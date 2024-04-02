@@ -8,7 +8,7 @@ import {
 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { ClickOutsideListenerCallback } from '@/ui/utilities/pointer-event/types/ClickOutsideListenerCallback';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const useClickOutsideListener = (componentId: string) => {
   // TODO: improve typing
@@ -34,7 +34,7 @@ export const useClickOutsideListener = (componentId: string) => {
             callback(event);
 
             const additionalCallbacks = snapshot
-              .getLoadable(getClickOutsideListenerCallbacksState())
+              .getLoadable(getClickOutsideListenerCallbacksState)
               .getValue();
 
             additionalCallbacks.forEach((additionalCallback) => {
@@ -51,7 +51,7 @@ export const useClickOutsideListener = (componentId: string) => {
   const toggleClickOutsideListener = useRecoilCallback(
     ({ set }) =>
       (activated: boolean) => {
-        set(getClickOutsideListenerIsActivatedState(), activated);
+        set(getClickOutsideListenerIsActivatedState, activated);
       },
     [getClickOutsideListenerIsActivatedState],
   );
@@ -60,21 +60,21 @@ export const useClickOutsideListener = (componentId: string) => {
     ({ set, snapshot }) =>
       ({ callbackFunction, callbackId }: ClickOutsideListenerCallback) => {
         const existingCallbacks = snapshot
-          .getLoadable(getClickOutsideListenerCallbacksState())
+          .getLoadable(getClickOutsideListenerCallbacksState)
           .getValue();
 
         const existingCallbackWithSameId = existingCallbacks.find(
           (callback) => callback.callbackId === callbackId,
         );
 
-        if (!isNonNullable(existingCallbackWithSameId)) {
+        if (!isDefined(existingCallbackWithSameId)) {
           const existingCallbacksWithNewCallback = existingCallbacks.concat({
             callbackId,
             callbackFunction,
           });
 
           set(
-            getClickOutsideListenerCallbacksState(),
+            getClickOutsideListenerCallbacksState,
             existingCallbacksWithNewCallback,
           );
         } else {
@@ -95,7 +95,7 @@ export const useClickOutsideListener = (componentId: string) => {
           };
 
           set(
-            getClickOutsideListenerCallbacksState(),
+            getClickOutsideListenerCallbacksState,
             existingCallbacksWithOverwrittenCallback,
           );
         }
@@ -107,7 +107,7 @@ export const useClickOutsideListener = (componentId: string) => {
     ({ set, snapshot }) =>
       ({ callbackId }: { callbackId: string }) => {
         const existingCallbacks = snapshot
-          .getLoadable(getClickOutsideListenerCallbacksState())
+          .getLoadable(getClickOutsideListenerCallbacksState)
           .getValue();
 
         const indexOfCallbackToUnsubscribe = existingCallbacks.findIndex(
@@ -121,7 +121,7 @@ export const useClickOutsideListener = (componentId: string) => {
             existingCallbacks.toSpliced(indexOfCallbackToUnsubscribe, 1);
 
           set(
-            getClickOutsideListenerCallbacksState(),
+            getClickOutsideListenerCallbacksState,
             newCallbacksWithoutCallbackToUnsubscribe,
           );
         }

@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
-export const isVerifyPendingState = atom<boolean>({
+export const isVerifyPendingState = createState<boolean>({
   key: 'isVerifyPendingState',
-  default: false,
+  defaultValue: false,
 });

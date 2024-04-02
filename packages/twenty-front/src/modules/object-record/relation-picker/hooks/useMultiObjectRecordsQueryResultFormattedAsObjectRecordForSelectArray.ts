@@ -5,7 +5,7 @@ import { objectMetadataItemsByNamePluralMapSelector } from '@/object-metadata/st
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export type MultiObjectRecordQueryResult = {
   [namePlural: string]: ObjectRecordConnection;
@@ -30,7 +30,7 @@ export const useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArr
           const objectMetadataItem =
             objectMetadataItemsByNamePluralMap.get(namePlural);
 
-          if (!isNonNullable(objectMetadataItem)) return [];
+          if (!isDefined(objectMetadataItem)) return [];
 
           return objectRecordConnection.edges.map(({ node }) => ({
             objectMetadataItem,

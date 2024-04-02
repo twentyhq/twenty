@@ -1,8 +1,8 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
 import { Telemetry } from '~/generated/graphql';
 
-export const telemetryState = atom<Telemetry>({
+export const telemetryState = createState<Telemetry>({
   key: 'telemetryState',
-  default: { enabled: true, anonymizationEnabled: true },
+  defaultValue: { enabled: true, anonymizationEnabled: true },
 });

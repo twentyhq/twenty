@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
+import { IconBuildingSkyscraper } from 'twenty-ui';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { IconBuildingSkyscraper } from '@/ui/display/icon';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageFavoriteButton } from '@/ui/layout/page/PageFavoriteButton';
@@ -16,7 +16,7 @@ import { ShowPageAddButton } from '@/ui/layout/show-page/components/ShowPageAddB
 import { ShowPageMoreButton } from '@/ui/layout/show-page/components/ShowPageMoreButton';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const RecordShowPage = () => {
   const { objectNameSingular, objectRecordId } = useParams<{
@@ -55,12 +55,12 @@ export const RecordShowPage = () => {
     (favorite) => favorite.recordId === objectRecordId,
   );
 
-  const isFavorite = isNonNullable(correspondingFavorite);
+  const isFavorite = isDefined(correspondingFavorite);
 
   const handleFavoriteButtonClick = async () => {
     if (!objectNameSingular || !record) return;
 
-    if (isFavorite && record) {
+    if (isFavorite && isDefined(record)) {
       deleteFavorite(correspondingFavorite.id);
     } else {
       createFavorite(record, objectNameSingular);
@@ -75,7 +75,7 @@ export const RecordShowPage = () => {
           labelIdentifierFieldValue?.firstName,
           labelIdentifierFieldValue?.lastName,
         ].join(' ')
-      : labelIdentifierFieldValue;
+      : `${labelIdentifierFieldValue}`;
 
   return (
     <PageContainer>

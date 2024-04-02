@@ -1,10 +1,10 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
 import { ActivityTargetableObject } from '../types/ActivityTargetableEntity';
 
-export const activityTargetableEntityArrayState = atom<
+export const activityTargetableEntityArrayState = createState<
   ActivityTargetableObject[]
 >({
   key: 'activities/targetable-entity-array',
-  default: [],
+  defaultValue: [],
 });

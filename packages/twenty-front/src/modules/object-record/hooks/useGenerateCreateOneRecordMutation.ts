@@ -1,8 +1,11 @@
 import { gql } from '@apollo/client';
+import { useRecoilValue } from 'recoil';
 
-import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
 import { EMPTY_MUTATION } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const getCreateOneRecordMutationResponseField = (
@@ -11,12 +14,16 @@ export const getCreateOneRecordMutationResponseField = (
 
 export const useGenerateCreateOneRecordMutation = ({
   objectMetadataItem,
+  queryFields,
+  depth = 1,
 }: {
   objectMetadataItem: ObjectMetadataItem;
+  queryFields?: Record<string, any>;
+  depth?: number;
 }) => {
-  const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  if (!objectMetadataItem) {
+  if (isUndefinedOrNull(objectMetadataItem)) {
     return EMPTY_MUTATION;
   }
 
@@ -28,16 +35,12 @@ export const useGenerateCreateOneRecordMutation = ({
 
   return gql`
     mutation CreateOne${capitalizedObjectName}($input: ${capitalizedObjectName}CreateInput!)  {
-      ${mutationResponseField}(data: $input) {
-        id
-        ${objectMetadataItem.fields
-          .map((field) =>
-            mapFieldMetadataToGraphQLQuery({
-              field,
-            }),
-          )
-          .join('\n')}
-      }
+      ${mutationResponseField}(data: $input) ${mapObjectMetadataToGraphQLQuery({
+        objectMetadataItems,
+        objectMetadataItem,
+        queryFields,
+        depth,
+      })}
     }
   `;
 };

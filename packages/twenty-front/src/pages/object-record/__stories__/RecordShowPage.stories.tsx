@@ -26,7 +26,7 @@ const meta: Meta<PageDecoratorArgs> = {
   parameters: {
     msw: {
       handlers: [
-        graphql.query('FindOneperson', () => {
+        graphql.query('FindOnePerson', () => {
           return HttpResponse.json({
             data: {
               person: mockedPeopleData[0],

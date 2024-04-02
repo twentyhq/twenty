@@ -7,7 +7,7 @@ import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 const updateBlockedEmailListJestFn = fn();
 
 const ClearMocksDecorator: Decorator = (Story, context) => {
-  if (context.parameters.clearMocks) {
+  if (context.parameters.clearMocks === true) {
     updateBlockedEmailListJestFn.mockClear();
   }
   return <Story />;

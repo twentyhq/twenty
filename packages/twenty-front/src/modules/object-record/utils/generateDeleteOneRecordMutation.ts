@@ -2,6 +2,7 @@ import { gql } from '@apollo/client';
 
 import { EMPTY_MUTATION } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const getDeleteOneRecordMutationResponseField = (
@@ -13,7 +14,7 @@ export const generateDeleteOneRecordMutation = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  if (!objectMetadataItem) {
+  if (isUndefinedOrNull(objectMetadataItem)) {
     return EMPTY_MUTATION;
   }
 

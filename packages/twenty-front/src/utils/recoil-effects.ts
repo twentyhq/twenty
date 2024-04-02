@@ -2,6 +2,8 @@ import { AtomEffect } from 'recoil';
 
 import { cookieStorage } from '~/utils/cookie-storage';
 
+import { isDefined } from './isDefined';
+
 export const localStorageEffect =
   <T>(key: string): AtomEffect<T> =>
   ({ setSelf, onSet }) => {
@@ -21,7 +23,10 @@ export const cookieStorageEffect =
   <T>(key: string): AtomEffect<T | null> =>
   ({ setSelf, onSet }) => {
     const savedValue = cookieStorage.getItem(key);
-    if (savedValue != null && JSON.parse(savedValue)['accessToken']) {
+    if (
+      isDefined(savedValue) &&
+      isDefined(JSON.parse(savedValue)['accessToken'])
+    ) {
       setSelf(JSON.parse(savedValue));
     }
 

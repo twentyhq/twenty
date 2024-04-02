@@ -1,23 +1,29 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { IconPlus, IconSettings } from 'twenty-ui';
 
+import { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from '@/object-metadata/constants/LabelIdentifierFieldMetadataTypes';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { getActiveFieldMetadataItems } from '@/object-metadata/utils/getActiveFieldMetadataItems';
+import { getDisabledFieldMetadataItems } from '@/object-metadata/utils/getDisabledFieldMetadataItems';
 import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsAboutSection } from '@/settings/data-model/object-details/components/SettingsObjectAboutSection';
 import { SettingsObjectFieldActiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldActiveActionDropdown';
-import { SettingsObjectFieldDisabledActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown';
+import { SettingsObjectFieldInactiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown';
 import {
   SettingsObjectFieldItemTableRow,
   StyledObjectFieldTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { getFieldIdentifierType } from '@/settings/data-model/utils/getFieldIdentifierType';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
-import { IconPlus, IconSettings } from '@/ui/display/icon';
+import { SettingsPath } from '@/types/SettingsPath';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -26,7 +32,6 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -38,11 +43,9 @@ export const SettingsObjectDetail = () => {
   const navigate = useNavigate();
 
   const { objectSlug = '' } = useParams();
-  const {
-    disableObjectMetadataItem,
-    editObjectMetadataItem,
-    findActiveObjectMetadataItemBySlug,
-  } = useObjectMetadataItemForSettings();
+  const { findActiveObjectMetadataItemBySlug } =
+    useObjectMetadataItemForSettings();
+  const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
@@ -56,16 +59,19 @@ export const SettingsObjectDetail = () => {
 
   if (!activeObjectMetadataItem) return null;
 
-  const activeMetadataFields = activeObjectMetadataItem.fields.filter(
-    (metadataField) => metadataField.isActive && !metadataField.isSystem,
+  const activeMetadataFields = getActiveFieldMetadataItems(
+    activeObjectMetadataItem,
   );
-  const disabledMetadataFields = activeObjectMetadataItem.fields.filter(
-    (metadataField) => !metadataField.isActive && !metadataField.isSystem,
+  const disabledMetadataFields = getDisabledFieldMetadataItems(
+    activeObjectMetadataItem,
   );
 
   const handleDisableObject = async () => {
-    await disableObjectMetadataItem(activeObjectMetadataItem);
-    navigate('/settings/objects');
+    await updateOneObjectMetadataItem({
+      idToUpdate: activeObjectMetadataItem.id,
+      updatePayload: { isActive: false },
+    });
+    navigate(getSettingsPagePath(SettingsPath.Objects));
   };
 
   const handleDisableField = (activeFieldMetadatItem: FieldMetadataItem) => {
@@ -74,12 +80,13 @@ export const SettingsObjectDetail = () => {
 
   const handleSetLabelIdentifierField = (
     activeFieldMetadatItem: FieldMetadataItem,
-  ) => {
-    editObjectMetadataItem({
-      ...activeObjectMetadataItem,
-      labelIdentifierFieldMetadataId: activeFieldMetadatItem.id,
+  ) =>
+    updateOneObjectMetadataItem({
+      idToUpdate: activeObjectMetadataItem.id,
+      updatePayload: {
+        labelIdentifierFieldMetadataId: activeFieldMetadatItem.id,
+      },
     });
-  };
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -94,7 +101,7 @@ export const SettingsObjectDetail = () => {
           iconKey={activeObjectMetadataItem.icon ?? undefined}
           name={activeObjectMetadataItem.labelPlural || ''}
           isCustom={activeObjectMetadataItem.isCustom}
-          onDisable={handleDisableObject}
+          onDeactivate={handleDisableObject}
           onEdit={() => navigate('./edit')}
         />
         <Section>
@@ -123,7 +130,7 @@ export const SettingsObjectDetail = () => {
                   const canBeSetAsLabelIdentifier =
                     activeObjectMetadataItem.isCustom &&
                     !isLabelIdentifier &&
-                    [FieldMetadataType.Text, FieldMetadataType.Number].includes(
+                    LABEL_IDENTIFIER_FIELD_METADATA_TYPES.includes(
                       activeMetadataField.type,
                     );
 
@@ -155,7 +162,7 @@ export const SettingsObjectDetail = () => {
                                   )
                               : undefined
                           }
-                          onDisable={
+                          onDeactivate={
                             isLabelIdentifier
                               ? undefined
                               : () => handleDisableField(activeMetadataField)
@@ -168,7 +175,7 @@ export const SettingsObjectDetail = () => {
               </TableSection>
             )}
             {!!disabledMetadataFields.length && (
-              <TableSection isInitiallyExpanded={false} title="Disabled">
+              <TableSection isInitiallyExpanded={false} title="Inactive">
                 {disabledMetadataFields.map((disabledMetadataField) => (
                   <SettingsObjectFieldItemTableRow
                     key={disabledMetadataField.id}
@@ -179,7 +186,7 @@ export const SettingsObjectDetail = () => {
                     }
                     fieldMetadataItem={disabledMetadataField}
                     ActionIcon={
-                      <SettingsObjectFieldDisabledActionDropdown
+                      <SettingsObjectFieldInactiveActionDropdown
                         isCustomField={!!disabledMetadataField.isCustom}
                         scopeKey={disabledMetadataField.id}
                         onActivate={() =>

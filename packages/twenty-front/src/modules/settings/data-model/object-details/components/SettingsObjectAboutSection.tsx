@@ -1,8 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconArchive, IconDotsVertical, IconPencil } from 'twenty-ui';
 
 import { SettingsDataModelIsCustomTag } from '@/settings/data-model/objects/SettingsDataModelIsCustomTag';
-import { IconArchive, IconDotsVertical, IconPencil } from '@/ui/display/icon';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
@@ -19,7 +19,7 @@ type SettingsAboutSectionProps = {
   iconKey?: string;
   isCustom: boolean;
   name: string;
-  onDisable: () => void;
+  onDeactivate: () => void;
   onEdit: () => void;
 };
 
@@ -49,7 +49,7 @@ export const SettingsAboutSection = ({
   iconKey = '',
   isCustom,
   name,
-  onDisable,
+  onDeactivate,
   onEdit,
 }: SettingsAboutSectionProps) => {
   const theme = useTheme();
@@ -63,8 +63,8 @@ export const SettingsAboutSection = ({
     closeDropdown();
   };
 
-  const handleDisable = () => {
-    onDisable();
+  const handleDeactivate = () => {
+    onDeactivate();
     closeDropdown();
   };
 
@@ -92,9 +92,9 @@ export const SettingsAboutSection = ({
                     onClick={handleEdit}
                   />
                   <MenuItem
-                    text="Disable"
+                    text="Deactivate"
                     LeftIcon={IconArchive}
-                    onClick={handleDisable}
+                    onClick={handleDeactivate}
                   />
                 </DropdownMenuItemsContainer>
               </DropdownMenu>

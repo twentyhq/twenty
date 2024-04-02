@@ -1,8 +1,10 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 
-export const targetableObjectsInDrawerState = atom<ActivityTargetableObject[]>({
+export const targetableObjectsInDrawerState = createState<
+  ActivityTargetableObject[]
+>({
   key: 'targetableObjectsInDrawerState',
-  default: [],
+  defaultValue: [],
 });

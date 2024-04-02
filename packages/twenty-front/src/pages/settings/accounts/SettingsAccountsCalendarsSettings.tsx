@@ -1,23 +1,27 @@
-import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconRefresh, IconSettings, IconUser } from 'twenty-ui';
 
 import {
-  EventSettingsVisibilityValue,
-  SettingsAccountsEventVisibilitySettingsCard,
-} from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
+  CalendarChannel,
+  CalendarChannelVisibility,
+} from '@/accounts/types/CalendarChannel';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { SettingsAccountsEventVisibilitySettingsCard } from '@/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard';
 import { SettingsAccountsCardMedia } from '@/settings/accounts/components/SettingsAccountsCardMedia';
-import { SettingsAccountsColorSettingCard } from '@/settings/accounts/components/SettingsAccountsColorSettingCard';
 import { SettingsAccountsToggleSettingCard } from '@/settings/accounts/components/SettingsAccountsToggleSettingCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { IconRefresh, IconSettings, IconUser } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { mockedConnectedAccounts } from '~/testing/mock-data/accounts';
 
 const StyledCardMedia = styled(SettingsAccountsCardMedia)`
   height: ${({ theme }) => theme.spacing(6)};
@@ -25,10 +29,52 @@ const StyledCardMedia = styled(SettingsAccountsCardMedia)`
 
 export const SettingsAccountsCalendarsSettings = () => {
   const theme = useTheme();
-  const { accountUuid = '' } = useParams();
-  const connectedAccount = mockedConnectedAccounts.find(
-    ({ id }) => id === accountUuid,
-  );
+  const navigate = useNavigate();
+
+  const { accountUuid: calendarChannelId = '' } = useParams();
+
+  const { record: calendarChannel, loading } =
+    useFindOneRecord<CalendarChannel>({
+      objectNameSingular: CoreObjectNameSingular.CalendarChannel,
+      objectRecordId: calendarChannelId,
+    });
+
+  const { updateOneRecord } = useUpdateOneRecord<CalendarChannel>({
+    objectNameSingular: CoreObjectNameSingular.CalendarChannel,
+  });
+
+  const handleVisibilityChange = (value: CalendarChannelVisibility) => {
+    updateOneRecord({
+      idToUpdate: calendarChannelId,
+      updateOneRecordInput: {
+        visibility: value,
+      },
+    });
+  };
+
+  const handleContactAutoCreationToggle = (value: boolean) => {
+    updateOneRecord({
+      idToUpdate: calendarChannelId,
+      updateOneRecordInput: {
+        isContactAutoCreationEnabled: value,
+      },
+    });
+  };
+
+  const handleSyncEventsToggle = (value: boolean) => {
+    updateOneRecord({
+      idToUpdate: calendarChannelId,
+      updateOneRecordInput: {
+        isSyncEnabled: value,
+      },
+    });
+  };
+
+  useEffect(() => {
+    if (!loading && !calendarChannel) navigate(AppPath.NotFound);
+  }, [loading, calendarChannel, navigate]);
+
+  if (!calendarChannel) return null;
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -43,27 +89,17 @@ export const SettingsAccountsCalendarsSettings = () => {
               children: 'Calendars',
               href: getSettingsPagePath(SettingsPath.AccountsCalendars),
             },
-            { children: connectedAccount?.handle || '' },
+            { children: calendarChannel?.handle || '' },
           ]}
         />
-        <Section>
-          <H2Title
-            title="Color"
-            description="Define the color associated with this calendar"
-          />
-          <SettingsAccountsColorSettingCard
-            value="blue"
-            onChange={(_colorName) => {}}
-          />
-        </Section>
         <Section>
           <H2Title
             title="Event visibility"
             description="Define what will be visible to other users in your workspace"
           />
           <SettingsAccountsEventVisibilitySettingsCard
-            value={EventSettingsVisibilityValue.Everything}
-            onChange={(_value) => {}}
+            value={calendarChannel.visibility}
+            onChange={handleVisibilityChange}
           />
         </Section>
         <Section>
@@ -81,8 +117,8 @@ export const SettingsAccountsCalendarsSettings = () => {
               </StyledCardMedia>
             }
             title="Auto-creation"
-            value={false}
-            onToggle={(_value) => {}}
+            value={!!calendarChannel.isContactAutoCreationEnabled}
+            onToggle={handleContactAutoCreationToggle}
           />
         </Section>
         <Section>
@@ -100,8 +136,8 @@ export const SettingsAccountsCalendarsSettings = () => {
               </StyledCardMedia>
             }
             title="Sync events"
-            value={false}
-            onToggle={(_value) => {}}
+            value={!!calendarChannel.isSyncEnabled}
+            onToggle={handleSyncEventsToggle}
           />
         </Section>
       </SettingsPageContainer>

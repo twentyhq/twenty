@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { EMPTY_QUERY } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
+import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/multiple-objects/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
 import { useLimitPerMetadataItem } from '@/object-record/relation-picker/hooks/useLimitPerMetadataItem';
 import {
   MultiObjectRecordQueryResult,
@@ -14,7 +14,7 @@ import { SelectedObjectRecordId } from '@/object-record/relation-picker/hooks/us
 import { useOrderByFieldPerMetadataItem } from '@/object-record/relation-picker/hooks/useOrderByFieldPerMetadataItem';
 import { useSearchFilterPerMetadataItem } from '@/object-record/relation-picker/hooks/useSearchFilterPerMetadataItem';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
@@ -72,7 +72,7 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
             makeAndFilterVariables(searchFilters),
           ];
         })
-        .filter(isNonNullable),
+        .filter(isDefined),
     );
 
   const { orderByFieldPerMetadataItem } = useOrderByFieldPerMetadataItem({
@@ -86,7 +86,8 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
 
   const multiSelectQuery =
     useGenerateFindManyRecordsForMultipleMetadataItemsQuery({
-      objectMetadataItems: nonSystemObjectMetadataItems,
+      targetObjectMetadataItems: nonSystemObjectMetadataItems,
+      depth: 0,
     });
 
   const {
@@ -98,7 +99,7 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
       ...orderByFieldPerMetadataItem,
       ...limitPerMetadataItem,
     },
-    skip: !isNonNullable(multiSelectQuery),
+    skip: !isDefined(multiSelectQuery),
   });
 
   const {

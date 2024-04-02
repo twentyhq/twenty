@@ -1,9 +1,9 @@
 import { DropdownScopeInternalContext } from '@/ui/layout/dropdown/scopes/scope-internal-context/DropdownScopeInternalContext';
-import { dropdownHotkeyStateScopeMap } from '@/ui/layout/dropdown/states/dropdownHotkeyStateScopeMap';
-import { dropdownWidthStateScopeMap } from '@/ui/layout/dropdown/states/dropdownWidthStateScopeMap';
-import { isDropdownOpenStateScopeMap } from '@/ui/layout/dropdown/states/isDropdownOpenStateScopeMap';
+import { dropdownHotkeyComponentState } from '@/ui/layout/dropdown/states/dropdownHotkeyComponentState';
+import { dropdownWidthComponentState } from '@/ui/layout/dropdown/states/dropdownWidthComponentState';
+import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { getState } from '@/ui/utilities/recoil-scope/utils/getState';
+import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 
 type UseDropdownStatesProps = {
   dropdownScopeId?: string;
@@ -19,8 +19,17 @@ export const useDropdownStates = ({
 
   return {
     scopeId,
-    dropdownHotkeyScopeState: getState(dropdownHotkeyStateScopeMap, scopeId),
-    dropdownWidthState: getState(dropdownWidthStateScopeMap, scopeId),
-    isDropdownOpenState: getState(isDropdownOpenStateScopeMap, scopeId),
+    dropdownHotkeyScopeState: extractComponentState(
+      dropdownHotkeyComponentState,
+      scopeId,
+    ),
+    dropdownWidthState: extractComponentState(
+      dropdownWidthComponentState,
+      scopeId,
+    ),
+    isDropdownOpenState: extractComponentState(
+      isDropdownOpenComponentState,
+      scopeId,
+    ),
   };
 };

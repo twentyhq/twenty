@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
+import { IconPlus } from 'twenty-ui';
 import { v4 } from 'uuid';
 
-import { IconPlus } from '@/ui/display/icon';
 import { LightButton } from '@/ui/input/button/components/LightButton';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { CardFooter } from '@/ui/layout/card/components/CardFooter';
@@ -37,7 +37,6 @@ const StyledLabel = styled.span`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin-bottom: 6px;
   margin-top: ${({ theme }) => theme.spacing(1)};
-  text-transform: uppercase;
 `;
 
 const StyledFooter = styled(CardFooter)`

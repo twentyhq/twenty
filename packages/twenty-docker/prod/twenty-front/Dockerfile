@@ -1,17 +1,18 @@
 FROM node:18.17.1-alpine as twenty-front-build
 
 ARG REACT_APP_SERVER_BASE_URL
-ARG REACT_APP_SERVER_AUTH_URL
-ARG REACT_APP_SERVER_FILES_URL
 
 WORKDIR /app
 
 COPY ./package.json .
 COPY ./yarn.lock .
 COPY ./.yarnrc.yml .
+COPY ./nx.json .
+COPY ./tsconfig.base.json .
 COPY ./.yarn/releases /app/.yarn/releases
 COPY ./tools/eslint-rules /app/tools/eslint-rules
 COPY ./packages/twenty-emails /app/packages/twenty-emails
+COPY ./packages/twenty-ui /app/packages/twenty-ui
 COPY ./packages/twenty-front/package.json /app/packages/twenty-front/package.json
 
 RUN yarn

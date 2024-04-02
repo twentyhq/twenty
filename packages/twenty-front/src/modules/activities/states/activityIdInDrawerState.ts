@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
-export const activityIdInDrawerState = atom<string | null>({
+export const activityIdInDrawerState = createState<string | null>({
   key: 'activityIdInDrawerState',
-  default: null,
+  defaultValue: null,
 });

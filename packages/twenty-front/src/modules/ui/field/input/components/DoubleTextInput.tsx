@@ -1,13 +1,19 @@
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import {
+  ChangeEvent,
+  ClipboardEvent,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
 
 import { FieldDoubleText } from '@/object-record/record-field/types/FieldDoubleText';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
-import { StyledInput } from './TextInput';
+import { StyledTextInput } from './TextInput';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -39,6 +45,7 @@ type DoubleTextInputProps = {
     newDoubleTextValue: FieldDoubleText,
   ) => void;
   onChange?: (newDoubleTextValue: FieldDoubleText) => void;
+  onPaste?: (newDoubleTextValue: FieldDoubleText) => void;
 };
 
 export const DoubleTextInput = ({
@@ -53,6 +60,7 @@ export const DoubleTextInput = ({
   onShiftTab,
   onTab,
   onChange,
+  onPaste,
 }: DoubleTextInputProps) => {
   const [firstInternalValue, setFirstInternalValue] = useState(firstValue);
   const [secondInternalValue, setSecondInternalValue] = useState(secondValue);
@@ -147,12 +155,26 @@ export const DoubleTextInput = ({
         secondValue: secondInternalValue,
       });
     },
-    enabled: isNonNullable(onClickOutside),
+    enabled: isDefined(onClickOutside),
   });
+
+  const handleOnPaste = (event: ClipboardEvent<HTMLInputElement>) => {
+    if (firstInternalValue.length > 0 || secondInternalValue.length > 0) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const name = event.clipboardData.getData('Text');
+
+    const splittedName = name.split(' ');
+
+    onPaste?.({ firstValue: splittedName[0], secondValue: splittedName[1] });
+  };
 
   return (
     <StyledContainer ref={containerRef}>
-      <StyledInput
+      <StyledTextInput
         autoComplete="off"
         autoFocus
         onFocus={() => setFocusPosition('left')}
@@ -162,8 +184,11 @@ export const DoubleTextInput = ({
         onChange={(event: ChangeEvent<HTMLInputElement>) => {
           handleChange(event.target.value, secondInternalValue);
         }}
+        onPaste={(event: ClipboardEvent<HTMLInputElement>) =>
+          handleOnPaste(event)
+        }
       />
-      <StyledInput
+      <StyledTextInput
         autoComplete="off"
         onFocus={() => setFocusPosition('right')}
         ref={secondValueInputRef}

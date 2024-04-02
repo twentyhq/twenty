@@ -1,4 +1,4 @@
-import { createStateScopeMap } from '@/ui/utilities/recoil-scope/utils/createStateScopeMap';
+import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
 import { DialogOptions } from '../types/DialogOptions';
 
@@ -7,7 +7,7 @@ type DialogState = {
   queue: DialogOptions[];
 };
 
-export const dialogInternalScopedState = createStateScopeMap<DialogState>({
+export const dialogInternalScopedState = createComponentState<DialogState>({
   key: 'dialog/internal-state',
   defaultValue: {
     maxQueue: 2,

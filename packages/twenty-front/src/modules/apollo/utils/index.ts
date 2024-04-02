@@ -1,5 +1,6 @@
 import { ApolloLink, gql, Operation } from '@apollo/client';
 
+import { isDefined } from '~/utils/isDefined';
 import { logDebug } from '~/utils/logDebug';
 import { logError } from '~/utils/logError';
 
@@ -29,7 +30,9 @@ export const loggerLink = (getSchemaName: (operation: Operation) => string) =>
     const operationType = (operation.query.definitions[0] as any).operation;
     const headers = operation.getContext().headers;
 
-    const [queryName, query] = parseQuery(operation.query.loc!.source.body);
+    const [queryName, query] = parseQuery(
+      operation.query.loc?.source.body ?? '',
+    );
 
     if (operationType === 'subscription') {
       const date = new Date().toLocaleTimeString();
@@ -64,7 +67,7 @@ export const loggerLink = (getSchemaName: (operation: Operation) => string) =>
 
         getGroup(!hasError)(...titleArgs);
 
-        if (errors) {
+        if (isDefined(errors)) {
           errors.forEach((err: any) => {
             logDebug(
               `%c${err.message}`,
@@ -82,10 +85,10 @@ export const loggerLink = (getSchemaName: (operation: Operation) => string) =>
 
         logDebug('QUERY', query);
 
-        if (result.data) {
+        if (isDefined(result.data)) {
           logDebug('RESULT', result.data);
         }
-        if (errors) {
+        if (isDefined(errors)) {
           logDebug('ERRORS', errors);
         }
 
@@ -95,7 +98,7 @@ export const loggerLink = (getSchemaName: (operation: Operation) => string) =>
         logDebug(
           `${operationType} ${schemaName}::${queryName} (in ${time} ms)`,
         );
-        if (errors) {
+        if (isDefined(errors)) {
           logError(errors);
         }
       }

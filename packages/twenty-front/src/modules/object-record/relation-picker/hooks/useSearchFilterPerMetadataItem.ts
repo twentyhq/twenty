@@ -1,9 +1,11 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { FieldMetadataType } from '~/generated/graphql';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 export const useSearchFilterPerMetadataItem = ({
   objectMetadataItems,
@@ -23,10 +25,10 @@ export const useSearchFilterPerMetadataItem = ({
 
           let searchFilter: ObjectRecordQueryFilter = {};
 
-          if (labelIdentifierFieldMetadataItem) {
+          if (isDefined(labelIdentifierFieldMetadataItem)) {
             switch (labelIdentifierFieldMetadataItem.type) {
               case FieldMetadataType.FullName: {
-                if (searchFilterValue) {
+                if (isNonEmptyString(searchFilterValue)) {
                   const fullNameFilter = makeOrFilterVariables([
                     {
                       [labelIdentifierFieldMetadataItem.name]: {
@@ -44,14 +46,14 @@ export const useSearchFilterPerMetadataItem = ({
                     },
                   ]);
 
-                  if (fullNameFilter) {
+                  if (isDefined(fullNameFilter)) {
                     searchFilter = fullNameFilter;
                   }
                 }
                 break;
               }
               default: {
-                if (searchFilterValue) {
+                if (isNonEmptyString(searchFilterValue)) {
                   searchFilter = {
                     [labelIdentifierFieldMetadataItem.name]: {
                       ilike: `%${searchFilterValue}%`,
@@ -64,7 +66,7 @@ export const useSearchFilterPerMetadataItem = ({
 
           return [objectMetadataItem.nameSingular, searchFilter] as const;
         })
-        .filter(isNonNullable),
+        .filter(isDefined),
     );
 
   return {

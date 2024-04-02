@@ -1,11 +1,11 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
-export const timelineActivitiesNetworkingState = atom<{
+export const timelineActivitiesNetworkingState = createState<{
   initialized: boolean;
   noActivities: boolean;
 }>({
   key: 'timelineActivitiesNetworkingState',
-  default: {
+  defaultValue: {
     initialized: false,
     noActivities: false,
   },

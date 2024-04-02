@@ -1,23 +1,26 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-
-import { useAuth } from '@/auth/hooks/useAuth';
-import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
-import { AppPath } from '@/types/AppPath';
-import { SettingsPath } from '@/types/SettingsPath';
+import { useRecoilValue } from 'recoil';
 import {
   IconApps,
   IconAt,
   IconCalendarEvent,
   IconCode,
   IconColorSwatch,
+  IconCurrencyDollar,
   IconDoorEnter,
   IconHierarchy2,
   IconMail,
   IconSettings,
   IconUserCircle,
   IconUsers,
-} from '@/ui/display/icon';
+} from 'twenty-ui';
+
+import { useAuth } from '@/auth/hooks/useAuth';
+import { billingState } from '@/client-config/states/billingState.ts';
+import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
+import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
@@ -30,10 +33,11 @@ export const SettingsNavigationDrawerItems = () => {
 
   const handleLogout = useCallback(() => {
     signOut();
-    navigate(AppPath.SignIn);
+    navigate(AppPath.SignInUp);
   }, [signOut, navigate]);
 
   const isCalendarEnabled = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
+  const billing = useRecoilValue(billingState);
 
   return (
     <>
@@ -86,6 +90,13 @@ export const SettingsNavigationDrawerItems = () => {
           path={SettingsPath.WorkspaceMembersPage}
           Icon={IconUsers}
         />
+        {billing?.isBillingEnabled && (
+          <SettingsNavigationDrawerItem
+            label="Billing"
+            path={SettingsPath.Billing}
+            Icon={IconCurrencyDollar}
+          />
+        )}
         <SettingsNavigationDrawerItem
           label="Data model"
           path={SettingsPath.Objects}

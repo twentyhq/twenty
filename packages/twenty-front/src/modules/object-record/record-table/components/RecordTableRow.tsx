@@ -23,12 +23,12 @@ const StyledTd = styled.td`
 `;
 
 export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
-  const { getVisibleTableColumnsSelector, isRowSelectedFamilyState } =
+  const { visibleTableColumnsSelector, isRowSelectedFamilyState } =
     useRecordTableStates();
   const currentRowSelected = useRecoilValue(isRowSelectedFamilyState(recordId));
   const { objectMetadataItem } = useContext(RecordTableContext);
 
-  const visibleTableColumns = useRecoilValue(getVisibleTableColumnsSelector());
+  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
 
   const scrollWrapperRef = useContext(ScrollWrapperContext);
 

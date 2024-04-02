@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar.tsx';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useEmailPasswordResetLinkMutation } from '~/generated/graphql.tsx';
 
 export const useHandleResetPassword = () => {
@@ -22,7 +22,7 @@ export const useHandleResetPassword = () => {
             variables: { email },
           });
 
-          if (data?.emailPasswordResetLink?.success) {
+          if (data?.emailPasswordResetLink?.success === true) {
             enqueueSnackBar('Password reset link has been sent to the email', {
               variant: 'success',
             });

@@ -1,10 +1,6 @@
 import { ReactNode } from 'react';
 
-import { ViewFilter } from '@/views/types/ViewFilter';
-import { ViewSort } from '@/views/types/ViewSort';
-import { ViewType } from '@/views/types/ViewType';
-
-import { ViewField } from '../types/ViewField';
+import { GraphQLView } from '@/views/types/GraphQLView';
 
 import { ViewScopeInitEffect } from './init-effect/ViewScopeInitEffect';
 import { ViewScopeInternalContext } from './scope-internal-context/ViewScopeInternalContext';
@@ -12,23 +8,13 @@ import { ViewScopeInternalContext } from './scope-internal-context/ViewScopeInte
 type ViewScopeProps = {
   children: ReactNode;
   viewScopeId: string;
-  onViewSortsChange?: (sorts: ViewSort[]) => void | Promise<void>;
-  onViewFiltersChange?: (filters: ViewFilter[]) => void | Promise<void>;
-  onViewFieldsChange?: (fields: ViewField[]) => void | Promise<void>;
-  onViewTypeChange?: (viewType: ViewType) => void | Promise<void>;
-  onViewCompactModeChange?: (
-    isCompactModeActive: boolean,
-  ) => void | Promise<void>;
+  onCurrentViewChange: (view: GraphQLView | undefined) => void | Promise<void>;
 };
 
 export const ViewScope = ({
   children,
   viewScopeId,
-  onViewSortsChange,
-  onViewFiltersChange,
-  onViewFieldsChange,
-  onViewTypeChange,
-  onViewCompactModeChange,
+  onCurrentViewChange,
 }: ViewScopeProps) => {
   return (
     <ViewScopeInternalContext.Provider
@@ -38,11 +24,7 @@ export const ViewScope = ({
     >
       <ViewScopeInitEffect
         viewScopeId={viewScopeId}
-        onViewSortsChange={onViewSortsChange}
-        onViewFiltersChange={onViewFiltersChange}
-        onViewFieldsChange={onViewFieldsChange}
-        onViewTypeChange={onViewTypeChange}
-        onViewCompactModeChange={onViewCompactModeChange}
+        onCurrentViewChange={onCurrentViewChange}
       />
       {children}
     </ViewScopeInternalContext.Provider>

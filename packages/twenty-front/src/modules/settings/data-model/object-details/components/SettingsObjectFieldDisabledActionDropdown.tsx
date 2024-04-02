@@ -1,4 +1,5 @@
-import { IconArchiveOff, IconDotsVertical } from '@/ui/display/icon';
+import { IconArchiveOff, IconDotsVertical } from 'twenty-ui';
+
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -6,17 +7,17 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
-type SettingsObjectFieldDisabledActionDropdownProps = {
+type SettingsObjectFieldInactiveActionDropdownProps = {
   isCustomField?: boolean;
   onActivate: () => void;
   onErase: () => void;
   scopeKey: string;
 };
 
-export const SettingsObjectFieldDisabledActionDropdown = ({
+export const SettingsObjectFieldInactiveActionDropdown = ({
   onActivate,
   scopeKey,
-}: SettingsObjectFieldDisabledActionDropdownProps) => {
+}: SettingsObjectFieldInactiveActionDropdownProps) => {
   const dropdownId = `${scopeKey}-settings-field-disabled-action-dropdown`;
 
   const { closeDropdown } = useDropdown(dropdownId);

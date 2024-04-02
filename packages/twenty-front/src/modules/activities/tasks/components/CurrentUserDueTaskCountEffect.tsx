@@ -3,6 +3,7 @@ import { DateTime } from 'luxon';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { currentUserDueTaskCountState } from '@/activities/tasks/states/currentUserTaskCountState';
+import { Activity } from '@/activities/types/Activity';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -15,8 +16,9 @@ export const CurrentUserDueTaskCountEffect = () => {
     currentUserDueTaskCountState,
   );
 
-  const { records: tasks } = useFindManyRecords({
+  const { records: tasks } = useFindManyRecords<Activity>({
     objectNameSingular: CoreObjectNameSingular.Activity,
+    depth: 0,
     filter: {
       type: { eq: 'Task' },
       completedAt: { is: 'NULL' },

@@ -1,21 +1,18 @@
-import { useRef, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useState } from 'react';
 import { Key } from 'ts-key-enum';
+import {
+  IconBaselineDensitySmall,
+  IconChevronLeft,
+  IconFileImport,
+  IconTag,
+} from 'twenty-ui';
 
 import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
 import { useRecordIndexOptionsForTable } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForTable';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { useSpreadsheetRecordImport } from '@/object-record/spreadsheet-import/useSpreadsheetRecordImport';
-import {
-  IconBaselineDensitySmall,
-  IconChevronLeft,
-  IconFileExport,
-  IconFileImport,
-  IconTag,
-} from '@/ui/display/icon';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
-import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -23,11 +20,8 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemToggle';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
-import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
-import { useViewBar } from '@/views/hooks/useViewBar';
+import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';
-
-import { useExportTableData } from '../hooks/useExportTableData';
 
 type RecordIndexOptionsMenu = 'fields';
 
@@ -42,13 +36,8 @@ export const RecordIndexOptionsDropdownContent = ({
   recordIndexId,
   objectNameSingular,
 }: RecordIndexOptionsDropdownContentProps) => {
-  const { setViewEditMode, handleViewNameSubmit } = useViewBar({
-    viewBarId: recordIndexId,
-  });
-  const { viewEditModeState, currentViewSelector } = useViewScopedStates();
+  const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
-  const viewEditMode = useRecoilValue(viewEditModeState);
-  const currentView = useRecoilValue(currentViewSelector);
   const { closeDropdown } = useDropdown(RECORD_INDEX_OPTIONS_DROPDOWN_ID);
 
   const [currentMenu, setCurrentMenu] = useState<
@@ -57,8 +46,6 @@ export const RecordIndexOptionsDropdownContent = ({
 
   const resetMenu = () => setCurrentMenu(undefined);
 
-  const viewEditInputRef = useRef<HTMLInputElement>(null);
-
   const handleSelectMenu = (option: RecordIndexOptionsMenu) => {
     setCurrentMenu(option);
   };
@@ -66,18 +53,6 @@ export const RecordIndexOptionsDropdownContent = ({
   useScopedHotkeys(
     [Key.Escape],
     () => {
-      closeDropdown();
-    },
-    TableOptionsHotkeyScope.Dropdown,
-  );
-
-  useScopedHotkeys(
-    Key.Enter,
-    () => {
-      const name = viewEditInputRef.current?.value;
-      handleViewNameSubmit(name);
-      resetMenu();
-      setViewEditMode('none');
       closeDropdown();
     },
     TableOptionsHotkeyScope.Dropdown,
@@ -122,48 +97,21 @@ export const RecordIndexOptionsDropdownContent = ({
   const { openRecordSpreadsheetImport } =
     useSpreadsheetRecordImport(objectNameSingular);
 
-  const { progress, download } = useExportTableData({
-    delayMs: 100,
-    filename: `${objectNameSingular}.csv`,
-    objectNameSingular,
-    recordIndexId,
-  });
-
   return (
     <>
       {!currentMenu && (
-        <>
-          <DropdownMenuInput
-            ref={viewEditInputRef}
-            autoFocus={viewEditMode !== 'none'}
-            placeholder={
-              viewEditMode === 'create'
-                ? 'New view'
-                : viewEditMode === 'edit'
-                  ? 'View name'
-                  : ''
-            }
-            defaultValue={viewEditMode === 'create' ? '' : currentView?.name}
+        <DropdownMenuItemsContainer>
+          <MenuItem
+            onClick={() => handleSelectMenu('fields')}
+            LeftIcon={IconTag}
+            text="Fields"
           />
-          <DropdownMenuSeparator />
-          <DropdownMenuItemsContainer>
-            <MenuItem
-              onClick={() => handleSelectMenu('fields')}
-              LeftIcon={IconTag}
-              text="Fields"
-            />
-            <MenuItem
-              onClick={() => openRecordSpreadsheetImport()}
-              LeftIcon={IconFileImport}
-              text="Import"
-            />
-            <MenuItem
-              onClick={download}
-              LeftIcon={IconFileExport}
-              text={progress === undefined ? `Export` : `Export (${progress}%)`}
-            />
-          </DropdownMenuItemsContainer>
-        </>
+          <MenuItem
+            onClick={() => openRecordSpreadsheetImport()}
+            LeftIcon={IconFileImport}
+            text="Import"
+          />
+        </DropdownMenuItemsContainer>
       )}
       {currentMenu === 'fields' && (
         <>
@@ -200,7 +148,7 @@ export const RecordIndexOptionsDropdownContent = ({
               onToggleChange={() =>
                 setAndPersistIsCompactModeActive(
                   !isCompactModeActive,
-                  currentView,
+                  currentViewWithCombinedFiltersAndSorts,
                 )
               }
               toggled={isCompactModeActive}

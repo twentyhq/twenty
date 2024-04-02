@@ -7,6 +7,7 @@ export enum SettingsPath {
   AccountsCalendarsSettings = 'accounts/calendars/:accountUuid',
   AccountsEmails = 'accounts/emails',
   AccountsEmailsInboxSettings = 'accounts/emails/:accountUuid',
+  Billing = 'billing',
   Objects = 'objects',
   ObjectDetail = 'objects/:objectSlug',
   ObjectEdit = 'objects/:objectSlug/edit',
@@ -20,6 +21,8 @@ export enum SettingsPath {
   DevelopersNewApiKey = 'api-keys/new',
   DevelopersApiKeyDetail = 'api-keys/:apiKeyId',
   Integrations = 'integrations',
+  IntegrationDetail = 'integrations/:integrationKey',
+  IntegrationNewDatabase = 'integrations/:integrationKey/new',
   DevelopersNewWebhook = 'webhooks/new',
   DevelopersNewWebhookDetail = 'webhooks/:webhookId',
 }

@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
-export const isSignInPrefilledState = atom<boolean>({
+export const isSignInPrefilledState = createState<boolean>({
   key: 'isSignInPrefilledState',
-  default: false,
+  defaultValue: false,
 });

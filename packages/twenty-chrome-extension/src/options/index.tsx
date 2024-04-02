@@ -3,14 +3,14 @@ import ReactDOM from 'react-dom/client';
 
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
 import { ThemeType } from '@/ui/theme/constants/ThemeLight';
-import App from '~/options/Options';
+import Options from '~/options/Options';
 
 import '~/index.css';
 
 ReactDOM.createRoot(document.getElementById('app') as HTMLElement).render(
   <AppThemeProvider>
     <React.StrictMode>
-      <App />
+      <Options />
     </React.StrictMode>
   </AppThemeProvider>,
 );

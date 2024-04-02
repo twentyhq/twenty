@@ -15,9 +15,7 @@ describe('useClickOutsideListener', () => {
 
         return {
           useClickOutside: useClickOutsideListener(componentId),
-          isActivated: useRecoilValue(
-            getClickOutsideListenerIsActivatedState(),
-          ),
+          isActivated: useRecoilValue(getClickOutsideListenerIsActivatedState),
         };
       },
       {

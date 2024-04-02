@@ -17,6 +17,7 @@ export const query = gql`
           description
           icon
           isCustom
+          isRemote
           isActive
           isSystem
           createdAt
@@ -72,7 +73,6 @@ export const query = gql`
               startCursor
               endCursor
             }
-            totalCount
           }
         }
       }
@@ -82,7 +82,6 @@ export const query = gql`
         startCursor
         endCursor
       }
-      totalCount
     }
   }
 `;

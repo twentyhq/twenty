@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from '@emotion/styled';
+import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 import { SubTitle } from '@/auth/components/SubTitle.tsx';
@@ -9,14 +10,15 @@ import { SubscriptionCard } from '@/billing/components/SubscriptionCard.tsx';
 import { billingState } from '@/client-config/states/billingState.ts';
 import { AppPath } from '@/types/AppPath.ts';
 import { Loader } from '@/ui/feedback/loader/components/Loader.tsx';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar.tsx';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar.ts';
 import { MainButton } from '@/ui/input/button/components/MainButton.tsx';
 import { CardPicker } from '@/ui/input/components/CardPicker.tsx';
 import {
   ProductPriceEntity,
-  useCheckoutMutation,
+  useCheckoutSessionMutation,
   useGetProductPricesQuery,
 } from '~/generated/graphql.tsx';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledChoosePlanContainer = styled.div`
   display: flex;
@@ -53,11 +55,11 @@ export const ChooseYourPlan = () => {
     variables: { product: 'base-plan' },
   });
 
-  const [checkout] = useCheckoutMutation();
+  const [checkoutSession] = useCheckoutSessionMutation();
 
   const handlePlanChange = (type?: string) => {
     return () => {
-      if (type && planSelected !== type) {
+      if (isNonEmptyString(type) && planSelected !== type) {
         setPlanSelected(type);
       }
     };
@@ -73,7 +75,13 @@ export const ChooseYourPlan = () => {
     const monthPrice = prices.filter(
       (price) => price.recurringInterval === 'month',
     )?.[0];
-    if (monthPrice && monthPrice.unitAmount && price.unitAmount) {
+    if (
+      isDefined(monthPrice) &&
+      isNumber(monthPrice.unitAmount) &&
+      monthPrice.unitAmount > 0 &&
+      isNumber(price.unitAmount) &&
+      price.unitAmount > 0
+    ) {
       return `Save $${(12 * monthPrice.unitAmount - price.unitAmount) / 100}`;
     }
     return 'Cancel anytime';
@@ -81,14 +89,14 @@ export const ChooseYourPlan = () => {
 
   const handleButtonClick = async () => {
     setIsSubmitting(true);
-    const { data } = await checkout({
+    const { data } = await checkoutSession({
       variables: {
         recurringInterval: planSelected,
         successUrlPath: AppPath.PlanRequiredSuccess,
       },
     });
     setIsSubmitting(false);
-    if (!data?.checkout.url) {
+    if (!data?.checkoutSession.url) {
       enqueueSnackBar(
         'Checkout session error. Please retry or contact Twenty team',
         {
@@ -97,7 +105,7 @@ export const ChooseYourPlan = () => {
       );
       return;
     }
-    window.location.replace(data.checkout.url);
+    window.location.replace(data.checkoutSession.url);
   };
 
   return (

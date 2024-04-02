@@ -13,6 +13,8 @@ import {
   RenewTokenMutation,
   RenewTokenMutationVariables,
 } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const logger = loggerLink(() => 'Twenty-Refresh');
 
@@ -45,7 +47,7 @@ const renewTokenMutation = async (
     fetchPolicy: 'network-only',
   });
 
-  if (errors || !data) {
+  if (isDefined(errors) || isUndefinedOrNull(data)) {
     throw new Error('Something went wrong during token renewal');
   }
 
@@ -67,5 +69,5 @@ export const renewToken = async (
 
   const data = await renewTokenMutation(uri, tokenPair.refreshToken.token);
 
-  return data.renewToken.tokens;
+  return data?.renewToken.tokens;
 };

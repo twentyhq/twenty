@@ -1,10 +1,10 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
 import { AuthTokenPair } from '~/generated/graphql';
 import { cookieStorageEffect } from '~/utils/recoil-effects';
 
-export const tokenPairState = atom<AuthTokenPair | null>({
+export const tokenPairState = createState<AuthTokenPair | null>({
   key: 'tokenPairState',
-  default: null,
+  defaultValue: null,
   effects: [cookieStorageEffect('tokenPair')],
 });

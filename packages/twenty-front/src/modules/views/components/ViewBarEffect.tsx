@@ -1,83 +1,60 @@
-import { useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { useEffect, useState } from 'react';
+import { isUndefined } from '@sniptt/guards';
+import { useRecoilValue } from 'recoil';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { useViewBar } from '@/views/hooks/useViewBar';
-import { GraphQLView } from '@/views/types/GraphQLView';
+import { useViewStates } from '@/views/hooks/internal/useViewStates';
+import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { View } from '@/views/types/View';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
-import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
+type ViewBarEffectProps = {
+  viewBarId: string;
+};
 
-export const ViewBarEffect = () => {
+export const ViewBarEffect = ({ viewBarId }: ViewBarEffectProps) => {
+  const { currentViewWithCombinedFiltersAndSorts } =
+    useGetCurrentView(viewBarId);
   const {
-    loadView,
-    changeViewInUrl,
-    loadViewFields,
-    loadViewFilters,
-    loadViewSorts,
-  } = useViewBar();
+    onCurrentViewChangeState,
+    availableFilterDefinitionsState,
+    isPersistingViewFieldsState,
+  } = useViewStates(viewBarId);
 
-  const [searchParams] = useSearchParams();
-  const currentViewIdFromUrl = searchParams.get('view');
+  const [currentViewSnapshot, setCurrentViewSnapshot] = useState<
+    View | undefined
+  >(undefined);
 
-  const { viewObjectMetadataIdState, viewsState, currentViewIdState } =
-    useViewScopedStates();
-
-  const [views, setViews] = useRecoilState(viewsState);
-  const viewObjectMetadataId = useRecoilValue(viewObjectMetadataIdState);
-  const setCurrentViewId = useSetRecoilState(currentViewIdState);
-
-  const { records: newViews } = useFindManyRecords<GraphQLView>({
-    skip: !viewObjectMetadataId,
-    objectNameSingular: CoreObjectNameSingular.View,
-    filter: {
-      objectMetadataId: { eq: viewObjectMetadataId },
-    },
-    useRecordsWithoutConnection: true,
-  });
+  const onCurrentViewChange = useRecoilValue(onCurrentViewChangeState);
+  const availableFilterDefinitions = useRecoilValue(
+    availableFilterDefinitionsState,
+  );
+  const isPersistingViewFields = useRecoilValue(isPersistingViewFieldsState);
 
   useEffect(() => {
-    if (!newViews.length) return;
+    if (
+      !isDeeplyEqual(
+        currentViewWithCombinedFiltersAndSorts,
+        currentViewSnapshot,
+      )
+    ) {
+      if (isUndefined(currentViewWithCombinedFiltersAndSorts)) {
+        setCurrentViewSnapshot(currentViewWithCombinedFiltersAndSorts);
+        onCurrentViewChange?.(undefined);
+        return;
+      }
 
-    if (!isDeeplyEqual(views, newViews)) {
-      setViews(newViews);
+      if (!isPersistingViewFields) {
+        setCurrentViewSnapshot(currentViewWithCombinedFiltersAndSorts);
+        onCurrentViewChange?.(currentViewWithCombinedFiltersAndSorts);
+      }
     }
-
-    const currentView =
-      newViews.find((view) => view.id === currentViewIdFromUrl) ??
-      newViews[0] ??
-      null;
-
-    if (!currentView) return;
-
-    setCurrentViewId(currentView.id);
-
-    if (currentView?.viewFields) {
-      loadViewFields(currentView.viewFields, currentView.id);
-      loadViewFilters(currentView.viewFilters, currentView.id);
-      loadViewSorts(currentView.viewSorts, currentView.id);
-    }
-
-    if (!currentViewIdFromUrl) return changeViewInUrl(currentView.id);
   }, [
-    changeViewInUrl,
-    currentViewIdFromUrl,
-    loadViewFields,
-    loadViewFilters,
-    loadViewSorts,
-    newViews,
-    setCurrentViewId,
-    setViews,
-    views,
+    availableFilterDefinitions,
+    currentViewSnapshot,
+    currentViewWithCombinedFiltersAndSorts,
+    isPersistingViewFields,
+    onCurrentViewChange,
   ]);
-
-  useEffect(() => {
-    if (!currentViewIdFromUrl || !newViews.length) return;
-
-    loadView(currentViewIdFromUrl);
-  }, [currentViewIdFromUrl, loadView, newViews]);
 
   return <></>;
 };

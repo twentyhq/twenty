@@ -1,3 +1,4 @@
+/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { isDate, isNumber, isString } from '@sniptt/guards';
 import { differenceInCalendarDays, formatDistanceToNow } from 'date-fns';
 import { DateTime } from 'luxon';
@@ -115,7 +116,7 @@ export const hasDatePassed = (date: Date | string | number) => {
 export const beautifyDateDiff = (
   date: string,
   dateToCompareWith?: string,
-  short: boolean = false,
+  short = false,
 ) => {
   const dateDiff = DateTime.fromISO(date).diff(
     dateToCompareWith ? DateTime.fromISO(dateToCompareWith) : DateTime.now(),

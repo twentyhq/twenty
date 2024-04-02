@@ -1,9 +1,9 @@
-import { atomFamily } from 'recoil';
+import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
 
-export const activityTitleHasBeenSetFamilyState = atomFamily<
+export const activityTitleHasBeenSetFamilyState = createFamilyState<
   boolean,
   { activityId: string }
 >({
   key: 'activityTitleHasBeenSetFamilyState',
-  default: false,
+  defaultValue: false,
 });

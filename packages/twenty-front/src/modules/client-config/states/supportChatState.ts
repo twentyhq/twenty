@@ -1,10 +1,10 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
 import { Support } from '~/generated/graphql';
 
-export const supportChatState = atom<Support>({
+export const supportChatState = createState<Support>({
   key: 'supportChatState',
-  default: {
+  defaultValue: {
     supportDriver: 'none',
     supportFrontChatId: null,
   },

@@ -1,6 +1,9 @@
-import { atomFamily } from 'recoil';
+import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
 
-export const isInlineCellInEditModeScopedState = atomFamily<boolean, string>({
+export const isInlineCellInEditModeScopedState = createFamilyState<
+  boolean,
+  string
+>({
   key: 'isInlineCellInEditModeScopedState',
-  default: false,
+  defaultValue: false,
 });

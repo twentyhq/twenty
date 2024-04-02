@@ -1,11 +1,11 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 
-export const recordIndexFieldDefinitionsState = atom<
+export const recordIndexFieldDefinitionsState = createState<
   ColumnDefinition<FieldMetadata>[]
 >({
   key: 'recordIndexFieldDefinitionsState',
-  default: [],
+  defaultValue: [],
 });

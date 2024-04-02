@@ -1,16 +1,16 @@
 import { useMemo } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { v4 } from 'uuid';
-
-import { ColorSample } from '@/ui/display/color/components/ColorSample';
 import {
   IconCheck,
   IconDotsVertical,
   IconGripVertical,
   IconTrash,
   IconX,
-} from '@/ui/display/icon';
+} from 'twenty-ui';
+import { v4 } from 'uuid';
+
+import { ColorSample } from '@/ui/display/color/components/ColorSample';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -49,7 +49,7 @@ const StyledOptionInput = styled(TextInput)`
   margin-right: ${({ theme }) => theme.spacing(2)};
 
   & input {
-    height: ${({ theme }) => theme.spacing(2)};
+    height: ${({ theme }) => theme.spacing(6)};
   }
 `;
 

@@ -4,7 +4,7 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
+import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/multiple-objects/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
 import { useLimitPerMetadataItem } from '@/object-record/relation-picker/hooks/useLimitPerMetadataItem';
 import {
   MultiObjectRecordQueryResult,
@@ -12,7 +12,7 @@ import {
 } from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
 import { SelectedObjectRecordId } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { useOrderByFieldPerMetadataItem } from '@/object-record/relation-picker/hooks/useOrderByFieldPerMetadataItem';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const EMPTY_QUERY = gql`
@@ -56,7 +56,7 @@ export const useMultiObjectSearchSelectedItemsQuery = ({
           },
         ];
       })
-      .filter(isNonNullable),
+      .filter(isDefined),
   );
 
   const { orderByFieldPerMetadataItem } = useOrderByFieldPerMetadataItem({
@@ -69,7 +69,7 @@ export const useMultiObjectSearchSelectedItemsQuery = ({
 
   const multiSelectQueryForSelectedIds =
     useGenerateFindManyRecordsForMultipleMetadataItemsQuery({
-      objectMetadataItems: objectMetadataItemsUsedInSelectedIdsQuery,
+      targetObjectMetadataItems: objectMetadataItemsUsedInSelectedIdsQuery,
     });
 
   const {
@@ -83,7 +83,7 @@ export const useMultiObjectSearchSelectedItemsQuery = ({
         ...orderByFieldPerMetadataItem,
         ...limitPerMetadataItem,
       },
-      skip: !isNonNullable(multiSelectQueryForSelectedIds),
+      skip: !isDefined(multiSelectQueryForSelectedIds),
     },
   );
 

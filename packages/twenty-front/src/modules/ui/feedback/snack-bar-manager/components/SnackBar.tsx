@@ -1,13 +1,14 @@
 import { useCallback, useMemo, useRef } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconAlertTriangle, IconX } from 'twenty-ui';
 
-import { IconAlertTriangle, IconX } from '@/ui/display/icon';
 import {
   ProgressBar,
   ProgressBarControls,
 } from '@/ui/feedback/progress-bar/components/ProgressBar';
 import { RGBA } from '@/ui/theme/constants/Rgba';
+import { isDefined } from '~/utils/isDefined';
 
 import { usePausableTimeout } from '../hooks/usePausableTimeout';
 
@@ -131,7 +132,7 @@ export const SnackBar = ({
   );
 
   const icon = useMemo(() => {
-    if (iconComponent) {
+    if (isDefined(iconComponent)) {
       return iconComponent;
     }
 

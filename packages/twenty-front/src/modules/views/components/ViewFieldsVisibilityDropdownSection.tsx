@@ -5,11 +5,10 @@ import {
   OnDragEndResponder,
   ResponderProvided,
 } from '@hello-pangea/dnd';
+import { IconInfoCircle, IconMinus, IconPlus } from 'twenty-ui';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { IconMinus, IconPlus } from '@/ui/display/icon';
-import { IconInfoCircle } from '@/ui/display/icon';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { AppTooltip } from '@/ui/display/tooltip/AppTooltip';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
@@ -20,7 +19,7 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemDraggable } from '@/ui/navigation/menu-item/components/MenuItemDraggable';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
-import { isNonNullable } from '~/utils/isNonNullable';
+import { isDefined } from '~/utils/isDefined';
 
 type ViewFieldsVisibilityDropdownSectionProps = {
   fields: Omit<ColumnDefinition<FieldMetadata>, 'size'>[];
@@ -69,7 +68,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
             Icon: field.isVisible ? IconMinus : IconPlus,
             onClick: () => onVisibilityChange(field),
           },
-    ].filter(isNonNullable);
+    ].filter(isDefined);
 
     return iconButtons.length ? iconButtons : undefined;
   };
@@ -134,7 +133,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
           />
         )}
       </DropdownMenuItemsContainer>
-      {isNonNullable(openToolTipIndex) &&
+      {isDefined(openToolTipIndex) &&
         createPortal(
           <AppTooltip
             anchorSelect={`.${title}-${

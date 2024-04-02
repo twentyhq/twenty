@@ -5,15 +5,9 @@ import { RecoilRoot } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 
-import { TestApolloMetadataClientProvider } from '../__mocks__/ApolloMetadataClientProvider';
-
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
-    <MockedProvider addTypename={false}>
-      <TestApolloMetadataClientProvider>
-        {children}
-      </TestApolloMetadataClientProvider>
-    </MockedProvider>
+    <MockedProvider addTypename={false}>{children}</MockedProvider>
   </RecoilRoot>
 );
 
@@ -32,7 +26,6 @@ describe('useObjectMetadataItem', () => {
       labelIdentifierFieldMetadata,
       getRecordFromCache,
       findManyRecordsQuery,
-      modifyRecordFromCache,
       findOneRecordQuery,
       createOneRecordMutation,
       updateOneRecordMutation,
@@ -48,7 +41,6 @@ describe('useObjectMetadataItem', () => {
     expect(basePathToShowPage).toBe('/object/opportunity/');
     expect(objectMetadataItem.id).toBe('20202020-cae9-4ff4-9579-f7d9fe44c937');
     expect(typeof getRecordFromCache).toBe('function');
-    expect(typeof modifyRecordFromCache).toBe('function');
     expect(typeof mapToObjectRecordIdentifier).toBe('function');
     expect(typeof getObjectOrderByField).toBe('function');
     expect(findManyRecordsQuery).toHaveProperty('kind', 'Document');

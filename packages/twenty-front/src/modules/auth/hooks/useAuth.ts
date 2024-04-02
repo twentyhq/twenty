@@ -11,6 +11,7 @@ import {
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
+import { workspacesState } from '@/auth/states/workspaces';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
@@ -19,13 +20,14 @@ import { supportChatState } from '@/client-config/states/supportChatState';
 import { telemetryState } from '@/client-config/states/telemetryState';
 import { iconsState } from '@/ui/display/icon/states/iconsState';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
-import { REACT_APP_SERVER_AUTH_URL } from '~/config';
+import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   useChallengeMutation,
   useCheckUserExistsLazyQuery,
   useSignUpMutation,
   useVerifyMutation,
 } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 import { currentUserState } from '../states/currentUserState';
 import { tokenPairState } from '../states/tokenPairState';
@@ -39,6 +41,7 @@ export const useAuth = () => {
 
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
   const setIsVerifyPendingState = useSetRecoilState(isVerifyPendingState);
+  const setWorkspaces = useSetRecoilState(workspacesState);
 
   const [challenge] = useChallengeMutation();
   const [signUp] = useSignUpMutation();
@@ -59,7 +62,7 @@ export const useAuth = () => {
         },
       });
 
-      if (challengeResult.errors) {
+      if (isDefined(challengeResult.errors)) {
         throw challengeResult.errors;
       }
 
@@ -78,7 +81,7 @@ export const useAuth = () => {
         variables: { loginToken },
       });
 
-      if (verifyResult.errors) {
+      if (isDefined(verifyResult.errors)) {
         throw verifyResult.errors;
       }
 
@@ -91,7 +94,7 @@ export const useAuth = () => {
       const user = verifyResult.data?.verify.user;
       let workspaceMember = null;
       setCurrentUser(user);
-      if (user.workspaceMember) {
+      if (isDefined(user.workspaceMember)) {
         workspaceMember = {
           ...user.workspaceMember,
           colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
@@ -100,6 +103,16 @@ export const useAuth = () => {
       }
       const workspace = user.defaultWorkspace ?? null;
       setCurrentWorkspace(workspace);
+      if (isDefined(verifyResult.data?.verify.user.workspaces)) {
+        const validWorkspaces = verifyResult.data?.verify.user.workspaces
+          .filter(
+            ({ workspace }) => workspace !== null && workspace !== undefined,
+          )
+          .map((validWorkspace) => validWorkspace.workspace)
+          .filter(isDefined);
+
+        setWorkspaces(validWorkspaces);
+      }
       return {
         user,
         workspaceMember,
@@ -113,6 +126,7 @@ export const useAuth = () => {
       setCurrentUser,
       setCurrentWorkspaceMember,
       setCurrentWorkspace,
+      setWorkspaces,
     ],
   );
 
@@ -183,7 +197,7 @@ export const useAuth = () => {
         },
       });
 
-      if (signUpResult.errors) {
+      if (isDefined(signUpResult.errors)) {
         throw signUpResult.errors;
       }
 
@@ -203,9 +217,9 @@ export const useAuth = () => {
   );
 
   const handleGoogleLogin = useCallback((workspaceInviteHash?: string) => {
-    const authServerUrl = REACT_APP_SERVER_AUTH_URL;
+    const authServerUrl = REACT_APP_SERVER_BASE_URL;
     window.location.href =
-      `${authServerUrl}/google/${
+      `${authServerUrl}/auth/google/${
         workspaceInviteHash ? '?inviteHash=' + workspaceInviteHash : ''
       }` || '';
   }, []);

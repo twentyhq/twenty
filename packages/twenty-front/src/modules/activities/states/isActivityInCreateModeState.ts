@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
-export const isActivityInCreateModeState = atom<boolean>({
+export const isActivityInCreateModeState = createState<boolean>({
   key: 'isActivityInCreateModeState',
-  default: false,
+  defaultValue: false,
 });

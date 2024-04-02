@@ -1,6 +1,5 @@
 import { v4 } from 'uuid';
 
-import { FieldType } from '@/object-record/record-field/types/FieldType';
 import { Field } from '~/generated/graphql';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -18,29 +17,48 @@ export const useFieldMetadataItem = () => {
   const { deleteOneFieldMetadataItem } = useDeleteOneFieldMetadataItem();
 
   const createMetadataField = (
-    input: Pick<Field, 'label' | 'icon' | 'description'> & {
+    input: Pick<Field, 'label' | 'icon' | 'description' | 'defaultValue'> & {
       defaultValue?: unknown;
       objectMetadataId: string;
       options?: Omit<FieldMetadataOption, 'id'>[];
       type: FieldMetadataType;
     },
-  ) =>
-    createOneFieldMetadataItem({
-      ...formatFieldMetadataItemInput(input),
-      defaultValue: input.defaultValue,
+  ) => {
+    const formatedInput = formatFieldMetadataItemInput(input);
+    const defaultValue = input.defaultValue
+      ? typeof input.defaultValue == 'string'
+        ? `'${input.defaultValue}'`
+        : input.defaultValue
+      : formatedInput.defaultValue ?? undefined;
+
+    return createOneFieldMetadataItem({
+      ...formatedInput,
+      defaultValue,
       objectMetadataId: input.objectMetadataId,
-      type: input.type as FieldType,
+      type: input.type,
     });
+  };
 
   const editMetadataField = (
-    input: Pick<Field, 'id' | 'label' | 'icon' | 'description'> & {
+    input: Pick<
+      Field,
+      'id' | 'label' | 'icon' | 'description' | 'defaultValue'
+    > & {
       options?: FieldMetadataOption[];
     },
-  ) =>
-    updateOneFieldMetadataItem({
+  ) => {
+    const formatedInput = formatFieldMetadataItemInput(input);
+    const defaultValue = input.defaultValue
+      ? typeof input.defaultValue == 'string'
+        ? `'${input.defaultValue}'`
+        : input.defaultValue
+      : formatedInput.defaultValue ?? undefined;
+
+    return updateOneFieldMetadataItem({
       fieldMetadataIdToUpdate: input.id,
       updatePayload: formatFieldMetadataItemInput({
         ...input,
+        defaultValue,
         // In Edit mode, all options need an id,
         // so we generate an id for newly created options.
         options: input.options?.map((option) =>
@@ -48,6 +66,7 @@ export const useFieldMetadataItem = () => {
         ),
       }),
     });
+  };
 
   const activateMetadataField = (metadataField: FieldMetadataItem) =>
     updateOneFieldMetadataItem({

@@ -1,37 +1,22 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { useCachedRootQuery } from '@/apollo/hooks/useCachedRootQuery';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { QueryMethodName } from '@/object-metadata/types/QueryMethodName';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
+import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { GraphQLView } from '@/views/types/GraphQLView';
+import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
 
 export const ObjectMetadataNavItems = () => {
-  const { activeObjectMetadataItems, findObjectMetadataItemByNamePlural } =
-    useObjectMetadataItemForSettings();
+  const { activeObjectMetadataItems } = useObjectMetadataItemForSettings();
   const navigate = useNavigate();
   const { getIcon } = useIcons();
   const currentPath = useLocation().pathname;
 
-  const viewObjectMetadataItem = findObjectMetadataItemByNamePlural('views');
-
-  const { cachedRootQuery } = useCachedRootQuery({
-    objectMetadataItem: viewObjectMetadataItem,
-    queryMethodName: QueryMethodName.FindMany,
-  });
-
-  const { records } = useFindManyRecords({
-    skip: cachedRootQuery?.views,
-    objectNameSingular: CoreObjectNameSingular.View,
-    useRecordsWithoutConnection: true,
-  });
-
-  const views =
-    records.length > 0
-      ? records
-      : cachedRootQuery?.views?.edges?.map((edge: any) => edge?.node);
+  const { records: views } = usePrefetchedData<GraphQLView>(
+    PrefetchKey.AllViews,
+  );
 
   return (
     <>
@@ -63,9 +48,11 @@ export const ObjectMetadataNavItems = () => {
               : -1;
           }),
       ].map((objectMetadataItem) => {
-        const viewId = views?.find(
-          (view: any) => view?.objectMetadataId === objectMetadataItem.id,
-        )?.id;
+        const objectMetadataViews = getObjectMetadataItemViews(
+          objectMetadataItem.id,
+          views,
+        );
+        const viewId = objectMetadataViews[0]?.id;
 
         const navigationPath = `/objects/${objectMetadataItem.namePlural}${
           viewId ? `?view=${viewId}` : ''

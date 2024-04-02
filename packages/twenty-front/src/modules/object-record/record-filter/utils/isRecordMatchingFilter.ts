@@ -2,6 +2,7 @@ import { isObject } from '@sniptt/guards';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import {
+  AddressFilter,
   AndObjectRecordFilter,
   BooleanFilter,
   CurrencyFilter,
@@ -22,8 +23,8 @@ import { isMatchingFloatFilter } from '@/object-record/record-filter/utils/isMat
 import { isMatchingStringFilter } from '@/object-record/record-filter/utils/isMatchingStringFilter';
 import { isMatchingUUIDFilter } from '@/object-record/record-filter/utils/isMatchingUUIDFilter';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 import { isEmptyObject } from '~/utils/isEmptyObject';
-import { isNonNullable } from '~/utils/isNonNullable';
 
 const isAndFilter = (
   filter: ObjectRecordQueryFilter,
@@ -102,7 +103,7 @@ export const isRecordMatchingFilter = ({
   if (isNotFilter(filter)) {
     const filterValue = filter.not;
 
-    if (!isNonNullable(filterValue)) {
+    if (!isDefined(filterValue)) {
       throw new Error('Unexpected value for "not" filter : ' + filterValue);
     }
 
@@ -117,7 +118,7 @@ export const isRecordMatchingFilter = ({
   }
 
   return Object.entries(filter).every(([filterKey, filterValue]) => {
-    if (!isNonNullable(filterValue)) {
+    if (!isDefined(filterValue)) {
       throw new Error(
         'Unexpected value for filter key "' + filterKey + '" : ' + filterValue,
       );
@@ -129,7 +130,7 @@ export const isRecordMatchingFilter = ({
       (field) => field.name === filterKey,
     );
 
-    if (!isNonNullable(objectMetadataField)) {
+    if (!isDefined(objectMetadataField)) {
       throw new Error(
         'Field metadata item "' +
           filterKey +
@@ -141,6 +142,7 @@ export const isRecordMatchingFilter = ({
     switch (objectMetadataField.type) {
       case FieldMetadataType.Email:
       case FieldMetadataType.Phone:
+      case FieldMetadataType.Select:
       case FieldMetadataType.Text: {
         return isMatchingStringFilter({
           stringFilter: filterValue as StringFilter,
@@ -178,6 +180,30 @@ export const isRecordMatchingFilter = ({
               value: record[filterKey].lastName,
             }))
         );
+      }
+      case FieldMetadataType.Address: {
+        const addressFilter = filterValue as AddressFilter;
+
+        const keys = [
+          'addressStreet1',
+          'addressStreet2',
+          'addressCity',
+          'addressState',
+          'addressCountry',
+          'addressPostcode',
+        ] as const;
+
+        return keys.some((key) => {
+          const value = addressFilter[key];
+          if (value === undefined) {
+            return false;
+          }
+
+          return isMatchingStringFilter({
+            stringFilter: value,
+            value: record[filterKey][key],
+          });
+        });
       }
       case FieldMetadataType.DateTime: {
         return isMatchingDateFilter({

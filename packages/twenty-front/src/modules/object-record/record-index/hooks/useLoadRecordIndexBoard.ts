@@ -11,7 +11,7 @@ import { recordIndexFiltersState } from '@/object-record/record-index/states/rec
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
 import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
-import { useViewBar } from '@/views/hooks/useViewBar';
+import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
 
 type UseLoadRecordIndexBoardProps = {
   objectNameSingular: string;
@@ -30,7 +30,7 @@ export const useLoadRecordIndexBoard = ({
   const {
     setRecordIds: setRecordIdsInBoard,
     setFieldDefinitions,
-    getIsCompactModeActiveState,
+    isCompactModeActiveState,
   } = useRecordBoard(recordBoardId);
   const { setRecords: setRecordsInStore } = useSetRecordInStore();
 
@@ -68,13 +68,10 @@ export const useLoadRecordIndexBoard = ({
     orderBy,
   });
 
-  const { setEntityCountInCurrentView } = useViewBar({
-    viewBarId,
-  });
+  const { setRecordCountInCurrentView } =
+    useSetRecordCountInCurrentView(viewBarId);
 
-  const setIsCompactModeActive = useSetRecoilState(
-    getIsCompactModeActiveState(),
-  );
+  const setIsCompactModeActive = useSetRecoilState(isCompactModeActiveState);
 
   useEffect(() => {
     setRecordIdsInBoard(records);
@@ -85,8 +82,8 @@ export const useLoadRecordIndexBoard = ({
   }, [records, setRecordsInStore]);
 
   useEffect(() => {
-    setEntityCountInCurrentView(totalCount);
-  }, [totalCount, setEntityCountInCurrentView]);
+    setRecordCountInCurrentView(totalCount);
+  }, [totalCount, setRecordCountInCurrentView]);
 
   useEffect(() => {
     setIsCompactModeActive(recordIndexIsCompactModeActive);

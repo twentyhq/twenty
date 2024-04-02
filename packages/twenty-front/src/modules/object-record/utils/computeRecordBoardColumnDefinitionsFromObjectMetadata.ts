@@ -1,14 +1,18 @@
+import { IconPencil } from 'twenty-ui';
+
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { RecordBoardColumnDefinition } from '@/object-record/record-board/types/RecordBoardColumnDefinition';
-import { IconPencil } from '@/ui/display/icon';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const computeRecordBoardColumnDefinitionsFromObjectMetadata = (
   objectMetadataItem: ObjectMetadataItem,
+  kanbanFieldMetadataId: string,
   navigateToSelectSettings: () => void,
 ): RecordBoardColumnDefinition[] => {
   const selectFieldMetadataItem = objectMetadataItem.fields.find(
-    (field) => field.type === FieldMetadataType.Select,
+    (field) =>
+      field.id === kanbanFieldMetadataId &&
+      field.type === FieldMetadataType.Select,
   );
 
   if (!selectFieldMetadataItem) {

@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
-export const isUpsertingActivityInDBState = atom<boolean>({
+export const isUpsertingActivityInDBState = createState<boolean>({
   key: 'isUpsertingActivityInDBState',
-  default: false,
+  defaultValue: false,
 });

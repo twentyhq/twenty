@@ -1,10 +1,10 @@
 import React, { useContext, useState } from 'react';
 import styled from '@emotion/styled';
+import { IconDotsVertical } from 'twenty-ui';
 
 import { RecordBoardColumnDropdownMenu } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnDropdownMenu';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-import { BoardColumnHotkeyScope } from '@/object-record/record-board-deprecated/types/BoardColumnHotkeyScope';
-import { IconDotsVertical } from '@/ui/display/icon';
+import { RecordBoardColumnHotkeyScope } from '@/object-record/record-board/types/BoardColumnHotkeyScope';
 import { Tag } from '@/ui/display/tag/components/Tag';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
@@ -57,9 +57,12 @@ export const RecordBoardColumnHeader = () => {
 
   const handleBoardColumnMenuOpen = () => {
     setIsBoardColumnMenuOpen(true);
-    setHotkeyScopeAndMemorizePreviousScope(BoardColumnHotkeyScope.BoardColumn, {
-      goto: false,
-    });
+    setHotkeyScopeAndMemorizePreviousScope(
+      RecordBoardColumnHotkeyScope.BoardColumn,
+      {
+        goto: false,
+      },
+    );
   };
 
   const handleBoardColumnMenuClose = () => {

@@ -1,8 +1,9 @@
-import { BoardFieldDefinition } from '@/object-record/record-board-deprecated/types/BoardFieldDefinition';
+import { RecordBoardFieldDefinition } from '@/object-record/record-board/types/RecordBoardFieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 
 export type ViewField = {
+  __typename: 'ViewField';
   id: string;
   fieldMetadataId: string;
   position: number;
@@ -10,5 +11,5 @@ export type ViewField = {
   size: number;
   definition:
     | ColumnDefinition<FieldMetadata>
-    | BoardFieldDefinition<FieldMetadata>;
+    | RecordBoardFieldDefinition<FieldMetadata>;
 };

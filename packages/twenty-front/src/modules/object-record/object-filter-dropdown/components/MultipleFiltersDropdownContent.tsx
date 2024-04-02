@@ -1,13 +1,16 @@
-import { ObjectFilterDropdownRecordSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownEntitySearchInput';
+import { useRecoilValue } from 'recoil';
+
+import { ObjectFilterDropdownSearchInput } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownSearchInput';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 
 import { MultipleFiltersDropdownFilterOnFilterChangedEffect } from './MultipleFiltersDropdownFilterOnFilterChangedEffect';
-import { ObjectFilterDropdownDateSearchInput } from './ObjectFilterDropdownDateSearchInput';
+import { ObjectFilterDropdownDateInput } from './ObjectFilterDropdownDateInput';
 import { ObjectFilterDropdownFilterSelect } from './ObjectFilterDropdownFilterSelect';
-import { ObjectFilterDropdownNumberSearchInput } from './ObjectFilterDropdownNumberSearchInput';
+import { ObjectFilterDropdownNumberInput } from './ObjectFilterDropdownNumberInput';
 import { ObjectFilterDropdownOperandButton } from './ObjectFilterDropdownOperandButton';
 import { ObjectFilterDropdownOperandSelect } from './ObjectFilterDropdownOperandSelect';
+import { ObjectFilterDropdownOptionSelect } from './ObjectFilterDropdownOptionSelect';
 import { ObjectFilterDropdownRecordSelect } from './ObjectFilterDropdownRecordSelect';
 import { ObjectFilterDropdownTextSearchInput } from './ObjectFilterDropdownTextSearchInput';
 
@@ -19,10 +22,20 @@ export const MultipleFiltersDropdownContent = ({
   filterDropdownId,
 }: MultipleFiltersDropdownContentProps) => {
   const {
-    isObjectFilterDropdownOperandSelectUnfolded,
-    filterDefinitionUsedInDropdown,
-    selectedOperandInDropdown,
+    isObjectFilterDropdownOperandSelectUnfoldedState,
+    filterDefinitionUsedInDropdownState,
+    selectedOperandInDropdownState,
   } = useFilterDropdown({ filterDropdownId });
+
+  const isObjectFilterDropdownOperandSelectUnfolded = useRecoilValue(
+    isObjectFilterDropdownOperandSelectUnfoldedState,
+  );
+  const filterDefinitionUsedInDropdown = useRecoilValue(
+    filterDefinitionUsedInDropdownState,
+  );
+  const selectedOperandInDropdown = useRecoilValue(
+    selectedOperandInDropdownState,
+  );
 
   return (
     <>
@@ -40,15 +53,22 @@ export const MultipleFiltersDropdownContent = ({
             ) && <ObjectFilterDropdownTextSearchInput />}
             {['NUMBER', 'CURRENCY'].includes(
               filterDefinitionUsedInDropdown.type,
-            ) && <ObjectFilterDropdownNumberSearchInput />}
+            ) && <ObjectFilterDropdownNumberInput />}
             {filterDefinitionUsedInDropdown.type === 'DATE_TIME' && (
-              <ObjectFilterDropdownDateSearchInput />
+              <ObjectFilterDropdownDateInput />
             )}
             {filterDefinitionUsedInDropdown.type === 'RELATION' && (
               <>
-                <ObjectFilterDropdownRecordSearchInput />
+                <ObjectFilterDropdownSearchInput />
                 <DropdownMenuSeparator />
                 <ObjectFilterDropdownRecordSelect />
+              </>
+            )}
+            {filterDefinitionUsedInDropdown.type === 'SELECT' && (
+              <>
+                <ObjectFilterDropdownSearchInput />
+                <DropdownMenuSeparator />
+                <ObjectFilterDropdownOptionSelect />
               </>
             )}
           </>

@@ -1,7 +1,10 @@
-import { ApolloClient, useMutation } from '@apollo/client';
+import { ApolloClient, useApolloClient, useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
+  CreateObjectInput,
   CreateOneObjectMetadataItemMutation,
   CreateOneObjectMetadataItemMutationVariables,
 } from '~/generated-metadata/graphql';
@@ -11,8 +14,12 @@ import { FIND_MANY_OBJECT_METADATA_ITEMS } from '../graphql/queries';
 
 import { useApolloMetadataClient } from './useApolloMetadataClient';
 
-export const useCreateOneObjectRecordMetadataItem = () => {
+export const useCreateOneObjectMetadataItem = () => {
   const apolloMetadataClient = useApolloMetadataClient();
+  const apolloClient = useApolloClient();
+  const { findManyRecordsQuery } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.View,
+  });
 
   const [mutate] = useMutation<
     CreateOneObjectMetadataItemMutation,
@@ -21,20 +28,21 @@ export const useCreateOneObjectRecordMetadataItem = () => {
     client: apolloMetadataClient ?? ({} as ApolloClient<any>),
   });
 
-  const createOneObjectMetadataItem = async (
-    input: CreateOneObjectMetadataItemMutationVariables['input']['object'],
-  ) => {
-    return await mutate({
+  const createOneObjectMetadataItem = async (input: CreateObjectInput) => {
+    const createdObjectMetadata = await mutate({
       variables: {
-        input: {
-          object: {
-            ...input,
-          },
-        },
+        input: { object: input },
       },
       awaitRefetchQueries: true,
       refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
     });
+
+    await apolloClient.query({
+      query: findManyRecordsQuery,
+      fetchPolicy: 'network-only',
+    });
+
+    return createdObjectMetadata;
   };
 
   return {

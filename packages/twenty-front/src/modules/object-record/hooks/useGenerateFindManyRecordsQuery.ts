@@ -1,18 +1,27 @@
 import { gql } from '@apollo/client';
+import { useRecoilValue } from 'recoil';
 
-import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useGenerateFindManyRecordsQuery = () => {
-  const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   return ({
     objectMetadataItem,
     depth,
+    queryFields,
+    computeReferences = false,
   }: {
-    objectMetadataItem: ObjectMetadataItem;
+    objectMetadataItem: Pick<
+      ObjectMetadataItem,
+      'fields' | 'nameSingular' | 'namePlural'
+    >;
     depth?: number;
+    queryFields?: Record<string, any>;
+    computeReferences?: boolean;
   }) => gql`
     query FindMany${capitalize(
       objectMetadataItem.namePlural,
@@ -25,17 +34,13 @@ export const useGenerateFindManyRecordsQuery = () => {
         objectMetadataItem.namePlural
       }(filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor){
         edges {
-          node {
-            id
-            ${objectMetadataItem.fields
-              .map((field) =>
-                mapFieldMetadataToGraphQLQuery({
-                  field,
-                  maxDepthForRelations: depth,
-                }),
-              )
-              .join('\n')}
-          }
+          node ${mapObjectMetadataToGraphQLQuery({
+            objectMetadataItems,
+            objectMetadataItem,
+            depth,
+            queryFields,
+            computeReferences,
+          })}
           cursor
         }
         pageInfo {
