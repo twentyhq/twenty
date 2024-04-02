@@ -33,9 +33,8 @@ export class SyncDriver implements MessageQueueDriver {
     _queueName: MessageQueue,
     jobName: string,
     data: T,
-    pattern: string,
   ): Promise<void> {
-    this.logger.log(`Running '${pattern}' cron job with SyncDriver`);
+    this.logger.log(`Running cron job with SyncDriver`);
 
     const jobClassName = getJobClassName(jobName);
     const job: MessageQueueCronJobData<MessageQueueJobData | undefined> =

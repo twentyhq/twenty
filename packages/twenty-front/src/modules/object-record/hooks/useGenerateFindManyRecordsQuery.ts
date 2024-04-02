@@ -7,19 +7,21 @@ import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObje
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useGenerateFindManyRecordsQuery = () => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   return ({
     objectMetadataItem,
     depth,
-    eagerLoadedRelations,
+    queryFields,
+    computeReferences = false,
   }: {
     objectMetadataItem: Pick<
       ObjectMetadataItem,
       'fields' | 'nameSingular' | 'namePlural'
     >;
     depth?: number;
-    eagerLoadedRelations?: Record<string, any>;
+    queryFields?: Record<string, any>;
+    computeReferences?: boolean;
   }) => gql`
     query FindMany${capitalize(
       objectMetadataItem.namePlural,
@@ -36,7 +38,8 @@ export const useGenerateFindManyRecordsQuery = () => {
             objectMetadataItems,
             objectMetadataItem,
             depth,
-            eagerLoadedRelations,
+            queryFields,
+            computeReferences,
           })}
           cursor
         }

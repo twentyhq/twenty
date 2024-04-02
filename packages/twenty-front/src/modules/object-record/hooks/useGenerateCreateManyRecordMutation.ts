@@ -14,10 +14,14 @@ export const getCreateManyRecordsMutationResponseField = (
 
 export const useGenerateCreateManyRecordMutation = ({
   objectMetadataItem,
+  queryFields,
+  depth = 1,
 }: {
   objectMetadataItem: ObjectMetadataItem;
+  queryFields?: Record<string, any>;
+  depth?: number;
 }) => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   if (isUndefinedOrNull(objectMetadataItem)) {
     return EMPTY_MUTATION;
@@ -34,6 +38,8 @@ export const useGenerateCreateManyRecordMutation = ({
       ${mutationResponseField}(data: $data) ${mapObjectMetadataToGraphQLQuery({
         objectMetadataItems,
         objectMetadataItem,
+        queryFields,
+        depth,
       })}
   }`;
 };

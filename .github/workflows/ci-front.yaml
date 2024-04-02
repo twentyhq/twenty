@@ -67,7 +67,7 @@ jobs:
       - name: Install Playwright
         run: cd packages/twenty-front && npx playwright install
       - name: Build Storybook
-        run: yarn nx storybook:pages:build --quiet twenty-front
+        run: yarn nx storybook:pages:build twenty-front --quiet
       - name: Run storybook tests
         run: |
           cd packages/twenty-front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
@@ -107,7 +107,7 @@ jobs:
       - name: Install Playwright
         run: cd packages/twenty-front && npx playwright install
       - name: Build Storybook
-        run: yarn nx storybook:modules:build --quiet twenty-front
+        run: yarn nx storybook:modules:build twenty-front --quiet
       - name: Run storybook tests
         run: |
           cd packages/twenty-front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \

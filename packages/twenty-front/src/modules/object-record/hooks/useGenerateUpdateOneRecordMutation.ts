@@ -14,10 +14,14 @@ export const getUpdateOneRecordMutationResponseField = (
 
 export const useGenerateUpdateOneRecordMutation = ({
   objectMetadataItem,
+  depth = 1,
+  computeReferences = false,
 }: {
   objectMetadataItem: ObjectMetadataItem;
+  depth?: number;
+  computeReferences?: boolean;
 }) => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   if (isUndefinedOrNull(objectMetadataItem)) {
     return EMPTY_MUTATION;
@@ -35,6 +39,8 @@ export const useGenerateUpdateOneRecordMutation = ({
          {
            objectMetadataItems,
            objectMetadataItem,
+           depth,
+           computeReferences,
          },
        )}
     }

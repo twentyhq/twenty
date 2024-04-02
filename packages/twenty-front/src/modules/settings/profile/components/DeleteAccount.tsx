@@ -15,14 +15,14 @@ export const DeleteAccount = () => {
     useState(false);
 
   const [deleteUserAccount] = useDeleteUserAccountMutation();
-  const currentUser = useRecoilValue(currentUserState());
+  const currentUser = useRecoilValue(currentUserState);
   const userEmail = currentUser?.email;
   const { signOut } = useAuth();
   const navigate = useNavigate();
 
   const handleLogout = useCallback(() => {
     signOut();
-    navigate(AppPath.SignIn);
+    navigate(AppPath.SignInUp);
   }, [signOut, navigate]);
 
   const deleteAccount = async () => {

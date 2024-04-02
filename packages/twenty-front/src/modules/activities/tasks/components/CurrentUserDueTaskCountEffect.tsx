@@ -3,19 +3,20 @@ import { DateTime } from 'luxon';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { currentUserDueTaskCountState } from '@/activities/tasks/states/currentUserTaskCountState';
+import { Activity } from '@/activities/types/Activity';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { parseDate } from '~/utils/date-utils';
 
 export const CurrentUserDueTaskCountEffect = () => {
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState());
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const [currentUserDueTaskCount, setCurrentUserDueTaskCount] = useRecoilState(
-    currentUserDueTaskCountState(),
+    currentUserDueTaskCountState,
   );
 
-  const { records: tasks } = useFindManyRecords({
+  const { records: tasks } = useFindManyRecords<Activity>({
     objectNameSingular: CoreObjectNameSingular.Activity,
     depth: 0,
     filter: {

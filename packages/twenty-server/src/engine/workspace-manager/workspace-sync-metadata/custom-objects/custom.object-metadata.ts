@@ -1,18 +1,19 @@
 import { BaseCustomObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/base-custom-object-metadata.decorator';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
 import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
-} from 'src/engine-metadata/relation-metadata/relation-metadata.entity';
+} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { ActivityTargetObjectMetadata } from 'src/modules/activity/standard-objects/activity-target.object-metadata';
 import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/relation-metadata.decorator';
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { AttachmentObjectMetadata } from 'src/modules/attachment/standard-objects/attachment.object-metadata';
 import { customObjectStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
 
 @BaseCustomObjectMetadata()
 export class CustomObjectMetadata extends BaseObjectMetadata {
@@ -22,7 +23,7 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
     description: 'Name',
     type: FieldMetadataType.TEXT,
     icon: 'IconAbc',
-    defaultValue: { value: 'Untitled' },
+    defaultValue: "'Untitled'",
   })
   name: string;
 
@@ -85,4 +86,20 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   attachments: AttachmentObjectMetadata[];
+
+  @FieldMetadata({
+    standardId: customObjectStandardFieldIds.events,
+    type: FieldMetadataType.RELATION,
+    label: 'Events',
+    description: (objectMetadata) =>
+      `Events tied to the ${objectMetadata.labelSingular}`,
+    icon: 'IconJson',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    inverseSideTarget: () => EventObjectMetadata,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @IsNullable()
+  events: EventObjectMetadata[];
 }

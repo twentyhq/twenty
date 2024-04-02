@@ -23,7 +23,9 @@ export class StartFetchAllWorkspacesMessagesCronCommand extends CommandRunner {
     await this.messageQueueService.addCron<undefined>(
       FetchAllWorkspacesMessagesJob.name,
       undefined,
-      fetchAllWorkspacesMessagesCronPattern,
+      {
+        repeat: { pattern: fetchAllWorkspacesMessagesCronPattern },
+      },
     );
   }
 }

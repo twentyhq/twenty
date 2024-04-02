@@ -31,6 +31,7 @@ export const LightIconButtonGroup = ({
         <LightIconButton
           key={`light-icon-button-${index}`}
           Icon={Icon}
+          disabled={!onClick}
           onClick={onClick}
           size={size}
         />

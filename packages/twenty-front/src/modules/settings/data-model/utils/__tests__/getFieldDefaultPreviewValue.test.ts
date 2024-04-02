@@ -37,7 +37,7 @@ describe('getFieldDefaultPreviewValue', () => {
       });
 
       // Then
-      expect(result).toEqual(selectOptions[1]);
+      expect(result).toEqual(selectOptions[1].value);
     });
 
     it('returns the first select option if no default option was found', () => {
@@ -46,7 +46,7 @@ describe('getFieldDefaultPreviewValue', () => {
       const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
         ({ name }) => name === 'industry',
       )!;
-      const selectOptions = [
+      const selectOptions: SettingsObjectFieldSelectFormValues = [
         {
           color: 'purple' as const,
           label: '🏭 Industry',
@@ -67,7 +67,7 @@ describe('getFieldDefaultPreviewValue', () => {
       });
 
       // Then
-      expect(result).toEqual(selectOptions[0]);
+      expect(result).toEqual(selectOptions[0].value);
     });
   });
 

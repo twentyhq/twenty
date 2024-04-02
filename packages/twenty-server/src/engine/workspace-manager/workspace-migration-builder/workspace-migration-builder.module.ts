@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 
-import { WorkspaceMigrationModule } from 'src/engine-metadata/workspace-migration/workspace-migration.module';
+import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 
 import { workspaceMigrationBuilderFactories } from './factories';
 

@@ -47,7 +47,7 @@ const RIGHT_DRAWER_PAGES_CONFIG = {
 };
 
 export const RightDrawerRouter = () => {
-  const [rightDrawerPage] = useRecoilState(rightDrawerPageState());
+  const [rightDrawerPage] = useRecoilState(rightDrawerPageState);
 
   const { topBar = null, page = null } = rightDrawerPage
     ? RIGHT_DRAWER_PAGES_CONFIG[rightDrawerPage]

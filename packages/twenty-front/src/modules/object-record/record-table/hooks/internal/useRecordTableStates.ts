@@ -1,3 +1,4 @@
+import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
 import { availableTableColumnsComponentState } from '@/object-record/record-table/states/availableTableColumnsComponentState';
@@ -35,44 +36,40 @@ export const useRecordTableStates = (recordTableId?: string) => {
 
   return {
     scopeId,
-    getAvailableTableColumnsState: extractComponentState(
+    availableTableColumnsState: extractComponentState(
       availableTableColumnsComponentState,
       scopeId,
     ),
-    getTableFiltersState: extractComponentState(
+    tableFiltersState: extractComponentState(
       tableFiltersComponentState,
       scopeId,
     ),
-    getTableSortsState: extractComponentState(
-      tableSortsComponentState,
-      scopeId,
-    ),
-    getTableColumnsState: extractComponentState(
+    tableSortsState: extractComponentState(tableSortsComponentState, scopeId),
+    tableColumnsState: extractComponentState(
       tableColumnsComponentState,
       scopeId,
     ),
-
-    getOnColumnsChangeState: extractComponentState(
+    onColumnsChangeState: extractComponentState(
       onColumnsChangeComponentState,
       scopeId,
     ),
-    getOnEntityCountChangeState: extractComponentState(
+    onEntityCountChangeState: extractComponentState(
       onEntityCountChangeComponentState,
       scopeId,
     ),
-    getTableLastRowVisibleState: extractComponentState(
+    tableLastRowVisibleState: extractComponentState(
       tableLastRowVisibleComponentState,
       scopeId,
     ),
-    getSoftFocusPositionState: extractComponentState(
+    softFocusPositionState: extractComponentState(
       softFocusPositionComponentState,
       scopeId,
     ),
-    getNumberOfTableRowsState: extractComponentState(
+    numberOfTableRowsState: extractComponentState(
       numberOfTableRowsComponentState,
       scopeId,
     ),
-    getCurrentTableCellInEditModePositionState: extractComponentState(
+    currentTableCellInEditModePositionState: extractComponentState(
       currentTableCellInEditModePositionComponentState,
       scopeId,
     ),
@@ -80,19 +77,16 @@ export const useRecordTableStates = (recordTableId?: string) => {
       isTableCellInEditModeComponentFamilyState,
       scopeId,
     ),
-    getIsSoftFocusActiveState: extractComponentState(
+    isSoftFocusActiveState: extractComponentState(
       isSoftFocusActiveComponentState,
       scopeId,
     ),
-    getTableRowIdsState: extractComponentState(
-      tableRowIdsComponentState,
-      scopeId,
-    ),
-    getIsRecordTableInitialLoadingState: extractComponentState(
+    tableRowIdsState: extractComponentState(tableRowIdsComponentState, scopeId),
+    isRecordTableInitialLoadingState: extractComponentState(
       isRecordTableInitialLoadingComponentState,
       scopeId,
     ),
-    getResizeFieldOffsetState: extractComponentState(
+    resizeFieldOffsetState: extractComponentState(
       resizeFieldOffsetComponentState,
       scopeId,
     ),
@@ -104,23 +98,27 @@ export const useRecordTableStates = (recordTableId?: string) => {
       isRowSelectedComponentFamilyState,
       scopeId,
     ),
-    getAllRowsSelectedStatusSelector: extractComponentReadOnlySelector(
+    hasUserSelectedAllRowState: extractComponentState(
+      hasUserSelectedAllRowsComponentState,
+      scopeId,
+    ),
+    allRowsSelectedStatusSelector: extractComponentReadOnlySelector(
       allRowsSelectedStatusComponentSelector,
       scopeId,
     ),
-    getHiddenTableColumnsSelector: extractComponentReadOnlySelector(
+    hiddenTableColumnsSelector: extractComponentReadOnlySelector(
       hiddenTableColumnsComponentSelector,
       scopeId,
     ),
-    getNumberOfTableColumnsSelector: extractComponentReadOnlySelector(
+    numberOfTableColumnsSelector: extractComponentReadOnlySelector(
       numberOfTableColumnsComponentSelector,
       scopeId,
     ),
-    getSelectedRowIdsSelector: extractComponentReadOnlySelector(
+    selectedRowIdsSelector: extractComponentReadOnlySelector(
       selectedRowIdsComponentSelector,
       scopeId,
     ),
-    getVisibleTableColumnsSelector: extractComponentReadOnlySelector(
+    visibleTableColumnsSelector: extractComponentReadOnlySelector(
       visibleTableColumnsComponentSelector,
       scopeId,
     ),

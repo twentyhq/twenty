@@ -2,8 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import { IconChevronLeft } from 'twenty-ui';
 
-import { IconChevronLeft } from '@/ui/display/icon/index';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 
 type NavigationDrawerBackButtonProps = {
@@ -37,7 +37,7 @@ export const NavigationDrawerBackButton = ({
 }: NavigationDrawerBackButtonProps) => {
   const theme = useTheme();
   const navigate = useNavigate();
-  const navigationMemorizedUrl = useRecoilValue(navigationMemorizedUrlState());
+  const navigationMemorizedUrl = useRecoilValue(navigationMemorizedUrlState);
 
   return (
     <StyledContainer>

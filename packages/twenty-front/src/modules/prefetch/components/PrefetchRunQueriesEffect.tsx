@@ -1,53 +1,46 @@
 import { useEffect } from 'react';
-import { useQuery } from '@apollo/client';
+import { useRecoilValue } from 'recoil';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
-import { MultiObjectRecordQueryResult } from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
+import { currentUserState } from '@/auth/states/currentUserState';
+import { Favorite } from '@/favorites/types/Favorite';
+import { useFindManyRecordsForMultipleMetadataItems } from '@/object-record/multiple-objects/hooks/useFindManyRecordsForMultipleMetadataItems';
 import { usePrefetchRunQuery } from '@/prefetch/hooks/internal/usePrefetchRunQuery';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
+import { View } from '@/views/types/View';
 import { isDefined } from '~/utils/isDefined';
 
 export const PrefetchRunQueriesEffect = () => {
+  const currentUser = useRecoilValue(currentUserState);
+
   const {
     objectMetadataItem: objectMetadataItemView,
     upsertRecordsInCache: upsertViewsInCache,
-  } = usePrefetchRunQuery({
+  } = usePrefetchRunQuery<View>({
     prefetchKey: PrefetchKey.AllViews,
-    objectNameSingular: CoreObjectNameSingular.View,
   });
 
   const {
     objectMetadataItem: objectMetadataItemFavorite,
     upsertRecordsInCache: upsertFavoritesInCache,
-  } = usePrefetchRunQuery({
+  } = usePrefetchRunQuery<Favorite>({
     prefetchKey: PrefetchKey.AllFavorites,
-    objectNameSingular: CoreObjectNameSingular.Favorite,
   });
 
-  const prefetchFindManyQuery =
-    useGenerateFindManyRecordsForMultipleMetadataItemsQuery({
-      objectMetadataItems: [objectMetadataItemView, objectMetadataItemFavorite],
-      depth: 2,
-    });
-
-  if (!isDefined(prefetchFindManyQuery)) {
-    throw new Error('Could not prefetch recrds');
-  }
-
-  const { data } = useQuery<MultiObjectRecordQueryResult>(
-    prefetchFindManyQuery,
-  );
+  const { result } = useFindManyRecordsForMultipleMetadataItems({
+    objectMetadataItems: [objectMetadataItemView, objectMetadataItemFavorite],
+    skip: !currentUser,
+    depth: 1,
+  });
 
   useEffect(() => {
-    if (isDefined(data?.views)) {
-      upsertViewsInCache(data.views);
+    if (isDefined(result.views)) {
+      upsertViewsInCache(result.views as View[]);
     }
 
-    if (isDefined(data?.favorites)) {
-      upsertFavoritesInCache(data.favorites);
+    if (isDefined(result.favorites)) {
+      upsertFavoritesInCache(result.favorites as Favorite[]);
     }
-  }, [data, upsertViewsInCache, upsertFavoritesInCache]);
+  }, [result, upsertViewsInCache, upsertFavoritesInCache]);
 
   return <></>;
 };

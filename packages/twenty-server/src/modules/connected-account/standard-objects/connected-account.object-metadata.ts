@@ -1,13 +1,14 @@
-import { FeatureFlagKeys } from 'src/engine/modules/feature-flag/feature-flag.entity';
-import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
+import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
-} from 'src/engine-metadata/relation-metadata/relation-metadata.entity';
+} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { connectedAccountStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
+import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/relation-metadata.decorator';
@@ -80,6 +81,16 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
     icon: 'IconHistory',
   })
   lastSyncHistoryId: string;
+
+  @FieldMetadata({
+    standardId: connectedAccountStandardFieldIds.authFailedAt,
+    type: FieldMetadataType.DATE_TIME,
+    label: 'Auth failed at',
+    description: 'Auth failed at',
+    icon: 'IconX',
+  })
+  @IsNullable()
+  authFailedAt: Date;
 
   @FieldMetadata({
     standardId: connectedAccountStandardFieldIds.messageChannels,

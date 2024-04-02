@@ -2,6 +2,7 @@ import { ReactNode, useContext, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { IconEye } from 'twenty-ui';
 
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
@@ -15,7 +16,6 @@ import {
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { IconEye } from '@/ui/display/icon/index';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
@@ -133,12 +133,12 @@ export const RecordBoardCard = () => {
   const { updateOneRecord, objectMetadataItem } =
     useContext(RecordBoardContext);
   const {
-    getIsCompactModeActiveState,
+    isCompactModeActiveState,
     isRecordBoardCardSelectedFamilyState,
-    getVisibleFieldDefinitionsState,
+    visibleFieldDefinitionsState,
   } = useRecordBoardStates();
 
-  const isCompactModeActive = useRecoilValue(getIsCompactModeActiveState());
+  const isCompactModeActive = useRecoilValue(isCompactModeActiveState);
 
   const [isCardInCompactMode, setIsCardInCompactMode] = useState(true);
 
@@ -146,14 +146,14 @@ export const RecordBoardCard = () => {
     isRecordBoardCardSelectedFamilyState(recordId),
   );
 
-  const visibleBoardCardFieldDefinitions = useRecoilValue(
-    getVisibleFieldDefinitionsState(),
+  const visibleFieldDefinitions = useRecoilValue(
+    visibleFieldDefinitionsState(),
   );
 
   const record = useRecoilValue(recordStoreFamilyState(recordId));
 
-  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState());
-  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState());
+  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
+  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
 
   const handleContextMenu = (event: React.MouseEvent) => {
     event.preventDefault();
@@ -247,7 +247,7 @@ export const RecordBoardCard = () => {
             isOpen={!isCardInCompactMode || !isCompactModeActive}
             initial={false}
           >
-            {visibleBoardCardFieldDefinitions.map((fieldDefinition) => (
+            {visibleFieldDefinitions.map((fieldDefinition) => (
               <PreventSelectOnClickContainer
                 key={fieldDefinition.fieldMetadataId}
               >

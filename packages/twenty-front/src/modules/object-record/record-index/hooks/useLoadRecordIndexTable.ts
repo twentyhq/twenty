@@ -2,13 +2,12 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState.ts';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SIGN_IN_BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/SignInBackgroundMockCompanies';
-
-import { useFindManyRecords } from '../../hooks/useFindManyRecords';
 
 export const useFindManyParams = (
   objectNameSingular: string,
@@ -18,16 +17,20 @@ export const useFindManyParams = (
     objectNameSingular,
   });
 
-  const { getTableFiltersState, getTableSortsState } =
+  const { tableFiltersState, tableSortsState } =
     useRecordTableStates(recordTableId);
 
-  const tableFilters = useRecoilValue(getTableFiltersState());
-  const tableSorts = useRecoilValue(getTableSortsState());
+  const tableFilters = useRecoilValue(tableFiltersState);
+  const tableSorts = useRecoilValue(tableSortsState);
 
   const filter = turnObjectDropdownFilterIntoQueryFilter(
     tableFilters,
     objectMetadataItem?.fields ?? [],
   );
+
+  if (objectMetadataItem?.isRemote) {
+    return { objectNameSingular, filter };
+  }
 
   const orderBy = turnSortsIntoOrderBy(
     tableSorts,
@@ -40,9 +43,9 @@ export const useFindManyParams = (
 export const useLoadRecordIndexTable = (objectNameSingular: string) => {
   const { setRecordTableData, setIsRecordTableInitialLoading } =
     useRecordTable();
-  const { getTableLastRowVisibleState } = useRecordTableStates();
-  const setLastRowVisible = useSetRecoilState(getTableLastRowVisibleState());
-  const currentWorkspace = useRecoilValue(currentWorkspaceState());
+  const { tableLastRowVisibleState } = useRecordTableStates();
+  const setLastRowVisible = useSetRecoilState(tableLastRowVisibleState);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const params = useFindManyParams(objectNameSingular);
 
   const {

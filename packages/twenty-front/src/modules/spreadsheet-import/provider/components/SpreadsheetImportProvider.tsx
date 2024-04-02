@@ -11,7 +11,7 @@ export const SpreadsheetImportProvider = (
   props: SpreadsheetImportProviderProps,
 ) => {
   const [spreadsheetImport, setSpreadsheetImport] = useRecoilState(
-    spreadsheetImportState(),
+    spreadsheetImportState,
   );
 
   const handleClose = () => {

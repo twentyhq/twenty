@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
+import { IconPlus } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
@@ -9,7 +10,6 @@ import { RecordTable } from '@/object-record/record-table/components/RecordTable
 import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
@@ -20,7 +20,7 @@ import {
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useViewFields } from '@/views/hooks/internal/useViewFields';
+import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
 
 import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext';
@@ -59,16 +59,16 @@ export const RecordTableWithWrappers = ({
 }: RecordTableWithWrappersProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  const { getNumberOfTableRowsState, getIsRecordTableInitialLoadingState } =
+  const { numberOfTableRowsState, isRecordTableInitialLoadingState } =
     useRecordTableStates(recordTableId);
 
-  const numberOfTableRows = useRecoilValue(getNumberOfTableRowsState());
+  const numberOfTableRows = useRecoilValue(numberOfTableRowsState);
 
   const isRecordTableInitialLoading = useRecoilValue(
-    getIsRecordTableInitialLoadingState(),
+    isRecordTableInitialLoadingState,
   );
 
-  const { resetTableRowSelection, setRowSelectedState } = useRecordTable({
+  const { resetTableRowSelection, setRowSelected } = useRecordTable({
     recordTableId,
   });
 
@@ -78,7 +78,7 @@ export const RecordTableWithWrappers = ({
     },
   );
 
-  const { persistViewFields } = useViewFields(viewBarId);
+  const { saveViewFields } = useSaveCurrentViewFields(viewBarId);
 
   const { deleteOneRecord } = useDeleteOneRecord({ objectNameSingular });
 
@@ -96,20 +96,20 @@ export const RecordTableWithWrappers = ({
                   objectNameSingular={objectNameSingular}
                   onColumnsChange={useRecoilCallback(
                     () => (columns) => {
-                      persistViewFields(
+                      saveViewFields(
                         mapColumnDefinitionsToViewFields(
                           columns as ColumnDefinition<FieldMetadata>[],
                         ),
                       );
                     },
-                    [persistViewFields],
+                    [saveViewFields],
                   )}
                   createRecord={createRecord}
                 />
                 <DragSelect
                   dragSelectable={tableBodyRef}
                   onDragSelectionStart={resetTableRowSelection}
-                  onDragSelectionChange={setRowSelectedState}
+                  onDragSelectionChange={setRowSelected}
                 />
               </div>
               <RecordTableInternalEffect

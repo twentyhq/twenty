@@ -1,42 +1,52 @@
 import { useEffect } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useSortDropdown';
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
-import { useViewScopedStates } from '@/views/hooks/internal/useViewScopedStates';
+import { useViewStates } from '@/views/hooks/internal/useViewStates';
+import { useCombinedViewSorts } from '@/views/hooks/useCombinedViewSorts';
 import { isDefined } from '~/utils/isDefined';
 
 type ViewBarSortEffectProps = {
   sortDropdownId: string;
-  onSortSelect?: ((sort: Sort) => void) | undefined;
 };
 
 export const ViewBarSortEffect = ({
   sortDropdownId,
-  onSortSelect,
 }: ViewBarSortEffectProps) => {
-  const { availableSortDefinitionsState } = useViewScopedStates();
+  const { availableSortDefinitionsState } = useViewStates();
+  const { upsertCombinedViewSort } = useCombinedViewSorts();
 
   const availableSortDefinitions = useRecoilValue(
     availableSortDefinitionsState,
   );
 
-  const { setAvailableSortDefinitions, setOnSortSelect } = useSortDropdown({
+  const {
+    availableSortDefinitionsState: availableSortDefinitionsInSortDropdownState,
+    onSortSelectState,
+  } = useSortDropdown({
     sortDropdownId,
   });
 
+  const setAvailableSortDefinitionsInSortDropdown = useSetRecoilState(
+    availableSortDefinitionsInSortDropdownState,
+  );
+  const setOnSortSelect = useSetRecoilState(onSortSelectState);
+
   useEffect(() => {
     if (isDefined(availableSortDefinitions)) {
-      setAvailableSortDefinitions(availableSortDefinitions);
+      setAvailableSortDefinitionsInSortDropdown(availableSortDefinitions);
     }
-    if (isDefined(onSortSelect)) {
-      setOnSortSelect(() => onSortSelect);
-    }
+    setOnSortSelect(() => (sort: Sort | null) => {
+      if (isDefined(sort)) {
+        upsertCombinedViewSort(sort);
+      }
+    });
   }, [
     availableSortDefinitions,
-    onSortSelect,
-    setAvailableSortDefinitions,
+    setAvailableSortDefinitionsInSortDropdown,
     setOnSortSelect,
+    upsertCombinedViewSort,
   ]);
 
   return <></>;

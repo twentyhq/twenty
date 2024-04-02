@@ -15,13 +15,14 @@ import {
   GraphQLString,
   GraphQLType,
 } from 'graphql';
+import GraphQLJSON from 'graphql-type-json';
 
 import {
   DateScalarMode,
   NumberScalarMode,
 } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
 
-import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   UUIDFilterType,
   StringFilterType,
@@ -31,6 +32,7 @@ import {
   IntFilterType,
   BooleanFilterType,
   BigFloatFilterType,
+  RawJsonFilterType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input';
 import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
 import { BigFloatScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -68,6 +70,7 @@ export class TypeMapperService {
       [FieldMetadataType.PROBABILITY, GraphQLFloat],
       [FieldMetadataType.RELATION, GraphQLID],
       [FieldMetadataType.POSITION, PositionScalarType],
+      [FieldMetadataType.RAW_JSON, GraphQLJSON],
     ]);
 
     return typeScalarMapping.get(fieldMetadataType);
@@ -99,6 +102,7 @@ export class TypeMapperService {
       [FieldMetadataType.PROBABILITY, FloatFilterType],
       [FieldMetadataType.RELATION, UUIDFilterType],
       [FieldMetadataType.POSITION, FloatFilterType],
+      [FieldMetadataType.RAW_JSON, RawJsonFilterType],
     ]);
 
     return typeFilterMapping.get(fieldMetadataType);
@@ -122,6 +126,7 @@ export class TypeMapperService {
       [FieldMetadataType.SELECT, OrderByDirectionType],
       [FieldMetadataType.MULTI_SELECT, OrderByDirectionType],
       [FieldMetadataType.POSITION, OrderByDirectionType],
+      [FieldMetadataType.RAW_JSON, OrderByDirectionType],
     ]);
 
     return typeOrderByMapping.get(fieldMetadataType);
@@ -141,7 +146,7 @@ export class TypeMapperService {
       );
     }
 
-    if (!options.nullable && !options.defaultValue) {
+    if (options.nullable === false && options.defaultValue === null) {
       graphqlType = new GraphQLNonNull(graphqlType) as unknown as T;
     }
 

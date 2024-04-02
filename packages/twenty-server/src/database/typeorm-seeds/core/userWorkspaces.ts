@@ -1,39 +1,52 @@
 import { DataSource } from 'typeorm';
 
-// import { SeedWorkspaceId } from 'src/database/typeorm-seeds/core/workspaces';
+import {
+  SEED_APPLE_WORKSPACE_ID,
+  SEED_TWENTY_WORKSPACE_ID,
+} from 'src/database/typeorm-seeds/core/workspaces';
+import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { DEV_SEED_USER_IDS } from 'src/database/typeorm-seeds/core/users';
 
 const tableName = 'userWorkspace';
-
-export enum SeedUserIds {
-  Tim = '20202020-9e3b-46d4-a556-88b9ddc2b034',
-  Jony = '20202020-3957-4908-9c36-2929a23f8357',
-  Phil = '20202020-7169-42cf-bc47-1cfef15264b8',
-}
 
 export const seedUserWorkspaces = async (
   workspaceDataSource: DataSource,
   schemaName: string,
   workspaceId: string,
 ) => {
+  let userWorkspaces: Pick<UserWorkspace, 'userId' | 'workspaceId'>[] = [];
+
+  if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
+    userWorkspaces = [
+      {
+        userId: DEV_SEED_USER_IDS.TIM,
+        workspaceId,
+      },
+      {
+        userId: DEV_SEED_USER_IDS.JONY,
+        workspaceId,
+      },
+      {
+        userId: DEV_SEED_USER_IDS.PHIL,
+        workspaceId,
+      },
+    ];
+  }
+
+  if (workspaceId === SEED_TWENTY_WORKSPACE_ID) {
+    userWorkspaces = [
+      {
+        userId: DEV_SEED_USER_IDS.TIM,
+        workspaceId,
+      },
+    ];
+  }
   await workspaceDataSource
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, ['userId', 'workspaceId'])
     .orIgnore()
-    .values([
-      {
-        userId: SeedUserIds.Tim,
-        workspaceId,
-      },
-      {
-        userId: SeedUserIds.Jony,
-        workspaceId,
-      },
-      {
-        userId: SeedUserIds.Phil,
-        workspaceId,
-      },
-    ])
+    .values(userWorkspaces)
     .execute();
 };
 

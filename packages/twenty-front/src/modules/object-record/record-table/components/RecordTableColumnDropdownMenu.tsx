@@ -1,8 +1,8 @@
 import { useRecoilValue } from 'recoil';
+import { IconArrowLeft, IconArrowRight, IconEyeOff } from 'twenty-ui';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { IconArrowLeft, IconArrowRight, IconEyeOff } from '@/ui/display/icon';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
@@ -17,9 +17,9 @@ export type RecordTableColumnDropdownMenuProps = {
 export const RecordTableColumnDropdownMenu = ({
   column,
 }: RecordTableColumnDropdownMenuProps) => {
-  const { getVisibleTableColumnsSelector } = useRecordTableStates();
+  const { visibleTableColumnsSelector } = useRecordTableStates();
 
-  const visibleTableColumns = useRecoilValue(getVisibleTableColumnsSelector());
+  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
 
   const secondVisibleColumn = visibleTableColumns[1];
   const canMoveLeft =

@@ -5,8 +5,8 @@ import { RecoilRoot } from 'recoil';
 
 import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
 
-import { TestApolloMetadataClientProvider } from '../__mocks__/ApolloMetadataClientProvider';
 import {
+  findManyViewsQuery,
   query,
   responseData,
   variables,
@@ -24,14 +24,33 @@ const mocks = [
       },
     })),
   },
+  {
+    request: {
+      query: findManyViewsQuery,
+      variables: {},
+    },
+    result: jest.fn(() => ({
+      data: {
+        views: {
+          __typename: 'ViewConnection',
+          totalCount: 0,
+          pageInfo: {
+            __typename: 'PageInfo',
+            hasNextPage: false,
+            startCursor: '',
+            endCursor: '',
+          },
+          edges: [],
+        },
+      },
+    })),
+  },
 ];
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
     <MockedProvider mocks={mocks} addTypename={false}>
-      <TestApolloMetadataClientProvider>
-        {children}
-      </TestApolloMetadataClientProvider>
+      {children}
     </MockedProvider>
   </RecoilRoot>
 );

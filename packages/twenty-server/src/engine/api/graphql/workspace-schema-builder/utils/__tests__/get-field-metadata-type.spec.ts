@@ -1,10 +1,10 @@
-import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { getFieldMetadataType } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-field-metadata-type.util';
 
 describe('getFieldMetadataType', () => {
   it.each([
     ['uuid', FieldMetadataType.UUID],
-    ['timestamp', FieldMetadataType.DATE_TIME],
+    ['timestamptz', FieldMetadataType.DATE_TIME],
   ])(
     'should return correct FieldMetadataType for type %s',
     (type, expectedMetadataType) => {

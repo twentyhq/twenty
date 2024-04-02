@@ -12,8 +12,6 @@ import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObj
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 
-import { TestApolloMetadataClientProvider } from '../__mocks__/ApolloMetadataClientProvider';
-
 const mocks = [
   {
     request: {
@@ -31,9 +29,7 @@ const mocks = [
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
     <MockedProvider mocks={mocks} addTypename={false}>
-      <TestApolloMetadataClientProvider>
-        {children}
-      </TestApolloMetadataClientProvider>
+      {children}
     </MockedProvider>
   </RecoilRoot>
 );
@@ -44,7 +40,7 @@ describe('useObjectMetadataItemForSettings', () => {
   it('should findActiveObjectMetadataItemBySlug', async () => {
     const { result } = renderHook(
       () => {
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState());
+        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
         setMetadataItems(mockObjectMetadataItems);
 
         return useObjectMetadataItemForSettings();
@@ -64,7 +60,7 @@ describe('useObjectMetadataItemForSettings', () => {
   it('should findObjectMetadataItemById', async () => {
     const { result } = renderHook(
       () => {
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState());
+        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
         setMetadataItems(mockObjectMetadataItems);
 
         return useObjectMetadataItemForSettings();
@@ -86,7 +82,7 @@ describe('useObjectMetadataItemForSettings', () => {
   it('should findObjectMetadataItemByNamePlural', async () => {
     const { result } = renderHook(
       () => {
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState());
+        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
         setMetadataItems(mockObjectMetadataItems);
 
         return useObjectMetadataItemForSettings();

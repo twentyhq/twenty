@@ -3,6 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { FieldMetadataType } from '~/generated/graphql';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { useDateTimeField } from '../../../hooks/useDateTimeField';
@@ -44,7 +45,7 @@ const DateFieldInputWithContext = ({
         fieldDefinition={{
           fieldMetadataId: 'date',
           label: 'Date',
-          type: 'DATE_TIME',
+          type: FieldMetadataType.DateTime,
           iconName: 'IconCalendarEvent',
           metadata: {
             fieldName: 'Date',

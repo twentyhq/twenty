@@ -1,17 +1,29 @@
 import { ChangeEvent } from 'react';
+import { useRecoilValue } from 'recoil';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 
 export const ObjectFilterDropdownTextSearchInput = () => {
   const {
-    filterDefinitionUsedInDropdown,
-    selectedOperandInDropdown,
-    objectFilterDropdownSearchInput,
+    filterDefinitionUsedInDropdownState,
+    selectedOperandInDropdownState,
+    objectFilterDropdownSearchInputState,
     setObjectFilterDropdownSearchInput,
-    selectedFilter,
+    selectedFilterState,
     selectFilter,
   } = useFilterDropdown();
+
+  const filterDefinitionUsedInDropdown = useRecoilValue(
+    filterDefinitionUsedInDropdownState,
+  );
+  const selectedOperandInDropdown = useRecoilValue(
+    selectedOperandInDropdownState,
+  );
+  const objectFilterDropdownSearchInput = useRecoilValue(
+    objectFilterDropdownSearchInputState,
+  );
+  const selectedFilter = useRecoilValue(selectedFilterState);
 
   return (
     filterDefinitionUsedInDropdown &&

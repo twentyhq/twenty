@@ -20,7 +20,7 @@ export const useClearField = () => {
     ({ snapshot, set }) =>
       () => {
         const objectMetadataItems = snapshot
-          .getLoadable(objectMetadataItemsState())
+          .getLoadable(objectMetadataItemsState)
           .getValue();
 
         const foundObjectMetadataItem = objectMetadataItems.find(

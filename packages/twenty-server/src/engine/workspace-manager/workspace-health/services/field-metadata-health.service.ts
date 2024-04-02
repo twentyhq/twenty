@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import isEqual from 'lodash.isequal';
 
@@ -8,25 +8,25 @@ import {
 } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-issue.interface';
 import { WorkspaceTableStructure } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-table-definition.interface';
 import { WorkspaceHealthOptions } from 'src/engine/workspace-manager/workspace-health/interfaces/workspace-health-options.interface';
-import { FieldMetadataDefaultValue } from 'src/engine-metadata/field-metadata/interfaces/field-metadata-default-value.interface';
+import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import {
   FieldMetadataEntity,
   FieldMetadataType,
-} from 'src/engine-metadata/field-metadata/field-metadata.entity';
-import { isCompositeFieldMetadataType } from 'src/engine-metadata/field-metadata/utils/is-composite-field-metadata-type.util';
+} from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { DatabaseStructureService } from 'src/engine/workspace-manager/workspace-health/services/database-structure.service';
 import { validName } from 'src/engine/workspace-manager/workspace-health/utils/valid-name.util';
-import { compositeDefinitions } from 'src/engine-metadata/field-metadata/composite-types';
-import { validateDefaultValueForType } from 'src/engine-metadata/field-metadata/utils/validate-default-value-for-type.util';
+import { compositeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { validateDefaultValueForType } from 'src/engine/metadata-modules/field-metadata/utils/validate-default-value-for-type.util';
 import {
   EnumFieldMetadataUnionType,
   isEnumFieldMetadataType,
-} from 'src/engine-metadata/field-metadata/utils/is-enum-field-metadata-type.util';
-import { validateOptionsForType } from 'src/engine-metadata/field-metadata/utils/validate-options-for-type.util';
-import { serializeDefaultValue } from 'src/engine-metadata/field-metadata/utils/serialize-default-value';
+} from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { validateOptionsForType } from 'src/engine/metadata-modules/field-metadata/utils/validate-options-for-type.util';
+import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
 import { computeCompositeFieldMetadata } from 'src/engine/workspace-manager/workspace-health/utils/compute-composite-field-metadata.util';
-import { generateTargetColumnMap } from 'src/engine-metadata/field-metadata/utils/generate-target-column-map.util';
+import { generateTargetColumnMap } from 'src/engine/metadata-modules/field-metadata/utils/generate-target-column-map.util';
 import { customNamePrefix } from 'src/engine/utils/compute-custom-name.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 
@@ -67,18 +67,30 @@ export class FieldMetadataHealthService {
           issues.push(...defaultValueIssues);
         }
 
-        for (const compositeFieldMetadata of compositeFieldMetadataCollection) {
-          const compositeFieldIssues = await this.healthCheckField(
+        // Only check structure on nested composite fields
+        if (options.mode === 'structure' || options.mode === 'all') {
+          for (const compositeFieldMetadata of compositeFieldMetadataCollection) {
+            const compositeFieldStructureIssues = this.structureFieldCheck(
+              tableName,
+              workspaceTableColumns,
+              computeCompositeFieldMetadata(
+                compositeFieldMetadata,
+                fieldMetadata,
+              ),
+            );
+
+            issues.push(...compositeFieldStructureIssues);
+          }
+        }
+
+        // Only check metadata on the parent composite field
+        if (options.mode === 'metadata' || options.mode === 'all') {
+          const compositeFieldMetadataIssues = this.metadataFieldCheck(
             tableName,
-            workspaceTableColumns,
-            computeCompositeFieldMetadata(
-              compositeFieldMetadata,
-              fieldMetadata,
-            ),
-            options,
+            fieldMetadata,
           );
 
-          issues.push(...compositeFieldIssues);
+          issues.push(...compositeFieldMetadataIssues);
         }
       } else {
         const fieldIssues = await this.healthCheckField(
@@ -137,6 +149,7 @@ export class FieldMetadataHealthService {
       fieldMetadata.type,
       fieldMetadata.defaultValue,
     );
+
     // Check if column exist in database
     const columnStructure = workspaceTableColumns.find(
       (tableDefinition) => tableDefinition.columnName === columnName,
@@ -178,7 +191,7 @@ export class FieldMetadataHealthService {
 
     if (columnDefaultValue && isEnumFieldMetadataType(fieldMetadata.type)) {
       const enumValues = fieldMetadata.options?.map((option) =>
-        serializeDefaultValue(option.value),
+        serializeDefaultValue(`'${option.value}'`),
       );
 
       if (!enumValues.includes(columnDefaultValue)) {
@@ -325,10 +338,11 @@ export class FieldMetadataHealthService {
       isEnumFieldMetadataType(fieldMetadata.type) &&
       fieldMetadata.defaultValue
     ) {
-      const enumValues = fieldMetadata.options?.map((option) => option.value);
-      const metadataDefaultValue = (
-        fieldMetadata.defaultValue as FieldMetadataDefaultValue<EnumFieldMetadataUnionType>
-      )?.value;
+      const enumValues = fieldMetadata.options?.map((option) =>
+        serializeDefaultValue(`'${option.value}'`),
+      );
+      const metadataDefaultValue =
+        fieldMetadata.defaultValue as FieldMetadataDefaultValue<EnumFieldMetadataUnionType>;
 
       if (metadataDefaultValue && !enumValues.includes(metadataDefaultValue)) {
         issues.push({
@@ -340,30 +354,5 @@ export class FieldMetadataHealthService {
     }
 
     return issues;
-  }
-
-  private isCompositeObjectWellStructured(
-    fieldMetadataType: FieldMetadataType,
-    object: any,
-  ): boolean {
-    const subFields = compositeDefinitions.get(fieldMetadataType)?.() ?? [];
-
-    if (!object) {
-      return true;
-    }
-
-    if (subFields.length === 0) {
-      throw new InternalServerErrorException(
-        `The composite field type ${fieldMetadataType} doesn't have any sub fields, it seems this one is not implemented in the composite definitions map`,
-      );
-    }
-
-    for (const subField of subFields) {
-      if (!object[subField.name]) {
-        return false;
-      }
-    }
-
-    return true;
   }
 }

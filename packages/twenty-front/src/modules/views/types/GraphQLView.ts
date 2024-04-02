@@ -1,4 +1,3 @@
-import { Position } from '@/object-metadata/types/Position';
 import { ViewField } from '@/views/types/ViewField';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewKey } from '@/views/types/ViewKey';
@@ -10,11 +9,12 @@ export type GraphQLView = {
   name: string;
   type: ViewType;
   key: ViewKey | null;
+  kanbanFieldMetadataId: string;
   objectMetadataId: string;
   isCompact: boolean;
   viewFields: ViewField[];
   viewFilters: ViewFilter[];
   viewSorts: ViewSort[];
-  position: Position;
+  position: number;
   icon: string;
 };

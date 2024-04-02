@@ -6,19 +6,22 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
+// TODO: change ObjectMetadataItems mock before refactoring with relationDefinition computed field
 export const mapFieldMetadataToGraphQLQuery = ({
   objectMetadataItems,
   field,
-  relationFieldDepth = 0,
-  relationFieldEagerLoad,
+  depth = 0,
+  queryFields,
+  computeReferences = false,
 }: {
   objectMetadataItems: ObjectMetadataItem[];
   field: Pick<
     FieldMetadataItem,
     'name' | 'type' | 'toRelationMetadata' | 'fromRelationMetadata'
   >;
-  relationFieldDepth?: number;
-  relationFieldEagerLoad?: Record<string, any>;
+  depth?: number;
+  queryFields?: Record<string, any>;
+  computeReferences?: boolean;
 }): any => {
   const fieldType = field.type;
 
@@ -34,6 +37,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
       'RATING',
       'SELECT',
       'POSITION',
+      'RAW_JSON',
     ] as FieldMetadataType[]
   ).includes(fieldType);
 
@@ -42,7 +46,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
   } else if (
     fieldType === 'RELATION' &&
     field.toRelationMetadata?.relationType === 'ONE_TO_MANY' &&
-    relationFieldDepth > 0
+    depth > 0
   ) {
     const relationMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
@@ -58,13 +62,15 @@ export const mapFieldMetadataToGraphQLQuery = ({
 ${mapObjectMetadataToGraphQLQuery({
   objectMetadataItems,
   objectMetadataItem: relationMetadataItem,
-  eagerLoadedRelations: relationFieldEagerLoad,
-  depth: relationFieldDepth - 1,
+  depth: depth - 1,
+  queryFields,
+  computeReferences: computeReferences,
+  isRootLevel: false,
 })}`;
   } else if (
     fieldType === 'RELATION' &&
     field.fromRelationMetadata?.relationType === 'ONE_TO_MANY' &&
-    relationFieldDepth > 0
+    depth > 0
   ) {
     const relationMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
@@ -82,8 +88,10 @@ ${mapObjectMetadataToGraphQLQuery({
     node ${mapObjectMetadataToGraphQLQuery({
       objectMetadataItems,
       objectMetadataItem: relationMetadataItem,
-      eagerLoadedRelations: relationFieldEagerLoad,
-      depth: relationFieldDepth - 1,
+      depth: depth - 1,
+      queryFields,
+      computeReferences,
+      isRootLevel: false,
     })}
   }
 }`;
@@ -105,6 +113,18 @@ ${mapObjectMetadataToGraphQLQuery({
 {
   firstName
   lastName
+}`;
+  } else if (fieldType === 'ADDRESS') {
+    return `${field.name}
+{
+  addressStreet1
+  addressStreet2
+  addressCity
+  addressState
+  addressCountry
+  addressPostcode
+  addressLat
+  addressLng
 }`;
   }
 

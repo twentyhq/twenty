@@ -24,22 +24,20 @@ export const useOpenCreateActivityDrawer = () => {
   const { createActivityInCache } = useCreateActivityInCache();
 
   const setActivityTargetableEntityArray = useSetRecoilState(
-    activityTargetableEntityArrayState(),
+    activityTargetableEntityArrayState,
   );
-  const setViewableActivityId = useSetRecoilState(viewableActivityIdState());
+  const setViewableActivityId = useSetRecoilState(viewableActivityIdState);
 
-  const setIsCreatingActivity = useSetRecoilState(
-    isActivityInCreateModeState(),
-  );
+  const setIsCreatingActivity = useSetRecoilState(isActivityInCreateModeState);
 
   const setTemporaryActivityForEditor = useSetRecoilState(
-    temporaryActivityForEditorState(),
+    temporaryActivityForEditorState,
   );
 
-  const setActivityIdInDrawer = useSetRecoilState(activityIdInDrawerState());
+  const setActivityIdInDrawer = useSetRecoilState(activityIdInDrawerState);
 
   const [, setIsUpsertingActivityInDB] = useRecoilState(
-    isUpsertingActivityInDBState(),
+    isUpsertingActivityInDBState,
   );
 
   const openCreateActivityDrawer = async ({
@@ -53,7 +51,7 @@ export const useOpenCreateActivityDrawer = () => {
   }) => {
     const { createdActivityInCache } = createActivityInCache({
       type,
-      targetableObjects,
+      targetObject: targetableObjects[0],
       customAssignee,
     });
 

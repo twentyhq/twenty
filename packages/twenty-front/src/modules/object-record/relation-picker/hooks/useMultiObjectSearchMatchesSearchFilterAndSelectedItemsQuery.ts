@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import { EMPTY_QUERY } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
+import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/multiple-objects/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
 import { useLimitPerMetadataItem } from '@/object-record/relation-picker/hooks/useLimitPerMetadataItem';
 import {
   MultiObjectRecordQueryResult,
@@ -25,7 +25,7 @@ export const useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery = ({
   searchFilterValue: string;
   limit?: number;
 }) => {
-  const objectMetadataItems = useRecoilValue(objectMetadataItemsState());
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const { searchFilterPerMetadataItemNameSingular } =
     useSearchFilterPerMetadataItem({
@@ -85,7 +85,7 @@ export const useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery = ({
 
   const multiSelectQueryForSelectedIds =
     useGenerateFindManyRecordsForMultipleMetadataItemsQuery({
-      objectMetadataItems: objectMetadataItemsUsedInSelectedIdsQuery,
+      targetObjectMetadataItems: objectMetadataItemsUsedInSelectedIdsQuery,
       depth: 0,
     });
 

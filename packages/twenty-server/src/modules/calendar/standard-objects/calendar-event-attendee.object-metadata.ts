@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'src/engine-metadata/field-metadata/field-metadata.entity';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { calendarEventAttendeeStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
@@ -65,6 +65,7 @@ export class CalendarEventAttendeeObjectMetadata extends BaseObjectMetadata {
     label: 'Is Organizer',
     description: 'Is Organizer',
     icon: 'IconUser',
+    defaultValue: false,
   })
   isOrganizer: boolean;
 
@@ -100,7 +101,7 @@ export class CalendarEventAttendeeObjectMetadata extends BaseObjectMetadata {
         color: 'green',
       },
     ],
-    defaultValue: { value: CalendarEventAttendeeResponseStatus.NEEDS_ACTION },
+    defaultValue: `'${CalendarEventAttendeeResponseStatus.NEEDS_ACTION}'`,
   })
   responseStatus: string;
 

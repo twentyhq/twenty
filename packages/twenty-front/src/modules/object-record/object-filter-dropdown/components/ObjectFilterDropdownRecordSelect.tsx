@@ -1,3 +1,5 @@
+import { useRecoilValue } from 'recoil';
+
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { MultipleRecordSelectDropdown } from '@/object-record/select/components/MultipleRecordSelectDropdown';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
@@ -9,14 +11,27 @@ export const MAX_RECORDS_TO_DISPLAY = 3;
 
 export const ObjectFilterDropdownRecordSelect = () => {
   const {
-    filterDefinitionUsedInDropdown,
-    objectFilterDropdownSearchInput,
-    selectedOperandInDropdown,
+    filterDefinitionUsedInDropdownState,
+    objectFilterDropdownSearchInputState,
+    selectedOperandInDropdownState,
     setObjectFilterDropdownSelectedRecordIds,
-    objectFilterDropdownSelectedRecordIds,
+    objectFilterDropdownSelectedRecordIdsState,
     selectFilter,
     emptyFilterButKeepDefinition,
   } = useFilterDropdown();
+
+  const filterDefinitionUsedInDropdown = useRecoilValue(
+    filterDefinitionUsedInDropdownState,
+  );
+  const objectFilterDropdownSearchInput = useRecoilValue(
+    objectFilterDropdownSearchInputState,
+  );
+  const selectedOperandInDropdown = useRecoilValue(
+    selectedOperandInDropdownState,
+  );
+  const objectFilterDropdownSelectedRecordIds = useRecoilValue(
+    objectFilterDropdownSelectedRecordIdsState,
+  );
 
   const objectNameSingular =
     filterDefinitionUsedInDropdown?.relationObjectMetadataNameSingular ?? '';

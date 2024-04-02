@@ -1,10 +1,10 @@
 import { useRecoilValue } from 'recoil';
+import { Icon123 } from 'twenty-ui';
 
-import { Icon123 } from '@/ui/display/icon';
 import { iconsState } from '@/ui/display/icon/states/iconsState';
 
 export const useIcons = () => {
-  const icons = useRecoilValue(iconsState());
+  const icons = useRecoilValue(iconsState);
   const defaultIcon = Icon123;
 
   const getIcons = () => {
