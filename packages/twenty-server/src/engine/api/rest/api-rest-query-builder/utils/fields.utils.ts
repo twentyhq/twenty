@@ -3,6 +3,8 @@ import { BadRequestException } from '@nestjs/common';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
+// TODO: Should be properly typed
+
 export const getFieldType = (
   objectMetadataItem,
   fieldName,

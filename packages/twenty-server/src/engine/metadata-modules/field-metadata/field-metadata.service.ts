@@ -19,7 +19,6 @@ import {
   WorkspaceMigrationColumnDrop,
   WorkspaceMigrationTableAction,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
-import { generateTargetColumnMap } from 'src/engine/metadata-modules/field-metadata/utils/generate-target-column-map.util';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
@@ -123,11 +122,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       const createdFieldMetadata = await fieldMetadataRepository.save({
         ...fieldMetadataInput,
-        targetColumnMap: generateTargetColumnMap(
-          fieldMetadataInput.type,
-          !fieldMetadataInput.isRemoteCreation,
-          fieldMetadataInput.name,
-        ),
         isNullable: generateNullable(
           fieldMetadataInput.type,
           fieldMetadataInput.isNullable,
@@ -311,14 +305,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             : updatableFieldInput.defaultValue !== null
               ? updatableFieldInput.defaultValue
               : null,
-        // If the name is updated, the targetColumnMap should be updated as well
-        targetColumnMap: updatableFieldInput.name
-          ? generateTargetColumnMap(
-              existingFieldMetadata.type,
-              existingFieldMetadata.isCustom,
-              updatableFieldInput.name,
-            )
-          : existingFieldMetadata.targetColumnMap,
       });
       const updatedFieldMetadata = await fieldMetadataRepository.findOneOrFail({
         where: { id },
