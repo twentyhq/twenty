@@ -6,6 +6,11 @@ const TOP_GRADIENT_STOP = 350;
 const MIDDLE_GRADIENT_STOP = 1200;
 const BOTTOM_GRADIENT_STOP = 300;
 
+const BACKGROUND_ROTATION = -7;
+
+const BACKGROUND_IMAGE_URL =
+  'https://framerusercontent.com/images/nqEmdwe7yDXNsOZovuxG5zvj2E.png';
+
 const BackgroundContainer = styled.div`
   position: absolute;
   top: 0;
@@ -13,11 +18,11 @@ const BackgroundContainer = styled.div`
   right: -50%;
   width: 220%;
   height: 100%;
-  background-image: url(https://framerusercontent.com/images/nqEmdwe7yDXNsOZovuxG5zvj2E.png);
+  background-image: url(${BACKGROUND_IMAGE_URL});
   background-size: auto 20px;
   background-repeat: repeat;
   transform-origin: center center;
-  transform: rotate(-2deg);
+  transform: rotate(${BACKGROUND_ROTATION}deg);
   z-index: -2;
 `;
 
@@ -28,7 +33,7 @@ const Gradient = styled.div`
   right: -50%;
   width: 220%;
   height: 100%;
-  transform: rotate(-2deg);
+  transform: rotate(${BACKGROUND_ROTATION}deg);
   background: linear-gradient(
     185deg,
     #fff ${TOP_GRADIENT_STOP}px,
@@ -39,7 +44,7 @@ const Gradient = styled.div`
 `;
 
 type ContainerProps = {
-  containerHeight: number; // Specify that containerHeight is a number
+  containerHeight: number;
 };
 
 const Container = styled.div<ContainerProps>`
