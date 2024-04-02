@@ -26,12 +26,12 @@ export const fieldCurrencyMock = {
   name: 'fieldCurrency',
   type: FieldMetadataType.CURRENCY,
   isNullable: true,
-  defaultValue: null,
+  defaultValue: { amountMicros: null, currencyCode: "''" },
 };
 
-export const objectMetadataItemMock: DeepPartial<ObjectMetadataEntity> = {
+export const objectMetadataItemMock = {
   targetTableName: 'testingObject',
   nameSingular: 'objectName',
   namePlural: 'objectsName',
   fields: [fieldNumberMock, fieldStringMock, fieldLinkMock, fieldCurrencyMock],
-};
+} as ObjectMetadataEntity;
