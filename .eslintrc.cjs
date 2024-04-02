@@ -153,5 +153,9 @@ module.exports = {
         '@nx/workspace-max-consts-per-file': ['error', { max: 1 }],
       },
     },
+    {
+      files: ['*.json'],
+      parser: 'jsonc-eslint-parser',
+    },
   ],
 };

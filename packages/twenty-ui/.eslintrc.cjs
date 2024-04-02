@@ -25,6 +25,7 @@ module.exports = {
             ],
           },
         ],
+        '@nx/dependency-checks': 'error',
       },
     },
   ],
