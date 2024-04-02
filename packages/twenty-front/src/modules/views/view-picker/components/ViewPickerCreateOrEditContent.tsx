@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { IconChevronLeft, IconX } from 'twenty-ui';
+import { IconChevronLeft, IconLayoutKanban, IconTable, IconX } from 'twenty-ui';
 
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
@@ -141,8 +141,12 @@ export const ViewPickerCreateOrEditContent = () => {
               value={viewPickerType}
               onChange={(value) => setViewPickerType(value)}
               options={[
-                { value: ViewType.Table, label: 'Table' },
-                { value: ViewType.Kanban, label: 'Kanban' },
+                { value: ViewType.Table, label: 'Table', Icon: IconTable },
+                {
+                  value: ViewType.Kanban,
+                  label: 'Kanban',
+                  Icon: IconLayoutKanban,
+                },
               ]}
               dropdownId={VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID}
             />
