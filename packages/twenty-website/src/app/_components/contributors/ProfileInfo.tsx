@@ -22,7 +22,7 @@ const Container = styled(CardContainer)`
     .title {
       font-size: 24px;
       color: #b3b3b3;
-      margin: 0;
+      margin: 8px;
 
       @media (max-width: 810px) {
         font-size: 20px;
@@ -72,7 +72,7 @@ export const ProfileInfo = ({
         </div>
         <div className="separator"></div>
         <div className="item">
-          <p className="title">Rank</p>
+          <p className="title">Ranking</p>
           <span className="value">{rank}%</span>
         </div>
         <div className="separator"></div>
