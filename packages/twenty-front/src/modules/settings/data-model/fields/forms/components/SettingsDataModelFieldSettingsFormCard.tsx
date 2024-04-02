@@ -98,7 +98,6 @@ export const SettingsDataModelFieldSettingsFormCard = ({
             objectMetadataItem={objectMetadataItem}
             relationObjectMetadataItem={relationObjectMetadataItem}
             selectOptions={values.select}
-            values={values.currency}
           />
           {fieldMetadataItem.type === FieldMetadataType.Relation &&
             !!relationObjectMetadataItem && (
