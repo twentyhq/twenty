@@ -7,13 +7,6 @@
     "skipLibCheck": true,
     "allowJs": true,
     "esModuleInterop": true,
-    "paths": {
-      "@/*": ["packages/twenty-front/src/modules/*"],
-      "~/*": ["packages/twenty-front/src/*"],
-      "twenty-ui": ["packages/twenty-ui/src/index.ts"]
-    },
-
-    /* Bundler mode */
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "allowImportingTsExtensions": true,
@@ -21,13 +14,16 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-
-    /* Linting */
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "paths": {
+      "@/*": ["packages/twenty-front/src/modules/*"],
+      "~/*": ["packages/twenty-front/src/*"],
+      "twenty-ui": ["packages/twenty-ui/src/index.ts"]
+    }
   },
   "files": [],
   "include": [],
