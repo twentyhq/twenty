@@ -132,6 +132,7 @@ export const connectedAccountStandardFieldIds = {
   refreshToken: '20202020-532d-48bd-80a5-c4be6e7f6e49',
   accountOwner: '20202020-3517-4896-afac-b1d0aa362af6',
   lastSyncHistoryId: '20202020-115c-4a87-b50f-ac4367a971b9',
+  authFailedAt: '20202020-d268-4c6b-baff-400d402b430a',
   messageChannels: '20202020-24f7-4362-8468-042204d1e445',
   calendarChannels: '20202020-af4a-47bb-99ec-51911c1d3977',
 };
