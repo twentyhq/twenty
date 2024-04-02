@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
 
-import { SettingsObjectFieldCurrencyFormValues } from '@/settings/data-model/components/SettingsObjectFieldCurrencyForm';
 import {
   SettingsDataModelFieldPreview,
   SettingsDataModelFieldPreviewProps,
@@ -12,7 +11,6 @@ import { CardContent } from '@/ui/layout/card/components/CardContent';
 export type SettingsDataModelFieldPreviewCardProps =
   SettingsDataModelFieldPreviewProps & {
     className?: string;
-    values?: SettingsObjectFieldCurrencyFormValues;
   };
 
 const StyledCard = styled(Card)`
@@ -33,7 +31,6 @@ export const SettingsDataModelFieldPreviewCard = ({
   selectOptions,
   shrink,
   withFieldLabel = true,
-  values,
 }: SettingsDataModelFieldPreviewCardProps) => (
   <StyledCard className={className} fullWidth>
     <StyledCardContent>
@@ -45,7 +42,6 @@ export const SettingsDataModelFieldPreviewCard = ({
         selectOptions={selectOptions}
         shrink={shrink}
         withFieldLabel={withFieldLabel}
-        values={values}
       />
     </StyledCardContent>
   </StyledCard>

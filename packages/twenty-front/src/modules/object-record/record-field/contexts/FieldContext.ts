@@ -1,7 +1,5 @@
 import { createContext } from 'react';
 
-import { SettingsObjectFieldCurrencyFormValues } from '@/settings/data-model/components/SettingsObjectFieldCurrencyForm';
-
 import { FieldDefinition } from '../types/FieldDefinition';
 import { FieldMetadata } from '../types/FieldMetadata';
 
@@ -31,8 +29,6 @@ export type GenericFieldContextType = {
   basePathToShowPage?: string;
   clearable?: boolean;
   maxWidth?: number;
-  showCurrencySymbol?: boolean;
-  currencyValues?: SettingsObjectFieldCurrencyFormValues;
 };
 
 export const FieldContext = createContext<GenericFieldContextType>(

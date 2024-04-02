@@ -7,7 +7,6 @@ import { FieldDisplay } from '@/object-record/record-field/components/FieldDispl
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { BooleanFieldInput } from '@/object-record/record-field/meta-types/input/components/BooleanFieldInput';
 import { RatingFieldInput } from '@/object-record/record-field/meta-types/input/components/RatingFieldInput';
-import { SettingsObjectFieldCurrencyFormValues } from '@/settings/data-model/components/SettingsObjectFieldCurrencyForm';
 import { SettingsObjectFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
 import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetFieldValueEffect';
 import { SettingsDataModelSetRecordEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetRecordEffect';
@@ -25,7 +24,6 @@ export type SettingsDataModelFieldPreviewProps = {
   selectOptions?: SettingsObjectFieldSelectFormValues;
   shrink?: boolean;
   withFieldLabel?: boolean;
-  values?: SettingsObjectFieldCurrencyFormValues;
 };
 
 const StyledFieldPreview = styled.div<{ shrink?: boolean }>`
@@ -57,7 +55,6 @@ export const SettingsDataModelFieldPreview = ({
   selectOptions,
   shrink,
   withFieldLabel = true,
-  values,
 }: SettingsDataModelFieldPreviewProps) => {
   const theme = useTheme();
 
@@ -111,8 +108,6 @@ export const SettingsDataModelFieldPreview = ({
               },
             },
             hotkeyScope: 'field-preview',
-            showCurrencySymbol: true,
-            currencyValues: values,
           }}
         >
           {fieldMetadataItem.type === FieldMetadataType.Boolean ? (

@@ -1,15 +1,15 @@
-import { useContext } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
+import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
+import { formatAmount } from '~/utils/format/formatAmount';
+import { isDefined } from '~/utils/isDefined';
 
 import { EllipsisDisplay } from './EllipsisDisplay';
 
 type CurrencyDisplayProps = {
-  amount?: number | null;
+  currencyValue: FieldCurrencyValue | null | undefined;
 };
 
 const StyledEllipsisDisplay = styled(EllipsisDisplay)`
@@ -17,29 +17,35 @@ const StyledEllipsisDisplay = styled(EllipsisDisplay)`
   display: flex;
 `;
 
-export const CurrencyDisplay = ({ amount }: CurrencyDisplayProps) => {
-  const { showCurrencySymbol, currencyValues } = useContext(FieldContext);
-
+export const CurrencyDisplay = ({ currencyValue }: CurrencyDisplayProps) => {
   const theme = useTheme();
 
-  const currencyCode = currencyValues?.currencyCode || CurrencyCode.USD;
+  const shouldDisplayCurrency = isDefined(currencyValue?.currencyCode);
 
-  const currencyInfo = SETTINGS_FIELD_CURRENCY_CODES[currencyCode];
+  const CurrencyIcon = isDefined(currencyValue?.currencyCode)
+    ? SETTINGS_FIELD_CURRENCY_CODES[currencyValue?.currencyCode]?.Icon
+    : null;
 
-  const { Icon } = currencyInfo;
+  const amountToDisplay = isDefined(currencyValue?.amountMicros)
+    ? currencyValue.amountMicros / 1000000
+    : 0;
+
+  if (!shouldDisplayCurrency) {
+    return <StyledEllipsisDisplay>{0}</StyledEllipsisDisplay>;
+  }
 
   return (
     <StyledEllipsisDisplay>
-      {showCurrencySymbol && (
+      {isDefined(CurrencyIcon) && (
         <>
-          <Icon
+          <CurrencyIcon
             color={theme.font.color.primary}
             size={theme.icon.size.md}
             stroke={theme.icon.stroke.sm}
           />{' '}
         </>
       )}
-      {amount}
+      {amountToDisplay !== 0 ? formatAmount(amountToDisplay) : ''}
     </StyledEllipsisDisplay>
   );
 };
