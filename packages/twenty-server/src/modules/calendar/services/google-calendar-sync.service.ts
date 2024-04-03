@@ -19,7 +19,7 @@ import { MessageQueueService } from 'src/engine/integrations/message-queue/servi
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { CalendarEventRepository } from 'src/modules/calendar/repositories/calendar-event.repository';
 import { formatGoogleCalendarEvent } from 'src/modules/calendar/utils/format-google-calendar-event.util';
-import { GoogleCalendarFullSyncJobData } from 'src/modules/calendar/jobs/google-calendar-full-sync.job';
+import { GoogleCalendarSyncJobData } from 'src/modules/calendar/jobs/google-calendar-full-sync.job';
 import { CalendarEventAttendeeRepository } from 'src/modules/calendar/repositories/calendar-event-attendee.repository';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
@@ -59,7 +59,7 @@ export class GoogleCalendarSyncService {
     private readonly calendarEventAttendeesService: CalendarEventAttendeeService,
   ) {}
 
-  public async startGoogleCalendarFullSync(
+  public async startGoogleCalendarSync(
     workspaceId: string,
     connectedAccountId: string,
     pageToken?: string,
@@ -348,7 +348,7 @@ export class GoogleCalendarSyncService {
     );
 
     if (nextPageToken) {
-      await this.messageQueueService.add<GoogleCalendarFullSyncJobData>(
+      await this.messageQueueService.add<GoogleCalendarSyncJobData>(
         GoogleCalendarSyncService.name,
         {
           workspaceId,

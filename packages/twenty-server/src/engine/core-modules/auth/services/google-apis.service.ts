@@ -14,8 +14,8 @@ import {
   GmailFullSyncJobData,
 } from 'src/modules/messaging/jobs/gmail-full-sync.job';
 import {
-  GoogleCalendarFullSyncJob,
-  GoogleCalendarFullSyncJobData,
+  GoogleCalendarSyncJob,
+  GoogleCalendarSyncJobData,
 } from 'src/modules/calendar/jobs/google-calendar-full-sync.job';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import {
@@ -139,10 +139,7 @@ export class GoogleAPIsService {
       this.environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED') &&
       IsCalendarEnabled
     ) {
-      await this.enqueueGoogleCalendarFullSyncJob(
-        workspaceId,
-        connectedAccountId,
-      );
+      await this.enqueueGoogleCalendarSyncJob(workspaceId, connectedAccountId);
     }
 
     return;
@@ -174,10 +171,7 @@ export class GoogleAPIsService {
     }
 
     if (this.environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED')) {
-      await this.enqueueGoogleCalendarFullSyncJob(
-        workspaceId,
-        connectedAccountId,
-      );
+      await this.enqueueGoogleCalendarSyncJob(workspaceId, connectedAccountId);
     }
 
     return;
@@ -215,12 +209,12 @@ export class GoogleAPIsService {
     }
   }
 
-  async enqueueGoogleCalendarFullSyncJob(
+  async enqueueGoogleCalendarSyncJob(
     workspaceId: string,
     connectedAccountId: string,
   ) {
-    await this.calendarQueueService.add<GoogleCalendarFullSyncJobData>(
-      GoogleCalendarFullSyncJob.name,
+    await this.calendarQueueService.add<GoogleCalendarSyncJobData>(
+      GoogleCalendarSyncJob.name,
       {
         workspaceId,
         connectedAccountId,
