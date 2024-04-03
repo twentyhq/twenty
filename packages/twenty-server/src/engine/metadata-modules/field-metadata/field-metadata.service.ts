@@ -398,7 +398,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         throw new NotFoundException('Object does not exist');
       }
 
-      await this.fieldMetadataRepository.delete(fieldMetadata.id);
+      await fieldMetadataRepository.delete(fieldMetadata.id);
 
       await this.workspaceMigrationService.createCustomMigration(
         generateMigrationName(`delete-${fieldMetadata.name}`),
