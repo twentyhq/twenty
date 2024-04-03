@@ -356,6 +356,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       createdObjectMetadata,
     );
 
+    const dataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        createdObjectMetadata.workspaceId,
+      );
+
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+
     await this.workspaceMigrationService.createCustomMigration(
       generateMigrationName(`create-${createdObjectMetadata.nameSingular}`),
       createdObjectMetadata.workspaceId,
@@ -367,27 +375,21 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             eventObjectMetadata,
             favoriteObjectMetadata,
           )
-        : buildWorkspaceMigrationsForRemoteObject(
+        : await buildWorkspaceMigrationsForRemoteObject(
             createdObjectMetadata,
             activityTargetObjectMetadata,
             attachmentObjectMetadata,
             eventObjectMetadata,
             favoriteObjectMetadata,
             lastDataSourceMetadata.schema,
+            objectMetadataInput.remoteTableIdColumnType ?? 'uuid',
+            workspaceDataSource,
           ),
     );
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
       createdObjectMetadata.workspaceId,
     );
-
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        createdObjectMetadata.workspaceId,
-      );
-
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
     const view = await workspaceDataSource?.query(
       `INSERT INTO ${dataSourceMetadata.schema}."view"

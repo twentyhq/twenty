@@ -1,3 +1,5 @@
+import { DataSource } from 'typeorm';
+
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   WorkspaceMigrationTableAction,
@@ -7,21 +9,60 @@ import {
 import { computeCustomName } from 'src/engine/utils/compute-custom-name.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
-const buildCommentForRemoteObjectForeignKey = (
+const buildCommentForRemoteObjectForeignKey = async (
   localObjectMetadataName: string,
   remoteObjectMetadataName: string,
   schema: string,
-): string =>
-  `@graphql({"totalCount":{"enabled": true},"foreign_keys":[{"local_name":"${localObjectMetadataName}Collection","local_columns":["${remoteObjectMetadataName}Id"],"foreign_name":"${remoteObjectMetadataName}","foreign_schema":"${schema}","foreign_table":"${remoteObjectMetadataName}","foreign_columns":["id"]}]})`;
+  workspaceDataSource: DataSource | undefined,
+): Promise<string> => {
+  const existingComment = await workspaceDataSource?.query(
+    `SELECT col_description('${schema}."${localObjectMetadataName}"'::regclass, 0)`,
+  );
 
-export const buildWorkspaceMigrationsForRemoteObject = (
+  if (!existingComment[0]?.col_description) {
+    return `@graphql({"totalCount":{"enabled": true},"foreign_keys":[{"local_name":"${localObjectMetadataName}Collection","local_columns":["${remoteObjectMetadataName}Id"],"foreign_name":"${remoteObjectMetadataName}","foreign_schema":"${schema}","foreign_table":"${remoteObjectMetadataName}","foreign_columns":["id"]}]})`;
+  }
+
+  const commentWithoutGraphQL = existingComment[0].col_description
+    .replace('@graphql(', '')
+    .replace(')', '');
+  const parsedComment = JSON.parse(commentWithoutGraphQL);
+
+  if (parsedComment.foreign_keys) {
+    parsedComment.foreign_keys.push({
+      local_name: `${localObjectMetadataName}Collection`,
+      local_columns: [`${remoteObjectMetadataName}Id`],
+      foreign_name: `${remoteObjectMetadataName}`,
+      foreign_schema: schema,
+      foreign_table: remoteObjectMetadataName,
+      foreign_columns: ['id'],
+    });
+  } else {
+    parsedComment.foreign_keys = [
+      {
+        local_name: `${localObjectMetadataName}Collection`,
+        local_columns: [`${remoteObjectMetadataName}Id`],
+        foreign_name: `${remoteObjectMetadataName}`,
+        foreign_schema: schema,
+        foreign_table: remoteObjectMetadataName,
+        foreign_columns: ['id'],
+      },
+    ];
+  }
+
+  return `@graphql(${JSON.stringify(parsedComment)})`;
+};
+
+export const buildWorkspaceMigrationsForRemoteObject = async (
   createdObjectMetadata: ObjectMetadataEntity,
   activityTargetObjectMetadata: ObjectMetadataEntity,
   attachmentObjectMetadata: ObjectMetadataEntity,
   eventObjectMetadata: ObjectMetadataEntity,
   favoriteObjectMetadata: ObjectMetadataEntity,
   schema: string,
-): WorkspaceMigrationTableAction[] => {
+  remoteTableIdColumnType: string,
+  workspaceDataSource: DataSource | undefined,
+): Promise<WorkspaceMigrationTableAction[]> => {
   const createdObjectName = createdObjectMetadata.nameSingular;
 
   return [
@@ -35,7 +76,7 @@ export const buildWorkspaceMigrationsForRemoteObject = (
             createdObjectMetadata.nameSingular,
             false,
           )}Id`,
-          columnType: 'uuid',
+          columnType: remoteTableIdColumnType,
           isNullable: true,
         } satisfies WorkspaceMigrationColumnCreate,
       ],
@@ -50,7 +91,7 @@ export const buildWorkspaceMigrationsForRemoteObject = (
             createdObjectMetadata.nameSingular,
             false,
           )}Id`,
-          columnType: 'uuid',
+          columnType: remoteTableIdColumnType,
         },
       ],
     },
@@ -60,10 +101,11 @@ export const buildWorkspaceMigrationsForRemoteObject = (
       columns: [
         {
           action: WorkspaceMigrationColumnActionType.CREATE_COMMENT,
-          comment: buildCommentForRemoteObjectForeignKey(
+          comment: await buildCommentForRemoteObjectForeignKey(
             activityTargetObjectMetadata.nameSingular,
             createdObjectName,
             schema,
+            workspaceDataSource,
           ),
         },
       ],
@@ -79,7 +121,7 @@ export const buildWorkspaceMigrationsForRemoteObject = (
             createdObjectMetadata.nameSingular,
             false,
           )}Id`,
-          columnType: 'uuid',
+          columnType: remoteTableIdColumnType,
           isNullable: true,
         } satisfies WorkspaceMigrationColumnCreate,
       ],
@@ -94,7 +136,7 @@ export const buildWorkspaceMigrationsForRemoteObject = (
             createdObjectMetadata.nameSingular,
             false,
           )}Id`,
-          columnType: 'uuid',
+          columnType: remoteTableIdColumnType,
         },
       ],
     },
@@ -104,10 +146,11 @@ export const buildWorkspaceMigrationsForRemoteObject = (
       columns: [
         {
           action: WorkspaceMigrationColumnActionType.CREATE_COMMENT,
-          comment: buildCommentForRemoteObjectForeignKey(
+          comment: await buildCommentForRemoteObjectForeignKey(
             attachmentObjectMetadata.nameSingular,
             createdObjectName,
             schema,
+            workspaceDataSource,
           ),
         },
       ],
@@ -123,7 +166,7 @@ export const buildWorkspaceMigrationsForRemoteObject = (
             createdObjectMetadata.nameSingular,
             false,
           )}Id`,
-          columnType: 'uuid',
+          columnType: remoteTableIdColumnType,
           isNullable: true,
         } satisfies WorkspaceMigrationColumnCreate,
       ],
@@ -138,7 +181,7 @@ export const buildWorkspaceMigrationsForRemoteObject = (
             createdObjectMetadata.nameSingular,
             false,
           )}Id`,
-          columnType: 'uuid',
+          columnType: remoteTableIdColumnType,
         },
       ],
     },
@@ -148,10 +191,11 @@ export const buildWorkspaceMigrationsForRemoteObject = (
       columns: [
         {
           action: WorkspaceMigrationColumnActionType.CREATE_COMMENT,
-          comment: buildCommentForRemoteObjectForeignKey(
+          comment: await buildCommentForRemoteObjectForeignKey(
             eventObjectMetadata.nameSingular,
             createdObjectName,
             schema,
+            workspaceDataSource,
           ),
         },
       ],
@@ -167,7 +211,7 @@ export const buildWorkspaceMigrationsForRemoteObject = (
             createdObjectMetadata.nameSingular,
             false,
           )}Id`,
-          columnType: 'uuid',
+          columnType: remoteTableIdColumnType,
           isNullable: true,
         } satisfies WorkspaceMigrationColumnCreate,
       ],
@@ -182,7 +226,7 @@ export const buildWorkspaceMigrationsForRemoteObject = (
             createdObjectMetadata.nameSingular,
             false,
           )}Id`,
-          columnType: 'uuid',
+          columnType: remoteTableIdColumnType,
         },
       ],
     },
@@ -192,10 +236,11 @@ export const buildWorkspaceMigrationsForRemoteObject = (
       columns: [
         {
           action: WorkspaceMigrationColumnActionType.CREATE_COMMENT,
-          comment: buildCommentForRemoteObjectForeignKey(
+          comment: await buildCommentForRemoteObjectForeignKey(
             favoriteObjectMetadata.nameSingular,
             createdObjectName,
             schema,
+            workspaceDataSource,
           ),
         },
       ],
