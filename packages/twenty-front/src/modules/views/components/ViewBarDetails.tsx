@@ -4,7 +4,6 @@ import { useRecoilValue } from 'recoil';
 
 import { AddObjectFilterFromDetailsButton } from '@/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
-import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
 import { EditableSortChip } from '@/views/components/EditableSortChip';
@@ -161,7 +160,7 @@ export const ViewBarDetails = ({
                 <EditableFilterDropdownButton
                   viewFilter={viewFilter}
                   hotkeyScope={{
-                    scope: FiltersHotkeyScope.ObjectFilterDropdownButton,
+                    scope: viewFilter.fieldMetadataId,
                   }}
                   viewFilterDropdownId={viewFilter.fieldMetadataId}
                 />
