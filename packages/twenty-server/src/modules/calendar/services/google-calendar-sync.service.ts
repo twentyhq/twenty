@@ -62,6 +62,7 @@ export class GoogleCalendarSyncService {
   public async startGoogleCalendarSync(
     workspaceId: string,
     connectedAccountId: string,
+    syncToken?: string,
     pageToken?: string,
   ): Promise<void> {
     const connectedAccount = await this.connectedAccountRepository.getById(
@@ -168,8 +169,6 @@ export class GoogleCalendarSyncService {
       }ms.`,
     );
 
-    // TODO: In V2, we will also import deleted events by doing batch GET queries on the canceled events
-    // The canceled events start and end are not accessible in the list query
     const formattedEvents = events
       .filter((event) => event.status !== 'cancelled')
       .map((event) => formatGoogleCalendarEvent(event));
