@@ -1,6 +1,8 @@
-import { ApolloClient, useMutation } from '@apollo/client';
+import { ApolloClient, useApolloClient, useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
   CreateObjectInput,
   CreateOneObjectMetadataItemMutation,
@@ -14,6 +16,10 @@ import { useApolloMetadataClient } from './useApolloMetadataClient';
 
 export const useCreateOneObjectMetadataItem = () => {
   const apolloMetadataClient = useApolloMetadataClient();
+  const apolloClient = useApolloClient();
+  const { findManyRecordsQuery } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.View,
+  });
 
   const [mutate] = useMutation<
     CreateOneObjectMetadataItemMutation,
@@ -23,16 +29,20 @@ export const useCreateOneObjectMetadataItem = () => {
   });
 
   const createOneObjectMetadataItem = async (input: CreateObjectInput) => {
-    return await mutate({
+    const createdObjectMetadata = await mutate({
       variables: {
         input: { object: input },
       },
       awaitRefetchQueries: true,
-      refetchQueries: [
-        getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? '',
-        'FindManyRecordsMultipleMetadataItems',
-      ],
+      refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
     });
+
+    await apolloClient.query({
+      query: findManyRecordsQuery,
+      fetchPolicy: 'network-only',
+    });
+
+    return createdObjectMetadata;
   };
 
   return {

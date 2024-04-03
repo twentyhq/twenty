@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
+import { IconSearch } from 'twenty-ui';
 
-import { IconSearch } from '@/ui/display/icon';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';

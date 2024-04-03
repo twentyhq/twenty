@@ -1,3 +1,4 @@
+import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
 import { availableTableColumnsComponentState } from '@/object-record/record-table/states/availableTableColumnsComponentState';
@@ -48,7 +49,6 @@ export const useRecordTableStates = (recordTableId?: string) => {
       tableColumnsComponentState,
       scopeId,
     ),
-
     onColumnsChangeState: extractComponentState(
       onColumnsChangeComponentState,
       scopeId,
@@ -96,6 +96,10 @@ export const useRecordTableStates = (recordTableId?: string) => {
     ),
     isRowSelectedFamilyState: extractComponentFamilyState(
       isRowSelectedComponentFamilyState,
+      scopeId,
+    ),
+    hasUserSelectedAllRowState: extractComponentState(
+      hasUserSelectedAllRowsComponentState,
       scopeId,
     ),
     allRowsSelectedStatusSelector: extractComponentReadOnlySelector(

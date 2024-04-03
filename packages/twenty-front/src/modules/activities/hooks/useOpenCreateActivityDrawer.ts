@@ -51,7 +51,7 @@ export const useOpenCreateActivityDrawer = () => {
   }) => {
     const { createdActivityInCache } = createActivityInCache({
       type,
-      targetableObjects,
+      targetObject: targetableObjects[0],
       customAssignee,
     });
 

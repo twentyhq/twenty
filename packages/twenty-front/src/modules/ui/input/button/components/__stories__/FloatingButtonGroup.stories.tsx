@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { IconCheckbox, IconNotes, IconTimelineEvent } from 'twenty-ui';
 
-import { IconCheckbox, IconNotes, IconTimelineEvent } from '@/ui/display/icon';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { CatalogStory } from '~/testing/types';

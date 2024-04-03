@@ -216,7 +216,7 @@ export class WorkspaceQueryRunnerService {
     args: CreateManyResolverArgs<Record>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
-    const { workspaceId, objectMetadataItem } = options;
+    const { workspaceId, userId, objectMetadataItem } = options;
     const computedArgs = await this.queryRunnerArgsFactory.create(
       args,
       options,
@@ -246,6 +246,7 @@ export class WorkspaceQueryRunnerService {
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.created`, {
         workspaceId,
+        userId,
         recordId: record.id,
         objectMetadata: objectMetadataItem,
         details: {
@@ -270,7 +271,7 @@ export class WorkspaceQueryRunnerService {
     args: UpdateOneResolverArgs<Record>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
-    const { workspaceId, objectMetadataItem } = options;
+    const { workspaceId, userId, objectMetadataItem } = options;
 
     const existingRecord = await this.findOne(
       { filter: { id: { eq: args.id } } } as FindOneResolverArgs,
@@ -300,6 +301,7 @@ export class WorkspaceQueryRunnerService {
 
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.updated`, {
       workspaceId,
+      userId,
       recordId: (existingRecord as Record).id,
       objectMetadata: objectMetadataItem,
       details: {
@@ -356,7 +358,7 @@ export class WorkspaceQueryRunnerService {
     args: DeleteManyResolverArgs<Filter>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
-    const { workspaceId, objectMetadataItem } = options;
+    const { workspaceId, userId, objectMetadataItem } = options;
     const maximumRecordAffected = this.environmentService.get(
       'MUTATION_MAXIMUM_RECORD_AFFECTED',
     );
@@ -384,6 +386,7 @@ export class WorkspaceQueryRunnerService {
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
         workspaceId,
+        userId,
         recordId: record.id,
         objectMetadata: objectMetadataItem,
         details: {
@@ -399,11 +402,20 @@ export class WorkspaceQueryRunnerService {
     args: DeleteOneResolverArgs,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
-    const { workspaceId, objectMetadataItem } = options;
+    const { workspaceId, userId, objectMetadataItem } = options;
     const query = await this.workspaceQueryBuilderFactory.deleteOne(
       args,
       options,
     );
+
+    // TODO START: remove this awful patch and use our upcoming custom ORM is developed
+    const deletedWorkspaceMember = await this.handleDeleteWorkspaceMember(
+      args.id,
+      workspaceId,
+      objectMetadataItem,
+    );
+    // TODO END
+
     const result = await this.execute(query, workspaceId);
 
     const parsedResults = (
@@ -422,10 +434,14 @@ export class WorkspaceQueryRunnerService {
 
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
       workspaceId,
+      userId,
       recordId: args.id,
       objectMetadata: objectMetadataItem,
       details: {
-        before: this.removeNestedProperties(parsedResults?.[0]),
+        before: {
+          ...(deletedWorkspaceMember ?? {}),
+          ...this.removeNestedProperties(parsedResults?.[0]),
+        },
       },
     } satisfies ObjectRecordDeleteEvent<any>);
 
@@ -550,5 +566,34 @@ export class WorkspaceQueryRunnerService {
         { retryLimit: 3 },
       );
     });
+  }
+
+  async handleDeleteWorkspaceMember(
+    id: string,
+    workspaceId: string,
+    objectMetadataItem: ObjectMetadataInterface,
+  ) {
+    if (objectMetadataItem.nameSingular !== 'workspaceMember') {
+      return;
+    }
+
+    const workspaceMemberResult = await this.executeAndParse<IRecord>(
+      `
+      query {
+        workspaceMemberCollection(filter: {id: {eq: "${id}"}}) {
+          edges {
+            node {
+              userId: userId
+            }
+          }
+        }
+      }
+      `,
+      objectMetadataItem,
+      '',
+      workspaceId,
+    );
+
+    return workspaceMemberResult.edges?.[0]?.node;
   }
 }

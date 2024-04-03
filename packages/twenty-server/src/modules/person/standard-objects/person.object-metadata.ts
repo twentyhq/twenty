@@ -233,9 +233,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  @Gate({
-    featureFlag: 'IS_EVENT_OBJECT_ENABLED',
-  })
   @IsSystem()
   events: EventObjectMetadata[];
 }

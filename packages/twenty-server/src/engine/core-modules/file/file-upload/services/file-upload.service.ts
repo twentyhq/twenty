@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import sharp from 'sharp';
 import { v4 as uuidV4 } from 'uuid';
+import { JSDOM } from 'jsdom';
+import DOMPurify from 'dompurify';
 
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
@@ -32,6 +34,25 @@ export class FileUploadService {
     });
   }
 
+  private _sanitizeFile({
+    file,
+    ext,
+    mimeType,
+  }: {
+    file: Buffer | Uint8Array | string;
+    ext: string;
+    mimeType: string | undefined;
+  }): Buffer | Uint8Array | string {
+    if (ext === 'svg' || mimeType === 'image/svg+xml') {
+      const window = new JSDOM('').window;
+      const purify = DOMPurify(window);
+
+      return purify.sanitize(file.toString());
+    }
+
+    return file;
+  }
+
   async uploadFile({
     file,
     filename,
@@ -48,7 +69,7 @@ export class FileUploadService {
     const name = `${id}${ext ? `.${ext}` : ''}`;
 
     await this._uploadFile({
-      file,
+      file: this._sanitizeFile({ file, ext, mimeType }),
       filename: name,
       mimeType,
       fileFolder,

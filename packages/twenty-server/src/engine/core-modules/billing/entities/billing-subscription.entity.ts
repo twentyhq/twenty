@@ -23,13 +23,13 @@ export class BillingSubscription {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'timestamptz' })
   deletedAt?: Date;
 
-  @CreateDateColumn({ type: 'timestamp with time zone' })
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn({ type: 'timestamp with time zone' })
+  @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
   @ManyToOne(() => Workspace, (workspace) => workspace.billingSubscriptions, {
@@ -50,6 +50,10 @@ export class BillingSubscription {
   @Field()
   @Column({ nullable: false })
   status: Stripe.Subscription.Status;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  interval: Stripe.Price.Recurring.Interval;
 
   @OneToMany(
     () => BillingSubscriptionItem,

@@ -7,6 +7,7 @@ import {
   FieldSelectMetadata,
   FieldTextMetadata,
 } from '@/object-record/record-field/types/FieldMetadata';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import {
   mockedCompaniesMetadata,
   mockedCustomMetadata,
@@ -34,7 +35,7 @@ export const textfieldDefinition: FieldDefinition<FieldTextMetadata> = {
   fieldMetadataId,
   label: 'User Name',
   iconName: 'User',
-  type: 'TEXT',
+  type: FieldMetadataType.Text,
   metadata: { placeHolder: 'John Doe', fieldName: 'userName' },
 };
 
@@ -52,7 +53,7 @@ export const selectFieldDefinition: FieldDefinition<FieldSelectMetadata> = {
   fieldMetadataId,
   label: 'Account Owner',
   iconName: 'iconName',
-  type: 'SELECT',
+  type: FieldMetadataType.Select,
   metadata: {
     fieldName: 'accountOwner',
     options: [{ label: 'Elon Musk', color: 'blue', value: 'userId' }],
@@ -63,7 +64,7 @@ export const fullNameFieldDefinition: FieldDefinition<FieldFullNameMetadata> = {
   fieldMetadataId,
   label: 'Display Name',
   iconName: 'profile',
-  type: 'FULL_NAME',
+  type: FieldMetadataType.FullName,
   metadata: {
     fieldName: 'displayName',
     placeHolder: 'Mr Miagi',
@@ -74,7 +75,7 @@ export const linkFieldDefinition: FieldDefinition<FieldLinkMetadata> = {
   fieldMetadataId,
   label: 'LinkedIn URL',
   iconName: 'url',
-  type: 'LINK',
+  type: FieldMetadataType.Link,
   metadata: {
     fieldName: 'linkedInURL',
     placeHolder: 'https://linkedin.com/user',
@@ -93,7 +94,7 @@ export const ratingfieldDefinition: FieldDefinition<FieldRatingMetadata> = {
   fieldMetadataId,
   label: 'Rating',
   iconName: 'iconName',
-  type: 'RATING',
+  type: FieldMetadataType.Rating,
   metadata: {
     fieldName: 'rating',
   },

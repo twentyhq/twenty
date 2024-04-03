@@ -1,29 +1,45 @@
-import { SETTINGS_FIELD_METADATA_TYPES } from '@/settings/data-model/constants/SettingsFieldMetadataTypes';
+import omit from 'lodash.omit';
+
+import {
+  SETTINGS_FIELD_TYPE_CONFIGS,
+  SettingsFieldTypeConfig,
+} from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
+import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { Select, SelectOption } from '@/ui/input/components/Select';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsDataModelFieldTypeSelectProps = {
   className?: string;
   disabled?: boolean;
-  excludedFieldTypes?: FieldMetadataType[];
-  onChange?: ({ type }: { type: FieldMetadataType }) => void;
-  value?: FieldMetadataType;
+  excludedFieldTypes?: SettingsSupportedFieldType[];
+  onChange?: ({
+    type,
+    defaultValue,
+  }: {
+    type: SettingsSupportedFieldType;
+    defaultValue: any;
+  }) => void;
+  value?: SettingsSupportedFieldType;
 };
 
 export const SettingsDataModelFieldTypeSelect = ({
   className,
   disabled,
-  excludedFieldTypes,
+  excludedFieldTypes = [],
   onChange,
   value,
 }: SettingsDataModelFieldTypeSelectProps) => {
-  const fieldTypeOptions = Object.entries(SETTINGS_FIELD_METADATA_TYPES)
-    .filter(([key]) => !excludedFieldTypes?.includes(key as FieldMetadataType))
-    .map<SelectOption<FieldMetadataType>>(([key, dataTypeConfig]) => ({
-      Icon: dataTypeConfig.Icon,
-      label: dataTypeConfig.label,
-      value: key as FieldMetadataType,
-    }));
+  const fieldTypeConfigs = omit(
+    SETTINGS_FIELD_TYPE_CONFIGS,
+    excludedFieldTypes,
+  );
+  const fieldTypeOptions = Object.entries<SettingsFieldTypeConfig>(
+    fieldTypeConfigs,
+  ).map<SelectOption<SettingsSupportedFieldType>>(([key, dataTypeConfig]) => ({
+    Icon: dataTypeConfig.Icon,
+    label: dataTypeConfig.label,
+    value: key as SettingsSupportedFieldType,
+  }));
 
   return (
     <Select
@@ -32,7 +48,12 @@ export const SettingsDataModelFieldTypeSelect = ({
       disabled={disabled}
       dropdownId="object-field-type-select"
       value={value}
-      onChange={(value) => onChange?.({ type: value })}
+      onChange={(value) =>
+        onChange?.({
+          type: value,
+          defaultValue: value === FieldMetadataType.Boolean ? false : undefined,
+        })
+      }
       options={fieldTypeOptions}
     />
   );

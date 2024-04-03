@@ -26,8 +26,7 @@ export class EnumColumnActionFactory extends ColumnActionAbstractFactory<EnumFie
     fieldMetadata: FieldMetadataInterface<EnumFieldMetadataType>,
     options: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnCreate {
-    const defaultValue =
-      fieldMetadata.defaultValue?.value ?? options?.defaultValue;
+    const defaultValue = fieldMetadata.defaultValue ?? options?.defaultValue;
     const serializedDefaultValue = serializeDefaultValue(defaultValue);
     const enumOptions = fieldMetadata.options
       ? [...fieldMetadata.options.map((option) => option.value)]
@@ -50,7 +49,7 @@ export class EnumColumnActionFactory extends ColumnActionAbstractFactory<EnumFie
     options: WorkspaceColumnActionOptions,
   ): WorkspaceMigrationColumnAlter {
     const defaultValue =
-      alteredFieldMetadata.defaultValue?.value ?? options?.defaultValue;
+      alteredFieldMetadata.defaultValue ?? options?.defaultValue;
     const serializedDefaultValue = serializeDefaultValue(defaultValue);
 
     const enumOptions = alteredFieldMetadata.options
@@ -94,9 +93,7 @@ export class EnumColumnActionFactory extends ColumnActionAbstractFactory<EnumFie
           : undefined,
         isArray: currentFieldMetadata.type === FieldMetadataType.MULTI_SELECT,
         isNullable: currentFieldMetadata.isNullable,
-        defaultValue: serializeDefaultValue(
-          currentFieldMetadata.defaultValue?.value,
-        ),
+        defaultValue: serializeDefaultValue(currentFieldMetadata.defaultValue),
       },
       alteredColumnDefinition: {
         columnName: alteredColumnName,

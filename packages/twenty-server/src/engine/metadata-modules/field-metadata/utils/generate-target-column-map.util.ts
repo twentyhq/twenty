@@ -35,7 +35,7 @@ export function generateTargetColumnMap(
     case FieldMetadataType.SELECT:
     case FieldMetadataType.MULTI_SELECT:
     case FieldMetadataType.POSITION:
-    case FieldMetadataType.JSON:
+    case FieldMetadataType.RAW_JSON:
       return {
         value: columnName,
       };
@@ -53,6 +53,17 @@ export function generateTargetColumnMap(
       return {
         firstName: `${columnName}FirstName`,
         lastName: `${columnName}LastName`,
+      };
+    case FieldMetadataType.ADDRESS:
+      return {
+        addressStreet1: `${columnName}AddressStreet1`,
+        addressStreet2: `${columnName}AddressStreet2`,
+        addressCity: `${columnName}AddressCity`,
+        addressPostcode: `${columnName}AddressPostcode`,
+        addressState: `${columnName}AddressState`,
+        addressCountry: `${columnName}AddressCountry`,
+        addressLat: `${columnName}AddressLat`,
+        addressLng: `${columnName}AddressLng`,
       };
     case FieldMetadataType.RELATION:
       return {};

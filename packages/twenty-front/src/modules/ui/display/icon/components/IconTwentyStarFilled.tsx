@@ -1,4 +1,4 @@
-import { TablerIconsProps } from '@/ui/display/icon';
+import { TablerIconsProps } from 'twenty-ui';
 
 import IconTwentyStarFilledRaw from '../assets/twenty-star-filled.svg?react';
 

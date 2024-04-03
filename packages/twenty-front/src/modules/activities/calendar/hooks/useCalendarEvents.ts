@@ -8,7 +8,14 @@ import { groupArrayItemsBy } from '~/utils/array/groupArrayItemsBy';
 import { isDefined } from '~/utils/isDefined';
 import { sortDesc } from '~/utils/sort';
 
-export const useCalendarEvents = (calendarEvents: CalendarEvent[]) => {
+type CalendarEventGeneric = Omit<
+  CalendarEvent,
+  'attendees' | 'externalCreatedAt'
+>;
+
+export const useCalendarEvents = <T extends CalendarEventGeneric>(
+  calendarEvents: T[],
+) => {
   const calendarEventsByDayTime = groupArrayItemsBy(
     calendarEvents,
     (calendarEvent) =>
@@ -29,14 +36,14 @@ export const useCalendarEvents = (calendarEvents: CalendarEvent[]) => {
 
   const monthTimesByYear = groupArrayItemsBy(sortedMonthTimes, getYear);
 
-  const getPreviousCalendarEvent = (calendarEvent: CalendarEvent) => {
+  const getPreviousCalendarEvent = (calendarEvent: T) => {
     const calendarEventIndex = calendarEvents.indexOf(calendarEvent);
     return calendarEventIndex < calendarEvents.length - 1
       ? calendarEvents[calendarEventIndex + 1]
       : undefined;
   };
 
-  const getNextCalendarEvent = (calendarEvent: CalendarEvent) => {
+  const getNextCalendarEvent = (calendarEvent: T) => {
     const calendarEventIndex = calendarEvents.indexOf(calendarEvent);
     return calendarEventIndex > 0
       ? calendarEvents[calendarEventIndex - 1]

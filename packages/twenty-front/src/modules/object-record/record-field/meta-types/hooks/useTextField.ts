@@ -4,6 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { FieldTextValue } from '@/object-record/record-field/types/FieldMetadata';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '../../contexts/FieldContext';
 import { assertFieldMetadata } from '../../types/guards/assertFieldMetadata';
@@ -14,7 +15,7 @@ export const useTextField = () => {
   const { entityId, fieldDefinition, hotkeyScope, maxWidth } =
     useContext(FieldContext);
 
-  assertFieldMetadata('TEXT', isFieldText, fieldDefinition);
+  assertFieldMetadata(FieldMetadataType.Text, isFieldText, fieldDefinition);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

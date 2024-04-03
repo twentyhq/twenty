@@ -13,35 +13,31 @@ import DocCardList from '@theme/DocCardList';
 
 ## Useful commands
 
+These commands should be exectued from packages/twenty-server folder.
+From any other folder you can run `yarn nx <command>` twenty-server.
+
 ### First time setup
 
 ```
-yarn prisma:migrate # run migrations
-yarn prisma:generate # generate prisma and nestjs-graphql schemas
-yarn prisma:seed # provision database with seeds
-
-# alternatively, you can run
-yarn prisma:reset # all-in-one command to reset, migrate, seed and generate schemas
+yarn nx database:reset # setup the database with dev seeds
 ```
 
 ###  Starting the app
 
 ```
-nx prisma:migrate twenty-server
-nx prisma:generate twenty-server 
-nx start:dev twenty-server
+yarn nx start
 ```
 
 ### Lint
 
 ```
-nx lint twenty-server
+yarn nx lint
 ```
 
 ### Test
 
 ```
-nx test twenty-server
+yarn nx test:unit
 ```
 
 ### Resetting the database
@@ -49,7 +45,7 @@ nx test twenty-server
 If you want to reset the database, you can run the following command:
 
 ```bash
-nx database:reset twenty-server
+yarn nx database:reset
 ```
 
 :::warning

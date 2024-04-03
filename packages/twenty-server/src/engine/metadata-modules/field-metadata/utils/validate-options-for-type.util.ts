@@ -24,7 +24,7 @@ export const validateOptionsForType = (
   if (options === null) return true;
 
   if (!Array.isArray(options)) {
-    return false;
+    throw new Error('Options must be an array');
   }
 
   if (!isEnumFieldMetadataType(type)) {
@@ -33,6 +33,13 @@ export const validateOptionsForType = (
 
   if (type === FieldMetadataType.RATING) {
     return true;
+  }
+
+  const values = options.map(({ value }) => value);
+
+  // Check if all options are unique
+  if (new Set(values).size !== options.length) {
+    throw new Error('Options must be unique');
   }
 
   const validators = optionsValidatorsMap[type];
