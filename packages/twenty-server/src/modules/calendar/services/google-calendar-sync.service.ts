@@ -90,7 +90,7 @@ export class GoogleCalendarSyncService {
         workspaceId,
       );
 
-    const syncToken = calendarChannel?.syncCursor;
+    const syncToken = calendarChannel?.syncCursor || undefined;
 
     if (!calendarChannel) {
       return;
