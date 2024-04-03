@@ -35,7 +35,7 @@ import { CalendarEventCleanerModule } from 'src/modules/calendar/services/calend
 import { RecordPositionBackfillJob } from 'src/engine/api/graphql/workspace-query-runner/jobs/record-position-backfill.job';
 import { RecordPositionBackfillModule } from 'src/engine/api/graphql/workspace-query-runner/services/record-position-backfill-module';
 import { DeleteConnectedAccountAssociatedCalendarDataJob } from 'src/modules/messaging/jobs/delete-connected-account-associated-calendar-data.job';
-import { GoogleCalendarFullSyncModule } from 'src/modules/calendar/services/google-calendar-full-sync.module';
+import { GoogleCalendarSyncModule } from 'src/modules/calendar/services/google-calendar-sync.module';
 import { GoogleAPIRefreshAccessTokenModule } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.module';
 import { GmailFullSyncModule } from 'src/modules/messaging/services/gmail-full-sync/gmail-full-sync.module';
 import { GmailPartialSyncModule } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync.module';
@@ -63,7 +63,7 @@ import { GmailPartialSyncV2Module } from 'src/modules/messaging/services/gmail-p
     DataSeedDemoWorkspaceModule,
     EnvironmentModule,
     HttpModule,
-    GoogleCalendarFullSyncModule,
+    GoogleCalendarSyncModule,
     ObjectMetadataModule,
     StripeModule,
     ThreadCleanerModule,

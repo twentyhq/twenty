@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
-import { GoogleCalendarFullSyncService } from 'src/modules/calendar/services/google-calendar-full-sync.service';
+import { GoogleCalendarSyncService } from 'src/modules/calendar/services/google-calendar-sync.service';
 
 export type GoogleCalendarFullSyncJobData = {
   workspaceId: string;
@@ -19,7 +19,7 @@ export class GoogleCalendarFullSyncJob
 
   constructor(
     private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
-    private readonly googleCalendarFullSyncService: GoogleCalendarFullSyncService,
+    private readonly googleCalendarFullSyncService: GoogleCalendarSyncService,
   ) {}
 
   async handle(data: GoogleCalendarFullSyncJobData): Promise<void> {

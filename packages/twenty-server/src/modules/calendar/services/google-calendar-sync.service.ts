@@ -31,8 +31,8 @@ import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-
 import { CalendarEventAttendeeService } from 'src/modules/calendar/services/calendar-event-attendee/calendar-event-attendee.service';
 
 @Injectable()
-export class GoogleCalendarFullSyncService {
-  private readonly logger = new Logger(GoogleCalendarFullSyncService.name);
+export class GoogleCalendarSyncService {
+  private readonly logger = new Logger(GoogleCalendarSyncService.name);
 
   constructor(
     private readonly googleCalendarClientProvider: GoogleCalendarClientProvider,
@@ -349,7 +349,7 @@ export class GoogleCalendarFullSyncService {
 
     if (nextPageToken) {
       await this.messageQueueService.add<GoogleCalendarFullSyncJobData>(
-        GoogleCalendarFullSyncService.name,
+        GoogleCalendarSyncService.name,
         {
           workspaceId,
           connectedAccountId,

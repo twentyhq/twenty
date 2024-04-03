@@ -19,11 +19,11 @@ interface GoogleCalendarFullSyncOptions {
 }
 
 @Command({
-  name: 'workspace:google-calendar-full-sync',
+  name: 'workspace:google-calendar-sync',
   description:
-    'Start google calendar full-sync for all workspaceMembers in a workspace.',
+    'Start google calendar sync for all workspaceMembers in a workspace.',
 })
-export class GoogleCalendarFullSyncCommand extends CommandRunner {
+export class GoogleCalendarSyncCommand extends CommandRunner {
   constructor(
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
