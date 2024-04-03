@@ -1,6 +1,3 @@
-import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
-import { DEFAULT_DATE_VALUE } from '@/settings/data-model/constants/DefaultDateValue';
-import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import {
   IconCalendarEvent,
   IconCheck,
@@ -8,13 +5,18 @@ import {
   IconKey,
   IconLink,
   IconMail,
+  IconMap,
   IconNumbers,
   IconPhone,
   IconRelationManyToMany,
   IconTag,
   IconTextSize,
   IconUser,
-} from '@/ui/display/icon';
+} from 'twenty-ui';
+
+import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
+import { DEFAULT_DATE_VALUE } from '@/settings/data-model/constants/DefaultDateValue';
+import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { IconTwentyStar } from '@/ui/display/icon/components/IconTwentyStar';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -100,5 +102,19 @@ export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
     label: 'Full Name',
     Icon: IconUser,
     defaultValue: { firstName: 'John', lastName: 'Doe' },
+  },
+  [FieldMetadataType.Address]: {
+    label: 'Address',
+    Icon: IconMap,
+    defaultValue: {
+      addressStreet1: '456 Oak Street',
+      addressStreet2: 'Unit 3B',
+      addressCity: 'Springfield',
+      addressState: 'California',
+      addressCountry: 'United States',
+      addressPostcode: '90210',
+      addressLat: 34.0522,
+      addressLng: -118.2437,
+    },
   },
 };

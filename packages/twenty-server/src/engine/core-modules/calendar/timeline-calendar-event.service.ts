@@ -214,8 +214,7 @@ export class TimelineCalendarEventService {
         event.description = '';
         event.location = '';
         event.conferenceSolution = '';
-        event.conferenceLink.label = '';
-        event.conferenceLink.url = '';
+        event.conferenceLink = { label: '', url: '' };
       }
     });
 

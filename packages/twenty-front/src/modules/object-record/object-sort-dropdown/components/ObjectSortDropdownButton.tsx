@@ -1,10 +1,10 @@
 import { useCallback, useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { IconChevronDown } from 'twenty-ui';
 
 import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ObjectSortDropdownId';
 import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useSortDropdown';
 import { ObjectSortDropdownScope } from '@/object-record/object-sort-dropdown/scopes/ObjectSortDropdownScope';
-import { IconChevronDown } from '@/ui/display/icon';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { LightButton } from '@/ui/input/button/components/LightButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -38,10 +38,6 @@ export const ObjectSortDropdownButton = ({
     setSelectedSortDirection('asc');
   }, []);
 
-  const { isSortSelectedState } = useSortDropdown({
-    sortDropdownId: sortDropdownId,
-  });
-
   const { toggleDropdown } = useDropdown(OBJECT_SORT_DROPDOWN_ID);
 
   const handleButtonClick = () => {
@@ -49,7 +45,11 @@ export const ObjectSortDropdownButton = ({
     resetState();
   };
 
-  const { availableSortDefinitionsState, onSortSelectState } = useSortDropdown({
+  const {
+    availableSortDefinitionsState,
+    onSortSelectState,
+    isSortSelectedState,
+  } = useSortDropdown({
     sortDropdownId: sortDropdownId,
   });
 

@@ -186,6 +186,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => ConnectedAccountObjectMetadata,
     inverseSideFieldKey: 'accountOwner',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   connectedAccounts: ConnectedAccountObjectMetadata[];
 

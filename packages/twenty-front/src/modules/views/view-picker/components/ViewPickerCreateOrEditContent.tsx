@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
+import { IconChevronLeft, IconLayoutKanban, IconTable, IconX } from 'twenty-ui';
 
-import { IconChevronLeft, IconX } from '@/ui/display/icon';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
@@ -102,11 +102,18 @@ export const ViewPickerCreateOrEditContent = () => {
 
   const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
 
+  const handleClose = async () => {
+    if (viewPickerMode === 'edit') {
+      await handleUpdate();
+    }
+    setViewPickerMode('list');
+  };
+
   return (
     <>
       <DropdownMenuHeader
         StartIcon={viewPickerMode === 'create' ? IconX : IconChevronLeft}
-        onClick={() => setViewPickerMode('list')}
+        onClick={handleClose}
       >
         {viewPickerMode === 'create' ? 'Create view' : 'Edit view'}
       </DropdownMenuHeader>
@@ -134,8 +141,12 @@ export const ViewPickerCreateOrEditContent = () => {
               value={viewPickerType}
               onChange={(value) => setViewPickerType(value)}
               options={[
-                { value: ViewType.Table, label: 'Table' },
-                { value: ViewType.Kanban, label: 'Kanban' },
+                { value: ViewType.Table, label: 'Table', Icon: IconTable },
+                {
+                  value: ViewType.Kanban,
+                  label: 'Kanban',
+                  Icon: IconLayoutKanban,
+                },
               ]}
               dropdownId={VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID}
             />

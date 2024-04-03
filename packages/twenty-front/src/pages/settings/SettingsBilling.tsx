@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+  IconCalendarEvent,
+  IconCircleX,
+  IconCreditCard,
+  IconCurrencyDollar,
+} from 'twenty-ui';
 
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus.ts';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState.ts';
@@ -10,8 +16,6 @@ import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingC
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SupportChat } from '@/support/components/SupportChat';
 import { AppPath } from '@/types/AppPath.ts';
-import { IconCalendarEvent, IconCircleX } from '@/ui/display/icon';
-import { IconCreditCard, IconCurrencyDollar } from '@/ui/display/icon';
 import { Info } from '@/ui/display/info/components/Info';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
 import { H2Title } from '@/ui/display/typography/components/H2Title';

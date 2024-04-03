@@ -1,8 +1,8 @@
 import React from 'react';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconInfoCircle } from 'twenty-ui';
 
-import { IconInfoCircle } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button.tsx';
 
 export type InfoAccent = 'blue' | 'danger';

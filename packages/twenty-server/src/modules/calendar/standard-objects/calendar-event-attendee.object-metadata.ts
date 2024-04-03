@@ -65,6 +65,7 @@ export class CalendarEventAttendeeObjectMetadata extends BaseObjectMetadata {
     label: 'Is Organizer',
     description: 'Is Organizer',
     icon: 'IconUser',
+    defaultValue: false,
   })
   isOrganizer: boolean;
 

@@ -14,8 +14,12 @@ export const useSetRecordTableData = ({
   recordTableId,
   onEntityCountChange,
 }: useSetRecordTableDataProps) => {
-  const { tableRowIdsState, numberOfTableRowsState } =
-    useRecordTableStates(recordTableId);
+  const {
+    tableRowIdsState,
+    numberOfTableRowsState,
+    isRowSelectedFamilyState,
+    hasUserSelectedAllRowState,
+  } = useRecordTableStates(recordTableId);
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
@@ -32,15 +36,32 @@ export const useSetRecordTableData = ({
         }
         const currentRowIds = getSnapshotValue(snapshot, tableRowIdsState);
 
+        const hasUserSelectedAllRows = getSnapshotValue(
+          snapshot,
+          hasUserSelectedAllRowState,
+        );
+
         const entityIds = newEntityArray.map((entity) => entity.id);
 
         if (!isDeeplyEqual(currentRowIds, entityIds)) {
           set(tableRowIdsState, entityIds);
         }
 
+        if (hasUserSelectedAllRows) {
+          for (const rowId of entityIds) {
+            set(isRowSelectedFamilyState(rowId), true);
+          }
+        }
+
         set(numberOfTableRowsState, totalCount);
         onEntityCountChange(totalCount);
       },
-    [numberOfTableRowsState, tableRowIdsState, onEntityCountChange],
+    [
+      numberOfTableRowsState,
+      tableRowIdsState,
+      onEntityCountChange,
+      isRowSelectedFamilyState,
+      hasUserSelectedAllRowState,
+    ],
   );
 };

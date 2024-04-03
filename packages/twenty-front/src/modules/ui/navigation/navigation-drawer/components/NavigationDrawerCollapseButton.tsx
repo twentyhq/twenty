@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
-
 import {
   IconLayoutSidebarLeftCollapse,
   IconLayoutSidebarRightCollapse,
-} from '@/ui/display/icon';
+} from 'twenty-ui';
+
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 

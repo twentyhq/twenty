@@ -11,5 +11,6 @@ export type ConnectedAccount = {
   refreshToken: string;
   accountOwnerId: string;
   lastSyncHistoryId: string;
+  authFailedAt: Date | null;
   messageChannels: MessageChannelConnection;
 };

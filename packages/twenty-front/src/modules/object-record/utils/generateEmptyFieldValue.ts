@@ -2,7 +2,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldMetadataType } from '~/generated/graphql';
-import { capitalize } from '~/utils/string/capitalize';
 
 export const generateEmptyFieldValue = (
   fieldMetadataItem: FieldMetadataItem,
@@ -25,6 +24,18 @@ export const generateEmptyFieldValue = (
         lastName: '',
       };
     }
+    case FieldMetadataType.Address: {
+      return {
+        addressStreet1: '',
+        addressStreet2: '',
+        addressCity: '',
+        addressState: '',
+        addressCountry: '',
+        addressPostcode: '',
+        addressLat: null,
+        addressLng: null,
+      };
+    }
     case FieldMetadataType.DateTime: {
       return null;
     }
@@ -41,8 +52,6 @@ export const generateEmptyFieldValue = (
       return true;
     }
     case FieldMetadataType.Relation: {
-      // TODO: refactor with relationDefiniton once the PR is merged : https://github.com/twentyhq/twenty/pull/4378
-      // so we can directly check the relation type from this field point of view.
       if (
         !isNonEmptyString(
           fieldMetadataItem.fromRelationMetadata?.toObjectMetadata
@@ -52,12 +61,7 @@ export const generateEmptyFieldValue = (
         return null;
       }
 
-      return {
-        __typename: `${capitalize(
-          fieldMetadataItem.fromRelationMetadata.toObjectMetadata.nameSingular,
-        )}Connection`,
-        edges: [],
-      };
+      return [];
     }
     case FieldMetadataType.Currency: {
       return {

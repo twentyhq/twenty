@@ -132,6 +132,7 @@ export const connectedAccountStandardFieldIds = {
   refreshToken: '20202020-532d-48bd-80a5-c4be6e7f6e49',
   accountOwner: '20202020-3517-4896-afac-b1d0aa362af6',
   lastSyncHistoryId: '20202020-115c-4a87-b50f-ac4367a971b9',
+  authFailedAt: '20202020-d268-4c6b-baff-400d402b430a',
   messageChannels: '20202020-24f7-4362-8468-042204d1e445',
   calendarChannels: '20202020-af4a-47bb-99ec-51911c1d3977',
 };
@@ -169,7 +170,7 @@ export const messageChannelStandardFieldIds = {
   type: '20202020-ae95-42d9-a3f1-797a2ea22122',
   isContactAutoCreationEnabled: '20202020-fabd-4f14-b7c6-3310f6d132c6',
   messageChannelMessageAssociations: '20202020-49b8-4766-88fd-75f1e21b3d5f',
-  syncExternalId: '20202020-79d1-41cf-b738-bcf5ed61e256',
+  syncCursor: '20202020-79d1-41cf-b738-bcf5ed61e256',
   syncedAt: '20202020-263d-4c6b-ad51-137ada56f7d4',
   syncStatus: '20202020-56a1-4f7e-9880-a8493bb899cc',
   ongoingSyncStartedAt: '20202020-8c61-4a42-ae63-73c1c3c52e06',
