@@ -1,5 +1,10 @@
 import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
-import { Field, Relation } from '~/generated-metadata/graphql';
+import {
+  Field,
+  Object as MetadataObject,
+  Relation,
+  RelationDefinitionType,
+} from '~/generated-metadata/graphql';
 
 export type FieldMetadataItemOption = {
   color: ThemeColor;
@@ -16,6 +21,7 @@ export type FieldMetadataItem = Omit<
   | 'toRelationMetadata'
   | 'defaultValue'
   | 'options'
+  | 'relationDefinition'
 > & {
   __typename?: string;
   fromRelationMetadata?:
@@ -36,4 +42,17 @@ export type FieldMetadataItem = Omit<
     | null;
   defaultValue?: any;
   options?: FieldMetadataItemOption[];
+  relationDefinition?: {
+    direction: RelationDefinitionType;
+    sourceFieldMetadata: Pick<Field, 'id' | 'name'>;
+    sourceObjectMetadata: Pick<
+      MetadataObject,
+      'id' | 'nameSingular' | 'namePlural'
+    >;
+    targetFieldMetadata: Pick<Field, 'id' | 'name'>;
+    targetObjectMetadata: Pick<
+      MetadataObject,
+      'id' | 'nameSingular' | 'namePlural'
+    >;
+  } | null;
 };

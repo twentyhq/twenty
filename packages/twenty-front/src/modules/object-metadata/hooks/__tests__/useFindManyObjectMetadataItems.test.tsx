@@ -6,7 +6,6 @@ import { RecoilRoot } from 'recoil';
 import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 
-import { TestApolloMetadataClientProvider } from '../__mocks__/ApolloMetadataClientProvider';
 import {
   query,
   responseData,
@@ -30,11 +29,9 @@ const mocks = [
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
     <MockedProvider mocks={mocks} addTypename={false}>
-      <TestApolloMetadataClientProvider>
-        <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-          {children}
-        </SnackBarProviderScope>
-      </TestApolloMetadataClientProvider>
+      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+        {children}
+      </SnackBarProviderScope>
     </MockedProvider>
   </RecoilRoot>
 );

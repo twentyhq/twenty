@@ -1,167 +1,119 @@
 import { ReactNode } from 'react';
-import { MockedProvider, MockedResponse } from '@apollo/client/testing';
-import { act, renderHook, waitFor } from '@testing-library/react';
-import gql from 'graphql-tag';
+import { gql, InMemoryCache } from '@apollo/client';
+import { MockedProvider } from '@apollo/client/testing';
+import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
+import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
-import { mockedActivities } from '~/testing/mock-data/activities';
-import { mockedCompaniesData } from '~/testing/mock-data/companies';
-import { mockedPeopleData } from '~/testing/mock-data/people';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
-
-const defaultResponseData = {
-  pageInfo: {
-    hasNextPage: false,
-    startCursor: '',
-    endCursor: '',
-  },
-  totalCount: 1,
-};
-
-const mockActivityTarget = {
-  __typename: 'ActivityTarget',
-  updatedAt: '2021-08-03T19:20:06.000Z',
-  createdAt: '2021-08-03T19:20:06.000Z',
-  personId: '1',
-  activityId: '234',
-  companyId: '1',
-  id: '123',
-  person: { ...mockedPeopleData[0], __typename: 'Person', updatedAt: '' },
-  company: { ...mockedCompaniesData[0], __typename: 'Company', updatedAt: '' },
-  activity: mockedActivities[0],
-};
-
-const mocks: MockedResponse[] = [
-  {
-    request: {
-      query: gql`
-        query FindManyActivityTargets(
-          $filter: ActivityTargetFilterInput
-          $orderBy: ActivityTargetOrderByInput
-          $lastCursor: String
-          $limit: Float
-        ) {
-          activityTargets(
-            filter: $filter
-            orderBy: $orderBy
-            first: $limit
-            after: $lastCursor
-          ) {
-            edges {
-              node {
-                __typename
-                updatedAt
-                createdAt
-                company {
-                  __typename
-                  xLink {
-                    label
-                    url
-                  }
-                  linkedinLink {
-                    label
-                    url
-                  }
-                  domainName
-                  annualRecurringRevenue {
-                    amountMicros
-                    currencyCode
-                  }
-                  createdAt
-                  address
-                  updatedAt
-                  name
-                  accountOwnerId
-                  employees
-                  id
-                  idealCustomerProfile
-                }
-                personId
-                activityId
-                companyId
-                id
-                activity {
-                  __typename
-                  createdAt
-                  reminderAt
-                  authorId
-                  title
-                  completedAt
-                  updatedAt
-                  body
-                  dueAt
-                  type
-                  id
-                  assigneeId
-                }
-                person {
-                  __typename
-                  xLink {
-                    label
-                    url
-                  }
-                  id
-                  createdAt
-                  city
-                  email
-                  jobTitle
-                  name {
-                    firstName
-                    lastName
-                  }
-                  phone
-                  linkedinLink {
-                    label
-                    url
-                  }
-                  updatedAt
-                  avatarUrl
-                  companyId
-                }
-              }
-              cursor
-            }
-            pageInfo {
-              hasNextPage
-              startCursor
-              endCursor
-            }
-            totalCount
-          }
-        }
-      `,
-      variables: {
-        filter: { activityId: { eq: '1234' } },
-        limit: undefined,
-        orderBy: undefined,
-      },
-    },
-    result: jest.fn(() => ({
-      data: {
-        activityTargets: {
-          ...defaultResponseData,
-          edges: [
-            {
-              node: mockActivityTarget,
-              cursor: '1',
-            },
-          ],
-        },
-      },
-    })),
-  },
-];
 
 const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
+const cache = new InMemoryCache();
+
+const activityNode = {
+  id: '3ecaa1be-aac7-463a-a38e-64078dd451d5',
+  createdAt: '2023-04-26T10:12:42.33625+00:00',
+  updatedAt: '2023-04-26T10:23:42.33625+00:00',
+  reminderAt: null,
+  title: 'My very first note',
+  type: 'Note',
+  body: '',
+  dueAt: '2023-04-26T10:12:42.33625+00:00',
+  completedAt: null,
+  author: null,
+  assignee: null,
+  assigneeId: null,
+  authorId: null,
+  comments: {
+    edges: [],
+  },
+  activityTargets: {
+    edges: [
+      {
+        node: {
+          id: '89bb825c-171e-4bcc-9cf7-43448d6fb300',
+          createdAt: '2023-04-26T10:12:42.33625+00:00',
+          updatedAt: '2023-04-26T10:23:42.33625+00:00',
+          personId: null,
+          companyId: '89bb825c-171e-4bcc-9cf7-43448d6fb280',
+          company: {
+            id: '89bb825c-171e-4bcc-9cf7-43448d6fb280',
+            name: 'Airbnb',
+            domainName: 'airbnb.com',
+          },
+          person: null,
+          activityId: '89bb825c-171e-4bcc-9cf7-43448d6fb230',
+          activity: {
+            id: '89bb825c-171e-4bcc-9cf7-43448d6fb230',
+            createdAt: '2023-04-26T10:12:42.33625+00:00',
+            updatedAt: '2023-04-26T10:23:42.33625+00:00',
+          },
+          __typename: 'ActivityTarget',
+        },
+        __typename: 'ActivityTargetEdge',
+      },
+    ],
+    __typename: 'ActivityTargetConnection',
+  },
+  __typename: 'Activity' as const,
+};
+
+cache.writeFragment({
+  fragment: gql`
+    fragment CreateOneActivityInCache on Activity {
+      id
+      createdAt
+      updatedAt
+      reminderAt
+      title
+      body
+      dueAt
+      completedAt
+      author
+      assignee
+      assigneeId
+      authorId
+      activityTargets {
+        edges {
+          node {
+            id
+            createdAt
+            updatedAt
+            targetObjectNameSingular
+            personId
+            companyId
+            company {
+              id
+              name
+              domainName
+            }
+            person
+            activityId
+            activity {
+              id
+              createdAt
+              updatedAt
+            }
+            __typename
+          }
+        }
+      }
+      __typename
+    }
+  `,
+  id: activityNode.id,
+  data: activityNode,
+});
+
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
-    <MockedProvider mocks={mocks} addTypename={false}>
+    <MockedProvider cache={cache}>
       <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
         {children}
       </SnackBarProviderScope>
@@ -170,19 +122,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 describe('useActivityTargetObjectRecords', () => {
-  it('returns default response', () => {
-    const { result } = renderHook(
-      () => useActivityTargetObjectRecords({ activityId: '1234' }),
-      { wrapper: Wrapper },
-    );
-
-    expect(result.current).toEqual({
-      activityTargetObjectRecords: [],
-      loadingActivityTargets: false,
-    });
-  });
-
-  it('fetches records', async () => {
+  it('return targetObjects', async () => {
     const { result } = renderHook(
       () => {
         const setCurrentWorkspaceMember = useSetRecoilState(
@@ -192,11 +132,12 @@ describe('useActivityTargetObjectRecords', () => {
           objectMetadataItemsState,
         );
 
-        const { activityTargetObjectRecords, loadingActivityTargets } =
-          useActivityTargetObjectRecords({ activityId: '1234' });
+        const { activityTargetObjectRecords } = useActivityTargetObjectRecords(
+          getRecordFromRecordNode({ recordNode: activityNode as any }),
+        );
+
         return {
           activityTargetObjectRecords,
-          loadingActivityTargets,
           setCurrentWorkspaceMember,
           setObjectMetadataItems,
         };
@@ -208,16 +149,18 @@ describe('useActivityTargetObjectRecords', () => {
       result.current.setCurrentWorkspaceMember(mockWorkspaceMembers[0]);
       result.current.setObjectMetadataItems(mockObjectMetadataItems);
     });
+    const activityTargetObjectRecords =
+      result.current.activityTargetObjectRecords;
 
-    expect(result.current.loadingActivityTargets).toBe(true);
-
-    // Wait for activityTargets to complete fetching
-    await waitFor(() => !result.current.loadingActivityTargets);
-
-    expect(mocks[0].result).toHaveBeenCalled();
-    expect(result.current.activityTargetObjectRecords).toHaveLength(1);
+    expect(activityTargetObjectRecords).toHaveLength(1);
+    expect(activityTargetObjectRecords[0].activityTarget).toEqual(
+      activityNode.activityTargets.edges[0].node,
+    );
+    expect(activityTargetObjectRecords[0].targetObject).toEqual(
+      activityNode.activityTargets.edges[0].node.company,
+    );
     expect(
-      result.current.activityTargetObjectRecords[0].targetObjectNameSingular,
-    ).toBe('person');
+      activityTargetObjectRecords[0].targetObjectMetadataItem.nameSingular,
+    ).toEqual('company');
   });
 });

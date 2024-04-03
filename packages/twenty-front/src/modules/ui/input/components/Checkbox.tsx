@@ -1,8 +1,7 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
+import { IconCheck, IconMinus } from 'twenty-ui';
 import { v4 } from 'uuid';
-
-import { IconCheck, IconMinus } from '@/ui/display/icon';
 
 export enum CheckboxVariant {
   Primary = 'primary',

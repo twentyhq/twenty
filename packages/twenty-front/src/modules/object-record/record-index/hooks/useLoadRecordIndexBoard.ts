@@ -47,10 +47,9 @@ export const useLoadRecordIndexBoard = ({
     recordIndexFilters,
     objectMetadataItem?.fields ?? [],
   );
-  const orderBy = turnSortsIntoOrderBy(
-    recordIndexSorts,
-    objectMetadataItem?.fields ?? [],
-  );
+  const orderBy = !objectMetadataItem.isRemote
+    ? turnSortsIntoOrderBy(recordIndexSorts, objectMetadataItem?.fields ?? [])
+    : undefined;
 
   const recordIndexIsCompactModeActive = useRecoilValue(
     recordIndexIsCompactModeActiveState,

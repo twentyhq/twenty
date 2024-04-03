@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 import { CurrentWorkspace } from '@/auth/states/currentWorkspaceState.ts';
+import { previousUrlState } from '@/auth/states/previousUrlState';
 import { billingState } from '@/client-config/states/billingState.ts';
 import { AppPath } from '@/types/AppPath.ts';
 import { WorkspaceMember } from '~/generated/graphql.tsx';
@@ -10,6 +11,7 @@ import { WorkspaceMember } from '~/generated/graphql.tsx';
 export const useNavigateAfterSignInUp = () => {
   const navigate = useNavigate();
   const billing = useRecoilValue(billingState);
+  const previousUrl = useRecoilValue(previousUrlState);
   const navigateAfterSignInUp = useCallback(
     (
       currentWorkspace: CurrentWorkspace,
@@ -35,10 +37,10 @@ export const useNavigateAfterSignInUp = () => {
         navigate(AppPath.CreateProfile);
         return;
       }
-
-      navigate(AppPath.Index);
+      if (previousUrl !== '') navigate(previousUrl);
+      else navigate(AppPath.Index);
     },
-    [billing, navigate],
+    [billing, previousUrl, navigate],
   );
   return { navigateAfterSignInUp };
 };

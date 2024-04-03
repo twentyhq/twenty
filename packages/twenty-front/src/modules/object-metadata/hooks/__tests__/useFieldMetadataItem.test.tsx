@@ -7,7 +7,6 @@ import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataIt
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldMetadataType } from '~/generated/graphql';
 
-import { TestApolloMetadataClientProvider } from '../__mocks__/ApolloMetadataClientProvider';
 import {
   objectMetadataId,
   queries,
@@ -85,9 +84,7 @@ const mocks = [
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
     <MockedProvider mocks={mocks} addTypename={false}>
-      <TestApolloMetadataClientProvider>
-        {children}
-      </TestApolloMetadataClientProvider>
+      {children}
     </MockedProvider>
   </RecoilRoot>
 );

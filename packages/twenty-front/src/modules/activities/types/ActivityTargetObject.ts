@@ -6,5 +6,4 @@ export type ActivityTargetWithTargetRecord = {
   targetObjectMetadataItem: ObjectMetadataItem;
   activityTarget: ActivityTarget;
   targetObject: ObjectRecord;
-  targetObjectNameSingular: string;
 };

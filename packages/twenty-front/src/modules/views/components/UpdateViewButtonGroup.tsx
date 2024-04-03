@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { IconChevronDown, IconPlus } from 'twenty-ui';
 
-import { IconChevronDown, IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import { ButtonGroup } from '@/ui/input/button/components/ButtonGroup';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
