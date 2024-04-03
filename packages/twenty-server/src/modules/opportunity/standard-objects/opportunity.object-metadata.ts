@@ -163,6 +163,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => AttachmentObjectMetadata,
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
   attachments: AttachmentObjectMetadata[];
@@ -177,6 +178,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => EventObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
   events: EventObjectMetadata[];
