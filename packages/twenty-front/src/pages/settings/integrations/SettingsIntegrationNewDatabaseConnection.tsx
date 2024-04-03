@@ -7,18 +7,20 @@ import { z } from 'zod';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
-  SettingsIntegrationDatabaseConnectionForm,
-  settingsIntegrationDatabaseConnectionFormSchema,
+  SettingsIntegrationPostgreSQLConnectionForm,
+  settingsIntegrationPostgreSQLConnectionFormSchema,
 } from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectionForm';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
-const newConnectionSchema = settingsIntegrationDatabaseConnectionFormSchema;
+const newConnectionSchema = settingsIntegrationPostgreSQLConnectionFormSchema;
 
 type SettingsIntegrationNewConnectionFormValues = z.infer<
   typeof newConnectionSchema
@@ -57,6 +59,10 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
 
   if (!isIntegrationAvailable) return null;
 
+  const settingsIntegrationsPagePath = getSettingsPagePath(
+    SettingsPath.Integrations,
+  );
+
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
@@ -64,21 +70,26 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
         <SettingsPageContainer>
           <Breadcrumb
             links={[
-              { children: 'Integrations', href: '/settings/integrations' },
+              {
+                children: 'Integrations',
+                href: settingsIntegrationsPagePath,
+              },
               {
                 children: integration.text,
-                href: `/settings/integrations/${databaseKey}`,
+                href: `${settingsIntegrationsPagePath}/${databaseKey}`,
               },
               { children: 'New' },
             ]}
           />
-          <Section>
-            <H2Title
-              title="Add a Database"
-              description="Provide a name and an API to connect this workspace"
-            />
-            <SettingsIntegrationDatabaseConnectionForm />
-          </Section>
+          {databaseKey === 'postgresql' ? (
+            <Section>
+              <H2Title
+                title="Connect a new database"
+                description="Provide the information to connect a PostgreSQL database"
+              />
+              <SettingsIntegrationPostgreSQLConnectionForm />
+            </Section>
+          ) : null}
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
     </FormProvider>

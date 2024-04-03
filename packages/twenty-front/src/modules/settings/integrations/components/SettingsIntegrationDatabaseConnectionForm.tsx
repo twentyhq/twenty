@@ -4,29 +4,44 @@ import { z } from 'zod';
 
 import { TextInput } from '@/ui/input/components/TextInput';
 
-export const settingsIntegrationDatabaseConnectionFormSchema = z.object({
-  workspaceName: z.string().min(1),
-  workspaceApiKey: z.string().min(1),
+export const settingsIntegrationPostgreSQLConnectionFormSchema = z.object({
+  dbname: z.string().min(1),
+  host: z.string().min(1),
+  port: z.number().positive(),
+  username: z.string().min(1),
+  password: z.string().min(1),
 });
 
-type SettingsIntegrationDatabaseConnectionFormValues = z.infer<
-  typeof settingsIntegrationDatabaseConnectionFormSchema
+type SettingsIntegrationPostgreSQLConnectionFormValues = z.infer<
+  typeof settingsIntegrationPostgreSQLConnectionFormSchema
 >;
 
 const StyledInputsContainer = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(4)};
+  display: grid;
+  gap: ${({ theme }) => theme.spacing(2, 4)};
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas:
+    'input-1 input-1'
+    'input-2 input-3'
+    'input-4 input-5';
+
+  & :first-child {
+    grid-area: input-1;
+  }
 `;
 
-export const SettingsIntegrationDatabaseConnectionForm = () => {
+export const SettingsIntegrationPostgreSQLConnectionForm = () => {
   const { control } =
-    useFormContext<SettingsIntegrationDatabaseConnectionFormValues>();
+    useFormContext<SettingsIntegrationPostgreSQLConnectionFormValues>();
 
   return (
     <StyledInputsContainer>
       {[
-        { name: 'workspaceName' as const, label: 'Workspace name' },
-        { name: 'workspaceApiKey' as const, label: 'Workspace API Key' },
+        { name: 'dbname' as const, label: 'Database name' },
+        { name: 'host' as const, label: 'Host' },
+        { name: 'port' as const, label: 'Port' },
+        { name: 'username' as const, label: 'Username' },
+        { name: 'password' as const, label: 'Password' },
       ].map(({ name, label }) => (
         <Controller
           key={name}

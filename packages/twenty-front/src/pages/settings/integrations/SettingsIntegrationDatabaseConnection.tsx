@@ -46,6 +46,10 @@ export const SettingsIntegrationDatabaseConnection = () => {
 
   if (!isIntegrationAvailable || !connection) return null;
 
+  const settingsIntegrationsPagePath = getSettingsPagePath(
+    SettingsPath.Integrations,
+  );
+
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
@@ -53,11 +57,11 @@ export const SettingsIntegrationDatabaseConnection = () => {
           links={[
             {
               children: 'Integrations',
-              href: getSettingsPagePath(SettingsPath.Integrations),
+              href: settingsIntegrationsPagePath,
             },
             {
               children: integration.text,
-              href: `/settings/integrations/${databaseKey}`,
+              href: `${settingsIntegrationsPagePath}/${databaseKey}`,
             },
             { children: connection.name },
           ]}
