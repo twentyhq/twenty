@@ -1,8 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { LightIconButton } from 'tsup.ui.index';
-
 import { IconCopy } from 'twenty-ui';
+
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 const StyledButtonContainer = styled.div`

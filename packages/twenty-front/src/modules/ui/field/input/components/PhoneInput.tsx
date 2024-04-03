@@ -4,26 +4,18 @@ import styled from '@emotion/styled';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
+import { TEXT_INPUT_STYLE } from '@/ui/theme/constants/TextInputStyle';
 
 import 'react-phone-number-input/style.css';
 
-const StyledContainer = styled.div`
-  align-items: center;
-
-  border: none;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
-
-  display: flex;
-  justify-content: center;
-`;
-
 const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
+  margin: 0;
+  ${TEXT_INPUT_STYLE}
   font-family: ${({ theme }) => theme.font.family};
   height: 32px;
 
   .PhoneInputInput {
-    background: ${({ theme }) => theme.background.transparent.secondary};
+    background-color: transparent;
     border: none;
     color: ${({ theme }) => theme.font.color.primary};
 
@@ -43,6 +35,7 @@ const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
     border-radius: ${({ theme }) => theme.border.radius.xs};
     height: 12px;
   }
+  width: 75%;
 `;
 
 export type PhoneInputProps = {
@@ -71,7 +64,7 @@ export const PhoneInput = ({
 }: PhoneInputProps) => {
   const [internalValue, setInternalValue] = useState<string | undefined>(value);
 
-  const wrapperRef = useRef<HTMLDivElement>(null);
+  const wrapperRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (newValue: string) => {
     setInternalValue(newValue);
@@ -94,16 +87,15 @@ export const PhoneInput = ({
   });
 
   return (
-    <StyledContainer ref={wrapperRef}>
-      <StyledCustomPhoneInput
-        autoFocus={autoFocus}
-        placeholder="Phone number"
-        value={value}
-        onChange={handleChange}
-        international={true}
-        withCountryCallingCode={true}
-        countrySelectComponent={PhoneCountryPickerDropdownButton}
-      />
-    </StyledContainer>
+    <StyledCustomPhoneInput
+      autoFocus={autoFocus}
+      placeholder="Phone number"
+      value={value}
+      onChange={handleChange}
+      international={true}
+      withCountryCallingCode={true}
+      countrySelectComponent={PhoneCountryPickerDropdownButton}
+      ref={wrapperRef}
+    />
   );
 };
