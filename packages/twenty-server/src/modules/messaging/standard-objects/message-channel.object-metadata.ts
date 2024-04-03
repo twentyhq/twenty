@@ -113,16 +113,16 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   messageChannelMessageAssociations: MessageChannelMessageAssociationObjectMetadata[];
 
   @FieldMetadata({
-    standardId: messageChannelStandardFieldIds.syncExternalId,
+    standardId: messageChannelStandardFieldIds.syncCursor,
     type: FieldMetadataType.TEXT,
-    label: 'Last sync external ID',
-    description: 'Last sync external ID',
+    label: 'Last sync cursor',
+    description: 'Last sync cursor',
     icon: 'IconHistory',
   })
   @Gate({
     featureFlag: FeatureFlagKeys.IsFullSyncV2Enabled,
   })
-  syncExternalId: string;
+  syncCursor: string;
 
   @FieldMetadata({
     standardId: messageChannelStandardFieldIds.syncedAt,

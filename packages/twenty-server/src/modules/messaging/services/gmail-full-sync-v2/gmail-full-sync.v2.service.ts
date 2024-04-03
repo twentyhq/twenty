@@ -223,7 +223,7 @@ export class GmailFullSyncV2Service {
       `Fetched all ${messageIdsToFetch} message ids from Gmail for messageChannel ${messageChannelId} in workspace ${workspaceId} and added to cache for import`,
     );
 
-    await this.updateLastSyncExternalId(
+    await this.updateLastSyncCursor(
       gmailClient,
       messageChannelId,
       firstMessageExternalId,
@@ -256,7 +256,7 @@ export class GmailFullSyncV2Service {
     return blocklist.map((blocklist) => blocklist.handle);
   }
 
-  private async updateLastSyncExternalId(
+  private async updateLastSyncCursor(
     gmailClient: gmail_v1.Gmail,
     messageChannelId: string,
     firstMessageExternalId: string,
@@ -292,7 +292,7 @@ export class GmailFullSyncV2Service {
       `Updating last external id: ${historyId} for workspace ${workspaceId} and account ${messageChannelId} succeeded.`,
     );
 
-    await this.messageChannelRepository.updateLastSyncExternalIdIfHigher(
+    await this.messageChannelRepository.updateLastSyncCursorIfHigher(
       messageChannelId,
       historyId,
       workspaceId,
