@@ -1,20 +1,22 @@
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
+import { VerifyEffect } from '@/auth/components/VerifyEffect';
 import { billingState } from '@/client-config/states/billingState.ts';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
+import { BlankLayout } from '@/ui/layout/page/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/DefaultLayout';
-import { DefaultPageTitle } from '~/DefaultPageTitle';
+import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
+import Authorize from '~/pages/auth/Authorize';
 import { ChooseYourPlan } from '~/pages/auth/ChooseYourPlan.tsx';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { PaymentSuccess } from '~/pages/auth/PaymentSuccess.tsx';
 import { SignInUp } from '~/pages/auth/SignInUp';
-import { VerifyEffect } from '~/pages/auth/VerifyEffect';
 import { DefaultHomePage } from '~/pages/DefaultHomePage';
 import { ImpersonateEffect } from '~/pages/impersonate/ImpersonateEffect';
 import { NotFound } from '~/pages/not-found/NotFound';
@@ -38,6 +40,8 @@ import { SettingsDevelopersApiKeysNew } from '~/pages/settings/developers/api-ke
 import { SettingsDevelopers } from '~/pages/settings/developers/SettingsDevelopers';
 import { SettingsDevelopersWebhooksDetail } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhookDetail';
 import { SettingsDevelopersWebhooksNew } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhooksNew';
+import { SettingsIntegrationDetail } from '~/pages/settings/integrations/SettingsIntegrationDetail';
+import { SettingsIntegrationNewDatabase } from '~/pages/settings/integrations/SettingsIntegrationNewDatabase';
 import { SettingsIntegrations } from '~/pages/settings/integrations/SettingsIntegrations';
 import { SettingsAppearance } from '~/pages/settings/SettingsAppearance';
 import { SettingsBilling } from '~/pages/settings/SettingsBilling.tsx';
@@ -45,17 +49,20 @@ import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
 import { Tasks } from '~/pages/tasks/Tasks';
+import { getPageTitleFromPath } from '~/utils/title-utils';
 
 export const App = () => {
   const billing = useRecoilValue(billingState);
+  const { pathname } = useLocation();
+  const pageTitle = getPageTitleFromPath(pathname);
 
   return (
     <>
-      <DefaultPageTitle />
+      <PageTitle title={pageTitle} />
       <GotoHotkeysEffect />
       <CommandMenuEffect />
-      <DefaultLayout>
-        <Routes>
+      <Routes>
+        <Route element={<DefaultLayout />}>
           <Route path={AppPath.Verify} element={<VerifyEffect />} />
           <Route path={AppPath.SignInUp} element={<SignInUp />} />
           <Route path={AppPath.Invite} element={<SignInUp />} />
@@ -171,6 +178,14 @@ export const App = () => {
                   element={<SettingsIntegrations />}
                 />
                 <Route
+                  path={SettingsPath.IntegrationDetail}
+                  element={<SettingsIntegrationDetail />}
+                />
+                <Route
+                  path={SettingsPath.IntegrationNewDatabase}
+                  element={<SettingsIntegrationNewDatabase />}
+                />
+                <Route
                   path={SettingsPath.ObjectNewFieldStep1}
                   element={<SettingsObjectNewFieldStep1 />}
                 />
@@ -186,8 +201,11 @@ export const App = () => {
             }
           />
           <Route path={AppPath.NotFoundWildcard} element={<NotFound />} />
-        </Routes>
-      </DefaultLayout>
+        </Route>
+        <Route element={<BlankLayout />}>
+          <Route path={AppPath.Authorize} element={<Authorize />} />
+        </Route>
+      </Routes>
     </>
   );
 };

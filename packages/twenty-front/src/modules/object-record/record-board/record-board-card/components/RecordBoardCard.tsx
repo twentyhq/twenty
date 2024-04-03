@@ -2,6 +2,7 @@ import { ReactNode, useContext, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { IconEye } from 'twenty-ui';
 
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
@@ -15,7 +16,6 @@ import {
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { IconEye } from '@/ui/display/icon/index';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';

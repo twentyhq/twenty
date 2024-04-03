@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 
+import { FieldMetadataType } from '~/generated/graphql';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { FieldContext } from '../../../../contexts/FieldContext';
@@ -30,7 +31,7 @@ const meta: Meta = {
           fieldDefinition: {
             fieldMetadataId: 'date',
             label: 'Date',
-            type: 'DATE_TIME',
+            type: FieldMetadataType.DateTime,
             iconName: 'IconCalendarEvent',
             metadata: {
               fieldName: 'Date',

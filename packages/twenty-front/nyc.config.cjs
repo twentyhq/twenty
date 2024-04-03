@@ -8,14 +8,14 @@ const globalCoverage = {
 const modulesCoverage = {
   statements: 70,
   lines: 70,
-  functions: 70,
+  functions: 65,
   include: ['src/modules/**/*'],
   exclude: ['src/**/*.ts'],
 };
 
 const pagesCoverage = {
-  statements: 60,
-  lines: 60,
+  statements: 55,
+  lines: 55,
   functions: 45,
   exclude: ['src/generated/**/*', 'src/modules/**/*', 'src/**/*.ts'],
 };

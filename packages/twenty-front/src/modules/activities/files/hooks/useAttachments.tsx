@@ -1,6 +1,6 @@
 import { Attachment } from '@/activities/files/types/Attachment';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTargetObjectFilterFieldName';
+import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 
@@ -10,7 +10,7 @@ export const useAttachments = (targetableObject: ActivityTargetableObject) => {
     nameSingular: targetableObject.targetObjectNameSingular,
   });
 
-  const { records: attachments } = useFindManyRecords({
+  const { records: attachments } = useFindManyRecords<Attachment>({
     objectNameSingular: CoreObjectNameSingular.Attachment,
     filter: {
       [targetableObjectFieldIdName]: {
@@ -23,6 +23,6 @@ export const useAttachments = (targetableObject: ActivityTargetableObject) => {
   });
 
   return {
-    attachments: attachments as Attachment[],
+    attachments,
   };
 };

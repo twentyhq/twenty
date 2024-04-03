@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
+import { IconForbid } from 'twenty-ui';
 
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
-import { IconForbid } from '@/ui/display/icon';
 
 export type RelationPickerProps = {
   recordId?: string;

@@ -17,7 +17,6 @@ export const usePrefetchedData = <T extends ObjectRecord>(
   const { records } = useFindManyRecords<T>({
     skip: !isDataPrefetched,
     ...prefetchQueryKey,
-    useRecordsWithoutConnection: true,
   });
 
   return {

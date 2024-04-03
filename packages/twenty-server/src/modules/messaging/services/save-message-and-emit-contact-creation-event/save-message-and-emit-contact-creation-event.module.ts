@@ -7,15 +7,11 @@ import { MessageParticipantModule } from 'src/modules/messaging/services/message
 import { MessageModule } from 'src/modules/messaging/services/message/message.module';
 import { SaveMessageAndEmitContactCreationEventService } from 'src/modules/messaging/services/save-message-and-emit-contact-creation-event/save-message-and-emit-contact-creation-event.service';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
-import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 
 @Module({
   imports: [
     MessageModule,
-    ObjectMetadataRepositoryModule.forFeature([
-      MessageChannelObjectMetadata,
-      MessageParticipantObjectMetadata,
-    ]),
+    ObjectMetadataRepositoryModule.forFeature([MessageChannelObjectMetadata]),
     AutoCompaniesAndContactsCreationModule,
     MessageParticipantModule,
     WorkspaceDataSourceModule,

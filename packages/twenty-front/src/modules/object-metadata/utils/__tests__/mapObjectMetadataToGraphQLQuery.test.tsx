@@ -213,11 +213,25 @@ companyId
 }`);
   });
 
-  it('should eager load only specified relations', async () => {
+  it('should query  only specified queryFields', async () => {
     const res = mapObjectMetadataToGraphQLQuery({
       objectMetadataItems: mockObjectMetadataItems,
       objectMetadataItem: personObjectMetadataItem,
-      eagerLoadedRelations: { company: true },
+      queryFields: {
+        company: true,
+        xLink: true,
+        id: true,
+        createdAt: true,
+        city: true,
+        email: true,
+        jobTitle: true,
+        name: true,
+        phone: true,
+        linkedinLink: true,
+        updatedAt: true,
+        avatarUrl: true,
+        companyId: true,
+      },
       depth: 1,
     });
     expect(formatGQLString(res)).toEqual(`{
@@ -274,6 +288,52 @@ linkedinLink
 updatedAt
 avatarUrl
 companyId
+}`);
+  });
+
+  it('should load only specified query fields', async () => {
+    const res = mapObjectMetadataToGraphQLQuery({
+      objectMetadataItems: mockObjectMetadataItems,
+      objectMetadataItem: personObjectMetadataItem,
+      queryFields: { company: true, id: true, name: true },
+      depth: 1,
+    });
+    expect(formatGQLString(res)).toEqual(`{
+__typename
+id
+company
+{
+__typename
+xLink
+{
+  label
+  url
+}
+linkedinLink
+{
+  label
+  url
+}
+domainName
+annualRecurringRevenue
+{
+  amountMicros
+  currencyCode
+}
+createdAt
+address
+updatedAt
+name
+accountOwnerId
+employees
+id
+idealCustomerProfile
+}
+name
+{
+  firstName
+  lastName
+}
 }`);
   });
 });

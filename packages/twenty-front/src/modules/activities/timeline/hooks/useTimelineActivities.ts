@@ -2,14 +2,12 @@ import { useEffect, useState } from 'react';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
-import { useActivityConnectionUtils } from '@/activities/hooks/useActivityConnectionUtils';
 import { useActivityTargetsForTargetableObject } from '@/activities/hooks/useActivityTargetsForTargetableObject';
 import { objectShowPageTargetableObjectState } from '@/activities/timeline/states/objectShowPageTargetableObjectIdState';
 import { makeTimelineActivitiesQueryVariables } from '@/activities/timeline/utils/makeTimelineActivitiesQueryVariables';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { sortByAscString } from '~/utils/array/sortByAscString';
@@ -20,8 +18,6 @@ export const useTimelineActivities = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
-  const { makeActivityWithoutConnection } = useActivityConnectionUtils();
-
   const [, setObjectShowPageTargetableObject] = useRecoilState(
     objectShowPageTargetableObjectState,
   );
@@ -60,7 +56,7 @@ export const useTimelineActivities = ({
     },
   );
 
-  const { records: activitiesWithConnection, loading: loadingActivities } =
+  const { records: activities, loading: loadingActivities } =
     useFindManyRecords<Activity>({
       skip: loadingActivityTargets || !isNonEmptyArray(activityTargets),
       objectNameSingular: CoreObjectNameSingular.Activity,
@@ -68,14 +64,10 @@ export const useTimelineActivities = ({
       orderBy: timelineActivitiesQueryVariables.orderBy,
       onCompleted: useRecoilCallback(
         ({ set }) =>
-          (data) => {
+          (activities) => {
             if (!initialized) {
               setInitialized(true);
             }
-
-            const activities = getRecordsFromRecordConnection({
-              recordConnection: data,
-            });
 
             for (const activity of activities) {
               set(recordStoreFamilyState(activity.id), activity);
@@ -96,11 +88,6 @@ export const useTimelineActivities = ({
   }, [noActivityTargets]);
 
   const loading = loadingActivities || loadingActivityTargets;
-
-  const activities = activitiesWithConnection
-    ?.map(makeActivityWithoutConnection as any)
-    .map(({ activity }: any) => activity as any)
-    .filter(isDefined);
 
   return {
     activities,

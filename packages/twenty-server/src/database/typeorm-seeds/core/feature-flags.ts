@@ -16,17 +16,32 @@ export const seedFeatureFlags = async (
     .orIgnore()
     .values([
       {
-        key: FeatureFlagKeys.IsCalendarEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKeys.IsBlocklistEnabled,
         workspaceId: workspaceId,
         value: true,
       },
       {
+        key: FeatureFlagKeys.IsCalendarEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKeys.IsAirtableIntegrationEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKeys.IsPostgreSQLIntegrationEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
         key: FeatureFlagKeys.IsEventObjectEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKeys.IsFullSyncV2Enabled,
         workspaceId: workspaceId,
         value: true,
       },

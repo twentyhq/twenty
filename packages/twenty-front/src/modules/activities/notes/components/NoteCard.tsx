@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconComment } from 'twenty-ui';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
@@ -10,7 +11,6 @@ import {
   FieldContext,
   GenericFieldContextType,
 } from '@/object-record/record-field/contexts/FieldContext';
-import { IconComment } from '@/ui/display/icon';
 
 const StyledCard = styled.div<{ isSingleNote: boolean }>`
   align-items: flex-start;

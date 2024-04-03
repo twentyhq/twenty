@@ -1,21 +1,16 @@
 import { ReactNode } from 'react';
-import {
-  ApolloClient,
-  NormalizedCacheObject,
-  useApolloClient,
-} from '@apollo/client';
 
 import { ApolloMetadataClientContext } from '@/object-metadata/context/ApolloClientMetadataContext';
+import { mockedMetadataApolloClient } from '~/testing/mockedMetadataApolloClient';
 
-export const TestApolloMetadataClientProvider = ({
+export const ApolloMetadataClientMockedProvider = ({
   children,
 }: {
   children: ReactNode;
 }) => {
-  const client = useApolloClient() as ApolloClient<NormalizedCacheObject>;
   return (
-    <ApolloMetadataClientContext.Provider value={client}>
-      {client ? children : ''}
+    <ApolloMetadataClientContext.Provider value={mockedMetadataApolloClient}>
+      {mockedMetadataApolloClient ? children : ''}
     </ApolloMetadataClientContext.Provider>
   );
 };

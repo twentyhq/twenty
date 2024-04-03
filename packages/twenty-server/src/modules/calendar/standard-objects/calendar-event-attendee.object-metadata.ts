@@ -65,6 +65,7 @@ export class CalendarEventAttendeeObjectMetadata extends BaseObjectMetadata {
     label: 'Is Organizer',
     description: 'Is Organizer',
     icon: 'IconUser',
+    defaultValue: false,
   })
   isOrganizer: boolean;
 
@@ -100,7 +101,7 @@ export class CalendarEventAttendeeObjectMetadata extends BaseObjectMetadata {
         color: 'green',
       },
     ],
-    defaultValue: { value: CalendarEventAttendeeResponseStatus.NEEDS_ACTION },
+    defaultValue: `'${CalendarEventAttendeeResponseStatus.NEEDS_ACTION}'`,
   })
   responseStatus: string;
 

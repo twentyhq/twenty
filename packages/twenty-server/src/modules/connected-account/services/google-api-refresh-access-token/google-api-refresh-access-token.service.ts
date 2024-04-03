@@ -38,7 +38,11 @@ export class GoogleAPIRefreshAccessTokenService {
       );
     }
 
-    const accessToken = await this.refreshAccessToken(refreshToken);
+    const accessToken = await this.refreshAccessToken(
+      refreshToken,
+      connectedAccountId,
+      workspaceId,
+    );
 
     await this.connectedAccountRepository.updateAccessToken(
       accessToken,
@@ -47,22 +51,36 @@ export class GoogleAPIRefreshAccessTokenService {
     );
   }
 
-  async refreshAccessToken(refreshToken: string): Promise<string> {
-    const response = await axios.post(
-      'https://oauth2.googleapis.com/token',
-      {
-        client_id: this.environmentService.get('AUTH_GOOGLE_CLIENT_ID'),
-        client_secret: this.environmentService.get('AUTH_GOOGLE_CLIENT_SECRET'),
-        refresh_token: refreshToken,
-        grant_type: 'refresh_token',
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
+  async refreshAccessToken(
+    refreshToken: string,
+    connectedAccountId: string,
+    workspaceId: string,
+  ): Promise<string> {
+    try {
+      const response = await axios.post(
+        'https://oauth2.googleapis.com/token',
+        {
+          client_id: this.environmentService.get('AUTH_GOOGLE_CLIENT_ID'),
+          client_secret: this.environmentService.get(
+            'AUTH_GOOGLE_CLIENT_SECRET',
+          ),
+          refresh_token: refreshToken,
+          grant_type: 'refresh_token',
         },
-      },
-    );
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        },
+      );
 
-    return response.data.access_token;
+      return response.data.access_token;
+    } catch (error) {
+      await this.connectedAccountRepository.updateAuthFailedAt(
+        connectedAccountId,
+        workspaceId,
+      );
+      throw new Error(`Error refreshing access token: ${error.message}`);
+    }
   }
 }

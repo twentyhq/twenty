@@ -8,25 +8,19 @@ describe('serializeDefaultValue', () => {
   });
 
   it('should handle uuid dynamic default value', () => {
-    expect(serializeDefaultValue({ type: 'uuid' })).toBe(
-      'public.uuid_generate_v4()',
-    );
+    expect(serializeDefaultValue('uuid')).toBe('public.uuid_generate_v4()');
   });
 
   it('should handle now dynamic default value', () => {
-    expect(serializeDefaultValue({ type: 'now' })).toBe('now()');
+    expect(serializeDefaultValue('now')).toBe('now()');
   });
 
   it('should throw BadRequestException for invalid dynamic default value type', () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error Just for testing purposes
-    expect(() => serializeDefaultValue({ type: 'invalid' })).toThrow(
-      BadRequestException,
-    );
+    expect(() => serializeDefaultValue('invalid')).toThrow(BadRequestException);
   });
 
   it('should handle string static default value', () => {
-    expect(serializeDefaultValue('test')).toBe("'test'");
+    expect(serializeDefaultValue("'test'")).toBe("'test'");
   });
 
   it('should handle number static default value', () => {

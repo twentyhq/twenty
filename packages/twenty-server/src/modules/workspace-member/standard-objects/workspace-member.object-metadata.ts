@@ -49,7 +49,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     label: 'Color Scheme',
     description: 'Preferred color scheme',
     icon: 'IconColorSwatch',
-    defaultValue: { value: 'Light' },
+    defaultValue: "'Light'",
   })
   colorScheme: string;
 
@@ -59,7 +59,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     label: 'Language',
     description: 'Preferred language',
     icon: 'IconLanguage',
-    defaultValue: { value: 'en' },
+    defaultValue: "'en'",
   })
   locale: string;
 
@@ -186,6 +186,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => ConnectedAccountObjectMetadata,
     inverseSideFieldKey: 'accountOwner',
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   connectedAccounts: ConnectedAccountObjectMetadata[];
 

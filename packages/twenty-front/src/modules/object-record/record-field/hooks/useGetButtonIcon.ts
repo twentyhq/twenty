@@ -1,7 +1,7 @@
 import { useContext } from 'react';
+import { IconPencil } from 'twenty-ui';
 
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
-import { IconPencil } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 

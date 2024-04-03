@@ -1,56 +1,73 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { useApolloClient } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
+import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
+import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { Nullable } from '~/types/Nullable';
 import { isDefined } from '~/utils/isDefined';
 
-export const useActivityTargetObjectRecords = ({
-  activityId,
-}: {
-  activityId: string;
-}) => {
+export const useActivityTargetObjectRecords = (activity: Activity) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const { records: activityTargets, loading: loadingActivityTargets } =
-    useFindManyRecords<ActivityTarget>({
+  const activityTargets = activity.activityTargets ?? [];
+
+  const { objectMetadataItem: objectMetadataItemActivityTarget } =
+    useObjectMetadataItemOnly({
       objectNameSingular: CoreObjectNameSingular.ActivityTarget,
-      skip: !isNonEmptyString(activityId),
-      filter: {
-        activityId: {
-          eq: activityId,
-        },
-      },
     });
+
+  const getRecordFromCache = useGetRecordFromCache({
+    objectMetadataItem: objectMetadataItemActivityTarget,
+  });
+
+  const apolloClient = useApolloClient();
 
   const activityTargetObjectRecords = activityTargets
     .map<Nullable<ActivityTargetWithTargetRecord>>((activityTarget) => {
+      const activityTargetFromCache = getRecordFromCache<ActivityTarget>(
+        activityTarget.id,
+        apolloClient.cache,
+      );
+
+      if (!isDefined(activityTargetFromCache)) {
+        throw new Error(
+          `Cannot find activity target ${activityTarget.id} in cache, this shouldn't happen.`,
+        );
+      }
+
       const correspondingObjectMetadataItem = objectMetadataItems.find(
         (objectMetadataItem) =>
-          isDefined(activityTarget[objectMetadataItem.nameSingular]) &&
+          isDefined(activityTargetFromCache[objectMetadataItem.nameSingular]) &&
           !objectMetadataItem.isSystem,
       );
 
       if (!correspondingObjectMetadataItem) {
-        return null;
+        return undefined;
+      }
+
+      const targetObjectRecord =
+        activityTargetFromCache[correspondingObjectMetadataItem.nameSingular];
+
+      if (!targetObjectRecord) {
+        throw new Error(
+          `Cannot find target object record of type ${correspondingObjectMetadataItem.nameSingular}, make sure the request for activities eagerly loads for the target objects on activity target relation.`,
+        );
       }
 
       return {
-        activityTarget: activityTarget,
-        targetObject:
-          activityTarget[correspondingObjectMetadataItem.nameSingular],
+        activityTarget: activityTargetFromCache ?? activityTarget,
+        targetObject: targetObjectRecord ?? undefined,
         targetObjectMetadataItem: correspondingObjectMetadataItem,
-        targetObjectNameSingular: correspondingObjectMetadataItem.nameSingular,
       };
     })
     .filter(isDefined);
 
   return {
     activityTargetObjectRecords,
-    loadingActivityTargets,
   };
 };

@@ -1,8 +1,9 @@
 import { useMemo, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { useRecoilState } from 'recoil';
 
+import { previousUrlState } from '@/auth/states/previousUrlState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { AppPath } from '@/types/AppPath';
@@ -11,9 +12,9 @@ import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 import { isDefined } from '~/utils/isDefined';
 
-import { ApolloFactory } from '../services/apollo.factory';
+import { ApolloFactory, Options } from '../services/apollo.factory';
 
-export const useApolloFactory = () => {
+export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   // eslint-disable-next-line @nx/workspace-no-state-useref
   const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
   const [isDebugMode] = useRecoilState(isDebugModeState);
@@ -21,6 +22,8 @@ export const useApolloFactory = () => {
   const navigate = useNavigate();
   const isMatchingLocation = useIsMatchingLocation();
   const [tokenPair, setTokenPair] = useRecoilState(tokenPairState);
+  const [, setPreviousUrl] = useRecoilState(previousUrlState);
+  const location = useLocation();
 
   const apolloClient = useMemo(() => {
     apolloRef.current = new ApolloFactory({
@@ -45,16 +48,19 @@ export const useApolloFactory = () => {
           !isMatchingLocation(AppPath.Invite) &&
           !isMatchingLocation(AppPath.ResetPassword)
         ) {
+          setPreviousUrl(`${location.pathname}${location.search}`);
           navigate(AppPath.SignInUp);
         }
       },
       extraLinks: [],
       isDebugMode,
+      // Override options
+      ...options,
     });
 
     return apolloRef.current.getClient();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setTokenPair, isDebugMode]);
+  }, [setTokenPair, isDebugMode, setPreviousUrl]);
 
   useUpdateEffect(() => {
     if (isDefined(apolloRef.current)) {

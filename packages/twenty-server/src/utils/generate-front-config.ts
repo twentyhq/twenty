@@ -1,7 +1,8 @@
+import { ConfigService } from '@nestjs/config';
+
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { ConfigService } from '@nestjs/config';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 const environmentService = new EnvironmentService(new ConfigService());

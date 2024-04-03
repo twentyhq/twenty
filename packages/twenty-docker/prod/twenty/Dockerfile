@@ -24,12 +24,12 @@ FROM common-deps as twenty-server-build
 COPY ./packages/twenty-emails /app/packages/twenty-emails
 COPY ./packages/twenty-server /app/packages/twenty-server
 
-RUN npx nx run twenty-server:build && \
-    mv /app/packages/twenty-server/dist /app/packages/twenty-server/build && \
-    npx nx run twenty-server:build:packageJson && \
-    mv /app/packages/twenty-server/dist/package.json /app/packages/twenty-server/package.json && \
-    rm -rf /app/packages/twenty-server/dist && \
-    mv /app/packages/twenty-server/build /app/packages/twenty-server/dist
+RUN npx nx run twenty-server:build
+RUN mv /app/packages/twenty-server/dist /app/packages/twenty-server/build
+RUN npx nx run twenty-server:build:packageJson
+RUN mv /app/packages/twenty-server/dist/package.json /app/packages/twenty-server/package.json
+RUN rm -rf /app/packages/twenty-server/dist
+RUN mv /app/packages/twenty-server/build /app/packages/twenty-server/dist
 
 RUN yarn workspaces focus --production twenty-emails twenty-server
 

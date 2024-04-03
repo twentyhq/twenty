@@ -146,7 +146,7 @@ export class TypeMapperService {
       );
     }
 
-    if (!options.nullable && !options.defaultValue) {
+    if (options.nullable === false && options.defaultValue === null) {
       graphqlType = new GraphQLNonNull(graphqlType) as unknown as T;
     }
 
