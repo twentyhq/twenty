@@ -124,7 +124,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => CommentObjectMetadata,
-    onDelete: RelationOnDeleteAction.SET_NULL,
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
   comments: CommentObjectMetadata[];
