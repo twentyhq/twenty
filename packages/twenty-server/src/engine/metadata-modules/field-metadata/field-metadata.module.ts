@@ -61,7 +61,7 @@ import { UpdateFieldInput } from './dtos/update-field.input';
             one: { disabled: true },
             many: { disabled: true },
           },
-          delete: { many: { disabled: true } },
+          delete: { disabled: true },
           guards: [JwtAuthGuard],
         },
       ],
