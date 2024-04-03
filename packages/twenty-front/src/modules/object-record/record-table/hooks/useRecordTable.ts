@@ -43,6 +43,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     tableLastRowVisibleState,
     selectedRowIdsSelector,
     onToggleColumnFilterState,
+    onToggleColumnSortState,
   } = useRecordTableStates(recordTableId);
 
   const setAvailableTableColumns = useRecoilCallback(
@@ -72,6 +73,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   const setOnColumnsChange = useSetRecoilState(onColumnsChangeState);
 
   const setOnToggleColumnFilter = useSetRecoilState(onToggleColumnFilterState);
+  const setOnToggleColumnSort = useSetRecoilState(onToggleColumnSortState);
 
   const setIsRecordTableInitialLoading = useSetRecoilState(
     isRecordTableInitialLoadingState,
@@ -219,5 +221,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     selectedRowIdsSelector,
     setHasUserSelectedAllRows,
     setOnToggleColumnFilter,
+    setOnToggleColumnSort,
   };
 };
