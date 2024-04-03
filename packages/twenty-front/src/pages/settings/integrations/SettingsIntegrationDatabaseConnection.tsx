@@ -4,18 +4,21 @@ import { IconSettings } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { mockedRemoteObjectIntegrations } from '~/testing/mock-data/remoteObjectDatabases';
 
-export const SettingsIntegrationNewDatabase = () => {
-  const { integrationKey = '' } = useParams();
+export const SettingsIntegrationDatabaseConnection = () => {
+  const { databaseKey = '', connectionKey = '' } = useParams();
   const navigate = useNavigate();
 
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
   const integration = integrationCategoryAll.integrations.find(
-    ({ from: { key } }) => key === integrationKey,
+    ({ from: { key } }) => key === databaseKey,
   );
 
   const isAirtableIntegrationEnabled = useIsFeatureEnabled(
@@ -26,28 +29,37 @@ export const SettingsIntegrationNewDatabase = () => {
   );
   const isIntegrationAvailable =
     !!integration &&
-    ((integrationKey === 'airtable' && isAirtableIntegrationEnabled) ||
-      (integrationKey === 'postgresql' && isPostgresqlIntegrationEnabled));
+    ((databaseKey === 'airtable' && isAirtableIntegrationEnabled) ||
+      (databaseKey === 'postgresql' && isPostgresqlIntegrationEnabled));
+
+  const connections =
+    mockedRemoteObjectIntegrations.find(
+      ({ key }) => key === integration?.from.key,
+    )?.connections || [];
+  const connection = connections.find(({ key }) => key === connectionKey);
 
   useEffect(() => {
-    if (!isIntegrationAvailable) {
+    if (!isIntegrationAvailable || !connection) {
       navigate(AppPath.NotFound);
     }
-  }, [integration, integrationKey, navigate, isIntegrationAvailable]);
+  }, [integration, databaseKey, navigate, isIntegrationAvailable, connection]);
 
-  if (!isIntegrationAvailable) return null;
+  if (!isIntegrationAvailable || !connection) return null;
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
         <Breadcrumb
           links={[
-            { children: 'Integrations', href: '/settings/integrations' },
+            {
+              children: 'Integrations',
+              href: getSettingsPagePath(SettingsPath.Integrations),
+            },
             {
               children: integration.text,
-              href: `/settings/integrations/${integrationKey}`,
+              href: `/settings/integrations/${databaseKey}`,
             },
-            { children: 'New' },
+            { children: connection.name },
           ]}
         />
       </SettingsPageContainer>

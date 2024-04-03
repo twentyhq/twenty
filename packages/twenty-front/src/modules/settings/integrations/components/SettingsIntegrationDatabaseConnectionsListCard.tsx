@@ -6,9 +6,9 @@ import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { Status } from '@/ui/display/status/components/Status';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 
-type SettingsIntegrationDatabasesListCardProps = {
-  integrationLogoUrl: string;
-  databases: {
+type SettingsIntegrationDatabaseConnectionsListCardProps = {
+  databaseLogoUrl: string;
+  connections: {
     id: string;
     key: string;
     name: string;
@@ -18,7 +18,7 @@ type SettingsIntegrationDatabasesListCardProps = {
   }[];
 };
 
-const StyledIntegrationLogoContainer = styled.div`
+const StyledDatabaseLogoContainer = styled.div`
   align-items: center;
   display: flex;
   height: ${({ theme }) => theme.spacing(4)};
@@ -26,7 +26,7 @@ const StyledIntegrationLogoContainer = styled.div`
   width: ${({ theme }) => theme.spacing(4)};
 `;
 
-const StyledIntegrationLogo = styled.img`
+const StyledDatabaseLogo = styled.img`
   height: 100%;
 `;
 
@@ -36,35 +36,35 @@ const StyledRowRightContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
-export const SettingsIntegrationDatabasesListCard = ({
-  integrationLogoUrl,
-  databases,
-}: SettingsIntegrationDatabasesListCardProps) => {
+export const SettingsIntegrationDatabaseConnectionsListCard = ({
+  databaseLogoUrl,
+  connections,
+}: SettingsIntegrationDatabaseConnectionsListCardProps) => {
   const navigate = useNavigate();
 
   return (
     <SettingsListCard
-      items={databases}
+      items={connections}
       RowIcon={() => (
-        <StyledIntegrationLogoContainer>
-          <StyledIntegrationLogo alt="" src={integrationLogoUrl} />
-        </StyledIntegrationLogoContainer>
+        <StyledDatabaseLogoContainer>
+          <StyledDatabaseLogo alt="" src={databaseLogoUrl} />
+        </StyledDatabaseLogoContainer>
       )}
-      RowRightComponent={({ item: database }) => (
+      RowRightComponent={({ item: connection }) => (
         <StyledRowRightContainer>
           <Status
             color="green"
             text={
-              database.tables.length === 1
+              connection.tables.length === 1
                 ? `1 tracked table`
-                : `${database.tables.length} tracked tables`
+                : `${connection.tables.length} tracked tables`
             }
           />
           <LightIconButton Icon={IconChevronRight} accent="tertiary" />
         </StyledRowRightContainer>
       )}
-      onRowClick={(database) => navigate(`./${database.key}`)}
-      getItemLabel={(database) => database.name}
+      onRowClick={(connection) => navigate(`./${connection.key}`)}
+      getItemLabel={(connection) => connection.name}
       hasFooter
       footerButtonLabel="Add connection"
       onFooterButtonClick={() => navigate('./new')}
