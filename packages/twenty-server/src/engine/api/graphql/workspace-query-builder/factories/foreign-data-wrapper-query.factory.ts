@@ -25,6 +25,7 @@ export class ForeignDataWrapperQueryFactory {
     foreignDataWrapperId: string,
     userMappingOptions: UserMappingOptions,
   ) {
+    // CURRENT_USER works for now since we are using only one user. But if we switch to a user per workspace, we need to change this.
     return `CREATE USER MAPPING IF NOT EXISTS FOR CURRENT_USER SERVER "${foreignDataWrapperId}" OPTIONS (user '${userMappingOptions.username}', password '${userMappingOptions.password}')`;
   }
 
