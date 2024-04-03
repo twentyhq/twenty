@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { Repository } from 'typeorm';
+import { calendar_v3 } from 'googleapis';
 
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
@@ -19,7 +20,6 @@ import { MessageQueueService } from 'src/engine/integrations/message-queue/servi
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { CalendarEventRepository } from 'src/modules/calendar/repositories/calendar-event.repository';
 import { formatGoogleCalendarEvent } from 'src/modules/calendar/utils/format-google-calendar-event.util';
-import { GoogleCalendarSyncJobData } from 'src/modules/calendar/jobs/google-calendar-full-sync.job';
 import { CalendarEventAttendeeRepository } from 'src/modules/calendar/repositories/calendar-event-attendee.repository';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
@@ -120,27 +120,40 @@ export class GoogleCalendarSyncService {
     const blocklistedEmails = blocklist.map((blocklist) => blocklist.handle);
 
     let startTime = Date.now();
+    let endTime: number;
 
-    const googleCalendarEvents = await googleCalendarClient.events.list({
-      calendarId: 'primary',
-      maxResults: 500,
-      pageToken: pageToken,
-      q: googleCalendarSearchFilterExcludeEmails(blocklistedEmails),
-    });
+    let nextSyncToken: string | null | undefined;
+    let nextPageToken: string | null | undefined = pageToken;
+    const events: calendar_v3.Schema$Event[] = [];
 
-    let endTime = Date.now();
+    while (!nextPageToken) {
+      const googleCalendarEvents = await googleCalendarClient.events.list({
+        calendarId: 'primary',
+        maxResults: 500,
+        syncToken,
+        pageToken,
+        q: googleCalendarSearchFilterExcludeEmails(blocklistedEmails),
+      });
 
-    this.logger.log(
-      `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId} getting events list in ${
-        endTime - startTime
-      }ms.`,
-    );
+      endTime = Date.now();
 
-    const {
-      items: events,
-      nextPageToken,
-      nextSyncToken,
-    } = googleCalendarEvents.data;
+      this.logger.log(
+        `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId} getting events list in ${
+          endTime - startTime
+        }ms.`,
+      );
+
+      nextSyncToken = googleCalendarEvents.data.nextSyncToken;
+      nextPageToken = googleCalendarEvents.data.nextPageToken;
+
+      const { items } = googleCalendarEvents.data;
+
+      if (!items || items.length === 0) {
+        break;
+      }
+
+      events.push(...items);
+    }
 
     if (!events || events?.length === 0) {
       this.logger.log(
@@ -345,19 +358,5 @@ export class GoogleCalendarSyncService {
         nextPageToken ? `and ${nextPageToken} pageToken` : ''
       } done.`,
     );
-
-    if (nextPageToken) {
-      await this.messageQueueService.add<GoogleCalendarSyncJobData>(
-        GoogleCalendarSyncService.name,
-        {
-          workspaceId,
-          connectedAccountId,
-          nextPageToken,
-        },
-        {
-          retryLimit: 2,
-        },
-      );
-    }
   }
 }
