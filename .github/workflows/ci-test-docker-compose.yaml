@@ -1,6 +1,8 @@
 name: 'Test Docker Compose'
 on:
   pull_request:
+    paths:
+      - 'packages/twenty-docker/**'
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
