@@ -81,9 +81,6 @@ export class Workspace {
   subscriptionStatus: Stripe.Subscription.Status;
 
   @Field({ nullable: true })
-  currentCacheVersion: string;
-
-  @Field({ nullable: true })
   currentBillingSubscription: BillingSubscription;
 
   @Field()
