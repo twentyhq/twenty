@@ -31,11 +31,13 @@ const CampaignContext = () => {
   const [campaignData, setCampaignData] = useState({
     campaignName: '',
     campaignDescription: '',
-    specialtyType: '',
-    subSpecialtyType: '',
+    targetAudience: '',
+    emailTemplate: '',
+    whatsappTemplate: '',
     leads: '',
     startDate: '',
     endDate: '',
+    pageUrl: '',
   });
 
   return (

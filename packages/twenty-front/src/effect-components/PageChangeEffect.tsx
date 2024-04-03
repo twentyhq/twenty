@@ -74,7 +74,8 @@ export const PageChangeEffect = () => {
       navigate(AppPath.SignUp);
     };
     if (isMatchingLocation(CustomPath.CampaignForm)) {
-      navigate(CustomPath.CampaignForm);
+      console.log('Path Location:', location.pathname);
+      navigate(location.pathname);
       return;
     } else if (
       onboardingStatus === OnboardingStatus.OngoingUserCreation &&

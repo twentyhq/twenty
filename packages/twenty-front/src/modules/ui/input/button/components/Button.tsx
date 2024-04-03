@@ -8,7 +8,7 @@ import { Pill } from '@/ui/display/pill/components/Pill';
 export type ButtonSize = 'medium' | 'small';
 export type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
 export type ButtonVariant = 'primary' | 'secondary' | 'tertiary';
-export type ButtonAccent = 'default' | 'blue' | 'danger';
+export type ButtonAccent = 'default' | 'blue' | 'danger' | 'dark';
 
 export type ButtonProps = {
   className?: string;
@@ -112,6 +112,30 @@ const StyledButton = styled.button<
                     }
                   `}
             `;
+          case 'dark':
+            return css`
+              background: ${theme.color.black};
+              border-color: ${!disabled
+                ? focus
+                  ? theme.color.black
+                  : theme.background.transparent.light
+                : 'transparent'};
+              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
+              box-shadow: ${!disabled && focus
+                ? `0 0 0 3px ${theme.color.gray70}`
+                : 'none'};
+              color: ${theme.grayScale.gray0};
+              opacity: ${disabled ? 0.24 : 1};
+
+              ${disabled
+                ? ''
+                : css`
+                    &:hover,
+                    &:active {
+                      background: ${theme.color.gray50};
+                    }
+                  `}
+            `;
         }
         break;
       case 'secondary':
@@ -210,13 +234,13 @@ const StyledButton = styled.button<
   border-radius: ${({ position, theme }) => {
     switch (position) {
       case 'left':
-        return `${theme.border.radius.sm} 0px 0px ${theme.border.radius.sm}`;
+        return `${theme.border.radius.md} 0px 0px ${theme.border.radius.md}`;
       case 'right':
-        return `0px ${theme.border.radius.sm} ${theme.border.radius.sm} 0px`;
+        return `0px ${theme.border.radius.md} ${theme.border.radius.md} 0px`;
       case 'middle':
         return '0px';
       case 'standalone':
-        return theme.border.radius.sm;
+        return theme.border.radius.md;
     }
   }};
   border-style: solid;
@@ -237,7 +261,7 @@ const StyledButton = styled.button<
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   padding: ${({ theme }) => {
-    return `0 ${theme.spacing(2)}`;
+    return `0 ${theme.spacing(8)}`;
   }};
 
   transition: background 0.1s ease;

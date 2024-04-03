@@ -6,12 +6,12 @@ import { useRecoilState } from 'recoil';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { AppPath } from '@/types/AppPath';
-import { CustomPath } from '@/types/CustomPath';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
 
 import { ApolloFactory } from '../services/apollo.factory';
+import { CustomPath } from '@/types/CustomPath';
 
 export const useApolloFactory = () => {
   // eslint-disable-next-line @nx/workspace-no-state-useref
@@ -40,7 +40,7 @@ export const useApolloFactory = () => {
       onUnauthenticatedError: () => {
         // setTokenPair(null);
         if (isMatchingLocation(CustomPath.CampaignForm)) {
-          navigate(CustomPath.CampaignForm);
+          navigate(location.pathname);
         } else if (
           !isMatchingLocation(AppPath.Verify) &&
           !isMatchingLocation(AppPath.SignIn) &&
@@ -56,7 +56,6 @@ export const useApolloFactory = () => {
     });
 
     return apolloRef.current.getClient();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setTokenPair, isDebugMode]);
 
   useUpdateEffect(() => {

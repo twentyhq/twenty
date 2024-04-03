@@ -12,4 +12,5 @@ export const MAIN_COLORS = {
   orange: '#ff7222',
   yellow: '#ffd338',
   gray: GRAY_SCALE.gray30,
+  black: '#000000'
 };

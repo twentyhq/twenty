@@ -1,71 +1,62 @@
-import { useNavigate } from 'react-router-dom';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { IconSettings } from '@/ui/display/icon';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { Table } from '@/ui/layout/table/components/Table';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { useParams } from 'react-router-dom';
+import styled from '@emotion/styled';
 
+import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
+import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
+import { useSelectedTableCellEditMode } from '@/object-record/record-table/record-table-cell/hooks/useSelectedTableCellEditMode';
+import { RGBA } from '@/ui/theme/constants/Rgba';
+import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 export const TemplatesList = () => {
-  const navigate = useNavigate();
+  // const objectNameSingular = 'people';
+  // const { updateOneRecord } = useUpdateOneRecord({
+  //   objectNameSingular,
+  // });
 
-  const handleRowClick = (templateName: string) => {
-    navigate(`/${templateName.toLowerCase()}`);
+  // const updateEntity = ({ variables }: RecordUpdateHookParams) => {
+  //   updateOneRecord?.({
+  //     idToUpdate: variables.where.id as string,
+  //     updateOneRecordInput: variables.updateOneRecordInput,
+  //   });
+  // };
+
+  const objectNamePlural = useParams().objectNamePlural ?? 'campaignLists';
+
+  const { objectNameSingular } = useObjectNameSingularFromPlural({
+    objectNamePlural,
+  });
+
+  console.log(objectNamePlural);
+
+  const { createOneRecord: createOneObject } = useCreateOneRecord({
+    objectNameSingular,
+  });
+  console.log(createOneObject);
+
+  const recordIndexId = objectNamePlural ?? 'campaignLists';
+  const setHotkeyScope = useSetHotkeyScope();
+
+  const { setSelectedTableCellEditMode } = useSelectedTableCellEditMode({
+    scopeId: recordIndexId,
+  });
+
+  const handleAddButtonClick = async () => {
+    await createOneObject?.({
+      position: 0,
+    });
+
+    setSelectedTableCellEditMode(0, 0);
+    setHotkeyScope(DEFAULT_CELL_SCOPE.scope, DEFAULT_CELL_SCOPE.customScopes);
   };
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <SettingsPageContainer>
-        <H2Title
-          title="Templates"
-          description={`List of all the WhatsApp Templates.`}
-        />
-        <Table>
-          <TableRow>
-            <TableHeader>Name</TableHeader>
-            <TableHeader>Description</TableHeader>
-            <TableHeader>Created At</TableHeader>
-          </TableRow>
-
-          <TableRow onClick={() => handleRowClick('TextTemplate')}>
-            <TableCell>Text Template</TableCell>
-            <TableCell>Template with text Header type.</TableCell>
-            <TableCell>12/12/12</TableCell>
-          </TableRow>
-
-          <TableRow onClick={() => handleRowClick('ImageTemplate')}>
-            <TableCell>Image Template</TableCell>
-            <TableCell>Template with Image Header type.</TableCell>
-            <TableCell>12/12/12</TableCell>
-          </TableRow>
-
-          <TableRow onClick={() => handleRowClick('VideoTemplate')}>
-            <TableCell>Video Template</TableCell>
-            <TableCell>Template with Video Header type.</TableCell>
-            <TableCell>12/12/12</TableCell>
-          </TableRow>
-
-          <TableRow onClick={() => handleRowClick('AudioTemplate')}>
-            <TableCell>Audio Template</TableCell>
-            <TableCell>Template with Audio Header type.</TableCell>
-            <TableCell>12/12/12</TableCell>
-          </TableRow>
-
-          <TableRow onClick={() => handleRowClick('DocumentTemplate')}>
-            <TableCell>Document Template</TableCell>
-            <TableCell>Template with Video Header type.</TableCell>
-            <TableCell>12/12/12</TableCell>
-          </TableRow>
-        </Table>
-      </SettingsPageContainer>
-      {/* <Button
-        Icon={IconPlus}
-        title="Add Template"
-        size="small"
-        variant="secondary"
-      /> */}
-    </SubMenuTopBarContainer>
+    <>
+      <RecordIndexContainer
+        recordIndexId={recordIndexId}
+        objectNamePlural={objectNamePlural}
+        createRecord={handleAddButtonClick}
+      />
+    </>
   );
 };

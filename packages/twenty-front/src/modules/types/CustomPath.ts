@@ -15,5 +15,8 @@ export enum CustomPath {
 
   DatePickerPage = '/datepicker',
 
-  CampaignForm = '/campaignform',
+  CampaignForm = '/campaign/:userid',
+
+  SegmentPage = '/segment',
+
 }

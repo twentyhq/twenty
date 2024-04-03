@@ -44460,6 +44460,7 @@ __metadata:
     class-transformer: "npm:^0.5.1"
     clsx: "npm:^1.2.1"
     concurrently: "npm:^8.2.2"
+    cors: "npm:^2.8.5"
     cross-env: "npm:^7.0.3"
     cross-var: "npm:^1.1.0"
     danger: "npm:^11.3.0"

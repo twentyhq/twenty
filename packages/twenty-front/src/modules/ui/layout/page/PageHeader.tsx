@@ -50,7 +50,7 @@ const StyledLeftContainer = styled.div`
 
 const StyledTitleContainer = styled.div`
   display: flex;
-  font-size: ${({ theme }) => theme.font.size.md};
+  font-size: ${({ theme }) => theme.font.size.lg};
   margin-left: ${({ theme }) => theme.spacing(1)};
   max-width: 50%;
 `;

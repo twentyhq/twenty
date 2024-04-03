@@ -53,6 +53,7 @@ import { TemplatesList } from '~/pages/Templates/TemplatesList';
 import { TextTemplate } from '~/pages/Templates/TextTemplate';
 import { VideoTemplate } from '~/pages/Templates/VideoTemplate';
 import { getPageTitleFromPath } from '~/utils/title-utils';
+import { Segment } from '~/pages/Segment/Segment';
 
 export const App = () => {
   const isSelfBillingEnabled = useIsFeatureEnabled('IS_SELF_BILLING_ENABLED');
@@ -224,6 +225,8 @@ export const App = () => {
             element={<DocumentTemplate targetableObject={targetableObject} />}
           />
           <Route path={CustomPath.TemplatesPage} element={<TemplatesList />} />
+
+          <Route path={CustomPath.SegmentPage} element={<Segment />} />
         </Routes>
       </DefaultLayout>
     </>

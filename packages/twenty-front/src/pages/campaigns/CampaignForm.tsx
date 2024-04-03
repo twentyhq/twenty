@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { Section } from '@react-email/components';
 import {
@@ -10,8 +10,16 @@ import {
   TextArea,
   TextInput,
 } from 'tsup.ui.index';
-
+import base64 from 'base64-js';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { useParams } from 'react-router-dom';
+import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
+import { AnimatedPlaceholderEmptyTextContainer } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
+import {
+  AnimatedPlaceholderErrorContainer,
+  AnimatedPlaceholderErrorTitle,
+} from '@/ui/layout/animated-placeholder/components/ErrorPlaceholderStyled';
+import { Spinner } from '@/ui/feedback/loader/components/spinner';
 
 const StyledCard = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -22,12 +30,31 @@ const StyledCard = styled.div`
   flex-direction: column;
   justify-content: center;
   background: ${({ theme }) => theme.background.primary};
-  height: 100%;
-  width: 100%;
+  height: 95%;
+  width: 70%;
   margin: auto;
   align-items: center;
+  margin-bottom: ${({ theme }) => theme.spacing(2)}
+  overflow-y: scroll;
 `;
 
+const StyledFormTitle = styled.h3`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+`;
+
+const StyledTitleContainer = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+`;
+
+const StyledTitle = styled.h2`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.lg};
+  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  padding: ${({ theme }) => theme.spacing(6)};
+`;
 const StyledInputCard = styled.div`
   color: ${({ theme }) => theme.font.color.secondary};
   display: flex;
@@ -43,16 +70,6 @@ const StyledCheckboxInput = styled.div`
   margin-top: ${({ theme }) => theme.spacing(4)};
 `;
 
-const StyledTitleCard = styled.div`
-  /* align-items: center; */
-  color: ${({ theme }) => theme.font.color.secondary};
-  display: flex;
-  flex-direction: column;
-  height: 10%;
-  width: 100%;
-  justify-content: flex-start;
-`;
-
 const StyledAreaLabel = styled.span`
   align-content: flex-start;
   display: flex;
@@ -64,12 +81,6 @@ const StyledButton = styled.span`
   display: flex;
   justify-content: space-between;
   width: 100%;
-`;
-
-const StyledTitle = styled.h3`
-  color: ${({ theme }) => theme.font.color.secondary};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  font-size: ${({ theme }) => theme.font.size.md};
 `;
 
 const StyledCheckboxLabel = styled.span`
@@ -84,18 +95,90 @@ const StyledComboInputContainer = styled.div`
   }
 `;
 
+// const generateRandomId = (username: string, formId: string, campaignname: string) => {
+//   const randomId = `${username}-${formId}-${campaignname}`;
+//   const encodedRandomId = base64.fromByteArray(new TextEncoder().encode(randomId));
+//   return encodedRandomId;
+// }
+
+// const username = "Ertha Creboe";
+// const formname = "abc";
+// const campaignname = "Healthy Lives";
+
+// const randomId = generateRandomId(username, formname, campaignname);
+// console.log("Encoded Random ID:", randomId);
+
 export const CampaignForm = () => {
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [contact, setContact] = useState('');
   const [email, setEmail] = useState('');
   const [comments, setComments] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [errorType, setErrorType] = useState('');
+  const { userid } = useParams<{ userid: string }>();
+  console.log('USERID', userid);
+
+  useEffect(() => {
+    const fetchUserDetails = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:3000/campaign?id=${userid}`,
+        );
+        if (!response.ok) {
+          throw new Error('Failed to fetch user details');
+        }
+        const userData = await response.json();
+        console.log('setting user details....');
+        setFirstName(userData.name);
+        setEmail(userData.email);
+        setLoading(false);
+      } catch (error: any) {
+        console.error('error in fetching user details', error);
+        if (error.message === 'Form expired') {
+          setErrorType('formexpired');
+        } else {
+          setErrorType('othererror');
+        }
+      }
+    };
+    fetchUserDetails();
+  }, [userid]);
+
+  if (loading) {
+    return (
+      <>
+        <AnimatedPlaceholderErrorContainer>
+          <Spinner />
+          <AnimatedPlaceholderEmptyTextContainer>
+            <AnimatedPlaceholderErrorTitle>
+              Collecting form data...
+            </AnimatedPlaceholderErrorTitle>
+          </AnimatedPlaceholderEmptyTextContainer>
+        </AnimatedPlaceholderErrorContainer>
+      </>
+    );
+  } else if (loading && errorType === 'formexpired') {
+    return (
+      <>
+        <AnimatedPlaceholderErrorContainer>
+          <AnimatedPlaceholder type="error404" />
+          <AnimatedPlaceholderEmptyTextContainer>
+            <AnimatedPlaceholderErrorTitle>
+              Oops! We are not taking responses anymore.
+            </AnimatedPlaceholderErrorTitle>
+          </AnimatedPlaceholderEmptyTextContainer>
+        </AnimatedPlaceholderErrorContainer>
+      </>
+    );
+  }
+
   return (
     <>
       <StyledCard>
-        <StyledTitleCard>
-          <StyledTitle></StyledTitle>
-        </StyledTitleCard>
+        <StyledTitleContainer>
+          <StyledTitle>Campaign Form</StyledTitle>
+        </StyledTitleContainer>
         <StyledInputCard>
           <Section>
             <H2Title title="First Name" description="Enter your first name" />

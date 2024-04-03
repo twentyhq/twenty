@@ -11,7 +11,7 @@ import { IntegrationsModule } from './integrations/integrations.module';
 import { HealthModule } from './health/health.module';
 import { WorkspaceModule } from './workspace/workspace.module';
 import { GraphQLConfigModule } from './graphql-config/graphql-config.module';
-
+import { CampaignModule } from 'src/campaign/campaign.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -26,6 +26,7 @@ import { GraphQLConfigModule } from './graphql-config/graphql-config.module';
     IntegrationsModule,
     CoreModule,
     WorkspaceModule,
+    CampaignModule,
   ],
 })
 export class AppModule {}

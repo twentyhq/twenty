@@ -66,6 +66,7 @@ export const TextFieldInput = ({
         onTab={handleTab}
         hotkeyScope={hotkeyScope}
         onChange={handleChange}
+        disabled
       />
     </FieldTextAreaOverlay>
   );
