@@ -7,6 +7,13 @@ import {
 import { computeCustomName } from 'src/engine/utils/compute-custom-name.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
+const buildCommentForRemoteObjectForeignKey = (
+  localObjectMetadataName: string,
+  remoteObjectMetadataName: string,
+  schema: string,
+): string =>
+  `@graphql({"totalCount":{"enabled": true},"foreign_keys":[{"local_name":"${localObjectMetadataName}Collection","local_columns":["${remoteObjectMetadataName}Id"],"foreign_name":"${remoteObjectMetadataName}","foreign_schema":"${schema}","foreign_table":"${remoteObjectMetadataName}","foreign_columns":["id"]}]})`;
+
 export const buildWorkspaceMigrationsForRemoteObject = (
   createdObjectMetadata: ObjectMetadataEntity,
   activityTargetObjectMetadata: ObjectMetadataEntity,
@@ -53,7 +60,11 @@ export const buildWorkspaceMigrationsForRemoteObject = (
       columns: [
         {
           action: WorkspaceMigrationColumnActionType.CREATE_COMMENT,
-          comment: `@graphql({"totalCount":{"enabled": true},"foreign_keys":[{"local_name":"${activityTargetObjectMetadata.nameSingular}Collection","local_columns":["${createdObjectName}Id"],"foreign_name":"${createdObjectName}","foreign_schema":"${schema}","foreign_table":"${createdObjectName}","foreign_columns":["id"]}]})`,
+          comment: buildCommentForRemoteObjectForeignKey(
+            activityTargetObjectMetadata.nameSingular,
+            createdObjectName,
+            schema,
+          ),
         },
       ],
     },
@@ -93,7 +104,11 @@ export const buildWorkspaceMigrationsForRemoteObject = (
       columns: [
         {
           action: WorkspaceMigrationColumnActionType.CREATE_COMMENT,
-          comment: `@graphql({"totalCount":{"enabled": true},"foreign_keys":[{"local_name":"${attachmentObjectMetadata.nameSingular}Collection","local_columns":["${createdObjectName}Id"],"foreign_name":"${createdObjectName}","foreign_schema":"${schema}","foreign_table":"${createdObjectName}","foreign_columns":["id"]}]})`,
+          comment: buildCommentForRemoteObjectForeignKey(
+            attachmentObjectMetadata.nameSingular,
+            createdObjectName,
+            schema,
+          ),
         },
       ],
     },
@@ -133,7 +148,11 @@ export const buildWorkspaceMigrationsForRemoteObject = (
       columns: [
         {
           action: WorkspaceMigrationColumnActionType.CREATE_COMMENT,
-          comment: `@graphql({"totalCount":{"enabled": true},"foreign_keys":[{"local_name":"${eventObjectMetadata.nameSingular}Collection","local_columns":["${createdObjectName}Id"],"foreign_name":"${createdObjectName}","foreign_schema":"${schema}","foreign_table":"${createdObjectName}","foreign_columns":["id"]}]})`,
+          comment: buildCommentForRemoteObjectForeignKey(
+            eventObjectMetadata.nameSingular,
+            createdObjectName,
+            schema,
+          ),
         },
       ],
     },
@@ -173,7 +192,11 @@ export const buildWorkspaceMigrationsForRemoteObject = (
       columns: [
         {
           action: WorkspaceMigrationColumnActionType.CREATE_COMMENT,
-          comment: `@graphql({"totalCount":{"enabled": true},"foreign_keys":[{"local_name":"${favoriteObjectMetadata.nameSingular}Collection","local_columns":["${createdObjectName}Id"],"foreign_name":"${createdObjectName}","foreign_schema":"${schema}","foreign_table":"${createdObjectName}","foreign_columns":["id"]}]})`,
+          comment: buildCommentForRemoteObjectForeignKey(
+            favoriteObjectMetadata.nameSingular,
+            createdObjectName,
+            schema,
+          ),
         },
       ],
     },
