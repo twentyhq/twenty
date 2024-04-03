@@ -18,12 +18,12 @@ jobs:
         # change image to localbuild using yq
         yq eval 'del(.services.server.image)' -i docker-compose.yml
         yq eval '.services.server.build.context = "../../../"' -i docker-compose.yml
-        yq eval '.services.server.build.dockerfile = "./packages/twenty-docker/prod/twenty/Dockerfile"' -i docker-compose.yml
+        yq eval '.services.server.build.dockerfile = "./packages/twenty-docker/twenty/Dockerfile"' -i docker-compose.yml
         yq eval '.services.server.restart = "no"' -i docker-compose.yml
 
         yq eval 'del(.services.db.image)' -i docker-compose.yml
         yq eval '.services.db.build.context = "../../../"' -i docker-compose.yml
-        yq eval '.services.db.build.dockerfile = "./packages/twenty-docker/prod/twenty-postgres/Dockerfile"' -i docker-compose.yml
+        yq eval '.services.db.build.dockerfile = "./packages/twenty-docker/twenty-postgres/Dockerfile"' -i docker-compose.yml
 
         echo "Setting up .env file..."
         cp .env.example .env
@@ -56,4 +56,4 @@ jobs:
         done
 
         done
-      working-directory: ./packages/twenty-docker/prod/
+      working-directory: ./packages/twenty-docker/
