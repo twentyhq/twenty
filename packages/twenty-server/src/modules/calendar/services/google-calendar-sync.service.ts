@@ -29,6 +29,7 @@ import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calen
 import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-attendee.object-metadata';
 import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
 import { CalendarEventAttendeeService } from 'src/modules/calendar/services/calendar-event-attendee/calendar-event-attendee.service';
+import { CalendarEventCleanerService } from 'src/modules/calendar/services/calendar-event-cleaner/calendar-event-cleaner.service';
 
 @Injectable()
 export class GoogleCalendarSyncService {
@@ -57,6 +58,7 @@ export class GoogleCalendarSyncService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly eventEmitter: EventEmitter2,
     private readonly calendarEventAttendeesService: CalendarEventAttendeeService,
+    private readonly calendarEventCleanerService: CalendarEventCleanerService,
   ) {}
 
   public async startGoogleCalendarSync(
@@ -201,6 +203,14 @@ export class GoogleCalendarSyncService {
       existingEventExternalIds.includes(event.externalId),
     );
 
+    const eventsToDelete = existingCalendarChannelEventAssociations.filter(
+      (association) => !eventExternalIds.includes(association.eventExternalId),
+    );
+
+    const eventExternalIdsToDelete = eventsToDelete.map(
+      (association) => association.eventExternalId,
+    );
+
     const calendarChannelEventAssociationsToSave = eventsToSave.map(
       (event) => ({
         calendarEventId: event.id,
@@ -306,6 +316,27 @@ export class GoogleCalendarSyncService {
 
           this.logger.log(
             `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: updating attendees in ${
+              endTime - startTime
+            }ms.`,
+          );
+
+          startTime = Date.now();
+
+          await this.calendarChannelEventAssociationRepository.deleteByEventExternalIdsAndCalendarChannelId(
+            eventExternalIdsToDelete,
+            calendarChannelId,
+            workspaceId,
+            transactionManager,
+          );
+
+          await this.calendarEventCleanerService.cleanWorkspaceCalendarEvents(
+            workspaceId,
+          );
+
+          endTime = Date.now();
+
+          this.logger.log(
+            `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: deleting calendar channel event associations in ${
               endTime - startTime
             }ms.`,
           );
