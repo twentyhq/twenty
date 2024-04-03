@@ -3,7 +3,13 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'package.json'
+      - 'packages/twenty-docs/**'
   pull_request:
+    paths:
+      - 'package.json'
+      - 'packages/twenty-docs/**'
 jobs:
   docs-build:
     runs-on: ubuntu-latest

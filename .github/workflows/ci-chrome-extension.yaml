@@ -3,7 +3,13 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'package.json'
+      - 'packages/twenty-chrome-extension/**'
   pull_request:
+    paths:
+      - 'package.json'
+      - 'packages/twenty-chrome-extension/**'
 jobs:
   chrome-extension-yarn-install:
     runs-on: ci-8-cores

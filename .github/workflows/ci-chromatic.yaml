@@ -4,8 +4,14 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'package.json'
+      - 'packages/twenty-front/**'
   pull_request:
     types: [labeled]
+    paths:
+      - 'package.json'
+      - 'packages/twenty-front/**'
 jobs:
   chromatic-deployment:
     if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
