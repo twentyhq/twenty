@@ -102,6 +102,12 @@ export type FieldSelectMetadata = {
   options: { label: string; color: ThemeColor; value: string }[];
 };
 
+export type FieldMultiSelectMetadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
+  options: { label: string; color: ThemeColor; value: string }[];
+};
+
 export type FieldMetadata =
   | FieldBooleanMetadata
   | FieldCurrencyMetadata
