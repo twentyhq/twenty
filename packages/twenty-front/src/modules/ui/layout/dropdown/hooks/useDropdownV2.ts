@@ -7,16 +7,16 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { isDefined } from '~/utils/isDefined';
 
-export const useDropdownRemotely = () => {
+export const useDropdownV2 = () => {
   const {
     setHotkeyScopeAndMemorizePreviousScope,
     goBackToPreviousHotkeyScope,
   } = usePreviousHotkeyScope();
 
-  const closeDropdownRemotely = useRecoilCallback(
+  const closeDropdown = useRecoilCallback(
     ({ set }) =>
-      (componentId: string) => {
-        const scopeId = getScopeIdFromComponentId(componentId);
+      (specificComponentId: string) => {
+        const scopeId = getScopeIdFromComponentId(specificComponentId);
 
         goBackToPreviousHotkeyScope();
         set(
@@ -29,10 +29,10 @@ export const useDropdownRemotely = () => {
     [goBackToPreviousHotkeyScope],
   );
 
-  const openDropdownRemotely = useRecoilCallback(
+  const openDropdown = useRecoilCallback(
     ({ set, snapshot }) =>
-      (componentId: string, customHotkeyScope?: HotkeyScope) => {
-        const scopeId = getScopeIdFromComponentId(componentId);
+      (specificComponentId: string, customHotkeyScope?: HotkeyScope) => {
+        const scopeId = getScopeIdFromComponentId(specificComponentId);
 
         const dropdownHotkeyScope = snapshot
           .getLoadable(dropdownHotkeyComponentState({ scopeId }))
@@ -60,26 +60,26 @@ export const useDropdownRemotely = () => {
     [setHotkeyScopeAndMemorizePreviousScope],
   );
 
-  const toggleDropdownRemotely = useRecoilCallback(
+  const toggleDropdown = useRecoilCallback(
     ({ snapshot }) =>
-      (componentId: string) => {
-        const scopeId = getScopeIdFromComponentId(componentId);
+      (specificComponentId: string) => {
+        const scopeId = getScopeIdFromComponentId(specificComponentId);
         const isDropdownOpen = snapshot
           .getLoadable(isDropdownOpenComponentState({ scopeId }))
           .getValue();
 
         if (isDropdownOpen) {
-          closeDropdownRemotely(componentId);
+          closeDropdown(specificComponentId);
         } else {
-          openDropdownRemotely(componentId);
+          openDropdown(specificComponentId);
         }
       },
-    [closeDropdownRemotely, openDropdownRemotely],
+    [closeDropdown, openDropdown],
   );
 
   return {
-    closeDropdownRemotely,
-    openDropdownRemotely,
-    toggleDropdownRemotely,
+    closeDropdown,
+    openDropdown,
+    toggleDropdown,
   };
 };

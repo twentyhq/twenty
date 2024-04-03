@@ -5,7 +5,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { getFilterTypeFromFieldType } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { getOperandsForFilterType } from '@/object-record/object-filter-dropdown/utils/getOperandsForFilterType';
-import { useDropdownRemotely } from '@/ui/layout/dropdown/hooks/useDropdownRemotely';
+import { useDropdownV2 } from '@/ui/layout/dropdown/hooks/useDropdownV2';
 import { useCombinedViewFilters } from '@/views/hooks/useCombinedViewFilters';
 import { isDefined } from '~/utils/isDefined';
 
@@ -26,7 +26,7 @@ export const useHandleToggleColumnFilter = ({
     useColumnDefinitionsFromFieldMetadata(objectMetadataItem);
 
   const { upsertCombinedViewFilter } = useCombinedViewFilters(viewBarId);
-  const { openDropdownRemotely } = useDropdownRemotely();
+  const { openDropdown } = useDropdownV2();
 
   const handleToggleColumnFilter = useCallback(
     (fieldMetadataId: string) => {
@@ -60,11 +60,11 @@ export const useHandleToggleColumnFilter = ({
 
       upsertCombinedViewFilter(newFilter);
 
-      openDropdownRemotely(fieldMetadataId, {
+      openDropdown(fieldMetadataId, {
         scope: fieldMetadataId,
       });
     },
-    [columnDefinitions, upsertCombinedViewFilter, openDropdownRemotely],
+    [columnDefinitions, upsertCombinedViewFilter, openDropdown],
   );
 
   return handleToggleColumnFilter;
