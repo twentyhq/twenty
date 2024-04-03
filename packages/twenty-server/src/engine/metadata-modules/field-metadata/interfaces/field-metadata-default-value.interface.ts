@@ -8,7 +8,6 @@ import {
   FieldMetadataDefaultValueLink,
   FieldMetadataDefaultValueNumber,
   FieldMetadataDefaultValueString,
-  FieldMetadataDefaultValueStringArray,
   FieldMetadataDefaultValueUuidFunction,
   FieldMetadataDefaultValueNowFunction,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
@@ -39,7 +38,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.ADDRESS]: FieldMetadataDefaultValueAddress;
   [FieldMetadataType.RATING]: FieldMetadataDefaultValueString;
   [FieldMetadataType.SELECT]: FieldMetadataDefaultValueString;
-  [FieldMetadataType.MULTI_SELECT]: FieldMetadataDefaultValueStringArray;
+  [FieldMetadataType.MULTI_SELECT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.RAW_JSON]: FieldMetadataDefaultValueRawJson;
 };
 
