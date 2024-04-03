@@ -30,6 +30,7 @@ import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standa
 import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
 import { CalendarEventAttendeeService } from 'src/modules/calendar/services/calendar-event-attendee/calendar-event-attendee.service';
 import { CalendarEventCleanerService } from 'src/modules/calendar/services/calendar-event-cleaner/calendar-event-cleaner.service';
+import { CalendarEventAttendee } from 'src/modules/calendar/types/calendar-event';
 
 @Injectable()
 export class GoogleCalendarSyncService {
@@ -235,6 +236,8 @@ export class GoogleCalendarSyncService {
         workspaceId,
       );
 
+    let newCalendarEventAttendees: CalendarEventAttendee[] = [];
+
     if (events.length > 0) {
       const dataSourceMetadata =
         await this.workspaceDataSourceService.connectToWorkspaceDataSource(
@@ -309,12 +312,13 @@ export class GoogleCalendarSyncService {
 
           startTime = Date.now();
 
-          await this.calendarEventAttendeesRepository.updateCalendarEventAttendees(
-            attendeesToUpdate,
-            iCalUIDCalendarEventIdMap,
-            workspaceId,
-            transactionManager,
-          );
+          newCalendarEventAttendees =
+            await this.calendarEventAttendeesRepository.updateCalendarEventAttendeesAndReturnNewOnes(
+              attendeesToUpdate,
+              iCalUIDCalendarEventIdMap,
+              workspaceId,
+              transactionManager,
+            );
 
           endTime = Date.now();
 
@@ -347,7 +351,9 @@ export class GoogleCalendarSyncService {
         });
 
         if (calendarChannel.isContactAutoCreationEnabled) {
-          const contactsToCreate = attendeesToSave;
+          const contactsToCreate = attendeesToSave.concat(
+            newCalendarEventAttendees,
+          );
 
           this.eventEmitter.emit(`createContacts`, {
             workspaceId,

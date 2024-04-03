@@ -78,14 +78,14 @@ export class CalendarEventAttendeeRepository {
     );
   }
 
-  public async updateCalendarEventAttendees(
+  public async updateCalendarEventAttendeesAndReturnNewOnes(
     calendarEventAttendees: CalendarEventAttendee[],
     iCalUIDCalendarEventIdMap: Map<string, string>,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<void> {
+  ): Promise<CalendarEventAttendee[]> {
     if (calendarEventAttendees.length === 0) {
-      return;
+      return [];
     }
 
     const dataSourceSchema =
@@ -104,6 +104,13 @@ export class CalendarEventAttendeeRepository {
       calendarEventAttendees,
       (existingCalendarEventAttendee, calendarEventAttendee) =>
         existingCalendarEventAttendee.handle === calendarEventAttendee.handle,
+    );
+
+    const newCalendarEventAttendees = differenceWith(
+      calendarEventAttendees,
+      existingCalendarEventAttendees,
+      (calendarEventAttendee, existingCalendarEventAttendee) =>
+        calendarEventAttendee.handle === existingCalendarEventAttendee.handle,
     );
 
     await this.deleteByIds(
@@ -142,6 +149,8 @@ export class CalendarEventAttendeeRepository {
       workspaceId,
       transactionManager,
     );
+
+    return newCalendarEventAttendees;
   }
 
   public async getWithoutPersonIdAndWorkspaceMemberId(
