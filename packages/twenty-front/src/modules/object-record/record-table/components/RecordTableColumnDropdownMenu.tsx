@@ -81,19 +81,27 @@ export const RecordTableColumnDropdownMenu = ({
     onToggleColumnFilter?.(column.fieldMetadataId);
   };
 
+  const isSortable = column.isSortable === true;
+  const isFilterable = column.isFilterable === true;
+  const showSeparator = isFilterable || isSortable;
+
   return (
     <DropdownMenuItemsContainer>
-      <MenuItem
-        LeftIcon={IconFilter}
-        onClick={handleFilterClick}
-        text="Filter"
-      />
-      <MenuItem
-        LeftIcon={IconSortDescending}
-        onClick={handleSortClick}
-        text="Sort"
-      />
-      <DropdownMenuSeparator />
+      {isFilterable && (
+        <MenuItem
+          LeftIcon={IconFilter}
+          onClick={handleFilterClick}
+          text="Filter"
+        />
+      )}
+      {isSortable && (
+        <MenuItem
+          LeftIcon={IconSortDescending}
+          onClick={handleSortClick}
+          text="Sort"
+        />
+      )}
+      {showSeparator && <DropdownMenuSeparator />}
       {canMoveLeft && (
         <MenuItem
           LeftIcon={IconArrowLeft}
