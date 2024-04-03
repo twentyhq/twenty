@@ -5,6 +5,7 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { CalendarEventAttendeeModule } from 'src/modules/calendar/services/calendar-event-attendee/calendar-event-attendee.module';
+import { CalendarEventCleanerModule } from 'src/modules/calendar/services/calendar-event-cleaner/calendar-event-cleaner.module';
 import { GoogleCalendarSyncService } from 'src/modules/calendar/services/google-calendar-sync.service';
 import { CalendarProvidersModule } from 'src/modules/calendar/services/providers/calendar-providers.module';
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
@@ -32,6 +33,7 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
     CalendarEventAttendeeModule,
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     WorkspaceDataSourceModule,
+    CalendarEventCleanerModule,
   ],
   providers: [GoogleCalendarSyncService],
   exports: [GoogleCalendarSyncService],

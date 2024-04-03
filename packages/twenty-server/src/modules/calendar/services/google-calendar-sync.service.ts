@@ -64,7 +64,6 @@ export class GoogleCalendarSyncService {
   public async startGoogleCalendarSync(
     workspaceId: string,
     connectedAccountId: string,
-    syncToken?: string,
     pageToken?: string,
   ): Promise<void> {
     const connectedAccount = await this.connectedAccountRepository.getById(
@@ -90,6 +89,8 @@ export class GoogleCalendarSyncService {
         connectedAccountId,
         workspaceId,
       );
+
+    const syncToken = calendarChannel?.syncCursor;
 
     if (!calendarChannel) {
       return;
@@ -122,13 +123,12 @@ export class GoogleCalendarSyncService {
     const blocklistedEmails = blocklist.map((blocklist) => blocklist.handle);
 
     let startTime = Date.now();
-    let endTime: number;
 
     let nextSyncToken: string | null | undefined;
     let nextPageToken: string | null | undefined = pageToken;
     const events: calendar_v3.Schema$Event[] = [];
 
-    while (!nextPageToken) {
+    while (true) {
       const googleCalendarEvents = await googleCalendarClient.events.list({
         calendarId: 'primary',
         maxResults: 500,
@@ -136,14 +136,6 @@ export class GoogleCalendarSyncService {
         pageToken,
         q: googleCalendarSearchFilterExcludeEmails(blocklistedEmails),
       });
-
-      endTime = Date.now();
-
-      this.logger.log(
-        `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId} getting events list in ${
-          endTime - startTime
-        }ms.`,
-      );
 
       nextSyncToken = googleCalendarEvents.data.nextSyncToken;
       nextPageToken = googleCalendarEvents.data.nextPageToken;
@@ -155,7 +147,19 @@ export class GoogleCalendarSyncService {
       }
 
       events.push(...items);
+
+      if (!nextPageToken) {
+        break;
+      }
     }
+
+    let endTime = Date.now();
+
+    this.logger.log(
+      `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId} getting events list in ${
+        endTime - startTime
+      }ms.`,
+    );
 
     if (!events || events?.length === 0) {
       this.logger.log(
