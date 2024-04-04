@@ -74,6 +74,34 @@ export const SettingsObjectFieldSelectForm = ({
     onChange(nextOptions);
   };
 
+  const handleUniqueDefaultValueChange = (
+    index: number,
+    option: SettingsObjectFieldSelectFormOption,
+    nextOption: SettingsObjectFieldSelectFormOption,
+  ) => {
+    const hasDefaultOptionChanged = !option.isDefault && nextOption.isDefault;
+    const nextOptions = hasDefaultOptionChanged
+      ? values.map((value) => ({
+          ...value,
+          isDefault: false,
+        }))
+      : [...values];
+
+    nextOptions.splice(index, 1, nextOption);
+
+    onChange(nextOptions);
+  };
+
+  const handleDefaultValueChange = (
+    index: number,
+    option: SettingsObjectFieldSelectFormOption,
+    nextOption: SettingsObjectFieldSelectFormOption,
+  ) => {
+    const nextOptions = values;
+    nextOptions.splice(index, 1, nextOption);
+    onChange(nextOptions);
+  };
+
   return (
     <>
       <StyledContainer>
@@ -93,18 +121,13 @@ export const SettingsObjectFieldSelectForm = ({
                       key={option.value}
                       isDefault={option.isDefault}
                       onChange={(nextOption) => {
-                        const hasDefaultOptionChanged =
-                          !option.isDefault && nextOption.isDefault;
-                        const nextOptions = hasDefaultOptionChanged
-                          ? values.map((value) => ({
-                              ...value,
-                              isDefault: false,
-                            }))
-                          : [...values];
-
-                        nextOptions.splice(index, 1, nextOption);
-
-                        onChange(nextOptions);
+                        isMultiSelect
+                          ? handleDefaultValueChange(index, option, nextOption)
+                          : handleUniqueDefaultValueChange(
+                              index,
+                              option,
+                              nextOption,
+                            );
                       }}
                       onRemove={
                         values.length > 1

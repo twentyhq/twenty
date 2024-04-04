@@ -161,6 +161,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
             onChange={(nextSelectValues) =>
               onChange({ select: nextSelectValues })
             }
+            isMultiSelect={true}
           />
         ) : fieldMetadataItem.type === FieldMetadataType.Boolean ? (
           <SettingsDataModelDefaultValueForm

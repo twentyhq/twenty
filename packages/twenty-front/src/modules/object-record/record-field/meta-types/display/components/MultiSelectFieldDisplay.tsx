@@ -18,8 +18,12 @@ export const MultiSelectFieldDisplay = () => {
 
   return selectedOptions ? (
     <StyledTagContainer>
-      {selectedOptions.map((selectedOption) => (
-        <Tag color={selectedOption.color} text={selectedOption.label} />
+      {selectedOptions.map((selectedOption, index) => (
+        <Tag
+          key={index}
+          color={selectedOption.color}
+          text={selectedOption.label}
+        />
       ))}
     </StyledTagContainer>
   ) : (
