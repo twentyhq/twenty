@@ -14,7 +14,7 @@ export type CalendarEvent = {
   startsAt: string;
   title?: string;
   visibility: 'METADATA' | 'SHARE_EVERYTHING';
-  attendees?: {
+  participants?: {
     displayName: string;
     workspaceMemberId?: string;
   }[];

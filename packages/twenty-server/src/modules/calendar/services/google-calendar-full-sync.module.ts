@@ -4,12 +4,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
-import { CalendarEventAttendeeModule } from 'src/modules/calendar/services/calendar-event-attendee/calendar-event-attendee.module';
+import { CalendarEventParticipantModule } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.module';
 import { GoogleCalendarFullSyncService } from 'src/modules/calendar/services/google-calendar-full-sync.service';
 import { CalendarProvidersModule } from 'src/modules/calendar/services/providers/calendar-providers.module';
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
 import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
-import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-attendee.object-metadata';
+import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
 import { CalendarEventObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event.object-metadata';
 import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
@@ -24,12 +24,12 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
       CalendarEventObjectMetadata,
       CalendarChannelObjectMetadata,
       CalendarChannelEventAssociationObjectMetadata,
-      CalendarEventAttendeeObjectMetadata,
+      CalendarEventParticipantObjectMetadata,
       BlocklistObjectMetadata,
       PersonObjectMetadata,
       WorkspaceMemberObjectMetadata,
     ]),
-    CalendarEventAttendeeModule,
+    CalendarEventParticipantModule,
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     WorkspaceDataSourceModule,
   ],

@@ -1,4 +1,4 @@
-import { IconArchiveOff, IconDotsVertical } from 'twenty-ui';
+import { IconArchiveOff, IconDotsVertical, IconTrash } from 'twenty-ui';
 
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -9,6 +9,7 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsObjectFieldInactiveActionDropdownProps = {
   isCustomField?: boolean;
+  isRelationType?: boolean;
   onActivate: () => void;
   onErase: () => void;
   scopeKey: string;
@@ -17,6 +18,9 @@ type SettingsObjectFieldInactiveActionDropdownProps = {
 export const SettingsObjectFieldInactiveActionDropdown = ({
   onActivate,
   scopeKey,
+  onErase,
+  isCustomField,
+  isRelationType,
 }: SettingsObjectFieldInactiveActionDropdownProps) => {
   const dropdownId = `${scopeKey}-settings-field-disabled-action-dropdown`;
 
@@ -27,10 +31,12 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
     closeDropdown();
   };
 
-  // const handleErase = () => {
-  //   onErase();
-  //   closeDropdown();
-  // };
+  const handleErase = () => {
+    onErase();
+    closeDropdown();
+  };
+
+  const isErasable = isCustomField && !isRelationType;
 
   return (
     <Dropdown
@@ -46,14 +52,14 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
               LeftIcon={IconArchiveOff}
               onClick={handleActivate}
             />
-            {/* {isCustomField && (
-                <MenuItem
-                  text="Erase"
-                  accent="danger"
-                  LeftIcon={IconTrash}
-                  onClick={handleErase}
-                />
-              )} */}
+            {isErasable && (
+              <MenuItem
+                text="Erase"
+                accent="danger"
+                LeftIcon={IconTrash}
+                onClick={handleErase}
+              />
+            )}
           </DropdownMenuItemsContainer>
         </DropdownMenu>
       }

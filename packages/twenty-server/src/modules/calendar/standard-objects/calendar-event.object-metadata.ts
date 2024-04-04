@@ -11,7 +11,7 @@ import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/d
 import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
-import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-attendee.object-metadata';
+import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { calendarEventStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
@@ -171,16 +171,16 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   calendarChannelEventAssociations: CalendarChannelEventAssociationObjectMetadata[];
 
   @FieldMetadata({
-    standardId: calendarEventStandardFieldIds.eventAttendees,
+    standardId: calendarEventStandardFieldIds.eventParticipants,
     type: FieldMetadataType.RELATION,
-    label: 'Event Attendees',
-    description: 'Event Attendees',
+    label: 'Event Participants',
+    description: 'Event Participants',
     icon: 'IconUserCircle',
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => CalendarEventAttendeeObjectMetadata,
+    inverseSideTarget: () => CalendarEventParticipantObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  eventAttendees: CalendarEventAttendeeObjectMetadata[];
+  eventParticipants: CalendarEventParticipantObjectMetadata[];
 }

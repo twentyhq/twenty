@@ -39,6 +39,24 @@
         "{workspaceRoot}/.eslintrc.js",
         "{workspaceRoot}/tools/eslint-rules/**/*"
       ]
+    },
+    "@nx/vite:test": {
+      "cache": true,
+      "inputs": ["default", "^default"]
+    },
+    "@nx/vite:build": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["default", "^default"]
+    },
+    "storybook:build": {
+      "cache": true,
+      "inputs": [
+        "default",
+        "^default",
+        "{projectRoot}/.storybook/**/*",
+        "{projectRoot}/tsconfig.storybook.json"
+      ]
     }
   },
   "installation": {
@@ -54,21 +72,10 @@
       }
     }
   },
-  "plugins": [
-    {
-      "plugin": "@nx/storybook/plugin",
-      "options": {
-        "buildStorybookTargetName": "build-storybook",
-        "serveStorybookTargetName": "storybook",
-        "testStorybookTargetName": "test-storybook",
-        "staticStorybookTargetName": "static-storybook"
-      }
-    }
-  ],
   "tasksRunnerOptions": {
     "default": {
       "options": {
-        "cacheableOperations": ["build-storybook"]
+        "cacheableOperations": ["storybook:build"]
       }
     }
   },
