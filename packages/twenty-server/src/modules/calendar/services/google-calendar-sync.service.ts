@@ -184,15 +184,27 @@ export class GoogleCalendarSyncService {
       }ms.`,
     );
 
-    const formattedEvents = events
-      .filter((event) => event.status !== 'cancelled')
-      .map((event) => formatGoogleCalendarEvent(event));
-
     // TODO: When we will be able to add unicity contraint on iCalUID, we will do a INSERT ON CONFLICT DO UPDATE
 
     const existingEventExternalIds =
       existingCalendarChannelEventAssociations.map(
         (association) => association.eventExternalId,
+      );
+
+    const existingEventsIds = existingCalendarChannelEventAssociations.map(
+      (association) => association.calendarEventId,
+    );
+
+    const iCalUIDCalendarEventIdMap =
+      await this.calendarEventRepository.getICalUIDCalendarEventIdMap(
+        existingEventsIds,
+        workspaceId,
+      );
+
+    const formattedEvents = events
+      .filter((event) => event.status !== 'cancelled')
+      .map((event) =>
+        formatGoogleCalendarEvent(event, iCalUIDCalendarEventIdMap),
       );
 
     const eventsToSave = formattedEvents.filter(
@@ -224,12 +236,6 @@ export class GoogleCalendarSyncService {
     const attendeesToUpdate = eventsToUpdate.flatMap(
       (event) => event.attendees,
     );
-
-    const iCalUIDCalendarEventIdMap =
-      await this.calendarEventRepository.getICalUIDCalendarEventIdMap(
-        eventsToUpdate.map((event) => event.iCalUID),
-        workspaceId,
-      );
 
     let newCalendarEventAttendees: CalendarEventAttendee[] = [];
 
@@ -310,9 +316,6 @@ export class GoogleCalendarSyncService {
           );
 
           startTime = Date.now();
-
-          console.log('newCalendarEventAttendees', newCalendarEventAttendees);
-          console.log('attendeesToSave', attendeesToSave);
 
           await this.calendarEventAttendeesService.saveCalendarEventAttendees(
             attendeesToSave,

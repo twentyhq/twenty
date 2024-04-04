@@ -6,8 +6,9 @@ import { CalendarEventAttendeeResponseStatus } from 'src/modules/calendar/standa
 
 export const formatGoogleCalendarEvent = (
   event: calendar_v3.Schema$Event,
+  iCalUIDCalendarEventIdMap: Map<string, string>,
 ): CalendarEventWithAttendees => {
-  const id = v4();
+  const id = iCalUIDCalendarEventIdMap.get(event.iCalUID ?? '') ?? v4();
 
   const formatResponseStatus = (status: string | null | undefined) => {
     switch (status) {
