@@ -73,12 +73,12 @@ const findAll = (model: SQLiteTableWithColumns<any>) => {
   throw new Error('Unsupported database driver');
 };
 
-const insertMany = async <T extends SQLiteTableWithColumns<any>>(
-  model: T,
-  data: T[],
+const insertMany = async (
+  model: SQLiteTableWithColumns<any>,
+  data: any,
   options?: {
-    onConflictKey?: keyof T;
-    onConflictUpdateObject?: Partial<T>;
+    onConflictKey?: string;
+    onConflictUpdateObject?: any;
   },
 ) => {
   if (isSqliteDriver) {
