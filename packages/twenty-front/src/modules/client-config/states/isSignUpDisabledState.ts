@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
-export const isSignUpDisabledState = atom<boolean>({
+export const isSignUpDisabledState = createState<boolean>({
   key: 'isSignUpDisabledState',
-  default: false,
+  defaultValue: false,
 });

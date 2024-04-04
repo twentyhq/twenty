@@ -1,6 +1,7 @@
 import { useApolloClient } from '@apollo/client';
+import { useRecoilValue } from 'recoil';
 
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { MAX_QUERY_DEPTH_FOR_CACHE_INJECTION } from '@/object-record/cache/constants/MaxQueryDepthForCacheInjection';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
@@ -11,29 +12,44 @@ import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQu
 export const useUpsertFindManyRecordsQueryInCache = ({
   objectMetadataItem,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectMetadataItem: Pick<
+    ObjectMetadataItem,
+    'fields' | 'namePlural' | 'nameSingular'
+  >;
 }) => {
   const apolloClient = useApolloClient();
 
   const generateFindManyRecordsQuery = useGenerateFindManyRecordsQuery();
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const upsertFindManyRecordsQueryInCache = <
     T extends ObjectRecord = ObjectRecord,
   >({
     queryVariables,
+    depth = MAX_QUERY_DEPTH_FOR_CACHE_INJECTION,
     objectRecordsToOverwrite,
+    queryFields,
+    computeReferences = false,
   }: {
     queryVariables: ObjectRecordQueryVariables;
+    depth?: number;
     objectRecordsToOverwrite: T[];
+    queryFields?: Record<string, any>;
+    computeReferences?: boolean;
   }) => {
     const findManyRecordsQueryForCacheOverwrite = generateFindManyRecordsQuery({
       objectMetadataItem,
-      depth: MAX_QUERY_DEPTH_FOR_CACHE_INJECTION,
+      depth,
+      queryFields,
+      computeReferences,
     });
 
     const newObjectRecordConnection = getRecordConnectionFromRecords({
-      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+      objectMetadataItems: objectMetadataItems,
+      objectMetadataItem: objectMetadataItem,
       records: objectRecordsToOverwrite,
+      queryFields,
+      computeReferences,
     });
 
     apolloClient.writeQuery({

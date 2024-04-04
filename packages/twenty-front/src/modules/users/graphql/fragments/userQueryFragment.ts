@@ -26,11 +26,20 @@ export const USER_QUERY_FRAGMENT = gql`
       inviteHash
       allowImpersonation
       subscriptionStatus
+      activationStatus
       featureFlags {
         id
         key
         value
         workspaceId
+      }
+    }
+    workspaces {
+      workspace {
+        id
+        logo
+        displayName
+        domainName
       }
     }
   }

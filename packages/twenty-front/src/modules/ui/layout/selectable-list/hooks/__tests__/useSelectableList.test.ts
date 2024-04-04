@@ -21,7 +21,7 @@ describe('useSelectableList', () => {
           selectableListScopeId,
         });
 
-        const selectableItemIds = useRecoilValue(selectableItemIdsState());
+        const selectableItemIds = useRecoilValue(selectableItemIdsState);
 
         return {
           setSelectableItemIds,
@@ -51,9 +51,8 @@ describe('useSelectableList', () => {
           selectableListScopeId,
         });
 
-        const [selectedItemId, setSelectedItemId] = useRecoilState(
-          selectedItemIdState(),
-        );
+        const [selectedItemId, setSelectedItemId] =
+          useRecoilState(selectedItemIdState);
 
         return {
           resetSelectedItem,

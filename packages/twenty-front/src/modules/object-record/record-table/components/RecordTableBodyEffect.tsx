@@ -15,15 +15,16 @@ export const RecordTableBodyEffect = ({
   const {
     fetchMoreRecords: fetchMoreObjects,
     records,
+    totalCount,
     setRecordTableData,
     queryStateIdentifier,
     loading,
   } = useLoadRecordIndexTable(objectNameSingular);
 
-  const { getTableLastRowVisibleState } = useRecordTableStates();
+  const { tableLastRowVisibleState } = useRecordTableStates();
 
   const [tableLastRowVisible, setTableLastRowVisible] = useRecoilState(
-    getTableLastRowVisibleState(),
+    tableLastRowVisibleState,
   );
 
   const isFetchingMoreObjects = useRecoilValue(
@@ -32,9 +33,9 @@ export const RecordTableBodyEffect = ({
 
   useEffect(() => {
     if (!loading) {
-      setRecordTableData(records);
+      setRecordTableData(records, totalCount);
     }
-  }, [records, setRecordTableData, loading]);
+  }, [records, totalCount, setRecordTableData, loading]);
 
   useEffect(() => {
     if (tableLastRowVisible && !isFetchingMoreObjects) {

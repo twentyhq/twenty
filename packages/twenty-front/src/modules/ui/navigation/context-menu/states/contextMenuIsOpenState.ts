@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
-export const contextMenuIsOpenState = atom<boolean>({
+export const contextMenuIsOpenState = createState<boolean>({
   key: 'contextMenuIsOpenState',
-  default: false,
+  defaultValue: false,
 });

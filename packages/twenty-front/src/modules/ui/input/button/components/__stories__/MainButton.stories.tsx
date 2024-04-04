@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
+import { IconBrandGoogle } from 'twenty-ui';
 
-import { IconBrandGoogle } from '@/ui/display/icon';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { MainButton } from '../MainButton';
@@ -40,6 +40,10 @@ export const DisabledWithIcon: Story = {
 
 export const FullWidth: Story = {
   args: { fullWidth: true },
+};
+
+export const Width: Story = {
+  args: { width: 200 },
 };
 
 export const Secondary: Story = {

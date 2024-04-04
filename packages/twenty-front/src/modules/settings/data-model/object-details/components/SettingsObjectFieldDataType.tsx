@@ -1,20 +1,20 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
+import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
 import { IconTwentyStar } from '@/ui/display/icon/components/IconTwentyStar';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-
-import { settingsFieldMetadataTypes } from '../../constants/settingsFieldMetadataTypes';
 
 type SettingsObjectFieldDataTypeProps = {
   onClick?: () => void;
   Icon?: IconComponent;
   label?: string;
-  value: FieldMetadataType;
+  value: SettingsSupportedFieldType;
 };
 
-const StyledDataType = styled.div<{ value: FieldMetadataType }>`
+const StyledDataType = styled.div<{ value: SettingsSupportedFieldType }>`
   align-items: center;
   border: 1px solid transparent;
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -50,10 +50,15 @@ const StyledLabelContainer = styled.div`
 export const SettingsObjectFieldDataType = ({
   onClick,
   value,
-  Icon = settingsFieldMetadataTypes[value]?.Icon ?? IconTwentyStar,
-  label = settingsFieldMetadataTypes[value]?.label,
+  Icon: IconFromProps,
+  label: labelFromProps,
 }: SettingsObjectFieldDataTypeProps) => {
   const theme = useTheme();
+
+  const fieldTypeConfig = getSettingsFieldTypeConfig(value);
+  const Icon: IconComponent =
+    IconFromProps ?? fieldTypeConfig?.Icon ?? IconTwentyStar;
+  const label = labelFromProps ?? fieldTypeConfig?.label;
 
   const StyledIcon = styled(Icon)`
     flex: 1 0 auto;

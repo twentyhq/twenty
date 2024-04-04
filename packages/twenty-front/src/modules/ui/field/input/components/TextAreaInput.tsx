@@ -3,7 +3,8 @@ import TextareaAutosize from 'react-textarea-autosize';
 import styled from '@emotion/styled';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
-import { textInputStyle } from '@/ui/theme/constants/effects';
+import { TEXT_INPUT_STYLE } from '@/ui/theme/constants/TextInputStyle';
+import { isDefined } from '~/utils/isDefined';
 
 export type TextAreaInputProps = {
   disabled?: boolean;
@@ -21,7 +22,7 @@ export type TextAreaInputProps = {
 };
 
 const StyledTextArea = styled(TextareaAutosize)`
-  ${textInputStyle}
+  ${TEXT_INPUT_STYLE}
   width: 100%;
   resize: none;
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
@@ -55,7 +56,7 @@ export const TextAreaInput = ({
   const wrapperRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    if (wrapperRef.current) {
+    if (isDefined(wrapperRef.current)) {
       wrapperRef.current.setSelectionRange(
         wrapperRef.current.value.length,
         wrapperRef.current.value.length,

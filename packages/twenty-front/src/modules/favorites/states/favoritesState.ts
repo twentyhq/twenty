@@ -1,8 +1,8 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
 import { Favorite } from '@/favorites/types/Favorite';
 
-export const favoritesState = atom<Favorite[]>({
+export const favoritesState = createState<Favorite[]>({
   key: 'favoritesState',
-  default: [],
+  defaultValue: [],
 });

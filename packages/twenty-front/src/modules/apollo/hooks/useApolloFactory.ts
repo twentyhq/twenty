@@ -1,30 +1,41 @@
 import { useMemo, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { previousUrlState } from '@/auth/states/previousUrlState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { AppPath } from '@/types/AppPath';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
+import { isDefined } from '~/utils/isDefined';
 
-import { ApolloFactory } from '../services/apollo.factory';
+import { ApolloFactory, Options } from '../services/apollo.factory';
 
-export const useApolloFactory = () => {
+export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   // eslint-disable-next-line @nx/workspace-no-state-useref
   const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const [isDebugMode] = useRecoilState(isDebugModeState);
 
   const navigate = useNavigate();
   const isMatchingLocation = useIsMatchingLocation();
   const [tokenPair, setTokenPair] = useRecoilState(tokenPairState);
+  const [, setPreviousUrl] = useRecoilState(previousUrlState);
+  const location = useLocation();
 
   const apolloClient = useMemo(() => {
     apolloRef.current = new ApolloFactory({
       uri: `${REACT_APP_SERVER_BASE_URL}/graphql`,
       cache: new InMemoryCache(),
+      headers: {
+        ...(currentWorkspace?.currentCacheVersion && {
+          'X-Schema-Version': currentWorkspace.currentCacheVersion,
+        }),
+      },
       defaultOptions: {
         query: {
           fetchPolicy: 'cache-first',
@@ -40,24 +51,31 @@ export const useApolloFactory = () => {
         setTokenPair(null);
         if (
           !isMatchingLocation(AppPath.Verify) &&
-          !isMatchingLocation(AppPath.SignIn) &&
-          !isMatchingLocation(AppPath.SignUp) &&
+          !isMatchingLocation(AppPath.SignInUp) &&
           !isMatchingLocation(AppPath.Invite) &&
           !isMatchingLocation(AppPath.ResetPassword)
         ) {
-          navigate(AppPath.SignIn);
+          setPreviousUrl(`${location.pathname}${location.search}`);
+          navigate(AppPath.SignInUp);
         }
       },
       extraLinks: [],
       isDebugMode,
+      // Override options
+      ...options,
     });
 
     return apolloRef.current.getClient();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setTokenPair, isDebugMode]);
+  }, [
+    setTokenPair,
+    isDebugMode,
+    currentWorkspace?.currentCacheVersion,
+    setPreviousUrl,
+  ]);
 
   useUpdateEffect(() => {
-    if (apolloRef.current) {
+    if (isDefined(apolloRef.current)) {
       apolloRef.current.updateTokenPair(tokenPair);
     }
   }, [tokenPair]);

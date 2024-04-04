@@ -23,6 +23,14 @@ export const useColumnDefinitionsFromFieldMetadata = (
     [objectMetadataItem],
   );
 
+  const filterDefinitions = formatFieldMetadataItemsAsFilterDefinitions({
+    fields: activeFieldMetadataItems,
+  });
+
+  const sortDefinitions = formatFieldMetadataItemsAsSortDefinitions({
+    fields: activeFieldMetadataItems,
+  });
+
   const columnDefinitions: ColumnDefinition<FieldMetadata>[] = useMemo(
     () =>
       objectMetadataItem
@@ -35,17 +43,29 @@ export const useColumnDefinitionsFromFieldMetadata = (
               }),
             )
             .filter(filterAvailableTableColumns)
+            .map((column) => {
+              const existsInFilterDefinitions = filterDefinitions.some(
+                (filter) => filter.fieldMetadataId === column.fieldMetadataId,
+              );
+
+              const existsInSortDefinitions = sortDefinitions.some(
+                (sort) => sort.fieldMetadataId === column.fieldMetadataId,
+              );
+
+              return {
+                ...column,
+                isFilterable: existsInFilterDefinitions,
+                isSortable: existsInSortDefinitions,
+              };
+            })
         : [],
-    [activeFieldMetadataItems, objectMetadataItem],
+    [
+      activeFieldMetadataItems,
+      objectMetadataItem,
+      filterDefinitions,
+      sortDefinitions,
+    ],
   );
-
-  const filterDefinitions = formatFieldMetadataItemsAsFilterDefinitions({
-    fields: activeFieldMetadataItems,
-  });
-
-  const sortDefinitions = formatFieldMetadataItemsAsSortDefinitions({
-    fields: activeFieldMetadataItems,
-  });
 
   return {
     columnDefinitions,

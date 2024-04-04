@@ -8,6 +8,7 @@ import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
+import { isDefined } from '~/utils/isDefined';
 
 type ShowPageSummaryCardProps = {
   avatarPlaceholder: string;
@@ -25,7 +26,8 @@ const StyledShowPageSummaryCard = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
   justify-content: center;
-  padding: ${({ theme }) => theme.spacing(3)};
+  padding: ${({ theme }) => theme.spacing(4)};
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
 `;
 
 const StyledInfoContainer = styled.div`
@@ -47,7 +49,6 @@ const StyledTitle = styled.div`
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   justify-content: center;
-  width: 100%;
 `;
 
 const StyledTooltip = styled(Tooltip)`
@@ -85,7 +86,7 @@ export const ShowPageSummaryCard = ({
   const inputFileRef = useRef<HTMLInputElement>(null);
 
   const onFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) onUploadPicture?.(e.target.files[0]);
+    if (isDefined(e.target.files)) onUploadPicture?.(e.target.files[0]);
   };
 
   const handleAvatarClick = () => {

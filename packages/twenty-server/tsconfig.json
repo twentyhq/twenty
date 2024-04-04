@@ -28,5 +28,10 @@
       "test/*": ["packages/twenty-server/test/*"],
       "twenty-emails": ["packages/twenty-emails/src/index.ts"]
     }
-  }
+  },
+  "ts-node": {
+    "files": true,
+    "require": ["tsconfig-paths/register"]
+  },
+  "exclude": ["dist"]
 }

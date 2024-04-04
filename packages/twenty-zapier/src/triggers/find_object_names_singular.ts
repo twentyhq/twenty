@@ -4,8 +4,13 @@ import { requestSchema } from '../utils/requestDb';
 
 const objectListRequest = async (z: ZObject, bundle: Bundle) => {
   const schema = await requestSchema(z, bundle);
-  return Object.keys(schema.components.schemas).map((schema) => {
-    return { id: schema, nameSingular: schema.toLowerCase() };
+  return schema.data.objects.edges.map((edge: any) => {
+    const object = edge.node;
+    return {
+      id: object.nameSingular,
+      nameSingular: object.nameSingular,
+      labelSingular: object.labelSingular,
+    };
   });
 };
 

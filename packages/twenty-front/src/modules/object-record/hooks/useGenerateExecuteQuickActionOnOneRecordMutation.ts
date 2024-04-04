@@ -1,8 +1,11 @@
 import { gql } from '@apollo/client';
+import { useRecoilValue } from 'recoil';
 
-import { useMapFieldMetadataToGraphQLQuery } from '@/object-metadata/hooks/useMapFieldMetadataToGraphQLQuery';
 import { EMPTY_MUTATION } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const getExecuteQuickActionOnOneRecordMutationGraphQLField = ({
@@ -18,9 +21,9 @@ export const useGenerateExecuteQuickActionOnOneRecordMutation = ({
 }: {
   objectMetadataItem: ObjectMetadataItem;
 }) => {
-  const mapFieldMetadataToGraphQLQuery = useMapFieldMetadataToGraphQLQuery();
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  if (!objectMetadataItem) {
+  if (isUndefinedOrNull(objectMetadataItem)) {
     return EMPTY_MUTATION;
   }
 
@@ -33,16 +36,12 @@ export const useGenerateExecuteQuickActionOnOneRecordMutation = ({
 
   return gql`
     mutation ExecuteQuickActionOnOne${capitalizedObjectName}($idToExecuteQuickActionOn: ID!)  {
-       ${graphQLFieldForExecuteQuickActionOnOneRecordMutation}(id: $idToExecuteQuickActionOn) {
-        id
-        ${objectMetadataItem.fields
-          .map((field) =>
-            mapFieldMetadataToGraphQLQuery({
-              field,
-            }),
-          )
-          .join('\n')}
-      }
+       ${graphQLFieldForExecuteQuickActionOnOneRecordMutation}(id: $idToExecuteQuickActionOn) ${mapObjectMetadataToGraphQLQuery(
+         {
+           objectMetadataItems,
+           objectMetadataItem,
+         },
+       )}
     }
   `;
 };

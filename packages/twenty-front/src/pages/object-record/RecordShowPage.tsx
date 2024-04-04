@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
+import { IconBuildingSkyscraper } from 'twenty-ui';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { IconBuildingSkyscraper } from '@/ui/display/icon';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageFavoriteButton } from '@/ui/layout/page/PageFavoriteButton';
@@ -60,7 +60,7 @@ export const RecordShowPage = () => {
   const handleFavoriteButtonClick = async () => {
     if (!objectNameSingular || !record) return;
 
-    if (isFavorite && record) {
+    if (isFavorite && isDefined(record)) {
       deleteFavorite(correspondingFavorite.id);
     } else {
       createFavorite(record, objectNameSingular);
@@ -75,7 +75,7 @@ export const RecordShowPage = () => {
           labelIdentifierFieldValue?.firstName,
           labelIdentifierFieldValue?.lastName,
         ].join(' ')
-      : labelIdentifierFieldValue;
+      : `${labelIdentifierFieldValue}`;
 
   return (
     <PageContainer>
@@ -97,7 +97,6 @@ export const RecordShowPage = () => {
               activityTargetObject={{
                 id: record.id,
                 targetObjectNameSingular: objectMetadataItem?.nameSingular,
-                targetObjectRecord: record,
               }}
             />
             <ShowPageMoreButton

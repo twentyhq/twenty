@@ -7,7 +7,7 @@ import {
   H1Title,
   H1TitleFontColor,
 } from '@/ui/display/typography/components/H1Title';
-import { Button } from '@/ui/input/button/components/Button';
+import { Button, ButtonAccent } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import {
@@ -25,6 +25,7 @@ export type ConfirmationModalProps = {
   deleteButtonText?: string;
   confirmationPlaceholder?: string;
   confirmationValue?: string;
+  confirmButtonAccent?: ButtonAccent;
 };
 
 const StyledConfirmationModal = styled(Modal)`
@@ -40,6 +41,10 @@ const StyledCenteredButton = styled(Button)`
 
 const StyledCenteredTitle = styled.div`
   text-align: center;
+`;
+
+const StyledSection = styled(Section)`
+  margin-bottom: ${({ theme }) => theme.spacing(6)};
 `;
 
 export const StyledConfirmationButton = styled(StyledCenteredButton)`
@@ -62,6 +67,7 @@ export const ConfirmationModal = ({
   deleteButtonText = 'Delete',
   confirmationValue,
   confirmationPlaceholder,
+  confirmButtonAccent = 'danger',
 }: ConfirmationModalProps) => {
   const [inputConfirmationValue, setInputConfirmationValue] =
     useState<string>('');
@@ -94,12 +100,12 @@ export const ConfirmationModal = ({
           <StyledCenteredTitle>
             <H1Title title={title} fontColor={H1TitleFontColor.Primary} />
           </StyledCenteredTitle>
-          <Section
+          <StyledSection
             alignment={SectionAlignment.Center}
             fontColor={SectionFontColor.Primary}
           >
             {subtitle}
-          </Section>
+          </StyledSection>
           {confirmationValue && (
             <Section>
               <TextInput
@@ -112,17 +118,20 @@ export const ConfirmationModal = ({
             </Section>
           )}
           <StyledCenteredButton
-            onClick={onConfirmClick}
-            variant="secondary"
-            accent="danger"
-            title={deleteButtonText}
-            disabled={!isValidValue}
-            fullWidth
-          />
-          <StyledCenteredButton
             onClick={() => setIsOpen(false)}
             variant="secondary"
             title="Cancel"
+            fullWidth
+          />
+          <StyledCenteredButton
+            onClick={async () => {
+              await onConfirmClick();
+              setIsOpen(false);
+            }}
+            variant="secondary"
+            accent={confirmButtonAccent}
+            title={deleteButtonText}
+            disabled={!isValidValue}
             fullWidth
           />
         </StyledConfirmationModal>

@@ -1,6 +1,5 @@
 import { ApolloCache, StoreObject } from '@apollo/client';
 
-import { isCachedObjectRecordConnection } from '@/apollo/optimistic-effect/utils/isCachedObjectRecordConnection';
 import { sortCachedObjectEdges } from '@/apollo/optimistic-effect/utils/sortCachedObjectEdges';
 import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsOptimisticEffect';
 import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
@@ -8,6 +7,7 @@ import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
+import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
 import { isDefined } from '~/utils/isDefined';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
@@ -27,10 +27,6 @@ export const triggerUpdateRecordOptimisticEffect = ({
   updatedRecord: CachedObjectRecord;
   objectMetadataItems: ObjectMetadataItem[];
 }) => {
-  const objectEdgeTypeName = getEdgeTypename({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
-
   triggerUpdateRelationsOptimisticEffect({
     cache,
     sourceObjectMetadataItem: objectMetadataItem,
@@ -45,41 +41,35 @@ export const triggerUpdateRecordOptimisticEffect = ({
         rootQueryCachedResponse,
         { DELETE, readField, storeFieldName, toReference },
       ) => {
-        const rootQueryCachedResponseIsNotACachedObjectRecordConnection =
-          !isCachedObjectRecordConnection(
-            objectMetadataItem.nameSingular,
-            rootQueryCachedResponse,
-          );
+        const shouldSkip = !isObjectRecordConnectionWithRefs(
+          objectMetadataItem.nameSingular,
+          rootQueryCachedResponse,
+        );
 
-        if (rootQueryCachedResponseIsNotACachedObjectRecordConnection) {
+        if (shouldSkip) {
           return rootQueryCachedResponse;
         }
 
-        const rootQueryCachedObjectRecordConnection = rootQueryCachedResponse;
+        const rootQueryConnection = rootQueryCachedResponse;
 
-        const { fieldArguments: rootQueryVariables } =
+        const { fieldVariables: rootQueryVariables } =
           parseApolloStoreFieldName<CachedObjectRecordQueryVariables>(
             storeFieldName,
           );
 
-        const rootQueryCurrentCachedRecordEdges =
-          readField<CachedObjectRecordEdge[]>(
-            'edges',
-            rootQueryCachedObjectRecordConnection,
-          ) ?? [];
+        const rootQueryCurrentEdges =
+          readField<CachedObjectRecordEdge[]>('edges', rootQueryConnection) ??
+          [];
 
-        let rootQueryNextCachedRecordEdges = [
-          ...rootQueryCurrentCachedRecordEdges,
-        ];
+        let rootQueryNextEdges = [...rootQueryCurrentEdges];
 
         const rootQueryFilter = rootQueryVariables?.filter;
         const rootQueryOrderBy = rootQueryVariables?.orderBy;
         const rootQueryLimit = rootQueryVariables?.first;
 
-        const shouldTestThatUpdatedRecordMatchesThisRootQueryFilter =
-          isDefined(rootQueryFilter);
+        const shouldTryToMatchFilter = isDefined(rootQueryFilter);
 
-        if (shouldTestThatUpdatedRecordMatchesThisRootQueryFilter) {
+        if (shouldTryToMatchFilter) {
           const updatedRecordMatchesThisRootQueryFilter =
             isRecordMatchingFilter({
               record: updatedRecord,
@@ -88,25 +78,28 @@ export const triggerUpdateRecordOptimisticEffect = ({
             });
 
           const updatedRecordIndexInRootQueryEdges =
-            rootQueryCurrentCachedRecordEdges.findIndex(
+            rootQueryCurrentEdges.findIndex(
               (cachedEdge) =>
                 readField('id', cachedEdge.node) === updatedRecord.id,
             );
 
+          const updatedRecordFoundInRootQueryEdges =
+            updatedRecordIndexInRootQueryEdges > -1;
+
           const updatedRecordShouldBeAddedToRootQueryEdges =
             updatedRecordMatchesThisRootQueryFilter &&
-            updatedRecordIndexInRootQueryEdges === -1;
+            !updatedRecordFoundInRootQueryEdges;
 
           const updatedRecordShouldBeRemovedFromRootQueryEdges =
-            updatedRecordMatchesThisRootQueryFilter &&
-            updatedRecordIndexInRootQueryEdges === -1;
+            !updatedRecordMatchesThisRootQueryFilter &&
+            updatedRecordFoundInRootQueryEdges;
 
           if (updatedRecordShouldBeAddedToRootQueryEdges) {
             const updatedRecordNodeReference = toReference(updatedRecord);
 
             if (isDefined(updatedRecordNodeReference)) {
-              rootQueryNextCachedRecordEdges.push({
-                __typename: objectEdgeTypeName,
+              rootQueryNextEdges.push({
+                __typename: getEdgeTypename(objectMetadataItem.nameSingular),
                 node: updatedRecordNodeReference,
                 cursor: '',
               });
@@ -114,18 +107,18 @@ export const triggerUpdateRecordOptimisticEffect = ({
           }
 
           if (updatedRecordShouldBeRemovedFromRootQueryEdges) {
-            rootQueryNextCachedRecordEdges.splice(
-              updatedRecordIndexInRootQueryEdges,
-              1,
-            );
+            rootQueryNextEdges.splice(updatedRecordIndexInRootQueryEdges, 1);
           }
         }
 
-        const nextRootQueryEdgesShouldBeSorted = isDefined(rootQueryOrderBy);
+        const rootQueryNextEdgesShouldBeSorted = isDefined(rootQueryOrderBy);
 
-        if (nextRootQueryEdgesShouldBeSorted) {
-          rootQueryNextCachedRecordEdges = sortCachedObjectEdges({
-            edges: rootQueryNextCachedRecordEdges,
+        if (
+          rootQueryNextEdgesShouldBeSorted &&
+          Object.getOwnPropertyNames(rootQueryOrderBy).length > 0
+        ) {
+          rootQueryNextEdges = sortCachedObjectEdges({
+            edges: rootQueryNextEdges,
             orderBy: rootQueryOrderBy,
             readCacheField: readField,
           });
@@ -158,12 +151,12 @@ export const triggerUpdateRecordOptimisticEffect = ({
           // the query's result.
           // In this case, invalidate the cache entry so it can be re-fetched.
           const rootQueryCurrentCachedRecordEdgesLengthIsAtLimit =
-            rootQueryCurrentCachedRecordEdges.length === rootQueryLimit;
+            rootQueryCurrentEdges.length === rootQueryLimit;
 
           // If next edges length is under limit, then we can wait for the network response and merge the result
           //   then in the merge function we could implement this mechanism to limit the number of edges in the cache
           const rootQueryNextCachedRecordEdgesLengthIsUnderLimit =
-            rootQueryNextCachedRecordEdges.length < rootQueryLimit;
+            rootQueryNextEdges.length < rootQueryLimit;
 
           const shouldDeleteRootQuerySoItCanBeRefetched =
             rootQueryCurrentCachedRecordEdgesLengthIsAtLimit &&
@@ -174,16 +167,16 @@ export const triggerUpdateRecordOptimisticEffect = ({
           }
 
           const rootQueryNextCachedRecordEdgesLengthIsAboveRootQueryLimit =
-            rootQueryNextCachedRecordEdges.length > rootQueryLimit;
+            rootQueryNextEdges.length > rootQueryLimit;
 
           if (rootQueryNextCachedRecordEdgesLengthIsAboveRootQueryLimit) {
-            rootQueryNextCachedRecordEdges.splice(rootQueryLimit);
+            rootQueryNextEdges.splice(rootQueryLimit);
           }
         }
 
         return {
-          ...rootQueryCachedObjectRecordConnection,
-          edges: rootQueryNextCachedRecordEdges,
+          ...rootQueryConnection,
+          edges: rootQueryNextEdges,
         };
       },
     },

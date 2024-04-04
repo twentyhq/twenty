@@ -1,6 +1,9 @@
-import { atomFamily } from 'recoil';
+import { createFamilyState } from '@/ui/utilities/state/utils/createFamilyState';
 
-export const hasNextPageFamilyState = atomFamily<boolean, string | undefined>({
+export const hasNextPageFamilyState = createFamilyState<
+  boolean,
+  string | undefined
+>({
   key: 'hasNextPageFamilyState',
-  default: false,
+  defaultValue: false,
 });

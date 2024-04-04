@@ -4,7 +4,9 @@ import { Key } from 'ts-key-enum';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useGetIsSomeCellInEditModeState } from '@/object-record/record-table/hooks/internal/useGetIsSomeCellInEditMode';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { useSetHasUserSelectedAllRows } from '@/object-record/record-table/hooks/internal/useSetAllRowSelectedState';
 import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
+import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
@@ -31,51 +33,54 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const {
     scopeId,
-    getAvailableTableColumnsState,
-    getTableFiltersState,
-    getTableSortsState,
-    getTableColumnsState,
-    getOnEntityCountChangeState,
-    getOnColumnsChangeState,
-    getIsRecordTableInitialLoadingState,
-    getTableLastRowVisibleState,
-    getSelectedRowIdsSelector,
+    availableTableColumnsState,
+    tableFiltersState,
+    tableSortsState,
+    tableColumnsState,
+    onEntityCountChangeState,
+    onColumnsChangeState,
+    isRecordTableInitialLoadingState,
+    tableLastRowVisibleState,
+    selectedRowIdsSelector,
+    onToggleColumnFilterState,
+    onToggleColumnSortState,
   } = useRecordTableStates(recordTableId);
 
   const setAvailableTableColumns = useRecoilCallback(
     ({ snapshot, set }) =>
       (columns: ColumnDefinition<FieldMetadata>[]) => {
-        const availableTableColumnsState = getSnapshotValue(
+        const availableTableColumns = getSnapshotValue(
           snapshot,
-          getAvailableTableColumnsState(),
+          availableTableColumnsState,
         );
 
-        if (isDeeplyEqual(availableTableColumnsState, columns)) {
+        if (isDeeplyEqual(availableTableColumns, columns)) {
           return;
         }
-        set(getAvailableTableColumnsState(), columns);
+        set(availableTableColumnsState, columns);
       },
-    [getAvailableTableColumnsState],
+    [availableTableColumnsState],
   );
 
-  const setOnEntityCountChange = useSetRecoilState(
-    getOnEntityCountChangeState(),
-  );
+  const setOnEntityCountChange = useSetRecoilState(onEntityCountChangeState);
 
-  const setTableFilters = useSetRecoilState(getTableFiltersState());
+  const setTableFilters = useSetRecoilState(tableFiltersState);
 
-  const setTableSorts = useSetRecoilState(getTableSortsState());
+  const setTableSorts = useSetRecoilState(tableSortsState);
 
-  const setTableColumns = useSetRecoilState(getTableColumnsState());
+  const setTableColumns = useSetRecoilState(tableColumnsState);
 
-  const setOnColumnsChange = useSetRecoilState(getOnColumnsChangeState());
+  const setOnColumnsChange = useSetRecoilState(onColumnsChangeState);
+
+  const setOnToggleColumnFilter = useSetRecoilState(onToggleColumnFilterState);
+  const setOnToggleColumnSort = useSetRecoilState(onToggleColumnSortState);
 
   const setIsRecordTableInitialLoading = useSetRecoilState(
-    getIsRecordTableInitialLoadingState(),
+    isRecordTableInitialLoadingState,
   );
 
   const setRecordTableLastRowVisible = useSetRecoilState(
-    getTableLastRowVisibleState(),
+    tableLastRowVisibleState,
   );
 
   const onColumnsChange = useRecoilCallback(
@@ -83,12 +88,12 @@ export const useRecordTable = (props?: useRecordTableProps) => {
       (columns: ColumnDefinition<FieldMetadata>[]) => {
         const onColumnsChange = getSnapshotValue(
           snapshot,
-          getOnColumnsChangeState(),
+          onColumnsChangeState,
         );
 
         onColumnsChange?.(columns);
       },
-    [getOnColumnsChangeState],
+    [onColumnsChangeState],
   );
 
   const onEntityCountChange = useRecoilCallback(
@@ -96,12 +101,12 @@ export const useRecordTable = (props?: useRecordTableProps) => {
       (count: number) => {
         const onEntityCountChange = getSnapshotValue(
           snapshot,
-          getOnEntityCountChangeState(),
+          onEntityCountChangeState,
         );
 
         onEntityCountChange?.(count);
       },
-    [getOnEntityCountChangeState],
+    [onEntityCountChangeState],
   );
 
   const setRecordTableData = useSetRecordTableData({
@@ -111,11 +116,13 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const leaveTableFocus = useLeaveTableFocus(recordTableId);
 
-  const setRowSelectedState = useSetRowSelectedState(recordTableId);
+  const setRowSelected = useSetRowSelectedState(recordTableId);
+
+  const setHasUserSelectedAllRows = useSetHasUserSelectedAllRows(recordTableId);
 
   const resetTableRowSelection = useResetTableRowSelection(recordTableId);
 
-  const upsertRecordTableItem = useUpsertRecordFromState();
+  const upsertRecordTableItem = useUpsertRecordFromState;
 
   const setSoftFocusPosition = useSetSoftFocusPosition(recordTableId);
 
@@ -125,6 +132,10 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   const useMapKeyboardToSoftFocus = () => {
     const disableSoftFocus = useDisableSoftFocus(recordTableId);
     const setHotkeyScope = useSetHotkeyScope();
+
+    const setIsSoftFocusUsingMouseState = useSetRecoilState(
+      isSoftFocusUsingMouseState,
+    );
 
     useScopedHotkeys(
       [Key.ArrowUp, `${Key.Shift}+${Key.Enter}`],
@@ -148,6 +159,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
       [Key.ArrowLeft, `${Key.Shift}+${Key.Tab}`],
       () => {
         moveLeft();
+        setIsSoftFocusUsingMouseState(false);
       },
       TableHotkeyScope.TableSoftFocus,
       [moveLeft],
@@ -157,6 +169,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
       [Key.ArrowRight, Key.Tab],
       () => {
         moveRight();
+        setIsSoftFocusUsingMouseState(false);
       },
       TableHotkeyScope.TableSoftFocus,
       [moveRight],
@@ -191,7 +204,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setRecordTableData,
     setTableColumns,
     leaveTableFocus,
-    setRowSelectedState,
+    setRowSelected,
     resetTableRowSelection,
     upsertRecordTableItem,
     moveDown,
@@ -205,6 +218,9 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setRecordTableLastRowVisible,
     setSoftFocusPosition,
     isSomeCellInEditModeState,
-    getSelectedRowIdsSelector,
+    selectedRowIdsSelector,
+    setHasUserSelectedAllRows,
+    setOnToggleColumnFilter,
+    setOnToggleColumnSort,
   };
 };

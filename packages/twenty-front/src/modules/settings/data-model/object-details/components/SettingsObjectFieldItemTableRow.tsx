@@ -7,13 +7,13 @@ import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMe
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { FieldIdentifierType } from '@/settings/data-model/types/FieldIdentifierType';
+import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { Nullable } from '~/types/Nullable';
 
-import { relationTypes } from '../../constants/relationTypes';
-import { settingsFieldMetadataTypes } from '../../constants/settingsFieldMetadataTypes';
+import { RELATION_TYPES } from '../../constants/RelationTypes';
 
 import { SettingsObjectFieldDataType } from './SettingsObjectFieldDataType';
 
@@ -49,10 +49,6 @@ export const SettingsObjectFieldItemTableRow = ({
   const Icon = getIcon(fieldMetadataItem.icon);
   const navigate = useNavigate();
 
-  // TODO: parse with zod and merge types with FieldType (create a subset of FieldType for example)
-  const fieldDataTypeIsSupported =
-    fieldMetadataItem.type in settingsFieldMetadataTypes;
-
   const getRelationMetadata = useGetRelationMetadata();
 
   const { relationObjectMetadataItem, relationType } =
@@ -61,10 +57,13 @@ export const SettingsObjectFieldItemTableRow = ({
       [fieldMetadataItem, getRelationMetadata],
     ) ?? {};
 
-  if (!fieldDataTypeIsSupported) return null;
+  const fieldType = fieldMetadataItem.type;
+  const isFieldTypeSupported = isFieldTypeSupportedInSettings(fieldType);
+
+  if (!isFieldTypeSupported) return null;
 
   const RelationIcon = relationType
-    ? relationTypes[relationType].Icon
+    ? RELATION_TYPES[relationType].Icon
     : undefined;
 
   return (
@@ -97,7 +96,7 @@ export const SettingsObjectFieldItemTableRow = ({
                   )
               : undefined
           }
-          value={fieldMetadataItem.type}
+          value={fieldType}
         />
       </TableCell>
       <StyledIconTableCell>{ActionIcon}</StyledIconTableCell>

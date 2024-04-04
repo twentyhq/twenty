@@ -4,14 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import { IconChevronLeft } from 'twenty-ui';
 
-import { IconChevronLeft } from '@/ui/display/icon/index';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/theme';
+import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 export const PAGE_BAR_MIN_HEIGHT = 40;

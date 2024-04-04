@@ -53,7 +53,6 @@ describe('useCreateOneRecord', () => {
 
     await act(async () => {
       const res = await result.current.createOneRecord(input);
-      console.log('res', res);
       expect(res).toBeDefined();
       expect(res).toHaveProperty('id', personId);
     });

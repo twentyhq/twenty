@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
-export const scrollTopState = atom<number>({
+export const scrollTopState = createState<number>({
   key: 'scroll/scrollTopState',
-  default: 0,
+  defaultValue: 0,
 });

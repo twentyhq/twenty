@@ -1,6 +1,6 @@
 {
   "name": "twenty-emails",
-  "version": "0.3.0",
+  "version": "0.3.3",
   "description": "",
   "author": "",
   "private": true,
@@ -23,10 +23,6 @@
     "vite": "^5.0.0",
     "vite-plugin-dts": "~2.3.0",
     "vite-tsconfig-paths": "^4.2.1"
-  },
-  "dependencies": {
-    "@react-email/components": "0.0.12",
-    "date-fns": "^2.30.0"
   },
   "engines": {
     "node": "^18.17.1",

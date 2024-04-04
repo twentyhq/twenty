@@ -30,10 +30,6 @@ const StyledContentContainer = styled.div`
   width: 200px;
 `;
 
-const StyledFooterNote = styled(FooterNote)`
-  max-width: 280px;
-`;
-
 const StyledForm = styled.form`
   align-items: center;
   display: flex;
@@ -58,6 +54,7 @@ export const SignInUpForm = () => {
   const { form } = useSignInUpForm();
 
   const {
+    isInviteMode,
     signInUpStep,
     signInUpMode,
     continueWithCredentials,
@@ -89,22 +86,25 @@ export const SignInUpForm = () => {
       return 'Continue';
     }
 
-    return signInUpMode === SignInUpMode.SignIn
-      ? 'Sign in'
-      : form.formState.isSubmitting
-        ? 'Creating workspace'
-        : 'Sign up';
-  }, [signInUpMode, signInUpStep, form.formState.isSubmitting]);
+    return signInUpMode === SignInUpMode.SignIn ? 'Sign in' : 'Sign up';
+  }, [signInUpMode, signInUpStep]);
 
   const title = useMemo(() => {
-    if (signInUpMode === SignInUpMode.Invite) {
+    if (isInviteMode) {
       return `Join ${workspace?.displayName ?? ''} team`;
+    }
+
+    if (
+      signInUpStep === SignInUpStep.Init ||
+      signInUpStep === SignInUpStep.Email
+    ) {
+      return 'Welcome to Twenty';
     }
 
     return signInUpMode === SignInUpMode.SignIn
       ? 'Sign in to Twenty'
       : 'Sign up to Twenty';
-  }, [signInUpMode, workspace?.displayName]);
+  }, [signInUpMode, workspace?.displayName, isInviteMode, signInUpStep]);
 
   const theme = useTheme();
 
@@ -237,15 +237,15 @@ export const SignInUpForm = () => {
           />
         </StyledForm>
       </StyledContentContainer>
-      {signInUpStep === SignInUpStep.Password ? (
+      {signInUpStep === SignInUpStep.Password && (
         <ActionLink onClick={handleResetPassword(form.getValues('email'))}>
           Forgot your password?
         </ActionLink>
-      ) : (
-        <StyledFooterNote>
-          By using Twenty, you agree to the Terms of Service and Data Processing
-          Agreement.
-        </StyledFooterNote>
+      )}
+      {signInUpStep === SignInUpStep.Init && (
+        <FooterNote>
+          By using Twenty, you agree to the Terms of Service and Privacy Policy.
+        </FooterNote>
       )}
     </>
   );

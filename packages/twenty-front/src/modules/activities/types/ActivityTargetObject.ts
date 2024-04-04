@@ -1,9 +1,9 @@
+import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-export type ActivityTargetObjectRecord = {
+export type ActivityTargetWithTargetRecord = {
   targetObjectMetadataItem: ObjectMetadataItem;
-  activityTargetRecord: ObjectRecord;
-  targetObjectRecord: ObjectRecord;
-  targetObjectNameSingular: string;
+  activityTarget: ActivityTarget;
+  targetObject: ObjectRecord;
 };

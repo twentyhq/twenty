@@ -1,6 +1,6 @@
 import { ApolloCache, StoreObject } from '@apollo/client';
 
-import { isCachedObjectRecordConnection } from '@/apollo/optimistic-effect/utils/isCachedObjectRecordConnection';
+import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const triggerDetachRelationOptimisticEffect = ({
@@ -32,29 +32,25 @@ export const triggerDetachRelationOptimisticEffect = ({
         targetRecordFieldValue,
         { isReference, readField },
       ) => {
-        const isRelationTargetFieldAnObjectRecordConnection =
-          isCachedObjectRecordConnection(
-            sourceObjectNameSingular,
-            targetRecordFieldValue,
-          );
-
-        if (isRelationTargetFieldAnObjectRecordConnection) {
-          const relationTargetFieldEdgesWithoutRelationSourceRecordToDetach =
-            targetRecordFieldValue.edges.filter(
-              ({ node }) => readField('id', node) !== sourceRecordId,
-            );
-
-          return {
-            ...targetRecordFieldValue,
-            edges: relationTargetFieldEdgesWithoutRelationSourceRecordToDetach,
-          };
-        }
-
-        const isRelationTargetFieldASingleObjectRecord = isReference(
+        const isRecordConnection = isObjectRecordConnectionWithRefs(
+          sourceObjectNameSingular,
           targetRecordFieldValue,
         );
 
-        if (isRelationTargetFieldASingleObjectRecord) {
+        if (isRecordConnection) {
+          const nextEdges = targetRecordFieldValue.edges.filter(
+            ({ node }) => readField('id', node) !== sourceRecordId,
+          );
+
+          return {
+            ...targetRecordFieldValue,
+            edges: nextEdges,
+          };
+        }
+
+        const isSingleReference = isReference(targetRecordFieldValue);
+
+        if (isSingleReference) {
           return null;
         }
 

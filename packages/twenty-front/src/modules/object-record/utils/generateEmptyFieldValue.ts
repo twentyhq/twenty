@@ -2,7 +2,6 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { FieldMetadataType } from '~/generated/graphql';
-import { capitalize } from '~/utils/string/capitalize';
 
 export const generateEmptyFieldValue = (
   fieldMetadataItem: FieldMetadataItem,
@@ -17,14 +16,24 @@ export const generateEmptyFieldValue = (
       return {
         label: '',
         url: '',
-        __typename: 'Link',
       };
     }
     case FieldMetadataType.FullName: {
       return {
         firstName: '',
         lastName: '',
-        __typename: 'FullName',
+      };
+    }
+    case FieldMetadataType.Address: {
+      return {
+        addressStreet1: '',
+        addressStreet2: '',
+        addressCity: '',
+        addressState: '',
+        addressCountry: '',
+        addressPostcode: '',
+        addressLat: null,
+        addressLng: null,
       };
     }
     case FieldMetadataType.DateTime: {
@@ -32,6 +41,7 @@ export const generateEmptyFieldValue = (
     }
     case FieldMetadataType.Number:
     case FieldMetadataType.Rating:
+    case FieldMetadataType.Position:
     case FieldMetadataType.Numeric: {
       return null;
     }
@@ -51,18 +61,12 @@ export const generateEmptyFieldValue = (
         return null;
       }
 
-      return {
-        __typename: `${capitalize(
-          fieldMetadataItem.fromRelationMetadata.toObjectMetadata.nameSingular,
-        )}Connection`,
-        edges: [],
-      };
+      return [];
     }
     case FieldMetadataType.Currency: {
       return {
         amountMicros: null,
         currencyCode: null,
-        __typename: 'Currency',
       };
     }
     case FieldMetadataType.Select: {

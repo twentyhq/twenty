@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
-export const currentPageLocationState = atom<string>({
+export const currentPageLocationState = createState<string>({
   key: 'currentPageLocationState',
-  default: '',
+  defaultValue: '',
 });

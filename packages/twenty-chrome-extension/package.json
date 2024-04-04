@@ -1,0 +1,23 @@
+{
+  "name": "twenty-chrome-extension",
+  "description": "",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "nx": "NX_DEFAULT_PROJECT=twenty-chrome-extension node ../../node_modules/nx/bin/nx.js",
+    "clean": "rimraf ./dist",
+    "start": "yarn clean && vite",
+    "build": "yarn clean && tsc && vite build",
+    "lint": "eslint . --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs",
+    "graphql:generate": "graphql-codegen",
+    "fmt": "prettier --check \"src/**/*.ts\" \"src/**/*.tsx\"",
+    "fmt:fix": "prettier --cache --write \"src/**/*.ts\" \"src/**/*.tsx\""
+  },
+  "dependencies": {
+    "@types/chrome": "^0.0.256"
+  },
+  "devDependencies": {
+    "@crxjs/vite-plugin": "^1.0.14"
+  }
+}

@@ -15,7 +15,11 @@ import { useInlineCell } from '../hooks/useInlineCell';
 
 import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 
-export const RecordInlineCell = () => {
+type RecordInlineCellProps = {
+  readonly?: boolean;
+};
+
+export const RecordInlineCell = ({ readonly }: RecordInlineCellProps) => {
   const { fieldDefinition, entityId } = useContext(FieldContext);
 
   const buttonIcon = useGetButtonIcon();
@@ -63,6 +67,7 @@ export const RecordInlineCell = () => {
 
   return (
     <RecordInlineCellContainer
+      readonly={readonly}
       buttonIcon={buttonIcon}
       customEditHotkeyScope={
         isFieldRelation(fieldDefinition)

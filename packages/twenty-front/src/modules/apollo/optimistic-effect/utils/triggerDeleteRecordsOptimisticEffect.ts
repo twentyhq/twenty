@@ -1,11 +1,11 @@
 import { ApolloCache, StoreObject } from '@apollo/client';
 
-import { isCachedObjectRecordConnection } from '@/apollo/optimistic-effect/utils/isCachedObjectRecordConnection';
 import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsOptimisticEffect';
 import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
 import { isDefined } from '~/utils/isDefined';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
@@ -27,7 +27,7 @@ export const triggerDeleteRecordsOptimisticEffect = ({
         { DELETE, readField, storeFieldName },
       ) => {
         const rootQueryCachedResponseIsNotACachedObjectRecordConnection =
-          !isCachedObjectRecordConnection(
+          !isObjectRecordConnectionWithRefs(
             objectMetadataItem.nameSingular,
             rootQueryCachedResponse,
           );
@@ -38,7 +38,7 @@ export const triggerDeleteRecordsOptimisticEffect = ({
 
         const rootQueryCachedObjectRecordConnection = rootQueryCachedResponse;
 
-        const { fieldArguments: rootQueryVariables } =
+        const { fieldVariables: rootQueryVariables } =
           parseApolloStoreFieldName<CachedObjectRecordQueryVariables>(
             storeFieldName,
           );
@@ -49,6 +49,12 @@ export const triggerDeleteRecordsOptimisticEffect = ({
           'edges',
           rootQueryCachedObjectRecordConnection,
         );
+
+        const totalCount =
+          readField<number>(
+            'totalCount',
+            rootQueryCachedObjectRecordConnection,
+          ) || 0;
 
         const nextCachedEdges =
           cachedEdges?.filter((cachedEdge) => {
@@ -71,6 +77,7 @@ export const triggerDeleteRecordsOptimisticEffect = ({
         return {
           ...rootQueryCachedObjectRecordConnection,
           edges: nextCachedEdges,
+          totalCount: totalCount - recordIdsToDelete.length,
         };
       },
     },

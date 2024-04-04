@@ -1,25 +1,12 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
 
 import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
+import { ActivityBodyEffect } from '@/activities/components/ActivityBodyEffect';
 import { ActivityComments } from '@/activities/components/ActivityComments';
+import { ActivityEditorFields } from '@/activities/components/ActivityEditorFields';
+import { ActivityTitleEffect } from '@/activities/components/ActivityTitleEffect';
 import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
-import { useDeleteActivityFromCache } from '@/activities/hooks/useDeleteActivityFromCache';
-import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
-import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
-import { isCreatingActivityState } from '@/activities/states/isCreatingActivityState';
-import { Activity } from '@/activities/types/Activity';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useFieldContext } from '@/object-record/hooks/useFieldContext';
-import {
-  RecordUpdateHook,
-  RecordUpdateHookParams,
-} from '@/object-record/record-field/contexts/FieldContext';
-import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
-import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
-import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
-import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { ActivityTitle } from './ActivityTitle';
@@ -31,8 +18,8 @@ const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  justify-content: space-between;
   overflow-y: auto;
+  gap: ${({ theme }) => theme.spacing(4)};
 `;
 
 const StyledUpperPartContainer = styled.div`
@@ -41,7 +28,6 @@ const StyledUpperPartContainer = styled.div`
   display: flex;
   flex-direction: column;
 
-  gap: ${({ theme }) => theme.spacing(4)};
   justify-content: flex-start;
 `;
 
@@ -54,106 +40,40 @@ const StyledTopContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 24px;
-  padding: 24px 24px 24px 48px;
+  padding: ${({ theme }) => theme.spacing(6)};
 `;
 
 type ActivityEditorProps = {
-  activity: Activity;
+  activityId: string;
   showComment?: boolean;
   fillTitleFromBody?: boolean;
 };
 
 export const ActivityEditor = ({
-  activity,
+  activityId,
   showComment = true,
   fillTitleFromBody = false,
 }: ActivityEditorProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const { useRegisterClickOutsideListenerCallback } = useClickOutsideListener(
-    RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID,
-  );
-
-  const { upsertActivity } = useUpsertActivity();
-  const { deleteActivityFromCache } = useDeleteActivityFromCache();
-
-  const useUpsertOneActivityMutation: RecordUpdateHook = () => {
-    const upsertActivityMutation = ({ variables }: RecordUpdateHookParams) => {
-      upsertActivity({ activity, input: variables.updateOneRecordInput });
-    };
-
-    return [upsertActivityMutation, { loading: false }];
-  };
-
-  const { FieldContextProvider: DueAtFieldContextProvider } = useFieldContext({
-    objectNameSingular: CoreObjectNameSingular.Activity,
-    objectRecordId: activity.id,
-    fieldMetadataName: 'dueAt',
-    fieldPosition: 0,
-    clearable: true,
-    customUseUpdateOneObjectHook: useUpsertOneActivityMutation,
-  });
-
-  const { FieldContextProvider: AssigneeFieldContextProvider } =
-    useFieldContext({
-      objectNameSingular: CoreObjectNameSingular.Activity,
-      objectRecordId: activity.id,
-      fieldMetadataName: 'assignee',
-      fieldPosition: 1,
-      clearable: true,
-      customUseUpdateOneObjectHook: useUpsertOneActivityMutation,
-    });
-
-  const [isCreatingActivity, setIsCreatingActivity] = useRecoilState(
-    isCreatingActivityState,
-  );
-
-  // TODO: remove
-
-  useRegisterClickOutsideListenerCallback({
-    callbackId: 'activity-editor',
-    callbackFunction: () => {
-      if (isCreatingActivity) {
-        setIsCreatingActivity(false);
-        deleteActivityFromCache(activity);
-      }
-    },
-  });
-
-  if (!activity) {
-    return <></>;
-  }
-
   return (
     <StyledContainer ref={containerRef}>
       <StyledUpperPartContainer>
         <StyledTopContainer>
-          <ActivityTypeDropdown activity={activity} />
-          <ActivityTitle activity={activity} />
-          <PropertyBox>
-            {activity.type === 'Task' &&
-              DueAtFieldContextProvider &&
-              AssigneeFieldContextProvider && (
-                <>
-                  <DueAtFieldContextProvider>
-                    <RecordInlineCell />
-                  </DueAtFieldContextProvider>
-                  <AssigneeFieldContextProvider>
-                    <RecordInlineCell />
-                  </AssigneeFieldContextProvider>
-                </>
-              )}
-            <ActivityTargetsInlineCell activity={activity} />
-          </PropertyBox>
+          <ActivityTypeDropdown activityId={activityId} />
+          <ActivityTitleEffect activityId={activityId} />
+          <ActivityTitle activityId={activityId} />
+          <ActivityEditorFields activityId={activityId} />
         </StyledTopContainer>
-        <ActivityBodyEditor
-          activity={activity}
-          fillTitleFromBody={fillTitleFromBody}
-        />
       </StyledUpperPartContainer>
+      <ActivityBodyEffect activityId={activityId} />
+      <ActivityBodyEditor
+        activityId={activityId}
+        fillTitleFromBody={fillTitleFromBody}
+      />
       {showComment && (
         <ActivityComments
-          activity={activity}
+          activityId={activityId}
           scrollableContainerRef={containerRef}
         />
       )}

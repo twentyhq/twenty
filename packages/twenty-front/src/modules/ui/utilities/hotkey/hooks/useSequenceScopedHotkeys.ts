@@ -2,6 +2,8 @@ import { Options, useHotkeys } from 'react-hotkeys-hook';
 import { Keys } from 'react-hotkeys-hook/dist/types';
 import { useRecoilState } from 'recoil';
 
+import { isDefined } from '~/utils/isDefined';
+
 import { pendingHotkeyState } from '../states/internal/pendingHotkeysState';
 
 import { useScopedHotkeyCallback } from './useScopedHotkeyCallback';
@@ -55,7 +57,7 @@ export const useSequenceHotkeys = (
 
           setPendingHotkey(null);
 
-          if (options.preventDefault) {
+          if (isDefined(options.preventDefault)) {
             keyboardEvent.stopImmediatePropagation();
             keyboardEvent.stopPropagation();
             keyboardEvent.preventDefault();

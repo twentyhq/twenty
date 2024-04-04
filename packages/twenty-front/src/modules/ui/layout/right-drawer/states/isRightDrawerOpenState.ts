@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
-export const isRightDrawerOpenState = atom<boolean>({
+export const isRightDrawerOpenState = createState<boolean>({
   key: 'ui/layout/is-right-drawer-open',
-  default: false,
+  defaultValue: false,
 });

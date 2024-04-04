@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
-import { isCurrentWorkspaceActiveSelector } from '@/auth/states/selectors/isCurrentWorkspaceActiveSelector';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState.ts';
 import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { useGetObjectOrderByField } from '@/object-metadata/hooks/useGetObjectOrderByField';
 import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
@@ -11,11 +11,11 @@ import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShow
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
-import { useModifyRecordFromCache } from '@/object-record/cache/hooks/useModifyRecordFromCache';
 import { useGenerateCreateManyRecordMutation } from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
 import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
 import { useGenerateDeleteManyRecordMutation } from '@/object-record/hooks/useGenerateDeleteManyRecordMutation';
 import { useGenerateExecuteQuickActionOnOneRecordMutation } from '@/object-record/hooks/useGenerateExecuteQuickActionOnOneRecordMutation';
+import { useGenerateFindDuplicateRecordsQuery } from '@/object-record/hooks/useGenerateFindDuplicateRecordsQuery';
 import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
 import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
 import { useGenerateUpdateOneRecordMutation } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
@@ -39,10 +39,11 @@ export const EMPTY_MUTATION = gql`
 export const useObjectMetadataItem = (
   { objectNameSingular }: ObjectMetadataItemIdentifier,
   depth?: number,
+  queryFields?: Record<string, any>,
+  computeReferences = false,
 ) => {
-  const isCurrentWorkspaceActive = useRecoilValue(
-    isCurrentWorkspaceActiveSelector,
-  );
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+
   const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
   let objectMetadataItem = useRecoilValue(
@@ -54,7 +55,7 @@ export const useObjectMetadataItem = (
 
   let objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  if (!isCurrentWorkspaceActive) {
+  if (currentWorkspace?.activationStatus !== 'active') {
     objectMetadataItem =
       mockObjectMetadataItems.find(
         (objectMetadataItem) =>
@@ -82,12 +83,16 @@ export const useObjectMetadataItem = (
     objectMetadataItem,
   });
 
-  const modifyRecordFromCache = useModifyRecordFromCache({
-    objectMetadataItem,
-  });
-
   const generateFindManyRecordsQuery = useGenerateFindManyRecordsQuery();
   const findManyRecordsQuery = generateFindManyRecordsQuery({
+    objectMetadataItem,
+    depth,
+    queryFields,
+  });
+
+  const generateFindDuplicateRecordsQuery =
+    useGenerateFindDuplicateRecordsQuery();
+  const findDuplicateRecordsQuery = generateFindDuplicateRecordsQuery({
     objectMetadataItem,
     depth,
   });
@@ -100,14 +105,18 @@ export const useObjectMetadataItem = (
 
   const createOneRecordMutation = useGenerateCreateOneRecordMutation({
     objectMetadataItem,
+    depth,
   });
 
   const createManyRecordsMutation = useGenerateCreateManyRecordMutation({
     objectMetadataItem,
+    depth,
   });
 
   const updateOneRecordMutation = useGenerateUpdateOneRecordMutation({
     objectMetadataItem,
+    depth,
+    computeReferences,
   });
 
   const deleteOneRecordMutation = generateDeleteOneRecordMutation({
@@ -135,8 +144,8 @@ export const useObjectMetadataItem = (
     basePathToShowPage,
     objectMetadataItem,
     getRecordFromCache,
-    modifyRecordFromCache,
     findManyRecordsQuery,
+    findDuplicateRecordsQuery,
     findOneRecordQuery,
     createOneRecordMutation,
     updateOneRecordMutation,

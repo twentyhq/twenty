@@ -4,8 +4,8 @@ import styled from '@emotion/styled';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { SettingsDataModelIsCustomTag } from '@/settings/data-model/objects/SettingsDataModelIsCustomTag';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
-import { Tag } from '@/ui/display/tag/components/Tag';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
@@ -36,10 +36,10 @@ export const SettingsObjectItemTableRow = ({
 }: SettingsObjectItemTableRowProps) => {
   const theme = useTheme();
 
-  const { records } = useFindManyRecords({
+  const { totalCount } = useFindManyRecords({
     objectNameSingular: objectItem.nameSingular,
+    depth: 0,
   });
-
   const { getIcon } = useIcons();
   const Icon = getIcon(objectItem.icon);
 
@@ -52,16 +52,12 @@ export const SettingsObjectItemTableRow = ({
         {objectItem.labelPlural}
       </StyledNameTableCell>
       <TableCell>
-        {objectItem.isCustom ? (
-          <Tag color="orange" text="Custom" weight="regular" />
-        ) : (
-          <Tag color="blue" text="Standard" weight="regular" />
-        )}
+        <SettingsDataModelIsCustomTag isCustom={objectItem.isCustom} />
       </TableCell>
       <TableCell align="right">
         {objectItem.fields.filter((field) => !field.isSystem).length}
       </TableCell>
-      <TableCell align="right">{records.length}</TableCell>
+      <TableCell align="right">{totalCount}</TableCell>
       <StyledActionTableCell>{action}</StyledActionTableCell>
     </StyledObjectTableRow>
   );

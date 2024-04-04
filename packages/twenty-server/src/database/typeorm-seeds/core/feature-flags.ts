@@ -1,6 +1,6 @@
 import { DataSource } from 'typeorm';
 
-import { FeatureFlagKeys } from 'src/core/feature-flag/feature-flag.entity';
+import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 const tableName = 'featureFlag';
 
@@ -16,17 +16,37 @@ export const seedFeatureFlags = async (
     .orIgnore()
     .values([
       {
-        key: FeatureFlagKeys.IsMessagingEnabled,
+        key: FeatureFlagKeys.IsBlocklistEnabled,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKeys.IsWorkspaceCleanable,
+        key: FeatureFlagKeys.IsCalendarEnabled,
         workspaceId: workspaceId,
         value: true,
       },
       {
-        key: FeatureFlagKeys.IsNewRecordBoardEnabled,
+        key: FeatureFlagKeys.IsAirtableIntegrationEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKeys.IsPostgreSQLIntegrationEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKeys.IsEventObjectEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKeys.IsFullSyncV2Enabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKeys.IsMultiSelectEnabled,
         workspaceId: workspaceId,
         value: true,
       },

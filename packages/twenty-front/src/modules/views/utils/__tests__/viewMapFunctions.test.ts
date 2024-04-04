@@ -1,6 +1,5 @@
 import { Filter } from '@/object-record/object-filter-dropdown/types/Filter';
 import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
-import { BoardFieldDefinition } from '@/object-record/record-board-deprecated/types/BoardFieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ViewField } from '@/views/types/ViewField';
@@ -8,13 +7,12 @@ import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { ViewSort } from '@/views/types/ViewSort';
 import { mapColumnDefinitionsToViewFields } from '@/views/utils/mapColumnDefinitionToViewField';
-import { mapViewFieldsToBoardFieldDefinitions } from '@/views/utils/mapViewFieldsToBoardFieldDefinitions';
 import { mapViewFieldsToColumnDefinitions } from '@/views/utils/mapViewFieldsToColumnDefinitions';
 import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
 import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 
 const baseDefinition = {
-  fieldMetadataId: 'fieldMetadataId',
+  fieldMetadataId: '05731f68-6e7a-4903-8374-c0b6a9063482',
   label: 'label',
   iconName: 'iconName',
 };
@@ -23,20 +21,22 @@ describe('mapViewSortsToSorts', () => {
   it('should map each ViewSort object to a corresponding Sort object', () => {
     const viewSorts: ViewSort[] = [
       {
+        __typename: 'ViewSort',
         id: 'id',
-        fieldMetadataId: 'fieldMetadataId',
+        fieldMetadataId: '05731f68-6e7a-4903-8374-c0b6a9063482',
         direction: 'asc',
-        definition: baseDefinition,
       },
     ];
     const expectedSorts: Sort[] = [
       {
-        fieldMetadataId: 'fieldMetadataId',
+        fieldMetadataId: '05731f68-6e7a-4903-8374-c0b6a9063482',
         direction: 'asc',
         definition: baseDefinition,
       },
     ];
-    expect(mapViewSortsToSorts(viewSorts)).toEqual(expectedSorts);
+    expect(mapViewSortsToSorts(viewSorts, [baseDefinition])).toEqual(
+      expectedSorts,
+    );
   });
 });
 
@@ -44,20 +44,17 @@ describe('mapViewFiltersToFilters', () => {
   it('should map each ViewFilter object to a corresponding Filter object', () => {
     const viewFilters: ViewFilter[] = [
       {
+        __typename: 'ViewFilter',
         id: 'id',
-        fieldMetadataId: '1',
+        fieldMetadataId: '05731f68-6e7a-4903-8374-c0b6a9063482',
         value: 'testValue',
         displayValue: 'Test Display Value',
         operand: ViewFilterOperand.Is,
-        definition: {
-          ...baseDefinition,
-          type: 'FULL_NAME',
-        },
       },
     ];
     const expectedFilters: Filter[] = [
       {
-        fieldMetadataId: '1',
+        fieldMetadataId: '05731f68-6e7a-4903-8374-c0b6a9063482',
         value: 'testValue',
         displayValue: 'Test Display Value',
         operand: ViewFilterOperand.Is,
@@ -67,7 +64,14 @@ describe('mapViewFiltersToFilters', () => {
         },
       },
     ];
-    expect(mapViewFiltersToFilters(viewFilters)).toEqual(expectedFilters);
+    expect(
+      mapViewFiltersToFilters(viewFilters, [
+        {
+          ...baseDefinition,
+          type: 'FULL_NAME',
+        },
+      ]),
+    ).toEqual(expectedFilters);
   });
 });
 
@@ -75,6 +79,7 @@ describe('mapViewFieldsToColumnDefinitions', () => {
   it('should map visible ViewFields to ColumnDefinitions and filter out missing fieldMetadata', () => {
     const viewFields: ViewField[] = [
       {
+        __typename: 'ViewField',
         id: '1',
         fieldMetadataId: '1',
         position: 1,
@@ -94,6 +99,7 @@ describe('mapViewFieldsToColumnDefinitions', () => {
         },
       },
       {
+        __typename: 'ViewField',
         id: '2',
         fieldMetadataId: '2',
         position: 2,
@@ -113,6 +119,7 @@ describe('mapViewFieldsToColumnDefinitions', () => {
         },
       },
       {
+        __typename: 'ViewField',
         id: '3',
         fieldMetadataId: '3',
         position: 3,
@@ -192,84 +199,6 @@ describe('mapViewFieldsToColumnDefinitions', () => {
   });
 });
 
-describe('mapViewFieldsToBoardFieldDefinitions', () => {
-  it('should map visible ViewFields to BoardFieldDefinitions and filter out missing fieldMetadata', () => {
-    const viewFields = [
-      {
-        id: 1,
-        fieldMetadataId: 1,
-        position: 1,
-        isVisible: true,
-      },
-      {
-        id: 2,
-        fieldMetadataId: 2,
-        position: 2,
-        isVisible: false,
-      },
-      {
-        id: 3,
-        fieldMetadataId: 3,
-        position: 3,
-        isVisible: true,
-      },
-    ];
-
-    const fieldsMetadata = [
-      {
-        fieldMetadataId: 1,
-        label: 'Field 1',
-        metadata: {},
-        position: 1,
-        infoTooltipContent: 'Tooltip content for Field 1',
-        iconName: 'icon-field-1',
-        type: 'string',
-      },
-      {
-        fieldMetadataId: 3,
-        label: 'Field 3',
-        metadata: {},
-        position: 3,
-        infoTooltipContent: 'Tooltip for Field 3',
-        iconName: 'icon-field-3',
-        type: 'number',
-      },
-    ];
-
-    const expectedBoardFieldDefinitions = [
-      {
-        fieldMetadataId: 1,
-        label: 'Field 1',
-        metadata: {},
-        position: 1,
-        infoTooltipContent: 'Tooltip content for Field 1',
-        iconName: 'icon-field-1',
-        type: 'string',
-        isVisible: true,
-        viewFieldId: 1,
-      },
-      {
-        fieldMetadataId: 3,
-        label: 'Field 3',
-        metadata: {},
-        position: 3,
-        infoTooltipContent: 'Tooltip for Field 3',
-        iconName: 'icon-field-3',
-        type: 'number',
-        isVisible: true,
-        viewFieldId: 3,
-      },
-    ];
-
-    const actualBoardFieldDefinitions = mapViewFieldsToBoardFieldDefinitions(
-      viewFields as unknown as ViewField[],
-      fieldsMetadata as unknown as BoardFieldDefinition<FieldMetadata>[],
-    );
-
-    expect(actualBoardFieldDefinitions).toEqual(expectedBoardFieldDefinitions);
-  });
-});
-
 describe('mapColumnDefinitionsToViewFields', () => {
   it('should map ColumnDefinitions to ViewFields, setting defaults and using viewFieldId if present', () => {
     const columnDefinitions = [
@@ -289,13 +218,16 @@ describe('mapColumnDefinitionsToViewFields', () => {
 
     const expectedViewFields = [
       {
+        __typename: 'ViewField',
         id: 'custom-id-1',
         fieldMetadataId: 1,
         position: 1,
         isVisible: true,
         definition: columnDefinitions[0],
+        size: undefined,
       },
       {
+        __typename: 'ViewField',
         id: '',
         fieldMetadataId: 2,
         position: 2,

@@ -1,19 +1,24 @@
-import { isNonEmptyString } from '@sniptt/guards';
-import { useRecoilValue } from 'recoil';
+import { Reference, useApolloClient } from '@apollo/client';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
-import { useAttachRelationInBothDirections } from '@/activities/hooks/useAttachRelationInBothDirections';
-import { useInjectIntoActivityTargetInlineCellCache } from '@/activities/inline-cell/hooks/useInjectIntoActivityTargetInlineCellCache';
-import { useInjectIntoTimelineActivitiesQueryAfterDrawerMount } from '@/activities/timeline/hooks/useInjectIntoTimelineActivitiesQueryAfterDrawerMount';
 import { Activity, ActivityType } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { getActivityTargetsToCreateFromTargetableObjects } from '@/activities/utils/getActivityTargetsToCreateFromTargetableObjects';
+import { makeActivityTargetsToCreateFromTargetableObjects } from '@/activities/utils/getActivityTargetsToCreateFromTargetableObjects';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useCreateManyRecordsInCache } from '@/object-record/hooks/useCreateManyRecordsInCache';
-import { useCreateOneRecordInCache } from '@/object-record/hooks/useCreateOneRecordInCache';
+import { useCreateManyRecordsInCache } from '@/object-record/cache/hooks/useCreateManyRecordsInCache';
+import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
+import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
+import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
+import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useCreateActivityInCache = () => {
   const { createManyRecordsInCache: createManyActivityTargetsInCache } =
@@ -21,93 +26,161 @@ export const useCreateActivityInCache = () => {
       objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     });
 
-  const { createOneRecordInCache: createOneActivityInCache } =
-    useCreateOneRecordInCache<Activity>({
+  const cache = useApolloClient().cache;
+
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
+  const { record: currentWorkspaceMemberRecord } = useFindOneRecord({
+    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+    objectRecordId: currentWorkspaceMember?.id,
+    depth: 0,
+  });
+
+  const { objectMetadataItem: objectMetadataItemActivity } =
+    useObjectMetadataItemOnly({
       objectNameSingular: CoreObjectNameSingular.Activity,
     });
 
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const { objectMetadataItem: objectMetadataItemActivityTarget } =
+    useObjectMetadataItemOnly({
+      objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+    });
 
-  const { record: workspaceMemberRecord } = useFindOneRecord({
-    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-    objectRecordId: currentWorkspaceMember?.id,
-    depth: 3,
+  const createOneActivityInCache = useCreateOneRecordInCache<Activity>({
+    objectMetadataItem: objectMetadataItemActivity,
   });
 
-  const { injectIntoTimelineActivitiesQueryAfterDrawerMount } =
-    useInjectIntoTimelineActivitiesQueryAfterDrawerMount();
+  const createActivityInCache = useRecoilCallback(
+    ({ snapshot, set }) =>
+      ({
+        type,
+        targetObject,
+        customAssignee,
+      }: {
+        type: ActivityType;
+        targetObject?: ActivityTargetableObject;
+        customAssignee?: WorkspaceMember;
+      }) => {
+        const activityId = v4();
 
-  const { injectIntoActivityTargetInlineCellCache } =
-    useInjectIntoActivityTargetInlineCellCache();
+        const createdActivityInCache = createOneActivityInCache({
+          id: activityId,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          author: currentWorkspaceMemberRecord,
+          authorId: currentWorkspaceMemberRecord?.id,
+          assignee: customAssignee ?? currentWorkspaceMemberRecord,
+          assigneeId: customAssignee?.id ?? currentWorkspaceMemberRecord?.id,
+          type,
+        });
 
-  const {
-    attachRelationInBothDirections:
-      attachRelationSourceRecordToItsRelationTargetRecordsAndViceVersaInCache,
-  } = useAttachRelationInBothDirections();
+        if (isUndefinedOrNull(createdActivityInCache)) {
+          throw new Error('Failed to create activity in cache');
+        }
 
-  const createActivityInCache = ({
-    type,
-    targetableObjects,
-    timelineTargetableObject,
-    assigneeId,
-  }: {
-    type: ActivityType;
-    targetableObjects: ActivityTargetableObject[];
-    timelineTargetableObject: ActivityTargetableObject;
-    assigneeId?: string;
-  }) => {
-    const activityId = v4();
+        if (isUndefinedOrNull(targetObject)) {
+          set(recordStoreFamilyState(activityId), {
+            ...createdActivityInCache,
+            activityTargets: [],
+            comments: [],
+          });
 
-    const createdActivityInCache = createOneActivityInCache({
-      id: activityId,
-      author: workspaceMemberRecord,
-      authorId: workspaceMemberRecord?.id,
-      assignee: !assigneeId ? workspaceMemberRecord : undefined,
-      assigneeId:
-        assigneeId ?? isNonEmptyString(workspaceMemberRecord?.id)
-          ? workspaceMemberRecord?.id
-          : undefined,
-      type: type,
-    });
+          return {
+            createdActivityInCache: {
+              ...createdActivityInCache,
+              activityTargets: [],
+            },
+          };
+        }
 
-    const activityTargetsToCreate =
-      getActivityTargetsToCreateFromTargetableObjects({
-        activityId,
-        targetableObjects,
-      });
+        const targetObjectRecord = snapshot
+          .getLoadable(recordStoreFamilyState(targetObject.id))
+          .getValue();
 
-    const createdActivityTargetsInCache = createManyActivityTargetsInCache(
-      activityTargetsToCreate,
-    );
+        if (isUndefinedOrNull(targetObjectRecord)) {
+          throw new Error('Failed to find target object record');
+        }
 
-    injectIntoTimelineActivitiesQueryAfterDrawerMount({
-      activityToInject: createdActivityInCache,
-      activityTargetsToInject: createdActivityTargetsInCache,
-      timelineTargetableObject,
-    });
+        const activityTargetsToCreate =
+          makeActivityTargetsToCreateFromTargetableObjects({
+            activity: createdActivityInCache,
+            targetableObjects: [targetObject],
+            targetObjectRecords: [targetObjectRecord],
+          });
 
-    injectIntoActivityTargetInlineCellCache({
-      activityId,
-      activityTargetsToInject: createdActivityTargetsInCache,
-    });
+        const createdActivityTargetsInCache = createManyActivityTargetsInCache(
+          activityTargetsToCreate,
+        );
 
-    attachRelationSourceRecordToItsRelationTargetRecordsAndViceVersaInCache({
-      sourceRecord: createdActivityInCache,
-      fieldNameOnSourceRecord: 'activityTargets',
-      sourceObjectNameSingular: CoreObjectNameSingular.Activity,
-      fieldNameOnTargetRecord: 'activity',
-      targetObjectNameSingular: CoreObjectNameSingular.ActivityTarget,
-      targetRecords: createdActivityTargetsInCache,
-    });
+        const activityTargetsConnection = getRecordConnectionFromRecords({
+          objectMetadataItems: objectMetadataItems,
+          objectMetadataItem: objectMetadataItemActivityTarget,
+          records: createdActivityTargetsInCache,
+          withPageInfo: false,
+          computeReferences: true,
+          isRootLevel: false,
+        });
 
-    return {
-      createdActivityInCache: {
-        ...createdActivityInCache,
-        activityTargets: createdActivityTargetsInCache,
+        modifyRecordFromCache({
+          recordId: createdActivityInCache.id,
+          cache,
+          fieldModifiers: {
+            activityTargets: () => activityTargetsConnection,
+          },
+          objectMetadataItem: objectMetadataItemActivity,
+        });
+
+        const targetObjectMetadataItem = objectMetadataItems.find(
+          (item) => item.nameSingular === targetObject.targetObjectNameSingular,
+        );
+
+        if (isDefined(targetObjectMetadataItem)) {
+          modifyRecordFromCache({
+            cache,
+            objectMetadataItem: targetObjectMetadataItem,
+            recordId: targetObject.id,
+            fieldModifiers: {
+              activityTargets: (activityTargetsRef, { readField }) => {
+                const edges = readField<{ node: Reference }[]>(
+                  'edges',
+                  activityTargetsRef,
+                );
+
+                if (!edges) return activityTargetsRef;
+
+                return {
+                  ...activityTargetsRef,
+                  edges: [...edges, ...activityTargetsConnection.edges],
+                };
+              },
+            },
+          });
+        }
+
+        set(recordStoreFamilyState(activityId), {
+          ...createdActivityInCache,
+          activityTargets: createdActivityTargetsInCache,
+          comments: [],
+        });
+
+        return {
+          createdActivityInCache: {
+            ...createdActivityInCache,
+            activityTargets: createdActivityTargetsInCache,
+          },
+        };
       },
-      createdActivityTargetsInCache,
-    };
-  };
+    [
+      createOneActivityInCache,
+      currentWorkspaceMemberRecord,
+      createManyActivityTargetsInCache,
+      objectMetadataItems,
+      objectMetadataItemActivityTarget,
+      cache,
+      objectMetadataItemActivity,
+    ],
+  );
 
   return {
     createActivityInCache,

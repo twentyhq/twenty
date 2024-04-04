@@ -1,11 +1,8 @@
-import { useEffect } from 'react';
-import { useSetRecoilState } from 'recoil';
+import groupBy from 'lodash.groupby';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
-import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
-import { parseFieldType } from '@/object-metadata/utils/parseFieldType';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   FieldContext,
@@ -15,9 +12,12 @@ import {
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
-import { RecordRelationFieldCardSection } from '@/object-record/record-relation-card/components/RecordRelationFieldCardSection';
+import { RecordDetailDuplicatesSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailDuplicatesSection';
+import { RecordDetailRelationSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSection';
+import { recordLoadingFamilyState } from '@/object-record/record-store/states/recordLoadingFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { isFieldMetadataItemAvailable } from '@/object-record/utils/isFieldMetadataItemAvailable';
+import { recordStoreIdentifierFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreIdentifierSelector';
+import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
 import { ShowPageContainer } from '@/ui/layout/page/ShowPageContainer';
 import { ShowPageLeftContainer } from '@/ui/layout/show-page/components/ShowPageLeftContainer';
 import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPageRightContainer';
@@ -29,6 +29,8 @@ import {
   FileFolder,
   useUploadImageMutation,
 } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type RecordShowContainerProps = {
   objectNameSingular: string;
@@ -39,28 +41,25 @@ export const RecordShowContainer = ({
   objectNameSingular,
   objectRecordId,
 }: RecordShowContainerProps) => {
-  const {
-    objectMetadataItem,
-    labelIdentifierFieldMetadata,
-    mapToObjectRecordIdentifier,
-  } = useObjectMetadataItem({
-    objectNameSingular,
-  });
+  const { objectMetadataItem, labelIdentifierFieldMetadata } =
+    useObjectMetadataItem({
+      objectNameSingular,
+    });
 
-  const setEntityFields = useSetRecoilState(
+  const [recordLoading] = useRecoilState(
+    recordLoadingFamilyState(objectRecordId),
+  );
+
+  const [recordFromStore] = useRecoilState(
     recordStoreFamilyState(objectRecordId),
   );
 
-  const { record, loading } = useFindOneRecord({
-    objectRecordId,
-    objectNameSingular,
-    depth: 3,
-  });
-
-  useEffect(() => {
-    if (!record) return;
-    setEntityFields(record);
-  }, [record, setEntityFields]);
+  const recordIdentifier = useRecoilValue(
+    recordStoreIdentifierFamilySelector({
+      objectNameSingular,
+      recordId: objectRecordId,
+    }),
+  );
 
   const [uploadImage] = useUploadImageMutation();
   const { updateOneRecord } = useUpdateOneRecord({ objectNameSingular });
@@ -90,18 +89,12 @@ export const RecordShowContainer = ({
 
     const avatarUrl = result?.data?.uploadImage;
 
-    if (!avatarUrl) {
-      return;
-    }
-    if (!updateOneRecord) {
-      return;
-    }
-    if (!record) {
+    if (!avatarUrl || isUndefinedOrNull(updateOneRecord) || !recordFromStore) {
       return;
     }
 
     await updateOneRecord({
-      idToUpdate: record.id,
+      idToUpdate: objectRecordId,
       updateOneRecordInput: {
         avatarUrl,
       },
@@ -111,50 +104,43 @@ export const RecordShowContainer = ({
   const availableFieldMetadataItems = objectMetadataItem.fields
     .filter(
       (fieldMetadataItem) =>
-        isFieldMetadataItemAvailable(fieldMetadataItem) &&
+        isFieldCellSupported(fieldMetadataItem) &&
         fieldMetadataItem.id !== labelIdentifierFieldMetadata?.id,
     )
     .sort((fieldMetadataItemA, fieldMetadataItemB) =>
       fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
     );
 
-  const inlineFieldMetadataItems = availableFieldMetadataItems.filter(
+  const { inlineFieldMetadataItems, relationFieldMetadataItems } = groupBy(
+    availableFieldMetadataItems,
     (fieldMetadataItem) =>
-      fieldMetadataItem.type !== FieldMetadataType.Relation,
-  );
-
-  const relationFieldMetadataItems = availableFieldMetadataItems.filter(
-    (fieldMetadataItem) =>
-      fieldMetadataItem.type === FieldMetadataType.Relation,
+      fieldMetadataItem.type === FieldMetadataType.Relation
+        ? 'relationFieldMetadataItems'
+        : 'inlineFieldMetadataItems',
   );
 
   return (
     <RecoilScope CustomRecoilScopeContext={ShowPageRecoilScopeContext}>
       <ShowPageContainer>
         <ShowPageLeftContainer>
-          {!loading && !!record && (
+          {!recordLoading && isDefined(recordFromStore) && (
             <>
               <ShowPageSummaryCard
-                id={record.id}
-                logoOrAvatar={
-                  mapToObjectRecordIdentifier(record).avatarUrl ?? ''
-                }
-                avatarPlaceholder={
-                  mapToObjectRecordIdentifier(record).name ?? ''
-                }
-                date={record.createdAt ?? ''}
+                id={objectRecordId}
+                logoOrAvatar={recordIdentifier?.avatarUrl ?? ''}
+                avatarPlaceholder={recordIdentifier?.name ?? ''}
+                date={recordFromStore.createdAt ?? ''}
                 title={
                   <FieldContext.Provider
                     value={{
-                      entityId: record.id,
+                      entityId: objectRecordId,
                       recoilScopeId:
-                        record.id + labelIdentifierFieldMetadata?.id,
+                        objectRecordId + labelIdentifierFieldMetadata?.id,
                       isLabelIdentifier: false,
                       fieldDefinition: {
-                        type: parseFieldType(
+                        type:
                           labelIdentifierFieldMetadata?.type ||
-                            FieldMetadataType.Text,
-                        ),
+                          FieldMetadataType.Text,
                         iconName: '',
                         fieldMetadataId: labelIdentifierFieldMetadata?.id ?? '',
                         label: labelIdentifierFieldMetadata?.label || '',
@@ -169,21 +155,19 @@ export const RecordShowContainer = ({
                     <RecordInlineCell />
                   </FieldContext.Provider>
                 }
-                avatarType={
-                  mapToObjectRecordIdentifier(record).avatarType ?? 'rounded'
-                }
+                avatarType={recordIdentifier?.avatarType ?? 'rounded'}
                 onUploadPicture={
                   objectNameSingular === 'person' ? onUploadPicture : undefined
                 }
               />
-              <PropertyBox extraPadding={true}>
+              <PropertyBox>
                 {inlineFieldMetadataItems.map((fieldMetadataItem, index) => (
                   <FieldContext.Provider
-                    key={record.id + fieldMetadataItem.id}
+                    key={objectRecordId + fieldMetadataItem.id}
                     value={{
-                      entityId: record.id,
+                      entityId: objectRecordId,
                       maxWidth: 200,
-                      recoilScopeId: record.id + fieldMetadataItem.id,
+                      recoilScopeId: objectRecordId + fieldMetadataItem.id,
                       isLabelIdentifier: false,
                       fieldDefinition:
                         formatFieldMetadataItemAsColumnDefinition({
@@ -201,49 +185,37 @@ export const RecordShowContainer = ({
                   </FieldContext.Provider>
                 ))}
               </PropertyBox>
-              {relationFieldMetadataItems
-                .filter((item) => {
-                  const relationObjectMetadataItem = item.toRelationMetadata
-                    ? item.toRelationMetadata.fromObjectMetadata
-                    : item.fromRelationMetadata?.toObjectMetadata;
-
-                  if (!relationObjectMetadataItem) {
-                    return false;
-                  }
-
-                  return isObjectMetadataAvailableForRelation(
-                    relationObjectMetadataItem,
-                  );
-                })
-                .map((fieldMetadataItem, index) => (
-                  <FieldContext.Provider
-                    key={record.id + fieldMetadataItem.id}
-                    value={{
-                      entityId: record.id,
-                      recoilScopeId: record.id + fieldMetadataItem.id,
-                      isLabelIdentifier: false,
-                      fieldDefinition:
-                        formatFieldMetadataItemAsColumnDefinition({
-                          field: fieldMetadataItem,
-                          position: index,
-                          objectMetadataItem,
-                        }),
-                      useUpdateRecord: useUpdateOneObjectRecordMutation,
-                      hotkeyScope: InlineCellHotkeyScope.InlineCell,
-                    }}
-                  >
-                    <RecordRelationFieldCardSection />
-                  </FieldContext.Provider>
-                ))}
+              <RecordDetailDuplicatesSection
+                objectRecordId={objectRecordId}
+                objectNameSingular={objectNameSingular}
+              />
+              {relationFieldMetadataItems?.map((fieldMetadataItem, index) => (
+                <FieldContext.Provider
+                  key={objectRecordId + fieldMetadataItem.id}
+                  value={{
+                    entityId: objectRecordId,
+                    recoilScopeId: objectRecordId + fieldMetadataItem.id,
+                    isLabelIdentifier: false,
+                    fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
+                      field: fieldMetadataItem,
+                      position: index,
+                      objectMetadataItem,
+                    }),
+                    useUpdateRecord: useUpdateOneObjectRecordMutation,
+                    hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                  }}
+                >
+                  <RecordDetailRelationSection />
+                </FieldContext.Provider>
+              ))}
             </>
           )}
         </ShowPageLeftContainer>
-        {record ? (
+        {recordFromStore ? (
           <ShowPageRightContainer
             targetableObject={{
-              id: record.id,
+              id: objectRecordId,
               targetObjectNameSingular: objectMetadataItem?.nameSingular,
-              targetObjectRecord: record,
             }}
             timeline
             tasks

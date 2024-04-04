@@ -1,9 +1,10 @@
 import React from 'react';
 import { useTheme } from '@emotion/react';
+import { useRecoilValue } from 'recoil';
+import { IconChevronDown } from 'twenty-ui';
 
 import { ObjectFilterDropdownRecordRemoveFilterMenuItem } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordRemoveFilterMenuItem';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { IconChevronDown } from '@/ui/display/icon/index';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
@@ -13,8 +14,8 @@ import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
 import { GenericEntityFilterChip } from './GenericEntityFilterChip';
-import { ObjectFilterDropdownRecordSearchInput } from './ObjectFilterDropdownEntitySearchInput';
 import { ObjectFilterDropdownRecordSelect } from './ObjectFilterDropdownRecordSelect';
+import { ObjectFilterDropdownSearchInput } from './ObjectFilterDropdownSearchInput';
 
 export const SingleEntityObjectFilterDropdownButton = ({
   hotkeyScope,
@@ -22,11 +23,16 @@ export const SingleEntityObjectFilterDropdownButton = ({
   hotkeyScope: HotkeyScope;
 }) => {
   const {
-    availableFilterDefinitions,
-    selectedFilter,
+    availableFilterDefinitionsState,
+    selectedFilterState,
     setFilterDefinitionUsedInDropdown,
     setSelectedOperandInDropdown,
   } = useFilterDropdown();
+
+  const availableFilterDefinitions = useRecoilValue(
+    availableFilterDefinitionsState,
+  );
+  const selectedFilter = useRecoilValue(selectedFilterState);
 
   const availableFilter = availableFilterDefinitions[0];
 
@@ -66,7 +72,7 @@ export const SingleEntityObjectFilterDropdownButton = ({
       }
       dropdownComponents={
         <>
-          <ObjectFilterDropdownRecordSearchInput />
+          <ObjectFilterDropdownSearchInput />
           <DropdownMenuSeparator />
           <ObjectFilterDropdownRecordRemoveFilterMenuItem />
           <ObjectFilterDropdownRecordSelect />

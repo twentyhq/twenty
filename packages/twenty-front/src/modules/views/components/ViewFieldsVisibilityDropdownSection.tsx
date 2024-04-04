@@ -5,11 +5,10 @@ import {
   OnDragEndResponder,
   ResponderProvided,
 } from '@hello-pangea/dnd';
+import { IconInfoCircle, IconMinus, IconPlus } from 'twenty-ui';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { IconMinus, IconPlus } from '@/ui/display/icon';
-import { IconInfoCircle } from '@/ui/display/icon';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { AppTooltip } from '@/ui/display/tooltip/AppTooltip';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';

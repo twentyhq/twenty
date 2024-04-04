@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
-export const internalHotkeysEnabledScopesState = atom<string[]>({
+export const internalHotkeysEnabledScopesState = createState<string[]>({
   key: 'internalHotkeysEnabledScopesState',
-  default: [],
+  defaultValue: [],
 });

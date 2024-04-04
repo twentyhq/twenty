@@ -10,5 +10,7 @@ export type ObjectRecordConnection<T extends ObjectRecord = ObjectRecord> = {
     hasPreviousPage?: boolean;
     startCursor?: Nullable<string>;
     endCursor?: Nullable<string>;
+    totalCount?: number;
   };
+  totalCount?: number;
 };

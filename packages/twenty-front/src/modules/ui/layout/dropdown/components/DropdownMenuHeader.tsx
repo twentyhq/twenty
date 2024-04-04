@@ -7,9 +7,11 @@ import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 const StyledHeader = styled.li`
   align-items: center;
   color: ${({ theme }) => theme.font.color.primary};
+  cursor: pointer;
   display: flex;
   font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
 
   padding: ${({ theme }) => theme.spacing(1)};
 
@@ -44,9 +46,9 @@ export const DropdownMenuHeader = ({
     <StyledHeader data-testid={testId}>
       {StartIcon && (
         <LightIconButton
+          onClick={onClick}
           testId="dropdown-menu-header-end-icon"
           Icon={StartIcon}
-          onClick={onClick}
           accent="tertiary"
           size="small"
         />
@@ -54,9 +56,9 @@ export const DropdownMenuHeader = ({
       <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
       {EndIcon && (
         <StyledLightIconButton
+          onClick={onClick}
           testId="dropdown-menu-header-end-icon"
           Icon={EndIcon}
-          onClick={onClick}
           accent="tertiary"
           size="small"
         />

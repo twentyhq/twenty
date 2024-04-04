@@ -1,14 +1,25 @@
-import { BlockNoteEditor } from '@blocknote/core';
-import { BlockNoteView } from '@blocknote/react';
+import { ClipboardEvent } from 'react';
+import { filterSuggestionItems } from '@blocknote/core';
+import { BlockNoteView, SuggestionMenuController } from '@blocknote/react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 
+import { blockSchema } from '@/activities/blocks/schema';
+import { getSlashMenu } from '@/activities/blocks/slashMenu';
+import {
+  CustomSlashMenu,
+  SuggestionItem,
+} from '@/ui/input/editor/components/CustomSlashMenu';
+
 interface BlockEditorProps {
-  editor: BlockNoteEditor;
+  editor: typeof blockSchema.BlockNoteEditor;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  onPaste?: (event: ClipboardEvent) => void;
+  onChange?: () => void;
 }
 
 const StyledEditor = styled.div`
-  min-height: 200px;
   width: 100%;
   & .editor {
     background: ${({ theme }) => theme.background.primary};
@@ -21,12 +32,51 @@ const StyledEditor = styled.div`
   }
 `;
 
-export const BlockEditor = ({ editor }: BlockEditorProps) => {
+export const BlockEditor = ({
+  editor,
+  onFocus,
+  onBlur,
+  onChange,
+  onPaste,
+}: BlockEditorProps) => {
   const theme = useTheme();
   const blockNoteTheme = theme.name === 'light' ? 'light' : 'dark';
+
+  const handleFocus = () => {
+    onFocus?.();
+  };
+
+  const handleBlur = () => {
+    onBlur?.();
+  };
+
+  const handleChange = () => {
+    onChange?.();
+  };
+
+  const handlePaste = (event: ClipboardEvent) => {
+    onPaste?.(event);
+  };
+
   return (
     <StyledEditor>
-      <BlockNoteView editor={editor} theme={blockNoteTheme} />
+      <BlockNoteView
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        onPaste={handlePaste}
+        onChange={handleChange}
+        editor={editor}
+        theme={blockNoteTheme}
+        slashMenu={false}
+      >
+        <SuggestionMenuController
+          triggerCharacter={'/'}
+          getItems={async (query) =>
+            filterSuggestionItems<SuggestionItem>(getSlashMenu(editor), query)
+          }
+          suggestionMenuComponent={CustomSlashMenu}
+        />
+      </BlockNoteView>
     </StyledEditor>
   );
 };

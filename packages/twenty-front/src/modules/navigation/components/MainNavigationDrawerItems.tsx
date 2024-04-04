@@ -1,16 +1,12 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { IconCheckbox, IconInbox, IconSearch, IconSettings } from 'twenty-ui';
 
-import { useCurrentUserTaskCount } from '@/activities/tasks/hooks/useCurrentUserDueTaskCount';
+import { CurrentUserDueTaskCountEffect } from '@/activities/tasks/components/CurrentUserDueTaskCountEffect';
+import { currentUserDueTaskCountState } from '@/activities/tasks/states/currentUserTaskCountState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { Favorites } from '@/favorites/components/Favorites';
 import { ObjectMetadataNavItems } from '@/object-metadata/components/ObjectMetadataNavItems';
-import {
-  IconBell,
-  IconCheckbox,
-  IconSearch,
-  IconSettings,
-} from '@/ui/display/icon';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
@@ -23,7 +19,7 @@ export const MainNavigationDrawerItems = () => {
   const isMobile = useIsMobile();
   const { toggleCommandMenu } = useCommandMenu();
   const isTasksPage = useIsTasksPage();
-  const { currentUserDueTaskCount } = useCurrentUserTaskCount();
+  const currentUserDueTaskCount = useRecoilValue(currentUserDueTaskCountState);
   const navigate = useNavigate();
   const location = useLocation();
   const setNavigationMemorizedUrl = useSetRecoilState(
@@ -41,9 +37,9 @@ export const MainNavigationDrawerItems = () => {
             keyboard={['⌘', 'K']}
           />
           <NavigationDrawerItem
-            label="Notifications"
+            label="Inbox"
             to="/inbox"
-            Icon={IconBell}
+            Icon={IconInbox}
             soon
           />
           <NavigationDrawerItem
@@ -54,6 +50,7 @@ export const MainNavigationDrawerItems = () => {
             }}
             Icon={IconSettings}
           />
+          <CurrentUserDueTaskCountEffect />
           <NavigationDrawerItem
             label="Tasks"
             to="/tasks"

@@ -1,7 +1,10 @@
 import { useNavigate } from 'react-router-dom';
+import { IconDotsVertical, IconMail, IconRefresh, IconTrash } from 'twenty-ui';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import { IconDotsVertical, IconMail, IconTrash } from '@/ui/display/icon';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -12,18 +15,22 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 type SettingsAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;
   className?: string;
-  onRemove?: (uuid: string) => void;
 };
 
 export const SettingsAccountsRowDropdownMenu = ({
   account,
   className,
-  onRemove,
 }: SettingsAccountsRowDropdownMenuProps) => {
   const dropdownId = `settings-account-row-${account.id}`;
 
   const navigate = useNavigate();
   const { closeDropdown } = useDropdown(dropdownId);
+
+  const { deleteOneRecord } = useDeleteOneRecord({
+    objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
+  });
+
+  const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
 
   return (
     <Dropdown
@@ -47,17 +54,25 @@ export const SettingsAccountsRowDropdownMenu = ({
                 closeDropdown();
               }}
             />
-            {!!onRemove && (
+            {account.authFailedAt && (
               <MenuItem
-                accent="danger"
-                LeftIcon={IconTrash}
-                text="Remove account"
+                LeftIcon={IconRefresh}
+                text="Reconnect"
                 onClick={() => {
-                  onRemove(account.id);
+                  triggerGoogleApisOAuth();
                   closeDropdown();
                 }}
               />
             )}
+            <MenuItem
+              accent="danger"
+              LeftIcon={IconTrash}
+              text="Remove account"
+              onClick={() => {
+                deleteOneRecord(account.id);
+                closeDropdown();
+              }}
+            />
           </DropdownMenuItemsContainer>
         </DropdownMenu>
       }

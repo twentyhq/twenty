@@ -48,8 +48,8 @@ EOF
 echo_header $BLUE "                    DATABASE SETUP"
 
 PG_MAIN_VERSION=15
-PG_GRAPHQL_VERSION=1.4.2
-CARGO_PGRX_VERSION=0.10.2
+PG_GRAPHQL_VERSION=1.5.1
+CARGO_PGRX_VERSION=0.11.2
 
 current_directory=$(pwd)
 script_directory="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"

@@ -1,8 +1,9 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
 import { ActivityForEditor } from '@/activities/types/ActivityForEditor';
 
-export const temporaryActivityForEditorState = atom<ActivityForEditor | null>({
-  key: 'temporaryActivityForEditorState',
-  default: null,
-});
+export const temporaryActivityForEditorState =
+  createState<ActivityForEditor | null>({
+    key: 'temporaryActivityForEditorState',
+    defaultValue: null,
+  });

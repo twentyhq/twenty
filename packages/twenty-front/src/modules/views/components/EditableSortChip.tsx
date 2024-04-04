@@ -1,21 +1,23 @@
-import { IconArrowDown, IconArrowUp } from '@/ui/display/icon/index';
+import { IconArrowDown, IconArrowUp } from 'twenty-ui';
+
+import { Sort } from '@/object-record/object-sort-dropdown/types/Sort';
 import { SortOrFilterChip } from '@/views/components/SortOrFilterChip';
-import { useViewBar } from '@/views/hooks/useViewBar';
-import { ViewSort } from '@/views/types/ViewSort';
+import { useCombinedViewSorts } from '@/views/hooks/useCombinedViewSorts';
 
 type EditableSortChipProps = {
-  viewSort: ViewSort;
+  viewSort: Sort;
 };
 
 export const EditableSortChip = ({ viewSort }: EditableSortChipProps) => {
-  const { removeViewSort, upsertViewSort } = useViewBar();
+  const { removeCombinedViewSort, upsertCombinedViewSort } =
+    useCombinedViewSorts();
 
   const handleRemoveClick = () => {
-    removeViewSort(viewSort.fieldMetadataId);
+    removeCombinedViewSort(viewSort.fieldMetadataId);
   };
 
   const handleClick = () => {
-    upsertViewSort({
+    upsertCombinedViewSort({
       ...viewSort,
       direction: viewSort.direction === 'asc' ? 'desc' : 'asc',
     });
@@ -27,7 +29,6 @@ export const EditableSortChip = ({ viewSort }: EditableSortChipProps) => {
       testId={viewSort.fieldMetadataId}
       labelValue={viewSort.definition.label}
       Icon={viewSort.direction === 'desc' ? IconArrowDown : IconArrowUp}
-      isSort
       onRemove={handleRemoveClick}
       onClick={handleClick}
     />

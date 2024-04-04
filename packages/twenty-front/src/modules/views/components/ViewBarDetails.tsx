@@ -4,14 +4,16 @@ import { useRecoilValue } from 'recoil';
 
 import { AddObjectFilterFromDetailsButton } from '@/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
-import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
 import { EditableSortChip } from '@/views/components/EditableSortChip';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
-import { useViewBar } from '@/views/hooks/useViewBar';
-
-import { useViewScopedStates } from '../hooks/internal/useViewScopedStates';
+import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
+import { useViewStates } from '@/views/hooks/internal/useViewStates';
+import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
+import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
+import { mapViewFiltersToFilters } from '@/views/utils/mapViewFiltersToFilters';
+import { mapViewSortsToSorts } from '@/views/utils/mapViewSortsToSorts';
 
 export type ViewBarDetailsProps = {
   hasFilterButton?: boolean;
@@ -25,9 +27,11 @@ const StyledBar = styled.div`
   border-top: 1px solid ${({ theme }) => theme.border.color.light};
   display: flex;
   flex-direction: row;
-  height: 40px;
+  min-height: 32px;
   justify-content: space-between;
   z-index: 4;
+  padding-top: ${({ theme }) => theme.spacing(1)};
+  padding-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledChipcontainer = styled.div`
@@ -35,10 +39,9 @@ const StyledChipcontainer = styled.div`
   display: flex;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
-  height: 40px;
-  justify-content: space-between;
+  min-height: 32px;
   margin-left: ${({ theme }) => theme.spacing(2)};
-  overflow-x: auto;
+  flex-wrap: wrap;
 `;
 
 const StyledCancelButton = styled.button`
@@ -92,37 +95,37 @@ export const ViewBarDetails = ({
   hasFilterButton = false,
   rightComponent,
   filterDropdownId,
-  viewBarId,
 }: ViewBarDetailsProps) => {
   const {
-    currentViewSortsState,
-    currentViewFiltersState,
-    canPersistFiltersSelector,
-    canPersistSortsSelector,
+    canPersistViewSelector,
     isViewBarExpandedState,
-  } = useViewScopedStates();
+    availableFilterDefinitionsState,
+    availableSortDefinitionsState,
+  } = useViewStates();
 
-  const currentViewSorts = useRecoilValue(currentViewSortsState);
-  const currentViewFilters = useRecoilValue(currentViewFiltersState);
-  const canPersistFilters = useRecoilValue(canPersistFiltersSelector);
-  const canPersistSorts = useRecoilValue(canPersistSortsSelector);
+  const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
+
   const isViewBarExpanded = useRecoilValue(isViewBarExpandedState);
+  const { hasFiltersQueryParams } = useViewFromQueryParams();
+  const canPersistView = useRecoilValue(canPersistViewSelector());
+  const availableFilterDefinitions = useRecoilValue(
+    availableFilterDefinitionsState,
+  );
+  const availableSortDefinitions = useRecoilValue(
+    availableSortDefinitionsState,
+  );
 
-  const { resetViewBar } = useViewBar();
-
-  const canPersistView = canPersistFilters || canPersistSorts;
+  const { resetCurrentView } = useResetCurrentView();
+  const canResetView = canPersistView && !hasFiltersQueryParams;
 
   const handleCancelClick = () => {
-    resetViewBar();
+    resetCurrentView();
   };
-
-  const { upsertViewFilter } = useViewBar({
-    viewBarId: viewBarId,
-  });
 
   const shouldExpandViewBar =
     canPersistView ||
-    ((currentViewSorts?.length || currentViewFilters?.length) &&
+    ((currentViewWithCombinedFiltersAndSorts?.viewSorts?.length ||
+      currentViewWithCombinedFiltersAndSorts?.viewFilters?.length) &&
       isViewBarExpanded);
 
   if (!shouldExpandViewBar) {
@@ -133,28 +136,34 @@ export const ViewBarDetails = ({
     <StyledBar>
       <StyledFilterContainer>
         <StyledChipcontainer>
-          {currentViewSorts?.map((sort) => (
-            <EditableSortChip key={sort.id} viewSort={sort} />
+          {mapViewSortsToSorts(
+            currentViewWithCombinedFiltersAndSorts?.viewSorts ?? [],
+            availableSortDefinitions,
+          ).map((sort) => (
+            <EditableSortChip key={sort.fieldMetadataId} viewSort={sort} />
           ))}
-          {!!currentViewSorts?.length && !!currentViewFilters?.length && (
-            <StyledSeperatorContainer>
-              <StyledSeperator />
-            </StyledSeperatorContainer>
-          )}
-          {currentViewFilters?.map((viewFilter) => (
+          {!!currentViewWithCombinedFiltersAndSorts?.viewSorts?.length &&
+            !!currentViewWithCombinedFiltersAndSorts?.viewFilters?.length && (
+              <StyledSeperatorContainer>
+                <StyledSeperator />
+              </StyledSeperatorContainer>
+            )}
+          {mapViewFiltersToFilters(
+            currentViewWithCombinedFiltersAndSorts?.viewFilters ?? [],
+            availableFilterDefinitions,
+          ).map((viewFilter) => (
             <ObjectFilterDropdownScope
-              key={viewFilter.id}
+              key={viewFilter.fieldMetadataId}
               filterScopeId={viewFilter.fieldMetadataId}
             >
               <DropdownScope dropdownScopeId={viewFilter.fieldMetadataId}>
                 <ViewBarFilterEffect
                   filterDropdownId={viewFilter.fieldMetadataId}
-                  onFilterSelect={upsertViewFilter}
                 />
                 <EditableFilterDropdownButton
                   viewFilter={viewFilter}
                   hotkeyScope={{
-                    scope: FiltersHotkeyScope.ObjectFilterDropdownButton,
+                    scope: viewFilter.fieldMetadataId,
                   }}
                   viewFilterDropdownId={viewFilter.fieldMetadataId}
                 />
@@ -170,7 +179,7 @@ export const ViewBarDetails = ({
           </StyledAddFilterContainer>
         )}
       </StyledFilterContainer>
-      {canPersistView && (
+      {canResetView && (
         <StyledCancelButton
           data-testid="cancel-button"
           onClick={handleCancelClick}

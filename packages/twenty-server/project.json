@@ -1,0 +1,155 @@
+{
+  "name": "twenty-server",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-server",
+        "commands": ["rimraf dist", "nest build --path ./tsconfig.build.json"]
+      }
+    },
+    "build:packageJson": {
+      "executor": "@nx/js:tsc",
+      "options": {
+        "main": "packages/twenty-server/dist/src/main.js",
+        "tsConfig": "packages/twenty-server/tsconfig.json",
+        "outputPath": "packages/twenty-server/dist",
+        "updateBuildableProjectDepsInPackageJson": true
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "NODE_ENV=development && nest start --watch"
+      }
+    },
+    "start:debug": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "nx start --debug"
+      }
+    },
+    "command": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "node dist/src/command/command.js"
+      }
+    },
+    "command-no-deps": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "node dist/src/command/command.js"
+      }
+    },
+    "worker": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "node dist/src/queue-worker/queue-worker.js"
+      }
+    },
+    "typeorm": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "ts-node ../../node_modules/typeorm/cli.js"
+      }
+    },
+    "ts-node": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "ts-node"
+      }
+    },
+    "ts-node-no-deps": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "ts-node"
+      }
+    },
+    "lint": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "eslint \"src/**/*.ts\" --fix"
+      }
+    },
+    "test:unit": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "jest"
+      }
+    },
+    "test:unit:watch": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "jest --watch"
+      }
+    },
+    "test:unit:coverage": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "jest --coverage"
+      }
+    },
+    "test:unit:debug": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register ../../node_modules/.bin/jest --runInBand"
+      }
+    },
+    "test:e2e": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/twenty-server",
+        "command": "./scripts/run-integration.sh"
+      }
+    },
+    "database:migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-server",
+        "commands": [
+          "nx typeorm -- migration:run -d src/database/typeorm/metadata/metadata.datasource",
+          "nx typeorm -- migration:run -d src/database/typeorm/core/core.datasource"
+        ],
+        "parallel": false
+      }
+    },
+    "database:reset": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/twenty-server",
+        "commands": [
+          "nx ts-node-no-deps -- ./scripts/truncate-db.ts",
+          "nx ts-node-no-deps -- ./scripts/setup-db.ts",
+          "nx database:migrate",
+          "nx command-no-deps -- workspace:seed:dev"
+        ],
+        "parallel": false
+      }
+    }
+  }
+}

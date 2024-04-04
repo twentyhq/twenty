@@ -1,10 +1,9 @@
 import { Metadata } from 'next';
-import { Gabarito } from 'next/font/google';
+import { Gabarito, Inter } from 'next/font/google';
 
-import { HeaderMobile } from '@/app/components/HeaderMobile';
+import { AppHeader } from '@/app/_components/ui/layout/header';
 
-import { FooterDesktop } from './components/FooterDesktop';
-import { HeaderDesktop } from './components/HeaderDesktop';
+import { FooterDesktop } from './_components/ui/layout/FooterDesktop';
 import EmotionRootStyleRegistry from './emotion-root-style-registry';
 
 import './layout.css';
@@ -16,10 +15,19 @@ export const metadata: Metadata = {
 };
 
 const gabarito = Gabarito({
-  weight: ['400', '500'],
+  weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
   display: 'swap',
   adjustFontFallback: false,
+  variable: '--font-gabarito',
+});
+
+const inter = Inter({
+  weight: ['400', '500', '600', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  adjustFontFallback: false,
+  variable: '--font-inter',
 });
 
 export default function RootLayout({
@@ -28,14 +36,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={gabarito.className}>
+    <html lang="en" className={`${gabarito.variable} ${inter.variable}`}>
       <body>
         <EmotionRootStyleRegistry>
-          <HeaderDesktop />
-          <div className="container">
-            <HeaderMobile />
-            {children}
-          </div>
+          <AppHeader />
+          <div className="container">{children}</div>
           <FooterDesktop />
         </EmotionRootStyleRegistry>
       </body>

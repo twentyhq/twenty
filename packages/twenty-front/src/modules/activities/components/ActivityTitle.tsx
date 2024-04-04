@@ -1,19 +1,28 @@
-import { useState } from 'react';
+import { useRef } from 'react';
+import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState } from 'recoil';
+import { Key } from 'ts-key-enum';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
+import { activityTitleFamilyState } from '@/activities/states/activityTitleFamilyState';
 import { activityTitleHasBeenSetFamilyState } from '@/activities/states/activityTitleHasBeenSetFamilyState';
+import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
 import { Activity } from '@/activities/types/Activity';
+import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useModifyRecordFromCache } from '@/object-record/cache/hooks/useModifyRecordFromCache';
+import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
   Checkbox,
   CheckboxShape,
   CheckboxSize,
 } from '@/ui/input/components/Checkbox';
+import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledEditableTitleInput = styled.input<{
@@ -48,17 +57,56 @@ const StyledContainer = styled.div`
 `;
 
 type ActivityTitleProps = {
-  activity: Activity;
+  activityId: string;
 };
 
-export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
-  const [internalTitle, setInternalTitle] = useState(activity.title);
+export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
+  const [activityInStore, setActivityInStore] = useRecoilState(
+    recordStoreFamilyState(activityId),
+  );
+
+  const cache = useApolloClient().cache;
+
+  const [activityTitle, setActivityTitle] = useRecoilState(
+    activityTitleFamilyState({ activityId }),
+  );
+
+  const activity = activityInStore as Activity;
+
+  const [canCreateActivity, setCanCreateActivity] = useRecoilState(
+    canCreateActivityState,
+  );
 
   const { upsertActivity } = useUpsertActivity();
 
+  const {
+    setHotkeyScopeAndMemorizePreviousScope,
+    goBackToPreviousHotkeyScope,
+  } = usePreviousHotkeyScope();
+  const titleInputRef = useRef<HTMLInputElement>(null);
+
+  useScopedHotkeys(
+    Key.Escape,
+    () => {
+      handleBlur();
+    },
+    ActivityEditorHotkeyScope.ActivityTitle,
+  );
+
+  const handleBlur = () => {
+    goBackToPreviousHotkeyScope();
+    titleInputRef.current?.blur();
+  };
+
+  const handleFocus = () => {
+    setHotkeyScopeAndMemorizePreviousScope(
+      ActivityEditorHotkeyScope.ActivityTitle,
+    );
+  };
+
   const [activityTitleHasBeenSet, setActivityTitleHasBeenSet] = useRecoilState(
     activityTitleHasBeenSetFamilyState({
-      activityId: activity.id,
+      activityId: activityId,
     }),
   );
 
@@ -66,10 +114,6 @@ export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
     useObjectMetadataItemOnly({
       objectNameSingular: CoreObjectNameSingular.Activity,
     });
-
-  const modifyActivityFromCache = useModifyRecordFromCache({
-    objectMetadataItem: objectMetadataItemActivity,
-  });
 
   const persistTitleDebounced = useDebouncedCallback((newTitle: string) => {
     upsertActivity({
@@ -84,14 +128,35 @@ export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
     }
   }, 500);
 
-  const handleTitleChange = (newTitle: string) => {
-    setInternalTitle(newTitle);
-
-    modifyActivityFromCache(activity.id, {
-      title: () => {
-        return newTitle;
-      },
+  const setTitleDebounced = useDebouncedCallback((newTitle: string) => {
+    setActivityInStore((currentActivity) => {
+      return {
+        ...currentActivity,
+        id: activity.id,
+        title: newTitle,
+      };
     });
+
+    if (isNonEmptyString(newTitle) && !canCreateActivity) {
+      setCanCreateActivity(true);
+    }
+
+    modifyRecordFromCache({
+      recordId: activity.id,
+      fieldModifiers: {
+        title: () => {
+          return newTitle;
+        },
+      },
+      cache: cache,
+      objectMetadataItem: objectMetadataItemActivity,
+    });
+  }, 500);
+
+  const handleTitleChange = (newTitle: string) => {
+    setActivityTitle(newTitle);
+
+    setTitleDebounced(newTitle);
 
     persistTitleDebounced(newTitle);
   };
@@ -120,10 +185,13 @@ export const ActivityTitle = ({ activity }: ActivityTitleProps) => {
       <StyledEditableTitleInput
         autoComplete="off"
         autoFocus
+        ref={titleInputRef}
         placeholder={`${activity.type} title`}
         onChange={(event) => handleTitleChange(event.target.value)}
-        value={internalTitle}
+        value={activityTitle}
         completed={completed}
+        onBlur={handleBlur}
+        onFocus={handleFocus}
       />
     </StyledContainer>
   );

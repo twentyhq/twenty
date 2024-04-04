@@ -1,10 +1,9 @@
 import { useCallback, useState } from 'react';
 import { SubmitHandler, UseFormReturn } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useParams } from 'react-router-dom';
 
+import { useNavigateAfterSignInUp } from '@/auth/sign-in-up/hooks/useNavigateAfterSignInUp.ts';
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm.ts';
-import { billingState } from '@/client-config/states/billingState';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -16,7 +15,6 @@ import { useAuth } from '../../hooks/useAuth';
 export enum SignInUpMode {
   SignIn = 'sign-in',
   SignUp = 'sign-up',
-  Invite = 'invite',
 }
 
 export enum SignInUpStep {
@@ -26,23 +24,26 @@ export enum SignInUpStep {
 }
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
-  const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
+
   const isMatchingLocation = useIsMatchingLocation();
-  const billing = useRecoilValue(billingState);
+
   const workspaceInviteHash = useParams().workspaceInviteHash;
+
+  const { navigateAfterSignInUp } = useNavigateAfterSignInUp();
+
+  const [isInviteMode] = useState(() => isMatchingLocation(AppPath.Invite));
+
   const [signInUpStep, setSignInUpStep] = useState<SignInUpStep>(
     SignInUpStep.Init,
   );
-  const [signInUpMode, setSignInUpMode] = useState<SignInUpMode>(() => {
-    if (isMatchingLocation(AppPath.Invite)) {
-      return SignInUpMode.Invite;
-    }
 
-    return isMatchingLocation(AppPath.SignIn)
+  const [signInUpMode, setSignInUpMode] = useState<SignInUpMode>(() => {
+    return isMatchingLocation(AppPath.SignInUp)
       ? SignInUpMode.SignIn
       : SignInUpMode.SignUp;
   });
+
   const {
     signInWithCredentials,
     signUpWithCredentials,
@@ -52,7 +53,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const continueWithEmail = useCallback(() => {
     setSignInUpStep(SignInUpStep.Email);
     setSignInUpMode(
-      isMatchingLocation(AppPath.SignIn)
+      isMatchingLocation(AppPath.SignInUp)
         ? SignInUpMode.SignIn
         : SignInUpMode.SignUp,
     );
@@ -84,8 +85,11 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           throw new Error('Email and password are required');
         }
 
-        const { workspace: currentWorkspace } =
-          signInUpMode === SignInUpMode.SignIn
+        const {
+          workspace: currentWorkspace,
+          workspaceMember: currentWorkspaceMember,
+        } =
+          signInUpMode === SignInUpMode.SignIn && !isInviteMode
             ? await signInWithCredentials(
                 data.email.toLowerCase().trim(),
                 data.password,
@@ -96,19 +100,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
                 workspaceInviteHash,
               );
 
-        if (
-          billing?.isBillingEnabled &&
-          currentWorkspace.subscriptionStatus !== 'active'
-        ) {
-          navigate(AppPath.PlanRequired);
-          return;
-        }
-        if (currentWorkspace.displayName) {
-          navigate(AppPath.Index);
-          return;
-        }
-
-        navigate(AppPath.CreateWorkspace);
+        navigateAfterSignInUp(currentWorkspace, currentWorkspaceMember);
       } catch (err: any) {
         enqueueSnackBar(err?.message, {
           variant: 'error',
@@ -117,11 +109,11 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     },
     [
       signInUpMode,
+      isInviteMode,
       signInWithCredentials,
       signUpWithCredentials,
       workspaceInviteHash,
-      billing?.isBillingEnabled,
-      navigate,
+      navigateAfterSignInUp,
       enqueueSnackBar,
     ],
   );
@@ -142,10 +134,17 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       }
     },
     PageHotkeyScope.SignInUp,
-    [continueWithEmail],
+    [
+      continueWithEmail,
+      signInUpStep,
+      continueWithCredentials,
+      form,
+      submitCredentials,
+    ],
   );
 
   return {
+    isInviteMode,
     signInUpStep,
     signInUpMode,
     continueWithCredentials,

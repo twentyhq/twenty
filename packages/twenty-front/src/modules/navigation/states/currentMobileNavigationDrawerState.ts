@@ -1,6 +1,8 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
-export const currentMobileNavigationDrawerState = atom<'main' | 'settings'>({
+export const currentMobileNavigationDrawerState = createState<
+  'main' | 'settings'
+>({
   key: 'currentMobileNavigationDrawerState',
-  default: 'main',
+  defaultValue: 'main',
 });

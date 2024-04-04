@@ -1,10 +1,10 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import { IconPlus } from 'twenty-ui';
 
 import { RecordTableHeaderCell } from '@/object-record/record-table/components/RecordTableHeaderCell';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { IconPlus } from '@/ui/display/icon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useScrollWrapperScopedRef } from '@/ui/utilities/scroll/hooks/useScrollWrapperScopedRef';
 
@@ -28,8 +28,7 @@ const StyledPlusIconHeaderCell = styled.th<{ isTableWiderThanScreen: boolean }>`
   min-width: 32px;
   ${({ isTableWiderThanScreen, theme }) =>
     isTableWiderThanScreen &&
-    `position: relative;
-    right: 0;
+    `
     width: 32px;
     border-right: none !important;
     background-color: ${theme.background.primary};
@@ -56,16 +55,15 @@ export const RecordTableHeader = ({
 }: {
   createRecord: () => void;
 }) => {
-  const { getHiddenTableColumnsSelector, getVisibleTableColumnsSelector } =
-    useRecordTableStates();
+  const { visibleTableColumnsSelector } = useRecordTableStates();
 
   const scrollWrapper = useScrollWrapperScopedRef();
   const isTableWiderThanScreen =
     (scrollWrapper.current?.clientWidth ?? 0) <
     (scrollWrapper.current?.scrollWidth ?? 0);
 
-  const visibleTableColumns = useRecoilValue(getVisibleTableColumnsSelector());
-  const hiddenTableColumns = useRecoilValue(getHiddenTableColumnsSelector());
+  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
+  const hiddenTableColumns = useRecoilValue(visibleTableColumnsSelector());
 
   const theme = useTheme();
 

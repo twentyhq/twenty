@@ -8,10 +8,11 @@ import {
   seedWorkspaces,
   deleteWorkspaces,
 } from 'src/database/typeorm-seeds/core/demo/workspaces';
+import { deleteFeatureFlags } from 'src/database/typeorm-seeds/core/demo/feature-flags';
 import {
-  seedFeatureFlags,
-  deleteFeatureFlags,
-} from 'src/database/typeorm-seeds/core/demo/feature-flags';
+  deleteUserWorkspaces,
+  seedUserWorkspaces,
+} from 'src/database/typeorm-seeds/core/demo/user-workspaces';
 
 export const seedCoreSchema = async (
   workspaceDataSource: DataSource,
@@ -21,7 +22,7 @@ export const seedCoreSchema = async (
 
   await seedWorkspaces(workspaceDataSource, schemaName, workspaceId);
   await seedUsers(workspaceDataSource, schemaName, workspaceId);
-  await seedFeatureFlags(workspaceDataSource, schemaName, workspaceId);
+  await seedUserWorkspaces(workspaceDataSource, schemaName, workspaceId);
 };
 
 export const deleteCoreSchema = async (
@@ -30,6 +31,7 @@ export const deleteCoreSchema = async (
 ) => {
   const schemaName = 'core';
 
+  await deleteUserWorkspaces(workspaceDataSource, schemaName, workspaceId);
   await deleteUsersByWorkspace(workspaceDataSource, schemaName, workspaceId);
   await deleteFeatureFlags(workspaceDataSource, schemaName, workspaceId);
   // deleteWorkspaces should be last

@@ -1,7 +1,7 @@
 import { Keys } from 'react-hotkeys-hook/dist/types';
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
-export const pendingHotkeyState = atom<Keys | null>({
+export const pendingHotkeyState = createState<Keys | null>({
   key: 'pendingHotkeyState',
-  default: null,
+  defaultValue: null,
 });

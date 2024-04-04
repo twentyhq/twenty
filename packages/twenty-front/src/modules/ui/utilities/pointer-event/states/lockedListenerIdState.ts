@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
-export const lockedListenerIdState = atom<string | null>({
+export const lockedListenerIdState = createState<string | null>({
   key: 'lockedListenerIdState',
-  default: null,
+  defaultValue: null,
 });

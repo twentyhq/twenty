@@ -2,6 +2,7 @@ import { useCallback, useMemo, useState } from 'react';
 // @ts-expect-error Todo: remove usage of react-data-grid
 import { RowsChangeData } from 'react-data-grid';
 import styled from '@emotion/styled';
+import { IconTrash } from 'twenty-ui';
 
 import { ContinueButton } from '@/spreadsheet-import/components/ContinueButton';
 import { Heading } from '@/spreadsheet-import/components/Heading';
@@ -9,11 +10,11 @@ import { Table } from '@/spreadsheet-import/components/Table';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { Data } from '@/spreadsheet-import/types';
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
-import { IconTrash } from '@/ui/display/icon';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { Button } from '@/ui/input/button/components/Button';
 import { Toggle } from '@/ui/input/components/Toggle';
 import { Modal } from '@/ui/layout/modal/components/Modal';
+import { isDefined } from '~/utils/isDefined';
 
 import { generateColumns } from './components/columns';
 import { Meta } from './types';
@@ -94,7 +95,7 @@ export const ValidationStep = <T extends string>({
   );
 
   const deleteSelectedRows = () => {
-    if (selectedRows.size) {
+    if (selectedRows.size > 0) {
       const newData = data.filter((value) => !selectedRows.has(value.__index));
       updateData(newData);
       setSelectedRows(new Set());
@@ -129,7 +130,7 @@ export const ValidationStep = <T extends string>({
   const tableData = useMemo(() => {
     if (filterByErrors) {
       return data.filter((value) => {
-        if (value?.__errors) {
+        if (isDefined(value?.__errors)) {
           return Object.values(value.__errors)?.filter(
             (err) => err.level === 'error',
           ).length;
@@ -146,7 +147,7 @@ export const ValidationStep = <T extends string>({
     const calculatedData = data.reduce(
       (acc, value) => {
         const { __index, __errors, ...values } = value;
-        if (__errors) {
+        if (isDefined(__errors)) {
           for (const key in __errors) {
             if (__errors[key].level === 'error') {
               acc.invalidData.push(values as unknown as Data<T>);
@@ -165,7 +166,7 @@ export const ValidationStep = <T extends string>({
   };
   const onContinue = () => {
     const invalidData = data.find((value) => {
-      if (value?.__errors) {
+      if (isDefined(value?.__errors)) {
         return !!Object.values(value.__errors)?.filter(
           (err) => err.level === 'error',
         ).length;

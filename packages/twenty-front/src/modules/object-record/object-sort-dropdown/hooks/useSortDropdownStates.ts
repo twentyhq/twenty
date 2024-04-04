@@ -1,29 +1,27 @@
-import { onSortSelectScopedState } from '@/object-record/object-sort-dropdown/states/onSortSelectScopedState';
-import { useRecoilScopedStateV2 } from '@/ui/utilities/recoil-scope/hooks/useRecoilScopedStateV2';
-
-import { availableSortDefinitionsScopedState } from '../states/availableSortDefinitionsScopedState';
-import { isSortSelectedScopedState } from '../states/isSortSelectedScopedState';
+import { isSortSelectedComponentState } from '@/object-record/object-sort-dropdown/states/isSortSelectedScopedState';
+import { onSortSelectComponentState } from '@/object-record/object-sort-dropdown/states/onSortSelectScopedState';
+import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
+import { availableSortDefinitionsComponentState } from '@/views/states/availableSortDefinitionsComponentState';
 
 export const useSortDropdownStates = (scopeId: string) => {
-  const [availableSortDefinitions, setAvailableSortDefinitions] =
-    useRecoilScopedStateV2(availableSortDefinitionsScopedState, scopeId);
-
-  const [isSortSelected, setIsSortSelected] = useRecoilScopedStateV2(
-    isSortSelectedScopedState,
+  const availableSortDefinitionsState = extractComponentState(
+    availableSortDefinitionsComponentState,
     scopeId,
   );
 
-  const [onSortSelect, setOnSortSelect] = useRecoilScopedStateV2(
-    onSortSelectScopedState,
+  const isSortSelectedState = extractComponentState(
+    isSortSelectedComponentState,
+    scopeId,
+  );
+
+  const onSortSelectState = extractComponentState(
+    onSortSelectComponentState,
     scopeId,
   );
 
   return {
-    availableSortDefinitions,
-    setAvailableSortDefinitions,
-    isSortSelected,
-    setIsSortSelected,
-    onSortSelect,
-    setOnSortSelect,
+    availableSortDefinitionsState,
+    isSortSelectedState,
+    onSortSelectState,
   };
 };

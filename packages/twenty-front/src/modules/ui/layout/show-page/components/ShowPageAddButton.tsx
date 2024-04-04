@@ -1,10 +1,10 @@
 import styled from '@emotion/styled';
+import { IconCheckbox, IconNotes, IconPlus } from 'twenty-ui';
 
-import { useOpenCreateActivityDrawerV2 } from '@/activities/hooks/useOpenCreateActivityDrawerV2';
+import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { ActivityType } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { IconCheckbox, IconNotes, IconPlus } from '@/ui/display/icon/index';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -24,14 +24,14 @@ export const ShowPageAddButton = ({
   activityTargetObject: ActivityTargetableObject;
 }) => {
   const { closeDropdown, toggleDropdown } = useDropdown('add-show-page');
-  const openCreateActivity = useOpenCreateActivityDrawerV2();
+  const openCreateActivity = useOpenCreateActivityDrawer();
 
   const handleSelect = (type: ActivityType) => {
     openCreateActivity({
       type,
       targetableObjects: [activityTargetObject],
-      timelineTargetableObject: activityTargetObject,
     });
+
     closeDropdown();
   };
 

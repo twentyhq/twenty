@@ -20,7 +20,7 @@ const StyledRecordInlineCellNormalModeOuterContainer = styled.div<
   padding: ${({ theme }) => theme.spacing(1)};
 
   ${(props) => {
-    if (props.isHovered) {
+    if (props.isHovered === true) {
       return css`
         background-color: ${!props.disableHoverEffect
           ? props.theme.background.transparent.light

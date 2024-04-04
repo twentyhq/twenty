@@ -9,7 +9,7 @@ import { EntityForSelect } from '@/object-record/relation-picker/types/EntityFor
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
-import { assertNotNull } from '~/utils/assert';
+import { isDefined } from '~/utils/isDefined';
 
 type SearchFilter = { fieldNames: string[]; filter: string | number };
 
@@ -59,7 +59,7 @@ export const useFilteredSearchEntityQuery = ({
       fieldNames.map((fieldName) => {
         const [parentFieldName, subFieldName] = fieldName.split('.');
 
-        if (subFieldName) {
+        if (isNonEmptyString(subFieldName)) {
           // Composite field
           return {
             [parentFieldName]: {
@@ -102,15 +102,11 @@ export const useFilteredSearchEntityQuery = ({
     });
 
   return {
-    selectedEntities: selectedRecords
-      .map(mappingFunction)
-      .filter(assertNotNull),
+    selectedEntities: selectedRecords.map(mappingFunction).filter(isDefined),
     filteredSelectedEntities: filteredSelectedRecords
       .map(mappingFunction)
-      .filter(assertNotNull),
-    entitiesToSelect: recordsToSelect
-      .map(mappingFunction)
-      .filter(assertNotNull),
+      .filter(isDefined),
+    entitiesToSelect: recordsToSelect.map(mappingFunction).filter(isDefined),
     loading:
       recordsToSelectLoading ||
       filteredSelectedRecordsLoading ||

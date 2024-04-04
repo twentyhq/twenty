@@ -5,7 +5,7 @@ import { useRecoilCallback, useRecoilValue } from 'recoil';
 import { useLoadRecordIndexTable } from '@/object-record/record-index/hooks/useLoadRecordIndexTable';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
-import { grayScale } from '@/ui/theme/constants/colors';
+import { GRAY_SCALE } from '@/ui/theme/constants/GrayScale';
 
 type RecordTableBodyFetchMoreLoaderProps = {
   objectNameSingular: string;
@@ -14,7 +14,7 @@ type RecordTableBodyFetchMoreLoaderProps = {
 const StyledText = styled.div`
   align-items: center;
   box-shadow: none;
-  color: ${grayScale.gray40};
+  color: ${GRAY_SCALE.gray40};
   display: flex;
   height: 32px;
   margin-left: ${({ theme }) => theme.spacing(8)};

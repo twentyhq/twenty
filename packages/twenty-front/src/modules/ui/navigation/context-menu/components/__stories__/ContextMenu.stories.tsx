@@ -1,9 +1,9 @@
-import { MemoryRouter } from 'react-router-dom';
 import { Meta, StoryObj } from '@storybook/react';
 import { useSetRecoilState } from 'recoil';
 
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 import { contextMenuIsOpenState } from '../../states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '../../states/contextMenuPositionState';
@@ -24,14 +24,13 @@ const meta: Meta<typeof ContextMenu> = {
   title: 'UI/Navigation/ContextMenu/ContextMenu',
   component: FilledContextMenu,
   decorators: [
+    MemoryRouterDecorator,
     (Story) => (
       <RecordTableScope
         recordTableScopeId="companies"
         onColumnsChange={() => {}}
       >
-        <MemoryRouter>
-          <Story />
-        </MemoryRouter>
+        <Story />
       </RecordTableScope>
     ),
     ComponentDecorator,

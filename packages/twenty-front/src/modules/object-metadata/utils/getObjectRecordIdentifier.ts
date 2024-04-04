@@ -62,9 +62,9 @@ export const getObjectRecordIdentifier = ({
   // TODO: This is a temporary solution before we seed imageIdentifierFieldMetadataId in the database
   const avatarUrl =
     (objectMetadataItem.nameSingular === CoreObjectNameSingular.Company
-      ? getLogoUrlFromDomainName(record['domainName'] ?? '')
+      ? getLogoUrlFromDomainName(record.domainName ?? '')
       : objectMetadataItem.nameSingular === CoreObjectNameSingular.Person
-        ? record['avatarUrl'] ?? ''
+        ? record.avatarUrl ?? ''
         : imageIdentifierFieldValue) ?? '';
 
   const basePathToShowPage = getBasePathToShowPage({
@@ -74,9 +74,10 @@ export const getObjectRecordIdentifier = ({
   const isWorkspaceMemberObjectMetadata =
     objectMetadataItem.nameSingular === CoreObjectNameSingular.WorkspaceMember;
 
-  const linkToShowPage = isWorkspaceMemberObjectMetadata
-    ? ''
-    : `${basePathToShowPage}${record.id}`;
+  const linkToShowPage =
+    isWorkspaceMemberObjectMetadata || !record.id
+      ? ''
+      : `${basePathToShowPage}${record.id}`;
 
   return {
     id: record.id,

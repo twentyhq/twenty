@@ -1,29 +1,41 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Reference } from '@apollo/client';
+import { Reference, useApolloClient } from '@apollo/client';
+import styled from '@emotion/styled';
+import { IconSettings } from 'twenty-ui';
 
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectFieldFormSection } from '@/settings/data-model/components/SettingsObjectFieldFormSection';
-import { SettingsObjectFieldTypeSelectSection } from '@/settings/data-model/components/SettingsObjectFieldTypeSelectSection';
-import { useFieldMetadataForm } from '@/settings/data-model/hooks/useFieldMetadataForm';
+import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
+import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
+import { useFieldMetadataForm } from '@/settings/data-model/fields/forms/hooks/useFieldMetadataForm';
+import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { AppPath } from '@/types/AppPath';
-import { IconSettings } from '@/ui/display/icon';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+
+const StyledSettingsObjectFieldTypeSelect = styled(
+  SettingsDataModelFieldTypeSelect,
+)`
+  margin-bottom: ${({ theme }) => theme.spacing(4)};
+`;
 
 export const SettingsObjectNewFieldStep2 = () => {
   const navigate = useNavigate();
@@ -39,6 +51,7 @@ export const SettingsObjectNewFieldStep2 = () => {
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
   const { createMetadataField } = useFieldMetadataItem();
+  const cache = useApolloClient().cache;
 
   const {
     formValues,
@@ -72,38 +85,35 @@ export const SettingsObjectNewFieldStep2 = () => {
   const [objectViews, setObjectViews] = useState<View[]>([]);
   const [relationObjectViews, setRelationObjectViews] = useState<View[]>([]);
 
-  const { modifyRecordFromCache: modifyViewFromCache } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.View,
-  });
+  const { objectMetadataItem: viewObjectMetadataItem } =
+    useObjectMetadataItemOnly({
+      objectNameSingular: CoreObjectNameSingular.View,
+    });
 
-  useFindManyRecords({
+  useFindManyRecords<View>({
     objectNameSingular: CoreObjectNameSingular.View,
     filter: {
       type: { eq: ViewType.Table },
       objectMetadataId: { eq: activeObjectMetadataItem?.id },
     },
-    onCompleted: async (data: ObjectRecordConnection<View>) => {
-      const views = data.edges;
+    onCompleted: async (views) => {
+      if (isUndefinedOrNull(views)) return;
 
-      if (!views) return;
-
-      setObjectViews(data.edges.map(({ node }) => node));
+      setObjectViews(views);
     },
   });
 
-  useFindManyRecords({
+  useFindManyRecords<View>({
     objectNameSingular: CoreObjectNameSingular.View,
     skip: !formValues.relation?.objectMetadataId,
     filter: {
       type: { eq: ViewType.Table },
       objectMetadataId: { eq: formValues.relation?.objectMetadataId },
     },
-    onCompleted: async (data: ObjectRecordConnection<View>) => {
-      const views = data.edges;
+    onCompleted: async (views) => {
+      if (isUndefinedOrNull(views)) return;
 
-      if (!views) return;
-
-      setRelationObjectViews(data.edges.map(({ node }) => node));
+      setRelationObjectViews(views);
     },
   });
 
@@ -150,47 +160,58 @@ export const SettingsObjectNewFieldStep2 = () => {
             size: 100,
           };
 
-          modifyViewFromCache(view.id, {
-            viewFields: (viewFieldsRef, { readField }) => {
-              const edges = readField<{ node: Reference }[]>(
-                'edges',
-                viewFieldsRef,
-              );
+          modifyRecordFromCache({
+            objectMetadataItem: viewObjectMetadataItem,
+            cache: cache,
+            fieldModifiers: {
+              viewFields: (viewFieldsRef, { readField }) => {
+                const edges = readField<{ node: Reference }[]>(
+                  'edges',
+                  viewFieldsRef,
+                );
 
-              if (!edges) return viewFieldsRef;
+                if (!edges) return viewFieldsRef;
 
-              return {
-                ...viewFieldsRef,
-                edges: [...edges, { node: viewFieldToCreate }],
-              };
+                return {
+                  ...viewFieldsRef,
+                  edges: [...edges, { node: viewFieldToCreate }],
+                };
+              },
             },
+            recordId: view.id,
           });
-        });
-        relationObjectViews.forEach(async (view) => {
-          const viewFieldToCreate = {
-            viewId: view.id,
-            fieldMetadataId:
-              validatedFormValues.relation.type === 'MANY_TO_ONE'
-                ? createdRelation.data?.createOneRelation.fromFieldMetadataId
-                : createdRelation.data?.createOneRelation.toFieldMetadataId,
-            position: relationObjectMetadataItem?.fields.length,
-            isVisible: true,
-            size: 100,
-          };
-          modifyViewFromCache(view.id, {
-            viewFields: (viewFieldsRef, { readField }) => {
-              const edges = readField<{ node: Reference }[]>(
-                'edges',
-                viewFieldsRef,
-              );
 
-              if (!edges) return viewFieldsRef;
+          relationObjectViews.forEach(async (view) => {
+            const viewFieldToCreate = {
+              viewId: view.id,
+              fieldMetadataId:
+                validatedFormValues.relation.type === 'MANY_TO_ONE'
+                  ? createdRelation.data?.createOneRelation.fromFieldMetadataId
+                  : createdRelation.data?.createOneRelation.toFieldMetadataId,
+              position: relationObjectMetadataItem?.fields.length,
+              isVisible: true,
+              size: 100,
+            };
+            modifyRecordFromCache({
+              objectMetadataItem: viewObjectMetadataItem,
+              cache: cache,
+              fieldModifiers: {
+                viewFields: (viewFieldsRef, { readField }) => {
+                  const edges = readField<{ node: Reference }[]>(
+                    'edges',
+                    viewFieldsRef,
+                  );
 
-              return {
-                ...viewFieldsRef,
-                edges: [...edges, { node: viewFieldToCreate }],
-              };
-            },
+                  if (!edges) return viewFieldsRef;
+
+                  return {
+                    ...viewFieldsRef,
+                    edges: [...edges, { node: viewFieldToCreate }],
+                  };
+                },
+              },
+              recordId: view.id,
+            });
           });
         });
       } else {
@@ -201,7 +222,7 @@ export const SettingsObjectNewFieldStep2 = () => {
                   amountMicros: null,
                   currencyCode: validatedFormValues.currency.currencyCode,
                 }
-              : undefined,
+              : validatedFormValues.defaultValue,
           description: validatedFormValues.description,
           icon: validatedFormValues.icon,
           label: validatedFormValues.label ?? '',
@@ -222,20 +243,25 @@ export const SettingsObjectNewFieldStep2 = () => {
             size: 100,
           };
 
-          modifyViewFromCache(view.id, {
-            viewFields: (cachedViewFieldsConnection, { readField }) => {
-              const edges = readField<CachedObjectRecordEdge[]>(
-                'edges',
-                cachedViewFieldsConnection,
-              );
+          modifyRecordFromCache({
+            objectMetadataItem: viewObjectMetadataItem,
+            cache: cache,
+            fieldModifiers: {
+              viewFields: (cachedViewFieldsConnection, { readField }) => {
+                const edges = readField<CachedObjectRecordEdge[]>(
+                  'edges',
+                  cachedViewFieldsConnection,
+                );
 
-              if (!edges) return cachedViewFieldsConnection;
+                if (!edges) return cachedViewFieldsConnection;
 
-              return {
-                ...cachedViewFieldsConnection,
-                edges: [...edges, { node: viewFieldToCreate }],
-              };
+                return {
+                  ...cachedViewFieldsConnection,
+                  edges: [...edges, { node: viewFieldToCreate }],
+                };
+              },
             },
+            recordId: view.id,
           });
         });
       }
@@ -248,7 +274,7 @@ export const SettingsObjectNewFieldStep2 = () => {
     }
   };
 
-  const excludedFieldTypes = [
+  const excludedFieldTypes: SettingsSupportedFieldType[] = [
     FieldMetadataType.Currency,
     FieldMetadataType.Email,
     FieldMetadataType.FullName,
@@ -286,21 +312,32 @@ export const SettingsObjectNewFieldStep2 = () => {
           description={formValues.description}
           onChange={handleFormChange}
         />
-        <SettingsObjectFieldTypeSelectSection
-          excludedFieldTypes={excludedFieldTypes}
-          fieldMetadata={{
-            icon: formValues.icon,
-            label: formValues.label || 'Employees',
-          }}
-          objectMetadataId={activeObjectMetadataItem.id}
-          onChange={handleFormChange}
-          values={{
-            type: formValues.type,
-            currency: formValues.currency,
-            relation: formValues.relation,
-            select: formValues.select,
-          }}
-        />
+        <Section>
+          <H2Title
+            title="Type and values"
+            description="The field's type and values."
+          />
+          <StyledSettingsObjectFieldTypeSelect
+            excludedFieldTypes={excludedFieldTypes}
+            onChange={handleFormChange}
+            value={formValues.type}
+          />
+          <SettingsDataModelFieldSettingsFormCard
+            fieldMetadataItem={{
+              icon: formValues.icon,
+              label: formValues.label || 'Employees',
+              type: formValues.type,
+            }}
+            objectMetadataItem={activeObjectMetadataItem}
+            onChange={handleFormChange}
+            values={{
+              currency: formValues.currency,
+              relation: formValues.relation,
+              select: formValues.select,
+              defaultValue: formValues.defaultValue,
+            }}
+          />
+        </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

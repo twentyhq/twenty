@@ -9,7 +9,6 @@ sidebar_custom_props:
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-In this document, you'll learn how to install the project using yarn. You should use this method since it's the easiest way to get started but you can also run the project with [Docker](/start/local-setup/docker-setup).  
 
 :::info
 `npm` does not support local packages well, opt for `yarn` instead.
@@ -183,12 +182,12 @@ yarn
 
 Setup your database with the following command:
 ```bash
-yarn nx database:init twenty-server
+yarn nx database:reset twenty-server
 ```
 
 Start the server and the frontend:
 ```bash
-yarn nx start:dev twenty-server
+yarn nx start twenty-server
 yarn nx start twenty-front
 ```
 

@@ -14,6 +14,8 @@ import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
+import { isDefined } from '~/utils/isDefined';
 
 import { useDropdown } from '../hooks/useDropdown';
 import { useInternalHotkeyScopeManagement } from '../hooks/useInternalHotkeyScopeManagement';
@@ -32,8 +34,9 @@ type DropdownProps = {
   dropdownHotkeyScope: HotkeyScope;
   dropdownId: string;
   dropdownPlacement?: Placement;
-  dropdownMenuWidth?: number;
+  dropdownMenuWidth?: `${string}px` | `${number}%` | 'auto' | number;
   dropdownOffset?: { x?: number; y?: number };
+  disableBlur?: boolean;
   onClickOutside?: () => void;
   onClose?: () => void;
   onOpen?: () => void;
@@ -49,6 +52,7 @@ export const Dropdown = ({
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
   dropdownOffset = { x: 0, y: 0 },
+  disableBlur = false,
   onClickOutside,
   onClose,
   onOpen,
@@ -59,11 +63,11 @@ export const Dropdown = ({
     useDropdown(dropdownId);
   const offsetMiddlewares = [];
 
-  if (dropdownOffset.x) {
+  if (isDefined(dropdownOffset.x)) {
     offsetMiddlewares.push(offset({ crossAxis: dropdownOffset.x }));
   }
 
-  if (dropdownOffset.y) {
+  if (isDefined(dropdownOffset.y)) {
     offsetMiddlewares.push(offset({ mainAxis: dropdownOffset.y }));
   }
 
@@ -89,7 +93,7 @@ export const Dropdown = ({
   });
 
   useInternalHotkeyScopeManagement({
-    dropdownScopeId: `${dropdownId}-scope`,
+    dropdownScopeId: getScopeIdFromComponentId(dropdownId),
     dropdownHotkeyScopeFromParent: dropdownHotkeyScope,
   });
 
@@ -103,12 +107,15 @@ export const Dropdown = ({
   );
 
   return (
-    <DropdownScope dropdownScopeId={`${dropdownId}-scope`}>
+    <DropdownScope dropdownScopeId={getScopeIdFromComponentId(dropdownId)}>
       <div ref={containerRef} className={className}>
         {clickableComponent && (
           <div
             ref={refs.setReference}
-            onClick={toggleDropdown}
+            onClick={() => {
+              toggleDropdown();
+              onClickOutside?.();
+            }}
             className={className}
           >
             {clickableComponent}
@@ -122,6 +129,7 @@ export const Dropdown = ({
         )}
         {isDropdownOpen && (
           <DropdownMenu
+            disableBlur={disableBlur}
             width={dropdownMenuWidth ?? dropdownWidth}
             data-select-disable
             ref={refs.setFloating}

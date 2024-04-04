@@ -13,21 +13,27 @@ const StyledContainer = styled.div`
   height: 32px;
 
   justify-content: center;
+  background-color: ${({ theme }) => theme.background.primary};
 `;
 
 export const SelectAllCheckbox = () => {
-  const { getAllRowsSelectedStatusSelector } = useRecordTableStates();
+  const { allRowsSelectedStatusSelector } = useRecordTableStates();
 
-  const allRowsSelectedStatus = useRecoilValue(
-    getAllRowsSelectedStatusSelector(),
-  );
-  const { selectAllRows } = useRecordTable();
+  const allRowsSelectedStatus = useRecoilValue(allRowsSelectedStatusSelector());
+  const { selectAllRows, resetTableRowSelection, setHasUserSelectedAllRows } =
+    useRecordTable();
 
   const checked = allRowsSelectedStatus === 'all';
   const indeterminate = allRowsSelectedStatus === 'some';
 
-  const onChange = () => {
-    selectAllRows();
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      setHasUserSelectedAllRows(true);
+      selectAllRows();
+    } else {
+      setHasUserSelectedAllRows(false);
+      resetTableRowSelection();
+    }
   };
 
   return (

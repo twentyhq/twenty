@@ -1,7 +1,13 @@
 module.exports = {
   root: true,
   extends: ['plugin:prettier/recommended'],
-  plugins: ['@nx', 'prefer-arrow', 'simple-import-sort', 'unused-imports'],
+  plugins: [
+    '@nx',
+    'prefer-arrow',
+    'simple-import-sort',
+    'unused-imports',
+    'unicorn',
+  ],
   rules: {
     'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
     'no-console': ['warn', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
@@ -68,6 +74,7 @@ module.exports = {
         '@typescript-eslint/explicit-function-return-type': 'off',
         '@typescript-eslint/explicit-module-boundary-types': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-unused-vars': [
           'warn',
           {
@@ -81,6 +88,10 @@ module.exports = {
           'error',
           { prefer: 'no-type-imports' },
         ],
+        '@typescript-eslint/no-empty-interface': [
+          'error',
+          { allowSingleExtends: true },
+        ],
       },
     },
     {
@@ -93,7 +104,36 @@ module.exports = {
       env: {
         jest: true,
       },
-      rules: {},
+      rules: {
+        '@typescript-eslint/no-non-null-assertion': 'off',
+      },
+    },
+    {
+      files: ['*.stories.@(ts|tsx|js|jsx)'],
+      rules: {
+        '@typescript-eslint/no-non-null-assertion': 'off',
+      },
+    },
+    {
+      files: ['**/constants/*.ts', '**/*.constants.ts'],
+      rules: {
+        '@typescript-eslint/naming-convention': [
+          'error',
+          {
+            selector: 'variable',
+            format: ['UPPER_CASE'],
+          },
+        ],
+        'unicorn/filename-case': [
+          'warn',
+          {
+            cases: {
+              pascalCase: true,
+            },
+          },
+        ],
+        '@nx/workspace-max-consts-per-file': ['error', { max: 1 }],
+      },
     },
   ],
 };

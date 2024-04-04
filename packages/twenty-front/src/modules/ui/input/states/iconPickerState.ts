@@ -1,6 +1,6 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
+import { IconApps } from 'twenty-ui';
 
-import { IconApps } from '@/ui/display/icon';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 
 type IconPickerState = {
@@ -8,7 +8,7 @@ type IconPickerState = {
   iconKey: string;
 };
 
-export const iconPickerState = atom<IconPickerState>({
+export const iconPickerState = createState<IconPickerState>({
   key: 'iconPickerState',
-  default: { Icon: IconApps, iconKey: 'IconApps' },
+  defaultValue: { Icon: IconApps, iconKey: 'IconApps' },
 });

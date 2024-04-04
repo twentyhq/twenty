@@ -13,6 +13,22 @@ const StyledContainer = styled(NavigationDrawerSection)`
   width: 100%;
 `;
 
+const StyledAvatar = styled(Avatar)`
+  :hover {
+    cursor: grab;
+  }
+`;
+
+const StyledNavigationDrawerItem = styled(NavigationDrawerItem)`
+  :active {
+    cursor: grabbing;
+
+    .fav-avatar:hover {
+      cursor: grabbing;
+    }
+  }
+`;
+
 export const Favorites = () => {
   const { favorites, handleReorderFavorite } = useFavorites();
 
@@ -41,15 +57,16 @@ export const Favorites = () => {
                   draggableId={id}
                   index={index}
                   itemComponent={
-                    <NavigationDrawerItem
+                    <StyledNavigationDrawerItem
                       key={id}
                       label={labelIdentifier}
                       Icon={() => (
-                        <Avatar
+                        <StyledAvatar
                           entityId={recordId}
                           avatarUrl={avatarUrl}
                           type={avatarType}
                           placeholder={labelIdentifier}
+                          className="fav-avatar"
                         />
                       )}
                       to={link}

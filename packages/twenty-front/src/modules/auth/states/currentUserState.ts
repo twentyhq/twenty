@@ -1,4 +1,4 @@
-import { atom } from 'recoil';
+import { createState } from 'twenty-ui';
 
 import { User } from '~/generated/graphql';
 
@@ -7,7 +7,7 @@ export type CurrentUser = Pick<
   'id' | 'email' | 'supportUserHash' | 'canImpersonate'
 >;
 
-export const currentUserState = atom<CurrentUser | null>({
+export const currentUserState = createState<CurrentUser | null>({
   key: 'currentUserState',
-  default: null,
+  defaultValue: null,
 });

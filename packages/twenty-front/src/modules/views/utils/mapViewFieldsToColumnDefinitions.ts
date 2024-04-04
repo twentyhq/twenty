@@ -2,7 +2,8 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
-import { assertNotNull } from '~/utils/assert';
+import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { ViewField } from '../types/ViewField';
 
@@ -25,11 +26,11 @@ export const mapViewFieldsToColumnDefinitions = ({
       const correspondingColumnDefinition =
         columnDefinitionsByFieldMetadataId[viewField.fieldMetadataId];
 
-      if (!correspondingColumnDefinition) return null;
+      if (isUndefinedOrNull(correspondingColumnDefinition)) return null;
 
       const { isLabelIdentifier } = correspondingColumnDefinition;
 
-      if (isLabelIdentifier) {
+      if (isLabelIdentifier === true) {
         labelIdentifierFieldMetadataId =
           correspondingColumnDefinition.fieldMetadataId;
       }
@@ -46,9 +47,11 @@ export const mapViewFieldsToColumnDefinitions = ({
         isLabelIdentifier,
         isVisible: isLabelIdentifier || viewField.isVisible,
         viewFieldId: viewField.id,
-      };
+        isSortable: correspondingColumnDefinition.isSortable,
+        isFilterable: correspondingColumnDefinition.isFilterable,
+      } as ColumnDefinition<FieldMetadata>;
     })
-    .filter(assertNotNull);
+    .filter(isDefined);
 
   // No label identifier set for this object
   if (!labelIdentifierFieldMetadataId) return columnDefinitionsFromViewFields;

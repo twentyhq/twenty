@@ -1,21 +1,18 @@
-import { useCallback, useState } from 'react';
+import { IconChevronDown } from 'twenty-ui';
 
-import { useSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useSortDropdown';
+import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ObjectSortDropdownId';
+import { useObjectSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useObjectSortDropdown';
 import { ObjectSortDropdownScope } from '@/object-record/object-sort-dropdown/scopes/ObjectSortDropdownScope';
-import { IconChevronDown } from '@/ui/display/icon';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { LightButton } from '@/ui/input/button/components/LightButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
-import { ObjectSortDropdownId } from '../constants/ObjectSortDropdownId';
-import { SortDefinition } from '../types/SortDefinition';
-import { SORT_DIRECTIONS, SortDirection } from '../types/SortDirection';
+import { SORT_DIRECTIONS } from '../types/SortDirection';
 
 export type ObjectSortDropdownButtonProps = {
   sortDropdownId: string;
@@ -26,39 +23,20 @@ export const ObjectSortDropdownButton = ({
   sortDropdownId,
   hotkeyScope,
 }: ObjectSortDropdownButtonProps) => {
-  const [isSortDirectionMenuUnfolded, setIsSortDirectionMenuUnfolded] =
-    useState(false);
-
-  const [selectedSortDirection, setSelectedSortDirection] =
-    useState<SortDirection>('asc');
-
-  const resetState = useCallback(() => {
-    setIsSortDirectionMenuUnfolded(false);
-    setSelectedSortDirection('asc');
-  }, []);
-
-  const { isSortSelected } = useSortDropdown({
-    sortDropdownId: sortDropdownId,
-  });
-
-  const { toggleDropdown } = useDropdown(ObjectSortDropdownId);
+  const {
+    isSortDirectionMenuUnfolded,
+    setIsSortDirectionMenuUnfolded,
+    selectedSortDirection,
+    setSelectedSortDirection,
+    toggleSortDropdown,
+    resetState,
+    isSortSelected,
+    availableSortDefinitions,
+    handleAddSort,
+  } = useObjectSortDropdown();
 
   const handleButtonClick = () => {
-    toggleDropdown();
-    resetState();
-  };
-
-  const { availableSortDefinitions, onSortSelect } = useSortDropdown({
-    sortDropdownId: sortDropdownId,
-  });
-
-  const handleAddSort = (selectedSortDefinition: SortDefinition) => {
-    toggleDropdown();
-    onSortSelect?.({
-      fieldMetadataId: selectedSortDefinition.fieldMetadataId,
-      direction: selectedSortDirection,
-      definition: selectedSortDefinition,
-    });
+    toggleSortDropdown();
   };
 
   const handleDropdownButtonClose = () => {
@@ -70,7 +48,7 @@ export const ObjectSortDropdownButton = ({
   return (
     <ObjectSortDropdownScope sortScopeId={sortDropdownId}>
       <Dropdown
-        dropdownId={ObjectSortDropdownId}
+        dropdownId={OBJECT_SORT_DROPDOWN_ID}
         dropdownHotkeyScope={hotkeyScope}
         dropdownOffset={{ y: 8 }}
         clickableComponent={

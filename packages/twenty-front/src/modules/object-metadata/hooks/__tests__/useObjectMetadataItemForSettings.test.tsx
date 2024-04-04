@@ -12,8 +12,6 @@ import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObj
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 
-import { TestApolloMetadataClientProvider } from '../__mocks__/ApolloMetadataClientProvider';
-
 const mocks = [
   {
     request: {
@@ -31,9 +29,7 @@ const mocks = [
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
     <MockedProvider mocks={mocks} addTypename={false}>
-      <TestApolloMetadataClientProvider>
-        {children}
-      </TestApolloMetadataClientProvider>
+      {children}
     </MockedProvider>
   </RecoilRoot>
 );
@@ -101,30 +97,6 @@ describe('useObjectMetadataItemForSettings', () => {
         result.current.findObjectMetadataItemByNamePlural('opportunities');
       expect(res).toBeDefined();
       expect(res?.namePlural).toBe('opportunities');
-    });
-  });
-
-  it('should editObjectMetadataItem', async () => {
-    const { result } = renderHook(
-      () => {
-        const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
-        setMetadataItems(mockObjectMetadataItems);
-
-        return useObjectMetadataItemForSettings();
-      },
-      {
-        wrapper: Wrapper,
-      },
-    );
-
-    await act(async () => {
-      const res = await result.current.editObjectMetadataItem({
-        id: 'idToUpdate',
-        description: 'newDescription',
-        labelPlural: 'labelPlural',
-        labelSingular: 'labelSingular',
-      });
-      expect(res.data).toEqual({ updateOneObject: responseData });
     });
   });
 });

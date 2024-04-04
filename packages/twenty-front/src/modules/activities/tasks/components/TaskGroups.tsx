@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import { IconPlus } from 'twenty-ui';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { TASKS_TAB_LIST_COMPONENT_ID } from '@/activities/tasks/constants/tasksTabListComponentId';
+import { TASKS_TAB_LIST_COMPONENT_ID } from '@/activities/tasks/constants/TasksTabListComponentId';
 import { useTasks } from '@/activities/tasks/hooks/useTasks';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { IconPlus } from '@/ui/display/icon';
 import { Button } from '@/ui/input/button/components/Button';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
@@ -40,6 +40,7 @@ export const TaskGroups = ({
     upcomingTasks,
     unscheduledTasks,
     completedTasks,
+    initialized,
   } = useTasks({
     filterDropdownId: filterDropdownId,
     targetableObjects: targetableObjects ?? [],
@@ -47,8 +48,12 @@ export const TaskGroups = ({
 
   const openCreateActivity = useOpenCreateActivityDrawer();
 
-  const { getActiveTabIdState } = useTabList(TASKS_TAB_LIST_COMPONENT_ID);
-  const activeTabId = useRecoilValue(getActiveTabIdState());
+  const { activeTabIdState } = useTabList(TASKS_TAB_LIST_COMPONENT_ID);
+  const activeTabId = useRecoilValue(activeTabIdState);
+
+  if (!initialized) {
+    return <></>;
+  }
 
   if (
     (activeTabId !== 'done' &&
@@ -61,9 +66,11 @@ export const TaskGroups = ({
       <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="noTask" />
         <AnimatedPlaceholderEmptyTextContainer>
-          <AnimatedPlaceholderEmptyTitle>No Task</AnimatedPlaceholderEmptyTitle>
+          <AnimatedPlaceholderEmptyTitle>
+            Mission accomplished!
+          </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            There are no tasks for this user filter
+            All tasks addressed. Maintain the momentum.
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
         <Button
@@ -73,7 +80,7 @@ export const TaskGroups = ({
           onClick={() =>
             openCreateActivity({
               type: 'Task',
-              targetableObjects,
+              targetableObjects: targetableObjects ?? [],
             })
           }
         />

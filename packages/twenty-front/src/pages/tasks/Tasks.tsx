@@ -1,12 +1,12 @@
 import styled from '@emotion/styled';
+import { IconArchive, IconCheck, IconCheckbox } from 'twenty-ui';
 
 import { TasksRecoilScopeContext } from '@/activities/states/recoil-scope-contexts/TasksRecoilScopeContext';
 import { PageAddTaskButton } from '@/activities/tasks/components/PageAddTaskButton';
 import { TaskGroups } from '@/activities/tasks/components/TaskGroups';
-import { TASKS_TAB_LIST_COMPONENT_ID } from '@/activities/tasks/constants/tasksTabListComponentId';
+import { TASKS_TAB_LIST_COMPONENT_ID } from '@/activities/tasks/constants/TasksTabListComponentId';
 import { ObjectFilterDropdownButton } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownButton';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
-import { IconArchive, IconCheck, IconCheckbox } from '@/ui/display/icon/index';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
@@ -52,7 +52,7 @@ export const Tasks = () => {
       <RecoilScope CustomRecoilScopeContext={TasksRecoilScopeContext}>
         <TasksEffect filterDropdownId={filterDropdownId} />
         <PageHeader title="Tasks" Icon={IconCheckbox}>
-          <PageAddTaskButton filterDropdownId={filterDropdownId} />
+          <PageAddTaskButton />
         </PageHeader>
         <PageBody>
           <StyledTasksContainer>
