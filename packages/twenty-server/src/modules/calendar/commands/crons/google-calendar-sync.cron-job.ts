@@ -12,9 +12,9 @@ import {
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { GmailFetchMessageContentFromCacheService } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.service';
 import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
 import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
+import { GoogleCalendarSyncService } from 'src/modules/calendar/services/google-calendar-sync.service';
 
 @Injectable()
 export class GoogleCalendarSyncCronJob implements MessageQueueJob<undefined> {
@@ -27,7 +27,7 @@ export class GoogleCalendarSyncCronJob implements MessageQueueJob<undefined> {
     private readonly calendarChannelRepository: CalendarChannelRepository,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
-    private readonly gmailFetchMessageContentFromCacheService: GmailFetchMessageContentFromCacheService,
+    private readonly googleCalendarSyncService: GoogleCalendarSyncService,
   ) {}
 
   async handle(): Promise<void> {
@@ -73,7 +73,7 @@ export class GoogleCalendarSyncCronJob implements MessageQueueJob<undefined> {
       await this.calendarChannelRepository.getAll(workspaceId);
 
     for (const calendarChannel of calendarChannels) {
-      await this.gmailFetchMessageContentFromCacheService.fetchMessageContentFromCache(
+      await this.googleCalendarSyncService.startGoogleCalendarSync(
         workspaceId,
         calendarChannel.connectedAccountId,
       );
