@@ -52,6 +52,7 @@ describe('useAvailableScopeIdOrThrow', () => {
   });
 
   it('should throw an error if no scopeId is provided and scopeId is undefined in the context', () => {
+    // eslint-disable-next-line no-console
     console.error = jest.fn();
 
     const renderFunction = () =>

@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { IconChevronRight } from 'twenty-ui';
 
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { Status } from '@/ui/display/status/components/Status';
+import { SettingsIntegrationDatabaseConnectedTablesStatus } from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectedTablesStatus';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 
 type SettingsIntegrationDatabaseConnectionsListCardProps = {
@@ -52,13 +52,8 @@ export const SettingsIntegrationDatabaseConnectionsListCard = ({
       )}
       RowRightComponent={({ item: connection }) => (
         <StyledRowRightContainer>
-          <Status
-            color="green"
-            text={
-              connection.tables.length === 1
-                ? `1 tracked table`
-                : `${connection.tables.length} tracked tables`
-            }
+          <SettingsIntegrationDatabaseConnectedTablesStatus
+            connectedTablesCount={connection.tables.length}
           />
           <LightIconButton Icon={IconChevronRight} accent="tertiary" />
         </StyledRowRightContainer>

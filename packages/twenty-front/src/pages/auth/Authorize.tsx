@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { MainButton } from 'tsup.ui.index';
 
 import { AppPath } from '@/types/AppPath';
+import { MainButton } from '@/ui/input/button/components/MainButton';
 import { useAuthorizeAppMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 

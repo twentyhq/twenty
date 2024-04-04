@@ -303,10 +303,10 @@
     "ts-loader": "^9.2.3",
     "ts-node": "10.9.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.3.3",
+    "typescript": "5.3.3",
     "vite": "^5.0.0",
     "vite-plugin-checker": "^0.6.2",
-    "vite-plugin-dts": "~2.3.0",
+    "vite-plugin-dts": "3.8.1",
     "vite-plugin-svgr": "^4.2.0",
     "vitest": "1.4.0"
   },
@@ -320,7 +320,8 @@
   "packageManager": "yarn@4.0.2",
   "resolutions": {
     "graphql": "16.8.0",
-    "type-fest": "4.10.1"
+    "type-fest": "4.10.1",
+    "typescript": "5.3.3"
   },
   "version": "0.2.1",
   "scripts": {
