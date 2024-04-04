@@ -123,9 +123,9 @@ export class MessageChannelRepository {
     );
   }
 
-  public async updateLastSyncExternalIdIfHigher(
+  public async updateLastSyncCursorIfHigher(
     id: string,
-    syncExternalId: string,
+    syncCursor: string,
     workspaceId: string,
     transactionManager?: EntityManager,
   ) {
@@ -133,16 +133,16 @@ export class MessageChannelRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."messageChannel" SET "syncExternalId" = $1
+      `UPDATE ${dataSourceSchema}."messageChannel" SET "syncCursor" = $1
       WHERE "id" = $2
-      AND ("syncExternalId" < $1 OR "syncExternalId" = '')`,
-      [syncExternalId, id],
+      AND ("syncCursor" < $1 OR "syncCursor" = '')`,
+      [syncCursor, id],
       workspaceId,
       transactionManager,
     );
   }
 
-  public async resetSyncExternalId(
+  public async resetSyncCursor(
     id: string,
     workspaceId: string,
     transactionManager?: EntityManager,
@@ -151,7 +151,7 @@ export class MessageChannelRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."messageChannel" SET "syncExternalId" = ''
+      `UPDATE ${dataSourceSchema}."messageChannel" SET "syncCursor" = ''
       WHERE "id" = $1`,
       [id],
       workspaceId,
