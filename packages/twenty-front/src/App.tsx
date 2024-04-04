@@ -40,8 +40,9 @@ import { SettingsDevelopersApiKeysNew } from '~/pages/settings/developers/api-ke
 import { SettingsDevelopers } from '~/pages/settings/developers/SettingsDevelopers';
 import { SettingsDevelopersWebhooksDetail } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhookDetail';
 import { SettingsDevelopersWebhooksNew } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhooksNew';
-import { SettingsIntegrationDetail } from '~/pages/settings/integrations/SettingsIntegrationDetail';
-import { SettingsIntegrationNewDatabase } from '~/pages/settings/integrations/SettingsIntegrationNewDatabase';
+import { SettingsIntegrationDatabase } from '~/pages/settings/integrations/SettingsIntegrationDatabase';
+import { SettingsIntegrationDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationDatabaseConnection';
+import { SettingsIntegrationNewDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationNewDatabaseConnection';
 import { SettingsIntegrations } from '~/pages/settings/integrations/SettingsIntegrations';
 import { SettingsAppearance } from '~/pages/settings/SettingsAppearance';
 import { SettingsBilling } from '~/pages/settings/SettingsBilling.tsx';
@@ -178,12 +179,16 @@ export const App = () => {
                   element={<SettingsIntegrations />}
                 />
                 <Route
-                  path={SettingsPath.IntegrationDetail}
-                  element={<SettingsIntegrationDetail />}
+                  path={SettingsPath.IntegrationDatabase}
+                  element={<SettingsIntegrationDatabase />}
                 />
                 <Route
-                  path={SettingsPath.IntegrationNewDatabase}
-                  element={<SettingsIntegrationNewDatabase />}
+                  path={SettingsPath.IntegrationNewDatabaseConnection}
+                  element={<SettingsIntegrationNewDatabaseConnection />}
+                />
+                <Route
+                  path={SettingsPath.IntegrationDatabaseConnection}
+                  element={<SettingsIntegrationDatabaseConnection />}
                 />
                 <Route
                   path={SettingsPath.ObjectNewFieldStep1}

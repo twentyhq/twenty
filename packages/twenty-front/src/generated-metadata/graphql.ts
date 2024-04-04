@@ -39,6 +39,23 @@ export type ApiKeyToken = {
   token: Scalars['String']['output'];
 };
 
+export type AppToken = {
+  __typename?: 'AppToken';
+  createdAt: Scalars['DateTime']['output'];
+  expiresAt: Scalars['DateTime']['output'];
+  id: Scalars['ID']['output'];
+  type: Scalars['String']['output'];
+  updatedAt: Scalars['DateTime']['output'];
+};
+
+export type AppTokenEdge = {
+  __typename?: 'AppTokenEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor']['output'];
+  /** The node containing the AppToken */
+  node: AppToken;
+};
+
 export type AuthProviders = {
   __typename?: 'AuthProviders';
   google: Scalars['Boolean']['output'];
@@ -61,6 +78,11 @@ export type AuthTokenPair = {
 export type AuthTokens = {
   __typename?: 'AuthTokens';
   tokens: AuthTokenPair;
+};
+
+export type AuthorizeApp = {
+  __typename?: 'AuthorizeApp';
+  redirectUrl: Scalars['String']['output'];
 };
 
 export type Billing = {
@@ -110,6 +132,10 @@ export type ClientConfig = {
   telemetry: Telemetry;
 };
 
+export type CreateAppTokenInput = {
+  expiresAt: Scalars['DateTime']['input'];
+};
+
 export type CreateFieldInput = {
   defaultValue?: InputMaybe<Scalars['JSON']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
@@ -138,6 +164,11 @@ export type CreateObjectInput = {
   nameSingular: Scalars['String']['input'];
 };
 
+export type CreateOneAppTokenInput = {
+  /** The record to create */
+  appToken: CreateAppTokenInput;
+};
+
 export type CreateOneFieldMetadataInput = {
   /** The record to create */
   field: CreateFieldInput;
@@ -148,18 +179,9 @@ export type CreateOneObjectInput = {
   object: CreateObjectInput;
 };
 
-export type CreateOneRefreshTokenInput = {
-  /** The record to create */
-  refreshToken: CreateRefreshTokenInput;
-};
-
 export type CreateOneRelationInput = {
   /** The record to create */
   relation: CreateRelationInput;
-};
-
-export type CreateRefreshTokenInput = {
-  expiresAt: Scalars['DateTime']['input'];
 };
 
 export type CreateRelationInput = {
@@ -213,6 +235,13 @@ export type EmailPasswordResetLink = {
   __typename?: 'EmailPasswordResetLink';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean']['output'];
+};
+
+export type ExchangeAuthCode = {
+  __typename?: 'ExchangeAuthCode';
+  accessToken: AuthToken;
+  loginToken: AuthToken;
+  refreshToken: AuthToken;
 };
 
 export type FeatureFlag = {
@@ -338,11 +367,12 @@ export type LoginToken = {
 export type Mutation = {
   __typename?: 'Mutation';
   activateWorkspace: Workspace;
+  authorizeApp: AuthorizeApp;
   challenge: LoginToken;
   checkoutSession: SessionEntity;
+  createOneAppToken: AppToken;
   createOneField: Field;
   createOneObject: Object;
-  createOneRefreshToken: RefreshToken;
   createOneRelation: Relation;
   createOneRemoteServer: RemoteServer;
   deleteCurrentWorkspace: Workspace;
@@ -378,6 +408,12 @@ export type MutationActivateWorkspaceArgs = {
 };
 
 
+export type MutationAuthorizeAppArgs = {
+  clientId: Scalars['String']['input'];
+  codeChallenge: Scalars['String']['input'];
+};
+
+
 export type MutationChallengeArgs = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -390,6 +426,11 @@ export type MutationCheckoutSessionArgs = {
 };
 
 
+export type MutationCreateOneAppTokenArgs = {
+  input: CreateOneAppTokenInput;
+};
+
+
 export type MutationCreateOneFieldArgs = {
   input: CreateOneFieldMetadataInput;
 };
@@ -397,11 +438,6 @@ export type MutationCreateOneFieldArgs = {
 
 export type MutationCreateOneObjectArgs = {
   input: CreateOneObjectInput;
-};
-
-
-export type MutationCreateOneRefreshTokenArgs = {
-  input: CreateOneRefreshTokenInput;
 };
 
 
@@ -457,7 +493,7 @@ export type MutationImpersonateArgs = {
 
 
 export type MutationRenewTokenArgs = {
-  refreshToken: Scalars['String']['input'];
+  appToken: Scalars['String']['input'];
 };
 
 
@@ -576,6 +612,7 @@ export type Query = {
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
+  exchangeAuthorizationCode: ExchangeAuthCode;
   field: Field;
   fields: FieldConnection;
   findAvailableRemoteTablesByServerId: Array<RemoteTable>;
@@ -607,6 +644,12 @@ export type QueryCheckUserExistsArgs = {
 
 export type QueryCheckWorkspaceInviteHashIsValidArgs = {
   inviteHash: Scalars['String']['input'];
+};
+
+
+export type QueryExchangeAuthorizationCodeArgs = {
+  authorizationCode: Scalars['String']['input'];
+  codeVerifier: Scalars['String']['input'];
 };
 
 
@@ -697,22 +740,6 @@ export type QueryRelationsArgs = {
 
 export type QueryValidatePasswordResetTokenArgs = {
   passwordResetToken: Scalars['String']['input'];
-};
-
-export type RefreshToken = {
-  __typename?: 'RefreshToken';
-  createdAt: Scalars['DateTime']['output'];
-  expiresAt: Scalars['DateTime']['output'];
-  id: Scalars['ID']['output'];
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export type RefreshTokenEdge = {
-  __typename?: 'RefreshTokenEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor']['output'];
-  /** The node containing the RefreshToken */
-  node: RefreshToken;
 };
 
 export type RelationConnection = {
@@ -1027,6 +1054,7 @@ export type Workspace = {
   billingSubscriptions?: Maybe<Array<BillingSubscription>>;
   createdAt: Scalars['DateTime']['output'];
   currentBillingSubscription?: Maybe<BillingSubscription>;
+  currentCacheVersion?: Maybe<Scalars['String']['output']>;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   displayName?: Maybe<Scalars['String']['output']>;
   domainName?: Maybe<Scalars['String']['output']>;

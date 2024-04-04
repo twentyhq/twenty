@@ -1,9 +1,16 @@
 import { useRecoilValue } from 'recoil';
-import { IconArrowLeft, IconArrowRight, IconEyeOff } from 'twenty-ui';
+import {
+  IconArrowLeft,
+  IconArrowRight,
+  IconEyeOff,
+  IconFilter,
+  IconSortDescending,
+} from 'twenty-ui';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
@@ -17,7 +24,11 @@ export type RecordTableColumnDropdownMenuProps = {
 export const RecordTableColumnDropdownMenu = ({
   column,
 }: RecordTableColumnDropdownMenuProps) => {
-  const { visibleTableColumnsSelector } = useRecordTableStates();
+  const {
+    visibleTableColumnsSelector,
+    onToggleColumnFilterState,
+    onToggleColumnSortState,
+  } = useRecordTableStates();
 
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
 
@@ -55,8 +66,42 @@ export const RecordTableColumnDropdownMenu = ({
     handleColumnVisibilityChange(column);
   };
 
+  const onToggleColumnFilter = useRecoilValue(onToggleColumnFilterState);
+  const onToggleColumnSort = useRecoilValue(onToggleColumnSortState);
+
+  const handleSortClick = () => {
+    closeDropdown();
+
+    onToggleColumnSort?.(column.fieldMetadataId);
+  };
+
+  const handleFilterClick = () => {
+    closeDropdown();
+
+    onToggleColumnFilter?.(column.fieldMetadataId);
+  };
+
+  const isSortable = column.isSortable === true;
+  const isFilterable = column.isFilterable === true;
+  const showSeparator = isFilterable || isSortable;
+
   return (
     <DropdownMenuItemsContainer>
+      {isFilterable && (
+        <MenuItem
+          LeftIcon={IconFilter}
+          onClick={handleFilterClick}
+          text="Filter"
+        />
+      )}
+      {isSortable && (
+        <MenuItem
+          LeftIcon={IconSortDescending}
+          onClick={handleSortClick}
+          text="Sort"
+        />
+      )}
+      {showSeparator && <DropdownMenuSeparator />}
       {canMoveLeft && (
         <MenuItem
           LeftIcon={IconArrowLeft}
