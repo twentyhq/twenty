@@ -20,7 +20,7 @@ export type MenuItemProps = {
   accent?: MenuItemAccent;
   text: string;
   iconButtons?: MenuItemIconButton[];
-  isIconStatic?: boolean;
+  isIconDisplayedOnHoverOnly?: boolean;
   isTooltipOpen?: boolean;
   className?: string;
   testId?: string;
@@ -33,7 +33,7 @@ export const MenuItem = ({
   text,
   iconButtons,
   isTooltipOpen,
-  isIconStatic = false,
+  isIconDisplayedOnHoverOnly = true,
   className,
   testId,
   onClick,
@@ -55,11 +55,12 @@ export const MenuItem = ({
       className={className}
       accent={accent}
       isMenuOpen={!!isTooltipOpen}
+      isIconDisplayedOnHoverOnly={isIconDisplayedOnHoverOnly}
     >
       <StyledMenuItemLeftContent>
         <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />
       </StyledMenuItemLeftContent>
-      <div className={isIconStatic? `hoverable-buttons`: ``}>
+      <div className="hoverable-buttons">
         {showIconButtons && (
           <LightIconButtonGroup iconButtons={iconButtons} size="small" />
         )}
