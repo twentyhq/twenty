@@ -28,7 +28,7 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { computeCustomName } from 'src/engine/utils/compute-custom-name.util';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { RelationToDelete } from 'src/engine/metadata-modules/relation-metadata/types/relation-to-delete';
@@ -47,6 +47,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 import { buildWorkspaceMigrationsForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-workspace-migrations-for-custom-object';
 import { buildWorkspaceMigrationsForRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/build-workspace-migrations-for-remote-object';
+import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -172,7 +173,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           workspaceId,
           [
             {
-              name: computeCustomName(
+              name: computeTableName(
                 relationToDelete.toObjectName,
                 relationToDelete.toObjectMetadataIsCustom,
               ),
@@ -180,9 +181,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               columns: [
                 {
                   action: WorkspaceMigrationColumnActionType.DROP,
-                  columnName: computeCustomName(
-                    `${relationToDelete.toFieldMetadataName}Id`,
-                    relationToDelete.toFieldMetadataIsCustom,
+                  columnName: computeColumnName(
+                    relationToDelete.toFieldMetadataName,
+                    { isForeignKey: true },
                   ),
                 } satisfies WorkspaceMigrationColumnDrop,
               ],

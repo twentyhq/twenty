@@ -1,10 +1,10 @@
+import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   WorkspaceMigrationTableAction,
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnCreate,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
-import { computeCustomName } from 'src/engine/utils/compute-custom-name.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
 const buildCommentForRemoteObjectForeignKey = (
@@ -31,10 +31,9 @@ export const buildWorkspaceMigrationsForRemoteObject = (
       columns: [
         {
           action: WorkspaceMigrationColumnActionType.CREATE,
-          columnName: `${computeCustomName(
-            createdObjectMetadata.nameSingular,
-            false,
-          )}Id`,
+          columnName: computeColumnName(createdObjectMetadata.nameSingular, {
+            isForeignKey: true,
+          }),
           columnType: 'uuid',
           isNullable: true,
         } satisfies WorkspaceMigrationColumnCreate,
@@ -46,10 +45,9 @@ export const buildWorkspaceMigrationsForRemoteObject = (
       columns: [
         {
           action: WorkspaceMigrationColumnActionType.CREATE,
-          columnName: `${computeCustomName(
-            createdObjectMetadata.nameSingular,
-            false,
-          )}Id`,
+          columnName: computeColumnName(createdObjectMetadata.nameSingular, {
+            isForeignKey: true,
+          }),
           columnType: 'uuid',
         },
       ],
@@ -75,10 +73,9 @@ export const buildWorkspaceMigrationsForRemoteObject = (
       columns: [
         {
           action: WorkspaceMigrationColumnActionType.CREATE,
-          columnName: `${computeCustomName(
-            createdObjectMetadata.nameSingular,
-            false,
-          )}Id`,
+          columnName: computeColumnName(createdObjectMetadata.nameSingular, {
+            isForeignKey: true,
+          }),
           columnType: 'uuid',
           isNullable: true,
         } satisfies WorkspaceMigrationColumnCreate,
@@ -90,10 +87,9 @@ export const buildWorkspaceMigrationsForRemoteObject = (
       columns: [
         {
           action: WorkspaceMigrationColumnActionType.CREATE,
-          columnName: `${computeCustomName(
-            createdObjectMetadata.nameSingular,
-            false,
-          )}Id`,
+          columnName: computeColumnName(createdObjectMetadata.nameSingular, {
+            isForeignKey: true,
+          }),
           columnType: 'uuid',
         },
       ],
@@ -119,10 +115,9 @@ export const buildWorkspaceMigrationsForRemoteObject = (
       columns: [
         {
           action: WorkspaceMigrationColumnActionType.CREATE,
-          columnName: `${computeCustomName(
-            createdObjectMetadata.nameSingular,
-            false,
-          )}Id`,
+          columnName: computeColumnName(createdObjectMetadata.nameSingular, {
+            isForeignKey: true,
+          }),
           columnType: 'uuid',
           isNullable: true,
         } satisfies WorkspaceMigrationColumnCreate,
@@ -134,10 +129,9 @@ export const buildWorkspaceMigrationsForRemoteObject = (
       columns: [
         {
           action: WorkspaceMigrationColumnActionType.CREATE,
-          columnName: `${computeCustomName(
-            createdObjectMetadata.nameSingular,
-            false,
-          )}Id`,
+          columnName: computeColumnName(createdObjectMetadata.nameSingular, {
+            isForeignKey: true,
+          }),
           columnType: 'uuid',
         },
       ],
@@ -163,10 +157,9 @@ export const buildWorkspaceMigrationsForRemoteObject = (
       columns: [
         {
           action: WorkspaceMigrationColumnActionType.CREATE,
-          columnName: `${computeCustomName(
-            createdObjectMetadata.nameSingular,
-            false,
-          )}Id`,
+          columnName: computeColumnName(createdObjectMetadata.nameSingular, {
+            isForeignKey: true,
+          }),
           columnType: 'uuid',
           isNullable: true,
         } satisfies WorkspaceMigrationColumnCreate,
@@ -178,10 +171,9 @@ export const buildWorkspaceMigrationsForRemoteObject = (
       columns: [
         {
           action: WorkspaceMigrationColumnActionType.CREATE,
-          columnName: `${computeCustomName(
-            createdObjectMetadata.nameSingular,
-            false,
-          )}Id`,
+          columnName: computeColumnName(createdObjectMetadata.nameSingular, {
+            isForeignKey: true,
+          }),
           columnType: 'uuid',
         },
       ],

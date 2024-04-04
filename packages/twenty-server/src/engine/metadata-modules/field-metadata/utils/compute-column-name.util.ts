@@ -5,18 +5,37 @@ import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/fi
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { pascalCase } from 'src/utils/pascal-case';
 
-export const computeColumnName = <T extends FieldMetadataType | 'default'>(
+type ComputeColumnNameOptions = { isForeignKey?: boolean };
+
+export function computeColumnName(
+  fieldName: string,
+  options?: ComputeColumnNameOptions,
+): string;
+export function computeColumnName<T extends FieldMetadataType | 'default'>(
   fieldMetadata: FieldMetadataInterface<T>,
-): string => {
-  if (isCompositeFieldMetadataType(fieldMetadata.type)) {
+  ioptions?: ComputeColumnNameOptions,
+): string;
+// TODO: If we need to implement custom name logic for columns, we can do it here
+export function computeColumnName<T extends FieldMetadataType | 'default'>(
+  fieldMetadataOrFieldName: FieldMetadataInterface<T> | string,
+  options?: ComputeColumnNameOptions,
+): string {
+  const generateName = (name: string) => {
+    return options?.isForeignKey ? `${name}Id` : name;
+  };
+
+  if (typeof fieldMetadataOrFieldName === 'string') {
+    return generateName(fieldMetadataOrFieldName);
+  }
+
+  if (isCompositeFieldMetadataType(fieldMetadataOrFieldName.type)) {
     throw new Error(
-      `Cannot compute column name for composite field metadata type: ${fieldMetadata.type}`,
+      `Cannot compute column name for composite field metadata type: ${fieldMetadataOrFieldName.type}`,
     );
   }
 
-  // TODO: If we need to implement custom name logic for columns, we can do it here
-  return fieldMetadata.name;
-};
+  return generateName(fieldMetadataOrFieldName.name);
+}
 
 export const computeCompositeColumnName = <
   T extends FieldMetadataType | 'default',

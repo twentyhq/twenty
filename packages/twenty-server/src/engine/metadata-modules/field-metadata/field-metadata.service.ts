@@ -36,7 +36,7 @@ import {
   RelationMetadataType,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
-import { computeCustomName } from 'src/engine/utils/compute-custom-name.util';
+import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 
 import {
   FieldMetadataEntity,
@@ -396,10 +396,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
             columns: [
               {
                 action: WorkspaceMigrationColumnActionType.DROP,
-                columnName: computeCustomName(
-                  fieldMetadata.name,
-                  fieldMetadata.isCustom,
-                ),
+                columnName: computeColumnName(fieldMetadata),
               } satisfies WorkspaceMigrationColumnDrop,
             ],
           } satisfies WorkspaceMigrationTableAction,

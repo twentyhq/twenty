@@ -22,7 +22,7 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
 import { validateOptionsForType } from 'src/engine/metadata-modules/field-metadata/utils/validate-options-for-type.util';
 import { serializeDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/serialize-default-value';
-import { customNamePrefix } from 'src/engine/utils/compute-custom-name.util';
+import { customNamePrefix } from 'src/engine/utils/compute-table-name.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import {
@@ -212,11 +212,11 @@ export class FieldMetadataHealthService {
       });
     }
 
-    if (fieldMetadata.isCustom && !columnName?.startsWith(customNamePrefix)) {
+    if (fieldMetadata.isCustom && columnName?.startsWith(customNamePrefix)) {
       issues.push({
-        type: WorkspaceHealthIssueType.COLUMN_NAME_SHOULD_BE_CUSTOM,
+        type: WorkspaceHealthIssueType.COLUMN_NAME_SHOULD_NOT_BE_CUSTOM,
         fieldMetadata,
-        message: `Column ${columnName} is marked as custom in table ${tableName} but doesn't start with "_"`,
+        message: `Column ${columnName} is marked as custom in table ${tableName} but and start with "_", this behavior has been removed. Please remove the prefix.`,
       });
     }
 
