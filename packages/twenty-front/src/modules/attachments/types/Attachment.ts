@@ -1,6 +1,6 @@
 export type Attachment = {
   id: string;
-  createdAt: Date;
+  createdAt: string;
   updatedAt: Date;
   deletedAt: Date | null;
 };
