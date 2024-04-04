@@ -85,7 +85,7 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
             <Section>
               <H2Title
                 title="Connect a new database"
-                description="Provide the information to connect a PostgreSQL database"
+                description="Provide the information to connect your PostgreSQL database"
               />
               <SettingsIntegrationPostgreSQLConnectionForm />
             </Section>

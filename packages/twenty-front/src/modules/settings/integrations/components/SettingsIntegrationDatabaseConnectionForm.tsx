@@ -37,7 +37,7 @@ export const SettingsIntegrationPostgreSQLConnectionForm = () => {
   return (
     <StyledInputsContainer>
       {[
-        { name: 'dbname' as const, label: 'Database name' },
+        { name: 'dbname' as const, label: 'Database Name' },
         { name: 'host' as const, label: 'Host' },
         { name: 'port' as const, label: 'Port' },
         { name: 'username' as const, label: 'Username' },
