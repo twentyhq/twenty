@@ -59,7 +59,7 @@ const StlyedContent = styled.div`
     color: ${Theme.text.color.primary};
     font-weight: 700;
     font-size: 40px;
-    margin-block-start: 0;
+    margin: 0;
   }
 
   p {
@@ -68,7 +68,7 @@ const StlyedContent = styled.div`
     font-size: 16px;
     line-height: 28.8px;
     font-weight: 400;
-    margin-bottom: 40px;
+    margin: 40px 0px;
     text-align: justify;
   }
 
@@ -98,6 +98,7 @@ export const Release = async ({ release }: { release: ReleaseNote }) => {
       source: release.content,
       options: {
         mdxOptions: {
+          development: process.env.NODE_ENV === 'development',
           remarkPlugins: [gfm, [remarkBehead, { depth: 2 }]],
         },
       },

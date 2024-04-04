@@ -37,6 +37,10 @@ const Details = styled.div`
   flex-direction: column;
   gap: 4px;
 
+  @media (max-width: 810px) {
+    gap: 8px;
+  }
+
   .username {
     font-size: 40px;
     font-weight: 700;
@@ -46,7 +50,7 @@ const Details = styled.div`
     gap: 12px;
 
     @media (max-width: 810px) {
-      font-size: 24px;
+      font-size: 32px;
       line-height: 28.8px;
     }
   }

@@ -10,6 +10,7 @@ const List = styled.div`
   display: flex;
   gap: 24px;
   flex-direction: column;
+  overflow: hidden;
 `;
 interface PullRequestsProps {
   list: {

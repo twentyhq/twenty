@@ -15,8 +15,8 @@ const Title = styled.h2`
   flex-direction: column;
 
   @media (max-width: 810px) {
-    font-size: 28px;
-    margin-bottom: 24px;
+    font-size: 32px;
+    margin-bottom: 22px;
   }
 `;
 

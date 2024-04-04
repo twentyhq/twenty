@@ -19,7 +19,7 @@ const FooterContainer = styled.div`
   color: rgb(129, 129, 129);
   gap: 32px;
   @media (max-width: 809px) {
-    padding: 12px 30px;
+    padding: 36px 24px;
   }
 `;
 

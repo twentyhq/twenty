@@ -10,6 +10,7 @@ const StyledLineContainer = styled.div`
   @media (max-width: 810px) {
     width: auto;
     display: block;
+    margin: 24px 0px 64px;
   }
 `;
 
