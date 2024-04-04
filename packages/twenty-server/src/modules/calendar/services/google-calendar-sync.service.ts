@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { Repository } from 'typeorm';
-import { calendar_v3 } from 'googleapis';
+import { calendar_v3 as calendarV3 } from 'googleapis';
 
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
@@ -122,7 +122,7 @@ export class GoogleCalendarSyncService {
 
     let nextSyncToken: string | null | undefined;
     let nextPageToken: string | undefined;
-    const events: calendar_v3.Schema$Event[] = [];
+    const events: calendarV3.Schema$Event[] = [];
 
     while (true) {
       const googleCalendarEvents = await googleCalendarClient.events.list({
