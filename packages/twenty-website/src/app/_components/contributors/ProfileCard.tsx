@@ -10,6 +10,10 @@ const ProfileContainer = styled.div`
   gap: 32px;
   width: 100%;
   align-items: center;
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: start;
+  }
 `;
 
 const Avatar = styled.div`
