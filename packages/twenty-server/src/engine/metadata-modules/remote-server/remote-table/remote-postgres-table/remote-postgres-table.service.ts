@@ -14,6 +14,7 @@ import {
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { getRemoteTableName } from 'src/engine/metadata-modules/remote-server/remote-table/utils/get-remote-table-name.util';
+import { RemoteTableColumn } from 'src/engine/metadata-modules/remote-server/remote-table/types/remote-table-column';
 
 @Injectable()
 export class RemotePostgresTableService {
@@ -55,7 +56,7 @@ export class RemotePostgresTableService {
     remoteServer: RemoteServerEntity<RemoteServerType>,
     tableName: string,
     tableSchema: string,
-  ) {
+  ): Promise<RemoteTableColumn[]> {
     const dataSource = new DataSource({
       url: buildPostgresUrl(
         this.environmentService.get('LOGIN_TOKEN_SECRET'),
@@ -73,7 +74,14 @@ export class RemotePostgresTableService {
 
     await dataSource.destroy();
 
-    return columns;
+    return columns.map(
+      (column) =>
+        ({
+          columnName: column.column_name,
+          dataType: column.data_type,
+          udtName: column.udt_name,
+        }) as RemoteTableColumn,
+    );
   }
 
   private async fetchTablesFromRemotePostgresSchema(
