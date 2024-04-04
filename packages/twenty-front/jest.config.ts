@@ -17,12 +17,14 @@ const jestConfig: JestConfigWithTsJest = {
     '^.+\\.(ts|js|tsx|jsx)$': '@swc/jest',
   },
   moduleNameMapper: {
-    ...pathsToModuleNameMapper(compilerOptions.paths),
-    // Include internal library aliases, so there is no need to build the library before tests.
-    ...pathsToModuleNameMapper(twentyUiCompilerOptions.paths),
     '\\.(jpg|jpeg|png|gif|webp|svg|svg\\?react)$':
       '<rootDir>/__mocks__/imageMock.js',
     '\\.css$': '<rootDir>/__mocks__/styleMock.js',
+    ...pathsToModuleNameMapper(compilerOptions.paths),
+    // Include internal library aliases, so there is no need to build the library before tests.
+    ...pathsToModuleNameMapper(twentyUiCompilerOptions.paths, {
+      prefix: '<rootDir>/../../',
+    }),
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
