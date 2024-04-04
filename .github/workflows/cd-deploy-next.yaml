@@ -1,0 +1,20 @@
+name: CD deploy tag
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Branch or tag to deploy'
+        required: true
+        default: 'main'
+
+jobs:
+  deploy-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Repository Dispatch
+        uses: peter-evans/repository-dispatch@v2
+        with:
+          token: ${{ secrets.TWENTY_INFRA_TOKEN }}
+          repository: twentyhq/twenty-infra
+          event-type: auto-deploy-next
+          client-payload: '{"github": ${{ toJson(github) }}, "ref": "${{ inputs.ref }}"}' # Passes the entire github context to the downstream workflow
