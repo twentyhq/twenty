@@ -121,6 +121,7 @@ export {
   IconSettings,
   IconTable,
   IconTag,
+  IconTags,
   IconTarget,
   IconTargetArrow,
   IconTextSize,

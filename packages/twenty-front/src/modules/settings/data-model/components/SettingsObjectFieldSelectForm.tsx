@@ -24,6 +24,7 @@ export type SettingsObjectFieldSelectFormValues =
 type SettingsObjectFieldSelectFormProps = {
   onChange: (values: SettingsObjectFieldSelectFormValues) => void;
   values: SettingsObjectFieldSelectFormValues;
+  isMultiSelect?: boolean;
 };
 
 const StyledContainer = styled(CardContent)`
@@ -60,6 +61,7 @@ const getNextColor = (currentColor: ThemeColor) => {
 export const SettingsObjectFieldSelectForm = ({
   onChange,
   values,
+  isMultiSelect = false,
 }: SettingsObjectFieldSelectFormProps) => {
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;

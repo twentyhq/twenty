@@ -63,6 +63,7 @@ const previewableTypes = [
   FieldMetadataType.Currency,
   FieldMetadataType.DateTime,
   FieldMetadataType.Select,
+  FieldMetadataType.MultiSelect,
   FieldMetadataType.Link,
   FieldMetadataType.Number,
   FieldMetadataType.Rating,
@@ -148,6 +149,13 @@ export const SettingsDataModelFieldSettingsFormCard = ({
             }
           />
         ) : fieldMetadataItem.type === FieldMetadataType.Select ? (
+          <SettingsObjectFieldSelectForm
+            values={values.select}
+            onChange={(nextSelectValues) =>
+              onChange({ select: nextSelectValues })
+            }
+          />
+        ) : fieldMetadataItem.type === FieldMetadataType.MultiSelect ? (
           <SettingsObjectFieldSelectForm
             values={values.select}
             onChange={(nextSelectValues) =>

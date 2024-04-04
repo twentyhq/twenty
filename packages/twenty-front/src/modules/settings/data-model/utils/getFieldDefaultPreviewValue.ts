@@ -31,6 +31,14 @@ export const getFieldDefaultPreviewValue = ({
     return defaultSelectOption.value;
   }
 
+  // Multi-select field
+  if (
+    fieldMetadataItem.type === FieldMetadataType.MultiSelect &&
+    isDefined(selectOptions)
+  ) {
+    return selectOptions.map((selectOption) => selectOption.value);
+  }
+
   // Relation field
   if (
     fieldMetadataItem.type === FieldMetadataType.Relation &&
