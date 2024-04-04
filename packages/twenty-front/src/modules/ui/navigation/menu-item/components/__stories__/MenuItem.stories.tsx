@@ -23,7 +23,9 @@ export const Default: Story = {
     LeftIcon: IconBell,
     accent: 'default',
     iconButtons: [
+      // eslint-disable-next-line no-console
       { Icon: IconBell, onClick: () => console.log('Clicked') },
+      // eslint-disable-next-line no-console
       { Icon: IconBell, onClick: () => console.log('Clicked') },
     ],
   },
@@ -85,11 +87,13 @@ export const Catalog: CatalogStory<Story, typeof MenuItem> = {
                     {
                       Icon: IconBell,
                       onClick: () =>
+                        // eslint-disable-next-line no-console
                         console.log('Clicked on first icon button'),
                     },
                     {
                       Icon: IconBell,
                       onClick: () =>
+                        // eslint-disable-next-line no-console
                         console.log('Clicked on second icon button'),
                     },
                   ],
