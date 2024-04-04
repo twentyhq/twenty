@@ -46,6 +46,7 @@ export const useUploadAttachmentFile = () => {
       type: getFileType(file.name),
       [targetableObjectFieldIdName]: targetableObject.id,
       createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     } as Partial<Attachment>;
 
     await createOneAttachment(attachmentToCreate);
