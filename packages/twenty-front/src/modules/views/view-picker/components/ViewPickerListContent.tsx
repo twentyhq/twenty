@@ -74,6 +74,7 @@ export const ViewPickerListContent = () => {
                     Icon: IconLock,
                   },
             ].filter(isDefined)}
+            isIconDisplayedOnHoverOnly={view.key !== 'INDEX'}
             onClick={() => handleViewSelect(view.id)}
             LeftIcon={getIcon(view.icon)}
             text={view.name}
