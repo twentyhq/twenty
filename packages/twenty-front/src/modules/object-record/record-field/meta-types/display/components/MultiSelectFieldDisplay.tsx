@@ -4,11 +4,18 @@ import { Tag } from '@/ui/display/tag/components/Tag';
 export const MultiSelectFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useMultiSelectField();
 
-  // TODO: use values
-  const selectedOption = fieldDefinition.metadata.options[0];
+  const selectedOptions = fieldValue
+    ? fieldDefinition.metadata.options.filter((option) =>
+        fieldValue.includes(option.value),
+      )
+    : [];
 
-  return selectedOption ? (
-    <Tag color={selectedOption.color} text={selectedOption.label} />
+  return selectedOptions ? (
+    <>
+      {selectedOptions.map((selectedOption) => (
+        <Tag color={selectedOption.color} text={selectedOption.label} />
+      ))}
+    </>
   ) : (
     <></>
   );

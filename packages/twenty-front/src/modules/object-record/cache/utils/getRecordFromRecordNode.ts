@@ -11,7 +11,7 @@ export const getRecordFromRecordNode = <T extends ObjectRecord>({
   return {
     ...Object.fromEntries(
       Object.entries(recordNode).map(([fieldName, value]) => {
-        if (isUndefinedOrNull(value)) {
+        if (isUndefinedOrNull(value) || Array.isArray(value)) {
           return [fieldName, value];
         }
 
