@@ -8,7 +8,7 @@
   "main": "./dist/index.js",
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-emails node ../../node_modules/nx/bin/nx.js",
-    "build": "vite build",
+    "build": "npx vite build",
     "lint": "eslint"
   },
   "exports": {
