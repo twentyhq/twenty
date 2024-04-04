@@ -42,7 +42,7 @@ const renewTokenMutation = async (
   >({
     mutation: RenewTokenDocument,
     variables: {
-      refreshToken: refreshToken,
+      appToken: refreshToken,
     },
     fetchPolicy: 'network-only',
   });
@@ -57,6 +57,7 @@ const renewTokenMutation = async (
 /**
  * Renew token and update cookie storage
  * @param uri string | UriFunction | undefined
+ * @param tokenPair AuthTokenPair | undefined | null
  * @returns TokenPair
  */
 export const renewToken = async (
