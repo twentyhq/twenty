@@ -81,7 +81,7 @@ export class GoogleCalendarSyncService {
 
     if (!refreshToken) {
       throw new Error(
-        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId} during full-sync`,
+        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId} during sync`,
       );
     }
 
@@ -157,14 +157,14 @@ export class GoogleCalendarSyncService {
     let endTime = Date.now();
 
     this.logger.log(
-      `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId} getting events list in ${
+      `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId} getting events list in ${
         endTime - startTime
       }ms.`,
     );
 
     if (!events || events?.length === 0) {
       this.logger.log(
-        `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
+        `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
       );
 
       return;
@@ -184,7 +184,7 @@ export class GoogleCalendarSyncService {
     endTime = Date.now();
 
     this.logger.log(
-      `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: getting existing calendar channel event associations in ${
+      `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId}: getting existing calendar channel event associations in ${
         endTime - startTime
       }ms.`,
     );
@@ -257,7 +257,7 @@ export class GoogleCalendarSyncService {
           endTime = Date.now();
 
           this.logger.log(
-            `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: saving ${
+            `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId}: saving ${
               eventsToSave.length
             } events in ${endTime - startTime}ms.`,
           );
@@ -273,7 +273,7 @@ export class GoogleCalendarSyncService {
           endTime = Date.now();
 
           this.logger.log(
-            `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: updating ${
+            `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId}: updating ${
               eventsToUpdate.length
             } events in ${endTime - startTime}ms.`,
           );
@@ -289,7 +289,7 @@ export class GoogleCalendarSyncService {
           endTime = Date.now();
 
           this.logger.log(
-            `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: saving calendar channel event associations in ${
+            `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId}: saving calendar channel event associations in ${
               endTime - startTime
             }ms.`,
           );
@@ -305,7 +305,7 @@ export class GoogleCalendarSyncService {
           endTime = Date.now();
 
           this.logger.log(
-            `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: saving attendees in ${
+            `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId}: saving attendees in ${
               endTime - startTime
             }ms.`,
           );
@@ -323,7 +323,7 @@ export class GoogleCalendarSyncService {
           endTime = Date.now();
 
           this.logger.log(
-            `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: updating attendees in ${
+            `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId}: updating attendees in ${
               endTime - startTime
             }ms.`,
           );
@@ -340,7 +340,7 @@ export class GoogleCalendarSyncService {
           endTime = Date.now();
 
           this.logger.log(
-            `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: deleting calendar channel event associations in ${
+            `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId}: deleting calendar channel event associations in ${
               endTime - startTime
             }ms.`,
           );
@@ -355,7 +355,7 @@ export class GoogleCalendarSyncService {
         endTime = Date.now();
 
         this.logger.log(
-          `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: cleaning calendar events in ${
+          `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId}: cleaning calendar events in ${
             endTime - startTime
           }ms.`,
         );
@@ -373,18 +373,18 @@ export class GoogleCalendarSyncService {
         }
       } catch (error) {
         this.logger.error(
-          `Error during google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: ${error.message}`,
+          `Error during google calendar sync for workspace ${workspaceId} and account ${connectedAccountId}: ${error.message}`,
         );
       }
     } else {
       this.logger.log(
-        `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
+        `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import.`,
       );
     }
 
     if (!nextSyncToken) {
       throw new Error(
-        `No next sync token found for connected account ${connectedAccountId} in workspace ${workspaceId} during full-sync`,
+        `No next sync token found for connected account ${connectedAccountId} in workspace ${workspaceId} during sync`,
       );
     }
 
@@ -399,13 +399,13 @@ export class GoogleCalendarSyncService {
     endTime = Date.now();
 
     this.logger.log(
-      `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: updating sync cursor in ${
+      `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId}: updating sync cursor in ${
         endTime - startTime
       }ms.`,
     );
 
     this.logger.log(
-      `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId} ${
+      `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId} ${
         nextPageToken ? `and ${nextPageToken} pageToken` : ''
       } done.`,
     );
