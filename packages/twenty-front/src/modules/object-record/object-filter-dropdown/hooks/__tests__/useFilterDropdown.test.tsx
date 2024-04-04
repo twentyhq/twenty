@@ -351,8 +351,7 @@ describe('useFilterDropdown', () => {
   });
 
   it('should handle scopeId undefined on initial values', () => {
-    // eslint-disable-next-line no-console
-    console.error = jest.fn();
+    global.console.error = jest.fn();
 
     const renderFunction = () => {
       renderHook(() => useFilterDropdown(), renderHookConfig);
