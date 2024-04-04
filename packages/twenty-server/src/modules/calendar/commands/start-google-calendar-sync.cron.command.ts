@@ -4,13 +4,12 @@ import { Command, CommandRunner } from 'nest-commander';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { FetchAllMessagesFromCacheCronJob } from 'src/modules/messaging/jobs/crons/fetch-all-messages-from-cache.cron-job';
 
 @Command({
-  name: 'fetch-all-workspaces-messages-from-cache:cron:start',
-  description: 'Starts a cron job to fetch all workspaces messages from cache',
+  name: 'google-calendar-sync:cron:start',
+  description: 'Starts a cron job to sync google calendar for all workspaces.',
 })
-export class StartFetchAllWorkspacesMessagesFromCacheCronCommand extends CommandRunner {
+export class StartGoogleCalendarSyncCronJobCommand extends CommandRunner {
   constructor(
     @Inject(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -20,7 +19,7 @@ export class StartFetchAllWorkspacesMessagesFromCacheCronCommand extends Command
 
   async run(): Promise<void> {
     await this.messageQueueService.addCron<undefined>(
-      FetchAllMessagesFromCacheCronJob.name,
+      StartGoogleCalendarSyncCronJobCommand.name,
       undefined,
       {
         repeat: {

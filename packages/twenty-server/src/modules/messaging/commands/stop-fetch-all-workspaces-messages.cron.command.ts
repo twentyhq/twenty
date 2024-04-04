@@ -4,8 +4,8 @@ import { Command, CommandRunner } from 'nest-commander';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { fetchAllWorkspacesMessagesCronPattern } from 'src/modules/messaging/commands/crons/fetch-all-workspaces-messages.cron.pattern';
-import { FetchAllWorkspacesMessagesJob } from 'src/modules/messaging/commands/crons/fetch-all-workspaces-messages.job';
+import { fetchAllWorkspacesMessagesCronPattern } from 'src/modules/messaging/jobs/crons/fetch-all-workspaces-messages.cron.pattern';
+import { FetchAllWorkspacesMessagesJob } from 'src/modules/messaging/jobs/crons/fetch-all-workspaces-messages.job';
 
 @Command({
   name: 'fetch-all-workspaces-messages:cron:stop',
