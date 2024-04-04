@@ -148,7 +148,7 @@ export const SettingsObjectNewFieldStep2 = () => {
           validatedFormValues.relation.objectMetadataId,
         );
 
-        objectViews.forEach(async (view) => {
+        objectViews.map(async (view) => {
           const viewFieldToCreate = {
             viewId: view.id,
             fieldMetadataId:
@@ -181,7 +181,7 @@ export const SettingsObjectNewFieldStep2 = () => {
             recordId: view.id,
           });
 
-          relationObjectViews.forEach(async (view) => {
+          relationObjectViews.map(async (view) => {
             const viewFieldToCreate = {
               viewId: view.id,
               fieldMetadataId:
@@ -234,7 +234,7 @@ export const SettingsObjectNewFieldStep2 = () => {
               : undefined,
         });
 
-        objectViews.forEach(async (view) => {
+        objectViews.map(async (view) => {
           const viewFieldToCreate = {
             viewId: view.id,
             fieldMetadataId: createdMetadataField.data?.createOneField.id,
