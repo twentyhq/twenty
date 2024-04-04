@@ -1,8 +1,8 @@
 import { MouseEvent } from 'react';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
+import { IconLock, IconPencil, IconPlus } from 'twenty-ui';
 
-import { IconLock, IconPencil, IconPlus } from '@/ui/display/icon';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';

@@ -5,21 +5,71 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nx/vite:build",
-      "outputs": ["{options.outputPath}"],
+      "dependsOn": ["^build", "generateBarrels"]
+    },
+    "generateBarrels": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*.{ts,tsx}",
+        "!{projectRoot}/src/**/*.(spec|test).{ts,tsx}",
+        "!{projectRoot}/src/**/*.stories.{ts,tsx}"
+      ],
+      "outputs": ["{projectRoot}/src/index.ts", "{projectRoot}/src/*/index.ts"],
       "options": {
-        "outputPath": "packages/twenty-ui/dist"
+        "outputPath": "{projectRoot}/dist",
+        "command": "npx ts-node --esm {projectRoot}/scripts/generateBarrels.ts"
       }
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
+      "options": {
+        "eslintConfig": "{projectRoot}/.eslintrc.cjs",
+        "ignorePath": "{workspaceRoot}/.gitignore",
+        "lintFilePatterns": [
+          "{projectRoot}/src/**/*.{ts,tsx,json}",
+          "{projectRoot}/package.json"
+        ]
+      },
+      "configurations": {
+        "ci": { "lintFilePatterns": ["{projectRoot}/**/*.{ts,tsx,json}"] },
+        "fix": { "fix": true }
+      }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": ["{projectRoot}/coverage"],
       "options": {
-        "jestConfig": "packages/twenty-ui/jest.config.ts"
+        "jestConfig": "{projectRoot}/jest.config.ts"
+      }
+    },
+    "storybook:dev": {
+      "executor": "@nx/storybook:storybook",
+      "options": {
+        "port": 6007,
+        "configDir": "{projectRoot}/.storybook"
+      },
+      "configurations": {
+        "ci": { "quiet": true }
+      }
+    },
+    "storybook:build": {
+      "executor": "@nx/storybook:build",
+      "outputs": ["{options.outputDir}"],
+      "options": {
+        "outputDir": "{projectRoot}/storybook-static",
+        "configDir": "{projectRoot}/.storybook"
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "storybook:test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "test-storybook -c {projectRoot}/.storybook --url=http://localhost:6007"
       }
     }
   },

@@ -44,9 +44,16 @@ import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repos
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
-import { CreateCompanyAndContactJob } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
 import { SaveEventToDbJob } from 'src/engine/api/graphql/workspace-query-runner/jobs/save-event-to-db.job';
+import { CreateCompanyAndContactJob } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
 import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { HandleWorkspaceMemberDeletedJob } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
+import { GmailFullSynV2Module } from 'src/modules/messaging/services/gmail-full-sync-v2/gmail-full-sync.v2.module';
+import { GmailFetchMessageContentFromCacheModule } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.module';
+import { FetchAllMessagesFromCacheCronJob } from 'src/modules/messaging/commands/crons/fetch-all-messages-from-cache.cron-job';
+import { GmailFullSyncV2Job } from 'src/modules/messaging/jobs/gmail-full-sync-v2.job';
+import { GmailPartialSyncV2Job } from 'src/modules/messaging/jobs/gmail-partial-sync-v2.job';
+import { GmailPartialSyncV2Module } from 'src/modules/messaging/services/gmail-partial-sync-v2/gmail-partial-sync-v2.module';
 
 @Module({
   imports: [
@@ -78,6 +85,9 @@ import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.ob
       MessageChannelObjectMetadata,
       EventObjectMetadata,
     ]),
+    GmailFullSynV2Module,
+    GmailFetchMessageContentFromCacheModule,
+    GmailPartialSyncV2Module,
   ],
   providers: [
     {
@@ -131,6 +141,10 @@ import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.ob
     },
     { provide: UpdateSubscriptionJob.name, useClass: UpdateSubscriptionJob },
     {
+      provide: HandleWorkspaceMemberDeletedJob.name,
+      useClass: HandleWorkspaceMemberDeletedJob,
+    },
+    {
       provide: RecordPositionBackfillJob.name,
       useClass: RecordPositionBackfillJob,
     },
@@ -141,6 +155,18 @@ import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.ob
     {
       provide: SaveEventToDbJob.name,
       useClass: SaveEventToDbJob,
+    },
+    {
+      provide: FetchAllMessagesFromCacheCronJob.name,
+      useClass: FetchAllMessagesFromCacheCronJob,
+    },
+    {
+      provide: GmailFullSyncV2Job.name,
+      useClass: GmailFullSyncV2Job,
+    },
+    {
+      provide: GmailPartialSyncV2Job.name,
+      useClass: GmailPartialSyncV2Job,
     },
   ],
 })

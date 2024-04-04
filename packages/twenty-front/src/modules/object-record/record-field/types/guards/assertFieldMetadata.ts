@@ -2,6 +2,7 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldDefinition } from '../FieldDefinition';
 import {
+  FieldAddressMetadata,
   FieldBooleanMetadata,
   FieldCurrencyMetadata,
   FieldDateTimeMetadata,
@@ -49,9 +50,11 @@ type AssertFieldMetadataFunction = <
                             ? FieldTextMetadata
                             : E extends 'UUID'
                               ? FieldUuidMetadata
-                              : E extends 'RAW_JSON'
-                                ? FieldRawJsonMetadata
-                                : never,
+                              : E extends 'ADDRESS'
+                                ? FieldAddressMetadata
+                                : E extends 'RAW_JSON'
+                                  ? FieldRawJsonMetadata
+                                  : never,
 >(
   fieldType: E,
   fieldTypeGuard: (

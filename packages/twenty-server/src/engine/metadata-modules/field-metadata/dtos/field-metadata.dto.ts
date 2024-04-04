@@ -9,7 +9,6 @@ import {
 import { GraphQLJSON } from 'graphql-type-json';
 import {
   Authorize,
-  BeforeDeleteOne,
   FilterableField,
   IDField,
   QueryOptions,
@@ -31,7 +30,6 @@ import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-met
 
 import { RelationMetadataDTO } from 'src/engine/metadata-modules/relation-metadata/dtos/relation-metadata.dto';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { BeforeDeleteOneField } from 'src/engine/metadata-modules/field-metadata/hooks/before-delete-one-field.hook';
 import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
 import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-options.validator';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
@@ -52,7 +50,6 @@ registerEnumType(FieldMetadataType, {
   disableSort: true,
   maxResultsSize: 1000,
 })
-@BeforeDeleteOne(BeforeDeleteOneField)
 @Relation('toRelationMetadata', () => RelationMetadataDTO, {
   nullable: true,
 })

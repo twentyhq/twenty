@@ -12,7 +12,7 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 @Controller('auth/google-gmail')
 export class GoogleGmailAuthController {
   constructor(
-    private readonly googleGmailService: GoogleAPIsService,
+    private readonly googleAPIsService: GoogleAPIsService,
     private readonly tokenService: TokenService,
     private readonly environmentService: EnvironmentService,
   ) {}
@@ -47,11 +47,10 @@ export class GoogleGmailAuthController {
       throw new Error('Workspace not found');
     }
 
-    await this.googleGmailService.saveConnectedAccount({
+    await this.googleAPIsService.saveOrUpdateConnectedAccount({
       handle: email,
       workspaceMemberId: workspaceMemberId,
       workspaceId: workspaceId,
-      provider: 'gmail',
       accessToken,
       refreshToken,
     });

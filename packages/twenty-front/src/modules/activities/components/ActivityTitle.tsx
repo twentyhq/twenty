@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState } from 'recoil';
@@ -13,7 +14,7 @@ import { Activity } from '@/activities/types/Activity';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useModifyRecordFromCache } from '@/object-record/cache/hooks/useModifyRecordFromCache';
+import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
   Checkbox,
@@ -64,6 +65,8 @@ export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
     recordStoreFamilyState(activityId),
   );
 
+  const cache = useApolloClient().cache;
+
   const [activityTitle, setActivityTitle] = useRecoilState(
     activityTitleFamilyState({ activityId }),
   );
@@ -112,10 +115,6 @@ export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
       objectNameSingular: CoreObjectNameSingular.Activity,
     });
 
-  const modifyActivityFromCache = useModifyRecordFromCache({
-    objectMetadataItem: objectMetadataItemActivity,
-  });
-
   const persistTitleDebounced = useDebouncedCallback((newTitle: string) => {
     upsertActivity({
       activity,
@@ -142,10 +141,15 @@ export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
       setCanCreateActivity(true);
     }
 
-    modifyActivityFromCache(activity.id, {
-      title: () => {
-        return newTitle;
+    modifyRecordFromCache({
+      recordId: activity.id,
+      fieldModifiers: {
+        title: () => {
+          return newTitle;
+        },
       },
+      cache: cache,
+      objectMetadataItem: objectMetadataItemActivity,
     });
   }, 500);
 

@@ -34,9 +34,8 @@ export const currencyFields = (
       isNullable: true,
       ...(inferredFieldMetadata
         ? {
-            defaultValue: {
-              value: inferredFieldMetadata.defaultValue?.amountMicros ?? null,
-            },
+            defaultValue:
+              inferredFieldMetadata.defaultValue?.amountMicros ?? null,
           }
         : {}),
     } satisfies FieldMetadataInterface<FieldMetadataType.NUMERIC>,
@@ -52,9 +51,8 @@ export const currencyFields = (
       isNullable: true,
       ...(inferredFieldMetadata
         ? {
-            defaultValue: {
-              value: inferredFieldMetadata.defaultValue?.currencyCode ?? null,
-            },
+            defaultValue:
+              inferredFieldMetadata.defaultValue?.currencyCode ?? null,
           }
         : {}),
     } satisfies FieldMetadataInterface<FieldMetadataType.TEXT>,

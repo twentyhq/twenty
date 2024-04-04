@@ -9,23 +9,32 @@ export function generateDefaultValue(
     case FieldMetadataType.TEXT:
     case FieldMetadataType.PHONE:
     case FieldMetadataType.EMAIL:
-      return {
-        value: '',
-      };
+      return "''";
     case FieldMetadataType.FULL_NAME:
       return {
-        firstName: '',
-        lastName: '',
+        firstName: "''",
+        lastName: "''",
+      };
+    case FieldMetadataType.ADDRESS:
+      return {
+        addressStreet1: "''",
+        addressStreet2: "''",
+        addressCity: "''",
+        addressState: "''",
+        addressCountry: "''",
+        addressPostcode: "''",
+        addressLat: null,
+        addressLng: null,
       };
     case FieldMetadataType.LINK:
       return {
-        url: '',
-        label: '',
+        url: "''",
+        label: "''",
       };
     case FieldMetadataType.CURRENCY:
       return {
         amountMicros: null,
-        currencyCode: '',
+        currencyCode: "''",
       };
     default:
       return null;

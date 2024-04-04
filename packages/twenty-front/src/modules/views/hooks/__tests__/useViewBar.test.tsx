@@ -40,10 +40,13 @@ const Wrapper = ({ children }: { children: React.ReactNode }) => (
     </MockedProvider>
   </MemoryRouter>
 );
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _renderHookConfig = {
   wrapper: Wrapper,
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const _viewBarId = 'viewBarTestId';
 
 describe('useViewBar', () => {

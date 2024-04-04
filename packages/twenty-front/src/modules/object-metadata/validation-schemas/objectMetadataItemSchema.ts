@@ -15,6 +15,7 @@ export const objectMetadataItemSchema = z.object({
   imageIdentifierFieldMetadataId: z.string().uuid().nullable(),
   isActive: z.boolean(),
   isCustom: z.boolean(),
+  isRemote: z.boolean(),
   isSystem: z.boolean(),
   labelIdentifierFieldMetadataId: z.string().uuid().nullable(),
   labelPlural: z.string().trim().min(1),

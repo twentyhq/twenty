@@ -17,7 +17,7 @@ import {
 
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { BeforeDeleteOneRelation } from 'src/engine/metadata-modules/relation-metadata/hooks/before-delete-one-field.hook';
+import { BeforeDeleteOneRelation } from 'src/engine/metadata-modules/relation-metadata/hooks/before-delete-one-relation.hook';
 
 registerEnumType(RelationMetadataType, {
   name: 'RelationMetadataType',

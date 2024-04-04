@@ -1,4 +1,8 @@
-import { UseGuards } from '@nestjs/common';
+import {
+  BadRequestException,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import {
   Args,
   Mutation,
@@ -11,9 +15,11 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { CreateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { RelationDefinitionDTO } from 'src/engine/metadata-modules/field-metadata/dtos/relation-definition.dto';
 import { UpdateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 
 @UseGuards(JwtAuthGuard)
@@ -41,6 +47,43 @@ export class FieldMetadataResolver {
       ...input.update,
       workspaceId,
     });
+  }
+
+  @Mutation(() => FieldMetadataDTO)
+  async deleteOneField(
+    @Args('input') input: DeleteOneFieldInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    if (!workspaceId) {
+      throw new UnauthorizedException();
+    }
+
+    const fieldMetadata =
+      await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
+        where: {
+          id: input.id.toString(),
+        },
+      });
+
+    if (!fieldMetadata) {
+      throw new BadRequestException('Field does not exist');
+    }
+
+    if (!fieldMetadata.isCustom) {
+      throw new BadRequestException("Standard Fields can't be deleted");
+    }
+
+    if (fieldMetadata.isActive) {
+      throw new BadRequestException("Active fields can't be deleted");
+    }
+
+    if (fieldMetadata.type === FieldMetadataType.RELATION) {
+      throw new BadRequestException(
+        "Relation fields can't be deleted, you need to delete the RelationMetadata instead",
+      );
+    }
+
+    return this.fieldMetadataService.deleteOneField(input, workspaceId);
   }
 
   @ResolveField(() => RelationDefinitionDTO, { nullable: true })

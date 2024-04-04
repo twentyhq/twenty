@@ -5,10 +5,12 @@ import { VerifyEffect } from '@/auth/components/VerifyEffect';
 import { billingState } from '@/client-config/states/billingState.ts';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
+import { BlankLayout } from '@/ui/layout/page/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/DefaultLayout';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
+import Authorize from '~/pages/auth/Authorize';
 import { ChooseYourPlan } from '~/pages/auth/ChooseYourPlan.tsx';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
@@ -38,7 +40,9 @@ import { SettingsDevelopersApiKeysNew } from '~/pages/settings/developers/api-ke
 import { SettingsDevelopers } from '~/pages/settings/developers/SettingsDevelopers';
 import { SettingsDevelopersWebhooksDetail } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhookDetail';
 import { SettingsDevelopersWebhooksNew } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhooksNew';
-import { SettingsIntegrationDetail } from '~/pages/settings/integrations/SettingsIntegrationDetail';
+import { SettingsIntegrationDatabase } from '~/pages/settings/integrations/SettingsIntegrationDatabase';
+import { SettingsIntegrationDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationDatabaseConnection';
+import { SettingsIntegrationNewDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationNewDatabaseConnection';
 import { SettingsIntegrations } from '~/pages/settings/integrations/SettingsIntegrations';
 import { SettingsAppearance } from '~/pages/settings/SettingsAppearance';
 import { SettingsBilling } from '~/pages/settings/SettingsBilling.tsx';
@@ -58,8 +62,8 @@ export const App = () => {
       <PageTitle title={pageTitle} />
       <GotoHotkeysEffect />
       <CommandMenuEffect />
-      <DefaultLayout>
-        <Routes>
+      <Routes>
+        <Route element={<DefaultLayout />}>
           <Route path={AppPath.Verify} element={<VerifyEffect />} />
           <Route path={AppPath.SignInUp} element={<SignInUp />} />
           <Route path={AppPath.Invite} element={<SignInUp />} />
@@ -175,8 +179,16 @@ export const App = () => {
                   element={<SettingsIntegrations />}
                 />
                 <Route
-                  path={SettingsPath.IntegrationDetail}
-                  element={<SettingsIntegrationDetail />}
+                  path={SettingsPath.IntegrationDatabase}
+                  element={<SettingsIntegrationDatabase />}
+                />
+                <Route
+                  path={SettingsPath.IntegrationNewDatabaseConnection}
+                  element={<SettingsIntegrationNewDatabaseConnection />}
+                />
+                <Route
+                  path={SettingsPath.IntegrationDatabaseConnection}
+                  element={<SettingsIntegrationDatabaseConnection />}
                 />
                 <Route
                   path={SettingsPath.ObjectNewFieldStep1}
@@ -194,8 +206,11 @@ export const App = () => {
             }
           />
           <Route path={AppPath.NotFoundWildcard} element={<NotFound />} />
-        </Routes>
-      </DefaultLayout>
+        </Route>
+        <Route element={<BlankLayout />}>
+          <Route path={AppPath.Authorize} element={<Authorize />} />
+        </Route>
+      </Routes>
     </>
   );
 };

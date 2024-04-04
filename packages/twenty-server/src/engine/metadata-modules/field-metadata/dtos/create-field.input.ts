@@ -1,6 +1,6 @@
 import { Field, InputType, OmitType } from '@nestjs/graphql';
 
-import { IsUUID, ValidateNested } from 'class-validator';
+import { IsOptional, IsUUID, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
@@ -14,6 +14,10 @@ export class CreateFieldInput extends OmitType(
   @IsUUID()
   @Field()
   objectMetadataId: string;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsOptional()
+  isRemoteCreation?: boolean;
 }
 
 @InputType()

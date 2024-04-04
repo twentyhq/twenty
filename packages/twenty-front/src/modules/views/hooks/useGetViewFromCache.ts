@@ -26,15 +26,18 @@ export const useGetViewFromCache = () => {
 
       const view = {
         ...viewWithConnections,
-        viewFilters: viewWithConnections.viewFilters?.edges.map(
-          (edge: ObjectRecordEdge) => edge.node,
-        ),
-        viewSorts: viewWithConnections.viewSorts?.edges.map(
-          (edge: ObjectRecordEdge) => edge.node,
-        ),
-        viewFields: viewWithConnections.viewFields?.edges.map(
-          (edge: ObjectRecordEdge) => edge.node,
-        ),
+        viewFilters:
+          viewWithConnections.viewFilters?.edges?.map(
+            (edge: ObjectRecordEdge) => edge.node,
+          ) ?? [],
+        viewSorts:
+          viewWithConnections.viewSorts?.edges?.map(
+            (edge: ObjectRecordEdge) => edge.node,
+          ) ?? [],
+        viewFields:
+          viewWithConnections.viewFields?.edges?.map(
+            (edge: ObjectRecordEdge) => edge.node,
+          ) ?? [],
       } as GraphQLView;
 
       return view;

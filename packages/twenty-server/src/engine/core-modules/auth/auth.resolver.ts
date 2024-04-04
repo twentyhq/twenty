@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 
+import { AppTokenInput } from 'src/engine/core-modules/auth/dto/app-token.input';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { assert } from 'src/utils/assert';
@@ -27,10 +28,13 @@ import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-
 import { EmailPasswordResetLinkInput } from 'src/engine/core-modules/auth/dto/email-password-reset-link.input';
 import { GenerateJwtInput } from 'src/engine/core-modules/auth/dto/generate-jwt.input';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.entity';
+import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
+import { ExchangeAuthCodeInput } from 'src/engine/core-modules/auth/dto/exchange-auth-code.input';
+import { ExchangeAuthCode } from 'src/engine/core-modules/auth/dto/exchange-auth-code.entity';
 
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
 import { TokenService } from './services/token.service';
-import { RefreshTokenInput } from './dto/refresh-token.input';
 import { Verify } from './dto/verify.entity';
 import { VerifyInput } from './dto/verify.input';
 import { AuthService } from './services/auth.service';
@@ -131,6 +135,26 @@ export class AuthResolver {
     return result;
   }
 
+  @Mutation(() => AuthorizeApp)
+  @UseGuards(JwtAuthGuard)
+  authorizeApp(@Args() authorizeAppInput: AuthorizeAppInput): AuthorizeApp {
+    const authorizedApp =
+      this.authService.generateAuthorizationCode(authorizeAppInput);
+
+    return authorizedApp;
+  }
+
+  @Query(() => ExchangeAuthCode)
+  async exchangeAuthorizationCode(
+    @Args() exchangeAuthCodeInput: ExchangeAuthCodeInput,
+  ) {
+    const tokens = await this.tokenService.verifyAuthorizationCode(
+      exchangeAuthCodeInput,
+    );
+
+    return tokens;
+  }
+
   @Mutation(() => AuthTokens)
   @UseGuards(JwtAuthGuard)
   async generateJWT(
@@ -146,13 +170,13 @@ export class AuthResolver {
   }
 
   @Mutation(() => AuthTokens)
-  async renewToken(@Args() args: RefreshTokenInput): Promise<AuthTokens> {
-    if (!args.refreshToken) {
+  async renewToken(@Args() args: AppTokenInput): Promise<AuthTokens> {
+    if (!args.appToken) {
       throw new BadRequestException('Refresh token is mendatory');
     }
 
     const tokens = await this.tokenService.generateTokensFromRefreshToken(
-      args.refreshToken,
+      args.appToken,
     );
 
     return { tokens: tokens };

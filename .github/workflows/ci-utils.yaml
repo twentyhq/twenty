@@ -2,7 +2,7 @@ name: CI Utils
 on:
   # it's usually not recommended to use pull_request_target
   # but we consider it's safe here if we keep the same steps
-  # see: https://securitylab.github.com/research/github-actions-preventing-pwn-requests/ 
+  # see: https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
   # and: https://github.com/facebook/react-native/pull/34370/files
   pull_request_target:
 permissions:
@@ -12,14 +12,14 @@ permissions:
   issues: write
   pull-requests: write
   statuses: write
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   danger-js:
     runs-on: ubuntu-latest
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-            access_token: ${{ github.token }}
       - uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v3

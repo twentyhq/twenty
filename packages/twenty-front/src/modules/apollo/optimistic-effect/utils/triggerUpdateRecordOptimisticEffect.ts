@@ -1,6 +1,5 @@
 import { ApolloCache, StoreObject } from '@apollo/client';
 
-import { isCachedObjectRecordConnection } from '@/apollo/optimistic-effect/utils/isCachedObjectRecordConnection';
 import { sortCachedObjectEdges } from '@/apollo/optimistic-effect/utils/sortCachedObjectEdges';
 import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsOptimisticEffect';
 import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
@@ -8,6 +7,7 @@ import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
+import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
 import { isDefined } from '~/utils/isDefined';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
@@ -27,10 +27,6 @@ export const triggerUpdateRecordOptimisticEffect = ({
   updatedRecord: CachedObjectRecord;
   objectMetadataItems: ObjectMetadataItem[];
 }) => {
-  const objectEdgeTypeName = getEdgeTypename({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
-
   triggerUpdateRelationsOptimisticEffect({
     cache,
     sourceObjectMetadataItem: objectMetadataItem,
@@ -45,7 +41,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
         rootQueryCachedResponse,
         { DELETE, readField, storeFieldName, toReference },
       ) => {
-        const shouldSkip = !isCachedObjectRecordConnection(
+        const shouldSkip = !isObjectRecordConnectionWithRefs(
           objectMetadataItem.nameSingular,
           rootQueryCachedResponse,
         );
@@ -103,7 +99,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
 
             if (isDefined(updatedRecordNodeReference)) {
               rootQueryNextEdges.push({
-                __typename: objectEdgeTypeName,
+                __typename: getEdgeTypename(objectMetadataItem.nameSingular),
                 node: updatedRecordNodeReference,
                 cursor: '',
               });
