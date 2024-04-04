@@ -58,7 +58,6 @@ export const NumberFieldInput = ({
 
   return (
     <FieldInputOverlay>
-      <LightCopyIconButton copyText={draftValue ?? ''} />
       <TextInput
         placeholder={fieldDefinition.metadata.placeHolder}
         autoFocus
@@ -71,6 +70,7 @@ export const NumberFieldInput = ({
         hotkeyScope={hotkeyScope}
         onChange={handleChange}
       />
+      <LightCopyIconButton copyText={draftValue ?? ''} />
     </FieldInputOverlay>
   );
 };
