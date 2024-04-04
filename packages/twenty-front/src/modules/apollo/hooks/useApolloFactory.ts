@@ -67,7 +67,12 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
 
     return apolloRef.current.getClient();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setTokenPair, isDebugMode, currentWorkspace?.currentCacheVersion, setPreviousUrl]);
+  }, [
+    setTokenPair,
+    isDebugMode,
+    currentWorkspace?.currentCacheVersion,
+    setPreviousUrl,
+  ]);
 
   useUpdateEffect(() => {
     if (isDefined(apolloRef.current)) {
