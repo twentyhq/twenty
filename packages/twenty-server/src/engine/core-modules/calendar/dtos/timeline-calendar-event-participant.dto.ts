@@ -1,7 +1,7 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 
-@ObjectType('TimelineCalendarEventAttendee')
-export class TimelineCalendarEventAttendee {
+@ObjectType('TimelineCalendarEventParticipant')
+export class TimelineCalendarEventParticipant {
   @Field(() => ID, { nullable: true })
   personId: string;
 
