@@ -231,7 +231,9 @@ export const SettingsObjectNewFieldStep2 = () => {
           options:
             validatedFormValues.type === FieldMetadataType.Select
               ? validatedFormValues.select
-              : undefined,
+              : validatedFormValues.type === FieldMetadataType.MultiSelect
+                ? validatedFormValues.multiSelect
+                : undefined,
         });
 
         objectViews.map(async (view) => {
@@ -333,6 +335,7 @@ export const SettingsObjectNewFieldStep2 = () => {
               currency: formValues.currency,
               relation: formValues.relation,
               select: formValues.select,
+              multiSelect: formValues.multiSelect,
               defaultValue: formValues.defaultValue,
             }}
           />

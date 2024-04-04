@@ -27,6 +27,7 @@ export type SettingsDataModelFieldSettingsFormValues = {
   currency: SettingsObjectFieldCurrencyFormValues;
   relation: SettingsObjectFieldRelationFormValues;
   select: SettingsObjectFieldSelectFormValues;
+  multiSelect: SettingsObjectFieldSelectFormValues;
   defaultValue: any;
 };
 
@@ -157,9 +158,9 @@ export const SettingsDataModelFieldSettingsFormCard = ({
           />
         ) : fieldMetadataItem.type === FieldMetadataType.MultiSelect ? (
           <SettingsObjectFieldSelectForm
-            values={values.select}
+            values={values.multiSelect}
             onChange={(nextSelectValues) =>
-              onChange({ select: nextSelectValues })
+              onChange({ multiSelect: nextSelectValues })
             }
             isMultiSelect={true}
           />

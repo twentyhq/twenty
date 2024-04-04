@@ -261,6 +261,7 @@ export const SettingsObjectFieldEdit = () => {
               currency: formValues.currency,
               relation: formValues.relation,
               select: formValues.select,
+              multiSelect: formValues.multiSelect,
               defaultValue: formValues.defaultValue,
             }}
           />
