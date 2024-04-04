@@ -4,11 +4,11 @@ import { useRecoilValue } from 'recoil';
 
 import { AddObjectFilterFromDetailsButton } from '@/object-record/object-filter-dropdown/components/AddObjectFilterFromDetailsButton';
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
-import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { EditableFilterDropdownButton } from '@/views/components/EditableFilterDropdownButton';
 import { EditableSortChip } from '@/views/components/EditableSortChip';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
+import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
@@ -106,6 +106,7 @@ export const ViewBarDetails = ({
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
   const isViewBarExpanded = useRecoilValue(isViewBarExpandedState);
+  const { hasFiltersQueryParams } = useViewFromQueryParams();
   const canPersistView = useRecoilValue(canPersistViewSelector());
   const availableFilterDefinitions = useRecoilValue(
     availableFilterDefinitionsState,
@@ -115,6 +116,7 @@ export const ViewBarDetails = ({
   );
 
   const { resetCurrentView } = useResetCurrentView();
+  const canResetView = canPersistView && !hasFiltersQueryParams;
 
   const handleCancelClick = () => {
     resetCurrentView();
@@ -161,7 +163,7 @@ export const ViewBarDetails = ({
                 <EditableFilterDropdownButton
                   viewFilter={viewFilter}
                   hotkeyScope={{
-                    scope: FiltersHotkeyScope.ObjectFilterDropdownButton,
+                    scope: viewFilter.fieldMetadataId,
                   }}
                   viewFilterDropdownId={viewFilter.fieldMetadataId}
                 />
@@ -177,7 +179,7 @@ export const ViewBarDetails = ({
           </StyledAddFilterContainer>
         )}
       </StyledFilterContainer>
-      {canPersistView && (
+      {canResetView && (
         <StyledCancelButton
           data-testid="cancel-button"
           onClick={handleCancelClick}

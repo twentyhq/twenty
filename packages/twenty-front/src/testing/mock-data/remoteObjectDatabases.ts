@@ -2,7 +2,7 @@ export const mockedRemoteObjectIntegrations = [
   {
     id: '5b717911-dc75-4876-bf33-dfdc994c88cd',
     key: 'postgresql',
-    databases: [
+    connections: [
       {
         id: '67cbfd35-8dd4-4591-b9d4-c1906281a5da',
         key: 'twenty_postgres',

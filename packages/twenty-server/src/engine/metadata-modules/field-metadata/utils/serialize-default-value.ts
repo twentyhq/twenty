@@ -42,7 +42,9 @@ export const serializeDefaultValue = (
   }
 
   if (Array.isArray(defaultValue)) {
-    return defaultValue;
+    return `'{${defaultValue
+      .map((value) => value.replace(/'/g, ''))
+      .join(',')}}'`;
   }
 
   if (typeof defaultValue === 'object') {

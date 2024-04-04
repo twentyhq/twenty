@@ -20,6 +20,7 @@ export enum FeatureFlagKeys {
   IsAirtableIntegrationEnabled = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IsPostgreSQLIntegrationEnabled = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IsFullSyncV2Enabled = 'IS_FULL_SYNC_V2_ENABLED',
+  IsMultiSelectEnabled = 'IS_MULTI_SELECT_ENABLED',
 }
 
 @Entity({ name: 'featureFlag', schema: 'core' })

@@ -14,6 +14,7 @@ import { HotkeyEffect } from '@/ui/utilities/hotkey/components/HotkeyEffect';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { isDefined } from '~/utils/isDefined';
 
 import { useDropdown } from '../hooks/useDropdown';
@@ -92,7 +93,7 @@ export const Dropdown = ({
   });
 
   useInternalHotkeyScopeManagement({
-    dropdownScopeId: `${dropdownId}-scope`,
+    dropdownScopeId: getScopeIdFromComponentId(dropdownId),
     dropdownHotkeyScopeFromParent: dropdownHotkeyScope,
   });
 
@@ -106,7 +107,7 @@ export const Dropdown = ({
   );
 
   return (
-    <DropdownScope dropdownScopeId={`${dropdownId}-scope`}>
+    <DropdownScope dropdownScopeId={getScopeIdFromComponentId(dropdownId)}>
       <div ref={containerRef} className={className}>
         {clickableComponent && (
           <div

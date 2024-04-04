@@ -794,6 +794,7 @@ export type Workspace = {
   billingSubscriptions?: Maybe<Array<BillingSubscription>>;
   createdAt: Scalars['DateTime'];
   currentBillingSubscription?: Maybe<BillingSubscription>;
+  currentCacheVersion?: Maybe<Scalars['String']>;
   deletedAt?: Maybe<Scalars['DateTime']>;
   displayName?: Maybe<Scalars['String']>;
   domainName?: Maybe<Scalars['String']>;
@@ -2356,6 +2357,7 @@ export const GetCurrentUserDocument = gql`
         value
         workspaceId
       }
+      currentCacheVersion
       currentBillingSubscription {
         status
         interval

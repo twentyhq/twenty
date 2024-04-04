@@ -3,7 +3,17 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'package.json'
+      - 'packages/twenty-chrome-extension/**'
   pull_request:
+    paths:
+      - 'package.json'
+      - 'packages/twenty-chrome-extension/**'
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   chrome-extension-yarn-install:
     runs-on: ci-8-cores
@@ -11,10 +21,6 @@ jobs:
       VITE_SERVER_BASE_URL: http://localhost:3000
       VITE_FRONT_BASE_URL: http://localhost:3001
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-            access_token: ${{ github.token }}
       - uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v3
