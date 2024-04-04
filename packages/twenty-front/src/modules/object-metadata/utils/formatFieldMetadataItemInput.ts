@@ -1,7 +1,8 @@
 import toCamelCase from 'lodash.camelcase';
 import toSnakeCase from 'lodash.snakecase';
 
-import { Field } from '~/generated-metadata/graphql';
+import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined.ts';
 
 import { FieldMetadataOption } from '../types/FieldMetadataOption';
 
@@ -22,9 +23,23 @@ export const getOptionValueFromLabel = (label: string) => {
 export const formatFieldMetadataItemInput = (
   input: Pick<Field, 'label' | 'icon' | 'description' | 'defaultValue'> & {
     options?: FieldMetadataOption[];
+    type?: FieldMetadataType;
   },
 ) => {
-  const defaultOption = input.options?.find((option) => option.isDefault);
+  let defaultValue = input.defaultValue;
+  if (input.type === FieldMetadataType.MultiSelect) {
+    const defaultOptions = input.options?.filter((option) => option.isDefault);
+    if (isDefined(defaultOptions)) {
+      defaultValue = defaultOptions.map(
+        (defaultOption) => `'${getOptionValueFromLabel(defaultOption.label)}'`,
+      );
+    }
+  } else {
+    const defaultOption = input.options?.find((option) => option.isDefault);
+    if (isDefined(defaultOption)) {
+      defaultValue = `'${getOptionValueFromLabel(defaultOption.label)}'`;
+    }
+  }
 
   // Check if options has unique values
   if (input.options !== undefined) {
@@ -43,9 +58,7 @@ export const formatFieldMetadataItemInput = (
   }
 
   return {
-    defaultValue: defaultOption
-      ? `'${getOptionValueFromLabel(defaultOption.label)}'`
-      : input.defaultValue,
+    defaultValue,
     description: input.description?.trim() ?? null,
     icon: input.icon,
     label: input.label.trim(),

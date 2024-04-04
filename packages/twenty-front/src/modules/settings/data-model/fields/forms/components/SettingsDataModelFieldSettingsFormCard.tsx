@@ -99,7 +99,11 @@ export const SettingsDataModelFieldSettingsFormCard = ({
             shrink={fieldMetadataItem.type === FieldMetadataType.Relation}
             objectMetadataItem={objectMetadataItem}
             relationObjectMetadataItem={relationObjectMetadataItem}
-            selectOptions={values.select}
+            selectOptions={
+              fieldMetadataItem.type === FieldMetadataType.MultiSelect
+                ? values.multiSelect
+                : values.select
+            }
           />
           {fieldMetadataItem.type === FieldMetadataType.Relation &&
             !!relationObjectMetadataItem && (

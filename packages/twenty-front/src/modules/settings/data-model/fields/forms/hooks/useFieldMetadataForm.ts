@@ -204,6 +204,7 @@ export const useFieldMetadataForm = () => {
       currency: nextCurrencyFormValues,
       relation: nextRelationFormValues,
       select: nextSelectFormValues,
+      multiSelect: nextMultiSelectFormValues,
       defaultValue: nextDefaultValue,
       ...nextFieldFormValues
     } = nextFormValues;
@@ -225,7 +226,7 @@ export const useFieldMetadataForm = () => {
     );
     setHasMultiSelectFormChanged(
       nextFieldFormValues.type === FieldMetadataType.MultiSelect &&
-        !isDeeplyEqual(initialMultiSelectFormValues, nextSelectFormValues),
+        !isDeeplyEqual(initialMultiSelectFormValues, nextMultiSelectFormValues),
     );
     setHasDefaultValueFormChanged(
       nextFieldFormValues.type === FieldMetadataType.Boolean &&
