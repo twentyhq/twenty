@@ -46,7 +46,7 @@
     "@types/lodash.upperfirst": "^4.3.7",
     "@types/react": "^18.2.39",
     "rimraf": "^5.0.5",
-    "typescript": "^5.3.3"
+    "typescript": "5.3.3"
   },
   "engines": {
     "node": "^18.17.1",

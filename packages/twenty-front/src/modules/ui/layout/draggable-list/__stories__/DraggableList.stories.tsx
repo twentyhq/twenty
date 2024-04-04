@@ -12,6 +12,7 @@ const meta: Meta<typeof DraggableList> = {
   component: DraggableList,
   decorators: [ComponentDecorator],
   parameters: {
+    // eslint-disable-next-line no-console
     onDragEnd: () => console.log('dragged'),
   },
   argTypes: {

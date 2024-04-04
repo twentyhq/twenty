@@ -5,13 +5,19 @@
     "types": ["jest", "node"]
   },
   "include": [
-    "vite.config.ts",
-    "jest.config.ts",
-    "**/*.test.ts",
-    "**/*.test.tsx",
-    "**/*.spec.ts",
-    "**/*.d.ts",
     ".storybook/**/*",
-    "**/*.stories.tsx"
+    "**/__mocks__/**/*",
+    "jest.config.ts",
+    "setupTests.ts",
+    "src/**/*.d.ts",
+    "src/**/*.spec.ts",
+    "src/**/*.spec.tsx",
+    "src/**/*.stories.ts",
+    "src/**/*.stories.tsx",
+    "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "tsup.config.ts",
+    "tsup.ui.index.tsx",
+    "vite.config.ts"
   ]
 }

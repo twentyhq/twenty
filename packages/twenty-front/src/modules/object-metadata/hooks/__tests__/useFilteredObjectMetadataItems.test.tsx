@@ -7,8 +7,8 @@ import {
   query,
   responseData,
   variables,
-} from '@/object-metadata/hooks/__mocks__/useObjectMetadataItemForSettings';
-import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+} from '@/object-metadata/hooks/__mocks__/useFilteredObjectMetadataItems';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 
@@ -36,14 +36,14 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 
 const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
-describe('useObjectMetadataItemForSettings', () => {
+describe('useFilteredObjectMetadataItems', () => {
   it('should findActiveObjectMetadataItemBySlug', async () => {
     const { result } = renderHook(
       () => {
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
         setMetadataItems(mockObjectMetadataItems);
 
-        return useObjectMetadataItemForSettings();
+        return useFilteredObjectMetadataItems();
       },
       {
         wrapper: Wrapper,
@@ -63,7 +63,7 @@ describe('useObjectMetadataItemForSettings', () => {
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
         setMetadataItems(mockObjectMetadataItems);
 
-        return useObjectMetadataItemForSettings();
+        return useFilteredObjectMetadataItems();
       },
       {
         wrapper: Wrapper,
@@ -85,7 +85,7 @@ describe('useObjectMetadataItemForSettings', () => {
         const setMetadataItems = useSetRecoilState(objectMetadataItemsState);
         setMetadataItems(mockObjectMetadataItems);
 
-        return useObjectMetadataItemForSettings();
+        return useFilteredObjectMetadataItems();
       },
       {
         wrapper: Wrapper,

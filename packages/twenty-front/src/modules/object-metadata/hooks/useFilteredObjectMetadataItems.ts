@@ -4,7 +4,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 
 import { getObjectSlug } from '../utils/getObjectSlug';
 
-export const useObjectMetadataItemForSettings = () => {
+export const useFilteredObjectMetadataItems = () => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const activeObjectMetadataItems = objectMetadataItems.filter(

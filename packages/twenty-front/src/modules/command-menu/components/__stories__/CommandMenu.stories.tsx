@@ -46,6 +46,7 @@ const meta: Meta<typeof CommandMenu> = {
             label: 'Create Task',
             type: CommandType.Create,
             Icon: IconCheckbox,
+            // eslint-disable-next-line no-console
             onCommandClick: () => console.log('create task click'),
           },
           {
@@ -54,6 +55,7 @@ const meta: Meta<typeof CommandMenu> = {
             label: 'Create Note',
             type: CommandType.Create,
             Icon: IconNotes,
+            // eslint-disable-next-line no-console
             onCommandClick: () => console.log('create note click'),
           },
         ]);
