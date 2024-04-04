@@ -45,11 +45,17 @@ export const DropdownMenuItemsContainer = ({
 }) => {
   return (
     <StyledDropdownMenuItemsExternalContainer hasMaxHeight={hasMaxHeight}>
-      <StyledScrollWrapper>
+      {hasMaxHeight ? (
+        <StyledScrollWrapper>
+          <StyledDropdownMenuItemsInternalContainer>
+            {children}
+          </StyledDropdownMenuItemsInternalContainer>
+        </StyledScrollWrapper>
+      ) : (
         <StyledDropdownMenuItemsInternalContainer>
           {children}
         </StyledDropdownMenuItemsInternalContainer>
-      </StyledScrollWrapper>
+      )}
     </StyledDropdownMenuItemsExternalContainer>
   );
 };
