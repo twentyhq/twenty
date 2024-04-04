@@ -382,7 +382,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             eventObjectMetadata,
             favoriteObjectMetadata,
             lastDataSourceMetadata.schema,
-            objectMetadataInput.remoteTableIdColumnType ?? 'uuid',
+            objectMetadataInput.remoteTablePrimaryKeyColumnType ?? 'uuid',
             workspaceDataSource,
           ),
     );

@@ -179,7 +179,7 @@ export class RemoteTableService {
       workspaceId: workspaceId,
       icon: 'IconUser',
       isRemote: true,
-      remoteTableIdColumnType: remoteTableIdColumn.udt_name,
+      remoteTablePrimaryKeyColumnType: remoteTableIdColumn.udt_name,
     } as CreateObjectInput);
 
     for (const column of remoteTableColumns) {

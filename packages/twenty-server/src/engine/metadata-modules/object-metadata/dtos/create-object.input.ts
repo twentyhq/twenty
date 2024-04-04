@@ -70,5 +70,5 @@ export class CreateObjectInput {
 
   @IsOptional()
   @Field({ nullable: true })
-  remoteTableIdColumnType?: string;
+  remoteTablePrimaryKeyColumnType?: string;
 }
