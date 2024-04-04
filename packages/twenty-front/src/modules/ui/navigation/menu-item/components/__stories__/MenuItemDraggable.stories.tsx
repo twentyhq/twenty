@@ -24,7 +24,9 @@ export const Default: Story = {
   args: {
     LeftIcon: IconBell,
     accent: 'default',
+    // eslint-disable-next-line no-console
     iconButtons: [{ Icon: IconMinus, onClick: () => console.log('Clicked') }],
+    // eslint-disable-next-line no-console
     onClick: () => console.log('Clicked'),
     text: 'Menu item draggable',
     isDragDisabled: false,
@@ -86,6 +88,7 @@ export const Catalog: Story = {
                     {
                       Icon: IconMinus,
                       onClick: () =>
+                        // eslint-disable-next-line no-console
                         console.log('Clicked on minus icon button'),
                     },
                   ],
