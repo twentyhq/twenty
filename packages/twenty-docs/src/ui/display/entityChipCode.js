@@ -1,6 +1,7 @@
-import { BrowserRouter as Router } from "react-router-dom";
-import { EntityChip } from "@/ui/display/chip/components/EntityChip";
-import { IconComponent } from "@/ui/display/icon/types/IconComponent";
+import { BrowserRouter as Router } from 'react-router-dom';
+import { IconComponent } from 'twenty-ui';
+
+import { EntityChip } from '@/ui/display/chip/components/EntityChip';
 
 export const MyComponent = () => {
   return (
