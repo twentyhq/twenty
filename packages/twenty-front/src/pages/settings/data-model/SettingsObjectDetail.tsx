@@ -32,6 +32,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -188,6 +189,10 @@ export const SettingsObjectDetail = () => {
                     ActionIcon={
                       <SettingsObjectFieldInactiveActionDropdown
                         isCustomField={!!disabledMetadataField.isCustom}
+                        isRelationType={
+                          disabledMetadataField.type ===
+                          FieldMetadataType.Relation
+                        }
                         scopeKey={disabledMetadataField.id}
                         onActivate={() =>
                           activateMetadataField(disabledMetadataField)

@@ -34,6 +34,23 @@ export type ApiKeyToken = {
   token: Scalars['String'];
 };
 
+export type AppToken = {
+  __typename?: 'AppToken';
+  createdAt: Scalars['DateTime'];
+  expiresAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  type: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type AppTokenEdge = {
+  __typename?: 'AppTokenEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the AppToken */
+  node: AppToken;
+};
+
 export type AuthProviders = {
   __typename?: 'AuthProviders';
   google: Scalars['Boolean'];
@@ -108,12 +125,6 @@ export type ClientConfig = {
   signUpDisabled: Scalars['Boolean'];
   support: Support;
   telemetry: Telemetry;
-};
-
-export type CreateRemoteServerInput = {
-  foreignDataWrapperOptions: Scalars['JSON'];
-  foreignDataWrapperType: Scalars['String'];
-  userMappingOptions?: InputMaybe<Scalars['JSON']>;
 };
 
 export type CursorPaging = {
@@ -271,12 +282,10 @@ export type Mutation = {
   authorizeApp: AuthorizeApp;
   challenge: LoginToken;
   checkoutSession: SessionEntity;
+  createOneAppToken: AppToken;
   createOneObject: Object;
-  createOneRefreshToken: RefreshToken;
-  createOneRemoteServer: RemoteServer;
   deleteCurrentWorkspace: Workspace;
   deleteOneObject: Object;
-  deleteOneRemoteServer: RemoteServer;
   deleteUser: User;
   emailPasswordResetLink: EmailPasswordResetLink;
   generateApiKeyToken: ApiKeyToken;
@@ -321,18 +330,8 @@ export type MutationCheckoutSessionArgs = {
 };
 
 
-export type MutationCreateOneRemoteServerArgs = {
-  input: CreateRemoteServerInput;
-};
-
-
 export type MutationDeleteOneObjectArgs = {
   input: DeleteOneObjectInput;
-};
-
-
-export type MutationDeleteOneRemoteServerArgs = {
-  input: RemoteServerIdInput;
 };
 
 
@@ -358,7 +357,7 @@ export type MutationImpersonateArgs = {
 
 
 export type MutationRenewTokenArgs = {
-  refreshToken: Scalars['String'];
+  appToken: Scalars['String'];
 };
 
 
@@ -463,8 +462,6 @@ export type Query = {
   currentUser: User;
   currentWorkspace: Workspace;
   exchangeAuthorizationCode: ExchangeAuthCode;
-  findManyRemoteServersByType: Array<RemoteServer>;
-  findOneRemoteServerById: RemoteServer;
   findWorkspaceFromInviteHash: Workspace;
   getProductPrices: ProductPricesEntity;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
@@ -495,16 +492,6 @@ export type QueryCheckWorkspaceInviteHashIsValidArgs = {
 export type QueryExchangeAuthorizationCodeArgs = {
   authorizationCode: Scalars['String'];
   codeVerifier: Scalars['String'];
-};
-
-
-export type QueryFindManyRemoteServersByTypeArgs = {
-  input: RemoteServerTypeInput;
-};
-
-
-export type QueryFindOneRemoteServerByIdArgs = {
-  input: RemoteServerIdInput;
 };
 
 
@@ -548,22 +535,6 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
 
 export type QueryValidatePasswordResetTokenArgs = {
   passwordResetToken: Scalars['String'];
-};
-
-export type RefreshToken = {
-  __typename?: 'RefreshToken';
-  createdAt: Scalars['DateTime'];
-  expiresAt: Scalars['DateTime'];
-  id: Scalars['ID'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type RefreshTokenEdge = {
-  __typename?: 'RefreshTokenEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor'];
-  /** The node containing the RefreshToken */
-  node: RefreshToken;
 };
 
 export type RelationConnection = {
@@ -620,14 +591,6 @@ export type RemoteServer = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type RemoteServerIdInput = {
-  /** The id of the record. */
-  id: Scalars['ID'];
-};
-
-export type RemoteServerTypeInput = {
-  foreignDataWrapperType: Scalars['String'];
-};
 export type RemoteTable = {
   __typename?: 'RemoteTable';
   name: Scalars['String'];
@@ -677,7 +640,6 @@ export type Telemetry = {
 
 export type TimelineCalendarEvent = {
   __typename?: 'TimelineCalendarEvent';
-  attendees: Array<TimelineCalendarEventAttendee>;
   conferenceLink: LinkMetadata;
   conferenceSolution: Scalars['String'];
   description: Scalars['String'];
@@ -686,13 +648,14 @@ export type TimelineCalendarEvent = {
   isCanceled: Scalars['Boolean'];
   isFullDay: Scalars['Boolean'];
   location: Scalars['String'];
+  participants: Array<TimelineCalendarEventParticipant>;
   startsAt: Scalars['DateTime'];
   title: Scalars['String'];
   visibility: TimelineCalendarEventVisibility;
 };
 
-export type TimelineCalendarEventAttendee = {
-  __typename?: 'TimelineCalendarEventAttendee';
+export type TimelineCalendarEventParticipant = {
+  __typename?: 'TimelineCalendarEventParticipant';
   avatarUrl: Scalars['String'];
   displayName: Scalars['String'];
   firstName: Scalars['String'];
@@ -831,6 +794,7 @@ export type Workspace = {
   billingSubscriptions?: Maybe<Array<BillingSubscription>>;
   createdAt: Scalars['DateTime'];
   currentBillingSubscription?: Maybe<BillingSubscription>;
+  currentCacheVersion?: Maybe<Scalars['String']>;
   deletedAt?: Maybe<Scalars['DateTime']>;
   displayName?: Maybe<Scalars['String']>;
   domainName?: Maybe<Scalars['String']>;
@@ -971,11 +935,11 @@ export type RelationEdge = {
   node: Relation;
 };
 
-export type TimelineCalendarEventAttendeeFragmentFragment = { __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
+export type TimelineCalendarEventFragmentFragment = { __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
 
-export type TimelineCalendarEventFragmentFragment = { __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
+export type TimelineCalendarEventParticipantFragmentFragment = { __typename?: 'TimelineCalendarEventParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
 
-export type TimelineCalendarEventsWithTotalFragmentFragment = { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
+export type TimelineCalendarEventsWithTotalFragmentFragment = { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
 
 export type GetTimelineCalendarEventsFromCompanyIdQueryVariables = Exact<{
   companyId: Scalars['ID'];
@@ -984,7 +948,7 @@ export type GetTimelineCalendarEventsFromCompanyIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTimelineCalendarEventsFromCompanyIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromCompanyId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+export type GetTimelineCalendarEventsFromCompanyIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromCompanyId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type GetTimelineCalendarEventsFromPersonIdQueryVariables = Exact<{
   personId: Scalars['ID'];
@@ -993,7 +957,7 @@ export type GetTimelineCalendarEventsFromPersonIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTimelineCalendarEventsFromPersonIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromPersonId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+export type GetTimelineCalendarEventsFromPersonIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromPersonId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type ParticipantFragmentFragment = { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
 
@@ -1084,7 +1048,7 @@ export type ImpersonateMutationVariables = Exact<{
 export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: string, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type RenewTokenMutationVariables = Exact<{
-  refreshToken: Scalars['String'];
+  appToken: Scalars['String'];
 }>;
 
 
@@ -1228,8 +1192,8 @@ export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
 
 export type GetWorkspaceFromInviteHashQuery = { __typename?: 'Query', findWorkspaceFromInviteHash: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, allowImpersonation: boolean } };
 
-export const TimelineCalendarEventAttendeeFragmentFragmentDoc = gql`
-    fragment TimelineCalendarEventAttendeeFragment on TimelineCalendarEventAttendee {
+export const TimelineCalendarEventParticipantFragmentFragmentDoc = gql`
+    fragment TimelineCalendarEventParticipantFragment on TimelineCalendarEventParticipant {
   personId
   workspaceMemberId
   firstName
@@ -1249,11 +1213,11 @@ export const TimelineCalendarEventFragmentFragmentDoc = gql`
   endsAt
   isFullDay
   visibility
-  attendees {
-    ...TimelineCalendarEventAttendeeFragment
+  participants {
+    ...TimelineCalendarEventParticipantFragment
   }
 }
-    ${TimelineCalendarEventAttendeeFragmentFragmentDoc}`;
+    ${TimelineCalendarEventParticipantFragmentFragmentDoc}`;
 export const TimelineCalendarEventsWithTotalFragmentFragmentDoc = gql`
     fragment TimelineCalendarEventsWithTotalFragment on TimelineCalendarEventsWithTotal {
   totalNumberOfCalendarEvents
@@ -1810,8 +1774,8 @@ export type ImpersonateMutationHookResult = ReturnType<typeof useImpersonateMuta
 export type ImpersonateMutationResult = Apollo.MutationResult<ImpersonateMutation>;
 export type ImpersonateMutationOptions = Apollo.BaseMutationOptions<ImpersonateMutation, ImpersonateMutationVariables>;
 export const RenewTokenDocument = gql`
-    mutation RenewToken($refreshToken: String!) {
-  renewToken(refreshToken: $refreshToken) {
+    mutation RenewToken($appToken: String!) {
+  renewToken(appToken: $appToken) {
     tokens {
       ...AuthTokensFragment
     }
@@ -1833,7 +1797,7 @@ export type RenewTokenMutationFn = Apollo.MutationFunction<RenewTokenMutation, R
  * @example
  * const [renewTokenMutation, { data, loading, error }] = useRenewTokenMutation({
  *   variables: {
- *      refreshToken: // value for 'refreshToken'
+ *      appToken: // value for 'appToken'
  *   },
  * });
  */
@@ -2393,6 +2357,7 @@ export const GetCurrentUserDocument = gql`
         value
         workspaceId
       }
+      currentCacheVersion
       currentBillingSubscription {
         status
         interval

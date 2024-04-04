@@ -2,7 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SettingsIntegrationDetail } from '~/pages/settings/integrations/SettingsIntegrationDetail';
+import { SettingsIntegrationDatabase } from '~/pages/settings/integrations/SettingsIntegrationDatabase';
 import {
   PageDecorator,
   PageDecoratorArgs,
@@ -10,12 +10,12 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/Integrations/SettingsIntegrationDetail',
-  component: SettingsIntegrationDetail,
+  title: 'Pages/Settings/Integrations/SettingsIntegrationDatabase',
+  component: SettingsIntegrationDatabase,
   decorators: [PageDecorator],
   args: {
-    routePath: getSettingsPagePath(SettingsPath.IntegrationDetail),
-    routeParams: { ':integrationKey': 'postgresql' },
+    routePath: getSettingsPagePath(SettingsPath.IntegrationDatabase),
+    routeParams: { ':databaseKey': 'postgresql' },
   },
   parameters: {
     msw: graphqlMocks,
@@ -24,6 +24,6 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsIntegrationDetail>;
+export type Story = StoryObj<typeof SettingsIntegrationDatabase>;
 
 export const Default: Story = {};
