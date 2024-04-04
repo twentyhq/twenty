@@ -1,11 +1,11 @@
 import { useQuery } from '@apollo/client';
 
 import { GET_MANY_DATABASE_CONNECTIONS } from '@/databases/graphql/queries/findManyDatabaseConnections';
+import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import {
   GetManyDatabaseConnectionsQuery,
   GetManyDatabaseConnectionsQueryVariables,
 } from '~/generated-metadata/graphql';
-import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 
 type UseGetDatabaseConnectionsParams = {
   databaseKey: string;
