@@ -152,6 +152,7 @@ export class RemoteTableService {
     const remoteTableName = `${camelCase(input.name)}Remote`;
     const remoteTableLabel = camelToTitleCase(remoteTableName);
 
+    // We only support remote tables with an id column for now.
     const remoteTableIdColumn = remoteTableColumns.filter(
       (column) => column.column_name === 'id',
     )?.[0];

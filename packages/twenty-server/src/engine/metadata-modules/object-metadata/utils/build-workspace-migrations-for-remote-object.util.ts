@@ -28,26 +28,19 @@ const buildCommentForRemoteObjectForeignKey = async (
     .replace(')', '');
   const parsedComment = JSON.parse(commentWithoutGraphQL);
 
+  const foreignKey = {
+    local_name: `${localObjectMetadataName}Collection`,
+    local_columns: [`${remoteObjectMetadataName}Id`],
+    foreign_name: `${remoteObjectMetadataName}`,
+    foreign_schema: schema,
+    foreign_table: remoteObjectMetadataName,
+    foreign_columns: ['id'],
+  };
+
   if (parsedComment.foreign_keys) {
-    parsedComment.foreign_keys.push({
-      local_name: `${localObjectMetadataName}Collection`,
-      local_columns: [`${remoteObjectMetadataName}Id`],
-      foreign_name: `${remoteObjectMetadataName}`,
-      foreign_schema: schema,
-      foreign_table: remoteObjectMetadataName,
-      foreign_columns: ['id'],
-    });
+    parsedComment.foreign_keys.push(foreignKey);
   } else {
-    parsedComment.foreign_keys = [
-      {
-        local_name: `${localObjectMetadataName}Collection`,
-        local_columns: [`${remoteObjectMetadataName}Id`],
-        foreign_name: `${remoteObjectMetadataName}`,
-        foreign_schema: schema,
-        foreign_table: remoteObjectMetadataName,
-        foreign_columns: ['id'],
-      },
-    ];
+    parsedComment.foreign_keys = [foreignKey];
   }
 
   return `@graphql(${JSON.stringify(parsedComment)})`;
