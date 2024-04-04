@@ -53,7 +53,7 @@ export const SettingsIntegrationDatabaseConnectionsListCard = ({
       RowRightComponent={({ item: connection }) => (
         <StyledRowRightContainer>
           <SettingsIntegrationDatabaseConnectedTablesStatus
-            connectedTablesNb={connection.tables.length}
+            connectedTablesCount={connection.tables.length}
           />
           <LightIconButton Icon={IconChevronRight} accent="tertiary" />
         </StyledRowRightContainer>

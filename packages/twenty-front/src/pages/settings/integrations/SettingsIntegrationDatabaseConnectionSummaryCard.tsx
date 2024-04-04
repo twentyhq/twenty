@@ -37,7 +37,7 @@ export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
     }
     rightComponent={
       <SettingsIntegrationDatabaseConnectedTablesStatus
-        connectedTablesNb={connectedTablesNb}
+        connectedTablesCount={connectedTablesNb}
       />
     }
   />
