@@ -13,6 +13,7 @@ export enum WorkspaceMigrationColumnActionType {
   CREATE_FOREIGN_KEY = 'CREATE_FOREIGN_KEY',
   DROP_FOREIGN_KEY = 'DROP_FOREIGN_KEY',
   DROP = 'DROP',
+  CREATE_COMMENT = 'CREATE_COMMENT',
 }
 
 export type WorkspaceMigrationEnum = string | { from: string; to: string };
@@ -56,6 +57,11 @@ export type WorkspaceMigrationColumnDrop = {
   columnName: string;
 };
 
+export type WorkspaceMigrationCreateComment = {
+  action: WorkspaceMigrationColumnActionType.CREATE_COMMENT;
+  comment: string;
+};
+
 export type WorkspaceMigrationColumnAction = {
   action: WorkspaceMigrationColumnActionType;
 } & (
@@ -64,6 +70,7 @@ export type WorkspaceMigrationColumnAction = {
   | WorkspaceMigrationColumnCreateRelation
   | WorkspaceMigrationColumnDropRelation
   | WorkspaceMigrationColumnDrop
+  | WorkspaceMigrationCreateComment
 );
 
 export type WorkspaceMigrationTableAction = {

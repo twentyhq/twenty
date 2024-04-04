@@ -10,7 +10,7 @@ import { sortDesc } from '~/utils/sort';
 
 type CalendarEventGeneric = Omit<
   CalendarEvent,
-  'attendees' | 'externalCreatedAt'
+  'participants' | 'externalCreatedAt'
 >;
 
 export const useCalendarEvents = <T extends CalendarEventGeneric>(

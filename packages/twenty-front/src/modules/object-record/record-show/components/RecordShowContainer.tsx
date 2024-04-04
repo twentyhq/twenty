@@ -189,7 +189,7 @@ export const RecordShowContainer = ({
                 objectRecordId={objectRecordId}
                 objectNameSingular={objectNameSingular}
               />
-              {relationFieldMetadataItems.map((fieldMetadataItem, index) => (
+              {relationFieldMetadataItems?.map((fieldMetadataItem, index) => (
                 <FieldContext.Provider
                   key={objectRecordId + fieldMetadataItem.id}
                   value={{

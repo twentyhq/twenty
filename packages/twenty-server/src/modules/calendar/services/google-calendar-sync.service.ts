@@ -18,17 +18,17 @@ import { CalendarChannelRepository } from 'src/modules/calendar/repositories/cal
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { CalendarEventRepository } from 'src/modules/calendar/repositories/calendar-event.repository';
 import { formatGoogleCalendarEvent } from 'src/modules/calendar/utils/format-google-calendar-event.util';
-import { CalendarEventAttendeeRepository } from 'src/modules/calendar/repositories/calendar-event-attendee.repository';
+import { CalendarEventParticipantRepository } from 'src/modules/calendar/repositories/calendar-event-participant.repository';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { CalendarEventObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event.object-metadata';
 import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
-import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-attendee.object-metadata';
+import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
 import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
-import { CalendarEventAttendeeService } from 'src/modules/calendar/services/calendar-event-attendee/calendar-event-attendee.service';
 import { CalendarEventCleanerService } from 'src/modules/calendar/services/calendar-event-cleaner/calendar-event-cleaner.service';
-import { CalendarEventAttendee } from 'src/modules/calendar/types/calendar-event';
+import { CalendarEventParticipantService } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.service';
+import { CalendarEventParticipant } from 'src/modules/calendar/types/calendar-event';
 
 @Injectable()
 export class GoogleCalendarSyncService {
@@ -46,16 +46,16 @@ export class GoogleCalendarSyncService {
       CalendarChannelEventAssociationObjectMetadata,
     )
     private readonly calendarChannelEventAssociationRepository: CalendarChannelEventAssociationRepository,
-    @InjectObjectMetadataRepository(CalendarEventAttendeeObjectMetadata)
-    private readonly calendarEventAttendeesRepository: CalendarEventAttendeeRepository,
+    @InjectObjectMetadataRepository(CalendarEventParticipantObjectMetadata)
+    private readonly calendarEventParticipantsRepository: CalendarEventParticipantRepository,
     @InjectObjectMetadataRepository(BlocklistObjectMetadata)
     private readonly blocklistRepository: BlocklistRepository,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly eventEmitter: EventEmitter2,
-    private readonly calendarEventAttendeesService: CalendarEventAttendeeService,
     private readonly calendarEventCleanerService: CalendarEventCleanerService,
+    private readonly calendarEventParticipantsService: CalendarEventParticipantService,
   ) {}
 
   public async startGoogleCalendarSync(
@@ -231,13 +231,15 @@ export class GoogleCalendarSyncService {
       }),
     );
 
-    const attendeesToSave = eventsToSave.flatMap((event) => event.attendees);
-
-    const attendeesToUpdate = eventsToUpdate.flatMap(
-      (event) => event.attendees,
+    const participantsToSave = eventsToSave.flatMap(
+      (event) => event.participants,
     );
 
-    let newCalendarEventAttendees: CalendarEventAttendee[] = [];
+    const participantsToUpdate = eventsToUpdate.flatMap(
+      (event) => event.participants,
+    );
+
+    let newCalendarEventParticipants: CalendarEventParticipant[] = [];
 
     if (events.length > 0) {
       const dataSourceMetadata =
@@ -297,9 +299,9 @@ export class GoogleCalendarSyncService {
 
           startTime = Date.now();
 
-          newCalendarEventAttendees =
-            await this.calendarEventAttendeesRepository.updateCalendarEventAttendeesAndReturnNewOnes(
-              attendeesToUpdate,
+          newCalendarEventParticipants =
+            await this.calendarEventParticipantsRepository.updateCalendarEventParticipantsAndReturnNewOnes(
+              participantsToUpdate,
               iCalUIDCalendarEventIdMap,
               workspaceId,
               transactionManager,
@@ -307,18 +309,18 @@ export class GoogleCalendarSyncService {
 
           endTime = Date.now();
 
-          attendeesToSave.push(...newCalendarEventAttendees);
+          participantsToSave.push(...newCalendarEventParticipants);
 
           this.logger.log(
-            `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId}: updating attendees in ${
+            `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId}: updating participants in ${
               endTime - startTime
             }ms.`,
           );
 
           startTime = Date.now();
 
-          await this.calendarEventAttendeesService.saveCalendarEventAttendees(
-            attendeesToSave,
+          await this.calendarEventParticipantsService.saveCalendarEventParticipants(
+            participantsToSave,
             workspaceId,
             transactionManager,
           );
@@ -326,7 +328,7 @@ export class GoogleCalendarSyncService {
           endTime = Date.now();
 
           this.logger.log(
-            `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId}: saving attendees in ${
+            `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId}: saving participants in ${
               endTime - startTime
             }ms.`,
           );
@@ -367,7 +369,7 @@ export class GoogleCalendarSyncService {
           this.eventEmitter.emit(`createContacts`, {
             workspaceId,
             connectedAccountHandle: connectedAccount.handle,
-            contactsToCreate: attendeesToSave,
+            contactsToCreate: participantsToSave,
           });
         }
       } catch (error) {

@@ -1,6 +1,6 @@
 import { CalendarChannelEventAssociationRepository } from 'src/modules/calendar/repositories/calendar-channel-event-association.repository';
 import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
-import { CalendarEventAttendeeRepository } from 'src/modules/calendar/repositories/calendar-event-attendee.repository';
+import { CalendarEventParticipantRepository } from 'src/modules/calendar/repositories/calendar-event-participant.repository';
 import { CalendarEventRepository } from 'src/modules/calendar/repositories/calendar-event.repository';
 import { CompanyRepository } from 'src/modules/company/repositories/company.repository';
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
@@ -19,7 +19,7 @@ export const metadataToRepositoryMapping = {
   CalendarChannelEventAssociationObjectMetadata:
     CalendarChannelEventAssociationRepository,
   CalendarChannelObjectMetadata: CalendarChannelRepository,
-  CalendarEventAttendeeObjectMetadata: CalendarEventAttendeeRepository,
+  CalendarEventParticipantObjectMetadata: CalendarEventParticipantRepository,
   CalendarEventObjectMetadata: CalendarEventRepository,
   CompanyObjectMetadata: CompanyRepository,
   ConnectedAccountObjectMetadata: ConnectedAccountRepository,

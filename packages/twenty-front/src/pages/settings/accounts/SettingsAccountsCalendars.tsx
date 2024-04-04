@@ -51,7 +51,7 @@ export const SettingsAccountsCalendars = () => {
   const exampleDayTime = startOfDay(exampleStartDate).getTime();
   const exampleCalendarEvent: TimelineCalendarEvent = {
     id: '',
-    attendees: [
+    participants: [
       {
         firstName: currentWorkspaceMember?.name.firstName || '',
         lastName: currentWorkspaceMember?.name.lastName || '',

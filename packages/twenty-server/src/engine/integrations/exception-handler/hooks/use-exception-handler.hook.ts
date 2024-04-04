@@ -49,7 +49,7 @@ export const useExceptionHandler = <PluginContext extends GraphQLContext>(
         (o) => o.kind === Kind.OPERATION_DEFINITION,
       ) as OperationDefinitionNode;
       const operationType = rootOperation.operation;
-      const user = args.contextValue.user;
+      const user = args.contextValue.req.user;
       const document = getDocumentString(args.document, print);
       const opName =
         args.operationName ||
@@ -124,6 +124,25 @@ export const useExceptionHandler = <PluginContext extends GraphQLContext>(
           return handleStreamOrSingleExecutionResult(payload, handleResult);
         },
       };
+    },
+    onValidate: ({ context, validateFn, params: { documentAST, schema } }) => {
+      const errors = validateFn(schema, documentAST);
+
+      if (Array.isArray(errors) && errors.length > 0) {
+        const headers = context.req.headers;
+        const currentSchemaVersion = context.req.cacheVersion;
+
+        const requestSchemaVersion = headers['x-schema-version'];
+
+        if (
+          requestSchemaVersion &&
+          requestSchemaVersion !== currentSchemaVersion
+        ) {
+          throw new GraphQLError(
+            `Schema version mismatch, please refresh the page.`,
+          );
+        }
+      }
     },
   };
 };

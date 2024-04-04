@@ -42,7 +42,7 @@ const renewTokenMutation = async (
   >({
     mutation: RenewTokenDocument,
     variables: {
-      refreshToken: refreshToken,
+      appToken: refreshToken,
     },
     fetchPolicy: 'network-only',
   });
