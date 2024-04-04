@@ -17,6 +17,7 @@
       ],
       "outputs": ["{projectRoot}/src/index.ts", "{projectRoot}/src/*/index.ts"],
       "options": {
+        "outputPath": "{projectRoot}/dist",
         "command": "npx ts-node --esm {projectRoot}/scripts/generateBarrels.ts"
       }
     },
@@ -37,9 +38,38 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": ["{projectRoot}/coverage"],
       "options": {
-        "jestConfig": "packages/twenty-ui/jest.config.ts"
+        "jestConfig": "{projectRoot}/jest.config.ts"
+      }
+    },
+    "storybook:dev": {
+      "executor": "@nx/storybook:storybook",
+      "options": {
+        "port": 6007,
+        "configDir": "{projectRoot}/.storybook"
+      },
+      "configurations": {
+        "ci": { "quiet": true }
+      }
+    },
+    "storybook:build": {
+      "executor": "@nx/storybook:build",
+      "outputs": ["{options.outputDir}"],
+      "options": {
+        "outputDir": "{projectRoot}/storybook-static",
+        "configDir": "{projectRoot}/.storybook"
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "storybook:test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "test-storybook -c {projectRoot}/.storybook --url=http://localhost:6007"
       }
     }
   },
