@@ -73,13 +73,28 @@ const findAll = (model: SQLiteTableWithColumns<any>) => {
   throw new Error('Unsupported database driver');
 };
 
-const insertMany = async (
-  model: SQLiteTableWithColumns<any>,
-  data: any,
-  options?: { onConflictKey?: string },
+const insertMany = async <T extends SQLiteTableWithColumns<any>>(
+  model: T,
+  data: T[],
+  options?: {
+    onConflictKey?: keyof T;
+    onConflictUpdateObject?: Partial<T>;
+  },
 ) => {
   if (isSqliteDriver) {
     const query = sqliteDb.insert(model).values(data);
+
+    if (options?.onConflictUpdateObject) {
+      if (options?.onConflictKey) {
+        return query
+          .onConflictDoUpdate({
+            target: [model[options.onConflictKey]],
+            set: options.onConflictUpdateObject,
+          })
+          .execute();
+      }
+    }
+
     if (options?.onConflictKey) {
       return query
         .onConflictDoNothing({
@@ -87,10 +102,23 @@ const insertMany = async (
         })
         .execute();
     }
+
     return query.execute();
   }
   if (isPgDriver) {
     const query = pgDb.insert(model).values(data);
+
+    if (options?.onConflictUpdateObject) {
+      if (options?.onConflictKey) {
+        return query
+          .onConflictDoUpdate({
+            target: [model[options.onConflictKey]],
+            set: options.onConflictUpdateObject,
+          })
+          .execute();
+      }
+    }
+
     if (options?.onConflictKey) {
       return query
         .onConflictDoNothing({
