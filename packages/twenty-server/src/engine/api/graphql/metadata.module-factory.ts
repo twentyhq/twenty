@@ -7,13 +7,17 @@ import { useExceptionHandler } from 'src/engine/integrations/exception-handler/h
 import { useThrottler } from 'src/engine/api/graphql/graphql-config/hooks/use-throttler';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
+import { testMetadataSchema } from 'src/engine/utils/testMetadataSchema';
 
 export const metadataModuleFactory = async (
   environmentService: EnvironmentService,
   exceptionHandlerService: ExceptionHandlerService,
 ): Promise<YogaDriverConfig> => {
+  const isTestEnv = environmentService.get('ENV') === 'test';
+
   const config: YogaDriverConfig = {
-    autoSchemaFile: true,
+    autoSchemaFile: !isTestEnv,
+    schema: isTestEnv ? testMetadataSchema : undefined,
     include: [MetadataGraphQLApiModule],
     renderGraphiQL() {
       return renderApolloPlayground({ path: 'metadata' });
