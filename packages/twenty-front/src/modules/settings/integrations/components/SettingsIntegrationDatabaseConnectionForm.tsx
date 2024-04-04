@@ -25,7 +25,7 @@ const StyledInputsContainer = styled.div`
     'input-2 input-3'
     'input-4 input-5';
 
-  & :first-child {
+  & :first-of-type {
     grid-area: input-1;
   }
 `;
