@@ -114,7 +114,7 @@ export class FieldMetadataHealthService {
       columnNames = [computeColumnName(fieldMetadata)];
     }
 
-    const defaultValue = this.databaseStructureService.getPostgresDefault(
+    const defaultValues = this.databaseStructureService.getPostgresDefaults(
       fieldMetadata.type,
       fieldMetadata.defaultValue,
     );
@@ -140,8 +140,11 @@ export class FieldMetadataHealthService {
         issues.push({
           type: WorkspaceHealthIssueType.MISSING_COLUMN,
           fieldMetadata,
+          columnStructures: workspaceTableColumns,
           message: `Column ${columnName} not found in table ${tableName}`,
         });
+
+        continue;
       }
 
       const columnDefaultValue =
@@ -183,12 +186,12 @@ export class FieldMetadataHealthService {
         }
       }
 
-      if (columnDefaultValue !== defaultValue) {
+      if (columnDefaultValue !== defaultValues[index]) {
         issues.push({
           type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_CONFLICT,
           fieldMetadata,
           columnStructure,
-          message: `Column ${columnName} default value is not the same as the field metadata default value "${columnStructure.columnDefault}" !== "${defaultValue}"`,
+          message: `Column ${columnName} default value is not the same as the field metadata default value "${columnStructure.columnDefault}" !== "${defaultValues[index]}"`,
         });
       }
     }

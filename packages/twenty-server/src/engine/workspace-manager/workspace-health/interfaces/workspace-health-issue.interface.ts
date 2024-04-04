@@ -73,6 +73,7 @@ export interface WorkspaceHealthColumnIssue<
   type: T;
   fieldMetadata: FieldMetadataEntity;
   columnStructure?: WorkspaceTableStructure;
+  columnStructures?: WorkspaceTableStructure[];
   message: string;
 }
 

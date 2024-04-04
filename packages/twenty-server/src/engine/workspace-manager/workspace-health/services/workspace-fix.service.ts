@@ -11,6 +11,7 @@ import { WorkspaceNullableFixer } from 'src/engine/workspace-manager/workspace-h
 import { WorkspaceDefaultValueFixer } from 'src/engine/workspace-manager/workspace-health/fixer/workspace-default-value.fixer';
 import { WorkspaceTypeFixer } from 'src/engine/workspace-manager/workspace-health/fixer/workspace-type.fixer';
 import { CompareEntity } from 'src/engine/workspace-manager/workspace-health/fixer/abstract-workspace.fixer';
+import { WorkspaceMissingColumnFixer } from 'src/engine/workspace-manager/workspace-health/fixer/workspace-missing-column.fixer';
 
 @Injectable()
 export class WorkspaceFixService {
@@ -18,6 +19,7 @@ export class WorkspaceFixService {
     private readonly workspaceNullableFixer: WorkspaceNullableFixer,
     private readonly workspaceDefaultValueFixer: WorkspaceDefaultValueFixer,
     private readonly workspaceTypeFixer: WorkspaceTypeFixer,
+    private readonly workspaceMissingColumnFixer: WorkspaceMissingColumnFixer,
   ) {}
 
   async createWorkspaceMigrations(
@@ -50,6 +52,16 @@ export class WorkspaceFixService {
         const filteredIssues = this.workspaceTypeFixer.filterIssues(issues);
 
         return this.workspaceTypeFixer.createWorkspaceMigrations(
+          manager,
+          objectMetadataCollection,
+          filteredIssues,
+        );
+      }
+      case WorkspaceHealthFixKind.MissingColumn: {
+        const filteredIssues =
+          this.workspaceMissingColumnFixer.filterIssues(issues);
+
+        return this.workspaceMissingColumnFixer.createWorkspaceMigrations(
           manager,
           objectMetadataCollection,
           filteredIssues,
