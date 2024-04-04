@@ -6,10 +6,12 @@ on:
     paths:
       - 'package.json'
       - 'packages/twenty-server/**'
+      - 'packages/twenty-emails/**'
   pull_request:
     paths:
       - 'package.json'
       - 'packages/twenty-server/**'
+      - 'packages/twenty-emails/**'
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
