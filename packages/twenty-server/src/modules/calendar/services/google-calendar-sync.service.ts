@@ -257,9 +257,9 @@ export class GoogleCalendarSyncService {
           endTime = Date.now();
 
           this.logger.log(
-            `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: saving events in ${
-              endTime - startTime
-            }ms.`,
+            `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: saving ${
+              eventsToSave.length
+            } events in ${endTime - startTime}ms.`,
           );
 
           startTime = Date.now();
@@ -273,9 +273,9 @@ export class GoogleCalendarSyncService {
           endTime = Date.now();
 
           this.logger.log(
-            `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: updating events in ${
-              endTime - startTime
-            }ms.`,
+            `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: updating ${
+              eventsToUpdate.length
+            } events in ${endTime - startTime}ms.`,
           );
 
           startTime = Date.now();
@@ -337,10 +337,6 @@ export class GoogleCalendarSyncService {
             transactionManager,
           );
 
-          await this.calendarEventCleanerService.cleanWorkspaceCalendarEvents(
-            workspaceId,
-          );
-
           endTime = Date.now();
 
           this.logger.log(
@@ -349,6 +345,20 @@ export class GoogleCalendarSyncService {
             }ms.`,
           );
         });
+
+        startTime = Date.now();
+
+        await this.calendarEventCleanerService.cleanWorkspaceCalendarEvents(
+          workspaceId,
+        );
+
+        endTime = Date.now();
+
+        this.logger.log(
+          `google calendar full-sync for workspace ${workspaceId} and account ${connectedAccountId}: cleaning calendar events in ${
+            endTime - startTime
+          }ms.`,
+        );
 
         if (calendarChannel.isContactAutoCreationEnabled) {
           const contactsToCreate = attendeesToSave.concat(
