@@ -4,6 +4,23 @@
   "sourceRoot": "packages/twenty-ui/src",
   "projectType": "library",
   "targets": {
+    "build": {
+      "dependsOn": ["^build", "generateBarrels"]
+    },
+    "generateBarrels": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*.{ts,tsx}",
+        "!{projectRoot}/src/**/*.(spec|test).{ts,tsx}",
+        "!{projectRoot}/src/**/*.stories.{ts,tsx}"
+      ],
+      "outputs": ["{projectRoot}/src/index.ts", "{projectRoot}/src/*/index.ts"],
+      "options": {
+        "outputPath": "{projectRoot}/dist",
+        "command": "npx ts-node --esm {projectRoot}/scripts/generateBarrels.ts"
+      }
+    },
     "lint": {
       "executor": "@nx/eslint:lint",
       "options": {
@@ -24,6 +41,35 @@
       "outputs": ["{projectRoot}/coverage"],
       "options": {
         "jestConfig": "{projectRoot}/jest.config.ts"
+      }
+    },
+    "storybook:dev": {
+      "executor": "@nx/storybook:storybook",
+      "options": {
+        "port": 6007,
+        "configDir": "{projectRoot}/.storybook"
+      },
+      "configurations": {
+        "ci": { "quiet": true }
+      }
+    },
+    "storybook:build": {
+      "executor": "@nx/storybook:build",
+      "outputs": ["{options.outputDir}"],
+      "options": {
+        "outputDir": "{projectRoot}/storybook-static",
+        "configDir": "{projectRoot}/.storybook"
+      },
+      "configurations": {
+        "ci": {
+          "quiet": true
+        }
+      }
+    },
+    "storybook:test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "test-storybook -c {projectRoot}/.storybook --url=http://localhost:6007"
       }
     }
   },
