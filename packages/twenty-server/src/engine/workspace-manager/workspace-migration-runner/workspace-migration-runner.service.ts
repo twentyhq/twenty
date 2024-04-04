@@ -224,6 +224,14 @@ export class WorkspaceMigrationRunnerService {
             columnMigration.columnName,
           );
           break;
+        case WorkspaceMigrationColumnActionType.CREATE_COMMENT:
+          await this.createComment(
+            queryRunner,
+            schemaName,
+            tableName,
+            columnMigration.comment,
+          );
+          break;
         default:
           throw new Error(`Migration column action not supported`);
       }
@@ -411,5 +419,16 @@ export class WorkspaceMigrationRunnerService {
     );
 
     return foreignKeys[0]?.constraint_name;
+  }
+
+  private async createComment(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+    comment: string,
+  ) {
+    await queryRunner.query(`
+      COMMENT ON TABLE "${schemaName}"."${tableName}" IS e'${comment}';
+    `);
   }
 }

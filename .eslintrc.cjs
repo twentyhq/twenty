@@ -4,6 +4,7 @@ module.exports = {
   plugins: [
     '@nx',
     'prefer-arrow',
+    'import',
     'simple-import-sort',
     'unused-imports',
     'unicorn',
@@ -11,9 +12,10 @@ module.exports = {
   rules: {
     'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
     'no-console': ['warn', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
-    'no-unused-vars': 'off',
     'no-control-regex': 0,
+    'no-duplicate-imports': 'error',
     'no-undef': 'off',
+    'no-unused-vars': 'off',
 
     '@nx/enforce-module-boundaries': [
       'error',
@@ -29,6 +31,10 @@ module.exports = {
       },
     ],
 
+    'import/no-relative-packages': 'error',
+    'import/no-useless-path-segments': 'error',
+    'import/no-duplicates': ['error', { considerQueryString: true }],
+
     'prefer-arrow/prefer-arrow-functions': [
       'error',
       {
@@ -43,7 +49,7 @@ module.exports = {
       {
         groups: [
           ['^react', '^@?\\w'],
-          ['^(@|~)(/.*|$)'],
+          ['^(@|~|src)(/.*|$)'],
           ['^\\u0000'],
           ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
           ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
@@ -70,9 +76,20 @@ module.exports = {
       extends: ['plugin:@nx/typescript'],
       rules: {
         '@typescript-eslint/ban-ts-comment': 'error',
-        '@typescript-eslint/interface-name-prefix': 'off',
+        '@typescript-eslint/consistent-type-imports': [
+          'error',
+          { prefer: 'no-type-imports' },
+        ],
         '@typescript-eslint/explicit-function-return-type': 'off',
         '@typescript-eslint/explicit-module-boundary-types': 'off',
+        '@typescript-eslint/interface-name-prefix': 'off',
+        '@typescript-eslint/no-empty-function': 'off',
+        '@typescript-eslint/no-empty-interface': [
+          'error',
+          {
+            allowSingleExtends: true,
+          },
+        ],
         '@typescript-eslint/no-explicit-any': 'off',
         '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-unused-vars': [
@@ -83,14 +100,6 @@ module.exports = {
             args: 'after-used',
             argsIgnorePattern: '^_',
           },
-        ],
-        '@typescript-eslint/consistent-type-imports': [
-          'error',
-          { prefer: 'no-type-imports' },
-        ],
-        '@typescript-eslint/no-empty-interface': [
-          'error',
-          { allowSingleExtends: true },
         ],
       },
     },
@@ -104,12 +113,6 @@ module.exports = {
       env: {
         jest: true,
       },
-      rules: {
-        '@typescript-eslint/no-non-null-assertion': 'off',
-      },
-    },
-    {
-      files: ['*.stories.@(ts|tsx|js|jsx)'],
       rules: {
         '@typescript-eslint/no-non-null-assertion': 'off',
       },
@@ -134,6 +137,10 @@ module.exports = {
         ],
         '@nx/workspace-max-consts-per-file': ['error', { max: 1 }],
       },
+    },
+    {
+      files: ['*.json'],
+      parser: 'jsonc-eslint-parser',
     },
   ],
 };

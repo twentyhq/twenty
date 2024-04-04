@@ -1,5 +1,8 @@
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import {
+  RelationMetadataType,
+  RelationOnDeleteAction,
+} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { activityStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
@@ -91,6 +94,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => ActivityTargetObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
   activityTargets: ActivityTargetObjectMetadata[];
@@ -105,6 +109,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => AttachmentObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
   attachments: AttachmentObjectMetadata[];
@@ -119,6 +124,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => CommentObjectMetadata,
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
   comments: CommentObjectMetadata[];
@@ -131,6 +137,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
     icon: 'IconUserCircle',
     joinColumn: 'authorId',
   })
+  @IsNullable()
   author: WorkspaceMemberObjectMetadata;
 
   @FieldMetadata({

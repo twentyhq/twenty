@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import styled from '@emotion/styled';
-import { useRouter } from 'next/navigation';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { IconChevronDown, IconChevronRight } from '@/app/_components/ui/icons';
 import { Theme } from '@/app/_components/ui/theme/theme';

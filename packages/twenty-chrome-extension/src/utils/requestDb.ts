@@ -1,4 +1,5 @@
 import { OperationVariables } from '@apollo/client';
+import { isUndefined } from '@sniptt/guards';
 import { DocumentNode } from 'graphql';
 
 import getApolloClient from '~/utils/apolloClient';
@@ -11,11 +12,9 @@ export const callQuery = async <T>(
 
   const { data, error } = await client.query<T>({ query, variables });
 
-  if (error) throw new Error(error.message);
+  if (!isUndefined(error)) throw new Error(error.message);
 
-  if (data) return data;
-
-  return null;
+  return data ?? null;
 };
 
 export const callMutation = async <T>(
@@ -26,9 +25,7 @@ export const callMutation = async <T>(
 
   const { data, errors } = await client.mutate<T>({ mutation, variables });
 
-  if (errors) throw new Error(errors[0].message);
+  if (!isUndefined(errors)) throw new Error(errors[0].message);
 
-  if (data) return data;
-
-  return null;
+  return data ?? null;
 };

@@ -59,7 +59,9 @@ export const useViewFromQueryParams = () => {
     [queryParamsValidation],
   );
 
-  const hasFiltersQueryParams = filterQueryParams;
+  const hasFiltersQueryParams =
+    isDefined(filterQueryParams) &&
+    Object.entries(filterQueryParams).length > 0;
 
   const getFiltersFromQueryParams = useRecoilCallback(
     ({ snapshot }) =>
