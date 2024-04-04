@@ -13,7 +13,18 @@
     },
     "lint": {
       "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"]
+      "options": {
+        "eslintConfig": "{projectRoot}/.eslintrc.cjs",
+        "ignorePath": "{workspaceRoot}/.gitignore",
+        "lintFilePatterns": [
+          "{projectRoot}/src/**/*.{ts,tsx,json}",
+          "{projectRoot}/package.json"
+        ]
+      },
+      "configurations": {
+        "ci": { "lintFilePatterns": ["{projectRoot}/**/*.{ts,tsx,json}"] },
+        "fix": { "fix": true }
+      }
     },
     "test": {
       "executor": "@nx/jest:jest",

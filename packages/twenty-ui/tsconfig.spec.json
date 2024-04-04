@@ -7,8 +7,9 @@
   },
   "include": [
     "jest.config.ts",
-    "src/**/*.test.ts",
+    "src/**/*.d.ts",
     "src/**/*.spec.ts",
-    "src/**/*.d.ts"
+    "src/**/*.test.ts",
+    "vite.config.ts"
   ]
 }
