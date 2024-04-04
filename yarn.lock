@@ -11808,6 +11808,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@sentry/types@npm:^7.109.0":
+  version: 7.109.0
+  resolution: "@sentry/types@npm:7.109.0"
+  checksum: 0c2953999b94b1549919b89fd0c956c2229c9fbcdee2c692ee8f94841b10905ea03cc361e89aa4387fe231a1c08d02fe27080d40874ad0da3785e43d17d941bc
+  languageName: node
+  linkType: hard
+
 "@sentry/utils@npm:6.19.7":
   version: 6.19.7
   resolution: "@sentry/utils@npm:6.19.7"
@@ -45659,6 +45666,7 @@ __metadata:
     "@sentry/profiling-node": "npm:^1.3.4"
     "@sentry/react": "npm:^7.88.0"
     "@sentry/tracing": "npm:^7.99.0"
+    "@sentry/types": "npm:^7.109.0"
     "@sniptt/guards": "npm:^0.2.0"
     "@stoplight/elements": "npm:^8.0.5"
     "@storybook/addon-actions": "npm:^7.6.3"

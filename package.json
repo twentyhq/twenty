@@ -202,6 +202,7 @@
     "@nx/storybook": "18.1.3",
     "@nx/vite": "18.1.3",
     "@nx/web": "18.1.3",
+    "@sentry/types": "^7.109.0",
     "@storybook/addon-actions": "^7.6.3",
     "@storybook/addon-coverage": "^1.0.0",
     "@storybook/addon-essentials": "^7.6.7",
