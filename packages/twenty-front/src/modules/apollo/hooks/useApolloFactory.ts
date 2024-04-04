@@ -1,8 +1,9 @@
 import { useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { previousUrlState } from '@/auth/states/previousUrlState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
@@ -17,6 +18,7 @@ import { ApolloFactory, Options } from '../services/apollo.factory';
 export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   // eslint-disable-next-line @nx/workspace-no-state-useref
   const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const [isDebugMode] = useRecoilState(isDebugModeState);
 
   const navigate = useNavigate();
@@ -29,6 +31,11 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
     apolloRef.current = new ApolloFactory({
       uri: `${REACT_APP_SERVER_BASE_URL}/graphql`,
       cache: new InMemoryCache(),
+      headers: {
+        ...(currentWorkspace?.currentCacheVersion && {
+          'X-Schema-Version': currentWorkspace.currentCacheVersion,
+        }),
+      },
       defaultOptions: {
         query: {
           fetchPolicy: 'cache-first',
@@ -60,7 +67,7 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
 
     return apolloRef.current.getClient();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [setTokenPair, isDebugMode, setPreviousUrl]);
+  }, [setTokenPair, isDebugMode, currentWorkspace?.currentCacheVersion, setPreviousUrl]);
 
   useUpdateEffect(() => {
     if (isDefined(apolloRef.current)) {
