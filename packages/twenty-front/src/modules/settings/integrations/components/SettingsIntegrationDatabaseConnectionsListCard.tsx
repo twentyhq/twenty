@@ -4,18 +4,14 @@ import { IconChevronRight } from 'twenty-ui';
 
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsIntegrationDatabaseConnectedTablesStatus } from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectedTablesStatus';
+import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { RemoteServer } from '~/generated-metadata/graphql';
+import { mockedRemoteObjectIntegrations } from '~/testing/mock-data/remoteObjectDatabases';
 
 type SettingsIntegrationDatabaseConnectionsListCardProps = {
-  databaseLogoUrl: string;
-  connections: {
-    id: string;
-    key: string;
-    name: string;
-    tables: {
-      name: string;
-    }[];
-  }[];
+  integration: SettingsIntegration;
+  connections: RemoteServer[];
 };
 
 const StyledDatabaseLogoContainer = styled.div`
@@ -37,29 +33,39 @@ const StyledRowRightContainer = styled.div`
 `;
 
 export const SettingsIntegrationDatabaseConnectionsListCard = ({
-  databaseLogoUrl,
+  integration,
   connections,
 }: SettingsIntegrationDatabaseConnectionsListCardProps) => {
   const navigate = useNavigate();
+
+  // TODO: Use real remote database tables data from backend
+  const tables = mockedRemoteObjectIntegrations[0].connections[0].tables;
+
+  const getConnectionDbName = (connection: RemoteServer) =>
+    integration.from.key === 'postgresql'
+      ? connection.foreignDataWrapperOptions?.dbname
+      : '';
 
   return (
     <SettingsListCard
       items={connections}
       RowIcon={() => (
         <StyledDatabaseLogoContainer>
-          <StyledDatabaseLogo alt="" src={databaseLogoUrl} />
+          <StyledDatabaseLogo alt="" src={integration.from.image} />
         </StyledDatabaseLogoContainer>
       )}
-      RowRightComponent={({ item: connection }) => (
+      RowRightComponent={({ item: _connection }) => (
         <StyledRowRightContainer>
           <SettingsIntegrationDatabaseConnectedTablesStatus
-            connectedTablesCount={connection.tables.length}
+            connectedTablesCount={tables.length}
           />
           <LightIconButton Icon={IconChevronRight} accent="tertiary" />
         </StyledRowRightContainer>
       )}
-      onRowClick={(connection) => navigate(`./${connection.key}`)}
-      getItemLabel={(connection) => connection.name}
+      onRowClick={(connection) =>
+        navigate(`./${getConnectionDbName(connection)}`)
+      }
+      getItemLabel={getConnectionDbName}
       hasFooter
       footerButtonLabel="Add connection"
       onFooterButtonClick={() => navigate('./new')}
