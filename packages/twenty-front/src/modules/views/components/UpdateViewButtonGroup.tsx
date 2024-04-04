@@ -11,6 +11,7 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { UPDATE_VIEW_BUTTON_DROPDOWN_ID } from '@/views/constants/UpdateViewButtonDropdownId';
+import { useViewFromQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { useSaveCurrentViewFiltersAndSorts } from '@/views/hooks/useSaveCurrentViewFiltersAndSorts';
@@ -74,7 +75,11 @@ export const UpdateViewButtonGroup = ({
     await saveCurrentViewFilterAndSorts();
   };
 
-  if (!canPersistView) {
+  const { hasFiltersQueryParams } = useViewFromQueryParams();
+
+  const canShowButton = canPersistView && !hasFiltersQueryParams;
+
+  if (!canShowButton) {
     return <></>;
   }
 

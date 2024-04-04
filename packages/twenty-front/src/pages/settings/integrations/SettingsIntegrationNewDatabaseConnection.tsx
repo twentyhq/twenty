@@ -1,13 +1,30 @@
 import { useEffect } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { IconSettings } from 'twenty-ui';
+import { z } from 'zod';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import {
+  SettingsIntegrationPostgreSQLConnectionForm,
+  settingsIntegrationPostgreSQLConnectionFormSchema,
+} from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectionForm';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
+import { SettingsPath } from '@/types/SettingsPath';
+import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+
+const newConnectionSchema = settingsIntegrationPostgreSQLConnectionFormSchema;
+
+type SettingsIntegrationNewConnectionFormValues = z.infer<
+  typeof newConnectionSchema
+>;
 
 export const SettingsIntegrationNewDatabaseConnection = () => {
   const { databaseKey = '' } = useParams();
@@ -35,22 +52,46 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
     }
   }, [integration, databaseKey, navigate, isIntegrationAvailable]);
 
+  const formConfig = useForm<SettingsIntegrationNewConnectionFormValues>({
+    mode: 'onTouched',
+    resolver: zodResolver(newConnectionSchema),
+  });
+
   if (!isIntegrationAvailable) return null;
 
+  const settingsIntegrationsPagePath = getSettingsPagePath(
+    SettingsPath.Integrations,
+  );
+
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <SettingsPageContainer>
-        <Breadcrumb
-          links={[
-            { children: 'Integrations', href: '/settings/integrations' },
-            {
-              children: integration.text,
-              href: `/settings/integrations/${databaseKey}`,
-            },
-            { children: 'New' },
-          ]}
-        />
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <FormProvider {...formConfig}>
+      <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+        <SettingsPageContainer>
+          <Breadcrumb
+            links={[
+              {
+                children: 'Integrations',
+                href: settingsIntegrationsPagePath,
+              },
+              {
+                children: integration.text,
+                href: `${settingsIntegrationsPagePath}/${databaseKey}`,
+              },
+              { children: 'New' },
+            ]}
+          />
+          {databaseKey === 'postgresql' ? (
+            <Section>
+              <H2Title
+                title="Connect a new database"
+                description="Provide the information to connect your PostgreSQL database"
+              />
+              <SettingsIntegrationPostgreSQLConnectionForm />
+            </Section>
+          ) : null}
+        </SettingsPageContainer>
+      </SubMenuTopBarContainer>
+    </FormProvider>
   );
 };

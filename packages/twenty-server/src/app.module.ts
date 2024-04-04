@@ -1,4 +1,9 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import {
+  DynamicModule,
+  MiddlewareConsumer,
+  Module,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { GraphQLModule } from '@nestjs/graphql';
@@ -16,6 +21,8 @@ import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphq
 import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graphql-config.module';
 import { GraphQLConfigService } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { UserWorkspaceMiddleware } from 'src/engine/middlewares/user-workspace.middleware';
+import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
 
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
 import { IntegrationsModule } from './engine/integrations/integrations.module';
@@ -44,6 +51,8 @@ import { IntegrationsModule } from './engine/integrations/integrations.module';
     CoreEngineModule,
     // Modules module, contains all business logic modules
     ModulesModule,
+    // Needed for the user workspace middleware
+    WorkspaceCacheVersionModule,
     // Api modules
     CoreGraphQLApiModule,
     MetadataGraphQLApiModule,
@@ -66,5 +75,15 @@ export class AppModule {
     }
 
     return modules;
+  }
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(UserWorkspaceMiddleware)
+      .forRoutes({ path: 'graphql', method: RequestMethod.ALL });
+
+    consumer
+      .apply(UserWorkspaceMiddleware)
+      .forRoutes({ path: 'metadata', method: RequestMethod.ALL });
   }
 }
