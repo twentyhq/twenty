@@ -101,13 +101,13 @@ export class CalendarEventRepository {
       transactionManager,
     );
 
-    const iCalUIDsCalendarEvnetIdsMap = new Map<string, string>();
+    const iCalUIDsCalendarEventIdsMap = new Map<string, string>();
 
     calendarEvents.forEach((calendarEvent) => {
-      iCalUIDsCalendarEvnetIdsMap.set(calendarEvent.iCalUID, calendarEvent.id);
+      iCalUIDsCalendarEventIdsMap.set(calendarEvent.iCalUID, calendarEvent.id);
     });
 
-    return iCalUIDsCalendarEvnetIdsMap;
+    return iCalUIDsCalendarEventIdsMap;
   }
 
   public async saveCalendarEvents(

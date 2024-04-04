@@ -291,22 +291,6 @@ export class GoogleCalendarSyncService {
 
           startTime = Date.now();
 
-          await this.calendarEventAttendeesService.saveCalendarEventAttendees(
-            attendeesToSave,
-            workspaceId,
-            transactionManager,
-          );
-
-          endTime = Date.now();
-
-          this.logger.log(
-            `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId}: saving attendees in ${
-              endTime - startTime
-            }ms.`,
-          );
-
-          startTime = Date.now();
-
           newCalendarEventAttendees =
             await this.calendarEventAttendeesRepository.updateCalendarEventAttendeesAndReturnNewOnes(
               attendeesToUpdate,
@@ -317,8 +301,29 @@ export class GoogleCalendarSyncService {
 
           endTime = Date.now();
 
+          attendeesToSave.push(...newCalendarEventAttendees);
+
           this.logger.log(
             `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId}: updating attendees in ${
+              endTime - startTime
+            }ms.`,
+          );
+
+          startTime = Date.now();
+
+          console.log('newCalendarEventAttendees', newCalendarEventAttendees);
+          console.log('attendeesToSave', attendeesToSave);
+
+          await this.calendarEventAttendeesService.saveCalendarEventAttendees(
+            attendeesToSave,
+            workspaceId,
+            transactionManager,
+          );
+
+          endTime = Date.now();
+
+          this.logger.log(
+            `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId}: saving attendees in ${
               endTime - startTime
             }ms.`,
           );
@@ -356,14 +361,10 @@ export class GoogleCalendarSyncService {
         );
 
         if (calendarChannel.isContactAutoCreationEnabled) {
-          const contactsToCreate = attendeesToSave.concat(
-            newCalendarEventAttendees,
-          );
-
           this.eventEmitter.emit(`createContacts`, {
             workspaceId,
             connectedAccountHandle: connectedAccount.handle,
-            contactsToCreate,
+            contactsToCreate: attendeesToSave,
           });
         }
       } catch (error) {
