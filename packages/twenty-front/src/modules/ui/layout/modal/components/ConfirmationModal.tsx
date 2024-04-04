@@ -1,7 +1,7 @@
 import { ReactNode, useState } from 'react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup } from 'framer-motion';
-import debounce from 'lodash.debounce';
+import { useDebouncedCallback } from 'use-debounce';
 
 import {
   H1Title,
@@ -78,7 +78,7 @@ export const ConfirmationModal = ({
     isValueMatchingInput(confirmationValue, value);
   };
 
-  const isValueMatchingInput = debounce(
+  const isValueMatchingInput = useDebouncedCallback(
     (value?: string, inputValue?: string) => {
       setIsValidValue(Boolean(value && inputValue && value === inputValue));
     },
