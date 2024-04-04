@@ -16,7 +16,7 @@ import {
 import {
   GoogleCalendarSyncJob,
   GoogleCalendarSyncJobData,
-} from 'src/modules/calendar/jobs/google-calendar-full-sync.job';
+} from 'src/modules/calendar/jobs/google-calendar-sync.job';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import {
   FeatureFlagEntity,

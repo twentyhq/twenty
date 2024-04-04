@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
@@ -15,8 +15,6 @@ import { GoogleCalendarClientProvider } from 'src/modules/calendar/services/prov
 import { googleCalendarSearchFilterExcludeEmails } from 'src/modules/calendar/utils/google-calendar-search-filter.util';
 import { CalendarChannelEventAssociationRepository } from 'src/modules/calendar/repositories/calendar-channel-event-association.repository';
 import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { CalendarEventRepository } from 'src/modules/calendar/repositories/calendar-event.repository';
 import { formatGoogleCalendarEvent } from 'src/modules/calendar/utils/format-google-calendar-event.util';
@@ -38,8 +36,6 @@ export class GoogleCalendarSyncService {
 
   constructor(
     private readonly googleCalendarClientProvider: GoogleCalendarClientProvider,
-    @Inject(MessageQueue.calendarQueue)
-    private readonly messageQueueService: MessageQueueService,
     @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectObjectMetadataRepository(CalendarEventObjectMetadata)
@@ -65,7 +61,6 @@ export class GoogleCalendarSyncService {
   public async startGoogleCalendarSync(
     workspaceId: string,
     connectedAccountId: string,
-    pageToken?: string,
   ): Promise<void> {
     const connectedAccount = await this.connectedAccountRepository.getById(
       connectedAccountId,
@@ -126,7 +121,7 @@ export class GoogleCalendarSyncService {
     let startTime = Date.now();
 
     let nextSyncToken: string | null | undefined;
-    let nextPageToken: string | null | undefined = pageToken;
+    let nextPageToken: string | undefined;
     const events: calendar_v3.Schema$Event[] = [];
 
     while (true) {
@@ -134,12 +129,12 @@ export class GoogleCalendarSyncService {
         calendarId: 'primary',
         maxResults: 500,
         syncToken,
-        pageToken,
+        pageToken: nextPageToken,
         q: googleCalendarSearchFilterExcludeEmails(blocklistedEmails),
       });
 
       nextSyncToken = googleCalendarEvents.data.nextSyncToken;
-      nextPageToken = googleCalendarEvents.data.nextPageToken;
+      nextPageToken = googleCalendarEvents.data.nextPageToken || undefined;
 
       const { items } = googleCalendarEvents.data;
 
@@ -406,8 +401,8 @@ export class GoogleCalendarSyncService {
 
     this.logger.log(
       `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId} ${
-        nextPageToken ? `and ${nextPageToken} pageToken` : ''
-      } done.`,
+        syncToken ? `and ${syncToken} syncToken ` : ''
+      }done.`,
     );
   }
 }

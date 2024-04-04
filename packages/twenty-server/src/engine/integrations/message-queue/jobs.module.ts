@@ -30,7 +30,7 @@ import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.modu
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
-import { GoogleCalendarSyncJob } from 'src/modules/calendar/jobs/google-calendar-full-sync.job';
+import { GoogleCalendarSyncJob } from 'src/modules/calendar/jobs/google-calendar-sync.job';
 import { CalendarEventCleanerModule } from 'src/modules/calendar/services/calendar-event-cleaner/calendar-event-cleaner.module';
 import { RecordPositionBackfillJob } from 'src/engine/api/graphql/workspace-query-runner/jobs/record-position-backfill.job';
 import { RecordPositionBackfillModule } from 'src/engine/api/graphql/workspace-query-runner/services/record-position-backfill-module';

@@ -8,7 +8,6 @@ import { GoogleCalendarSyncService } from 'src/modules/calendar/services/google-
 export type GoogleCalendarSyncJobData = {
   workspaceId: string;
   connectedAccountId: string;
-  nextPageToken?: string;
 };
 
 @Injectable()
@@ -24,11 +23,7 @@ export class GoogleCalendarSyncJob
 
   async handle(data: GoogleCalendarSyncJobData): Promise<void> {
     this.logger.log(
-      `google calendar full-sync for workspace ${
-        data.workspaceId
-      } and account ${data.connectedAccountId} ${
-        data.nextPageToken ? `and ${data.nextPageToken} pageToken` : ''
-      }`,
+      `google calendar sync for workspace ${data.workspaceId} and account ${data.connectedAccountId}`,
     );
     try {
       await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
@@ -47,7 +42,6 @@ export class GoogleCalendarSyncJob
     await this.googleCalendarSyncService.startGoogleCalendarSync(
       data.workspaceId,
       data.connectedAccountId,
-      data.nextPageToken,
     );
   }
 }

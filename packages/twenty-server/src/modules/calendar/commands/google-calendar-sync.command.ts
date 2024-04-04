@@ -8,7 +8,7 @@ import { ConnectedAccountRepository } from 'src/modules/connected-account/reposi
 import {
   GoogleCalendarSyncJobData,
   GoogleCalendarSyncJob,
-} from 'src/modules/calendar/jobs/google-calendar-full-sync.job';
+} from 'src/modules/calendar/jobs/google-calendar-sync.job';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
