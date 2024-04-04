@@ -36,6 +36,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
       'BOOLEAN',
       'RATING',
       'SELECT',
+      'MULTI_SELECT',
       'POSITION',
       'RAW_JSON',
     ] as FieldMetadataType[]
