@@ -5,6 +5,8 @@ import { isFieldAddress } from '@/object-record/record-field/types/guards/isFiel
 import { isFieldAddressValue } from '@/object-record/record-field/types/guards/isFieldAddressValue';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
+import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect.ts';
+import { isFieldMultiSelectValue } from '@/object-record/record-field/types/guards/isFieldMultiSelectValue.ts';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/record-field/types/guards/isFieldSelectValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
@@ -84,6 +86,10 @@ export const usePersistField = () => {
         const fieldIsSelect =
           isFieldSelect(fieldDefinition) && isFieldSelectValue(valueToPersist);
 
+        const fieldIsMultiSelect =
+          isFieldMultiSelect(fieldDefinition) &&
+          isFieldMultiSelectValue(valueToPersist);
+
         const fieldIsAddress =
           isFieldAddress(fieldDefinition) &&
           isFieldAddressValue(valueToPersist);
@@ -101,6 +107,7 @@ export const usePersistField = () => {
           fieldIsCurrency ||
           fieldIsFullName ||
           fieldIsSelect ||
+          fieldIsMultiSelect ||
           fieldIsAddress
         ) {
           const fieldName = fieldDefinition.metadata.fieldName;

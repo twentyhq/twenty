@@ -120,6 +120,7 @@ export type FieldMetadata =
   | FieldRatingMetadata
   | FieldRelationMetadata
   | FieldSelectMetadata
+  | FieldMultiSelectMetadata
   | FieldTextMetadata
   | FieldUuidMetadata
   | FieldAddressMetadata;
@@ -150,5 +151,6 @@ export type FieldAddressValue = {
 };
 export type FieldRatingValue = (typeof RATING_VALUES)[number];
 export type FieldSelectValue = string | null;
+export type FieldMultiSelectValue = string[] | null;
 
 export type FieldRelationValue = EntityForSelect | null;

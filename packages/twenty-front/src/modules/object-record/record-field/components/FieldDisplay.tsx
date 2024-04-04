@@ -1,5 +1,7 @@
 import { useContext } from 'react';
 
+import { MultiSelectFieldDisplay } from '@/object-record/record-field/meta-types/display/components/MultiSelectFieldDisplay.tsx';
+
 import { FieldContext } from '../contexts/FieldContext';
 import { AddressFieldDisplay } from '../meta-types/display/components/AddressFieldDisplay';
 import { ChipFieldDisplay } from '../meta-types/display/components/ChipFieldDisplay';
@@ -20,6 +22,7 @@ import { isFieldDateTime } from '../types/guards/isFieldDateTime';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
 import { isFieldFullName } from '../types/guards/isFieldFullName';
 import { isFieldLink } from '../types/guards/isFieldLink';
+import { isFieldMultiSelect } from '../types/guards/isFieldMultiSelect.ts';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldPhone } from '../types/guards/isFieldPhone';
 import { isFieldRelation } from '../types/guards/isFieldRelation';
@@ -57,6 +60,8 @@ export const FieldDisplay = () => {
     <PhoneFieldDisplay />
   ) : isFieldSelect(fieldDefinition) ? (
     <SelectFieldDisplay />
+  ) : isFieldMultiSelect(fieldDefinition) ? (
+    <MultiSelectFieldDisplay />
   ) : isFieldAddress(fieldDefinition) ? (
     <AddressFieldDisplay />
   ) : null;

@@ -73,7 +73,7 @@ export const generateEmptyFieldValue = (
       return null;
     }
     case FieldMetadataType.MultiSelect: {
-      throw new Error('Not implemented yet');
+      return null;
     }
     default: {
       throw new Error('Unhandled FieldMetadataType');
