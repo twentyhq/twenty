@@ -54,6 +54,7 @@ import { FetchAllMessagesFromCacheCronJob } from 'src/modules/messaging/commands
 import { GmailFullSyncV2Job } from 'src/modules/messaging/jobs/gmail-full-sync-v2.job';
 import { GmailPartialSyncV2Job } from 'src/modules/messaging/jobs/gmail-partial-sync-v2.job';
 import { GmailPartialSyncV2Module } from 'src/modules/messaging/services/gmail-partial-sync-v2/gmail-partial-sync-v2.module';
+import { GoogleCalendarSyncCronJob } from 'src/modules/calendar/commands/crons/google-calendar-sync.cron-job';
 
 @Module({
   imports: [
@@ -167,6 +168,10 @@ import { GmailPartialSyncV2Module } from 'src/modules/messaging/services/gmail-p
     {
       provide: GmailPartialSyncV2Job.name,
       useClass: GmailPartialSyncV2Job,
+    },
+    {
+      provide: GoogleCalendarSyncCronJob.name,
+      useClass: GoogleCalendarSyncCronJob,
     },
   ],
 })
