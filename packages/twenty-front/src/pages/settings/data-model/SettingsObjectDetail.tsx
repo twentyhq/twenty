@@ -13,13 +13,13 @@ import { getDisabledFieldMetadataItems } from '@/object-metadata/utils/getDisabl
 import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsAboutSection } from '@/settings/data-model/object-details/components/SettingsObjectAboutSection';
 import { SettingsObjectFieldActiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldActiveActionDropdown';
 import { SettingsObjectFieldInactiveActionDropdown } from '@/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown';
 import {
   SettingsObjectFieldItemTableRow,
   StyledObjectFieldTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
+import { SettingsObjectSummaryCard } from '@/settings/data-model/object-details/components/SettingsObjectSummaryCard';
 import { getFieldIdentifierType } from '@/settings/data-model/utils/getFieldIdentifierType';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
@@ -98,13 +98,16 @@ export const SettingsObjectDetail = () => {
             { children: activeObjectMetadataItem.labelPlural },
           ]}
         />
-        <SettingsAboutSection
-          iconKey={activeObjectMetadataItem.icon ?? undefined}
-          name={activeObjectMetadataItem.labelPlural || ''}
-          isCustom={activeObjectMetadataItem.isCustom}
-          onDeactivate={handleDisableObject}
-          onEdit={() => navigate('./edit')}
-        />
+        <Section>
+          <H2Title title="About" description="Manage your object" />
+          <SettingsObjectSummaryCard
+            iconKey={activeObjectMetadataItem.icon ?? undefined}
+            name={activeObjectMetadataItem.labelPlural || ''}
+            isCustom={activeObjectMetadataItem.isCustom}
+            onDeactivate={handleDisableObject}
+            onEdit={() => navigate('./edit')}
+          />
+        </Section>
         <Section>
           <H2Title
             title="Fields"
