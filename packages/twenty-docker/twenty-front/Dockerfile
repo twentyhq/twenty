@@ -26,7 +26,7 @@ FROM node:18.17.1-alpine as twenty-front
 WORKDIR /app/packages/twenty-front
 
 COPY --from=twenty-front-build /app/packages/twenty-front/build ./build
-COPY ./packages/twenty-docker/prod/twenty-front/serve.json ./build
+COPY ./packages/twenty-docker/twenty-front/serve.json ./build
 COPY ./packages/twenty-front/scripts/inject-runtime-env.sh /app/packages/twenty-front/scripts/inject-runtime-env.sh
 RUN yarn global add serve
 

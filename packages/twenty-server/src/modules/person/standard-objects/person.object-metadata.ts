@@ -142,6 +142,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => OpportunityObjectMetadata,
     inverseSideFieldKey: 'pointOfContact',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   pointOfContactForOpportunities: OpportunityObjectMetadata[];
 
@@ -199,6 +200,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => MessageParticipantObjectMetadata,
     inverseSideFieldKey: 'person',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsSystem()
   messageParticipants: MessageParticipantObjectMetadata[];
@@ -213,6 +215,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => CalendarEventAttendeeObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @Gate({
     featureFlag: 'IS_CALENDAR_ENABLED',

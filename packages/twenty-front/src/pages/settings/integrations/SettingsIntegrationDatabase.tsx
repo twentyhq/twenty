@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { IconSettings } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsIntegrationDatabasesListCard } from '@/settings/integrations/components/SettingsIntegrationDatabasesListCard';
+import { SettingsIntegrationDatabaseConnectionsListCard } from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectionsListCard';
 import { SettingsIntegrationPreview } from '@/settings/integrations/components/SettingsIntegrationPreview';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
@@ -16,13 +16,13 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { mockedRemoteObjectIntegrations } from '~/testing/mock-data/remoteObjectDatabases';
 
-export const SettingsIntegrationDetail = () => {
-  const { integrationKey = '' } = useParams();
+export const SettingsIntegrationDatabase = () => {
+  const { databaseKey = '' } = useParams();
   const navigate = useNavigate();
 
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
   const integration = integrationCategoryAll.integrations.find(
-    ({ from: { key } }) => key === integrationKey,
+    ({ from: { key } }) => key === databaseKey,
   );
 
   const isAirtableIntegrationEnabled = useIsFeatureEnabled(
@@ -33,21 +33,21 @@ export const SettingsIntegrationDetail = () => {
   );
   const isIntegrationAvailable =
     !!integration &&
-    ((integrationKey === 'airtable' && isAirtableIntegrationEnabled) ||
-      (integrationKey === 'postgresql' && isPostgresqlIntegrationEnabled));
+    ((databaseKey === 'airtable' && isAirtableIntegrationEnabled) ||
+      (databaseKey === 'postgresql' && isPostgresqlIntegrationEnabled));
 
   useEffect(() => {
     if (!isIntegrationAvailable) {
       navigate(AppPath.NotFound);
     }
-  }, [integration, integrationKey, navigate, isIntegrationAvailable]);
+  }, [integration, databaseKey, navigate, isIntegrationAvailable]);
 
   if (!isIntegrationAvailable) return null;
 
-  const databases =
+  const connections =
     mockedRemoteObjectIntegrations.find(
       ({ key }) => key === integration.from.key,
-    )?.databases || [];
+    )?.connections || [];
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -69,9 +69,9 @@ export const SettingsIntegrationDetail = () => {
             title={`${integration.text} database`}
             description={`Connect or access your ${integration.text} data`}
           />
-          <SettingsIntegrationDatabasesListCard
-            integrationLogoUrl={integration.from.image}
-            databases={databases}
+          <SettingsIntegrationDatabaseConnectionsListCard
+            databaseLogoUrl={integration.from.image}
+            connections={connections}
           />
         </Section>
       </SettingsPageContainer>

@@ -47,7 +47,7 @@ WORKDIR mysql_fdw
 RUN make USE_PGXS=1
 RUN make USE_PGXS=1 install
 
-COPY ./packages/twenty-docker/prod/twenty-postgres/init.sql /docker-entrypoint-initdb.d/
+COPY ./packages/twenty-docker/twenty-postgres/init.sql /docker-entrypoint-initdb.d/
 
 USER 1001
 ENTRYPOINT ["/opt/bitnami/scripts/postgresql/entrypoint.sh"]
