@@ -300,11 +300,13 @@ export const SettingsObjectNewFieldStep2 = () => {
               { children: 'New Field' },
             ]}
           />
-          <SaveAndCancelButtons
-            isSaveDisabled={!canSave}
-            onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-            onSave={handleSave}
-          />
+          {!activeObjectMetadataItem.isRemote &&
+            <SaveAndCancelButtons
+              isSaveDisabled={!canSave}
+              onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
+              onSave={handleSave}
+            />
+          }     
         </SettingsHeaderContainer>
         <SettingsObjectFieldFormSection
           iconKey={formValues.icon}
