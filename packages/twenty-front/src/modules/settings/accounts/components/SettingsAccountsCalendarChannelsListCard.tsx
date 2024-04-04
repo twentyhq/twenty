@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { IconChevronRight } from 'twenty-ui';
+import { IconChevronRight, IconGoogleCalendar } from 'twenty-ui';
 
 import { CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
@@ -14,7 +14,6 @@ import {
   SettingsAccountsSynchronizationStatusProps,
 } from '@/settings/accounts/components/SettingsAccountsSynchronizationStatus';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { IconGoogleCalendar } from '@/ui/display/icon/components/IconGoogleCalendar';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 
 const StyledRowRightContainer = styled.div`

@@ -1,9 +1,8 @@
-import { IconChevronDown } from 'twenty-ui';
+import { IconChevronDown, useIcons } from 'twenty-ui';
 
 import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ObjectSortDropdownId';
 import { useObjectSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useObjectSortDropdown';
 import { ObjectSortDropdownScope } from '@/object-record/object-sort-dropdown/scopes/ObjectSortDropdownScope';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { LightButton } from '@/ui/input/button/components/LightButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';

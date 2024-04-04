@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
+import { IconGoogle } from 'twenty-ui';
 
 import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
-import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
 import { Button } from '@/ui/input/button/components/Button';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
