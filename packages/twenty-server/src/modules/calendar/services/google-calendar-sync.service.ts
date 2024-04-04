@@ -130,6 +130,7 @@ export class GoogleCalendarSyncService {
         maxResults: 500,
         syncToken,
         pageToken: nextPageToken,
+        showDeleted: true,
         q: googleCalendarSearchFilterExcludeEmails(blocklistedEmails),
       });
 
@@ -215,13 +216,9 @@ export class GoogleCalendarSyncService {
       existingEventExternalIds.includes(event.externalId),
     );
 
-    const eventsToDelete = existingCalendarChannelEventAssociations.filter(
-      (association) => !eventExternalIds.includes(association.eventExternalId),
-    );
-
-    const eventExternalIdsToDelete = eventsToDelete.map(
-      (association) => association.eventExternalId,
-    );
+    const cancelledEventExternalIds = events
+      .filter((event) => event.status === 'cancelled')
+      .map((event) => event.id as string);
 
     const calendarChannelEventAssociationsToSave = eventsToSave.map(
       (event) => ({
@@ -336,7 +333,7 @@ export class GoogleCalendarSyncService {
           startTime = Date.now();
 
           await this.calendarChannelEventAssociationRepository.deleteByEventExternalIdsAndCalendarChannelId(
-            eventExternalIdsToDelete,
+            cancelledEventExternalIds,
             calendarChannelId,
             workspaceId,
             transactionManager,
