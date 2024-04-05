@@ -25,6 +25,7 @@ import { RemotePostgresTableService } from 'src/engine/metadata-modules/remote-s
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { camelCase } from 'src/utils/camel-case';
 import { camelToTitleCase } from 'src/utils/camel-to-title-case';
+import { getRemoteTableName } from 'src/engine/metadata-modules/remote-server/remote-table/utils/get-remote-table-name.util';
 
 export class RemoteTableService {
   constructor(
@@ -149,7 +150,7 @@ export class RemoteTableService {
       .map((column) => `"${column.column_name}" ${column.data_type}`)
       .join(', ');
 
-    const remoteTableName = `${camelCase(input.name)}Remote`;
+    const remoteTableName = getRemoteTableName(input.name);
     const remoteTableLabel = camelToTitleCase(remoteTableName);
 
     // We only support remote tables with an id column for now.
@@ -211,9 +212,11 @@ export class RemoteTableService {
     workspaceDataSource: DataSource,
     localSchema: string,
   ) {
+    const remoteTableName = getRemoteTableName(input.name);
+
     const objectMetadata =
       await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
-        where: { nameSingular: `${input.name}Remote` },
+        where: { nameSingular: remoteTableName },
       });
 
     if (objectMetadata) {
