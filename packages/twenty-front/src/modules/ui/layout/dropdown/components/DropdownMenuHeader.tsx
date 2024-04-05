@@ -25,10 +25,10 @@ const StyledHeader = styled.li`
   }
 `;
 
-const StyledIcon = styled.div`
+const StyledEndIcon = styled.div`
   display: inline-flex;
   color: ${({ theme }) => theme.font.color.tertiary};
-  padding: 4px;
+  padding: ${({ theme }) => theme.spacing(1)};
   margin-left: auto;
   margin-right: 0;
 
@@ -62,9 +62,9 @@ export const DropdownMenuHeader = ({
       {EndIcon && (
         <StyledHeader data-testid={testId} onClick={onClick}>
           <StyledChildrenWrapper>{children}</StyledChildrenWrapper>
-          <StyledIcon>
+          <StyledEndIcon>
             <EndIcon size={theme.icon.size.md} />
-          </StyledIcon>
+          </StyledEndIcon>
         </StyledHeader>
       )}
       {StartIcon && (
