@@ -1,9 +1,12 @@
 import { useContext } from 'react';
+import { useRecoilValue } from 'recoil';
 
 import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { useRecordFieldInputStates } from '@/object-record/record-field/hooks/internal/useRecordFieldInputStates';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { usePendingRecordId } from '@/object-record/record-table/hooks/usePendingRecordId';
 import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
 import { RecordTableCellContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellContainer';
 import { useCloseRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useCloseRecordTableCell';
@@ -17,17 +20,27 @@ export const RecordTableCell = ({
   const { closeTableCell } = useCloseRecordTableCell();
   const { entityId, fieldDefinition } = useContext(FieldContext);
 
+  const { pendingRecordId } = usePendingRecordId();
+  const fieldName = fieldDefinition.metadata.fieldName;
+  const { getDraftValueSelector } = useRecordFieldInputStates(
+    `${entityId}-${fieldName}`,
+  );
+  const draftValue = useRecoilValue(getDraftValueSelector());
+
+  const shouldPersistField =
+    (pendingRecordId && draftValue) || !pendingRecordId;
+
   const { moveLeft, moveRight, moveDown } = useRecordTableMoveFocus();
 
   const handleEnter: FieldInputEvent = (persistField) => {
-    persistField();
+    if (shouldPersistField) persistField();
 
     closeTableCell();
     moveDown();
   };
 
   const handleSubmit: FieldInputEvent = (persistField) => {
-    persistField();
+    if (shouldPersistField) persistField();
 
     closeTableCell();
   };
@@ -37,26 +50,26 @@ export const RecordTableCell = ({
   };
 
   const handleClickOutside: FieldInputEvent = (persistField) => {
-    persistField();
+    if (shouldPersistField) persistField();
 
     closeTableCell();
   };
 
   const handleEscape: FieldInputEvent = (persistField) => {
-    persistField();
+    if (shouldPersistField) persistField();
 
     closeTableCell();
   };
 
   const handleTab: FieldInputEvent = (persistField) => {
-    persistField();
+    if (shouldPersistField) persistField();
 
     closeTableCell();
     moveRight();
   };
 
   const handleShiftTab: FieldInputEvent = (persistField) => {
-    persistField();
+    if (shouldPersistField) persistField();
 
     closeTableCell();
     moveLeft();

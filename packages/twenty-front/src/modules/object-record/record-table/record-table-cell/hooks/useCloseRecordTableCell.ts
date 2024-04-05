@@ -1,3 +1,6 @@
+import { useResetRecoilState } from 'recoil';
+
+import { pendingRecordIdState } from '@/object-record/record-table/states/pendingRecordIdState';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 
@@ -9,11 +12,13 @@ export const useCloseRecordTableCell = () => {
   const { setDragSelectionStartEnabled } = useDragSelect();
 
   const closeCurrentTableCellInEditMode = useCloseCurrentTableCellInEditMode();
+  const resetPendingRecordId = useResetRecoilState(pendingRecordIdState);
 
   const closeTableCell = async () => {
     setDragSelectionStartEnabled(true);
     closeCurrentTableCellInEditMode();
     setHotkeyScope(TableHotkeyScope.TableSoftFocus);
+    resetPendingRecordId();
   };
 
   return {
