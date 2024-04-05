@@ -1,9 +1,7 @@
 import { useLazyQuery } from '@apollo/client';
 
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
-import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
-import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
+import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 type UseLazyFindOneRecordParams = ObjectMetadataItemIdentifier & {
@@ -19,21 +17,19 @@ export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
   objectNameSingular,
   depth,
 }: UseLazyFindOneRecordParams) => {
-  const { objectMetadataItem } = useObjectMetadataItemOnly({
+  const { findOneRecordQuery } = useFindOneRecordQuery({
     objectNameSingular,
+    depth,
   });
-  const findOneRecordQuery = useGenerateFindOneRecordQuery();
 
-  const [findOneRecord, { loading, error, data, called }] = useLazyQuery(
-    findOneRecordQuery({ objectMetadataItem, depth }),
-  );
+  const [findOneRecord, { loading, error, data, called }] =
+    useLazyQuery(findOneRecordQuery);
 
   return {
     findOneRecord: ({ objectRecordId, onCompleted }: FindOneRecordParams<T>) =>
       findOneRecord({
         variables: { objectRecordId },
-        onCompleted: (data) =>
-          onCompleted?.(getRecordFromRecordNode(data[objectNameSingular])),
+        onCompleted: (data) => onCompleted?.(data[objectNameSingular]),
       }),
     called,
     error,

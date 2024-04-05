@@ -185,6 +185,10 @@ export const RecordDetailRelationRecordsListItem = ({
     [isExpanded],
   );
 
+  console.log({
+    relationRecord,
+  });
+
   return (
     <>
       <StyledListItem isDropdownOpen={isDropdownOpen}>

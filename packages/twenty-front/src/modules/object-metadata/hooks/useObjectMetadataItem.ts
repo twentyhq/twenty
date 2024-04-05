@@ -15,7 +15,6 @@ import { useGenerateCreateManyRecordMutation } from '@/object-record/hooks/useGe
 import { useGenerateDeleteManyRecordMutation } from '@/object-record/hooks/useGenerateDeleteManyRecordMutation';
 import { useGenerateExecuteQuickActionOnOneRecordMutation } from '@/object-record/hooks/useGenerateExecuteQuickActionOnOneRecordMutation';
 import { useGenerateFindDuplicateRecordsQuery } from '@/object-record/hooks/useGenerateFindDuplicateRecordsQuery';
-import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
 import { generateDeleteOneRecordMutation } from '@/object-record/utils/generateDeleteOneRecordMutation';
 import { isDefined } from '~/utils/isDefined';
 
@@ -85,12 +84,6 @@ export const useObjectMetadataItem = (
     depth,
   });
 
-  const generateFindOneRecordQuery = useGenerateFindOneRecordQuery();
-  const findOneRecordQuery = generateFindOneRecordQuery({
-    objectMetadataItem,
-    depth,
-  });
-
   const createManyRecordsMutation = useGenerateCreateManyRecordMutation({
     objectMetadataItem,
     depth,
@@ -122,7 +115,6 @@ export const useObjectMetadataItem = (
     objectMetadataItem,
     getRecordFromCache,
     findDuplicateRecordsQuery,
-    findOneRecordQuery,
     deleteOneRecordMutation,
     executeQuickActionOnOneRecordMutation,
     createManyRecordsMutation,
