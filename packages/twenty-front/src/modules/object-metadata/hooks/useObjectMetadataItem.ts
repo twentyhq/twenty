@@ -17,7 +17,6 @@ import { useGenerateExecuteQuickActionOnOneRecordMutation } from '@/object-recor
 import { useGenerateFindDuplicateRecordsQuery } from '@/object-record/hooks/useGenerateFindDuplicateRecordsQuery';
 import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
 import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
-import { useGenerateUpdateOneRecordMutation } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
 import { generateDeleteOneRecordMutation } from '@/object-record/utils/generateDeleteOneRecordMutation';
 import { isDefined } from '~/utils/isDefined';
 
@@ -39,7 +38,6 @@ export const useObjectMetadataItem = (
   { objectNameSingular }: ObjectMetadataItemIdentifier,
   depth?: number,
   queryFields?: Record<string, any>,
-  computeReferences = false,
 ) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
@@ -107,12 +105,6 @@ export const useObjectMetadataItem = (
     depth,
   });
 
-  const updateOneRecordMutation = useGenerateUpdateOneRecordMutation({
-    objectMetadataItem,
-    depth,
-    computeReferences,
-  });
-
   const deleteOneRecordMutation = generateDeleteOneRecordMutation({
     objectMetadataItem,
   });
@@ -141,7 +133,6 @@ export const useObjectMetadataItem = (
     findManyRecordsQuery,
     findDuplicateRecordsQuery,
     findOneRecordQuery,
-    updateOneRecordMutation,
     deleteOneRecordMutation,
     executeQuickActionOnOneRecordMutation,
     createManyRecordsMutation,
