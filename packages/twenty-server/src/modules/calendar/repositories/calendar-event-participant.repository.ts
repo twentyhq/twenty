@@ -68,6 +68,38 @@ export class CalendarEventParticipantRepository {
     );
   }
 
+  public async removePersonIdByHandle(
+    handle: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."calendarEventParticipant" SET "personId" = NULL WHERE "handle" = $1`,
+      [handle],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async removeWorkspaceMemberIdByHandle(
+    handle: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."calendarEventParticipant" SET "workspaceMemberId" = NULL WHERE "handle" = $1`,
+      [handle],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async getByIds(
     calendarEventParticipantIds: string[],
     workspaceId: string,

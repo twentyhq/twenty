@@ -145,4 +145,24 @@ export class CalendarEventParticipantService {
       );
     }
   }
+
+  public async unmatchCalendarEventParticipants(
+    workspaceId: string,
+    handle: string,
+    personId?: string,
+    workspaceMemberId?: string,
+  ) {
+    if (personId) {
+      await this.calendarEventParticipantRepository.removePersonIdByHandle(
+        handle,
+        workspaceId,
+      );
+    }
+    if (workspaceMemberId) {
+      await this.calendarEventParticipantRepository.removeWorkspaceMemberIdByHandle(
+        handle,
+        workspaceId,
+      );
+    }
+  }
 }
