@@ -3,6 +3,7 @@
 import styled from '@emotion/styled';
 
 import { CardContainer } from '@/app/_components/contributors/CardContainer';
+import { Theme } from '@/app/_components/ui/theme/theme';
 
 const Container = styled(CardContainer)`
   flex-direction: row;
@@ -21,8 +22,8 @@ const Container = styled(CardContainer)`
 
     .title {
       font-size: 24px;
-      color: #b3b3b3;
-      margin: 0;
+      color: ${Theme.text.color.quarternary};
+      margin: 8px;
 
       @media (max-width: 810px) {
         font-size: 20px;
@@ -32,7 +33,7 @@ const Container = styled(CardContainer)`
     .value {
       font-size: 56px;
       font-weight: 700;
-      color: #474747;
+      color: ${Theme.text.color.secondary};
 
       @media (max-width: 810px) {
         font-size: 32px;
@@ -72,7 +73,7 @@ export const ProfileInfo = ({
         </div>
         <div className="separator"></div>
         <div className="item">
-          <p className="title">Rank</p>
+          <p className="title">Ranking</p>
           <span className="value">{rank}%</span>
         </div>
         <div className="separator"></div>

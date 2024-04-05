@@ -119,22 +119,26 @@ export const LinkNextToCTA = styled.a`
 export const HamburgerContainer = styled.div`
   height: 44px;
   width: 44px;
-  cursor: pointer;
   position: relative;
+
   input {
+    cursor: pointer;
     height: 44px;
     width: 44px;
     opacity: 0;
+    z-index: 1;
   }
 
   #line1 {
     transition: transform 0.5s;
     transition-timing-function: ease-in-out;
+    z-index: 0;
   }
 
   #line2 {
     transition: transform 0.5s;
     transition-timing-function: ease-in-out;
+    z-index: 0;
   }
 
   #menu-input:checked ~ #line1 {
@@ -154,6 +158,7 @@ export const HamburgerLine1 = styled.div`
   width: 20px;
   border-radius: 10px;
   background-color: rgb(179, 179, 179);
+  z-index: 0;
 `;
 
 export const HamburgerLine2 = styled.div`
@@ -164,6 +169,7 @@ export const HamburgerLine2 = styled.div`
   width: 20px;
   border-radius: 10px;
   background-color: rgb(179, 179, 179);
+  z-index: 0;
 `;
 
 export const NavOpen = styled.div`
