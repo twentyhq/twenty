@@ -6,7 +6,7 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant.repository';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 
-export type MatchMessageParticipantsJobData = {
+export type MatchParticipantJobData = {
   workspaceId: string;
   email: string;
   personId?: string;
@@ -14,15 +14,15 @@ export type MatchMessageParticipantsJobData = {
 };
 
 @Injectable()
-export class MatchMessageParticipantJob
-  implements MessageQueueJob<MatchMessageParticipantsJobData>
+export class MatchParticipantJob
+  implements MessageQueueJob<MatchParticipantJobData>
 {
   constructor(
     @InjectObjectMetadataRepository(MessageParticipantObjectMetadata)
     private readonly messageParticipantRepository: MessageParticipantRepository,
   ) {}
 
-  async handle(data: MatchMessageParticipantsJobData): Promise<void> {
+  async handle(data: MatchParticipantJobData): Promise<void> {
     const { workspaceId, personId, workspaceMemberId, email } = data;
 
     const messageParticipantsToUpdate =

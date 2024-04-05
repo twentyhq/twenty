@@ -16,7 +16,7 @@ import { EmailSenderJob } from 'src/engine/integrations/email/email-sender.job';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { EnvironmentModule } from 'src/engine/integrations/environment/environment.module';
 import { FetchAllWorkspacesMessagesJob } from 'src/modules/messaging/commands/crons/fetch-all-workspaces-messages.job';
-import { MatchMessageParticipantJob } from 'src/modules/messaging/jobs/match-message-participant.job';
+import { MatchParticipantJob } from 'src/modules/connected-account/jobs/match-participant.job';
 import { CreateCompaniesAndContactsAfterSyncJob } from 'src/modules/messaging/jobs/create-companies-and-contacts-after-sync.job';
 import { AutoCompaniesAndContactsCreationModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/auto-companies-and-contacts-creation.module';
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
@@ -120,8 +120,8 @@ import { GmailPartialSyncV2Module } from 'src/modules/messaging/services/gmail-p
       useClass: FetchAllWorkspacesMessagesJob,
     },
     {
-      provide: MatchMessageParticipantJob.name,
-      useClass: MatchMessageParticipantJob,
+      provide: MatchParticipantJob.name,
+      useClass: MatchParticipantJob,
     },
     {
       provide: CreateCompaniesAndContactsAfterSyncJob.name,
