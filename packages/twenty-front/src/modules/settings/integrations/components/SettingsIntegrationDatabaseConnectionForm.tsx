@@ -7,7 +7,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 export const settingsIntegrationPostgreSQLConnectionFormSchema = z.object({
   dbname: z.string().min(1),
   host: z.string().min(1),
-  port: z.number().positive(),
+  port: z.string().min(1),
   username: z.string().min(1),
   password: z.string().min(1),
 });
