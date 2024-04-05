@@ -33,6 +33,7 @@ import {
   WorkspaceMigrationForeignTable,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { RemoteTableColumn } from 'src/engine/metadata-modules/remote-server/remote-table/types/remote-table-column';
+import { getRemoteTableName } from 'src/engine/metadata-modules/remote-server/remote-table/utils/get-remote-table-name.util';
 
 export class RemoteTableService {
   constructor(
@@ -122,13 +123,17 @@ export class RemoteTableService {
     remoteServer: RemoteServerEntity<RemoteServerType>,
     workspaceId: string,
   ) {
+    if (!input.schema) {
+      throw new Error('Schema is required for syncing remote table');
+    }
+
     const remoteTableColumns = await this.fetchTableColumnsSchema(
       remoteServer,
       input.name,
       input.schema,
     );
 
-    const remoteTableName = `${camelCase(input.name)}Remote`;
+    const remoteTableName = getRemoteTableName(input.name);
     const remoteTableLabel = camelToTitleCase(remoteTableName);
 
     // We only support remote tables with an id column for now.
@@ -226,7 +231,7 @@ export class RemoteTableService {
     input: RemoteTableInput,
     workspaceId: string,
   ) {
-    const remoteTableName = `${camelCase(input.name)}Remote`;
+    const remoteTableName = getRemoteTableName(input.name);
 
     const objectMetadata =
       await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {

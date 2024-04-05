@@ -14,6 +14,7 @@ import {
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { RemoteTableColumn } from 'src/engine/metadata-modules/remote-server/remote-table/types/remote-table-column';
+import { getRemoteTableName } from 'src/engine/metadata-modules/remote-server/remote-table/utils/get-remote-table-name.util';
 
 @Injectable()
 export class RemotePostgresTableService {
@@ -43,7 +44,9 @@ export class RemotePostgresTableService {
     return remotePostgresTables.map((remoteTable) => ({
       name: remoteTable.table_name,
       schema: remoteTable.table_schema,
-      status: currentForeignTableNames.includes(remoteTable.table_name)
+      status: currentForeignTableNames.includes(
+        getRemoteTableName(remoteTable.table_name),
+      )
         ? RemoteTableStatus.SYNCED
         : RemoteTableStatus.NOT_SYNCED,
     }));
