@@ -17,7 +17,10 @@ import { CreateRelationInput } from 'src/engine/metadata-modules/relation-metada
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { WorkspaceMigrationColumnActionType } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import {
+  WorkspaceMigrationColumnActionType,
+  WorkspaceMigrationTableActionType,
+} from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
@@ -171,7 +174,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
           name: computeObjectTargetTable(
             objectMetadataMap[relationMetadataInput.toObjectMetadataId],
           ),
-          action: 'alter',
+          action: WorkspaceMigrationTableActionType.ALTER,
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE,
@@ -186,7 +189,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
           name: computeObjectTargetTable(
             objectMetadataMap[relationMetadataInput.toObjectMetadataId],
           ),
-          action: 'alter',
+          action: WorkspaceMigrationTableActionType.ALTER,
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,

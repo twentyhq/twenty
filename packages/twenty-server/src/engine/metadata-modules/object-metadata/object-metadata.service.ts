@@ -16,6 +16,7 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
 import {
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnDrop,
+  WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import {
   FieldMetadataEntity,
@@ -177,7 +178,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
                 relationToDelete.toObjectName,
                 relationToDelete.toObjectMetadataIsCustom,
               ),
-              action: 'alter',
+              action: WorkspaceMigrationTableActionType.ALTER,
               columns: [
                 {
                   action: WorkspaceMigrationColumnActionType.DROP,
@@ -203,7 +204,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         [
           {
             name: computeObjectTargetTable(objectMetadata),
-            action: 'drop',
+            action: WorkspaceMigrationTableActionType.DROP,
           },
         ],
       );

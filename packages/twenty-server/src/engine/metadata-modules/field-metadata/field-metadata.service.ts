@@ -18,6 +18,7 @@ import {
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnDrop,
   WorkspaceMigrationTableAction,
+  WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -152,7 +153,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           [
             {
               name: computeObjectTargetTable(objectMetadata),
-              action: 'alter',
+              action: WorkspaceMigrationTableActionType.ALTER,
               columns: this.workspaceMigrationFactory.createColumnActions(
                 WorkspaceMigrationColumnActionType.CREATE,
                 createdFieldMetadata,
@@ -328,7 +329,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           [
             {
               name: computeObjectTargetTable(objectMetadata),
-              action: 'alter',
+              action: WorkspaceMigrationTableActionType.ALTER,
               columns: this.workspaceMigrationFactory.createColumnActions(
                 WorkspaceMigrationColumnActionType.ALTER,
                 existingFieldMetadata,
@@ -399,7 +400,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         [
           {
             name: computeObjectTargetTable(objectMetadata),
-            action: 'alter',
+            action: WorkspaceMigrationTableActionType.ALTER,
             columns: [
               {
                 action: WorkspaceMigrationColumnActionType.DROP,
