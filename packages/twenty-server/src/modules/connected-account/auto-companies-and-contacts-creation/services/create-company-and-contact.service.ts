@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { EntityManager } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import compact from 'lodash/compact';
 
 import { getDomainNameFromHandle } from 'src/modules/messaging/utils/get-domain-name-from-handle.util';
@@ -22,6 +23,10 @@ import { CalendarEventParticipantService } from 'src/modules/calendar/services/c
 import { CalendarEventParticipantRepository } from 'src/modules/calendar/repositories/calendar-event-participant.repository';
 import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
 import { filterOutContactsFromCompanyOrWorkspace } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/filter-out-contacts-from-company-or-workspace.util';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @Injectable()
 export class CreateCompanyAndContactService {
@@ -39,6 +44,8 @@ export class CreateCompanyAndContactService {
     @InjectObjectMetadataRepository(CalendarEventParticipantObjectMetadata)
     private readonly calendarEventParticipantRepository: CalendarEventParticipantRepository,
     private readonly calendarEventParticipantService: CalendarEventParticipantService,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   async createCompaniesAndContacts(
@@ -161,6 +168,16 @@ export class CreateCompanyAndContactService {
           workspaceId,
           transactionManager,
         );
+
+        const isCalendarEnabled = await this.featureFlagRepository.findOneBy({
+          workspaceId,
+          key: FeatureFlagKeys.IsCalendarEnabled,
+          value: true,
+        });
+
+        if (!isCalendarEnabled || !isCalendarEnabled.value) {
+          return;
+        }
 
         const calendarEventParticipantsWithoutPersonIdAndWorkspaceMemberId =
           await this.calendarEventParticipantRepository.getWithoutPersonIdAndWorkspaceMemberId(
