@@ -117,7 +117,7 @@ export const SettingsObjectFieldEdit = () => {
 
     const multiSelectOptions = activeMetadataField.options?.map((option) => ({
       ...option,
-      isDefault: defaultValue.includes(`'${option.value}'`),
+      isDefault: defaultValue?.includes(`'${option.value}'`) || false,
     }));
     multiSelectOptions?.sort(
       (optionA, optionB) => optionA.position - optionB.position,
