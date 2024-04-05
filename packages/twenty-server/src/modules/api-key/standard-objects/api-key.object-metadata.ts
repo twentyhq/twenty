@@ -9,14 +9,14 @@ import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-
 
 @ObjectMetadata({
   standardId: standardObjectIds.apiKey,
-  namePlural: 'apiTokens',
-  labelSingular: 'Api token',
-  labelPlural: 'Api tokens',
-  description: 'An api token',
+  namePlural: 'apiKeys',
+  labelSingular: 'Api Key',
+  labelPlural: 'Api Keys',
+  description: 'An api key',
   icon: 'IconRobot',
 })
 @IsSystem()
-export class ApiTokenObjectMetadata extends BaseObjectMetadata {
+export class ApiKeyObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: apiKeyStandardFieldIds.name,
     type: FieldMetadataType.TEXT,

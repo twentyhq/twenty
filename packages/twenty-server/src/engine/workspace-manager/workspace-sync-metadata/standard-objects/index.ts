@@ -1,6 +1,6 @@
 import { ActivityTargetObjectMetadata } from 'src/modules/activity/standard-objects/activity-target.object-metadata';
 import { ActivityObjectMetadata } from 'src/modules/activity/standard-objects/activity.object-metadata';
-import { ApiTokenObjectMetadata } from 'src/modules/api-key/standard-objects/api-key.object-metadata';
+import { ApiKeyObjectMetadata } from 'src/modules/api-key/standard-objects/api-key.object-metadata';
 import { AttachmentObjectMetadata } from 'src/modules/attachment/standard-objects/attachment.object-metadata';
 import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
 import { CalendarEventObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event.object-metadata';
@@ -29,7 +29,7 @@ import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.ob
 export const standardObjectMetadataDefinitions = [
   ActivityTargetObjectMetadata,
   ActivityObjectMetadata,
-  ApiTokenObjectMetadata,
+  ApiKeyObjectMetadata,
   AttachmentObjectMetadata,
   BlocklistObjectMetadata,
   CommentObjectMetadata,
