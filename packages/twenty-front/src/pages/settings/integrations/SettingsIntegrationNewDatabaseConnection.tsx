@@ -6,6 +6,7 @@ import { IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useCreateOneDatabaseConnection } from '@/databases/hooks/useCreateOneDatabaseConnection';
+import { getForeignDataWrapperType } from '@/databases/utils/getForeignDataWrapperType';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -47,15 +48,6 @@ const createRemoteServerInputSchema = newConnectionSchema
 type SettingsIntegrationNewConnectionFormValues = z.infer<
   typeof newConnectionSchema
 >;
-
-const getForeignDataWrapperType = (databaseKey: string) => {
-  switch (databaseKey) {
-    case 'postgresql':
-      return 'postgres_fdw';
-    default:
-      return null;
-  }
-};
 
 export const SettingsIntegrationNewDatabaseConnection = () => {
   const { databaseKey = '' } = useParams();
