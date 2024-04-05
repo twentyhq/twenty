@@ -11,11 +11,15 @@ const StyledEllipsisDisplay = styled.div<{ maxWidth?: number }>`
 type EllipsisDisplayProps = {
   children: React.ReactNode;
   maxWidth?: number;
+  className?: string;
 };
 
 export const EllipsisDisplay = ({
   children,
   maxWidth,
+  className,
 }: EllipsisDisplayProps) => (
-  <StyledEllipsisDisplay style={{ maxWidth }}>{children}</StyledEllipsisDisplay>
+  <StyledEllipsisDisplay style={{ maxWidth }} className={className}>
+    {children}
+  </StyledEllipsisDisplay>
 );

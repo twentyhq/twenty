@@ -102,7 +102,7 @@ export class GmailPartialSyncV2Service {
 
     await workspaceDataSource
       ?.transaction(async (transactionManager: EntityManager) => {
-        const lastSyncHistoryId = gmailMessageChannel.syncExternalId;
+        const lastSyncHistoryId = gmailMessageChannel.syncCursor;
 
         if (!lastSyncHistoryId) {
           this.logger.log(
@@ -134,7 +134,7 @@ export class GmailPartialSyncV2Service {
             `404: Invalid lastSyncHistoryId: ${lastSyncHistoryId} for workspace ${workspaceId} and account ${connectedAccountId}, falling back to full sync.`,
           );
 
-          await this.messageChannelRepository.resetSyncExternalId(
+          await this.messageChannelRepository.resetSyncCursor(
             gmailMessageChannel.id,
             workspaceId,
             transactionManager,
@@ -206,7 +206,7 @@ export class GmailPartialSyncV2Service {
           messagesDeleted,
         );
 
-        await this.messageChannelRepository.updateLastSyncExternalIdIfHigher(
+        await this.messageChannelRepository.updateLastSyncCursorIfHigher(
           gmailMessageChannel.id,
           historyId,
           workspaceId,

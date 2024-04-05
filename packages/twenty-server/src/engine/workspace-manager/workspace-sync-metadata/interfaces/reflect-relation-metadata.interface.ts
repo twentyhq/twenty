@@ -11,7 +11,7 @@ export interface RelationMetadataDecoratorParams<T> {
   type: RelationMetadataType;
   inverseSideTarget: () => ObjectType<T>;
   inverseSideFieldKey?: keyof T;
-  onDelete?: RelationOnDeleteAction;
+  onDelete: RelationOnDeleteAction;
 }
 
 export interface ReflectRelationMetadata

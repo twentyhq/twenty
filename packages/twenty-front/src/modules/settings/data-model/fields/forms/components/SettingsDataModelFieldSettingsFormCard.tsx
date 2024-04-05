@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelDefaultValueForm } from '@/settings/data-model/components/SettingsDataModelDefaultValue';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
@@ -79,7 +79,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   relationFieldMetadataItem,
   values,
 }: SettingsDataModelFieldSettingsFormCardProps) => {
-  const { findObjectMetadataItemById } = useObjectMetadataItemForSettings();
+  const { findObjectMetadataItemById } = useFilteredObjectMetadataItems();
 
   if (!previewableTypes.includes(fieldMetadataItem.type)) return null;
 

@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil';
 
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getTargetObjectFilterFieldName';
+import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { Attachment } from '@/attachments/types/Attachment';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -45,6 +45,8 @@ export const useUploadAttachmentFile = () => {
       fullPath: attachmentUrl,
       type: getFileType(file.name),
       [targetableObjectFieldIdName]: targetableObject.id,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
     } as Partial<Attachment>;
 
     await createOneAttachment(attachmentToCreate);

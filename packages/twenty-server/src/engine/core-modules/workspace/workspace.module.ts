@@ -14,6 +14,7 @@ import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkspaceWorkspaceMemberListener } from 'src/engine/core-modules/workspace/workspace-workspace-member.listener';
+import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
 
 import { workspaceAutoResolverOpts } from './workspace.auto-resolver-opts';
 import { Workspace } from './workspace.entity';
@@ -27,6 +28,7 @@ import { WorkspaceService } from './services/workspace.service';
       imports: [
         BillingModule,
         FileUploadModule,
+        WorkspaceCacheVersionModule,
         NestjsQueryTypeOrmModule.forFeature(
           [Workspace, UserWorkspace, FeatureFlagEntity],
           'core',

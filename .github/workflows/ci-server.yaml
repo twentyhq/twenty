@@ -3,7 +3,19 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'package.json'
+      - 'packages/twenty-server/**'
+      - 'packages/twenty-emails/**'
   pull_request:
+    paths:
+      - 'package.json'
+      - 'packages/twenty-server/**'
+      - 'packages/twenty-emails/**'
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   server-test:
     runs-on: ubuntu-latest
@@ -16,10 +28,6 @@ jobs:
         ports:
           - 5432:5432
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-            access_token: ${{ github.token }}
       - uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v3

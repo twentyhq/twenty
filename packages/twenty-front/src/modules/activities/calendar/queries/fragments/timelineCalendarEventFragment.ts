@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-import { timelineCalendarEventAttendeeFragment } from '@/activities/calendar/queries/fragments/timelineCalendarEventAttendeeFragment';
+import { timelineCalendarEventParticipantFragment } from '@/activities/calendar/queries/fragments/timelineCalendarEventParticipantFragment';
 
 export const timelineCalendarEventFragment = gql`
   fragment TimelineCalendarEventFragment on TimelineCalendarEvent {
@@ -12,9 +12,9 @@ export const timelineCalendarEventFragment = gql`
     endsAt
     isFullDay
     visibility
-    attendees {
-      ...TimelineCalendarEventAttendeeFragment
+    participants {
+      ...TimelineCalendarEventParticipantFragment
     }
   }
-  ${timelineCalendarEventAttendeeFragment}
+  ${timelineCalendarEventParticipantFragment}
 `;

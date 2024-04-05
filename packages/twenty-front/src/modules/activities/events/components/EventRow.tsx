@@ -1,14 +1,10 @@
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
+import { IconCirclePlus, IconEditCircle, IconFocusCentered } from 'twenty-ui';
 
 import { EventUpdateProperty } from '@/activities/events/components/EventUpdateProperty';
 import { Event } from '@/activities/events/types/Event';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import {
-  IconCirclePlus,
-  IconEditCircle,
-  IconFocusCentered,
-} from '@/ui/display/icon';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
   beautifyExactDateTime,

@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import { IconDotsVertical, IconTrash } from 'twenty-ui';
 
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
-import { IconDotsVertical, IconTrash } from '@/ui/display/icon/index';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';

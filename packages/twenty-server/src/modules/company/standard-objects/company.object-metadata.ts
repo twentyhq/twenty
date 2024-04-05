@@ -51,7 +51,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     standardId: companyStandardFieldIds.address,
-    type: FieldMetadataType.ADDRESS,
+    type: FieldMetadataType.TEXT,
     label: 'Address',
     description: 'The company address',
     icon: 'IconMap',
@@ -132,6 +132,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => PersonObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
   people: PersonObjectMetadata[];
@@ -173,6 +174,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => OpportunityObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
   opportunities: OpportunityObjectMetadata[];

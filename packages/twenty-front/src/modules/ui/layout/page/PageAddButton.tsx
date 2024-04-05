@@ -1,4 +1,5 @@
-import { IconPlus } from '@/ui/display/icon';
+import { IconPlus } from 'twenty-ui';
+
 import { IconButton } from '@/ui/input/button/components/IconButton';
 
 type PageAddButtonProps = {

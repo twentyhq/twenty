@@ -15,9 +15,7 @@ import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import {
   WorkspaceMigrationColumnActionType,
-  WorkspaceMigrationColumnCreate,
   WorkspaceMigrationColumnDrop,
-  WorkspaceMigrationTableAction,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import {
   FieldMetadataEntity,
@@ -47,6 +45,8 @@ import {
   createForeignKeyDeterministicUuid,
   createRelationDeterministicUuid,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
+import { buildWorkspaceMigrationsForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-workspace-migrations-for-custom-object.util';
+import { buildWorkspaceMigrationsForRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/build-workspace-migrations-for-remote-object.util';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -232,15 +232,17 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     }
 
+    const isCustom = !objectMetadataInput.isRemote;
+
     const createdObjectMetadata = await super.createOne({
       ...objectMetadataInput,
       dataSourceId: lastDataSourceMetadata.id,
       targetTableName: 'DEPRECATED',
       isActive: true,
-      isCustom: !objectMetadataInput.isRemote,
+      isCustom: isCustom,
       isSystem: false,
-      isRemote: !!objectMetadataInput.isRemote,
-      fields: !objectMetadataInput.isRemote
+      isRemote: objectMetadataInput.isRemote,
+      fields: isCustom
         ? // Creating default fields.
           // No need to create a custom migration for this though as the default columns are already
           // created with default values which is not supported yet by workspace migrations.
@@ -333,203 +335,25 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           [],
     });
 
-    if (!objectMetadataInput.isRemote) {
-      const { eventObjectMetadata } = await this.createEventRelation(
+    const { eventObjectMetadata } = await this.createEventRelation(
+      objectMetadataInput.workspaceId,
+      createdObjectMetadata,
+    );
+
+    const { activityTargetObjectMetadata } =
+      await this.createActivityTargetRelation(
         objectMetadataInput.workspaceId,
         createdObjectMetadata,
       );
 
-      const { activityTargetObjectMetadata } =
-        await this.createActivityTargetRelation(
-          objectMetadataInput.workspaceId,
-          createdObjectMetadata,
-        );
+    const { favoriteObjectMetadata } = await this.createFavoriteRelation(
+      objectMetadataInput.workspaceId,
+      createdObjectMetadata,
+    );
 
-      const { favoriteObjectMetadata } = await this.createFavoriteRelation(
-        objectMetadataInput.workspaceId,
-        createdObjectMetadata,
-      );
-
-      const { attachmentObjectMetadata } = await this.createAttachmentRelation(
-        objectMetadataInput.workspaceId,
-        createdObjectMetadata,
-      );
-
-      await this.workspaceMigrationService.createCustomMigration(
-        generateMigrationName(`create-${createdObjectMetadata.nameSingular}`),
-        createdObjectMetadata.workspaceId,
-        [
-          {
-            name: computeObjectTargetTable(createdObjectMetadata),
-            action: 'create',
-          } satisfies WorkspaceMigrationTableAction,
-          // Add activity target relation
-          {
-            name: computeObjectTargetTable(activityTargetObjectMetadata),
-            action: 'alter',
-            columns: [
-              {
-                action: WorkspaceMigrationColumnActionType.CREATE,
-                columnName: `${computeCustomName(
-                  createdObjectMetadata.nameSingular,
-                  false,
-                )}Id`,
-                columnType: 'uuid',
-                isNullable: true,
-              } satisfies WorkspaceMigrationColumnCreate,
-            ],
-          },
-          {
-            name: computeObjectTargetTable(activityTargetObjectMetadata),
-            action: 'alter',
-            columns: [
-              {
-                action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-                columnName: `${computeCustomName(
-                  createdObjectMetadata.nameSingular,
-                  false,
-                )}Id`,
-                referencedTableName: computeObjectTargetTable(
-                  createdObjectMetadata,
-                ),
-                referencedTableColumnName: 'id',
-                onDelete: RelationOnDeleteAction.CASCADE,
-              },
-            ],
-          },
-          // Add attachment relation
-          {
-            name: computeObjectTargetTable(attachmentObjectMetadata),
-            action: 'alter',
-            columns: [
-              {
-                action: WorkspaceMigrationColumnActionType.CREATE,
-                columnName: `${computeCustomName(
-                  createdObjectMetadata.nameSingular,
-                  false,
-                )}Id`,
-                columnType: 'uuid',
-                isNullable: true,
-              } satisfies WorkspaceMigrationColumnCreate,
-            ],
-          },
-          {
-            name: computeObjectTargetTable(attachmentObjectMetadata),
-            action: 'alter',
-            columns: [
-              {
-                action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-                columnName: `${computeCustomName(
-                  createdObjectMetadata.nameSingular,
-                  false,
-                )}Id`,
-                referencedTableName: computeObjectTargetTable(
-                  createdObjectMetadata,
-                ),
-                referencedTableColumnName: 'id',
-                onDelete: RelationOnDeleteAction.CASCADE,
-              },
-            ],
-          },
-          // Add event relation
-          {
-            name: computeObjectTargetTable(eventObjectMetadata),
-            action: 'alter',
-            columns: [
-              {
-                action: WorkspaceMigrationColumnActionType.CREATE,
-                columnName: `${computeCustomName(
-                  createdObjectMetadata.nameSingular,
-                  false,
-                )}Id`,
-                columnType: 'uuid',
-                isNullable: true,
-              } satisfies WorkspaceMigrationColumnCreate,
-            ],
-          },
-          {
-            name: computeObjectTargetTable(eventObjectMetadata),
-            action: 'alter',
-            columns: [
-              {
-                action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-                columnName: `${computeCustomName(
-                  createdObjectMetadata.nameSingular,
-                  false,
-                )}Id`,
-                referencedTableName: computeObjectTargetTable(
-                  createdObjectMetadata,
-                ),
-                referencedTableColumnName: 'id',
-                onDelete: RelationOnDeleteAction.CASCADE,
-              },
-            ],
-          },
-          // Add favorite relation
-          {
-            name: computeObjectTargetTable(favoriteObjectMetadata),
-            action: 'alter',
-            columns: [
-              {
-                action: WorkspaceMigrationColumnActionType.CREATE,
-                columnName: `${computeCustomName(
-                  createdObjectMetadata.nameSingular,
-                  false,
-                )}Id`,
-                columnType: 'uuid',
-                isNullable: true,
-              } satisfies WorkspaceMigrationColumnCreate,
-            ],
-          },
-          {
-            name: computeObjectTargetTable(favoriteObjectMetadata),
-            action: 'alter',
-            columns: [
-              {
-                action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-                columnName: `${computeCustomName(
-                  createdObjectMetadata.nameSingular,
-                  false,
-                )}Id`,
-                referencedTableName: computeObjectTargetTable(
-                  createdObjectMetadata,
-                ),
-                referencedTableColumnName: 'id',
-                onDelete: RelationOnDeleteAction.CASCADE,
-              },
-            ],
-          },
-          {
-            name: computeObjectTargetTable(createdObjectMetadata),
-            action: 'alter',
-            columns: [
-              {
-                action: WorkspaceMigrationColumnActionType.CREATE,
-                columnName: 'position',
-                columnType: 'float',
-                isNullable: true,
-              } satisfies WorkspaceMigrationColumnCreate,
-            ],
-          } satisfies WorkspaceMigrationTableAction,
-          // This is temporary until we implement mainIdentifier
-          {
-            name: computeObjectTargetTable(createdObjectMetadata),
-            action: 'alter',
-            columns: [
-              {
-                action: WorkspaceMigrationColumnActionType.CREATE,
-                columnName: 'name',
-                columnType: 'text',
-                defaultValue: "'Untitled'",
-              } satisfies WorkspaceMigrationColumnCreate,
-            ],
-          } satisfies WorkspaceMigrationTableAction,
-        ],
-      );
-    }
-
-    await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-      createdObjectMetadata.workspaceId,
+    const { attachmentObjectMetadata } = await this.createAttachmentRelation(
+      objectMetadataInput.workspaceId,
+      createdObjectMetadata,
     );
 
     const dataSourceMetadata =
@@ -539,6 +363,33 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSourceMetadata);
+
+    await this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(`create-${createdObjectMetadata.nameSingular}`),
+      createdObjectMetadata.workspaceId,
+      isCustom
+        ? buildWorkspaceMigrationsForCustomObject(
+            createdObjectMetadata,
+            activityTargetObjectMetadata,
+            attachmentObjectMetadata,
+            eventObjectMetadata,
+            favoriteObjectMetadata,
+          )
+        : await buildWorkspaceMigrationsForRemoteObject(
+            createdObjectMetadata,
+            activityTargetObjectMetadata,
+            attachmentObjectMetadata,
+            eventObjectMetadata,
+            favoriteObjectMetadata,
+            lastDataSourceMetadata.schema,
+            objectMetadataInput.remoteTablePrimaryKeyColumnType ?? 'uuid',
+            workspaceDataSource,
+          ),
+    );
+
+    await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+      createdObjectMetadata.workspaceId,
+    );
 
     const view = await workspaceDataSource?.query(
       `INSERT INTO ${dataSourceMetadata.schema}."view"

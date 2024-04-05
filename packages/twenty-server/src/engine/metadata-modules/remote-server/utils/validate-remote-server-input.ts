@@ -1,4 +1,4 @@
-const INPUT_REGEX = /^([A-Za-z0-9\-\_]+)$/;
+const INPUT_REGEX = /^([A-Za-z0-9\-\_\.]+)$/;
 
 export const validateObject = (input: object) => {
   for (const [key, value] of Object.entries(input)) {

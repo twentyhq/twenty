@@ -4,6 +4,8 @@ import { useRecoilValue } from 'recoil';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
+import { useHandleToggleColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleColumnFilter';
+import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
 
@@ -23,6 +25,8 @@ export const RecordIndexTableContainerEffect = ({
     setOnEntityCountChange,
     resetTableRowSelection,
     selectedRowIdsSelector,
+    setOnToggleColumnFilter,
+    setOnToggleColumnSort,
   } = useRecordTable({
     recordTableId,
   });
@@ -48,6 +52,30 @@ export const RecordIndexTableContainerEffect = ({
     selectedRecordIds: selectedRowIds,
     callback: resetTableRowSelection,
   });
+
+  const handleToggleColumnFilter = useHandleToggleColumnFilter({
+    objectNameSingular,
+    viewBarId,
+  });
+
+  const handleToggleColumnSort = useHandleToggleColumnSort({
+    objectNameSingular,
+    viewBarId,
+  });
+
+  useEffect(() => {
+    setOnToggleColumnFilter(
+      () => (fieldMetadataId: string) =>
+        handleToggleColumnFilter(fieldMetadataId),
+    );
+  }, [setOnToggleColumnFilter, handleToggleColumnFilter]);
+
+  useEffect(() => {
+    setOnToggleColumnSort(
+      () => (fieldMetadataId: string) =>
+        handleToggleColumnSort(fieldMetadataId),
+    );
+  }, [setOnToggleColumnSort, handleToggleColumnSort]);
 
   useEffect(() => {
     setActionBarEntries?.();

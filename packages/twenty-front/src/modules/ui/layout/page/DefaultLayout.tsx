@@ -2,8 +2,7 @@ import { useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 import { css, Global, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
-import { AnimatePresence, LayoutGroup } from 'framer-motion';
+import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 
 import { AuthModal } from '@/auth/components/Modal';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';

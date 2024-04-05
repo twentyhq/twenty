@@ -6,8 +6,8 @@ import { beautifyDateDiff } from '~/utils/date-utils';
 
 export const formatExpiration = (
   expiresAt: string | null,
-  withExpiresMention: boolean = false,
-  short: boolean = true,
+  withExpiresMention = false,
+  short = true,
 ) => {
   if (isNonEmptyString(expiresAt)) {
     const dateDiff = beautifyDateDiff(expiresAt, undefined, short);

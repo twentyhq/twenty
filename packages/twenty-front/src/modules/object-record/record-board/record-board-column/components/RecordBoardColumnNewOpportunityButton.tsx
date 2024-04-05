@@ -1,6 +1,7 @@
 import { useCallback, useContext, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconPlus } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
@@ -8,7 +9,6 @@ import { RecordBoardColumnContext } from '@/object-record/record-board/record-bo
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
-import { IconPlus } from '@/ui/display/icon';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 
 const StyledButton = styled.button`

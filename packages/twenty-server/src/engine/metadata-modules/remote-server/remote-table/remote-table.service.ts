@@ -22,9 +22,9 @@ import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dto
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { RemotePostgresTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-postgres-table/remote-postgres-table.service';
-import { snakeCase } from 'src/utils/snake-case';
-import { capitalize } from 'src/utils/capitalize';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { camelCase } from 'src/utils/camel-case';
+import { camelToTitleCase } from 'src/utils/camel-to-title-case';
 
 export class RemoteTableService {
   constructor(
@@ -149,36 +149,44 @@ export class RemoteTableService {
       .map((column) => `"${column.column_name}" ${column.data_type}`)
       .join(', ');
 
+    const remoteTableName = `${camelCase(input.name)}Remote`;
+    const remoteTableLabel = camelToTitleCase(remoteTableName);
+
+    // We only support remote tables with an id column for now.
+    const remoteTableIdColumn = remoteTableColumns.filter(
+      (column) => column.column_name === 'id',
+    )?.[0];
+
+    if (!remoteTableIdColumn) {
+      throw new Error('Remote table must have an id column');
+    }
+
     await workspaceDataSource.query(
-      `CREATE FOREIGN TABLE ${localSchema}."${input.name}Remote" (${foreignTableColumns}) SERVER "${remoteServer.foreignDataWrapperId}" OPTIONS (schema_name '${input.schema}', table_name '${input.name}')`,
+      `CREATE FOREIGN TABLE ${localSchema}."${remoteTableName}" (${foreignTableColumns}) SERVER "${remoteServer.foreignDataWrapperId}" OPTIONS (schema_name '${input.schema}', table_name '${input.name}')`,
     );
+
     await workspaceDataSource.query(
-      `COMMENT ON FOREIGN TABLE ${localSchema}."${input.name}Remote" IS e'@graphql({"primary_key_columns": ["id"], "totalCount": {"enabled": true}})'`,
+      `COMMENT ON FOREIGN TABLE ${localSchema}."${remoteTableName}" IS e'@graphql({"primary_key_columns": ["id"], "totalCount": {"enabled": true}})'`,
     );
 
     // Should be done in a transaction. To be discussed
     const objectMetadata = await this.objectMetadataService.createOne({
-      nameSingular: `${input.name}Remote`,
-      namePlural: `${input.name}Remotes`,
-      labelSingular: `${capitalize(snakeCase(input.name)).replace(
-        /_/g,
-        ' ',
-      )} remote`,
-      labelPlural: `${capitalize(snakeCase(input.name)).replace(
-        /_/g,
-        ' ',
-      )} remotes`,
+      nameSingular: remoteTableName,
+      namePlural: `${remoteTableName}s`,
+      labelSingular: remoteTableLabel,
+      labelPlural: `${remoteTableLabel}s`,
       description: 'Remote table',
       dataSourceId: dataSourceMetadata.id,
       workspaceId: workspaceId,
       icon: 'IconUser',
       isRemote: true,
+      remoteTablePrimaryKeyColumnType: remoteTableIdColumn.udt_name,
     } as CreateObjectInput);
 
     for (const column of remoteTableColumns) {
       const field = await this.fieldMetadataService.createOne({
         name: column.column_name,
-        label: capitalize(snakeCase(column.column_name)).replace(/_/g, ' '),
+        label: camelToTitleCase(camelCase(column.column_name)),
         description: 'Field of remote',
         // TODO: function should work for other types than Postgres
         type: mapUdtNameToFieldType(column.udt_name),
@@ -186,6 +194,7 @@ export class RemoteTableService {
         objectMetadataId: objectMetadata.id,
         isRemoteCreation: true,
         isNullable: true,
+        icon: 'IconUser',
       } as CreateFieldInput);
 
       if (column.column_name === 'id') {

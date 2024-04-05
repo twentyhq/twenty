@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
-import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
+import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/multiple-objects/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>{children}</RecoilRoot>
