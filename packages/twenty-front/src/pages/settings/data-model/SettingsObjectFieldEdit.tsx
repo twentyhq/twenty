@@ -87,6 +87,7 @@ export const SettingsObjectFieldEdit = () => {
     hasFormChanged,
     hasRelationFormChanged,
     hasSelectFormChanged,
+    hasMultiSelectFormChanged,
     initForm,
     isInitialized,
     isValid,
@@ -114,6 +115,14 @@ export const SettingsObjectFieldEdit = () => {
       (optionA, optionB) => optionA.position - optionB.position,
     );
 
+    const multiSelectOptions = activeMetadataField.options?.map((option) => ({
+      ...option,
+      isDefault: defaultValue.includes(`'${option.value}'`),
+    }));
+    multiSelectOptions?.sort(
+      (optionA, optionB) => optionA.position - optionB.position,
+    );
+
     const fieldType = activeMetadataField.type;
     const isFieldTypeSupported = isFieldTypeSupportedInSettings(fieldType);
 
@@ -135,6 +144,9 @@ export const SettingsObjectFieldEdit = () => {
       },
       defaultValue: activeMetadataField.defaultValue,
       ...(selectOptions?.length ? { select: selectOptions } : {}),
+      ...(multiSelectOptions?.length
+        ? { multiSelect: multiSelectOptions }
+        : {}),
     });
   }, [
     activeMetadataField,
@@ -170,11 +182,13 @@ export const SettingsObjectFieldEdit = () => {
           icon: validatedFormValues.relation.field.icon,
           id: relationFieldMetadataItem?.id,
           label: validatedFormValues.relation.field.label,
+          type: validatedFormValues.type,
         });
       }
       if (
         hasFieldFormChanged ||
         hasSelectFormChanged ||
+        hasMultiSelectFormChanged ||
         hasDefaultValueChanged
       ) {
         await editMetadataField({
@@ -183,10 +197,13 @@ export const SettingsObjectFieldEdit = () => {
           id: activeMetadataField.id,
           label: validatedFormValues.label,
           defaultValue: validatedFormValues.defaultValue,
+          type: validatedFormValues.type,
           options:
             validatedFormValues.type === FieldMetadataType.Select
               ? validatedFormValues.select
-              : undefined,
+              : validatedFormValues.type === FieldMetadataType.MultiSelect
+                ? validatedFormValues.multiSelect
+                : undefined,
         });
       }
 

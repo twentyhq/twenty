@@ -163,8 +163,8 @@ export const SettingsDataModelFieldSettingsFormCard = ({
         ) : fieldMetadataItem.type === FieldMetadataType.MultiSelect ? (
           <SettingsObjectFieldSelectForm
             values={values.multiSelect}
-            onChange={(nextSelectValues) =>
-              onChange({ multiSelect: nextSelectValues })
+            onChange={(nextMultiSelectValues) =>
+              onChange({ multiSelect: nextMultiSelectValues })
             }
             isMultiSelect={true}
           />

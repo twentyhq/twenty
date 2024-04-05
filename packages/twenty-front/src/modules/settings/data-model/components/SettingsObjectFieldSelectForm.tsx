@@ -94,10 +94,9 @@ export const SettingsObjectFieldSelectForm = ({
 
   const handleDefaultValueChange = (
     index: number,
-    option: SettingsObjectFieldSelectFormOption,
     nextOption: SettingsObjectFieldSelectFormOption,
   ) => {
-    const nextOptions = values;
+    const nextOptions = [...values];
     nextOptions.splice(index, 1, nextOption);
     onChange(nextOptions);
   };
@@ -122,7 +121,7 @@ export const SettingsObjectFieldSelectForm = ({
                       isDefault={option.isDefault}
                       onChange={(nextOption) => {
                         isMultiSelect
-                          ? handleDefaultValueChange(index, option, nextOption)
+                          ? handleDefaultValueChange(index, nextOption)
                           : handleUniqueDefaultValueChange(
                               index,
                               option,

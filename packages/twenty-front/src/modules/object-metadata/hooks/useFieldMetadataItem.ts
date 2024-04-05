@@ -45,6 +45,7 @@ export const useFieldMetadataItem = () => {
       'id' | 'label' | 'icon' | 'description' | 'defaultValue'
     > & {
       options?: FieldMetadataOption[];
+      type: FieldMetadataType;
     },
   ) => {
     const formatedInput = formatFieldMetadataItemInput(input);
