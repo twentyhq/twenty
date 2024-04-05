@@ -1,13 +1,15 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { IconBuildingSkyscraper } from 'twenty-ui';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageFavoriteButton } from '@/ui/layout/page/PageFavoriteButton';
@@ -39,6 +41,19 @@ export const RecordShowPage = () => {
 
   const setEntityFields = useSetRecoilState(
     recordStoreFamilyState(objectRecordId),
+  );
+
+  const { objectNamePlural } = useObjectNamePluralFromSingular({
+    objectNameSingular,
+  });
+
+  const { findObjectMetadataItemByNamePlural } =
+    useFilteredObjectMetadataItems();
+
+  const { getIcon } = useIcons();
+
+  const Icon = getIcon(
+    findObjectMetadataItemByNamePlural(objectNamePlural)?.icon,
   );
 
   const { record, loading } = useFindOneRecord({
@@ -83,7 +98,7 @@ export const RecordShowPage = () => {
       <PageHeader
         title={pageName ?? ''}
         hasBackButton
-        Icon={IconBuildingSkyscraper}
+        Icon={Icon}
         loading={loading}
       >
         {record && (
