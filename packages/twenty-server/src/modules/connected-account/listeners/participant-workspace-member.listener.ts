@@ -10,6 +10,10 @@ import {
   MatchParticipantJob,
   MatchParticipantJobData,
 } from 'src/modules/connected-account/jobs/match-participant.job';
+import {
+  UnmatchParticipantJobData,
+  UnmatchParticipantJob,
+} from 'src/modules/connected-account/jobs/unmatch-participant.job';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
 @Injectable()
@@ -47,6 +51,15 @@ export class ParticipantWorkspaceMemberListener {
         payload.details.after,
       ).includes('userEmail')
     ) {
+      await this.messageQueueService.add<UnmatchParticipantJobData>(
+        UnmatchParticipantJob.name,
+        {
+          workspaceId: payload.workspaceId,
+          email: payload.details.before.userEmail,
+          personId: payload.recordId,
+        },
+      );
+
       await this.messageQueueService.add<MatchParticipantJobData>(
         MatchParticipantJob.name,
         {

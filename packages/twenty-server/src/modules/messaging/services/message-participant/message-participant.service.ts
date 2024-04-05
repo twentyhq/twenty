@@ -143,4 +143,24 @@ export class MessageParticipantService {
       );
     }
   }
+
+  public async unmatchMessageParticipants(
+    workspaceId: string,
+    handle: string,
+    personId?: string,
+    workspaceMemberId?: string,
+  ) {
+    if (personId) {
+      await this.messageParticipantRepository.removePersonIdByHandle(
+        handle,
+        workspaceId,
+      );
+    }
+    if (workspaceMemberId) {
+      await this.messageParticipantRepository.removeWorkspaceMemberIdByHandle(
+        handle,
+        workspaceId,
+      );
+    }
+  }
 }
