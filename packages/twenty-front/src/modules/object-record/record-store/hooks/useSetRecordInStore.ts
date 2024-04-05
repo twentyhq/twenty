@@ -7,15 +7,10 @@ export const useSetRecordInStore = () => {
   const setRecords = useRecoilCallback(
     ({ set, snapshot }) =>
       (records: ObjectRecord[]) => {
-        console.log({
-          records,
-        });
         records.forEach((record) => {
           const currentRecord = snapshot
             .getLoadable(recordStoreFamilyState(record.id))
             .getValue();
-
-          console.log({ currentRecord });
 
           if (JSON.stringify(currentRecord) !== JSON.stringify(record)) {
             set(recordStoreFamilyState(record.id), record);
