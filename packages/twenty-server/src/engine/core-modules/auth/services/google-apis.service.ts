@@ -10,10 +10,6 @@ import { SaveOrUpdateConnectedAccountInput } from 'src/engine/core-modules/auth/
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import {
-  GmailFullSyncJob,
-  GmailFullSyncJobData,
-} from 'src/modules/messaging/jobs/gmail-full-sync.job';
-import {
   GoogleCalendarFullSyncJob,
   GoogleCalendarFullSyncJobData,
 } from 'src/modules/calendar/jobs/google-calendar-full-sync.job';
@@ -187,32 +183,13 @@ export class GoogleAPIsService {
     workspaceId: string,
     connectedAccountId: string,
   ) {
-    const isFullSyncV2Enabled = await this.featureFlagRepository.findOneBy({
-      workspaceId,
-      key: FeatureFlagKeys.IsFullSyncV2Enabled,
-      value: true,
-    });
-
-    if (isFullSyncV2Enabled) {
-      await this.messageQueueService.add<GmailFullSyncV2JobData>(
-        GmailFullSyncV2Job.name,
-        {
-          workspaceId,
-          connectedAccountId,
-        },
-      );
-    } else {
-      await this.messageQueueService.add<GmailFullSyncJobData>(
-        GmailFullSyncJob.name,
-        {
-          workspaceId,
-          connectedAccountId,
-        },
-        {
-          retryLimit: 2,
-        },
-      );
-    }
+    await this.messageQueueService.add<GmailFullSyncV2JobData>(
+      GmailFullSyncV2Job.name,
+      {
+        workspaceId,
+        connectedAccountId,
+      },
+    );
   }
 
   async enqueueGoogleCalendarFullSyncJob(
