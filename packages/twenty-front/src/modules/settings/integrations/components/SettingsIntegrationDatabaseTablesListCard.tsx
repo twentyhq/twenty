@@ -6,7 +6,7 @@ import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { Toggle } from '@/ui/input/components/Toggle';
 
 export const settingsIntegrationsDatabaseTablesSchema = z.object({
-  trackedTablesById: z.record(z.boolean()),
+  syncedTablesById: z.record(z.boolean()),
 });
 
 export type SettingsIntegrationsDatabaseTablesFormValues = z.infer<
@@ -14,7 +14,7 @@ export type SettingsIntegrationsDatabaseTablesFormValues = z.infer<
 >;
 
 type SettingsIntegrationDatabaseTablesListCardProps = {
-  tables: { id: string; name: string; isTracked?: boolean }[];
+  tables: { id: string; name: string; isSynced?: boolean }[];
 };
 
 const StyledRowRightContainer = styled.div`
@@ -35,9 +35,9 @@ export const SettingsIntegrationDatabaseTablesListCard = ({
       RowRightComponent={({ item: table }) => (
         <StyledRowRightContainer>
           <Controller
-            name={`trackedTablesById.${table.id}`}
+            name={`syncedTablesById.${table.id}`}
             control={control}
-            defaultValue={!!table.isTracked}
+            defaultValue={!!table.isSynced}
             render={({ field: { onChange, value } }) => (
               <Toggle value={value} onChange={onChange} />
             )}

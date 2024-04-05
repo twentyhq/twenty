@@ -9,9 +9,9 @@ export const mockedRemoteObjectIntegrations = [
         name: 'Twenty_postgres',
         tables: [
           { id: 'invoices', name: 'Invoices' },
-          { id: 'quotes', name: 'Quotes', isTracked: true },
-          { id: 'customers', name: 'Customers', isTracked: false },
-          { id: 'subscriptions', name: 'Subscriptions', isTracked: true },
+          { id: 'quotes', name: 'Quotes', isSynced: true },
+          { id: 'customers', name: 'Customers', isSynced: false },
+          { id: 'subscriptions', name: 'Subscriptions', isSynced: true },
           { id: 'payments', name: 'Payments' },
         ],
       },
