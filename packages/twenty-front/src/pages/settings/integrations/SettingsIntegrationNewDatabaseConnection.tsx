@@ -48,6 +48,15 @@ type SettingsIntegrationNewConnectionFormValues = z.infer<
   typeof newConnectionSchema
 >;
 
+const getForeignDataWrapperType = (databaseKey: string) => {
+  switch (databaseKey) {
+    case 'postgresql':
+      return 'postgres_fdw';
+    default:
+      return null;
+  }
+};
+
 export const SettingsIntegrationNewDatabaseConnection = () => {
   const { databaseKey = '' } = useParams();
   const navigate = useNavigate();
@@ -97,7 +106,7 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
       await createOneDatabaseConnection(
         createRemoteServerInputSchema.parse({
           ...formValues,
-          foreignDataWrapperType: 'postgres_fdw',
+          foreignDataWrapperType: getForeignDataWrapperType(databaseKey),
         }),
       );
 
