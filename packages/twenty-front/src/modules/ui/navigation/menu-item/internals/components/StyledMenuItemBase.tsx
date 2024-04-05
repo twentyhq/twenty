@@ -117,6 +117,7 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
     & .hoverable-buttons {
       opacity: 1;
       pointer-events: auto;
+      position: static;
     }
   }
 `;
