@@ -5,7 +5,7 @@ import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMeta
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
-import { useRecordTableQueryFields } from '@/object-record/record-index/utils/useRecordTableQueryFields';
+import { useRecordTableQueryFields } from '@/object-record/record-index/hooks/useRecordTableQueryFields';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SIGN_IN_BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/SignInBackgroundMockCompanies';
