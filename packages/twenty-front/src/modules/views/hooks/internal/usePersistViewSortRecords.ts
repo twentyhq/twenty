@@ -7,6 +7,7 @@ import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewSort } from '@/views/types/ViewSort';
@@ -14,11 +15,14 @@ import { ViewSort } from '@/views/types/ViewSort';
 export const usePersistViewSortRecords = () => {
   const {
     updateOneRecordMutation,
-    createOneRecordMutation,
     deleteOneRecordMutation,
     objectMetadataItem,
     getRecordFromCache,
   } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.ViewSort,
+  });
+
+  const { createOneRecordMutation } = useCreateOneRecordMutation({
     objectNameSingular: CoreObjectNameSingular.ViewSort,
   });
 

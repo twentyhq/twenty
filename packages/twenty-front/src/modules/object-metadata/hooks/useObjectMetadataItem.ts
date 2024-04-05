@@ -12,7 +12,6 @@ import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useGenerateCreateManyRecordMutation } from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
-import { useGenerateCreateOneRecordMutation } from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
 import { useGenerateDeleteManyRecordMutation } from '@/object-record/hooks/useGenerateDeleteManyRecordMutation';
 import { useGenerateExecuteQuickActionOnOneRecordMutation } from '@/object-record/hooks/useGenerateExecuteQuickActionOnOneRecordMutation';
 import { useGenerateFindDuplicateRecordsQuery } from '@/object-record/hooks/useGenerateFindDuplicateRecordsQuery';
@@ -103,11 +102,6 @@ export const useObjectMetadataItem = (
     depth,
   });
 
-  const createOneRecordMutation = useGenerateCreateOneRecordMutation({
-    objectMetadataItem,
-    depth,
-  });
-
   const createManyRecordsMutation = useGenerateCreateManyRecordMutation({
     objectMetadataItem,
     depth,
@@ -147,7 +141,6 @@ export const useObjectMetadataItem = (
     findManyRecordsQuery,
     findDuplicateRecordsQuery,
     findOneRecordQuery,
-    createOneRecordMutation,
     updateOneRecordMutation,
     deleteOneRecordMutation,
     executeQuickActionOnOneRecordMutation,
