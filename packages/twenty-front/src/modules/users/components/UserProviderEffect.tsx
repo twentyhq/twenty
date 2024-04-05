@@ -28,16 +28,18 @@ export const UserProviderEffect = () => {
 
   const { loading: queryLoading, data: queryData } = useQuery<{
     currentUser: User;
-  }>(GET_CURRENT_USER, { skip: isCurrentUserLoaded });
+  }>(GET_CURRENT_USER, {
+    skip: isCurrentUserLoaded,
+  });
 
   useEffect(() => {
     if (!queryLoading) {
       setIsLoading(false);
+      setIsCurrentUserLoaded(true);
     }
 
     if (!isDefined(queryData?.currentUser)) return;
 
-    setIsCurrentUserLoaded(true);
     setCurrentUser(queryData.currentUser);
     setCurrentWorkspace(queryData.currentUser.defaultWorkspace);
 
