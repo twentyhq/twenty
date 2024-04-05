@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
@@ -10,6 +10,7 @@ import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/s
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
+import { useRecordBoardQueryFields } from '@/object-record/record-index/utils/useRecordBoardQueryFields';
 import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
 import { useSetRecordCountInCurrentView } from '@/views/hooks/useSetRecordCountInCurrentView';
 
@@ -24,7 +25,7 @@ export const useLoadRecordIndexBoard = ({
   viewBarId,
   recordBoardId,
 }: UseLoadRecordIndexBoardProps) => {
-  const { objectMetadataItem } = useObjectMetadataItem({
+  const { objectMetadataItem } = useObjectMetadataItemOnly({
     objectNameSingular,
   });
   const {
@@ -55,6 +56,11 @@ export const useLoadRecordIndexBoard = ({
     recordIndexIsCompactModeActiveState,
   );
 
+  const queryFields = useRecordBoardQueryFields({
+    objectMetadataItem,
+    recordBoardId,
+  });
+
   const {
     records,
     totalCount,
@@ -65,6 +71,7 @@ export const useLoadRecordIndexBoard = ({
     objectNameSingular,
     filter: requestFilters,
     orderBy,
+    queryFields,
   });
 
   const { setRecordCountInCurrentView } =
