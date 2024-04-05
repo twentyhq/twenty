@@ -123,6 +123,10 @@ export class RemoteTableService {
     remoteServer: RemoteServerEntity<RemoteServerType>,
     workspaceId: string,
   ) {
+    if (!input.schema) {
+      throw new Error('Schema is required for syncing remote table');
+    }
+
     const remoteTableColumns = await this.fetchTableColumnsSchema(
       remoteServer,
       input.name,
