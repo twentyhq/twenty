@@ -15,7 +15,6 @@ import { useGenerateCreateManyRecordMutation } from '@/object-record/hooks/useGe
 import { useGenerateDeleteManyRecordMutation } from '@/object-record/hooks/useGenerateDeleteManyRecordMutation';
 import { useGenerateExecuteQuickActionOnOneRecordMutation } from '@/object-record/hooks/useGenerateExecuteQuickActionOnOneRecordMutation';
 import { useGenerateFindDuplicateRecordsQuery } from '@/object-record/hooks/useGenerateFindDuplicateRecordsQuery';
-import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
 import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
 import { generateDeleteOneRecordMutation } from '@/object-record/utils/generateDeleteOneRecordMutation';
 import { isDefined } from '~/utils/isDefined';
@@ -37,7 +36,6 @@ export const EMPTY_MUTATION = gql`
 export const useObjectMetadataItem = (
   { objectNameSingular }: ObjectMetadataItemIdentifier,
   depth?: number,
-  queryFields?: Record<string, any>,
 ) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
@@ -78,13 +76,6 @@ export const useObjectMetadataItem = (
 
   const getRecordFromCache = useGetRecordFromCache({
     objectMetadataItem,
-  });
-
-  const generateFindManyRecordsQuery = useGenerateFindManyRecordsQuery();
-  const findManyRecordsQuery = generateFindManyRecordsQuery({
-    objectMetadataItem,
-    depth,
-    queryFields,
   });
 
   const generateFindDuplicateRecordsQuery =
@@ -130,7 +121,6 @@ export const useObjectMetadataItem = (
     basePathToShowPage,
     objectMetadataItem,
     getRecordFromCache,
-    findManyRecordsQuery,
     findDuplicateRecordsQuery,
     findOneRecordQuery,
     deleteOneRecordMutation,

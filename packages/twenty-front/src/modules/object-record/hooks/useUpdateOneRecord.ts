@@ -28,7 +28,6 @@ export const useUpdateOneRecord = <
   const { objectMetadataItem, getRecordFromCache } = useObjectMetadataItem(
     { objectNameSingular },
     depth,
-    queryFields,
   );
 
   const { updateOneRecordMutation } = useUpdateOneRecordMutation({
