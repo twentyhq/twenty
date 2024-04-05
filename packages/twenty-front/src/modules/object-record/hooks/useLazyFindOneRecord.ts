@@ -32,8 +32,12 @@ export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
     findOneRecord: ({ objectRecordId, onCompleted }: FindOneRecordParams<T>) =>
       findOneRecord({
         variables: { objectRecordId },
-        onCompleted: (data) =>
-          onCompleted?.(getRecordFromRecordNode(data[objectNameSingular])),
+        onCompleted: (data) => {
+          const record = getRecordFromRecordNode<T>({
+            recordNode: data[objectNameSingular],
+          });
+          onCompleted?.(record);
+        },
       }),
     called,
     error,
