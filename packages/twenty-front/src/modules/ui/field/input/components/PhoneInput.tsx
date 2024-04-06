@@ -9,6 +9,17 @@ import { TEXT_INPUT_STYLE } from '@/ui/theme/constants/TextInputStyle';
 
 import 'react-phone-number-input/style.css';
 
+const StyledContainer = styled.div`
+  align-items: center;
+
+  border: none;
+
+  display: flex;
+  justify-content: start;
+
+  width: 75%;
+`;
+
 const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
   margin: 0;
   ${TEXT_INPUT_STYLE}
@@ -36,7 +47,6 @@ const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
     border-radius: ${({ theme }) => theme.border.radius.xs};
     height: 12px;
   }
-  width: 75%;
 `;
 
 export type PhoneInputProps = {
@@ -67,7 +77,7 @@ export const PhoneInput = ({
 }: PhoneInputProps) => {
   const [internalValue, setInternalValue] = useState<string | undefined>(value);
 
-  const wrapperRef = useRef<HTMLInputElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const copyRef = useRef<HTMLDivElement>(null);
 
   const handleChange = (newValue: string) => {
@@ -93,16 +103,17 @@ export const PhoneInput = ({
 
   return (
     <>
-      <StyledCustomPhoneInput
-        autoFocus={autoFocus}
-        placeholder="Phone number"
-        value={value}
-        onChange={handleChange}
-        international={true}
-        withCountryCallingCode={true}
-        countrySelectComponent={PhoneCountryPickerDropdownButton}
-        ref={wrapperRef}
-      />
+      <StyledContainer ref={wrapperRef}>
+        <StyledCustomPhoneInput
+          autoFocus={autoFocus}
+          placeholder="Phone number"
+          value={value}
+          onChange={handleChange}
+          international={true}
+          withCountryCallingCode={true}
+          countrySelectComponent={PhoneCountryPickerDropdownButton}
+        />
+      </StyledContainer>
       {copyButton && (
         <div ref={copyRef}>
           <LightCopyIconButton copyText={value} />
