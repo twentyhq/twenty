@@ -1,4 +1,4 @@
-[
+export const companiesDemo = [
   {
     "name": "Google",
     "domainName": "goo.gle",

@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
@@ -97,7 +99,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
-  activityTargets: ActivityTargetObjectMetadata[];
+  activityTargets: Relation<ActivityTargetObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: activityStandardFieldIds.attachments,
@@ -112,7 +114,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
-  attachments: AttachmentObjectMetadata[];
+  attachments: Relation<AttachmentObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: activityStandardFieldIds.comments,
@@ -127,7 +129,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  comments: CommentObjectMetadata[];
+  comments: Relation<CommentObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: activityStandardFieldIds.author,
@@ -138,7 +140,7 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'authorId',
   })
   @IsNullable()
-  author: WorkspaceMemberObjectMetadata;
+  author: Relation<WorkspaceMemberObjectMetadata>;
 
   @FieldMetadata({
     standardId: activityStandardFieldIds.assignee,
@@ -149,5 +151,5 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'assigneeId',
   })
   @IsNullable()
-  assignee: WorkspaceMemberObjectMetadata;
+  assignee: Relation<WorkspaceMemberObjectMetadata>;
 }

@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
@@ -41,7 +43,7 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
     icon: 'IconUserCircle',
     joinColumn: 'connectedAccountId',
   })
-  connectedAccount: ConnectedAccountObjectMetadata;
+  connectedAccount: Relation<ConnectedAccountObjectMetadata>;
 
   @FieldMetadata({
     standardId: calendarChannelStandardFieldIds.handle,
@@ -119,5 +121,7 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
     inverseSideTarget: () => CalendarChannelEventAssociationObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  calendarChannelEventAssociations: CalendarChannelEventAssociationObjectMetadata[];
+  calendarChannelEventAssociations: Relation<
+    CalendarChannelEventAssociationObjectMetadata[]
+  >;
 }
