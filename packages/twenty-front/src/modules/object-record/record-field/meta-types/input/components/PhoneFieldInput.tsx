@@ -1,4 +1,3 @@
-import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { PhoneInput } from '@/ui/field/input/components/PhoneInput';
 
 import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
@@ -70,7 +69,6 @@ export const PhoneFieldInput = ({
         hotkeyScope={hotkeyScope}
         onChange={handleChange}
       />
-      <LightCopyIconButton copyText={draftValue ?? ''} />
     </FieldInputOverlay>
   );
 };

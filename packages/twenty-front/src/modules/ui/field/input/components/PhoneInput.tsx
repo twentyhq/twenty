@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import ReactPhoneNumberInput from 'react-phone-number-input';
 import styled from '@emotion/styled';
 
+import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 import { TEXT_INPUT_STYLE } from '@/ui/theme/constants/TextInputStyle';
@@ -49,6 +50,7 @@ export type PhoneInputProps = {
   onClickOutside: (event: MouseEvent | TouchEvent, inputValue: string) => void;
   onChange?: (newText: string) => void;
   hotkeyScope: string;
+  copyButton?: boolean;
 };
 
 export const PhoneInput = ({
@@ -61,10 +63,12 @@ export const PhoneInput = ({
   onClickOutside,
   hotkeyScope,
   onChange,
+  copyButton = true,
 }: PhoneInputProps) => {
   const [internalValue, setInternalValue] = useState<string | undefined>(value);
 
   const wrapperRef = useRef<HTMLInputElement>(null);
+  const copyRef = useRef<HTMLDivElement>(null);
 
   const handleChange = (newValue: string) => {
     setInternalValue(newValue);
@@ -77,6 +81,7 @@ export const PhoneInput = ({
 
   useRegisterInputEvents({
     inputRef: wrapperRef,
+    copyRef: copyRef,
     inputValue: internalValue ?? '',
     onEnter,
     onEscape,
@@ -87,15 +92,22 @@ export const PhoneInput = ({
   });
 
   return (
-    <StyledCustomPhoneInput
-      autoFocus={autoFocus}
-      placeholder="Phone number"
-      value={value}
-      onChange={handleChange}
-      international={true}
-      withCountryCallingCode={true}
-      countrySelectComponent={PhoneCountryPickerDropdownButton}
-      ref={wrapperRef}
-    />
+    <>
+      <StyledCustomPhoneInput
+        autoFocus={autoFocus}
+        placeholder="Phone number"
+        value={value}
+        onChange={handleChange}
+        international={true}
+        withCountryCallingCode={true}
+        countrySelectComponent={PhoneCountryPickerDropdownButton}
+        ref={wrapperRef}
+      />
+      {copyButton && (
+        <div ref={copyRef}>
+          <LightCopyIconButton copyText={value} />
+        </div>
+      )}
+    </>
   );
 };

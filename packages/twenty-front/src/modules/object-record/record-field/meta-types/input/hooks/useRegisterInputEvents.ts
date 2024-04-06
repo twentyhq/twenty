@@ -6,6 +6,7 @@ import { isDefined } from '~/utils/isDefined';
 
 export const useRegisterInputEvents = <T>({
   inputRef,
+  copyRef,
   inputValue,
   onEscape,
   onEnter,
@@ -15,6 +16,7 @@ export const useRegisterInputEvents = <T>({
   hotkeyScope,
 }: {
   inputRef: React.RefObject<any>;
+  copyRef: React.RefObject<any>;
   inputValue: T;
   onEscape: (inputValue: T) => void;
   onEnter: (inputValue: T) => void;
@@ -26,6 +28,9 @@ export const useRegisterInputEvents = <T>({
   useListenClickOutside({
     refs: [inputRef],
     callback: (event) => {
+      if (copyRef.current.contains(event.target) === true) {
+        return;
+      }
       event.stopImmediatePropagation();
       onClickOutside?.(event, inputValue);
     },

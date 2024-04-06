@@ -2,6 +2,7 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import styled from '@emotion/styled';
 
+import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { TEXT_INPUT_STYLE } from '@/ui/theme/constants/TextInputStyle';
 import { isDefined } from '~/utils/isDefined';
@@ -19,6 +20,7 @@ export type TextAreaInputProps = {
   onClickOutside: (event: MouseEvent | TouchEvent, inputValue: string) => void;
   hotkeyScope: string;
   onChange?: (newText: string) => void;
+  copyButton?: boolean;
 };
 
 const StyledTextArea = styled(TextareaAutosize)`
@@ -45,6 +47,7 @@ export const TextAreaInput = ({
   onShiftTab,
   onClickOutside,
   onChange,
+  copyButton = true,
 }: TextAreaInputProps) => {
   const [internalText, setInternalText] = useState(value);
 
@@ -54,6 +57,7 @@ export const TextAreaInput = ({
   };
 
   const wrapperRef = useRef<HTMLTextAreaElement>(null);
+  const copyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isDefined(wrapperRef.current)) {
@@ -66,6 +70,7 @@ export const TextAreaInput = ({
 
   useRegisterInputEvents({
     inputRef: wrapperRef,
+    copyRef: copyRef,
     inputValue: internalText,
     onEnter,
     onEscape,
@@ -76,14 +81,21 @@ export const TextAreaInput = ({
   });
 
   return (
-    <StyledTextArea
-      placeholder={placeholder}
-      disabled={disabled}
-      className={className}
-      ref={wrapperRef}
-      onChange={handleChange}
-      autoFocus={autoFocus}
-      value={internalText}
-    />
+    <>
+      <StyledTextArea
+        placeholder={placeholder}
+        disabled={disabled}
+        className={className}
+        ref={wrapperRef}
+        onChange={handleChange}
+        autoFocus={autoFocus}
+        value={internalText}
+      />
+      {copyButton && (
+        <div ref={copyRef}>
+          <LightCopyIconButton copyText={internalText} />
+        </div>
+      )}
+    </>
   );
 };
