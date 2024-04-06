@@ -1,3 +1,4 @@
+import { isUndefined } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -16,7 +17,7 @@ export const useRegisterInputEvents = <T>({
   hotkeyScope,
 }: {
   inputRef: React.RefObject<any>;
-  copyRef: React.RefObject<any>;
+  copyRef?: React.RefObject<any>;
   inputValue: T;
   onEscape: (inputValue: T) => void;
   onEnter: (inputValue: T) => void;
@@ -28,7 +29,10 @@ export const useRegisterInputEvents = <T>({
   useListenClickOutside({
     refs: [inputRef],
     callback: (event) => {
-      if (copyRef.current.contains(event.target) === true) {
+      if (
+        isUndefined(copyRef) === false &&
+        copyRef.current.contains(event.target) === true
+      ) {
         return;
       }
       event.stopImmediatePropagation();
