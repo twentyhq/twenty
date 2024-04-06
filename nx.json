@@ -4,9 +4,17 @@
       "cache": true,
       "dependsOn": ["^build"]
     },
+    "build:swc": {
+      "cache": true,
+      "dependsOn": ["^build"]
+    },
     "start": {
       "cache": true,
       "dependsOn": ["^build"]
+    },
+    "start:swc": {
+      "cache": true,
+      "dependsOn": ["^build:swc"]
     },
     "lint": {
       "cache": true
