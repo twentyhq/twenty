@@ -26,7 +26,6 @@ const StyledContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: row;
-  margin-left: ${({ theme }) => theme.spacing(2)};
   margin-right: ${({ theme }) => theme.spacing(2)};
 `;
 
