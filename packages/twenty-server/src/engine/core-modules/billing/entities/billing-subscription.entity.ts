@@ -8,6 +8,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  Relation,
   UpdateDateColumn,
 } from 'typeorm';
 import Stripe from 'stripe';
@@ -36,7 +37,7 @@ export class BillingSubscription {
     onDelete: 'CASCADE',
   })
   @JoinColumn()
-  workspace: Workspace;
+  workspace: Relation<Workspace>;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
@@ -59,5 +60,5 @@ export class BillingSubscription {
     () => BillingSubscriptionItem,
     (billingSubscriptionItem) => billingSubscriptionItem.billingSubscription,
   )
-  billingSubscriptionItems: BillingSubscriptionItem[];
+  billingSubscriptionItems: Relation<BillingSubscriptionItem[]>;
 }

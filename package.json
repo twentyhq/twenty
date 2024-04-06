@@ -220,6 +220,7 @@
     "@storybook/testing-library": "^0.2.2",
     "@stylistic/eslint-plugin": "^1.5.0",
     "@swc-node/register": "1.8.0",
+    "@swc/cli": "^0.3.12",
     "@swc/core": "~1.3.100",
     "@swc/helpers": "~0.5.2",
     "@testing-library/jest-dom": "^6.1.5",

@@ -8,6 +8,7 @@ import {
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
+  Relation,
 } from 'typeorm';
 import { BeforeCreateOne, IDField } from '@ptc-org/nestjs-query-graphql';
 
@@ -32,7 +33,7 @@ export class AppToken {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'userId' })
-  user: User;
+  user: Relation<User>;
 
   @Column()
   userId: string;
@@ -41,7 +42,7 @@ export class AppToken {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'workspaceId' })
-  workspace: Workspace;
+  workspace: Relation<Workspace>;
 
   @Column({ nullable: true })
   workspaceId: string;

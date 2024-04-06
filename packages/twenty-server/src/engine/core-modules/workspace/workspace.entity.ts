@@ -7,6 +7,7 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
+  Relation,
   UpdateDateColumn,
 } from 'typeorm';
 import Stripe from 'stripe';
@@ -59,22 +60,22 @@ export class Workspace {
   @OneToMany(() => AppToken, (appToken) => appToken.workspace, {
     cascade: true,
   })
-  appTokens: AppToken[];
+  appTokens: Relation<AppToken[]>;
 
   @OneToMany(() => User, (user) => user.defaultWorkspace)
-  users: User[];
+  users: Relation<User[]>;
 
   @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.workspace, {
     onDelete: 'CASCADE',
   })
-  workspaceUsers: UserWorkspace[];
+  workspaceUsers: Relation<UserWorkspace[]>;
 
   @Field()
   @Column({ default: true })
   allowImpersonation: boolean;
 
   @OneToMany(() => FeatureFlagEntity, (featureFlag) => featureFlag.workspace)
-  featureFlags: FeatureFlagEntity[];
+  featureFlags: Relation<FeatureFlagEntity[]>;
 
   @Field()
   @Column({ default: 'incomplete' })
@@ -90,5 +91,5 @@ export class Workspace {
     () => BillingSubscription,
     (billingSubscription) => billingSubscription.workspace,
   )
-  billingSubscriptions: BillingSubscription[];
+  billingSubscriptions: Relation<BillingSubscription[]>;
 }

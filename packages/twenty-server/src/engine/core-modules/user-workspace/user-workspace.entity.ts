@@ -8,6 +8,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Relation,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
@@ -28,7 +29,7 @@ export class UserWorkspace {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'userId' })
-  user: User;
+  user: Relation<User>;
 
   @Field({ nullable: false })
   @Column()
@@ -39,7 +40,7 @@ export class UserWorkspace {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'workspaceId' })
-  workspace: Workspace;
+  workspace: Relation<Workspace>;
 
   @Field({ nullable: false })
   @Column()
