@@ -78,7 +78,7 @@ export class Workspace {
   featureFlags: Relation<FeatureFlagEntity[]>;
 
   @Field(() => String)
-  @Column({ default: 'incomplete' })
+  @Column({ type: 'text', default: 'incomplete' })
   subscriptionStatus: Stripe.Subscription.Status;
 
   @Field({ nullable: true })

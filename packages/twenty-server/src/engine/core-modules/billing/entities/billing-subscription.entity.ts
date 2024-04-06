@@ -48,12 +48,12 @@ export class BillingSubscription {
   @Column({ unique: true, nullable: false })
   stripeSubscriptionId: string;
 
-  @Field()
-  @Column({ nullable: false })
+  @Field(() => String)
+  @Column({ type: 'text', nullable: false })
   status: Stripe.Subscription.Status;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'text', nullable: true })
   interval: Stripe.Price.Recurring.Interval;
 
   @OneToMany(
