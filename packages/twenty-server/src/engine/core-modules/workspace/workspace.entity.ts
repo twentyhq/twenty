@@ -77,7 +77,7 @@ export class Workspace {
   @OneToMany(() => FeatureFlagEntity, (featureFlag) => featureFlag.workspace)
   featureFlags: Relation<FeatureFlagEntity[]>;
 
-  @Field()
+  @Field(() => String)
   @Column({ default: 'incomplete' })
   subscriptionStatus: Stripe.Subscription.Status;
 
