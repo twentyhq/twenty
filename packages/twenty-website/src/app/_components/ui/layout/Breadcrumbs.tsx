@@ -30,7 +30,7 @@ const ExternalLinkItem = styled.a`
 `;
 
 const ActivePage = styled.span`
-  color: ${Theme.text.color.secondary};
+  color: ${Theme.text.color.primary};
   font-weight: ${Theme.font.weight.medium};
 `;
 

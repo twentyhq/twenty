@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import {
+  AddressFilter,
   CurrencyFilter,
   DateFilter,
   FloatFilter,
@@ -243,6 +244,74 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
                         ilike: `%${rawUIFilter.value}%`,
                       },
                     } as FullNameFilter,
+                  },
+                },
+              ],
+            });
+            break;
+          default:
+            throw new Error(
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+            );
+        }
+        break;
+      case 'ADDRESS':
+        switch (rawUIFilter.operand) {
+          case ViewFilterOperand.Contains:
+            objectRecordFilters.push({
+              or: [
+                {
+                  [correspondingField.name]: {
+                    addressStreet1: {
+                      ilike: `%${rawUIFilter.value}%`,
+                    },
+                  } as AddressFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    addressStreet2: {
+                      ilike: `%${rawUIFilter.value}%`,
+                    },
+                  } as AddressFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    addressCity: {
+                      ilike: `%${rawUIFilter.value}%`,
+                    },
+                  } as AddressFilter,
+                },
+              ],
+            });
+            break;
+          case ViewFilterOperand.DoesNotContain:
+            objectRecordFilters.push({
+              and: [
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      addressStreet1: {
+                        ilike: `%${rawUIFilter.value}%`,
+                      },
+                    } as AddressFilter,
+                  },
+                },
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      addressStreet2: {
+                        ilike: `%${rawUIFilter.value}%`,
+                      },
+                    } as AddressFilter,
+                  },
+                },
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      addressCity: {
+                        ilike: `%${rawUIFilter.value}%`,
+                      },
+                    } as AddressFilter,
                   },
                 },
               ],

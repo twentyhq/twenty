@@ -14,16 +14,17 @@ const StyledRow = styled(CardContent)`
   gap: ${({ theme }) => theme.spacing(2)};
   padding: ${({ theme }) => theme.spacing(2)};
   padding-left: ${({ theme }) => theme.spacing(3)};
+  min-height: ${({ theme }) => theme.spacing(6)};
 `;
 
-const StyledAccountHandle = styled.span`
+const StyledLabel = styled.span`
   flex: 1 0 auto;
 `;
 
 type SettingsListItemCardContentProps = {
   label: string;
   divider?: boolean;
-  LeftIcon: IconComponent;
+  LeftIcon?: IconComponent;
   onClick?: () => void;
   rightComponent: ReactNode;
 };
@@ -39,8 +40,8 @@ export const SettingsListItemCardContent = ({
 
   return (
     <StyledRow onClick={onClick} divider={divider}>
-      <LeftIcon size={theme.icon.size.md} />
-      <StyledAccountHandle>{label}</StyledAccountHandle>
+      {!!LeftIcon && <LeftIcon size={theme.icon.size.md} />}
+      <StyledLabel>{label}</StyledLabel>
       {rightComponent}
     </StyledRow>
   );

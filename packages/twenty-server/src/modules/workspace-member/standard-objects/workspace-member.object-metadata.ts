@@ -15,7 +15,7 @@ import { ActivityObjectMetadata } from 'src/modules/activity/standard-objects/ac
 import { AttachmentObjectMetadata } from 'src/modules/attachment/standard-objects/attachment.object-metadata';
 import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
-import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-attendee.object-metadata';
+import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
 import { CommentObjectMetadata } from 'src/modules/activity/standard-objects/comment.object-metadata';
 import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
@@ -102,6 +102,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => ActivityObjectMetadata,
     inverseSideFieldKey: 'author',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   authoredActivities: ActivityObjectMetadata[];
 
@@ -116,6 +117,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => ActivityObjectMetadata,
     inverseSideFieldKey: 'assignee',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   assignedActivities: ActivityObjectMetadata[];
 
@@ -144,6 +146,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => CompanyObjectMetadata,
     inverseSideFieldKey: 'accountOwner',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   accountOwnerForCompanies: CompanyObjectMetadata[];
 
@@ -158,6 +161,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => AttachmentObjectMetadata,
     inverseSideFieldKey: 'author',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   authoredAttachments: AttachmentObjectMetadata[];
 
@@ -172,6 +176,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => CommentObjectMetadata,
     inverseSideFieldKey: 'author',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   authoredComments: CommentObjectMetadata[];
 
@@ -201,6 +206,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => MessageParticipantObjectMetadata,
     inverseSideFieldKey: 'workspaceMember',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   messageParticipants: MessageParticipantObjectMetadata[];
 
@@ -215,25 +221,27 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => BlocklistObjectMetadata,
     inverseSideFieldKey: 'workspaceMember',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   blocklist: BlocklistObjectMetadata[];
 
   @FieldMetadata({
-    standardId: workspaceMemberStandardFieldIds.calendarEventAttendees,
+    standardId: workspaceMemberStandardFieldIds.calendarEventParticipants,
     type: FieldMetadataType.RELATION,
-    label: 'Calendar Event Attendees',
-    description: 'Calendar Event Attendees',
+    label: 'Calendar Event Participants',
+    description: 'Calendar Event Participants',
     icon: 'IconCalendar',
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => CalendarEventAttendeeObjectMetadata,
+    inverseSideTarget: () => CalendarEventParticipantObjectMetadata,
     inverseSideFieldKey: 'workspaceMember',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @Gate({
     featureFlag: 'IS_CALENDAR_ENABLED',
   })
-  calendarEventAttendees: CalendarEventAttendeeObjectMetadata[];
+  calendarEventParticipants: CalendarEventParticipantObjectMetadata[];
 
   @FieldMetadata({
     standardId: workspaceMemberStandardFieldIds.events,

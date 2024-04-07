@@ -10,6 +10,8 @@ import { isTableCellInEditModeComponentFamilyState } from '@/object-record/recor
 import { numberOfTableRowsComponentState } from '@/object-record/record-table/states/numberOfTableRowsComponentState';
 import { onColumnsChangeComponentState } from '@/object-record/record-table/states/onColumnsChangeComponentState';
 import { onEntityCountChangeComponentState } from '@/object-record/record-table/states/onEntityCountChangeComponentState';
+import { onToggleColumnFilterComponentState } from '@/object-record/record-table/states/onToggleColumnFilterComponentState';
+import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
 import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
@@ -47,6 +49,14 @@ export const useRecordTableStates = (recordTableId?: string) => {
     tableSortsState: extractComponentState(tableSortsComponentState, scopeId),
     tableColumnsState: extractComponentState(
       tableColumnsComponentState,
+      scopeId,
+    ),
+    onToggleColumnFilterState: extractComponentState(
+      onToggleColumnFilterComponentState,
+      scopeId,
+    ),
+    onToggleColumnSortState: extractComponentState(
+      onToggleColumnSortComponentState,
       scopeId,
     ),
     onColumnsChangeState: extractComponentState(

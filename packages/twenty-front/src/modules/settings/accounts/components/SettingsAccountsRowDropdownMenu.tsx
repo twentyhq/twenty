@@ -1,9 +1,10 @@
 import { useNavigate } from 'react-router-dom';
-import { IconDotsVertical, IconMail, IconTrash } from 'twenty-ui';
+import { IconDotsVertical, IconMail, IconRefresh, IconTrash } from 'twenty-ui';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -12,12 +13,12 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsAccountsRowDropdownMenuProps = {
-  item: Pick<ConnectedAccount, 'id' | 'messageChannels'>;
+  account: ConnectedAccount;
   className?: string;
 };
 
 export const SettingsAccountsRowDropdownMenu = ({
-  item: account,
+  account,
   className,
 }: SettingsAccountsRowDropdownMenuProps) => {
   const dropdownId = `settings-account-row-${account.id}`;
@@ -28,6 +29,8 @@ export const SettingsAccountsRowDropdownMenu = ({
   const { deleteOneRecord } = useDeleteOneRecord({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
   });
+
+  const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
 
   return (
     <Dropdown
@@ -51,6 +54,16 @@ export const SettingsAccountsRowDropdownMenu = ({
                 closeDropdown();
               }}
             />
+            {account.authFailedAt && (
+              <MenuItem
+                LeftIcon={IconRefresh}
+                text="Reconnect"
+                onClick={() => {
+                  triggerGoogleApisOAuth();
+                  closeDropdown();
+                }}
+              />
+            )}
             <MenuItem
               accent="danger"
               LeftIcon={IconTrash}

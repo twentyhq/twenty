@@ -16,6 +16,7 @@ import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metada
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import {
   WorkspaceMigrationColumnActionType,
+  WorkspaceMigrationColumnDrop,
   WorkspaceMigrationTableAction,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { generateTargetColumnMap } from 'src/engine/metadata-modules/field-metadata/utils/generate-target-column-map.util';
@@ -35,6 +36,9 @@ import {
   RelationMetadataEntity,
   RelationMetadataType,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
+import { computeCustomName } from 'src/engine/utils/compute-custom-name.util';
+import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 
 import {
   FieldMetadataEntity,
@@ -89,6 +93,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       if (!objectMetadata) {
         throw new NotFoundException('Object does not exist');
+      }
+
+      if (!fieldMetadataInput.isRemoteCreation) {
+        assertMutationNotOnRemoteObject(objectMetadata);
       }
 
       // Double check in case the service is directly called
@@ -270,6 +278,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         throw new NotFoundException('Object does not exist');
       }
 
+      assertMutationNotOnRemoteObject(objectMetadata);
+
       if (
         objectMetadata.labelIdentifierFieldMetadataId ===
           existingFieldMetadata.id &&
@@ -350,6 +360,80 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       await queryRunner.commitTransaction();
 
       return updatedFieldMetadata;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  public async deleteOneField(
+    input: DeleteOneFieldInput,
+    workspaceId: string,
+  ): Promise<FieldMetadataEntity> {
+    const queryRunner = this.metadataDataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction(); // transaction not safe as a different queryRunner is used within workspaceMigrationRunnerService
+
+    try {
+      const fieldMetadataRepository =
+        queryRunner.manager.getRepository<FieldMetadataEntity<'default'>>(
+          FieldMetadataEntity,
+        );
+
+      const fieldMetadata = await fieldMetadataRepository.findOne({
+        where: {
+          id: input.id,
+          workspaceId: workspaceId,
+        },
+      });
+
+      if (!fieldMetadata) {
+        throw new NotFoundException('Field does not exist');
+      }
+
+      const objectMetadata =
+        await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
+          where: {
+            id: fieldMetadata?.objectMetadataId,
+          },
+        });
+
+      if (!objectMetadata) {
+        throw new NotFoundException('Object does not exist');
+      }
+
+      await fieldMetadataRepository.delete(fieldMetadata.id);
+
+      await this.workspaceMigrationService.createCustomMigration(
+        generateMigrationName(`delete-${fieldMetadata.name}`),
+        workspaceId,
+        [
+          {
+            name: computeObjectTargetTable(objectMetadata),
+            action: 'alter',
+            columns: [
+              {
+                action: WorkspaceMigrationColumnActionType.DROP,
+                columnName: computeCustomName(
+                  fieldMetadata.name,
+                  fieldMetadata.isCustom,
+                ),
+              } satisfies WorkspaceMigrationColumnDrop,
+            ],
+          } satisfies WorkspaceMigrationTableAction,
+        ],
+      );
+
+      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+        workspaceId,
+      );
+
+      await queryRunner.commitTransaction();
+
+      return fieldMetadata;
     } catch (error) {
       await queryRunner.rollbackTransaction();
       throw error;

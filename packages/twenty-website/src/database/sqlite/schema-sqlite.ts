@@ -9,7 +9,7 @@ export const sqlLiteUsers = sqliteTable('users', {
 
 export const sqlLitePullRequests = sqliteTable('pullRequests', {
   id: text('id').primaryKey(),
-  name: text('title'),
+  title: text('title'),
   body: text('body'),
   url: text('url'),
   createdAt: text('createdAt'),

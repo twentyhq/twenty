@@ -47,11 +47,10 @@ export class GoogleAPIsAuthController {
       throw new Error('Workspace not found');
     }
 
-    await this.googleAPIsService.saveConnectedAccount({
+    await this.googleAPIsService.saveOrUpdateConnectedAccount({
       handle: email,
       workspaceMemberId: workspaceMemberId,
       workspaceId: workspaceId,
-      provider: 'google',
       accessToken,
       refreshToken,
     });

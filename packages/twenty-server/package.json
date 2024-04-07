@@ -1,6 +1,6 @@
 {
   "name": "twenty-server",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "description": "",
   "author": "",
   "private": true,
@@ -23,6 +23,7 @@
     "cache-manager-redis-yet": "^4.1.2",
     "class-validator": "patch:class-validator@0.14.0#./patches/class-validator+0.14.0.patch",
     "graphql-middleware": "^6.1.35",
+    "jsdom": "~22.1.0",
     "jwt-decode": "^4.0.0",
     "lodash.differencewith": "^4.5.0",
     "lodash.uniq": "^4.5.0",
@@ -45,7 +46,7 @@
     "@types/lodash.upperfirst": "^4.3.7",
     "@types/react": "^18.2.39",
     "rimraf": "^5.0.5",
-    "typescript": "^5.3.3"
+    "typescript": "5.3.3"
   },
   "engines": {
     "node": "^18.17.1",

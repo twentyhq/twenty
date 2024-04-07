@@ -6,7 +6,6 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/reflect-relation-metadata.interface';
 
 import { TypedReflect } from 'src/utils/typed-reflect';
-import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 export function RelationMetadata<TClass extends object>(
   params: RelationMetadataDecoratorParams<TClass>,
@@ -27,7 +26,6 @@ export function RelationMetadata<TClass extends object>(
           target,
           fieldKey,
           ...params,
-          onDelete: params.onDelete ?? RelationOnDeleteAction.SET_NULL,
           gate,
         } satisfies ReflectRelationMetadata,
       ],

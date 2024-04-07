@@ -9,7 +9,7 @@ import {
 export async function fetchIssuesPRs(
   query: typeof graphql,
   cursor: string | null = null,
-  isIssues: boolean = false,
+  isIssues = false,
   accumulatedData: Array<PullRequestNode | IssueNode> = [],
 ): Promise<Array<PullRequestNode | IssueNode>> {
   const { repository } = await query<Repository>(

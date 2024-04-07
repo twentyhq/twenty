@@ -8,6 +8,7 @@ import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getR
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { lowerAndCapitalize } from '~/utils/string/lowerAndCapitalize';
 
 export const getRecordNodeFromRecord = <T extends ObjectRecord>({
   objectMetadataItems,
@@ -92,46 +93,61 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
           ];
         }
 
-        if (field.type === 'RELATION') {
-          if (
-            isUndefined(
+        switch (field.type) {
+          case FieldMetadataType.Relation: {
+            if (
+              isUndefined(
+                field.relationDefinition?.targetObjectMetadata.nameSingular,
+              )
+            ) {
+              return undefined;
+            }
+
+            if (isNull(value)) {
+              return [fieldName, null];
+            }
+
+            if (isUndefined(value?.id)) {
+              return undefined;
+            }
+
+            const typeName = getObjectTypename(
               field.relationDefinition?.targetObjectMetadata.nameSingular,
-            )
-          ) {
-            return undefined;
-          }
+            );
 
-          if (isNull(value)) {
-            return [fieldName, null];
-          }
+            if (computeReferences) {
+              return [
+                fieldName,
+                {
+                  __ref: `${typeName}:${value.id}`,
+                },
+              ];
+            }
 
-          if (isUndefined(value?.id)) {
-            return undefined;
-          }
-
-          const typeName = getObjectTypename(
-            field.relationDefinition?.targetObjectMetadata.nameSingular,
-          );
-
-          if (computeReferences) {
             return [
               fieldName,
               {
-                __ref: `${typeName}:${value.id}`,
+                __typename: typeName,
+                ...value,
               },
             ];
           }
-
-          return [
-            fieldName,
-            {
-              __typename: typeName,
-              ...value,
-            },
-          ];
+          case FieldMetadataType.Link:
+          case FieldMetadataType.Address:
+          case FieldMetadataType.FullName:
+          case FieldMetadataType.Currency: {
+            return [
+              fieldName,
+              {
+                ...value,
+                __typename: lowerAndCapitalize(field.type),
+              },
+            ];
+          }
+          default: {
+            return [fieldName, value];
+          }
         }
-
-        return [fieldName, value];
       })
       .filter(isDefined),
   ) as T; // Todo fix typing once we have investigated apollo edges / nodes removal

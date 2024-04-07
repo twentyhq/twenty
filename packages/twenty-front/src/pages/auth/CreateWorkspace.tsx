@@ -3,12 +3,14 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
@@ -19,7 +21,6 @@ import { Loader } from '@/ui/feedback/loader/components/Loader.tsx';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { useActivateWorkspaceMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -52,6 +53,7 @@ export const CreateWorkspace = () => {
 
   const [activateWorkspace] = useActivateWorkspaceMutation();
   const apolloMetadataClient = useApolloMetadataClient();
+  const setIsCurrentUserLoaded = useSetRecoilState(isCurrentUserLoadedState);
 
   // Form
   const {
@@ -75,8 +77,8 @@ export const CreateWorkspace = () => {
               displayName: data.name,
             },
           },
-          refetchQueries: [GET_CURRENT_USER],
         });
+        setIsCurrentUserLoaded(false);
 
         await apolloMetadataClient?.refetchQueries({
           include: [FIND_MANY_OBJECT_METADATA_ITEMS],
@@ -95,7 +97,13 @@ export const CreateWorkspace = () => {
         });
       }
     },
-    [enqueueSnackBar, navigate, apolloMetadataClient, activateWorkspace],
+    [
+      activateWorkspace,
+      setIsCurrentUserLoaded,
+      apolloMetadataClient,
+      navigate,
+      enqueueSnackBar,
+    ],
   );
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {

@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { IconChevronLeft, IconX } from 'twenty-ui';
+import { IconChevronLeft, IconLayoutKanban, IconTable, IconX } from 'twenty-ui';
 
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
@@ -57,6 +57,7 @@ export const ViewPickerCreateOrEditContent = () => {
     viewPickerIsPersistingState,
     viewPickerKanbanFieldMetadataIdState,
     viewPickerTypeState,
+    viewPickerIsDirtyState,
   } = useViewPickerStates();
 
   const [viewPickerInputName, setViewPickerInputName] = useRecoilState(
@@ -66,6 +67,7 @@ export const ViewPickerCreateOrEditContent = () => {
     viewPickerSelectedIconState,
   );
   const viewPickerIsPersisting = useRecoilValue(viewPickerIsPersistingState);
+  const setViewPickerIsDirty = useSetRecoilState(viewPickerIsDirtyState);
 
   const [viewPickerKanbanFieldMetadataId, setViewPickerKanbanFieldMetadataId] =
     useRecoilState(viewPickerKanbanFieldMetadataIdState);
@@ -80,16 +82,13 @@ export const ViewPickerCreateOrEditContent = () => {
   useScopedHotkeys(
     Key.Enter,
     async () => {
+      if (viewPickerIsPersisting) {
+        return;
+      }
       if (viewPickerMode === 'create') {
-        if (viewPickerIsPersisting) {
-          return;
-        }
         await handleCreate();
       }
       if (viewPickerMode === 'edit') {
-        if (viewPickerIsPersisting) {
-          return;
-        }
         await handleUpdate();
       }
     },
@@ -97,6 +96,7 @@ export const ViewPickerCreateOrEditContent = () => {
   );
 
   const onIconChange = ({ iconKey }: { iconKey: string }) => {
+    setViewPickerIsDirty(true);
     setViewPickerSelectedIcon(iconKey);
   };
 
@@ -128,7 +128,10 @@ export const ViewPickerCreateOrEditContent = () => {
           />
           <DropdownMenuInput
             value={viewPickerInputName}
-            onChange={(event) => setViewPickerInputName(event.target.value)}
+            onChange={(event) => {
+              setViewPickerIsDirty(true);
+              setViewPickerInputName(event.target.value);
+            }}
             autoFocus
           />
         </StyledIconAndNameContainer>
@@ -139,10 +142,17 @@ export const ViewPickerCreateOrEditContent = () => {
               label="View type"
               fullWidth
               value={viewPickerType}
-              onChange={(value) => setViewPickerType(value)}
+              onChange={(value) => {
+                setViewPickerIsDirty(true);
+                setViewPickerType(value);
+              }}
               options={[
-                { value: ViewType.Table, label: 'Table' },
-                { value: ViewType.Kanban, label: 'Kanban' },
+                { value: ViewType.Table, label: 'Table', Icon: IconTable },
+                {
+                  value: ViewType.Kanban,
+                  label: 'Kanban',
+                  Icon: IconLayoutKanban,
+                },
               ]}
               dropdownId={VIEW_PICKER_VIEW_TYPE_DROPDOWN_ID}
             />

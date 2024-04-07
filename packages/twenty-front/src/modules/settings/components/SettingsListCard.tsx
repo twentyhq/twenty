@@ -42,7 +42,7 @@ type SettingsListCardProps<ListItem extends { id: string }> = {
   hasFooter?: boolean;
   isLoading?: boolean;
   onRowClick?: (item: ListItem) => void;
-  RowIcon: IconComponent;
+  RowIcon?: IconComponent;
   RowRightComponent: ComponentType<{ item: ListItem }>;
   footerButtonLabel?: string;
   onFooterButtonClick?: () => void;

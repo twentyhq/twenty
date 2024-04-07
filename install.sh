@@ -72,13 +72,13 @@ done
 echo "📁 Creating directory '$dir_name'"
 mkdir -p "$dir_name" && cd "$dir_name" || { echo "❌ Failed to create/access directory '$dir_name'"; exit 1; }
 
-# Copy the twenty/packages/twenty-docker/prod/docker-compose.yml file in it
+# Copy the twenty/packages/twenty-docker/docker-compose.yml file in it
 echo -e "\t• Copying docker-compose.yml"
-curl -sLo docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/$branch/packages/twenty-docker/prod/docker-compose.yml
+curl -sLo docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/$branch/packages/twenty-docker/docker-compose.yml
 
-# Copy twenty/packages/twenty-docker/prod/.env.example to .env
+# Copy twenty/packages/twenty-docker/.env.example to .env
 echo -e "\t• Setting up .env file"
-curl -sLo .env https://raw.githubusercontent.com/twentyhq/twenty/$branch/packages/twenty-docker/prod/.env.example
+curl -sLo .env https://raw.githubusercontent.com/twentyhq/twenty/$branch/packages/twenty-docker/.env.example
 
 # Replace TAG=latest by TAG=<latest_release or version input>
 if [[ $(uname) == "Darwin" ]]; then
@@ -122,7 +122,7 @@ fi
 # Ask user if he wants to start the project
 read -p "🚀 Do you want to start the project now? (Y/n) " answer
 if [ "$answer" = "n" ]; then
-  echo "✅ Project setup completed. Run 'docker-compose up -d' to start."
+  echo "✅ Project setup completed. Run 'docker compose up -d' to start."
   exit 0
 else
   echo "🐳 Starting Docker containers..."

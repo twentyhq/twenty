@@ -76,10 +76,25 @@ const findAll = (model: SQLiteTableWithColumns<any>) => {
 const insertMany = async (
   model: SQLiteTableWithColumns<any>,
   data: any,
-  options?: { onConflictKey?: string },
+  options?: {
+    onConflictKey?: string;
+    onConflictUpdateObject?: any;
+  },
 ) => {
   if (isSqliteDriver) {
     const query = sqliteDb.insert(model).values(data);
+
+    if (options?.onConflictUpdateObject) {
+      if (options?.onConflictKey) {
+        return query
+          .onConflictDoUpdate({
+            target: [model[options.onConflictKey]],
+            set: options.onConflictUpdateObject,
+          })
+          .execute();
+      }
+    }
+
     if (options?.onConflictKey) {
       return query
         .onConflictDoNothing({
@@ -87,10 +102,23 @@ const insertMany = async (
         })
         .execute();
     }
+
     return query.execute();
   }
   if (isPgDriver) {
     const query = pgDb.insert(model).values(data);
+
+    if (options?.onConflictUpdateObject) {
+      if (options?.onConflictKey) {
+        return query
+          .onConflictDoUpdate({
+            target: [model[options.onConflictKey]],
+            set: options.onConflictUpdateObject,
+          })
+          .execute();
+      }
+    }
+
     if (options?.onConflictKey) {
       return query
         .onConflictDoNothing({
