@@ -1,5 +1,3 @@
-import { OverflowingTextWithTooltip } from '../../../display/tooltip/OverflowingTextWithTooltip';
-
 import { EllipsisDisplay } from './EllipsisDisplay';
 
 type JsonDisplayProps = {
@@ -8,7 +6,5 @@ type JsonDisplayProps = {
 };
 
 export const JsonDisplay = ({ text, maxWidth }: JsonDisplayProps) => (
-  <EllipsisDisplay maxWidth={maxWidth}>
-    <OverflowingTextWithTooltip text={text} mutliline />
-  </EllipsisDisplay>
+  <EllipsisDisplay maxWidth={maxWidth}>{text}</EllipsisDisplay>
 );

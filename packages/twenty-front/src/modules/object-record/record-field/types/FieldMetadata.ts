@@ -78,6 +78,7 @@ export type FieldAddressMetadata = {
 export type FieldRawJsonMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
+  placeHolder: string;
 };
 
 export type FieldDefinitionRelationType =

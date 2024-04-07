@@ -6,7 +6,7 @@ export const JsonFieldDisplay = () => {
 
   return (
     <JsonDisplay
-      text={JSON.stringify(JSON.parse(fieldValue || '{}'), null, 2)}
+      text={fieldValue ? JSON.stringify(JSON.parse(fieldValue), null, 2) : ''}
       maxWidth={maxWidth}
     />
   );

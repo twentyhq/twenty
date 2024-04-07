@@ -28,26 +28,36 @@ export const RawJsonFieldInput = ({
   const persistField = usePersistField();
 
   const handleEnter = (newText: string) => {
-    if (isValidJSON(newText)) onEnter?.(() => persistField(newText));
+    onEnter?.(() => {
+      if (isValidJSON(newText)) persistField(newText);
+    });
   };
 
   const handleEscape = (newText: string) => {
-    if (isValidJSON(newText)) onEscape?.(() => persistField(newText));
+    onEscape?.(() => {
+      if (isValidJSON(newText)) persistField(newText);
+    });
   };
 
   const handleClickOutside = (
     _event: MouseEvent | TouchEvent,
     newText: string,
   ) => {
-    if (isValidJSON(newText)) onClickOutside?.(() => persistField(newText));
+    onClickOutside?.(() => {
+      if (isValidJSON(newText)) persistField(newText);
+    });
   };
 
   const handleTab = (newText: string) => {
-    if (isValidJSON(newText)) onTab?.(() => persistField(newText));
+    onTab?.(() => {
+      if (isValidJSON(newText)) persistField(newText);
+    });
   };
 
   const handleShiftTab = (newText: string) => {
-    if (isValidJSON(newText)) onShiftTab?.(() => persistField(newText));
+    onShiftTab?.(() => {
+      if (isValidJSON(newText)) persistField(newText);
+    });
   };
 
   const handleChange = (newText: string) => {

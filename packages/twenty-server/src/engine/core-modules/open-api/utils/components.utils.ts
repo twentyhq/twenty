@@ -71,7 +71,6 @@ const getSchemaComponentsProperties = (
         };
         break;
       case FieldMetadataType.RAW_JSON:
-        // TODO: Possible mistake here
         itemProperty.type = 'object';
         break;
       default:
