@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 
 import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
-import { formatAmount } from '~/utils/format/formatAmount';
+import { formatCurrency } from '~/utils/format/formatCurrency';
 import { isDefined } from '~/utils/isDefined';
 
 import { EllipsisDisplay } from './EllipsisDisplay';
@@ -45,7 +45,7 @@ export const CurrencyDisplay = ({ currencyValue }: CurrencyDisplayProps) => {
           />{' '}
         </>
       )}
-      {amountToDisplay !== 0 ? formatAmount(amountToDisplay) : ''}
+      {amountToDisplay !== 0 ? formatCurrency(amountToDisplay) : ''}
     </StyledEllipsisDisplay>
   );
 };
