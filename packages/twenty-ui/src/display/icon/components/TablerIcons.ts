@@ -112,6 +112,7 @@ export {
   IconPresentation,
   IconProgressCheck,
   IconPuzzle,
+  IconQuestionMark,
   IconRefresh,
   IconRelationManyToMany,
   IconRelationOneToMany,
