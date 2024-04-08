@@ -45,6 +45,7 @@ trap on_exit EXIT
 
 # Use environment variables VERSION and BRANCH, with defaults if not set
 version=${VERSION:-$(curl -s https://api.github.com/repos/twentyhq/twenty/releases/latest | grep '"tag_name":' | cut -d '"' -f 4)}
+pg_version=$(echo $version | sed 's/^v//')
 branch=${BRANCH:-main}
 
 echo "🚀 Using version $version and branch $branch"
@@ -84,9 +85,11 @@ curl -sLo .env https://raw.githubusercontent.com/twentyhq/twenty/$branch/package
 if [[ $(uname) == "Darwin" ]]; then
   # Running on macOS
   sed -i '' "s/TAG=latest/TAG=$version/g" .env
+  sed -i '' "s/PG_TAG=latest/PG_TAG=$pg_version/g" .env
 else
   # Assuming Linux
   sed -i'' "s/TAG=latest/TAG=$version/g" .env
+  sed -i'' "s/PG_TAG=latest/PG_TAG=$pg_version/g" .env
 fi
 
 # Generate random strings for secrets
