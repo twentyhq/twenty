@@ -22,6 +22,7 @@ export enum CheckboxSize {
 type CheckboxProps = {
   checked: boolean;
   indeterminate?: boolean;
+  hoverable?: boolean;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   onCheckedChange?: (value: boolean) => void;
   variant?: CheckboxVariant;
@@ -30,19 +31,40 @@ type CheckboxProps = {
   className?: string;
 };
 
-const StyledInputContainer = styled.div`
-  align-items: center;
-  display: flex;
-  position: relative;
-`;
-
 type InputProps = {
   checkboxSize: CheckboxSize;
   variant: CheckboxVariant;
   indeterminate?: boolean;
+  hoverable?: boolean;
   shape?: CheckboxShape;
   isChecked?: boolean;
 };
+
+const StyledInputContainer = styled.div<InputProps>`
+  align-items: center;
+  display: flex;
+  position: relative;
+
+  --size: ${({ checkboxSize }) =>
+    checkboxSize === CheckboxSize.Large ? '32px' : '24px'};
+  padding: ${({ checkboxSize }) =>
+    checkboxSize === CheckboxSize.Large ? '6px' : '5px'};
+  border-radius: ${({ theme, shape }) =>
+    shape === CheckboxShape.Rounded
+      ? theme.border.radius.rounded
+      : theme.border.radius.sm};
+  ${({ hoverable, isChecked, theme, indeterminate }) => {
+    if (!hoverable) return '';
+    return `&:hover{
+      background-color: ${
+        indeterminate || isChecked
+          ? theme.color.blue10
+          : theme.background.transparent.light
+      };
+    }}
+  }`;
+  }}
+`;
 
 const StyledInput = styled.input<InputProps>`
   cursor: pointer;
@@ -117,6 +139,7 @@ export const Checkbox = ({
   variant = CheckboxVariant.Primary,
   size = CheckboxSize.Small,
   shape = CheckboxShape.Squared,
+  hoverable = true,
   className,
 }: CheckboxProps) => {
   const [isInternalChecked, setIsInternalChecked] =
@@ -135,7 +158,15 @@ export const Checkbox = ({
   const checkboxId = 'checkbox' + v4();
 
   return (
-    <StyledInputContainer className={className}>
+    <StyledInputContainer
+      checkboxSize={size}
+      variant={variant}
+      shape={shape}
+      isChecked={isInternalChecked}
+      hoverable={hoverable}
+      indeterminate={indeterminate}
+      className={className}
+    >
       <StyledInput
         autoComplete="off"
         type="checkbox"
