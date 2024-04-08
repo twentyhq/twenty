@@ -77,6 +77,15 @@ export const CalendarEventParticipantsResponseStatusField = ({
     No: <IconX stroke={theme.icon.stroke.sm} />,
   }[responseStatus];
 
+  // We want to display external participants first
+  const orderedParticipants = [
+    ...participants.filter((participant) => participant.person),
+    ...participants.filter(
+      (participant) => !participant.person && !participant.workspaceMember,
+    ),
+    ...participants.filter((participant) => participant.workspaceMember),
+  ];
+
   return (
     <StyledPropertyBox>
       <StyledInlineCellBaseContainer>
@@ -89,7 +98,7 @@ export const CalendarEventParticipantsResponseStatusField = ({
         </StyledLabelAndIconContainer>
 
         <StyledParticipantsContainer>
-          {participants.map((participant) => (
+          {orderedParticipants.map((participant) => (
             <ParticipantChip key={participant.id} participant={participant} />
           ))}
         </StyledParticipantsContainer>
