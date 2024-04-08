@@ -32,6 +32,7 @@ const StyledContainer = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(6)};
   padding: ${({ theme }) => theme.spacing(6)};
+  max-width: 100%;
 `;
 
 const StyledEventChip = styled(Chip)`

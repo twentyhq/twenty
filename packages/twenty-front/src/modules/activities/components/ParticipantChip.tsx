@@ -9,10 +9,11 @@ const StyledAvatar = styled(Avatar)`
   margin: ${({ theme }) => theme.spacing(0, 1)};
 `;
 
-const StyledSenderName = styled.span`
+const StyledSenderName = styled.span<{ variant?: 'default' | 'bold' }>`
   color: ${({ theme }) => theme.font.color.primary};
   font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${({ theme, variant }) =>
+    variant === 'bold' ? theme.font.weight.medium : theme.font.weight.regular};
   overflow: hidden;
   text-overflow: ellipsis;
 `;
@@ -22,11 +23,18 @@ const StyledContainer = styled.div`
   display: flex;
 `;
 
-const StyledRecordChip = styled(RecordChip)`
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+const StyledRecordChip = styled(RecordChip)<{ variant: 'default' | 'bold' }>`
+  font-weight: ${({ theme, variant }) =>
+    variant === 'bold' ? theme.font.weight.medium : theme.font.weight.regular};
 `;
 
-export const ParticipantChip = ({ participant }: any) => {
+export const ParticipantChip = ({
+  participant,
+  variant = 'default',
+}: {
+  participant: any;
+  variant?: 'default' | 'bold';
+}) => {
   const { person, workspaceMember } = participant;
 
   const displayName = getDisplayNameFromParticipant({
@@ -42,6 +50,7 @@ export const ParticipantChip = ({ participant }: any) => {
         <StyledRecordChip
           objectNameSingular={CoreObjectNameSingular.Person}
           record={person}
+          variant={variant}
         />
       ) : (
         <>
@@ -51,7 +60,7 @@ export const ParticipantChip = ({ participant }: any) => {
             placeholder={displayName}
             size="sm"
           />
-          <StyledSenderName>{displayName}</StyledSenderName>
+          <StyledSenderName variant={variant}>{displayName}</StyledSenderName>
         </>
       )}
     </StyledContainer>

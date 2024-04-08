@@ -53,12 +53,13 @@ const StyledLabelContainer = styled.div<{ width?: number }>`
 `;
 
 const StyledParticipantsContainer = styled.div`
+  align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
+  max-width: 100%;
   overflow: hidden;
-  white-space: nowrap;
   text-overflow: ellipsis;
-  align-items: center;
+  white-space: nowrap;
 `;
 
 export const CalendarEventParticipantsResponseStatusField = ({

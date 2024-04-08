@@ -27,7 +27,7 @@ export const EmailThreadMessageSender = ({
 }: EmailThreadMessageSenderProps) => {
   return (
     <StyledEmailThreadMessageSender>
-      <ParticipantChip participant={sender} />
+      <ParticipantChip participant={sender} variant="bold" />
       <StyledThreadMessageSentAt>
         {beautifyPastDateRelativeToNow(sentAt)}
       </StyledThreadMessageSentAt>
