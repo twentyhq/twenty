@@ -65,12 +65,15 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
           return undefined;
         }
 
-        if (Array.isArray(value)) {
-          const objectMetadataItem = objectMetadataItems.find(
-            (objectMetadataItem) => objectMetadataItem.namePlural === fieldName,
+        if (
+          Array.isArray(value) &&
+          field.type !== FieldMetadataType.MultiSelect
+        ) {
+          const item = objectMetadataItems.find(
+            (omi) => omi.namePlural === fieldName,
           );
 
-          if (!objectMetadataItem) {
+          if (!item) {
             return undefined;
           }
 
@@ -78,7 +81,7 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
             fieldName,
             getRecordConnectionFromRecords({
               objectMetadataItems,
-              objectMetadataItem: objectMetadataItem,
+              objectMetadataItem: item,
               records: value as ObjectRecord[],
               queryFields:
                 queryFields?.[fieldName] === true ||
