@@ -1,5 +1,10 @@
+import gql from 'graphql-tag';
+
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useGenerateDeleteManyRecordMutation } from '@/object-record/hooks/useGenerateDeleteManyRecordMutation';
+import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
+import { getDeleteManyRecordsMutationResponseField } from '@/object-record/utils/getDeleteManyRecordsMutationResponseField';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { capitalize } from '~/utils/string/capitalize';
 
 export const useDeleteManyRecordsMutation = ({
   objectNameSingular,
@@ -10,9 +15,25 @@ export const useDeleteManyRecordsMutation = ({
     objectNameSingular,
   });
 
-  const deleteManyRecordsMutation = useGenerateDeleteManyRecordMutation({
-    objectMetadataItem,
-  });
+  if (isUndefinedOrNull(objectMetadataItem)) {
+    return { deleteManyRecordsMutation: EMPTY_MUTATION };
+  }
+
+  const capitalizedObjectName = capitalize(objectMetadataItem.namePlural);
+
+  const mutationResponseField = getDeleteManyRecordsMutationResponseField(
+    objectMetadataItem.namePlural,
+  );
+
+  const deleteManyRecordsMutation = gql`
+    mutation DeleteMany${capitalizedObjectName}($filter: ${capitalize(
+      objectMetadataItem.nameSingular,
+    )}FilterInput!)  {
+      ${mutationResponseField}(filter: $filter) {
+        id
+      }
+    }
+  `;
 
   return {
     deleteManyRecordsMutation,

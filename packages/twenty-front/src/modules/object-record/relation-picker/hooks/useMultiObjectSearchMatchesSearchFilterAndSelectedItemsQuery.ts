@@ -3,6 +3,7 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
 import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/multiple-objects/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
 import { useLimitPerMetadataItem } from '@/object-record/relation-picker/hooks/useLimitPerMetadataItem';
 import {
@@ -12,7 +13,6 @@ import {
 import { SelectedObjectRecordId } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { useOrderByFieldPerMetadataItem } from '@/object-record/relation-picker/hooks/useOrderByFieldPerMetadataItem';
 import { useSearchFilterPerMetadataItem } from '@/object-record/relation-picker/hooks/useSearchFilterPerMetadataItem';
-import { EMPTY_QUERY } from '~/constants/EmptyQuery';
 import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
 

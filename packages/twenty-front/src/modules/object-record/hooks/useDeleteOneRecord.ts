@@ -6,7 +6,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useDeleteOneRecordMutation } from '@/object-record/hooks/useDeleteOneRecordMutation';
-import { getDeleteOneRecordMutationResponseField } from '@/object-record/utils/generateDeleteOneRecordMutation';
+import { getDeleteOneRecordMutationResponseField } from '@/object-record/utils/getDeleteOneRecordMutationResponseField';
 import { capitalize } from '~/utils/string/capitalize';
 
 type useDeleteOneRecordProps = {

@@ -2,9 +2,9 @@ import { useQuery } from '@apollo/client';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
+import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
 import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/multiple-objects/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
 import { MultiObjectRecordQueryResult } from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
-import { EMPTY_QUERY } from '~/constants/EmptyQuery';
 
 export const useFindManyRecordsForMultipleMetadataItems = ({
   objectMetadataItems,

@@ -5,9 +5,9 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { useFindDuplicateRecordsQuery } from '@/object-record/hooks/useFindDuplicatesRecordsQuery';
-import { getFindDuplicateRecordsQueryResponseField } from '@/object-record/hooks/useGenerateFindDuplicateRecordsQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
+import { getFindDuplicateRecordsQueryResponseField } from '@/object-record/utils/getFindDuplicateRecordsQueryResponseField';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { logError } from '~/utils/logError';
 

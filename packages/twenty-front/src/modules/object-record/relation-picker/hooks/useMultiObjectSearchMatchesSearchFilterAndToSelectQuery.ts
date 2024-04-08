@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
 import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/multiple-objects/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
 import { useLimitPerMetadataItem } from '@/object-record/relation-picker/hooks/useLimitPerMetadataItem';
 import {
@@ -13,7 +14,6 @@ import { SelectedObjectRecordId } from '@/object-record/relation-picker/hooks/us
 import { useOrderByFieldPerMetadataItem } from '@/object-record/relation-picker/hooks/useOrderByFieldPerMetadataItem';
 import { useSearchFilterPerMetadataItem } from '@/object-record/relation-picker/hooks/useSearchFilterPerMetadataItem';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
-import { EMPTY_QUERY } from '~/constants/EmptyQuery';
 import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
 

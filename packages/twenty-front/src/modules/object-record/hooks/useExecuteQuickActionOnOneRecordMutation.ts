@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
-import { EMPTY_MUTATION } from '~/constants/EmptyMutation';
+import { EMPTY_MUTATION } from '@/object-record/constants/constants/EmptyMutation';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from '~/utils/string/capitalize';
 

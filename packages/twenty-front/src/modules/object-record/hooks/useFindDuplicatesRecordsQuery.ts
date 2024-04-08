@@ -1,5 +1,11 @@
+import gql from 'graphql-tag';
+import { useRecoilValue } from 'recoil';
+
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useGenerateFindDuplicateRecordsQuery } from '@/object-record/hooks/useGenerateFindDuplicateRecordsQuery';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { getFindDuplicateRecordsQueryResponseField } from '@/object-record/utils/getFindDuplicateRecordsQueryResponseField';
+import { capitalize } from '~/utils/string/capitalize';
 
 export const useFindDuplicateRecordsQuery = ({
   objectNameSingular,
@@ -12,13 +18,30 @@ export const useFindDuplicateRecordsQuery = ({
     objectNameSingular,
   });
 
-  const generateFindDuplicateRecordsQuery =
-    useGenerateFindDuplicateRecordsQuery();
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const findDuplicateRecordsQuery = generateFindDuplicateRecordsQuery({
-    objectMetadataItem,
-    depth,
-  });
+  const findDuplicateRecordsQuery = gql`
+    query FindDuplicate${capitalize(objectMetadataItem.nameSingular)}($id: ID) {
+      ${getFindDuplicateRecordsQueryResponseField(
+        objectMetadataItem.nameSingular,
+      )}(id: $id) {
+        edges {
+          node ${mapObjectMetadataToGraphQLQuery({
+            objectMetadataItems,
+            objectMetadataItem,
+            depth,
+          })}
+          cursor
+        }
+        pageInfo {
+          hasNextPage
+          startCursor
+          endCursor
+        }
+        totalCount
+      }
+    }
+  `;
 
   return {
     findDuplicateRecordsQuery,
