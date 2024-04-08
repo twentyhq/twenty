@@ -11,7 +11,6 @@ import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShow
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
-import { useGenerateDeleteManyRecordMutation } from '@/object-record/hooks/useGenerateDeleteManyRecordMutation';
 import { useGenerateExecuteQuickActionOnOneRecordMutation } from '@/object-record/hooks/useGenerateExecuteQuickActionOnOneRecordMutation';
 import { isDefined } from '~/utils/isDefined';
 
@@ -73,10 +72,6 @@ export const useObjectMetadataItem = ({
     objectMetadataItem,
   });
 
-  const deleteManyRecordsMutation = useGenerateDeleteManyRecordMutation({
-    objectMetadataItem,
-  });
-
   const executeQuickActionOnOneRecordMutation =
     useGenerateExecuteQuickActionOnOneRecordMutation({
       objectMetadataItem,
@@ -95,7 +90,6 @@ export const useObjectMetadataItem = ({
     objectMetadataItem,
     getRecordFromCache,
     executeQuickActionOnOneRecordMutation,
-    deleteManyRecordsMutation,
     mapToObjectRecordIdentifier,
     getObjectOrderByField,
   };
