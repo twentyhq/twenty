@@ -25,10 +25,9 @@ export const useUpdateOneRecord = <
 }: useUpdateOneRecordProps) => {
   const apolloClient = useApolloClient();
 
-  const { objectMetadataItem, getRecordFromCache } = useObjectMetadataItem(
-    { objectNameSingular },
-    depth,
-  );
+  const { objectMetadataItem, getRecordFromCache } = useObjectMetadataItem({
+    objectNameSingular,
+  });
 
   const { updateOneRecordMutation } = useUpdateOneRecordMutation({
     objectNameSingular,

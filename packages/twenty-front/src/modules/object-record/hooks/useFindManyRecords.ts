@@ -31,7 +31,6 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   limit,
   onCompleted,
   skip,
-  depth = 1,
   queryFields,
 }: ObjectMetadataItemIdentifier &
   ObjectRecordQueryVariables & {
@@ -64,12 +63,9 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     isFetchingMoreRecordsFamilyState(findManyQueryStateIdentifier),
   );
 
-  const { objectMetadataItem } = useObjectMetadataItem(
-    {
-      objectNameSingular,
-    },
-    depth,
-  );
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
 
   const { findManyRecordsQuery } = useFindManyRecordsQuery({
     objectNameSingular,

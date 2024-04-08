@@ -11,6 +11,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
   </RecoilRoot>
 );
 
+// Split into tests for each new hook
 describe('useObjectMetadataItem', () => {
   it('should return correct properties', async () => {
     const { result } = renderHook(
@@ -25,13 +26,7 @@ describe('useObjectMetadataItem', () => {
       objectMetadataItem,
       labelIdentifierFieldMetadata,
       getRecordFromCache,
-      findManyRecordsQuery,
-      findOneRecordQuery,
-      createOneRecordMutation,
-      updateOneRecordMutation,
-      deleteOneRecordMutation,
       executeQuickActionOnOneRecordMutation,
-      createManyRecordsMutation,
       deleteManyRecordsMutation,
       mapToObjectRecordIdentifier,
       getObjectOrderByField,

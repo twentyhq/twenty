@@ -4,6 +4,7 @@ import { useQuery } from '@apollo/client';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
+import { useFindDuplicateRecordsQuery } from '@/object-record/hooks/useFindDuplicatesRecordsQuery';
 import { getFindDuplicateRecordsQueryResponseField } from '@/object-record/hooks/useGenerateFindDuplicateRecordsQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
@@ -25,8 +26,15 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
 }) => {
   const findDuplicateQueryStateIdentifier = objectNameSingular;
 
-  const { objectMetadataItem, findDuplicateRecordsQuery } =
-    useObjectMetadataItem({ objectNameSingular }, depth);
+  const { objectMetadataItem } = useObjectMetadataItem(
+    { objectNameSingular },
+    depth,
+  );
+
+  const { findDuplicateRecordsQuery } = useFindDuplicateRecordsQuery({
+    objectNameSingular,
+    depth,
+  });
 
   const { enqueueSnackBar } = useSnackBar();
 

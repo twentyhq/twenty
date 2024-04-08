@@ -11,10 +11,8 @@ import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShow
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
-import { useGenerateCreateManyRecordMutation } from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
 import { useGenerateDeleteManyRecordMutation } from '@/object-record/hooks/useGenerateDeleteManyRecordMutation';
 import { useGenerateExecuteQuickActionOnOneRecordMutation } from '@/object-record/hooks/useGenerateExecuteQuickActionOnOneRecordMutation';
-import { useGenerateFindDuplicateRecordsQuery } from '@/object-record/hooks/useGenerateFindDuplicateRecordsQuery';
 import { isDefined } from '~/utils/isDefined';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
@@ -31,10 +29,9 @@ export const EMPTY_MUTATION = gql`
   }
 `;
 
-export const useObjectMetadataItem = (
-  { objectNameSingular }: ObjectMetadataItemIdentifier,
-  depth?: number,
-) => {
+export const useObjectMetadataItem = ({
+  objectNameSingular,
+}: ObjectMetadataItemIdentifier) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
   const mockObjectMetadataItems = getObjectMetadataItemsMock();
@@ -76,18 +73,6 @@ export const useObjectMetadataItem = (
     objectMetadataItem,
   });
 
-  const generateFindDuplicateRecordsQuery =
-    useGenerateFindDuplicateRecordsQuery();
-  const findDuplicateRecordsQuery = generateFindDuplicateRecordsQuery({
-    objectMetadataItem,
-    depth,
-  });
-
-  const createManyRecordsMutation = useGenerateCreateManyRecordMutation({
-    objectMetadataItem,
-    depth,
-  });
-
   const deleteManyRecordsMutation = useGenerateDeleteManyRecordMutation({
     objectMetadataItem,
   });
@@ -109,9 +94,7 @@ export const useObjectMetadataItem = (
     basePathToShowPage,
     objectMetadataItem,
     getRecordFromCache,
-    findDuplicateRecordsQuery,
     executeQuickActionOnOneRecordMutation,
-    createManyRecordsMutation,
     deleteManyRecordsMutation,
     mapToObjectRecordIdentifier,
     getObjectOrderByField,
