@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useInView } from 'react-intersection-observer';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui';
 
+import { IntersectionObserverWrapper } from '@/activities/calendar/components/IntersectionObserverWrapper';
 import { CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
@@ -63,44 +63,9 @@ const StyledParticipantsContainer = styled.div`
   white-space: nowrap;
 `;
 
-const StyledParticipantChip = styled(ParticipantChip)<{ isInView: boolean }>`
-  opacity: ${({ isInView }) => (isInView ? 1 : 0)};
+const StyledParticipantChip = styled(ParticipantChip)<{ inView?: boolean }>`
+  opacity: ${({ inView }) => (inView ? 1 : 0)};
 `;
-
-const ParticipantChipWithIntersectionObserver = ({
-  participant,
-  setParticipantsInView,
-}: {
-  participant: CalendarEventParticipant;
-  setParticipantsInView: React.Dispatch<React.SetStateAction<Set<string>>>;
-}) => {
-  const { ref, inView } = useInView({
-    threshold: 1,
-    onChange: (inView) => {
-      if (inView) {
-        setParticipantsInView((prev: Set<string>) => {
-          const newSet = new Set(prev);
-          newSet.add(participant.id);
-          return newSet;
-        });
-      }
-      if (!inView) {
-        setParticipantsInView((prev: Set<string>) => {
-          const newSet = new Set(prev);
-          newSet.delete(participant.id);
-          return newSet;
-        });
-      }
-    },
-    rootMargin: '0px -50px 0px 0px',
-  });
-
-  return (
-    <div ref={ref}>
-      <StyledParticipantChip participant={participant} isInView={inView} />
-    </div>
-  );
-};
 
 export const CalendarEventParticipantsResponseStatusField = ({
   responseStatus,
@@ -144,11 +109,13 @@ export const CalendarEventParticipantsResponseStatusField = ({
         <StyledParticipantsContainer>
           {orderedParticipants.map((participant, index) => (
             <>
-              <ParticipantChipWithIntersectionObserver
-                key={index}
-                participant={participant}
-                setParticipantsInView={setParticipantsInView}
-              />
+              <IntersectionObserverWrapper
+                set={setParticipantsInView}
+                id={participant.id}
+                margin="0px -50px 0px 0px"
+              >
+                <StyledParticipantChip key={index} participant={participant} />
+              </IntersectionObserverWrapper>
               {index === participantsInView.size - 1 &&
                 orderedParticipants.length - participantsInView.size !== 0 && (
                   <EllipsisDisplay>{`+${
