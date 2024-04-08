@@ -14,7 +14,6 @@ export enum WorkspaceMigrationColumnActionType {
   DROP_FOREIGN_KEY = 'DROP_FOREIGN_KEY',
   DROP = 'DROP',
   CREATE_COMMENT = 'CREATE_COMMENT',
-  CREATE_FOREIGN_TABLE = 'CREATE_FOREIGN_TABLE',
 }
 
 export type WorkspaceMigrationEnum = string | { from: string; to: string };

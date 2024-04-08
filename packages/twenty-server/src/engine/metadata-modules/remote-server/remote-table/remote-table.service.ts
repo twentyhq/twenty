@@ -102,7 +102,7 @@ export class RemoteTableService {
 
     switch (input.status) {
       case RemoteTableStatus.SYNCED:
-        await this.buildForeignTableAndMetadata(
+        await this.createForeignTableAndMetadata(
           input,
           remoteServer,
           workspaceId,
@@ -120,7 +120,7 @@ export class RemoteTableService {
     return input;
   }
 
-  private async buildForeignTableAndMetadata(
+  private async createForeignTableAndMetadata(
     input: RemoteTableInput,
     remoteServer: RemoteServerEntity<RemoteServerType>,
     workspaceId: string,
@@ -154,14 +154,10 @@ export class RemoteTableService {
       throw new Error('Remote table must have an id column');
     }
 
-    const dataSourcesMetatada =
-      await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
+    const dataSourceMetatada =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         workspaceId,
       );
-
-    if (!dataSourcesMetatada) {
-      throw new NotFoundException('Workspace data source does not exist');
-    }
 
     await this.workspaceMigrationService.createCustomMigration(
       generateMigrationName(`create-foreign-table-${remoteTableName}`),
@@ -196,7 +192,7 @@ export class RemoteTableService {
       labelSingular: remoteTableLabel,
       labelPlural: `${remoteTableLabel}s`,
       description: 'Remote table',
-      dataSourceId: dataSourcesMetatada[0].id,
+      dataSourceId: dataSourceMetatada.id,
       workspaceId: workspaceId,
       icon: 'IconUser',
       isRemote: true,
