@@ -26,10 +26,7 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
 }) => {
   const findDuplicateQueryStateIdentifier = objectNameSingular;
 
-  const { objectMetadataItem } = useObjectMetadataItem(
-    { objectNameSingular },
-    depth,
-  );
+  const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
 
   const { findDuplicateRecordsQuery } = useFindDuplicateRecordsQuery({
     objectNameSingular,
