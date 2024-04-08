@@ -93,8 +93,6 @@ export const CalendarEventDetails = ({
 
   const { calendarEventParticipants } = calendarEvent;
 
-  console.log('calendarEvent', calendarEvent);
-
   const Fields = fieldsToDisplay.map((fieldName) => (
     <StyledPropertyBox key={fieldName}>
       <FieldContext.Provider

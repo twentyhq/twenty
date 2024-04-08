@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useInView } from 'framer-motion';
 import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui';
 
 import { CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
@@ -74,28 +74,30 @@ const ParticipantChipWithIntersectionObserver = ({
   participant: CalendarEventParticipant;
   setParticipantsInView: React.Dispatch<React.SetStateAction<Set<string>>>;
 }) => {
-  // eslint-disable-next-line @nx/workspace-no-state-useref
-  const ref = useRef(null);
-  const isInView = useInView(ref, {
-    once: true,
-    margin: '0px 0px -200px 0px',
+  const { ref, inView } = useInView({
+    threshold: 1,
+    onChange: (inView) => {
+      if (inView) {
+        setParticipantsInView((prev: Set<string>) => {
+          const newSet = new Set(prev);
+          newSet.add(participant.id);
+          return newSet;
+        });
+      }
+      if (!inView) {
+        setParticipantsInView((prev: Set<string>) => {
+          const newSet = new Set(prev);
+          newSet.delete(participant.id);
+          return newSet;
+        });
+      }
+    },
   });
 
-  useEffect(() => {
-    if (isInView) {
-      setParticipantsInView((prev: Set<string>) => {
-        const newSet = new Set(prev);
-        newSet.add(participant.id);
-        return newSet;
-      });
-    }
-  }, [isInView, participant.id, setParticipantsInView]);
-
   return (
-    <>
-      <StyledParticipantChip participant={participant} isInView={isInView} />
-      <div ref={ref}></div>
-    </>
+    <div ref={ref}>
+      <StyledParticipantChip participant={participant} isInView={inView} />
+    </div>
   );
 };
 
@@ -142,15 +144,16 @@ export const CalendarEventParticipantsResponseStatusField = ({
           {orderedParticipants.map((participant, index) => (
             <>
               <ParticipantChipWithIntersectionObserver
-                key={participant.id}
+                key={index}
                 participant={participant}
                 setParticipantsInView={setParticipantsInView}
               />
-              {index === participantsInView.size - 1 && (
-                <EllipsisDisplay>{`+${
-                  orderedParticipants.length - participantsInView.size
-                }`}</EllipsisDisplay>
-              )}{' '}
+              {index === participantsInView.size - 1 &&
+                orderedParticipants.length - participantsInView.size !== 0 && (
+                  <EllipsisDisplay>{`+${
+                    orderedParticipants.length - participantsInView.size
+                  }`}</EllipsisDisplay>
+                )}{' '}
             </>
           ))}
         </StyledParticipantsContainer>
