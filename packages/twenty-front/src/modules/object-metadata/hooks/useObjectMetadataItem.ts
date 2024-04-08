@@ -5,7 +5,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState.ts';
 import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { isDefined } from '~/utils/isDefined';
 
@@ -55,11 +54,7 @@ export const useObjectMetadataItem = ({
     );
   }
 
-  const labelIdentifierFieldMetadata =
-    getLabelIdentifierFieldMetadataItem(objectMetadataItem);
-
   return {
-    labelIdentifierFieldMetadata,
     objectMetadataItem,
   };
 };
