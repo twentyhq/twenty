@@ -3,9 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -43,18 +41,9 @@ export const RecordShowPage = () => {
     recordStoreFamilyState(objectRecordId),
   );
 
-  const { objectNamePlural } = useObjectNamePluralFromSingular({
-    objectNameSingular,
-  });
-
-  const { findObjectMetadataItemByNamePlural } =
-    useFilteredObjectMetadataItems();
-
   const { getIcon } = useIcons();
 
-  const Icon = getIcon(
-    findObjectMetadataItemByNamePlural(objectNamePlural)?.icon,
-  );
+  const headerIcon = getIcon(objectMetadataItem?.icon);
 
   const { record, loading } = useFindOneRecord({
     objectRecordId,
@@ -98,7 +87,7 @@ export const RecordShowPage = () => {
       <PageHeader
         title={pageName ?? ''}
         hasBackButton
-        Icon={Icon}
+        Icon={headerIcon}
         loading={loading}
       >
         {record && (
