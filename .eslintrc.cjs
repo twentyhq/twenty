@@ -48,11 +48,16 @@ module.exports = {
       'error',
       {
         groups: [
+          // Packages
           ['^react', '^@?\\w'],
-          ['^(@|~|src)(/.*|$)'],
+          // Internal modules
+          ['^(@|~|src|@ui)(/.*|$)'],
+          // Side effect imports
           ['^\\u0000'],
+          // Relative imports
           ['^\\.\\.(?!/?$)', '^\\.\\./?$'],
           ['^\\./(?=.*/)(?!/?$)', '^\\.(?!/?$)', '^\\./?$'],
+          // CSS imports
           ['^.+\\.?(css)$'],
         ],
       },

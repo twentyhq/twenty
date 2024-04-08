@@ -107,7 +107,7 @@ export class WorkspaceResolver {
     return 'inactive';
   }
 
-  @ResolveField(() => String)
+  @ResolveField(() => String, { nullable: true })
   async currentCacheVersion(
     @Parent() workspace: Workspace,
   ): Promise<string | null> {

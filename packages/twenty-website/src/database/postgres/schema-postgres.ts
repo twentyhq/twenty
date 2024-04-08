@@ -9,7 +9,7 @@ export const pgUsers = pgTable('users', {
 
 export const pgPullRequests = pgTable('pullRequests', {
   id: text('id').primaryKey(),
-  name: text('title'),
+  title: text('title'),
   body: text('body'),
   url: text('url'),
   createdAt: text('createdAt'),

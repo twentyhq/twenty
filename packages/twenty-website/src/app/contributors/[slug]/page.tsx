@@ -127,7 +127,7 @@ export default async function ({ params }: { params: { slug: string } }) {
             }[]
           }
         />
-        <ThankYou authorId={contributor.login} />
+        <ThankYou username={contributor.id} />
       </ContentContainer>
     </>
   );

@@ -7,7 +7,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 export const settingsIntegrationPostgreSQLConnectionFormSchema = z.object({
   dbname: z.string().min(1),
   host: z.string().min(1),
-  port: z.number().positive(),
+  port: z.preprocess((val) => parseInt(val as string), z.number().positive()),
   username: z.string().min(1),
   password: z.string().min(1),
 });
@@ -25,7 +25,7 @@ const StyledInputsContainer = styled.div`
     'input-2 input-3'
     'input-4 input-5';
 
-  & :first-child {
+  & :first-of-type {
     grid-area: input-1;
   }
 `;

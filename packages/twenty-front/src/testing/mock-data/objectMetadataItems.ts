@@ -1,5 +1,8 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { FieldMetadataType, RelationMetadataType } from '~/generated/graphql';
+import {
+  FieldMetadataType,
+  RelationMetadataType,
+} from '~/generated-metadata/graphql';
 
 export const mockObjectMetadataItem: ObjectMetadataItem = {
   __typename: 'object',

@@ -29,7 +29,7 @@ export interface Directory {
 async function getFiles(
   filePath: string,
   basePath: string,
-  position: number = 0,
+  position = 0,
 ): Promise<Directory> {
   const entries = fs.readdirSync(filePath, { withFileTypes: true });
 
@@ -99,13 +99,14 @@ async function parseFrontMatterAndCategory(
   return parsedDirectory;
 }
 
-export async function compileMDXFile(filePath: string, addToc: boolean = true) {
+export async function compileMDXFile(filePath: string, addToc = true) {
   const fileContent = fs.readFileSync(filePath, 'utf8');
   const compiled = await compileMDX<{ title: string; position?: number }>({
     source: fileContent,
     options: {
       parseFrontmatter: true,
       mdxOptions: {
+        development: process.env.NODE_ENV === 'development',
         remarkPlugins: [gfm],
         rehypePlugins: [rehypeSlug, ...(addToc ? [toc] : [])],
       },

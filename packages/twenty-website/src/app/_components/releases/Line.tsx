@@ -9,17 +9,17 @@ const StyledLineContainer = styled.div`
 
   @media (max-width: 810px) {
     width: auto;
-    margin: 24px 0;
     display: block;
+    margin: 24px 0px 64px;
   }
 `;
 
 const StyledLine = styled.div`
   height: 1px;
   background-color: #d9d9d9;
-  margin-bottom: 48px;
+  margin-bottom: 80px;
   margin-left: 148px;
-  margin-top: 48px;
+  margin-top: 40px;
   width: 100%;
 
   @media (max-width: 810px) {

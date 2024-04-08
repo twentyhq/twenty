@@ -102,7 +102,7 @@ export const StyledMenuItemRightContent = styled.div`
 
 export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
   isMenuOpen: boolean;
-  isIconDisplayedOnHoverOnly: boolean;
+  isIconDisplayedOnHoverOnly?: boolean;
 }>`
   & .hoverable-buttons {
     pointer-events: none;
@@ -117,6 +117,7 @@ export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
     & .hoverable-buttons {
       opacity: 1;
       pointer-events: auto;
+      position: static;
     }
   }
 `;

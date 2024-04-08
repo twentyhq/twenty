@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { IconSettings } from 'twenty-ui';
 
+import { useGetDatabaseConnections } from '@/databases/hooks/useGetDatabaseConnections';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsIntegrationDatabaseConnectionsListCard } from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectionsListCard';
 import { SettingsIntegrationPreview } from '@/settings/integrations/components/SettingsIntegrationPreview';
@@ -14,7 +15,6 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { mockedRemoteObjectIntegrations } from '~/testing/mock-data/remoteObjectDatabases';
 
 export const SettingsIntegrationDatabase = () => {
   const { databaseKey = '' } = useParams();
@@ -42,12 +42,12 @@ export const SettingsIntegrationDatabase = () => {
     }
   }, [integration, databaseKey, navigate, isIntegrationAvailable]);
 
-  if (!isIntegrationAvailable) return null;
+  const { connections } = useGetDatabaseConnections({
+    databaseKey,
+    skip: !isIntegrationAvailable,
+  });
 
-  const connections =
-    mockedRemoteObjectIntegrations.find(
-      ({ key }) => key === integration.from.key,
-    )?.connections || [];
+  if (!isIntegrationAvailable) return null;
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -70,7 +70,7 @@ export const SettingsIntegrationDatabase = () => {
             description={`Connect or access your ${integration.text} data`}
           />
           <SettingsIntegrationDatabaseConnectionsListCard
-            databaseLogoUrl={integration.from.image}
+            integration={integration}
             connections={connections}
           />
         </Section>

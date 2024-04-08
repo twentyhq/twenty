@@ -6,6 +6,7 @@ import { RecoilRoot } from 'recoil';
 
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
+import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
 import { ApolloDevLogEffect } from '@/debug/components/ApolloDevLogEffect';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
@@ -22,6 +23,7 @@ import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/Sn
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
 import { ThemeType } from '@/ui/theme/constants/ThemeLight';
 import { UserProvider } from '@/users/components/UserProvider';
+import { UserProviderEffect } from '@/users/components/UserProviderEffect';
 import { PageChangeEffect } from '~/effect-components/PageChangeEffect';
 
 import '@emotion/react';
@@ -46,7 +48,9 @@ root.render(
             <ExceptionHandlerProvider>
               <ApolloProvider>
                 <HelmetProvider>
+                  <ClientConfigProviderEffect />
                   <ClientConfigProvider>
+                    <UserProviderEffect />
                     <UserProvider>
                       <ApolloMetadataClientProvider>
                         <ObjectMetadataItemsProvider>

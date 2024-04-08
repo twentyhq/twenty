@@ -5,8 +5,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { IconArchive, IconSettings } from 'twenty-ui';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
-import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
@@ -52,7 +52,7 @@ export const SettingsObjectFieldEdit = () => {
 
   const { objectSlug = '', fieldSlug = '' } = useParams();
   const { findActiveObjectMetadataItemBySlug } =
-    useObjectMetadataItemForSettings();
+    useFilteredObjectMetadataItems();
 
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);

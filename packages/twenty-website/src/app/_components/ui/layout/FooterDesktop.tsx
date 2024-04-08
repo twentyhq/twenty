@@ -19,7 +19,7 @@ const FooterContainer = styled.div`
   color: rgb(129, 129, 129);
   gap: 32px;
   @media (max-width: 809px) {
-    display: none;
+    padding: 36px 24px;
   }
 `;
 
@@ -28,6 +28,9 @@ const LeftSideFooter = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  @media (max-width: 809px) {
+    display: none;
+  }
 `;
 
 const RightSideFooter = styled.div`
@@ -35,6 +38,10 @@ const RightSideFooter = styled.div`
   justify-content: space-between;
   gap: 48px;
   height: 146px;
+  @media (max-width: 809px) {
+    flex-direction: column;
+    height: fit-content;
+  }
 `;
 
 const RightSideFooterColumn = styled.div`
@@ -96,6 +103,9 @@ export const FooterDesktop = () => {
           </RightSideFooterColumn>
           <RightSideFooterColumn>
             <RightSideFooterColumnTitle>Other</RightSideFooterColumnTitle>
+            <RightSideFooterLink href="/contributors">
+              Contributors
+            </RightSideFooterLink>
             <RightSideFooterLink href="/oss-friends">
               OSS Friends
             </RightSideFooterLink>
@@ -120,7 +130,7 @@ export const FooterDesktop = () => {
       >
         <div>
           <span style={{ fontFamily: 'Inter, sans-serif' }}>©</span>
-          2023 Twenty PBC
+          {new Date().getFullYear()} Twenty PBC
         </div>
         <div
           style={{

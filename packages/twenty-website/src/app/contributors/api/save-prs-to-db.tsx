@@ -15,6 +15,7 @@ export async function savePRsToDB(
     if (pr.author == null) {
       continue;
     }
+
     await insertMany(
       userModel,
       [
@@ -43,7 +44,7 @@ export async function savePRsToDB(
           authorId: pr.author.login,
         },
       ],
-      { onConflictKey: 'id' },
+      { onConflictKey: 'id', onConflictUpdateObject: { title: pr.title } },
     );
 
     for (const label of pr.labels.nodes) {

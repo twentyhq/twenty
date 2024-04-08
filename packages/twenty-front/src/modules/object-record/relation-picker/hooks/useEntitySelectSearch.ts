@@ -1,4 +1,4 @@
-import debounce from 'lodash.debounce';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 
@@ -14,7 +14,7 @@ export const useEntitySelectSearch = ({
     setRelationPickerSearchFilter,
   } = useRelationPicker({ relationPickerScopeId });
 
-  const debouncedSetSearchFilter = debounce(
+  const debouncedSetSearchFilter = useDebouncedCallback(
     setRelationPickerSearchFilter,
     100,
     {

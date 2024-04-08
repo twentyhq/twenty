@@ -137,9 +137,14 @@ export class AuthResolver {
 
   @Mutation(() => AuthorizeApp)
   @UseGuards(JwtAuthGuard)
-  authorizeApp(@Args() authorizeAppInput: AuthorizeAppInput): AuthorizeApp {
-    const authorizedApp =
-      this.authService.generateAuthorizationCode(authorizeAppInput);
+  async authorizeApp(
+    @Args() authorizeAppInput: AuthorizeAppInput,
+    @AuthUser() user: User,
+  ): Promise<AuthorizeApp> {
+    const authorizedApp = await this.authService.generateAuthorizationCode(
+      authorizeAppInput,
+      user,
+    );
 
     return authorizedApp;
   }

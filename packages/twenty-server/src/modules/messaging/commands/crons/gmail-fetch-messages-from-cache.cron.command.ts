@@ -4,14 +4,13 @@ import { Command, CommandRunner } from 'nest-commander';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { fetchAllWorkspacesMessagesCronPattern } from 'src/modules/messaging/commands/crons/fetch-all-workspaces-messages.cron.pattern';
-import { FetchAllWorkspacesMessagesJob } from 'src/modules/messaging/commands/crons/fetch-all-workspaces-messages.job';
+import { FetchAllMessagesFromCacheCronJob } from 'src/modules/messaging/jobs/crons/fetch-all-messages-from-cache.cron.job';
 
 @Command({
-  name: 'fetch-all-workspaces-messages:cron:start',
-  description: 'Starts a cron job to fetch all workspaces messages',
+  name: 'cron:messaging:gmail-fetch-messages-from-cache',
+  description: 'Starts a cron job to fetch all messages from cache',
 })
-export class StartFetchAllWorkspacesMessagesCronCommand extends CommandRunner {
+export class GmailFetchMessagesFromCacheCronCommand extends CommandRunner {
   constructor(
     @Inject(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -21,10 +20,12 @@ export class StartFetchAllWorkspacesMessagesCronCommand extends CommandRunner {
 
   async run(): Promise<void> {
     await this.messageQueueService.addCron<undefined>(
-      FetchAllWorkspacesMessagesJob.name,
+      FetchAllMessagesFromCacheCronJob.name,
       undefined,
       {
-        repeat: { pattern: fetchAllWorkspacesMessagesCronPattern },
+        repeat: {
+          every: 5000,
+        },
       },
     );
   }
