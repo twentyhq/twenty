@@ -7,13 +7,17 @@ import { objectRecordChangedProperties as objectRecordUpdateEventChangedProperti
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import {
-  MatchMessageParticipantJob,
-  MatchMessageParticipantsJobData,
-} from 'src/modules/messaging/jobs/match-message-participant.job';
+  MatchParticipantJob,
+  MatchParticipantJobData,
+} from 'src/modules/connected-account/jobs/match-participant.job';
+import {
+  UnmatchParticipantJobData,
+  UnmatchParticipantJob,
+} from 'src/modules/connected-account/jobs/unmatch-participant.job';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 
 @Injectable()
-export class MessagingPersonListener {
+export class ParticipantPersonListener {
   constructor(
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -27,8 +31,8 @@ export class MessagingPersonListener {
       return;
     }
 
-    this.messageQueueService.add<MatchMessageParticipantsJobData>(
-      MatchMessageParticipantJob.name,
+    await this.messageQueueService.add<MatchParticipantJobData>(
+      MatchParticipantJob.name,
       {
         workspaceId: payload.workspaceId,
         email: payload.details.after.email,
@@ -47,8 +51,17 @@ export class MessagingPersonListener {
         payload.details.after,
       ).includes('email')
     ) {
-      this.messageQueueService.add<MatchMessageParticipantsJobData>(
-        MatchMessageParticipantJob.name,
+      await this.messageQueueService.add<UnmatchParticipantJobData>(
+        UnmatchParticipantJob.name,
+        {
+          workspaceId: payload.workspaceId,
+          email: payload.details.before.email,
+          personId: payload.recordId,
+        },
+      );
+
+      await this.messageQueueService.add<MatchParticipantJobData>(
+        MatchParticipantJob.name,
         {
           workspaceId: payload.workspaceId,
           email: payload.details.after.email,

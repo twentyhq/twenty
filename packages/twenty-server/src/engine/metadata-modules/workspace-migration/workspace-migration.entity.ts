@@ -62,6 +62,13 @@ export type WorkspaceMigrationCreateComment = {
   comment: string;
 };
 
+export type WorkspaceMigrationForeignTable = {
+  columns: WorkspaceMigrationColumnDefinition[];
+  referencedTableName: string;
+  referencedTableSchema: string;
+  foreignDataWrapperId: string;
+};
+
 export type WorkspaceMigrationColumnAction = {
   action: WorkspaceMigrationColumnActionType;
 } & (
@@ -75,8 +82,14 @@ export type WorkspaceMigrationColumnAction = {
 
 export type WorkspaceMigrationTableAction = {
   name: string;
-  action: 'create' | 'alter' | 'drop';
+  action:
+    | 'create'
+    | 'alter'
+    | 'drop'
+    | 'create_foreign_table'
+    | 'drop_foreign_table';
   columns?: WorkspaceMigrationColumnAction[];
+  foreignTable?: WorkspaceMigrationForeignTable;
 };
 
 @Entity('workspaceMigration')

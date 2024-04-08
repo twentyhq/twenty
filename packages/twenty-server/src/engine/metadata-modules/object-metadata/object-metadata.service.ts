@@ -28,7 +28,7 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { computeCustomName } from 'src/engine/utils/compute-custom-name.util';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { RelationToDelete } from 'src/engine/metadata-modules/relation-metadata/types/relation-to-delete';
@@ -47,6 +47,7 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 import { buildWorkspaceMigrationsForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-workspace-migrations-for-custom-object.util';
 import { buildWorkspaceMigrationsForRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/build-workspace-migrations-for-remote-object.util';
+import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -172,7 +173,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           workspaceId,
           [
             {
-              name: computeCustomName(
+              name: computeTableName(
                 relationToDelete.toObjectName,
                 relationToDelete.toObjectMetadataIsCustom,
               ),
@@ -180,9 +181,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               columns: [
                 {
                   action: WorkspaceMigrationColumnActionType.DROP,
-                  columnName: computeCustomName(
-                    `${relationToDelete.toFieldMetadataName}Id`,
-                    relationToDelete.toFieldMetadataIsCustom,
+                  columnName: computeColumnName(
+                    relationToDelete.toFieldMetadataName,
+                    { isForeignKey: true },
                   ),
                 } satisfies WorkspaceMigrationColumnDrop,
               ],
@@ -252,9 +253,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               type: FieldMetadataType.UUID,
               name: 'id',
               label: 'Id',
-              targetColumnMap: {
-                value: 'id',
-              },
               icon: 'Icon123',
               description: 'Id',
               isNullable: false,
@@ -269,9 +267,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               type: FieldMetadataType.TEXT,
               name: 'name',
               label: 'Name',
-              targetColumnMap: {
-                value: 'name',
-              },
               icon: 'IconAbc',
               description: 'Name',
               isNullable: false,
@@ -285,9 +280,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               type: FieldMetadataType.DATE_TIME,
               name: 'createdAt',
               label: 'Creation date',
-              targetColumnMap: {
-                value: 'createdAt',
-              },
               icon: 'IconCalendar',
               description: 'Creation date',
               isNullable: false,
@@ -301,9 +293,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               type: FieldMetadataType.DATE_TIME,
               name: 'updatedAt',
               label: 'Update date',
-              targetColumnMap: {
-                value: 'updatedAt',
-              },
               icon: 'IconCalendar',
               description: 'Update date',
               isNullable: false,
@@ -318,9 +307,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               type: FieldMetadataType.POSITION,
               name: 'position',
               label: 'Position',
-              targetColumnMap: {
-                value: 'position',
-              },
               icon: 'IconHierarchy2',
               description: 'Position',
               isNullable: true,
@@ -518,7 +504,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           type: FieldMetadataType.RELATION,
           name: 'activityTargets',
           label: 'Activities',
-          targetColumnMap: {},
           description: `Activities tied to the ${createdObjectMetadata.labelSingular}`,
           icon: 'IconCheckbox',
           isNullable: true,
@@ -536,7 +521,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           type: FieldMetadataType.RELATION,
           name: createdObjectMetadata.nameSingular,
           label: createdObjectMetadata.labelSingular,
-          targetColumnMap: {},
           description: `ActivityTarget ${createdObjectMetadata.labelSingular}`,
           icon: 'IconBuildingSkyscraper',
           isNullable: true,
@@ -554,12 +538,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           type: FieldMetadataType.UUID,
           name: `${createdObjectMetadata.nameSingular}Id`,
           label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
-          targetColumnMap: {
-            value: `${computeCustomName(
-              createdObjectMetadata.nameSingular,
-              false,
-            )}Id`,
-          },
           description: `ActivityTarget ${createdObjectMetadata.labelSingular} id foreign key`,
           icon: undefined,
           isNullable: true,
@@ -621,7 +599,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           type: FieldMetadataType.RELATION,
           name: 'attachments',
           label: 'Attachments',
-          targetColumnMap: {},
           description: `Attachments tied to the ${createdObjectMetadata.labelSingular}`,
           icon: 'IconFileImport',
           isNullable: true,
@@ -639,7 +616,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           type: FieldMetadataType.RELATION,
           name: createdObjectMetadata.nameSingular,
           label: createdObjectMetadata.labelSingular,
-          targetColumnMap: {},
           description: `Attachment ${createdObjectMetadata.labelSingular}`,
           icon: 'IconBuildingSkyscraper',
           isNullable: true,
@@ -657,12 +633,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           type: FieldMetadataType.UUID,
           name: `${createdObjectMetadata.nameSingular}Id`,
           label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
-          targetColumnMap: {
-            value: `${computeCustomName(
-              createdObjectMetadata.nameSingular,
-              false,
-            )}Id`,
-          },
           description: `Attachment ${createdObjectMetadata.labelSingular} id foreign key`,
           icon: undefined,
           isNullable: true,
@@ -721,7 +691,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         type: FieldMetadataType.RELATION,
         name: 'events',
         label: 'Events',
-        targetColumnMap: {},
         description: `Events tied to the ${createdObjectMetadata.labelSingular}`,
         icon: 'IconFileImport',
         isNullable: true,
@@ -739,7 +708,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         type: FieldMetadataType.RELATION,
         name: createdObjectMetadata.nameSingular,
         label: createdObjectMetadata.labelSingular,
-        targetColumnMap: {},
         description: `Event ${createdObjectMetadata.labelSingular}`,
         icon: 'IconBuildingSkyscraper',
         isNullable: true,
@@ -757,12 +725,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         type: FieldMetadataType.UUID,
         name: `${createdObjectMetadata.nameSingular}Id`,
         label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
-        targetColumnMap: {
-          value: `${computeCustomName(
-            createdObjectMetadata.nameSingular,
-            false,
-          )}Id`,
-        },
         description: `Event ${createdObjectMetadata.labelSingular} id foreign key`,
         icon: undefined,
         isNullable: true,
@@ -822,7 +784,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           type: FieldMetadataType.RELATION,
           name: 'favorites',
           label: 'Favorites',
-          targetColumnMap: {},
           description: `Favorites tied to the ${createdObjectMetadata.labelSingular}`,
           icon: 'IconHeart',
           isNullable: true,
@@ -840,7 +801,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           type: FieldMetadataType.RELATION,
           name: createdObjectMetadata.nameSingular,
           label: createdObjectMetadata.labelSingular,
-          targetColumnMap: {},
           description: `Favorite ${createdObjectMetadata.labelSingular}`,
           icon: 'IconBuildingSkyscraper',
           isNullable: true,
@@ -858,12 +818,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           type: FieldMetadataType.UUID,
           name: `${createdObjectMetadata.nameSingular}Id`,
           label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
-          targetColumnMap: {
-            value: `${computeCustomName(
-              createdObjectMetadata.nameSingular,
-              false,
-            )}Id`,
-          },
           description: `Favorite ${createdObjectMetadata.labelSingular} id foreign key`,
           icon: undefined,
           isNullable: true,

@@ -19,7 +19,6 @@ import { TokenService } from 'src/engine/core-modules/auth/services/token.servic
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { SignUpService } from 'src/engine/core-modules/auth/services/sign-up.service';
-import { GoogleGmailAuthController } from 'src/engine/core-modules/auth/controllers/google-gmail-auth.controller';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
@@ -58,7 +57,6 @@ const jwtModule = JwtModule.registerAsync({
   controllers: [
     GoogleAuthController,
     GoogleAPIsAuthController,
-    GoogleGmailAuthController,
     VerifyAuthController,
   ],
   providers: [
