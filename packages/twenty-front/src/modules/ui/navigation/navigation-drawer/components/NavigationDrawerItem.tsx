@@ -3,6 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useSetRecoilState } from 'recoil';
+import { Pill } from 'twenty-ui';
 
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
@@ -85,18 +86,6 @@ const StyledItemLabel = styled.div`
   white-space: nowrap;
 `;
 
-const StyledSoonPill = styled.div`
-  align-items: center;
-  background-color: ${({ theme }) => theme.background.transparent.light};
-  border-radius: 50px;
-  display: flex;
-  font-size: ${({ theme }) => theme.font.size.xs};
-  height: 16px;
-  justify-content: center;
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(2)};
-`;
-
 const StyledItemCount = styled.div`
   align-items: center;
   background-color: ${({ theme }) => theme.color.blue};
@@ -168,7 +157,7 @@ export const NavigationDrawerItem = ({
     >
       {Icon && <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.md} />}
       <StyledItemLabel>{label}</StyledItemLabel>
-      {soon && <StyledSoonPill>Soon</StyledSoonPill>}
+      {soon && <Pill label="Soon" />}
       {!!count && <StyledItemCount>{count}</StyledItemCount>}
       {keyboard && (
         <StyledKeyBoardShortcut className="keyboard-shortcuts">

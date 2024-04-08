@@ -37,6 +37,7 @@ import {
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 
 import {
   FieldMetadataEntity,
@@ -91,6 +92,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       if (!objectMetadata) {
         throw new NotFoundException('Object does not exist');
+      }
+
+      if (!fieldMetadataInput.isRemoteCreation) {
+        assertMutationNotOnRemoteObject(objectMetadata);
       }
 
       // Double check in case the service is directly called
@@ -266,6 +271,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       if (!objectMetadata) {
         throw new NotFoundException('Object does not exist');
       }
+
+      assertMutationNotOnRemoteObject(objectMetadata);
 
       if (
         objectMetadata.labelIdentifierFieldMetadataId ===

@@ -2,41 +2,23 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconArchive, IconDotsVertical, IconPencil } from 'twenty-ui';
 
+import { SettingsSummaryCard } from '@/settings/components/SettingsSummaryCard';
 import { SettingsDataModelIsCustomTag } from '@/settings/data-model/objects/SettingsDataModelIsCustomTag';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
-import { Card } from '@/ui/layout/card/components/Card';
-import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { Section } from '@/ui/layout/section/components/Section';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
-type SettingsAboutSectionProps = {
+type SettingsObjectSummaryCardProps = {
   iconKey?: string;
   isCustom: boolean;
   name: string;
   onDeactivate: () => void;
   onEdit: () => void;
 };
-
-const StyledCardContent = styled(CardContent)`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(2)};
-  padding: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledName = styled.div`
-  color: ${({ theme }) => theme.font.color.primary};
-  display: flex;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  gap: ${({ theme }) => theme.spacing(2)};
-  margin-right: auto;
-`;
 
 const StyledIsCustomTag = styled(SettingsDataModelIsCustomTag)`
   box-sizing: border-box;
@@ -45,13 +27,13 @@ const StyledIsCustomTag = styled(SettingsDataModelIsCustomTag)`
 
 const dropdownId = 'settings-object-edit-about-menu-dropdown';
 
-export const SettingsAboutSection = ({
+export const SettingsObjectSummaryCard = ({
   iconKey = '',
   isCustom,
   name,
   onDeactivate,
   onEdit,
-}: SettingsAboutSectionProps) => {
+}: SettingsObjectSummaryCardProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
   const Icon = getIcon(iconKey);
@@ -69,14 +51,15 @@ export const SettingsAboutSection = ({
   };
 
   return (
-    <Section>
-      <H2Title title="About" description="Manage your object" />
-      <Card>
-        <StyledCardContent>
-          <StyledName>
-            {!!Icon && <Icon size={theme.icon.size.md} />}
-            {name}
-          </StyledName>
+    <SettingsSummaryCard
+      title={
+        <>
+          {!!Icon && <Icon size={theme.icon.size.md} />}
+          {name}
+        </>
+      }
+      rightComponent={
+        <>
           <StyledIsCustomTag isCustom={isCustom} />
           <Dropdown
             dropdownId={dropdownId}
@@ -103,8 +86,8 @@ export const SettingsAboutSection = ({
               scope: dropdownId,
             }}
           />
-        </StyledCardContent>
-      </Card>
-    </Section>
+        </>
+      }
+    />
   );
 };

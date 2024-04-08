@@ -1,16 +1,17 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc"
+    "outDir": "../../dist/out-tsc",
+    "types": ["node"]
   },
   "exclude": [
+    "**/__mocks__/**/*",
     "**/*.spec.ts",
-    "**/*.test.ts",
     "**/*.spec.tsx",
-    "**/*.test.tsx",
-    "jest.config.ts",
-    "tsup.config.ts",
-    "tsup.ui.index.tsx"
+    "**/*.stories.ts",
+    "**/*.stories.tsx",
+    "**/*.test.ts",
+    "**/*.test.tsx"
   ],
   "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"]
 }

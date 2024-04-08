@@ -5,10 +5,6 @@ import { Repository, In } from 'typeorm';
 
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
@@ -29,8 +25,6 @@ export class FetchAllMessagesFromCacheCronJob
     private readonly dataSourceRepository: Repository<DataSourceEntity>,
     @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
     private readonly messageChannelRepository: MessageChannelRepository,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     private readonly gmailFetchMessageContentFromCacheService: GmailFetchMessageContentFromCacheService,
   ) {}
 
@@ -44,20 +38,9 @@ export class FetchAllMessagesFromCacheCronJob
       })
     ).map((workspace) => workspace.id);
 
-    const workspacesWithFeatureFlagActive =
-      await this.featureFlagRepository.find({
-        where: {
-          workspaceId: In(workspaceIds),
-          key: FeatureFlagKeys.IsFullSyncV2Enabled,
-          value: true,
-        },
-      });
-
     const dataSources = await this.dataSourceRepository.find({
       where: {
-        workspaceId: In(
-          workspacesWithFeatureFlagActive.map((w) => w.workspaceId),
-        ),
+        workspaceId: In(workspaceIds),
       },
     });
 

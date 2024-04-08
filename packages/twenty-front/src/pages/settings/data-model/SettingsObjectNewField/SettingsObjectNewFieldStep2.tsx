@@ -7,7 +7,7 @@ import { IconSettings } from 'twenty-ui';
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
-import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
@@ -46,7 +46,7 @@ export const SettingsObjectNewFieldStep2 = () => {
     findActiveObjectMetadataItemBySlug,
     findObjectMetadataItemById,
     findObjectMetadataItemByNamePlural,
-  } = useObjectMetadataItemForSettings();
+  } = useFilteredObjectMetadataItems();
 
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
@@ -300,11 +300,13 @@ export const SettingsObjectNewFieldStep2 = () => {
               { children: 'New Field' },
             ]}
           />
-          <SaveAndCancelButtons
-            isSaveDisabled={!canSave}
-            onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-            onSave={handleSave}
-          />
+          {!activeObjectMetadataItem.isRemote && (
+            <SaveAndCancelButtons
+              isSaveDisabled={!canSave}
+              onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
+              onSave={handleSave}
+            />
+          )}
         </SettingsHeaderContainer>
         <SettingsObjectFieldFormSection
           iconKey={formValues.icon}

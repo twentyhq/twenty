@@ -1,3 +1,4 @@
+import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
 import { IconBell, IconMinus } from 'twenty-ui';
 
@@ -24,8 +25,8 @@ export const Default: Story = {
   args: {
     LeftIcon: IconBell,
     accent: 'default',
-    iconButtons: [{ Icon: IconMinus, onClick: () => console.log('Clicked') }],
-    onClick: () => console.log('Clicked'),
+    iconButtons: [{ Icon: IconMinus, onClick: action('Clicked') }],
+    onClick: action('Clicked'),
     text: 'Menu item draggable',
     isDragDisabled: false,
   },
@@ -85,8 +86,7 @@ export const Catalog: Story = {
                   iconButtons: [
                     {
                       Icon: IconMinus,
-                      onClick: () =>
-                        console.log('Clicked on minus icon button'),
+                      onClick: action('Clicked on minus icon button'),
                     },
                   ],
                 };

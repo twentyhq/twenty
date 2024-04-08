@@ -9,7 +9,7 @@ import {
 export async function searchIssuesPRs(
   query: typeof graphql,
   cursor: string | null = null,
-  isIssues: boolean = false,
+  isIssues = false,
   accumulatedData: Array<PullRequestNode | IssueNode> = [],
 ): Promise<Array<PullRequestNode | IssueNode>> {
   const { search } = await query<SearchIssuesPRsQuery>(

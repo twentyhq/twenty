@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 import { useSetRecoilState } from 'recoil';
@@ -46,7 +47,7 @@ const meta: Meta<typeof CommandMenu> = {
             label: 'Create Task',
             type: CommandType.Create,
             Icon: IconCheckbox,
-            onCommandClick: () => console.log('create task click'),
+            onCommandClick: action('create task click'),
           },
           {
             id: 'create-note',
@@ -54,7 +55,7 @@ const meta: Meta<typeof CommandMenu> = {
             label: 'Create Note',
             type: CommandType.Create,
             Icon: IconNotes,
-            onCommandClick: () => console.log('create note click'),
+            onCommandClick: action('create note click'),
           },
         ]);
         openCommandMenu();

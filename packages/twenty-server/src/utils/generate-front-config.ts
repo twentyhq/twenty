@@ -1,17 +1,14 @@
-import { ConfigService } from '@nestjs/config';
-
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-
-const environmentService = new EnvironmentService(new ConfigService());
+import { config } from 'dotenv';
+config();
 
 export function generateFrontConfig(): void {
   const configObject = {
     window: {
       _env_: {
-        REACT_APP_SERVER_BASE_URL: environmentService.get('SERVER_URL'),
+        REACT_APP_SERVER_BASE_URL: process.env.SERVER_URL,
       },
     },
   };

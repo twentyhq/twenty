@@ -1,11 +1,8 @@
-import { ConfigService } from '@nestjs/config';
-
 import { CommandFactory } from 'nest-commander';
 
 import { filterException } from 'src/engine/utils/global-exception-handler.util';
 import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
 import { LoggerService } from 'src/engine/integrations/logger/logger.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 import { CommandModule } from './command.module';
 
@@ -20,10 +17,8 @@ async function bootstrap() {
     exceptionHandlerService.captureExceptions([err]);
   };
 
-  const environmentService = new EnvironmentService(new ConfigService());
-
   const app = await CommandFactory.createWithoutRunning(CommandModule, {
-    bufferLogs: environmentService.get('LOGGER_IS_BUFFER_ENABLED'),
+    bufferLogs: process.env.LOGGER_IS_BUFFER_ENABLED === 'true',
     errorHandler,
     serviceErrorHandler: errorHandler,
   });
