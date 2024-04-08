@@ -1,5 +1,7 @@
+import React, { useEffect, useRef, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useInView } from 'framer-motion';
 import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui';
 
 import { CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
@@ -62,6 +64,41 @@ const StyledParticipantsContainer = styled.div`
   white-space: nowrap;
 `;
 
+const ParticipantChipWithIntersectionObserver = ({
+  participant,
+  setParticipantsInView,
+}: {
+  participant: CalendarEventParticipant;
+  setParticipantsInView: React.Dispatch<React.SetStateAction<Set<string>>>;
+}) => {
+  // eslint-disable-next-line @nx/workspace-no-state-useref
+  const ref = useRef(null);
+  const isInView = useInView(ref);
+
+  useEffect(() => {
+    if (isInView) {
+      setParticipantsInView((prev: Set<string>) => {
+        const newSet = new Set(prev);
+        newSet.add(participant.id);
+        return newSet;
+      });
+    }
+    if (!isInView) {
+      setParticipantsInView((prev: Set<string>) => {
+        const newSet = new Set(prev);
+        newSet.delete(participant.id);
+        return newSet;
+      });
+    }
+  }, [isInView, participant.id, setParticipantsInView]);
+
+  return (
+    <div ref={ref}>
+      <ParticipantChip participant={participant} />
+    </div>
+  );
+};
+
 export const CalendarEventParticipantsResponseStatusField = ({
   responseStatus,
   participants,
@@ -70,6 +107,10 @@ export const CalendarEventParticipantsResponseStatusField = ({
   participants: CalendarEventParticipant[];
 }) => {
   const theme = useTheme();
+
+  const [participantsInView, setParticipantsInView] = useState(
+    new Set<string>(),
+  );
 
   const Icon = {
     Yes: <IconCheck stroke={theme.icon.stroke.sm} />,
@@ -98,8 +139,13 @@ export const CalendarEventParticipantsResponseStatusField = ({
         </StyledLabelAndIconContainer>
 
         <StyledParticipantsContainer>
+          {participantsInView.size}
           {orderedParticipants.map((participant) => (
-            <ParticipantChip key={participant.id} participant={participant} />
+            <ParticipantChipWithIntersectionObserver
+              key={participant.id}
+              participant={participant}
+              setParticipantsInView={setParticipantsInView}
+            />
           ))}
         </StyledParticipantsContainer>
       </StyledInlineCellBaseContainer>
