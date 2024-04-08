@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui';
 
+import { CalendarEventParticipantPlus } from '@/activities/calendar/components/CalendarEventParticipantPlus';
 import { IntersectionObserverWrapper } from '@/activities/calendar/components/IntersectionObserverWrapper';
 import { CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
@@ -118,9 +119,11 @@ export const CalendarEventParticipantsResponseStatusField = ({
               </IntersectionObserverWrapper>
               {index === participantsInView.size - 1 &&
                 orderedParticipants.length - participantsInView.size !== 0 && (
-                  <EllipsisDisplay>{`+${
-                    orderedParticipants.length - participantsInView.size
-                  }`}</EllipsisDisplay>
+                  <CalendarEventParticipantPlus
+                    number={
+                      orderedParticipants.length - participantsInView.size
+                    }
+                  />
                 )}{' '}
             </>
           ))}
