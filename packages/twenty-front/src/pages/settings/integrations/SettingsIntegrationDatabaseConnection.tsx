@@ -5,6 +5,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { IconSettings } from 'twenty-ui';
 
 import { useDeleteOneDatabaseConnection } from '@/databases/hooks/useDeleteOneDatabaseConnection';
+import { useGetDatabaseConnection } from '@/databases/hooks/useGetDatabaseConnection';
+import { useGetDatabaseConnectionTables } from '@/databases/hooks/useGetDatabaseConnectionTables';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   SettingsIntegrationDatabaseTablesListCard,
@@ -12,6 +14,7 @@ import {
   settingsIntegrationsDatabaseTablesSchema,
 } from '@/settings/integrations/components/SettingsIntegrationDatabaseTablesListCard';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
+import { getConnectionDbName } from '@/settings/integrations/utils/getConnectionDbName';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -21,10 +24,9 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SettingsIntegrationDatabaseConnectionSummaryCard } from '~/pages/settings/integrations/SettingsIntegrationDatabaseConnectionSummaryCard';
-import { mockedRemoteObjectIntegrations } from '~/testing/mock-data/remoteObjectDatabases';
 
 export const SettingsIntegrationDatabaseConnection = () => {
-  const { databaseKey = '', connectionKey = '' } = useParams();
+  const { databaseKey = '', connectionId = '' } = useParams();
   const navigate = useNavigate();
 
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
@@ -43,11 +45,11 @@ export const SettingsIntegrationDatabaseConnection = () => {
     ((databaseKey === 'airtable' && isAirtableIntegrationEnabled) ||
       (databaseKey === 'postgresql' && isPostgresqlIntegrationEnabled));
 
-  const connections =
-    mockedRemoteObjectIntegrations.find(
-      ({ key }) => key === integration?.from.key,
-    )?.connections || [];
-  const connection = connections.find(({ key }) => key === connectionKey);
+  const { connection, loading } = useGetDatabaseConnection({
+    databaseKey,
+    connectionId,
+    skip: !isIntegrationAvailable,
+  });
 
   const { deleteOneDatabaseConnection } = useDeleteOneDatabaseConnection();
 
@@ -60,10 +62,22 @@ export const SettingsIntegrationDatabaseConnection = () => {
   };
 
   useEffect(() => {
-    if (!isIntegrationAvailable || !connection) {
+    if (!isIntegrationAvailable || (!loading && !connection)) {
       navigate(AppPath.NotFound);
     }
-  }, [integration, databaseKey, navigate, isIntegrationAvailable, connection]);
+  }, [
+    integration,
+    databaseKey,
+    navigate,
+    isIntegrationAvailable,
+    connection,
+    loading,
+  ]);
+
+  const { tables } = useGetDatabaseConnectionTables({
+    connectionId,
+    skip: !isIntegrationAvailable || !connection,
+  });
 
   const formConfig = useForm<SettingsIntegrationsDatabaseTablesFormValues>({
     mode: 'onTouched',
@@ -76,7 +90,7 @@ export const SettingsIntegrationDatabaseConnection = () => {
     SettingsPath.Integrations,
   );
 
-  const tables = mockedRemoteObjectIntegrations[0].connections[0].tables;
+  const connectionName = getConnectionDbName({ integration, connection });
 
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
@@ -93,15 +107,15 @@ export const SettingsIntegrationDatabaseConnection = () => {
                 children: integration.text,
                 href: `${settingsIntegrationsPagePath}/${databaseKey}`,
               },
-              { children: connection.name },
+              { children: connectionName },
             ]}
           />
           <Section>
             <H2Title title="About" description="About this remote object" />
             <SettingsIntegrationDatabaseConnectionSummaryCard
               databaseLogoUrl={integration.from.image}
-              connectionName={connection.name}
-              connectedTablesNb={tables.length}
+              connectionId={connectionId}
+              connectionName={connectionName}
               onRemove={deleteConnection}
             />
           </Section>

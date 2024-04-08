@@ -13,9 +13,12 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "\n  mutation createServer($input: CreateRemoteServerInput!) {\n    createOneRemoteServer(input: $input) {\n      id\n      foreignDataWrapperId\n      foreignDataWrapperOptions\n      foreignDataWrapperType\n    }\n  }\n": types.CreateServerDocument,
+    "\n  fragment RemoteServerFields on RemoteServer {\n    id\n    createdAt\n    foreignDataWrapperId\n    foreignDataWrapperOptions\n    foreignDataWrapperType\n    updatedAt\n  }\n": types.RemoteServerFieldsFragmentDoc,
+    "\n  \n  mutation createServer($input: CreateRemoteServerInput!) {\n    createOneRemoteServer(input: $input) {\n      ...RemoteServerFields\n    }\n  }\n": types.CreateServerDocument,
     "\n  mutation deleteServer($input: RemoteServerIdInput!) {\n    deleteOneRemoteServer(input: $input) {\n      id\n    }\n  }\n": types.DeleteServerDocument,
-    "\n  query GetManyDatabaseConnections($input: RemoteServerTypeInput!) {\n    findManyRemoteServersByType(input: $input) {\n      id\n      createdAt\n      foreignDataWrapperId\n      foreignDataWrapperOptions\n      foreignDataWrapperType\n      updatedAt\n    }\n  }\n": types.GetManyDatabaseConnectionsDocument,
+    "\n  query GetManyDatabaseConnectionTables($input: RemoteServerIdInput!) {\n    findAvailableRemoteTablesByServerId(input: $input) {\n      name\n      schema\n      status\n    }\n  }\n": types.GetManyDatabaseConnectionTablesDocument,
+    "\n  \n  query GetManyDatabaseConnections($input: RemoteServerTypeInput!) {\n    findManyRemoteServersByType(input: $input) {\n      ...RemoteServerFields\n    }\n  }\n": types.GetManyDatabaseConnectionsDocument,
+    "\n  \n  query GetOneDatabaseConnection($input: RemoteServerIdInput!) {\n    findOneRemoteServerById(input: $input) {\n      ...RemoteServerFields\n    }\n  }\n": types.GetOneDatabaseConnectionDocument,
     "\n  mutation CreateOneObjectMetadataItem($input: CreateOneObjectInput!) {\n    createOneObject(input: $input) {\n      id\n      dataSourceId\n      nameSingular\n      namePlural\n      labelSingular\n      labelPlural\n      description\n      icon\n      isCustom\n      isActive\n      createdAt\n      updatedAt\n      labelIdentifierFieldMetadataId\n      imageIdentifierFieldMetadataId\n    }\n  }\n": types.CreateOneObjectMetadataItemDocument,
     "\n  mutation CreateOneFieldMetadataItem($input: CreateOneFieldMetadataInput!) {\n    createOneField(input: $input) {\n      id\n      type\n      name\n      label\n      description\n      icon\n      isCustom\n      isActive\n      isNullable\n      createdAt\n      updatedAt\n      defaultValue\n      options\n    }\n  }\n": types.CreateOneFieldMetadataItemDocument,
     "\n  mutation CreateOneRelationMetadata($input: CreateOneRelationInput!) {\n    createOneRelation(input: $input) {\n      id\n      relationType\n      fromObjectMetadataId\n      toObjectMetadataId\n      fromFieldMetadataId\n      toFieldMetadataId\n      createdAt\n      updatedAt\n    }\n  }\n": types.CreateOneRelationMetadataDocument,
@@ -43,7 +46,11 @@ export function graphql(source: string): unknown;
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  mutation createServer($input: CreateRemoteServerInput!) {\n    createOneRemoteServer(input: $input) {\n      id\n      foreignDataWrapperId\n      foreignDataWrapperOptions\n      foreignDataWrapperType\n    }\n  }\n"): (typeof documents)["\n  mutation createServer($input: CreateRemoteServerInput!) {\n    createOneRemoteServer(input: $input) {\n      id\n      foreignDataWrapperId\n      foreignDataWrapperOptions\n      foreignDataWrapperType\n    }\n  }\n"];
+export function graphql(source: "\n  fragment RemoteServerFields on RemoteServer {\n    id\n    createdAt\n    foreignDataWrapperId\n    foreignDataWrapperOptions\n    foreignDataWrapperType\n    updatedAt\n  }\n"): (typeof documents)["\n  fragment RemoteServerFields on RemoteServer {\n    id\n    createdAt\n    foreignDataWrapperId\n    foreignDataWrapperOptions\n    foreignDataWrapperType\n    updatedAt\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  \n  mutation createServer($input: CreateRemoteServerInput!) {\n    createOneRemoteServer(input: $input) {\n      ...RemoteServerFields\n    }\n  }\n"): (typeof documents)["\n  \n  mutation createServer($input: CreateRemoteServerInput!) {\n    createOneRemoteServer(input: $input) {\n      ...RemoteServerFields\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -51,7 +58,15 @@ export function graphql(source: "\n  mutation deleteServer($input: RemoteServerI
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  query GetManyDatabaseConnections($input: RemoteServerTypeInput!) {\n    findManyRemoteServersByType(input: $input) {\n      id\n      createdAt\n      foreignDataWrapperId\n      foreignDataWrapperOptions\n      foreignDataWrapperType\n      updatedAt\n    }\n  }\n"): (typeof documents)["\n  query GetManyDatabaseConnections($input: RemoteServerTypeInput!) {\n    findManyRemoteServersByType(input: $input) {\n      id\n      createdAt\n      foreignDataWrapperId\n      foreignDataWrapperOptions\n      foreignDataWrapperType\n      updatedAt\n    }\n  }\n"];
+export function graphql(source: "\n  query GetManyDatabaseConnectionTables($input: RemoteServerIdInput!) {\n    findAvailableRemoteTablesByServerId(input: $input) {\n      name\n      schema\n      status\n    }\n  }\n"): (typeof documents)["\n  query GetManyDatabaseConnectionTables($input: RemoteServerIdInput!) {\n    findAvailableRemoteTablesByServerId(input: $input) {\n      name\n      schema\n      status\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  \n  query GetManyDatabaseConnections($input: RemoteServerTypeInput!) {\n    findManyRemoteServersByType(input: $input) {\n      ...RemoteServerFields\n    }\n  }\n"): (typeof documents)["\n  \n  query GetManyDatabaseConnections($input: RemoteServerTypeInput!) {\n    findManyRemoteServersByType(input: $input) {\n      ...RemoteServerFields\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  \n  query GetOneDatabaseConnection($input: RemoteServerIdInput!) {\n    findOneRemoteServerById(input: $input) {\n      ...RemoteServerFields\n    }\n  }\n"): (typeof documents)["\n  \n  query GetOneDatabaseConnection($input: RemoteServerIdInput!) {\n    findOneRemoteServerById(input: $input) {\n      ...RemoteServerFields\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

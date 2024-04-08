@@ -11,8 +11,8 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsIntegrationDatabaseConnectionSummaryCardProps = {
   databaseLogoUrl: string;
+  connectionId: string;
   connectionName: string;
-  connectedTablesNb: number;
   onRemove: () => void;
 };
 
@@ -30,8 +30,8 @@ const StyledDatabaseLogo = styled.img`
 
 export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
   databaseLogoUrl,
+  connectionId,
   connectionName,
-  connectedTablesNb,
   onRemove,
 }: SettingsIntegrationDatabaseConnectionSummaryCardProps) => {
   const dropdownId =
@@ -50,7 +50,7 @@ export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
       rightComponent={
         <>
           <SettingsIntegrationDatabaseConnectedTablesStatus
-            connectedTablesCount={connectedTablesNb}
+            connectionId={connectionId}
           />
           <Dropdown
             dropdownId={dropdownId}
