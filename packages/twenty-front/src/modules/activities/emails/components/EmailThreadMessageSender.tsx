@@ -1,11 +1,8 @@
-import React from 'react';
 import styled from '@emotion/styled';
 
+import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
 import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { RecordChip } from '@/object-record/components/RecordChip';
-import { Avatar } from '@/users/components/Avatar';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 const StyledEmailThreadMessageSender = styled.div`
@@ -13,32 +10,11 @@ const StyledEmailThreadMessageSender = styled.div`
   justify-content: space-between;
 `;
 
-const StyledEmailThreadMessageSenderUser = styled.div`
-  align-items: flex-start;
-  display: flex;
-`;
-
-const StyledAvatar = styled(Avatar)`
-  margin: ${({ theme }) => theme.spacing(0, 1)};
-`;
-
-const StyledSenderName = styled.span`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-  overflow: hidden;
-  text-overflow: ellipsis;
-`;
-
 const StyledThreadMessageSentAt = styled.div`
   align-items: flex-end;
   display: flex;
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.sm};
-`;
-
-const StyledRecordChip = styled(RecordChip)`
-  font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
 type EmailThreadMessageSenderProps = {
@@ -61,24 +37,11 @@ export const EmailThreadMessageSender = ({
 
   return (
     <StyledEmailThreadMessageSender>
-      <StyledEmailThreadMessageSenderUser>
-        {person ? (
-          <StyledRecordChip
-            objectNameSingular={CoreObjectNameSingular.Person}
-            record={person}
-          />
-        ) : (
-          <>
-            <StyledAvatar
-              avatarUrl={avatarUrl}
-              type="rounded"
-              placeholder={displayName}
-              size="sm"
-            />
-            <StyledSenderName>{displayName}</StyledSenderName>
-          </>
-        )}
-      </StyledEmailThreadMessageSenderUser>
+      <ParticipantChip
+        person={person}
+        displayName={displayName}
+        avatarUrl={avatarUrl}
+      />
       <StyledThreadMessageSentAt>
         {beautifyPastDateRelativeToNow(sentAt)}
       </StyledThreadMessageSentAt>
