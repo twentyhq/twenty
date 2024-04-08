@@ -20,10 +20,10 @@ import {
   deduceRelationDirection,
 } from 'src/engine/utils/deduce-relation-direction.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { createRelationForeignKeyColumnName } from 'src/engine/metadata-modules/relation-metadata/utils/create-relation-foreign-key-column-name.util';
 import { createRelationForeignKeyFieldMetadataName } from 'src/engine/metadata-modules/relation-metadata/utils/create-relation-foreign-key-field-metadata-name.util';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
+import { camelCase } from 'src/utils/camel-case';
 
 @Injectable()
 export class RelationMetadataHealthService {
@@ -145,11 +145,7 @@ export class RelationMetadataHealthService {
       return [];
     }
 
-    const isCustom = toFieldMetadata.isCustom ?? false;
-    const foreignKeyColumnName = createRelationForeignKeyColumnName(
-      toFieldMetadata.name,
-      isCustom,
-    );
+    const foreignKeyColumnName = `${camelCase(toFieldMetadata.name)}Id`;
     const relationColumn = workspaceTableColumns.find(
       (column) => column.columnName === foreignKeyColumnName,
     );

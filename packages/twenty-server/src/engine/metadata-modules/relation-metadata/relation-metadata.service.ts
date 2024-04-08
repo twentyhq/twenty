@@ -19,9 +19,7 @@ import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceMigrationColumnActionType } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { createCustomColumnName } from 'src/engine/utils/create-custom-column-name.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-import { createRelationForeignKeyColumnName } from 'src/engine/metadata-modules/relation-metadata/utils/create-relation-foreign-key-column-name.util';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 
 import {
@@ -57,11 +55,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
 
     // NOTE: this logic is called to create relation through metadata graphql endpoint (so only for custom field relations)
     const isCustom = true;
-    const baseColumnName = `${camelCase(relationMetadataInput.toName)}Id`;
-    const foreignKeyColumnName = createRelationForeignKeyColumnName(
-      relationMetadataInput.toName,
-      isCustom,
-    );
+    const columnName = `${camelCase(relationMetadataInput.toName)}Id`;
 
     const fromId = uuidV4();
     const toId = uuidV4();
@@ -79,11 +73,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         isCustom,
         toId,
       ),
-      this.createForeignKeyFieldMetadata(
-        relationMetadataInput,
-        baseColumnName,
-        foreignKeyColumnName,
-      ),
+      this.createForeignKeyFieldMetadata(relationMetadataInput, columnName),
     ]);
 
     const createdRelationMetadata = await super.createOne({
@@ -95,7 +85,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     await this.createWorkspaceCustomMigration(
       relationMetadataInput,
       objectMetadataMap,
-      foreignKeyColumnName,
+      columnName,
     );
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
@@ -170,7 +160,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
   private async createWorkspaceCustomMigration(
     relationMetadataInput: CreateRelationInput,
     objectMetadataMap: { [key: string]: ObjectMetadataEntity },
-    foreignKeyColumnName: string,
+    columnName: string,
   ) {
     await this.workspaceMigrationService.createCustomMigration(
       generateMigrationName(`create-${relationMetadataInput.fromName}`),
@@ -185,7 +175,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE,
-              columnName: foreignKeyColumnName,
+              columnName,
               columnType: 'uuid',
               isNullable: true,
             },
@@ -200,7 +190,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-              columnName: foreignKeyColumnName,
+              columnName,
               referencedTableName: computeObjectTargetTable(
                 objectMetadataMap[relationMetadataInput.fromObjectMetadataId],
               ),
@@ -229,12 +219,6 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       description: relationMetadataInput[`${relationDirection}Description`],
       icon: relationMetadataInput[`${relationDirection}Icon`],
       isCustom: true,
-      targetColumnMap:
-        relationDirection === 'to'
-          ? isCustom
-            ? createCustomColumnName(relationMetadataInput.toName)
-            : relationMetadataInput.toName
-          : {},
       isActive: true,
       isNullable: true,
       type: FieldMetadataType.RELATION,
@@ -246,18 +230,16 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
 
   private createForeignKeyFieldMetadata(
     relationMetadataInput: CreateRelationInput,
-    baseColumnName: string,
-    foreignKeyColumnName: string,
+    columnName: string,
   ) {
     return {
-      name: baseColumnName,
+      name: columnName,
       label: `${relationMetadataInput.toLabel} Foreign Key`,
       description: relationMetadataInput.toDescription
         ? `${relationMetadataInput.toDescription} Foreign Key`
         : undefined,
       icon: undefined,
       isCustom: true,
-      targetColumnMap: { value: foreignKeyColumnName },
       isActive: true,
       isNullable: true,
       isSystem: true,
