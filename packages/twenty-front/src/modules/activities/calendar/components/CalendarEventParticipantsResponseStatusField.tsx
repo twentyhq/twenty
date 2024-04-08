@@ -7,6 +7,18 @@ import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 
+const StyledInlineCellBaseContainer = styled.div`
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+
+  gap: ${({ theme }) => theme.spacing(1)};
+
+  position: relative;
+  user-select: none;
+`;
+
 const StyledPropertyBox = styled(PropertyBox)`
   height: ${({ theme }) => theme.spacing(6)};
   padding: 0;
@@ -40,6 +52,15 @@ const StyledLabelContainer = styled.div<{ width?: number }>`
   width: ${({ width }) => width}px;
 `;
 
+const StyledParticipantsContainer = styled.div`
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  align-items: center;
+`;
+
 export const CalendarEventParticipantsResponseStatusField = ({
   responseStatus,
   participants,
@@ -57,17 +78,21 @@ export const CalendarEventParticipantsResponseStatusField = ({
 
   return (
     <StyledPropertyBox>
-      <StyledLabelAndIconContainer>
-        <StyledIconContainer>{Icon}</StyledIconContainer>
+      <StyledInlineCellBaseContainer>
+        <StyledLabelAndIconContainer>
+          <StyledIconContainer>{Icon}</StyledIconContainer>
 
-        <StyledLabelContainer>
-          <EllipsisDisplay>{responseStatus}</EllipsisDisplay>
-        </StyledLabelContainer>
-      </StyledLabelAndIconContainer>
+          <StyledLabelContainer width={72}>
+            <EllipsisDisplay>{responseStatus}</EllipsisDisplay>
+          </StyledLabelContainer>
+        </StyledLabelAndIconContainer>
 
-      {participants.map((participant) => (
-        <ParticipantChip key={participant.id} participant={participant} />
-      ))}
+        <StyledParticipantsContainer>
+          {participants.map((participant) => (
+            <ParticipantChip key={participant.id} participant={participant} />
+          ))}
+        </StyledParticipantsContainer>
+      </StyledInlineCellBaseContainer>
     </StyledPropertyBox>
   );
 };
