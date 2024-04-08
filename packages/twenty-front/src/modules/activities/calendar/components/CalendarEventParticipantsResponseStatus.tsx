@@ -22,19 +22,21 @@ export const CalendarEventParticipantsResponseStatus = ({
     }
   });
 
-  const responseStatusOrder = ['Yes', 'Maybe', 'No'];
+  const responseStatusOrder: ('Yes' | 'Maybe' | 'No')[] = [
+    'Yes',
+    'Maybe',
+    'No',
+  ];
 
   return (
     <>
-      {Object.entries(groupedParticipants).map(
-        ([responseStatus, participants]) => (
-          <CalendarEventParticipantsResponseStatusField
-            key={responseStatus}
-            responseStatus={responseStatus as 'Yes' | 'Maybe' | 'No'}
-            participants={participants}
-          />
-        ),
-      )}
+      {responseStatusOrder.map((responseStatus) => (
+        <CalendarEventParticipantsResponseStatusField
+          key={responseStatus}
+          responseStatus={responseStatus}
+          participants={groupedParticipants[responseStatus] || []}
+        />
+      ))}
     </>
   );
 };
