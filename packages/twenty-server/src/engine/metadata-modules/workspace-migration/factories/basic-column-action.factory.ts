@@ -24,6 +24,7 @@ export type BasicFieldMetadataType =
   | FieldMetadataType.BOOLEAN
   | FieldMetadataType.POSITION
   | FieldMetadataType.DATE_TIME
+  | FieldMetadataType.DATE
   | FieldMetadataType.POSITION;
 
 @Injectable()

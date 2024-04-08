@@ -31,6 +31,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
       'TEXT',
       'PHONE',
       'DATE_TIME',
+      'DATE',
       'EMAIL',
       'NUMBER',
       'BOOLEAN',

@@ -62,6 +62,7 @@ const previewableTypes = [
   FieldMetadataType.Boolean,
   FieldMetadataType.Currency,
   FieldMetadataType.DateTime,
+  FieldMetadataType.Date,
   FieldMetadataType.Select,
   FieldMetadataType.Link,
   FieldMetadataType.Number,

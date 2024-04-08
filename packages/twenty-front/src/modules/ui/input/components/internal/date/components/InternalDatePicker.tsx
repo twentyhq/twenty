@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDatePicker from 'react-datepicker';
 import styled from '@emotion/styled';
 import { IconCalendarX } from 'twenty-ui';
@@ -235,7 +235,7 @@ const StyledButtonContainer = styled(StyledHoverableMenuItemBase)`
 `;
 
 const StyledButton = styled(MenuItemLeftContent)`
-  justify-content: center;
+  justify-content: start;
 `;
 
 export type InternalDatePickerProps = {
@@ -243,21 +243,74 @@ export type InternalDatePickerProps = {
   onMouseSelect?: (date: Date | null) => void;
   onChange?: (date: Date) => void;
   clearable?: boolean;
+  isDateTimeInput?: boolean;
 };
+
+const StyledInputContainer = styled.div`
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  height: ${({ theme }) => theme.spacing(8)};
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledInput = styled.input`
+  background: ${({ theme }) => theme.background.secondary};
+  border: none;
+  color: ${({ theme }) => theme.font.color.primary};
+  outline: none;
+  padding: 0;
+  font-weight: 500;
+  font-size: ${({ theme }) => theme.font.size.md};
+`;
 
 export const InternalDatePicker = ({
   date,
   onChange,
   onMouseSelect,
   clearable = true,
+  isDateTimeInput,
 }: InternalDatePickerProps) => {
   const handleClear = () => {
     onMouseSelect?.(null);
   };
 
+  const [dateValue, setDateValue] = useState('');
+
   return (
     <StyledContainer>
       <div className={clearable ? 'clearable ' : ''}>
+        <StyledInputContainer>
+          <StyledInput
+            type="text"
+            placeholder={`Type date${
+              isDateTimeInput ? ' and time' : ' (mm/dd/yyyy)'
+            }`}
+            inputMode="numeric"
+            value={dateValue}
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              setDateValue(inputValue);
+
+              if (/^\d{1,2}\/\d{1,2}\/(?:\d{2}|\d{4})$/.test(inputValue)) {
+                const [month, day, year] = inputValue.split('/').map(Number);
+                const formattedYear = Number(
+                  `${year}`.length === 2 ? `20${year}` : year,
+                );
+                let date = new Date(formattedYear, month - 1, day - 1);
+                if (!isNaN(date.getTime())) {
+                  date = new Date(
+                    date.getTime() -
+                      date.getTimezoneOffset() * 60 * 1000 +
+                      24 * 60 * 60 * 1000,
+                  );
+                  onChange?.(date);
+                }
+              }
+            }}
+          />
+        </StyledInputContainer>
+
         <ReactDatePicker
           open={true}
           selected={date}
@@ -268,10 +321,13 @@ export const InternalDatePicker = ({
           }}
           customInput={<></>}
           onSelect={(date: Date, event) => {
+            // Setting the time to midnight might sometimes return the previous day
+            // We set to 21:00 to avoid any timezone issues
+            const dateForDateField = new Date(date.setHours(21, 0, 0, 0));
             if (event?.type === 'click') {
-              onMouseSelect?.(date);
+              onMouseSelect?.(isDateTimeInput ? date : dateForDateField);
             } else {
-              onChange?.(date);
+              onChange?.(isDateTimeInput ? date : dateForDateField);
             }
           }}
         ></ReactDatePicker>

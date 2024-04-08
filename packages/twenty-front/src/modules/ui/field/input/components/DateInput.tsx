@@ -38,6 +38,7 @@ export type DateInputProps = {
   hotkeyScope: string;
   clearable?: boolean;
   onChange?: (newDate: Nullable<Date>) => void;
+  isDateTimeInput?: boolean;
 };
 
 export const DateInput = ({
@@ -48,6 +49,7 @@ export const DateInput = ({
   onClickOutside,
   clearable,
   onChange,
+  isDateTimeInput,
 }: DateInputProps) => {
   const theme = useTheme();
 
@@ -99,6 +101,7 @@ export const DateInput = ({
               onEnter(newDate);
             }}
             clearable={clearable ? clearable : false}
+            isDateTimeInput={isDateTimeInput}
           />
         </StyledCalendarContainer>
       </div>

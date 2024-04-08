@@ -3,6 +3,7 @@ export type FilterType =
   | 'PHONE'
   | 'EMAIL'
   | 'DATE_TIME'
+  | 'DATE'
   | 'NUMBER'
   | 'CURRENCY'
   | 'FULL_NAME'

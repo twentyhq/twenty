@@ -5,6 +5,7 @@ import {
   FieldAddressMetadata,
   FieldBooleanMetadata,
   FieldCurrencyMetadata,
+  FieldDateMetadata,
   FieldDateTimeMetadata,
   FieldEmailMetadata,
   FieldFullNameMetadata,
@@ -30,31 +31,33 @@ type AssertFieldMetadataFunction = <
         ? FieldFullNameMetadata
         : E extends 'DATE_TIME'
           ? FieldDateTimeMetadata
-          : E extends 'EMAIL'
-            ? FieldEmailMetadata
-            : E extends 'SELECT'
-              ? FieldSelectMetadata
-              : E extends 'RATING'
-                ? FieldRatingMetadata
-                : E extends 'LINK'
-                  ? FieldLinkMetadata
-                  : E extends 'NUMBER'
-                    ? FieldNumberMetadata
-                    : E extends 'PHONE'
-                      ? FieldPhoneMetadata
-                      : E extends 'PROBABILITY'
-                        ? FieldRatingMetadata
-                        : E extends 'RELATION'
-                          ? FieldRelationMetadata
-                          : E extends 'TEXT'
-                            ? FieldTextMetadata
-                            : E extends 'UUID'
-                              ? FieldUuidMetadata
-                              : E extends 'ADDRESS'
-                                ? FieldAddressMetadata
-                                : E extends 'RAW_JSON'
-                                  ? FieldRawJsonMetadata
-                                  : never,
+          : E extends 'DATE'
+            ? FieldDateMetadata
+            : E extends 'EMAIL'
+              ? FieldEmailMetadata
+              : E extends 'SELECT'
+                ? FieldSelectMetadata
+                : E extends 'RATING'
+                  ? FieldRatingMetadata
+                  : E extends 'LINK'
+                    ? FieldLinkMetadata
+                    : E extends 'NUMBER'
+                      ? FieldNumberMetadata
+                      : E extends 'PHONE'
+                        ? FieldPhoneMetadata
+                        : E extends 'PROBABILITY'
+                          ? FieldRatingMetadata
+                          : E extends 'RELATION'
+                            ? FieldRelationMetadata
+                            : E extends 'TEXT'
+                              ? FieldTextMetadata
+                              : E extends 'UUID'
+                                ? FieldUuidMetadata
+                                : E extends 'ADDRESS'
+                                  ? FieldAddressMetadata
+                                  : E extends 'RAW_JSON'
+                                    ? FieldRawJsonMetadata
+                                    : never,
 >(
   fieldType: E,
   fieldTypeGuard: (

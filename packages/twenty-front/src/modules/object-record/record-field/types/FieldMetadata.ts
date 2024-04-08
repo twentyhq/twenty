@@ -26,6 +26,12 @@ export type FieldDateTimeMetadata = {
   fieldName: string;
 };
 
+export type FieldDateMetadata = {
+  objectMetadataNameSingular?: string;
+  placeHolder: string;
+  fieldName: string;
+};
+
 export type FieldNumberMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
@@ -106,6 +112,7 @@ export type FieldMetadata =
   | FieldBooleanMetadata
   | FieldCurrencyMetadata
   | FieldDateTimeMetadata
+  | FieldDateMetadata
   | FieldEmailMetadata
   | FieldFullNameMetadata
   | FieldLinkMetadata
@@ -121,6 +128,7 @@ export type FieldMetadata =
 export type FieldTextValue = string;
 export type FieldUUidValue = string;
 export type FieldDateTimeValue = string | null;
+export type FieldDateValue = string | null;
 export type FieldNumberValue = number | null;
 export type FieldBooleanValue = boolean;
 

@@ -20,6 +20,7 @@ import {
   FieldMetadataDefaultValueStringArray,
   FieldMetadataDefaultValueNowFunction,
   FieldMetadataDefaultValueUuidFunction,
+  FieldMetadataDefaultValueDate,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 
@@ -35,6 +36,7 @@ export const defaultValueValidatorsMap = {
     FieldMetadataDefaultValueDateTime,
     FieldMetadataDefaultValueNowFunction,
   ],
+  [FieldMetadataType.DATE]: [FieldMetadataDefaultValueDate],
   [FieldMetadataType.BOOLEAN]: [FieldMetadataDefaultValueBoolean],
   [FieldMetadataType.NUMBER]: [FieldMetadataDefaultValueNumber],
   [FieldMetadataType.NUMERIC]: [FieldMetadataDefaultValueString],
