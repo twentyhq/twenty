@@ -18,7 +18,7 @@ export const useExecuteQuickActionOnOneRecord = <T>({
     objectNameSingular,
   });
 
-  const executeQuickActionOnOneRecordMutation =
+  const { executeQuickActionOnOneRecordMutation } =
     useExecuteQuickActionOnOneRecordMutation({
       objectNameSingular,
     });

@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
-import { EMPTY_MUTATION } from '@/object-record/constants/constants/EmptyMutation';
+import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -28,7 +28,7 @@ export const useExecuteQuickActionOnOneRecordMutation = ({
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   if (isUndefinedOrNull(objectMetadataItem)) {
-    return EMPTY_MUTATION;
+    return { executeQuickActionOnOneRecordMutation: EMPTY_MUTATION };
   }
 
   const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
@@ -38,7 +38,7 @@ export const useExecuteQuickActionOnOneRecordMutation = ({
       objectNameSingular: objectMetadataItem.nameSingular,
     });
 
-  return gql`
+  const executeQuickActionOnOneRecordMutation = gql`
     mutation ExecuteQuickActionOnOne${capitalizedObjectName}($idToExecuteQuickActionOn: ID!)  {
        ${graphQLFieldForExecuteQuickActionOnOneRecordMutation}(id: $idToExecuteQuickActionOn) ${mapObjectMetadataToGraphQLQuery(
          {
@@ -48,4 +48,6 @@ export const useExecuteQuickActionOnOneRecordMutation = ({
        )}
     }
   `;
+
+  return { executeQuickActionOnOneRecordMutation };
 };
