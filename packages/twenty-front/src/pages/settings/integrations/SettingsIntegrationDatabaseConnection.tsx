@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { IconSettings } from 'twenty-ui';
 
+import { useDeleteOneDatabaseConnection } from '@/databases/hooks/useDeleteOneDatabaseConnection';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
   SettingsIntegrationDatabaseTablesListCard,
@@ -48,6 +49,16 @@ export const SettingsIntegrationDatabaseConnection = () => {
     )?.connections || [];
   const connection = connections.find(({ key }) => key === connectionKey);
 
+  const { deleteOneDatabaseConnection } = useDeleteOneDatabaseConnection();
+
+  const deleteConnection = async () => {
+    if (!connection) return;
+
+    await deleteOneDatabaseConnection({ id: connection.id });
+
+    navigate(`${settingsIntegrationsPagePath}/${databaseKey}`);
+  };
+
   useEffect(() => {
     if (!isIntegrationAvailable || !connection) {
       navigate(AppPath.NotFound);
@@ -91,6 +102,7 @@ export const SettingsIntegrationDatabaseConnection = () => {
               databaseLogoUrl={integration.from.image}
               connectionName={connection.name}
               connectedTablesNb={tables.length}
+              onRemove={deleteConnection}
             />
           </Section>
           <Section>

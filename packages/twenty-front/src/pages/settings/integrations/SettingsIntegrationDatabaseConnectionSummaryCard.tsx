@@ -13,6 +13,7 @@ type SettingsIntegrationDatabaseConnectionSummaryCardProps = {
   databaseLogoUrl: string;
   connectionName: string;
   connectedTablesNb: number;
+  onRemove: () => void;
 };
 
 const StyledDatabaseLogoContainer = styled.div`
@@ -31,6 +32,7 @@ export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
   databaseLogoUrl,
   connectionName,
   connectedTablesNb,
+  onRemove,
 }: SettingsIntegrationDatabaseConnectionSummaryCardProps) => {
   const dropdownId =
     'settings-integration-database-connection-summary-card-dropdown';
@@ -59,7 +61,11 @@ export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
             dropdownComponents={
               <DropdownMenu>
                 <DropdownMenuItemsContainer>
-                  <MenuItem LeftIcon={IconTrash} text="Remove" />
+                  <MenuItem
+                    LeftIcon={IconTrash}
+                    text="Remove"
+                    onClick={onRemove}
+                  />
                 </DropdownMenuItemsContainer>
               </DropdownMenu>
             }
