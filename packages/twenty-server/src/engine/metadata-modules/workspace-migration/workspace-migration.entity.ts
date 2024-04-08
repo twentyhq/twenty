@@ -13,6 +13,7 @@ export enum WorkspaceMigrationColumnActionType {
   CREATE_FOREIGN_KEY = 'CREATE_FOREIGN_KEY',
   DROP_FOREIGN_KEY = 'DROP_FOREIGN_KEY',
   DROP = 'DROP',
+  CREATE_COMMENT = 'CREATE_COMMENT',
 }
 
 export type WorkspaceMigrationEnum = string | { from: string; to: string };
@@ -56,6 +57,18 @@ export type WorkspaceMigrationColumnDrop = {
   columnName: string;
 };
 
+export type WorkspaceMigrationCreateComment = {
+  action: WorkspaceMigrationColumnActionType.CREATE_COMMENT;
+  comment: string;
+};
+
+export type WorkspaceMigrationForeignTable = {
+  columns: WorkspaceMigrationColumnDefinition[];
+  referencedTableName: string;
+  referencedTableSchema: string;
+  foreignDataWrapperId: string;
+};
+
 export type WorkspaceMigrationColumnAction = {
   action: WorkspaceMigrationColumnActionType;
 } & (
@@ -64,12 +77,19 @@ export type WorkspaceMigrationColumnAction = {
   | WorkspaceMigrationColumnCreateRelation
   | WorkspaceMigrationColumnDropRelation
   | WorkspaceMigrationColumnDrop
+  | WorkspaceMigrationCreateComment
 );
 
 export type WorkspaceMigrationTableAction = {
   name: string;
-  action: 'create' | 'alter' | 'drop';
+  action:
+    | 'create'
+    | 'alter'
+    | 'drop'
+    | 'create_foreign_table'
+    | 'drop_foreign_table';
   columns?: WorkspaceMigrationColumnAction[];
+  foreignTable?: WorkspaceMigrationForeignTable;
 };
 
 @Entity('workspaceMigration')
@@ -86,12 +106,12 @@ export class WorkspaceMigrationEntity {
   @Column({ default: false })
   isCustom: boolean;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'timestamptz' })
   appliedAt?: Date;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 }

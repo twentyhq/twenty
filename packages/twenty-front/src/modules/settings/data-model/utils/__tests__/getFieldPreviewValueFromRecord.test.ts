@@ -42,7 +42,7 @@ describe('getFieldPreviewValueFromRecord', () => {
       });
 
       // Then
-      expect(result).toEqual(selectOptions[2]);
+      expect(result).toEqual(selectOptions[2].value);
     });
 
     it('returns undefined if the select option was not found', () => {

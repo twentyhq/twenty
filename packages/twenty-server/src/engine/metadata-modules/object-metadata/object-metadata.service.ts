@@ -15,9 +15,7 @@ import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import {
   WorkspaceMigrationColumnActionType,
-  WorkspaceMigrationColumnCreate,
   WorkspaceMigrationColumnDrop,
-  WorkspaceMigrationTableAction,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import {
   FieldMetadataEntity,
@@ -30,7 +28,7 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { computeCustomName } from 'src/engine/utils/compute-custom-name.util';
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { RelationToDelete } from 'src/engine/metadata-modules/relation-metadata/types/relation-to-delete';
@@ -40,9 +38,16 @@ import {
   attachmentStandardFieldIds,
   baseObjectStandardFieldIds,
   customObjectStandardFieldIds,
+  eventStandardFieldIds,
   favoriteStandardFieldIds,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { createDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
+import {
+  createForeignKeyDeterministicUuid,
+  createRelationDeterministicUuid,
+} from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
+import { buildWorkspaceMigrationsForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-workspace-migrations-for-custom-object.util';
+import { buildWorkspaceMigrationsForRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/build-workspace-migrations-for-remote-object.util';
+import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -135,9 +140,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       });
     }
 
-    await this.relationMetadataRepository.delete(
-      relationsToDelete.map((relation) => relation.id),
-    );
+    if (relationsToDelete.length > 0) {
+      await this.relationMetadataRepository.delete(
+        relationsToDelete.map((relation) => relation.id),
+      );
+    }
 
     for (const relationToDelete of relationsToDelete) {
       const foreignKeyFieldsToDelete = await this.fieldMetadataRepository.find({
@@ -166,7 +173,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           workspaceId,
           [
             {
-              name: computeCustomName(
+              name: computeTableName(
                 relationToDelete.toObjectName,
                 relationToDelete.toObjectMetadataIsCustom,
               ),
@@ -174,9 +181,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
               columns: [
                 {
                   action: WorkspaceMigrationColumnActionType.DROP,
-                  columnName: computeCustomName(
-                    `${relationToDelete.toFieldMetadataName}Id`,
-                    relationToDelete.toFieldMetadataIsCustom,
+                  columnName: computeColumnName(
+                    relationToDelete.toFieldMetadataName,
+                    { isForeignKey: true },
                   ),
                 } satisfies WorkspaceMigrationColumnDrop,
               ],
@@ -188,17 +195,19 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     await this.objectMetadataRepository.delete(objectMetadata.id);
 
-    // DROP TABLE
-    await this.workspaceMigrationService.createCustomMigration(
-      generateMigrationName(`delete-${objectMetadata.nameSingular}`),
-      workspaceId,
-      [
-        {
-          name: computeObjectTargetTable(objectMetadata),
-          action: 'drop',
-        },
-      ],
-    );
+    if (!objectMetadata.isRemote) {
+      // DROP TABLE
+      await this.workspaceMigrationService.createCustomMigration(
+        generateMigrationName(`delete-${objectMetadata.nameSingular}`),
+        workspaceId,
+        [
+          {
+            name: computeObjectTargetTable(objectMetadata),
+            action: 'drop',
+          },
+        ],
+      );
+    }
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
       workspaceId,
@@ -224,103 +233,98 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     }
 
+    const isCustom = !objectMetadataInput.isRemote;
+
     const createdObjectMetadata = await super.createOne({
       ...objectMetadataInput,
       dataSourceId: lastDataSourceMetadata.id,
       targetTableName: 'DEPRECATED',
       isActive: true,
-      isCustom: true,
+      isCustom: isCustom,
       isSystem: false,
-      fields:
-        // Creating default fields.
-        // No need to create a custom migration for this though as the default columns are already
-        // created with default values which is not supported yet by workspace migrations.
-        [
-          {
-            standardId: baseObjectStandardFieldIds.id,
-            type: FieldMetadataType.UUID,
-            name: 'id',
-            label: 'Id',
-            targetColumnMap: {
-              value: 'id',
+      isRemote: objectMetadataInput.isRemote,
+      fields: isCustom
+        ? // Creating default fields.
+          // No need to create a custom migration for this though as the default columns are already
+          // created with default values which is not supported yet by workspace migrations.
+          [
+            {
+              standardId: baseObjectStandardFieldIds.id,
+              type: FieldMetadataType.UUID,
+              name: 'id',
+              label: 'Id',
+              icon: 'Icon123',
+              description: 'Id',
+              isNullable: false,
+              isActive: true,
+              isCustom: false,
+              isSystem: true,
+              workspaceId: objectMetadataInput.workspaceId,
+              defaultValue: 'uuid',
             },
-            icon: 'Icon123',
-            description: 'Id',
-            isNullable: false,
-            isActive: true,
-            isCustom: false,
-            isSystem: true,
-            workspaceId: objectMetadataInput.workspaceId,
-            defaultValue: { type: 'uuid' },
-          },
-          {
-            standardId: customObjectStandardFieldIds.name,
-            type: FieldMetadataType.TEXT,
-            name: 'name',
-            label: 'Name',
-            targetColumnMap: {
-              value: 'name',
+            {
+              standardId: customObjectStandardFieldIds.name,
+              type: FieldMetadataType.TEXT,
+              name: 'name',
+              label: 'Name',
+              icon: 'IconAbc',
+              description: 'Name',
+              isNullable: false,
+              isActive: true,
+              isCustom: false,
+              workspaceId: objectMetadataInput.workspaceId,
+              defaultValue: "'Untitled'",
             },
-            icon: 'IconAbc',
-            description: 'Name',
-            isNullable: false,
-            isActive: true,
-            isCustom: false,
-            workspaceId: objectMetadataInput.workspaceId,
-            defaultValue: { value: 'Untitled' },
-          },
-          {
-            standardId: baseObjectStandardFieldIds.createdAt,
-            type: FieldMetadataType.DATE_TIME,
-            name: 'createdAt',
-            label: 'Creation date',
-            targetColumnMap: {
-              value: 'createdAt',
+            {
+              standardId: baseObjectStandardFieldIds.createdAt,
+              type: FieldMetadataType.DATE_TIME,
+              name: 'createdAt',
+              label: 'Creation date',
+              icon: 'IconCalendar',
+              description: 'Creation date',
+              isNullable: false,
+              isActive: true,
+              isCustom: false,
+              workspaceId: objectMetadataInput.workspaceId,
+              defaultValue: 'now',
             },
-            icon: 'IconCalendar',
-            description: 'Creation date',
-            isNullable: false,
-            isActive: true,
-            isCustom: false,
-            workspaceId: objectMetadataInput.workspaceId,
-            defaultValue: { type: 'now' },
-          },
-          {
-            standardId: baseObjectStandardFieldIds.updatedAt,
-            type: FieldMetadataType.DATE_TIME,
-            name: 'updatedAt',
-            label: 'Update date',
-            targetColumnMap: {
-              value: 'updatedAt',
+            {
+              standardId: baseObjectStandardFieldIds.updatedAt,
+              type: FieldMetadataType.DATE_TIME,
+              name: 'updatedAt',
+              label: 'Update date',
+              icon: 'IconCalendar',
+              description: 'Update date',
+              isNullable: false,
+              isActive: true,
+              isCustom: false,
+              isSystem: true,
+              workspaceId: objectMetadataInput.workspaceId,
+              defaultValue: 'now',
             },
-            icon: 'IconCalendar',
-            description: 'Update date',
-            isNullable: false,
-            isActive: true,
-            isCustom: false,
-            isSystem: true,
-            workspaceId: objectMetadataInput.workspaceId,
-            defaultValue: { type: 'now' },
-          },
-          {
-            standardId: customObjectStandardFieldIds.position,
-            type: FieldMetadataType.POSITION,
-            name: 'position',
-            label: 'Position',
-            targetColumnMap: {
-              value: 'position',
+            {
+              standardId: customObjectStandardFieldIds.position,
+              type: FieldMetadataType.POSITION,
+              name: 'position',
+              label: 'Position',
+              icon: 'IconHierarchy2',
+              description: 'Position',
+              isNullable: true,
+              isActive: true,
+              isCustom: false,
+              isSystem: true,
+              workspaceId: objectMetadataInput.workspaceId,
+              defaultValue: null,
             },
-            icon: 'IconHierarchy2',
-            description: 'Position',
-            isNullable: true,
-            isActive: true,
-            isCustom: false,
-            isSystem: true,
-            workspaceId: objectMetadataInput.workspaceId,
-            defaultValue: null,
-          },
-        ],
+          ]
+        : // No fields for remote objects.
+          [],
     });
+
+    const { eventObjectMetadata } = await this.createEventRelation(
+      objectMetadataInput.workspaceId,
+      createdObjectMetadata,
+    );
 
     const { activityTargetObjectMetadata } =
       await this.createActivityTargetRelation(
@@ -338,148 +342,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       createdObjectMetadata,
     );
 
-    await this.workspaceMigrationService.createCustomMigration(
-      generateMigrationName(`create-${createdObjectMetadata.nameSingular}`),
-      createdObjectMetadata.workspaceId,
-      [
-        {
-          name: computeObjectTargetTable(createdObjectMetadata),
-          action: 'create',
-        } satisfies WorkspaceMigrationTableAction,
-        // Add activity target relation
-        {
-          name: computeObjectTargetTable(activityTargetObjectMetadata),
-          action: 'alter',
-          columns: [
-            {
-              action: WorkspaceMigrationColumnActionType.CREATE,
-              columnName: `${computeCustomName(
-                createdObjectMetadata.nameSingular,
-                false,
-              )}Id`,
-              columnType: 'uuid',
-              isNullable: true,
-            } satisfies WorkspaceMigrationColumnCreate,
-          ],
-        },
-        {
-          name: computeObjectTargetTable(activityTargetObjectMetadata),
-          action: 'alter',
-          columns: [
-            {
-              action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-              columnName: `${computeCustomName(
-                createdObjectMetadata.nameSingular,
-                false,
-              )}Id`,
-              referencedTableName: computeObjectTargetTable(
-                createdObjectMetadata,
-              ),
-              referencedTableColumnName: 'id',
-              onDelete: RelationOnDeleteAction.CASCADE,
-            },
-          ],
-        },
-        // Add attachment relation
-        {
-          name: computeObjectTargetTable(attachmentObjectMetadata),
-          action: 'alter',
-          columns: [
-            {
-              action: WorkspaceMigrationColumnActionType.CREATE,
-              columnName: `${computeCustomName(
-                createdObjectMetadata.nameSingular,
-                false,
-              )}Id`,
-              columnType: 'uuid',
-              isNullable: true,
-            } satisfies WorkspaceMigrationColumnCreate,
-          ],
-        },
-        {
-          name: computeObjectTargetTable(attachmentObjectMetadata),
-          action: 'alter',
-          columns: [
-            {
-              action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-              columnName: `${computeCustomName(
-                createdObjectMetadata.nameSingular,
-                false,
-              )}Id`,
-              referencedTableName: computeObjectTargetTable(
-                createdObjectMetadata,
-              ),
-              referencedTableColumnName: 'id',
-              onDelete: RelationOnDeleteAction.CASCADE,
-            },
-          ],
-        },
-        // Add favorite relation
-        {
-          name: computeObjectTargetTable(favoriteObjectMetadata),
-          action: 'alter',
-          columns: [
-            {
-              action: WorkspaceMigrationColumnActionType.CREATE,
-              columnName: `${computeCustomName(
-                createdObjectMetadata.nameSingular,
-                false,
-              )}Id`,
-              columnType: 'uuid',
-              isNullable: true,
-            } satisfies WorkspaceMigrationColumnCreate,
-          ],
-        },
-        {
-          name: computeObjectTargetTable(favoriteObjectMetadata),
-          action: 'alter',
-          columns: [
-            {
-              action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-              columnName: `${computeCustomName(
-                createdObjectMetadata.nameSingular,
-                false,
-              )}Id`,
-              referencedTableName: computeObjectTargetTable(
-                createdObjectMetadata,
-              ),
-              referencedTableColumnName: 'id',
-              onDelete: RelationOnDeleteAction.CASCADE,
-            },
-          ],
-        },
-        {
-          name: computeObjectTargetTable(createdObjectMetadata),
-          action: 'alter',
-          columns: [
-            {
-              action: WorkspaceMigrationColumnActionType.CREATE,
-              columnName: 'position',
-              columnType: 'float',
-              isNullable: true,
-            } satisfies WorkspaceMigrationColumnCreate,
-          ],
-        } satisfies WorkspaceMigrationTableAction,
-        // This is temporary until we implement mainIdentifier
-        {
-          name: computeObjectTargetTable(createdObjectMetadata),
-          action: 'alter',
-          columns: [
-            {
-              action: WorkspaceMigrationColumnActionType.CREATE,
-              columnName: 'name',
-              columnType: 'text',
-              defaultValue: "'Untitled'",
-            } satisfies WorkspaceMigrationColumnCreate,
-          ],
-        } satisfies WorkspaceMigrationTableAction,
-      ],
-    );
-
-    await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-      createdObjectMetadata.workspaceId,
-    );
-
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         createdObjectMetadata.workspaceId,
@@ -487,6 +349,33 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSourceMetadata);
+
+    await this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(`create-${createdObjectMetadata.nameSingular}`),
+      createdObjectMetadata.workspaceId,
+      isCustom
+        ? buildWorkspaceMigrationsForCustomObject(
+            createdObjectMetadata,
+            activityTargetObjectMetadata,
+            attachmentObjectMetadata,
+            eventObjectMetadata,
+            favoriteObjectMetadata,
+          )
+        : await buildWorkspaceMigrationsForRemoteObject(
+            createdObjectMetadata,
+            activityTargetObjectMetadata,
+            attachmentObjectMetadata,
+            eventObjectMetadata,
+            favoriteObjectMetadata,
+            lastDataSourceMetadata.schema,
+            objectMetadataInput.remoteTablePrimaryKeyColumnType ?? 'uuid',
+            workspaceDataSource,
+          ),
+    );
+
+    await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+      createdObjectMetadata.workspaceId,
+    );
 
     const view = await workspaceDataSource?.query(
       `INSERT INTO ${dataSourceMetadata.schema}."view"
@@ -615,14 +504,16 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           type: FieldMetadataType.RELATION,
           name: 'activityTargets',
           label: 'Activities',
-          targetColumnMap: {},
           description: `Activities tied to the ${createdObjectMetadata.labelSingular}`,
           icon: 'IconCheckbox',
           isNullable: true,
         },
         // TO
         {
-          standardId: activityTargetStandardFieldIds.custom,
+          standardId: createRelationDeterministicUuid({
+            objectId: createdObjectMetadata.id,
+            standardId: activityTargetStandardFieldIds.custom,
+          }),
           objectMetadataId: activityTargetObjectMetadata.id,
           workspaceId: workspaceId,
           isCustom: false,
@@ -630,16 +521,16 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           type: FieldMetadataType.RELATION,
           name: createdObjectMetadata.nameSingular,
           label: createdObjectMetadata.labelSingular,
-          targetColumnMap: {},
           description: `ActivityTarget ${createdObjectMetadata.labelSingular}`,
           icon: 'IconBuildingSkyscraper',
           isNullable: true,
         },
         // Foreign key
         {
-          standardId: createDeterministicUuid(
-            activityTargetStandardFieldIds.custom,
-          ),
+          standardId: createForeignKeyDeterministicUuid({
+            objectId: createdObjectMetadata.id,
+            standardId: activityTargetStandardFieldIds.custom,
+          }),
           objectMetadataId: activityTargetObjectMetadata.id,
           workspaceId: workspaceId,
           isCustom: false,
@@ -647,12 +538,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           type: FieldMetadataType.UUID,
           name: `${createdObjectMetadata.nameSingular}Id`,
           label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
-          targetColumnMap: {
-            value: `${computeCustomName(
-              createdObjectMetadata.nameSingular,
-              false,
-            )}Id`,
-          },
           description: `ActivityTarget ${createdObjectMetadata.labelSingular} id foreign key`,
           icon: undefined,
           isNullable: true,
@@ -714,14 +599,16 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           type: FieldMetadataType.RELATION,
           name: 'attachments',
           label: 'Attachments',
-          targetColumnMap: {},
           description: `Attachments tied to the ${createdObjectMetadata.labelSingular}`,
           icon: 'IconFileImport',
           isNullable: true,
         },
         // TO
         {
-          standardId: attachmentStandardFieldIds.custom,
+          standardId: createRelationDeterministicUuid({
+            objectId: createdObjectMetadata.id,
+            standardId: attachmentStandardFieldIds.custom,
+          }),
           objectMetadataId: attachmentObjectMetadata.id,
           workspaceId: workspaceId,
           isCustom: false,
@@ -729,16 +616,16 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           type: FieldMetadataType.RELATION,
           name: createdObjectMetadata.nameSingular,
           label: createdObjectMetadata.labelSingular,
-          targetColumnMap: {},
           description: `Attachment ${createdObjectMetadata.labelSingular}`,
           icon: 'IconBuildingSkyscraper',
           isNullable: true,
         },
         // Foreign key
         {
-          standardId: createDeterministicUuid(
-            attachmentStandardFieldIds.custom,
-          ),
+          standardId: createForeignKeyDeterministicUuid({
+            objectId: createdObjectMetadata.id,
+            standardId: attachmentStandardFieldIds.custom,
+          }),
           objectMetadataId: attachmentObjectMetadata.id,
           workspaceId: workspaceId,
           isCustom: false,
@@ -746,12 +633,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           type: FieldMetadataType.UUID,
           name: `${createdObjectMetadata.nameSingular}Id`,
           label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
-          targetColumnMap: {
-            value: `${computeCustomName(
-              createdObjectMetadata.nameSingular,
-              false,
-            )}Id`,
-          },
           description: `Attachment ${createdObjectMetadata.labelSingular} id foreign key`,
           icon: undefined,
           isNullable: true,
@@ -789,6 +670,97 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     return { attachmentObjectMetadata };
   }
 
+  private async createEventRelation(
+    workspaceId: string,
+    createdObjectMetadata: ObjectMetadataEntity,
+  ) {
+    const eventObjectMetadata =
+      await this.objectMetadataRepository.findOneByOrFail({
+        nameSingular: 'event',
+        workspaceId: workspaceId,
+      });
+
+    const eventRelationFieldMetadata = await this.fieldMetadataRepository.save([
+      // FROM
+      {
+        standardId: customObjectStandardFieldIds.events,
+        objectMetadataId: createdObjectMetadata.id,
+        workspaceId: workspaceId,
+        isCustom: false,
+        isActive: true,
+        type: FieldMetadataType.RELATION,
+        name: 'events',
+        label: 'Events',
+        description: `Events tied to the ${createdObjectMetadata.labelSingular}`,
+        icon: 'IconFileImport',
+        isNullable: true,
+      },
+      // TO
+      {
+        standardId: createRelationDeterministicUuid({
+          objectId: createdObjectMetadata.id,
+          standardId: eventStandardFieldIds.custom,
+        }),
+        objectMetadataId: eventObjectMetadata.id,
+        workspaceId: workspaceId,
+        isCustom: false,
+        isActive: true,
+        type: FieldMetadataType.RELATION,
+        name: createdObjectMetadata.nameSingular,
+        label: createdObjectMetadata.labelSingular,
+        description: `Event ${createdObjectMetadata.labelSingular}`,
+        icon: 'IconBuildingSkyscraper',
+        isNullable: true,
+      },
+      // Foreign key
+      {
+        standardId: createForeignKeyDeterministicUuid({
+          objectId: createdObjectMetadata.id,
+          standardId: eventStandardFieldIds.custom,
+        }),
+        objectMetadataId: eventObjectMetadata.id,
+        workspaceId: workspaceId,
+        isCustom: false,
+        isActive: true,
+        type: FieldMetadataType.UUID,
+        name: `${createdObjectMetadata.nameSingular}Id`,
+        label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
+        description: `Event ${createdObjectMetadata.labelSingular} id foreign key`,
+        icon: undefined,
+        isNullable: true,
+        isSystem: true,
+        defaultValue: undefined,
+      },
+    ]);
+
+    const eventRelationFieldMetadataMap = eventRelationFieldMetadata.reduce(
+      (acc, fieldMetadata: FieldMetadataEntity) => {
+        if (fieldMetadata.type === FieldMetadataType.RELATION) {
+          acc[fieldMetadata.objectMetadataId] = fieldMetadata;
+        }
+
+        return acc;
+      },
+      {},
+    );
+
+    await this.relationMetadataRepository.save([
+      {
+        workspaceId: workspaceId,
+        relationType: RelationMetadataType.ONE_TO_MANY,
+        fromObjectMetadataId: createdObjectMetadata.id,
+        toObjectMetadataId: eventObjectMetadata.id,
+        fromFieldMetadataId:
+          eventRelationFieldMetadataMap[createdObjectMetadata.id].id,
+        toFieldMetadataId:
+          eventRelationFieldMetadataMap[eventObjectMetadata.id].id,
+        onDeleteAction: RelationOnDeleteAction.CASCADE,
+      },
+    ]);
+
+    return { eventObjectMetadata };
+  }
+
   private async createFavoriteRelation(
     workspaceId: string,
     createdObjectMetadata: ObjectMetadataEntity,
@@ -812,14 +784,16 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           type: FieldMetadataType.RELATION,
           name: 'favorites',
           label: 'Favorites',
-          targetColumnMap: {},
           description: `Favorites tied to the ${createdObjectMetadata.labelSingular}`,
           icon: 'IconHeart',
           isNullable: true,
         },
         // TO
         {
-          standardId: favoriteStandardFieldIds.custom,
+          standardId: createRelationDeterministicUuid({
+            objectId: createdObjectMetadata.id,
+            standardId: favoriteStandardFieldIds.custom,
+          }),
           objectMetadataId: favoriteObjectMetadata.id,
           workspaceId: workspaceId,
           isCustom: false,
@@ -827,14 +801,16 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           type: FieldMetadataType.RELATION,
           name: createdObjectMetadata.nameSingular,
           label: createdObjectMetadata.labelSingular,
-          targetColumnMap: {},
           description: `Favorite ${createdObjectMetadata.labelSingular}`,
           icon: 'IconBuildingSkyscraper',
           isNullable: true,
         },
         // Foreign key
         {
-          standardId: createDeterministicUuid(favoriteStandardFieldIds.custom),
+          standardId: createForeignKeyDeterministicUuid({
+            objectId: createdObjectMetadata.id,
+            standardId: favoriteStandardFieldIds.custom,
+          }),
           objectMetadataId: favoriteObjectMetadata.id,
           workspaceId: workspaceId,
           isCustom: false,
@@ -842,12 +818,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           type: FieldMetadataType.UUID,
           name: `${createdObjectMetadata.nameSingular}Id`,
           label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
-          targetColumnMap: {
-            value: `${computeCustomName(
-              createdObjectMetadata.nameSingular,
-              false,
-            )}Id`,
-          },
           description: `Favorite ${createdObjectMetadata.labelSingular} id foreign key`,
           icon: undefined,
           isNullable: true,

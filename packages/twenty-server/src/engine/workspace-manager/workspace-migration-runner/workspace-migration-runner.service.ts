@@ -18,6 +18,7 @@ import {
   WorkspaceMigrationColumnCreateRelation,
   WorkspaceMigrationColumnAlter,
   WorkspaceMigrationColumnDropRelation,
+  WorkspaceMigrationForeignTable,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { WorkspaceMigrationEnumService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-enum.service';
@@ -131,6 +132,19 @@ export class WorkspaceMigrationRunnerService {
       case 'drop':
         await queryRunner.dropTable(`${schemaName}.${tableMigration.name}`);
         break;
+      case 'create_foreign_table':
+        await this.createForeignTable(
+          queryRunner,
+          schemaName,
+          tableMigration.name,
+          tableMigration?.foreignTable,
+        );
+        break;
+      case 'drop_foreign_table':
+        await queryRunner.query(
+          `DROP FOREIGN TABLE ${schemaName}."${tableMigration.name}"`,
+        );
+        break;
       default:
         throw new Error(
           `Migration table action ${tableMigration.action} not supported`,
@@ -222,6 +236,14 @@ export class WorkspaceMigrationRunnerService {
           await queryRunner.dropColumn(
             `${schemaName}.${tableName}`,
             columnMigration.columnName,
+          );
+          break;
+        case WorkspaceMigrationColumnActionType.CREATE_COMMENT:
+          await this.createComment(
+            queryRunner,
+            schemaName,
+            tableName,
+            columnMigration.comment,
           );
           break;
         default:
@@ -411,5 +433,39 @@ export class WorkspaceMigrationRunnerService {
     );
 
     return foreignKeys[0]?.constraint_name;
+  }
+
+  private async createComment(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+    comment: string,
+  ) {
+    await queryRunner.query(`
+      COMMENT ON TABLE "${schemaName}"."${tableName}" IS e'${comment}';
+    `);
+  }
+
+  private async createForeignTable(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    name: string,
+    foreignTable: WorkspaceMigrationForeignTable | undefined,
+  ) {
+    if (!foreignTable) {
+      return;
+    }
+
+    const foreignTableColumns = foreignTable.columns
+      .map((column) => `"${column.columnName}" ${column.columnType}`)
+      .join(', ');
+
+    await queryRunner.query(
+      `CREATE FOREIGN TABLE ${schemaName}."${name}" (${foreignTableColumns}) SERVER "${foreignTable.foreignDataWrapperId}" OPTIONS (schema_name '${foreignTable.referencedTableSchema}', table_name '${foreignTable.referencedTableName}')`,
+    );
+
+    await queryRunner.query(`
+      COMMENT ON FOREIGN TABLE "${schemaName}"."${name}" IS '@graphql({"primary_key_columns": ["id"], "totalCount": {"enabled": true}})';
+    `);
   }
 }

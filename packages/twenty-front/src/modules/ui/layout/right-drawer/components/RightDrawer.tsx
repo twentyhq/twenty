@@ -102,13 +102,14 @@ export const RightDrawer = () => {
 
   const variants = {
     fullScreen: {
-      width: '100%',
+      x: '0%',
     },
     normal: {
+      x: '0%',
       width: rightDrawerWidth,
     },
     closed: {
-      width: 0,
+      x: '100%',
     },
   };
 

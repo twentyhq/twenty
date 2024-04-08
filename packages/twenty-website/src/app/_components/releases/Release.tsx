@@ -6,6 +6,7 @@ import { compileMDX } from 'next-mdx-remote/rsc';
 import remarkBehead from 'remark-behead';
 import gfm from 'remark-gfm';
 
+import { Theme } from '@/app/_components/ui/theme/theme';
 import { ReleaseNote } from '@/app/releases/api/route';
 
 const StyledContainer = styled.div`
@@ -16,7 +17,6 @@ const StyledContainer = styled.div`
 
   @media (max-width: 810px) {
     width: auto;
-    margin: 24px 0;
     display: block;
   }
 `;
@@ -35,17 +35,19 @@ const StyledVersion = styled.div`
     font-size: 20px;
     flex-flow: row;
     justify-content: space-between;
+    margin-bottom: 24px;
   }
 `;
 
 const StyledRelease = styled.span`
-  color: #141414;
+  color: ${Theme.text.color.quarternary};
+  line-height: 140%;
 `;
 
 const StyledDate = styled.span`
-  color: #474747;
-  font-size: 16px;
+  color: ${Theme.text.color.secondary};
   font-weight: 400;
+  font-size: ${Theme.font.size.sm};
 `;
 
 const StlyedContent = styled.div`
@@ -54,16 +56,20 @@ const StlyedContent = styled.div`
   gap: 64px;
 
   h3 {
-    color: #141414;
+    color: ${Theme.text.color.primary};
+    font-weight: 700;
     font-size: 40px;
     margin: 0;
   }
 
   p {
-    color: #474747;
+    color: ${Theme.text.color.secondary};
+    font-family: ${Theme.font.family};
     font-size: 16px;
     line-height: 28.8px;
     font-weight: 400;
+    margin: 40px 0px;
+    text-align: justify;
   }
 
   img {
@@ -73,16 +79,16 @@ const StlyedContent = styled.div`
   @media (max-width: 810px) {
     h3 {
       font-size: 24px;
-      margin: 24px 0 40px;
     }
   }
 `;
 
 const gabarito = Gabarito({
-  weight: ['400', '500'],
+  weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
   display: 'swap',
   adjustFontFallback: false,
+  variable: '--font-gabarito',
 });
 
 export const Release = async ({ release }: { release: ReleaseNote }) => {
@@ -92,6 +98,7 @@ export const Release = async ({ release }: { release: ReleaseNote }) => {
       source: release.content,
       options: {
         mdxOptions: {
+          development: process.env.NODE_ENV === 'development',
           remarkPlugins: [gfm, [remarkBehead, { depth: 2 }]],
         },
       },

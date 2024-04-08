@@ -3,6 +3,7 @@ import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metad
 
 const DEFAULT_DEPTH_VALUE = 2;
 
+// TODO: Should be properly type and based on composite type definitions
 export const mapFieldMetadataToGraphqlQuery = (
   objectMetadataItems,
   field,
@@ -102,6 +103,20 @@ export const mapFieldMetadataToGraphqlQuery = (
       {
         firstName
         lastName
+      }
+    `;
+  } else if (fieldType === FieldMetadataType.ADDRESS) {
+    return `
+      ${field.name}
+      {
+        addressStreet1
+        addressStreet2
+        addressCity
+        addressPostcode
+        addressState
+        addressCountry
+        addressLat
+        addressLng
       }
     `;
   }

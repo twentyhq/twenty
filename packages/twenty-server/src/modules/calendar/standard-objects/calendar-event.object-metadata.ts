@@ -11,10 +11,11 @@ import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/d
 import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
-import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-attendee.object-metadata';
+import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { calendarEventStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { LinkMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/link.composite-type';
 
 @ObjectMetadata({
   standardId: standardObjectIds.calendarEvent,
@@ -59,8 +60,8 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: calendarEventStandardFieldIds.startsAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Start DateTime',
-    description: 'Start DateTime',
+    label: 'Start Date',
+    description: 'Start Date',
     icon: 'IconCalendarClock',
   })
   @IsNullable()
@@ -69,8 +70,8 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: calendarEventStandardFieldIds.endsAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'End DateTime',
-    description: 'End DateTime',
+    label: 'End Date',
+    description: 'End Date',
     icon: 'IconCalendarClock',
   })
   @IsNullable()
@@ -133,13 +134,14 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   conferenceSolution: string;
 
   @FieldMetadata({
-    standardId: calendarEventStandardFieldIds.conferenceUri,
-    type: FieldMetadataType.TEXT,
-    label: 'Conference URI',
-    description: 'Conference URI',
+    standardId: calendarEventStandardFieldIds.conferenceLink,
+    type: FieldMetadataType.LINK,
+    label: 'Meet Link',
+    description: 'Meet Link',
     icon: 'IconLink',
   })
-  conferenceUri: string;
+  @IsNullable()
+  conferenceLink: LinkMetadata;
 
   @FieldMetadata({
     standardId: calendarEventStandardFieldIds.recurringEventExternalId,
@@ -169,16 +171,16 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   calendarChannelEventAssociations: CalendarChannelEventAssociationObjectMetadata[];
 
   @FieldMetadata({
-    standardId: calendarEventStandardFieldIds.eventAttendees,
+    standardId: calendarEventStandardFieldIds.eventParticipants,
     type: FieldMetadataType.RELATION,
-    label: 'Event Attendees',
-    description: 'Event Attendees',
+    label: 'Event Participants',
+    description: 'Event Participants',
     icon: 'IconUserCircle',
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => CalendarEventAttendeeObjectMetadata,
+    inverseSideTarget: () => CalendarEventParticipantObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  eventAttendees: CalendarEventAttendeeObjectMetadata[];
+  eventParticipants: CalendarEventParticipantObjectMetadata[];
 }

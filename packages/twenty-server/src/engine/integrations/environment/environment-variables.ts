@@ -275,15 +275,15 @@ export class EnvironmentVariables {
 
   REDIS_HOST: string = '127.0.0.1';
 
+  @CastToPositiveNumber()
   REDIS_PORT: number = 6379;
 
   API_TOKEN_EXPIRES_IN: string = '100y';
 
   SHORT_TERM_TOKEN_EXPIRES_IN: string = '5m';
 
+  @CastToBoolean()
   MESSAGING_PROVIDER_GMAIL_ENABLED: boolean = false;
-
-  MESSAGING_PROVIDER_GMAIL_CALLBACK_URL: string;
 
   MESSAGE_QUEUE_TYPE: string = MessageQueueDriverType.Sync;
 
@@ -297,6 +297,7 @@ export class EnvironmentVariables {
 
   EMAIL_SMTP_HOST: string;
 
+  @CastToPositiveNumber()
   EMAIL_SMTP_PORT: number = 587;
 
   EMAIL_SMTP_USER: string;
@@ -305,20 +306,28 @@ export class EnvironmentVariables {
 
   OPENROUTER_API_KEY: string;
 
+  @CastToPositiveNumber()
   API_RATE_LIMITING_TTL: number = 100;
 
+  @CastToPositiveNumber()
   API_RATE_LIMITING_LIMIT: number = 500;
 
   CACHE_STORAGE_TYPE: string = 'memory';
 
+  @CastToPositiveNumber()
   CACHE_STORAGE_TTL: number = 3600 * 24 * 7;
 
+  @CastToBoolean()
   CALENDAR_PROVIDER_GOOGLE_ENABLED: boolean = false;
 
   AUTH_GOOGLE_APIS_CALLBACK_URL: string;
+
+  CHROME_EXTENSION_REDIRECT_URL: string;
 }
 
-export const validate = (config: Record<string, unknown>) => {
+export const validate = (
+  config: Record<string, unknown>,
+): EnvironmentVariables => {
   const validatedConfig = plainToClass(EnvironmentVariables, config);
 
   const errors = validateSync(validatedConfig);

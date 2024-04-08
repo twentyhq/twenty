@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { validateMetadataLabel } from '@/object-metadata/utils/validateMetadataLabel';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
@@ -58,7 +58,7 @@ export const SettingsObjectFieldRelationForm = ({
 }: SettingsObjectFieldRelationFormProps) => {
   const { getIcon } = useIcons();
   const { objectMetadataItems, findObjectMetadataItemById } =
-    useObjectMetadataItemForSettings();
+    useFilteredObjectMetadataItems();
 
   const selectedObjectMetadataItem =
     (values.objectMetadataId

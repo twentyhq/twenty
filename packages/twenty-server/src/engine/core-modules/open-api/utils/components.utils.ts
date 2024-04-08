@@ -11,6 +11,7 @@ import {
   computeLimitParameters,
   computeOrderByParameters,
 } from 'src/engine/core-modules/open-api/utils/parameters.utils';
+import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 
 type Property = OpenAPIV3_1.SchemaObject;
 
@@ -57,16 +58,17 @@ const getSchemaComponentsProperties = (
       case FieldMetadataType.LINK:
       case FieldMetadataType.CURRENCY:
       case FieldMetadataType.FULL_NAME:
+      case FieldMetadataType.ADDRESS:
         itemProperty = {
           type: 'object',
-          properties: Object.keys(field.targetColumnMap).reduce(
-            (properties, key) => {
-              properties[key] = { type: 'string' };
+          properties: compositeTypeDefintions
+            .get(field.type)
+            ?.properties?.reduce((properties, property) => {
+              // TODO: This should not be statically typed, instead we should do someting recursive
+              properties[property.name] = { type: 'string' };
 
               return properties;
-            },
-            {} as Properties,
-          ),
+            }, {} as Properties),
         };
         break;
       case FieldMetadataType.RAW_JSON:
@@ -173,6 +175,7 @@ export const computeMetadataSchemaComponents = (
               description: { type: 'string' },
               icon: { type: 'string' },
               isCustom: { type: 'boolean' },
+              isRemote: { type: 'boolean' },
               isActive: { type: 'boolean' },
               isSystem: { type: 'boolean' },
               createdAt: { type: 'string' },

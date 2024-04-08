@@ -1,8 +1,13 @@
-import { DynamicModule, Module } from '@nestjs/common';
+import {
+  DynamicModule,
+  MiddlewareConsumer,
+  Module,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { DevtoolsModule } from '@nestjs/devtools-integration';
 import { GraphQLModule } from '@nestjs/graphql';
+import { DevtoolsModule } from '@nestjs/devtools-integration';
 
 import { existsSync } from 'fs';
 import { join } from 'path';
@@ -11,11 +16,13 @@ import { YogaDriverConfig, YogaDriver } from '@graphql-yoga/nestjs';
 
 import { ApiRestModule } from 'src/engine/api/rest/api-rest.module';
 import { ModulesModule } from 'src/modules/modules.module';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
 import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graphql-config.module';
 import { GraphQLConfigService } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { UserWorkspaceMiddleware } from 'src/engine/middlewares/user-workspace.middleware';
+import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
 
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
 import { IntegrationsModule } from './engine/integrations/integrations.module';
@@ -44,6 +51,8 @@ import { IntegrationsModule } from './engine/integrations/integrations.module';
     CoreEngineModule,
     // Modules module, contains all business logic modules
     ModulesModule,
+    // Needed for the user workspace middleware
+    WorkspaceCacheVersionModule,
     // Api modules
     CoreGraphQLApiModule,
     MetadataGraphQLApiModule,
@@ -66,5 +75,15 @@ export class AppModule {
     }
 
     return modules;
+  }
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(UserWorkspaceMiddleware)
+      .forRoutes({ path: 'graphql', method: RequestMethod.ALL });
+
+    consumer
+      .apply(UserWorkspaceMiddleware)
+      .forRoutes({ path: 'metadata', method: RequestMethod.ALL });
   }
 }

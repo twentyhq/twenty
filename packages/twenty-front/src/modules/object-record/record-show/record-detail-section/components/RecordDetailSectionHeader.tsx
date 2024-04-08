@@ -53,7 +53,7 @@ export const RecordDetailSectionHeader = ({
         <StyledTitleLabel>{title}</StyledTitleLabel>
         {link && <StyledLink to={link.to}>{link.label}</StyledLink>}
       </StyledTitle>
-      {hideRightAdornmentOnMouseLeave && !isHovered! ? null : rightAdornment}
+      {hideRightAdornmentOnMouseLeave && !isHovered ? null : rightAdornment}
     </StyledHeader>
   );
 };

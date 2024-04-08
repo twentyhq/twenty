@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
 
-import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { SettingsDataModelDefaultValueForm } from '@/settings/data-model/components/SettingsDataModelDefaultValue';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
 import {
   SettingsObjectFieldCurrencyForm,
@@ -26,6 +27,7 @@ export type SettingsDataModelFieldSettingsFormValues = {
   currency: SettingsObjectFieldCurrencyFormValues;
   relation: SettingsObjectFieldRelationFormValues;
   select: SettingsObjectFieldSelectFormValues;
+  defaultValue: any;
 };
 
 type SettingsDataModelFieldSettingsFormCardProps = {
@@ -66,6 +68,7 @@ const previewableTypes = [
   FieldMetadataType.Rating,
   FieldMetadataType.Relation,
   FieldMetadataType.Text,
+  FieldMetadataType.Address,
 ];
 
 export const SettingsDataModelFieldSettingsFormCard = ({
@@ -76,7 +79,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   relationFieldMetadataItem,
   values,
 }: SettingsDataModelFieldSettingsFormCardProps) => {
-  const { findObjectMetadataItemById } = useObjectMetadataItemForSettings();
+  const { findObjectMetadataItemById } = useFilteredObjectMetadataItems();
 
   if (!previewableTypes.includes(fieldMetadataItem.type)) return null;
 
@@ -149,6 +152,13 @@ export const SettingsDataModelFieldSettingsFormCard = ({
             values={values.select}
             onChange={(nextSelectValues) =>
               onChange({ select: nextSelectValues })
+            }
+          />
+        ) : fieldMetadataItem.type === FieldMetadataType.Boolean ? (
+          <SettingsDataModelDefaultValueForm
+            value={values.defaultValue}
+            onChange={(nextValueDefaultValue) =>
+              onChange({ defaultValue: nextValueDefaultValue })
             }
           />
         ) : undefined

@@ -14,6 +14,7 @@ import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
 import { workspacesState } from '@/auth/states/workspaces';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
+import { isClientConfigLoadedState } from '@/client-config/states/isClientConfigLoadedState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
@@ -109,7 +110,8 @@ export const useAuth = () => {
           .filter(
             ({ workspace }) => workspace !== null && workspace !== undefined,
           )
-          .map((validWorkspace) => validWorkspace.workspace!);
+          .map((validWorkspace) => validWorkspace.workspace)
+          .filter(isDefined);
 
         setWorkspaces(validWorkspaces);
       }
@@ -169,8 +171,12 @@ export const useAuth = () => {
         const supportChat = snapshot.getLoadable(supportChatState).getValue();
         const telemetry = snapshot.getLoadable(telemetryState).getValue();
         const isDebugMode = snapshot.getLoadable(isDebugModeState).getValue();
+        const isClientConfigLoaded = snapshot
+          .getLoadable(isClientConfigLoadedState)
+          .getValue();
 
         const initialSnapshot = emptySnapshot.map(({ set }) => {
+          set(isClientConfigLoadedState, isClientConfigLoaded);
           set(iconsState, iconsValue);
           set(authProvidersState, authProvidersValue);
           set(billingState, billing);

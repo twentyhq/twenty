@@ -1,13 +1,11 @@
-import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { config } from 'dotenv';
 config();
-const configService = new ConfigService();
 
 export const typeORMMetadataModuleOptions: TypeOrmModuleOptions = {
-  url: configService.get('PG_DATABASE_URL'),
+  url: process.env.PG_DATABASE_URL,
   type: 'postgres',
   logging: ['error'],
   schema: 'metadata',

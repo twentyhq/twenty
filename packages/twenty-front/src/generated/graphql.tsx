@@ -40,6 +40,23 @@ export type ApiKeyToken = {
   token: Scalars['String'];
 };
 
+export type AppToken = {
+  __typename?: 'AppToken';
+  createdAt: Scalars['DateTime'];
+  expiresAt: Scalars['DateTime'];
+  id: Scalars['ID'];
+  type: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type AppTokenEdge = {
+  __typename?: 'AppTokenEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the AppToken */
+  node: AppToken;
+};
+
 export type AuthProviders = {
   __typename?: 'AuthProviders';
   google: Scalars['Boolean'];
@@ -62,6 +79,11 @@ export type AuthTokenPair = {
 export type AuthTokens = {
   __typename?: 'AuthTokens';
   tokens: AuthTokenPair;
+};
+
+export type AuthorizeApp = {
+  __typename?: 'AuthorizeApp';
+  redirectUrl: Scalars['String'];
 };
 
 export type Billing = {
@@ -146,6 +168,13 @@ export type EmailPasswordResetLink = {
   success: Scalars['Boolean'];
 };
 
+export type ExchangeAuthCode = {
+  __typename?: 'ExchangeAuthCode';
+  accessToken: AuthToken;
+  loginToken: AuthToken;
+  refreshToken: AuthToken;
+};
+
 export type FeatureFlag = {
   __typename?: 'FeatureFlag';
   id: Scalars['ID'];
@@ -198,6 +227,7 @@ export type FieldDeleteResponse = {
 
 /** Type of the field */
 export enum FieldMetadataType {
+  Address = 'ADDRESS',
   Boolean = 'BOOLEAN',
   Currency = 'CURRENCY',
   DateTime = 'DATE_TIME',
@@ -254,6 +284,12 @@ export type InvalidatePassword = {
   success: Scalars['Boolean'];
 };
 
+export type LinkMetadata = {
+  __typename?: 'LinkMetadata';
+  label: Scalars['String'];
+  url: Scalars['String'];
+};
+
 export type LoginToken = {
   __typename?: 'LoginToken';
   loginToken: AuthToken;
@@ -262,10 +298,11 @@ export type LoginToken = {
 export type Mutation = {
   __typename?: 'Mutation';
   activateWorkspace: Workspace;
+  authorizeApp: AuthorizeApp;
   challenge: LoginToken;
   checkoutSession: SessionEntity;
+  createOneAppToken: AppToken;
   createOneObject: Object;
-  createOneRefreshToken: RefreshToken;
   deleteCurrentWorkspace: Workspace;
   deleteOneObject: Object;
   deleteUser: User;
@@ -292,6 +329,16 @@ export type MutationActivateWorkspaceArgs = {
   data: ActivateWorkspaceInput;
 };
 
+<<<<<<< HEAD
+=======
+
+export type MutationAuthorizeAppArgs = {
+  clientId: Scalars['String'];
+  codeChallenge: Scalars['String'];
+};
+
+
+>>>>>>> main
 export type MutationChallengeArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
@@ -325,7 +372,7 @@ export type MutationImpersonateArgs = {
 };
 
 export type MutationRenewTokenArgs = {
-  refreshToken: Scalars['String'];
+  appToken: Scalars['String'];
 };
 
 export type MutationSignUpArgs = {
@@ -421,6 +468,7 @@ export type Query = {
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
+  exchangeAuthorizationCode: ExchangeAuthCode;
   findWorkspaceFromInviteHash: Workspace;
   getProductPrices: ProductPricesEntity;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
@@ -444,6 +492,16 @@ export type QueryCheckWorkspaceInviteHashIsValidArgs = {
   inviteHash: Scalars['String'];
 };
 
+<<<<<<< HEAD
+=======
+
+export type QueryExchangeAuthorizationCodeArgs = {
+  authorizationCode: Scalars['String'];
+  codeVerifier: Scalars['String'];
+};
+
+
+>>>>>>> main
 export type QueryFindWorkspaceFromInviteHashArgs = {
   inviteHash: Scalars['String'];
 };
@@ -478,22 +536,6 @@ export type QueryGetTimelineThreadsFromPersonIdArgs = {
 
 export type QueryValidatePasswordResetTokenArgs = {
   passwordResetToken: Scalars['String'];
-};
-
-export type RefreshToken = {
-  __typename?: 'RefreshToken';
-  createdAt: Scalars['DateTime'];
-  expiresAt: Scalars['DateTime'];
-  id: Scalars['ID'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type RefreshTokenEdge = {
-  __typename?: 'RefreshTokenEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor'];
-  /** The node containing the RefreshToken */
-  node: RefreshToken;
 };
 
 export type RelationConnection = {
@@ -540,6 +582,29 @@ export enum RelationMetadataType {
   OneToOne = 'ONE_TO_ONE',
 }
 
+export type RemoteServer = {
+  __typename?: 'RemoteServer';
+  createdAt: Scalars['DateTime'];
+  foreignDataWrapperId: Scalars['ID'];
+  foreignDataWrapperOptions?: Maybe<Scalars['JSON']>;
+  foreignDataWrapperType: Scalars['String'];
+  id: Scalars['ID'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type RemoteTable = {
+  __typename?: 'RemoteTable';
+  name: Scalars['String'];
+  schema: Scalars['String'];
+  status: RemoteTableStatus;
+};
+
+/** Status of the table */
+export enum RemoteTableStatus {
+  NotSynced = 'NOT_SYNCED',
+  Synced = 'SYNCED'
+}
+
 export type Sentry = {
   __typename?: 'Sentry';
   dsn?: Maybe<Scalars['String']>;
@@ -576,22 +641,22 @@ export type Telemetry = {
 
 export type TimelineCalendarEvent = {
   __typename?: 'TimelineCalendarEvent';
-  attendees: Array<TimelineCalendarEventAttendee>;
+  conferenceLink: LinkMetadata;
   conferenceSolution: Scalars['String'];
-  conferenceUri: Scalars['String'];
   description: Scalars['String'];
   endsAt: Scalars['DateTime'];
   id: Scalars['ID'];
   isCanceled: Scalars['Boolean'];
   isFullDay: Scalars['Boolean'];
   location: Scalars['String'];
+  participants: Array<TimelineCalendarEventParticipant>;
   startsAt: Scalars['DateTime'];
   title: Scalars['String'];
   visibility: TimelineCalendarEventVisibility;
 };
 
-export type TimelineCalendarEventAttendee = {
-  __typename?: 'TimelineCalendarEventAttendee';
+export type TimelineCalendarEventParticipant = {
+  __typename?: 'TimelineCalendarEventParticipant';
   avatarUrl: Scalars['String'];
   displayName: Scalars['String'];
   firstName: Scalars['String'];
@@ -730,6 +795,7 @@ export type Workspace = {
   billingSubscriptions?: Maybe<Array<BillingSubscription>>;
   createdAt: Scalars['DateTime'];
   currentBillingSubscription?: Maybe<BillingSubscription>;
+  currentCacheVersion?: Maybe<Scalars['String']>;
   deletedAt?: Maybe<Scalars['DateTime']>;
   displayName?: Maybe<Scalars['String']>;
   domainName?: Maybe<Scalars['String']>;
@@ -822,6 +888,7 @@ export type Object = {
   imageIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
   isActive: Scalars['Boolean'];
   isCustom: Scalars['Boolean'];
+  isRemote: Scalars['Boolean'];
   isSystem: Scalars['Boolean'];
   labelIdentifierFieldMetadataId?: Maybe<Scalars['String']>;
   labelPlural: Scalars['String'];
@@ -866,6 +933,7 @@ export type RelationEdge = {
   node: Relation;
 };
 
+<<<<<<< HEAD
 export type AttendeeFragmentFragment = {
   __typename?: 'TimelineCalendarEventAttendee';
   personId?: string | null;
@@ -922,6 +990,13 @@ export type TimelineCalendarEventsWithTotalFragmentFragment = {
     }>;
   }>;
 };
+=======
+export type TimelineCalendarEventFragmentFragment = { __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
+
+export type TimelineCalendarEventParticipantFragmentFragment = { __typename?: 'TimelineCalendarEventParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
+
+export type TimelineCalendarEventsWithTotalFragmentFragment = { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
+>>>>>>> main
 
 export type GetTimelineCalendarEventsFromCompanyIdQueryVariables = Exact<{
   companyId: Scalars['ID'];
@@ -929,6 +1004,7 @@ export type GetTimelineCalendarEventsFromCompanyIdQueryVariables = Exact<{
   pageSize: Scalars['Int'];
 }>;
 
+<<<<<<< HEAD
 export type GetTimelineCalendarEventsFromCompanyIdQuery = {
   __typename?: 'Query';
   getTimelineCalendarEventsFromCompanyId: {
@@ -956,6 +1032,10 @@ export type GetTimelineCalendarEventsFromCompanyIdQuery = {
     }>;
   };
 };
+=======
+
+export type GetTimelineCalendarEventsFromCompanyIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromCompanyId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+>>>>>>> main
 
 export type GetTimelineCalendarEventsFromPersonIdQueryVariables = Exact<{
   personId: Scalars['ID'];
@@ -991,6 +1071,7 @@ export type GetTimelineCalendarEventsFromPersonIdQuery = {
   };
 };
 
+<<<<<<< HEAD
 export type ParticipantFragmentFragment = {
   __typename?: 'TimelineThreadParticipant';
   personId?: string | null;
@@ -1001,6 +1082,9 @@ export type ParticipantFragmentFragment = {
   avatarUrl: string;
   handle: string;
 };
+=======
+export type GetTimelineCalendarEventsFromPersonIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromPersonId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+>>>>>>> main
 
 export type TimelineThreadFragmentFragment = {
   __typename?: 'TimelineThread';
@@ -1189,6 +1273,14 @@ export type AuthTokensFragmentFragment = {
   refreshToken: { __typename?: 'AuthToken'; token: string; expiresAt: string };
 };
 
+export type AuthorizeAppMutationVariables = Exact<{
+  clientId: Scalars['String'];
+  codeChallenge: Scalars['String'];
+}>;
+
+
+export type AuthorizeAppMutation = { __typename?: 'Mutation', authorizeApp: { __typename?: 'AuthorizeApp', redirectUrl: string } };
+
 export type ChallengeMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
@@ -1331,7 +1423,7 @@ export type ImpersonateMutation = {
 };
 
 export type RenewTokenMutationVariables = Exact<{
-  refreshToken: Scalars['String'];
+  appToken: Scalars['String'];
 }>;
 
 export type RenewTokenMutation = {
@@ -1760,12 +1852,129 @@ export type GetWorkspaceFromInviteHashQuery = {
   };
 };
 
+<<<<<<< HEAD
 export const AttendeeFragmentFragmentDoc = gql`
   fragment AttendeeFragment on TimelineCalendarEventAttendee {
     personId
     workspaceMemberId
     firstName
     lastName
+=======
+export const TimelineCalendarEventParticipantFragmentFragmentDoc = gql`
+    fragment TimelineCalendarEventParticipantFragment on TimelineCalendarEventParticipant {
+  personId
+  workspaceMemberId
+  firstName
+  lastName
+  displayName
+  avatarUrl
+  handle
+}
+    `;
+export const TimelineCalendarEventFragmentFragmentDoc = gql`
+    fragment TimelineCalendarEventFragment on TimelineCalendarEvent {
+  id
+  title
+  description
+  location
+  startsAt
+  endsAt
+  isFullDay
+  visibility
+  participants {
+    ...TimelineCalendarEventParticipantFragment
+  }
+}
+    ${TimelineCalendarEventParticipantFragmentFragmentDoc}`;
+export const TimelineCalendarEventsWithTotalFragmentFragmentDoc = gql`
+    fragment TimelineCalendarEventsWithTotalFragment on TimelineCalendarEventsWithTotal {
+  totalNumberOfCalendarEvents
+  timelineCalendarEvents {
+    ...TimelineCalendarEventFragment
+  }
+}
+    ${TimelineCalendarEventFragmentFragmentDoc}`;
+export const ParticipantFragmentFragmentDoc = gql`
+    fragment ParticipantFragment on TimelineThreadParticipant {
+  personId
+  workspaceMemberId
+  firstName
+  lastName
+  displayName
+  avatarUrl
+  handle
+}
+    `;
+export const TimelineThreadFragmentFragmentDoc = gql`
+    fragment TimelineThreadFragment on TimelineThread {
+  id
+  read
+  visibility
+  firstParticipant {
+    ...ParticipantFragment
+  }
+  lastTwoParticipants {
+    ...ParticipantFragment
+  }
+  lastMessageReceivedAt
+  lastMessageBody
+  subject
+  numberOfMessagesInThread
+  participantCount
+}
+    ${ParticipantFragmentFragmentDoc}`;
+export const TimelineThreadsWithTotalFragmentFragmentDoc = gql`
+    fragment TimelineThreadsWithTotalFragment on TimelineThreadsWithTotal {
+  totalNumberOfThreads
+  timelineThreads {
+    ...TimelineThreadFragment
+  }
+}
+    ${TimelineThreadFragmentFragmentDoc}`;
+export const TimelineThreadFragmentDoc = gql`
+    fragment timelineThread on TimelineThread {
+  id
+  subject
+  lastMessageReceivedAt
+}
+    `;
+export const AuthTokenFragmentFragmentDoc = gql`
+    fragment AuthTokenFragment on AuthToken {
+  token
+  expiresAt
+}
+    `;
+export const AuthTokensFragmentFragmentDoc = gql`
+    fragment AuthTokensFragment on AuthTokenPair {
+  accessToken {
+    ...AuthTokenFragment
+  }
+  refreshToken {
+    ...AuthTokenFragment
+  }
+}
+    ${AuthTokenFragmentFragmentDoc}`;
+export const UserQueryFragmentFragmentDoc = gql`
+    fragment UserQueryFragment on User {
+  id
+  firstName
+  lastName
+  email
+  canImpersonate
+  supportUserHash
+  workspaceMember {
+    id
+    name {
+      firstName
+      lastName
+    }
+    colorScheme
+    avatarUrl
+    locale
+  }
+  defaultWorkspace {
+    id
+>>>>>>> main
     displayName
     avatarUrl
     handle
@@ -1823,6 +2032,7 @@ export const TimelineThreadFragmentFragmentDoc = gql`
     numberOfMessagesInThread
     participantCount
   }
+<<<<<<< HEAD
   ${ParticipantFragmentFragmentDoc}
 `;
 export const TimelineThreadsWithTotalFragmentFragmentDoc = gql`
@@ -1830,6 +2040,195 @@ export const TimelineThreadsWithTotalFragmentFragmentDoc = gql`
     totalNumberOfThreads
     timelineThreads {
       ...TimelineThreadFragment
+=======
+}
+    ${TimelineCalendarEventsWithTotalFragmentFragmentDoc}`;
+
+/**
+ * __useGetTimelineCalendarEventsFromPersonIdQuery__
+ *
+ * To run a query within a React component, call `useGetTimelineCalendarEventsFromPersonIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTimelineCalendarEventsFromPersonIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTimelineCalendarEventsFromPersonIdQuery({
+ *   variables: {
+ *      personId: // value for 'personId'
+ *      page: // value for 'page'
+ *      pageSize: // value for 'pageSize'
+ *   },
+ * });
+ */
+export function useGetTimelineCalendarEventsFromPersonIdQuery(baseOptions: Apollo.QueryHookOptions<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>(GetTimelineCalendarEventsFromPersonIdDocument, options);
+      }
+export function useGetTimelineCalendarEventsFromPersonIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>(GetTimelineCalendarEventsFromPersonIdDocument, options);
+        }
+export type GetTimelineCalendarEventsFromPersonIdQueryHookResult = ReturnType<typeof useGetTimelineCalendarEventsFromPersonIdQuery>;
+export type GetTimelineCalendarEventsFromPersonIdLazyQueryHookResult = ReturnType<typeof useGetTimelineCalendarEventsFromPersonIdLazyQuery>;
+export type GetTimelineCalendarEventsFromPersonIdQueryResult = Apollo.QueryResult<GetTimelineCalendarEventsFromPersonIdQuery, GetTimelineCalendarEventsFromPersonIdQueryVariables>;
+export const GetTimelineThreadsFromCompanyIdDocument = gql`
+    query GetTimelineThreadsFromCompanyId($companyId: ID!, $page: Int!, $pageSize: Int!) {
+  getTimelineThreadsFromCompanyId(
+    companyId: $companyId
+    page: $page
+    pageSize: $pageSize
+  ) {
+    ...TimelineThreadsWithTotalFragment
+  }
+}
+    ${TimelineThreadsWithTotalFragmentFragmentDoc}`;
+
+/**
+ * __useGetTimelineThreadsFromCompanyIdQuery__
+ *
+ * To run a query within a React component, call `useGetTimelineThreadsFromCompanyIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTimelineThreadsFromCompanyIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTimelineThreadsFromCompanyIdQuery({
+ *   variables: {
+ *      companyId: // value for 'companyId'
+ *      page: // value for 'page'
+ *      pageSize: // value for 'pageSize'
+ *   },
+ * });
+ */
+export function useGetTimelineThreadsFromCompanyIdQuery(baseOptions: Apollo.QueryHookOptions<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>(GetTimelineThreadsFromCompanyIdDocument, options);
+      }
+export function useGetTimelineThreadsFromCompanyIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>(GetTimelineThreadsFromCompanyIdDocument, options);
+        }
+export type GetTimelineThreadsFromCompanyIdQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromCompanyIdQuery>;
+export type GetTimelineThreadsFromCompanyIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromCompanyIdLazyQuery>;
+export type GetTimelineThreadsFromCompanyIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromCompanyIdQuery, GetTimelineThreadsFromCompanyIdQueryVariables>;
+export const GetTimelineThreadsFromPersonIdDocument = gql`
+    query GetTimelineThreadsFromPersonId($personId: ID!, $page: Int!, $pageSize: Int!) {
+  getTimelineThreadsFromPersonId(
+    personId: $personId
+    page: $page
+    pageSize: $pageSize
+  ) {
+    ...TimelineThreadsWithTotalFragment
+  }
+}
+    ${TimelineThreadsWithTotalFragmentFragmentDoc}`;
+
+/**
+ * __useGetTimelineThreadsFromPersonIdQuery__
+ *
+ * To run a query within a React component, call `useGetTimelineThreadsFromPersonIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetTimelineThreadsFromPersonIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetTimelineThreadsFromPersonIdQuery({
+ *   variables: {
+ *      personId: // value for 'personId'
+ *      page: // value for 'page'
+ *      pageSize: // value for 'pageSize'
+ *   },
+ * });
+ */
+export function useGetTimelineThreadsFromPersonIdQuery(baseOptions: Apollo.QueryHookOptions<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>(GetTimelineThreadsFromPersonIdDocument, options);
+      }
+export function useGetTimelineThreadsFromPersonIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>(GetTimelineThreadsFromPersonIdDocument, options);
+        }
+export type GetTimelineThreadsFromPersonIdQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdQuery>;
+export type GetTimelineThreadsFromPersonIdLazyQueryHookResult = ReturnType<typeof useGetTimelineThreadsFromPersonIdLazyQuery>;
+export type GetTimelineThreadsFromPersonIdQueryResult = Apollo.QueryResult<GetTimelineThreadsFromPersonIdQuery, GetTimelineThreadsFromPersonIdQueryVariables>;
+export const TrackDocument = gql`
+    mutation Track($type: String!, $data: JSON!) {
+  track(type: $type, data: $data) {
+    success
+  }
+}
+    `;
+export type TrackMutationFn = Apollo.MutationFunction<TrackMutation, TrackMutationVariables>;
+
+/**
+ * __useTrackMutation__
+ *
+ * To run a mutation, you first call `useTrackMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useTrackMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [trackMutation, { data, loading, error }] = useTrackMutation({
+ *   variables: {
+ *      type: // value for 'type'
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useTrackMutation(baseOptions?: Apollo.MutationHookOptions<TrackMutation, TrackMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<TrackMutation, TrackMutationVariables>(TrackDocument, options);
+      }
+export type TrackMutationHookResult = ReturnType<typeof useTrackMutation>;
+export type TrackMutationResult = Apollo.MutationResult<TrackMutation>;
+export type TrackMutationOptions = Apollo.BaseMutationOptions<TrackMutation, TrackMutationVariables>;
+export const AuthorizeAppDocument = gql`
+    mutation authorizeApp($clientId: String!, $codeChallenge: String!) {
+  authorizeApp(clientId: $clientId, codeChallenge: $codeChallenge) {
+    redirectUrl
+  }
+}
+    `;
+export type AuthorizeAppMutationFn = Apollo.MutationFunction<AuthorizeAppMutation, AuthorizeAppMutationVariables>;
+
+/**
+ * __useAuthorizeAppMutation__
+ *
+ * To run a mutation, you first call `useAuthorizeAppMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAuthorizeAppMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [authorizeAppMutation, { data, loading, error }] = useAuthorizeAppMutation({
+ *   variables: {
+ *      clientId: // value for 'clientId'
+ *      codeChallenge: // value for 'codeChallenge'
+ *   },
+ * });
+ */
+export function useAuthorizeAppMutation(baseOptions?: Apollo.MutationHookOptions<AuthorizeAppMutation, AuthorizeAppMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<AuthorizeAppMutation, AuthorizeAppMutationVariables>(AuthorizeAppDocument, options);
+      }
+export type AuthorizeAppMutationHookResult = ReturnType<typeof useAuthorizeAppMutation>;
+export type AuthorizeAppMutationResult = Apollo.MutationResult<AuthorizeAppMutation>;
+export type AuthorizeAppMutationOptions = Apollo.BaseMutationOptions<AuthorizeAppMutation, AuthorizeAppMutationVariables>;
+export const ChallengeDocument = gql`
+    mutation Challenge($email: String!, $password: String!) {
+  challenge(email: $email, password: $password) {
+    loginToken {
+      ...AuthTokenFragment
+>>>>>>> main
     }
   }
   ${TimelineThreadFragmentFragmentDoc}
@@ -1852,7 +2251,155 @@ export const AuthTokensFragmentFragmentDoc = gql`
     accessToken {
       ...AuthTokenFragment
     }
+<<<<<<< HEAD
     refreshToken {
+=======
+  }
+}
+    ${AuthTokensFragmentFragmentDoc}`;
+export type GenerateJwtMutationFn = Apollo.MutationFunction<GenerateJwtMutation, GenerateJwtMutationVariables>;
+
+/**
+ * __useGenerateJwtMutation__
+ *
+ * To run a mutation, you first call `useGenerateJwtMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGenerateJwtMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [generateJwtMutation, { data, loading, error }] = useGenerateJwtMutation({
+ *   variables: {
+ *      workspaceId: // value for 'workspaceId'
+ *   },
+ * });
+ */
+export function useGenerateJwtMutation(baseOptions?: Apollo.MutationHookOptions<GenerateJwtMutation, GenerateJwtMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GenerateJwtMutation, GenerateJwtMutationVariables>(GenerateJwtDocument, options);
+      }
+export type GenerateJwtMutationHookResult = ReturnType<typeof useGenerateJwtMutation>;
+export type GenerateJwtMutationResult = Apollo.MutationResult<GenerateJwtMutation>;
+export type GenerateJwtMutationOptions = Apollo.BaseMutationOptions<GenerateJwtMutation, GenerateJwtMutationVariables>;
+export const GenerateTransientTokenDocument = gql`
+    mutation generateTransientToken {
+  generateTransientToken {
+    transientToken {
+      token
+    }
+  }
+}
+    `;
+export type GenerateTransientTokenMutationFn = Apollo.MutationFunction<GenerateTransientTokenMutation, GenerateTransientTokenMutationVariables>;
+
+/**
+ * __useGenerateTransientTokenMutation__
+ *
+ * To run a mutation, you first call `useGenerateTransientTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useGenerateTransientTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [generateTransientTokenMutation, { data, loading, error }] = useGenerateTransientTokenMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGenerateTransientTokenMutation(baseOptions?: Apollo.MutationHookOptions<GenerateTransientTokenMutation, GenerateTransientTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<GenerateTransientTokenMutation, GenerateTransientTokenMutationVariables>(GenerateTransientTokenDocument, options);
+      }
+export type GenerateTransientTokenMutationHookResult = ReturnType<typeof useGenerateTransientTokenMutation>;
+export type GenerateTransientTokenMutationResult = Apollo.MutationResult<GenerateTransientTokenMutation>;
+export type GenerateTransientTokenMutationOptions = Apollo.BaseMutationOptions<GenerateTransientTokenMutation, GenerateTransientTokenMutationVariables>;
+export const ImpersonateDocument = gql`
+    mutation Impersonate($userId: String!) {
+  impersonate(userId: $userId) {
+    user {
+      ...UserQueryFragment
+    }
+    tokens {
+      ...AuthTokensFragment
+    }
+  }
+}
+    ${UserQueryFragmentFragmentDoc}
+${AuthTokensFragmentFragmentDoc}`;
+export type ImpersonateMutationFn = Apollo.MutationFunction<ImpersonateMutation, ImpersonateMutationVariables>;
+
+/**
+ * __useImpersonateMutation__
+ *
+ * To run a mutation, you first call `useImpersonateMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useImpersonateMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [impersonateMutation, { data, loading, error }] = useImpersonateMutation({
+ *   variables: {
+ *      userId: // value for 'userId'
+ *   },
+ * });
+ */
+export function useImpersonateMutation(baseOptions?: Apollo.MutationHookOptions<ImpersonateMutation, ImpersonateMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<ImpersonateMutation, ImpersonateMutationVariables>(ImpersonateDocument, options);
+      }
+export type ImpersonateMutationHookResult = ReturnType<typeof useImpersonateMutation>;
+export type ImpersonateMutationResult = Apollo.MutationResult<ImpersonateMutation>;
+export type ImpersonateMutationOptions = Apollo.BaseMutationOptions<ImpersonateMutation, ImpersonateMutationVariables>;
+export const RenewTokenDocument = gql`
+    mutation RenewToken($appToken: String!) {
+  renewToken(appToken: $appToken) {
+    tokens {
+      ...AuthTokensFragment
+    }
+  }
+}
+    ${AuthTokensFragmentFragmentDoc}`;
+export type RenewTokenMutationFn = Apollo.MutationFunction<RenewTokenMutation, RenewTokenMutationVariables>;
+
+/**
+ * __useRenewTokenMutation__
+ *
+ * To run a mutation, you first call `useRenewTokenMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRenewTokenMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [renewTokenMutation, { data, loading, error }] = useRenewTokenMutation({
+ *   variables: {
+ *      appToken: // value for 'appToken'
+ *   },
+ * });
+ */
+export function useRenewTokenMutation(baseOptions?: Apollo.MutationHookOptions<RenewTokenMutation, RenewTokenMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<RenewTokenMutation, RenewTokenMutationVariables>(RenewTokenDocument, options);
+      }
+export type RenewTokenMutationHookResult = ReturnType<typeof useRenewTokenMutation>;
+export type RenewTokenMutationResult = Apollo.MutationResult<RenewTokenMutation>;
+export type RenewTokenMutationOptions = Apollo.BaseMutationOptions<RenewTokenMutation, RenewTokenMutationVariables>;
+export const SignUpDocument = gql`
+    mutation SignUp($email: String!, $password: String!, $workspaceInviteHash: String) {
+  signUp(
+    email: $email
+    password: $password
+    workspaceInviteHash: $workspaceInviteHash
+  ) {
+    loginToken {
+>>>>>>> main
       ...AuthTokenFragment
     }
   }
@@ -1891,6 +2438,14 @@ export const UserQueryFragmentFragmentDoc = gql`
         value
         workspaceId
       }
+<<<<<<< HEAD
+=======
+      currentCacheVersion
+      currentBillingSubscription {
+        status
+        interval
+      }
+>>>>>>> main
     }
     workspaces {
       workspace {

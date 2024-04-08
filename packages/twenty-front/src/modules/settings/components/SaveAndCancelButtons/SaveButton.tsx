@@ -1,4 +1,5 @@
-import { IconDeviceFloppy } from '@/ui/display/icon';
+import { IconDeviceFloppy } from 'twenty-ui';
+
 import { Button } from '@/ui/input/button/components/Button';
 
 type SaveButtonProps = {

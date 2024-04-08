@@ -1,8 +1,4 @@
 import { Meta, StoryObj } from '@storybook/react';
-
-import { Favorites } from '@/favorites/components/Favorites';
-import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
-import { SettingsPath } from '@/types/SettingsPath';
 import {
   IconAt,
   IconBell,
@@ -18,7 +14,11 @@ import {
   IconUser,
   IconUserCircle,
   IconUsers,
-} from '@/ui/display/icon';
+} from 'twenty-ui';
+
+import { Favorites } from '@/favorites/components/Favorites';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { GithubVersionLink } from '@/ui/navigation/link/components/GithubVersionLink';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';

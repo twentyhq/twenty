@@ -72,7 +72,7 @@ export const calendarChannelStandardFieldIds = {
   calendarChannelEventAssociations: '20202020-afb0-4a9f-979f-2d5087d71d09',
 };
 
-export const calendarEventAttendeeStandardFieldIds = {
+export const calendarEventParticipantStandardFieldIds = {
   calendarEvent: '20202020-fe3a-401c-b889-af4f4657a861',
   handle: '20202020-8692-4580-8210-9e09cbd031a7',
   displayName: '20202020-ee1e-4f9f-8ac1-5c0b2f69691e',
@@ -94,10 +94,10 @@ export const calendarEventStandardFieldIds = {
   location: '20202020-641a-4ffe-960d-c3c186d95b17',
   iCalUID: '20202020-f24b-45f4-b6a3-d2f9fcb98714',
   conferenceSolution: '20202020-1c3f-4b5a-b526-5411a82179eb',
-  conferenceUri: '20202020-0fc5-490a-871a-2df8a45ab46c',
+  conferenceLink: '20202020-35da-43ef-9ca0-e936e9dc237b',
   recurringEventExternalId: '20202020-4b96-43d0-8156-4c7a9717635c',
   calendarChannelEventAssociations: '20202020-bdf8-4572-a2cc-ecbb6bcc3a02',
-  eventAttendees: '20202020-e07e-4ccb-88f5-6f3d00458eec',
+  eventParticipants: '20202020-e07e-4ccb-88f5-6f3d00458eec',
 };
 
 export const commentStandardFieldIds = {
@@ -132,6 +132,7 @@ export const connectedAccountStandardFieldIds = {
   refreshToken: '20202020-532d-48bd-80a5-c4be6e7f6e49',
   accountOwner: '20202020-3517-4896-afac-b1d0aa362af6',
   lastSyncHistoryId: '20202020-115c-4a87-b50f-ac4367a971b9',
+  authFailedAt: '20202020-d268-4c6b-baff-400d402b430a',
   messageChannels: '20202020-24f7-4362-8468-042204d1e445',
   calendarChannels: '20202020-af4a-47bb-99ec-51911c1d3977',
 };
@@ -169,6 +170,10 @@ export const messageChannelStandardFieldIds = {
   type: '20202020-ae95-42d9-a3f1-797a2ea22122',
   isContactAutoCreationEnabled: '20202020-fabd-4f14-b7c6-3310f6d132c6',
   messageChannelMessageAssociations: '20202020-49b8-4766-88fd-75f1e21b3d5f',
+  syncCursor: '20202020-79d1-41cf-b738-bcf5ed61e256',
+  syncedAt: '20202020-263d-4c6b-ad51-137ada56f7d4',
+  syncStatus: '20202020-56a1-4f7e-9880-a8493bb899cc',
+  ongoingSyncStartedAt: '20202020-8c61-4a42-ae63-73c1c3c52e06',
 };
 
 export const messageParticipantStandardFieldIds = {
@@ -227,7 +232,7 @@ export const personStandardFieldIds = {
   favorites: '20202020-4073-4117-9cf1-203bcdc91cbd',
   attachments: '20202020-cd97-451f-87fa-bcb789bdbf3a',
   messageParticipants: '20202020-498e-4c61-8158-fa04f0638334',
-  calendarEventAttendees: '20202020-52ee-45e9-a702-b64b3753e3a9',
+  calendarEventParticipants: '20202020-52ee-45e9-a702-b64b3753e3a9',
   events: '20202020-a43e-4873-9c23-e522de906ce5',
 };
 
@@ -288,7 +293,7 @@ export const workspaceMemberStandardFieldIds = {
   connectedAccounts: '20202020-e322-4bde-a525-727079b4a100',
   messageParticipants: '20202020-8f99-48bc-a5eb-edd33dd54188',
   blocklist: '20202020-6cb2-4161-9f29-a4b7f1283859',
-  calendarEventAttendees: '20202020-0dbc-4841-9ce1-3e793b5b3512',
+  calendarEventParticipants: '20202020-0dbc-4841-9ce1-3e793b5b3512',
   events: '20202020-e15b-47b8-94fe-8200e3c66615',
 };
 
@@ -298,4 +303,5 @@ export const customObjectStandardFieldIds = {
   activityTargets: '20202020-7f42-40ae-b96c-c8a61acc83bf',
   favorites: '20202020-a4a7-4686-b296-1c6c3482ee21',
   attachments: '20202020-8d59-46ca-b7b2-73d167712134',
+  events: '20202020-a508-4334-9724-5c2bf1b05998',
 };

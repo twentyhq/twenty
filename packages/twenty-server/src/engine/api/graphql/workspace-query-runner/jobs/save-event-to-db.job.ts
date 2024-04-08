@@ -39,14 +39,6 @@ export class SaveEventToDbJob implements MessageQueueJob<SaveEventToDbJobData> {
       workspaceMemberId = workspaceMember.id;
     }
 
-    if (
-      data.objectName != 'person' &&
-      data.objectName != 'company' &&
-      data.objectName != 'opportunity'
-    ) {
-      return;
-    }
-
     if (data.details.diff) {
       // we remove "before" and "after" property for a cleaner/slimmer event payload
       data.details = {

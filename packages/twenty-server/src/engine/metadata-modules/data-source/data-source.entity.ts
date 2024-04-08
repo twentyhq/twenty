@@ -40,9 +40,9 @@ export class DataSourceEntity {
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 }

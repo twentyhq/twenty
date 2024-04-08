@@ -4,10 +4,10 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { v4 as uuidV4 } from 'uuid';
-import { FindOneOptions, Repository } from 'typeorm';
+import { DataSource, FindOneOptions, Repository } from 'typeorm';
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
@@ -16,9 +16,9 @@ import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metada
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import {
   WorkspaceMigrationColumnActionType,
+  WorkspaceMigrationColumnDrop,
   WorkspaceMigrationTableAction,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
-import { generateTargetColumnMap } from 'src/engine/metadata-modules/field-metadata/utils/generate-target-column-map.util';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
@@ -35,6 +35,9 @@ import {
   RelationMetadataEntity,
   RelationMetadataType,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
+import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 
 import {
   FieldMetadataEntity,
@@ -48,6 +51,8 @@ import { generateDefaultValue } from './utils/generate-default-value';
 @Injectable()
 export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntity> {
   constructor(
+    @InjectDataSource('metadata')
+    private readonly metadataDataSource: DataSource,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     @InjectRepository(RelationMetadataEntity, 'metadata')
@@ -65,231 +70,359 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   override async createOne(
     fieldMetadataInput: CreateFieldInput,
   ): Promise<FieldMetadataEntity> {
-    const objectMetadata =
-      await this.objectMetadataService.findOneWithinWorkspace(
-        fieldMetadataInput.workspaceId,
-        {
-          where: {
-            id: fieldMetadataInput.objectMetadataId,
+    const queryRunner = this.metadataDataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    try {
+      const fieldMetadataRepository =
+        queryRunner.manager.getRepository<FieldMetadataEntity<'default'>>(
+          FieldMetadataEntity,
+        );
+      const objectMetadata =
+        await this.objectMetadataService.findOneWithinWorkspace(
+          fieldMetadataInput.workspaceId,
+          {
+            where: {
+              id: fieldMetadataInput.objectMetadataId,
+            },
           },
-        },
-      );
+        );
 
-    if (!objectMetadata) {
-      throw new NotFoundException('Object does not exist');
-    }
-
-    // Double check in case the service is directly called
-    if (isEnumFieldMetadataType(fieldMetadataInput.type)) {
-      if (
-        !fieldMetadataInput.options &&
-        fieldMetadataInput.type !== FieldMetadataType.RATING
-      ) {
-        throw new BadRequestException('Options are required for enum fields');
+      if (!objectMetadata) {
+        throw new NotFoundException('Object does not exist');
       }
-    }
 
-    // Generate options for rating fields
-    if (fieldMetadataInput.type === FieldMetadataType.RATING) {
-      fieldMetadataInput.options = generateRatingOptions();
-    }
+      if (!fieldMetadataInput.isRemoteCreation) {
+        assertMutationNotOnRemoteObject(objectMetadata);
+      }
 
-    const fieldAlreadyExists = await this.fieldMetadataRepository.findOne({
-      where: {
-        name: fieldMetadataInput.name,
-        objectMetadataId: fieldMetadataInput.objectMetadataId,
-        workspaceId: fieldMetadataInput.workspaceId,
-      },
-    });
-
-    if (fieldAlreadyExists) {
-      throw new ConflictException('Field already exists');
-    }
-
-    const createdFieldMetadata = await super.createOne({
-      ...fieldMetadataInput,
-      targetColumnMap: generateTargetColumnMap(
-        fieldMetadataInput.type,
-        true,
-        fieldMetadataInput.name,
-      ),
-      isNullable: generateNullable(
-        fieldMetadataInput.type,
-        fieldMetadataInput.isNullable,
-      ),
-      defaultValue:
-        fieldMetadataInput.defaultValue ??
-        generateDefaultValue(fieldMetadataInput.type),
-      options: fieldMetadataInput.options
-        ? fieldMetadataInput.options.map((option) => ({
-            ...option,
-            id: uuidV4(),
-          }))
-        : undefined,
-      isActive: true,
-      isCustom: true,
-    });
-
-    await this.workspaceMigrationService.createCustomMigration(
-      generateMigrationName(`create-${createdFieldMetadata.name}`),
-      fieldMetadataInput.workspaceId,
-      [
-        {
-          name: computeObjectTargetTable(objectMetadata),
-          action: 'alter',
-          columns: this.workspaceMigrationFactory.createColumnActions(
-            WorkspaceMigrationColumnActionType.CREATE,
-            createdFieldMetadata,
-          ),
-        } satisfies WorkspaceMigrationTableAction,
-      ],
-    );
-
-    await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-      fieldMetadataInput.workspaceId,
-    );
-
-    // TODO: Move viewField creation to a cdc scheduler
-    const dataSourceMetadata =
-      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        fieldMetadataInput.workspaceId,
-      );
-
-    const workspaceDataSource =
-      await this.typeORMService.connectToDataSource(dataSourceMetadata);
-
-    // TODO: use typeorm repository
-    const view = await workspaceDataSource?.query(
-      `SELECT id FROM ${dataSourceMetadata.schema}."view"
-      WHERE "objectMetadataId" = '${createdFieldMetadata.objectMetadataId}'`,
-    );
-
-    const existingViewFields = await workspaceDataSource?.query(
-      `SELECT * FROM ${dataSourceMetadata.schema}."viewField"
-      WHERE "viewId" = '${view[0].id}'`,
-    );
-
-    const lastPosition = existingViewFields
-      .map((viewField) => viewField.position)
-      .reduce((acc, position) => {
-        if (position > acc) {
-          return position;
+      // Double check in case the service is directly called
+      if (isEnumFieldMetadataType(fieldMetadataInput.type)) {
+        if (
+          !fieldMetadataInput.options &&
+          fieldMetadataInput.type !== FieldMetadataType.RATING
+        ) {
+          throw new BadRequestException('Options are required for enum fields');
         }
+      }
 
-        return acc;
-      }, -1);
+      // Generate options for rating fields
+      if (fieldMetadataInput.type === FieldMetadataType.RATING) {
+        fieldMetadataInput.options = generateRatingOptions();
+      }
 
-    await workspaceDataSource?.query(
-      `INSERT INTO ${dataSourceMetadata.schema}."viewField"
+      const fieldAlreadyExists = await fieldMetadataRepository.findOne({
+        where: {
+          name: fieldMetadataInput.name,
+          objectMetadataId: fieldMetadataInput.objectMetadataId,
+          workspaceId: fieldMetadataInput.workspaceId,
+        },
+      });
+
+      if (fieldAlreadyExists) {
+        throw new ConflictException('Field already exists');
+      }
+
+      const createdFieldMetadata = await fieldMetadataRepository.save({
+        ...fieldMetadataInput,
+        isNullable: generateNullable(
+          fieldMetadataInput.type,
+          fieldMetadataInput.isNullable,
+          fieldMetadataInput.isRemoteCreation,
+        ),
+        defaultValue:
+          fieldMetadataInput.defaultValue ??
+          generateDefaultValue(fieldMetadataInput.type),
+        options: fieldMetadataInput.options
+          ? fieldMetadataInput.options.map((option) => ({
+              ...option,
+              id: uuidV4(),
+            }))
+          : undefined,
+        isActive: true,
+        isCustom: true,
+      });
+
+      if (!fieldMetadataInput.isRemoteCreation) {
+        await this.workspaceMigrationService.createCustomMigration(
+          generateMigrationName(`create-${createdFieldMetadata.name}`),
+          fieldMetadataInput.workspaceId,
+          [
+            {
+              name: computeObjectTargetTable(objectMetadata),
+              action: 'alter',
+              columns: this.workspaceMigrationFactory.createColumnActions(
+                WorkspaceMigrationColumnActionType.CREATE,
+                createdFieldMetadata,
+              ),
+            } satisfies WorkspaceMigrationTableAction,
+          ],
+        );
+
+        await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+          fieldMetadataInput.workspaceId,
+        );
+      }
+
+      // TODO: Move viewField creation to a cdc scheduler
+      const dataSourceMetadata =
+        await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+          fieldMetadataInput.workspaceId,
+        );
+
+      const workspaceDataSource =
+        await this.typeORMService.connectToDataSource(dataSourceMetadata);
+
+      const workspaceQueryRunner = workspaceDataSource?.createQueryRunner();
+
+      if (!workspaceQueryRunner) {
+        throw new Error('Could not create workspace query runner');
+      }
+
+      await workspaceQueryRunner.connect();
+      await workspaceQueryRunner.startTransaction();
+
+      try {
+        // TODO: use typeorm repository
+        const view = await workspaceQueryRunner?.query(
+          `SELECT id FROM ${dataSourceMetadata.schema}."view"
+      WHERE "objectMetadataId" = '${createdFieldMetadata.objectMetadataId}'`,
+        );
+
+        const existingViewFields = await workspaceQueryRunner?.query(
+          `SELECT * FROM ${dataSourceMetadata.schema}."viewField"
+      WHERE "viewId" = '${view[0].id}'`,
+        );
+
+        const lastPosition = existingViewFields
+          .map((viewField) => viewField.position)
+          .reduce((acc, position) => {
+            if (position > acc) {
+              return position;
+            }
+
+            return acc;
+          }, -1);
+
+        await workspaceQueryRunner?.query(
+          `INSERT INTO ${dataSourceMetadata.schema}."viewField"
     ("fieldMetadataId", "position", "isVisible", "size", "viewId")
     VALUES ('${createdFieldMetadata.id}', '${lastPosition + 1}', true, 180, '${
       view[0].id
     }')`,
-    );
+        );
+        await workspaceQueryRunner.commitTransaction();
+      } catch (error) {
+        await workspaceQueryRunner.rollbackTransaction();
+        throw error;
+      } finally {
+        await workspaceQueryRunner.release();
+      }
 
-    return createdFieldMetadata;
+      await queryRunner.commitTransaction();
+
+      return createdFieldMetadata;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   override async updateOne(
     id: string,
     fieldMetadataInput: UpdateFieldInput,
   ): Promise<FieldMetadataEntity> {
-    const existingFieldMetadata = await this.fieldMetadataRepository.findOne({
-      where: {
-        id,
-        workspaceId: fieldMetadataInput.workspaceId,
-      },
-    });
+    const queryRunner = this.metadataDataSource.createQueryRunner();
 
-    if (!existingFieldMetadata) {
-      throw new NotFoundException('Field does not exist');
-    }
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    const objectMetadata =
-      await this.objectMetadataService.findOneWithinWorkspace(
-        fieldMetadataInput.workspaceId,
-        {
-          where: {
-            id: existingFieldMetadata?.objectMetadataId,
-          },
+    try {
+      const fieldMetadataRepository =
+        queryRunner.manager.getRepository<FieldMetadataEntity<'default'>>(
+          FieldMetadataEntity,
+        );
+
+      const existingFieldMetadata = await fieldMetadataRepository.findOne({
+        where: {
+          id,
+          workspaceId: fieldMetadataInput.workspaceId,
         },
-      );
+      });
 
-    if (!objectMetadata) {
-      throw new NotFoundException('Object does not exist');
-    }
+      if (!existingFieldMetadata) {
+        throw new NotFoundException('Field does not exist');
+      }
 
-    if (
-      objectMetadata.labelIdentifierFieldMetadataId ===
-        existingFieldMetadata.id &&
-      fieldMetadataInput.isActive === false
-    ) {
-      throw new BadRequestException('Cannot deactivate label identifier field');
-    }
+      const objectMetadata =
+        await this.objectMetadataService.findOneWithinWorkspace(
+          fieldMetadataInput.workspaceId,
+          {
+            where: {
+              id: existingFieldMetadata?.objectMetadataId,
+            },
+          },
+        );
 
-    if (fieldMetadataInput.options) {
-      for (const option of fieldMetadataInput.options) {
-        if (!option.id) {
-          throw new BadRequestException('Option id is required');
+      if (!objectMetadata) {
+        throw new NotFoundException('Object does not exist');
+      }
+
+      assertMutationNotOnRemoteObject(objectMetadata);
+
+      if (
+        objectMetadata.labelIdentifierFieldMetadataId ===
+          existingFieldMetadata.id &&
+        fieldMetadataInput.isActive === false
+      ) {
+        throw new BadRequestException(
+          'Cannot deactivate label identifier field',
+        );
+      }
+
+      if (fieldMetadataInput.options) {
+        for (const option of fieldMetadataInput.options) {
+          if (!option.id) {
+            throw new BadRequestException('Option id is required');
+          }
         }
       }
-    }
 
-    const updatableFieldInput =
-      existingFieldMetadata.isCustom === false
-        ? this.buildUpdatableStandardFieldInput(
-            fieldMetadataInput,
-            existingFieldMetadata,
-          )
-        : fieldMetadataInput;
+      const updatableFieldInput =
+        existingFieldMetadata.isCustom === false
+          ? this.buildUpdatableStandardFieldInput(
+              fieldMetadataInput,
+              existingFieldMetadata,
+            )
+          : fieldMetadataInput;
 
-    const updatedFieldMetadata = await super.updateOne(id, {
-      ...updatableFieldInput,
-      defaultValue:
-        // Todo: we need to handle default value for all field types. Right now we are only allowing update for SELECt
-        existingFieldMetadata.type !== FieldMetadataType.SELECT
-          ? existingFieldMetadata.defaultValue
-          : updatableFieldInput.defaultValue
-            ? // Todo: we need to rework DefaultValue typing and format to be simpler, there is no need to have this complexity
-              { value: updatableFieldInput.defaultValue as unknown as string }
-            : null,
-      // If the name is updated, the targetColumnMap should be updated as well
-      targetColumnMap: updatableFieldInput.name
-        ? generateTargetColumnMap(
+      // We're running field update under a transaction, so we can rollback if migration fails
+      await fieldMetadataRepository.update(id, {
+        ...updatableFieldInput,
+        defaultValue:
+          // Todo: we handle default value for all field types.
+          ![FieldMetadataType.SELECT, FieldMetadataType.BOOLEAN].includes(
             existingFieldMetadata.type,
-            existingFieldMetadata.isCustom,
-            updatableFieldInput.name,
           )
-        : existingFieldMetadata.targetColumnMap,
-    });
+            ? existingFieldMetadata.defaultValue
+            : updatableFieldInput.defaultValue !== null
+              ? updatableFieldInput.defaultValue
+              : null,
+      });
+      const updatedFieldMetadata = await fieldMetadataRepository.findOneOrFail({
+        where: { id },
+      });
 
-    if (
-      fieldMetadataInput.name ||
-      updatableFieldInput.options ||
-      updatableFieldInput.defaultValue
-    ) {
+      if (
+        fieldMetadataInput.name ||
+        updatableFieldInput.options ||
+        updatableFieldInput.defaultValue
+      ) {
+        await this.workspaceMigrationService.createCustomMigration(
+          generateMigrationName(`update-${updatedFieldMetadata.name}`),
+          existingFieldMetadata.workspaceId,
+          [
+            {
+              name: computeObjectTargetTable(objectMetadata),
+              action: 'alter',
+              columns: this.workspaceMigrationFactory.createColumnActions(
+                WorkspaceMigrationColumnActionType.ALTER,
+                existingFieldMetadata,
+                updatedFieldMetadata,
+              ),
+            } satisfies WorkspaceMigrationTableAction,
+          ],
+        );
+
+        await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+          updatedFieldMetadata.workspaceId,
+        );
+      }
+
+      await queryRunner.commitTransaction();
+
+      return updatedFieldMetadata;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  public async deleteOneField(
+    input: DeleteOneFieldInput,
+    workspaceId: string,
+  ): Promise<FieldMetadataEntity> {
+    const queryRunner = this.metadataDataSource.createQueryRunner();
+
+    await queryRunner.connect();
+    await queryRunner.startTransaction(); // transaction not safe as a different queryRunner is used within workspaceMigrationRunnerService
+
+    try {
+      const fieldMetadataRepository =
+        queryRunner.manager.getRepository<FieldMetadataEntity<'default'>>(
+          FieldMetadataEntity,
+        );
+
+      const fieldMetadata = await fieldMetadataRepository.findOne({
+        where: {
+          id: input.id,
+          workspaceId: workspaceId,
+        },
+      });
+
+      if (!fieldMetadata) {
+        throw new NotFoundException('Field does not exist');
+      }
+
+      const objectMetadata =
+        await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
+          where: {
+            id: fieldMetadata?.objectMetadataId,
+          },
+        });
+
+      if (!objectMetadata) {
+        throw new NotFoundException('Object does not exist');
+      }
+
+      await fieldMetadataRepository.delete(fieldMetadata.id);
+
       await this.workspaceMigrationService.createCustomMigration(
-        generateMigrationName(`update-${updatedFieldMetadata.name}`),
-        existingFieldMetadata.workspaceId,
+        generateMigrationName(`delete-${fieldMetadata.name}`),
+        workspaceId,
         [
           {
             name: computeObjectTargetTable(objectMetadata),
             action: 'alter',
-            columns: this.workspaceMigrationFactory.createColumnActions(
-              WorkspaceMigrationColumnActionType.ALTER,
-              existingFieldMetadata,
-              updatedFieldMetadata,
-            ),
+            columns: [
+              {
+                action: WorkspaceMigrationColumnActionType.DROP,
+                columnName: computeColumnName(fieldMetadata),
+              } satisfies WorkspaceMigrationColumnDrop,
+            ],
           } satisfies WorkspaceMigrationTableAction,
         ],
       );
 
       await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-        updatedFieldMetadata.workspaceId,
+        workspaceId,
       );
-    }
 
-    return updatedFieldMetadata;
+      await queryRunner.commitTransaction();
+
+      return fieldMetadata;
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      throw error;
+    } finally {
+      await queryRunner.release();
+    }
   }
 
   public async findOneOrFail(

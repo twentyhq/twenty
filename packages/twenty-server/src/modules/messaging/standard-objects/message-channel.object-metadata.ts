@@ -14,6 +14,13 @@ import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
 
+export enum MessageChannelSyncStatus {
+  PENDING = 'PENDING',
+  ONGOING = 'ONGOING',
+  SUCCEEDED = 'SUCCEEDED',
+  FAILED = 'FAILED',
+}
+
 @ObjectMetadata({
   standardId: standardObjectIds.messageChannel,
   namePlural: 'messageChannels',
@@ -40,7 +47,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
         color: 'orange',
       },
     ],
-    defaultValue: { value: 'share_everything' },
+    defaultValue: "'share_everything'",
   })
   visibility: string;
 
@@ -73,7 +80,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
       { value: 'email', label: 'Email', position: 0, color: 'green' },
       { value: 'sms', label: 'SMS', position: 1, color: 'blue' },
     ],
-    defaultValue: { value: 'email' },
+    defaultValue: "'email'",
   })
   type: string;
 
@@ -83,7 +90,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
     label: 'Is Contact Auto Creation Enabled',
     description: 'Is Contact Auto Creation Enabled',
     icon: 'IconUserCircle',
-    defaultValue: { value: true },
+    defaultValue: true,
   })
   isContactAutoCreationEnabled: boolean;
 
@@ -102,4 +109,69 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   messageChannelMessageAssociations: MessageChannelMessageAssociationObjectMetadata[];
+
+  @FieldMetadata({
+    standardId: messageChannelStandardFieldIds.syncCursor,
+    type: FieldMetadataType.TEXT,
+    label: 'Last sync cursor',
+    description: 'Last sync cursor',
+    icon: 'IconHistory',
+  })
+  syncCursor: string;
+
+  @FieldMetadata({
+    standardId: messageChannelStandardFieldIds.syncedAt,
+    type: FieldMetadataType.DATE_TIME,
+    label: 'Last sync date',
+    description: 'Last sync date',
+    icon: 'IconHistory',
+  })
+  @IsNullable()
+  syncedAt: string;
+
+  @FieldMetadata({
+    standardId: messageChannelStandardFieldIds.syncStatus,
+    type: FieldMetadataType.SELECT,
+    label: 'Last sync status',
+    description: 'Last sync status',
+    icon: 'IconHistory',
+    options: [
+      {
+        value: MessageChannelSyncStatus.PENDING,
+        label: 'Pending',
+        position: 0,
+        color: 'blue',
+      },
+      {
+        value: MessageChannelSyncStatus.ONGOING,
+        label: 'Ongoing',
+        position: 1,
+        color: 'yellow',
+      },
+      {
+        value: MessageChannelSyncStatus.SUCCEEDED,
+        label: 'Succeeded',
+        position: 2,
+        color: 'green',
+      },
+      {
+        value: MessageChannelSyncStatus.FAILED,
+        label: 'Failed',
+        position: 3,
+        color: 'red',
+      },
+    ],
+  })
+  @IsNullable()
+  syncStatus: MessageChannelSyncStatus;
+
+  @FieldMetadata({
+    standardId: messageChannelStandardFieldIds.ongoingSyncStartedAt,
+    type: FieldMetadataType.DATE_TIME,
+    label: 'Ongoing sync started at',
+    description: 'Ongoing sync started at',
+    icon: 'IconHistory',
+  })
+  @IsNullable()
+  ongoingSyncStartedAt: string;
 }

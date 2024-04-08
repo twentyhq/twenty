@@ -22,7 +22,7 @@ jest.mock('react-router-dom', () => {
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
   <RecoilRoot>
     <MemoryRouter
-      initialEntries={['/sign-in', '/verify', '/opportunities']}
+      initialEntries={['/welcome', '/verify', '/opportunities']}
       initialIndex={2}
     >
       {children}
@@ -44,7 +44,7 @@ describe('useApolloFactory', () => {
     expect(res).toHaveProperty('query');
   });
 
-  it('should navigate to /sign-in on unauthenticated error', async () => {
+  it('should navigate to /welcome on unauthenticated error', async () => {
     const errors = [
       {
         extensions: {
@@ -90,7 +90,7 @@ describe('useApolloFactory', () => {
       expect((error as ApolloError).message).toBe('Error message not found.');
 
       expect(mockNavigate).toHaveBeenCalled();
-      expect(mockNavigate).toHaveBeenCalledWith('/sign-in');
+      expect(mockNavigate).toHaveBeenCalledWith('/welcome');
     }
   });
 });

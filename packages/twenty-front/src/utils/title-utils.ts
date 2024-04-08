@@ -6,10 +6,8 @@ export const getPageTitleFromPath = (pathname: string): string => {
   switch (pathname) {
     case AppPath.Verify:
       return 'Verify';
-    case AppPath.SignIn:
-      return 'Sign In';
-    case AppPath.SignUp:
-      return 'Sign Up';
+    case AppPath.SignInUp:
+      return 'Sign in or Create an account';
     case AppPath.Invite:
       return 'Invite';
     case AppPath.CreateWorkspace:

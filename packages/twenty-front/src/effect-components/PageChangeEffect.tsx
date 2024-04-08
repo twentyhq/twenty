@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { matchPath, useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { IconCheckbox } from 'twenty-ui';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { useEventTracker } from '@/analytics/hooks/useEventTracker';
@@ -14,7 +15,6 @@ import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
-import { IconCheckbox } from '@/ui/display/icon';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useGetWorkspaceFromInviteHashLazyQuery } from '~/generated/graphql';
@@ -57,8 +57,7 @@ export const PageChangeEffect = () => {
 
   useEffect(() => {
     const isMatchingOngoingUserCreationRoute =
-      isMatchingLocation(AppPath.SignUp) ||
-      isMatchingLocation(AppPath.SignIn) ||
+      isMatchingLocation(AppPath.SignInUp) ||
       isMatchingLocation(AppPath.Invite) ||
       isMatchingLocation(AppPath.Verify);
 
@@ -73,7 +72,7 @@ export const PageChangeEffect = () => {
       enqueueSnackBar('workspace does not exist', {
         variant: 'error',
       });
-      navigate(AppPath.SignUp);
+      navigate(AppPath.SignInUp);
     };
 
     if (
@@ -81,7 +80,7 @@ export const PageChangeEffect = () => {
       !isMatchingOngoingUserCreationRoute &&
       !isMatchingLocation(AppPath.ResetPassword)
     ) {
-      navigate(AppPath.SignIn);
+      navigate(AppPath.SignInUp);
     } else if (
       isDefined(onboardingStatus) &&
       onboardingStatus === OnboardingStatus.Incomplete &&
@@ -141,8 +140,6 @@ export const PageChangeEffect = () => {
           navigateToSignUp();
         },
       });
-    } else if (isMatchingLocation(AppPath.SignUp) && isSignUpDisabled) {
-      navigate(AppPath.SignIn);
     }
   }, [
     enqueueSnackBar,
@@ -185,11 +182,7 @@ export const PageChangeEffect = () => {
         break;
       }
 
-      case isMatchingLocation(AppPath.SignIn): {
-        setHotkeyScope(PageHotkeyScope.SignInUp);
-        break;
-      }
-      case isMatchingLocation(AppPath.SignUp): {
+      case isMatchingLocation(AppPath.SignInUp): {
         setHotkeyScope(PageHotkeyScope.SignInUp);
         break;
       }

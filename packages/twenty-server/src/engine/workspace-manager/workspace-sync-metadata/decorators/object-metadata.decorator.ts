@@ -19,6 +19,7 @@ export function ObjectMetadata(
         targetTableName: 'DEPRECATED',
         isSystem,
         isCustom: false,
+        isRemote: false,
         description: params.description,
         icon: params.icon,
         gate,

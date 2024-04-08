@@ -39,7 +39,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   );
 
   const [signInUpMode, setSignInUpMode] = useState<SignInUpMode>(() => {
-    return isMatchingLocation(AppPath.SignIn)
+    return isMatchingLocation(AppPath.SignInUp)
       ? SignInUpMode.SignIn
       : SignInUpMode.SignUp;
   });
@@ -53,7 +53,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const continueWithEmail = useCallback(() => {
     setSignInUpStep(SignInUpStep.Email);
     setSignInUpMode(
-      isMatchingLocation(AppPath.SignIn)
+      isMatchingLocation(AppPath.SignInUp)
         ? SignInUpMode.SignIn
         : SignInUpMode.SignUp,
     );

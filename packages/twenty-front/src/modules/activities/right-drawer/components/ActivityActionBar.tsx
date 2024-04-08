@@ -1,31 +1,26 @@
-import { useLocation } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
+import { IconPlus, IconTrash } from 'twenty-ui';
 
-import { useDeleteActivityFromCache } from '@/activities/hooks/useDeleteActivityFromCache';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
-import { useRemoveFromActivitiesQueries } from '@/activities/hooks/useRemoveFromActivitiesQueries';
-import { useRemoveFromActivityTargetsQueries } from '@/activities/hooks/useRemoveFromActivityTargetsQueries';
-import { currentNotesQueryVariablesState } from '@/activities/notes/states/currentNotesQueryVariablesState';
+import { useRefreshShowPageFindManyActivitiesQueries } from '@/activities/hooks/useRefreshShowPageFindManyActivitiesQueries';
 import { activityIdInDrawerState } from '@/activities/states/activityIdInDrawerState';
 import { activityTargetableEntityArrayState } from '@/activities/states/activityTargetableEntityArrayState';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
 import { temporaryActivityForEditorState } from '@/activities/states/temporaryActivityForEditorState';
 import { viewableActivityIdState } from '@/activities/states/viewableActivityIdState';
-import { currentCompletedTaskQueryVariablesState } from '@/activities/tasks/states/currentCompletedTaskQueryVariablesState';
-import { currentIncompleteTaskQueryVariablesState } from '@/activities/tasks/states/currentIncompleteTaskQueryVariablesState';
-import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline/constants/FindManyTimelineActivitiesOrderBy';
 import { objectShowPageTargetableObjectState } from '@/activities/timeline/states/objectShowPageTargetableObjectIdState';
 import { Activity } from '@/activities/types/Activity';
+import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useDeleteRecordFromCache } from '@/object-record/cache/hooks/useDeleteRecordFromCache';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { getChildRelationArray } from '@/object-record/utils/getChildRelationArray';
 import { mapToRecordId } from '@/object-record/utils/mapToObjectId';
-import { IconPlus, IconTrash } from '@/ui/display/icon';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
 import { isDefined } from '~/utils/isDefined';
@@ -56,7 +51,12 @@ export const ActivityActionBar = () => {
   const [temporaryActivityForEditor, setTemporaryActivityForEditor] =
     useRecoilState(temporaryActivityForEditorState);
 
-  const { deleteActivityFromCache } = useDeleteActivityFromCache();
+  const deleteActivityFromCache = useDeleteRecordFromCache({
+    objectNameSingular: CoreObjectNameSingular.Activity,
+  });
+  const deleteActivityTargetFromCache = useDeleteRecordFromCache({
+    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+  });
 
   const [isActivityInCreateMode] = useRecoilState(isActivityInCreateModeState);
   const [isUpsertingActivityInDB] = useRecoilState(
@@ -67,27 +67,10 @@ export const ActivityActionBar = () => {
     objectShowPageTargetableObjectState,
   );
 
+  const { refreshShowPageFindManyActivitiesQueries } =
+    useRefreshShowPageFindManyActivitiesQueries();
+
   const openCreateActivity = useOpenCreateActivityDrawer();
-
-  const currentCompletedTaskQueryVariables = useRecoilValue(
-    currentCompletedTaskQueryVariablesState,
-  );
-
-  const currentIncompleteTaskQueryVariables = useRecoilValue(
-    currentIncompleteTaskQueryVariablesState,
-  );
-
-  const currentNotesQueryVariables = useRecoilValue(
-    currentNotesQueryVariablesState,
-  );
-
-  const { pathname } = useLocation();
-  const { removeFromActivitiesQueries } = useRemoveFromActivitiesQueries();
-  const { removeFromActivityTargetsQueries } =
-    useRemoveFromActivityTargetsQueries();
-
-  const weAreOnObjectShowPage = pathname.startsWith('/object');
-  const weAreOnTaskPage = pathname.startsWith('/tasks');
 
   const deleteActivity = useRecoilCallback(
     ({ snapshot }) =>
@@ -108,105 +91,46 @@ export const ActivityActionBar = () => {
 
         setIsRightDrawerOpen(false);
 
-        if (isNonEmptyString(viewableActivityId)) {
-          if (isActivityInCreateMode && isDefined(temporaryActivityForEditor)) {
-            deleteActivityFromCache(temporaryActivityForEditor);
-            setTemporaryActivityForEditor(null);
-          } else if (isNonEmptyString(activityIdInDrawer)) {
-            const activityTargetIdsToDelete: string[] =
-              activityTargets.map(mapToRecordId) ?? [];
+        if (!isNonEmptyString(viewableActivityId)) {
+          return;
+        }
 
-            if (weAreOnTaskPage) {
-              removeFromActivitiesQueries({
-                activityIdToRemove: viewableActivityId,
-                targetableObjects: [],
-                activitiesFilters: currentCompletedTaskQueryVariables?.filter,
-                activitiesOrderByVariables:
-                  currentCompletedTaskQueryVariables?.orderBy,
-              });
+        if (isActivityInCreateMode && isDefined(temporaryActivityForEditor)) {
+          deleteActivityFromCache(temporaryActivityForEditor);
+          setTemporaryActivityForEditor(null);
+          return;
+        }
 
-              removeFromActivitiesQueries({
-                activityIdToRemove: viewableActivityId,
-                targetableObjects: [],
-                activitiesFilters: currentIncompleteTaskQueryVariables?.filter,
-                activitiesOrderByVariables:
-                  currentIncompleteTaskQueryVariables?.orderBy,
-              });
-            } else if (
-              weAreOnObjectShowPage &&
-              isDefined(objectShowPageTargetableObject)
-            ) {
-              removeFromActivitiesQueries({
-                activityIdToRemove: viewableActivityId,
-                targetableObjects: [objectShowPageTargetableObject],
-                activitiesFilters: {},
-                activitiesOrderByVariables:
-                  FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
-              });
+        if (isNonEmptyString(activityIdInDrawer)) {
+          const activityTargetIdsToDelete: string[] =
+            activityTargets.map(mapToRecordId) ?? [];
 
-              if (isDefined(currentCompletedTaskQueryVariables)) {
-                removeFromActivitiesQueries({
-                  activityIdToRemove: viewableActivityId,
-                  targetableObjects: [objectShowPageTargetableObject],
-                  activitiesFilters: currentCompletedTaskQueryVariables?.filter,
-                  activitiesOrderByVariables:
-                    currentCompletedTaskQueryVariables?.orderBy,
-                });
-              }
+          deleteActivityFromCache(activity);
+          activityTargets.forEach((activityTarget: ActivityTarget) => {
+            deleteActivityTargetFromCache(activityTarget);
+          });
 
-              if (isDefined(currentIncompleteTaskQueryVariables)) {
-                removeFromActivitiesQueries({
-                  activityIdToRemove: viewableActivityId,
-                  targetableObjects: [objectShowPageTargetableObject],
-                  activitiesFilters:
-                    currentIncompleteTaskQueryVariables?.filter,
-                  activitiesOrderByVariables:
-                    currentIncompleteTaskQueryVariables?.orderBy,
-                });
-              }
+          refreshShowPageFindManyActivitiesQueries();
 
-              if (isDefined(currentNotesQueryVariables)) {
-                removeFromActivitiesQueries({
-                  activityIdToRemove: viewableActivityId,
-                  targetableObjects: [objectShowPageTargetableObject],
-                  activitiesFilters: currentNotesQueryVariables?.filter,
-                  activitiesOrderByVariables:
-                    currentNotesQueryVariables?.orderBy,
-                });
-              }
-
-              removeFromActivityTargetsQueries({
-                activityTargetsToRemove: activity?.activityTargets ?? [],
-                targetableObjects: [objectShowPageTargetableObject],
-              });
-            }
-
-            if (isNonEmptyArray(activityTargetIdsToDelete)) {
-              await deleteManyActivityTargets(activityTargetIdsToDelete);
-            }
-
-            await deleteOneActivity?.(viewableActivityId);
+          if (isNonEmptyArray(activityTargetIdsToDelete)) {
+            await deleteManyActivityTargets(activityTargetIdsToDelete);
           }
+
+          await deleteOneActivity?.(viewableActivityId);
         }
       },
     [
       activityIdInDrawer,
-      currentCompletedTaskQueryVariables,
-      currentIncompleteTaskQueryVariables,
-      currentNotesQueryVariables,
-      deleteActivityFromCache,
-      deleteManyActivityTargets,
-      deleteOneActivity,
-      isActivityInCreateMode,
-      objectShowPageTargetableObject,
-      removeFromActivitiesQueries,
-      removeFromActivityTargetsQueries,
-      setTemporaryActivityForEditor,
-      temporaryActivityForEditor,
-      viewableActivityId,
-      weAreOnObjectShowPage,
-      weAreOnTaskPage,
       setIsRightDrawerOpen,
+      viewableActivityId,
+      isActivityInCreateMode,
+      temporaryActivityForEditor,
+      deleteActivityFromCache,
+      setTemporaryActivityForEditor,
+      refreshShowPageFindManyActivitiesQueries,
+      deleteOneActivity,
+      deleteActivityTargetFromCache,
+      deleteManyActivityTargets,
     ],
   );
 

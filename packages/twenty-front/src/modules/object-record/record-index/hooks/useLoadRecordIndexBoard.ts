@@ -1,11 +1,12 @@
 import { useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
+import { useRecordBoardQueryFields } from '@/object-record/record-index/hooks/useRecordBoardQueryFields';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
@@ -24,7 +25,7 @@ export const useLoadRecordIndexBoard = ({
   viewBarId,
   recordBoardId,
 }: UseLoadRecordIndexBoardProps) => {
-  const { objectMetadataItem } = useObjectMetadataItem({
+  const { objectMetadataItem } = useObjectMetadataItemOnly({
     objectNameSingular,
   });
   const {
@@ -47,14 +48,18 @@ export const useLoadRecordIndexBoard = ({
     recordIndexFilters,
     objectMetadataItem?.fields ?? [],
   );
-  const orderBy = turnSortsIntoOrderBy(
-    recordIndexSorts,
-    objectMetadataItem?.fields ?? [],
-  );
+  const orderBy = !objectMetadataItem.isRemote
+    ? turnSortsIntoOrderBy(recordIndexSorts, objectMetadataItem?.fields ?? [])
+    : undefined;
 
   const recordIndexIsCompactModeActive = useRecoilValue(
     recordIndexIsCompactModeActiveState,
   );
+
+  const queryFields = useRecordBoardQueryFields({
+    objectMetadataItem,
+    recordBoardId,
+  });
 
   const {
     records,
@@ -66,6 +71,7 @@ export const useLoadRecordIndexBoard = ({
     objectNameSingular,
     filter: requestFilters,
     orderBy,
+    queryFields,
   });
 
   const { setRecordCountInCurrentView } =

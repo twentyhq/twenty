@@ -1,6 +1,9 @@
 // TODO: use backend CalendarEvent type when ready
 export type CalendarEvent = {
-  conferenceUri?: string;
+  conferenceLink?: {
+    label: string;
+    url: string;
+  };
   description?: string;
   endsAt?: string;
   externalCreatedAt: string;
@@ -11,7 +14,7 @@ export type CalendarEvent = {
   startsAt: string;
   title?: string;
   visibility: 'METADATA' | 'SHARE_EVERYTHING';
-  attendees?: {
+  participants?: {
     displayName: string;
     workspaceMemberId?: string;
   }[];

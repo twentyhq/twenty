@@ -7,10 +7,11 @@
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "yarn",
+      "runtimeVersion": "18",
       "runtimeArgs": [
         "nx",
         "run",
-        "twenty-server:start:dev",
+        "twenty-server:start",
       ],
       "outputCapture": "std",
       "internalConsoleOptions": "openOnSessionStart",

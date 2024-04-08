@@ -33,7 +33,7 @@ export class ViewFieldObjectMetadata extends BaseObjectMetadata {
     label: 'Visible',
     description: 'View Field visibility',
     icon: 'IconEye',
-    defaultValue: { value: true },
+    defaultValue: true,
   })
   isVisible: boolean;
 
@@ -43,7 +43,7 @@ export class ViewFieldObjectMetadata extends BaseObjectMetadata {
     label: 'Size',
     description: 'View Field size',
     icon: 'IconEye',
-    defaultValue: { value: 0 },
+    defaultValue: 0,
   })
   size: number;
 
@@ -53,7 +53,7 @@ export class ViewFieldObjectMetadata extends BaseObjectMetadata {
     label: 'Position',
     description: 'View Field position',
     icon: 'IconList',
-    defaultValue: { value: 0 },
+    defaultValue: 0,
   })
   position: number;
 

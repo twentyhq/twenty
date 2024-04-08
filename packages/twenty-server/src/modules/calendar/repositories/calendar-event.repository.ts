@@ -7,7 +7,7 @@ import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metada
 import { CalendarEventObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event.object-metadata';
 import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/getFlattenedValuesAndValuesStringForBatchRawQuery.util';
 import { CalendarEvent } from 'src/modules/calendar/types/calendar-event';
-import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-attendee.object-metadata';
+import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
 
 @Injectable()
 export class CalendarEventRepository {
@@ -60,7 +60,7 @@ export class CalendarEventRepository {
     offset: number,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<CalendarEventAttendeeObjectMetadata>[]> {
+  ): Promise<ObjectRecord<CalendarEventParticipantObjectMetadata>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -136,12 +136,13 @@ export class CalendarEventRepository {
         location: 'text',
         iCalUID: 'text',
         conferenceSolution: 'text',
-        conferenceUri: 'text',
+        conferenceLinkLabel: 'text',
+        conferenceLinkUrl: 'text',
         recurringEventExternalId: 'text',
       });
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}."calendarEvent" ("id", "title", "isCanceled", "isFullDay", "startsAt", "endsAt", "externalCreatedAt", "externalUpdatedAt", "description", "location", "iCalUID", "conferenceSolution", "conferenceUri", "recurringEventExternalId") VALUES ${valuesString}`,
+      `INSERT INTO ${dataSourceSchema}."calendarEvent" ("id", "title", "isCanceled", "isFullDay", "startsAt", "endsAt", "externalCreatedAt", "externalUpdatedAt", "description", "location", "iCalUID", "conferenceSolution", "conferenceLinkLabel", "conferenceLinkUrl", "recurringEventExternalId") VALUES ${valuesString}`,
       flattenedValues,
       workspaceId,
       transactionManager,
@@ -173,7 +174,8 @@ export class CalendarEventRepository {
         location: 'text',
         iCalUID: 'text',
         conferenceSolution: 'text',
-        conferenceUri: 'text',
+        conferenceLinkLabel: 'text',
+        conferenceLinkUrl: 'text',
         recurringEventExternalId: 'text',
       });
 
@@ -189,10 +191,11 @@ export class CalendarEventRepository {
       "description" = "newData"."description",
       "location" = "newData"."location",
       "conferenceSolution" = "newData"."conferenceSolution",
-      "conferenceUri" = "newData"."conferenceUri",
+      "conferenceLinkLabel" = "newData"."conferenceLinkLabel",
+      "conferenceLinkUrl" = "newData"."conferenceLinkUrl",
       "recurringEventExternalId" = "newData"."recurringEventExternalId"
       FROM (VALUES ${valuesString})
-      AS "newData"("title", "isCanceled", "isFullDay", "startsAt", "endsAt", "externalCreatedAt", "externalUpdatedAt", "description", "location", "iCalUID", "conferenceSolution", "conferenceUri", "recurringEventExternalId")
+      AS "newData"("title", "isCanceled", "isFullDay", "startsAt", "endsAt", "externalCreatedAt", "externalUpdatedAt", "description", "location", "iCalUID", "conferenceSolution", "conferenceLinkLabel", "conferenceLinkUrl", "recurringEventExternalId")
       WHERE "calendarEvent"."iCalUID" = "newData"."iCalUID"`,
       flattenedValues,
       workspaceId,

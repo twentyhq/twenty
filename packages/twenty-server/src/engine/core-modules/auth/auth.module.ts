@@ -7,7 +7,7 @@ import { HttpModule } from '@nestjs/axios';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { RefreshToken } from 'src/engine/core-modules/refresh-token/refresh-token.entity';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
@@ -19,9 +19,9 @@ import { TokenService } from 'src/engine/core-modules/auth/services/token.servic
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { SignUpService } from 'src/engine/core-modules/auth/services/sign-up.service';
-import { GoogleGmailAuthController } from 'src/engine/core-modules/auth/controllers/google-gmail-auth.controller';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
+import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -48,7 +48,7 @@ const jwtModule = JwtModule.registerAsync({
     WorkspaceManagerModule,
     TypeORMModule,
     TypeOrmModule.forFeature(
-      [Workspace, User, RefreshToken, FeatureFlagEntity],
+      [Workspace, User, AppToken, FeatureFlagEntity],
       'core',
     ),
     HttpModule,
@@ -57,7 +57,6 @@ const jwtModule = JwtModule.registerAsync({
   controllers: [
     GoogleAuthController,
     GoogleAPIsAuthController,
-    GoogleGmailAuthController,
     VerifyAuthController,
   ],
   providers: [
@@ -67,6 +66,7 @@ const jwtModule = JwtModule.registerAsync({
     JwtAuthStrategy,
     AuthResolver,
     GoogleAPIsService,
+    AppTokenService,
   ],
   exports: [jwtModule, TokenService],
 })
