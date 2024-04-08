@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { IconDotsVertical, IconTrash } from 'twenty-ui';
 
 import { SettingsSummaryCard } from '@/settings/components/SettingsSummaryCard';
-import { SettingsIntegrationDatabaseConnectedTablesStatus } from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectedTablesStatus';
+import { SettingsIntegrationDatabaseConnectionSyncStatus } from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectionSyncStatus';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -49,7 +49,7 @@ export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
       }
       rightComponent={
         <>
-          <SettingsIntegrationDatabaseConnectedTablesStatus
+          <SettingsIntegrationDatabaseConnectionSyncStatus
             connectionId={connectionId}
           />
           <Dropdown

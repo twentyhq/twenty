@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { IconChevronRight } from 'twenty-ui';
 
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { SettingsIntegrationDatabaseConnectedTablesStatus } from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectedTablesStatus';
+import { SettingsIntegrationDatabaseConnectionSyncStatus } from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectionSyncStatus';
 import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { getConnectionDbName } from '@/settings/integrations/utils/getConnectionDbName';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
@@ -48,7 +48,7 @@ export const SettingsIntegrationDatabaseConnectionsListCard = ({
       )}
       RowRightComponent={({ item: connection }) => (
         <StyledRowRightContainer>
-          <SettingsIntegrationDatabaseConnectedTablesStatus
+          <SettingsIntegrationDatabaseConnectionSyncStatus
             connectionId={connection.id}
           />
           <LightIconButton Icon={IconChevronRight} accent="tertiary" />
