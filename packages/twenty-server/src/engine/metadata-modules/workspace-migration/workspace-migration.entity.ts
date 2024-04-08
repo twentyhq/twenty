@@ -61,7 +61,6 @@ export type WorkspaceMigrationColumnDrop = {
 export type WorkspaceMigrationCreateComment = {
   action: WorkspaceMigrationColumnActionType.CREATE_COMMENT;
   comment: string;
-  isForeignTable?: boolean;
 };
 
 export type WorkspaceMigrationForeignTable = {

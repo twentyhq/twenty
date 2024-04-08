@@ -244,7 +244,6 @@ export class WorkspaceMigrationRunnerService {
             schemaName,
             tableName,
             columnMigration.comment,
-            columnMigration.isForeignTable,
           );
           break;
         default:
@@ -441,12 +440,9 @@ export class WorkspaceMigrationRunnerService {
     schemaName: string,
     tableName: string,
     comment: string,
-    isForeignTable?: boolean,
   ) {
-    const tableType = isForeignTable ? 'FOREIGN TABLE' : 'TABLE';
-
     await queryRunner.query(`
-      COMMENT ON ${tableType} "${schemaName}"."${tableName}" IS e'${comment}';
+      COMMENT ON TABLE "${schemaName}"."${tableName}" IS e'${comment}';
     `);
   }
 
@@ -467,5 +463,9 @@ export class WorkspaceMigrationRunnerService {
     await queryRunner.query(
       `CREATE FOREIGN TABLE ${schemaName}."${name}" (${foreignTableColumns}) SERVER "${foreignTable.foreignDataWrapperId}" OPTIONS (schema_name '${foreignTable.referencedTableSchema}', table_name '${foreignTable.referencedTableName}')`,
     );
+
+    await queryRunner.query(`
+      COMMENT ON FOREIGN TABLE "${schemaName}"."${name}" IS '@graphql({"primary_key_columns": ["id"], "totalCount": {"enabled": true}})';
+    `);
   }
 }

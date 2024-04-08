@@ -6,51 +6,17 @@ import {
   RemoteServerEntity,
   RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
-import { RemoteTableStatus } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
 import {
   buildPostgresUrl,
   EXCLUDED_POSTGRES_SCHEMAS,
 } from 'src/engine/metadata-modules/remote-server/remote-table/remote-postgres-table/utils/remote-postgres-table.util';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { getRemoteTableName } from 'src/engine/metadata-modules/remote-server/remote-table/utils/get-remote-table-name.util';
 import { RemoteTableColumn } from 'src/engine/metadata-modules/remote-server/remote-table/types/remote-table-column';
+import { RemoteTable } from 'src/engine/metadata-modules/remote-server/remote-table/types/remote-table';
 
 @Injectable()
 export class RemotePostgresTableService {
-  constructor(
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly environmentService: EnvironmentService,
-  ) {}
-
-  public async findAvailableRemotePostgresTables(
-    workspaceId: string,
-    remoteServer: RemoteServerEntity<RemoteServerType>,
-  ) {
-    const remotePostgresTables =
-      await this.fetchTablesFromRemotePostgresSchema(remoteServer);
-
-    const workspaceDataSource =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
-        workspaceId,
-      );
-
-    const currentForeignTableNames = (
-      await workspaceDataSource.query(
-        `SELECT foreign_table_name FROM information_schema.foreign_tables`,
-      )
-    ).map((foreignTable) => foreignTable.foreign_table_name);
-
-    return remotePostgresTables.map((remoteTable) => ({
-      name: remoteTable.table_name,
-      schema: remoteTable.table_schema,
-      status: currentForeignTableNames.includes(
-        getRemoteTableName(remoteTable.table_name),
-      )
-        ? RemoteTableStatus.SYNCED
-        : RemoteTableStatus.NOT_SYNCED,
-    }));
-  }
+  constructor(private readonly environmentService: EnvironmentService) {}
 
   public async fetchPostgresTableColumnsSchema(
     remoteServer: RemoteServerEntity<RemoteServerType>,
@@ -84,9 +50,9 @@ export class RemotePostgresTableService {
     );
   }
 
-  private async fetchTablesFromRemotePostgresSchema(
+  public async fetchTablesFromRemotePostgresSchema(
     remoteServer: RemoteServerEntity<RemoteServerType>,
-  ) {
+  ): Promise<RemoteTable[]> {
     const dataSource = new DataSource({
       url: buildPostgresUrl(
         this.environmentService.get('LOGIN_TOKEN_SECRET'),
@@ -112,6 +78,12 @@ export class RemotePostgresTableService {
 
     await dataSource.destroy();
 
-    return remotePostgresTables;
+    return remotePostgresTables.map(
+      (table) =>
+        ({
+          tableName: table.table_name,
+          tableSchema: table.table_schema,
+        }) as RemoteTable,
+    );
   }
 }

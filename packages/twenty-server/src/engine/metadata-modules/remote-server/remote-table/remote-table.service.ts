@@ -28,12 +28,12 @@ import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
-  WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnDefinition,
-  WorkspaceMigrationCreateComment,
   WorkspaceMigrationForeignTable,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { RemoteTableColumn } from 'src/engine/metadata-modules/remote-server/remote-table/types/remote-table-column';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { RemoteTable } from 'src/engine/metadata-modules/remote-server/remote-table/types/remote-table';
 
 export class RemoteTableService {
   constructor(
@@ -50,6 +50,7 @@ export class RemoteTableService {
     private readonly remotePostgresTableService: RemotePostgresTableService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
   public async findAvailableRemoteTablesByServerId(
@@ -67,20 +68,21 @@ export class RemoteTableService {
       throw new NotFoundException('Remote server does not exist');
     }
 
-    switch (remoteServer.foreignDataWrapperType) {
-      case RemoteServerType.POSTGRES_FDW:
-        await isPostgreSQLIntegrationEnabled(
-          this.featureFlagRepository,
-          workspaceId,
-        );
+    const currentForeignTableNames =
+      await this.fetchForeignTableNamesWithinWorkspace(workspaceId);
 
-        return this.remotePostgresTableService.findAvailableRemotePostgresTables(
-          workspaceId,
-          remoteServer,
-        );
-      default:
-        throw new Error('Unsupported foreign data wrapper type');
-    }
+    const tableInRemoteSchema =
+      await this.fetchTablesFromRemoteSchema(remoteServer);
+
+    return tableInRemoteSchema.map((remoteTable) => ({
+      name: remoteTable.tableName,
+      schema: remoteTable.tableSchema,
+      status: currentForeignTableNames.includes(
+        getRemoteTableName(remoteTable.tableName),
+      )
+        ? RemoteTableStatus.SYNCED
+        : RemoteTableStatus.NOT_SYNCED,
+    }));
   }
 
   public async updateRemoteTableSyncStatus(
@@ -127,6 +129,13 @@ export class RemoteTableService {
       throw new Error('Schema is required for syncing remote table');
     }
 
+    const currentForeignTableNames =
+      await this.fetchForeignTableNamesWithinWorkspace(workspaceId);
+
+    if (currentForeignTableNames.includes(getRemoteTableName(input.name))) {
+      throw new Error('Remote table already exists');
+    }
+
     const remoteTableColumns = await this.fetchTableColumnsSchema(
       remoteServer,
       input.name,
@@ -154,8 +163,8 @@ export class RemoteTableService {
       throw new NotFoundException('Workspace data source does not exist');
     }
 
-    this.workspaceMigrationService.createCustomMigration(
-      generateMigrationName(`create-remote-table-${remoteTableName}`),
+    await this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(`create-foreign-table-${remoteTableName}`),
       workspaceId,
       [
         {
@@ -173,17 +182,6 @@ export class RemoteTableService {
             referencedTableSchema: input.schema,
             foreignDataWrapperId: remoteServer.foreignDataWrapperId,
           } satisfies WorkspaceMigrationForeignTable,
-        },
-        {
-          name: remoteTableName,
-          action: 'alter',
-          columns: [
-            {
-              action: WorkspaceMigrationColumnActionType.CREATE_COMMENT,
-              comment: `@graphql({"primary_key_columns": ["id"], "totalCount": {"enabled": true}})`,
-              isForeignTable: true,
-            } satisfies WorkspaceMigrationCreateComment,
-          ],
         },
       ],
     );
@@ -233,6 +231,13 @@ export class RemoteTableService {
   ) {
     const remoteTableName = getRemoteTableName(input.name);
 
+    const currentForeignTableNames =
+      await this.fetchForeignTableNamesWithinWorkspace(workspaceId);
+
+    if (!currentForeignTableNames.includes(remoteTableName)) {
+      throw new Error('Remote table does not exist');
+    }
+
     const objectMetadata =
       await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
         where: { nameSingular: remoteTableName },
@@ -245,8 +250,8 @@ export class RemoteTableService {
       );
     }
 
-    this.workspaceMigrationService.createCustomMigration(
-      generateMigrationName(`drop-remote-table-${input.name}`),
+    await this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(`drop-foreign-table-${input.name}`),
       workspaceId,
       [
         {
@@ -277,6 +282,37 @@ export class RemoteTableService {
           remoteServer,
           tableName,
           tableSchema,
+        );
+      default:
+        throw new Error('Unsupported foreign data wrapper type');
+    }
+  }
+
+  private async fetchForeignTableNamesWithinWorkspace(workspaceId: string) {
+    const workspaceDataSource =
+      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
+        workspaceId,
+      );
+
+    return (
+      await workspaceDataSource.query(
+        `SELECT foreign_table_name FROM information_schema.foreign_tables`,
+      )
+    ).map((foreignTable) => foreignTable.foreign_table_name);
+  }
+
+  private async fetchTablesFromRemoteSchema(
+    remoteServer: RemoteServerEntity<RemoteServerType>,
+  ): Promise<RemoteTable[]> {
+    switch (remoteServer.foreignDataWrapperType) {
+      case RemoteServerType.POSTGRES_FDW:
+        await isPostgreSQLIntegrationEnabled(
+          this.featureFlagRepository,
+          remoteServer.workspaceId,
+        );
+
+        return this.remotePostgresTableService.fetchTablesFromRemotePostgresSchema(
+          remoteServer,
         );
       default:
         throw new Error('Unsupported foreign data wrapper type');

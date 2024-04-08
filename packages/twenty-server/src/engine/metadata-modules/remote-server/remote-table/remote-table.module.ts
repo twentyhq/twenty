@@ -11,6 +11,7 @@ import { RemoteTableResolver } from 'src/engine/metadata-modules/remote-server/r
 import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
 import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
+import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 
 @Module({
@@ -24,7 +25,9 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     WorkspaceCacheVersionModule,
     WorkspaceMigrationModule,
     WorkspaceMigrationRunnerModule,
+    WorkspaceDataSourceModule,
   ],
   providers: [RemoteTableService, RemoteTableResolver],
+  exports: [RemoteTableService],
 })
 export class RemoteTableModule {}
