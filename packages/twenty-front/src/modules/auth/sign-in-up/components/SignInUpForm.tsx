@@ -71,8 +71,10 @@ export const SignInUpForm = () => {
       } else if (signInUpStep === SignInUpStep.Email) {
         continueWithCredentials();
       } else if (signInUpStep === SignInUpStep.Password) {
-        setShowErrors(true);
-        form.handleSubmit(submitCredentials)();
+        if (!form.formState.isSubmitting) {
+          setShowErrors(true);
+          form.handleSubmit(submitCredentials)();
+        }
       }
     }
   };
@@ -225,7 +227,7 @@ export const SignInUpForm = () => {
             }}
             Icon={() => form.formState.isSubmitting && <Loader />}
             disabled={
-              SignInUpStep.Init
+              signInUpStep === SignInUpStep.Init
                 ? false
                 : signInUpStep === SignInUpStep.Email
                   ? !form.watch('email')
