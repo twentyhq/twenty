@@ -5,7 +5,7 @@ import { CalendarEventRepository } from 'src/modules/calendar/repositories/calen
 import { CompanyRepository } from 'src/modules/company/repositories/company.repository';
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
-import { EventRepository } from 'src/modules/event/repositiories/event.repository';
+import { LogEventRepository } from 'src/modules/event/repositiories/log-event.repository';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant.repository';
@@ -23,7 +23,7 @@ export const metadataToRepositoryMapping = {
   CalendarEventObjectMetadata: CalendarEventRepository,
   CompanyObjectMetadata: CompanyRepository,
   ConnectedAccountObjectMetadata: ConnectedAccountRepository,
-  EventObjectMetadata: EventRepository,
+  LogEventObjectMetadata: LogEventRepository,
   MessageChannelMessageAssociationObjectMetadata:
     MessageChannelMessageAssociationRepository,
   MessageChannelObjectMetadata: MessageChannelRepository,

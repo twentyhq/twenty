@@ -13,7 +13,8 @@ import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-me
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { AttachmentObjectMetadata } from 'src/modules/attachment/standard-objects/attachment.object-metadata';
 import { customObjectStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { LogEventObjectMetadata } from 'src/modules/event/standard-objects/log-event.object-metadata';
+import { TimelineEventObjectMetadata } from 'src/modules/event/standard-objects/timeline-event.object-metadata';
 
 @BaseCustomObjectMetadata()
 export class CustomObjectMetadata extends BaseObjectMetadata {
@@ -88,7 +89,7 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
   attachments: AttachmentObjectMetadata[];
 
   @FieldMetadata({
-    standardId: customObjectStandardFieldIds.events,
+    standardId: customObjectStandardFieldIds.timelineEvents,
     type: FieldMetadataType.RELATION,
     label: 'Events',
     description: (objectMetadata) =>
@@ -97,9 +98,28 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => EventObjectMetadata,
+    inverseSideTarget: () => LogEventObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  events: EventObjectMetadata[];
+  @IsSystem()
+  logEvents: LogEventObjectMetadata[];
+
+  @FieldMetadata({
+    standardId: customObjectStandardFieldIds.timelineEvents,
+    type: FieldMetadataType.RELATION,
+    label: 'Timeline Events',
+    description: (objectMetadata) =>
+      `Timeline Events tied to the ${objectMetadata.labelSingular}`,
+
+    icon: 'IconIconTimelineEvent',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    inverseSideTarget: () => TimelineEventObjectMetadata,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @IsNullable()
+  @IsSystem()
+  timelineEvents: TimelineEventObjectMetadata[];
 }

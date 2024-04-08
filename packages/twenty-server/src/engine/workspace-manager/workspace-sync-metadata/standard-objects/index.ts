@@ -24,7 +24,8 @@ import { ViewObjectMetadata } from 'src/modules/view/standard-objects/view.objec
 import { WebhookObjectMetadata } from 'src/modules/webhook/standard-objects/webhook.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
-import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { LogEventObjectMetadata } from 'src/modules/event/standard-objects/log-event.object-metadata';
+import { TimelineEventObjectMetadata } from 'src/modules/event/standard-objects/timeline-event.object-metadata';
 
 export const standardObjectMetadataDefinitions = [
   ActivityTargetObjectMetadata,
@@ -35,7 +36,8 @@ export const standardObjectMetadataDefinitions = [
   CommentObjectMetadata,
   CompanyObjectMetadata,
   ConnectedAccountObjectMetadata,
-  EventObjectMetadata,
+  LogEventObjectMetadata,
+  TimelineEventObjectMetadata,
   FavoriteObjectMetadata,
   OpportunityObjectMetadata,
   PersonObjectMetadata,

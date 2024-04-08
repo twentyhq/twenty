@@ -19,10 +19,10 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
   labelSingular: 'Event',
   labelPlural: 'Events',
   description: 'An event',
-  icon: 'IconJson',
+  icon: 'IconIconTimelineEvent',
 })
 @IsSystem()
-export class EventObjectMetadata extends BaseObjectMetadata {
+export class LogEventObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: eventStandardFieldIds.properties,
     type: FieldMetadataType.TEXT,

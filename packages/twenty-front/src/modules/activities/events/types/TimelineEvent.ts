@@ -1,6 +1,6 @@
 import { WorkspaceMember } from '~/generated/graphql';
 
-export type Event = {
+export type TimelineEvent = {
   id: string;
   createdAt: string;
   updatedAt: string;

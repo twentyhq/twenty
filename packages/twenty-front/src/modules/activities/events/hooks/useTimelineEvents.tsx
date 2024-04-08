@@ -1,17 +1,19 @@
-import { Event } from '@/activities/events/types/Event';
+import { TimelineEvent } from '@/activities/events/types/TimelineEvent';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 
 // do we need to test this?
-export const useEvents = (targetableObject: ActivityTargetableObject) => {
+export const useTimelineEvents = (
+  targetableObject: ActivityTargetableObject,
+) => {
   const targetableObjectFieldIdName = getActivityTargetObjectFieldIdName({
     nameSingular: targetableObject.targetObjectNameSingular,
   });
 
-  const { records: events } = useFindManyRecords({
-    objectNameSingular: CoreObjectNameSingular.Event,
+  const { records: timelineEvents } = useFindManyRecords({
+    objectNameSingular: CoreObjectNameSingular.TimelineEvent,
     filter: {
       [targetableObjectFieldIdName]: {
         eq: targetableObject.id,
@@ -23,6 +25,6 @@ export const useEvents = (targetableObject: ActivityTargetableObject) => {
   });
 
   return {
-    events: events as Event[],
+    timelineEvents: timelineEvents as TimelineEvent[],
   };
 };

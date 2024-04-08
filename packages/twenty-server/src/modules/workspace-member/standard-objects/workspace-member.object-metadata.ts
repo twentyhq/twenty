@@ -22,7 +22,8 @@ import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/st
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
-import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { LogEventObjectMetadata } from 'src/modules/event/standard-objects/log-event.object-metadata';
+import { TimelineEventObjectMetadata } from 'src/modules/event/standard-objects/timeline-event.object-metadata';
 
 @ObjectMetadata({
   standardId: standardObjectIds.workspaceMember,
@@ -244,7 +245,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   calendarEventParticipants: CalendarEventParticipantObjectMetadata[];
 
   @FieldMetadata({
-    standardId: workspaceMemberStandardFieldIds.events,
+    standardId: workspaceMemberStandardFieldIds.logEvents,
     type: FieldMetadataType.RELATION,
     label: 'Events',
     description: 'Events linked to the workspace member',
@@ -252,10 +253,26 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => EventObjectMetadata,
+    inverseSideTarget: () => LogEventObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
   @IsSystem()
-  events: EventObjectMetadata[];
+  logEvents: LogEventObjectMetadata[];
+
+  @FieldMetadata({
+    standardId: workspaceMemberStandardFieldIds.timelineEvents,
+    type: FieldMetadataType.RELATION,
+    label: 'Events',
+    description: 'Events linked to the workspace member',
+    icon: 'IconTimelineEvent',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    inverseSideTarget: () => TimelineEventObjectMetadata,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @IsNullable()
+  @IsSystem()
+  timelineEvents: TimelineEventObjectMetadata[];
 }

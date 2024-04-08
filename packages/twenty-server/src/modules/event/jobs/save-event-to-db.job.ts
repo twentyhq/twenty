@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { EventRepository } from 'src/modules/event/repositiories/event.repository';
-import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { LogEventRepository } from 'src/modules/event/repositiories/log-event.repository';
+import { LogEventObjectMetadata } from 'src/modules/event/standard-objects/log-event.object-metadata';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
@@ -22,8 +22,8 @@ export class SaveEventToDbJob implements MessageQueueJob<SaveEventToDbJobData> {
   constructor(
     @InjectObjectMetadataRepository(WorkspaceMemberObjectMetadata)
     private readonly workspaceMemberService: WorkspaceMemberRepository,
-    @InjectObjectMetadataRepository(EventObjectMetadata)
-    private readonly eventService: EventRepository,
+    @InjectObjectMetadataRepository(LogEventObjectMetadata)
+    private readonly eventService: LogEventRepository,
   ) {}
 
   // TODO: need to support objects others than "person", "company", "opportunity"

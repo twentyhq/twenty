@@ -40,9 +40,8 @@ import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repos
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
-import { SaveEventToDbJob } from 'src/engine/api/graphql/workspace-query-runner/jobs/save-event-to-db.job';
 import { CreateCompanyAndContactJob } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
-import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { LogEventObjectMetadata } from 'src/modules/event/standard-objects/log-event.object-metadata';
 import { HandleWorkspaceMemberDeletedJob } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
 import { GmailFullSynV2Module } from 'src/modules/messaging/services/gmail-full-sync-v2/gmail-full-sync.v2.module';
 import { GmailFetchMessageContentFromCacheModule } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.module';
@@ -50,6 +49,7 @@ import { FetchAllMessagesFromCacheCronJob } from 'src/modules/messaging/jobs/cro
 import { GmailFullSyncV2Job } from 'src/modules/messaging/jobs/gmail-full-sync-v2.job';
 import { GmailPartialSyncV2Job } from 'src/modules/messaging/jobs/gmail-partial-sync-v2.job';
 import { GmailPartialSyncV2Module } from 'src/modules/messaging/services/gmail-partial-sync-v2/gmail-partial-sync-v2.module';
+import { SaveEventToDbJob } from 'src/modules/event/jobs/save-event-to-db.job';
 
 @Module({
   imports: [
@@ -77,7 +77,7 @@ import { GmailPartialSyncV2Module } from 'src/modules/messaging/services/gmail-p
       ConnectedAccountObjectMetadata,
       MessageParticipantObjectMetadata,
       MessageChannelObjectMetadata,
-      EventObjectMetadata,
+      LogEventObjectMetadata,
     ]),
     GmailFullSynV2Module,
     GmailFetchMessageContentFromCacheModule,

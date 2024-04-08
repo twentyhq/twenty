@@ -21,7 +21,8 @@ import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/comp
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
-import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { LogEventObjectMetadata } from 'src/modules/event/standard-objects/log-event.object-metadata';
+import { TimelineEventObjectMetadata } from 'src/modules/event/standard-objects/timeline-event.object-metadata';
 
 @ObjectMetadata({
   standardId: standardObjectIds.person,
@@ -224,7 +225,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   calendarEventParticipants: CalendarEventParticipantObjectMetadata[];
 
   @FieldMetadata({
-    standardId: personStandardFieldIds.events,
+    standardId: personStandardFieldIds.logEvents,
     type: FieldMetadataType.RELATION,
     label: 'Events',
     description: 'Events linked to the company',
@@ -232,10 +233,26 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => EventObjectMetadata,
+    inverseSideTarget: () => LogEventObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
   @IsSystem()
-  events: EventObjectMetadata[];
+  logEvents: LogEventObjectMetadata[];
+
+  @FieldMetadata({
+    standardId: personStandardFieldIds.timelineEvents,
+    type: FieldMetadataType.RELATION,
+    label: 'Events',
+    description: 'Events linked to the company',
+    icon: 'IconTimelineEvent',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    inverseSideTarget: () => TimelineEventObjectMetadata,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @IsNullable()
+  @IsSystem()
+  timelineEvents: TimelineEventObjectMetadata[];
 }

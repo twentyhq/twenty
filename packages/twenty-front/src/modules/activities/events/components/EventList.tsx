@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
 import { EventsGroup } from '@/activities/events/components/EventsGroup';
-import { Event } from '@/activities/events/types/Event';
+import { TimelineEvent } from '@/activities/events/types/TimelineEvent';
 import { groupEventsByMonth } from '@/activities/events/utils/groupEventsByMonth';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
@@ -10,7 +10,7 @@ import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 type EventListProps = {
   targetableObject: ActivityTargetableObject;
   title: string;
-  events: Event[];
+  events: TimelineEvent[];
   button?: ReactElement | false;
 };
 

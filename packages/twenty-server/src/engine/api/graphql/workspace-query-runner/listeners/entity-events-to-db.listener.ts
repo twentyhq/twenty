@@ -8,9 +8,9 @@ import { MessageQueue } from 'src/engine/integrations/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
 import {
-  SaveEventToDbJobData,
   SaveEventToDbJob,
-} from 'src/engine/api/graphql/workspace-query-runner/jobs/save-event-to-db.job';
+  SaveEventToDbJobData,
+} from 'src/modules/event/jobs/save-event-to-db.job';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,

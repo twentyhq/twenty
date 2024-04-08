@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { isNonEmptyArray } from '@sniptt/guards';
 
 import { EventList } from '@/activities/events/components/EventList';
-import { useEvents } from '@/activities/events/hooks/useEvents';
+import { useTimelineEvents } from '@/activities/events/hooks/useTimelineEvents';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
@@ -30,9 +30,9 @@ export const Events = ({
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
-  const { events } = useEvents(targetableObject);
+  const { timelineEvents } = useTimelineEvents(targetableObject);
 
-  if (!isNonEmptyArray(events)) {
+  if (!isNonEmptyArray(timelineEvents)) {
     return (
       <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="emptyTimeline" />
@@ -53,7 +53,7 @@ export const Events = ({
       <EventList
         targetableObject={targetableObject}
         title="All"
-        events={events ?? []}
+        events={timelineEvents ?? []}
       />
     </StyledMainContainer>
   );
