@@ -90,7 +90,9 @@ export const CalendarEventDetails = ({
     ({ name }) => name,
   );
 
-  const { participants } = calendarEvent;
+  const { calendarEventParticipants } = calendarEvent;
+
+  console.log('calendarEvent', calendarEvent);
 
   const Fields = fieldsToDisplay.map((fieldName) => (
     <StyledPropertyBox key={fieldName}>
@@ -137,9 +139,9 @@ export const CalendarEventDetails = ({
       </StyledHeader>
       <StyledFields>
         {Fields.slice(0, 2)}
-        {participants && (
+        {calendarEventParticipants && (
           <CalendarEventParticipantsResponseStatus
-            participants={participants}
+            participants={calendarEventParticipants}
           />
         )}
         {Fields.slice(2)}

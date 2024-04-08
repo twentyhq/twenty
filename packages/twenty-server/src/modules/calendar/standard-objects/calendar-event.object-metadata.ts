@@ -182,5 +182,5 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
     inverseSideTarget: () => CalendarEventParticipantObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  eventParticipants: CalendarEventParticipantObjectMetadata[];
+  calendarEventParticipants: CalendarEventParticipantObjectMetadata[];
 }
