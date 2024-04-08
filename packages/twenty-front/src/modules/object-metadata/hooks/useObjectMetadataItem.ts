@@ -3,7 +3,6 @@ import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState.ts';
 import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
-import { useGetObjectOrderByField } from '@/object-metadata/hooks/useGetObjectOrderByField';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
@@ -59,10 +58,6 @@ export const useObjectMetadataItem = ({
     );
   }
 
-  const getObjectOrderByField = useGetObjectOrderByField({
-    objectMetadataItem,
-  });
-
   const getRecordFromCache = useGetRecordFromCache({
     objectMetadataItem,
   });
@@ -85,6 +80,5 @@ export const useObjectMetadataItem = ({
     objectMetadataItem,
     getRecordFromCache,
     executeQuickActionOnOneRecordMutation,
-    getObjectOrderByField,
   };
 };
