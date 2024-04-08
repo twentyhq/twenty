@@ -6,6 +6,7 @@ import {
 import { Person, PersonFilterInput } from '~/generated/graphql';
 import { CREATE_PERSON } from '~/graphql/person/mutations';
 import { FIND_PERSON } from '~/graphql/person/queries';
+import { isDefined } from '~/utils/isDefined';
 
 import { callMutation, callQuery } from '../utils/requestDb';
 
@@ -17,8 +18,12 @@ export const fetchPerson = async (
       ...personFilterData,
     },
   });
-  if (data?.people.edges) {
-    return data?.people.edges.length > 0 ? data?.people.edges[0].node : null;
+  if (isDefined(data?.people.edges)) {
+    return data.people.edges.length > 0
+      ? isDefined(data.people.edges[0].node)
+        ? data.people.edges[0].node
+        : null
+      : null;
   }
   return null;
 };
@@ -29,7 +34,7 @@ export const createPerson = async (
   const data = await callMutation<CreatePersonResponse>(CREATE_PERSON, {
     input: person,
   });
-  if (data?.createPerson) {
+  if (isDefined(data?.createPerson)) {
     return data.createPerson.id;
   }
   return null;

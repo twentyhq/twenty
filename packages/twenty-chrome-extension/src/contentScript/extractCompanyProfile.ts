@@ -3,6 +3,7 @@ import extractCompanyLinkedinLink from '~/contentScript/utils/extractCompanyLink
 import extractDomain from '~/contentScript/utils/extractDomain';
 import { createCompany, fetchCompany } from '~/db/company.db';
 import { CompanyInput } from '~/db/types/company.types';
+import { isDefined } from '~/utils/isDefined';
 
 const insertButtonForCompany = async (): Promise<void> => {
   // Select the element in which to create the button.
@@ -11,7 +12,7 @@ const insertButtonForCompany = async (): Promise<void> => {
   );
 
   // Create the button with desired callback funciton to execute upon click.
-  if (parentDiv) {
+  if (isDefined(parentDiv)) {
     // Extract company-specific data from the DOM
     const companyNameElement = document.querySelector(
       '.org-top-card-summary__title',
@@ -62,16 +63,14 @@ const insertButtonForCompany = async (): Promise<void> => {
     const companyURL = extractCompanyLinkedinLink(activeTabUrl);
     companyInputData.linkedinLink = { url: companyURL, label: companyURL };
 
-    const company = null;
-    
-    // await fetchCompany({
-    //   linkedinLink: {
-    //     url: { eq: companyURL },
-    //     label: { eq: companyURL },
-    //   },
-    // });
+    const company = await fetchCompany({
+      linkedinLink: {
+        url: { eq: companyURL },
+        label: { eq: companyURL },
+      },
+    });
 
-    if (company) {
+    if (isDefined(company)) {
       const savedCompany: HTMLDivElement = createNewButton(
         'Saved',
         async () => {},
@@ -91,7 +90,7 @@ const insertButtonForCompany = async (): Promise<void> => {
         async () => {
           const response = await createCompany(companyInputData);
 
-          if (response) {
+          if (isDefined(response)) {
             newButtonCompany.textContent = 'Saved';
             newButtonCompany.setAttribute('disabled', 'true');
 

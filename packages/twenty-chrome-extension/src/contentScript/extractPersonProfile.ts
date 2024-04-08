@@ -2,6 +2,7 @@ import createNewButton from '~/contentScript/createButton';
 import extractFirstAndLastName from '~/contentScript/utils/extractFirstAndLastName';
 import { createPerson, fetchPerson } from '~/db/person.db';
 import { PersonInput } from '~/db/types/person.types';
+import { isDefined } from '~/utils/isDefined';
 
 const insertButtonForPerson = async (): Promise<void> => {
   // Select the element in which to create the button.
@@ -10,7 +11,7 @@ const insertButtonForPerson = async (): Promise<void> => {
   );
 
   // Create the button with desired callback funciton to execute upon click.
-  if (parentDiv) {
+  if (isDefined(parentDiv)) {
     // Extract person-specific data from the DOM.
     const personNameElement = document.querySelector('.text-heading-xlarge');
 
@@ -58,21 +59,19 @@ const insertButtonForPerson = async (): Promise<void> => {
     });
 
     // Remove last slash from the URL for consistency when saving usernames.
-    if (activeTabUrl.endsWith('/')) {
+    if (isDefined(activeTabUrl.endsWith('/'))) {
       activeTabUrl = activeTabUrl.slice(0, -1);
     }
 
     personData.linkedinLink = { url: activeTabUrl, label: activeTabUrl };
-    const person = null;
-    
-    // await fetchPerson({
-    //   name: {
-    //     firstName: { eq: firstName },
-    //     lastName: { eq: lastName },
-    //   },
-    //   linkedinLink: { url: { eq: activeTabUrl }, label: { eq: activeTabUrl } },
-    // });
-    if (person) {
+    const person = await fetchPerson({
+      name: {
+        firstName: { eq: firstName },
+        lastName: { eq: lastName },
+      },
+      linkedinLink: { url: { eq: activeTabUrl }, label: { eq: activeTabUrl } },
+    });
+    if (isDefined(person)) {
       const savedPerson: HTMLDivElement = createNewButton(
         'Saved',
         async () => {},
@@ -92,7 +91,7 @@ const insertButtonForPerson = async (): Promise<void> => {
         'Add to Twenty',
         async () => {
           const response = await createPerson(personData);
-          if (response) {
+          if (isDefined(response)) {
             newButtonPerson.textContent = 'Saved';
             newButtonPerson.setAttribute('disabled', 'true');
 

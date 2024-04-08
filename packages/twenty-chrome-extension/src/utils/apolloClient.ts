@@ -1,5 +1,7 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 
+import { isDefined } from '~/utils/isDefined';
+
 const getApolloClient = async () => {
   const { apiKey } = await chrome.storage.local.get('apiKey');
   const { serverBaseUrl } = await chrome.storage.local.get('serverBaseUrl');
@@ -8,7 +10,7 @@ const getApolloClient = async () => {
     serverBaseUrl ? serverBaseUrl : import.meta.env.VITE_SERVER_BASE_URL
   }/graphql`;
 
-  if (apiKey) {
+  if (isDefined(apiKey)) {
     return new ApolloClient({
       cache,
       uri: serverUrl,

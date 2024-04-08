@@ -41,7 +41,6 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
   return true;
 });
 
-
 const generateRandomString = (length: number) => {
   const charset =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
@@ -79,17 +78,28 @@ const launchOAuth = () => {
         const authorizationCode = url.searchParams.get(
           'authorizationCode',
         ) as string;
-        const tokens = await exchangeAuthorizationCode({ authorizationCode, codeVerifier });
+        const tokens = await exchangeAuthorizationCode({
+          authorizationCode,
+          codeVerifier,
+        });
         if (isDefined(tokens)) {
-          chrome.storage.local.set({ 
-            loginToken: tokens.loginToken, 
-            authToken: tokens.authToken, 
-            refreshToken: tokens.refreshToken 
+          chrome.storage.local.set({
+            loginToken: tokens.loginToken,
+          });
+
+          chrome.storage.local.set({
+            authToken: tokens.authToken,
+          });
+
+          chrome.storage.local.set({
+            refreshToken: tokens.refreshToken,
           });
 
           chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (isDefined(tabs) && isDefined(tabs[0])) {
-              chrome.tabs.sendMessage(tabs[0].id ?? 0, { action: 'TOGGLE' });
+              chrome.tabs.sendMessage(tabs[0].id ?? 0, {
+                action: 'AUTHENTICATED',
+              });
             }
           });
         }
