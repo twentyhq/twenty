@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
+import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { Person } from '@/people/types/Person';
 import { Avatar } from '@/users/components/Avatar';
 
 const StyledAvatar = styled(Avatar)`
@@ -26,17 +26,16 @@ const StyledRecordChip = styled(RecordChip)`
   font-weight: ${({ theme }) => theme.font.weight.medium};
 `;
 
-type ParticipantChipProps = {
-  person?: Person;
-  displayName: string;
-  avatarUrl: string;
-};
+export const ParticipantChip = ({ participant }: any) => {
+  const { person, workspaceMember } = participant;
 
-export const ParticipantChip = ({
-  person,
-  displayName,
-  avatarUrl,
-}: ParticipantChipProps) => {
+  const displayName = getDisplayNameFromParticipant({
+    participant,
+    shouldUseFullName: true,
+  });
+
+  const avatarUrl = person?.avatarUrl ?? workspaceMember?.avatarUrl ?? '';
+
   return (
     <StyledContainer>
       {person ? (

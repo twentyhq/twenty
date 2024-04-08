@@ -1,7 +1,9 @@
+import React from 'react';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconCalendarEvent } from 'twenty-ui';
 
+import { CalendarEventParticipantsResponseStatus } from '@/activities/calendar/components/CalendarEventParticipantsResponseStatus';
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
 import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -88,6 +90,30 @@ export const CalendarEventDetails = ({
     ({ name }) => name,
   );
 
+  const { participants } = calendarEvent;
+
+  const Fields = fieldsToDisplay.map((fieldName) => (
+    <StyledPropertyBox key={fieldName}>
+      <FieldContext.Provider
+        value={{
+          entityId: calendarEvent.id,
+          hotkeyScope: 'calendar-event-details',
+          recoilScopeId: `${calendarEvent.id}-${fieldName}`,
+          isLabelIdentifier: false,
+          fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
+            field: fieldsByName[fieldName],
+            objectMetadataItem,
+            showLabel: true,
+            labelWidth: 72,
+          }),
+          useUpdateRecord: () => [() => undefined, { loading: false }],
+        }}
+      >
+        <RecordInlineCell readonly />
+      </FieldContext.Provider>
+    </StyledPropertyBox>
+  ));
+
   return (
     <StyledContainer>
       <StyledEventChip
@@ -110,27 +136,13 @@ export const CalendarEventDetails = ({
         </StyledCreatedAt>
       </StyledHeader>
       <StyledFields>
-        {fieldsToDisplay.map((fieldName) => (
-          <StyledPropertyBox key={fieldName}>
-            <FieldContext.Provider
-              value={{
-                entityId: calendarEvent.id,
-                hotkeyScope: 'calendar-event-details',
-                recoilScopeId: `${calendarEvent.id}-${fieldName}`,
-                isLabelIdentifier: false,
-                fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
-                  field: fieldsByName[fieldName],
-                  objectMetadataItem,
-                  showLabel: true,
-                  labelWidth: 72,
-                }),
-                useUpdateRecord: () => [() => undefined, { loading: false }],
-              }}
-            >
-              <RecordInlineCell readonly />
-            </FieldContext.Provider>
-          </StyledPropertyBox>
-        ))}
+        {Fields.slice(0, 2)}
+        {participants && (
+          <CalendarEventParticipantsResponseStatus
+            participants={participants}
+          />
+        )}
+        {Fields.slice(2)}
       </StyledFields>
     </StyledContainer>
   );
