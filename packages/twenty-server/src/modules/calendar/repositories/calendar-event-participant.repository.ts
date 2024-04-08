@@ -18,6 +18,88 @@ export class CalendarEventParticipantRepository {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
+  public async getByHandles(
+    handles: string[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<CalendarEventParticipantObjectMetadata>[]> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT * FROM ${dataSourceSchema}."calendarEventParticipant" WHERE "handle" = ANY($1)`,
+      [handles],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async updateParticipantsPersonId(
+    participantIds: string[],
+    personId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."calendarEventParticipant" SET "personId" = $1 WHERE "id" = ANY($2)`,
+      [personId, participantIds],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async updateParticipantsWorkspaceMemberId(
+    participantIds: string[],
+    workspaceMemberId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."calendarEventParticipant" SET "workspaceMemberId" = $1 WHERE "id" = ANY($2)`,
+      [workspaceMemberId, participantIds],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async removePersonIdByHandle(
+    handle: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."calendarEventParticipant" SET "personId" = NULL WHERE "handle" = $1`,
+      [handle],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async removeWorkspaceMemberIdByHandle(
+    handle: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."calendarEventParticipant" SET "workspaceMemberId" = NULL WHERE "handle" = $1`,
+      [handle],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async getByIds(
     calendarEventParticipantIds: string[],
     workspaceId: string,

@@ -7,13 +7,17 @@ import { objectRecordChangedProperties as objectRecordUpdateEventChangedProperti
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import {
-  MatchMessageParticipantJob,
-  MatchMessageParticipantsJobData,
-} from 'src/modules/messaging/jobs/match-message-participant.job';
+  MatchParticipantJob,
+  MatchParticipantJobData,
+} from 'src/modules/connected-account/jobs/match-participant.job';
+import {
+  UnmatchParticipantJobData,
+  UnmatchParticipantJob,
+} from 'src/modules/connected-account/jobs/unmatch-participant.job';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
 @Injectable()
-export class MessagingWorkspaceMemberListener {
+export class ParticipantWorkspaceMemberListener {
   constructor(
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -27,8 +31,8 @@ export class MessagingWorkspaceMemberListener {
       return;
     }
 
-    await this.messageQueueService.add<MatchMessageParticipantsJobData>(
-      MatchMessageParticipantJob.name,
+    await this.messageQueueService.add<MatchParticipantJobData>(
+      MatchParticipantJob.name,
       {
         workspaceId: payload.workspaceId,
         email: payload.details.after.userEmail,
@@ -47,8 +51,17 @@ export class MessagingWorkspaceMemberListener {
         payload.details.after,
       ).includes('userEmail')
     ) {
-      await this.messageQueueService.add<MatchMessageParticipantsJobData>(
-        MatchMessageParticipantJob.name,
+      await this.messageQueueService.add<UnmatchParticipantJobData>(
+        UnmatchParticipantJob.name,
+        {
+          workspaceId: payload.workspaceId,
+          email: payload.details.before.userEmail,
+          personId: payload.recordId,
+        },
+      );
+
+      await this.messageQueueService.add<MatchParticipantJobData>(
+        MatchParticipantJob.name,
         {
           workspaceId: payload.workspaceId,
           email: payload.details.after.userEmail,
