@@ -1,5 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
+import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { OrderBy } from '@/object-metadata/types/OrderBy';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
@@ -24,10 +25,13 @@ export const useRecordsForSelect = ({
   excludeEntityIds?: string[];
   objectNameSingular: string;
 }) => {
-  const { mapToObjectRecordIdentifier, getObjectOrderByField } =
-    useObjectMetadataItem({
-      objectNameSingular,
-    });
+  const { getObjectOrderByField } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
+  const { mapToObjectRecordIdentifier } = useMapToObjectRecordIdentifier({
+    objectNameSingular,
+  });
 
   const filters = [
     {
