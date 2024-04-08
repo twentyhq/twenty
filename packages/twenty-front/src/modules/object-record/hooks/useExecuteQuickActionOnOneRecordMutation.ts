@@ -2,8 +2,8 @@ import { gql } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
 import { EMPTY_MUTATION } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from '~/utils/string/capitalize';
@@ -16,11 +16,15 @@ export const getExecuteQuickActionOnOneRecordMutationGraphQLField = ({
   return `executeQuickActionOn${capitalize(objectNameSingular)}`;
 };
 
-export const useGenerateExecuteQuickActionOnOneRecordMutation = ({
-  objectMetadataItem,
+export const useExecuteQuickActionOnOneRecordMutation = ({
+  objectNameSingular,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectNameSingular: string;
 }) => {
+  const { objectMetadataItem } = useObjectMetadataItemOnly({
+    objectNameSingular,
+  });
+
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   if (isUndefinedOrNull(objectMetadataItem)) {

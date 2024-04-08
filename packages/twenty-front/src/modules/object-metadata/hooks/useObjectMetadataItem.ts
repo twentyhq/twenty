@@ -8,8 +8,6 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
-import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
-import { useGenerateExecuteQuickActionOnOneRecordMutation } from '@/object-record/hooks/useGenerateExecuteQuickActionOnOneRecordMutation';
 import { isDefined } from '~/utils/isDefined';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
@@ -58,15 +56,6 @@ export const useObjectMetadataItem = ({
     );
   }
 
-  const getRecordFromCache = useGetRecordFromCache({
-    objectMetadataItem,
-  });
-
-  const executeQuickActionOnOneRecordMutation =
-    useGenerateExecuteQuickActionOnOneRecordMutation({
-      objectMetadataItem,
-    });
-
   const labelIdentifierFieldMetadata =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
@@ -78,7 +67,5 @@ export const useObjectMetadataItem = ({
     labelIdentifierFieldMetadata,
     basePathToShowPage,
     objectMetadataItem,
-    getRecordFromCache,
-    executeQuickActionOnOneRecordMutation,
   };
 };

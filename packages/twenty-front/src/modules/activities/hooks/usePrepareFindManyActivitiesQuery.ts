@@ -21,7 +21,7 @@ export const usePrepareFindManyActivitiesQuery = () => {
     });
 
   const getActivityFromCache = useGetRecordFromCache({
-    objectMetadataItem: objectMetadataItemActivity,
+    objectNameSingular: CoreObjectNameSingular.Activity,
   });
 
   const cache = useApolloClient().cache;
