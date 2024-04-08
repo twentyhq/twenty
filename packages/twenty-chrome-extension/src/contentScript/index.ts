@@ -70,8 +70,8 @@ const toggleIframe = (iframe: HTMLIFrameElement) => {
 };
 
 const toggle = async () => {
-  const authToken = await chrome.storage.local.get("authToken");
-  if (isDefined(authToken)) {
+  const store = await chrome.storage.local.get(["authToken"]);
+  if (isDefined(store.authToken)) {
     toggleIframe(contentIframe);
   } else {
     toggleIframe(optionsIframe);
