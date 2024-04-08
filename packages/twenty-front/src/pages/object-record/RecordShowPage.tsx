@@ -33,7 +33,9 @@ export const RecordShowPage = () => {
     throw new Error(`Record id is not defined`);
   }
 
-  const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
 
   const { labelIdentifierFieldMetadataItem } =
     useLabelIdentifierFieldMetadataItem({

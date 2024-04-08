@@ -1,4 +1,4 @@
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useGenerateUpdateOneRecordMutation } from '@/object-record/hooks/useGenerateUpdateOneRecordMutation';
 
 export const useUpdateOneRecordMutation = ({
@@ -8,7 +8,7 @@ export const useUpdateOneRecordMutation = ({
   objectNameSingular: string;
   computeReferences?: boolean;
 }) => {
-  const { objectMetadataItem } = useObjectMetadataItemOnly({
+  const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 

@@ -1,4 +1,3 @@
-import { gql } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState.ts';
@@ -9,18 +8,6 @@ import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMet
 import { isDefined } from '~/utils/isDefined';
 
 import { ObjectMetadataItemIdentifier } from '../types/ObjectMetadataItemIdentifier';
-
-export const EMPTY_QUERY = gql`
-  query EmptyQuery {
-    empty
-  }
-`;
-
-export const EMPTY_MUTATION = gql`
-  mutation EmptyMutation {
-    empty
-  }
-`;
 
 export const useObjectMetadataItem = ({
   objectNameSingular,

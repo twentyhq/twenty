@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { IconCalendarEvent } from 'twenty-ui';
 
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -71,7 +71,7 @@ export const CalendarEventDetails = ({
   calendarEvent,
 }: CalendarEventDetailsProps) => {
   const theme = useTheme();
-  const { objectMetadataItem } = useObjectMetadataItemOnly({
+  const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.CalendarEvent,
   });
 

@@ -10,7 +10,7 @@ import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { getActivityTargetObjectFieldName } from '@/activities/utils/getActivityTargetObjectFieldName';
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateManyRecordsInCache } from '@/object-record/cache/hooks/useCreateManyRecordsInCache';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
@@ -61,7 +61,7 @@ export const ActivityTargetInlineCellEditMode = ({
   const { upsertActivity } = useUpsertActivity();
 
   const { objectMetadataItem: objectMetadataItemActivityTarget } =
-    useObjectMetadataItemOnly({
+    useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     });
 

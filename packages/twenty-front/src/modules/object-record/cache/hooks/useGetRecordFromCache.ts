@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useApolloClient } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -12,7 +12,7 @@ export const useGetRecordFromCache = ({
 }: {
   objectNameSingular: string;
 }) => {
-  const { objectMetadataItem } = useObjectMetadataItemOnly({
+  const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 

@@ -1,4 +1,4 @@
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
 
 export const useFindOneRecordQuery = ({
@@ -8,7 +8,7 @@ export const useFindOneRecordQuery = ({
   objectNameSingular: string;
   depth?: number;
 }) => {
-  const { objectMetadataItem } = useObjectMetadataItemOnly({
+  const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 

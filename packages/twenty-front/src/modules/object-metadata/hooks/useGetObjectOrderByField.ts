@@ -1,4 +1,4 @@
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { OrderBy } from '@/object-metadata/types/OrderBy';
 import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { getOrderByFieldForObjectMetadataItem } from '@/object-metadata/utils/getObjectOrderByField';
@@ -8,7 +8,7 @@ export const useGetObjectOrderByField = ({
 }: {
   objectNameSingular: string;
 }) => {
-  const { objectMetadataItem } = useObjectMetadataItemOnly({
+  const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 

@@ -1,4 +1,4 @@
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { generateDeleteOneRecordMutation } from '@/object-record/utils/generateDeleteOneRecordMutation';
 
 export const useDeleteOneRecordMutation = ({
@@ -6,7 +6,7 @@ export const useDeleteOneRecordMutation = ({
 }: {
   objectNameSingular: string;
 }) => {
-  const { objectMetadataItem } = useObjectMetadataItemOnly({
+  const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 

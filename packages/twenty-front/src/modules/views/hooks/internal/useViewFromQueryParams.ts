@@ -39,7 +39,9 @@ export const useViewFromQueryParams = () => {
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
   });
-  const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
   const generateFindManyRecordsQuery = useGenerateFindManyRecordsQuery();
 
   const queryParamsValidation = filterQueryParamsSchema.safeParse(
