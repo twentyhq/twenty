@@ -60,8 +60,11 @@ const StyledParticipantsContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
   max-width: 100%;
   overflow: hidden;
-  text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const StyledParticipantChip = styled(ParticipantChip)<{ isInView: boolean }>`
+  opacity: ${({ isInView }) => (isInView ? 1 : 0)};
 `;
 
 const ParticipantChipWithIntersectionObserver = ({
@@ -73,7 +76,10 @@ const ParticipantChipWithIntersectionObserver = ({
 }) => {
   // eslint-disable-next-line @nx/workspace-no-state-useref
   const ref = useRef(null);
-  const isInView = useInView(ref);
+  const isInView = useInView(ref, {
+    once: true,
+    margin: '0px 0px -200px 0px',
+  });
 
   useEffect(() => {
     if (isInView) {
@@ -83,19 +89,13 @@ const ParticipantChipWithIntersectionObserver = ({
         return newSet;
       });
     }
-    if (!isInView) {
-      setParticipantsInView((prev: Set<string>) => {
-        const newSet = new Set(prev);
-        newSet.delete(participant.id);
-        return newSet;
-      });
-    }
   }, [isInView, participant.id, setParticipantsInView]);
 
   return (
-    <div ref={ref}>
-      <ParticipantChip participant={participant} />
-    </div>
+    <>
+      <StyledParticipantChip participant={participant} isInView={isInView} />
+      <div ref={ref}></div>
+    </>
   );
 };
 
@@ -139,13 +139,19 @@ export const CalendarEventParticipantsResponseStatusField = ({
         </StyledLabelAndIconContainer>
 
         <StyledParticipantsContainer>
-          {participantsInView.size}
-          {orderedParticipants.map((participant) => (
-            <ParticipantChipWithIntersectionObserver
-              key={participant.id}
-              participant={participant}
-              setParticipantsInView={setParticipantsInView}
-            />
+          {orderedParticipants.map((participant, index) => (
+            <>
+              <ParticipantChipWithIntersectionObserver
+                key={participant.id}
+                participant={participant}
+                setParticipantsInView={setParticipantsInView}
+              />
+              {index === participantsInView.size - 1 && (
+                <EllipsisDisplay>{`+${
+                  orderedParticipants.length - participantsInView.size
+                }`}</EllipsisDisplay>
+              )}{' '}
+            </>
           ))}
         </StyledParticipantsContainer>
       </StyledInlineCellBaseContainer>

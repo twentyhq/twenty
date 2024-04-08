@@ -31,9 +31,11 @@ const StyledRecordChip = styled(RecordChip)<{ variant: 'default' | 'bold' }>`
 export const ParticipantChip = ({
   participant,
   variant = 'default',
+  className,
 }: {
   participant: any;
   variant?: 'default' | 'bold';
+  className?: string;
 }) => {
   const { person, workspaceMember } = participant;
 
@@ -45,7 +47,7 @@ export const ParticipantChip = ({
   const avatarUrl = person?.avatarUrl ?? workspaceMember?.avatarUrl ?? '';
 
   return (
-    <StyledContainer>
+    <StyledContainer className={className}>
       {person ? (
         <StyledRecordChip
           objectNameSingular={CoreObjectNameSingular.Person}
