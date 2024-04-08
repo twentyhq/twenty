@@ -22,15 +22,15 @@ export const useMultiSelectField = () => {
 
   const { fieldName } = fieldDefinition.metadata;
 
-  const [fieldValue, setFieldValue] = useRecoilState<FieldMultiSelectValue>(
+  const [fieldValues, setFieldValue] = useRecoilState<FieldMultiSelectValue>(
     recordStoreFamilySelector({
       recordId: entityId,
       fieldName: fieldName,
     }),
   );
 
-  const fieldMultiSelectValue = isFieldMultiSelectValue(fieldValue)
-    ? fieldValue
+  const fieldMultiSelectValues = isFieldMultiSelectValue(fieldValues)
+    ? fieldValues
     : null;
   const persistField = usePersistField();
 
@@ -41,7 +41,7 @@ export const useMultiSelectField = () => {
   return {
     fieldDefinition,
     persistField,
-    fieldValue: fieldMultiSelectValue,
+    fieldValues: fieldMultiSelectValues,
     draftValue,
     setDraftValue,
     setFieldValue,

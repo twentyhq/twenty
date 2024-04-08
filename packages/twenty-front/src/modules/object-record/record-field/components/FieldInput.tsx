@@ -132,7 +132,7 @@ export const FieldInput = ({
       ) : isFieldSelect(fieldDefinition) ? (
         <SelectFieldInput onSubmit={onSubmit} onCancel={onCancel} />
       ) : isFieldMultiSelect(fieldDefinition) ? (
-        <MultiSelectFieldInput onSubmit={onSubmit} onCancel={onCancel} />
+        <MultiSelectFieldInput onCancel={onCancel} />
       ) : isFieldAddress(fieldDefinition) ? (
         <AddressFieldInput
           onEnter={onEnter}

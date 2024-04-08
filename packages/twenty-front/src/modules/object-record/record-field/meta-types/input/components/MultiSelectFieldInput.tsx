@@ -1,13 +1,13 @@
 import { useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { useSelectField } from '@/object-record/record-field/meta-types/hooks/useSelectField';
+import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField.ts';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { MenuItemSelectTag } from '@/ui/navigation/menu-item/components/MenuItemSelectTag';
+import { MenuItemMultiSelectTag } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectTag.tsx';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
@@ -23,26 +23,30 @@ export type MultiSelectFieldInputProps = {
 };
 
 export const MultiSelectFieldInput = ({
-  onSubmit,
   onCancel,
 }: MultiSelectFieldInputProps) => {
-  const { persistField, fieldDefinition, fieldValue } = useSelectField();
+  const { persistField, fieldDefinition, fieldValues } = useMultiSelectField();
   const [searchFilter, setSearchFilter] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const selectedOption = fieldDefinition.metadata.options.find(
-    (option) => option.value === fieldValue,
+  const selectedOptions = fieldDefinition.metadata.options.filter(
+    (option) => fieldValues?.includes(option.value),
   );
-  const optionsToSelect =
-    fieldDefinition.metadata.options.filter((option) => {
-      return (
-        option.value !== fieldValue &&
-        option.label.toLowerCase().includes(searchFilter.toLowerCase())
+
+  const optionsInDropDown = fieldDefinition.metadata.options;
+
+  const formatNewSelectedOptions = (value: string) => {
+    const selectedOptionsValues = selectedOptions.map(
+      (selectedOption) => selectedOption.value,
+    );
+    if (!selectedOptionsValues.includes(value)) {
+      return [value, ...selectedOptionsValues];
+    } else {
+      return selectedOptionsValues.filter(
+        (selectedOptionsValue) => selectedOptionsValue !== value,
       );
-    }) || [];
-  const optionsInDropDown = selectedOption
-    ? [selectedOption, ...optionsToSelect]
-    : optionsToSelect;
+    }
+  };
 
   useListenClickOutside({
     refs: [containerRef],
@@ -71,12 +75,14 @@ export const MultiSelectFieldInput = ({
         <DropdownMenuItemsContainer hasMaxHeight>
           {optionsInDropDown.map((option) => {
             return (
-              <MenuItemSelectTag
+              <MenuItemMultiSelectTag
                 key={option.value}
-                selected={option.value === fieldValue}
+                selected={fieldValues?.includes(option.value) || false}
                 text={option.label}
                 color={option.color}
-                onClick={() => onSubmit?.(() => persistField(option.value))}
+                onClick={() =>
+                  persistField(formatNewSelectedOptions(option.value))
+                }
               />
             );
           })}

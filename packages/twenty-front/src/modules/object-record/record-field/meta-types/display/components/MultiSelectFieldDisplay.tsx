@@ -8,11 +8,11 @@ const StyledTagContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 export const MultiSelectFieldDisplay = () => {
-  const { fieldValue, fieldDefinition } = useMultiSelectField();
+  const { fieldValues, fieldDefinition } = useMultiSelectField();
 
-  const selectedOptions = fieldValue
+  const selectedOptions = fieldValues
     ? fieldDefinition.metadata.options.filter((option) =>
-        fieldValue.includes(option.value),
+        fieldValues.includes(option.value),
       )
     : [];
 
