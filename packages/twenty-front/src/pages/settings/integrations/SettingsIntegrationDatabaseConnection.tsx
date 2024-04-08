@@ -54,7 +54,7 @@ export const SettingsIntegrationDatabaseConnection = () => {
   const deleteConnection = async () => {
     if (!connection) return;
 
-    await deleteOneDatabaseConnection({ id: connection?.id });
+    await deleteOneDatabaseConnection({ id: connection.id });
 
     navigate(`${settingsIntegrationsPagePath}/${databaseKey}`);
   };
@@ -102,7 +102,7 @@ export const SettingsIntegrationDatabaseConnection = () => {
               databaseLogoUrl={integration.from.image}
               connectionName={connection.name}
               connectedTablesNb={tables.length}
-              deleteConnection={deleteConnection}
+              onRemove={deleteConnection}
             />
           </Section>
           <Section>
