@@ -139,7 +139,7 @@ export const Checkbox = ({
   variant = CheckboxVariant.Primary,
   size = CheckboxSize.Small,
   shape = CheckboxShape.Squared,
-  hoverable = true,
+  hoverable = false,
   className,
 }: CheckboxProps) => {
   const [isInternalChecked, setIsInternalChecked] =
