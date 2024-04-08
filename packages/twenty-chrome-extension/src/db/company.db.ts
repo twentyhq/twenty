@@ -8,6 +8,7 @@ import { CREATE_COMPANY } from '~/graphql/company/mutations';
 import { FIND_COMPANY } from '~/graphql/company/queries';
 
 import { callMutation, callQuery } from '../utils/requestDb';
+import { isDefined } from '~/utils/isDefined';
 
 export const fetchCompany = async (
   companyfilerInput: CompanyFilterInput,
@@ -17,9 +18,9 @@ export const fetchCompany = async (
       ...companyfilerInput,
     },
   });
-  if (data?.companies.edges) {
-    return data?.companies.edges.length > 0
-      ? data?.companies.edges[0].node
+  if (isDefined(data?.companies.edges)) {
+    return data.companies.edges.length > 0
+      ? isDefined(data.companies.edges[0].node) ? data.companies.edges[0].node : null
       : null;
   }
   return null;

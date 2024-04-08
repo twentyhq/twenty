@@ -104,6 +104,17 @@ export class AuthResolver {
     return { loginToken };
   }
 
+  @Mutation(() => ExchangeAuthCode)
+  async exchangeAuthorizationCode(
+    @Args() exchangeAuthCodeInput: ExchangeAuthCodeInput,
+  ) {
+    const tokens = await this.tokenService.verifyAuthorizationCode(
+      exchangeAuthCodeInput,
+    );
+
+    return tokens;
+  }
+
   @Mutation(() => TransientToken)
   @UseGuards(JwtAuthGuard)
   async generateTransientToken(
@@ -147,17 +158,6 @@ export class AuthResolver {
     );
 
     return authorizedApp;
-  }
-
-  @Query(() => ExchangeAuthCode)
-  async exchangeAuthorizationCode(
-    @Args() exchangeAuthCodeInput: ExchangeAuthCodeInput,
-  ) {
-    const tokens = await this.tokenService.verifyAuthorizationCode(
-      exchangeAuthCodeInput,
-    );
-
-    return tokens;
   }
 
   @Mutation(() => AuthTokens)

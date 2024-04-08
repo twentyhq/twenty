@@ -62,12 +62,15 @@ const insertButtonForCompany = async (): Promise<void> => {
     const companyURL = extractCompanyLinkedinLink(activeTabUrl);
     companyInputData.linkedinLink = { url: companyURL, label: companyURL };
 
-    const company = await fetchCompany({
-      linkedinLink: {
-        url: { eq: companyURL },
-        label: { eq: companyURL },
-      },
-    });
+    const company = null;
+    
+    // await fetchCompany({
+    //   linkedinLink: {
+    //     url: { eq: companyURL },
+    //     label: { eq: companyURL },
+    //   },
+    // });
+
     if (company) {
       const savedCompany: HTMLDivElement = createNewButton(
         'Saved',

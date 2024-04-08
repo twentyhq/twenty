@@ -1,5 +1,6 @@
 import insertButtonForCompany from '~/contentScript/extractCompanyProfile';
 import insertButtonForPerson from '~/contentScript/extractPersonProfile';
+import { isDefined } from '~/utils/isDefined';
 
 // Inject buttons into the DOM when SPA is reloaded on the resource url.
 // e.g. reload the page when on https://www.linkedin.com/in/mabdullahabaid/
@@ -17,7 +18,7 @@ chrome.runtime.onMessage.addListener(async (message, _, sendResponse) => {
   }
 
   if (message.action === 'TOGGLE') {
-    toggle();
+    await toggle();
   }
 
   sendResponse('Executing!');
@@ -53,8 +54,12 @@ contentIframe.onload = handleContentIframeLoadComplete;
 const loadingIframe = createIframe();
 loadingIframe.src = chrome.runtime.getURL('loading.html');
 
+const optionsIframe = createIframe();
+optionsIframe.src = chrome.runtime.getURL('options.html');
+
 document.body.appendChild(loadingIframe);
 document.body.appendChild(contentIframe);
+document.body.appendChild(optionsIframe);
 
 const toggleIframe = (iframe: HTMLIFrameElement) => {
   if (iframe.style.right === '-400px' && iframe.style.display !== 'none') {
@@ -64,7 +69,11 @@ const toggleIframe = (iframe: HTMLIFrameElement) => {
   }
 };
 
-const toggle = () => {
-  toggleIframe(loadingIframe);
-  toggleIframe(contentIframe);
+const toggle = async () => {
+  const authToken = await chrome.storage.local.get("authToken");
+  if (isDefined(authToken)) {
+    toggleIframe(contentIframe);
+  } else {
+    toggleIframe(optionsIframe);
+  }
 };

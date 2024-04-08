@@ -63,15 +63,15 @@ const insertButtonForPerson = async (): Promise<void> => {
     }
 
     personData.linkedinLink = { url: activeTabUrl, label: activeTabUrl };
-
-    const person = await fetchPerson({
-      name: {
-        firstName: { eq: firstName },
-        lastName: { eq: lastName },
-      },
-      linkedinLink: { url: { eq: activeTabUrl }, label: { eq: activeTabUrl } },
-    });
-
+    const person = null;
+    
+    // await fetchPerson({
+    //   name: {
+    //     firstName: { eq: firstName },
+    //     lastName: { eq: lastName },
+    //   },
+    //   linkedinLink: { url: { eq: activeTabUrl }, label: { eq: activeTabUrl } },
+    // });
     if (person) {
       const savedPerson: HTMLDivElement = createNewButton(
         'Saved',

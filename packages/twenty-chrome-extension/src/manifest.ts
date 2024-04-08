@@ -32,9 +32,9 @@ export default defineManifest({
     },
   ],
 
-  permissions: ['activeTab', 'storage'],
+  permissions: ['activeTab', 'storage', 'identity'],
 
-  host_permissions: ['https://www.linkedin.com/*'],
+  host_permissions: ['https://www.linkedin.com/*', 'http://localhost:3001/*'],
 
   externally_connectable: {
     matches: [`https://app.twenty.com/*`, `http://localhost:3001/*`],
