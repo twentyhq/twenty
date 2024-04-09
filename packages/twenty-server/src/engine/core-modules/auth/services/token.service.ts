@@ -445,6 +445,7 @@ export class TokenService {
   }
 
   async generateTokensFromRefreshToken(token: string): Promise<{
+    loginToken: AuthToken;
     accessToken: AuthToken;
     refreshToken: AuthToken;
   }> {
@@ -463,10 +464,12 @@ export class TokenService {
       },
     );
 
+    const loginToken = await this.generateLoginToken(user.email);
     const accessToken = await this.generateAccessToken(user.id);
     const refreshToken = await this.generateRefreshToken(user.id);
 
     return {
+      loginToken,
       accessToken,
       refreshToken,
     };

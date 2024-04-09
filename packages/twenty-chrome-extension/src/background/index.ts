@@ -88,7 +88,7 @@ const launchOAuth = () => {
           });
 
           chrome.storage.local.set({
-            authToken: tokens.authToken,
+            accessToken: tokens.accessToken,
           });
 
           chrome.storage.local.set({
