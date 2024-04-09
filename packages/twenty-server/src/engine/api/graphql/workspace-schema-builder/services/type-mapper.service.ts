@@ -5,7 +5,6 @@ import {
   GraphQLBoolean,
   GraphQLEnumType,
   GraphQLFloat,
-  GraphQLID,
   GraphQLInputObjectType,
   GraphQLInputType,
   GraphQLInt,
@@ -35,7 +34,10 @@ import {
   RawJsonFilterType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input';
 import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
-import { BigFloatScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import {
+  BigFloatScalarType,
+  UUIDScalarType,
+} from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { PositionScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/position.scalar';
 
 export interface TypeOptions<T = any> {
@@ -58,7 +60,7 @@ export class TypeMapperService {
       numberScalarMode === 'float' ? GraphQLFloat : GraphQLInt;
 
     const typeScalarMapping = new Map<FieldMetadataType, GraphQLScalarType>([
-      [FieldMetadataType.UUID, GraphQLID],
+      [FieldMetadataType.UUID, UUIDScalarType],
       [FieldMetadataType.TEXT, GraphQLString],
       [FieldMetadataType.PHONE, GraphQLString],
       [FieldMetadataType.EMAIL, GraphQLString],
@@ -67,7 +69,7 @@ export class TypeMapperService {
       [FieldMetadataType.NUMBER, numberScalar],
       [FieldMetadataType.NUMERIC, BigFloatScalarType],
       [FieldMetadataType.PROBABILITY, GraphQLFloat],
-      [FieldMetadataType.RELATION, GraphQLID],
+      [FieldMetadataType.RELATION, UUIDScalarType],
       [FieldMetadataType.POSITION, PositionScalarType],
       [FieldMetadataType.RAW_JSON, GraphQLJSON],
     ]);
