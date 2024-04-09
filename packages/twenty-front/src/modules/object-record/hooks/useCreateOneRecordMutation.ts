@@ -1,30 +1,31 @@
-import { gql } from '@apollo/client';
+import gql from 'graphql-tag';
 import { useRecoilValue } from 'recoil';
 
-import { EMPTY_MUTATION } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
+import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const getCreateOneRecordMutationResponseField = (
-  objectNameSingular: string,
-) => `create${capitalize(objectNameSingular)}`;
-
-export const useGenerateCreateOneRecordMutation = ({
-  objectMetadataItem,
+export const useCreateOneRecordMutation = ({
+  objectNameSingular,
   queryFields,
-  depth = 1,
+  depth,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectNameSingular: string;
   queryFields?: Record<string, any>;
   depth?: number;
 }) => {
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   if (isUndefinedOrNull(objectMetadataItem)) {
-    return EMPTY_MUTATION;
+    return { createOneRecordMutation: EMPTY_MUTATION };
   }
 
   const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
@@ -33,7 +34,7 @@ export const useGenerateCreateOneRecordMutation = ({
     objectMetadataItem.nameSingular,
   );
 
-  return gql`
+  const createOneRecordMutation = gql`
     mutation CreateOne${capitalizedObjectName}($input: ${capitalizedObjectName}CreateInput!)  {
       ${mutationResponseField}(data: $input) ${mapObjectMetadataToGraphQLQuery({
         objectMetadataItems,
@@ -43,4 +44,8 @@ export const useGenerateCreateOneRecordMutation = ({
       })}
     }
   `;
+
+  return {
+    createOneRecordMutation,
+  };
 };

@@ -80,14 +80,21 @@ export type WorkspaceMigrationColumnAction = {
   | WorkspaceMigrationCreateComment
 );
 
+/**
+ * Enum values are lowercase to avoid issues with already existing enum values
+ */
+export enum WorkspaceMigrationTableActionType {
+  CREATE = 'create',
+  ALTER = 'alter',
+  DROP = 'drop',
+  CREATE_FOREIGN_TABLE = 'create_foreign_table',
+  DROP_FOREIGN_TABLE = 'drop_foreign_table'
+}
+
 export type WorkspaceMigrationTableAction = {
   name: string;
-  action:
-    | 'create'
-    | 'alter'
-    | 'drop'
-    | 'create_foreign_table'
-    | 'drop_foreign_table';
+  newName?: string;
+  action: WorkspaceMigrationTableActionType;
   columns?: WorkspaceMigrationColumnAction[];
   foreignTable?: WorkspaceMigrationForeignTable;
 };

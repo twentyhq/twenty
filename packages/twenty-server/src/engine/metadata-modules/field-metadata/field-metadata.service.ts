@@ -18,6 +18,7 @@ import {
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnDrop,
   WorkspaceMigrationTableAction,
+  WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -152,7 +153,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           [
             {
               name: computeObjectTargetTable(objectMetadata),
-              action: 'alter',
+              action: WorkspaceMigrationTableActionType.ALTER,
               columns: this.workspaceMigrationFactory.createColumnActions(
                 WorkspaceMigrationColumnActionType.CREATE,
                 createdFieldMetadata,
@@ -328,7 +329,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           [
             {
               name: computeObjectTargetTable(objectMetadata),
-              action: 'alter',
+              action: WorkspaceMigrationTableActionType.ALTER,
               columns: this.workspaceMigrationFactory.createColumnActions(
                 WorkspaceMigrationColumnActionType.ALTER,
                 existingFieldMetadata,
@@ -399,7 +400,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         [
           {
             name: computeObjectTargetTable(objectMetadata),
-            action: 'alter',
+            action: WorkspaceMigrationTableActionType.ALTER,
             columns: [
               {
                 action: WorkspaceMigrationColumnActionType.DROP,
@@ -484,68 +485,48 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     return fieldMetadataInputOverrided as UpdateFieldInput;
   }
 
-  public async getRelationDefinition(
-    fieldMetadata: FieldMetadataDTO,
+  public async getRelationDefinitionFromRelationMetadata(
+    fieldMetadataDTO: FieldMetadataDTO,
+    relationMetadata: RelationMetadataEntity,
   ): Promise<RelationDefinitionDTO | null> {
-    if (fieldMetadata.type !== FieldMetadataType.RELATION) {
+    if (fieldMetadataDTO.type !== FieldMetadataType.RELATION) {
       return null;
     }
 
-    const foundRelationMetadata = await this.relationMetadataRepository.findOne(
-      {
-        where: [
-          { fromFieldMetadataId: fieldMetadata.id },
-          { toFieldMetadataId: fieldMetadata.id },
-        ],
-        relations: [
-          'fromObjectMetadata',
-          'toObjectMetadata',
-          'fromFieldMetadata',
-          'toFieldMetadata',
-        ],
-      },
-    );
-
-    if (!foundRelationMetadata) {
-      throw new Error('RelationMetadata not found');
-    }
-
     const isRelationFromSource =
-      foundRelationMetadata.fromFieldMetadata.id === fieldMetadata.id;
+      relationMetadata.fromFieldMetadata.id === fieldMetadataDTO.id;
 
     // TODO: implement MANY_TO_MANY
-    if (
-      foundRelationMetadata.relationType === RelationMetadataType.MANY_TO_MANY
-    ) {
+    if (relationMetadata.relationType === RelationMetadataType.MANY_TO_MANY) {
       throw new Error(`
-        Relation type ${foundRelationMetadata.relationType} not supported
+        Relation type ${relationMetadata.relationType} not supported
       `);
     }
 
     if (isRelationFromSource) {
       const direction =
-        foundRelationMetadata.relationType === RelationMetadataType.ONE_TO_ONE
+        relationMetadata.relationType === RelationMetadataType.ONE_TO_ONE
           ? RelationDefinitionType.ONE_TO_ONE
           : RelationDefinitionType.ONE_TO_MANY;
 
       return {
-        sourceObjectMetadata: foundRelationMetadata.fromObjectMetadata,
-        sourceFieldMetadata: foundRelationMetadata.fromFieldMetadata,
-        targetObjectMetadata: foundRelationMetadata.toObjectMetadata,
-        targetFieldMetadata: foundRelationMetadata.toFieldMetadata,
+        sourceObjectMetadata: relationMetadata.fromObjectMetadata,
+        sourceFieldMetadata: relationMetadata.fromFieldMetadata,
+        targetObjectMetadata: relationMetadata.toObjectMetadata,
+        targetFieldMetadata: relationMetadata.toFieldMetadata,
         direction,
       };
     } else {
       const direction =
-        foundRelationMetadata.relationType === RelationMetadataType.ONE_TO_ONE
+        relationMetadata.relationType === RelationMetadataType.ONE_TO_ONE
           ? RelationDefinitionType.ONE_TO_ONE
           : RelationDefinitionType.MANY_TO_ONE;
 
       return {
-        sourceObjectMetadata: foundRelationMetadata.toObjectMetadata,
-        sourceFieldMetadata: foundRelationMetadata.toFieldMetadata,
-        targetObjectMetadata: foundRelationMetadata.fromObjectMetadata,
-        targetFieldMetadata: foundRelationMetadata.fromFieldMetadata,
+        sourceObjectMetadata: relationMetadata.toObjectMetadata,
+        sourceFieldMetadata: relationMetadata.toFieldMetadata,
+        targetObjectMetadata: relationMetadata.fromObjectMetadata,
+        targetFieldMetadata: relationMetadata.fromFieldMetadata,
         direction,
       };
     }

@@ -1,25 +1,26 @@
-import { gql } from '@apollo/client';
+import gql from 'graphql-tag';
 import { useRecoilValue } from 'recoil';
 
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { getFindDuplicateRecordsQueryResponseField } from '@/object-record/utils/getFindDuplicateRecordsQueryResponseField';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const getFindDuplicateRecordsQueryResponseField = (
-  objectNameSingular: string,
-) => `${objectNameSingular}Duplicates`;
+export const useFindDuplicateRecordsQuery = ({
+  objectNameSingular,
+  depth,
+}: {
+  objectNameSingular: string;
+  depth?: number;
+}) => {
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
 
-export const useGenerateFindDuplicateRecordsQuery = () => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  return ({
-    objectMetadataItem,
-    depth,
-  }: {
-    objectMetadataItem: Pick<ObjectMetadataItem, 'fields' | 'nameSingular'>;
-    depth?: number;
-  }) => gql`
+  const findDuplicateRecordsQuery = gql`
     query FindDuplicate${capitalize(objectMetadataItem.nameSingular)}($id: ID) {
       ${getFindDuplicateRecordsQueryResponseField(
         objectMetadataItem.nameSingular,
@@ -41,4 +42,8 @@ export const useGenerateFindDuplicateRecordsQuery = () => {
       }
     }
   `;
+
+  return {
+    findDuplicateRecordsQuery,
+  };
 };

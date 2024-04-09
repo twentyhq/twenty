@@ -4,9 +4,10 @@ import { z } from 'zod';
 
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { Toggle } from '@/ui/input/components/Toggle';
+import { RemoteTable, RemoteTableStatus } from '~/generated-metadata/graphql';
 
 export const settingsIntegrationsDatabaseTablesSchema = z.object({
-  syncedTablesById: z.record(z.boolean()),
+  syncedTablesByName: z.record(z.boolean()),
 });
 
 export type SettingsIntegrationsDatabaseTablesFormValues = z.infer<
@@ -14,7 +15,7 @@ export type SettingsIntegrationsDatabaseTablesFormValues = z.infer<
 >;
 
 type SettingsIntegrationDatabaseTablesListCardProps = {
-  tables: { id: string; name: string; isSynced?: boolean }[];
+  tables: RemoteTable[];
 };
 
 const StyledRowRightContainer = styled.div`
@@ -31,13 +32,13 @@ export const SettingsIntegrationDatabaseTablesListCard = ({
 
   return (
     <SettingsListCard
-      items={tables}
+      items={tables.map((table) => ({ id: table.name, ...table }))}
       RowRightComponent={({ item: table }) => (
         <StyledRowRightContainer>
           <Controller
-            name={`syncedTablesById.${table.id}`}
+            name={`syncedTablesByName.${table.name}`}
             control={control}
-            defaultValue={!!table.isSynced}
+            defaultValue={table.status === RemoteTableStatus.Synced}
             render={({ field: { onChange, value } }) => (
               <Toggle value={value} onChange={onChange} />
             )}

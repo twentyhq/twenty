@@ -7,17 +7,27 @@ import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
+import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewField } from '@/views/types/ViewField';
 
 export const usePersistViewFieldRecords = () => {
-  const {
-    updateOneRecordMutation,
-    createOneRecordMutation,
-    getRecordFromCache,
-    objectMetadataItem,
-  } = useObjectMetadataItem({
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.ViewField,
+  });
+
+  const getRecordFromCache = useGetRecordFromCache({
+    objectNameSingular: CoreObjectNameSingular.ViewField,
+  });
+
+  const { createOneRecordMutation } = useCreateOneRecordMutation({
+    objectNameSingular: CoreObjectNameSingular.ViewField,
+  });
+
+  const { updateOneRecordMutation } = useUpdateOneRecordMutation({
     objectNameSingular: CoreObjectNameSingular.ViewField,
   });
 

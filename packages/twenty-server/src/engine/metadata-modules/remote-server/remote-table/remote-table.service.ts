@@ -30,6 +30,7 @@ import { generateMigrationName } from 'src/engine/metadata-modules/workspace-mig
 import {
   WorkspaceMigrationColumnDefinition,
   WorkspaceMigrationForeignTable,
+  WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { RemoteTableColumn } from 'src/engine/metadata-modules/remote-server/remote-table/types/remote-table-column';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
@@ -165,7 +166,7 @@ export class RemoteTableService {
       [
         {
           name: remoteTableName,
-          action: 'create_foreign_table',
+          action: WorkspaceMigrationTableActionType.CREATE_FOREIGN_TABLE,
           foreignTable: {
             columns: remoteTableColumns.map(
               (column) =>
@@ -252,7 +253,7 @@ export class RemoteTableService {
       [
         {
           name: remoteTableName,
-          action: 'drop_foreign_table',
+          action: WorkspaceMigrationTableActionType.DROP_FOREIGN_TABLE,
         },
       ],
     );

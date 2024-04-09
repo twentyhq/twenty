@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { EntityChip } from '@/ui/display/chip/components/EntityChip';
 
@@ -18,12 +17,8 @@ export const RecordChip = ({
   maxWidth,
   className,
 }: RecordChipProps) => {
-  const { objectMetadataItem } = useObjectMetadataItemOnly({
+  const { mapToObjectRecordIdentifier } = useMapToObjectRecordIdentifier({
     objectNameSingular,
-  });
-
-  const mapToObjectRecordIdentifier = useMapToObjectRecordIdentifier({
-    objectMetadataItem,
   });
 
   const objectRecordIdentifier = mapToObjectRecordIdentifier(record);

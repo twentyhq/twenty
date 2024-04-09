@@ -6,11 +6,9 @@ import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
-import {
-  getCreateOneRecordMutationResponseField,
-  useGenerateCreateOneRecordMutation,
-} from '@/object-record/hooks/useGenerateCreateOneRecordMutation';
+import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { isDefined } from '~/utils/isDefined';
 
@@ -26,17 +24,17 @@ export const useCreateOneRecord = <
 >({
   objectNameSingular,
   queryFields,
-  depth = 1,
   skipPostOptmisticEffect = false,
 }: useCreateOneRecordProps) => {
   const apolloClient = useApolloClient();
 
-  const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
 
-  const createOneRecordMutation = useGenerateCreateOneRecordMutation({
-    objectMetadataItem,
+  const { createOneRecordMutation } = useCreateOneRecordMutation({
+    objectNameSingular,
     queryFields,
-    depth,
   });
 
   const createOneRecordInCache = useCreateOneRecordInCache<CachedObjectRecord>({

@@ -35,7 +35,7 @@ export class GoogleAPIsStrategy extends PassportStrategy(
     }
 
     if (environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED')) {
-      scope.push('https://www.googleapis.com/auth/calendar');
+      scope.push('https://www.googleapis.com/auth/calendar.events');
     }
 
     super({
