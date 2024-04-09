@@ -1,4 +1,5 @@
 import React, { ReactElement, useState } from 'react';
+import ReactDOM from 'react-dom';
 import styled from '@emotion/styled';
 
 import { IntersectionObserverWrapper } from '@/activities/calendar/components/ExpandableList/IntersectionObserverWrapper';
@@ -16,14 +17,14 @@ export const ExpandableList = ({
 }) => {
   const [componentsInView, setComponentsInView] = useState(new Set<number>());
 
-  const [isExpanded, setIsExpanded] = useState(false);
-
   const firstComponent = components[0];
 
   const dropdownId = 'expandable-list-dropdown';
 
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
   return (
-    <StyledContainer>
+    <StyledContainer ref={containerRef}>
       {firstComponent}
       {components.slice(1).map((component, index) => (
         <React.Fragment key={index}>
@@ -48,10 +49,10 @@ export const ExpandableList = ({
                     variant={ChipVariant.Highlighted}
                   />
                 }
-                dropdownOffset={{ x: 0, y: -20 }}
-                dropdownComponents={
-                  <StyledExpendableCell>{components}</StyledExpendableCell>
-                }
+                dropdownComponents={ReactDOM.createPortal(
+                  <StyledExpendableCell>{components}</StyledExpendableCell>,
+                  containerRef.current as HTMLDivElement,
+                )}
               />
             )}
         </React.Fragment>
