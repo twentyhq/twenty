@@ -101,8 +101,6 @@ export const SettingsObjectFieldSelectForm = ({
     onChange(nextOptions);
   };
 
-  console.log('values', values);
-
   const findNewLabel = () => {
     let optionIndex = values.length + 1;
     while (optionIndex < 100) {
