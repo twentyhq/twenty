@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { ApolloClient, useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
@@ -20,15 +21,18 @@ export const useSyncRemoteTable = () => {
     client: apolloMetadataClient ?? ({} as ApolloClient<any>),
   });
 
-  const syncRemoteTable = async (input: RemoteTableInput) => {
-    return await mutate({
-      variables: {
-        input,
-      },
-      awaitRefetchQueries: true,
-      refetchQueries: [getOperationName(GET_MANY_REMOTE_TABLES) ?? ''],
-    });
-  };
+  const syncRemoteTable = useCallback(
+    async (input: RemoteTableInput) => {
+      return await mutate({
+        variables: {
+          input,
+        },
+        awaitRefetchQueries: true,
+        refetchQueries: [getOperationName(GET_MANY_REMOTE_TABLES) ?? ''],
+      });
+    },
+    [mutate],
+  );
 
   return {
     syncRemoteTable,
