@@ -39,7 +39,7 @@ export const formatFieldMetadataItemInput = (
     const defaultOption = input.options?.find((option) => option.isDefault);
     defaultValue = isDefined(defaultOption)
       ? `'${getOptionValueFromLabel(defaultOption.label)}'`
-      : null;
+      : undefined;
   }
 
   // Check if options has unique values
