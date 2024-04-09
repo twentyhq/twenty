@@ -42,7 +42,8 @@ const canPersistFieldMetadataItemUpdate = (
 ) => {
   return (
     fieldMetadataItem.isCustom ||
-    fieldMetadataItem.type === FieldMetadataType.Select
+    fieldMetadataItem.type === FieldMetadataType.Select ||
+    fieldMetadataItem.type === FieldMetadataType.MultiSelect
   );
 };
 

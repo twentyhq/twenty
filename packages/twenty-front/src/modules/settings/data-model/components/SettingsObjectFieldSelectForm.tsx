@@ -79,7 +79,7 @@ export const SettingsObjectFieldSelectForm = ({
     option: SettingsObjectFieldSelectFormOption,
     nextOption: SettingsObjectFieldSelectFormOption,
   ) => {
-    const hasDefaultOptionChanged = !option.isDefault && nextOption.isDefault;
+    const hasDefaultOptionChanged = option.isDefault !== nextOption.isDefault;
     const nextOptions = hasDefaultOptionChanged
       ? values.map((value) => ({
           ...value,
