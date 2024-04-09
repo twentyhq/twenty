@@ -1,13 +1,13 @@
-import { TimelineEvent } from '@/activities/events/types/TimelineEvent';
+import { TimelineActivity } from '@/activities/events/types/TimelineActivity';
 import { isDefined } from '~/utils/isDefined';
 
 export type EventGroup = {
   month: number;
   year: number;
-  items: TimelineEvent[];
+  items: TimelineActivity[];
 };
 
-export const groupEventsByMonth = (events: TimelineEvent[]) => {
+export const groupEventsByMonth = (events: TimelineActivity[]) => {
   const acitivityGroups: EventGroup[] = [];
 
   for (const event of events) {

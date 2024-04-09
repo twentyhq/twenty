@@ -2,32 +2,25 @@ import { Injectable } from '@nestjs/common';
 
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
+import { ObjectRecordBaseEvent } from 'src/engine/integrations/event-emitter/types/object-record.base.event';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { AuditLogRepository } from 'src/modules/event/repositiories/audit-log.repository';
 import { AuditLogObjectMetadata } from 'src/modules/event/standard-objects/audit-log.object-metadata';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
-export type SaveEventToDbJobData = {
-  workspaceId: string;
-  recordId: string;
-  userId: string | undefined;
-  objectName: string;
-  operation: string;
-  details: any;
-};
-
 @Injectable()
-export class SaveEventToDbJob implements MessageQueueJob<SaveEventToDbJobData> {
+export class CreateAuditLogFromInternalEvent
+  implements MessageQueueJob<ObjectRecordBaseEvent>
+{
   constructor(
     @InjectObjectMetadataRepository(WorkspaceMemberObjectMetadata)
     private readonly workspaceMemberService: WorkspaceMemberRepository,
     @InjectObjectMetadataRepository(AuditLogObjectMetadata)
-    private readonly eventService: AuditLogRepository,
+    private readonly auditLogService: AuditLogRepository,
   ) {}
 
-  // TODO: need to support objects others than "person", "company", "opportunity"
-  async handle(data: SaveEventToDbJobData): Promise<void> {
+  async handle(data: ObjectRecordBaseEvent): Promise<void> {
     let workspaceMemberId: string | null = null;
 
     if (data.userId) {
@@ -46,11 +39,11 @@ export class SaveEventToDbJob implements MessageQueueJob<SaveEventToDbJobData> {
       };
     }
 
-    await this.eventService.insert(
-      `${data.operation}.${data.objectName}`,
+    await this.auditLogService.insert(
+      data.name,
       data.details,
       workspaceMemberId,
-      data.objectName,
+      data.name.split('.')[0],
       data.recordId,
       data.workspaceId,
     );

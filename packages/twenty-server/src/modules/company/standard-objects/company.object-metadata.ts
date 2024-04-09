@@ -211,10 +211,10 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   attachments: AttachmentObjectMetadata[];
 
   @FieldMetadata({
-    standardId: companyStandardFieldIds.timelineEvents,
+    standardId: companyStandardFieldIds.timelineActivities,
     type: FieldMetadataType.RELATION,
-    label: 'Timeline Events',
-    description: 'Timeline Events linked to the company',
+    label: 'Timeline Activities',
+    description: 'Timeline Activities linked to the company',
     icon: 'IconIconTimelineEvent',
   })
   @RelationMetadata({
@@ -224,5 +224,5 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   @IsSystem()
-  timelineEvents: TimelineActivityObjectMetadata[];
+  timelineActivities: TimelineActivityObjectMetadata[];
 }

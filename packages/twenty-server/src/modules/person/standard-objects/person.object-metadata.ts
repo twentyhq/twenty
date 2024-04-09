@@ -224,7 +224,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   calendarEventParticipants: CalendarEventParticipantObjectMetadata[];
 
   @FieldMetadata({
-    standardId: personStandardFieldIds.timelineEvents,
+    standardId: personStandardFieldIds.timelineActivities,
     type: FieldMetadataType.RELATION,
     label: 'Events',
     description: 'Events linked to the company',
@@ -237,5 +237,5 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   @IsSystem()
-  timelineEvents: TimelineActivityObjectMetadata[];
+  timelineActivities: TimelineActivityObjectMetadata[];
 }

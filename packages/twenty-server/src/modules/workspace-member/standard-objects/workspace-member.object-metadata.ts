@@ -23,6 +23,7 @@ import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/fa
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { TimelineActivityObjectMetadata } from 'src/modules/event/standard-objects/timeline-activity.object-metadata';
+import { AuditLogObjectMetadata } from 'src/modules/event/standard-objects/audit-log.object-metadata';
 
 @ObjectMetadata({
   standardId: standardObjectIds.workspaceMember,
@@ -244,7 +245,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   calendarEventParticipants: CalendarEventParticipantObjectMetadata[];
 
   @FieldMetadata({
-    standardId: workspaceMemberStandardFieldIds.timelineEvents,
+    standardId: workspaceMemberStandardFieldIds.timelineActivities,
     type: FieldMetadataType.RELATION,
     label: 'Events',
     description: 'Events linked to the workspace member',
@@ -257,5 +258,21 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   @IsSystem()
-  timelineEvents: TimelineActivityObjectMetadata[];
+  timelineActivities: TimelineActivityObjectMetadata[];
+
+  @FieldMetadata({
+    standardId: workspaceMemberStandardFieldIds.timelineActivities,
+    type: FieldMetadataType.RELATION,
+    label: 'Aud tLogs',
+    description: 'Audit Logs linked to the workspace member',
+    icon: 'IconTimelineEvent',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    inverseSideTarget: () => AuditLogObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @IsNullable()
+  @IsSystem()
+  auditLogs: AuditLogObjectMetadata[];
 }

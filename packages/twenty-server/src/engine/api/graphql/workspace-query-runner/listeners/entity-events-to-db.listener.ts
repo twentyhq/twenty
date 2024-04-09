@@ -7,16 +7,14 @@ import { Repository } from 'typeorm';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
-import {
-  SaveEventToDbJob,
-  SaveEventToDbJobData,
-} from 'src/modules/event/jobs/save-event-as-log-events.job';
+import { CreateAuditLogFromInternalEvent } from 'src/modules/event/jobs/create-audit-log-from-internal-event';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
 } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { objectRecordChangedValues } from 'src/engine/integrations/event-emitter/utils/object-record-changed-values';
 import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
+import { ObjectRecordBaseEvent } from 'src/engine/integrations/event-emitter/types/object-record.base.event';
 
 @Injectable()
 export class EntityEventsToDbListener {
@@ -29,7 +27,7 @@ export class EntityEventsToDbListener {
 
   @OnEvent('*.created')
   async handleCreate(payload: ObjectRecordCreateEvent<any>) {
-    return this.handle(payload, 'created');
+    return this.handle(payload);
   }
 
   @OnEvent('*.updated')
@@ -39,16 +37,13 @@ export class EntityEventsToDbListener {
       payload.details.after,
     );
 
-    return this.handle(payload, 'updated');
+    return this.handle(payload);
   }
 
   // @OnEvent('*.deleted') - TODO: implement when we have soft deleted
   // ....
 
-  private async handle(
-    payload: ObjectRecordCreateEvent<any>,
-    operation: string,
-  ) {
+  private async handle(payload: ObjectRecordCreateEvent<any>) {
     if (payload.objectMetadata.isSystem) {
       return;
     }
@@ -67,13 +62,14 @@ export class EntityEventsToDbListener {
       return;
     }
 
-    this.messageQueueService.add<SaveEventToDbJobData>(SaveEventToDbJob.name, {
-      workspaceId: payload.workspaceId,
-      userId: payload.userId,
-      recordId: payload.recordId,
-      objectName: payload.objectMetadata.nameSingular,
-      operation: operation,
-      details: payload.details,
-    });
+    this.messageQueueService.add<ObjectRecordBaseEvent>(
+      CreateAuditLogFromInternalEvent.name,
+      payload,
+    );
+
+    this.messageQueueService.add<ObjectRecordBaseEvent>(
+      CreateAuditLogFromInternalEvent.name,
+      payload,
+    );
   }
 }

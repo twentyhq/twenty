@@ -122,7 +122,7 @@ export const companyStandardFieldIds = {
   opportunities: '20202020-add3-4658-8e23-d70dccb6d0ec',
   favorites: '20202020-4d1d-41ac-b13b-621631298d55',
   attachments: '20202020-c1b5-4120-b0f0-987ca401ed53',
-  timelineEvents: '72d5d7d3-8782-446c-a54b-1c25024f55db',
+  timelineActivities: '72d5d7d3-8782-446c-a54b-1c25024f55db',
 };
 
 export const connectedAccountStandardFieldIds = {
@@ -147,8 +147,6 @@ export const auditLogStandardFieldIds = {
 };
 
 export const behavioralEventStandardFieldIds = {
-  sentAt: '20202020-4760-4340-bede-09cb903525f8',
-  receivedAt: '20202020-a480-4767-81ce-93096aa4cb11',
   name: '20202020-2462-4b9d-b5d9-745febb3b095',
   properties: '20202020-5d36-470e-8fad-d56ea3ab2fd0',
   context: '20202020-bd62-4b5b-8385-6caeed8f8078',
@@ -156,10 +154,10 @@ export const behavioralEventStandardFieldIds = {
   objectId: '20202020-6d8b-4ca5-9869-f882cb335673',
 };
 
-export const timelineActivityStandardFieldIds = {
+export const TimelineActivitiestandardFieldIds = {
+  happensAt: '073174de-9526-4993-b339-c4318c4d39f1',
   type: 'b4b4d436-5e7b-4ccd-8b8a-86b94b474135',
   name: '4360514a-7207-46e8-9dab-849505ae8498',
-  happensAt: '073174de-9526-4993-b339-c4318c4d39f1',
   properties: '20202020-f142-4b04-b91b-6a2b4af3bf10',
   workspaceMember: '20202020-af23-4479-9a30-868edc474b35',
   person: '20202020-c414-45b9-a60a-ac27aa96229e',
@@ -235,7 +233,7 @@ export const opportunityStandardFieldIds = {
   favorites: '20202020-a1c2-4500-aaae-83ba8a0e827a',
   activityTargets: '20202020-220a-42d6-8261-b2102d6eab35',
   attachments: '20202020-87c7-4118-83d6-2f4031005209',
-  timelineEvents: '863a6f5c-493a-47c8-9e14-34ed929d2ba6',
+  timelineActivities: '863a6f5c-493a-47c8-9e14-34ed929d2ba6',
 };
 
 export const personStandardFieldIds = {
@@ -255,7 +253,7 @@ export const personStandardFieldIds = {
   attachments: '20202020-cd97-451f-87fa-bcb789bdbf3a',
   messageParticipants: '20202020-498e-4c61-8158-fa04f0638334',
   calendarEventParticipants: '20202020-52ee-45e9-a702-b64b3753e3a9',
-  timelineEvents: 'f23d6471-78e0-458a-bdd0-9a84cd7d0b70',
+  timelineActivities: 'f23d6471-78e0-458a-bdd0-9a84cd7d0b70',
 };
 
 export const viewFieldStandardFieldIds = {
@@ -316,7 +314,7 @@ export const workspaceMemberStandardFieldIds = {
   messageParticipants: '20202020-8f99-48bc-a5eb-edd33dd54188',
   blocklist: '20202020-6cb2-4161-9f29-a4b7f1283859',
   calendarEventParticipants: '20202020-0dbc-4841-9ce1-3e793b5b3512',
-  timelineEvents: 'c23dd16e-f0d9-4ba3-a123-69cc2c185071',
+  timelineActivities: 'c23dd16e-f0d9-4ba3-a123-69cc2c185071',
 };
 
 export const customObjectStandardFieldIds = {
@@ -325,5 +323,5 @@ export const customObjectStandardFieldIds = {
   activityTargets: '20202020-7f42-40ae-b96c-c8a61acc83bf',
   favorites: '20202020-a4a7-4686-b296-1c6c3482ee21',
   attachments: '20202020-8d59-46ca-b7b2-73d167712134',
-  timelineEvents: '040fa45d-f1ef-4ba4-8f33-1a4577afa477',
+  timelineActivities: '040fa45d-f1ef-4ba4-8f33-1a4577afa477',
 };

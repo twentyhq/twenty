@@ -1,6 +1,6 @@
-import { TimelineEvent } from '@/activities/events/types/TimelineEvent';
+import { TimelineActivity } from '@/activities/events/types/TimelineActivity';
 
-export const mockedEvents: Array<TimelineEvent> = [
+export const mockedEvents: Array<TimelineActivity> = [
   {
     properties: '{"diff": {"address": {"after": "TEST", "before": ""}}}',
     updatedAt: '2023-04-26T10:12:42.33625+00:00',

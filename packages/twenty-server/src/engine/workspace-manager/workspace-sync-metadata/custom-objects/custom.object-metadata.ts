@@ -88,11 +88,11 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
   attachments: AttachmentObjectMetadata[];
 
   @FieldMetadata({
-    standardId: customObjectStandardFieldIds.timelineEvents,
+    standardId: customObjectStandardFieldIds.timelineActivities,
     type: FieldMetadataType.RELATION,
-    label: 'Timeline Events',
+    label: 'Timeline Activities',
     description: (objectMetadata) =>
-      `Timeline Events tied to the ${objectMetadata.labelSingular}`,
+      `Timeline Activities tied to the ${objectMetadata.labelSingular}`,
 
     icon: 'IconIconTimelineEvent',
   })
@@ -103,5 +103,5 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   @IsSystem()
-  timelineEvents: TimelineActivityObjectMetadata[];
+  timelineActivities: TimelineActivityObjectMetadata[];
 }

@@ -169,10 +169,10 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   attachments: AttachmentObjectMetadata[];
 
   @FieldMetadata({
-    standardId: opportunityStandardFieldIds.timelineEvents,
+    standardId: opportunityStandardFieldIds.timelineActivities,
     type: FieldMetadataType.RELATION,
-    label: 'Timeline Events',
-    description: 'Timeline Events linked to the opportunity.',
+    label: 'Timeline Activities',
+    description: 'Timeline Activities linked to the opportunity.',
     icon: 'IconTimelineEvent',
   })
   @RelationMetadata({
@@ -181,5 +181,5 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
-  timelineEvents: TimelineActivityObjectMetadata[];
+  timelineActivities: TimelineActivityObjectMetadata[];
 }

@@ -38,7 +38,7 @@ import {
   attachmentStandardFieldIds,
   baseObjectStandardFieldIds,
   customObjectStandardFieldIds,
-  timelineActivityStandardFieldIds,
+  TimelineActivitiestandardFieldIds,
   favoriteStandardFieldIds,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import {
@@ -335,7 +335,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           [],
     });
 
-    const { timelineEventObjectMetadata } = await this.createEventRelation(
+    const { timelineActivityObjectMetadata } = await this.createEventRelation(
       objectMetadataInput.workspaceId,
       createdObjectMetadata,
     );
@@ -372,14 +372,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             createdObjectMetadata,
             activityTargetObjectMetadata,
             attachmentObjectMetadata,
-            timelineEventObjectMetadata,
+            timelineActivityObjectMetadata,
             favoriteObjectMetadata,
           )
         : await buildWorkspaceMigrationsForRemoteObject(
             createdObjectMetadata,
             activityTargetObjectMetadata,
             attachmentObjectMetadata,
-            timelineEventObjectMetadata,
+            timelineActivityObjectMetadata,
             favoriteObjectMetadata,
             lastDataSourceMetadata.schema,
             objectMetadataInput.remoteTablePrimaryKeyColumnType ?? 'uuid',
@@ -704,17 +704,17 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     workspaceId: string,
     createdObjectMetadata: ObjectMetadataEntity,
   ) {
-    const timelineEventObjectMetadata =
+    const timelineActivityObjectMetadata =
       await this.objectMetadataRepository.findOneByOrFail({
         nameSingular: 'event',
         workspaceId: workspaceId,
       });
 
-    const timelineEventRelationFieldMetadata =
+    const timelineActivityRelationFieldMetadata =
       await this.fieldMetadataRepository.save([
         // FROM
         {
-          standardId: customObjectStandardFieldIds.timelineEvents,
+          standardId: customObjectStandardFieldIds.timelineActivities,
           objectMetadataId: createdObjectMetadata.id,
           workspaceId: workspaceId,
           isCustom: false,
@@ -731,9 +731,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           standardId: createRelationDeterministicUuid({
             objectId: createdObjectMetadata.id,
-            standardId: timelineActivityStandardFieldIds.custom,
+            standardId: TimelineActivitiestandardFieldIds.custom,
           }),
-          objectMetadataId: timelineEventObjectMetadata.id,
+          objectMetadataId: timelineActivityObjectMetadata.id,
           workspaceId: workspaceId,
           isCustom: false,
           isActive: true,
@@ -749,9 +749,9 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           standardId: createForeignKeyDeterministicUuid({
             objectId: createdObjectMetadata.id,
-            standardId: timelineActivityStandardFieldIds.custom,
+            standardId: TimelineActivitiestandardFieldIds.custom,
           }),
-          objectMetadataId: timelineEventObjectMetadata.id,
+          objectMetadataId: timelineActivityObjectMetadata.id,
           workspaceId: workspaceId,
           isCustom: false,
           isActive: true,
@@ -772,8 +772,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         },
       ]);
 
-    const timelineEventRelationFieldMetadataMap =
-      timelineEventRelationFieldMetadata.reduce(
+    const timelineActivityRelationFieldMetadataMap =
+      timelineActivityRelationFieldMetadata.reduce(
         (acc, fieldMetadata: FieldMetadataEntity) => {
           if (fieldMetadata.type === FieldMetadataType.RELATION) {
             acc[fieldMetadata.objectMetadataId] = fieldMetadata;
@@ -789,17 +789,18 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         workspaceId: workspaceId,
         relationType: RelationMetadataType.ONE_TO_MANY,
         fromObjectMetadataId: createdObjectMetadata.id,
-        toObjectMetadataId: timelineEventObjectMetadata.id,
+        toObjectMetadataId: timelineActivityObjectMetadata.id,
         fromFieldMetadataId:
-          timelineEventRelationFieldMetadataMap[createdObjectMetadata.id].id,
+          timelineActivityRelationFieldMetadataMap[createdObjectMetadata.id].id,
         toFieldMetadataId:
-          timelineEventRelationFieldMetadataMap[timelineEventObjectMetadata.id]
-            .id,
+          timelineActivityRelationFieldMetadataMap[
+            timelineActivityObjectMetadata.id
+          ].id,
         onDeleteAction: RelationOnDeleteAction.CASCADE,
       },
     ]);
 
-    return { timelineEventObjectMetadata };
+    return { timelineActivityObjectMetadata };
   }
 
   private async createFavoriteRelation(

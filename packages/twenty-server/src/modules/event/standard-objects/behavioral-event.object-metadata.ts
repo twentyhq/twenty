@@ -1,8 +1,5 @@
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import {
-  baseObjectStandardFieldIds,
-  behavioralEventStandardFieldIds,
-} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { behavioralEventStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
@@ -18,38 +15,8 @@ import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-
   description: 'An event related to user behavior',
   icon: 'IconIconTimelineEvent',
 })
+@IsSystem()
 export class BehavioralEventObjectMetadata extends BaseObjectMetadata {
-  @FieldMetadata({
-    standardId: baseObjectStandardFieldIds.id,
-    type: FieldMetadataType.UUID,
-    label: 'Id',
-    description: 'Id',
-    defaultValue: 'uuid',
-    icon: 'Icon123',
-  })
-  @IsSystem()
-  id: string;
-
-  @FieldMetadata({
-    standardId: behavioralEventStandardFieldIds.receivedAt,
-    type: FieldMetadataType.DATE_TIME,
-    label: 'Receival date',
-    description: 'Receival date',
-    icon: 'IconCalendar',
-    defaultValue: 'now',
-  })
-  receivedAt: Date;
-
-  @FieldMetadata({
-    standardId: behavioralEventStandardFieldIds.sentAt,
-    type: FieldMetadataType.DATE_TIME,
-    label: 'Sending date',
-    description: 'Sending date',
-    icon: 'IconCalendar',
-    defaultValue: 'now',
-  })
-  sentAt: Date;
-
   /** 
    * 
    * Common in Segment, Rudderstack, etc.

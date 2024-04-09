@@ -249,6 +249,7 @@ export class WorkspaceQueryRunnerService {
 
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.created`, {
+        name: `${objectMetadataItem.nameSingular}.created`,
         workspaceId,
         userId,
         recordId: record.id,
@@ -306,6 +307,7 @@ export class WorkspaceQueryRunnerService {
     );
 
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.updated`, {
+      name: `${objectMetadataItem.nameSingular}.updated`,
       workspaceId,
       userId,
       recordId: (existingRecord as Record).id,
@@ -397,6 +399,7 @@ export class WorkspaceQueryRunnerService {
 
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
+        name: `${objectMetadataItem.nameSingular}.deleted`,
         workspaceId,
         userId,
         recordId: record.id,
@@ -448,6 +451,7 @@ export class WorkspaceQueryRunnerService {
     );
 
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
+      name: `${objectMetadataItem.nameSingular}.deleted`,
       workspaceId,
       userId,
       recordId: args.id,

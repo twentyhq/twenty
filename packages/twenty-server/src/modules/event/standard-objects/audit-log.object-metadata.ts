@@ -1,13 +1,11 @@
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import {
-  baseObjectStandardFieldIds,
-  auditLogStandardFieldIds,
-} from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { auditLogStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
+import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
 @ObjectMetadata({
@@ -19,28 +17,7 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
   icon: 'IconIconTimelineEvent',
 })
 @IsSystem()
-export class AuditLogObjectMetadata {
-  @FieldMetadata({
-    standardId: baseObjectStandardFieldIds.id,
-    type: FieldMetadataType.UUID,
-    label: 'Id',
-    description: 'Id',
-    defaultValue: 'uuid',
-    icon: 'Icon123',
-  })
-  @IsSystem()
-  id: string;
-
-  @FieldMetadata({
-    standardId: baseObjectStandardFieldIds.createdAt,
-    type: FieldMetadataType.DATE_TIME,
-    label: 'Creation date',
-    description: 'Creation date',
-    icon: 'IconCalendar',
-    defaultValue: 'now',
-  })
-  createdAt: Date;
-
+export class AuditLogObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: auditLogStandardFieldIds.name,
     type: FieldMetadataType.TEXT,

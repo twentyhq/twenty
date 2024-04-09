@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { IconCirclePlus, IconEditCircle, IconFocusCentered } from 'twenty-ui';
 
 import { EventUpdateProperty } from '@/activities/events/components/EventUpdateProperty';
-import { TimelineEvent } from '@/activities/events/types/TimelineEvent';
+import { TimelineActivity } from '@/activities/events/types/TimelineActivity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
@@ -120,7 +120,7 @@ const StyledTimelineItemContainer = styled.div<{ isGap?: boolean }>`
 type EventRowProps = {
   targetableObject: ActivityTargetableObject;
   isLastEvent?: boolean;
-  event: TimelineEvent;
+  event: TimelineActivity;
 };
 
 export const EventRow = ({
