@@ -67,9 +67,13 @@ export const Catalog: CatalogStory<Story, typeof Checkbox> = {
         },
         {
           name: 'state',
-          values: ['hoverable', 'non-hoverable'],
-          props: (state: string) =>
-            state === 'hoverable' ? { hoverable: true } : {},
+          values: ['default', 'hoverable'],
+          props: (state: string) => {
+            if (state === 'hoverable') {
+              return { hoverable: true };
+            }
+            return {};
+          },
         },
         {
           name: 'size',
