@@ -59,16 +59,21 @@ const StyledContainer = styled.div`
 `;
 
 const StyledExpendableCell = styled.div<{ isExpanded: boolean }>`
-  border: 1px solid ${({ theme }) => theme.border.color.strong};
   display: ${({ isExpanded }) => (isExpanded ? 'flex' : 'none')};
   align-items: center;
-  flex-flow: row wrap;
+  align-content: center;
+  flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing(1)};
   position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  width: 300px;
+  top: ${({ theme }) => `-${theme.spacing(2.25)}`};
+  left: ${({ theme }) => `-${theme.spacing(2.25)}`};
+  width: 232px;
+  z-index: 1;
   box-sizing: border-box;
   background: ${({ theme }) => theme.background.secondary};
+  padding: ${({ theme }) => theme.spacing(2)};
+  box-shadow: ${({ theme }) => theme.boxShadow.light};
+  backdrop-filter: blur(20px);
+  border-radius: 4px;
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
 `;
