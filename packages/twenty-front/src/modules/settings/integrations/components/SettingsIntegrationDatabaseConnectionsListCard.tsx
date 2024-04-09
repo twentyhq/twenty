@@ -3,19 +3,15 @@ import styled from '@emotion/styled';
 import { IconChevronRight } from 'twenty-ui';
 
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { SettingsIntegrationDatabaseConnectedTablesStatus } from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectedTablesStatus';
+import { SettingsIntegrationDatabaseConnectionSyncStatus } from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectionSyncStatus';
+import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
+import { getConnectionDbName } from '@/settings/integrations/utils/getConnectionDbName';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { RemoteServer } from '~/generated-metadata/graphql';
 
 type SettingsIntegrationDatabaseConnectionsListCardProps = {
-  databaseLogoUrl: string;
-  connections: {
-    id: string;
-    key: string;
-    name: string;
-    tables: {
-      name: string;
-    }[];
-  }[];
+  integration: SettingsIntegration;
+  connections: RemoteServer[];
 };
 
 const StyledDatabaseLogoContainer = styled.div`
@@ -37,7 +33,7 @@ const StyledRowRightContainer = styled.div`
 `;
 
 export const SettingsIntegrationDatabaseConnectionsListCard = ({
-  databaseLogoUrl,
+  integration,
   connections,
 }: SettingsIntegrationDatabaseConnectionsListCardProps) => {
   const navigate = useNavigate();
@@ -47,19 +43,21 @@ export const SettingsIntegrationDatabaseConnectionsListCard = ({
       items={connections}
       RowIcon={() => (
         <StyledDatabaseLogoContainer>
-          <StyledDatabaseLogo alt="" src={databaseLogoUrl} />
+          <StyledDatabaseLogo alt="" src={integration.from.image} />
         </StyledDatabaseLogoContainer>
       )}
       RowRightComponent={({ item: connection }) => (
         <StyledRowRightContainer>
-          <SettingsIntegrationDatabaseConnectedTablesStatus
-            connectedTablesCount={connection.tables.length}
+          <SettingsIntegrationDatabaseConnectionSyncStatus
+            connectionId={connection.id}
           />
           <LightIconButton Icon={IconChevronRight} accent="tertiary" />
         </StyledRowRightContainer>
       )}
-      onRowClick={(connection) => navigate(`./${connection.key}`)}
-      getItemLabel={(connection) => connection.name}
+      onRowClick={(connection) => navigate(`./${connection.id}`)}
+      getItemLabel={(connection) =>
+        getConnectionDbName({ integration, connection })
+      }
       hasFooter
       footerButtonLabel="Add connection"
       onFooterButtonClick={() => navigate('./new')}

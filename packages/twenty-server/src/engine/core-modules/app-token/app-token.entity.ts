@@ -16,6 +16,8 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 export enum AppTokenType {
   RefreshToken = 'REFRESH_TOKEN',
+  CodeChallenge = 'CODE_CHALLENGE',
+  AuthorizationCode = 'AUTHORIZATION_CODE',
 }
 
 @Entity({ name: 'appToken', schema: 'core' })

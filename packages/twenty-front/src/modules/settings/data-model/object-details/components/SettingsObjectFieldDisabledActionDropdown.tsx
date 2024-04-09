@@ -6,10 +6,11 @@ import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsObjectFieldInactiveActionDropdownProps = {
   isCustomField?: boolean;
-  isRelationType?: boolean;
+  fieldType?: FieldMetadataType;
   onActivate: () => void;
   onErase: () => void;
   scopeKey: string;
@@ -20,7 +21,7 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
   scopeKey,
   onErase,
   isCustomField,
-  isRelationType,
+  fieldType,
 }: SettingsObjectFieldInactiveActionDropdownProps) => {
   const dropdownId = `${scopeKey}-settings-field-disabled-action-dropdown`;
 
@@ -36,7 +37,10 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
     closeDropdown();
   };
 
-  const isErasable = isCustomField && !isRelationType;
+  const isErasable =
+    isCustomField &&
+    fieldType !== FieldMetadataType.Relation &&
+    fieldType !== FieldMetadataType.Address;
 
   return (
     <Dropdown

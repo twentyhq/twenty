@@ -17,9 +17,8 @@ const StyledDropdownMenuItemsExternalContainer = styled.div<{
   overflow-y: auto;
 
   padding: var(--padding);
-  padding-right: 0;
 
-  width: calc(100% - 1 * var(--padding));
+  width: calc(100% - 2 * var(--padding));
 `;
 
 const StyledScrollWrapper = styled(ScrollWrapper)`
@@ -45,11 +44,17 @@ export const DropdownMenuItemsContainer = ({
 }) => {
   return (
     <StyledDropdownMenuItemsExternalContainer hasMaxHeight={hasMaxHeight}>
-      <StyledScrollWrapper>
+      {hasMaxHeight ? (
+        <StyledScrollWrapper>
+          <StyledDropdownMenuItemsInternalContainer>
+            {children}
+          </StyledDropdownMenuItemsInternalContainer>
+        </StyledScrollWrapper>
+      ) : (
         <StyledDropdownMenuItemsInternalContainer>
           {children}
         </StyledDropdownMenuItemsInternalContainer>
-      </StyledScrollWrapper>
+      )}
     </StyledDropdownMenuItemsExternalContainer>
   );
 };

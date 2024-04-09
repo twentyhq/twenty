@@ -1,4 +1,3 @@
-import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
@@ -7,7 +6,6 @@ import {
 import { messageChannelStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
@@ -119,9 +117,6 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
     description: 'Last sync cursor',
     icon: 'IconHistory',
   })
-  @Gate({
-    featureFlag: FeatureFlagKeys.IsFullSyncV2Enabled,
-  })
   syncCursor: string;
 
   @FieldMetadata({
@@ -130,9 +125,6 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
     label: 'Last sync date',
     description: 'Last sync date',
     icon: 'IconHistory',
-  })
-  @Gate({
-    featureFlag: FeatureFlagKeys.IsFullSyncV2Enabled,
   })
   @IsNullable()
   syncedAt: string;
@@ -170,9 +162,6 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
       },
     ],
   })
-  @Gate({
-    featureFlag: FeatureFlagKeys.IsFullSyncV2Enabled,
-  })
   @IsNullable()
   syncStatus: MessageChannelSyncStatus;
 
@@ -182,9 +171,6 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
     label: 'Ongoing sync started at',
     description: 'Ongoing sync started at',
     icon: 'IconHistory',
-  })
-  @Gate({
-    featureFlag: FeatureFlagKeys.IsFullSyncV2Enabled,
   })
   @IsNullable()
   ongoingSyncStartedAt: string;

@@ -1,6 +1,8 @@
 import { useRecoilCallback } from 'recoil';
 
+import { DEBUG_HOTKEY_SCOPE } from '@/ui/utilities/hotkey/hooks/useScopedHotkeyCallback';
 import { isDefined } from '~/utils/isDefined';
+import { logDebug } from '~/utils/logDebug';
 
 import { DEFAULT_HOTKEYS_SCOPE_CUSTOM_SCOPES } from '../constants/DefaultHotkeysScopeCustomScopes';
 import { currentHotkeyScopeState } from '../states/internal/currentHotkeyScopeState';
@@ -76,6 +78,17 @@ export const useSetHotkeyScope = () =>
         }
 
         scopesToSet.push(newHotkeyScope.scope);
+
+        // TODO: fix eslint rule not understanding a boolean constant
+        //    See issue https://github.com/twentyhq/twenty/issues/4881
+        // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
+        if (DEBUG_HOTKEY_SCOPE) {
+          logDebug('DEBUG: set new hotkey scope', {
+            scopesToSet,
+            newHotkeyScope,
+          });
+        }
+
         set(internalHotkeysEnabledScopesState, scopesToSet);
         set(currentHotkeyScopeState, newHotkeyScope);
       },

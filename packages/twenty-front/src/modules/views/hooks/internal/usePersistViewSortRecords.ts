@@ -7,18 +7,32 @@ import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
+import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
+import { useDeleteOneRecordMutation } from '@/object-record/hooks/useDeleteOneRecordMutation';
+import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewSort } from '@/views/types/ViewSort';
 
 export const usePersistViewSortRecords = () => {
-  const {
-    updateOneRecordMutation,
-    createOneRecordMutation,
-    deleteOneRecordMutation,
-    objectMetadataItem,
-    getRecordFromCache,
-  } = useObjectMetadataItem({
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.ViewSort,
+  });
+
+  const getRecordFromCache = useGetRecordFromCache({
+    objectNameSingular: CoreObjectNameSingular.ViewSort,
+  });
+
+  const { deleteOneRecordMutation } = useDeleteOneRecordMutation({
+    objectNameSingular: CoreObjectNameSingular.ViewSort,
+  });
+
+  const { createOneRecordMutation } = useCreateOneRecordMutation({
+    objectNameSingular: CoreObjectNameSingular.ViewSort,
+  });
+
+  const { updateOneRecordMutation } = useUpdateOneRecordMutation({
     objectNameSingular: CoreObjectNameSingular.ViewSort,
   });
 

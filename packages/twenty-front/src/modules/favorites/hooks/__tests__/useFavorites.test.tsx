@@ -146,8 +146,7 @@ describe('useFavorites', () => {
       };
 
       const responderProvided: ResponderProvided = {
-        // eslint-disable-next-line no-console
-        announce: (message: string) => console.log(message),
+        announce: () => {},
       };
 
       result.current.handleReorderFavorite(

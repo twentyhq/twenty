@@ -11,6 +11,7 @@ describe('getOperandsForFilterType', () => {
       'FULL_NAME',
       [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain],
     ],
+    ['ADDRESS', [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain]],
     ['LINK', [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain]],
     ['CURRENCY', [ViewFilterOperand.GreaterThan, ViewFilterOperand.LessThan]],
     ['NUMBER', [ViewFilterOperand.GreaterThan, ViewFilterOperand.LessThan]],

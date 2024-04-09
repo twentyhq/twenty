@@ -5,7 +5,7 @@ import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
-export const getObjectOrderByField = (
+export const getOrderByFieldForObjectMetadataItem = (
   objectMetadataItem: ObjectMetadataItem,
   orderBy?: OrderBy | null,
 ): OrderByField => {

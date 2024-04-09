@@ -3,7 +3,6 @@ import { ModuleRef } from '@nestjs/core';
 import { HttpModule } from '@nestjs/axios';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { GmailFullSyncJob } from 'src/modules/messaging/jobs/gmail-full-sync.job';
 import { CallWebhookJobsJob } from 'src/engine/api/graphql/workspace-query-runner/jobs/call-webhook-jobs.job';
 import { CallWebhookJob } from 'src/engine/api/graphql/workspace-query-runner/jobs/call-webhook.job';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
@@ -11,12 +10,11 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { CleanInactiveWorkspaceJob } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-inactive-workspace.job';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { GmailPartialSyncJob } from 'src/modules/messaging/jobs/gmail-partial-sync.job';
 import { EmailSenderJob } from 'src/engine/integrations/email/email-sender.job';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { EnvironmentModule } from 'src/engine/integrations/environment/environment.module';
-import { FetchAllWorkspacesMessagesJob } from 'src/modules/messaging/jobs/crons/fetch-all-workspaces-messages.job';
-import { MatchMessageParticipantJob } from 'src/modules/messaging/jobs/match-message-participant.job';
+import { MatchParticipantJob } from 'src/modules/connected-account/jobs/match-participant.job';
+import { GmailPartialSyncCronJob } from 'src/modules/messaging/jobs/crons/gmail-partial-sync.cron.job';
 import { CreateCompaniesAndContactsAfterSyncJob } from 'src/modules/messaging/jobs/create-companies-and-contacts-after-sync.job';
 import { AutoCompaniesAndContactsCreationModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/auto-companies-and-contacts-creation.module';
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
@@ -34,15 +32,11 @@ import { GoogleCalendarSyncJob } from 'src/modules/calendar/jobs/google-calendar
 import { CalendarEventCleanerModule } from 'src/modules/calendar/services/calendar-event-cleaner/calendar-event-cleaner.module';
 import { RecordPositionBackfillJob } from 'src/engine/api/graphql/workspace-query-runner/jobs/record-position-backfill.job';
 import { RecordPositionBackfillModule } from 'src/engine/api/graphql/workspace-query-runner/services/record-position-backfill-module';
-import { DeleteConnectedAccountAssociatedCalendarDataJob } from 'src/modules/messaging/jobs/delete-connected-account-associated-calendar-data.job';
 import { GoogleCalendarSyncModule } from 'src/modules/calendar/services/google-calendar-sync.module';
 import { GoogleAPIRefreshAccessTokenModule } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.module';
-import { GmailFullSyncModule } from 'src/modules/messaging/services/gmail-full-sync/gmail-full-sync.module';
-import { GmailPartialSyncModule } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync.module';
 import { MessageParticipantModule } from 'src/modules/messaging/services/message-participant/message-participant.module';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
-import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { SaveEventToDbJob } from 'src/engine/api/graphql/workspace-query-runner/jobs/save-event-to-db.job';
 import { CreateCompanyAndContactJob } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
@@ -55,6 +49,9 @@ import { GmailFullSyncV2Job } from 'src/modules/messaging/jobs/gmail-full-sync-v
 import { GmailPartialSyncV2Job } from 'src/modules/messaging/jobs/gmail-partial-sync-v2.job';
 import { GmailPartialSyncV2Module } from 'src/modules/messaging/services/gmail-partial-sync-v2/gmail-partial-sync-v2.module';
 import { GoogleCalendarSyncCronJob } from 'src/modules/calendar/jobs/crons/google-calendar-sync.cron-job';
+import { CalendarEventParticipantModule } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.module';
+import { UnmatchParticipantJob } from 'src/modules/connected-account/jobs/unmatch-participant.job';
+import { DeleteConnectedAccountAssociatedCalendarDataJob } from 'src/modules/calendar/jobs/delete-connected-account-associated-calendar-data.job';
 
 @Module({
   imports: [
@@ -77,27 +74,25 @@ import { GoogleCalendarSyncCronJob } from 'src/modules/calendar/jobs/crons/googl
     WorkspaceDataSourceModule,
     RecordPositionBackfillModule,
     GoogleAPIRefreshAccessTokenModule,
-    GmailFullSyncModule,
-    GmailPartialSyncModule,
     MessageParticipantModule,
     ObjectMetadataRepositoryModule.forFeature([
       ConnectedAccountObjectMetadata,
-      MessageParticipantObjectMetadata,
       MessageChannelObjectMetadata,
       EventObjectMetadata,
     ]),
     GmailFullSynV2Module,
     GmailFetchMessageContentFromCacheModule,
     GmailPartialSyncV2Module,
+    CalendarEventParticipantModule,
   ],
   providers: [
     {
-      provide: GmailFullSyncJob.name,
-      useClass: GmailFullSyncJob,
+      provide: GmailFullSyncV2Job.name,
+      useClass: GmailFullSyncV2Job,
     },
     {
-      provide: GmailPartialSyncJob.name,
-      useClass: GmailPartialSyncJob,
+      provide: GmailPartialSyncV2Job.name,
+      useClass: GmailPartialSyncV2Job,
     },
     {
       provide: GoogleCalendarSyncJob.name,
@@ -117,12 +112,16 @@ import { GoogleCalendarSyncCronJob } from 'src/modules/calendar/jobs/crons/googl
     },
     { provide: EmailSenderJob.name, useClass: EmailSenderJob },
     {
-      provide: FetchAllWorkspacesMessagesJob.name,
-      useClass: FetchAllWorkspacesMessagesJob,
+      provide: GmailPartialSyncCronJob.name,
+      useClass: GmailPartialSyncCronJob,
     },
     {
-      provide: MatchMessageParticipantJob.name,
-      useClass: MatchMessageParticipantJob,
+      provide: MatchParticipantJob.name,
+      useClass: MatchParticipantJob,
+    },
+    {
+      provide: UnmatchParticipantJob.name,
+      useClass: UnmatchParticipantJob,
     },
     {
       provide: CreateCompaniesAndContactsAfterSyncJob.name,
