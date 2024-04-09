@@ -2,7 +2,7 @@ import React, { ReactElement, useState } from 'react';
 import ReactDOM from 'react-dom';
 import styled from '@emotion/styled';
 
-import { IntersectionObserverWrapper } from '@/activities/calendar/components/ExpandableList/IntersectionObserverWrapper';
+import { IntersectionObserverWrapper } from '@/activities/components/ExpandableList/IntersectionObserverWrapper';
 import { Chip, ChipVariant } from '@/ui/display/chip/components/Chip';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 
