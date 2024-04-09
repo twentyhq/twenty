@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, KeyboardEvent } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -139,11 +139,18 @@ export const CreateProfile = () => {
     return null;
   }
 
+   const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === Key.Enter && isValid && !isSubmitting) {
+      event.preventDefault();
+      handleSubmit(onSubmit)();
+    }
+  };
+
   return (
     <>
       <Title withMarginTop={false}>Create profile</Title>
       <SubTitle>How you'll be identified on the app.</SubTitle>
-      <StyledContentContainer>
+      <StyledContentContainer onKeyDown={handleKeyDown}>
         <StyledSectionContainer>
           <H2Title title="Picture" />
           <ProfilePictureUploader />
