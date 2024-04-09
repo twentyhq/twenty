@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
@@ -32,8 +33,14 @@ export const RecordShowPage = () => {
     throw new Error(`Record id is not defined`);
   }
 
-  const { labelIdentifierFieldMetadata, objectMetadataItem } =
-    useObjectMetadataItem({ objectNameSingular });
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
+  const { labelIdentifierFieldMetadataItem } =
+    useLabelIdentifierFieldMetadataItem({
+      objectNameSingular,
+    });
 
   const { favorites, createFavorite, deleteFavorite } = useFavorites();
 
@@ -72,9 +79,9 @@ export const RecordShowPage = () => {
   };
 
   const labelIdentifierFieldValue =
-    record?.[labelIdentifierFieldMetadata?.name ?? ''];
+    record?.[labelIdentifierFieldMetadataItem?.name ?? ''];
   const pageName =
-    labelIdentifierFieldMetadata?.type === FieldMetadataType.FullName
+    labelIdentifierFieldMetadataItem?.type === FieldMetadataType.FullName
       ? [
           labelIdentifierFieldValue?.firstName,
           labelIdentifierFieldValue?.lastName,

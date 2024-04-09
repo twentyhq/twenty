@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
+import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
   FieldContext,
@@ -27,7 +28,11 @@ export const useFieldContext = ({
   objectRecordId: string;
   customUseUpdateOneObjectHook?: RecordUpdateHook;
 }) => {
-  const { basePathToShowPage, objectMetadataItem } = useObjectMetadataItem({
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
+  const basePathToShowPage = getBasePathToShowPage({
     objectNameSingular,
   });
 

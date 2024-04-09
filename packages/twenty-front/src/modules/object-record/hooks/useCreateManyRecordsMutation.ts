@@ -1,37 +1,38 @@
-import { gql } from '@apollo/client';
+import gql from 'graphql-tag';
 import { useRecoilValue } from 'recoil';
 
-import { EMPTY_MUTATION } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
+import { getCreateManyRecordsMutationResponseField } from '@/object-record/utils/getCreateManyRecordsMutationResponseField';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const getCreateManyRecordsMutationResponseField = (
-  objectNamePlural: string,
-) => `create${capitalize(objectNamePlural)}`;
-
-export const useGenerateCreateManyRecordMutation = ({
-  objectMetadataItem,
+export const useCreateManyRecordsMutation = ({
+  objectNameSingular,
   queryFields,
-  depth = 1,
+  depth,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectNameSingular: string;
   queryFields?: Record<string, any>;
   depth?: number;
 }) => {
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   if (isUndefinedOrNull(objectMetadataItem)) {
-    return EMPTY_MUTATION;
+    return { createManyRecordsMutation: EMPTY_MUTATION };
   }
 
   const mutationResponseField = getCreateManyRecordsMutationResponseField(
     objectMetadataItem.namePlural,
   );
 
-  return gql`
+  const createManyRecordsMutation = gql`
     mutation Create${capitalize(
       objectMetadataItem.namePlural,
     )}($data: [${capitalize(objectMetadataItem.nameSingular)}CreateInput!]!)  {
@@ -42,4 +43,8 @@ export const useGenerateCreateManyRecordMutation = ({
         depth,
       })}
   }`;
+
+  return {
+    createManyRecordsMutation,
+  };
 };

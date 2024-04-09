@@ -1,22 +1,25 @@
-import { gql } from '@apollo/client';
+import gql from 'graphql-tag';
 import { useRecoilValue } from 'recoil';
 
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const useGenerateFindOneRecordQuery = () => {
+export const useFindOneRecordQuery = ({
+  objectNameSingular,
+  depth,
+}: {
+  objectNameSingular: string;
+  depth?: number;
+}) => {
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  return ({
-    objectMetadataItem,
-    depth,
-  }: {
-    objectMetadataItem: Pick<ObjectMetadataItem, 'fields' | 'nameSingular'>;
-    depth?: number;
-  }) => {
-    return gql`
+  const findOneRecordQuery = gql`
       query FindOne${capitalize(
         objectMetadataItem.nameSingular,
       )}($objectRecordId: UUID!) {
@@ -31,5 +34,8 @@ export const useGenerateFindOneRecordQuery = () => {
         })}
       }
   `;
+
+  return {
+    findOneRecordQuery,
   };
 };

@@ -1,6 +1,7 @@
 import groupBy from 'lodash.groupby';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -41,8 +42,12 @@ export const RecordShowContainer = ({
   objectNameSingular,
   objectRecordId,
 }: RecordShowContainerProps) => {
-  const { objectMetadataItem, labelIdentifierFieldMetadata } =
-    useObjectMetadataItem({
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
+  const { labelIdentifierFieldMetadataItem } =
+    useLabelIdentifierFieldMetadataItem({
       objectNameSingular,
     });
 
@@ -105,7 +110,7 @@ export const RecordShowContainer = ({
     .filter(
       (fieldMetadataItem) =>
         isFieldCellSupported(fieldMetadataItem) &&
-        fieldMetadataItem.id !== labelIdentifierFieldMetadata?.id,
+        fieldMetadataItem.id !== labelIdentifierFieldMetadataItem?.id,
     )
     .sort((fieldMetadataItemA, fieldMetadataItemB) =>
       fieldMetadataItemA.name.localeCompare(fieldMetadataItemB.name),
@@ -135,17 +140,19 @@ export const RecordShowContainer = ({
                     value={{
                       entityId: objectRecordId,
                       recoilScopeId:
-                        objectRecordId + labelIdentifierFieldMetadata?.id,
+                        objectRecordId + labelIdentifierFieldMetadataItem?.id,
                       isLabelIdentifier: false,
                       fieldDefinition: {
                         type:
-                          labelIdentifierFieldMetadata?.type ||
+                          labelIdentifierFieldMetadataItem?.type ||
                           FieldMetadataType.Text,
                         iconName: '',
-                        fieldMetadataId: labelIdentifierFieldMetadata?.id ?? '',
-                        label: labelIdentifierFieldMetadata?.label || '',
+                        fieldMetadataId:
+                          labelIdentifierFieldMetadataItem?.id ?? '',
+                        label: labelIdentifierFieldMetadataItem?.label || '',
                         metadata: {
-                          fieldName: labelIdentifierFieldMetadata?.name || '',
+                          fieldName:
+                            labelIdentifierFieldMetadataItem?.name || '',
                         },
                       },
                       useUpdateRecord: useUpdateOneObjectRecordMutation,

@@ -1,10 +1,10 @@
 import { gql } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
-import { EMPTY_MUTATION } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from '~/utils/string/capitalize';
 
@@ -16,15 +16,19 @@ export const getExecuteQuickActionOnOneRecordMutationGraphQLField = ({
   return `executeQuickActionOn${capitalize(objectNameSingular)}`;
 };
 
-export const useGenerateExecuteQuickActionOnOneRecordMutation = ({
-  objectMetadataItem,
+export const useExecuteQuickActionOnOneRecordMutation = ({
+  objectNameSingular,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectNameSingular: string;
 }) => {
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   if (isUndefinedOrNull(objectMetadataItem)) {
-    return EMPTY_MUTATION;
+    return { executeQuickActionOnOneRecordMutation: EMPTY_MUTATION };
   }
 
   const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
@@ -34,7 +38,7 @@ export const useGenerateExecuteQuickActionOnOneRecordMutation = ({
       objectNameSingular: objectMetadataItem.nameSingular,
     });
 
-  return gql`
+  const executeQuickActionOnOneRecordMutation = gql`
     mutation ExecuteQuickActionOnOne${capitalizedObjectName}($idToExecuteQuickActionOn: ID!)  {
        ${graphQLFieldForExecuteQuickActionOnOneRecordMutation}(id: $idToExecuteQuickActionOn) ${mapObjectMetadataToGraphQLQuery(
          {
@@ -44,4 +48,6 @@ export const useGenerateExecuteQuickActionOnOneRecordMutation = ({
        )}
     }
   `;
+
+  return { executeQuickActionOnOneRecordMutation };
 };
