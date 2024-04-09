@@ -33,6 +33,6 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     sleep(1000);
 
-    await canvas.findByRole('button', { name: 'Subscribe' });
+    await canvas.findByText('PostgreSQL database');
   },
 };

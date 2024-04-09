@@ -15,7 +15,7 @@ import { mockedClientConfig } from '~/testing/mock-data/config';
 import { mockedUsersData } from '~/testing/mock-data/users';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
-import { mockedObjectMetadataItems } from './mock-data/metadata';
+import { mockedObjectMetadataItems } from './mock-data/generated/metadata';
 import { mockedPeopleData } from './mock-data/people';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 import { mockedViewsData } from './mock-data/views';
