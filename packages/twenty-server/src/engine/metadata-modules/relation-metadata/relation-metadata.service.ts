@@ -322,7 +322,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
   async getManyRelationMetadataByFieldMetadataIdsForDataloader(
     fieldMetadataIds: string[],
   ) {
-    const relationMetadataItems = await this.relationMetadataRepository.find({
+    const relationMetadataCollection = await this.relationMetadataRepository.find({
       where: [
         {
           fromFieldMetadataId: In(fieldMetadataIds),
