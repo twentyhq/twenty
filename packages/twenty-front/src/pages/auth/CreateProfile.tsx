@@ -135,6 +135,13 @@ export const CreateProfile = () => {
     [onSubmit],
   );
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === Key.Enter && !isSubmitting) {
+      event.preventDefault();
+      handleSubmit(onSubmit)();
+    }
+  };
+
   if (onboardingStatus !== OnboardingStatus.OngoingProfileCreation) {
     return null;
   }
@@ -171,6 +178,7 @@ export const CreateProfile = () => {
                   placeholder="Tim"
                   error={error?.message}
                   fullWidth
+                  onKeyDown={handleKeyDown}
                   disableHotkeys
                 />
               )}
@@ -190,6 +198,7 @@ export const CreateProfile = () => {
                   placeholder="Cook"
                   error={error?.message}
                   fullWidth
+                  onKeyDown={handleKeyDown}
                   disableHotkeys
                 />
               )}
