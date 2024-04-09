@@ -35,6 +35,7 @@ const meta: Meta = {
             iconName: 'IconCalendarEvent',
             metadata: {
               fieldName: 'Date',
+              objectMetadataNameSingular: 'person',
             },
           },
           hotkeyScope: 'hotkey-scope',
