@@ -23,7 +23,7 @@ export class CaptchaGuard implements CanActivate {
     if (result.success) return true;
     else
       throw new HttpException(
-        result?.error ?? 'Captcha Error',
+        result?.error ?? 'Invalid Captcha, please try again',
         HttpStatus.BAD_REQUEST,
       );
   }
