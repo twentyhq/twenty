@@ -15,8 +15,8 @@ export enum WorkspaceMigrationColumnActionType {
   DROP = 'DROP',
   CREATE_COMMENT = 'CREATE_COMMENT',
 }
-
-export type WorkspaceMigrationEnum = string | { from: string; to: string };
+export type WorkspaceMigrationRenamedEnum = { from: string; to: string };
+export type WorkspaceMigrationEnum = string | WorkspaceMigrationRenamedEnum;
 
 export interface WorkspaceMigrationColumnDefinition {
   columnName: string;
