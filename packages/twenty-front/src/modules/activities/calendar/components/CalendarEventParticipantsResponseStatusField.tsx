@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui';
 
-import { ExpandableList } from '@/activities/calendar/components/ExpandableList';
+import { ExpandableList } from '@/activities/calendar/components/ExpandableList/ExpandableList';
 import { CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';

@@ -1,8 +1,9 @@
 import React, { ReactElement, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { ExpandableListPlus } from '@/activities/calendar/components/ExpandableListPlus';
-import { IntersectionObserverWrapper } from '@/activities/calendar/components/IntersectionObserverWrapper';
+import { IntersectionObserverWrapper } from '@/activities/calendar/components/ExpandableList/IntersectionObserverWrapper';
+import { Chip, ChipVariant } from '@/ui/display/chip/components/Chip';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 
 export const ExpandableList = ({
   components,
@@ -19,6 +20,8 @@ export const ExpandableList = ({
 
   const firstComponent = components[0];
 
+  const dropdownId = 'expandable-list-dropdown';
+
   return (
     <StyledContainer>
       {firstComponent}
@@ -34,16 +37,25 @@ export const ExpandableList = ({
           </IntersectionObserverWrapper>
           {index === componentsInView.size - 1 &&
             components.length - componentsInView.size - 1 !== 0 && (
-              <ExpandableListPlus
-                number={components.length - componentsInView.size - 1}
-                onClick={() => setIsExpanded(!isExpanded)}
+              <Dropdown
+                dropdownId={dropdownId}
+                dropdownHotkeyScope={{
+                  scope: dropdownId,
+                }}
+                clickableComponent={
+                  <Chip
+                    label={`+${components.length - componentsInView.size - 1}`}
+                    variant={ChipVariant.Highlighted}
+                  />
+                }
+                dropdownOffset={{ x: 0, y: -20 }}
+                dropdownComponents={
+                  <StyledExpendableCell>{components}</StyledExpendableCell>
+                }
               />
             )}
         </React.Fragment>
       ))}
-      <StyledExpendableCell isExpanded={isExpanded}>
-        {components}
-      </StyledExpendableCell>
     </StyledContainer>
   );
 };
@@ -58,8 +70,8 @@ const StyledContainer = styled.div`
   box-sizing: border-box;
 `;
 
-const StyledExpendableCell = styled.div<{ isExpanded: boolean }>`
-  display: ${({ isExpanded }) => (isExpanded ? 'flex' : 'none')};
+const StyledExpendableCell = styled.div`
+  display: flex;
   align-items: center;
   align-content: center;
   flex-wrap: wrap;
