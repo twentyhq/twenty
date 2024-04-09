@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui';
+import { v4 } from 'uuid';
 
 import { ExpandableList } from '@/activities/calendar/components/ExpandableList/ExpandableList';
 import { CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
@@ -101,6 +102,7 @@ export const CalendarEventParticipantsResponseStatusField = ({
 
         <ExpandableList
           components={StyledChips}
+          id={v4()}
           rootRef={participantsContainerRef}
           margin="0px -50px 0px 0px"
         />

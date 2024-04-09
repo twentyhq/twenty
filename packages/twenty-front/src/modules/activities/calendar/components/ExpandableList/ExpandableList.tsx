@@ -9,17 +9,19 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 export const ExpandableList = ({
   components,
   rootRef,
+  id,
   margin,
 }: {
   components: ReactElement[];
   rootRef: React.RefObject<HTMLElement>;
+  id: string;
   margin?: string;
 }) => {
   const [componentsInView, setComponentsInView] = useState(new Set<number>());
 
   const firstComponent = components[0];
 
-  const dropdownId = 'expandable-list-dropdown';
+  const dropdownId = `expandable-list-dropdown-${id}`;
 
   const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -71,7 +73,6 @@ const StyledContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   position: relative;
-  width: 100%;
   box-sizing: border-box;
 `;
 
@@ -87,7 +88,7 @@ const StyledDiv = styled.div`
   overflow: hidden;
 `;
 
-const StyledExpendableCell = styled.div<{ width?: number }>`
+const StyledExpendableCell = styled.div`
   display: flex;
   align-items: center;
   align-content: center;
@@ -96,7 +97,7 @@ const StyledExpendableCell = styled.div<{ width?: number }>`
   position: absolute;
   top: ${({ theme }) => `-${theme.spacing(2.25)}`};
   left: ${({ theme }) => `-${theme.spacing(2.25)}`};
-  width: ${({ width }) => width}px;
+  width: 232px;
   z-index: 1;
   box-sizing: border-box;
   background: ${({ theme }) => theme.background.secondary};
