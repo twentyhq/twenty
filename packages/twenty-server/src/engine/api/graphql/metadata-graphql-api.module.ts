@@ -10,14 +10,16 @@ import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graph
 import { metadataModuleFactory } from 'src/engine/api/graphql/metadata.module-factory';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
+import { DataloaderModule } from 'src/engine/dataloaders/dataloader.module';
+import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 
 @Module({
   imports: [
     GraphQLModule.forRootAsync<YogaDriverConfig>({
       driver: YogaDriver,
       useFactory: metadataModuleFactory,
-      imports: [GraphQLConfigModule],
-      inject: [EnvironmentService, ExceptionHandlerService],
+      imports: [GraphQLConfigModule, DataloaderModule],
+      inject: [EnvironmentService, ExceptionHandlerService, DataloaderService],
     }),
     MetadataEngineModule,
     WorkspaceMigrationRunnerModule,
