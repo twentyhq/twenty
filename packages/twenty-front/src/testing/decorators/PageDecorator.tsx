@@ -1,6 +1,7 @@
 import { HelmetProvider } from 'react-helmet-async';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
+import { loadDevMessages } from '@apollo/client/dev';
 import { Decorator } from '@storybook/react';
 import { RecoilRoot } from 'recoil';
 
@@ -34,12 +35,19 @@ const computeLocation = (routePath: string, routeParams: RouteParams) => {
   };
 };
 
+const ApolloStorybookDevLogEffect = () => {
+  loadDevMessages();
+
+  return <></>;
+};
+
 export const PageDecorator: Decorator<{
   routePath: string;
   routeParams: RouteParams;
 }> = (Story, { args }) => (
   <RecoilRoot>
     <ApolloProvider client={mockedApolloClient}>
+      <ApolloStorybookDevLogEffect />
       <ApolloMetadataClientMockedProvider>
         <UserProviderEffect />
         <UserProvider>
