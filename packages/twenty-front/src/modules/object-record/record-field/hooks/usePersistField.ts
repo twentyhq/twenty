@@ -1,9 +1,6 @@
 import { useContext } from 'react';
-import { useParams } from 'react-router-dom';
 import { useRecoilCallback } from 'recoil';
 
-import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldAddressValue } from '@/object-record/record-field/types/guards/isFieldAddressValue';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
@@ -11,8 +8,6 @@ import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/record-field/types/guards/isFieldSelectValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { usePendingRecordId } from '@/object-record/record-table/hooks/usePendingRecordId';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 import { FieldContext } from '../contexts/FieldContext';
 import { isFieldBoolean } from '../types/guards/isFieldBoolean';
@@ -36,45 +31,14 @@ import { isFieldRelationValue } from '../types/guards/isFieldRelationValue';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldTextValue } from '../types/guards/isFieldTextValue';
 
-const useUpsertRecord = () => {
-  const { pendingRecordId } = usePendingRecordId();
-
-  const { useUpdateRecord = () => [] } = useContext(FieldContext);
-  const [updateRecord] = useUpdateRecord();
-
-  const objectNamePlural = useParams().objectNamePlural ?? '';
-  const { objectNameSingular } = useObjectNameSingularFromPlural({
-    objectNamePlural,
-  });
-  const { createOneRecord } = useCreateOneRecord({
-    objectNameSingular,
-  });
-
-  const upsertRecord = ({
-    id,
-    recordInput,
-  }: {
-    id: string;
-    recordInput: Partial<Omit<ObjectRecord, 'id'>>;
-  }) => {
-    if (!pendingRecordId) {
-      updateRecord?.({
-        variables: {
-          where: { id },
-          updateOneRecordInput: recordInput,
-        },
-      });
-    } else {
-      createOneRecord({ id, ...recordInput });
-    }
-  };
-
-  return { upsertRecord };
-};
-
 export const usePersistField = () => {
-  const { entityId, fieldDefinition } = useContext(FieldContext);
-  const { upsertRecord } = useUpsertRecord();
+  const {
+    entityId,
+    fieldDefinition,
+    useUpdateRecord = () => [],
+  } = useContext(FieldContext);
+
+  const [updateRecord] = useUpdateRecord();
 
   const persistField = useRecoilCallback(
     ({ set }) =>
@@ -146,20 +110,24 @@ export const usePersistField = () => {
           );
 
           if (fieldIsRelation) {
-            upsertRecord?.({
-              id: entityId,
-              recordInput: {
-                [fieldName]: valueToPersist,
-                [`${fieldName}Id`]: valueToPersist?.id ?? null,
+            updateRecord?.({
+              variables: {
+                where: { id: entityId },
+                updateOneRecordInput: {
+                  [fieldName]: valueToPersist,
+                  [`${fieldName}Id`]: valueToPersist?.id ?? null,
+                },
               },
             });
             return;
           }
 
-          upsertRecord?.({
-            id: entityId,
-            recordInput: {
-              [fieldName]: valueToPersist,
+          updateRecord?.({
+            variables: {
+              where: { id: entityId },
+              updateOneRecordInput: {
+                [fieldName]: valueToPersist,
+              },
             },
           });
         } else {
@@ -172,7 +140,7 @@ export const usePersistField = () => {
           );
         }
       },
-    [entityId, fieldDefinition, upsertRecord],
+    [entityId, fieldDefinition, updateRecord],
   );
 
   return persistField;
