@@ -4,11 +4,13 @@ import { useInView } from 'react-intersection-observer';
 export const IntersectionObserverWrapper = ({
   set,
   id,
+  rootRef,
   children,
   margin,
 }: {
   set: React.Dispatch<React.SetStateAction<Set<string>>>;
   id: string;
+  rootRef?: React.RefObject<HTMLElement>;
   children: React.ReactNode;
   margin?: string;
 }) => {
@@ -30,6 +32,7 @@ export const IntersectionObserverWrapper = ({
         });
       }
     },
+    root: rootRef?.current,
     rootMargin: margin,
   });
 

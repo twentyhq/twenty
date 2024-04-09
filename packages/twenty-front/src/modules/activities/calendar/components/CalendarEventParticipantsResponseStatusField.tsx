@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui';
@@ -96,6 +96,8 @@ export const CalendarEventParticipantsResponseStatusField = ({
     ...participants.filter((participant) => participant.workspaceMember),
   ];
 
+  const participantsContainerRef = useRef<HTMLDivElement>(null);
+
   return (
     <StyledPropertyBox>
       <StyledInlineCellBaseContainer>
@@ -113,6 +115,7 @@ export const CalendarEventParticipantsResponseStatusField = ({
               <IntersectionObserverWrapper
                 set={setParticipantsInView}
                 id={participant.id}
+                rootRef={participantsContainerRef}
                 margin="0px -50px 0px 0px"
               >
                 <StyledParticipantChip key={index} participant={participant} />
