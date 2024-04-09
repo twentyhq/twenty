@@ -1,5 +1,9 @@
-import { Checkbox, CheckboxShape, CheckboxSize, Tag } from 'tsup.ui.index';
-
+import { Tag } from '@/ui/display/tag/components/Tag';
+import {
+  Checkbox,
+  CheckboxShape,
+  CheckboxSize,
+} from '@/ui/input/components/Checkbox';
 import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
 
 import {
