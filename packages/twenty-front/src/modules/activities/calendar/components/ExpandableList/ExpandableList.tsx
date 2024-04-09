@@ -25,39 +25,43 @@ export const ExpandableList = ({
 
   return (
     <StyledContainer ref={containerRef}>
-      {firstComponent}
-      {components.slice(1).map((component, index) => (
-        <React.Fragment key={index}>
-          <IntersectionObserverWrapper
-            set={setComponentsInView}
-            id={index}
-            rootRef={rootRef}
-            margin={margin}
-          >
-            {component}
-          </IntersectionObserverWrapper>
-          {index === componentsInView.size - 1 &&
-            components.length - componentsInView.size - 1 !== 0 && (
-              <Dropdown
-                dropdownId={dropdownId}
-                dropdownHotkeyScope={{
-                  scope: dropdownId,
-                }}
-                clickableComponent={
-                  <Chip
-                    label={`+${components.length - componentsInView.size - 1}`}
-                    variant={ChipVariant.Highlighted}
-                  />
-                }
-                dropdownComponents={ReactDOM.createPortal(
-                  <StyledExpendableCell>{components}</StyledExpendableCell>,
-                  containerRef.current as HTMLDivElement,
-                )}
-                disableBorder
-              />
-            )}
-        </React.Fragment>
-      ))}
+      <StyledDiv>
+        {firstComponent}
+        {components.slice(1).map((component, index) => (
+          <React.Fragment key={index}>
+            <IntersectionObserverWrapper
+              set={setComponentsInView}
+              id={index}
+              rootRef={rootRef}
+              margin={margin}
+            >
+              {component}
+            </IntersectionObserverWrapper>
+            {index === componentsInView.size - 1 &&
+              components.length - componentsInView.size - 1 !== 0 && (
+                <Dropdown
+                  dropdownId={dropdownId}
+                  dropdownHotkeyScope={{
+                    scope: dropdownId,
+                  }}
+                  clickableComponent={
+                    <Chip
+                      label={`+${
+                        components.length - componentsInView.size - 1
+                      }`}
+                      variant={ChipVariant.Highlighted}
+                    />
+                  }
+                  dropdownComponents={ReactDOM.createPortal(
+                    <StyledExpendableCell>{components}</StyledExpendableCell>,
+                    containerRef.current as HTMLDivElement,
+                  )}
+                  disableBorder
+                />
+              )}
+          </React.Fragment>
+        ))}
+      </StyledDiv>
     </StyledContainer>
   );
 };
@@ -67,12 +71,23 @@ const StyledContainer = styled.div`
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   position: relative;
-  white-space: nowrap;
-  max-width: 100%;
+  width: 100%;
   box-sizing: border-box;
 `;
 
-const StyledExpendableCell = styled.div`
+const StyledDiv = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  position: relative;
+  white-space: nowrap;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+`;
+
+const StyledExpendableCell = styled.div<{ width?: number }>`
   display: flex;
   align-items: center;
   align-content: center;
@@ -81,7 +96,7 @@ const StyledExpendableCell = styled.div`
   position: absolute;
   top: ${({ theme }) => `-${theme.spacing(2.25)}`};
   left: ${({ theme }) => `-${theme.spacing(2.25)}`};
-  width: 232px;
+  width: ${({ width }) => width}px;
   z-index: 1;
   box-sizing: border-box;
   background: ${({ theme }) => theme.background.secondary};
