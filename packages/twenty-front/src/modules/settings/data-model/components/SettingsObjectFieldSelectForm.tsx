@@ -101,6 +101,20 @@ export const SettingsObjectFieldSelectForm = ({
     onChange(nextOptions);
   };
 
+  console.log('values', values);
+
+  const findNewLabel = () => {
+    let optionIndex = values.length + 1;
+    while (optionIndex < 100) {
+      const newLabel = `Option ${optionIndex}`;
+      if (!values.map((value) => value.label).includes(newLabel)) {
+        return newLabel;
+      }
+      optionIndex += 1;
+    }
+    return `Option 100`;
+  };
+
   return (
     <>
       <StyledContainer>
@@ -155,7 +169,7 @@ export const SettingsObjectFieldSelectForm = ({
               ...values,
               {
                 color: getNextColor(values[values.length - 1].color),
-                label: `Option ${values.length + 1}`,
+                label: findNewLabel(),
                 value: v4(),
               },
             ])
