@@ -1,4 +1,3 @@
-import { FieldMetadataTargetColumnMap } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-target-column-map.interface';
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
@@ -12,7 +11,6 @@ export interface FieldMetadataInterface<
   type: FieldMetadataType;
   name: string;
   label: string;
-  targetColumnMap: FieldMetadataTargetColumnMap<T>;
   defaultValue?: FieldMetadataDefaultValue<T>;
   options?: FieldMetadataOptions<T>;
   objectMetadataId: string;

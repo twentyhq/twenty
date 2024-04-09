@@ -17,7 +17,7 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   const getRecordFromCache = useGetRecordFromCache({
-    objectMetadataItem,
+    objectNameSingular: objectMetadataItem.nameSingular,
   });
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const apolloClient = useApolloClient();

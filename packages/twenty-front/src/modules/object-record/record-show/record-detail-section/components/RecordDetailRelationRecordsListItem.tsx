@@ -9,7 +9,7 @@ import {
   IconUnlink,
 } from 'twenty-ui';
 
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { RecordChip } from '@/object-record/components/RecordChip';
@@ -92,7 +92,7 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const isToOneObject = relationType === 'TO_ONE_OBJECT';
   const { objectMetadataItem: relationObjectMetadataItem } =
-    useObjectMetadataItemOnly({
+    useObjectMetadataItem({
       objectNameSingular: relationObjectMetadataNameSingular,
     });
 

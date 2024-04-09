@@ -18,6 +18,8 @@ import {
   WorkspaceMigrationColumnCreateRelation,
   WorkspaceMigrationColumnAlter,
   WorkspaceMigrationColumnDropRelation,
+  WorkspaceMigrationTableActionType,
+  WorkspaceMigrationForeignTable,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { WorkspaceMigrationEnumService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-enum.service';
@@ -117,19 +119,44 @@ export class WorkspaceMigrationRunnerService {
     tableMigration: WorkspaceMigrationTableAction,
   ) {
     switch (tableMigration.action) {
-      case 'create':
+      case WorkspaceMigrationTableActionType.CREATE:
         await this.createTable(queryRunner, schemaName, tableMigration.name);
         break;
-      case 'alter':
-        await this.handleColumnChanges(
+      case WorkspaceMigrationTableActionType.ALTER: {
+        if (tableMigration.newName) {
+          await this.renameTable(
+            queryRunner,
+            schemaName,
+            tableMigration.name,
+            tableMigration.newName,
+          );
+        }
+
+        if (tableMigration.columns && tableMigration.columns.length > 0) {
+          await this.handleColumnChanges(
+            queryRunner,
+            schemaName,
+            tableMigration.newName ?? tableMigration.name,
+            tableMigration.columns,
+          );
+        }
+        break;
+      }
+      case WorkspaceMigrationTableActionType.DROP:
+        await queryRunner.dropTable(`${schemaName}.${tableMigration.name}`);
+        break;
+      case 'create_foreign_table':
+        await this.createForeignTable(
           queryRunner,
           schemaName,
           tableMigration.name,
-          tableMigration?.columns,
+          tableMigration?.foreignTable,
         );
         break;
-      case 'drop':
-        await queryRunner.dropTable(`${schemaName}.${tableMigration.name}`);
+      case 'drop_foreign_table':
+        await queryRunner.query(
+          `DROP FOREIGN TABLE ${schemaName}."${tableMigration.name}"`,
+        );
         break;
       default:
         throw new Error(
@@ -163,6 +190,25 @@ export class WorkspaceMigrationRunnerService {
     await queryRunner.query(`
       COMMENT ON TABLE "${schemaName}"."${tableName}" IS '@graphql({"totalCount": {"enabled": true}})';
     `);
+  }
+
+  /**
+   * Rename a table
+   * @param queryRunner QueryRunner
+   * @param schemaName string
+   * @param oldTableName string
+   * @param newTableName string
+   */
+  private async renameTable(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    oldTableName: string,
+    newTableName: string,
+  ) {
+    await queryRunner.renameTable(
+      `${schemaName}.${oldTableName}`,
+      newTableName,
+    );
   }
 
   /**
@@ -429,6 +475,29 @@ export class WorkspaceMigrationRunnerService {
   ) {
     await queryRunner.query(`
       COMMENT ON TABLE "${schemaName}"."${tableName}" IS e'${comment}';
+    `);
+  }
+
+  private async createForeignTable(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    name: string,
+    foreignTable: WorkspaceMigrationForeignTable | undefined,
+  ) {
+    if (!foreignTable) {
+      return;
+    }
+
+    const foreignTableColumns = foreignTable.columns
+      .map((column) => `"${column.columnName}" ${column.columnType}`)
+      .join(', ');
+
+    await queryRunner.query(
+      `CREATE FOREIGN TABLE ${schemaName}."${name}" (${foreignTableColumns}) SERVER "${foreignTable.foreignDataWrapperId}" OPTIONS (schema_name '${foreignTable.referencedTableSchema}', table_name '${foreignTable.referencedTableName}')`,
+    );
+
+    await queryRunner.query(`
+      COMMENT ON FOREIGN TABLE "${schemaName}"."${name}" IS '@graphql({"primary_key_columns": ["id"], "totalCount": {"enabled": true}})';
     `);
   }
 }

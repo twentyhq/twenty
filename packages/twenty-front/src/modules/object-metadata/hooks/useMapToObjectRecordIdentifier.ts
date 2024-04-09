@@ -1,8 +1,19 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-export const useMapToObjectRecordIdentifier =
-  ({ objectMetadataItem }: { objectMetadataItem: ObjectMetadataItem }) =>
-  (record: ObjectRecord) =>
-    getObjectRecordIdentifier({ objectMetadataItem, record });
+export const useMapToObjectRecordIdentifier = ({
+  objectNameSingular,
+}: {
+  objectNameSingular: string;
+}) => {
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
+  const mapToObjectRecordIdentifier = (record: ObjectRecord) => {
+    return getObjectRecordIdentifier({ objectMetadataItem, record });
+  };
+
+  return { mapToObjectRecordIdentifier };
+};

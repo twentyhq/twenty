@@ -1,11 +1,12 @@
 import { useApolloClient } from '@apollo/client';
 
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
-import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordQueryResult } from '@/object-record/types/ObjectRecordQueryResult';
 import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
+import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import { isDefined } from '~/utils/isDefined';
 
 export const useReadFindManyRecordsQueryInCache = ({
@@ -15,7 +16,7 @@ export const useReadFindManyRecordsQueryInCache = ({
 }) => {
   const apolloClient = useApolloClient();
 
-  const generateFindManyRecordsQuery = useGenerateFindManyRecordsQuery();
+  const { objectMetadataItems } = useObjectMetadataItems();
 
   const readFindManyRecordsQueryInCache = <
     T extends ObjectRecord = ObjectRecord,
@@ -30,6 +31,7 @@ export const useReadFindManyRecordsQueryInCache = ({
   }) => {
     const findManyRecordsQueryForCacheRead = generateFindManyRecordsQuery({
       objectMetadataItem,
+      objectMetadataItems,
       queryFields,
       depth,
     });
