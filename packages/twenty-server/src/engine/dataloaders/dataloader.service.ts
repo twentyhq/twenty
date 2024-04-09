@@ -17,12 +17,12 @@ export class DataloaderService {
       string,
       RelationMetadataEntity
     >(async (fieldMetadataIds: string[]) => {
-      const relationsMetadataItems =
-        await this.relationMetadataService.getManyRelationMetadataByFieldMetadataIdsForDataloader(
+      const relationsMetadataCollection =
+        await this.relationMetadataService.findManyRelationMetadataByFieldMetadataIds(
           fieldMetadataIds,
         );
 
-      return relationsMetadataItems;
+      return relationsMetadataCollection;
     });
 
     return {

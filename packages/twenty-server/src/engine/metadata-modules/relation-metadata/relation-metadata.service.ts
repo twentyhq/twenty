@@ -24,7 +24,6 @@ import {
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
-import { NotFoundError } from 'src/engine/utils/graphql-errors.util';
 
 import {
   RelationMetadataEntity,
@@ -321,26 +320,27 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
 
   async findManyRelationMetadataByFieldMetadataIds(
     fieldMetadataIds: string[],
-  ) {
-    const relationMetadataCollection = await this.relationMetadataRepository.find({
-      where: [
-        {
-          fromFieldMetadataId: In(fieldMetadataIds),
-        },
-        {
-          toFieldMetadataId: In(fieldMetadataIds),
-        },
-      ],
-      relations: [
-        'fromObjectMetadata',
-        'toObjectMetadata',
-        'fromFieldMetadata',
-        'toFieldMetadata',
-      ],
-    });
+  ): Promise<(RelationMetadataEntity | NotFoundException)[]> {
+    const relationMetadataCollection =
+      await this.relationMetadataRepository.find({
+        where: [
+          {
+            fromFieldMetadataId: In(fieldMetadataIds),
+          },
+          {
+            toFieldMetadataId: In(fieldMetadataIds),
+          },
+        ],
+        relations: [
+          'fromObjectMetadata',
+          'toObjectMetadata',
+          'fromFieldMetadata',
+          'toFieldMetadata',
+        ],
+      });
 
     const mappedResult = fieldMetadataIds.map((fieldMetadataId) => {
-      const foundRelationMetadataItem = relationMetadataItems.find(
+      const foundRelationMetadataItem = relationMetadataCollection.find(
         (relationMetadataItem) =>
           relationMetadataItem.fromFieldMetadataId === fieldMetadataId ||
           relationMetadataItem.toFieldMetadataId === fieldMetadataId,
@@ -348,7 +348,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
 
       return (
         foundRelationMetadataItem ??
-        new NotFoundError(
+        new NotFoundException(
           `RelationMetadata with fieldMetadataId ${fieldMetadataId} not found`,
         )
       );
