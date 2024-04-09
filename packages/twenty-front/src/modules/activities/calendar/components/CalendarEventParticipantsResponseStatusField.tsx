@@ -54,17 +54,8 @@ const StyledLabelContainer = styled.div<{ width?: number }>`
   width: ${({ width }) => width}px;
 `;
 
-const StyledParticipantsContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  max-width: 100%;
-  overflow: hidden;
-  white-space: nowrap;
-`;
-
 const StyledParticipantChip = styled(ParticipantChip)<{ inView?: boolean }>`
-  opacity: ${({ inView }) => (inView ? 1 : 0)};
+  opacity: ${({ inView }) => (inView === undefined || inView ? 1 : 0)};
 `;
 
 export const CalendarEventParticipantsResponseStatusField = ({
@@ -108,13 +99,11 @@ export const CalendarEventParticipantsResponseStatusField = ({
           </StyledLabelContainer>
         </StyledLabelAndIconContainer>
 
-        <StyledParticipantsContainer>
-          <ExpandableList
-            components={StyledChips}
-            rootRef={participantsContainerRef}
-            margin="0px -50px 0px 0px"
-          />
-        </StyledParticipantsContainer>
+        <ExpandableList
+          components={StyledChips}
+          rootRef={participantsContainerRef}
+          margin="0px -50px 0px 0px"
+        />
       </StyledInlineCellBaseContainer>
     </StyledPropertyBox>
   );

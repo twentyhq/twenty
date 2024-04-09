@@ -1,4 +1,5 @@
 import React, { ReactElement, useState } from 'react';
+import styled from '@emotion/styled';
 
 import { ExpandableListPlus } from '@/activities/calendar/components/ExpandableListPlus';
 import { IntersectionObserverWrapper } from '@/activities/calendar/components/IntersectionObserverWrapper';
@@ -14,11 +15,13 @@ export const ExpandableList = ({
 }) => {
   const [componentsInView, setComponentsInView] = useState(new Set<number>());
 
+  const [isExpanded, setIsExpanded] = useState(false);
+
   const firstComponent = components[0];
 
   return (
-    <>
-      {firstComponent && React.cloneElement(firstComponent, { inView: true })}
+    <StyledContainer>
+      {firstComponent}
       {components.slice(1).map((component, index) => (
         <React.Fragment key={index}>
           <IntersectionObserverWrapper
@@ -33,22 +36,38 @@ export const ExpandableList = ({
             components.length - componentsInView.size - 1 !== 0 && (
               <ExpandableListPlus
                 number={components.length - componentsInView.size - 1}
+                onClick={() => setIsExpanded(!isExpanded)}
               />
             )}
         </React.Fragment>
       ))}
-    </>
+      <StyledExpendableCell isExpanded={isExpanded}>
+        {components}
+      </StyledExpendableCell>
+    </StyledContainer>
   );
 };
 
-const ExpendableCell = ({
-  children,
-  isExpanded,
-}: {
-  children: React.ReactNode;
-  isExpanded: boolean;
-}) => {
-  return (
-    <div style={{ display: isExpanded ? 'block' : 'none' }}>{children}</div>
-  );
-};
+const StyledContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  position: relative;
+  white-space: nowrap;
+  max-width: 100%;
+  box-sizing: border-box;
+`;
+
+const StyledExpendableCell = styled.div<{ isExpanded: boolean }>`
+  border: 1px solid ${({ theme }) => theme.border.color.strong};
+  display: ${({ isExpanded }) => (isExpanded ? 'flex' : 'none')};
+  flex-flow: row wrap;
+  gap: ${({ theme }) => theme.spacing(1)};
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  width: 300px;
+  box-sizing: border-box;
+  background: ${({ theme }) => theme.background.secondary};
+`;
