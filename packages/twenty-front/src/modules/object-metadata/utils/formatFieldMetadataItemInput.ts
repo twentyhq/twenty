@@ -34,11 +34,12 @@ export const formatFieldMetadataItemInput = (
         (defaultOption) => `'${getOptionValueFromLabel(defaultOption.label)}'`,
       );
     }
-  } else {
+  }
+  if (input.type === FieldMetadataType.Select) {
     const defaultOption = input.options?.find((option) => option.isDefault);
-    if (isDefined(defaultOption)) {
-      defaultValue = `'${getOptionValueFromLabel(defaultOption.label)}'`;
-    }
+    defaultValue = isDefined(defaultOption)
+      ? `'${getOptionValueFromLabel(defaultOption.label)}'`
+      : null;
   }
 
   // Check if options has unique values
