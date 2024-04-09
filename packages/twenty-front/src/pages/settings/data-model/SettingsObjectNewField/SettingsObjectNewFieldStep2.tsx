@@ -28,6 +28,7 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled.ts';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -41,6 +42,7 @@ export const SettingsObjectNewFieldStep2 = () => {
   const navigate = useNavigate();
   const { objectSlug = '' } = useParams();
   const { enqueueSnackBar } = useSnackBar();
+  const isMultiSelectEnabled = useIsFeatureEnabled('IS_MULTI_SELECT_ENABLED');
 
   const {
     findActiveObjectMetadataItemBySlug,
@@ -286,6 +288,10 @@ export const SettingsObjectNewFieldStep2 = () => {
     FieldMetadataType.Probability,
     FieldMetadataType.Uuid,
   ];
+
+  if (!isMultiSelectEnabled) {
+    excludedFieldTypes.push(FieldMetadataType.MultiSelect);
+  }
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
