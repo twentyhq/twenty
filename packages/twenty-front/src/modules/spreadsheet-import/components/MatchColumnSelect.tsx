@@ -9,8 +9,8 @@ import {
   size,
   useFloating,
 } from '@floating-ui/react';
-import debounce from 'lodash.debounce';
 import { ReadonlyDeep } from 'type-fest';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { SelectOption } from '@/spreadsheet-import/types';
 import { AppTooltip } from '@/ui/display/tooltip/AppTooltip';
@@ -72,9 +72,13 @@ export const MatchColumnSelect = ({
     [initialOptions],
   );
 
-  const debouncedHandleSearchFilter = debounce(handleSearchFilterChange, 100, {
-    leading: true,
-  });
+  const debouncedHandleSearchFilter = useDebouncedCallback(
+    handleSearchFilterChange,
+    100,
+    {
+      leading: true,
+    },
+  );
 
   const handleFilterChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.currentTarget.value;

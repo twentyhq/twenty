@@ -146,7 +146,7 @@ describe('useFavorites', () => {
       };
 
       const responderProvided: ResponderProvided = {
-        announce: (message: string) => console.log(message),
+        announce: () => {},
       };
 
       result.current.handleReorderFavorite(

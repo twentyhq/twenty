@@ -351,7 +351,7 @@ describe('useFilterDropdown', () => {
   });
 
   it('should handle scopeId undefined on initial values', () => {
-    console.error = jest.fn();
+    global.console.error = jest.fn();
 
     const renderFunction = () => {
       renderHook(() => useFilterDropdown(), renderHookConfig);

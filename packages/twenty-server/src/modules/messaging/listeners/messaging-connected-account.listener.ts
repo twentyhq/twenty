@@ -10,7 +10,7 @@ import { MessageQueueService } from 'src/engine/integrations/message-queue/servi
 import {
   DeleteConnectedAccountAssociatedCalendarDataJobData,
   DeleteConnectedAccountAssociatedCalendarDataJob,
-} from 'src/modules/messaging/jobs/delete-connected-account-associated-calendar-data.job';
+} from 'src/modules/calendar/jobs/delete-connected-account-associated-calendar-data.job';
 import {
   DeleteConnectedAccountAssociatedMessagingDataJobData,
   DeleteConnectedAccountAssociatedMessagingDataJob,

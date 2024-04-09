@@ -7,8 +7,8 @@ import { IconSettings } from 'twenty-ui';
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
-import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -48,7 +48,7 @@ export const SettingsObjectNewFieldStep2 = () => {
     findActiveObjectMetadataItemBySlug,
     findObjectMetadataItemById,
     findObjectMetadataItemByNamePlural,
-  } = useObjectMetadataItemForSettings();
+  } = useFilteredObjectMetadataItems();
 
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
@@ -87,10 +87,9 @@ export const SettingsObjectNewFieldStep2 = () => {
   const [objectViews, setObjectViews] = useState<View[]>([]);
   const [relationObjectViews, setRelationObjectViews] = useState<View[]>([]);
 
-  const { objectMetadataItem: viewObjectMetadataItem } =
-    useObjectMetadataItemOnly({
-      objectNameSingular: CoreObjectNameSingular.View,
-    });
+  const { objectMetadataItem: viewObjectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.View,
+  });
 
   useFindManyRecords<View>({
     objectNameSingular: CoreObjectNameSingular.View,
@@ -307,11 +306,13 @@ export const SettingsObjectNewFieldStep2 = () => {
               { children: 'New Field' },
             ]}
           />
-          <SaveAndCancelButtons
-            isSaveDisabled={!canSave}
-            onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-            onSave={handleSave}
-          />
+          {!activeObjectMetadataItem.isRemote && (
+            <SaveAndCancelButtons
+              isSaveDisabled={!canSave}
+              onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
+              onSave={handleSave}
+            />
+          )}
         </SettingsHeaderContainer>
         <SettingsObjectFieldFormSection
           iconKey={formValues.icon}

@@ -5,7 +5,6 @@ import {
 import { ComputedPartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { generateTargetColumnMap } from 'src/engine/metadata-modules/field-metadata/utils/generate-target-column-map.util';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   createForeignKeyDeterministicUuid,
@@ -42,7 +41,6 @@ export const computeStandardObject = (
           ...rest,
           standardId: relationStandardId,
           defaultValue: null,
-          targetColumnMap: {},
         });
 
         // Foreign key
@@ -55,11 +53,6 @@ export const computeStandardObject = (
           description: `${data.description} id foreign key`,
           defaultValue: null,
           icon: undefined,
-          targetColumnMap: generateTargetColumnMap(
-            FieldMetadataType.UUID,
-            rest.isCustom,
-            joinColumn,
-          ),
           isSystem: true,
         });
       }

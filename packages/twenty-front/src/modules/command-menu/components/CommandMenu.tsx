@@ -89,7 +89,8 @@ export const StyledList = styled.div`
 
 export const StyledInnerList = styled.div`
   padding-left: ${({ theme }) => theme.spacing(1)};
-  width: 100%;
+  padding-right: ${({ theme }) => theme.spacing(1)};
+  width: calc(100% - ${({ theme }) => theme.spacing(2)});
 `;
 
 export const StyledEmpty = styled.div`

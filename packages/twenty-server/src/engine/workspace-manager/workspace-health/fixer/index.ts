@@ -1,11 +1,12 @@
+import { WorkspaceMissingColumnFixer } from 'src/engine/workspace-manager/workspace-health/fixer/workspace-missing-column.fixer';
+
 import { WorkspaceNullableFixer } from './workspace-nullable.fixer';
 import { WorkspaceDefaultValueFixer } from './workspace-default-value.fixer';
 import { WorkspaceTypeFixer } from './workspace-type.fixer';
-import { WorkspaceTargetColumnMapFixer } from './workspace-target-column-map.fixer';
 
 export const workspaceFixers = [
   WorkspaceNullableFixer,
   WorkspaceDefaultValueFixer,
   WorkspaceTypeFixer,
-  WorkspaceTargetColumnMapFixer,
+  WorkspaceMissingColumnFixer,
 ];

@@ -10,6 +10,10 @@ const ProfileContainer = styled.div`
   gap: 32px;
   width: 100%;
   align-items: center;
+  @media (max-width: 600px) {
+    flex-direction: column;
+    align-items: start;
+  }
 `;
 
 const Avatar = styled.div`
@@ -33,6 +37,10 @@ const Details = styled.div`
   flex-direction: column;
   gap: 4px;
 
+  @media (max-width: 810px) {
+    gap: 8px;
+  }
+
   .username {
     font-size: 40px;
     font-weight: 700;
@@ -42,7 +50,7 @@ const Details = styled.div`
     gap: 12px;
 
     @media (max-width: 810px) {
-      font-size: 24px;
+      font-size: 32px;
       line-height: 28.8px;
     }
   }

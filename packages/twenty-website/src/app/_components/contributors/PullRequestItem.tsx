@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { format } from 'date-fns';
 
 import { PullRequestIcon } from '@/app/_components/ui/icons/SvgIcons';
+import { Theme } from '@/app/_components/ui/theme/theme';
 import { formatIntoRelativeDate } from '@/shared-utils/formatIntoRelativeDate';
 
 const StyledTooltip = styled(Tooltip)``;
@@ -15,7 +16,7 @@ const Item = styled.div`
 const StyledTitle = styled.a`
   font-size: 24px;
   font-weight: 400;
-  color: #474747;
+  color: ${Theme.text.color.secondary};
   margin: 0;
   text-decoration: none;
 
@@ -27,6 +28,7 @@ const StyledTitle = styled.a`
 const StyledPrLink = styled.a`
   cursor: pointer;
   text-decoration: none;
+  color: ${Theme.text.color.quarternary} !important;
 
   &:hover {
     text-decoration: underline;
@@ -38,7 +40,8 @@ const StyledDescription = styled.div`
   font-size: 20px;
   line-height: 28px;
   font-weight: 500;
-  color: #b3b3b3;
+  color: ${Theme.text.color.quarternary};
+  margin-top: 4px;
 
   @media (max-width: 810px) {
     font-size: 18px;

@@ -25,7 +25,7 @@ const commonFieldPropertiesToIgnore = [
   'options',
 ];
 
-const fieldPropertiesToStringify = ['targetColumnMap', 'defaultValue'] as const;
+const fieldPropertiesToStringify = ['defaultValue'] as const;
 
 @Injectable()
 export class WorkspaceFieldComparator {

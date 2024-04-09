@@ -4,8 +4,18 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'package.json'
+      - 'packages/twenty-front/**'
   pull_request:
     types: [labeled]
+    paths:
+      - 'package.json'
+      - 'packages/twenty-front/**'
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   chromatic-deployment:
     if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
@@ -14,10 +24,6 @@ jobs:
       REACT_APP_SERVER_BASE_URL: http://127.0.0.1:3000
       CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-            access_token: ${{ github.token }}
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0

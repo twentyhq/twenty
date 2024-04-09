@@ -16,7 +16,6 @@ describe('WorkspaceFieldComparator', () => {
       type: 'TEXT',
       name: 'DefaultFieldName',
       label: 'Default Field Label',
-      targetColumnMap: 'default_column',
       defaultValue: null,
       description: 'Default description',
       isCustom: false,

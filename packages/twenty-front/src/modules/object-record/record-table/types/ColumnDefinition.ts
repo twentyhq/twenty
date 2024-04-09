@@ -7,4 +7,6 @@ export type ColumnDefinition<T extends FieldMetadata> = FieldDefinition<T> & {
   isLabelIdentifier?: boolean;
   isVisible?: boolean;
   viewFieldId?: string;
+  isFilterable?: boolean;
+  isSortable?: boolean;
 };

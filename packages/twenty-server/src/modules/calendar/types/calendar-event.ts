@@ -1,4 +1,4 @@
-import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-attendee.object-metadata';
+import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
 import { CalendarEventObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event.object-metadata';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
@@ -7,16 +7,16 @@ export type CalendarEvent = Omit<
   | 'createdAt'
   | 'updatedAt'
   | 'calendarChannelEventAssociations'
-  | 'calendarEventAttendees'
-  | 'eventAttendees'
+  | 'calendarEventParticipants'
+  | 'eventParticipants'
   | 'conferenceLink'
 > & {
   conferenceLinkLabel: string;
   conferenceLinkUrl: string;
 };
 
-export type CalendarEventAttendee = Omit<
-  ObjectRecord<CalendarEventAttendeeObjectMetadata>,
+export type CalendarEventParticipant = Omit<
+  ObjectRecord<CalendarEventParticipantObjectMetadata>,
   | 'id'
   | 'createdAt'
   | 'updatedAt'
@@ -29,11 +29,11 @@ export type CalendarEventAttendee = Omit<
   iCalUID: string;
 };
 
-export type CalendarEventWithAttendees = CalendarEvent & {
+export type CalendarEventWithParticipants = CalendarEvent & {
   externalId: string;
-  attendees: CalendarEventAttendee[];
+  participants: CalendarEventParticipant[];
 };
 
-export type CalendarEventAttendeeWithId = CalendarEventAttendee & {
+export type CalendarEventParticipantWithId = CalendarEventParticipant & {
   id: string;
 };

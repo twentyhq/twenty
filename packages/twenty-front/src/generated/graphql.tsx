@@ -16,6 +16,7 @@ export type Scalars = {
   ConnectionCursor: any;
   DateTime: string;
   JSON: any;
+  UUID: any;
   Upload: any;
 };
 
@@ -196,7 +197,6 @@ export enum FieldMetadataType {
   DateTime = 'DATE_TIME',
   Email = 'EMAIL',
   FullName = 'FULL_NAME',
-  Json = 'JSON',
   Link = 'LINK',
   MultiSelect = 'MULTI_SELECT',
   Number = 'NUMBER',
@@ -297,7 +297,8 @@ export type MutationActivateWorkspaceArgs = {
 
 export type MutationAuthorizeAppArgs = {
   clientId: Scalars['String'];
-  codeChallenge: Scalars['String'];
+  codeChallenge?: InputMaybe<Scalars['String']>;
+  redirectUrl?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -474,7 +475,8 @@ export type QueryCheckWorkspaceInviteHashIsValidArgs = {
 
 export type QueryExchangeAuthorizationCodeArgs = {
   authorizationCode: Scalars['String'];
-  codeVerifier: Scalars['String'];
+  clientSecret?: InputMaybe<Scalars['String']>;
+  codeVerifier?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -623,7 +625,6 @@ export type Telemetry = {
 
 export type TimelineCalendarEvent = {
   __typename?: 'TimelineCalendarEvent';
-  attendees: Array<TimelineCalendarEventAttendee>;
   conferenceLink: LinkMetadata;
   conferenceSolution: Scalars['String'];
   description: Scalars['String'];
@@ -632,13 +633,14 @@ export type TimelineCalendarEvent = {
   isCanceled: Scalars['Boolean'];
   isFullDay: Scalars['Boolean'];
   location: Scalars['String'];
+  participants: Array<TimelineCalendarEventParticipant>;
   startsAt: Scalars['DateTime'];
   title: Scalars['String'];
   visibility: TimelineCalendarEventVisibility;
 };
 
-export type TimelineCalendarEventAttendee = {
-  __typename?: 'TimelineCalendarEventAttendee';
+export type TimelineCalendarEventParticipant = {
+  __typename?: 'TimelineCalendarEventParticipant';
   avatarUrl: Scalars['String'];
   displayName: Scalars['String'];
   firstName: Scalars['String'];
@@ -777,6 +779,7 @@ export type Workspace = {
   billingSubscriptions?: Maybe<Array<BillingSubscription>>;
   createdAt: Scalars['DateTime'];
   currentBillingSubscription?: Maybe<BillingSubscription>;
+  currentCacheVersion?: Maybe<Scalars['String']>;
   deletedAt?: Maybe<Scalars['DateTime']>;
   displayName?: Maybe<Scalars['String']>;
   domainName?: Maybe<Scalars['String']>;
@@ -817,7 +820,7 @@ export type WorkspaceMember = {
   __typename?: 'WorkspaceMember';
   avatarUrl?: Maybe<Scalars['String']>;
   colorScheme: Scalars['String'];
-  id: Scalars['ID'];
+  id: Scalars['UUID'];
   locale: Scalars['String'];
   name: FullName;
 };
@@ -917,11 +920,11 @@ export type RelationEdge = {
   node: Relation;
 };
 
-export type TimelineCalendarEventAttendeeFragmentFragment = { __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
+export type TimelineCalendarEventFragmentFragment = { __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
 
-export type TimelineCalendarEventFragmentFragment = { __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
+export type TimelineCalendarEventParticipantFragmentFragment = { __typename?: 'TimelineCalendarEventParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
 
-export type TimelineCalendarEventsWithTotalFragmentFragment = { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
+export type TimelineCalendarEventsWithTotalFragmentFragment = { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
 
 export type GetTimelineCalendarEventsFromCompanyIdQueryVariables = Exact<{
   companyId: Scalars['ID'];
@@ -930,7 +933,7 @@ export type GetTimelineCalendarEventsFromCompanyIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTimelineCalendarEventsFromCompanyIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromCompanyId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+export type GetTimelineCalendarEventsFromCompanyIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromCompanyId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type GetTimelineCalendarEventsFromPersonIdQueryVariables = Exact<{
   personId: Scalars['ID'];
@@ -939,7 +942,7 @@ export type GetTimelineCalendarEventsFromPersonIdQueryVariables = Exact<{
 }>;
 
 
-export type GetTimelineCalendarEventsFromPersonIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromPersonId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, attendees: Array<{ __typename?: 'TimelineCalendarEventAttendee', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+export type GetTimelineCalendarEventsFromPersonIdQuery = { __typename?: 'Query', getTimelineCalendarEventsFromPersonId: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: string, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: TimelineCalendarEventVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type ParticipantFragmentFragment = { __typename?: 'TimelineThreadParticipant', personId?: string | null, workspaceMemberId?: string | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
 
@@ -1027,7 +1030,7 @@ export type ImpersonateMutationVariables = Exact<{
 }>;
 
 
-export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: string, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type ImpersonateMutation = { __typename?: 'Mutation', impersonate: { __typename?: 'Verify', user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: string, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type RenewTokenMutationVariables = Exact<{
   appToken: Scalars['String'];
@@ -1058,7 +1061,7 @@ export type VerifyMutationVariables = Exact<{
 }>;
 
 
-export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: string, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
+export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: 'Verify', user: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: string, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> }, tokens: { __typename?: 'AuthTokenPair', accessToken: { __typename?: 'AuthToken', token: string, expiresAt: string }, refreshToken: { __typename?: 'AuthToken', token: string, expiresAt: string } } } };
 
 export type CheckUserExistsQueryVariables = Exact<{
   email: Scalars['String'];
@@ -1122,7 +1125,7 @@ export type UploadImageMutationVariables = Exact<{
 
 export type UploadImageMutation = { __typename?: 'Mutation', uploadImage: string };
 
-export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: string, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> };
+export type UserQueryFragmentFragment = { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: string, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> };
 
 export type DeleteUserAccountMutationVariables = Exact<{ [key: string]: never; }>;
 
@@ -1139,7 +1142,7 @@ export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProf
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: string, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', status: string, interval?: string | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null } | null }> } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, currentCacheVersion?: string | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: string, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', status: string, interval?: string | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, domainName?: string | null } | null }> } };
 
 export type ActivateWorkspaceMutationVariables = Exact<{
   input: ActivateWorkspaceInput;
@@ -1174,8 +1177,8 @@ export type GetWorkspaceFromInviteHashQueryVariables = Exact<{
 
 export type GetWorkspaceFromInviteHashQuery = { __typename?: 'Query', findWorkspaceFromInviteHash: { __typename?: 'Workspace', id: string, displayName?: string | null, logo?: string | null, allowImpersonation: boolean } };
 
-export const TimelineCalendarEventAttendeeFragmentFragmentDoc = gql`
-    fragment TimelineCalendarEventAttendeeFragment on TimelineCalendarEventAttendee {
+export const TimelineCalendarEventParticipantFragmentFragmentDoc = gql`
+    fragment TimelineCalendarEventParticipantFragment on TimelineCalendarEventParticipant {
   personId
   workspaceMemberId
   firstName
@@ -1195,11 +1198,11 @@ export const TimelineCalendarEventFragmentFragmentDoc = gql`
   endsAt
   isFullDay
   visibility
-  attendees {
-    ...TimelineCalendarEventAttendeeFragment
+  participants {
+    ...TimelineCalendarEventParticipantFragment
   }
 }
-    ${TimelineCalendarEventAttendeeFragmentFragmentDoc}`;
+    ${TimelineCalendarEventParticipantFragmentFragmentDoc}`;
 export const TimelineCalendarEventsWithTotalFragmentFragmentDoc = gql`
     fragment TimelineCalendarEventsWithTotalFragment on TimelineCalendarEventsWithTotal {
   totalNumberOfCalendarEvents
@@ -2339,6 +2342,7 @@ export const GetCurrentUserDocument = gql`
         value
         workspaceId
       }
+      currentCacheVersion
       currentBillingSubscription {
         status
         interval

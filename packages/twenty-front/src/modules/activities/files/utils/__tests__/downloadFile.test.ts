@@ -28,7 +28,7 @@ describe.skip('downloadFile', () => {
     const link = document.querySelector(
       'a[href="mock-url"][download="file.pdf"]',
     );
-    console.log(document.body.innerHTML, link);
+
     expect(link).not.toBeNull();
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore

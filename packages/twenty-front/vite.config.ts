@@ -31,24 +31,34 @@ export default defineConfig(({ command, mode }) => {
     };
   }
 
-  const plugins = [
-    react({ jsxImportSource: '@emotion/react' }),
-    tsconfigPaths(),
-    svgr(),
-    checker(checkers),
-  ];
-
   return {
-    // base: ,
-    envPrefix: 'REACT_APP_',
+    root: __dirname,
+    cacheDir: '../../node_modules/.vite/packages/twenty-front',
+
+    server: {
+      port: 3001,
+      host: 'localhost',
+    },
+
+    plugins: [
+      react({ jsxImportSource: '@emotion/react' }),
+      tsconfigPaths({
+        projects: [
+          'tsconfig.json',
+          // Include internal library aliases in development mode, so hot reload is enabled for libraries.
+          mode === 'development' ? '../twenty-ui/tsconfig.json' : undefined,
+        ].filter(Boolean) as string[],
+      }),
+      svgr(),
+      checker(checkers),
+    ],
+
     build: {
       outDir: 'build',
     },
-    plugins,
-    server: {
-      // open: true,
-      port: 3001,
-    },
+
+    envPrefix: 'REACT_APP_',
+
     define: {
       'process.env': {
         REACT_APP_SERVER_BASE_URL,

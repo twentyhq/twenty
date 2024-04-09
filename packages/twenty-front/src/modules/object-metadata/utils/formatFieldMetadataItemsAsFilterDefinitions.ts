@@ -54,10 +54,10 @@ export const formatFieldMetadataItemAsFilterDefinition = ({
     field.toRelationMetadata?.fromObjectMetadata.namePlural,
   relationObjectMetadataNameSingular:
     field.toRelationMetadata?.fromObjectMetadata.nameSingular,
-  type: getFilterType(field.type),
+  type: getFilterTypeFromFieldType(field.type),
 });
 
-const getFilterType = (fieldType: FieldMetadataType) => {
+export const getFilterTypeFromFieldType = (fieldType: FieldMetadataType) => {
   switch (fieldType) {
     case FieldMetadataType.DateTime:
       return 'DATE_TIME';

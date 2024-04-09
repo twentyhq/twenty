@@ -2,7 +2,7 @@ import { SafeParseSuccess } from 'zod';
 
 import { CreateObjectInput } from '~/generated-metadata/graphql';
 
-import { settingsCreateObjectInputSchema } from '..//settingsCreateObjectInputSchema';
+import { settingsCreateObjectInputSchema } from '../settingsCreateObjectInputSchema';
 
 describe('settingsCreateObjectInputSchema', () => {
   it('validates a valid input and adds name properties', () => {
