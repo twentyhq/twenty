@@ -41,7 +41,7 @@ import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/st
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { CreateCompanyAndContactJob } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
-import { LogEventObjectMetadata } from 'src/modules/event/standard-objects/log-event.object-metadata';
+import { AuditLogObjectMetadata } from 'src/modules/event/standard-objects/audit-log.object-metadata';
 import { HandleWorkspaceMemberDeletedJob } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
 import { GmailFullSynV2Module } from 'src/modules/messaging/services/gmail-full-sync-v2/gmail-full-sync.v2.module';
 import { GmailFetchMessageContentFromCacheModule } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.module';
@@ -49,7 +49,7 @@ import { FetchAllMessagesFromCacheCronJob } from 'src/modules/messaging/jobs/cro
 import { GmailFullSyncV2Job } from 'src/modules/messaging/jobs/gmail-full-sync-v2.job';
 import { GmailPartialSyncV2Job } from 'src/modules/messaging/jobs/gmail-partial-sync-v2.job';
 import { GmailPartialSyncV2Module } from 'src/modules/messaging/services/gmail-partial-sync-v2/gmail-partial-sync-v2.module';
-import { SaveEventToDbJob } from 'src/modules/event/jobs/save-event-to-db.job';
+import { SaveEventToDbJob } from 'src/modules/event/jobs/save-event-as-log-events.job';
 
 @Module({
   imports: [
@@ -77,7 +77,7 @@ import { SaveEventToDbJob } from 'src/modules/event/jobs/save-event-to-db.job';
       ConnectedAccountObjectMetadata,
       MessageParticipantObjectMetadata,
       MessageChannelObjectMetadata,
-      LogEventObjectMetadata,
+      AuditLogObjectMetadata,
     ]),
     GmailFullSynV2Module,
     GmailFetchMessageContentFromCacheModule,

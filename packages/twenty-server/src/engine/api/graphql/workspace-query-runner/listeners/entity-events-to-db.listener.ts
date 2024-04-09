@@ -10,7 +10,7 @@ import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/t
 import {
   SaveEventToDbJob,
   SaveEventToDbJobData,
-} from 'src/modules/event/jobs/save-event-to-db.job';
+} from 'src/modules/event/jobs/save-event-as-log-events.job';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,

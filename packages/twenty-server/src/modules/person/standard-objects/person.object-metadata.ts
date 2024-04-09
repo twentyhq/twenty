@@ -21,8 +21,7 @@ import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/comp
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
-import { LogEventObjectMetadata } from 'src/modules/event/standard-objects/log-event.object-metadata';
-import { TimelineEventObjectMetadata } from 'src/modules/event/standard-objects/timeline-event.object-metadata';
+import { TimelineActivityObjectMetadata } from 'src/modules/event/standard-objects/timeline-activity.object-metadata';
 
 @ObjectMetadata({
   standardId: standardObjectIds.person,
@@ -225,22 +224,6 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   calendarEventParticipants: CalendarEventParticipantObjectMetadata[];
 
   @FieldMetadata({
-    standardId: personStandardFieldIds.logEvents,
-    type: FieldMetadataType.RELATION,
-    label: 'Events',
-    description: 'Events linked to the company',
-    icon: 'IconTimelineEvent',
-  })
-  @RelationMetadata({
-    type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => LogEventObjectMetadata,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @IsNullable()
-  @IsSystem()
-  logEvents: LogEventObjectMetadata[];
-
-  @FieldMetadata({
     standardId: personStandardFieldIds.timelineEvents,
     type: FieldMetadataType.RELATION,
     label: 'Events',
@@ -249,10 +232,10 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => TimelineEventObjectMetadata,
+    inverseSideTarget: () => TimelineActivityObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
   @IsSystem()
-  timelineEvents: TimelineEventObjectMetadata[];
+  timelineEvents: TimelineActivityObjectMetadata[];
 }

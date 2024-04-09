@@ -1,5 +1,5 @@
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { eventStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { timelineActivityStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CustomObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/custom-objects/custom.object-metadata';
 import { DynamicRelationFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/dynamic-field-metadata.interface';
@@ -14,26 +14,45 @@ import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
 @ObjectMetadata({
-  standardId: standardObjectIds.event,
-  namePlural: 'events',
-  labelSingular: 'Event',
-  labelPlural: 'Events',
-  description: 'An event',
+  standardId: standardObjectIds.timelineActivity,
+  namePlural: 'timelineActivities',
+  labelSingular: 'Timeline Activity',
+  labelPlural: 'Timeline Activities',
+  description: 'Aggregated / filtered event to be displayed on the timeline',
   icon: 'IconIconTimelineEvent',
 })
 @IsSystem()
-export class LogEventObjectMetadata extends BaseObjectMetadata {
+export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    standardId: eventStandardFieldIds.properties,
+    standardId: timelineActivityStandardFieldIds.type,
+    type: FieldMetadataType.TEXT,
+    label: 'Event type',
+    description: 'Event name/type',
+    icon: 'IconAbc',
+  })
+  type: string;
+
+  @FieldMetadata({
+    standardId: timelineActivityStandardFieldIds.name,
     type: FieldMetadataType.TEXT,
     label: 'Event name',
-    description: 'Event name/type',
+    description: 'Event name',
     icon: 'IconAbc',
   })
   name: string;
 
   @FieldMetadata({
-    standardId: eventStandardFieldIds.properties,
+    standardId: timelineActivityStandardFieldIds.happensAt,
+    type: FieldMetadataType.DATE_TIME,
+    label: 'Creation date',
+    description: 'Creation date',
+    icon: 'IconCalendar',
+    defaultValue: 'now',
+  })
+  happensAt: Date;
+
+  @FieldMetadata({
+    standardId: timelineActivityStandardFieldIds.properties,
     type: FieldMetadataType.RAW_JSON,
     label: 'Event details',
     description: 'Json value for event details',
@@ -43,7 +62,7 @@ export class LogEventObjectMetadata extends BaseObjectMetadata {
   properties: JSON;
 
   @FieldMetadata({
-    standardId: eventStandardFieldIds.workspaceMember,
+    standardId: timelineActivityStandardFieldIds.workspaceMember,
     type: FieldMetadataType.RELATION,
     label: 'Workspace Member',
     description: 'Event workspace member',
@@ -54,7 +73,7 @@ export class LogEventObjectMetadata extends BaseObjectMetadata {
   workspaceMember: WorkspaceMemberObjectMetadata;
 
   @FieldMetadata({
-    standardId: eventStandardFieldIds.person,
+    standardId: timelineActivityStandardFieldIds.person,
     type: FieldMetadataType.RELATION,
     label: 'Person',
     description: 'Event person',
@@ -65,7 +84,7 @@ export class LogEventObjectMetadata extends BaseObjectMetadata {
   person: PersonObjectMetadata;
 
   @FieldMetadata({
-    standardId: eventStandardFieldIds.company,
+    standardId: timelineActivityStandardFieldIds.company,
     type: FieldMetadataType.RELATION,
     label: 'Company',
     description: 'Event company',
@@ -76,7 +95,7 @@ export class LogEventObjectMetadata extends BaseObjectMetadata {
   company: CompanyObjectMetadata;
 
   @FieldMetadata({
-    standardId: eventStandardFieldIds.opportunity,
+    standardId: timelineActivityStandardFieldIds.opportunity,
     type: FieldMetadataType.RELATION,
     label: 'Opportunity',
     description: 'Events opportunity',
@@ -87,7 +106,7 @@ export class LogEventObjectMetadata extends BaseObjectMetadata {
   opportunity: OpportunityObjectMetadata;
 
   @DynamicRelationFieldMetadata((oppositeObjectMetadata) => ({
-    standardId: eventStandardFieldIds.custom,
+    standardId: timelineActivityStandardFieldIds.custom,
     name: oppositeObjectMetadata.nameSingular,
     label: oppositeObjectMetadata.labelSingular,
     description: `Event ${oppositeObjectMetadata.labelSingular}`,

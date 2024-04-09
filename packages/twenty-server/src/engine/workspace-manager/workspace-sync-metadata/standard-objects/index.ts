@@ -24,23 +24,29 @@ import { ViewObjectMetadata } from 'src/modules/view/standard-objects/view.objec
 import { WebhookObjectMetadata } from 'src/modules/webhook/standard-objects/webhook.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
-import { LogEventObjectMetadata } from 'src/modules/event/standard-objects/log-event.object-metadata';
-import { TimelineEventObjectMetadata } from 'src/modules/event/standard-objects/timeline-event.object-metadata';
+import { AuditLogObjectMetadata } from 'src/modules/event/standard-objects/audit-log.object-metadata';
+import { TimelineActivityObjectMetadata } from 'src/modules/event/standard-objects/timeline-activity.object-metadata';
+import { BehavioralEventObjectMetadata } from 'src/modules/event/standard-objects/behavioral-event.object-metadata';
 
 export const standardObjectMetadataDefinitions = [
   ActivityTargetObjectMetadata,
   ActivityObjectMetadata,
   ApiKeyObjectMetadata,
+  AuditLogObjectMetadata,
   AttachmentObjectMetadata,
+  BehavioralEventObjectMetadata,
   BlocklistObjectMetadata,
+  CalendarEventObjectMetadata,
+  CalendarChannelObjectMetadata,
+  CalendarChannelEventAssociationObjectMetadata,
+  CalendarEventParticipantObjectMetadata,
   CommentObjectMetadata,
   CompanyObjectMetadata,
   ConnectedAccountObjectMetadata,
-  LogEventObjectMetadata,
-  TimelineEventObjectMetadata,
   FavoriteObjectMetadata,
   OpportunityObjectMetadata,
   PersonObjectMetadata,
+  TimelineActivityObjectMetadata,
   ViewFieldObjectMetadata,
   ViewFilterObjectMetadata,
   ViewSortObjectMetadata,
@@ -52,8 +58,4 @@ export const standardObjectMetadataDefinitions = [
   MessageChannelObjectMetadata,
   MessageParticipantObjectMetadata,
   MessageChannelMessageAssociationObjectMetadata,
-  CalendarEventObjectMetadata,
-  CalendarChannelObjectMetadata,
-  CalendarChannelEventAssociationObjectMetadata,
-  CalendarEventParticipantObjectMetadata,
 ];

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 @Injectable()
-export class LogEventRepository {
+export class AuditLogRepository {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}

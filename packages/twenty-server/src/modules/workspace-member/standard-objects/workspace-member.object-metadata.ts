@@ -22,8 +22,7 @@ import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/st
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
-import { LogEventObjectMetadata } from 'src/modules/event/standard-objects/log-event.object-metadata';
-import { TimelineEventObjectMetadata } from 'src/modules/event/standard-objects/timeline-event.object-metadata';
+import { TimelineActivityObjectMetadata } from 'src/modules/event/standard-objects/timeline-activity.object-metadata';
 
 @ObjectMetadata({
   standardId: standardObjectIds.workspaceMember,
@@ -245,22 +244,6 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   calendarEventParticipants: CalendarEventParticipantObjectMetadata[];
 
   @FieldMetadata({
-    standardId: workspaceMemberStandardFieldIds.logEvents,
-    type: FieldMetadataType.RELATION,
-    label: 'Events',
-    description: 'Events linked to the workspace member',
-    icon: 'IconTimelineEvent',
-  })
-  @RelationMetadata({
-    type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => LogEventObjectMetadata,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @IsNullable()
-  @IsSystem()
-  logEvents: LogEventObjectMetadata[];
-
-  @FieldMetadata({
     standardId: workspaceMemberStandardFieldIds.timelineEvents,
     type: FieldMetadataType.RELATION,
     label: 'Events',
@@ -269,10 +252,10 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => TimelineEventObjectMetadata,
+    inverseSideTarget: () => TimelineActivityObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
   @IsSystem()
-  timelineEvents: TimelineEventObjectMetadata[];
+  timelineEvents: TimelineActivityObjectMetadata[];
 }

@@ -38,7 +38,7 @@ import {
   attachmentStandardFieldIds,
   baseObjectStandardFieldIds,
   customObjectStandardFieldIds,
-  timelineEventStandardFieldIds,
+  timelineActivityStandardFieldIds,
   favoriteStandardFieldIds,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import {
@@ -731,7 +731,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           standardId: createRelationDeterministicUuid({
             objectId: createdObjectMetadata.id,
-            standardId: timelineEventStandardFieldIds.custom,
+            standardId: timelineActivityStandardFieldIds.custom,
           }),
           objectMetadataId: timelineEventObjectMetadata.id,
           workspaceId: workspaceId,
@@ -749,7 +749,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           standardId: createForeignKeyDeterministicUuid({
             objectId: createdObjectMetadata.id,
-            standardId: timelineEventStandardFieldIds.custom,
+            standardId: timelineActivityStandardFieldIds.custom,
           }),
           objectMetadataId: timelineEventObjectMetadata.id,
           workspaceId: workspaceId,

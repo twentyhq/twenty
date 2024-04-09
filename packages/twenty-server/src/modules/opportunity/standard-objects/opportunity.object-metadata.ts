@@ -17,8 +17,7 @@ import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-
 import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
-import { LogEventObjectMetadata } from 'src/modules/event/standard-objects/log-event.object-metadata';
-import { TimelineEventObjectMetadata } from 'src/modules/event/standard-objects/timeline-event.object-metadata';
+import { TimelineActivityObjectMetadata } from 'src/modules/event/standard-objects/timeline-activity.object-metadata';
 
 @ObjectMetadata({
   standardId: standardObjectIds.opportunity,
@@ -170,21 +169,6 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   attachments: AttachmentObjectMetadata[];
 
   @FieldMetadata({
-    standardId: opportunityStandardFieldIds.logEvents,
-    type: FieldMetadataType.RELATION,
-    label: 'Events',
-    description: 'Events linked to the opportunity.',
-    icon: 'IconTimelineEvent',
-  })
-  @RelationMetadata({
-    type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => LogEventObjectMetadata,
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  @IsNullable()
-  logEvents: LogEventObjectMetadata[];
-
-  @FieldMetadata({
     standardId: opportunityStandardFieldIds.timelineEvents,
     type: FieldMetadataType.RELATION,
     label: 'Timeline Events',
@@ -193,9 +177,9 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => TimelineEventObjectMetadata,
+    inverseSideTarget: () => TimelineActivityObjectMetadata,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
-  timelineEvents: TimelineEventObjectMetadata[];
+  timelineEvents: TimelineActivityObjectMetadata[];
 }

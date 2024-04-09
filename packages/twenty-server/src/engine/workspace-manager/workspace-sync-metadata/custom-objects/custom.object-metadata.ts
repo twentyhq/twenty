@@ -13,8 +13,7 @@ import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-me
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { AttachmentObjectMetadata } from 'src/modules/attachment/standard-objects/attachment.object-metadata';
 import { customObjectStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { LogEventObjectMetadata } from 'src/modules/event/standard-objects/log-event.object-metadata';
-import { TimelineEventObjectMetadata } from 'src/modules/event/standard-objects/timeline-event.object-metadata';
+import { TimelineActivityObjectMetadata } from 'src/modules/event/standard-objects/timeline-activity.object-metadata';
 
 @BaseCustomObjectMetadata()
 export class CustomObjectMetadata extends BaseObjectMetadata {
@@ -91,23 +90,6 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: customObjectStandardFieldIds.timelineEvents,
     type: FieldMetadataType.RELATION,
-    label: 'Events',
-    description: (objectMetadata) =>
-      `Events tied to the ${objectMetadata.labelSingular}`,
-    icon: 'IconJson',
-  })
-  @RelationMetadata({
-    type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => LogEventObjectMetadata,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @IsNullable()
-  @IsSystem()
-  logEvents: LogEventObjectMetadata[];
-
-  @FieldMetadata({
-    standardId: customObjectStandardFieldIds.timelineEvents,
-    type: FieldMetadataType.RELATION,
     label: 'Timeline Events',
     description: (objectMetadata) =>
       `Timeline Events tied to the ${objectMetadata.labelSingular}`,
@@ -116,10 +98,10 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => TimelineEventObjectMetadata,
+    inverseSideTarget: () => TimelineActivityObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
   @IsSystem()
-  timelineEvents: TimelineEventObjectMetadata[];
+  timelineEvents: TimelineActivityObjectMetadata[];
 }

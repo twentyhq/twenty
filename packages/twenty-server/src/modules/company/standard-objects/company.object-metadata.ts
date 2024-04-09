@@ -19,8 +19,7 @@ import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/fa
 import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
-import { LogEventObjectMetadata } from 'src/modules/event/standard-objects/log-event.object-metadata';
-import { TimelineEventObjectMetadata } from 'src/modules/event/standard-objects/timeline-event.object-metadata';
+import { TimelineActivityObjectMetadata } from 'src/modules/event/standard-objects/timeline-activity.object-metadata';
 
 @ObjectMetadata({
   standardId: standardObjectIds.company,
@@ -212,22 +211,6 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   attachments: AttachmentObjectMetadata[];
 
   @FieldMetadata({
-    standardId: companyStandardFieldIds.logEvents,
-    type: FieldMetadataType.RELATION,
-    label: 'Log Events',
-    description: 'Log Events linked to the company',
-    icon: 'IconIconTimelineEvent',
-  })
-  @RelationMetadata({
-    type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => LogEventObjectMetadata,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @IsNullable()
-  @IsSystem()
-  logEvents: LogEventObjectMetadata[];
-
-  @FieldMetadata({
     standardId: companyStandardFieldIds.timelineEvents,
     type: FieldMetadataType.RELATION,
     label: 'Timeline Events',
@@ -236,10 +219,10 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => TimelineEventObjectMetadata,
+    inverseSideTarget: () => TimelineActivityObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
   @IsSystem()
-  timelineEvents: TimelineEventObjectMetadata[];
+  timelineEvents: TimelineActivityObjectMetadata[];
 }
