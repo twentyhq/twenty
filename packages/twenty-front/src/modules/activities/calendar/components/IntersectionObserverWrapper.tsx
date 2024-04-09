@@ -8,8 +8,8 @@ export const IntersectionObserverWrapper = ({
   children,
   margin,
 }: {
-  set: React.Dispatch<React.SetStateAction<Set<string>>>;
-  id: string;
+  set: React.Dispatch<React.SetStateAction<Set<number>>>;
+  id: number;
   rootRef?: React.RefObject<HTMLElement>;
   children: React.ReactNode;
   margin?: string;
@@ -18,14 +18,14 @@ export const IntersectionObserverWrapper = ({
     threshold: 1,
     onChange: (inView) => {
       if (inView) {
-        set((prev: Set<string>) => {
+        set((prev: Set<number>) => {
           const newSet = new Set(prev);
           newSet.add(id);
           return newSet;
         });
       }
       if (!inView) {
-        set((prev: Set<string>) => {
+        set((prev: Set<number>) => {
           const newSet = new Set(prev);
           newSet.delete(id);
           return newSet;

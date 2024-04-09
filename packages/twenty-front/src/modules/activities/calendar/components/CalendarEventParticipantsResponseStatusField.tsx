@@ -1,10 +1,9 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui';
 
-import { CalendarEventParticipantPlus } from '@/activities/calendar/components/CalendarEventParticipantPlus';
-import { IntersectionObserverWrapper } from '@/activities/calendar/components/IntersectionObserverWrapper';
+import { ExpandableList } from '@/activities/calendar/components/ExpandableList';
 import { CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
@@ -77,10 +76,6 @@ export const CalendarEventParticipantsResponseStatusField = ({
 }) => {
   const theme = useTheme();
 
-  const [participantsInView, setParticipantsInView] = useState(
-    new Set<string>(),
-  );
-
   const Icon = {
     Yes: <IconCheck stroke={theme.icon.stroke.sm} />,
     Maybe: <IconQuestionMark stroke={theme.icon.stroke.sm} />,
@@ -110,26 +105,11 @@ export const CalendarEventParticipantsResponseStatusField = ({
         </StyledLabelAndIconContainer>
 
         <StyledParticipantsContainer>
-          {orderedParticipants.map((participant, index) => (
-            <>
-              <IntersectionObserverWrapper
-                set={setParticipantsInView}
-                id={participant.id}
-                rootRef={participantsContainerRef}
-                margin="0px -50px 0px 0px"
-              >
-                <StyledParticipantChip key={index} participant={participant} />
-              </IntersectionObserverWrapper>
-              {index === participantsInView.size - 1 &&
-                orderedParticipants.length - participantsInView.size !== 0 && (
-                  <CalendarEventParticipantPlus
-                    number={
-                      orderedParticipants.length - participantsInView.size
-                    }
-                  />
-                )}{' '}
-            </>
-          ))}
+          <ExpandableList
+            items={orderedParticipants}
+            rootRef={participantsContainerRef}
+            margin="0px -50px 0px 0px"
+          />
         </StyledParticipantsContainer>
       </StyledInlineCellBaseContainer>
     </StyledPropertyBox>
