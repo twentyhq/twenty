@@ -6,6 +6,46 @@ import { IntersectionObserverWrapper } from '@/activities/components/ExpandableL
 import { Chip, ChipVariant } from '@/ui/display/chip/components/Chip';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 
+const StyledContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  position: relative;
+  box-sizing: border-box;
+`;
+
+const StyledDiv = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
+  position: relative;
+  white-space: nowrap;
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+`;
+
+const StyledExpendableCell = styled.div`
+  display: flex;
+  align-items: center;
+  align-content: center;
+  flex-wrap: wrap;
+  gap: ${({ theme }) => theme.spacing(1)};
+  position: absolute;
+  top: ${({ theme }) => `-${theme.spacing(2.25)}`};
+  left: ${({ theme }) => `-${theme.spacing(2.25)}`};
+  width: 232px;
+  z-index: 1;
+  box-sizing: border-box;
+  background: ${({ theme }) => theme.background.secondary};
+  padding: ${({ theme }) => theme.spacing(2)};
+  box-shadow: ${({ theme }) => theme.boxShadow.light};
+  backdrop-filter: blur(20px);
+  border-radius: 4px;
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+`;
+
 export const ExpandableList = ({
   components,
   rootRef,
@@ -67,43 +107,3 @@ export const ExpandableList = ({
     </StyledContainer>
   );
 };
-
-const StyledContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  position: relative;
-  box-sizing: border-box;
-`;
-
-const StyledDiv = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  position: relative;
-  white-space: nowrap;
-  max-width: 100%;
-  width: 100%;
-  box-sizing: border-box;
-  overflow: hidden;
-`;
-
-const StyledExpendableCell = styled.div`
-  display: flex;
-  align-items: center;
-  align-content: center;
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing(1)};
-  position: absolute;
-  top: ${({ theme }) => `-${theme.spacing(2.25)}`};
-  left: ${({ theme }) => `-${theme.spacing(2.25)}`};
-  width: 232px;
-  z-index: 1;
-  box-sizing: border-box;
-  background: ${({ theme }) => theme.background.secondary};
-  padding: ${({ theme }) => theme.spacing(2)};
-  box-shadow: ${({ theme }) => theme.boxShadow.light};
-  backdrop-filter: blur(20px);
-  border-radius: 4px;
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-`;
