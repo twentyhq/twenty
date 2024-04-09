@@ -20,6 +20,8 @@ export type Scalars = {
   DateTime: { input: any; output: any; }
   /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSON: { input: any; output: any; }
+  /** A UUID scalar type */
+  UUID: { input: any; output: any; }
   /** The `Upload` scalar type represents a file upload. */
   Upload: { input: any; output: any; }
 };
@@ -1080,7 +1082,7 @@ export type WorkspaceMember = {
   __typename?: 'WorkspaceMember';
   avatarUrl?: Maybe<Scalars['String']['output']>;
   colorScheme: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
+  id: Scalars['UUID']['output'];
   locale: Scalars['String']['output'];
   name: FullName;
 };
