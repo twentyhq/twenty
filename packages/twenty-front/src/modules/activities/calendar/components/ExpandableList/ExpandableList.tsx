@@ -53,6 +53,7 @@ export const ExpandableList = ({
                   <StyledExpendableCell>{components}</StyledExpendableCell>,
                   containerRef.current as HTMLDivElement,
                 )}
+                disableBorder
               />
             )}
         </React.Fragment>

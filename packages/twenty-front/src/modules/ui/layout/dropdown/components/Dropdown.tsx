@@ -37,6 +37,7 @@ type DropdownProps = {
   dropdownMenuWidth?: `${string}px` | `${number}%` | 'auto' | number;
   dropdownOffset?: { x?: number; y?: number };
   disableBlur?: boolean;
+  disableBorder?: boolean;
   onClickOutside?: () => void;
   onClose?: () => void;
   onOpen?: () => void;
@@ -53,6 +54,7 @@ export const Dropdown = ({
   dropdownPlacement = 'bottom-end',
   dropdownOffset = { x: 0, y: 0 },
   disableBlur = false,
+  disableBorder = false,
   onClickOutside,
   onClose,
   onOpen,
@@ -130,6 +132,7 @@ export const Dropdown = ({
         {isDropdownOpen && (
           <DropdownMenu
             disableBlur={disableBlur}
+            disableBorder={disableBorder}
             width={dropdownMenuWidth ?? dropdownWidth}
             data-select-disable
             ref={refs.setFloating}
