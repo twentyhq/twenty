@@ -24,6 +24,7 @@ import {
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
+import { NotFoundError } from 'src/engine/utils/graphql-errors.util';
 
 import {
   RelationMetadataEntity,
@@ -316,5 +317,43 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     });
 
     return deletedRelationMetadata;
+  }
+
+  async getManyRelationMetadataByFieldMetadataIdsForDataloader(
+    fieldMetadataIds: string[],
+  ) {
+    const relationMetadataItems = await this.relationMetadataRepository.find({
+      where: [
+        {
+          fromFieldMetadataId: In(fieldMetadataIds),
+        },
+        {
+          toFieldMetadataId: In(fieldMetadataIds),
+        },
+      ],
+      relations: [
+        'fromObjectMetadata',
+        'toObjectMetadata',
+        'fromFieldMetadata',
+        'toFieldMetadata',
+      ],
+    });
+
+    const mappedResult = fieldMetadataIds.map((fieldMetadataId) => {
+      const foundRelationMetadataItem = relationMetadataItems.find(
+        (relationMetadataItem) =>
+          relationMetadataItem.fromFieldMetadataId === fieldMetadataId ||
+          relationMetadataItem.toFieldMetadataId === fieldMetadataId,
+      );
+
+      return (
+        foundRelationMetadataItem ??
+        new NotFoundError(
+          `RelationMetadata with fieldMetadataId ${fieldMetadataId} not found`,
+        )
+      );
+    });
+
+    return mappedResult;
   }
 }
