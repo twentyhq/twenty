@@ -10,8 +10,9 @@ export class WorkspaceSyncStorage {
   // Object metadata
   private readonly _objectMetadataCreateCollection: ComputedPartialObjectMetadata[] =
     [];
-  private readonly _objectMetadataUpdateCollection: Partial<ComputedPartialObjectMetadata>[] =
-    [];
+  private readonly _objectMetadataUpdateCollection: (Partial<ComputedPartialObjectMetadata> & {
+    id: string;
+  })[] = [];
   private readonly _objectMetadataDeleteCollection: ObjectMetadataEntity[] = [];
 
   // Field metadata
@@ -72,7 +73,9 @@ export class WorkspaceSyncStorage {
     this._objectMetadataCreateCollection.push(object);
   }
 
-  addUpdateObjectMetadata(object: Partial<ComputedPartialObjectMetadata>) {
+  addUpdateObjectMetadata(
+    object: Partial<ComputedPartialObjectMetadata> & { id: string },
+  ) {
     this._objectMetadataUpdateCollection.push(object);
   }
 

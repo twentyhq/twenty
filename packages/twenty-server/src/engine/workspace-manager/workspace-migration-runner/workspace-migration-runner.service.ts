@@ -18,6 +18,7 @@ import {
   WorkspaceMigrationColumnCreateRelation,
   WorkspaceMigrationColumnAlter,
   WorkspaceMigrationColumnDropRelation,
+  WorkspaceMigrationTableActionType,
   WorkspaceMigrationForeignTable,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
@@ -118,18 +119,30 @@ export class WorkspaceMigrationRunnerService {
     tableMigration: WorkspaceMigrationTableAction,
   ) {
     switch (tableMigration.action) {
-      case 'create':
+      case WorkspaceMigrationTableActionType.CREATE:
         await this.createTable(queryRunner, schemaName, tableMigration.name);
         break;
-      case 'alter':
-        await this.handleColumnChanges(
-          queryRunner,
-          schemaName,
-          tableMigration.name,
-          tableMigration?.columns,
-        );
+      case WorkspaceMigrationTableActionType.ALTER: {
+        if (tableMigration.newName) {
+          await this.renameTable(
+            queryRunner,
+            schemaName,
+            tableMigration.name,
+            tableMigration.newName,
+          );
+        }
+
+        if (tableMigration.columns && tableMigration.columns.length > 0) {
+          await this.handleColumnChanges(
+            queryRunner,
+            schemaName,
+            tableMigration.newName ?? tableMigration.name,
+            tableMigration.columns,
+          );
+        }
         break;
-      case 'drop':
+      }
+      case WorkspaceMigrationTableActionType.DROP:
         await queryRunner.dropTable(`${schemaName}.${tableMigration.name}`);
         break;
       case 'create_foreign_table':
@@ -177,6 +190,25 @@ export class WorkspaceMigrationRunnerService {
     await queryRunner.query(`
       COMMENT ON TABLE "${schemaName}"."${tableName}" IS '@graphql({"totalCount": {"enabled": true}})';
     `);
+  }
+
+  /**
+   * Rename a table
+   * @param queryRunner QueryRunner
+   * @param schemaName string
+   * @param oldTableName string
+   * @param newTableName string
+   */
+  private async renameTable(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    oldTableName: string,
+    newTableName: string,
+  ) {
+    await queryRunner.renameTable(
+      `${schemaName}.${oldTableName}`,
+      newTableName,
+    );
   }
 
   /**

@@ -5,6 +5,7 @@ import {
   WorkspaceMigrationTableAction,
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnCreate,
+  WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
@@ -17,12 +18,12 @@ export const buildWorkspaceMigrationsForCustomObject = (
 ): WorkspaceMigrationTableAction[] => [
   {
     name: computeObjectTargetTable(createdObjectMetadata),
-    action: 'create',
+    action: WorkspaceMigrationTableActionType.CREATE,
   } satisfies WorkspaceMigrationTableAction,
   // Add activity target relation
   {
     name: computeObjectTargetTable(activityTargetObjectMetadata),
-    action: 'alter',
+    action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {
         action: WorkspaceMigrationColumnActionType.CREATE,
@@ -36,7 +37,7 @@ export const buildWorkspaceMigrationsForCustomObject = (
   },
   {
     name: computeObjectTargetTable(activityTargetObjectMetadata),
-    action: 'alter',
+    action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {
         action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
@@ -52,7 +53,7 @@ export const buildWorkspaceMigrationsForCustomObject = (
   // Add attachment relation
   {
     name: computeObjectTargetTable(attachmentObjectMetadata),
-    action: 'alter',
+    action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {
         action: WorkspaceMigrationColumnActionType.CREATE,
@@ -66,7 +67,7 @@ export const buildWorkspaceMigrationsForCustomObject = (
   },
   {
     name: computeObjectTargetTable(attachmentObjectMetadata),
-    action: 'alter',
+    action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {
         action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
@@ -82,7 +83,7 @@ export const buildWorkspaceMigrationsForCustomObject = (
   // Add event relation
   {
     name: computeObjectTargetTable(eventObjectMetadata),
-    action: 'alter',
+    action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {
         action: WorkspaceMigrationColumnActionType.CREATE,
@@ -96,7 +97,7 @@ export const buildWorkspaceMigrationsForCustomObject = (
   },
   {
     name: computeObjectTargetTable(eventObjectMetadata),
-    action: 'alter',
+    action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {
         action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
@@ -112,7 +113,7 @@ export const buildWorkspaceMigrationsForCustomObject = (
   // Add favorite relation
   {
     name: computeObjectTargetTable(favoriteObjectMetadata),
-    action: 'alter',
+    action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {
         action: WorkspaceMigrationColumnActionType.CREATE,
@@ -126,7 +127,7 @@ export const buildWorkspaceMigrationsForCustomObject = (
   },
   {
     name: computeObjectTargetTable(favoriteObjectMetadata),
-    action: 'alter',
+    action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {
         action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
@@ -141,7 +142,7 @@ export const buildWorkspaceMigrationsForCustomObject = (
   },
   {
     name: computeObjectTargetTable(createdObjectMetadata),
-    action: 'alter',
+    action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {
         action: WorkspaceMigrationColumnActionType.CREATE,
@@ -154,7 +155,7 @@ export const buildWorkspaceMigrationsForCustomObject = (
   // This is temporary until we implement mainIdentifier
   {
     name: computeObjectTargetTable(createdObjectMetadata),
-    action: 'alter',
+    action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {
         action: WorkspaceMigrationColumnActionType.CREATE,
