@@ -93,6 +93,10 @@ export const CalendarEventParticipantsResponseStatusField = ({
 
   const participantsContainerRef = useRef<HTMLDivElement>(null);
 
+  const StyledChips = orderedParticipants.map((participant) => (
+    <StyledParticipantChip participant={participant} />
+  ));
+
   return (
     <StyledPropertyBox>
       <StyledInlineCellBaseContainer>
@@ -106,9 +110,7 @@ export const CalendarEventParticipantsResponseStatusField = ({
 
         <StyledParticipantsContainer>
           <ExpandableList
-            components={orderedParticipants.map((participant) => (
-              <StyledParticipantChip participant={participant} />
-            ))}
+            components={StyledChips}
             rootRef={participantsContainerRef}
             margin="0px -50px 0px 0px"
           />
