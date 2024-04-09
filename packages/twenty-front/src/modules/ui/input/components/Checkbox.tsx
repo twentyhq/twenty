@@ -29,6 +29,7 @@ type CheckboxProps = {
   size?: CheckboxSize;
   shape?: CheckboxShape;
   className?: string;
+  disabled?: boolean;
 };
 
 type InputProps = {
@@ -38,23 +39,25 @@ type InputProps = {
   hoverable?: boolean;
   shape?: CheckboxShape;
   isChecked?: boolean;
+  disabled?: boolean;
 };
 
 const StyledInputContainer = styled.div<InputProps>`
-  align-items: center;
-  display: flex;
-  position: relative;
-
   --size: ${({ checkboxSize }) =>
     checkboxSize === CheckboxSize.Large ? '32px' : '24px'};
-  padding: ${({ checkboxSize }) =>
-    checkboxSize === CheckboxSize.Large ? '6px' : '5px'};
+  align-items: center;
   border-radius: ${({ theme, shape }) =>
     shape === CheckboxShape.Rounded
       ? theme.border.radius.rounded
       : theme.border.radius.sm};
-  ${({ hoverable, isChecked, theme, indeterminate }) => {
-    if (!hoverable) return '';
+
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
+  display: flex;
+  padding: ${({ checkboxSize }) =>
+    checkboxSize === CheckboxSize.Large ? '6px' : '5px'};
+  position: relative;
+  ${({ hoverable, isChecked, theme, indeterminate, disabled }) => {
+    if (!hoverable || disabled === true) return '';
     return `&:hover{
       background-color: ${
         indeterminate || isChecked
@@ -67,16 +70,15 @@ const StyledInputContainer = styled.div<InputProps>`
 `;
 
 const StyledInput = styled.input<InputProps>`
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
   margin: 0;
   opacity: 0;
   position: absolute;
   z-index: 10;
-
   & + label {
     --size: ${({ checkboxSize }) =>
       checkboxSize === CheckboxSize.Large ? '18px' : '12px'};
-    cursor: pointer;
+    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
     height: calc(var(--size) + 2px);
     padding: 0;
     position: relative;
@@ -88,8 +90,16 @@ const StyledInput = styled.input<InputProps>`
       checkboxSize === CheckboxSize.Large ? '18px' : '12px'};
     background: ${({ theme, indeterminate, isChecked }) =>
       indeterminate || isChecked ? theme.color.blue : 'transparent'};
-    border-color: ${({ theme, indeterminate, isChecked, variant }) => {
+    border-color: ${({
+      theme,
+      indeterminate,
+      isChecked,
+      variant,
+      disabled,
+    }) => {
       switch (true) {
+        case disabled:
+          return theme.background.transparent.medium;
         case indeterminate || isChecked:
           return theme.color.blue;
         case variant === CheckboxVariant.Primary:
@@ -105,21 +115,21 @@ const StyledInput = styled.input<InputProps>`
         ? theme.border.radius.rounded
         : theme.border.radius.sm};
     border-style: solid;
-    border-width: ${({ variant }) =>
-      variant === CheckboxVariant.Tertiary ? '2px' : '1px'};
+    border-width: ${({ variant, checkboxSize }) =>
+      checkboxSize === CheckboxSize.Large ||
+      variant === CheckboxVariant.Tertiary
+        ? '1.43px'
+        : '1px'};
     content: '';
-    cursor: pointer;
+    cursor: ${({ disabled }) => (disabled ? 'not-allowed' : 'pointer')};
     display: inline-block;
     height: var(--size);
     width: var(--size);
   }
 
   & + label > svg {
-    --padding: ${({ checkboxSize, variant }) =>
-      checkboxSize === CheckboxSize.Large ||
-      variant === CheckboxVariant.Tertiary
-        ? '2px'
-        : '1px'};
+    --padding: ${({ checkboxSize }) =>
+      checkboxSize === CheckboxSize.Large ? '2px' : '1px'};
     --size: ${({ checkboxSize }) =>
       checkboxSize === CheckboxSize.Large ? '16px' : '12px'};
     height: var(--size);
@@ -141,6 +151,7 @@ export const Checkbox = ({
   shape = CheckboxShape.Squared,
   hoverable = false,
   className,
+  disabled = false,
 }: CheckboxProps) => {
   const [isInternalChecked, setIsInternalChecked] =
     React.useState<boolean>(false);
@@ -166,6 +177,7 @@ export const Checkbox = ({
       hoverable={hoverable}
       indeterminate={indeterminate}
       className={className}
+      disabled={disabled}
     >
       <StyledInput
         autoComplete="off"
@@ -180,6 +192,7 @@ export const Checkbox = ({
         shape={shape}
         isChecked={isInternalChecked}
         onChange={handleChange}
+        disabled={disabled}
       />
       <label htmlFor={checkboxId}>
         {indeterminate ? (
