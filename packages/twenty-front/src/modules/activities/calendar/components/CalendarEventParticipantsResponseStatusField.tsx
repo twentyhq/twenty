@@ -106,7 +106,9 @@ export const CalendarEventParticipantsResponseStatusField = ({
 
         <StyledParticipantsContainer>
           <ExpandableList
-            items={orderedParticipants}
+            components={orderedParticipants.map((participant) => (
+              <StyledParticipantChip participant={participant} />
+            ))}
             rootRef={participantsContainerRef}
             margin="0px -50px 0px 0px"
           />

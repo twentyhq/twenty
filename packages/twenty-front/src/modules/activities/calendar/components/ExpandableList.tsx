@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { ReactElement, useState } from 'react';
 
-import { CalendarEventParticipantPlus } from '@/activities/calendar/components/CalendarEventParticipantPlus';
+import { ExpandableListPlus } from '@/activities/calendar/components/ExpandableListPlus';
 import { IntersectionObserverWrapper } from '@/activities/calendar/components/IntersectionObserverWrapper';
 
 export const ExpandableList = ({
@@ -8,7 +8,7 @@ export const ExpandableList = ({
   rootRef,
   margin,
 }: {
-  components: React.ReactNode[];
+  components: ReactElement[];
   rootRef: React.RefObject<HTMLElement>;
   margin?: string;
 }) => {
@@ -18,7 +18,7 @@ export const ExpandableList = ({
 
   return (
     <>
-      {firstComponent}
+      {firstComponent && React.cloneElement(firstComponent, { inView: true })}
       {components.slice(1).map((component, index) => (
         <React.Fragment key={index}>
           <IntersectionObserverWrapper
@@ -29,19 +29,26 @@ export const ExpandableList = ({
           >
             {component}
           </IntersectionObserverWrapper>
-          {index === componentsInView.size &&
+          {index === componentsInView.size - 1 &&
             components.length - componentsInView.size - 1 !== 0 && (
-              <CalendarEventParticipantPlus
+              <ExpandableListPlus
                 number={components.length - componentsInView.size - 1}
               />
-            )}{' '}
+            )}
         </React.Fragment>
       ))}
-      {components.length - componentsInView.size - 1 !== 0 && (
-        <CalendarEventParticipantPlus
-          number={components.length - componentsInView.size - 1}
-        />
-      )}
     </>
+  );
+};
+
+const ExpendableCell = ({
+  children,
+  isExpanded,
+}: {
+  children: React.ReactNode;
+  isExpanded: boolean;
+}) => {
+  return (
+    <div style={{ display: isExpanded ? 'block' : 'none' }}>{children}</div>
   );
 };

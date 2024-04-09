@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-const StyledCalendarEventParticipantPlusContainer = styled.div`
+const StyledExpandableListPlusContainer = styled.div`
   align-items: center;
   background: ${({ theme }) => theme.background.tertiary};
   border-radius: 4px;
@@ -16,7 +16,7 @@ const StyledCalendarEventParticipantPlusContainer = styled.div`
   }
 `;
 
-export const CalendarEventParticipantPlus = ({
+export const ExpandableListPlus = ({
   number,
   onClick,
 }: {
@@ -24,8 +24,8 @@ export const CalendarEventParticipantPlus = ({
   onClick?: () => void;
 }) => {
   return (
-    <StyledCalendarEventParticipantPlusContainer onClick={onClick}>
+    <StyledExpandableListPlusContainer onClick={onClick}>
       +{number}
-    </StyledCalendarEventParticipantPlusContainer>
+    </StyledExpandableListPlusContainer>
   );
 };
