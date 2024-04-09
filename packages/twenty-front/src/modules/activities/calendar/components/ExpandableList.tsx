@@ -61,6 +61,7 @@ const StyledContainer = styled.div`
 const StyledExpendableCell = styled.div<{ isExpanded: boolean }>`
   border: 1px solid ${({ theme }) => theme.border.color.strong};
   display: ${({ isExpanded }) => (isExpanded ? 'flex' : 'none')};
+  align-items: center;
   flex-flow: row wrap;
   gap: ${({ theme }) => theme.spacing(1)};
   position: absolute;
