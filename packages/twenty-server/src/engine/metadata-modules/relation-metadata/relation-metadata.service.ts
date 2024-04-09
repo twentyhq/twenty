@@ -319,7 +319,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     return deletedRelationMetadata;
   }
 
-  async getManyRelationMetadataByFieldMetadataIdsForDataloader(
+  async findManyRelationMetadataByFieldMetadataIds(
     fieldMetadataIds: string[],
   ) {
     const relationMetadataCollection = await this.relationMetadataRepository.find({
