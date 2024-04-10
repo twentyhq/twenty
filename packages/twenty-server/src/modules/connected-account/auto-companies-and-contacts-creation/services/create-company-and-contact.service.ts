@@ -182,12 +182,12 @@ export class CreateCompanyAndContactService {
 
   async createCompaniesAndContactsAndUpdateParticipantsAfterSync(
     messageChannelHandle: string,
-    participants: { id: string; handle: string; displayName: string }[],
+    contactsToCreate: { id: string; handle: string; displayName: string }[],
     workspaceId: string,
   ) {
     await this.createCompaniesAndContacts(
       messageChannelHandle,
-      participants,
+      contactsToCreate,
       workspaceId,
     );
 

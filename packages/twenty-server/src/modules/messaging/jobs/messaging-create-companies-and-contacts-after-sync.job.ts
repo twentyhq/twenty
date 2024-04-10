@@ -49,7 +49,7 @@ export class MessagingCreateCompaniesAndContactsAfterSyncJob
       return;
     }
 
-    const messageParticipantsWithoutPersonIdAndWorkspaceMemberId =
+    const contactsToCreate =
       await this.messageParticipantRepository.getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberIdAndMessageOutgoing(
         messageChannelId,
         workspaceId,
@@ -57,7 +57,7 @@ export class MessagingCreateCompaniesAndContactsAfterSyncJob
 
     await this.createCompaniesAndContactsService.createCompaniesAndContactsAndUpdateParticipantsAfterSync(
       handle,
-      messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
+      contactsToCreate,
       workspaceId,
     );
 
