@@ -1,12 +1,4 @@
-import {
-  Args,
-  Query,
-  Resolver,
-  Int,
-  ArgsType,
-  Field,
-  ID,
-} from '@nestjs/graphql';
+import { Args, Query, Resolver, Int, ArgsType, Field } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 
 import { Max } from 'class-validator';
@@ -20,10 +12,11 @@ import { TimelineThreadsWithTotal } from 'src/engine/core-modules/messaging/dtos
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @ArgsType()
 class GetTimelineThreadsFromPersonIdArgs {
-  @Field(() => ID)
+  @Field(() => UUIDScalarType)
   personId: string;
 
   @Field(() => Int)
@@ -36,7 +29,7 @@ class GetTimelineThreadsFromPersonIdArgs {
 
 @ArgsType()
 class GetTimelineThreadsFromCompanyIdArgs {
-  @Field(() => ID)
+  @Field(() => UUIDScalarType)
   companyId: string;
 
   @Field(() => Int)
