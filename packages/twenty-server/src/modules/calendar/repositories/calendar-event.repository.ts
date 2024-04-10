@@ -80,34 +80,36 @@ export class CalendarEventRepository {
   }
 
   public async getICalUIDCalendarEventIdMap(
-    iCalUIDs: string[],
+    calendarEventIds: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<Map<string, string>> {
-    if (iCalUIDs.length === 0) {
+    if (calendarEventIds.length === 0) {
       return new Map();
     }
 
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const calendarEvents: {
-      id: string;
-      iCalUID: string;
-    }[] = await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT id, "iCalUID" FROM ${dataSourceSchema}."calendarEvent" WHERE "iCalUID" = ANY($1)`,
-      [iCalUIDs],
+    const calendarEvents:
+      | {
+          id: string;
+          iCalUID: string;
+        }[]
+      | undefined = await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT id, "iCalUID" FROM ${dataSourceSchema}."calendarEvent" WHERE "id" = ANY($1)`,
+      [calendarEventIds],
       workspaceId,
       transactionManager,
     );
 
-    const iCalUIDsCalendarEvnetIdsMap = new Map<string, string>();
+    const iCalUIDsCalendarEventIdsMap = new Map<string, string>();
 
-    calendarEvents.forEach((calendarEvent) => {
-      iCalUIDsCalendarEvnetIdsMap.set(calendarEvent.iCalUID, calendarEvent.id);
+    calendarEvents?.forEach((calendarEvent) => {
+      iCalUIDsCalendarEventIdsMap.set(calendarEvent.iCalUID, calendarEvent.id);
     });
 
-    return iCalUIDsCalendarEvnetIdsMap;
+    return iCalUIDsCalendarEventIdsMap;
   }
 
   public async saveCalendarEvents(
