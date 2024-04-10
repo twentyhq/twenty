@@ -4,14 +4,15 @@ import { Command, CommandRunner } from 'nest-commander';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { GoogleCalendarSyncCronJob } from 'src/modules/calendar/jobs/crons/google-calendar-sync.cron.job';
-import { googleCalendarSyncCronPattern } from 'src/modules/calendar/jobs/crons/pattern/google-calendar-sync.cron.pattern';
+import { fetchAllWorkspacesMessagesCronPattern } from 'src/modules/messaging/commands/crons/patterns/fetch-all-workspaces-messages.cron.pattern';
+import { GmailPartialSyncCronJob } from 'src/modules/messaging/jobs/crons/gmail-partial-sync.cron.job';
 
 @Command({
-  name: 'cron:calendar:google-calendar-sync',
-  description: 'Starts a cron job to sync google calendar for all workspaces.',
+  name: 'cron:messaging:gmail-partial-sync',
+  description:
+    'Starts a cron job to sync existing connected account messages and store them in the cache',
 })
-export class StartGoogleCalendarSyncCronJobCommand extends CommandRunner {
+export class GmailPartialSyncCronCommand extends CommandRunner {
   constructor(
     @Inject(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -21,10 +22,10 @@ export class StartGoogleCalendarSyncCronJobCommand extends CommandRunner {
 
   async run(): Promise<void> {
     await this.messageQueueService.addCron<undefined>(
-      GoogleCalendarSyncCronJob.name,
+      GmailPartialSyncCronJob.name,
       undefined,
       {
-        repeat: { pattern: googleCalendarSyncCronPattern },
+        repeat: { pattern: fetchAllWorkspacesMessagesCronPattern },
       },
     );
   }
