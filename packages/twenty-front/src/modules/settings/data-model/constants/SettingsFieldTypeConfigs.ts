@@ -1,5 +1,5 @@
 import {
-  IconCalendarEvent,
+  IconCalendarTime,
   IconCheck,
   IconCoins,
   IconKey,
@@ -65,8 +65,8 @@ export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
     defaultValue: true,
   },
   [FieldMetadataType.DateTime]: {
-    label: 'Date & Time',
-    Icon: IconCalendarEvent,
+    label: 'Date and Time',
+    Icon: IconCalendarTime,
     defaultValue: DEFAULT_DATE_VALUE.toISOString(),
   },
   [FieldMetadataType.Select]: {
