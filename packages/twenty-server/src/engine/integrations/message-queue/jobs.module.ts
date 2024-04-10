@@ -15,7 +15,7 @@ import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { EnvironmentModule } from 'src/engine/integrations/environment/environment.module';
 import { MatchParticipantJob } from 'src/modules/connected-account/jobs/match-participant.job';
 import { GmailPartialSyncCronJob } from 'src/modules/messaging/jobs/crons/gmail-partial-sync.cron.job';
-import { MessagingCreateCompaniesAndContactsAfterSyncJob } from 'src/modules/messaging/jobs/messaging-create-companies-and-contacts-after-sync.job';
+import { MessagingCreateCompanyAndContactAfterSyncJob } from 'src/modules/messaging/jobs/messaging-create-company-and-contact-after-sync.job';
 import { AutoCompaniesAndContactsCreationModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/auto-companies-and-contacts-creation.module';
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
 import { DataSeedDemoWorkspaceJob } from 'src/database/commands/data-seed-demo-workspace/jobs/data-seed-demo-workspace.job';
@@ -116,8 +116,8 @@ import { CalendarCreateCompanyAndContactAfterSyncJob } from 'src/modules/calenda
       useClass: UnmatchParticipantJob,
     },
     {
-      provide: MessagingCreateCompaniesAndContactsAfterSyncJob.name,
-      useClass: MessagingCreateCompaniesAndContactsAfterSyncJob,
+      provide: MessagingCreateCompanyAndContactAfterSyncJob.name,
+      useClass: MessagingCreateCompanyAndContactAfterSyncJob,
     },
     {
       provide: CalendarCreateCompanyAndContactAfterSyncJob.name,

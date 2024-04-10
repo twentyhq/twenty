@@ -9,18 +9,17 @@ import { MessageParticipantRepository } from 'src/modules/messaging/repositories
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 
-export type MessagingCreateCompaniesAndContactsAfterSyncJobData = {
+export type MessagingCreateCompanyAndContactAfterSyncJobData = {
   workspaceId: string;
   messageChannelId: string;
 };
 
 @Injectable()
-export class MessagingCreateCompaniesAndContactsAfterSyncJob
-  implements
-    MessageQueueJob<MessagingCreateCompaniesAndContactsAfterSyncJobData>
+export class MessagingCreateCompanyAndContactAfterSyncJob
+  implements MessageQueueJob<MessagingCreateCompanyAndContactAfterSyncJobData>
 {
   private readonly logger = new Logger(
-    MessagingCreateCompaniesAndContactsAfterSyncJob.name,
+    MessagingCreateCompanyAndContactAfterSyncJob.name,
   );
   constructor(
     private readonly createCompaniesAndContactsService: CreateCompanyAndContactService,
@@ -31,7 +30,7 @@ export class MessagingCreateCompaniesAndContactsAfterSyncJob
   ) {}
 
   async handle(
-    data: MessagingCreateCompaniesAndContactsAfterSyncJobData,
+    data: MessagingCreateCompanyAndContactAfterSyncJobData,
   ): Promise<void> {
     this.logger.log(
       `create contacts and companies after sync for workspace ${data.workspaceId} and messageChannel ${data.messageChannelId}`,
