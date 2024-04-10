@@ -24,13 +24,14 @@ export class MessageParticipantService {
   ) {}
 
   public async updateMessageParticipantsAfterPeopleCreation(
-    participants: {
-      id: string;
-      handle: string;
-    }[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
+    const participants =
+      await this.messageParticipantRepository.getWithoutPersonIdAndWorkspaceMemberId(
+        workspaceId,
+      );
+
     if (!participants) return;
 
     const dataSourceSchema =

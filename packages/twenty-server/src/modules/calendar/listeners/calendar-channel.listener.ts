@@ -29,7 +29,6 @@ export class CalendarChannelListener {
       ).includes('isContactAutoCreationEnabled') &&
       payload.details.after.isContactAutoCreationEnabled
     ) {
-      console.log('calendarChannel.updated');
       await this.messageQueueService.add<CalendarCreateCompanyAndContactAfterSyncJobData>(
         CalendarCreateCompanyAndContactAfterSyncJob.name,
         {

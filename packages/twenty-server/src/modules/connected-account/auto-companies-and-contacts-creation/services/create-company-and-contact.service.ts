@@ -157,14 +157,7 @@ export class CreateCompanyAndContactService {
           transactionManager,
         );
 
-        const messageParticipantsWithoutPersonIdAndWorkspaceMemberId =
-          await this.messageParticipantRepository.getWithoutPersonIdAndWorkspaceMemberId(
-            workspaceId,
-            transactionManager,
-          );
-
         await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
-          messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
           workspaceId,
           transactionManager,
         );
@@ -179,14 +172,7 @@ export class CreateCompanyAndContactService {
           return;
         }
 
-        const calendarEventParticipantsWithoutPersonIdAndWorkspaceMemberId =
-          await this.calendarEventParticipantRepository.getWithoutPersonIdAndWorkspaceMemberId(
-            workspaceId,
-            transactionManager,
-          );
-
-        await this.calendarEventParticipantService.updateCalendarEventParticipantsAfterContactCreation(
-          calendarEventParticipantsWithoutPersonIdAndWorkspaceMemberId,
+        await this.calendarEventParticipantService.updateCalendarEventParticipantsAfterPeopleCreation(
           workspaceId,
           transactionManager,
         );
@@ -206,12 +192,10 @@ export class CreateCompanyAndContactService {
     );
 
     await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
-      participants,
       workspaceId,
     );
 
-    await this.calendarEventParticipantService.updateCalendarEventParticipantsAfterContactCreation(
-      participants,
+    await this.calendarEventParticipantService.updateCalendarEventParticipantsAfterPeopleCreation(
       workspaceId,
     );
   }

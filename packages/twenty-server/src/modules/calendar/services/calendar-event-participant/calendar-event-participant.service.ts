@@ -23,14 +23,15 @@ export class CalendarEventParticipantService {
     private readonly addPersonIdAndWorkspaceMemberIdService: AddPersonIdAndWorkspaceMemberIdService,
   ) {}
 
-  public async updateCalendarEventParticipantsAfterContactCreation(
-    participants: {
-      id: string;
-      handle: string;
-    }[],
+  public async updateCalendarEventParticipantsAfterPeopleCreation(
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
+    const participants =
+      await this.calendarEventParticipantRepository.getWithoutPersonIdAndWorkspaceMemberId(
+        workspaceId,
+      );
+
     if (!participants) return;
 
     const dataSourceSchema =
