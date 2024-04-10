@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useGetObjectOrderByField } from '@/object-metadata/hooks/useGetObjectOrderByField';
+import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
 import { OrderBy } from '@/object-metadata/types/OrderBy';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -24,10 +25,9 @@ export const useRecordsForSelect = ({
   excludeEntityIds?: string[];
   objectNameSingular: string;
 }) => {
-  const { mapToObjectRecordIdentifier, getObjectOrderByField } =
-    useObjectMetadataItem({
-      objectNameSingular,
-    });
+  const { mapToObjectRecordIdentifier } = useMapToObjectRecordIdentifier({
+    objectNameSingular,
+  });
 
   const filters = [
     {
@@ -35,6 +35,10 @@ export const useRecordsForSelect = ({
       filter: searchFilterText,
     },
   ];
+
+  const { getObjectOrderByField } = useGetObjectOrderByField({
+    objectNameSingular,
+  });
 
   const orderByField = getObjectOrderByField(sortOrder);
   const selectedIdsFilter = { id: { in: selectedIds } };

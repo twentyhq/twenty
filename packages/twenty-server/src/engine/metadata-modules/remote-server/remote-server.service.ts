@@ -16,6 +16,8 @@ import {
   validateString,
 } from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-input';
 import { ForeignDataWrapperQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/foreign-data-wrapper-query.factory';
+import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
+import { RemoteTableStatus } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
 
 @Injectable()
 export class RemoteServerService<T extends RemoteServerType> {
@@ -28,6 +30,7 @@ export class RemoteServerService<T extends RemoteServerType> {
     private readonly metadataDataSource: DataSource,
     private readonly environmentService: EnvironmentService,
     private readonly foreignDataWrapperQueryFactory: ForeignDataWrapperQueryFactory,
+    private readonly remoteTableService: RemoteTableService,
   ) {}
 
   async createOneRemoteServer(
@@ -112,6 +115,26 @@ export class RemoteServerService<T extends RemoteServerType> {
 
     if (!remoteServer) {
       throw new NotFoundException('Object does not exist');
+    }
+
+    const remoteTablesToRemove = (
+      await this.remoteTableService.findAvailableRemoteTablesByServerId(
+        id,
+        workspaceId,
+      )
+    ).filter((remoteTable) => remoteTable.status === RemoteTableStatus.SYNCED);
+
+    if (remoteTablesToRemove.length) {
+      for (const remoteTable of remoteTablesToRemove) {
+        await this.remoteTableService.updateRemoteTableSyncStatus(
+          {
+            remoteServerId: id,
+            name: remoteTable.name,
+            status: RemoteTableStatus.NOT_SYNCED,
+          },
+          workspaceId,
+        );
+      }
     }
 
     return this.metadataDataSource.transaction(

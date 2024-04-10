@@ -3,6 +3,7 @@ import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metad
 
 const DEFAULT_DEPTH_VALUE = 2;
 
+// TODO: Should be properly type and based on composite type definitions
 export const mapFieldMetadataToGraphqlQuery = (
   objectMetadataItems,
   field,

@@ -1,7 +1,7 @@
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState.ts';
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
@@ -14,7 +14,7 @@ export const useFindManyParams = (
   objectNameSingular: string,
   recordTableId?: string,
 ) => {
-  const { objectMetadataItem } = useObjectMetadataItemOnly({
+  const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 

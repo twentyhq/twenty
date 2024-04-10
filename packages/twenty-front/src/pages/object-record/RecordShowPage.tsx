@@ -1,13 +1,14 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { IconBuildingSkyscraper } from 'twenty-ui';
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { PageFavoriteButton } from '@/ui/layout/page/PageFavoriteButton';
@@ -32,14 +33,24 @@ export const RecordShowPage = () => {
     throw new Error(`Record id is not defined`);
   }
 
-  const { labelIdentifierFieldMetadata, objectMetadataItem } =
-    useObjectMetadataItem({ objectNameSingular });
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
+  const { labelIdentifierFieldMetadataItem } =
+    useLabelIdentifierFieldMetadataItem({
+      objectNameSingular,
+    });
 
   const { favorites, createFavorite, deleteFavorite } = useFavorites();
 
   const setEntityFields = useSetRecoilState(
     recordStoreFamilyState(objectRecordId),
   );
+
+  const { getIcon } = useIcons();
+
+  const headerIcon = getIcon(objectMetadataItem?.icon);
 
   const { record, loading } = useFindOneRecord({
     objectRecordId,
@@ -68,9 +79,9 @@ export const RecordShowPage = () => {
   };
 
   const labelIdentifierFieldValue =
-    record?.[labelIdentifierFieldMetadata?.name ?? ''];
+    record?.[labelIdentifierFieldMetadataItem?.name ?? ''];
   const pageName =
-    labelIdentifierFieldMetadata?.type === FieldMetadataType.FullName
+    labelIdentifierFieldMetadataItem?.type === FieldMetadataType.FullName
       ? [
           labelIdentifierFieldValue?.firstName,
           labelIdentifierFieldValue?.lastName,
@@ -83,7 +94,7 @@ export const RecordShowPage = () => {
       <PageHeader
         title={pageName ?? ''}
         hasBackButton
-        Icon={IconBuildingSkyscraper}
+        Icon={headerIcon}
         loading={loading}
       >
         {record && (
