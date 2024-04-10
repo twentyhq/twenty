@@ -19,7 +19,7 @@ export class MessagingMessageChannelListener {
   ) {}
 
   @OnEvent('messageChannel.updated')
-  handleUpdatedEvent(
+  async handleUpdatedEvent(
     payload: ObjectRecordUpdateEvent<MessageChannelObjectMetadata>,
   ) {
     if (
@@ -29,7 +29,7 @@ export class MessagingMessageChannelListener {
       ).includes('isContactAutoCreationEnabled') &&
       payload.details.after.isContactAutoCreationEnabled
     ) {
-      this.messageQueueService.add<MessagingCreateCompaniesAndContactsAfterSyncJobData>(
+      await this.messageQueueService.add<MessagingCreateCompaniesAndContactsAfterSyncJobData>(
         MessagingCreateCompaniesAndContactsAfterSyncJob.name,
         {
           workspaceId: payload.workspaceId,

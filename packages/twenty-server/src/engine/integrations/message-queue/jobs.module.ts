@@ -51,6 +51,7 @@ import { GmailPartialSyncV2Job } from 'src/modules/messaging/jobs/gmail-partial-
 import { GmailPartialSyncV2Module } from 'src/modules/messaging/services/gmail-partial-sync-v2/gmail-partial-sync-v2.module';
 import { CalendarEventParticipantModule } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.module';
 import { UnmatchParticipantJob } from 'src/modules/connected-account/jobs/unmatch-participant.job';
+import { CalendarCreateCompanyAndContactAfterSyncJob } from 'src/modules/calendar/jobs/calendar-create-company-and-contact-after-sync.job';
 
 @Module({
   imports: [
@@ -119,6 +120,10 @@ import { UnmatchParticipantJob } from 'src/modules/connected-account/jobs/unmatc
       useClass: MessagingCreateCompaniesAndContactsAfterSyncJob,
     },
     {
+      provide: CalendarCreateCompanyAndContactAfterSyncJob.name,
+      useClass: CalendarCreateCompanyAndContactAfterSyncJob,
+    },
+    {
       provide: DataSeedDemoWorkspaceJob.name,
       useClass: DataSeedDemoWorkspaceJob,
     },
@@ -143,6 +148,7 @@ import { UnmatchParticipantJob } from 'src/modules/connected-account/jobs/unmatc
       provide: CreateCompanyAndContactJob.name,
       useClass: CreateCompanyAndContactJob,
     },
+
     {
       provide: SaveEventToDbJob.name,
       useClass: SaveEventToDbJob,

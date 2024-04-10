@@ -6,9 +6,9 @@ import { objectRecordChangedProperties } from 'src/engine/integrations/event-emi
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import {
-  CalendarCreateCompaniesAndContactsAfterSyncJobData,
-  CalendarCreateCompaniesAndContactsAfterSyncJob,
-} from 'src/modules/calendar/jobs/calendar-create-companies-and-contacts-after-sync.job';
+  CalendarCreateCompanyAndContactAfterSyncJobData,
+  CalendarCreateCompanyAndContactAfterSyncJob,
+} from 'src/modules/calendar/jobs/calendar-create-company-and-contact-after-sync.job';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 
 @Injectable()
@@ -19,7 +19,7 @@ export class CalendarChannelListener {
   ) {}
 
   @OnEvent('calendarChannel.updated')
-  handleUpdatedEvent(
+  async handleUpdatedEvent(
     payload: ObjectRecordUpdateEvent<MessageChannelObjectMetadata>,
   ) {
     if (
@@ -29,8 +29,9 @@ export class CalendarChannelListener {
       ).includes('isContactAutoCreationEnabled') &&
       payload.details.after.isContactAutoCreationEnabled
     ) {
-      this.messageQueueService.add<CalendarCreateCompaniesAndContactsAfterSyncJobData>(
-        CalendarCreateCompaniesAndContactsAfterSyncJob.name,
+      console.log('calendarChannel.updated');
+      await this.messageQueueService.add<CalendarCreateCompanyAndContactAfterSyncJobData>(
+        CalendarCreateCompanyAndContactAfterSyncJob.name,
         {
           workspaceId: payload.workspaceId,
           calendarChannelId: payload.recordId,

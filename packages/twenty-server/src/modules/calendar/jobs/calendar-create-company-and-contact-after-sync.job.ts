@@ -9,18 +9,17 @@ import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-obj
 import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
 import { CreateCompanyAndContactService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/services/create-company-and-contact.service';
 
-export type CalendarCreateCompaniesAndContactsAfterSyncJobData = {
+export type CalendarCreateCompanyAndContactAfterSyncJobData = {
   workspaceId: string;
   calendarChannelId: string;
 };
 
 @Injectable()
-export class CalendarCreateCompaniesAndContactsAfterSyncJob
-  implements
-    MessageQueueJob<CalendarCreateCompaniesAndContactsAfterSyncJobData>
+export class CalendarCreateCompanyAndContactAfterSyncJob
+  implements MessageQueueJob<CalendarCreateCompanyAndContactAfterSyncJobData>
 {
   private readonly logger = new Logger(
-    CalendarCreateCompaniesAndContactsAfterSyncJob.name,
+    CalendarCreateCompanyAndContactAfterSyncJob.name,
   );
   constructor(
     private readonly createCompaniesAndContactsService: CreateCompanyAndContactService,
@@ -31,7 +30,7 @@ export class CalendarCreateCompaniesAndContactsAfterSyncJob
   ) {}
 
   async handle(
-    data: CalendarCreateCompaniesAndContactsAfterSyncJobData,
+    data: CalendarCreateCompanyAndContactAfterSyncJobData,
   ): Promise<void> {
     this.logger.log(
       `create contacts and companies after sync for workspace ${data.workspaceId} and calendarChannel ${data.calendarChannelId}`,
