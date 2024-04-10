@@ -8,7 +8,7 @@ export class DeleteQueryFactory {
     const objectNameSingular = capitalize(objectMetadataItem.nameSingular);
 
     return `
-      mutation Delete${objectNameSingular}($id: ID!) {
+      mutation Delete${objectNameSingular}($id: UUID!) {
         delete${objectNameSingular}(id: $id) {
           id
         }

@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import {
   Entity,
@@ -12,6 +12,7 @@ import {
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 export enum FeatureFlagKeys {
   IsBlocklistEnabled = 'IS_BLOCKLIST_ENABLED',
@@ -26,7 +27,7 @@ export enum FeatureFlagKeys {
 @ObjectType('FeatureFlag')
 @Unique('IndexOnKeyAndWorkspaceIdUnique', ['key', 'workspaceId'])
 export class FeatureFlagEntity {
-  @IDField(() => ID)
+  @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

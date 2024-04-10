@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import { IDField, UnPagedRelation } from '@ptc-org/nestjs-query-graphql';
 import {
@@ -16,6 +16,7 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType('Workspace')
@@ -24,7 +25,7 @@ import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
   nullable: true,
 })
 export class Workspace {
-  @IDField(() => ID)
+  @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
