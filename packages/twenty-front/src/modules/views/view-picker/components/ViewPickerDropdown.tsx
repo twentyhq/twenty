@@ -1,3 +1,4 @@
+import { useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
@@ -8,6 +9,7 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
+import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { ViewPickerCreateOrEditContent } from '@/views/view-picker/components/ViewPickerCreateOrEditContent';
@@ -16,6 +18,7 @@ import { ViewPickerListContent } from '@/views/view-picker/components/ViewPicker
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { useViewPickerPersistView } from '@/views/view-picker/hooks/useViewPickerPersistView';
+import { capitalize } from '~/utils/string/capitalize';
 
 import { useViewStates } from '../../hooks/internal/useViewStates';
 
@@ -45,6 +48,8 @@ const StyledViewName = styled.span`
 
 export const ViewPickerDropdown = () => {
   const theme = useTheme();
+
+  const objectNamePlural = useParams().objectNamePlural ?? '';
 
   const { entityCountInCurrentViewState } = useViewStates();
 
@@ -86,6 +91,11 @@ export const ViewPickerDropdown = () => {
           ) : (
             <IconList size={theme.icon.size.md} />
           )}
+          <PageTitle
+            title={`${
+              currentViewWithCombinedFiltersAndSorts?.name ?? 'All'
+            } - ${capitalize(objectNamePlural)}`}
+          />
           <StyledViewName>
             {currentViewWithCombinedFiltersAndSorts?.name ?? 'All'}
           </StyledViewName>

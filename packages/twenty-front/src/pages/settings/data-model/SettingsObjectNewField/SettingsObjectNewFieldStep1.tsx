@@ -23,6 +23,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 
 const StyledSection = styled(Section)`
   display: flex;
@@ -102,6 +103,9 @@ export const SettingsObjectNewFieldStep1 = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+      <PageTitle
+        title={`(Step 1) New ${activeObjectMetadataItem.labelPlural} Field - Settings`}
+      />
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <Breadcrumb

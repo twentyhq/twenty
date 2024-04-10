@@ -14,6 +14,7 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 
 export const SettingsDevelopersWebhooksDetail = () => {
   const [isDeleteWebhookModalOpen, setIsDeleteWebhookModalOpen] =
@@ -35,6 +36,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
     <>
       {webhookData?.targetUrl && (
         <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+          <PageTitle title="Webhook Detail - Settings" />
           <SettingsPageContainer>
             <SettingsHeaderContainer>
               <Breadcrumb

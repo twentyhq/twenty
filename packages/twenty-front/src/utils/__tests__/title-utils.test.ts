@@ -13,14 +13,57 @@ describe('title-utils', () => {
     expect(getPageTitleFromPath('/objects/opportunities')).toBe(
       'Opportunities',
     );
-    expect(getPageTitleFromPath('/settings/profile')).toBe('Profile');
+    expect(getPageTitleFromPath('/settings/profile')).toBe(
+      'Profile - Settings',
+    );
     expect(getPageTitleFromPath('/settings/profile/appearance')).toBe(
-      'Appearance',
+      'Appearance - Settings',
+    );
+    expect(getPageTitleFromPath('/settings/accounts')).toBe(
+      'Accounts - Settings',
+    );
+    expect(getPageTitleFromPath('/settings/accounts/new')).toBe(
+      'New Account - Settings',
+    );
+    expect(getPageTitleFromPath('/settings/accounts/calendars')).toBe(
+      'Calendars - Settings',
+    );
+    expect(
+      getPageTitleFromPath('/settings/accounts/calendars/:accountUuid'),
+    ).toBe('Calendars Settings - Settings');
+    expect(getPageTitleFromPath('/settings/accounts/emails')).toBe(
+      'Emails - Settings',
+    );
+    expect(getPageTitleFromPath('/settings/accounts/emails/:accountUuid')).toBe(
+      'Emails Settings - Settings',
+    );
+    expect(getPageTitleFromPath('/settings/billing')).toBe(
+      'Billing - Settings',
+    );
+    expect(getPageTitleFromPath('/settings/objects')).toBe(
+      'Objects - Settings',
+    );
+    expect(getPageTitleFromPath('/settings/objects/new')).toBe(
+      'New Object - Settings',
+    );
+    expect(getPageTitleFromPath('/settings/developers')).toBe(
+      'Developers - Settings',
+    );
+    expect(getPageTitleFromPath('/settings/developers/api-keys/new')).toBe(
+      'New API Key - Settings',
+    );
+    expect(getPageTitleFromPath('/settings/integrations')).toBe(
+      'Integrations - Settings',
+    );
+    expect(getPageTitleFromPath('/settings/developers/webhooks/new')).toBe(
+      'New webhook - Settings',
     );
     expect(getPageTitleFromPath('/settings/workspace-members')).toBe(
-      'Workspace Members',
+      'Workspace Members - Settings',
     );
-    expect(getPageTitleFromPath('/settings/workspace')).toBe('Workspace');
+    expect(getPageTitleFromPath('/settings/workspace')).toBe(
+      'Workspace - Settings',
+    );
     expect(getPageTitleFromPath('/')).toBe('Twenty');
     expect(getPageTitleFromPath('/random')).toBe('Twenty');
   });

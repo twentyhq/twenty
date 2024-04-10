@@ -18,6 +18,7 @@ import { ShowPageMoreButton } from '@/ui/layout/show-page/components/ShowPageMor
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { capitalize } from '~/utils/string/capitalize';
 
 export const RecordShowPage = () => {
   const { objectNameSingular, objectRecordId } = useParams<{
@@ -90,7 +91,7 @@ export const RecordShowPage = () => {
 
   return (
     <PageContainer>
-      <PageTitle title={pageName} />
+      <PageTitle title={`${pageName} - ${capitalize(objectNameSingular)}`} />
       <PageHeader
         title={pageName ?? ''}
         hasBackButton
