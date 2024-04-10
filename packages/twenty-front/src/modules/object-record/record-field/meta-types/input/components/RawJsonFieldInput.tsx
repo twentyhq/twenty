@@ -76,6 +76,7 @@ export const RawJsonFieldInput = ({
         onTab={handleTab}
         hotkeyScope={hotkeyScope}
         onChange={handleChange}
+        maxRows={25}
       />
     </FieldTextAreaOverlay>
   );
