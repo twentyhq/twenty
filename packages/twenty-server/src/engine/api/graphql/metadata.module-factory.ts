@@ -7,10 +7,12 @@ import { useExceptionHandler } from 'src/engine/integrations/exception-handler/h
 import { useThrottler } from 'src/engine/api/graphql/graphql-config/hooks/use-throttler';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
+import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
 
 export const metadataModuleFactory = async (
   environmentService: EnvironmentService,
   exceptionHandlerService: ExceptionHandlerService,
+  dataloaderService: DataloaderService,
 ): Promise<YogaDriverConfig> => {
   const config: YogaDriverConfig = {
     autoSchemaFile: true,
@@ -32,6 +34,9 @@ export const metadataModuleFactory = async (
       }),
     ],
     path: '/metadata',
+    context: () => ({
+      loaders: dataloaderService.createLoaders(),
+    }),
   };
 
   if (environmentService.get('DEBUG_MODE')) {
