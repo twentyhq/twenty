@@ -1,16 +1,13 @@
 import { useContext } from 'react';
-import { useRecoilValue } from 'recoil';
 
-import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { useRecordFieldInputStates } from '@/object-record/record-field/hooks/internal/useRecordFieldInputStates';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
 import { RecordTableCellContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellContainer';
 import { useCloseRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useCloseRecordTableCell';
-import { recordTablePendingRecordIdState } from '@/object-record/record-table/states/recordTablePendingRecordIdState';
+import { useUpsertRecord } from '@/object-record/record-table/record-table-cell/hooks/useUpsertRecord';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 export const RecordTableCell = ({
@@ -19,36 +16,11 @@ export const RecordTableCell = ({
   customHotkeyScope: HotkeyScope;
 }) => {
   const { closeTableCell } = useCloseRecordTableCell();
-  const { entityId, fieldDefinition } = useContext(FieldContext);
-
-  const recordTablePendingRecordId = useRecoilValue(
-    recordTablePendingRecordIdState,
-  );
-  const fieldName = fieldDefinition.metadata.fieldName;
-  const { getDraftValueSelector } = useRecordFieldInputStates(
-    `${entityId}-${fieldName}`,
-  );
-  const draftValue = useRecoilValue(getDraftValueSelector());
-
-  const objectNameSingular =
-    fieldDefinition.metadata.objectMetadataNameSingular ?? '';
-  const { createOneRecord } = useCreateOneRecord({
-    objectNameSingular,
-  });
-
-  const upsertRecord = (persistField: () => void) => {
-    if (recordTablePendingRecordId && draftValue) {
-      createOneRecord({
-        id: recordTablePendingRecordId,
-        name: draftValue,
-        position: 'first',
-      });
-    } else if (!recordTablePendingRecordId) {
-      persistField();
-    }
-  };
+  const { upsertRecord } = useUpsertRecord();
 
   const { moveLeft, moveRight, moveDown } = useRecordTableMoveFocus();
+
+  const { entityId, fieldDefinition } = useContext(FieldContext);
 
   const handleEnter: FieldInputEvent = (persistField) => {
     upsertRecord(persistField);
