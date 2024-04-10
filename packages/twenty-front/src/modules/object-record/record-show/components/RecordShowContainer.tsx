@@ -153,6 +153,7 @@ export const RecordShowContainer = ({
                         metadata: {
                           fieldName:
                             labelIdentifierFieldMetadataItem?.name || '',
+                          objectMetadataNameSingular: objectNameSingular,
                         },
                       },
                       useUpdateRecord: useUpdateOneObjectRecordMutation,

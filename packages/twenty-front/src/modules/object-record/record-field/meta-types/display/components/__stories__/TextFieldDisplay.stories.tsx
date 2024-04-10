@@ -34,6 +34,7 @@ const meta: Meta = {
             metadata: {
               fieldName: 'Text',
               placeHolder: 'Text',
+              objectMetadataNameSingular: 'person',
             },
           },
           hotkeyScope: 'hotkey-scope',

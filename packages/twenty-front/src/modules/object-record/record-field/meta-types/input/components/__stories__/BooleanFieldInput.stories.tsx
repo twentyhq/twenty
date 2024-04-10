@@ -47,6 +47,7 @@ const BooleanFieldInputWithContext = ({
         type: FieldMetadataType.Boolean,
         metadata: {
           fieldName: 'Boolean',
+          objectMetadataNameSingular: 'person',
         },
       }}
       entityId={entityId}
