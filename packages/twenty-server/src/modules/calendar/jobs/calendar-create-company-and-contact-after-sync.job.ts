@@ -22,7 +22,7 @@ export class CalendarCreateCompanyAndContactAfterSyncJob
     CalendarCreateCompanyAndContactAfterSyncJob.name,
   );
   constructor(
-    private readonly createCompaniesAndContactsService: CreateCompanyAndContactService,
+    private readonly createCompanyAndContactService: CreateCompanyAndContactService,
     @InjectObjectMetadataRepository(CalendarChannelObjectMetadata)
     private readonly calendarChannelService: CalendarChannelRepository,
     @InjectObjectMetadataRepository(CalendarEventParticipantObjectMetadata)
@@ -54,7 +54,7 @@ export class CalendarCreateCompanyAndContactAfterSyncJob
         workspaceId,
       );
 
-    await this.createCompaniesAndContactsService.createCompaniesAndContactsAndUpdateParticipantsAfterSync(
+    await this.createCompanyAndContactService.createCompaniesAndContactsAndUpdateParticipantsAfterSync(
       handle,
       calendarEventParticipantsWithoutPersonIdAndWorkspaceMemberId,
       workspaceId,

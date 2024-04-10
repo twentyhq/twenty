@@ -22,7 +22,7 @@ export class MessagingCreateCompanyAndContactAfterSyncJob
     MessagingCreateCompanyAndContactAfterSyncJob.name,
   );
   constructor(
-    private readonly createCompaniesAndContactsService: CreateCompanyAndContactService,
+    private readonly createCompanyAndContactService: CreateCompanyAndContactService,
     @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
     private readonly messageChannelService: MessageChannelRepository,
     @InjectObjectMetadataRepository(MessageParticipantObjectMetadata)
@@ -54,7 +54,7 @@ export class MessagingCreateCompanyAndContactAfterSyncJob
         workspaceId,
       );
 
-    await this.createCompaniesAndContactsService.createCompaniesAndContactsAndUpdateParticipantsAfterSync(
+    await this.createCompanyAndContactService.createCompaniesAndContactsAndUpdateParticipantsAfterSync(
       handle,
       contactsToCreate,
       workspaceId,
