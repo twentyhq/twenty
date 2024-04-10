@@ -5,6 +5,7 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useRecordFieldInputStates } from '@/object-record/record-field/hooks/internal/useRecordFieldInputStates';
 import { recordTablePendingRecordIdState } from '@/object-record/record-table/states/recordTablePendingRecordIdState';
+import { isDefined } from '~/utils/isDefined';
 
 export const useUpsertRecord = () => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
@@ -25,7 +26,7 @@ export const useUpsertRecord = () => {
   });
 
   const upsertRecord = (persistField: () => void) => {
-    if (recordTablePendingRecordId && draftValue) {
+    if (isDefined(recordTablePendingRecordId) && isDefined(draftValue)) {
       createOneRecord({
         id: recordTablePendingRecordId,
         name: draftValue,
