@@ -100,7 +100,9 @@ export const MonthAndYearDropdown = ({
 
   useListenClickOutside({
     refs: [ref],
-    callback: onCloseDropdown,
+    callback: () => {
+      if (isOpen) onCloseDropdown();
+    },
   });
 
   const handleDropdown = (dropdown: 'month' | 'year') => {

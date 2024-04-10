@@ -502,15 +502,17 @@ export const InternalDatePicker = ({
       </div>
       <StyledIconButton
         isOpen={isMonthAndYearDropdownOpen}
-        onClick={() =>
-          setIsMonthAndYearDropdownOpen(!isMonthAndYearDropdownOpen)
-        }
+        onClick={() => setIsMonthAndYearDropdownOpen(true)}
       >
         <IconCalendarDue color={theme.font.color.tertiary} size={16} />
       </StyledIconButton>
       <MonthAndYearDropdown
         isOpen={isMonthAndYearDropdownOpen}
-        onCloseDropdown={() => setIsMonthAndYearDropdownOpen(false)}
+        onCloseDropdown={() => {
+          setIsMonthAndYearDropdownOpen(false);
+          // persist date
+          onMouseSelect?.(date);
+        }}
         month={date.getMonth()}
         year={date.getFullYear()}
         updateMonth={updateMonth}
