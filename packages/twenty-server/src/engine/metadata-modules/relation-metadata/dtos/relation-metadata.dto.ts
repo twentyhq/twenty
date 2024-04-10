@@ -1,6 +1,5 @@
 import {
   ObjectType,
-  ID,
   Field,
   HideField,
   registerEnumType,
@@ -18,6 +17,7 @@ import {
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { BeforeDeleteOneRelation } from 'src/engine/metadata-modules/relation-metadata/hooks/before-delete-one-relation.hook';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 registerEnumType(RelationMetadataType, {
   name: 'RelationMetadataType',
@@ -40,7 +40,7 @@ registerEnumType(RelationMetadataType, {
 @Relation('fromObjectMetadata', () => ObjectMetadataDTO)
 @Relation('toObjectMetadata', () => ObjectMetadataDTO)
 export class RelationMetadataDTO {
-  @IDField(() => ID)
+  @IDField(() => UUIDScalarType)
   id: string;
 
   @Field(() => RelationMetadataType)
