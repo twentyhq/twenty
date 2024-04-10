@@ -11,8 +11,8 @@ rm -rf "./$BASE_FILENAME"
 	if [ -n "$SENTRY_RELEASE" ]; then
 		echo "  SENTRY_RELEASE: \"$SENTRY_RELEASE\","
 	fi
-	if [ -n "$SENTRY_ENVIRONMENT" ]; then
-		echo "  SENTRY_ENVIRONMENT: \"$SENTRY_ENVIRONMENT\","
+	if [ -n "$ENVIRONMENT" ]; then
+		echo "  ENVIRONMENT: \"$ENVIRONMENT\","
 	fi
 	echo "}"
 } > "./$BASE_FILENAME"

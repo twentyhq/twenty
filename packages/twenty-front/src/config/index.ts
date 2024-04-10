@@ -33,7 +33,7 @@ export const SENTRY_RELEASE =
   window._env_?.SENTRY_RELEASE ||
   process.env.SENTRY_RELEASE;
 
-export const SENTRY_ENVIRONMENT =
-  window._env_?.SENTRY_ENVIRONMENT ||
-  process.env.SENTRY_ENVIRONMENT ||
+export const ENVIRONMENT =
+  window._env_?.ENVIRONMENT ||
+  process.env.ENVIRONMENT ||
   'main';

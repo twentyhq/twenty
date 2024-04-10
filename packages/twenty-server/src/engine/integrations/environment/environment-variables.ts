@@ -241,7 +241,7 @@ export class EnvironmentVariables {
     (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
   )
   @IsString()
-  SENTRY_ENVIRONMENT: string;
+  ENVIRONMENT: string;
 
   @IsDuration()
   @IsOptional()
