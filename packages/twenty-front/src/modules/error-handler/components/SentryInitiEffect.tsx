@@ -8,6 +8,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { sentryConfigState } from '@/client-config/states/sentryConfigState';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { SENTRY_RELEASE } from '~/config';
 import { isDefined } from '~/utils/isDefined';
 
 export const SentryInitEffect = () => {
@@ -22,6 +23,7 @@ export const SentryInitEffect = () => {
   useEffect(() => {
     if (isNonEmptyString(sentryConfig?.dsn) && !isSentryInitialized) {
       Sentry.init({
+        release: SENTRY_RELEASE,
         dsn: sentryConfig?.dsn,
         integrations: [
           new Sentry.BrowserTracing({

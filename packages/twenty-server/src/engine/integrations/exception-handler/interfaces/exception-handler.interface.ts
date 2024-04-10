@@ -8,6 +8,7 @@ export enum ExceptionHandlerDriver {
 export interface ExceptionHandlerSentryDriverFactoryOptions {
   type: ExceptionHandlerDriver.Sentry;
   options: {
+    release?: string;
     dsn: string;
     serverInstance?: Router;
     debug?: boolean;

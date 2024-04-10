@@ -28,3 +28,7 @@ export const REACT_APP_SERVER_BASE_URL =
   window._env_?.REACT_APP_SERVER_BASE_URL ||
   process.env.REACT_APP_SERVER_BASE_URL ||
   getDefaultUrl();
+
+export const SENTRY_RELEASE =
+  window._env_?.SENTRY_RELEASE ||
+  process.env.SENTRY_RELEASE

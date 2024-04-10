@@ -9,6 +9,7 @@ export function generateFrontConfig(): void {
     window: {
       _env_: {
         REACT_APP_SERVER_BASE_URL: process.env.SERVER_URL,
+        SENTRY_RELEASE: process.env.SENTRY_RELEASE,
       },
     },
   };
