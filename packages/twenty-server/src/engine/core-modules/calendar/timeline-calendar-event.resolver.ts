@@ -1,13 +1,5 @@
 import { UseGuards } from '@nestjs/common';
-import {
-  Query,
-  Args,
-  ArgsType,
-  Field,
-  ID,
-  Int,
-  Resolver,
-} from '@nestjs/graphql';
+import { Query, Args, ArgsType, Field, Int, Resolver } from '@nestjs/graphql';
 
 import { Max } from 'class-validator';
 
@@ -21,10 +13,11 @@ import { TimelineCalendarEventService } from 'src/engine/core-modules/calendar/t
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { NotFoundError } from 'src/engine/utils/graphql-errors.util';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @ArgsType()
 class GetTimelineCalendarEventsFromPersonIdArgs {
-  @Field(() => ID)
+  @Field(() => UUIDScalarType)
   personId: string;
 
   @Field(() => Int)
@@ -37,7 +30,7 @@ class GetTimelineCalendarEventsFromPersonIdArgs {
 
 @ArgsType()
 class GetTimelineCalendarEventsFromCompanyIdArgs {
-  @Field(() => ID)
+  @Field(() => UUIDScalarType)
   companyId: string;
 
   @Field(() => Int)

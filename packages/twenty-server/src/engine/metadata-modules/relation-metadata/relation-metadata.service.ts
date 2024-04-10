@@ -317,4 +317,43 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
 
     return deletedRelationMetadata;
   }
+
+  async findManyRelationMetadataByFieldMetadataIds(
+    fieldMetadataIds: string[],
+  ): Promise<(RelationMetadataEntity | NotFoundException)[]> {
+    const relationMetadataCollection =
+      await this.relationMetadataRepository.find({
+        where: [
+          {
+            fromFieldMetadataId: In(fieldMetadataIds),
+          },
+          {
+            toFieldMetadataId: In(fieldMetadataIds),
+          },
+        ],
+        relations: [
+          'fromObjectMetadata',
+          'toObjectMetadata',
+          'fromFieldMetadata',
+          'toFieldMetadata',
+        ],
+      });
+
+    const mappedResult = fieldMetadataIds.map((fieldMetadataId) => {
+      const foundRelationMetadataItem = relationMetadataCollection.find(
+        (relationMetadataItem) =>
+          relationMetadataItem.fromFieldMetadataId === fieldMetadataId ||
+          relationMetadataItem.toFieldMetadataId === fieldMetadataId,
+      );
+
+      return (
+        foundRelationMetadataItem ??
+        new NotFoundException(
+          `RelationMetadata with fieldMetadataId ${fieldMetadataId} not found`,
+        )
+      );
+    });
+
+    return mappedResult;
+  }
 }
