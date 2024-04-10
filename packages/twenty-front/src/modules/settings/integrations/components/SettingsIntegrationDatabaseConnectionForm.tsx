@@ -7,7 +7,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 export const settingsIntegrationPostgreSQLConnectionFormSchema = z.object({
   dbname: z.string().min(1),
   host: z.string().min(1),
-  port: z.number().positive(),
+  port: z.preprocess((val) => parseInt(val as string), z.number().positive()),
   username: z.string().min(1),
   password: z.string().min(1),
 });
@@ -41,8 +41,8 @@ export const SettingsIntegrationPostgreSQLConnectionForm = () => {
         { name: 'host' as const, label: 'Host' },
         { name: 'port' as const, label: 'Port' },
         { name: 'username' as const, label: 'Username' },
-        { name: 'password' as const, label: 'Password' },
-      ].map(({ name, label }) => (
+        { name: 'password' as const, label: 'Password', type: 'password' },
+      ].map(({ name, label, type }) => (
         <Controller
           key={name}
           name={name}
@@ -53,6 +53,7 @@ export const SettingsIntegrationPostgreSQLConnectionForm = () => {
               value={value}
               onChange={onChange}
               fullWidth
+              type={type}
             />
           )}
         />

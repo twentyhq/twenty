@@ -12,10 +12,10 @@ import { TypeMapperService } from './services/type-mapper.service';
 @Module({
   imports: [ObjectMetadataModule],
   providers: [
-    ...workspaceSchemaBuilderFactories,
-    TypeDefinitionsGenerator,
     TypeDefinitionsStorage,
     TypeMapperService,
+    ...workspaceSchemaBuilderFactories,
+    TypeDefinitionsGenerator,
     WorkspaceGraphQLSchemaFactory,
   ],
   exports: [WorkspaceGraphQLSchemaFactory],

@@ -17,7 +17,7 @@ const meta: Meta<PageDecoratorArgs> = {
     routePath: getSettingsPagePath(SettingsPath.IntegrationDatabaseConnection),
     routeParams: {
       ':databaseKey': 'postgresql',
-      ':connectionKey': 'twenty_postgres',
+      ':connectionId': '67cbfd35-8dd4-4591-b9d4-c1906281a5da',
     },
   },
   parameters: {

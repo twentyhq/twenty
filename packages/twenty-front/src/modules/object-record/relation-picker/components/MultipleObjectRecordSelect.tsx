@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
-import debounce from 'lodash.debounce';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { MultipleObjectRecordOnClickOutsideEffect } from '@/object-record/relation-picker/components/MultipleObjectRecordOnClickOutsideEffect';
 import { MultipleObjectRecordSelectItem } from '@/object-record/relation-picker/components/MultipleObjectRecordSelectItem';
@@ -83,7 +83,7 @@ export const MultipleObjectRecordSelect = ({
     }
   }, [selectedObjectRecordsForSelect, loading]);
 
-  const debouncedSetSearchFilter = debounce(setSearchFilter, 100, {
+  const debouncedSetSearchFilter = useDebouncedCallback(setSearchFilter, 100, {
     leading: true,
   });
 

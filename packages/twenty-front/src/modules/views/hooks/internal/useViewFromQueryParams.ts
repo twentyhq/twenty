@@ -3,16 +3,17 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import { useApolloClient } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
 import qs from 'qs';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useRecoilValue } from 'recoil';
 import z from 'zod';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { formatFieldMetadataItemAsFilterDefinition } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
-import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 import { ViewFilter } from '@/views/types/ViewFilter';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { isDefined } from '~/utils/isDefined';
@@ -39,8 +40,11 @@ export const useViewFromQueryParams = () => {
   const { objectNameSingular } = useObjectNameSingularFromPlural({
     objectNamePlural,
   });
-  const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
-  const generateFindManyRecordsQuery = useGenerateFindManyRecordsQuery();
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
+  const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const queryParamsValidation = filterQueryParamsSchema.safeParse(
     qs.parse(searchParams.toString()),
@@ -119,6 +123,7 @@ export const useViewFromQueryParams = () => {
                   >({
                     query: generateFindManyRecordsQuery({
                       objectMetadataItem: relationObjectMetadataItem,
+                      objectMetadataItems,
                     }),
                     variables: {
                       filter: { id: { in: filterValueFromURL } },
@@ -165,9 +170,9 @@ export const useViewFromQueryParams = () => {
     [
       apolloClient,
       filterQueryParams,
-      generateFindManyRecordsQuery,
       hasFiltersQueryParams,
       objectMetadataItem.fields,
+      objectMetadataItems,
     ],
   );
 

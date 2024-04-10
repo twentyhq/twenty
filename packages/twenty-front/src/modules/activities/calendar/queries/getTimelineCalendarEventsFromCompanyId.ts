@@ -4,7 +4,7 @@ import { timelineCalendarEventWithTotalFragment } from '@/activities/calendar/qu
 
 export const getTimelineCalendarEventsFromCompanyId = gql`
   query GetTimelineCalendarEventsFromCompanyId(
-    $companyId: ID!
+    $companyId: UUID!
     $page: Int!
     $pageSize: Int!
   ) {

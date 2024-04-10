@@ -1,9 +1,20 @@
 import { useEffect } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { IconSettings } from 'twenty-ui';
 
+import { useDeleteOneDatabaseConnection } from '@/databases/hooks/useDeleteOneDatabaseConnection';
+import { useGetDatabaseConnection } from '@/databases/hooks/useGetDatabaseConnection';
+import { useGetDatabaseConnectionTables } from '@/databases/hooks/useGetDatabaseConnectionTables';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import {
+  SettingsIntegrationDatabaseTablesListCard,
+  SettingsIntegrationsDatabaseTablesFormValues,
+  settingsIntegrationsDatabaseTablesSchema,
+} from '@/settings/integrations/components/SettingsIntegrationDatabaseTablesListCard';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
+import { getConnectionDbName } from '@/settings/integrations/utils/getConnectionDbName';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -13,10 +24,9 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SettingsIntegrationDatabaseConnectionSummaryCard } from '~/pages/settings/integrations/SettingsIntegrationDatabaseConnectionSummaryCard';
-import { mockedRemoteObjectIntegrations } from '~/testing/mock-data/remoteObjectDatabases';
 
 export const SettingsIntegrationDatabaseConnection = () => {
-  const { databaseKey = '', connectionKey = '' } = useParams();
+  const { databaseKey = '', connectionId = '' } = useParams();
   const navigate = useNavigate();
 
   const [integrationCategoryAll] = useSettingsIntegrationCategories();
@@ -35,17 +45,44 @@ export const SettingsIntegrationDatabaseConnection = () => {
     ((databaseKey === 'airtable' && isAirtableIntegrationEnabled) ||
       (databaseKey === 'postgresql' && isPostgresqlIntegrationEnabled));
 
-  const connections =
-    mockedRemoteObjectIntegrations.find(
-      ({ key }) => key === integration?.from.key,
-    )?.connections || [];
-  const connection = connections.find(({ key }) => key === connectionKey);
+  const { connection, loading } = useGetDatabaseConnection({
+    databaseKey,
+    connectionId,
+    skip: !isIntegrationAvailable,
+  });
+
+  const { deleteOneDatabaseConnection } = useDeleteOneDatabaseConnection();
+
+  const deleteConnection = async () => {
+    if (!connection) return;
+
+    await deleteOneDatabaseConnection({ id: connection.id });
+
+    navigate(`${settingsIntegrationsPagePath}/${databaseKey}`);
+  };
 
   useEffect(() => {
-    if (!isIntegrationAvailable || !connection) {
+    if (!isIntegrationAvailable || (!loading && !connection)) {
       navigate(AppPath.NotFound);
     }
-  }, [integration, databaseKey, navigate, isIntegrationAvailable, connection]);
+  }, [
+    integration,
+    databaseKey,
+    navigate,
+    isIntegrationAvailable,
+    connection,
+    loading,
+  ]);
+
+  const { tables } = useGetDatabaseConnectionTables({
+    connectionId,
+    skip: !isIntegrationAvailable || !connection,
+  });
+
+  const formConfig = useForm<SettingsIntegrationsDatabaseTablesFormValues>({
+    mode: 'onTouched',
+    resolver: zodResolver(settingsIntegrationsDatabaseTablesSchema),
+  });
 
   if (!isIntegrationAvailable || !connection) return null;
 
@@ -53,31 +90,44 @@ export const SettingsIntegrationDatabaseConnection = () => {
     SettingsPath.Integrations,
   );
 
+  const connectionName = getConnectionDbName({ integration, connection });
+
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <SettingsPageContainer>
-        <Breadcrumb
-          links={[
-            {
-              children: 'Integrations',
-              href: settingsIntegrationsPagePath,
-            },
-            {
-              children: integration.text,
-              href: `${settingsIntegrationsPagePath}/${databaseKey}`,
-            },
-            { children: connection.name },
-          ]}
-        />
-        <Section>
-          <H2Title title="About" description="About this remote object" />
-          <SettingsIntegrationDatabaseConnectionSummaryCard
-            databaseLogoUrl={integration.from.image}
-            connectionName={connection.name}
-            connectedTablesNb={connection.tables.length}
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <FormProvider {...formConfig}>
+      <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+        <SettingsPageContainer>
+          <Breadcrumb
+            links={[
+              {
+                children: 'Integrations',
+                href: settingsIntegrationsPagePath,
+              },
+              {
+                children: integration.text,
+                href: `${settingsIntegrationsPagePath}/${databaseKey}`,
+              },
+              { children: connectionName },
+            ]}
           />
-        </Section>
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+          <Section>
+            <H2Title title="About" description="About this remote object" />
+            <SettingsIntegrationDatabaseConnectionSummaryCard
+              databaseLogoUrl={integration.from.image}
+              connectionId={connectionId}
+              connectionName={connectionName}
+              onRemove={deleteConnection}
+            />
+          </Section>
+          <Section>
+            <H2Title
+              title="Tables"
+              description="Select the tables that should be tracked"
+            />
+            <SettingsIntegrationDatabaseTablesListCard tables={tables} />
+          </Section>
+        </SettingsPageContainer>
+      </SubMenuTopBarContainer>
+    </FormProvider>
   );
 };

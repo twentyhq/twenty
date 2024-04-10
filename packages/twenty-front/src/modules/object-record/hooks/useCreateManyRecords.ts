@@ -6,11 +6,9 @@ import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
-import {
-  getCreateManyRecordsMutationResponseField,
-  useGenerateCreateManyRecordMutation,
-} from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
+import { useCreateManyRecordsMutation } from '@/object-record/hooks/useCreateManyRecordsMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { getCreateManyRecordsMutationResponseField } from '@/object-record/utils/getCreateManyRecordsMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { isDefined } from '~/utils/isDefined';
 
@@ -35,8 +33,8 @@ export const useCreateManyRecords = <
     objectNameSingular,
   });
 
-  const createManyRecordsMutation = useGenerateCreateManyRecordMutation({
-    objectMetadataItem,
+  const { createManyRecordsMutation } = useCreateManyRecordsMutation({
+    objectNameSingular,
     queryFields,
     depth,
   });

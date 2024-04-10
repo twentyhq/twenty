@@ -1,11 +1,12 @@
+import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import {
   WorkspaceMigrationTableAction,
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnCreate,
+  WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
-import { computeCustomName } from 'src/engine/utils/compute-custom-name.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
 export const buildWorkspaceMigrationsForCustomObject = (
@@ -17,19 +18,18 @@ export const buildWorkspaceMigrationsForCustomObject = (
 ): WorkspaceMigrationTableAction[] => [
   {
     name: computeObjectTargetTable(createdObjectMetadata),
-    action: 'create',
+    action: WorkspaceMigrationTableActionType.CREATE,
   } satisfies WorkspaceMigrationTableAction,
   // Add activity target relation
   {
     name: computeObjectTargetTable(activityTargetObjectMetadata),
-    action: 'alter',
+    action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {
         action: WorkspaceMigrationColumnActionType.CREATE,
-        columnName: `${computeCustomName(
-          createdObjectMetadata.nameSingular,
-          false,
-        )}Id`,
+        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
+          isForeignKey: true,
+        }),
         columnType: 'uuid',
         isNullable: true,
       } satisfies WorkspaceMigrationColumnCreate,
@@ -37,14 +37,13 @@ export const buildWorkspaceMigrationsForCustomObject = (
   },
   {
     name: computeObjectTargetTable(activityTargetObjectMetadata),
-    action: 'alter',
+    action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {
         action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-        columnName: `${computeCustomName(
-          createdObjectMetadata.nameSingular,
-          false,
-        )}Id`,
+        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
+          isForeignKey: true,
+        }),
         referencedTableName: computeObjectTargetTable(createdObjectMetadata),
         referencedTableColumnName: 'id',
         onDelete: RelationOnDeleteAction.CASCADE,
@@ -54,14 +53,13 @@ export const buildWorkspaceMigrationsForCustomObject = (
   // Add attachment relation
   {
     name: computeObjectTargetTable(attachmentObjectMetadata),
-    action: 'alter',
+    action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {
         action: WorkspaceMigrationColumnActionType.CREATE,
-        columnName: `${computeCustomName(
-          createdObjectMetadata.nameSingular,
-          false,
-        )}Id`,
+        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
+          isForeignKey: true,
+        }),
         columnType: 'uuid',
         isNullable: true,
       } satisfies WorkspaceMigrationColumnCreate,
@@ -69,14 +67,13 @@ export const buildWorkspaceMigrationsForCustomObject = (
   },
   {
     name: computeObjectTargetTable(attachmentObjectMetadata),
-    action: 'alter',
+    action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {
         action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-        columnName: `${computeCustomName(
-          createdObjectMetadata.nameSingular,
-          false,
-        )}Id`,
+        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
+          isForeignKey: true,
+        }),
         referencedTableName: computeObjectTargetTable(createdObjectMetadata),
         referencedTableColumnName: 'id',
         onDelete: RelationOnDeleteAction.CASCADE,
@@ -86,14 +83,13 @@ export const buildWorkspaceMigrationsForCustomObject = (
   // Add event relation
   {
     name: computeObjectTargetTable(eventObjectMetadata),
-    action: 'alter',
+    action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {
         action: WorkspaceMigrationColumnActionType.CREATE,
-        columnName: `${computeCustomName(
-          createdObjectMetadata.nameSingular,
-          false,
-        )}Id`,
+        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
+          isForeignKey: true,
+        }),
         columnType: 'uuid',
         isNullable: true,
       } satisfies WorkspaceMigrationColumnCreate,
@@ -101,14 +97,13 @@ export const buildWorkspaceMigrationsForCustomObject = (
   },
   {
     name: computeObjectTargetTable(eventObjectMetadata),
-    action: 'alter',
+    action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {
         action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-        columnName: `${computeCustomName(
-          createdObjectMetadata.nameSingular,
-          false,
-        )}Id`,
+        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
+          isForeignKey: true,
+        }),
         referencedTableName: computeObjectTargetTable(createdObjectMetadata),
         referencedTableColumnName: 'id',
         onDelete: RelationOnDeleteAction.CASCADE,
@@ -118,14 +113,13 @@ export const buildWorkspaceMigrationsForCustomObject = (
   // Add favorite relation
   {
     name: computeObjectTargetTable(favoriteObjectMetadata),
-    action: 'alter',
+    action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {
         action: WorkspaceMigrationColumnActionType.CREATE,
-        columnName: `${computeCustomName(
-          createdObjectMetadata.nameSingular,
-          false,
-        )}Id`,
+        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
+          isForeignKey: true,
+        }),
         columnType: 'uuid',
         isNullable: true,
       } satisfies WorkspaceMigrationColumnCreate,
@@ -133,14 +127,13 @@ export const buildWorkspaceMigrationsForCustomObject = (
   },
   {
     name: computeObjectTargetTable(favoriteObjectMetadata),
-    action: 'alter',
+    action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {
         action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-        columnName: `${computeCustomName(
-          createdObjectMetadata.nameSingular,
-          false,
-        )}Id`,
+        columnName: computeColumnName(createdObjectMetadata.nameSingular, {
+          isForeignKey: true,
+        }),
         referencedTableName: computeObjectTargetTable(createdObjectMetadata),
         referencedTableColumnName: 'id',
         onDelete: RelationOnDeleteAction.CASCADE,
@@ -149,7 +142,7 @@ export const buildWorkspaceMigrationsForCustomObject = (
   },
   {
     name: computeObjectTargetTable(createdObjectMetadata),
-    action: 'alter',
+    action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {
         action: WorkspaceMigrationColumnActionType.CREATE,
@@ -162,7 +155,7 @@ export const buildWorkspaceMigrationsForCustomObject = (
   // This is temporary until we implement mainIdentifier
   {
     name: computeObjectTargetTable(createdObjectMetadata),
-    action: 'alter',
+    action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {
         action: WorkspaceMigrationColumnActionType.CREATE,

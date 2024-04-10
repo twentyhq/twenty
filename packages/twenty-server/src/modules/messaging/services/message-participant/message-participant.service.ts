@@ -12,11 +12,15 @@ import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/getFlattenedValuesAndValuesStringForBatchRawQuery.util';
 import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/connected-account/services/add-person-id-and-workspace-member-id/add-person-id-and-workspace-member-id.service';
+import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant.repository';
+import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 
 @Injectable()
 export class MessageParticipantService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    @InjectObjectMetadataRepository(MessageParticipantObjectMetadata)
+    private readonly messageParticipantRepository: MessageParticipantRepository,
     @InjectObjectMetadataRepository(PersonObjectMetadata)
     private readonly personRepository: PersonRepository,
     private readonly addPersonIdAndWorkspaceMemberIdService: AddPersonIdAndWorkspaceMemberIdService,
@@ -106,5 +110,57 @@ export class MessageParticipantService {
       workspaceId,
       transactionManager,
     );
+  }
+
+  public async matchMessageParticipants(
+    workspaceId: string,
+    email: string,
+    personId?: string,
+    workspaceMemberId?: string,
+  ) {
+    const messageParticipantsToUpdate =
+      await this.messageParticipantRepository.getByHandles(
+        [email],
+        workspaceId,
+      );
+
+    const messageParticipantIdsToUpdate = messageParticipantsToUpdate.map(
+      (participant) => participant.id,
+    );
+
+    if (personId) {
+      await this.messageParticipantRepository.updateParticipantsPersonId(
+        messageParticipantIdsToUpdate,
+        personId,
+        workspaceId,
+      );
+    }
+    if (workspaceMemberId) {
+      await this.messageParticipantRepository.updateParticipantsWorkspaceMemberId(
+        messageParticipantIdsToUpdate,
+        workspaceMemberId,
+        workspaceId,
+      );
+    }
+  }
+
+  public async unmatchMessageParticipants(
+    workspaceId: string,
+    handle: string,
+    personId?: string,
+    workspaceMemberId?: string,
+  ) {
+    if (personId) {
+      await this.messageParticipantRepository.removePersonIdByHandle(
+        handle,
+        workspaceId,
+      );
+    }
+    if (workspaceMemberId) {
+      await this.messageParticipantRepository.removeWorkspaceMemberIdByHandle(
+        handle,
+        workspaceId,
+      );
+    }
   }
 }
