@@ -8,7 +8,8 @@ export const formatGoogleCalendarEvent = (
   event: calendarV3.Schema$Event,
   iCalUIDCalendarEventIdMap: Map<string, string>,
 ): CalendarEventWithParticipants => {
-  const id = iCalUIDCalendarEventIdMap.get(event.iCalUID ?? '') ?? v4();
+  const id =
+    (event.iCalUID && iCalUIDCalendarEventIdMap.get(event.iCalUID)) ?? v4();
 
   const formatResponseStatus = (status: string | null | undefined) => {
     switch (status) {
