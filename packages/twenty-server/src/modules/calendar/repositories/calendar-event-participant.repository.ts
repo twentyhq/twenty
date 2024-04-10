@@ -229,6 +229,31 @@ export class CalendarEventParticipantRepository {
     );
   }
 
+  public async getWithoutPersonIdAndWorkspaceMemberId(
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<CalendarEventParticipantWithId[]> {
+    if (!workspaceId) {
+      throw new Error('WorkspaceId is required');
+    }
+
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const calendarEventParticipants: CalendarEventParticipantWithId[] =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT "calendarEventParticipant".*
+        FROM ${dataSourceSchema}."calendarEventParticipant" AS "calendarEventParticipant"
+        WHERE "calendarEventParticipant"."personId" IS NULL
+        AND "calendarEventParticipant"."workspaceMemberId" IS NULL`,
+        [],
+        workspaceId,
+        transactionManager,
+      );
+
+    return calendarEventParticipants;
+  }
+
   public async getByCalendarChannelIdWithoutPersonIdAndWorkspaceMemberId(
     calendarChannelId: string,
     workspaceId: string,
