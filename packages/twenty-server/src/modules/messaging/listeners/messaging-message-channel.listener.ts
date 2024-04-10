@@ -6,9 +6,9 @@ import { objectRecordChangedProperties } from 'src/engine/integrations/event-emi
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import {
-  CreateCompaniesAndContactsAfterSyncJobData,
-  CreateCompaniesAndContactsAfterSyncJob,
-} from 'src/modules/messaging/jobs/create-companies-and-contacts-after-sync.job';
+  MessagingCreateCompaniesAndContactsAfterSyncJobData,
+  MessagingCreateCompaniesAndContactsAfterSyncJob,
+} from 'src/modules/messaging/jobs/messaging-create-companies-and-contacts-after-sync.job';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 
 @Injectable()
@@ -29,8 +29,8 @@ export class MessagingMessageChannelListener {
       ).includes('isContactAutoCreationEnabled') &&
       payload.details.after.isContactAutoCreationEnabled
     ) {
-      this.messageQueueService.add<CreateCompaniesAndContactsAfterSyncJobData>(
-        CreateCompaniesAndContactsAfterSyncJob.name,
+      this.messageQueueService.add<MessagingCreateCompaniesAndContactsAfterSyncJobData>(
+        MessagingCreateCompaniesAndContactsAfterSyncJob.name,
         {
           workspaceId: payload.workspaceId,
           messageChannelId: payload.recordId,
