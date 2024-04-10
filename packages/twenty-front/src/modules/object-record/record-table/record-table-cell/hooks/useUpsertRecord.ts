@@ -4,15 +4,15 @@ import { useRecoilValue } from 'recoil';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useRecordFieldInputStates } from '@/object-record/record-field/hooks/internal/useRecordFieldInputStates';
-import { recordTablePendingRecordIdState } from '@/object-record/record-table/states/recordTablePendingRecordIdState';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { isDefined } from '~/utils/isDefined';
 
 export const useUpsertRecord = () => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
 
-  const recordTablePendingRecordId = useRecoilValue(
-    recordTablePendingRecordIdState,
-  );
+  const { pendingRecordIdState } = useRecordTableStates();
+
+  const pendingRecordId = useRecoilValue(pendingRecordIdState);
   const fieldName = fieldDefinition.metadata.fieldName;
   const { getDraftValueSelector } = useRecordFieldInputStates(
     `${entityId}-${fieldName}`,
@@ -26,13 +26,13 @@ export const useUpsertRecord = () => {
   });
 
   const upsertRecord = (persistField: () => void) => {
-    if (isDefined(recordTablePendingRecordId) && isDefined(draftValue)) {
+    if (isDefined(pendingRecordId) && isDefined(draftValue)) {
       createOneRecord({
-        id: recordTablePendingRecordId,
+        id: pendingRecordId,
         name: draftValue,
         position: 'first',
       });
-    } else if (!recordTablePendingRecordId) {
+    } else if (!pendingRecordId) {
       persistField();
     }
   };

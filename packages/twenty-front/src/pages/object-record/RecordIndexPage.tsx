@@ -1,12 +1,11 @@
 import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { useSetRecoilState } from 'recoil';
 import { v4 } from 'uuid';
 
 import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
+import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
 import { useSelectedTableCellEditMode } from '@/object-record/record-table/record-table-cell/hooks/useSelectedTableCellEditMode';
-import { recordTablePendingRecordIdState } from '@/object-record/record-table/states/recordTablePendingRecordIdState';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
@@ -28,12 +27,12 @@ export const RecordIndexPage = () => {
     scopeId: recordIndexId,
   });
 
-  const setRecordTablePendingRecordId = useSetRecoilState(
-    recordTablePendingRecordIdState,
-  );
+  const { setPendingRecordId } = useRecordTable({
+    recordTableId: recordIndexId,
+  });
 
   const handleAddButtonClick = async () => {
-    setRecordTablePendingRecordId(v4());
+    setPendingRecordId(v4());
 
     setSelectedTableCellEditMode(-1, 0);
     setHotkeyScope(DEFAULT_CELL_SCOPE.scope, DEFAULT_CELL_SCOPE.customScopes);

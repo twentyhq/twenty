@@ -1,19 +1,18 @@
 import { useRecoilValue } from 'recoil';
 
 import { RecordTableRow } from '@/object-record/record-table/components/RecordTableRow';
-import { recordTablePendingRecordIdState } from '@/object-record/record-table/states/recordTablePendingRecordIdState';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 
 export const RecordTablePendingRow = () => {
-  const recordTablePendingRecordId = useRecoilValue(
-    recordTablePendingRecordIdState,
-  );
+  const { pendingRecordIdState } = useRecordTableStates();
+  const pendingRecordId = useRecoilValue(pendingRecordIdState);
 
-  if (!recordTablePendingRecordId) return;
+  if (!pendingRecordId) return;
 
   return (
     <RecordTableRow
-      key={recordTablePendingRecordId}
-      recordId={recordTablePendingRecordId}
+      key={pendingRecordId}
+      recordId={pendingRecordId}
       rowIndex={-1}
     />
   );
