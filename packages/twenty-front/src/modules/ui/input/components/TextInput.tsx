@@ -145,6 +145,7 @@ const TextInputComponent = (
 
   const handleFocus: FocusEventHandler<HTMLInputElement> = (e) => {
     onFocus?.(e);
+
     if (!disableHotkeys) {
       setHotkeyScopeAndMemorizePreviousScope(InputHotkeyScope.TextInput);
     }
@@ -152,6 +153,7 @@ const TextInputComponent = (
 
   const handleBlur: FocusEventHandler<HTMLInputElement> = (e) => {
     onBlur?.(e);
+
     if (!disableHotkeys) {
       goBackToPreviousHotkeyScope();
     }

@@ -68,7 +68,7 @@ export const getObjectRecordIdentifier = ({
         : imageIdentifierFieldValue) ?? '';
 
   const basePathToShowPage = getBasePathToShowPage({
-    objectMetadataItem,
+    objectNameSingular: objectMetadataItem.nameSingular,
   });
 
   const isWorkspaceMemberObjectMetadata =

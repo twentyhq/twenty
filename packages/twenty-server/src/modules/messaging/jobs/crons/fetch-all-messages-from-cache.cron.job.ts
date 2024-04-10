@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository, In } from 'typeorm';
@@ -16,8 +16,6 @@ import { GmailFetchMessageContentFromCacheService } from 'src/modules/messaging/
 export class FetchAllMessagesFromCacheCronJob
   implements MessageQueueJob<undefined>
 {
-  private readonly logger = new Logger(FetchAllMessagesFromCacheCronJob.name);
-
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,

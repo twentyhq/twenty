@@ -17,5 +17,5 @@ export class RemoteTableInput {
   status: RemoteTableStatus;
 
   @Field(() => String)
-  schema: string;
+  schema?: string;
 }
