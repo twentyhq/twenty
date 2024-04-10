@@ -193,4 +193,26 @@ export class CreateCompanyAndContactService {
       },
     );
   }
+
+  async createCompaniesAndContactsAndUpdateParticipantsAfterSync(
+    messageChannelHandle: string,
+    participants: { id: string; handle: string; displayName: string }[],
+    workspaceId: string,
+  ) {
+    await this.createCompaniesAndContacts(
+      messageChannelHandle,
+      participants,
+      workspaceId,
+    );
+
+    await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
+      participants,
+      workspaceId,
+    );
+
+    await this.calendarEventParticipantService.updateCalendarEventParticipantsAfterContactCreation(
+      participants,
+      workspaceId,
+    );
+  }
 }
