@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 
 export const query = gql`
   mutation UpdateOneObjectMetadataItem(
-    $idToUpdate: ID!
+    $idToUpdate: UUID!
     $updatePayload: UpdateObjectInput!
   ) {
     updateOneObject(input: { id: $idToUpdate, update: $updatePayload }) {

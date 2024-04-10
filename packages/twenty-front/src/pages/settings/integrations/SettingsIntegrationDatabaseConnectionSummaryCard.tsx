@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { IconDotsVertical, IconTrash } from 'twenty-ui';
 
 import { SettingsSummaryCard } from '@/settings/components/SettingsSummaryCard';
-import { SettingsIntegrationDatabaseConnectedTablesStatus } from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectedTablesStatus';
+import { SettingsIntegrationDatabaseConnectionSyncStatus } from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectionSyncStatus';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -11,8 +11,9 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsIntegrationDatabaseConnectionSummaryCardProps = {
   databaseLogoUrl: string;
+  connectionId: string;
   connectionName: string;
-  connectedTablesNb: number;
+  onRemove: () => void;
 };
 
 const StyledDatabaseLogoContainer = styled.div`
@@ -29,8 +30,9 @@ const StyledDatabaseLogo = styled.img`
 
 export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
   databaseLogoUrl,
+  connectionId,
   connectionName,
-  connectedTablesNb,
+  onRemove,
 }: SettingsIntegrationDatabaseConnectionSummaryCardProps) => {
   const dropdownId =
     'settings-integration-database-connection-summary-card-dropdown';
@@ -47,8 +49,8 @@ export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
       }
       rightComponent={
         <>
-          <SettingsIntegrationDatabaseConnectedTablesStatus
-            connectedTablesCount={connectedTablesNb}
+          <SettingsIntegrationDatabaseConnectionSyncStatus
+            connectionId={connectionId}
           />
           <Dropdown
             dropdownId={dropdownId}
@@ -59,7 +61,11 @@ export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
             dropdownComponents={
               <DropdownMenu>
                 <DropdownMenuItemsContainer>
-                  <MenuItem LeftIcon={IconTrash} text="Remove" />
+                  <MenuItem
+                    LeftIcon={IconTrash}
+                    text="Remove"
+                    onClick={onRemove}
+                  />
                 </DropdownMenuItemsContainer>
               </DropdownMenu>
             }

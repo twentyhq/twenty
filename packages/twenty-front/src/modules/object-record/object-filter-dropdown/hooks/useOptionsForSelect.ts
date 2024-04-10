@@ -12,7 +12,9 @@ export const useOptionsForSelect = (fieldMetadataId: string) => {
     objectNamePlural,
   });
 
-  const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
 
   const fieldMetadataItem = objectMetadataItem.fields.find(
     (field) => field.id === fieldMetadataId,

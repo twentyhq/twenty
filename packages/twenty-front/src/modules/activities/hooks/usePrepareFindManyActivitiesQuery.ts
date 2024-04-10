@@ -4,7 +4,7 @@ import { FIND_MANY_ACTIVITIES_QUERY_KEY } from '@/activities/query-keys/FindMany
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
@@ -16,12 +16,12 @@ import { isDefined } from '~/utils/isDefined';
 
 export const usePrepareFindManyActivitiesQuery = () => {
   const { objectMetadataItem: objectMetadataItemActivity } =
-    useObjectMetadataItemOnly({
+    useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.Activity,
     });
 
   const getActivityFromCache = useGetRecordFromCache({
-    objectMetadataItem: objectMetadataItemActivity,
+    objectNameSingular: CoreObjectNameSingular.Activity,
   });
 
   const cache = useApolloClient().cache;

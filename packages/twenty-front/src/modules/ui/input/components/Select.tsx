@@ -10,7 +10,6 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
@@ -112,15 +111,6 @@ export const Select = <Value extends string | number | null>({
   const isDisabled = disabledFromProps || options.length <= 1;
 
   const { closeDropdown } = useDropdown(dropdownId);
-
-  const { useListenClickOutside } = useClickOutsideListener(dropdownId);
-
-  useListenClickOutside({
-    refs: [selectContainerRef],
-    callback: () => {
-      closeDropdown();
-    },
-  });
 
   const selectControl = (
     <StyledControlContainer disabled={isDisabled}>

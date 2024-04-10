@@ -6,7 +6,6 @@ import { GateDecoratorParams } from 'src/engine/workspace-manager/workspace-sync
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { generateTargetColumnMap } from 'src/engine/metadata-modules/field-metadata/utils/generate-target-column-map.util';
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { TypedReflect } from 'src/utils/typed-reflect';
 import { createDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
@@ -70,7 +69,6 @@ function generateFieldMetadata<T extends FieldMetadataType>(
   isSystem: boolean,
   gate: GateDecoratorParams | undefined = undefined,
 ): ReflectFieldMetadata[string] {
-  const targetColumnMap = generateTargetColumnMap(params.type, false, fieldKey);
   const defaultValue = (params.defaultValue ??
     generateDefaultValue(
       params.type,
@@ -79,7 +77,6 @@ function generateFieldMetadata<T extends FieldMetadataType>(
   return {
     name: fieldKey,
     ...params,
-    targetColumnMap,
     isNullable: params.type === FieldMetadataType.RELATION ? true : isNullable,
     isSystem,
     isCustom: false,

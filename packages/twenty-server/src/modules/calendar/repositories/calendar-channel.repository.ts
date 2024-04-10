@@ -12,6 +12,21 @@ export class CalendarChannelRepository {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
+  public async getAll(
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<CalendarChannelObjectMetadata>[]> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT * FROM ${dataSourceSchema}."calendarChannel"`,
+      [],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async getByConnectedAccountId(
     connectedAccountId: string,
     workspaceId: string,
