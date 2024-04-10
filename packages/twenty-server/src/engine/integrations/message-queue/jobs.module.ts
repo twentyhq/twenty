@@ -48,7 +48,7 @@ import { FetchAllMessagesFromCacheCronJob } from 'src/modules/messaging/jobs/cro
 import { GmailFullSyncV2Job } from 'src/modules/messaging/jobs/gmail-full-sync-v2.job';
 import { GmailPartialSyncV2Job } from 'src/modules/messaging/jobs/gmail-partial-sync-v2.job';
 import { GmailPartialSyncV2Module } from 'src/modules/messaging/services/gmail-partial-sync-v2/gmail-partial-sync-v2.module';
-import { GoogleCalendarSyncCronJob } from 'src/modules/calendar/jobs/crons/google-calendar-sync.cron-job';
+import { GoogleCalendarSyncCronJob } from 'src/modules/calendar/jobs/crons/google-calendar-sync.cron.job';
 import { CalendarEventParticipantModule } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.module';
 import { UnmatchParticipantJob } from 'src/modules/connected-account/jobs/unmatch-participant.job';
 import { DeleteConnectedAccountAssociatedCalendarDataJob } from 'src/modules/calendar/jobs/delete-connected-account-associated-calendar-data.job';
