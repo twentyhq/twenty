@@ -15,7 +15,7 @@ const getApolloClient = async () => {
       cache,
       uri: serverUrl,
       headers: {
-        Authorization: `Bearer ${store.accessToken}`,
+        Authorization: `Bearer ${store.accessToken.token}`,
       },
     });
   } else {

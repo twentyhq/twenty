@@ -32,6 +32,11 @@ export default defineManifest({
     },
   ],
 
+  web_accessible_resources: [{
+    resources: ['options.html'],
+    matches: ['https://www.linkedin.com/*'],
+  }],
+
   permissions: ['activeTab', 'storage', 'identity'],
 
   host_permissions: ['https://www.linkedin.com/*', 'http://localhost:3001/*'],

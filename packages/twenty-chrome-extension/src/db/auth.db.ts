@@ -4,9 +4,8 @@ import {
   Tokens,
 } from '~/db/types/auth.types';
 import { EXCHANGE_AUTHORIZATION_CODE } from '~/graphql/auth/mutations';
-import { RENEW_TOKEN } from '~/graphql/auth/queries';
 import { isDefined } from '~/utils/isDefined';
-import { callMutation, callQuery } from '~/utils/requestDb';
+import { callMutation } from '~/utils/requestDb';
 
 export const exchangeAuthorizationCode = async (
   exchangeAuthCodeInput: ExchangeAuthCodeInput,
@@ -20,8 +19,8 @@ export const exchangeAuthorizationCode = async (
   else return null;
 };
 
-export const RenewToken = async (appToken: string): Promise<Tokens | null> => {
-  const data = await callQuery<Tokens>(RENEW_TOKEN, { appToken });
-  if (isDefined(data)) return data;
-  else return null;
-};
+// export const RenewToken = async (appToken: string): Promise<Tokens | null> => {
+//   const data = await callQuery<Tokens>(RENEW_TOKEN, { appToken });
+//   if (isDefined(data)) return data;
+//   else return null;
+// };
