@@ -56,13 +56,8 @@ export class CreateCompaniesAndContactsAfterSyncJob
         workspaceId,
       );
 
-    await this.createCompaniesAndContactsService.createCompaniesAndContacts(
+    await this.createCompaniesAndContactsService.createCompaniesAndContactsAndUpdateParticipantsAfterSync(
       handle,
-      messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
-      workspaceId,
-    );
-
-    await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
       messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
       workspaceId,
     );
