@@ -22,6 +22,7 @@ export const useTimelineActivities = (
     orderBy: {
       createdAt: 'DescNullsFirst',
     },
+    fetchPolicy: 'network-only',
   });
 
   return {

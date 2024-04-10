@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { objectRecordDiffMerge } from 'src/engine/integrations/event-emitter/utils/object-record-diff-merge';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 @Injectable()
@@ -10,12 +11,42 @@ export class TimelineActivityRepository {
 
   public async upsert(
     name: string,
-    properties: string,
+    properties: Record<string, any>,
     workspaceMemberId: string | null,
     objectName: string,
     objectId: string,
     workspaceId: string,
   ): Promise<void> {
+    if (['activity', 'messageParticipant'].includes(objectName)) {
+      return await this.handleSecondOrderObjects(
+        name,
+        properties,
+        workspaceMemberId,
+        objectName,
+        objectId,
+        workspaceId,
+      );
+    }
+
+    return await this.upsertOne(
+      name,
+      'object',
+      properties,
+      workspaceMemberId,
+      objectName,
+      objectId,
+      workspaceId,
+    );
+  }
+
+  private async handleSecondOrderObjects(
+    name: string,
+    properties: Record<string, any>,
+    workspaceMemberId: string | null,
+    objectName: string,
+    objectId: string,
+    workspaceId: string,
+  ) {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -23,7 +54,7 @@ export class TimelineActivityRepository {
       const activityTargets =
         await this.workspaceDataSourceService.executeRawQuery(
           `SELECT * FROM ${dataSourceSchema}."activityTarget"
-        WHERE "activityId" = $1`,
+          WHERE "activityId" = $1`,
           [objectId],
           workspaceId,
         );
@@ -35,6 +66,7 @@ export class TimelineActivityRepository {
           if (columnName === 'activityId' || !columnName.endsWith('Id')) return;
           if (columnValue === null) return;
           this.upsertOne(
+            activityTargets[0].id,
             name,
             properties,
             workspaceMemberId,
@@ -45,11 +77,13 @@ export class TimelineActivityRepository {
         },
       );
     }
+    // Todo handle message participants
   }
 
   private async upsertOne(
     name: string,
-    properties: string,
+    type: string,
+    properties: Record<string, any>,
     workspaceMemberId: string | null,
     objectName: string,
     objectId: string,
@@ -61,17 +95,32 @@ export class TimelineActivityRepository {
     const recentActivity =
       await this.workspaceDataSourceService.executeRawQuery(
         `SELECT * FROM ${dataSourceSchema}."timelineActivity"
-      WHERE "${objectName}Id" = $1 AND "createdAt" >= NOW() - interval '10 minutes'`,
-        [objectId],
+      WHERE "${objectName}Id" = $1
+      AND ("name" = $2 OR "name" = $3)
+      AND "workspaceMemberId" = $4
+      AND "createdAt" >= NOW() - interval '10 minutes'`,
+        [
+          objectId,
+          name,
+          name.replace(/\.updated$/, '.created'),
+          workspaceMemberId,
+        ],
         workspaceId,
       );
 
     if (recentActivity.length !== 0) {
+      // Now we need to merge the .diff
+
+      const newProps = objectRecordDiffMerge(
+        recentActivity[0].properties,
+        properties,
+      );
+
       await this.workspaceDataSourceService.executeRawQuery(
         `UPDATE ${dataSourceSchema}."timelineActivity" 
       SET "properties" = $2, "workspaceMemberId" = $3
       WHERE "id" = $1`,
-        [recentActivity[0].id, properties, workspaceMemberId],
+        [recentActivity[0].id, newProps, workspaceMemberId],
         workspaceId,
       );
 

@@ -36,6 +36,7 @@ export class EntityEventsToDbListener {
     payload.details.diff = objectRecordChangedValues(
       payload.details.before,
       payload.details.after,
+      payload.objectMetadata,
     );
 
     return this.handle(payload);
