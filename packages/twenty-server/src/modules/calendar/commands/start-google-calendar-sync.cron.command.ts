@@ -5,7 +5,7 @@ import { Command, CommandRunner } from 'nest-commander';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { GoogleCalendarSyncCronJob } from 'src/modules/calendar/jobs/crons/google-calendar-sync.cron.job';
-import { googleCalendarSyncCronPattern } from 'src/modules/calendar/jobs/crons/google-calendar-sync.cron.pattern';
+import { googleCalendarSyncCronPattern } from 'src/modules/calendar/jobs/crons/pattern/google-calendar-sync.cron.pattern';
 
 @Command({
   name: 'cron:calendar:google-calendar-sync',
