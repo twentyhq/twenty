@@ -51,6 +51,8 @@ const StyledInputContainer = styled.div`
 export const SignInUpForm = () => {
   const [authProviders] = useRecoilState(authProvidersState);
   const [showErrors, setShowErrors] = useState(false);
+  const [isGeneratingCaptchaToken, setIsGeneratingCaptchaToken] =
+    useState(false);
   const { handleResetPassword } = useHandleResetPassword();
   const workspace = useWorkspaceFromInviteHash();
   const { signInWithGoogle } = useSignInWithGoogle();
@@ -82,10 +84,12 @@ export const SignInUpForm = () => {
       } else if (signInUpStep === SignInUpStep.Password) {
         setShowErrors(true);
 
+        setIsGeneratingCaptchaToken(true);
         const captchaToken = await generateCaptchaToken(isCaptchaScriptLoaded);
         if (!isUndefinedOrNull(captchaToken)) {
           form.setValue('captchaToken', captchaToken);
         }
+        setIsGeneratingCaptchaToken(false);
 
         form.handleSubmit(submitCredentials)();
       }
@@ -238,16 +242,22 @@ export const SignInUpForm = () => {
               }
               setShowErrors(true);
 
+              setIsGeneratingCaptchaToken(true);
               const captchaToken = await generateCaptchaToken(
                 isCaptchaScriptLoaded,
               );
+              setIsGeneratingCaptchaToken(false);
               if (!isUndefinedOrNull(captchaToken)) {
                 form.setValue('captchaToken', captchaToken);
               }
 
               form.handleSubmit(submitCredentials)();
             }}
-            Icon={() => form.formState.isSubmitting && <Loader />}
+            Icon={() =>
+              (isGeneratingCaptchaToken || form.formState.isSubmitting) && (
+                <Loader />
+              )
+            }
             disabled={
               SignInUpStep.Init
                 ? false
