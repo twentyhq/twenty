@@ -237,6 +237,12 @@ export class EnvironmentVariables {
   @IsString()
   SENTRY_RELEASE: string;
 
+  @ValidateIf(
+    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
+  )
+  @IsString()
+  SENTRY_ENVIRONMENT: string;
+
   @IsDuration()
   @IsOptional()
   PASSWORD_RESET_TOKEN_EXPIRES_IN: string = '5m';
