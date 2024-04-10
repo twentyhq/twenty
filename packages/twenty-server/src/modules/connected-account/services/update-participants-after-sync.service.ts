@@ -12,7 +12,6 @@ export class UpdateParticipantsAfterSyncService {
 
   async updateParticipantsAfterSync(
     participants: { id: string; handle: string }[],
-    messageChannelId: string,
     workspaceId: string,
   ) {
     await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
@@ -20,9 +19,8 @@ export class UpdateParticipantsAfterSyncService {
       workspaceId,
     );
 
-    await this.calendarEventParticipantService.updateEventParticipantsAfterPeopleCreation(
+    await this.calendarEventParticipantService.updateCalendarEventParticipantsAfterContactCreation(
       participants,
-      messageChannelId,
       workspaceId,
     );
   }

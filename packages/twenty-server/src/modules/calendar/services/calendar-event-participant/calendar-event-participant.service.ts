@@ -7,10 +7,7 @@ import { PersonRepository } from 'src/modules/person/repositories/person.reposit
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/getFlattenedValuesAndValuesStringForBatchRawQuery.util';
-import {
-  CalendarEventParticipant,
-  CalendarEventParticipantWithId,
-} from 'src/modules/calendar/types/calendar-event';
+import { CalendarEventParticipant } from 'src/modules/calendar/types/calendar-event';
 import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/connected-account/services/add-person-id-and-workspace-member-id/add-person-id-and-workspace-member-id.service';
 import { CalendarEventParticipantRepository } from 'src/modules/calendar/repositories/calendar-event-participant.repository';
 import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
@@ -27,7 +24,10 @@ export class CalendarEventParticipantService {
   ) {}
 
   public async updateCalendarEventParticipantsAfterContactCreation(
-    participants: CalendarEventParticipantWithId[],
+    participants: {
+      id: string;
+      handle: string;
+    }[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
