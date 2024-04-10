@@ -87,14 +87,6 @@ import { FetchAllMessagesFromCacheCronJob } from 'src/modules/messaging/jobs/cro
   ],
   providers: [
     {
-      provide: GmailFullSyncV2Job.name,
-      useClass: GmailFullSyncV2Job,
-    },
-    {
-      provide: GmailPartialSyncV2Job.name,
-      useClass: GmailPartialSyncV2Job,
-    },
-    {
       provide: GoogleCalendarSyncJob.name,
       useClass: GoogleCalendarSyncJob,
     },
