@@ -62,11 +62,11 @@ export class GoogleCalendarSyncCronJob implements MessageQueueJob<undefined> {
     );
 
     for (const workspaceId of workspaceIdsWithDataSources) {
-      await this.startWorkspaceGoogleCalendarFullSync(workspaceId);
+      await this.startWorkspaceGoogleCalendarSync(workspaceId);
     }
   }
 
-  private async startWorkspaceGoogleCalendarFullSync(
+  private async startWorkspaceGoogleCalendarSync(
     workspaceId: string,
   ): Promise<void> {
     const calendarChannels =
