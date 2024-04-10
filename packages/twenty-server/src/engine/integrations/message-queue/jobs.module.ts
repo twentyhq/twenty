@@ -50,6 +50,8 @@ import { GmailFullSyncV2Job } from 'src/modules/messaging/jobs/gmail-full-sync-v
 import { GmailPartialSyncV2Job } from 'src/modules/messaging/jobs/gmail-partial-sync-v2.job';
 import { GmailPartialSyncV2Module } from 'src/modules/messaging/services/gmail-partial-sync-v2/gmail-partial-sync-v2.module';
 import { CreateAuditLogFromInternalEvent } from 'src/modules/event/jobs/create-audit-log-from-internal-event';
+import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/event/jobs/upsert-timeline-activity-from-internal-event.job';
+import { TimelineActivityObjectMetadata } from 'src/modules/event/standard-objects/timeline-activity.object-metadata';
 
 @Module({
   imports: [
@@ -78,6 +80,7 @@ import { CreateAuditLogFromInternalEvent } from 'src/modules/event/jobs/create-a
       MessageParticipantObjectMetadata,
       MessageChannelObjectMetadata,
       AuditLogObjectMetadata,
+      TimelineActivityObjectMetadata,
     ]),
     GmailFullSynV2Module,
     GmailFetchMessageContentFromCacheModule,
@@ -141,6 +144,10 @@ import { CreateAuditLogFromInternalEvent } from 'src/modules/event/jobs/create-a
     {
       provide: CreateAuditLogFromInternalEvent.name,
       useClass: CreateAuditLogFromInternalEvent,
+    },
+    {
+      provide: UpsertTimelineActivityFromInternalEvent.name,
+      useClass: UpsertTimelineActivityFromInternalEvent,
     },
     {
       provide: FetchAllMessagesFromCacheCronJob.name,

@@ -12,8 +12,11 @@ export const objectRecordChangedValues = (
     (acc, key) => {
       // Discard if values are objects (e.g. we don't want Company.AccountOwner ; we have AccountOwnerId already)
       if (isObject(oldRecord[key]) || isObject(newRecord[key])) {
-        return acc;
+        //  return acc;
       }
+      console.log(oldRecord);
+      console.log('----');
+      console.log(newRecord);
 
       if (!deepEqual(oldRecord[key], newRecord[key]) && key != 'updatedAt') {
         acc[key] = { before: oldRecord[key], after: newRecord[key] };

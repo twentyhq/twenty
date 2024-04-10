@@ -9,7 +9,7 @@ export enum CoreObjectNameSingular {
   Comment = 'comment',
   Company = 'company',
   ConnectedAccount = 'connectedAccount',
-  TimelineActivity = 'timelineEvent',
+  TimelineActivity = 'timelineActivity',
   Favorite = 'favorite',
   Message = 'message',
   MessageChannel = 'messageChannel',

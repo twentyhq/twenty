@@ -6,6 +6,7 @@ import { CompanyRepository } from 'src/modules/company/repositories/company.repo
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { AuditLogRepository } from 'src/modules/event/repositiories/audit-log.repository';
+import { TimelineActivityRepository } from 'src/modules/event/repositiories/timeline-activity.repository';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant.repository';
@@ -15,6 +16,7 @@ import { PersonRepository } from 'src/modules/person/repositories/person.reposit
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 
 export const metadataToRepositoryMapping = {
+  AuditLogObjectMetadata: AuditLogRepository,
   BlocklistObjectMetadata: BlocklistRepository,
   CalendarChannelEventAssociationObjectMetadata:
     CalendarChannelEventAssociationRepository,
@@ -23,7 +25,6 @@ export const metadataToRepositoryMapping = {
   CalendarEventObjectMetadata: CalendarEventRepository,
   CompanyObjectMetadata: CompanyRepository,
   ConnectedAccountObjectMetadata: ConnectedAccountRepository,
-  AuditLogObjectMetadata: AuditLogRepository,
   MessageChannelMessageAssociationObjectMetadata:
     MessageChannelMessageAssociationRepository,
   MessageChannelObjectMetadata: MessageChannelRepository,
@@ -31,5 +32,6 @@ export const metadataToRepositoryMapping = {
   MessageParticipantObjectMetadata: MessageParticipantRepository,
   MessageThreadObjectMetadata: MessageThreadRepository,
   PersonObjectMetadata: PersonRepository,
+  TimelineActivityObjectMetadata: TimelineActivityRepository,
   WorkspaceMemberObjectMetadata: WorkspaceMemberRepository,
 };
