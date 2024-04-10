@@ -22,6 +22,10 @@ export const mapFieldMetadataToGraphqlQuery = (
     FieldMetadataType.DATE_TIME,
     FieldMetadataType.EMAIL,
     FieldMetadataType.NUMBER,
+    FieldMetadataType.NUMERIC,
+    FieldMetadataType.SELECT,
+    FieldMetadataType.PROBABILITY,
+    FieldMetadataType.RATING,
     FieldMetadataType.BOOLEAN,
     FieldMetadataType.POSITION,
   ].includes(fieldType);
