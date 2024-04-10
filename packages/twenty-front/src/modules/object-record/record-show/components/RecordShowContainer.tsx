@@ -151,8 +151,6 @@ export const RecordShowContainer = ({
                           labelIdentifierFieldMetadataItem?.id ?? '',
                         label: labelIdentifierFieldMetadataItem?.label || '',
                         metadata: {
-                          fieldName: labelIdentifierFieldMetadata?.name || '',
-                          objectMetadataNameSingular: objectNameSingular,
                           fieldName:
                             labelIdentifierFieldMetadataItem?.name || '',
                           objectMetadataNameSingular: objectNameSingular,
