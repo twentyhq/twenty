@@ -69,13 +69,24 @@ export const validateDefaultValueForType = (
       FieldMetadataClassValidation
     >(validator, conputedDefaultValue as FieldMetadataClassValidation);
 
-    return (
-      validateSync(defaultValueInstance, {
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        forbidUnknownValues: true,
-      }).length === 0
-    );
+    const errors = validateSync(defaultValueInstance, {
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    });
+
+    const hasErrors = errors.length > 0;
+
+    if (hasErrors) {
+      console.error(
+        'Invalid default value for type',
+        type,
+        defaultValue,
+        errors,
+      );
+    }
+
+    return !hasErrors;
   });
 
   return isValid;
