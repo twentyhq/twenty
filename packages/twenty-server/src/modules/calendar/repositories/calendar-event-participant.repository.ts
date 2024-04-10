@@ -229,7 +229,8 @@ export class CalendarEventParticipantRepository {
     );
   }
 
-  public async getWithoutPersonIdAndWorkspaceMemberId(
+  public async getByCalendarChannelIdWithoutPersonIdAndWorkspaceMemberId(
+    calendarChannelId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<CalendarEventParticipantWithId[]> {
@@ -244,9 +245,12 @@ export class CalendarEventParticipantRepository {
       await this.workspaceDataSourceService.executeRawQuery(
         `SELECT "calendarEventParticipant".*
         FROM ${dataSourceSchema}."calendarEventParticipant" AS "calendarEventParticipant"
-        WHERE "calendarEventParticipant"."personId" IS NULL
+        LEFT JOIN ${dataSourceSchema}."calendarEvent" AS "calendarEvent" ON "calendarEventParticipant"."calendarEventId" = "calendarEvent"."id"
+        LEFT JOIN ${dataSourceSchema}."calendarChannelEventAssociation" AS "calendarChannelEventAssociation" ON "calendarEvent"."id" = "calendarChannelEventAssociation"."calendarEventId"
+        WHERE "calendarChannelEventAssociation"."calendarChannelId" = $1
+        AND "calendarEventParticipant"."personId" IS NULL
         AND "calendarEventParticipant"."workspaceMemberId" IS NULL`,
-        [],
+        [calendarChannelId],
         workspaceId,
         transactionManager,
       );
