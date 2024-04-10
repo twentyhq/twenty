@@ -8,7 +8,7 @@ import { GoogleCalendarSyncCronJob } from 'src/modules/calendar/jobs/crons/googl
 import { googleCalendarSyncCronPattern } from 'src/modules/calendar/jobs/crons/google-calendar-sync.cron.pattern';
 
 @Command({
-  name: 'google-calendar-sync:cron:start',
+  name: 'cron:calendar:google-calendar-sync',
   description: 'Starts a cron job to sync google calendar for all workspaces.',
 })
 export class StartGoogleCalendarSyncCronJobCommand extends CommandRunner {
