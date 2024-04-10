@@ -8,7 +8,6 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { textfieldDefinition } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useUpsertRecord } from '@/object-record/record-table/record-table-cell/hooks/useUpsertRecord';
-import { recordTablePendingRecordIdState } from '@/object-record/record-table/states/recordTablePendingRecordIdState';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 
 const pendingRecordId = 'a7286b9a-c039-4a89-9567-2dfa7953cda9';
@@ -33,6 +32,20 @@ jest.mock(
   }),
 );
 
+const pendingRecordIdState = createState<string | null>({
+  key: 'pendingRecordIdState',
+  defaultValue: null,
+});
+jest.mock(
+  '@/object-record/record-table/hooks/internal/useRecordTableStates',
+  () => ({
+    __esModule: true,
+    useRecordTableStates: jest.fn(() => ({
+      pendingRecordIdState: pendingRecordIdState,
+    })),
+  }),
+);
+
 const createOneRecordMock = jest.fn();
 const updateOneRecordMock = jest.fn();
 (useCreateOneRecord as jest.Mock).mockReturnValue({
@@ -50,7 +63,7 @@ const Wrapper = ({
 }) => (
   <RecoilRoot
     initializeState={(snapshot) => {
-      snapshot.set(recordTablePendingRecordIdState, pendingRecordIdMockedValue);
+      snapshot.set(pendingRecordIdState, pendingRecordIdMockedValue);
       snapshot.set(draftValueState, draftValueMockedValue);
     }}
   >
