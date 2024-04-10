@@ -1,4 +1,3 @@
-import { isUndefined } from '@sniptt/guards';
 import { Key } from 'ts-key-enum';
 
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -27,14 +26,8 @@ export const useRegisterInputEvents = <T>({
   hotkeyScope: string;
 }) => {
   useListenClickOutside({
-    refs: [inputRef],
+    refs: [inputRef, copyRef].filter(isDefined),
     callback: (event) => {
-      if (
-        isUndefined(copyRef) === false &&
-        copyRef.current.contains(event.target) === true
-      ) {
-        return;
-      }
       event.stopImmediatePropagation();
       onClickOutside?.(event, inputValue);
     },

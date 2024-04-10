@@ -1,9 +1,9 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { LightIconButton } from 'tsup.ui.index';
 import { IconCopy } from 'twenty-ui';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 
 const StyledButtonContainer = styled.div`
   padding: 0 ${({ theme }) => theme.spacing(1)};
