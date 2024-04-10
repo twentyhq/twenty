@@ -235,12 +235,20 @@ export class EnvironmentVariables {
     (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
   )
   @IsString()
+  SENTRY_DSN_FRONT: string;
+
+  @ValidateIf(
+    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
+  )
+  @IsString()
+  @IsOptional()
   SENTRY_RELEASE: string;
 
   @ValidateIf(
     (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
   )
   @IsString()
+  @IsOptional()
   ENVIRONMENT: string;
 
   @IsDuration()
