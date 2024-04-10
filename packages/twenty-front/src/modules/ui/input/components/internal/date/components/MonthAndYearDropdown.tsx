@@ -58,9 +58,9 @@ const StyledDropdownButton = styled.button`
 
 type MonthAndYearDropdownProps = {
   isOpen: boolean;
-  onCloseDropdown: (date: Date) => void;
-  month: number | undefined;
-  year: number | undefined;
+  onCloseDropdown: () => void;
+  month: number;
+  year: number;
   updateMonth: (month: number) => void;
   updateYear: (year: number) => void;
 };
@@ -98,23 +98,16 @@ export const MonthAndYearDropdown = ({
 
   const ref = useRef<HTMLDivElement>(null);
 
-  const onClickOutside = () => {
-    if (!isOpen) return;
-    onCloseDropdown(new Date(year ?? 0, month ?? 0));
-  };
-
   useListenClickOutside({
     refs: [ref],
-    callback: onClickOutside,
+    callback: onCloseDropdown,
   });
 
   const handleDropdown = (dropdown: 'month' | 'year') => {
     if (dropdown === 'month') {
       setOpenMonth(!openMonth);
       setOpenYear(false);
-    }
-
-    if (dropdown === 'year') {
+    } else {
       setOpenYear(!openYear);
       setOpenMonth(false);
     }
@@ -122,13 +115,8 @@ export const MonthAndYearDropdown = ({
 
   return isOpen ? (
     <StyledContainer isOpen={isOpen} ref={ref}>
-      <StyledButton
-        onClick={() => {
-          handleDropdown('month');
-          updateMonth(month ?? 0);
-        }}
-      >
-        {months[month ?? 0].label}
+      <StyledButton onClick={() => handleDropdown('month')}>
+        {months[month].label}
         {openMonth ? <IconChevronDown /> : <IconChevronUp />}
       </StyledButton>
       {openMonth &&
@@ -140,12 +128,7 @@ export const MonthAndYearDropdown = ({
             {month.label}
           </StyledDropdownButton>
         ))}
-      <StyledButton
-        onClick={() => {
-          handleDropdown('year');
-          updateYear(year ?? 0);
-        }}
-      >
+      <StyledButton onClick={() => handleDropdown('year')}>
         {year} {openYear ? <IconChevronDown /> : <IconChevronUp />}
       </StyledButton>
       {openYear &&
