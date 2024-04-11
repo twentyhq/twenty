@@ -479,6 +479,7 @@ export type QueryBillingPortalSessionArgs = {
 
 
 export type QueryCheckUserExistsArgs = {
+  captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
 };
 
@@ -1082,6 +1083,7 @@ export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: '
 
 export type CheckUserExistsQueryVariables = Exact<{
   email: Scalars['String'];
+  captchaToken?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -1931,8 +1933,8 @@ export type VerifyMutationHookResult = ReturnType<typeof useVerifyMutation>;
 export type VerifyMutationResult = Apollo.MutationResult<VerifyMutation>;
 export type VerifyMutationOptions = Apollo.BaseMutationOptions<VerifyMutation, VerifyMutationVariables>;
 export const CheckUserExistsDocument = gql`
-    query CheckUserExists($email: String!) {
-  checkUserExists(email: $email) {
+    query CheckUserExists($email: String!, $captchaToken: String) {
+  checkUserExists(email: $email, captchaToken: $captchaToken) {
     exists
   }
 }
@@ -1951,6 +1953,7 @@ export const CheckUserExistsDocument = gql`
  * const { data, loading, error } = useCheckUserExistsQuery({
  *   variables: {
  *      email: // value for 'email'
+ *      captchaToken: // value for 'captchaToken'
  *   },
  * });
  */
