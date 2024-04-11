@@ -44,12 +44,12 @@ export const SettingsIntegrationDatabaseTablesListCard = ({
   );
 
   const onSyncUpdate = useCallback(
-    async (value: boolean, tableName: string) => {
+    async (isSynced: boolean, tableName: string) => {
       const table = items.find((table) => table.name === tableName);
 
       if (!isDefined(table)) return;
 
-      if (value) {
+      if (isSynced) {
         await syncRemoteTable({
           remoteServerId: connectionId,
           name: tableName,

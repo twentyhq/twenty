@@ -200,7 +200,7 @@ export class RemoteTableService {
       icon: 'IconUser',
       isRemote: true,
       remoteTablePrimaryKeyColumnType: remoteTableIdColumn.udtName,
-    } as CreateObjectInput);
+    } satisfies CreateObjectInput);
 
     for (const column of remoteTableColumns) {
       const field = await this.fieldMetadataService.createOne({
@@ -214,7 +214,7 @@ export class RemoteTableService {
         isRemoteCreation: true,
         isNullable: true,
         icon: 'IconUser',
-      } as CreateFieldInput);
+      } satisfies CreateFieldInput);
 
       if (column.columnName === 'id') {
         await this.objectMetadataService.updateOne(objectMetadata.id, {
@@ -227,7 +227,7 @@ export class RemoteTableService {
       name: input.name,
       schema: input.schema,
       status: RemoteTableStatus.SYNCED,
-    } as RemoteTableDTO;
+    };
   }
 
   private async removeForeignTableAndMetadata(
@@ -274,7 +274,7 @@ export class RemoteTableService {
       name: input.name,
       schema: input.schema,
       status: RemoteTableStatus.NOT_SYNCED,
-    } as RemoteTableDTO;
+    };
   }
 
   private async fetchTableColumnsSchema(
