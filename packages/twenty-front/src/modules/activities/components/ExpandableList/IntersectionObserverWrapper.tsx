@@ -1,5 +1,10 @@
 import React from 'react';
 import { useInView } from 'react-intersection-observer';
+import styled from '@emotion/styled';
+
+const StyledDiv = styled.div<{ inView?: boolean }>`
+  opacity: ${({ inView }) => (inView === undefined || inView ? 1 : 0)};
+`;
 
 export const IntersectionObserverWrapper = ({
   set,
@@ -35,8 +40,8 @@ export const IntersectionObserverWrapper = ({
   });
 
   return (
-    <div ref={ref}>
-      {React.cloneElement(children as React.ReactElement, { inView })}
-    </div>
+    <StyledDiv ref={ref} inView={inView}>
+      {children}
+    </StyledDiv>
   );
 };
