@@ -218,12 +218,15 @@ export const useRecordActionBar = ({
               },
             ]
           : []),
+        ...(isRemoteObject ? [] : deletionActions),
         ...baseActions,
       ]);
     }, [
       baseActions,
       dataExecuteQuickActionOnmentEnabled,
+      deletionActions,
       handleExecuteQuickActionOnClick,
+      isRemoteObject,
       setActionBarEntriesState,
     ]),
   };
