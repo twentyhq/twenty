@@ -120,6 +120,8 @@ export const CalendarEventRow = ({
   );
   const showTitle = calendarEvent.visibility === 'SHARE_EVERYTHING';
 
+  console.log(calendarEvent.participants);
+
   return (
     <StyledContainer
       className={className}
@@ -162,7 +164,12 @@ export const CalendarEventRow = ({
                 .filter(isDefined)
                 .join('-')}
               avatarUrl={participant.avatarUrl}
-              placeholder={participant.displayName}
+              placeholder={
+                participant.firstName && participant.lastName
+                  ? `${participant.firstName} ${participant.lastName}`
+                  : participant.displayName
+              }
+              entityId={participant.workspaceMemberId ?? participant.personId}
               type="rounded"
             />
           ))}
