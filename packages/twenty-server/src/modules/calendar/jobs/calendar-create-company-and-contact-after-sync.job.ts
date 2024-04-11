@@ -37,14 +37,20 @@ export class CalendarCreateCompanyAndContactAfterSyncJob
     );
     const { workspaceId, calendarChannelId } = data;
 
-    const calendarChannel = await this.calendarChannelService.getByIds(
+    const calendarChannels = await this.calendarChannelService.getByIds(
       [calendarChannelId],
       workspaceId,
     );
 
-    const { handle, isContactAutoCreationEnabled } = calendarChannel[0];
+    if (calendarChannels.length === 0) {
+      throw new Error(
+        `Calendar channel with id ${calendarChannelId} not found in workspace ${workspaceId}`,
+      );
+    }
 
-    if (!isContactAutoCreationEnabled) {
+    const { handle, isContactAutoCreationEnabled } = calendarChannels[0];
+
+    if (!isContactAutoCreationEnabled || !handle) {
       return;
     }
 
