@@ -74,29 +74,22 @@ export const SettingsObjectFieldSelectForm = ({
     onChange(nextOptions);
   };
 
-  const handleUniqueDefaultValueChange = (
+  const handleDefaultValueChange = (
     index: number,
     option: SettingsObjectFieldSelectFormOption,
     nextOption: SettingsObjectFieldSelectFormOption,
+    forceUniqueDefaultValue: boolean,
   ) => {
-    const hasDefaultOptionChanged = option.isDefault !== nextOption.isDefault;
-    const nextOptions = hasDefaultOptionChanged
+    const computeUniqueDefaultValue =
+      forceUniqueDefaultValue && option.isDefault !== nextOption.isDefault;
+
+    const nextOptions = computeUniqueDefaultValue
       ? values.map((value) => ({
           ...value,
           isDefault: false,
         }))
       : [...values];
 
-    nextOptions.splice(index, 1, nextOption);
-
-    onChange(nextOptions);
-  };
-
-  const handleDefaultValueChange = (
-    index: number,
-    nextOption: SettingsObjectFieldSelectFormOption,
-  ) => {
-    const nextOptions = [...values];
     nextOptions.splice(index, 1, nextOption);
     onChange(nextOptions);
   };
@@ -132,13 +125,12 @@ export const SettingsObjectFieldSelectForm = ({
                       key={option.value}
                       isDefault={option.isDefault}
                       onChange={(nextOption) => {
-                        isMultiSelect
-                          ? handleDefaultValueChange(index, nextOption)
-                          : handleUniqueDefaultValueChange(
-                              index,
-                              option,
-                              nextOption,
-                            );
+                        handleDefaultValueChange(
+                          index,
+                          option,
+                          nextOption,
+                          !isMultiSelect,
+                        );
                       }}
                       onRemove={
                         values.length > 1
