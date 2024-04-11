@@ -1,5 +1,4 @@
 import React, { ReactElement, useState } from 'react';
-import ReactDOM from 'react-dom';
 import styled from '@emotion/styled';
 
 import { IntersectionObserverWrapper } from '@/activities/components/ExpandableList/IntersectionObserverWrapper';
@@ -61,10 +60,8 @@ export const ExpandableList = ({
 
   const dropdownId = `expandable-list-dropdown-${id}`;
 
-  const containerRef = React.useRef<HTMLDivElement>(null);
-
   return (
-    <StyledContainer ref={containerRef}>
+    <StyledContainer>
       <StyledDiv>
         {firstListItem}
         {listItems.slice(1).map((listItem, index) => (
@@ -89,11 +86,9 @@ export const ExpandableList = ({
                       variant={ChipVariant.Highlighted}
                     />
                   }
-                  dropdownComponents={ReactDOM.createPortal(
-                    <StyledExpendableCell>{listItems}</StyledExpendableCell>,
-                    containerRef.current as HTMLDivElement,
-                  )}
-                  disableBorder
+                  dropdownComponents={
+                    <StyledExpendableCell>{listItems}</StyledExpendableCell>
+                  }
                 />
               )}
           </React.Fragment>
