@@ -5,8 +5,9 @@ import { z } from 'zod';
 import { useSyncRemoteTable } from '@/databases/hooks/useSyncRemoteTable';
 import { useUnsyncRemoteTable } from '@/databases/hooks/useUnsyncRemoteTable';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { SettingsIntegrationSyncStatusToggle } from '@/settings/integrations/components/SettingsIntegrationSyncStatusToggle';
+import { SettingsIntegrationRemoteTableSyncStatusToggle } from '@/settings/integrations/components/SettingsIntegrationRemoteTableSyncStatusToggle';
 import { RemoteTable, RemoteTableStatus } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 export const settingsIntegrationsDatabaseTablesSchema = z.object({
   syncedTablesByName: z.record(z.boolean()),
@@ -34,6 +35,7 @@ export const SettingsIntegrationDatabaseTablesListCard = ({
   const { syncRemoteTable } = useSyncRemoteTable();
   const { unsyncRemoteTable } = useUnsyncRemoteTable();
 
+  // We need to use a state because the table status update re-render the whole list of toggles
   const [items] = useState(
     tables.map((table) => ({
       id: table.name,
@@ -43,10 +45,9 @@ export const SettingsIntegrationDatabaseTablesListCard = ({
 
   const onSyncUpdate = useCallback(
     async (value: boolean, tableName: string) => {
-      const table = items.filter((table) => table.name === tableName)[0];
+      const table = items.find((table) => table.name === tableName);
 
-      // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
-      if (!table) return;
+      if (!isDefined(table)) return;
 
       if (value) {
         await syncRemoteTable({
@@ -72,8 +73,8 @@ export const SettingsIntegrationDatabaseTablesListCard = ({
       item: { id: string; name: string; status: RemoteTableStatus };
     }) => (
       <StyledRowRightContainer>
-        <SettingsIntegrationSyncStatusToggle
-          item={item}
+        <SettingsIntegrationRemoteTableSyncStatusToggle
+          table={item}
           onSyncUpdate={onSyncUpdate}
         />
       </StyledRowRightContainer>

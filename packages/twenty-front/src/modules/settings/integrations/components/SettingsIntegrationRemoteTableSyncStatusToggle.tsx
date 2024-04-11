@@ -3,11 +3,11 @@ import { useState } from 'react';
 import { Toggle } from '@/ui/input/components/Toggle';
 import { RemoteTableStatus } from '~/generated-metadata/graphql';
 
-export const SettingsIntegrationSyncStatusToggle = ({
-  item: table,
+export const SettingsIntegrationRemoteTableSyncStatusToggle = ({
+  table,
   onSyncUpdate,
 }: {
-  item: { id: string; name: string; status: RemoteTableStatus };
+  table: { id: string; name: string; status: RemoteTableStatus };
   onSyncUpdate: (value: boolean, tableName: string) => Promise<void>;
 }) => {
   const [isToggleLoading, setIsToggleLoading] = useState(false);
