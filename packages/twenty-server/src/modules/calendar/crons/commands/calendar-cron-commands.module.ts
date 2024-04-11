@@ -1,16 +1,14 @@
 import { Module } from '@nestjs/common';
 
+import { GoogleCalendarSyncCommand } from 'src/modules/calendar/commands/google-calendar-sync.command';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
-import { GmailFetchMessagesFromCacheCronCommand } from 'src/modules/messaging/commands/crons/gmail-fetch-messages-from-cache.cron.command';
-import { GmailPartialSyncCronCommand } from 'src/modules/messaging/commands/crons/gmail-partial-sync.cron.command';
+import { GoogleCalendarSyncCronCommand } from 'src/modules/calendar/crons/commands/google-calendar-sync.cron.command';
+
 @Module({
   imports: [
     ObjectMetadataRepositoryModule.forFeature([ConnectedAccountObjectMetadata]),
   ],
-  providers: [
-    GmailPartialSyncCronCommand,
-    GmailFetchMessagesFromCacheCronCommand,
-  ],
+  providers: [GoogleCalendarSyncCommand, GoogleCalendarSyncCronCommand],
 })
-export class MessagingCommandModule {}
+export class CalendarCronCommandsModule {}

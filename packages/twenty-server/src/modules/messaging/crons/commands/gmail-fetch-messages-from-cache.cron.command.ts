@@ -4,15 +4,13 @@ import { Command, CommandRunner } from 'nest-commander';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { gmailPartialSyncCronPattern } from 'src/modules/messaging/commands/crons/patterns/gmail-partial-sync.cron.pattern';
-import { GmailPartialSyncCronJob } from 'src/modules/messaging/jobs/crons/gmail-partial-sync.cron.job';
+import { GmailFetchMessagesFromCacheCronJob } from 'src/modules/messaging/crons/jobs/gmail-fetch-messages-from-cache.cron.job';
 
 @Command({
-  name: 'cron:messaging:gmail-partial-sync',
-  description:
-    'Starts a cron job to sync existing connected account messages and store them in the cache',
+  name: 'cron:messaging:gmail-fetch-messages-from-cache',
+  description: 'Starts a cron job to fetch all messages from cache',
 })
-export class GmailPartialSyncCronCommand extends CommandRunner {
+export class GmailFetchMessagesFromCacheCronCommand extends CommandRunner {
   constructor(
     @Inject(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -22,10 +20,12 @@ export class GmailPartialSyncCronCommand extends CommandRunner {
 
   async run(): Promise<void> {
     await this.messageQueueService.addCron<undefined>(
-      GmailPartialSyncCronJob.name,
+      GmailFetchMessagesFromCacheCronJob.name,
       undefined,
       {
-        repeat: { pattern: gmailPartialSyncCronPattern },
+        repeat: {
+          every: 5000,
+        },
       },
     );
   }
