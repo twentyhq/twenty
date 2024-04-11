@@ -111,6 +111,7 @@ export const CalendarEventDetails = ({
             labelWidth: 72,
           }),
           useUpdateRecord: () => [() => undefined, { loading: false }],
+          maxWidth: 300,
         }}
       >
         <RecordInlineCell readonly />
