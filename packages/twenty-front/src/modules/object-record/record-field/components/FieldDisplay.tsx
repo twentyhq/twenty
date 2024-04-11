@@ -41,6 +41,8 @@ export const FieldDisplay = () => {
     <ChipFieldDisplay />
   ) : isFieldRelation(fieldDefinition) ? (
     <RelationFieldDisplay />
+  ) : isFieldPhone(fieldDefinition) ? (
+    <PhoneFieldDisplay />
   ) : isFieldText(fieldDefinition) ? (
     <TextFieldDisplay />
   ) : isFieldUuid(fieldDefinition) ? (
@@ -57,8 +59,6 @@ export const FieldDisplay = () => {
     <CurrencyFieldDisplay />
   ) : isFieldFullName(fieldDefinition) ? (
     <FullNameFieldDisplay />
-  ) : isFieldPhone(fieldDefinition) ? (
-    <PhoneFieldDisplay />
   ) : isFieldSelect(fieldDefinition) ? (
     <SelectFieldDisplay />
   ) : isFieldMultiSelect(fieldDefinition) ? (
