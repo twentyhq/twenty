@@ -66,10 +66,10 @@ export const Catalog: CatalogStory<Story, typeof Checkbox> = {
           props: (shape: CheckboxShape) => ({ shape }),
         },
         {
-          name: 'state',
+          name: 'isHoverable',
           values: ['default', 'hoverable'],
-          props: (state: string) => {
-            if (state === 'hoverable') {
+          props: (isHoverable: string) => {
+            if (isHoverable === 'hoverable') {
               return { hoverable: true };
             }
             return {};
