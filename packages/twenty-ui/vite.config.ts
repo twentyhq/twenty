@@ -45,7 +45,14 @@ export default defineConfig({
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
-      external: ['react', 'react-dom', 'react/jsx-runtime'],
+      external: [
+        '@emotion/react',
+        '@emotion/styled',
+        'react-dom',
+        'react',
+        'react/jsx-runtime',
+        'recoil',
+      ],
     },
   },
 });
