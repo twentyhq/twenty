@@ -18,7 +18,11 @@ const excludedDirectories = [
 ];
 const srcPath = path.resolve('packages/twenty-ui/src');
 
-const getSubDirectoryPaths = (directoryPath: string) =>
+/**
+ * @param {string} directoryPath
+ * @returns {string[]}
+ */
+const getSubDirectoryPaths = (directoryPath) =>
   fs
     .readdirSync(directoryPath)
     .filter(
@@ -30,12 +34,22 @@ const getSubDirectoryPaths = (directoryPath: string) =>
     )
     .map((subDirectoryName) => path.join(directoryPath, subDirectoryName));
 
-const getDirectoryPathsRecursive = (directoryPath: string): string[] => [
+/**
+ *
+ * @param {string} directoryPath
+ * @returns {string[]}
+ */
+const getDirectoryPathsRecursive = (directoryPath) => [
   directoryPath,
   ...getSubDirectoryPaths(directoryPath).flatMap(getDirectoryPathsRecursive),
 ];
 
-const getFilesPaths = (directoryPath: string) =>
+/**
+ *
+ * @param {string} directoryPath
+ * @returns {string[]}
+ */
+const getFilesPaths = (directoryPath) =>
   fs
     .readdirSync(directoryPath)
     .filter(
