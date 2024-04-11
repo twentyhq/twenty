@@ -7,6 +7,7 @@ import {
   FieldEmailValue,
   FieldFullNameValue,
   FieldLinkValue,
+  FieldMultiSelectValue,
   FieldNumberValue,
   FieldPhoneValue,
   FieldRatingValue,
@@ -22,6 +23,7 @@ export type FieldDateTimeDraftValue = string;
 export type FieldPhoneDraftValue = string;
 export type FieldEmailDraftValue = string;
 export type FieldSelectDraftValue = string;
+export type FieldMultiSelectDraftValue = string[];
 export type FieldRelationDraftValue = string;
 export type FieldLinkDraftValue = { url: string; label: string };
 export type FieldCurrencyDraftValue = {
@@ -64,8 +66,10 @@ export type FieldInputDraftValue<FieldValue> = FieldValue extends FieldTextValue
                       ? FieldRatingValue
                       : FieldValue extends FieldSelectValue
                         ? FieldSelectDraftValue
-                        : FieldValue extends FieldRelationValue
-                          ? FieldRelationDraftValue
-                          : FieldValue extends FieldAddressValue
-                            ? FieldAddressDraftValue
-                            : never;
+                        : FieldValue extends FieldMultiSelectValue
+                          ? FieldMultiSelectDraftValue
+                          : FieldValue extends FieldRelationValue
+                            ? FieldRelationDraftValue
+                            : FieldValue extends FieldAddressValue
+                              ? FieldAddressDraftValue
+                              : never;

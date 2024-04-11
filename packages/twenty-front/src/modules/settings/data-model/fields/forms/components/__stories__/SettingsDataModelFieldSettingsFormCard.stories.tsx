@@ -26,6 +26,7 @@ const defaultValues = {
   currency: fieldMetadataFormDefaultValues.currency,
   relation: fieldMetadataFormDefaultValues.relation,
   select: fieldMetadataFormDefaultValues.select,
+  multiSelect: fieldMetadataFormDefaultValues.multiSelect,
   defaultValue: fieldMetadataFormDefaultValues.defaultValue,
 };
 

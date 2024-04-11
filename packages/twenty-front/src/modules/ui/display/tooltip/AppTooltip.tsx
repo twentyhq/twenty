@@ -35,6 +35,7 @@ export type AppTooltipProps = {
   className?: string;
   anchorSelect?: string;
   content?: string;
+  children?: React.ReactNode;
   delayHide?: number;
   offset?: number;
   noArrow?: boolean;
@@ -53,6 +54,7 @@ export const AppTooltip = ({
   offset,
   place,
   positionStrategy,
+  children,
 }: AppTooltipProps) => (
   <StyledAppTooltip
     {...{
@@ -65,6 +67,7 @@ export const AppTooltip = ({
       offset,
       place,
       positionStrategy,
+      children,
     }}
   />
 );

@@ -15,18 +15,20 @@ export const getRecordFromRecordNode = <T extends ObjectRecord>({
           return [fieldName, value];
         }
 
-        if (typeof value === 'object' && isDefined(value.edges)) {
-          return [
-            fieldName,
-            getRecordsFromRecordConnection({ recordConnection: value }),
-          ];
+        if (Array.isArray(value)) {
+          return [fieldName, value];
         }
 
-        if (typeof value === 'object' && !isDefined(value.edges)) {
-          return [fieldName, getRecordFromRecordNode<T>({ recordNode: value })];
+        if (typeof value !== 'object') {
+          return [fieldName, value];
         }
 
-        return [fieldName, value];
+        return isDefined(value.edges)
+          ? [
+              fieldName,
+              getRecordsFromRecordConnection({ recordConnection: value }),
+            ]
+          : [fieldName, getRecordFromRecordNode<T>({ recordNode: value })];
       }),
     ),
     id: recordNode.id,
