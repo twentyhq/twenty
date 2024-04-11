@@ -55,10 +55,6 @@ const StyledLabelContainer = styled.div<{ width?: number }>`
   width: ${({ width }) => width}px;
 `;
 
-const StyledParticipantChip = styled(ParticipantChip)<{ inView?: boolean }>`
-  opacity: ${({ inView }) => (inView === undefined || inView ? 1 : 0)};
-`;
-
 export const CalendarEventParticipantsResponseStatusField = ({
   responseStatus,
   participants,
@@ -86,7 +82,7 @@ export const CalendarEventParticipantsResponseStatusField = ({
   const participantsContainerRef = useRef<HTMLDivElement>(null);
 
   const StyledChips = orderedParticipants.map((participant) => (
-    <StyledParticipantChip participant={participant} />
+    <ParticipantChip participant={participant} />
   ));
 
   return (
