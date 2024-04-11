@@ -38,8 +38,6 @@ RUN yarn workspaces focus --production twenty-emails twenty-server
 FROM common-deps as twenty-front-build
 
 ARG REACT_APP_SERVER_BASE_URL
-ARG SENTRY_RELEASE
-ARG ENVIRONMENT
 
 COPY ./packages/twenty-front /app/packages/twenty-front
 COPY ./packages/twenty-ui /app/packages/twenty-ui
@@ -61,8 +59,6 @@ ARG REACT_APP_SERVER_BASE_URL
 ENV REACT_APP_SERVER_BASE_URL $REACT_APP_SERVER_BASE_URL
 ARG SENTRY_RELEASE
 ENV SENTRY_RELEASE $SENTRY_RELEASE
-ARG ENVIRONMENT
-ENV ENVIRONMENT $ENVIRONMENT
 
 # Copy built applications from previous stages
 COPY --chown=1000 --from=twenty-server-build /app /app
