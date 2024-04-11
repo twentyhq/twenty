@@ -161,11 +161,7 @@ export const CalendarEventRow = ({
               key={[participant.workspaceMemberId, participant.displayName]
                 .filter(isDefined)
                 .join('-')}
-              avatarUrl={
-                participant.workspaceMemberId === currentWorkspaceMember?.id
-                  ? currentWorkspaceMember?.avatarUrl
-                  : undefined
-              }
+              avatarUrl={participant.avatarUrl}
               placeholder={participant.displayName}
               type="rounded"
             />
