@@ -7,6 +7,7 @@ import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEv
 import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
 import { RecordTableCellContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellContainer';
 import { useCloseRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useCloseRecordTableCell';
+import { useUpsertRecord } from '@/object-record/record-table/record-table-cell/hooks/useUpsertRecord';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 export const RecordTableCell = ({
@@ -15,19 +16,21 @@ export const RecordTableCell = ({
   customHotkeyScope: HotkeyScope;
 }) => {
   const { closeTableCell } = useCloseRecordTableCell();
-  const { entityId, fieldDefinition } = useContext(FieldContext);
+  const { upsertRecord } = useUpsertRecord();
 
   const { moveLeft, moveRight, moveDown } = useRecordTableMoveFocus();
 
+  const { entityId, fieldDefinition } = useContext(FieldContext);
+
   const handleEnter: FieldInputEvent = (persistField) => {
-    persistField();
+    upsertRecord(persistField);
 
     closeTableCell();
     moveDown();
   };
 
   const handleSubmit: FieldInputEvent = (persistField) => {
-    persistField();
+    upsertRecord(persistField);
 
     closeTableCell();
   };
@@ -37,26 +40,26 @@ export const RecordTableCell = ({
   };
 
   const handleClickOutside: FieldInputEvent = (persistField) => {
-    persistField();
+    upsertRecord(persistField);
 
     closeTableCell();
   };
 
   const handleEscape: FieldInputEvent = (persistField) => {
-    persistField();
+    upsertRecord(persistField);
 
     closeTableCell();
   };
 
   const handleTab: FieldInputEvent = (persistField) => {
-    persistField();
+    upsertRecord(persistField);
 
     closeTableCell();
     moveRight();
   };
 
   const handleShiftTab: FieldInputEvent = (persistField) => {
-    persistField();
+    upsertRecord(persistField);
 
     closeTableCell();
     moveLeft();

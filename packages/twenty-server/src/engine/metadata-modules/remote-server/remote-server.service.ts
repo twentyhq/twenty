@@ -126,11 +126,10 @@ export class RemoteServerService<T extends RemoteServerType> {
 
     if (remoteTablesToRemove.length) {
       for (const remoteTable of remoteTablesToRemove) {
-        await this.remoteTableService.updateRemoteTableSyncStatus(
+        await this.remoteTableService.unsyncRemoteTable(
           {
             remoteServerId: id,
             name: remoteTable.name,
-            status: RemoteTableStatus.NOT_SYNCED,
           },
           workspaceId,
         );

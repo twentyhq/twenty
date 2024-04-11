@@ -82,6 +82,7 @@ export {
   IconHierarchy2,
   IconInbox,
   IconInfoCircle,
+  IconJson,
   IconKey,
   IconLanguage,
   IconLayersLinked,

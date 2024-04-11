@@ -78,6 +78,7 @@ export type FieldAddressMetadata = {
 export type FieldRawJsonMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
+  placeHolder: string;
 };
 
 export type FieldDefinitionRelationType =
@@ -154,3 +155,4 @@ export type FieldSelectValue = string | null;
 export type FieldMultiSelectValue = string[] | null;
 
 export type FieldRelationValue = EntityForSelect | null;
+export type FieldJsonValue = string;

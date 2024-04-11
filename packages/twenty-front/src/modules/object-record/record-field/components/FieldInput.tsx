@@ -3,10 +3,12 @@ import { useContext } from 'react';
 import { AddressFieldInput } from '@/object-record/record-field/meta-types/input/components/AddressFieldInput';
 import { FullNameFieldInput } from '@/object-record/record-field/meta-types/input/components/FullNameFieldInput';
 import { MultiSelectFieldInput } from '@/object-record/record-field/meta-types/input/components/MultiSelectFieldInput.tsx';
+import { RawJsonFieldInput } from '@/object-record/record-field/meta-types/input/components/RawJsonFieldInput';
 import { SelectFieldInput } from '@/object-record/record-field/meta-types/input/components/SelectFieldInput';
 import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect.ts';
+import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
@@ -135,6 +137,14 @@ export const FieldInput = ({
         <MultiSelectFieldInput onCancel={onCancel} />
       ) : isFieldAddress(fieldDefinition) ? (
         <AddressFieldInput
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
+        />
+      ) : isFieldRawJson(fieldDefinition) ? (
+        <RawJsonFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}
