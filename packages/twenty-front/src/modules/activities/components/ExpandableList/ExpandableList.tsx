@@ -33,8 +33,8 @@ const StyledExpendableCell = styled.div`
   flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing(1)};
   position: absolute;
-  top: ${({ theme }) => `-${theme.spacing(2.25)}`};
-  left: ${({ theme }) => `-${theme.spacing(2.25)}`};
+  top: ${({ theme }) => `-${theme.spacing(2 + 1 / 4)}`}; // spacing + border
+  left: ${({ theme }) => `-${theme.spacing(2 + 1 / 4)}`};
   width: 232px;
   z-index: 1;
   box-sizing: border-box;
