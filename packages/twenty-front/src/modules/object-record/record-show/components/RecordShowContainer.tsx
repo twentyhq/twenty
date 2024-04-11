@@ -155,6 +155,8 @@ export const RecordShowContainer = ({
                             labelIdentifierFieldMetadataItem?.name || '',
                           objectMetadataNameSingular: objectNameSingular,
                         },
+                        defaultValue:
+                          labelIdentifierFieldMetadataItem?.defaultValue,
                       },
                       useUpdateRecord: useUpdateOneObjectRecordMutation,
                       hotkeyScope: InlineCellHotkeyScope.InlineCell,
