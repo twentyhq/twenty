@@ -24,6 +24,7 @@ export const Default: Story = {
     checked: false,
     indeterminate: false,
     hoverable: false,
+    disabled: false,
     variant: CheckboxVariant.Primary,
     size: CheckboxSize.Small,
     shape: CheckboxShape.Squared,
