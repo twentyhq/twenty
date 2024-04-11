@@ -171,7 +171,7 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   calendarChannelEventAssociations: CalendarChannelEventAssociationObjectMetadata[];
 
   @FieldMetadata({
-    standardId: calendarEventStandardFieldIds.eventParticipants,
+    standardId: calendarEventStandardFieldIds.calendarEventParticipants,
     type: FieldMetadataType.RELATION,
     label: 'Event Participants',
     description: 'Event Participants',
