@@ -6,6 +6,7 @@ import { compileMDX } from 'next-mdx-remote/rsc';
 import remarkBehead from 'remark-behead';
 import gfm from 'remark-gfm';
 
+import MotionContainer from '@/app/_components/ui/layout/LoaderAnimation';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import { ReleaseNote } from '@/app/releases/api/route';
 
@@ -110,17 +111,18 @@ export const Release = async ({ release }: { release: ReleaseNote }) => {
   }
 
   return (
-    <StyledContainer className={gabarito.className}>
-      <StyledVersion>
-        <StyledRelease>{release.release}</StyledRelease>
-        <StyledDate>
-          {release.date.endsWith(new Date().getFullYear().toString())
-            ? release.date.slice(0, -5)
-            : release.date}
-        </StyledDate>
-      </StyledVersion>
-
-      <StlyedContent>{mdxSource}</StlyedContent>
-    </StyledContainer>
+    <MotionContainer>
+      <StyledContainer className={gabarito.className}>
+        <StyledVersion>
+          <StyledRelease>{release.release}</StyledRelease>
+          <StyledDate>
+            {release.date.endsWith(new Date().getFullYear().toString())
+              ? release.date.slice(0, -5)
+              : release.date}
+          </StyledDate>
+        </StyledVersion>
+        <StlyedContent>{mdxSource}</StlyedContent>
+      </StyledContainer>
+    </MotionContainer>
   );
 };
