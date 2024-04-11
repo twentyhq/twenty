@@ -47,6 +47,7 @@ type FieldInputProps = {
   onEscape?: FieldInputEvent;
   onTab?: FieldInputEvent;
   onShiftTab?: FieldInputEvent;
+  isReadOnly?: boolean;
 };
 
 export const FieldInput = ({
@@ -58,6 +59,7 @@ export const FieldInput = ({
   onShiftTab,
   onTab,
   onClickOutside,
+  isReadOnly,
 }: FieldInputProps) => {
   const { fieldDefinition } = useContext(FieldContext);
 
@@ -136,7 +138,7 @@ export const FieldInput = ({
           onShiftTab={onShiftTab}
         />
       ) : isFieldBoolean(fieldDefinition) ? (
-        <BooleanFieldInput onSubmit={onSubmit} />
+        <BooleanFieldInput onSubmit={onSubmit} readonly={isReadOnly} />
       ) : isFieldRating(fieldDefinition) ? (
         <RatingFieldInput onSubmit={onSubmit} />
       ) : isFieldSelect(fieldDefinition) ? (

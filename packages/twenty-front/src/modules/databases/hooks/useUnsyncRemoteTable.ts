@@ -5,6 +5,7 @@ import { getOperationName } from '@apollo/client/utilities';
 import { UNSYNC_REMOTE_TABLE } from '@/databases/graphql/mutations/unsyncRemoteTable';
 import { GET_MANY_REMOTE_TABLES } from '@/databases/graphql/queries/findManyRemoteTables';
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
+import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
 import {
   RemoteTableInput,
   UnsyncRemoteTableMutation,
@@ -13,6 +14,8 @@ import {
 
 export const useUnsyncRemoteTable = () => {
   const apolloMetadataClient = useApolloMetadataClient();
+  const { refetch: refetchObjectMetadataItems } =
+    useFindManyObjectMetadataItems();
 
   const [mutate] = useMutation<
     UnsyncRemoteTableMutation,
@@ -23,15 +26,19 @@ export const useUnsyncRemoteTable = () => {
 
   const unsyncRemoteTable = useCallback(
     async (input: RemoteTableInput) => {
-      return await mutate({
+      const remoteTable = await mutate({
         variables: {
           input,
         },
         awaitRefetchQueries: true,
         refetchQueries: [getOperationName(GET_MANY_REMOTE_TABLES) ?? ''],
       });
+
+      await refetchObjectMetadataItems();
+
+      return remoteTable;
     },
-    [mutate],
+    [mutate, refetchObjectMetadataItems],
   );
 
   return {

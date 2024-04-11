@@ -4,7 +4,8 @@ import styled from '@emotion/styled';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { SettingsDataModelIsCustomTag } from '@/settings/data-model/objects/SettingsDataModelIsCustomTag';
+import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/SettingsDataModelObjectTypeTag';
+import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -42,6 +43,7 @@ export const SettingsObjectItemTableRow = ({
   });
   const { getIcon } = useIcons();
   const Icon = getIcon(objectItem.icon);
+  const objectTypeLabel = getObjectTypeLabel(objectItem);
 
   return (
     <StyledObjectTableRow key={objectItem.namePlural} onClick={onClick}>
@@ -52,7 +54,7 @@ export const SettingsObjectItemTableRow = ({
         {objectItem.labelPlural}
       </StyledNameTableCell>
       <TableCell>
-        <SettingsDataModelIsCustomTag isCustom={objectItem.isCustom} />
+        <SettingsDataModelObjectTypeTag objectTypeLabel={objectTypeLabel} />
       </TableCell>
       <TableCell align="right">
         {objectItem.fields.filter((field) => !field.isSystem).length}
