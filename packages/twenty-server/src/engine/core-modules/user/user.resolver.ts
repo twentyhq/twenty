@@ -26,6 +26,8 @@ import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
+import { TwentyORMService } from 'src/engine/twenty-orm/twenty-orm.service';
+import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
 
 import { UserService } from './services/user.service';
 
@@ -46,6 +48,7 @@ export class UserResolver {
     private readonly userService: UserService,
     private readonly environmentService: EnvironmentService,
     private readonly fileUploadService: FileUploadService,
+    private readonly twentyORMService: TwentyORMService,
   ) {}
 
   @Query(() => User)
@@ -58,6 +61,16 @@ export class UserResolver {
     });
 
     assert(user, 'User not found');
+
+    const repository = this.twentyORMService.getRepository(
+      CompanyObjectMetadata,
+    );
+
+    const companyObjectMetadata = await repository.find({
+      relations: ['people'],
+    });
+
+    console.log('TEST: ', companyObjectMetadata);
 
     return user;
   }
