@@ -19,9 +19,9 @@ import {
   FeatureFlagKeys,
 } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import {
-  GmailFullSyncV2Job,
-  GmailFullSyncV2JobData,
-} from 'src/modules/messaging/jobs/gmail-full-sync-v2.job';
+  GmailFullSyncJob,
+  GmailFullSyncJobData,
+} from 'src/modules/messaging/jobs/gmail-full-sync.job';
 import { UpdateConnectedAccountInput } from 'src/engine/core-modules/auth/dto/update-connected-account';
 
 @Injectable()
@@ -177,8 +177,8 @@ export class GoogleAPIsService {
     workspaceId: string,
     connectedAccountId: string,
   ) {
-    await this.messageQueueService.add<GmailFullSyncV2JobData>(
-      GmailFullSyncV2Job.name,
+    await this.messageQueueService.add<GmailFullSyncJobData>(
+      GmailFullSyncJob.name,
       {
         workspaceId,
         connectedAccountId,

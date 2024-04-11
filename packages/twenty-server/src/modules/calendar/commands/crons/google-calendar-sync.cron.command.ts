@@ -11,7 +11,7 @@ import { GoogleCalendarSyncCronJob } from 'src/modules/calendar/jobs/crons/googl
   name: 'cron:calendar:google-calendar-sync',
   description: 'Starts a cron job to sync google calendar for all workspaces.',
 })
-export class GoogleCalendarSyncCronJobCommand extends CommandRunner {
+export class GoogleCalendarSyncCronCommand extends CommandRunner {
   constructor(
     @Inject(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,

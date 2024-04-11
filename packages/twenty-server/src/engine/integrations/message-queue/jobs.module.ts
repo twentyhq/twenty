@@ -44,14 +44,14 @@ import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.ob
 import { HandleWorkspaceMemberDeletedJob } from 'src/engine/core-modules/workspace/handle-workspace-member-deleted.job';
 import { GmailFullSynV2Module } from 'src/modules/messaging/services/gmail-full-sync-v2/gmail-full-sync.v2.module';
 import { GmailFetchMessageContentFromCacheModule } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.module';
-import { GmailFullSyncV2Job } from 'src/modules/messaging/jobs/gmail-full-sync-v2.job';
-import { GmailPartialSyncV2Job } from 'src/modules/messaging/jobs/gmail-partial-sync-v2.job';
+import { GmailFullSyncJob } from 'src/modules/messaging/jobs/gmail-full-sync.job';
+import { GmailPartialSyncJob } from 'src/modules/messaging/jobs/gmail-partial-sync.job';
 import { GmailPartialSyncV2Module } from 'src/modules/messaging/services/gmail-partial-sync-v2/gmail-partial-sync-v2.module';
 import { GoogleCalendarSyncCronJob } from 'src/modules/calendar/jobs/crons/google-calendar-sync.cron.job';
 import { CalendarEventParticipantModule } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.module';
 import { UnmatchParticipantJob } from 'src/modules/connected-account/jobs/unmatch-participant.job';
 import { DeleteConnectedAccountAssociatedCalendarDataJob } from 'src/modules/calendar/jobs/delete-connected-account-associated-calendar-data.job';
-import { FetchAllMessagesFromCacheCronJob } from 'src/modules/messaging/jobs/crons/fetch-all-messages-from-cache.cron.job';
+import { GmailFetchMessagesFromCacheCronJob } from 'src/modules/messaging/jobs/crons/gmail-fetch-messages-from-cache.cron.job';
 
 @Module({
   imports: [
@@ -149,16 +149,16 @@ import { FetchAllMessagesFromCacheCronJob } from 'src/modules/messaging/jobs/cro
       useClass: SaveEventToDbJob,
     },
     {
-      provide: FetchAllMessagesFromCacheCronJob.name,
-      useClass: FetchAllMessagesFromCacheCronJob,
+      provide: GmailFetchMessagesFromCacheCronJob.name,
+      useClass: GmailFetchMessagesFromCacheCronJob,
     },
     {
-      provide: GmailFullSyncV2Job.name,
-      useClass: GmailFullSyncV2Job,
+      provide: GmailFullSyncJob.name,
+      useClass: GmailFullSyncJob,
     },
     {
-      provide: GmailPartialSyncV2Job.name,
-      useClass: GmailPartialSyncV2Job,
+      provide: GmailPartialSyncJob.name,
+      useClass: GmailPartialSyncJob,
     },
     {
       provide: GoogleCalendarSyncCronJob.name,

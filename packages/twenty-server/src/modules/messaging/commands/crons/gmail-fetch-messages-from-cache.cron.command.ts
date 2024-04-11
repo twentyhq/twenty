@@ -4,7 +4,7 @@ import { Command, CommandRunner } from 'nest-commander';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { FetchAllMessagesFromCacheCronJob } from 'src/modules/messaging/jobs/crons/fetch-all-messages-from-cache.cron.job';
+import { GmailFetchMessagesFromCacheCronJob } from 'src/modules/messaging/jobs/crons/gmail-fetch-messages-from-cache.cron.job';
 
 @Command({
   name: 'cron:messaging:gmail-fetch-messages-from-cache',
@@ -20,7 +20,7 @@ export class GmailFetchMessagesFromCacheCronCommand extends CommandRunner {
 
   async run(): Promise<void> {
     await this.messageQueueService.addCron<undefined>(
-      FetchAllMessagesFromCacheCronJob.name,
+      GmailFetchMessagesFromCacheCronJob.name,
       undefined,
       {
         repeat: {
