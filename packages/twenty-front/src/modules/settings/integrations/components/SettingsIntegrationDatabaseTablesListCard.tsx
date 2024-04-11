@@ -1,10 +1,13 @@
-import { Controller, useFormContext } from 'react-hook-form';
+import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
 import { z } from 'zod';
 
+import { useSyncRemoteTable } from '@/databases/hooks/useSyncRemoteTable';
+import { useUnsyncRemoteTable } from '@/databases/hooks/useUnsyncRemoteTable';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { Toggle } from '@/ui/input/components/Toggle';
+import { SettingsIntegrationRemoteTableSyncStatusToggle } from '@/settings/integrations/components/SettingsIntegrationRemoteTableSyncStatusToggle';
 import { RemoteTable, RemoteTableStatus } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 export const settingsIntegrationsDatabaseTablesSchema = z.object({
   syncedTablesByName: z.record(z.boolean()),
@@ -15,6 +18,7 @@ export type SettingsIntegrationsDatabaseTablesFormValues = z.infer<
 >;
 
 type SettingsIntegrationDatabaseTablesListCardProps = {
+  connectionId: string;
   tables: RemoteTable[];
 };
 
@@ -25,27 +29,63 @@ const StyledRowRightContainer = styled.div`
 `;
 
 export const SettingsIntegrationDatabaseTablesListCard = ({
+  connectionId,
   tables,
 }: SettingsIntegrationDatabaseTablesListCardProps) => {
-  const { control } =
-    useFormContext<SettingsIntegrationsDatabaseTablesFormValues>();
+  const { syncRemoteTable } = useSyncRemoteTable();
+  const { unsyncRemoteTable } = useUnsyncRemoteTable();
 
+  // We need to use a state because the table status update re-render the whole list of toggles
+  const [items] = useState(
+    tables.map((table) => ({
+      id: table.name,
+      ...table,
+    })),
+  );
+
+  const onSyncUpdate = useCallback(
+    async (isSynced: boolean, tableName: string) => {
+      const table = items.find((table) => table.name === tableName);
+
+      if (!isDefined(table)) return;
+
+      if (isSynced) {
+        await syncRemoteTable({
+          remoteServerId: connectionId,
+          name: tableName,
+          schema: table.schema,
+        });
+      } else {
+        await unsyncRemoteTable({
+          remoteServerId: connectionId,
+          name: tableName,
+          schema: table.schema,
+        });
+      }
+    },
+    [connectionId, syncRemoteTable, items, unsyncRemoteTable],
+  );
+
+  const rowRightComponent = useCallback(
+    ({
+      item,
+    }: {
+      item: { id: string; name: string; status: RemoteTableStatus };
+    }) => (
+      <StyledRowRightContainer>
+        <SettingsIntegrationRemoteTableSyncStatusToggle
+          table={item}
+          onSyncUpdate={onSyncUpdate}
+        />
+      </StyledRowRightContainer>
+    ),
+    [onSyncUpdate],
+  );
   return (
     <SettingsListCard
-      items={tables.map((table) => ({ id: table.name, ...table }))}
-      RowRightComponent={({ item: table }) => (
-        <StyledRowRightContainer>
-          <Controller
-            name={`syncedTablesByName.${table.name}`}
-            control={control}
-            defaultValue={table.status === RemoteTableStatus.Synced}
-            render={({ field: { onChange, value } }) => (
-              <Toggle value={value} onChange={onChange} />
-            )}
-          />
-        </StyledRowRightContainer>
-      )}
-      getItemLabel={(table) => table.name}
+      items={items}
+      RowRightComponent={rowRightComponent}
+      getItemLabel={(table) => table.id}
     />
   );
 };
