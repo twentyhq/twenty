@@ -59,6 +59,7 @@ export class AuthResolver {
     private userWorkspaceService: UserWorkspaceService,
   ) {}
 
+  @UseGuards(CaptchaGuard)
   @Query(() => UserExists)
   async checkUserExists(
     @Args() checkUserExistsInput: CheckUserExistsInput,
