@@ -5,7 +5,10 @@ import { Line } from '@/app/_components/releases/Line';
 import { Release } from '@/app/_components/releases/Release';
 import { Title } from '@/app/_components/releases/StyledTitle';
 import { ContentContainer } from '@/app/_components/ui/layout/ContentContainer';
-import { getReleases } from '@/app/releases/get-releases';
+import {
+  getMdxReleasesContent,
+  getReleases,
+} from '@/app/releases/get-releases';
 
 export const metadata: Metadata = {
   title: 'Twenty - Releases',
@@ -14,6 +17,7 @@ export const metadata: Metadata = {
 
 const Home = async () => {
   const releases = await getReleases();
+  const mdxReleasesContent = await getMdxReleasesContent(releases);
 
   return (
     <ContentContainer>
@@ -21,7 +25,10 @@ const Home = async () => {
 
       {releases.map((note, index) => (
         <React.Fragment key={note.slug}>
-          <Release release={note} />
+          <Release
+            release={note}
+            mdxReleaseContent={mdxReleasesContent[index]}
+          />
           {index != releases.length - 1 && <Line />}
         </React.Fragment>
       ))}
