@@ -63,7 +63,7 @@ export const SettingsIntegrationDatabaseTablesListCard = ({
         });
       }
     },
-    [connectionId, syncRemoteTable, items, unsyncRemoteTable],
+    [items, syncRemoteTable, connectionId, unsyncRemoteTable],
   );
 
   const rowRightComponent = useCallback(
