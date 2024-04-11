@@ -35,6 +35,7 @@ const meta: Meta = {
               fieldName: 'Number',
               placeHolder: 'Number',
               isPositive: true,
+              objectMetadataNameSingular: 'person',
             },
           },
           hotkeyScope: 'hotkey-scope',

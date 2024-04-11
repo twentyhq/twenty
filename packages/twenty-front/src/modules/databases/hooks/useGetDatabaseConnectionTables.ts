@@ -1,10 +1,10 @@
 import { useQuery } from '@apollo/client';
 
-import { GET_MANY_DATABASE_CONNECTION_TABLES } from '@/databases/graphql/queries/findManyDatabaseConnectionTables';
+import { GET_MANY_REMOTE_TABLES } from '@/databases/graphql/queries/findManyRemoteTables';
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import {
-  GetManyDatabaseConnectionTablesQuery,
-  GetManyDatabaseConnectionTablesQueryVariables,
+  GetManyRemoteTablesQuery,
+  GetManyRemoteTablesQueryVariables,
 } from '~/generated-metadata/graphql';
 
 type UseGetDatabaseConnectionTablesParams = {
@@ -19,9 +19,9 @@ export const useGetDatabaseConnectionTables = ({
   const apolloMetadataClient = useApolloMetadataClient();
 
   const { data } = useQuery<
-    GetManyDatabaseConnectionTablesQuery,
-    GetManyDatabaseConnectionTablesQueryVariables
-  >(GET_MANY_DATABASE_CONNECTION_TABLES, {
+    GetManyRemoteTablesQuery,
+    GetManyRemoteTablesQueryVariables
+  >(GET_MANY_REMOTE_TABLES, {
     client: apolloMetadataClient ?? undefined,
     skip: skip || !apolloMetadataClient,
     variables: {

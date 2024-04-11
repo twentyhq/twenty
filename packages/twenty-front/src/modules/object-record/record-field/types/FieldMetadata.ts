@@ -78,6 +78,7 @@ export type FieldAddressMetadata = {
 export type FieldRawJsonMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
+  placeHolder: string;
 };
 
 export type FieldDefinitionRelationType =
@@ -102,6 +103,12 @@ export type FieldSelectMetadata = {
   options: { label: string; color: ThemeColor; value: string }[];
 };
 
+export type FieldMultiSelectMetadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
+  options: { label: string; color: ThemeColor; value: string }[];
+};
+
 export type FieldMetadata =
   | FieldBooleanMetadata
   | FieldCurrencyMetadata
@@ -114,6 +121,7 @@ export type FieldMetadata =
   | FieldRatingMetadata
   | FieldRelationMetadata
   | FieldSelectMetadata
+  | FieldMultiSelectMetadata
   | FieldTextMetadata
   | FieldUuidMetadata
   | FieldAddressMetadata;
@@ -144,5 +152,7 @@ export type FieldAddressValue = {
 };
 export type FieldRatingValue = (typeof RATING_VALUES)[number];
 export type FieldSelectValue = string | null;
+export type FieldMultiSelectValue = string[] | null;
 
 export type FieldRelationValue = EntityForSelect | null;
+export type FieldJsonValue = string;

@@ -5,6 +5,10 @@ import { isFieldAddress } from '@/object-record/record-field/types/guards/isFiel
 import { isFieldAddressValue } from '@/object-record/record-field/types/guards/isFieldAddressValue';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
+import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect.ts';
+import { isFieldMultiSelectValue } from '@/object-record/record-field/types/guards/isFieldMultiSelectValue.ts';
+import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
+import { isFieldRawJsonValue } from '@/object-record/record-field/types/guards/isFieldRawJsonValue';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/record-field/types/guards/isFieldSelectValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
@@ -84,11 +88,19 @@ export const usePersistField = () => {
         const fieldIsSelect =
           isFieldSelect(fieldDefinition) && isFieldSelectValue(valueToPersist);
 
+        const fieldIsMultiSelect =
+          isFieldMultiSelect(fieldDefinition) &&
+          isFieldMultiSelectValue(valueToPersist);
+
         const fieldIsAddress =
           isFieldAddress(fieldDefinition) &&
           isFieldAddressValue(valueToPersist);
 
-        if (
+        const fieldIsRawJson =
+          isFieldRawJson(fieldDefinition) &&
+          isFieldRawJsonValue(valueToPersist);
+
+        const isValuePersistable =
           fieldIsRelation ||
           fieldIsText ||
           fieldIsBoolean ||
@@ -101,8 +113,11 @@ export const usePersistField = () => {
           fieldIsCurrency ||
           fieldIsFullName ||
           fieldIsSelect ||
-          fieldIsAddress
-        ) {
+          fieldIsMultiSelect ||
+          fieldIsAddress ||
+          fieldIsRawJson;
+
+        if (isValuePersistable === true) {
           const fieldName = fieldDefinition.metadata.fieldName;
           set(
             recordStoreFamilySelector({ recordId: entityId, fieldName }),

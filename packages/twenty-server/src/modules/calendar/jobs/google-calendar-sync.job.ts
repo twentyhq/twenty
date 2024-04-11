@@ -3,32 +3,27 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
-import { GoogleCalendarFullSyncService } from 'src/modules/calendar/services/google-calendar-full-sync.service';
+import { GoogleCalendarSyncService } from 'src/modules/calendar/services/google-calendar-sync.service';
 
-export type GoogleCalendarFullSyncJobData = {
+export type GoogleCalendarSyncJobData = {
   workspaceId: string;
   connectedAccountId: string;
-  nextPageToken?: string;
 };
 
 @Injectable()
-export class GoogleCalendarFullSyncJob
-  implements MessageQueueJob<GoogleCalendarFullSyncJobData>
+export class GoogleCalendarSyncJob
+  implements MessageQueueJob<GoogleCalendarSyncJobData>
 {
-  private readonly logger = new Logger(GoogleCalendarFullSyncJob.name);
+  private readonly logger = new Logger(GoogleCalendarSyncJob.name);
 
   constructor(
     private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
-    private readonly googleCalendarFullSyncService: GoogleCalendarFullSyncService,
+    private readonly googleCalendarSyncService: GoogleCalendarSyncService,
   ) {}
 
-  async handle(data: GoogleCalendarFullSyncJobData): Promise<void> {
+  async handle(data: GoogleCalendarSyncJobData): Promise<void> {
     this.logger.log(
-      `google calendar full-sync for workspace ${
-        data.workspaceId
-      } and account ${data.connectedAccountId} ${
-        data.nextPageToken ? `and ${data.nextPageToken} pageToken` : ''
-      }`,
+      `google calendar sync for workspace ${data.workspaceId} and account ${data.connectedAccountId}`,
     );
     try {
       await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
@@ -44,10 +39,9 @@ export class GoogleCalendarFullSyncJob
       return;
     }
 
-    await this.googleCalendarFullSyncService.startGoogleCalendarFullSync(
+    await this.googleCalendarSyncService.startGoogleCalendarSync(
       data.workspaceId,
       data.connectedAccountId,
-      data.nextPageToken,
     );
   }
 }
