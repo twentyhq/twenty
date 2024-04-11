@@ -6,33 +6,31 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { CreateCompanyAndContactService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/services/create-company-and-contact.service';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant.repository';
-import { MessageParticipantService } from 'src/modules/messaging/services/message-participant/message-participant.service';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 
-export type CreateCompaniesAndContactsAfterSyncJobData = {
+export type MessagingCreateCompanyAndContactAfterSyncJobData = {
   workspaceId: string;
   messageChannelId: string;
 };
 
 @Injectable()
-export class CreateCompaniesAndContactsAfterSyncJob
-  implements MessageQueueJob<CreateCompaniesAndContactsAfterSyncJobData>
+export class MessagingCreateCompanyAndContactAfterSyncJob
+  implements MessageQueueJob<MessagingCreateCompanyAndContactAfterSyncJobData>
 {
   private readonly logger = new Logger(
-    CreateCompaniesAndContactsAfterSyncJob.name,
+    MessagingCreateCompanyAndContactAfterSyncJob.name,
   );
   constructor(
-    private readonly createCompaniesAndContactsService: CreateCompanyAndContactService,
+    private readonly createCompanyAndContactService: CreateCompanyAndContactService,
     @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
     private readonly messageChannelService: MessageChannelRepository,
-    private readonly messageParticipantService: MessageParticipantService,
     @InjectObjectMetadataRepository(MessageParticipantObjectMetadata)
     private readonly messageParticipantRepository: MessageParticipantRepository,
   ) {}
 
   async handle(
-    data: CreateCompaniesAndContactsAfterSyncJobData,
+    data: MessagingCreateCompanyAndContactAfterSyncJobData,
   ): Promise<void> {
     this.logger.log(
       `create contacts and companies after sync for workspace ${data.workspaceId} and messageChannel ${data.messageChannelId}`,
@@ -50,20 +48,15 @@ export class CreateCompaniesAndContactsAfterSyncJob
       return;
     }
 
-    const messageParticipantsWithoutPersonIdAndWorkspaceMemberId =
+    const contactsToCreate =
       await this.messageParticipantRepository.getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberIdAndMessageOutgoing(
         messageChannelId,
         workspaceId,
       );
 
-    await this.createCompaniesAndContactsService.createCompaniesAndContacts(
+    await this.createCompanyAndContactService.createCompaniesAndContactsAndUpdateParticipants(
       handle,
-      messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
-      workspaceId,
-    );
-
-    await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
-      messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
+      contactsToCreate,
       workspaceId,
     );
 
