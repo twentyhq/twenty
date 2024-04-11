@@ -5,7 +5,7 @@ import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui';
 import { v4 } from 'uuid';
 
 import { CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
-import { ExpandableList } from '@/activities/components/ExpandableList/ExpandableList';
+import { ExpandableList } from '@/ui/display/expandable-list/ExpandableList';
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
