@@ -60,7 +60,7 @@ export class CalendarCreateCompanyAndContactAfterSyncJob
         workspaceId,
       );
 
-    await this.createCompanyAndContactService.createCompaniesAndContactsAndUpdateParticipantsAfterSync(
+    await this.createCompanyAndContactService.createCompaniesAndContactsAndUpdateParticipants(
       handle,
       calendarEventParticipantsWithoutPersonIdAndWorkspaceMemberId,
       workspaceId,

@@ -54,7 +54,7 @@ export class MessagingCreateCompanyAndContactAfterSyncJob
         workspaceId,
       );
 
-    await this.createCompanyAndContactService.createCompaniesAndContactsAndUpdateParticipantsAfterSync(
+    await this.createCompanyAndContactService.createCompaniesAndContactsAndUpdateParticipants(
       handle,
       contactsToCreate,
       workspaceId,

@@ -171,24 +171,4 @@ export class CreateCompanyAndContactService {
       },
     );
   }
-
-  async createCompaniesAndContactsAndUpdateParticipantsAfterSync(
-    messageChannelHandle: string,
-    contactsToCreate: { id: string; handle: string; displayName: string }[],
-    workspaceId: string,
-  ) {
-    await this.createCompaniesAndContacts(
-      messageChannelHandle,
-      contactsToCreate,
-      workspaceId,
-    );
-
-    await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
-      workspaceId,
-    );
-
-    await this.calendarEventParticipantService.updateCalendarEventParticipantsAfterPeopleCreation(
-      workspaceId,
-    );
-  }
 }
