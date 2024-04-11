@@ -249,7 +249,7 @@ export class EnvironmentVariables {
   )
   @IsString()
   @IsOptional()
-  ENVIRONMENT: string;
+  SENTRY_ENVIRONMENT: string;
 
   @IsDuration()
   @IsOptional()
