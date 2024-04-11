@@ -41,8 +41,8 @@ const StyledExpendableCell = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   padding: ${({ theme }) => theme.spacing(2)};
   box-shadow: ${({ theme }) => theme.boxShadow.light};
-  backdrop-filter: blur(20px);
-  border-radius: 4px;
+  backdrop-filter: ${({ theme }) => theme.blur.strong};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
 `;
 
