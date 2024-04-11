@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import axios from 'axios';
 
@@ -10,8 +10,6 @@ import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/st
 
 @Injectable()
 export class GoogleAPIRefreshAccessTokenService {
-  private readonly logger = new Logger(GoogleAPIRefreshAccessTokenService.name);
-
   constructor(
     private readonly environmentService: EnvironmentService,
     @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
