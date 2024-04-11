@@ -6,12 +6,12 @@ import { RecordChip } from '@/object-record/components/RecordChip';
 import { Avatar } from '@/users/components/Avatar';
 
 const StyledAvatar = styled(Avatar)`
-  margin: ${({ theme }) => theme.spacing(0, 1)};
+  margin-right: ${({ theme }) => theme.spacing(1)};
 `;
 
 const StyledSenderName = styled.span<{ variant?: 'default' | 'bold' }>`
   color: ${({ theme }) => theme.font.color.primary};
-  font-size: ${({ theme }) => theme.font.size.sm};
+  font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme, variant }) =>
     variant === 'bold' ? theme.font.weight.medium : theme.font.weight.regular};
   overflow: hidden;
@@ -26,6 +26,14 @@ const StyledContainer = styled.div`
 const StyledRecordChip = styled(RecordChip)<{ variant: 'default' | 'bold' }>`
   font-weight: ${({ theme, variant }) =>
     variant === 'bold' ? theme.font.weight.medium : theme.font.weight.regular};
+`;
+
+const StyledChip = styled.div`
+  align-items: center;
+  display: flex;
+  padding: ${({ theme }) => theme.spacing(1)};
+  height: 20px;
+  box-sizing: border-box;
 `;
 
 type ParticipantChipVariant = 'default' | 'bold';
@@ -57,7 +65,7 @@ export const ParticipantChip = ({
           variant={variant}
         />
       ) : (
-        <>
+        <StyledChip>
           <StyledAvatar
             avatarUrl={avatarUrl}
             type="rounded"
@@ -65,7 +73,7 @@ export const ParticipantChip = ({
             size="sm"
           />
           <StyledSenderName variant={variant}>{displayName}</StyledSenderName>
-        </>
+        </StyledChip>
       )}
     </StyledContainer>
   );
