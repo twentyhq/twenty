@@ -13,9 +13,9 @@ import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-s
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import {
-  GmailPartialSyncV2Job as GmailPartialSyncV2Job,
-  GmailPartialSyncV2JobData as GmailPartialSyncV2JobData,
-} from 'src/modules/messaging/jobs/gmail-partial-sync-v2.job';
+  GmailPartialSyncJob as GmailPartialSyncJob,
+  GmailPartialSyncJobData as GmailPartialSyncJobData,
+} from 'src/modules/messaging/jobs/gmail-partial-sync.job';
 
 @Injectable()
 export class GmailPartialSyncCronJob implements MessageQueueJob<undefined> {
@@ -63,8 +63,8 @@ export class GmailPartialSyncCronJob implements MessageQueueJob<undefined> {
         await this.connectedAccountRepository.getAll(workspaceId);
 
       for (const connectedAccount of connectedAccounts) {
-        await this.messageQueueService.add<GmailPartialSyncV2JobData>(
-          GmailPartialSyncV2Job.name,
+        await this.messageQueueService.add<GmailPartialSyncJobData>(
+          GmailPartialSyncJob.name,
           {
             workspaceId,
             connectedAccountId: connectedAccount.id,
