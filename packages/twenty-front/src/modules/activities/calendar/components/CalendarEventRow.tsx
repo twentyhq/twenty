@@ -120,8 +120,6 @@ export const CalendarEventRow = ({
   );
   const showTitle = calendarEvent.visibility === 'SHARE_EVERYTHING';
 
-  console.log(calendarEvent.participants);
-
   return (
     <StyledContainer
       className={className}
