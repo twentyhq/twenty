@@ -1,3 +1,5 @@
+import { FieldMetadataType } from '~/generated-metadata/graphql.ts';
+
 import { FieldDefinition } from '../FieldDefinition';
 import { FieldMetadata, FieldPhoneMetadata } from '../FieldMetadata';
 
@@ -6,4 +8,4 @@ export const isFieldPhone = (
 ): field is FieldDefinition<FieldPhoneMetadata> =>
   field.metadata.objectMetadataNameSingular === 'person' &&
   field.metadata.fieldName === 'phone' &&
-  field.type === 'TEXT';
+  field.type === FieldMetadataType.Text;
