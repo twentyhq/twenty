@@ -43,5 +43,6 @@ export const formatFieldMetadataItemAsFieldDefinition = ({
       options: field.options,
     },
     iconName: field.icon ?? 'Icon123',
+    defaultValue: field.defaultValue,
   };
 };

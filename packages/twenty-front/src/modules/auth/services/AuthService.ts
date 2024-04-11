@@ -18,12 +18,6 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const logger = loggerLink(() => 'Twenty-Refresh');
 
-/**
- * Renew token mutation with custom apollo client
- * @param uri string | UriFunction | undefined
- * @param refreshToken string
- * @returns RenewTokenMutation
- */
 const renewTokenMutation = async (
   uri: string | UriFunction | undefined,
   refreshToken: string,
@@ -42,7 +36,7 @@ const renewTokenMutation = async (
   >({
     mutation: RenewTokenDocument,
     variables: {
-      refreshToken: refreshToken,
+      appToken: refreshToken,
     },
     fetchPolicy: 'network-only',
   });
@@ -54,11 +48,6 @@ const renewTokenMutation = async (
   return data;
 };
 
-/**
- * Renew token and update cookie storage
- * @param uri string | UriFunction | undefined
- * @returns TokenPair
- */
 export const renewToken = async (
   uri: string | UriFunction | undefined,
   tokenPair: AuthTokenPair | undefined | null,

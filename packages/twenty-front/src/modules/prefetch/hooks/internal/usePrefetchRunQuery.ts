@@ -1,29 +1,24 @@
 import { useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpsertFindManyRecordsQueryInCache } from '@/object-record/cache/hooks/useUpsertFindManyRecordsQueryInCache';
-import { useMapConnectionToRecords } from '@/object-record/hooks/useMapConnectionToRecords';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
-import { ALL_VIEWS_QUERY_KEY } from '@/prefetch/query-keys/AllViewsQueryKey';
+import { PREFETCH_CONFIG } from '@/prefetch/constants/PrefetchConfig';
 import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 
 export type UsePrefetchRunQuery = {
   prefetchKey: PrefetchKey;
-  objectNameSingular: CoreObjectNameSingular;
 };
 
 export const usePrefetchRunQuery = <T extends ObjectRecord>({
   prefetchKey,
-  objectNameSingular,
 }: UsePrefetchRunQuery) => {
   const setPrefetchDataIsLoadedLoaded = useSetRecoilState(
     prefetchIsLoadedFamilyState(prefetchKey),
   );
   const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: objectNameSingular,
+    objectNameSingular: PREFETCH_CONFIG[prefetchKey].objectNameSingular,
   });
 
   const { upsertFindManyRecordsQueryInCache } =
@@ -31,18 +26,12 @@ export const usePrefetchRunQuery = <T extends ObjectRecord>({
       objectMetadataItem: objectMetadataItem,
     });
 
-  const mapConnectionToRecords = useMapConnectionToRecords();
-
-  const upsertRecordsInCache = (records: ObjectRecordConnection<T>) => {
+  const upsertRecordsInCache = (records: T[]) => {
     upsertFindManyRecordsQueryInCache({
-      queryVariables: ALL_VIEWS_QUERY_KEY.variables,
-      depth: ALL_VIEWS_QUERY_KEY.depth,
-      objectRecordsToOverwrite:
-        mapConnectionToRecords({
-          objectRecordConnection: records,
-          objectNameSingular: CoreObjectNameSingular.View,
-          depth: 2,
-        }) ?? [],
+      queryVariables: PREFETCH_CONFIG[prefetchKey].variables,
+      depth: PREFETCH_CONFIG[prefetchKey].depth,
+      objectRecordsToOverwrite: records,
+      computeReferences: false,
     });
     setPrefetchDataIsLoadedLoaded(true);
   };

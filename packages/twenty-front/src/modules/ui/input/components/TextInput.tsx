@@ -10,29 +10,14 @@ import {
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
+import { IconAlertCircle, IconEye, IconEyeOff } from 'twenty-ui';
 
-import { IconAlertCircle } from '@/ui/display/icon';
-import { IconEye, IconEyeOff } from '@/ui/display/icon/index';
 import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 
 import { InputHotkeyScope } from '../types/InputHotkeyScope';
-
-export type TextInputComponentProps = Omit<
-  InputHTMLAttributes<HTMLInputElement>,
-  'onChange' | 'onKeyDown'
-> & {
-  className?: string;
-  label?: string;
-  onChange?: (text: string) => void;
-  fullWidth?: boolean;
-  disableHotkeys?: boolean;
-  error?: string;
-  RightIcon?: IconComponent;
-  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
-};
 
 const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
   display: inline-flex;
@@ -110,6 +95,21 @@ const StyledTrailingIcon = styled.div`
 
 const INPUT_TYPE_PASSWORD = 'password';
 
+export type TextInputComponentProps = Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  'onChange' | 'onKeyDown'
+> & {
+  className?: string;
+  label?: string;
+  onChange?: (text: string) => void;
+  fullWidth?: boolean;
+  disableHotkeys?: boolean;
+  error?: string;
+  RightIcon?: IconComponent;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
+  onBlur?: () => void;
+};
+
 const TextInputComponent = (
   {
     className,
@@ -145,6 +145,7 @@ const TextInputComponent = (
 
   const handleFocus: FocusEventHandler<HTMLInputElement> = (e) => {
     onFocus?.(e);
+
     if (!disableHotkeys) {
       setHotkeyScopeAndMemorizePreviousScope(InputHotkeyScope.TextInput);
     }
@@ -152,6 +153,7 @@ const TextInputComponent = (
 
   const handleBlur: FocusEventHandler<HTMLInputElement> = (e) => {
     onBlur?.(e);
+
     if (!disableHotkeys) {
       goBackToPreviousHotkeyScope();
     }
@@ -163,6 +165,7 @@ const TextInputComponent = (
       inputRef.current?.blur();
     },
     InputHotkeyScope.TextInput,
+    { enabled: !disableHotkeys },
   );
 
   const [passwordVisible, setPasswordVisible] = useState(false);

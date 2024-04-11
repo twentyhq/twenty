@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const RENEW_TOKEN = gql`
-  mutation RenewToken($refreshToken: String!) {
-    renewToken(refreshToken: $refreshToken) {
+  mutation RenewToken($appToken: String!) {
+    renewToken(appToken: $appToken) {
       tokens {
         ...AuthTokensFragment
       }

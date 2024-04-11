@@ -1,13 +1,6 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
-
-import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
-import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
-import { useExportTableData } from '@/object-record/record-index/options/hooks/useExportTableData';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
   IconClick,
   IconFileExport,
@@ -16,7 +9,15 @@ import {
   IconMail,
   IconPuzzle,
   IconTrash,
-} from '@/ui/display/icon';
+} from 'twenty-ui';
+
+import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
+import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
+import { useExportTableData } from '@/object-record/record-index/options/hooks/useExportTableData';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
 import { ContextMenuEntry } from '@/ui/navigation/context-menu/types/ContextMenuEntry';
@@ -36,6 +37,8 @@ export const useRecordActionBar = ({
 }: useRecordActionBarProps) => {
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
   const setActionBarEntriesState = useSetRecoilState(actionBarEntriesState);
+  const [isDeleteRecordsModalOpen, setIsDeleteRecordsModalOpen] =
+    useState(false);
 
   const { createFavorite, favorites, deleteFavorite } = useFavorites();
 
@@ -103,14 +106,10 @@ export const useRecordActionBar = ({
     recordIndexId: objectMetadataItem.namePlural,
   });
 
+  const isRemoteObject = objectMetadataItem.isRemote;
+
   const baseActions: ContextMenuEntry[] = useMemo(
     () => [
-      {
-        label: `Delete (${selectedRecordIds.length})`,
-        Icon: IconTrash,
-        accent: 'danger',
-        onClick: () => handleDeleteClick(),
-      },
       {
         label: `${progress === undefined ? `Export` : `Export (${progress}%)`}`,
         Icon: IconFileExport,
@@ -118,7 +117,40 @@ export const useRecordActionBar = ({
         onClick: () => download(),
       },
     ],
-    [handleDeleteClick, download, progress, selectedRecordIds],
+    [download, progress],
+  );
+
+  const deletionActions: ContextMenuEntry[] = useMemo(
+    () => [
+      {
+        label: 'Delete',
+        Icon: IconTrash,
+        accent: 'danger',
+        onClick: () => setIsDeleteRecordsModalOpen(true),
+        ConfirmationModal: (
+          <ConfirmationModal
+            isOpen={isDeleteRecordsModalOpen}
+            setIsOpen={setIsDeleteRecordsModalOpen}
+            title={`Delete ${selectedRecordIds.length} ${
+              selectedRecordIds.length === 1 ? `record` : 'records'
+            }`}
+            subtitle={`This action cannot be undone. This will permanently delete ${
+              selectedRecordIds.length === 1 ? 'this record' : 'these records'
+            }`}
+            onConfirmClick={() => handleDeleteClick()}
+            deleteButtonText={`Delete ${
+              selectedRecordIds.length > 1 ? 'Records' : 'Record'
+            }`}
+          />
+        ),
+      },
+    ],
+    [
+      handleDeleteClick,
+      selectedRecordIds,
+      isDeleteRecordsModalOpen,
+      setIsDeleteRecordsModalOpen,
+    ],
   );
 
   const dataExecuteQuickActionOnmentEnabled = useIsFeatureEnabled(
@@ -134,8 +166,9 @@ export const useRecordActionBar = ({
   return {
     setContextMenuEntries: useCallback(() => {
       setContextMenuEntries([
+        ...(isRemoteObject ? [] : deletionActions),
         ...baseActions,
-        ...(isFavorite && hasOnlyOneRecordSelected
+        ...(!isRemoteObject && isFavorite && hasOnlyOneRecordSelected
           ? [
               {
                 label: 'Remove from favorites',
@@ -144,7 +177,7 @@ export const useRecordActionBar = ({
               },
             ]
           : []),
-        ...(!isFavorite && hasOnlyOneRecordSelected
+        ...(!isRemoteObject && !isFavorite && hasOnlyOneRecordSelected
           ? [
               {
                 label: 'Add to favorites',
@@ -156,9 +189,11 @@ export const useRecordActionBar = ({
       ]);
     }, [
       baseActions,
+      deletionActions,
       handleFavoriteButtonClick,
       hasOnlyOneRecordSelected,
       isFavorite,
+      isRemoteObject,
       setContextMenuEntries,
     ]),
 
@@ -183,12 +218,15 @@ export const useRecordActionBar = ({
               },
             ]
           : []),
+        ...(isRemoteObject ? [] : deletionActions),
         ...baseActions,
       ]);
     }, [
       baseActions,
       dataExecuteQuickActionOnmentEnabled,
+      deletionActions,
       handleExecuteQuickActionOnClick,
+      isRemoteObject,
       setActionBarEntriesState,
     ]),
   };

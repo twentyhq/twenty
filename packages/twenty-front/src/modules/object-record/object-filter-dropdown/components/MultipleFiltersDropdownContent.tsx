@@ -48,9 +48,16 @@ export const MultipleFiltersDropdownContent = ({
           <>
             <ObjectFilterDropdownOperandButton />
             <DropdownMenuSeparator />
-            {['TEXT', 'EMAIL', 'PHONE', 'FULL_NAME', 'LINK'].includes(
-              filterDefinitionUsedInDropdown.type,
-            ) && <ObjectFilterDropdownTextSearchInput />}
+            {[
+              'TEXT',
+              'EMAIL',
+              'PHONE',
+              'FULL_NAME',
+              'LINK',
+              'ADDRESS',
+            ].includes(filterDefinitionUsedInDropdown.type) && (
+              <ObjectFilterDropdownTextSearchInput />
+            )}
             {['NUMBER', 'CURRENCY'].includes(
               filterDefinitionUsedInDropdown.type,
             ) && <ObjectFilterDropdownNumberInput />}

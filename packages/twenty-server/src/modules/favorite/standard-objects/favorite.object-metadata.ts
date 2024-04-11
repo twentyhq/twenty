@@ -29,7 +29,7 @@ export class FavoriteObjectMetadata extends BaseObjectMetadata {
     label: 'Position',
     description: 'Favorite position',
     icon: 'IconList',
-    defaultValue: { value: 0 },
+    defaultValue: 0,
   })
   position: number;
 

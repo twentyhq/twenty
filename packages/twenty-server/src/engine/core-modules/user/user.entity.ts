@@ -1,4 +1,4 @@
-import { ID, Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import {
   Entity,
@@ -11,15 +11,16 @@ import {
 } from 'typeorm';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
-import { RefreshToken } from 'src/engine/core-modules/refresh-token/refresh-token.entity';
+import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @Entity({ name: 'user', schema: 'core' })
 @ObjectType('User')
 export class User {
-  @IDField(() => ID)
+  @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -56,15 +57,15 @@ export class User {
   canImpersonate: boolean;
 
   @Field()
-  @CreateDateColumn({ type: 'timestamp with time zone' })
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
   @Field()
-  @UpdateDateColumn({ type: 'timestamp with time zone' })
+  @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'timestamptz' })
   deletedAt: Date;
 
   @Field(() => Workspace, { nullable: false })
@@ -82,13 +83,13 @@ export class User {
   passwordResetToken: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Column({ nullable: true, type: 'timestamptz' })
   passwordResetTokenExpiresAt: Date;
 
-  @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user, {
+  @OneToMany(() => AppToken, (appToken) => appToken.user, {
     cascade: true,
   })
-  refreshTokens: RefreshToken[];
+  appTokens: AppToken[];
 
   @Field(() => WorkspaceMember, { nullable: true })
   workspaceMember: WorkspaceMember;

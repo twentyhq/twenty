@@ -5,6 +5,7 @@ type RecordTableRowContextProps = {
   recordId: string;
   rowIndex: number;
   isSelected: boolean;
+  isReadOnly: boolean;
 };
 
 export const RecordTableRowContext = createContext<RecordTableRowContextProps>(

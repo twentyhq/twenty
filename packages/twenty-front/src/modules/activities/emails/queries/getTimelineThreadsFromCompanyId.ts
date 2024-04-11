@@ -4,7 +4,7 @@ import { timelineThreadWithTotalFragment } from '@/activities/emails/queries/fra
 
 export const getTimelineThreadsFromCompanyId = gql`
   query GetTimelineThreadsFromCompanyId(
-    $companyId: ID!
+    $companyId: UUID!
     $page: Int!
     $pageSize: Int!
   ) {

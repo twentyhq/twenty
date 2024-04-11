@@ -34,13 +34,18 @@ import {
 } from 'src/engine/core-modules/auth/dto/token.entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { User } from 'src/engine/core-modules/user/user.entity';
-import { RefreshToken } from 'src/engine/core-modules/refresh-token/refresh-token.entity';
+import {
+  AppToken,
+  AppTokenType,
+} from 'src/engine/core-modules/app-token/app-token.entity';
 import { ValidatePasswordResetToken } from 'src/engine/core-modules/auth/dto/validate-password-reset-token.entity';
 import { EmailService } from 'src/engine/integrations/email/email.service';
 import { InvalidatePassword } from 'src/engine/core-modules/auth/dto/invalidate-password.entity';
 import { EmailPasswordResetLink } from 'src/engine/core-modules/auth/dto/email-password-reset-link.entity';
 import { JwtData } from 'src/engine/core-modules/auth/types/jwt-data.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { ExchangeAuthCodeInput } from 'src/engine/core-modules/auth/dto/exchange-auth-code.input';
+import { ExchangeAuthCode } from 'src/engine/core-modules/auth/dto/exchange-auth-code.entity';
 
 @Injectable()
 export class TokenService {
@@ -50,12 +55,12 @@ export class TokenService {
     private readonly environmentService: EnvironmentService,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    @InjectRepository(RefreshToken, 'core')
-    private readonly refreshTokenRepository: Repository<RefreshToken>,
+    @InjectRepository(AppToken, 'core')
+    private readonly appTokenRepository: Repository<AppToken>,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly emailService: EmailService,
-  ) {}
+  ) { }
 
   async generateAccessToken(
     userId: string,
@@ -100,15 +105,15 @@ export class TokenService {
     const refreshTokenPayload = {
       userId,
       expiresAt,
+      type: AppTokenType.RefreshToken,
     };
     const jwtPayload = {
       sub: userId,
     };
 
-    const refreshToken =
-      this.refreshTokenRepository.create(refreshTokenPayload);
+    const refreshToken = this.appTokenRepository.create(refreshTokenPayload);
 
-    await this.refreshTokenRepository.save(refreshToken);
+    await this.appTokenRepository.save(refreshToken);
 
     return {
       token: this.jwtService.sign(jwtPayload, {
@@ -281,6 +286,114 @@ export class TokenService {
     };
   }
 
+  async verifyAuthorizationCode(
+    exchangeAuthCodeInput: ExchangeAuthCodeInput,
+  ): Promise<ExchangeAuthCode> {
+    const { authorizationCode, codeVerifier, clientSecret } =
+      exchangeAuthCodeInput;
+
+    assert(
+      authorizationCode,
+      'Authorization code not found',
+      NotFoundException,
+    );
+
+    assert(
+      !codeVerifier || !clientSecret,
+      'client secret or code verifier not found',
+      NotFoundException,
+    );
+
+    let userId = '';
+
+    if (clientSecret) {
+      // TODO: replace this with call to third party apps table
+      // assert(client.secret, 'client secret code does not exist', ForbiddenException);
+      throw new ForbiddenException();
+    }
+
+    if (codeVerifier) {
+      const authorizationCodeAppToken = await this.appTokenRepository.findOne({
+        where: {
+          value: authorizationCode,
+        },
+      });
+
+      assert(
+        authorizationCodeAppToken,
+        'Authorization code does not exist',
+        ForbiddenException,
+      );
+
+      assert(
+        authorizationCodeAppToken.expiresAt.getTime() >= Date.now(),
+        'Authorization code expired.',
+        NotFoundException,
+      );
+
+      const codeChallenge = crypto
+        .createHash('sha256')
+        .update(codeVerifier)
+        .digest()
+        .toString('base64')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=/g, '');
+
+      const codeChallengeAppToken = await this.appTokenRepository.findOne({
+        where: {
+          value: codeChallenge,
+        },
+      });
+
+      assert(
+        codeChallengeAppToken,
+        'code verifier doesnt match the challenge',
+        ForbiddenException,
+      );
+
+      assert(
+        codeChallengeAppToken.expiresAt.getTime() >= Date.now(),
+        'code challenge expired.',
+        NotFoundException,
+      );
+
+      assert(
+        codeChallengeAppToken.userId === authorizationCodeAppToken.userId,
+        'authorization code / code verifier was not created by same client',
+        ForbiddenException,
+      );
+
+      userId = codeChallengeAppToken.userId;
+    }
+
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['defaultWorkspace'],
+    });
+
+    if (!user) {
+      throw new NotFoundException('User who generated the token does not exist');
+    }
+
+    if (!user.defaultWorkspace) {
+      throw new NotFoundException('User does not have a default workspace');
+    }
+
+    const accessToken = await this.generateAccessToken(
+      user.id,
+      user.defaultWorkspaceId,
+    );
+    const refreshToken = await this.generateRefreshToken(user.id);
+    const loginToken = await this.generateLoginToken(user.email);
+
+    return {
+      accessToken,
+      refreshToken,
+      loginToken,
+    };
+  }
+
   async verifyRefreshToken(refreshToken: string) {
     const secret = this.environmentService.get('REFRESH_TOKEN_SECRET');
     const coolDown = this.environmentService.get('REFRESH_TOKEN_COOL_DOWN');
@@ -292,7 +405,7 @@ export class TokenService {
       UnprocessableEntityException,
     );
 
-    const token = await this.refreshTokenRepository.findOneBy({
+    const token = await this.appTokenRepository.findOneBy({
       id: jwtPayload.jti,
     });
 
@@ -311,15 +424,16 @@ export class TokenService {
     ) {
       // Revoke all user refresh tokens
       await Promise.all(
-        user.refreshTokens.map(
-          async ({ id }) =>
-            await this.refreshTokenRepository.update(
+        user.appTokens.map(async ({ id, type }) => {
+          if (type === AppTokenType.RefreshToken) {
+            await this.appTokenRepository.update(
               { id },
               {
                 revokedAt: new Date(),
               },
-            ),
-        ),
+            );
+          }
+        }),
       );
 
       throw new ForbiddenException(
@@ -340,7 +454,7 @@ export class TokenService {
     } = await this.verifyRefreshToken(token);
 
     // Revoke old refresh token
-    await this.refreshTokenRepository.update(
+    await this.appTokenRepository.update(
       {
         id,
       },

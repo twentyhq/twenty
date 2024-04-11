@@ -4,11 +4,11 @@ import { DataSource } from 'typeorm';
 
 const tableName = 'user';
 
-export enum DemoSeedUserIds {
-  Noah = '20202020-9e3b-46d4-a556-88b9ddc2b035',
-  Hugo = '20202020-3957-4908-9c36-2929a23f8358',
-  Julia = '20202020-7169-42cf-bc47-1cfef15264b9',
-}
+export const DEMO_SEED_USER_IDS = {
+  NOAH: '20202020-9e3b-46d4-a556-88b9ddc2b035',
+  HUGO: '20202020-3957-4908-9c36-2929a23f8358',
+  JULIA: '20202020-7169-42cf-bc47-1cfef15264b9',
+};
 
 export const seedUsers = async (
   workspaceDataSource: DataSource,
@@ -29,7 +29,7 @@ export const seedUsers = async (
     .orIgnore()
     .values([
       {
-        id: DemoSeedUserIds.Noah,
+        id: DEMO_SEED_USER_IDS.NOAH,
         firstName: 'Noah',
         lastName: 'A',
         email: 'noah@demo.dev',
@@ -38,7 +38,7 @@ export const seedUsers = async (
         defaultWorkspaceId: workspaceId,
       },
       {
-        id: DemoSeedUserIds.Hugo,
+        id: DEMO_SEED_USER_IDS.HUGO,
         firstName: 'Hugo',
         lastName: 'I',
         email: 'hugo@demo.dev',
@@ -48,7 +48,7 @@ export const seedUsers = async (
       },
       ,
       {
-        id: DemoSeedUserIds.Julia,
+        id: DEMO_SEED_USER_IDS.JULIA,
         firstName: 'Julia',
         lastName: 'S',
         email: 'julia.s@demo.dev',

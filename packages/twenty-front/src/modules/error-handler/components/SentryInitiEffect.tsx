@@ -22,6 +22,8 @@ export const SentryInitEffect = () => {
   useEffect(() => {
     if (isNonEmptyString(sentryConfig?.dsn) && !isSentryInitialized) {
       Sentry.init({
+        environment: sentryConfig?.environment ?? undefined,
+        release: sentryConfig?.release ?? undefined,
         dsn: sentryConfig?.dsn,
         integrations: [
           new Sentry.BrowserTracing({

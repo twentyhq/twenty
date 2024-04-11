@@ -14,6 +14,7 @@ export const ViewPickerCreateOrEditContentEffect = () => {
     viewPickerIsPersistingState,
     viewPickerKanbanFieldMetadataIdState,
     viewPickerTypeState,
+    viewPickerIsDirtyState,
   } = useViewPickerStates();
 
   const setViewPickerSelectedIcon = useSetRecoilState(
@@ -30,6 +31,8 @@ export const ViewPickerCreateOrEditContentEffect = () => {
     viewPickerReferenceViewIdState,
   );
 
+  const viewPickerIsDirty = useRecoilValue(viewPickerIsDirtyState);
+
   const viewPickerIsPersisting = useRecoilValue(viewPickerIsPersistingState);
 
   const { viewsOnCurrentObject } = useGetCurrentView();
@@ -40,7 +43,11 @@ export const ViewPickerCreateOrEditContentEffect = () => {
   const { availableFieldsForKanban } = useGetAvailableFieldsForKanban();
 
   useEffect(() => {
-    if (isDefined(referenceView) && !viewPickerIsPersisting) {
+    if (
+      isDefined(referenceView) &&
+      !viewPickerIsPersisting &&
+      !viewPickerIsDirty
+    ) {
       setViewPickerSelectedIcon(referenceView.icon);
       setViewPickerInputName(referenceView.name);
       setViewPickerKanbanFieldMetadataId(referenceView.kanbanFieldMetadataId);
@@ -53,6 +60,7 @@ export const ViewPickerCreateOrEditContentEffect = () => {
     setViewPickerSelectedIcon,
     setViewPickerType,
     viewPickerIsPersisting,
+    viewPickerIsDirty,
   ]);
 
   useEffect(() => {

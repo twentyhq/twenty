@@ -1,17 +1,11 @@
-import { ConfigService } from '@nestjs/config';
-
 import console from 'console';
 
 import { DataSource } from 'typeorm';
 
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-
-const environmentService = new EnvironmentService(new ConfigService());
-
 export const connectionSource = new DataSource({
   type: 'postgres',
   logging: false,
-  url: environmentService.get('PG_DATABASE_URL'),
+  url: process.env.PG_DATABASE_URL,
 });
 
 export const camelToSnakeCase = (str) =>

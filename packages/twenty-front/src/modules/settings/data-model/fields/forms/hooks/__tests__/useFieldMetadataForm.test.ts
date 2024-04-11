@@ -23,7 +23,11 @@ describe('useFieldMetadataForm', () => {
         objectMetadataId: '',
         field: { label: '' },
       },
+      defaultValue: null,
       select: [
+        { color: 'green', label: 'Option 1', value: expect.any(String) },
+      ],
+      multiSelect: [
         { color: 'green', label: 'Option 1', value: expect.any(String) },
       ],
     });

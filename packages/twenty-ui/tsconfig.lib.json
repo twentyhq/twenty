@@ -1,18 +1,15 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc",
-    "declaration": true,
-    "types": ["node", "vite/client"]
+    "outDir": "../../dist/out-tsc"
   },
-  "include": ["src/**/*.ts"],
   "exclude": [
-    "jest.config.ts",
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.spec.tsx",
     "**/*.stories.ts",
-    "**/*.stories.js",
-    "**/*.stories.jsx",
-    "**/*.stories.tsx"
-  ]
+    "**/*.stories.tsx",
+    "**/*.test.ts",
+    "**/*.test.tsx"
+  ],
+  "include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.tsx"]
 }

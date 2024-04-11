@@ -2,7 +2,7 @@ import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordTableBody } from '@/object-record/record-table/components/RecordTableBody';
 import { RecordTableBodyEffect } from '@/object-record/record-table/components/RecordTableBodyEffect';
 import { RecordTableHeader } from '@/object-record/record-table/components/RecordTableHeader';
@@ -81,7 +81,7 @@ const StyledTable = styled.table<{
     z-index: 6;
   }
 
-  thead th:nth-child(n + 3) {
+  thead th:nth-of-type(n + 3) {
     top: 0;
     z-index: 5;
     position: sticky;
@@ -141,7 +141,7 @@ export const RecordTable = ({
   const scrollLeft = useRecoilValue(scrollLeftState);
   const scrollTop = useRecoilValue(scrollTopState);
 
-  const { objectMetadataItem } = useObjectMetadataItemOnly({
+  const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 

@@ -6,7 +6,10 @@ import { Request } from 'express';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
-export type GoogleRequest = Request & {
+export type GoogleRequest = Omit<
+  Request,
+  'user' | 'workspace' | 'cacheVersion'
+> & {
   user: {
     firstName?: string | null;
     lastName?: string | null;

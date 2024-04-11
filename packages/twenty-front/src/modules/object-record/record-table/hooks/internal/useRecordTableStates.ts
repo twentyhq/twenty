@@ -1,3 +1,4 @@
+import { hasUserSelectedAllRowsComponentState } from '@/object-record/record-table/record-table-row/states/hasUserSelectedAllRowsFamilyState';
 import { isRowSelectedComponentFamilyState } from '@/object-record/record-table/record-table-row/states/isRowSelectedComponentFamilyState';
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
 import { availableTableColumnsComponentState } from '@/object-record/record-table/states/availableTableColumnsComponentState';
@@ -9,6 +10,9 @@ import { isTableCellInEditModeComponentFamilyState } from '@/object-record/recor
 import { numberOfTableRowsComponentState } from '@/object-record/record-table/states/numberOfTableRowsComponentState';
 import { onColumnsChangeComponentState } from '@/object-record/record-table/states/onColumnsChangeComponentState';
 import { onEntityCountChangeComponentState } from '@/object-record/record-table/states/onEntityCountChangeComponentState';
+import { onToggleColumnFilterComponentState } from '@/object-record/record-table/states/onToggleColumnFilterComponentState';
+import { onToggleColumnSortComponentState } from '@/object-record/record-table/states/onToggleColumnSortComponentState';
+import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
 import { resizeFieldOffsetComponentState } from '@/object-record/record-table/states/resizeFieldOffsetComponentState';
 import { allRowsSelectedStatusComponentSelector } from '@/object-record/record-table/states/selectors/allRowsSelectedStatusComponentSelector';
 import { hiddenTableColumnsComponentSelector } from '@/object-record/record-table/states/selectors/hiddenTableColumnsComponentSelector';
@@ -48,7 +52,14 @@ export const useRecordTableStates = (recordTableId?: string) => {
       tableColumnsComponentState,
       scopeId,
     ),
-
+    onToggleColumnFilterState: extractComponentState(
+      onToggleColumnFilterComponentState,
+      scopeId,
+    ),
+    onToggleColumnSortState: extractComponentState(
+      onToggleColumnSortComponentState,
+      scopeId,
+    ),
     onColumnsChangeState: extractComponentState(
       onColumnsChangeComponentState,
       scopeId,
@@ -98,6 +109,10 @@ export const useRecordTableStates = (recordTableId?: string) => {
       isRowSelectedComponentFamilyState,
       scopeId,
     ),
+    hasUserSelectedAllRowState: extractComponentState(
+      hasUserSelectedAllRowsComponentState,
+      scopeId,
+    ),
     allRowsSelectedStatusSelector: extractComponentReadOnlySelector(
       allRowsSelectedStatusComponentSelector,
       scopeId,
@@ -116,6 +131,10 @@ export const useRecordTableStates = (recordTableId?: string) => {
     ),
     visibleTableColumnsSelector: extractComponentReadOnlySelector(
       visibleTableColumnsComponentSelector,
+      scopeId,
+    ),
+    pendingRecordIdState: extractComponentState(
+      recordTablePendingRecordIdComponentState,
       scopeId,
     ),
   };

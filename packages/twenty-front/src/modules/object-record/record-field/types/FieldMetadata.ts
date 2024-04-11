@@ -26,6 +26,12 @@ export type FieldDateTimeMetadata = {
   fieldName: string;
 };
 
+export type FieldDateMetadata = {
+  objectMetadataNameSingular?: string;
+  placeHolder: string;
+  fieldName: string;
+};
+
 export type FieldNumberMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
@@ -69,9 +75,16 @@ export type FieldRatingMetadata = {
   fieldName: string;
 };
 
+export type FieldAddressMetadata = {
+  objectMetadataNameSingular?: string;
+  placeHolder: string;
+  fieldName: string;
+};
+
 export type FieldRawJsonMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
+  placeHolder: string;
 };
 
 export type FieldDefinitionRelationType =
@@ -96,10 +109,17 @@ export type FieldSelectMetadata = {
   options: { label: string; color: ThemeColor; value: string }[];
 };
 
+export type FieldMultiSelectMetadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
+  options: { label: string; color: ThemeColor; value: string }[];
+};
+
 export type FieldMetadata =
   | FieldBooleanMetadata
   | FieldCurrencyMetadata
   | FieldDateTimeMetadata
+  | FieldDateMetadata
   | FieldEmailMetadata
   | FieldFullNameMetadata
   | FieldLinkMetadata
@@ -108,12 +128,15 @@ export type FieldMetadata =
   | FieldRatingMetadata
   | FieldRelationMetadata
   | FieldSelectMetadata
+  | FieldMultiSelectMetadata
   | FieldTextMetadata
-  | FieldUuidMetadata;
+  | FieldUuidMetadata
+  | FieldAddressMetadata;
 
 export type FieldTextValue = string;
 export type FieldUUidValue = string;
 export type FieldDateTimeValue = string | null;
+export type FieldDateValue = string | null;
 export type FieldNumberValue = number | null;
 export type FieldBooleanValue = boolean;
 
@@ -125,7 +148,19 @@ export type FieldCurrencyValue = {
   amountMicros: number | null;
 };
 export type FieldFullNameValue = { firstName: string; lastName: string };
+export type FieldAddressValue = {
+  addressStreet1: string;
+  addressStreet2: string | null;
+  addressCity: string | null;
+  addressState: string | null;
+  addressPostcode: string | null;
+  addressCountry: string | null;
+  addressLat: number | null;
+  addressLng: number | null;
+};
 export type FieldRatingValue = (typeof RATING_VALUES)[number];
 export type FieldSelectValue = string | null;
+export type FieldMultiSelectValue = string[] | null;
 
 export type FieldRelationValue = EntityForSelect | null;
+export type FieldJsonValue = string;

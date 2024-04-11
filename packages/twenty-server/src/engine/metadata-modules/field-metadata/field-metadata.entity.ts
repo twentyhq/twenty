@@ -11,7 +11,6 @@ import {
 } from 'typeorm';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
-import { FieldMetadataTargetColumnMap } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-target-column-map.interface';
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
@@ -24,6 +23,7 @@ export enum FieldMetadataType {
   PHONE = 'PHONE',
   EMAIL = 'EMAIL',
   DATE_TIME = 'DATE_TIME',
+  DATE = 'DATE',
   BOOLEAN = 'BOOLEAN',
   NUMBER = 'NUMBER',
   NUMERIC = 'NUMERIC',
@@ -36,6 +36,7 @@ export enum FieldMetadataType {
   MULTI_SELECT = 'MULTI_SELECT',
   RELATION = 'RELATION',
   POSITION = 'POSITION',
+  ADDRESS = 'ADDRESS',
   RAW_JSON = 'RAW_JSON',
 }
 
@@ -72,9 +73,6 @@ export class FieldMetadataEntity<
 
   @Column({ nullable: false })
   label: string;
-
-  @Column({ nullable: false, type: 'jsonb' })
-  targetColumnMap: FieldMetadataTargetColumnMap<T>;
 
   @Column({ nullable: true, type: 'jsonb' })
   defaultValue: FieldMetadataDefaultValue<T>;
@@ -115,9 +113,9 @@ export class FieldMetadataEntity<
   )
   toRelationMetadata: RelationMetadataEntity;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 }

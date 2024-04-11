@@ -52,6 +52,8 @@ const AvatarItem = styled.div`
     transition:
       opacity 0.3s ease,
       visibility 0.3s;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
   }
 
   &:hover .username {

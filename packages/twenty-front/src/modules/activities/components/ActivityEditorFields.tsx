@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { Activity } from '@/activities/types/Activity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
 import {
   RecordUpdateHook,
@@ -26,9 +27,13 @@ export const ActivityEditorFields = ({
 }) => {
   const { upsertActivity } = useUpsertActivity();
 
-  const [activityFromStore] = useRecoilState(
-    recordStoreFamilyState(activityId),
-  );
+  const getRecordFromCache = useGetRecordFromCache({
+    objectNameSingular: CoreObjectNameSingular.Activity,
+  });
+
+  const activityFromCache = getRecordFromCache<Activity>(activityId);
+
+  const activityFromStore = useRecoilValue(recordStoreFamilyState(activityId));
 
   const activity = activityFromStore as Activity;
 
@@ -88,9 +93,9 @@ export const ActivityEditorFields = ({
             </AssigneeFieldContextProvider>
           </>
         )}
-      {ActivityTargetsContextProvider && (
+      {ActivityTargetsContextProvider && isDefined(activityFromCache) && (
         <ActivityTargetsContextProvider>
-          <ActivityTargetsInlineCell activity={activity} />
+          <ActivityTargetsInlineCell activity={activityFromCache} />
         </ActivityTargetsContextProvider>
       )}
     </StyledPropertyBox>

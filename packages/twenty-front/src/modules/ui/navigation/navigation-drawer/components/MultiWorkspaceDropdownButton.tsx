@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import { IconChevronDown } from 'twenty-ui';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { Workspaces } from '@/auth/states/workspaces';
-import { IconChevronDown } from '@/ui/display/icon';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -103,7 +103,7 @@ export const MultiWorkspaceDropdownButton = ({
           {workspaces.map((workspace) => (
             <MenuItemSelectAvatar
               key={workspace.id}
-              text={workspace.displayName!}
+              text={workspace.displayName ?? ''}
               avatar={
                 <StyledLogo
                   logo={

@@ -36,6 +36,7 @@ export enum FieldMetadataType {
   PHONE = 'PHONE',
   EMAIL = 'EMAIL',
   DATE_TIME = 'DATE_TIME',
+  DATE = 'DATE',
   BOOLEAN = 'BOOLEAN',
   NUMBER = 'NUMBER',
   NUMERIC = 'NUMERIC',
@@ -47,6 +48,7 @@ export enum FieldMetadataType {
   SELECT = 'SELECT',
   MULTI_SELECT = 'MULTI_SELECT',
   RELATION = 'RELATION',
+  ADDRESS = 'ADDRESS',
 }
 
 export type Schema = {

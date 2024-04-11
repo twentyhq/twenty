@@ -15,6 +15,7 @@ export const useViewPickerPersistView = () => {
     viewPickerReferenceViewIdState,
     viewPickerKanbanFieldMetadataIdState,
     viewPickerTypeState,
+    viewPickerIsDirtyState,
   } = useViewPickerStates();
 
   const { createView, selectView, removeView, updateView } = useHandleViews();
@@ -35,6 +36,7 @@ export const useViewPickerPersistView = () => {
         );
         const id = v4();
         set(viewPickerIsPersistingState, true);
+        set(viewPickerIsDirtyState, false);
         await createView({
           id,
           name,
@@ -50,6 +52,7 @@ export const useViewPickerPersistView = () => {
       createView,
       selectView,
       viewPickerInputNameState,
+      viewPickerIsDirtyState,
       viewPickerIsPersistingState,
       viewPickerKanbanFieldMetadataIdState,
       viewPickerSelectedIconState,
@@ -61,6 +64,8 @@ export const useViewPickerPersistView = () => {
     ({ set, snapshot }) =>
       async () => {
         set(viewPickerIsPersistingState, true);
+        closeAndResetViewPicker();
+        set(viewPickerIsDirtyState, false);
         const viewPickerReferenceViewId = getSnapshotValue(
           snapshot,
           viewPickerReferenceViewIdState,
@@ -72,12 +77,12 @@ export const useViewPickerPersistView = () => {
           )[0].id,
         );
         await removeView(viewPickerReferenceViewId);
-        closeAndResetViewPicker();
       },
     [
       closeAndResetViewPicker,
       removeView,
       selectView,
+      viewPickerIsDirtyState,
       viewPickerIsPersistingState,
       viewPickerReferenceViewIdState,
       viewsOnCurrentObject,
@@ -88,6 +93,8 @@ export const useViewPickerPersistView = () => {
     ({ set, snapshot }) =>
       async () => {
         set(viewPickerIsPersistingState, true);
+        set(viewPickerIsDirtyState, false);
+        closeAndResetViewPicker();
 
         const viewPickerReferenceViewId = getSnapshotValue(
           snapshot,
@@ -108,16 +115,16 @@ export const useViewPickerPersistView = () => {
           icon: viewPickerSelectedIcon,
         });
         selectView(viewPickerReferenceViewId);
-        closeAndResetViewPicker();
       },
     [
       viewPickerIsPersistingState,
+      viewPickerIsDirtyState,
+      closeAndResetViewPicker,
       viewPickerReferenceViewIdState,
       viewPickerInputNameState,
       viewPickerSelectedIconState,
       updateView,
       selectView,
-      closeAndResetViewPicker,
     ],
   );
 

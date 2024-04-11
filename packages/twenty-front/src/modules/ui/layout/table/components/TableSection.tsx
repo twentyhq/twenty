@@ -1,8 +1,7 @@
 import { ReactNode, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-
-import { IconChevronDown, IconChevronUp } from '@/ui/display/icon';
+import { IconChevronDown, IconChevronUp } from 'twenty-ui';
 
 import { TableBody } from './TableBody';
 

@@ -3,9 +3,12 @@ export type FilterType =
   | 'PHONE'
   | 'EMAIL'
   | 'DATE_TIME'
+  | 'DATE'
   | 'NUMBER'
   | 'CURRENCY'
   | 'FULL_NAME'
   | 'LINK'
   | 'RELATION'
-  | 'SELECT';
+  | 'ADDRESS'
+  | 'SELECT'
+  | 'MULTI_SELECT';

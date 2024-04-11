@@ -64,6 +64,8 @@ export const useCurrencyField = () => {
 
   const draftValue = useRecoilValue(getDraftValueSelector());
 
+  const defaultValue = fieldDefinition.defaultValue;
+
   return {
     fieldDefinition,
     fieldValue,
@@ -72,5 +74,6 @@ export const useCurrencyField = () => {
     setFieldValue,
     hotkeyScope,
     persistCurrencyField,
+    defaultValue,
   };
 };

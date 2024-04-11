@@ -1,5 +1,8 @@
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import {
+  RelationMetadataType,
+  RelationOnDeleteAction,
+} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { viewStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
@@ -43,7 +46,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.TEXT,
     label: 'Type',
     description: 'View type',
-    defaultValue: { value: 'table' },
+    defaultValue: "'table'",
   })
   type: string;
 
@@ -53,7 +56,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     label: 'Key',
     description: 'View key',
     options: [{ value: 'INDEX', label: 'Index', position: 0, color: 'red' }],
-    defaultValue: { value: 'INDEX' },
+    defaultValue: "'INDEX'",
   })
   @IsNullable()
   key: string;
@@ -88,7 +91,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.BOOLEAN,
     label: 'Compact View',
     description: 'Describes if the view is in compact mode',
-    defaultValue: { value: false },
+    defaultValue: false,
   })
   isCompact: boolean;
 
@@ -102,6 +105,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => ViewFieldObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
   viewFields: ViewFieldObjectMetadata[];
@@ -116,6 +120,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => ViewFilterObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
   viewFilters: ViewFilterObjectMetadata[];
@@ -130,6 +135,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => ViewSortObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
   viewSorts: ViewSortObjectMetadata[];

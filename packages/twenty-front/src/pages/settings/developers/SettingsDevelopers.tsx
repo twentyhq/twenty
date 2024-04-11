@@ -1,12 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { IconPlus, IconSettings } from 'twenty-ui';
 
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { SettingsReadDocumentationButton } from '@/settings/developers/components/SettingsReadDocumentationButton';
 import { SettingsWebhooksTable } from '@/settings/developers/components/SettingsWebhooksTable';
-import { IconPlus, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';

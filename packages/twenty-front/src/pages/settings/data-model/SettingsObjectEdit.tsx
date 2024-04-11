@@ -3,9 +3,10 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import pick from 'lodash.pick';
+import { IconArchive, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
-import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -21,7 +22,6 @@ import { settingsUpdateObjectInputSchema } from '@/settings/data-model/validatio
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { IconArchive, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
@@ -44,7 +44,7 @@ export const SettingsObjectEdit = () => {
 
   const { objectSlug = '' } = useParams();
   const { findActiveObjectMetadataItemBySlug } =
-    useObjectMetadataItemForSettings();
+    useFilteredObjectMetadataItems();
   const { updateOneObjectMetadataItem } = useUpdateOneObjectMetadataItem();
 
   const activeObjectMetadataItem =

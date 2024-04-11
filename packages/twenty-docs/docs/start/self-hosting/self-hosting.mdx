@@ -59,6 +59,8 @@ import TabItem from '@theme/TabItem';
     ['REFRESH_TOKEN_SECRET', '<random>', 'Secret used for the refresh tokens'],
     ['REFRESH_TOKEN_EXPIRES_IN', '90d', 'Refresh token expiration time'],
     ['REFRESH_TOKEN_COOL_DOWN', '1m', 'Refresh token cooldown'],
+    ['FILE_TOKEN_SECRET', '<random>', 'Secret used for the file tokens'],
+    ['FILE_TOKEN_EXPIRES_IN', '1d', 'File token expiration time'],
     ['API_TOKEN_EXPIRES_IN', '1000y', 'Api token expiration time'],
     ]}></OptionTable>
 
@@ -67,8 +69,7 @@ import TabItem from '@theme/TabItem';
 <OptionTable options={[
     ['MESSAGING_PROVIDER_GMAIL_ENABLED', 'false', 'Enable Gmail API connection'],
     ['CALENDAR_PROVIDER_GMAIL_ENABLED', 'false', 'Enable Google Calendar API connection'],
-    ['MESSAGING_PROVIDER_GMAIL_CALLBACK_URL', '', 'Gmail auth callback'],
-    ['AUTH_GOOGLE_APIS_CALLBACK_URL', '', 'Google API auth callback'],
+    ['AUTH_GOOGLE_APIS_CALLBACK_URL', '', 'Google APIs auth callback'],
     ['AUTH_GOOGLE_ENABLED', 'false', 'Enable Goole SSO login'],
     ['AUTH_GOOGLE_CLIENT_ID', '', 'Google client ID'],
     ['AUTH_GOOGLE_CLIENT_SECRET', '', 'Google client secret'],

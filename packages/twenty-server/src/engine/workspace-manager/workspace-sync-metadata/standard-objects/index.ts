@@ -5,7 +5,7 @@ import { AttachmentObjectMetadata } from 'src/modules/attachment/standard-object
 import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
 import { CalendarEventObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event.object-metadata';
 import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
-import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-attendee.object-metadata';
+import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
 import { CommentObjectMetadata } from 'src/modules/activity/standard-objects/comment.object-metadata';
 import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
@@ -53,5 +53,5 @@ export const standardObjectMetadataDefinitions = [
   CalendarEventObjectMetadata,
   CalendarChannelObjectMetadata,
   CalendarChannelEventAssociationObjectMetadata,
-  CalendarEventAttendeeObjectMetadata,
+  CalendarEventParticipantObjectMetadata,
 ];

@@ -56,6 +56,9 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   isCustom: boolean;
 
   @Column({ default: false })
+  isRemote: boolean;
+
+  @Column({ default: false })
   isActive: boolean;
 
   @Column({ default: false })
@@ -98,9 +101,9 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   })
   dataSource: DataSourceEntity;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 }

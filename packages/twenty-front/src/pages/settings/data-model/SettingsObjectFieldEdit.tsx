@@ -2,10 +2,11 @@ import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
+import { IconArchive, IconSettings } from 'twenty-ui';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
-import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
@@ -19,7 +20,6 @@ import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/f
 import { useFieldMetadataForm } from '@/settings/data-model/fields/forms/hooks/useFieldMetadataForm';
 import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
 import { AppPath } from '@/types/AppPath';
-import { IconArchive, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
@@ -42,7 +42,8 @@ const canPersistFieldMetadataItemUpdate = (
 ) => {
   return (
     fieldMetadataItem.isCustom ||
-    fieldMetadataItem.type === FieldMetadataType.Select
+    fieldMetadataItem.type === FieldMetadataType.Select ||
+    fieldMetadataItem.type === FieldMetadataType.MultiSelect
   );
 };
 
@@ -52,7 +53,7 @@ export const SettingsObjectFieldEdit = () => {
 
   const { objectSlug = '', fieldSlug = '' } = useParams();
   const { findActiveObjectMetadataItemBySlug } =
-    useObjectMetadataItemForSettings();
+    useFilteredObjectMetadataItems();
 
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
@@ -83,9 +84,11 @@ export const SettingsObjectFieldEdit = () => {
     formValues,
     handleFormChange,
     hasFieldFormChanged,
+    hasDefaultValueChanged,
     hasFormChanged,
     hasRelationFormChanged,
     hasSelectFormChanged,
+    hasMultiSelectFormChanged,
     initForm,
     isInitialized,
     isValid,
@@ -107,9 +110,17 @@ export const SettingsObjectFieldEdit = () => {
 
     const selectOptions = activeMetadataField.options?.map((option) => ({
       ...option,
-      isDefault: defaultValue?.value === option.value,
+      isDefault: defaultValue === `'${option.value}'`,
     }));
     selectOptions?.sort(
+      (optionA, optionB) => optionA.position - optionB.position,
+    );
+
+    const multiSelectOptions = activeMetadataField.options?.map((option) => ({
+      ...option,
+      isDefault: defaultValue?.includes(`'${option.value}'`) || false,
+    }));
+    multiSelectOptions?.sort(
       (optionA, optionB) => optionA.position - optionB.position,
     );
 
@@ -132,7 +143,11 @@ export const SettingsObjectFieldEdit = () => {
         objectMetadataId: relationObjectMetadataItem?.id || '',
         type: relationType || RelationMetadataType.OneToMany,
       },
+      defaultValue: activeMetadataField.defaultValue,
       ...(selectOptions?.length ? { select: selectOptions } : {}),
+      ...(multiSelectOptions?.length
+        ? { multiSelect: multiSelectOptions }
+        : {}),
     });
   }, [
     activeMetadataField,
@@ -168,19 +183,28 @@ export const SettingsObjectFieldEdit = () => {
           icon: validatedFormValues.relation.field.icon,
           id: relationFieldMetadataItem?.id,
           label: validatedFormValues.relation.field.label,
+          type: validatedFormValues.type,
         });
       }
-
-      if (hasFieldFormChanged || hasSelectFormChanged) {
+      if (
+        hasFieldFormChanged ||
+        hasSelectFormChanged ||
+        hasMultiSelectFormChanged ||
+        hasDefaultValueChanged
+      ) {
         await editMetadataField({
           description: validatedFormValues.description,
           icon: validatedFormValues.icon,
           id: activeMetadataField.id,
           label: validatedFormValues.label,
+          defaultValue: validatedFormValues.defaultValue,
+          type: validatedFormValues.type,
           options:
             validatedFormValues.type === FieldMetadataType.Select
               ? validatedFormValues.select
-              : undefined,
+              : validatedFormValues.type === FieldMetadataType.MultiSelect
+                ? validatedFormValues.multiSelect
+                : undefined,
         });
       }
 
@@ -255,6 +279,8 @@ export const SettingsObjectFieldEdit = () => {
               currency: formValues.currency,
               relation: formValues.relation,
               select: formValues.select,
+              multiSelect: formValues.multiSelect,
+              defaultValue: formValues.defaultValue,
             }}
           />
         </Section>

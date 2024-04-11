@@ -16,7 +16,7 @@ import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-me
 import { ActivityTargetObjectMetadata } from 'src/modules/activity/standard-objects/activity-target.object-metadata';
 import { AttachmentObjectMetadata } from 'src/modules/attachment/standard-objects/attachment.object-metadata';
 import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
-import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-attendee.object-metadata';
+import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
 import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
@@ -142,6 +142,7 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => OpportunityObjectMetadata,
     inverseSideFieldKey: 'pointOfContact',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   pointOfContactForOpportunities: OpportunityObjectMetadata[];
 
@@ -199,26 +200,28 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => MessageParticipantObjectMetadata,
     inverseSideFieldKey: 'person',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsSystem()
   messageParticipants: MessageParticipantObjectMetadata[];
 
   @FieldMetadata({
-    standardId: personStandardFieldIds.calendarEventAttendees,
+    standardId: personStandardFieldIds.calendarEventParticipants,
     type: FieldMetadataType.RELATION,
-    label: 'Calendar Event Attendees',
-    description: 'Calendar Event Attendees',
+    label: 'Calendar Event Participants',
+    description: 'Calendar Event Participants',
     icon: 'IconCalendar',
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => CalendarEventAttendeeObjectMetadata,
+    inverseSideTarget: () => CalendarEventParticipantObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @Gate({
     featureFlag: 'IS_CALENDAR_ENABLED',
   })
   @IsSystem()
-  calendarEventAttendees: CalendarEventAttendeeObjectMetadata[];
+  calendarEventParticipants: CalendarEventParticipantObjectMetadata[];
 
   @FieldMetadata({
     standardId: personStandardFieldIds.events,

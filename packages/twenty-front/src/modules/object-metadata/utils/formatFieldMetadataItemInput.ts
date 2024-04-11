@@ -1,7 +1,8 @@
 import toCamelCase from 'lodash.camelcase';
 import toSnakeCase from 'lodash.snakecase';
 
-import { Field } from '~/generated-metadata/graphql';
+import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined.ts';
 
 import { FieldMetadataOption } from '../types/FieldMetadataOption';
 
@@ -20,21 +21,51 @@ export const getOptionValueFromLabel = (label: string) => {
 };
 
 export const formatFieldMetadataItemInput = (
-  input: Pick<Field, 'label' | 'icon' | 'description' | 'defaultValue'> & {
-    options?: FieldMetadataOption[];
-  },
+  input: Pick<
+    Field,
+    'label' | 'icon' | 'description' | 'defaultValue' | 'type' | 'options'
+  >,
 ) => {
-  const defaultOption = input.options?.find((option) => option.isDefault);
+  const options = input.options as FieldMetadataOption[];
+  let defaultValue = input.defaultValue;
+  if (input.type === FieldMetadataType.MultiSelect) {
+    const defaultOptions = options?.filter((option) => option.isDefault);
+    if (isDefined(defaultOptions)) {
+      defaultValue = defaultOptions.map(
+        (defaultOption) => `'${getOptionValueFromLabel(defaultOption.label)}'`,
+      );
+    }
+  }
+  if (input.type === FieldMetadataType.Select) {
+    const defaultOption = options?.find((option) => option.isDefault);
+    defaultValue = isDefined(defaultOption)
+      ? `'${getOptionValueFromLabel(defaultOption.label)}'`
+      : undefined;
+  }
+
+  // Check if options has unique values
+  if (options !== undefined) {
+    // Compute the values based on the label
+    const values = options.map((option) =>
+      getOptionValueFromLabel(option.label),
+    );
+
+    if (new Set(values).size !== options.length) {
+      throw new Error(
+        `Options must have unique values, but contains the following duplicates ${values.join(
+          ', ',
+        )}`,
+      );
+    }
+  }
 
   return {
-    defaultValue: defaultOption
-      ? getOptionValueFromLabel(defaultOption.label)
-      : undefined,
+    defaultValue,
     description: input.description?.trim() ?? null,
     icon: input.icon,
     label: input.label.trim(),
     name: toCamelCase(input.label.trim()),
-    options: input.options?.map((option, index) => ({
+    options: options?.map((option, index) => ({
       color: option.color,
       id: option.id,
       label: option.label.trim(),

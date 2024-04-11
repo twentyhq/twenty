@@ -1,6 +1,5 @@
 import { useRecoilCallback } from 'recoil';
 
-import { useDeleteActivityFromCache } from '@/activities/hooks/useDeleteActivityFromCache';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { activityBodyFamilyState } from '@/activities/states/activityBodyFamilyState';
 import { activityTitleFamilyState } from '@/activities/states/activityTitleFamilyState';
@@ -8,6 +7,8 @@ import { canCreateActivityState } from '@/activities/states/canCreateActivitySta
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
 import { Activity } from '@/activities/types/Activity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useDeleteRecordFromCache } from '@/object-record/cache/hooks/useDeleteRecordFromCache';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
@@ -23,7 +24,9 @@ export const ActivityEditorEffect = ({
   );
 
   const { upsertActivity } = useUpsertActivity();
-  const { deleteActivityFromCache } = useDeleteActivityFromCache();
+  const deleteRecordFromCache = useDeleteRecordFromCache({
+    objectNameSingular: CoreObjectNameSingular.Activity,
+  });
 
   const upsertActivityCallback = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -68,7 +71,7 @@ export const ActivityEditorEffect = ({
               },
             });
           } else {
-            deleteActivityFromCache(activity);
+            deleteRecordFromCache(activity);
           }
 
           set(isActivityInCreateModeState, false);
@@ -87,7 +90,7 @@ export const ActivityEditorEffect = ({
           }
         }
       },
-    [activityId, deleteActivityFromCache, upsertActivity],
+    [activityId, deleteRecordFromCache, upsertActivity],
   );
 
   useRegisterClickOutsideListenerCallback({

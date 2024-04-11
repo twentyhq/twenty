@@ -1,11 +1,13 @@
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import {
+  FieldAddressValue,
   FieldBooleanValue,
   FieldCurrencyValue,
   FieldDateTimeValue,
   FieldEmailValue,
   FieldFullNameValue,
   FieldLinkValue,
+  FieldMultiSelectValue,
   FieldNumberValue,
   FieldPhoneValue,
   FieldRatingValue,
@@ -21,6 +23,7 @@ export type FieldDateTimeDraftValue = string;
 export type FieldPhoneDraftValue = string;
 export type FieldEmailDraftValue = string;
 export type FieldSelectDraftValue = string;
+export type FieldMultiSelectDraftValue = string[];
 export type FieldRelationDraftValue = string;
 export type FieldLinkDraftValue = { url: string; label: string };
 export type FieldCurrencyDraftValue = {
@@ -28,6 +31,16 @@ export type FieldCurrencyDraftValue = {
   amount: string;
 };
 export type FieldFullNameDraftValue = { firstName: string; lastName: string };
+export type FieldAddressDraftValue = {
+  addressStreet1: string;
+  addressStreet2: string | null;
+  addressCity: string | null;
+  addressState: string | null;
+  addressPostcode: string | null;
+  addressCountry: string | null;
+  addressLat: number | null;
+  addressLng: number | null;
+};
 
 export type FieldInputDraftValue<FieldValue> = FieldValue extends FieldTextValue
   ? FieldTextDraftValue
@@ -53,6 +66,10 @@ export type FieldInputDraftValue<FieldValue> = FieldValue extends FieldTextValue
                       ? FieldRatingValue
                       : FieldValue extends FieldSelectValue
                         ? FieldSelectDraftValue
-                        : FieldValue extends FieldRelationValue
-                          ? FieldRelationDraftValue
-                          : never;
+                        : FieldValue extends FieldMultiSelectValue
+                          ? FieldMultiSelectDraftValue
+                          : FieldValue extends FieldRelationValue
+                            ? FieldRelationDraftValue
+                            : FieldValue extends FieldAddressValue
+                              ? FieldAddressDraftValue
+                              : never;

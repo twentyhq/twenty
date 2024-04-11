@@ -1,6 +1,7 @@
+import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
+import { IconBell } from 'twenty-ui';
 
-import { IconBell } from '@/ui/display/icon';
 import { MenuItemDraggable } from '@/ui/navigation/menu-item/components/MenuItemDraggable';
 import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
@@ -12,7 +13,7 @@ const meta: Meta<typeof DraggableList> = {
   component: DraggableList,
   decorators: [ComponentDecorator],
   parameters: {
-    onDragEnd: () => console.log('dragged'),
+    onDragEnd: action('dragged'),
   },
   argTypes: {
     draggableItems: { control: false },

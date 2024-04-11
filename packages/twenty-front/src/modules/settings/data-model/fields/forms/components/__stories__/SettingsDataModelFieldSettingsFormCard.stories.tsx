@@ -26,6 +26,8 @@ const defaultValues = {
   currency: fieldMetadataFormDefaultValues.currency,
   relation: fieldMetadataFormDefaultValues.relation,
   select: fieldMetadataFormDefaultValues.select,
+  multiSelect: fieldMetadataFormDefaultValues.multiSelect,
+  defaultValue: fieldMetadataFormDefaultValues.defaultValue,
 };
 
 const meta: Meta<typeof SettingsDataModelFieldSettingsFormCard> = {
@@ -110,6 +112,7 @@ export const WithSelectForm: Story = {
         },
         { color: 'green', label: '🌏 NGO', value: 'NGO' },
       ],
+      defaultValue: undefined,
     },
   },
 };

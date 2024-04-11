@@ -7,7 +7,7 @@ import { SettingsApiKeysFieldItemTableRow } from '@/settings/developers/componen
 import { ApiFieldItem } from '@/settings/developers/types/api-key/ApiFieldItem';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { formatExpirations } from '@/settings/developers/utils/format-expiration';
-import { Table } from '@/spreadsheet-import/components/Table';
+import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';

@@ -106,7 +106,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     description:
       'Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you',
     icon: 'IconTarget',
-    defaultValue: { value: false },
+    defaultValue: false,
   })
   idealCustomerProfile: boolean;
 
@@ -132,6 +132,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => PersonObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
   people: PersonObjectMetadata[];
@@ -173,6 +174,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => OpportunityObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
   opportunities: OpportunityObjectMetadata[];

@@ -1,7 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
-import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { PageAddButton } from '@/ui/layout/page/PageAddButton';
@@ -20,7 +20,10 @@ export const RecordIndexPageHeader = ({
   const objectNamePlural = useParams().objectNamePlural ?? '';
 
   const { findObjectMetadataItemByNamePlural } =
-    useObjectMetadataItemForSettings();
+    useFilteredObjectMetadataItems();
+
+  const objectMetadataItem =
+    findObjectMetadataItemByNamePlural(objectNamePlural);
 
   const { getIcon } = useIcons();
   const Icon = getIcon(
@@ -29,12 +32,13 @@ export const RecordIndexPageHeader = ({
 
   const recordIndexViewType = useRecoilValue(recordIndexViewTypeState);
 
+  const canAddRecord =
+    recordIndexViewType === ViewType.Table && !objectMetadataItem?.isRemote;
+
   return (
     <PageHeader title={capitalize(objectNamePlural)} Icon={Icon}>
       <PageHotkeysEffect onAddButtonClick={createRecord} />
-      {recordIndexViewType === ViewType.Table && (
-        <PageAddButton onClick={createRecord} />
-      )}
+      {canAddRecord && <PageAddButton onClick={createRecord} />}
     </PageHeader>
   );
 };

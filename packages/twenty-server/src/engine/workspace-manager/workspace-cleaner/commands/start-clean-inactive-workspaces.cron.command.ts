@@ -23,8 +23,7 @@ export class StartCleanInactiveWorkspacesCronCommand extends CommandRunner {
     await this.messageQueueService.addCron<undefined>(
       CleanInactiveWorkspaceJob.name,
       undefined,
-      cleanInactiveWorkspaceCronPattern,
-      { retryLimit: 3 },
+      { retryLimit: 3, repeat: { pattern: cleanInactiveWorkspaceCronPattern } },
     );
   }
 }

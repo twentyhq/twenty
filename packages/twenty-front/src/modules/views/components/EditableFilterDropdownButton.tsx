@@ -74,7 +74,7 @@ export const EditableFilterDropdownButton = ({
 
   return (
     <Dropdown
-      dropdownId={viewFilter.fieldMetadataId}
+      dropdownId={viewFilterDropdownId}
       clickableComponent={
         <EditableFilterChip viewFilter={viewFilter} onRemove={handleRemove} />
       }

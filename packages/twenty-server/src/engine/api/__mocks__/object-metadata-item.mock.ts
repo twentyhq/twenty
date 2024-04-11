@@ -6,7 +6,6 @@ export const fieldNumberMock = {
   type: FieldMetadataType.NUMBER,
   isNullable: false,
   defaultValue: null,
-  targetColumnMap: { value: 'fieldNumber' },
 };
 
 export const fieldStringMock = {
@@ -14,7 +13,6 @@ export const fieldStringMock = {
   type: FieldMetadataType.TEXT,
   isNullable: true,
   defaultValue: null,
-  targetColumnMap: { value: 'fieldString' },
 };
 
 export const fieldLinkMock = {
@@ -22,23 +20,47 @@ export const fieldLinkMock = {
   type: FieldMetadataType.LINK,
   isNullable: false,
   defaultValue: { label: '', url: '' },
-  targetColumnMap: { label: 'fieldLinkLabel', url: 'fieldLinkUrl' },
 };
 
 export const fieldCurrencyMock = {
   name: 'fieldCurrency',
   type: FieldMetadataType.CURRENCY,
   isNullable: true,
-  defaultValue: null,
-  targetColumnMap: {
-    amountMicros: 'fieldCurrencyAmountMicros',
-    currencyCode: 'fieldCurrencyCurrencyCode',
-  },
+  defaultValue: { amountMicros: null, currencyCode: "''" },
 };
 
-export const objectMetadataItemMock: DeepPartial<ObjectMetadataEntity> = {
+export const fieldSelectMock = {
+  name: 'fieldSelect',
+  type: FieldMetadataType.SELECT,
+  isNullable: true,
+  defaultValue: 'OPTION_1',
+  options: [
+    {
+      id: '9a519a86-422b-4598-88ae-78751353f683',
+      color: 'red',
+      label: 'Opt 1',
+      value: 'OPTION_1',
+      position: 0,
+    },
+    {
+      id: '33f28d51-bc82-4e1d-ae4b-d9e4c0ed0ab4',
+      color: 'purple',
+      label: 'Opt 2',
+      value: 'OPTION_2',
+      position: 1,
+    },
+  ],
+};
+
+export const objectMetadataItemMock = {
   targetTableName: 'testingObject',
   nameSingular: 'objectName',
   namePlural: 'objectsName',
-  fields: [fieldNumberMock, fieldStringMock, fieldLinkMock, fieldCurrencyMock],
-};
+  fields: [
+    fieldNumberMock,
+    fieldStringMock,
+    fieldLinkMock,
+    fieldCurrencyMock,
+    fieldSelectMock,
+  ],
+} as ObjectMetadataEntity;

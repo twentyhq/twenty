@@ -1,13 +1,12 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconCalendarEvent } from 'twenty-ui';
 
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
-import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import {
@@ -16,7 +15,6 @@ import {
   ChipSize,
   ChipVariant,
 } from '@/ui/display/chip/components/Chip';
-import { IconCalendarEvent } from '@/ui/display/icon';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
@@ -73,22 +71,18 @@ export const CalendarEventDetails = ({
   calendarEvent,
 }: CalendarEventDetailsProps) => {
   const theme = useTheme();
-  const { objectMetadataItem } = useObjectMetadataItemOnly({
+  const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.CalendarEvent,
   });
 
-  const fieldsToDisplay: Partial<
-    Record<
-      keyof CalendarEvent,
-      Partial<Pick<FieldDefinition<FieldMetadata>, 'label'>>
-    >
-  > = {
-    startsAt: { label: 'Start Date' },
-    endsAt: { label: 'End Date' },
-    conferenceUri: { label: 'Meet link' },
-    location: {},
-    description: {},
-  };
+  const fieldsToDisplay = [
+    'startsAt',
+    'endsAt',
+    'conferenceLink',
+    'location',
+    'description',
+  ];
+
   const fieldsByName = mapArrayToObject(
     objectMetadataItem.fields,
     ({ name }) => name,
@@ -116,7 +110,7 @@ export const CalendarEventDetails = ({
         </StyledCreatedAt>
       </StyledHeader>
       <StyledFields>
-        {Object.entries(fieldsToDisplay).map(([fieldName, fieldOverride]) => (
+        {fieldsToDisplay.map((fieldName) => (
           <StyledPropertyBox key={fieldName}>
             <FieldContext.Provider
               value={{
@@ -125,10 +119,7 @@ export const CalendarEventDetails = ({
                 recoilScopeId: `${calendarEvent.id}-${fieldName}`,
                 isLabelIdentifier: false,
                 fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
-                  field: {
-                    ...fieldsByName[fieldName],
-                    ...fieldOverride,
-                  },
+                  field: fieldsByName[fieldName],
                   objectMetadataItem,
                   showLabel: true,
                   labelWidth: 72,

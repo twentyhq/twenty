@@ -1,4 +1,5 @@
-import { createState } from '@/ui/utilities/state/utils/createState';
+import { createState } from 'twenty-ui';
+
 import { Workspace } from '~/generated/graphql';
 
 export type CurrentWorkspace = Pick<
@@ -12,6 +13,7 @@ export type CurrentWorkspace = Pick<
   | 'subscriptionStatus'
   | 'activationStatus'
   | 'currentBillingSubscription'
+  | 'currentCacheVersion'
 >;
 
 export const currentWorkspaceState = createState<CurrentWorkspace | null>({
