@@ -21,6 +21,17 @@ export enum MessageChannelSyncStatus {
   FAILED = 'FAILED',
 }
 
+export enum MessageChannelVisibility {
+  METADATA = 'metadata',
+  SUBJECT = 'subject',
+  SHARE_EVERYTHING = 'share_everything',
+}
+
+export enum MessageChannelType {
+  EMAIL = 'email',
+  SMS = 'sms',
+}
+
 @ObjectMetadata({
   standardId: standardObjectIds.messageChannel,
   namePlural: 'messageChannels',
@@ -38,16 +49,26 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
     description: 'Visibility',
     icon: 'IconEyeglass',
     options: [
-      { value: 'metadata', label: 'Metadata', position: 0, color: 'green' },
-      { value: 'subject', label: 'Subject', position: 1, color: 'blue' },
       {
-        value: 'share_everything',
+        value: MessageChannelVisibility.METADATA,
+        label: 'Metadata',
+        position: 0,
+        color: 'green',
+      },
+      {
+        value: MessageChannelVisibility.SUBJECT,
+        label: 'Subject',
+        position: 1,
+        color: 'blue',
+      },
+      {
+        value: MessageChannelVisibility.SHARE_EVERYTHING,
         label: 'Share Everything',
         position: 2,
         color: 'orange',
       },
     ],
-    defaultValue: "'share_everything'",
+    defaultValue: MessageChannelVisibility.SHARE_EVERYTHING,
   })
   visibility: string;
 
@@ -77,10 +98,20 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
     description: 'Channel Type',
     icon: 'IconMessage',
     options: [
-      { value: 'email', label: 'Email', position: 0, color: 'green' },
-      { value: 'sms', label: 'SMS', position: 1, color: 'blue' },
+      {
+        value: MessageChannelType.EMAIL,
+        label: 'Email',
+        position: 0,
+        color: 'green',
+      },
+      {
+        value: MessageChannelType.SMS,
+        label: 'SMS',
+        position: 1,
+        color: 'blue',
+      },
     ],
-    defaultValue: "'email'",
+    defaultValue: MessageChannelType.EMAIL,
   })
   type: string;
 
