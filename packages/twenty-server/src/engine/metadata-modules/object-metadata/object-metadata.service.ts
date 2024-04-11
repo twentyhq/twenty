@@ -46,9 +46,13 @@ import {
   createForeignKeyDeterministicUuid,
   createRelationDeterministicUuid,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
-import { buildWorkspaceMigrationsForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/build-workspace-migrations-for-custom-object.util';
-import { buildWorkspaceMigrationsForRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/build-workspace-migrations-for-remote-object.util';
+import { createWorkspaceMigrationsForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/create-workspace-migrations-for-custom-object.util';
+import { createWorkspaceMigrationsForRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/create-workspace-migrations-for-remote-object.util';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -70,6 +74,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly typeORMService: TypeORMService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {
     super(objectMetadataRepository);
   }
@@ -322,27 +328,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           [],
     });
 
-    const { eventObjectMetadata } = await this.createEventRelation(
-      objectMetadataInput.workspaceId,
-      createdObjectMetadata,
-    );
-
-    const { activityTargetObjectMetadata } =
-      await this.createActivityTargetRelation(
-        objectMetadataInput.workspaceId,
-        createdObjectMetadata,
-      );
-
-    const { favoriteObjectMetadata } = await this.createFavoriteRelation(
-      objectMetadataInput.workspaceId,
-      createdObjectMetadata,
-    );
-
-    const { attachmentObjectMetadata } = await this.createAttachmentRelation(
-      objectMetadataInput.workspaceId,
-      createdObjectMetadata,
-    );
-
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         createdObjectMetadata.workspaceId,
@@ -351,28 +336,56 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
-    await this.workspaceMigrationService.createCustomMigration(
-      generateMigrationName(`create-${createdObjectMetadata.nameSingular}`),
-      createdObjectMetadata.workspaceId,
-      isCustom
-        ? buildWorkspaceMigrationsForCustomObject(
-            createdObjectMetadata,
-            activityTargetObjectMetadata,
-            attachmentObjectMetadata,
-            eventObjectMetadata,
-            favoriteObjectMetadata,
-          )
-        : await buildWorkspaceMigrationsForRemoteObject(
-            createdObjectMetadata,
-            activityTargetObjectMetadata,
-            attachmentObjectMetadata,
-            eventObjectMetadata,
-            favoriteObjectMetadata,
-            lastDataSourceMetadata.schema,
-            objectMetadataInput.remoteTablePrimaryKeyColumnType ?? 'uuid',
-            workspaceDataSource,
-          ),
-    );
+    const isRelationEnabledForRemoteObjects =
+      await this.isRelationEnabledForRemoteObjects(
+        objectMetadataInput.workspaceId,
+      );
+
+    if (isCustom || isRelationEnabledForRemoteObjects) {
+      const { eventObjectMetadata } = await this.createEventRelation(
+        objectMetadataInput.workspaceId,
+        createdObjectMetadata,
+      );
+
+      const { activityTargetObjectMetadata } =
+        await this.createActivityTargetRelation(
+          objectMetadataInput.workspaceId,
+          createdObjectMetadata,
+        );
+
+      const { favoriteObjectMetadata } = await this.createFavoriteRelation(
+        objectMetadataInput.workspaceId,
+        createdObjectMetadata,
+      );
+
+      const { attachmentObjectMetadata } = await this.createAttachmentRelation(
+        objectMetadataInput.workspaceId,
+        createdObjectMetadata,
+      );
+
+      await this.workspaceMigrationService.createCustomMigration(
+        generateMigrationName(`create-${createdObjectMetadata.nameSingular}`),
+        createdObjectMetadata.workspaceId,
+        isCustom
+          ? createWorkspaceMigrationsForCustomObject(
+              createdObjectMetadata,
+              activityTargetObjectMetadata,
+              attachmentObjectMetadata,
+              eventObjectMetadata,
+              favoriteObjectMetadata,
+            )
+          : await createWorkspaceMigrationsForRemoteObject(
+              createdObjectMetadata,
+              activityTargetObjectMetadata,
+              attachmentObjectMetadata,
+              eventObjectMetadata,
+              favoriteObjectMetadata,
+              lastDataSourceMetadata.schema,
+              objectMetadataInput.remoteTablePrimaryKeyColumnType ?? 'uuid',
+              workspaceDataSource,
+            ),
+      );
+    }
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
       createdObjectMetadata.workspaceId,
@@ -854,5 +867,15 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     ]);
 
     return { favoriteObjectMetadata };
+  }
+
+  private async isRelationEnabledForRemoteObjects(workspaceId: string) {
+    const featureFlag = await this.featureFlagRepository.findOneBy({
+      workspaceId,
+      key: FeatureFlagKeys.IsRelationForRemoteObjectsEnabled,
+      value: true,
+    });
+
+    return featureFlag && featureFlag.value;
   }
 }

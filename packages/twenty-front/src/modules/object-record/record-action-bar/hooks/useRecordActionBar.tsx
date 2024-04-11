@@ -106,7 +106,7 @@ export const useRecordActionBar = ({
     recordIndexId: objectMetadataItem.namePlural,
   });
 
-  const baseActions: ContextMenuEntry[] = useMemo(
+  const baseActionsForStandardAndCustomObjects: ContextMenuEntry[] = useMemo(
     () => [
       {
         label: 'Delete',
@@ -146,6 +146,22 @@ export const useRecordActionBar = ({
       setIsDeleteRecordsModalOpen,
     ],
   );
+
+  const baseActionsForRemoteObjects: ContextMenuEntry[] = useMemo(
+    () => [
+      {
+        label: `${progress === undefined ? `Export` : `Export (${progress}%)`}`,
+        Icon: IconFileExport,
+        accent: 'default',
+        onClick: () => download(),
+      },
+    ],
+    [download, progress],
+  );
+
+  const baseActions = objectMetadataItem.isRemote
+    ? baseActionsForRemoteObjects
+    : baseActionsForStandardAndCustomObjects;
 
   const dataExecuteQuickActionOnmentEnabled = useIsFeatureEnabled(
     'IS_QUICK_ACTIONS_ENABLED',

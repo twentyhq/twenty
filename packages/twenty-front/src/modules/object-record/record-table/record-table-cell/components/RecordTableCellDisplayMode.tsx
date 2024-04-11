@@ -1,4 +1,7 @@
+import { useContext } from 'react';
+
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
+import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useOpenRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
 
 import { useSetSoftFocusOnCurrentTableCell } from '../hooks/useSetSoftFocusOnCurrentTableCell';
@@ -10,6 +13,8 @@ export const RecordTableCellDisplayMode = ({
 }: React.PropsWithChildren<unknown>) => {
   const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentTableCell();
 
+  const { isReadOnly } = useContext(RecordTableRowContext);
+
   const isFieldInputOnly = useIsFieldInputOnly();
 
   const { openTableCell } = useOpenRecordTableCell();
@@ -17,7 +22,7 @@ export const RecordTableCellDisplayMode = ({
   const handleClick = () => {
     setSoftFocusOnCurrentCell();
 
-    if (!isFieldInputOnly) {
+    if (!isFieldInputOnly && !isReadOnly) {
       openTableCell();
     }
   };

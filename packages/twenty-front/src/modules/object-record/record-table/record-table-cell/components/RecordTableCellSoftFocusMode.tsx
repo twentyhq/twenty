@@ -1,4 +1,4 @@
-import { PropsWithChildren, useEffect, useRef } from 'react';
+import { PropsWithChildren, useContext, useEffect, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
@@ -6,6 +6,7 @@ import { useClearField } from '@/object-record/record-field/hooks/useClearField'
 import { useIsFieldClearable } from '@/object-record/record-field/hooks/useIsFieldClearable';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
+import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useOpenRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
 import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -25,6 +26,8 @@ export const RecordTableCellSoftFocusMode = ({
   const isFieldInputOnly = useIsFieldInputOnly();
 
   const isFieldClearable = useIsFieldClearable();
+
+  const { isReadOnly } = useContext(RecordTableRowContext);
 
   const toggleEditOnlyInput = useToggleEditOnlyInput();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -95,7 +98,7 @@ export const RecordTableCellSoftFocusMode = ({
   );
 
   const handleClick = () => {
-    if (!isFieldInputOnly) {
+    if (!isFieldInputOnly && !isReadOnly) {
       openTableCell();
     }
   };

@@ -47,7 +47,7 @@ const buildCommentForRemoteObjectForeignKey = async (
   return `@graphql(${JSON.stringify(parsedComment)})`;
 };
 
-export const buildWorkspaceMigrationsForRemoteObject = async (
+export const createWorkspaceMigrationsForRemoteObject = async (
   createdObjectMetadata: ObjectMetadataEntity,
   activityTargetObjectMetadata: ObjectMetadataEntity,
   attachmentObjectMetadata: ObjectMetadataEntity,
@@ -72,19 +72,6 @@ export const buildWorkspaceMigrationsForRemoteObject = async (
           columnType: remoteTablePrimaryKeyColumnType,
           isNullable: true,
         } satisfies WorkspaceMigrationColumnCreate,
-      ],
-    },
-    {
-      name: computeObjectTargetTable(activityTargetObjectMetadata),
-      action: WorkspaceMigrationTableActionType.ALTER,
-      columns: [
-        {
-          action: WorkspaceMigrationColumnActionType.CREATE,
-          columnName: computeColumnName(createdObjectMetadata.nameSingular, {
-            isForeignKey: true,
-          }),
-          columnType: remoteTablePrimaryKeyColumnType,
-        },
       ],
     },
     {
@@ -122,19 +109,6 @@ export const buildWorkspaceMigrationsForRemoteObject = async (
       action: WorkspaceMigrationTableActionType.ALTER,
       columns: [
         {
-          action: WorkspaceMigrationColumnActionType.CREATE,
-          columnName: computeColumnName(createdObjectMetadata.nameSingular, {
-            isForeignKey: true,
-          }),
-          columnType: remoteTablePrimaryKeyColumnType,
-        },
-      ],
-    },
-    {
-      name: computeObjectTargetTable(attachmentObjectMetadata),
-      action: WorkspaceMigrationTableActionType.ALTER,
-      columns: [
-        {
           action: WorkspaceMigrationColumnActionType.CREATE_COMMENT,
           comment: await buildCommentForRemoteObjectForeignKey(
             attachmentObjectMetadata.nameSingular,
@@ -165,19 +139,6 @@ export const buildWorkspaceMigrationsForRemoteObject = async (
       action: WorkspaceMigrationTableActionType.ALTER,
       columns: [
         {
-          action: WorkspaceMigrationColumnActionType.CREATE,
-          columnName: computeColumnName(createdObjectMetadata.nameSingular, {
-            isForeignKey: true,
-          }),
-          columnType: remoteTablePrimaryKeyColumnType,
-        },
-      ],
-    },
-    {
-      name: computeObjectTargetTable(eventObjectMetadata),
-      action: WorkspaceMigrationTableActionType.ALTER,
-      columns: [
-        {
           action: WorkspaceMigrationColumnActionType.CREATE_COMMENT,
           comment: await buildCommentForRemoteObjectForeignKey(
             eventObjectMetadata.nameSingular,
@@ -201,19 +162,6 @@ export const buildWorkspaceMigrationsForRemoteObject = async (
           columnType: remoteTablePrimaryKeyColumnType,
           isNullable: true,
         } satisfies WorkspaceMigrationColumnCreate,
-      ],
-    },
-    {
-      name: computeObjectTargetTable(favoriteObjectMetadata),
-      action: WorkspaceMigrationTableActionType.ALTER,
-      columns: [
-        {
-          action: WorkspaceMigrationColumnActionType.CREATE,
-          columnName: computeColumnName(createdObjectMetadata.nameSingular, {
-            isForeignKey: true,
-          }),
-          columnType: remoteTablePrimaryKeyColumnType,
-        },
       ],
     },
     {

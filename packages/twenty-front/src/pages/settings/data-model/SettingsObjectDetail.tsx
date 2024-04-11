@@ -102,7 +102,7 @@ export const SettingsObjectDetail = () => {
           <SettingsObjectSummaryCard
             iconKey={activeObjectMetadataItem.icon ?? undefined}
             name={activeObjectMetadataItem.labelPlural || ''}
-            isCustom={activeObjectMetadataItem.isCustom}
+            objectMetadataItem={activeObjectMetadataItem}
             onDeactivate={handleDisableObject}
             onEdit={() => navigate('./edit')}
           />
@@ -150,6 +150,7 @@ export const SettingsObjectDetail = () => {
                           : 'field-type'
                       }
                       fieldMetadataItem={activeMetadataField}
+                      isRemoteObjectField={activeObjectMetadataItem.isRemote}
                       ActionIcon={
                         <SettingsObjectFieldActiveActionDropdown
                           isCustomField={!!activeMetadataField.isCustom}
