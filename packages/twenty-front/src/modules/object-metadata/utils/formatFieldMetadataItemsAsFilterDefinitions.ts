@@ -61,6 +61,8 @@ export const getFilterTypeFromFieldType = (fieldType: FieldMetadataType) => {
   switch (fieldType) {
     case FieldMetadataType.DateTime:
       return 'DATE_TIME';
+    case FieldMetadataType.Date:
+      return 'DATE';
     case FieldMetadataType.Link:
       return 'LINK';
     case FieldMetadataType.FullName:

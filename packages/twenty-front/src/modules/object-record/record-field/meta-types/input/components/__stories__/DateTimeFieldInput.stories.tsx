@@ -7,7 +7,10 @@ import { FieldMetadataType } from '~/generated/graphql';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { useDateTimeField } from '../../../hooks/useDateTimeField';
-import { DateFieldInput, DateFieldInputProps } from '../DateFieldInput';
+import {
+  DateTimeFieldInput,
+  DateTimeFieldInputProps,
+} from '../DateTimeFieldInput';
 
 const formattedDate = new Date(2022, 1, 1);
 
@@ -21,7 +24,7 @@ const DateFieldValueSetterEffect = ({ value }: { value: Date }) => {
   return <></>;
 };
 
-type DateFieldInputWithContextProps = DateFieldInputProps & {
+type DateFieldInputWithContextProps = DateTimeFieldInputProps & {
   value: Date;
   entityId?: string;
 };
@@ -55,7 +58,7 @@ const DateFieldInputWithContext = ({
         entityId={entityId}
       >
         <DateFieldValueSetterEffect value={value} />
-        <DateFieldInput
+        <DateTimeFieldInput
           onEscape={onEscape}
           onEnter={onEnter}
           onClickOutside={onClickOutside}

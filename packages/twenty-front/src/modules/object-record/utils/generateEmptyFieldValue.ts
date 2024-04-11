@@ -39,6 +39,9 @@ export const generateEmptyFieldValue = (
     case FieldMetadataType.DateTime: {
       return null;
     }
+    case FieldMetadataType.Date: {
+      return null;
+    }
     case FieldMetadataType.Number:
     case FieldMetadataType.Rating:
     case FieldMetadataType.Position:

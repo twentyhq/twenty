@@ -194,6 +194,7 @@ export enum FieldMetadataType {
   Address = 'ADDRESS',
   Boolean = 'BOOLEAN',
   Currency = 'CURRENCY',
+  Date = 'DATE',
   DateTime = 'DATE_TIME',
   Email = 'EMAIL',
   FullName = 'FULL_NAME',

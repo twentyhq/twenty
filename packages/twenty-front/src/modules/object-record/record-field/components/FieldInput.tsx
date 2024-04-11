@@ -1,11 +1,13 @@
 import { useContext } from 'react';
 
 import { AddressFieldInput } from '@/object-record/record-field/meta-types/input/components/AddressFieldInput';
+import { DateFieldInput } from '@/object-record/record-field/meta-types/input/components/DateFieldInput';
 import { FullNameFieldInput } from '@/object-record/record-field/meta-types/input/components/FullNameFieldInput';
 import { MultiSelectFieldInput } from '@/object-record/record-field/meta-types/input/components/MultiSelectFieldInput.tsx';
 import { RawJsonFieldInput } from '@/object-record/record-field/meta-types/input/components/RawJsonFieldInput';
 import { SelectFieldInput } from '@/object-record/record-field/meta-types/input/components/SelectFieldInput';
 import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
+import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect.ts';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
@@ -15,7 +17,7 @@ import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/get
 import { FieldContext } from '../contexts/FieldContext';
 import { BooleanFieldInput } from '../meta-types/input/components/BooleanFieldInput';
 import { CurrencyFieldInput } from '../meta-types/input/components/CurrencyFieldInput';
-import { DateFieldInput } from '../meta-types/input/components/DateFieldInput';
+import { DateTimeFieldInput } from '../meta-types/input/components/DateTimeFieldInput';
 import { EmailFieldInput } from '../meta-types/input/components/EmailFieldInput';
 import { LinkFieldInput } from '../meta-types/input/components/LinkFieldInput';
 import { NumberFieldInput } from '../meta-types/input/components/NumberFieldInput';
@@ -98,6 +100,12 @@ export const FieldInput = ({
           onShiftTab={onShiftTab}
         />
       ) : isFieldDateTime(fieldDefinition) ? (
+        <DateTimeFieldInput
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+        />
+      ) : isFieldDate(fieldDefinition) ? (
         <DateFieldInput
           onEnter={onEnter}
           onEscape={onEscape}

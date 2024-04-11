@@ -71,6 +71,11 @@ export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
     Icon: IconCalendarEvent,
     defaultValue: DEFAULT_DATE_VALUE.toISOString(),
   },
+  [FieldMetadataType.Date]: {
+    label: 'Date',
+    Icon: IconCalendarEvent,
+    defaultValue: DEFAULT_DATE_VALUE.toISOString(),
+  },
   [FieldMetadataType.Select]: {
     label: 'Select',
     Icon: IconTag,

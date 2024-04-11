@@ -5,7 +5,7 @@ import { CurrencyInput } from '@/ui/field/input/components/CurrencyInput';
 import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
 import { useCurrencyField } from '../../hooks/useCurrencyField';
 
-import { FieldInputEvent } from './DateFieldInput';
+import { FieldInputEvent } from './DateTimeFieldInput';
 
 export type CurrencyFieldInputProps = {
   onClickOutside?: FieldInputEvent;
