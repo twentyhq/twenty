@@ -68,7 +68,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
         color: 'orange',
       },
     ],
-    defaultValue: MessageChannelVisibility.SHARE_EVERYTHING,
+    defaultValue: `'${MessageChannelVisibility.SHARE_EVERYTHING}'`,
   })
   visibility: string;
 
@@ -111,7 +111,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
         color: 'blue',
       },
     ],
-    defaultValue: MessageChannelType.EMAIL,
+    defaultValue: `'${MessageChannelType.EMAIL}'`,
   })
   type: string;
 
