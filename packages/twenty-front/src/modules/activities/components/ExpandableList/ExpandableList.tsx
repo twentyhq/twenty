@@ -47,19 +47,19 @@ const StyledExpendableCell = styled.div`
 `;
 
 export const ExpandableList = ({
-  components,
+  listItems,
   rootRef,
   id,
   margin,
 }: {
-  components: ReactElement[];
+  listItems: ReactElement[];
   rootRef: React.RefObject<HTMLElement>;
   id: string;
   margin?: string;
 }) => {
-  const [componentsInView, setComponentsInView] = useState(new Set<number>());
+  const [listItemsInView, setListItemsInView] = useState(new Set<number>());
 
-  const firstComponent = components[0];
+  const firstListItem = listItems[0];
 
   const dropdownId = `expandable-list-dropdown-${id}`;
 
@@ -68,19 +68,19 @@ export const ExpandableList = ({
   return (
     <StyledContainer ref={containerRef}>
       <StyledDiv>
-        {firstComponent}
-        {components.slice(1).map((component, index) => (
+        {firstListItem}
+        {listItems.slice(1).map((listItem, index) => (
           <React.Fragment key={index}>
             <IntersectionObserverWrapper
-              set={setComponentsInView}
+              set={setListItemsInView}
               id={index}
               rootRef={rootRef}
               margin={margin}
             >
-              {component}
+              {listItem}
             </IntersectionObserverWrapper>
-            {index === componentsInView.size - 1 &&
-              components.length - componentsInView.size - 1 !== 0 && (
+            {index === listItemsInView.size - 1 &&
+              listItems.length - listItemsInView.size - 1 !== 0 && (
                 <Dropdown
                   dropdownId={dropdownId}
                   dropdownHotkeyScope={{
@@ -88,14 +88,12 @@ export const ExpandableList = ({
                   }}
                   clickableComponent={
                     <Chip
-                      label={`+${
-                        components.length - componentsInView.size - 1
-                      }`}
+                      label={`+${listItems.length - listItemsInView.size - 1}`}
                       variant={ChipVariant.Highlighted}
                     />
                   }
                   dropdownComponents={ReactDOM.createPortal(
-                    <StyledExpendableCell>{components}</StyledExpendableCell>,
+                    <StyledExpendableCell>{listItems}</StyledExpendableCell>,
                     containerRef.current as HTMLDivElement,
                   )}
                   disableBorder
