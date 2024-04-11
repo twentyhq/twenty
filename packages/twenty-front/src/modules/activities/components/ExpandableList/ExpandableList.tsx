@@ -9,20 +9,11 @@ const StyledContainer = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-  position: relative;
   box-sizing: border-box;
-`;
-
-const StyledDiv = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-  position: relative;
   white-space: nowrap;
   max-width: 100%;
   width: 100%;
-  box-sizing: border-box;
-  overflow: hidden;
+  overflow-x: hidden;
 `;
 
 const StyledExpendableCell = styled.div`
@@ -31,10 +22,7 @@ const StyledExpendableCell = styled.div`
   align-content: center;
   flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing(1)};
-  position: absolute;
-  top: ${({ theme }) => `-${theme.spacing(2 + 1 / 4)}`}; // spacing + border
-  left: ${({ theme }) => `-${theme.spacing(2 + 1 / 4)}`};
-  width: 232px;
+  width: 100%;
   z-index: 1;
   box-sizing: border-box;
   background: ${({ theme }) => theme.background.secondary};
@@ -60,40 +48,41 @@ export const ExpandableList = ({
 
   const dropdownId = `expandable-list-dropdown-${id}`;
 
+  const containerRef = React.useRef<HTMLDivElement>(null);
+
   return (
-    <StyledContainer>
-      <StyledDiv>
-        {firstListItem}
-        {listItems.slice(1).map((listItem, index) => (
-          <React.Fragment key={index}>
-            <IntersectionObserverWrapper
-              set={setListItemsInView}
-              id={index}
-              rootRef={rootRef}
-            >
-              {listItem}
-            </IntersectionObserverWrapper>
-            {index === listItemsInView.size - 1 &&
-              listItems.length - listItemsInView.size - 1 !== 0 && (
-                <Dropdown
-                  dropdownId={dropdownId}
-                  dropdownHotkeyScope={{
-                    scope: dropdownId,
-                  }}
-                  clickableComponent={
-                    <Chip
-                      label={`+${listItems.length - listItemsInView.size - 1}`}
-                      variant={ChipVariant.Highlighted}
-                    />
-                  }
-                  dropdownComponents={
-                    <StyledExpendableCell>{listItems}</StyledExpendableCell>
-                  }
-                />
-              )}
-          </React.Fragment>
-        ))}
-      </StyledDiv>
+    <StyledContainer ref={containerRef}>
+      {firstListItem}
+      {listItems.slice(1).map((listItem, index) => (
+        <React.Fragment key={index}>
+          <IntersectionObserverWrapper
+            set={setListItemsInView}
+            id={index}
+            rootRef={rootRef}
+          >
+            {listItem}
+          </IntersectionObserverWrapper>
+          {index === listItemsInView.size - 1 &&
+            listItems.length - listItemsInView.size - 1 !== 0 && (
+              <Dropdown
+                dropdownId={dropdownId}
+                dropdownHotkeyScope={{
+                  scope: dropdownId,
+                }}
+                clickableComponent={
+                  <Chip
+                    label={`+${listItems.length - listItemsInView.size - 1}`}
+                    variant={ChipVariant.Highlighted}
+                  />
+                }
+                dropdownComponents={
+                  <StyledExpendableCell>{listItems}</StyledExpendableCell>
+                }
+                dropdownPlacement="bottom-start"
+              />
+            )}
+        </React.Fragment>
+      ))}
     </StyledContainer>
   );
 };
