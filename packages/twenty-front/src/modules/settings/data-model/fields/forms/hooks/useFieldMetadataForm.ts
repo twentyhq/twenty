@@ -36,12 +36,17 @@ export const fieldMetadataFormDefaultValues: FormValues = {
   select: [{ color: 'green', label: 'Option 1', value: v4() }],
   multiSelect: [{ color: 'green', label: 'Option 1', value: v4() }],
 };
-
 const fieldSchema = z.object({
   description: z.string().optional(),
   icon: z.string().startsWith('Icon'),
   label: z.string().min(1),
   defaultValue: z.any(),
+  type: z.enum(
+    Object.values(FieldMetadataType) as [
+      FieldMetadataType,
+      ...FieldMetadataType[],
+    ],
+  ),
 });
 
 const currencySchema = fieldSchema.merge(

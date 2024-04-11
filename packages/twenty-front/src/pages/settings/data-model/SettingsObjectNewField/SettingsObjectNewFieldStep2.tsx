@@ -134,12 +134,14 @@ export const SettingsObjectNewFieldStep2 = () => {
             description: validatedFormValues.description,
             icon: validatedFormValues.icon,
             label: validatedFormValues.label,
+            type: validatedFormValues.type,
           },
           objectMetadataId: activeObjectMetadataItem.id,
           connect: {
             field: {
               icon: validatedFormValues.relation.field.icon,
               label: validatedFormValues.relation.field.label,
+              type: validatedFormValues.relation.field.type,
             },
             objectMetadataId: validatedFormValues.relation.objectMetadataId,
           },
