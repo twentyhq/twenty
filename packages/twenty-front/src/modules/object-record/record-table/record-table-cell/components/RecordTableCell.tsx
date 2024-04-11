@@ -71,20 +71,17 @@ export const RecordTableCell = ({
     <RecordTableCellContainer
       editHotkeyScope={customHotkeyScope}
       editModeContent={
-        isReadOnly ? (
-          <FieldDisplay />
-        ) : (
-          <FieldInput
-            recordFieldInputdId={`${entityId}-${fieldDefinition?.metadata?.fieldName}`}
-            onCancel={handleCancel}
-            onClickOutside={handleClickOutside}
-            onEnter={handleEnter}
-            onEscape={handleEscape}
-            onShiftTab={handleShiftTab}
-            onSubmit={handleSubmit}
-            onTab={handleTab}
-          />
-        )
+        <FieldInput
+          recordFieldInputdId={`${entityId}-${fieldDefinition?.metadata?.fieldName}`}
+          onCancel={handleCancel}
+          onClickOutside={handleClickOutside}
+          onEnter={handleEnter}
+          onEscape={handleEscape}
+          onShiftTab={handleShiftTab}
+          onSubmit={handleSubmit}
+          onTab={handleTab}
+          isReadOnly={isReadOnly}
+        />
       }
       nonEditModeContent={<FieldDisplay />}
     />
