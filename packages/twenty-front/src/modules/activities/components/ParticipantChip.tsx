@@ -28,13 +28,15 @@ const StyledRecordChip = styled(RecordChip)<{ variant: 'default' | 'bold' }>`
     variant === 'bold' ? theme.font.weight.medium : theme.font.weight.regular};
 `;
 
+type ParticipantChipVariant = 'default' | 'bold';
+
 export const ParticipantChip = ({
   participant,
   variant = 'default',
   className,
 }: {
   participant: any;
-  variant?: 'default' | 'bold';
+  variant?: ParticipantChipVariant;
   className?: string;
 }) => {
   const { person, workspaceMember } = participant;
