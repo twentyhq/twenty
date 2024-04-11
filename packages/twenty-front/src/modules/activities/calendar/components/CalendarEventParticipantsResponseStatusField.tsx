@@ -25,6 +25,7 @@ const StyledInlineCellBaseContainer = styled.div`
 const StyledPropertyBox = styled(PropertyBox)`
   height: ${({ theme }) => theme.spacing(6)};
   padding: 0;
+  width: 100%;
 `;
 
 const StyledIconContainer = styled.div`

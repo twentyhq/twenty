@@ -1,4 +1,5 @@
-import React, { ReactElement, useState } from 'react';
+import React, { ReactElement, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import styled from '@emotion/styled';
 
 import { IntersectionObserverWrapper } from '@/activities/components/ExpandableList/IntersectionObserverWrapper';
@@ -8,29 +9,26 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
+  flex: 1;
   gap: ${({ theme }) => theme.spacing(1)};
   box-sizing: border-box;
   white-space: nowrap;
-  max-width: 100%;
-  width: 100%;
   overflow-x: hidden;
 `;
 
 const StyledExpendableCell = styled.div`
-  display: flex;
-  align-items: center;
   align-content: center;
+  align-items: center;
+  backdrop-filter: ${({ theme }) => theme.blur.strong};
+  background: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  box-shadow: ${({ theme }) => theme.boxShadow.light};
+  box-sizing: border-box;
+  display: flex;
   flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing(1)};
-  width: 100%;
-  z-index: 1;
-  box-sizing: border-box;
-  background: ${({ theme }) => theme.background.secondary};
   padding: ${({ theme }) => theme.spacing(2)};
-  box-shadow: ${({ theme }) => theme.boxShadow.light};
-  backdrop-filter: ${({ theme }) => theme.blur.strong};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
 `;
 
 export const ExpandableList = ({
@@ -48,7 +46,9 @@ export const ExpandableList = ({
 
   const dropdownId = `expandable-list-dropdown-${id}`;
 
-  const containerRef = React.useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const divRef = useRef<HTMLDivElement>(null);
 
   return (
     <StyledContainer ref={containerRef}>
@@ -76,13 +76,29 @@ export const ExpandableList = ({
                   />
                 }
                 dropdownComponents={
-                  <StyledExpendableCell>{listItems}</StyledExpendableCell>
+                  <>
+                    {divRef.current &&
+                      createPortal(
+                        <StyledExpendableCell>
+                          {listItems}
+                        </StyledExpendableCell>,
+                        divRef.current as HTMLElement,
+                      )}
+                  </>
                 }
-                dropdownPlacement="bottom-start"
               />
             )}
         </React.Fragment>
       ))}
+      <div
+        ref={divRef}
+        style={{
+          position: 'absolute',
+          top: '100%',
+          zIndex: 1,
+          boxSizing: 'border-box',
+        }}
+      ></div>
     </StyledContainer>
   );
 };

@@ -32,7 +32,8 @@ const StyledContainer = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(6)};
   padding: ${({ theme }) => theme.spacing(6)};
-  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
 `;
 
 const StyledEventChip = styled(Chip)`
@@ -63,11 +64,13 @@ const StyledFields = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
+  width: 100%;
 `;
 
 const StyledPropertyBox = styled(PropertyBox)`
   height: ${({ theme }) => theme.spacing(6)};
   padding: 0;
+  width: 100%;
 `;
 
 export const CalendarEventDetails = ({
