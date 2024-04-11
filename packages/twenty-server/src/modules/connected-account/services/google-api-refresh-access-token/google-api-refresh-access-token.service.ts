@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
@@ -14,7 +13,6 @@ export class GoogleAPIRefreshAccessTokenService {
     private readonly environmentService: EnvironmentService,
     @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   async refreshAndSaveAccessToken(
@@ -29,6 +27,12 @@ export class GoogleAPIRefreshAccessTokenService {
     if (!connectedAccount) {
       throw new Error(
         `No connected account found for ${connectedAccountId} in workspace ${workspaceId}`,
+      );
+    }
+
+    if (connectedAccount.authFailedAt) {
+      throw new Error(
+        `Skipping refresh of access token for connected account ${connectedAccountId} in workspace ${workspaceId} because auth already failed, a new refresh token is needed`,
       );
     }
 
@@ -82,11 +86,7 @@ export class GoogleAPIRefreshAccessTokenService {
         connectedAccountId,
         workspaceId,
       );
-      this.exceptionHandlerService.captureExceptions([error], {
-        user: {
-          workspaceId,
-        },
-      });
+
       throw new Error(`Error refreshing access token: ${error.message}`);
     }
   }
