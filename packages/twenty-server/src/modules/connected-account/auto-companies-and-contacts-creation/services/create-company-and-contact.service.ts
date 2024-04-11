@@ -15,13 +15,9 @@ import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 import { getUniqueContactsAndHandles } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/get-unique-contacts-and-handles.util';
 import { Contacts } from 'src/modules/connected-account/auto-companies-and-contacts-creation/types/contact.type';
-import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant.repository';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { MessageParticipantService } from 'src/modules/messaging/services/message-participant/message-participant.service';
-import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { CalendarEventParticipantService } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.service';
-import { CalendarEventParticipantRepository } from 'src/modules/calendar/repositories/calendar-event-participant.repository';
-import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
 import { filterOutContactsFromCompanyOrWorkspace } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/filter-out-contacts-from-company-or-workspace.util';
 import {
   FeatureFlagEntity,
@@ -37,12 +33,8 @@ export class CreateCompanyAndContactService {
     private readonly personRepository: PersonRepository,
     @InjectObjectMetadataRepository(WorkspaceMemberObjectMetadata)
     private readonly workspaceMemberRepository: WorkspaceMemberRepository,
-    @InjectObjectMetadataRepository(MessageParticipantObjectMetadata)
-    private readonly messageParticipantRepository: MessageParticipantRepository,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly messageParticipantService: MessageParticipantService,
-    @InjectObjectMetadataRepository(CalendarEventParticipantObjectMetadata)
-    private readonly calendarEventParticipantRepository: CalendarEventParticipantRepository,
     private readonly calendarEventParticipantService: CalendarEventParticipantService,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
@@ -157,14 +149,7 @@ export class CreateCompanyAndContactService {
           transactionManager,
         );
 
-        const messageParticipantsWithoutPersonIdAndWorkspaceMemberId =
-          await this.messageParticipantRepository.getWithoutPersonIdAndWorkspaceMemberId(
-            workspaceId,
-            transactionManager,
-          );
-
         await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
-          messageParticipantsWithoutPersonIdAndWorkspaceMemberId,
           workspaceId,
           transactionManager,
         );
@@ -179,14 +164,7 @@ export class CreateCompanyAndContactService {
           return;
         }
 
-        const calendarEventParticipantsWithoutPersonIdAndWorkspaceMemberId =
-          await this.calendarEventParticipantRepository.getWithoutPersonIdAndWorkspaceMemberId(
-            workspaceId,
-            transactionManager,
-          );
-
-        await this.calendarEventParticipantService.updateCalendarEventParticipantsAfterContactCreation(
-          calendarEventParticipantsWithoutPersonIdAndWorkspaceMemberId,
+        await this.calendarEventParticipantService.updateCalendarEventParticipantsAfterPeopleCreation(
           workspaceId,
           transactionManager,
         );

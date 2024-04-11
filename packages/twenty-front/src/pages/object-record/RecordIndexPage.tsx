@@ -1,9 +1,9 @@
 import { useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { v4 } from 'uuid';
 
-import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { RecordIndexContainer } from '@/object-record/record-index/components/RecordIndexContainer';
+import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
 import { useSelectedTableCellEditMode } from '@/object-record/record-table/record-table-cell/hooks/useSelectedTableCellEditMode';
 import { PageBody } from '@/ui/layout/page/PageBody';
@@ -20,14 +20,6 @@ const StyledIndexContainer = styled.div`
 export const RecordIndexPage = () => {
   const objectNamePlural = useParams().objectNamePlural ?? '';
 
-  const { objectNameSingular } = useObjectNameSingularFromPlural({
-    objectNamePlural,
-  });
-
-  const { createOneRecord: createOneObject } = useCreateOneRecord({
-    objectNameSingular,
-  });
-
   const recordIndexId = objectNamePlural ?? '';
   const setHotkeyScope = useSetHotkeyScope();
 
@@ -35,12 +27,14 @@ export const RecordIndexPage = () => {
     scopeId: recordIndexId,
   });
 
-  const handleAddButtonClick = async () => {
-    await createOneObject?.({
-      position: 'first',
-    });
+  const { setPendingRecordId } = useRecordTable({
+    recordTableId: recordIndexId,
+  });
 
-    setSelectedTableCellEditMode(0, 0);
+  const handleAddButtonClick = async () => {
+    setPendingRecordId(v4());
+
+    setSelectedTableCellEditMode(-1, 0);
     setHotkeyScope(DEFAULT_CELL_SCOPE.scope, DEFAULT_CELL_SCOPE.customScopes);
   };
 

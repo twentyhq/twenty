@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { flip, offset, useFloating } from '@floating-ui/react';
@@ -13,8 +13,6 @@ const StyledCalendarContainer = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
-
-  margin-top: 1px;
 
   position: absolute;
 
@@ -38,6 +36,7 @@ export type DateInputProps = {
   hotkeyScope: string;
   clearable?: boolean;
   onChange?: (newDate: Nullable<Date>) => void;
+  isDateTimeInput?: boolean;
 };
 
 export const DateInput = ({
@@ -48,6 +47,7 @@ export const DateInput = ({
   onClickOutside,
   clearable,
   onChange,
+  isDateTimeInput,
 }: DateInputProps) => {
   const theme = useTheme();
 
@@ -60,7 +60,7 @@ export const DateInput = ({
     middleware: [
       flip(),
       offset({
-        mainAxis: theme.spacingMultiplicator * 2,
+        mainAxis: theme.spacingMultiplicator * -6,
       }),
     ],
   });
@@ -69,10 +69,6 @@ export const DateInput = ({
     setInternalValue(newDate);
     onChange?.(newDate);
   };
-
-  useEffect(() => {
-    setInternalValue(value);
-  }, [value]);
 
   useRegisterInputEvents({
     inputRef: wrapperRef,
@@ -99,6 +95,7 @@ export const DateInput = ({
               onEnter(newDate);
             }}
             clearable={clearable ? clearable : false}
+            isDateTimeInput={isDateTimeInput}
           />
         </StyledCalendarContainer>
       </div>

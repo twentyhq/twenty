@@ -12,6 +12,45 @@ export class CalendarChannelRepository {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
+  public async getAll(
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<CalendarChannelObjectMetadata>[]> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT * FROM ${dataSourceSchema}."calendarChannel"`,
+      [],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async create(
+    calendarChannel: Pick<
+      ObjectRecord<CalendarChannelObjectMetadata>,
+      'id' | 'connectedAccountId' | 'handle' | 'visibility'
+    >,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<void> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `INSERT INTO ${dataSourceSchema}."calendarChannel" (id, "connectedAccountId", "handle", "visibility") VALUES ($1, $2, $3, $4)`,
+      [
+        calendarChannel.id,
+        calendarChannel.connectedAccountId,
+        calendarChannel.handle,
+        calendarChannel.visibility,
+      ],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async getByConnectedAccountId(
     connectedAccountId: string,
     workspaceId: string,

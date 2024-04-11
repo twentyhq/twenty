@@ -54,6 +54,8 @@ export const ClientConfigProviderEffect = () => {
 
       setSentryConfig({
         dsn: data?.clientConfig?.sentry?.dsn,
+        release: data?.clientConfig?.sentry?.release,
+        environment: data?.clientConfig?.sentry?.environment,
       });
 
       setCaptchaProvider({

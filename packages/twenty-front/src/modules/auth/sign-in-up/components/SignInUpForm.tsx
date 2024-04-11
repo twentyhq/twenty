@@ -76,11 +76,11 @@ export const SignInUpForm = () => {
         await getCaptchaToken();
         continueWithCredentials();
       } else if (signInUpStep === SignInUpStep.Password) {
-        setShowErrors(true);
-
-        await getCaptchaToken();
-
-        form.handleSubmit(submitCredentials)();
+        if (!form.formState.isSubmitting) {
+          setShowErrors(true);
+          await getCaptchaToken();
+          form.handleSubmit(submitCredentials)();
+        }
       }
     }
   };
@@ -242,7 +242,7 @@ export const SignInUpForm = () => {
               )
             }
             disabled={
-              SignInUpStep.Init
+              signInUpStep === SignInUpStep.Init
                 ? false
                 : signInUpStep === SignInUpStep.Email
                   ? !form.watch('email')

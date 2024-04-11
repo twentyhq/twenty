@@ -88,6 +88,11 @@ export const RecordShowPage = () => {
         ].join(' ')
       : `${labelIdentifierFieldValue}`;
 
+  // Temporarily since we don't have relations for remote objects yet
+  if (objectMetadataItem.isRemote) {
+    return null;
+  }
+
   return (
     <PageContainer>
       <PageTitle title={pageName} />

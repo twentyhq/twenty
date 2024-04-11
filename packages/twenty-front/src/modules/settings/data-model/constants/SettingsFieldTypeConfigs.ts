@@ -2,6 +2,7 @@ import {
   IconCalendarEvent,
   IconCheck,
   IconCoins,
+  IconJson,
   IconKey,
   IconLink,
   IconMail,
@@ -10,6 +11,7 @@ import {
   IconPhone,
   IconRelationManyToMany,
   IconTag,
+  IconTags,
   IconTextSize,
   IconUser,
 } from 'twenty-ui';
@@ -69,13 +71,18 @@ export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
     Icon: IconCalendarEvent,
     defaultValue: DEFAULT_DATE_VALUE.toISOString(),
   },
+  [FieldMetadataType.Date]: {
+    label: 'Date',
+    Icon: IconCalendarEvent,
+    defaultValue: DEFAULT_DATE_VALUE.toISOString(),
+  },
   [FieldMetadataType.Select]: {
     label: 'Select',
     Icon: IconTag,
   },
   [FieldMetadataType.MultiSelect]: {
-    label: 'MultiSelect',
-    Icon: IconTag,
+    label: 'Multi-select',
+    Icon: IconTags,
   },
   [FieldMetadataType.Currency]: {
     label: 'Currency',
@@ -116,5 +123,10 @@ export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
       addressLat: 34.0522,
       addressLng: -118.2437,
     },
+  },
+  [FieldMetadataType.RawJson]: {
+    label: 'JSON',
+    Icon: IconJson,
+    defaultValue: `{ "key": "value" }`,
   },
 };

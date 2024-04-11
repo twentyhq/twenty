@@ -21,6 +21,7 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
         FieldMetadataType.Address,
         FieldMetadataType.Relation,
         FieldMetadataType.Select,
+        FieldMetadataType.MultiSelect,
         FieldMetadataType.Currency,
       ].includes(field.type)
     ) {
@@ -60,6 +61,8 @@ export const getFilterTypeFromFieldType = (fieldType: FieldMetadataType) => {
   switch (fieldType) {
     case FieldMetadataType.DateTime:
       return 'DATE_TIME';
+    case FieldMetadataType.Date:
+      return 'DATE';
     case FieldMetadataType.Link:
       return 'LINK';
     case FieldMetadataType.FullName:
@@ -76,6 +79,8 @@ export const getFilterTypeFromFieldType = (fieldType: FieldMetadataType) => {
       return 'RELATION';
     case FieldMetadataType.Select:
       return 'SELECT';
+    case FieldMetadataType.MultiSelect:
+      return 'MULTI_SELECT';
     case FieldMetadataType.Address:
       return 'ADDRESS';
     default:

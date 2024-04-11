@@ -40,14 +40,11 @@ export class RemotePostgresTableService {
 
     await dataSource.destroy();
 
-    return columns.map(
-      (column) =>
-        ({
-          columnName: column.column_name,
-          dataType: column.data_type,
-          udtName: column.udt_name,
-        }) as RemoteTableColumn,
-    );
+    return columns.map((column) => ({
+      columnName: column.column_name,
+      dataType: column.data_type,
+      udtName: column.udt_name,
+    }));
   }
 
   public async fetchTablesFromRemotePostgresSchema(
@@ -78,12 +75,9 @@ export class RemotePostgresTableService {
 
     await dataSource.destroy();
 
-    return remotePostgresTables.map(
-      (table) =>
-        ({
-          tableName: table.table_name,
-          tableSchema: table.table_schema,
-        }) as RemoteTable,
-    );
+    return remotePostgresTables.map((table) => ({
+      tableName: table.table_name,
+      tableSchema: table.table_schema,
+    }));
   }
 }

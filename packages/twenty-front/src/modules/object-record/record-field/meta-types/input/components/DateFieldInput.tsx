@@ -1,8 +1,8 @@
+import { useDateField } from '@/object-record/record-field/meta-types/hooks/useDateField';
 import { DateInput } from '@/ui/field/input/components/DateInput';
 import { Nullable } from '~/types/Nullable';
 
 import { usePersistField } from '../../../hooks/usePersistField';
-import { useDateTimeField } from '../../hooks/useDateTimeField';
 
 export type FieldInputEvent = (persist: () => void) => void;
 
@@ -17,8 +17,7 @@ export const DateFieldInput = ({
   onEscape,
   onClickOutside,
 }: DateFieldInputProps) => {
-  const { fieldValue, hotkeyScope, clearable, setDraftValue } =
-    useDateTimeField();
+  const { fieldValue, hotkeyScope, setDraftValue } = useDateField();
 
   const persistField = usePersistField();
 
@@ -60,7 +59,7 @@ export const DateFieldInput = ({
       onEnter={handleEnter}
       onEscape={handleEscape}
       value={dateValue}
-      clearable={clearable}
+      clearable
       onChange={handleChange}
     />
   );
