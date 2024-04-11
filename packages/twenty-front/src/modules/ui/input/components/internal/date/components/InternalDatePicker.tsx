@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import ReactDatePicker from 'react-datepicker';
 import styled from '@emotion/styled';
+import { DateTime } from 'luxon';
 import { IconCalendarX } from 'twenty-ui';
 
 import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
@@ -251,7 +252,6 @@ const StyledInputContainer = styled.div`
   display: flex;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   height: ${({ theme }) => theme.spacing(8)};
-  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledInput = styled.input`
@@ -259,10 +259,13 @@ const StyledInput = styled.input`
   border: none;
   color: ${({ theme }) => theme.font.color.primary};
   outline: none;
-  padding: 0;
+  padding: 8px;
   font-weight: 500;
   font-size: ${({ theme }) => theme.font.size.md};
+  width: 100%;
 `;
+
+const PICKER_DATE_FORMAT = 'MM/dd/yyyy';
 
 export const InternalDatePicker = ({
   date,
@@ -275,7 +278,16 @@ export const InternalDatePicker = ({
     onMouseSelect?.(null);
   };
 
-  const [dateValue, setDateValue] = useState('');
+  const initialDate = date
+    ? DateTime.fromJSDate(date).toFormat(PICKER_DATE_FORMAT)
+    : DateTime.now().toFormat(PICKER_DATE_FORMAT);
+
+  const [dateValue, setDateValue] = useState(initialDate);
+
+  const dateValueAsJSDate = DateTime.fromFormat(dateValue, PICKER_DATE_FORMAT)
+    .isValid
+    ? DateTime.fromFormat(dateValue, PICKER_DATE_FORMAT).toJSDate()
+    : null;
 
   return (
     <StyledContainer>
@@ -292,19 +304,30 @@ export const InternalDatePicker = ({
               const inputValue = e.target.value;
               setDateValue(inputValue);
 
-              if (/^\d{1,2}\/\d{1,2}\/(?:\d{2}|\d{4})$/.test(inputValue)) {
-                const [month, day, year] = inputValue.split('/').map(Number);
-                const formattedYear = Number(
-                  `${year}`.length === 2 ? `20${year}` : year,
+              if (!isDateTimeInput) {
+                const parsedInputDate = DateTime.fromFormat(
+                  inputValue,
+                  PICKER_DATE_FORMAT,
+                  { zone: 'utc' },
                 );
-                let date = new Date(formattedYear, month - 1, day - 1);
-                if (!isNaN(date.getTime())) {
-                  date = new Date(
-                    date.getTime() -
-                      date.getTimezoneOffset() * 60 * 1000 +
-                      24 * 60 * 60 * 1000,
-                  );
-                  onChange?.(date);
+
+                const isValid = parsedInputDate.isValid;
+
+                if (isValid) {
+                  onChange?.(parsedInputDate.toJSDate());
+                }
+              } else {
+                // TODO: implement time also
+                const parsedInputDate = DateTime.fromFormat(
+                  inputValue,
+                  PICKER_DATE_FORMAT,
+                  { zone: 'utc' },
+                );
+
+                const isValid = parsedInputDate.isValid;
+
+                if (isValid) {
+                  onChange?.(parsedInputDate.toJSDate());
                 }
               }
             }}
@@ -313,7 +336,8 @@ export const InternalDatePicker = ({
 
         <ReactDatePicker
           open={true}
-          selected={date}
+          selected={dateValueAsJSDate}
+          value={dateValue}
           showMonthDropdown
           showYearDropdown
           onChange={() => {
@@ -324,6 +348,11 @@ export const InternalDatePicker = ({
             // Setting the time to midnight might sometimes return the previous day
             // We set to 21:00 to avoid any timezone issues
             const dateForDateField = new Date(date.setHours(21, 0, 0, 0));
+
+            setDateValue(
+              DateTime.fromJSDate(date).toFormat(PICKER_DATE_FORMAT),
+            );
+
             if (event?.type === 'click') {
               onMouseSelect?.(isDateTimeInput ? date : dateForDateField);
             } else {
