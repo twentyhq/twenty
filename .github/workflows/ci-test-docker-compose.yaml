@@ -56,6 +56,4 @@ jobs:
                 exit 1
             fi
         done
-
-        done
       working-directory: ./packages/twenty-docker/
