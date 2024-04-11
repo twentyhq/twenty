@@ -50,6 +50,7 @@ const RatingFieldInputWithContext = ({
         iconName: 'Icon123',
         metadata: {
           fieldName: 'Rating',
+          objectMetadataNameSingular: 'person',
         },
       }}
       entityId={entityId}

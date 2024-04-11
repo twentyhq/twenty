@@ -44,6 +44,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     selectedRowIdsSelector,
     onToggleColumnFilterState,
     onToggleColumnSortState,
+    pendingRecordIdState,
   } = useRecordTableStates(recordTableId);
 
   const setAvailableTableColumns = useRecoilCallback(
@@ -194,6 +195,8 @@ export const useRecordTable = (props?: useRecordTableProps) => {
   const isSomeCellInEditModeState =
     useGetIsSomeCellInEditModeState(recordTableId);
 
+  const setPendingRecordId = useSetRecoilState(pendingRecordIdState);
+
   return {
     scopeId,
     onColumnsChange,
@@ -222,5 +225,6 @@ export const useRecordTable = (props?: useRecordTableProps) => {
     setHasUserSelectedAllRows,
     setOnToggleColumnFilter,
     setOnToggleColumnSort,
+    setPendingRecordId,
   };
 };
