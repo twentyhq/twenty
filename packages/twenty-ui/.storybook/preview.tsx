@@ -1,0 +1,22 @@
+import { ThemeProvider } from '@emotion/react';
+import { Preview } from '@storybook/react';
+import { useDarkMode } from 'storybook-dark-mode';
+
+import { THEME_DARK, THEME_LIGHT } from '../src/theme/index';
+
+const preview: Preview = {
+  decorators: [
+    (Story) => {
+      const mode = useDarkMode() ? 'Dark' : 'Light';
+
+      const theme = mode === 'Dark' ? THEME_DARK : THEME_LIGHT;
+      return (
+        <ThemeProvider theme={theme}>
+          <Story />
+        </ThemeProvider>
+      );
+    },
+  ],
+};
+
+export default preview;
