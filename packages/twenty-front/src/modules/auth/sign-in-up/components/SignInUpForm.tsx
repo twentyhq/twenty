@@ -5,7 +5,6 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
 
-import { useGenerateCaptchaToken } from '@/auth/hooks/useGenerateCaptchaToken';
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword.ts';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm.ts';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle.ts';
@@ -17,8 +16,6 @@ import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ActionLink } from '@/ui/navigation/link/components/ActionLink.tsx';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
-import { useInsertCaptchaScript } from '~/hooks/useInsertCaptchaScript';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { Logo } from '../../components/Logo';
 import { Title } from '../../components/Title';
@@ -51,8 +48,6 @@ const StyledInputContainer = styled.div`
 export const SignInUpForm = () => {
   const [authProviders] = useRecoilState(authProvidersState);
   const [showErrors, setShowErrors] = useState(false);
-  const [isGeneratingCaptchaToken, setIsGeneratingCaptchaToken] =
-    useState(false);
   const { handleResetPassword } = useHandleResetPassword();
   const workspace = useWorkspaceFromInviteHash();
   const { signInWithGoogle } = useSignInWithGoogle();
@@ -65,11 +60,9 @@ export const SignInUpForm = () => {
     continueWithCredentials,
     continueWithEmail,
     submitCredentials,
+    isGeneratingCaptchaToken,
+    getCaptchaToken,
   } = useSignInUp(form);
-
-  const isCaptchaScriptLoaded = useInsertCaptchaScript();
-
-  const { generateCaptchaToken } = useGenerateCaptchaToken();
 
   const handleKeyDown = async (
     event: React.KeyboardEvent<HTMLInputElement>,
@@ -80,16 +73,12 @@ export const SignInUpForm = () => {
       if (signInUpStep === SignInUpStep.Init) {
         continueWithEmail();
       } else if (signInUpStep === SignInUpStep.Email) {
+        await getCaptchaToken();
         continueWithCredentials();
       } else if (signInUpStep === SignInUpStep.Password) {
         setShowErrors(true);
 
-        setIsGeneratingCaptchaToken(true);
-        const captchaToken = await generateCaptchaToken(isCaptchaScriptLoaded);
-        if (!isUndefinedOrNull(captchaToken)) {
-          form.setValue('captchaToken', captchaToken);
-        }
-        setIsGeneratingCaptchaToken(false);
+        await getCaptchaToken();
 
         form.handleSubmit(submitCredentials)();
       }
@@ -237,19 +226,13 @@ export const SignInUpForm = () => {
                 return;
               }
               if (signInUpStep === SignInUpStep.Email) {
+                await getCaptchaToken();
                 continueWithCredentials();
                 return;
               }
               setShowErrors(true);
 
-              setIsGeneratingCaptchaToken(true);
-              const captchaToken = await generateCaptchaToken(
-                isCaptchaScriptLoaded,
-              );
-              setIsGeneratingCaptchaToken(false);
-              if (!isUndefinedOrNull(captchaToken)) {
-                form.setValue('captchaToken', captchaToken);
-              }
+              await getCaptchaToken();
 
               form.handleSubmit(submitCredentials)();
             }}

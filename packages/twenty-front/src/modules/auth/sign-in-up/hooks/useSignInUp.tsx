@@ -2,13 +2,16 @@ import { useCallback, useState } from 'react';
 import { SubmitHandler, UseFormReturn } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 
+import { useGenerateCaptchaToken } from '@/auth/hooks/useGenerateCaptchaToken';
 import { useNavigateAfterSignInUp } from '@/auth/sign-in-up/hooks/useNavigateAfterSignInUp.ts';
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm.ts';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { useInsertCaptchaScript } from '~/hooks/useInsertCaptchaScript';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { useAuth } from '../../hooks/useAuth';
 
@@ -50,6 +53,22 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     checkUserExists: { checkUserExistsQuery },
   } = useAuth();
 
+  const isCaptchaScriptLoaded = useInsertCaptchaScript();
+  const { generateCaptchaToken } = useGenerateCaptchaToken();
+
+  const [isGeneratingCaptchaToken, setIsGeneratingCaptchaToken] =
+    useState(false);
+
+  const getCaptchaToken = useCallback(async () => {
+    setIsGeneratingCaptchaToken(true);
+    const captchaToken = await generateCaptchaToken(isCaptchaScriptLoaded);
+    setIsGeneratingCaptchaToken(false);
+    if (!isUndefinedOrNull(captchaToken)) {
+      form.setValue('captchaToken', captchaToken);
+    }
+    return captchaToken;
+  }, [form, generateCaptchaToken, isCaptchaScriptLoaded]);
+
   const continueWithEmail = useCallback(() => {
     setSignInUpStep(SignInUpStep.Email);
     setSignInUpMode(
@@ -66,6 +85,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     checkUserExistsQuery({
       variables: {
         email: form.getValues('email').toLowerCase().trim(),
+        captchaToken: form.getValues('captchaToken'),
       },
       onCompleted: (data) => {
         if (data?.checkUserExists.exists) {
@@ -76,7 +96,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         setSignInUpStep(SignInUpStep.Password);
       },
     });
-  }, [setSignInUpStep, checkUserExistsQuery, form, setSignInUpMode]);
+  }, [form, checkUserExistsQuery]);
 
   const submitCredentials: SubmitHandler<Form> = useCallback(
     async (data) => {
@@ -122,7 +142,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
 
   useScopedHotkeys(
     'enter',
-    () => {
+    async () => {
       if (signInUpStep === SignInUpStep.Init) {
         continueWithEmail();
       }
@@ -132,6 +152,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       }
 
       if (signInUpStep === SignInUpStep.Password) {
+        await getCaptchaToken();
         form.handleSubmit(submitCredentials)();
       }
     },
@@ -152,5 +173,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     continueWithCredentials,
     continueWithEmail,
     submitCredentials,
+    getCaptchaToken,
+    isGeneratingCaptchaToken,
   };
 };
