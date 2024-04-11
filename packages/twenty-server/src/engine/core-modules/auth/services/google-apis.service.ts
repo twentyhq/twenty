@@ -39,21 +39,6 @@ import {
 } from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
 import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
 
-export class Toto {
-  handle: string;
-  workspaceMemberId: string;
-  workspaceId: string;
-  accessToken: string;
-  refreshToken: string;
-}
-
-export class TotoUpdate {
-  workspaceId: string;
-  accessToken: string;
-  refreshToken: string;
-  connectedAccountId: string;
-}
-
 @Injectable()
 export class GoogleAPIsService {
   constructor(
@@ -74,7 +59,13 @@ export class GoogleAPIsService {
     private readonly calendarChannelRepository: CalendarChannelRepository,
   ) {}
 
-  async refreshGoogleRefreshToken(input: Toto) {
+  async refreshGoogleRefreshToken(input: {
+    handle: string;
+    workspaceMemberId: string;
+    workspaceId: string;
+    accessToken: string;
+    refreshToken: string;
+  }) {
     const { handle, workspaceId, workspaceMemberId } = input;
 
     const dataSourceMetadata =
