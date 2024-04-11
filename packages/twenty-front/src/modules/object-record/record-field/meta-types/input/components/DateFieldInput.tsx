@@ -32,7 +32,6 @@ export const DateFieldInput = ({
   };
 
   const handleEnter = (newDate: Nullable<Date>) => {
-    console.log('newDate enter', newDate);
     onEnter?.(() => persistDate(newDate));
   };
 
