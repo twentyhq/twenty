@@ -124,6 +124,7 @@ export {
   IconSortDescending,
   IconTable,
   IconTag,
+  IconTags,
   IconTarget,
   IconTargetArrow,
   IconTextSize,

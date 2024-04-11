@@ -11,6 +11,7 @@ import {
   IconPhone,
   IconRelationManyToMany,
   IconTag,
+  IconTags,
   IconTextSize,
   IconUser,
 } from 'twenty-ui';
@@ -75,8 +76,8 @@ export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
     Icon: IconTag,
   },
   [FieldMetadataType.MultiSelect]: {
-    label: 'MultiSelect',
-    Icon: IconTag,
+    label: 'Multi-select',
+    Icon: IconTags,
   },
   [FieldMetadataType.Currency]: {
     label: 'Currency',

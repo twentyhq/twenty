@@ -1,8 +1,5 @@
 import { useContext } from 'react';
 
-import { JsonFieldDisplay } from '@/object-record/record-field/meta-types/display/components/JsonFieldDisplay';
-import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
-
 import { FieldContext } from '../contexts/FieldContext';
 import { AddressFieldDisplay } from '../meta-types/display/components/AddressFieldDisplay';
 import { ChipFieldDisplay } from '../meta-types/display/components/ChipFieldDisplay';
@@ -10,7 +7,9 @@ import { CurrencyFieldDisplay } from '../meta-types/display/components/CurrencyF
 import { DateFieldDisplay } from '../meta-types/display/components/DateFieldDisplay';
 import { EmailFieldDisplay } from '../meta-types/display/components/EmailFieldDisplay';
 import { FullNameFieldDisplay } from '../meta-types/display/components/FullNameFieldDisplay';
+import { JsonFieldDisplay } from '../meta-types/display/components/JsonFieldDisplay';
 import { LinkFieldDisplay } from '../meta-types/display/components/LinkFieldDisplay';
+import { MultiSelectFieldDisplay } from '../meta-types/display/components/MultiSelectFieldDisplay.tsx';
 import { NumberFieldDisplay } from '../meta-types/display/components/NumberFieldDisplay';
 import { PhoneFieldDisplay } from '../meta-types/display/components/PhoneFieldDisplay';
 import { RelationFieldDisplay } from '../meta-types/display/components/RelationFieldDisplay';
@@ -23,8 +22,10 @@ import { isFieldDateTime } from '../types/guards/isFieldDateTime';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
 import { isFieldFullName } from '../types/guards/isFieldFullName';
 import { isFieldLink } from '../types/guards/isFieldLink';
+import { isFieldMultiSelect } from '../types/guards/isFieldMultiSelect.ts';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldPhone } from '../types/guards/isFieldPhone';
+import { isFieldRawJson } from '../types/guards/isFieldRawJson';
 import { isFieldRelation } from '../types/guards/isFieldRelation';
 import { isFieldSelect } from '../types/guards/isFieldSelect';
 import { isFieldText } from '../types/guards/isFieldText';
@@ -60,6 +61,8 @@ export const FieldDisplay = () => {
     <PhoneFieldDisplay />
   ) : isFieldSelect(fieldDefinition) ? (
     <SelectFieldDisplay />
+  ) : isFieldMultiSelect(fieldDefinition) ? (
+    <MultiSelectFieldDisplay />
   ) : isFieldAddress(fieldDefinition) ? (
     <AddressFieldDisplay />
   ) : isFieldRawJson(fieldDefinition) ? (

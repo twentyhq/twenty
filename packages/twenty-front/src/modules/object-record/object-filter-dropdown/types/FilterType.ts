@@ -9,4 +9,5 @@ export type FilterType =
   | 'LINK'
   | 'RELATION'
   | 'ADDRESS'
-  | 'SELECT';
+  | 'SELECT'
+  | 'MULTI_SELECT';
