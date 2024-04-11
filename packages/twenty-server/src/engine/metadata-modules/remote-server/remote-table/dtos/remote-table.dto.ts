@@ -22,5 +22,5 @@ export class RemoteTableDTO {
   status: RemoteTableStatus;
 
   @Field(() => String)
-  schema: string;
+  schema?: string;
 }

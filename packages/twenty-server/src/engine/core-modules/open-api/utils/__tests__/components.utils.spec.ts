@@ -11,6 +11,7 @@ describe('computeSchemaComponents', () => {
     ).toEqual({
       ObjectName: {
         type: 'object',
+        description: undefined,
         required: ['fieldNumber'],
         example: { fieldNumber: '' },
         properties: {
@@ -30,6 +31,9 @@ describe('computeSchemaComponents', () => {
           },
           fieldNumber: {
             type: 'number',
+          },
+          fieldSelect: {
+            type: 'string',
           },
           fieldString: {
             type: 'string',

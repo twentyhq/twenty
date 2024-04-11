@@ -1,11 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import ReactDatePicker from 'react-datepicker';
-import { IMask, useIMask } from 'react-imask';
+import { useIMask } from 'react-imask';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconCalendarDue, IconCalendarX, IconClockHour8 } from 'twenty-ui';
+import { DateTime } from 'luxon';
+import { IconCalendarDue, IconCalendarX } from 'twenty-ui';
 
 import { MonthAndYearDropdown } from '@/ui/input/components/internal/date/components/MonthAndYearDropdown';
+import { TimeInput } from '@/ui/input/components/internal/date/components/TimeInput';
+import { DATE_TIME_BLOCKS } from '@/ui/input/components/internal/date/constants/DateTimeBlocks';
+import { DATE_TIME_FORMAT } from '@/ui/input/components/internal/date/constants/DateTimeFormat';
 import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
 import { StyledHoverableMenuItemBase } from '@/ui/navigation/menu-item/internals/components/StyledMenuItemBase';
 import { OVERLAY_BACKGROUND } from '@/ui/theme/constants/OverlayBackground';
@@ -248,24 +252,6 @@ const StyledButton = styled(MenuItemLeftContent)`
   justify-content: start;
 `;
 
-const StyledInputContainer = styled.div`
-  width: 100%;
-  display: flex;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  height: ${({ theme }) => theme.spacing(8)};
-  padding: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledInput = styled.input`
-  background: ${({ theme }) => theme.background.secondary};
-  border: none;
-  color: ${({ theme }) => theme.font.color.primary};
-  outline: none;
-  padding: 0;
-  font-weight: 500;
-  font-size: ${({ theme }) => theme.font.size.md};
-`;
-
 const StyledIconButton = styled.button<{ isOpen: boolean }>`
   display: flex;
   justify-content: center;
@@ -291,122 +277,40 @@ const StyledIconButton = styled.button<{ isOpen: boolean }>`
   }
 `;
 
-const StyledIconClock = styled(IconClockHour8)`
-  position: absolute;
-`;
-
-const StyledTimeInputContainer = styled.div`
-  align-items: center;
-  background-color: ${({ theme }) => theme.background.tertiary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  display: flex;
-  margin-left: ${({ theme }) => theme.spacing(1)};
-  margin-right: 0;
-  padding: 0 ${({ theme }) => theme.spacing(2)};
-  position: absolute;
-  text-align: left;
-  width: 136px;
-  height: 32px;
-  gap: ${({ theme }) => theme.spacing(1)};
-  top: 56px;
-  z-index: 10;
-`;
-
-const StyledTimeInput = styled.input`
-  background: transparent;
-  border: none;
-  color: ${({ theme }) => theme.font.color.primary};
-  outline: none;
-  font-weight: 500;
-  font-size: ${({ theme }) => theme.font.size.md};
-  margin-left: ${({ theme }) => theme.spacing(5)};
-`;
-
 export type InternalDatePickerProps = {
   date: Date;
   onMouseSelect?: (date: Date | null) => void;
   onChange?: (date: Date) => void;
   clearable?: boolean;
+  isDateTimeInput?: boolean;
 };
 
-interface TimeInputProps {
-  onChange?: (date: Date) => void;
-  date: Date;
-}
+const StyledInputContainer = styled.div`
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  height: ${({ theme }) => theme.spacing(8)};
+`;
 
-const timeMask = 'HH:mm'; // Define blocks for hours and minutes
-const timeBlocks = {
-  HH: {
-    mask: IMask.MaskedRange, // Use MaskedRange for valid hour range (0-23)
-    from: 0,
-    to: 23,
-  },
-  mm: {
-    mask: IMask.MaskedRange, // Use MaskedRange for valid minute range (0-59)
-    from: 0,
-    to: 59,
-  },
-};
+const StyledInput = styled.input`
+  background: ${({ theme }) => theme.background.secondary};
+  border: none;
+  color: ${({ theme }) => theme.font.color.primary};
+  outline: none;
+  padding: 8px;
+  font-weight: 500;
+  font-size: ${({ theme }) => theme.font.size.md};
+  width: 100%;
+`;
 
-const datetimePattern = `MM/DD/YYYY ${timeMask}`;
-const datetimeBlocks = {
-  YYYY: {
-    mask: IMask.MaskedRange,
-    from: 1970,
-    to: 2100,
-  },
-  MM: {
-    mask: IMask.MaskedRange,
-    from: 1,
-    to: 12,
-  },
-  DD: {
-    mask: IMask.MaskedRange,
-    from: 1,
-    to: 31,
-  },
-  ...timeBlocks,
-};
-
-const TimeInput = ({ date, onChange }: TimeInputProps) => {
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-
-  const handleComplete = (value: string) => {
-    const [hours, minutes] = value.split(':');
-    const newDate = new Date(date);
-    newDate.setHours(parseInt(hours, 10));
-    newDate.setMinutes(parseInt(minutes, 10));
-    onChange?.(newDate);
-  };
-
-  const { ref, setValue } = useIMask(
-    {
-      mask: timeMask,
-      blocks: timeBlocks,
-    },
-    {
-      onComplete: handleComplete,
-    },
-  );
-
-  useEffect(() => {
-    setValue(`${hours}:${minutes}`);
-  }, [hours, minutes, setValue]);
-
-  return (
-    <StyledTimeInputContainer>
-      <StyledIconClock size={16} />
-      <StyledTimeInput type="text" ref={ref as any} />
-    </StyledTimeInputContainer>
-  );
-};
+const PICKER_DATE_FORMAT = 'MM/dd/yyyy';
 
 export const InternalDatePicker = ({
   date,
   onChange,
   onMouseSelect,
   clearable = true,
+  isDateTimeInput,
 }: InternalDatePickerProps) => {
   const theme = useTheme();
 
@@ -459,8 +363,8 @@ export const InternalDatePicker = ({
   const { ref, setValue } = useIMask(
     {
       mask: Date,
-      pattern: datetimePattern,
-      blocks: datetimeBlocks,
+      pattern: DATE_TIME_FORMAT,
+      blocks: DATE_TIME_BLOCKS,
       min: new Date(1970, 0, 1),
       max: new Date(2100, 0, 1),
       format: parseDateToString,
@@ -473,29 +377,69 @@ export const InternalDatePicker = ({
     },
   );
 
-  useEffect(() => {
-    setValue(parseDateToString(date));
-  }, [date, setValue]);
+  const initialDate = date
+    ? DateTime.fromJSDate(date).toFormat(PICKER_DATE_FORMAT)
+    : DateTime.now().toFormat(PICKER_DATE_FORMAT);
+
+  const [dateValue, setDateValue] = useState(initialDate);
+
+  const dateValueAsJSDate = DateTime.fromFormat(dateValue, PICKER_DATE_FORMAT)
+    .isValid
+    ? DateTime.fromFormat(dateValue, PICKER_DATE_FORMAT).toJSDate()
+    : null;
 
   return (
     <StyledContainer>
       <div className={clearable ? 'clearable ' : ''}>
+        {isDateTimeInput && <TimeInput date={date} onChange={onChange} />}
         <StyledInputContainer>
-          <StyledInput type="text" ref={ref as any} />
+          <StyledInput
+            type="text"
+            placeholder={`Type date${
+              isDateTimeInput ? ' and time' : ' (mm/dd/yyyy)'
+            }`}
+            inputMode="numeric"
+            value={dateValue}
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              setDateValue(inputValue);
+
+              const parsedInputDate = DateTime.fromFormat(
+                inputValue,
+                PICKER_DATE_FORMAT,
+                { zone: 'utc' },
+              );
+
+              const isValid = parsedInputDate.isValid;
+
+              if (isValid) {
+                onChange?.(parsedInputDate.toJSDate());
+              }
+            }}
+          />
         </StyledInputContainer>
-        <TimeInput date={date} onChange={onChange} />
+
         <ReactDatePicker
           open={true}
-          selected={date}
+          selected={dateValueAsJSDate}
+          value={dateValue}
           onChange={() => {
             // We need to use onSelect here but onChange is almost redundant with onSelect but is require
           }}
           customInput={<></>}
           onSelect={(date: Date, event) => {
+            // Setting the time to midnight might sometimes return the previous day
+            // We set to 21:00 to avoid any timezone issues
+            const dateForDateField = new Date(date.setHours(21, 0, 0, 0));
+
+            setDateValue(
+              DateTime.fromJSDate(date).toFormat(PICKER_DATE_FORMAT),
+            );
+
             if (event?.type === 'click') {
-              onMouseSelect?.(date);
+              onMouseSelect?.(isDateTimeInput ? date : dateForDateField);
             } else {
-              onChange?.(date);
+              onChange?.(isDateTimeInput ? date : dateForDateField);
             }
           }}
         ></ReactDatePicker>

@@ -1,7 +1,7 @@
 import { ThemeProvider } from '@emotion/react';
-import { withThemeFromJSXProvider } from '@storybook/addon-themes';
-import { Preview, ReactRenderer } from '@storybook/react';
+import { Preview } from '@storybook/react';
 import { initialize, mswDecorator } from 'msw-storybook-addon';
+import { useDarkMode } from 'storybook-dark-mode';
 
 import { THEME_DARK } from '@/ui/theme/constants/ThemeDark';
 import { THEME_LIGHT } from '@/ui/theme/constants/ThemeLight';
@@ -30,14 +30,16 @@ initialize({
 
 const preview: Preview = {
   decorators: [
-    withThemeFromJSXProvider<ReactRenderer>({
-      themes: {
-        light: THEME_LIGHT,
-        dark: THEME_DARK,
-      },
-      defaultTheme: 'light',
-      Provider: ThemeProvider,
-    }),
+    (Story) => {
+      const mode = useDarkMode() ? 'Dark' : 'Light';
+
+      const theme = mode === 'Dark' ? THEME_DARK : THEME_LIGHT;
+      return (
+        <ThemeProvider theme={theme}>
+          <Story />
+        </ThemeProvider>
+      );
+    },
     RootDecorator,
     mswDecorator,
   ],

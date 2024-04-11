@@ -14,7 +14,6 @@ import {
   GraphQLString,
   GraphQLType,
 } from 'graphql';
-import GraphQLJSON from 'graphql-type-json';
 
 import {
   DateScalarMode,
@@ -39,6 +38,7 @@ import {
   UUIDScalarType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { PositionScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/position.scalar';
+import { JsonScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/json.scalar';
 
 export interface TypeOptions<T = any> {
   nullable?: boolean;
@@ -65,13 +65,14 @@ export class TypeMapperService {
       [FieldMetadataType.PHONE, GraphQLString],
       [FieldMetadataType.EMAIL, GraphQLString],
       [FieldMetadataType.DATE_TIME, dateScalar],
+      [FieldMetadataType.DATE, dateScalar],
       [FieldMetadataType.BOOLEAN, GraphQLBoolean],
       [FieldMetadataType.NUMBER, numberScalar],
       [FieldMetadataType.NUMERIC, BigFloatScalarType],
       [FieldMetadataType.PROBABILITY, GraphQLFloat],
       [FieldMetadataType.RELATION, UUIDScalarType],
       [FieldMetadataType.POSITION, PositionScalarType],
-      [FieldMetadataType.RAW_JSON, GraphQLJSON],
+      [FieldMetadataType.RAW_JSON, JsonScalarType],
     ]);
 
     return typeScalarMapping.get(fieldMetadataType);
@@ -96,6 +97,7 @@ export class TypeMapperService {
       [FieldMetadataType.PHONE, StringFilterType],
       [FieldMetadataType.EMAIL, StringFilterType],
       [FieldMetadataType.DATE_TIME, dateFilter],
+      [FieldMetadataType.DATE, DateFilterType],
       [FieldMetadataType.BOOLEAN, BooleanFilterType],
       [FieldMetadataType.NUMBER, numberScalar],
       [FieldMetadataType.NUMERIC, BigFloatFilterType],
@@ -117,6 +119,7 @@ export class TypeMapperService {
       [FieldMetadataType.PHONE, OrderByDirectionType],
       [FieldMetadataType.EMAIL, OrderByDirectionType],
       [FieldMetadataType.DATE_TIME, OrderByDirectionType],
+      [FieldMetadataType.DATE, OrderByDirectionType],
       [FieldMetadataType.BOOLEAN, OrderByDirectionType],
       [FieldMetadataType.NUMBER, OrderByDirectionType],
       [FieldMetadataType.NUMERIC, OrderByDirectionType],

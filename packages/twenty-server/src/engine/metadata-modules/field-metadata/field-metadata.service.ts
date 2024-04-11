@@ -306,9 +306,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         ...updatableFieldInput,
         defaultValue:
           // Todo: we handle default value for all field types.
-          ![FieldMetadataType.SELECT, FieldMetadataType.BOOLEAN].includes(
-            existingFieldMetadata.type,
-          )
+          ![
+            FieldMetadataType.SELECT,
+            FieldMetadataType.MULTI_SELECT,
+            FieldMetadataType.BOOLEAN,
+          ].includes(existingFieldMetadata.type)
             ? existingFieldMetadata.defaultValue
             : updatableFieldInput.defaultValue !== null
               ? updatableFieldInput.defaultValue

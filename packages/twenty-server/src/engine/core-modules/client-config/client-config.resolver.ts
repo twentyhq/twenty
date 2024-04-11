@@ -39,7 +39,9 @@ export class ClientConfigResolver {
         ),
       },
       sentry: {
-        dsn: this.environmentService.get('SENTRY_DSN'),
+        environment: this.environmentService.get('SENTRY_ENVIRONMENT'),
+        release: this.environmentService.get('SENTRY_RELEASE'),
+        dsn: this.environmentService.get('SENTRY_DSN_FRONT'),
       },
     };
 

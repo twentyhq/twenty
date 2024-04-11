@@ -3,7 +3,7 @@ import { BooleanInput } from '@/ui/field/input/components/BooleanInput';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useBooleanField } from '../../hooks/useBooleanField';
 
-import { FieldInputEvent } from './DateFieldInput';
+import { FieldInputEvent } from './DateTimeFieldInput';
 
 export type BooleanFieldInputProps = {
   onSubmit?: FieldInputEvent;
