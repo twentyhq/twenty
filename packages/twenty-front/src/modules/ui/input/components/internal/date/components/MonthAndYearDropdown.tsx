@@ -1,7 +1,10 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconChevronDown, IconChevronUp } from 'twenty-ui';
 
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 const StyledContainer = styled.div<{ isOpen: boolean }>`
@@ -10,7 +13,6 @@ const StyledContainer = styled.div<{ isOpen: boolean }>`
   border-radius: ${(props) => props.theme.border.radius.md};
   display: flex;
   flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(1)};
   position: absolute;
   width: 160px;
   z-index: 10;
@@ -34,7 +36,7 @@ const StyledButton = styled.div`
   height: ${({ theme }) => theme.spacing(8)};
   justify-content: space-between;
   padding: 0 ${({ theme }) => theme.spacing(2)};
-  width: 148px;
+  width: calc(100% - ${({ theme }) => theme.spacing(6)});
 `;
 
 const StyledDropdownButton = styled.button`
@@ -81,8 +83,8 @@ const months = [
 ];
 
 const years = Array.from(
-  { length: 11 },
-  (_, i) => new Date().getFullYear() + i - 5,
+  { length: 200 },
+  (_, i) => new Date().getFullYear() - 100 + i,
 );
 
 export const MonthAndYearDropdown = ({
@@ -93,6 +95,8 @@ export const MonthAndYearDropdown = ({
   updateMonth,
   updateYear,
 }: MonthAndYearDropdownProps) => {
+  const theme = useTheme();
+
   const [openMonth, setOpenMonth] = useState(false);
   const [openYear, setOpenYear] = useState(false);
 
@@ -101,11 +105,13 @@ export const MonthAndYearDropdown = ({
   useListenClickOutside({
     refs: [ref],
     callback: () => {
-      if (isOpen) onCloseDropdown();
+      if (isOpen) {
+        onCloseDropdown();
+      }
     },
   });
 
-  const handleDropdown = (dropdown: 'month' | 'year') => {
+  const handleToggleDropdown = (dropdown: 'month' | 'year') => {
     if (dropdown === 'month') {
       setOpenMonth(!openMonth);
       setOpenYear(false);
@@ -117,28 +123,49 @@ export const MonthAndYearDropdown = ({
 
   return isOpen ? (
     <StyledContainer isOpen={isOpen} ref={ref}>
-      <StyledButton onClick={() => handleDropdown('month')}>
+      <StyledButton onClick={() => handleToggleDropdown('month')}>
         {months[month].label}
-        {openMonth ? <IconChevronDown /> : <IconChevronUp />}
+        {openMonth ? (
+          <IconChevronDown size={theme.icon.size.sm} />
+        ) : (
+          <IconChevronUp size={theme.icon.size.sm} />
+        )}
       </StyledButton>
-      {openMonth &&
-        months.map((month) => (
-          <StyledDropdownButton
-            key={month.value}
-            onClick={() => updateMonth(month.value - 1)}
-          >
-            {month.label}
-          </StyledDropdownButton>
-        ))}
-      <StyledButton onClick={() => handleDropdown('year')}>
-        {year} {openYear ? <IconChevronDown /> : <IconChevronUp />}
+      <DropdownMenuItemsContainer hasMaxHeight>
+        {openMonth &&
+          months.map((month) => (
+            <StyledDropdownButton
+              key={month.value}
+              onClick={() => {
+                handleToggleDropdown('month');
+                updateMonth(month.value - 1);
+              }}
+            >
+              {month.label}
+            </StyledDropdownButton>
+          ))}
+      </DropdownMenuItemsContainer>
+      <StyledButton onClick={() => handleToggleDropdown('year')}>
+        {year}{' '}
+        {openYear ? (
+          <IconChevronDown size={theme.icon.size.sm} />
+        ) : (
+          <IconChevronUp size={theme.icon.size.sm} />
+        )}
       </StyledButton>
-      {openYear &&
-        years.map((year) => (
-          <StyledDropdownButton key={year} onClick={() => updateYear(year)}>
-            {year}
-          </StyledDropdownButton>
-        ))}
+      <DropdownMenuItemsContainer hasMaxHeight>
+        {openYear &&
+          years.map((year) => (
+            <MenuItem
+              onClick={() => {
+                updateYear(year);
+                handleToggleDropdown('year');
+                onCloseDropdown();
+              }}
+              text={year.toString()}
+            />
+          ))}
+      </DropdownMenuItemsContainer>
     </StyledContainer>
   ) : null;
 };

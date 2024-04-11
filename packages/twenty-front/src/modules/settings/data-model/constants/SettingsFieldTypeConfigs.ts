@@ -1,4 +1,5 @@
 import {
+  IconCalendarEvent,
   IconCalendarTime,
   IconCheck,
   IconCoins,
