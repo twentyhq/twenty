@@ -2,6 +2,7 @@ import {
   IconCalendarEvent,
   IconCheck,
   IconCoins,
+  IconJson,
   IconKey,
   IconLink,
   IconMail,
@@ -116,5 +117,10 @@ export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
       addressLat: 34.0522,
       addressLng: -118.2437,
     },
+  },
+  [FieldMetadataType.RawJson]: {
+    label: 'JSON',
+    Icon: IconJson,
+    defaultValue: `{ "key": "value" }`,
   },
 };

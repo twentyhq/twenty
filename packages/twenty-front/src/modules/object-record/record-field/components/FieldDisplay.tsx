@@ -1,5 +1,8 @@
 import { useContext } from 'react';
 
+import { JsonFieldDisplay } from '@/object-record/record-field/meta-types/display/components/JsonFieldDisplay';
+import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
+
 import { FieldContext } from '../contexts/FieldContext';
 import { AddressFieldDisplay } from '../meta-types/display/components/AddressFieldDisplay';
 import { ChipFieldDisplay } from '../meta-types/display/components/ChipFieldDisplay';
@@ -59,5 +62,7 @@ export const FieldDisplay = () => {
     <SelectFieldDisplay />
   ) : isFieldAddress(fieldDefinition) ? (
     <AddressFieldDisplay />
+  ) : isFieldRawJson(fieldDefinition) ? (
+    <JsonFieldDisplay />
   ) : null;
 };

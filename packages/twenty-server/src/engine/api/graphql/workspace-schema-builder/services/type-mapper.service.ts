@@ -14,7 +14,6 @@ import {
   GraphQLString,
   GraphQLType,
 } from 'graphql';
-import GraphQLJSON from 'graphql-type-json';
 
 import {
   DateScalarMode,
@@ -39,6 +38,7 @@ import {
   UUIDScalarType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { PositionScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/position.scalar';
+import { JsonScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/json.scalar';
 
 export interface TypeOptions<T = any> {
   nullable?: boolean;
@@ -71,7 +71,7 @@ export class TypeMapperService {
       [FieldMetadataType.PROBABILITY, GraphQLFloat],
       [FieldMetadataType.RELATION, UUIDScalarType],
       [FieldMetadataType.POSITION, PositionScalarType],
-      [FieldMetadataType.RAW_JSON, GraphQLJSON],
+      [FieldMetadataType.RAW_JSON, JsonScalarType],
     ]);
 
     return typeScalarMapping.get(fieldMetadataType);

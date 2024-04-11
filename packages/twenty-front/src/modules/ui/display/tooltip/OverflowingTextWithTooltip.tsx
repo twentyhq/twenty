@@ -22,9 +22,11 @@ const StyledOverflowingText = styled.div<{ cursorPointer: boolean }>`
 export const OverflowingTextWithTooltip = ({
   text,
   className,
+  mutliline,
 }: {
   text: string | null | undefined;
   className?: string;
+  mutliline?: boolean;
 }) => {
   const textElementId = `title-id-${uuidV4()}`;
 
@@ -65,13 +67,15 @@ export const OverflowingTextWithTooltip = ({
           <div onClick={handleTooltipClick}>
             <AppTooltip
               anchorSelect={`#${textElementId}`}
-              content={text ?? ''}
+              content={mutliline ? undefined : text ?? ''}
               delayHide={0}
               offset={5}
               noArrow
               place="bottom"
               positionStrategy="absolute"
-            />
+            >
+              {mutliline ? <pre>{text}</pre> : ''}
+            </AppTooltip>
           </div>,
           document.body,
         )}
