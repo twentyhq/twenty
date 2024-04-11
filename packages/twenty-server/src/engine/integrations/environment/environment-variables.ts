@@ -272,8 +272,6 @@ export class EnvironmentVariables {
   @CastToBoolean()
   MESSAGING_PROVIDER_GMAIL_ENABLED: boolean = false;
 
-  MESSAGING_PROVIDER_GMAIL_CALLBACK_URL: string;
-
   MESSAGE_QUEUE_TYPE: string = MessageQueueDriverType.Sync;
 
   EMAIL_FROM_ADDRESS: string = 'noreply@yourdomain.com';

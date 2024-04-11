@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
 import { useHandleToggleColumnFilter } from '@/object-record/record-index/hooks/useHandleToggleColumnFilter';
 import { useHandleToggleColumnSort } from '@/object-record/record-index/hooks/useHandleToggleColumnSort';
@@ -31,7 +31,7 @@ export const RecordIndexTableContainerEffect = ({
     recordTableId,
   });
 
-  const { objectMetadataItem } = useObjectMetadataItemOnly({
+  const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 

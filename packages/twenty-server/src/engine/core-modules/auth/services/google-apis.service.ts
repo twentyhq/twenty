@@ -10,9 +10,9 @@ import { SaveOrUpdateConnectedAccountInput } from 'src/engine/core-modules/auth/
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import {
-  GoogleCalendarFullSyncJob,
-  GoogleCalendarFullSyncJobData,
-} from 'src/modules/calendar/jobs/google-calendar-full-sync.job';
+  GoogleCalendarSyncJob,
+  GoogleCalendarSyncJobData,
+} from 'src/modules/calendar/jobs/google-calendar-sync.job';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import {
   FeatureFlagEntity,
@@ -135,10 +135,7 @@ export class GoogleAPIsService {
       this.environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED') &&
       IsCalendarEnabled
     ) {
-      await this.enqueueGoogleCalendarFullSyncJob(
-        workspaceId,
-        connectedAccountId,
-      );
+      await this.enqueueGoogleCalendarSyncJob(workspaceId, connectedAccountId);
     }
 
     return;
@@ -170,10 +167,7 @@ export class GoogleAPIsService {
     }
 
     if (this.environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED')) {
-      await this.enqueueGoogleCalendarFullSyncJob(
-        workspaceId,
-        connectedAccountId,
-      );
+      await this.enqueueGoogleCalendarSyncJob(workspaceId, connectedAccountId);
     }
 
     return;
@@ -192,12 +186,12 @@ export class GoogleAPIsService {
     );
   }
 
-  async enqueueGoogleCalendarFullSyncJob(
+  async enqueueGoogleCalendarSyncJob(
     workspaceId: string,
     connectedAccountId: string,
   ) {
-    await this.calendarQueueService.add<GoogleCalendarFullSyncJobData>(
-      GoogleCalendarFullSyncJob.name,
+    await this.calendarQueueService.add<GoogleCalendarSyncJobData>(
+      GoogleCalendarSyncJob.name,
       {
         workspaceId,
         connectedAccountId,

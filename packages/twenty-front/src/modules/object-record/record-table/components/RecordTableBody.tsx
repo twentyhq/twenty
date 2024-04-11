@@ -1,6 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
 import { RecordTableBodyFetchMoreLoader } from '@/object-record/record-table/components/RecordTableBodyFetchMoreLoader';
+import { RecordTablePendingRow } from '@/object-record/record-table/components/RecordTablePendingRow';
 import { RecordTableRow } from '@/object-record/record-table/components/RecordTableRow';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 
@@ -18,6 +19,7 @@ export const RecordTableBody = ({
   return (
     <>
       <tbody>
+        <RecordTablePendingRow />
         {tableRowIds.map((recordId, rowIndex) => (
           <RecordTableRow
             key={recordId}

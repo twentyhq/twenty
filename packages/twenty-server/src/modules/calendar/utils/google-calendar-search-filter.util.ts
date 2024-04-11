@@ -1,8 +1,8 @@
 export const googleCalendarSearchFilterExcludeEmails = (
   emails: string[],
-): string => {
+): string | undefined => {
   if (emails.length === 0) {
-    return '';
+    return undefined;
   }
 
   return `email=-${emails.join(', -')}`;

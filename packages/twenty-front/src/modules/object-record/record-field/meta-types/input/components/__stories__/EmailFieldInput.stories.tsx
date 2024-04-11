@@ -50,6 +50,7 @@ const EmailFieldInputWithContext = ({
           metadata: {
             fieldName: 'email',
             placeHolder: 'username@email.com',
+            objectMetadataNameSingular: 'person',
           },
         }}
         entityId={entityId}

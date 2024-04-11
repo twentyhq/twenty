@@ -52,6 +52,7 @@ const DateFieldInputWithContext = ({
           iconName: 'IconCalendarEvent',
           metadata: {
             fieldName: 'Date',
+            objectMetadataNameSingular: 'person',
           },
         }}
         entityId={entityId}

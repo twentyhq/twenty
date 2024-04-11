@@ -19,7 +19,9 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
   const { enqueueSnackBar } = useSnackBar();
   const { getIcon } = useIcons();
 
-  const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
   const fields = objectMetadataItem.fields
     .filter(
       (x) =>

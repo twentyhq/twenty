@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -21,7 +21,7 @@ export const RecordIndexBoardContainer = ({
   recordBoardId,
   objectNameSingular,
 }: RecordIndexBoardContainerProps) => {
-  const { objectMetadataItem } = useObjectMetadataItemOnly({
+  const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 

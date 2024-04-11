@@ -58,6 +58,7 @@ const AddressInputWithContext = ({
           metadata: {
             fieldName: 'Address',
             placeHolder: 'Enter text',
+            objectMetadataNameSingular: 'person',
           },
         }}
         entityId={entityId}
