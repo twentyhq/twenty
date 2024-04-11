@@ -10,6 +10,7 @@ import {
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState.ts';
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
 import { workspacesState } from '@/auth/states/workspaces';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
@@ -169,9 +170,13 @@ export const useAuth = () => {
         const isClientConfigLoaded = snapshot
           .getLoadable(isClientConfigLoadedState)
           .getValue();
+        const isCurrentUserLoaded = snapshot
+          .getLoadable(isCurrentUserLoadedState)
+          .getValue();
 
         const initialSnapshot = emptySnapshot.map(({ set }) => {
           set(isClientConfigLoadedState, isClientConfigLoaded);
+          set(isCurrentUserLoadedState, isCurrentUserLoaded);
           set(iconsState, iconsValue);
           set(authProvidersState, authProvidersValue);
           set(billingState, billing);
