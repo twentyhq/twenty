@@ -1,5 +1,5 @@
 import { BrowserRouter as Router } from 'react-router-dom';
-import { IconComponent } from 'twenty-ui';
+import { IconTwentyStar } from 'twenty-ui';
 
 import { EntityChip } from '@/ui/display/chip/components/EntityChip';
 
@@ -13,7 +13,7 @@ export const MyComponent = () => {
         pictureUrl=""
         avatarType="rounded"
         variant="regular"
-        LeftIcon={IconComponent}
+        LeftIcon={IconTwentyStar}
       />
     </Router>
   );
