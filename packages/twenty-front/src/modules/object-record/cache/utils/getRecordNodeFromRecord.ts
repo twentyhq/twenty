@@ -6,7 +6,10 @@ import { getNodeTypename } from '@/object-record/cache/utils/getNodeTypename';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  RelationDefinitionType,
+} from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { lowerAndCapitalize } from '~/utils/string/lowerAndCapitalize';
 
@@ -66,14 +69,15 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
         }
 
         if (
-          Array.isArray(value) &&
-          field.type !== FieldMetadataType.MultiSelect
+          field.type === FieldMetadataType.Relation &&
+          field.relationDefinition?.direction ===
+            RelationDefinitionType.OneToMany
         ) {
-          const item = objectMetadataItems.find(
-            (omi) => omi.namePlural === fieldName,
+          const oneToManyObjectMetadataItem = objectMetadataItems.find(
+            (item) => item.namePlural === fieldName,
           );
 
-          if (!item) {
+          if (!oneToManyObjectMetadataItem) {
             return undefined;
           }
 
@@ -81,7 +85,7 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
             fieldName,
             getRecordConnectionFromRecords({
               objectMetadataItems,
-              objectMetadataItem: item,
+              objectMetadataItem: oneToManyObjectMetadataItem,
               records: value as ObjectRecord[],
               queryFields:
                 queryFields?.[fieldName] === true ||
