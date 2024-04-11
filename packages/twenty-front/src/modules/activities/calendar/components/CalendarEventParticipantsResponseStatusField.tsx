@@ -101,10 +101,9 @@ export const CalendarEventParticipantsResponseStatusField = ({
         </StyledLabelAndIconContainer>
 
         <ExpandableList
-          components={StyledChips}
+          listItems={StyledChips}
           id={v4()}
           rootRef={participantsContainerRef}
-          margin="0px -50px 0px 0px"
         />
       </StyledInlineCellBaseContainer>
     </StyledPropertyBox>

@@ -6,13 +6,11 @@ export const IntersectionObserverWrapper = ({
   id,
   rootRef,
   children,
-  margin,
 }: {
   set: React.Dispatch<React.SetStateAction<Set<number>>>;
   id: number;
   rootRef?: React.RefObject<HTMLElement>;
   children: React.ReactNode;
-  margin?: string;
 }) => {
   const { ref, inView } = useInView({
     threshold: 1,
@@ -33,7 +31,7 @@ export const IntersectionObserverWrapper = ({
       }
     },
     root: rootRef?.current,
-    rootMargin: margin,
+    rootMargin: '0px 0px -50px 0px',
   });
 
   return (

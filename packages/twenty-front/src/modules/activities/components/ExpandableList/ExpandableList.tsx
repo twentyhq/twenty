@@ -50,12 +50,10 @@ export const ExpandableList = ({
   listItems,
   rootRef,
   id,
-  margin,
 }: {
   listItems: ReactElement[];
   rootRef: React.RefObject<HTMLElement>;
   id: string;
-  margin?: string;
 }) => {
   const [listItemsInView, setListItemsInView] = useState(new Set<number>());
 
@@ -75,7 +73,6 @@ export const ExpandableList = ({
               set={setListItemsInView}
               id={index}
               rootRef={rootRef}
-              margin={margin}
             >
               {listItem}
             </IntersectionObserverWrapper>
