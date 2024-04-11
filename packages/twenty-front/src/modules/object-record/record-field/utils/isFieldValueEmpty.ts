@@ -5,6 +5,7 @@ import { isFieldAddressValue } from '@/object-record/record-field/types/guards/i
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
 import { isFieldCurrency } from '@/object-record/record-field/types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '@/object-record/record-field/types/guards/isFieldCurrencyValue';
+import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
 import { isFieldDateTime } from '@/object-record/record-field/types/guards/isFieldDateTime';
 import { isFieldEmail } from '@/object-record/record-field/types/guards/isFieldEmail';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
@@ -38,6 +39,7 @@ export const isFieldValueEmpty = ({
     isFieldUuid(fieldDefinition) ||
     isFieldText(fieldDefinition) ||
     isFieldDateTime(fieldDefinition) ||
+    isFieldDate(fieldDefinition) ||
     isFieldNumber(fieldDefinition) ||
     isFieldRating(fieldDefinition) ||
     isFieldEmail(fieldDefinition) ||

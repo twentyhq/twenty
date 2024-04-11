@@ -1,9 +1,9 @@
 import { DateDisplay } from '@/ui/field/display/components/DateDisplay';
 
-import { useDateTimeField } from '../../hooks/useDateTimeField';
+import { useDateField } from '../../hooks/useDateField';
 
 export const DateFieldDisplay = () => {
-  const { fieldValue } = useDateTimeField();
+  const { fieldValue } = useDateField();
 
   return <DateDisplay value={fieldValue} />;
 };

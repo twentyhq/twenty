@@ -6,7 +6,7 @@ import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { FieldContext } from '../../../../contexts/FieldContext';
 import { useDateTimeField } from '../../../hooks/useDateTimeField';
-import { DateFieldDisplay } from '../DateFieldDisplay';
+import { DateTimeFieldDisplay } from '../DateTimeFieldDisplay';
 
 const formattedDate = new Date('2023-04-01');
 
@@ -47,7 +47,7 @@ const meta: Meta = {
     ),
     ComponentDecorator,
   ],
-  component: DateFieldDisplay,
+  component: DateTimeFieldDisplay,
   argTypes: { value: { control: 'date' } },
   args: {
     value: formattedDate,
@@ -56,7 +56,7 @@ const meta: Meta = {
 
 export default meta;
 
-type Story = StoryObj<typeof DateFieldDisplay>;
+type Story = StoryObj<typeof DateTimeFieldDisplay>;
 
 export const Default: Story = {};
 

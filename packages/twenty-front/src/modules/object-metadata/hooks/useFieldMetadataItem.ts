@@ -1,6 +1,7 @@
 import { v4 } from 'uuid';
 
 import { FieldMetadataOption } from '@/object-metadata/types/FieldMetadataOption.ts';
+import { getDefaultValueForBackend } from '@/object-metadata/utils/getDefaultValueForBackend';
 import { Field } from '~/generated/graphql';
 
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
@@ -24,11 +25,11 @@ export const useFieldMetadataItem = () => {
     },
   ) => {
     const formattedInput = formatFieldMetadataItemInput(input);
-    const defaultValue = input.defaultValue
-      ? typeof input.defaultValue == 'string'
-        ? `'${input.defaultValue}'`
-        : input.defaultValue
-      : formattedInput.defaultValue ?? undefined;
+
+    const defaultValue = getDefaultValueForBackend(
+      input.defaultValue ?? formattedInput.defaultValue,
+      input.type,
+    );
 
     return createOneFieldMetadataItem({
       ...formattedInput,

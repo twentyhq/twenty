@@ -15,6 +15,7 @@ export const getOperandsForFilterType = (
     case 'CURRENCY':
     case 'NUMBER':
     case 'DATE_TIME':
+    case 'DATE':
       return [ViewFilterOperand.GreaterThan, ViewFilterOperand.LessThan];
     case 'RELATION':
     case 'SELECT':

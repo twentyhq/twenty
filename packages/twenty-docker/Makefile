@@ -35,18 +35,6 @@ prod-build:
 prod-run:
 	@docker run -d -p 3000:3000 --name twenty twenty
 
-prod-front-build:
-	@cd ../.. && docker build -f ./packages/twenty-docker/twenty-front/Dockerfile --tag twenty-front . && cd -
-
-prod-front-run:
-	@docker run -d -p 3001:3000 --name twenty-front twenty-front
-
-prod-server-build:
-	@cd ../.. && docker build -f ./packages/twenty-docker/twenty-server/Dockerfile --tag twenty-server . && cd -
-
-prod-server-run:
-	@docker run -d -p 3000:3000 --name twenty-server twenty-server
-
 prod-postgres-build:
 	@cd ../.. && docker build -f ./packages/twenty-docker/twenty-postgres/Dockerfile --tag twenty-postgres . && cd -
 
@@ -58,22 +46,6 @@ prod-website-build:
 
 prod-website-run:
 	@docker run -d -p 3000:3000 --name twenty-website twenty-website
-
-release-front:
-	@cd ../.. && docker buildx build \
-		--push \
-		--no-cache \
-		--platform linux/amd64,linux/arm64 \
-		-f ./packages/twenty-docker/twenty-front/Dockerfile -t twentycrm/twenty-front:$(version) -t twentycrm/twenty-front:latest . \
-		&& cd -
-
-release-server:
-	@cd ../.. && docker buildx build \
-		--push \
-		--no-cache \
-		--platform linux/amd64,linux/arm64 \
-		-f ./packages/twenty-docker/twenty-server/Dockerfile -t twentycrm/twenty-server:$(version) -t twentycrm/twenty-server:latest . \
-		&& cd -
 
 release-docs:
 	@cd ../.. && docker buildx build \
