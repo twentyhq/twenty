@@ -160,6 +160,10 @@ export class GoogleAPIsService {
         `UPDATE ${dataSourceMetadata.schema}."connectedAccount" SET "accessToken" = $1, "refreshToken" = $2, "authFailedAt" = NULL WHERE "id" = $3`,
         [accessToken, refreshToken, connectedAccountId],
       );
+      await manager.query(
+        `UPDATE ${dataSourceMetadata.schema}."messageChannel" SET "syncStatus" = NULL, "ongoingSyncStartedAt" = NULL, "syncCursor" = '' WHERE "connectedAccountId" = $1`,
+        [connectedAccountId],
+      );
     });
 
     if (this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED')) {
