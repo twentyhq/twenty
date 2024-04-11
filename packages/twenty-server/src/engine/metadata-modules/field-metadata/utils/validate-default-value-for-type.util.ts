@@ -1,5 +1,5 @@
 import { plainToInstance } from 'class-transformer';
-import { validateSync } from 'class-validator';
+import { ValidationError, validateSync } from 'class-validator';
 
 import {
   FieldMetadataClassValidation,
@@ -49,17 +49,32 @@ export const defaultValueValidatorsMap = {
   [FieldMetadataType.RAW_JSON]: [FieldMetadataDefaultValueRawJson],
 };
 
+type ValidationResult = {
+  isValid: boolean;
+  errors: ValidationError[];
+};
+
 export const validateDefaultValueForType = (
   type: FieldMetadataType,
   defaultValue: FieldMetadataDefaultValue,
-): boolean => {
-  if (defaultValue === null) return true;
+): ValidationResult => {
+  if (defaultValue === null) {
+    return {
+      isValid: true,
+      errors: [],
+    };
+  }
 
-  const validators = defaultValueValidatorsMap[type];
+  const validators = defaultValueValidatorsMap[type] as any[];
 
-  if (!validators) return false;
+  if (!validators) {
+    return {
+      isValid: false,
+      errors: [],
+    };
+  }
 
-  const isValid = validators.some((validator) => {
+  const validationResults = validators.map((validator) => {
     const conputedDefaultValue = isCompositeFieldMetadataType(type)
       ? defaultValue
       : { value: defaultValue };
@@ -75,19 +90,18 @@ export const validateDefaultValueForType = (
       forbidUnknownValues: true,
     });
 
-    const hasErrors = errors.length > 0;
+    const isValid = errors.length === 0;
 
-    if (hasErrors) {
-      console.error(
-        'Invalid default value for type',
-        type,
-        defaultValue,
-        errors,
-      );
-    }
-
-    return !hasErrors;
+    return {
+      isValid,
+      errors,
+    };
   });
 
-  return isValid;
+  const isValid = validationResults.some((result) => result.isValid);
+
+  return {
+    isValid,
+    errors: validationResults.flatMap((result) => result.errors),
+  };
 };

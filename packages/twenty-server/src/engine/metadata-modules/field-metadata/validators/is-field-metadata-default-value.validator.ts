@@ -14,13 +14,17 @@ import {
   FieldMetadataType,
 } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { validateDefaultValueForType } from 'src/engine/metadata-modules/field-metadata/utils/validate-default-value-for-type.util';
+import { LoggerService } from 'src/engine/integrations/logger/logger.service';
 
 @Injectable()
 @ValidatorConstraint({ name: 'isFieldMetadataDefaultValue', async: true })
 export class IsFieldMetadataDefaultValue
   implements ValidatorConstraintInterface
 {
-  constructor(private readonly fieldMetadataService: FieldMetadataService) {}
+  constructor(
+    private readonly fieldMetadataService: FieldMetadataService,
+    private readonly loggerService: LoggerService,
+  ) {}
 
   async validate(
     value: FieldMetadataDefaultValue,
@@ -48,7 +52,19 @@ export class IsFieldMetadataDefaultValue
       type = fieldMetadata.type;
     }
 
-    return validateDefaultValueForType(type, value);
+    const validationResult = validateDefaultValueForType(type, value);
+
+    if (!validationResult.isValid) {
+      this.loggerService.error(
+        {
+          message: 'Error during field validation',
+          errors: validationResult.errors,
+        },
+        'Field Metadata Validation',
+      );
+    }
+
+    return validationResult.isValid;
   }
 
   defaultMessage(): string {

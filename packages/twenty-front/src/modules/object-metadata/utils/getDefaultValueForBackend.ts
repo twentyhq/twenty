@@ -9,7 +9,7 @@ export const getDefaultValueForBackend = (
     const currencyDefaultValue = defaultValue as FieldCurrencyValue;
     return {
       amountMicros: currencyDefaultValue.amountMicros,
-      currencyCode: `'${defaultValue.currencyCode}'` as any,
+      currencyCode: `'${currencyDefaultValue.currencyCode}` as any,
     } satisfies FieldCurrencyValue;
   } else if (typeof defaultValue === 'string') {
     return `'${defaultValue}'`;
