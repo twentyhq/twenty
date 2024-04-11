@@ -803,6 +803,8 @@ export enum RemoteTableStatus {
 export type Sentry = {
   __typename?: 'Sentry';
   dsn?: Maybe<Scalars['String']['output']>;
+  environment?: Maybe<Scalars['String']['output']>;
+  release?: Maybe<Scalars['String']['output']>;
 };
 
 export type SessionEntity = {
