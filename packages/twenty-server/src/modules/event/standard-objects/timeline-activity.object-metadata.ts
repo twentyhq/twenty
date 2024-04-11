@@ -1,5 +1,5 @@
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { TimelineActivitiestandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { timelineActivitiestandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CustomObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/custom-objects/custom.object-metadata';
 import { DynamicRelationFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/dynamic-field-metadata.interface';
@@ -24,7 +24,7 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
 @IsSystem()
 export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    standardId: TimelineActivitiestandardFieldIds.happensAt,
+    standardId: timelineActivitiestandardFieldIds.happensAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Creation date',
     description: 'Creation date',
@@ -34,16 +34,7 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
   happensAt: Date;
 
   @FieldMetadata({
-    standardId: TimelineActivitiestandardFieldIds.type,
-    type: FieldMetadataType.TEXT,
-    label: 'Event type',
-    description: 'Event name/type',
-    icon: 'IconAbc',
-  })
-  type: string;
-
-  @FieldMetadata({
-    standardId: TimelineActivitiestandardFieldIds.name,
+    standardId: timelineActivitiestandardFieldIds.name,
     type: FieldMetadataType.TEXT,
     label: 'Event name',
     description: 'Event name',
@@ -52,7 +43,7 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
   name: string;
 
   @FieldMetadata({
-    standardId: TimelineActivitiestandardFieldIds.properties,
+    standardId: timelineActivitiestandardFieldIds.properties,
     type: FieldMetadataType.RAW_JSON,
     label: 'Event details',
     description: 'Json value for event details',
@@ -62,7 +53,7 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
   properties: JSON;
 
   @FieldMetadata({
-    standardId: TimelineActivitiestandardFieldIds.workspaceMember,
+    standardId: timelineActivitiestandardFieldIds.workspaceMember,
     type: FieldMetadataType.RELATION,
     label: 'Workspace Member',
     description: 'Event workspace member',
@@ -73,7 +64,7 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
   workspaceMember: WorkspaceMemberObjectMetadata;
 
   @FieldMetadata({
-    standardId: TimelineActivitiestandardFieldIds.person,
+    standardId: timelineActivitiestandardFieldIds.person,
     type: FieldMetadataType.RELATION,
     label: 'Person',
     description: 'Event person',
@@ -84,7 +75,7 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
   person: PersonObjectMetadata;
 
   @FieldMetadata({
-    standardId: TimelineActivitiestandardFieldIds.company,
+    standardId: timelineActivitiestandardFieldIds.company,
     type: FieldMetadataType.RELATION,
     label: 'Company',
     description: 'Event company',
@@ -95,7 +86,7 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
   company: CompanyObjectMetadata;
 
   @FieldMetadata({
-    standardId: TimelineActivitiestandardFieldIds.opportunity,
+    standardId: timelineActivitiestandardFieldIds.opportunity,
     type: FieldMetadataType.RELATION,
     label: 'Opportunity',
     description: 'Events opportunity',
@@ -106,7 +97,7 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
   opportunity: OpportunityObjectMetadata;
 
   @DynamicRelationFieldMetadata((oppositeObjectMetadata) => ({
-    standardId: TimelineActivitiestandardFieldIds.custom,
+    standardId: timelineActivitiestandardFieldIds.custom,
     name: oppositeObjectMetadata.nameSingular,
     label: oppositeObjectMetadata.labelSingular,
     description: `Event ${oppositeObjectMetadata.labelSingular}`,
@@ -114,4 +105,34 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
     icon: 'IconBuildingSkyscraper',
   }))
   custom: CustomObjectMetadata;
+
+  @FieldMetadata({
+    standardId: timelineActivitiestandardFieldIds.linkedRecordCachedName,
+    type: FieldMetadataType.TEXT,
+    label: 'Record cached name',
+    description: 'Cached record name',
+    icon: 'IconAbc',
+  })
+  @IsNullable()
+  linkedRecordCachedName: string;
+
+  @FieldMetadata({
+    standardId: timelineActivitiestandardFieldIds.linkedRecordId,
+    type: FieldMetadataType.TEXT,
+    label: 'Record name',
+    description: 'Cached record name',
+    icon: 'IconAbc',
+  })
+  @IsNullable()
+  linkedRecordId: string;
+
+  @FieldMetadata({
+    standardId: timelineActivitiestandardFieldIds.linkedObjectMetadataId,
+    type: FieldMetadataType.TEXT,
+    label: 'Record name',
+    description: 'Cached record name',
+    icon: 'IconAbc',
+  })
+  @IsNullable()
+  linkedObjectMetadataId: string;
 }

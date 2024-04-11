@@ -5,7 +5,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 type ObjectMetadataItemSelector = {
   objectName: string;
-  objectNameType: 'singular' | 'plural';
+  objectNameType: 'singular' | 'plural' | 'id';
 };
 
 export const objectMetadataItemFamilySelector = selectorFamily<
@@ -30,6 +30,12 @@ export const objectMetadataItemFamilySelector = selectorFamily<
           objectMetadataItems.find(
             (objectMetadataItem) =>
               objectMetadataItem.namePlural === objectName,
+          ) ?? null
+        );
+      } else if (objectNameType === 'id') {
+        return (
+          objectMetadataItems.find(
+            (objectMetadataItem) => objectMetadataItem.id === objectName,
           ) ?? null
         );
       }

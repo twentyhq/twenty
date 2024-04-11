@@ -43,7 +43,7 @@ export class UpsertTimelineActivityFromInternalEvent
       data.name,
       data.details,
       workspaceMemberId,
-      data.name.split('.')[0],
+      data.objectMetadata,
       data.recordId,
       data.workspaceId,
     );

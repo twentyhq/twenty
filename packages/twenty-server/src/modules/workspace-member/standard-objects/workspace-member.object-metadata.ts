@@ -261,7 +261,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   timelineActivities: TimelineActivityObjectMetadata[];
 
   @FieldMetadata({
-    standardId: workspaceMemberStandardFieldIds.timelineActivities,
+    standardId: workspaceMemberStandardFieldIds.auditLogs,
     type: FieldMetadataType.RELATION,
     label: 'Aud tLogs',
     description: 'Audit Logs linked to the workspace member',

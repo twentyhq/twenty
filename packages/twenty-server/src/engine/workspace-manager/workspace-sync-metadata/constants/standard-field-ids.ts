@@ -154,7 +154,7 @@ export const behavioralEventStandardFieldIds = {
   objectId: '20202020-6d8b-4ca5-9869-f882cb335673',
 };
 
-export const TimelineActivitiestandardFieldIds = {
+export const timelineActivitiestandardFieldIds = {
   happensAt: '073174de-9526-4993-b339-c4318c4d39f1',
   type: 'b4b4d436-5e7b-4ccd-8b8a-86b94b474135',
   name: '4360514a-7207-46e8-9dab-849505ae8498',
@@ -164,6 +164,9 @@ export const TimelineActivitiestandardFieldIds = {
   company: '20202020-04ad-4221-a744-7a8278a5ce20',
   opportunity: '20202020-7664-4a35-a3df-580d389fd5f0',
   custom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
+  linkedRecordCachedName: '20202020-cfdb-4bef-bbce-a29f41230933',
+  linkedRecordId: '20202020-2e0e-48c0-b445-ee6c1e61687f',
+  linkedObjectMetadataId: '20202020-c595-449d-9f89-562758c9ee67',
 };
 
 export const favoriteStandardFieldIds = {
@@ -314,7 +317,8 @@ export const workspaceMemberStandardFieldIds = {
   messageParticipants: '20202020-8f99-48bc-a5eb-edd33dd54188',
   blocklist: '20202020-6cb2-4161-9f29-a4b7f1283859',
   calendarEventParticipants: '20202020-0dbc-4841-9ce1-3e793b5b3512',
-  timelineActivities: 'c23dd16e-f0d9-4ba3-a123-69cc2c185071',
+  timelineActivities: '20202020-f0d9-4ba3-a123-69cc2c185071',
+  auditLogs: '20202020-2f54-4739-a5e2-99563385e83d',
 };
 
 export const customObjectStandardFieldIds = {

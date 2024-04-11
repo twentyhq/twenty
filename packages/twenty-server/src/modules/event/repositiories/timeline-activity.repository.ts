@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+
 import { objectRecordDiffMerge } from 'src/engine/integrations/event-emitter/utils/object-record-diff-merge';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
@@ -13,16 +15,20 @@ export class TimelineActivityRepository {
     name: string,
     properties: Record<string, any>,
     workspaceMemberId: string | null,
-    objectName: string,
+    objectMetadata: ObjectMetadataInterface,
     objectId: string,
     workspaceId: string,
   ): Promise<void> {
-    if (['activity', 'messageParticipant'].includes(objectName)) {
+    if (
+      ['activity', 'messageParticipant', 'activityTarget'].includes(
+        objectMetadata.nameSingular,
+      )
+    ) {
       return await this.handleSecondOrderObjects(
         name,
         properties,
         workspaceMemberId,
-        objectName,
+        objectMetadata,
         objectId,
         workspaceId,
       );
@@ -30,10 +36,9 @@ export class TimelineActivityRepository {
 
     return await this.upsertOne(
       name,
-      'object',
       properties,
       workspaceMemberId,
-      objectName,
+      objectMetadata.nameSingular,
       objectId,
       workspaceId,
     );
@@ -43,14 +48,53 @@ export class TimelineActivityRepository {
     name: string,
     properties: Record<string, any>,
     workspaceMemberId: string | null,
-    objectName: string,
+    objectMetadata: ObjectMetadataInterface,
     objectId: string,
     workspaceId: string,
   ) {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    if (objectName === 'activity') {
+    if (objectMetadata.nameSingular === 'activityTarget') {
+      const activityTarget =
+        await this.workspaceDataSourceService.executeRawQuery(
+          `SELECT * FROM ${dataSourceSchema}."activityTarget"
+            WHERE "id" = $1`,
+          [objectId],
+          workspaceId,
+        );
+
+      if (activityTarget.length === 0) return;
+
+      const activity = await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT * FROM ${dataSourceSchema}."activity"
+          WHERE "id" = $1`,
+        [activityTarget[0].activityId],
+        workspaceId,
+      );
+
+      if (activity.length === 0) return;
+
+      Object.entries(activityTarget[0]).forEach(
+        ([columnName, columnValue]: [string, string]) => {
+          if (columnName === 'activityId' || !columnName.endsWith('Id')) return;
+          if (columnValue === null) return;
+          this.upsertOne(
+            activity[0].type + '.' + name.split('.')[1],
+            {},
+            workspaceMemberId,
+            columnName.replace(/Id$/, ''),
+            columnValue,
+            workspaceId,
+            activity[0].title,
+            activityTarget[0].id,
+            objectMetadata.id,
+          );
+        },
+      );
+    }
+
+    if (objectMetadata.nameSingular === 'activity') {
       const activityTargets =
         await this.workspaceDataSourceService.executeRawQuery(
           `SELECT * FROM ${dataSourceSchema}."activityTarget"
@@ -59,40 +103,54 @@ export class TimelineActivityRepository {
           workspaceId,
         );
 
-      if (activityTargets.length === 0) return;
-
-      Object.entries(activityTargets[0]).forEach(
-        ([columnName, columnValue]: [string, string]) => {
-          if (columnName === 'activityId' || !columnName.endsWith('Id')) return;
-          if (columnValue === null) return;
-          this.upsertOne(
-            activityTargets[0].id,
-            name,
-            properties,
-            workspaceMemberId,
-            columnName.replace(/Id$/, ''),
-            columnValue,
-            workspaceId,
-          );
-        },
+      const activity = await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT * FROM ${dataSourceSchema}."activity"
+          WHERE "id" = $1`,
+        [objectId],
+        workspaceId,
       );
+
+      if (activityTargets.length === 0) return;
+      if (activity.length === 0) return;
+
+      activityTargets.forEach((activityTarget) => {
+        Object.entries(activityTarget).forEach(
+          ([columnName, columnValue]: [string, string]) => {
+            if (columnName === 'activityId' || !columnName.endsWith('Id'))
+              return;
+            if (columnValue === null) return;
+            this.upsertOne(
+              activity[0].type + '.' + name.split('.')[1],
+              properties,
+              workspaceMemberId,
+              columnName.replace(/Id$/, ''),
+              columnValue,
+              workspaceId,
+              activity[0].name,
+              activity[0].id,
+              objectMetadata.id,
+            );
+          },
+        );
+      });
     }
-    // Todo handle message participants
   }
 
   private async upsertOne(
     name: string,
-    type: string,
     properties: Record<string, any>,
     workspaceMemberId: string | null,
     objectName: string,
     objectId: string,
     workspaceId: string,
+    linkedRecordCachedName?: string,
+    linkedRecordId?: string,
+    linkedObjectMetadataId?: string,
   ) {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const recentActivity =
+    const recentTimelineActivity =
       await this.workspaceDataSourceService.executeRawQuery(
         `SELECT * FROM ${dataSourceSchema}."timelineActivity"
       WHERE "${objectName}Id" = $1
@@ -108,11 +166,9 @@ export class TimelineActivityRepository {
         workspaceId,
       );
 
-    if (recentActivity.length !== 0) {
-      // Now we need to merge the .diff
-
+    if (recentTimelineActivity.length !== 0) {
       const newProps = objectRecordDiffMerge(
-        recentActivity[0].properties,
+        recentTimelineActivity[0].properties,
         properties,
       );
 
@@ -120,7 +176,7 @@ export class TimelineActivityRepository {
         `UPDATE ${dataSourceSchema}."timelineActivity" 
       SET "properties" = $2, "workspaceMemberId" = $3
       WHERE "id" = $1`,
-        [recentActivity[0].id, newProps, workspaceMemberId],
+        [recentTimelineActivity[0].id, newProps, workspaceMemberId],
         workspaceId,
       );
 
@@ -129,9 +185,17 @@ export class TimelineActivityRepository {
 
     await this.workspaceDataSourceService.executeRawQuery(
       `INSERT INTO ${dataSourceSchema}."timelineActivity"
-    ("name", "properties", "workspaceMemberId", "${objectName}Id")
-    VALUES ($1, $2, $3, $4)`,
-      [name, properties, workspaceMemberId, objectId],
+    ("name", "properties", "workspaceMemberId", "${objectName}Id", "linkedRecordCachedName", "linkedRecordId", "linkedObjectMetadataId")
+    VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [
+        name,
+        properties,
+        workspaceMemberId,
+        objectId,
+        linkedRecordCachedName,
+        linkedRecordId,
+        linkedObjectMetadataId,
+      ],
       workspaceId,
     );
   }

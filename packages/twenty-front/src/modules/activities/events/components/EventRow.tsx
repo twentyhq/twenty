@@ -1,10 +1,19 @@
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
-import { IconCirclePlus, IconEditCircle, IconFocusCentered } from 'twenty-ui';
+import { useRecoilValue } from 'recoil';
+import {
+  IconCheckbox,
+  IconCirclePlus,
+  IconEditCircle,
+  IconFocusCentered,
+  IconNotes,
+} from 'twenty-ui';
 
 import { EventUpdateProperty } from '@/activities/events/components/EventUpdateProperty';
 import { TimelineActivity } from '@/activities/events/types/TimelineActivity';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
   beautifyExactDateTime,
@@ -40,14 +49,6 @@ const StyledItemContainer = styled.div`
   span {
     color: ${({ theme }) => theme.font.color.secondary};
   }
-  overflow: hidden;
-`;
-
-const StyledItemTitleContainer = styled.div`
-  display: flex;
-  flex: 1;
-  flex-flow: row ${() => (useIsMobile() ? 'wrap' : 'nowrap')};
-  gap: ${({ theme }) => theme.spacing(1)};
   overflow: hidden;
 `;
 
@@ -117,8 +118,16 @@ const StyledTimelineItemContainer = styled.div<{ isGap?: boolean }>`
   white-space: nowrap;
 `;
 
+const StyledSummary = styled.summary`
+  display: flex;
+  flex: 1;
+  flex-flow: row ${() => (useIsMobile() ? 'wrap' : 'nowrap')};
+  gap: ${({ theme }) => theme.spacing(1)};
+  overflow: hidden;
+`;
+
 type EventRowProps = {
-  targetableObject: ActivityTargetableObject;
+  mainObjectMetadata: ObjectMetadataItem | null;
   isLastEvent?: boolean;
   event: TimelineActivity;
 };
@@ -126,7 +135,7 @@ type EventRowProps = {
 export const EventRow = ({
   isLastEvent,
   event,
-  targetableObject,
+  mainObjectMetadata,
 }: EventRowProps) => {
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(event.createdAt);
   const exactCreatedAt = beautifyExactDateTime(event.createdAt);
@@ -135,47 +144,108 @@ export const EventRow = ({
   const diff: Record<string, { before: any; after: any }> = properties?.diff;
 
   const isEventType = (type: 'created' | 'updated') => {
-    return (
-      event.name === type + '.' + targetableObject.targetObjectNameSingular
-    );
+    if (event.name.includes('.')) {
+      return event.name.split('.')[1] === type;
+    }
+    return false;
   };
+
+  const { getIcon } = useIcons();
+
+  const linkedObjectMetadata = useRecoilValue(
+    objectMetadataItemFamilySelector({
+      objectName: event.linkedObjectMetadataId,
+      objectNameType: 'id',
+    }),
+  );
+
+  const linkedObjectLabel = event.name.includes('Note')
+    ? 'Note'
+    : event.name.includes('Task')
+      ? 'Task'
+      : linkedObjectMetadata?.labelSingular;
+
+  const ActivityIcon = event.linkedObjectMetadataId
+    ? event.name.includes('Note')
+      ? IconNotes
+      : event.name.includes('Task')
+        ? IconCheckbox
+        : getIcon(linkedObjectMetadata?.icon)
+    : isEventType('created')
+      ? IconCirclePlus
+      : isEventType('updated')
+        ? IconEditCircle
+        : IconFocusCentered;
+
+  const author =
+    event.workspaceMember?.name.firstName +
+    ' ' +
+    event.workspaceMember?.name.lastName;
+
+  const action = isEventType('created')
+    ? 'created'
+    : isEventType('updated')
+      ? 'updated'
+      : event.name;
+
+  let description;
+
+  if (linkedObjectMetadata !== null) {
+    description = 'a ' + linkedObjectLabel;
+  } else if (!event.linkedObjectMetadataId && isEventType('created')) {
+    description = `a new ${mainObjectMetadata?.labelSingular}`;
+  } else if (isEventType('updated')) {
+    const diffKeys = Object.keys(diff);
+    if (diffKeys.length === 0) {
+      description = `a ${mainObjectMetadata?.labelSingular}`;
+    } else if (diffKeys.length === 1) {
+      const [key, value] = Object.entries(diff)[0];
+      description = [
+        <EventUpdateProperty
+          propertyName={key}
+          after={value?.after as string}
+        />,
+      ];
+    } else if (diffKeys.length === 2) {
+      description =
+        mainObjectMetadata?.fields.find((field) => diffKeys[0] === field.name)
+          ?.label +
+        ' and ' +
+        mainObjectMetadata?.fields.find((field) => diffKeys[1] === field.name)
+          ?.label;
+    } else if (diffKeys.length > 2) {
+      description =
+        diffKeys[0] + ' and ' + (diffKeys.length - 1) + ' other fields';
+    }
+  } else if (!isEventType('created') && !isEventType('updated')) {
+    description = JSON.stringify(diff);
+  }
+  const details = JSON.stringify(diff);
 
   return (
     <>
       <StyledTimelineItemContainer>
         <StyledIconContainer>
-          {isEventType('created') && <IconCirclePlus />}
-          {isEventType('updated') && <IconEditCircle />}
-          {!isEventType('created') && !isEventType('updated') && (
-            <IconFocusCentered />
-          )}
+          <ActivityIcon />
         </StyledIconContainer>
         <StyledItemContainer>
-          <StyledItemTitleContainer>
-            <StyledItemAuthorText>
-              {event.workspaceMember?.name.firstName}{' '}
-              {event.workspaceMember?.name.lastName}
-            </StyledItemAuthorText>
-            <StyledActionName>
-              {isEventType('created') && 'created'}
-              {isEventType('updated') && 'updated'}
-              {!isEventType('created') && !isEventType('updated') && event.name}
-            </StyledActionName>
-            <StyledItemTitle>
-              {isEventType('created') &&
-                `a new ${targetableObject.targetObjectNameSingular}`}
-              {isEventType('updated') &&
-                Object.entries(diff).map(([key, value]) => (
-                  <EventUpdateProperty
-                    propertyName={key}
-                    after={value?.after}
-                  ></EventUpdateProperty>
-                ))}
-              {!isEventType('created') &&
-                !isEventType('updated') &&
-                JSON.stringify(diff)}
-            </StyledItemTitle>
-          </StyledItemTitleContainer>
+          <details>
+            <StyledSummary>
+              <StyledItemAuthorText>{author}</StyledItemAuthorText>
+              <StyledActionName>{action}</StyledActionName>
+              <StyledItemTitle>
+                {!linkedObjectMetadata ? (
+                  description
+                ) : (
+                  <>
+                    {linkedObjectLabel} : {event.linkedRecordCachedName}
+                  </>
+                )}
+              </StyledItemTitle>
+            </StyledSummary>
+            {details}
+          </details>
+
           <StyledItemTitleDate id={`id-${event.id}`}>
             {beautifiedCreatedAt}
           </StyledItemTitleDate>
