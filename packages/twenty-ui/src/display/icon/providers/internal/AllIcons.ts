@@ -24,7 +24,6 @@ export {
   IconAd2,
   IconAdCircle,
   IconAdCircleOff,
-  IconAddressBook,
   IconAddressBookOff,
   IconAdjustments,
   IconAdjustmentsAlt,

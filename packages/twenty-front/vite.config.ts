@@ -19,7 +19,9 @@ export default defineConfig(({ command, mode }) => {
 
   const checkers: Checkers = {
     typescript: {
-      tsconfigPath: 'tsconfig.app.json',
+      tsconfigPath: isBuildCommand
+        ? 'tsconfig.build.json'
+        : 'tsconfig.app.json',
     },
     overlay: false,
   };
@@ -43,11 +45,13 @@ export default defineConfig(({ command, mode }) => {
     plugins: [
       react({ jsxImportSource: '@emotion/react' }),
       tsconfigPaths({
-        projects: [
-          'tsconfig.json',
-          // Include internal library aliases in development mode, so hot reload is enabled for libraries.
-          mode === 'development' ? '../twenty-ui/tsconfig.json' : undefined,
-        ].filter(Boolean) as string[],
+        projects: isBuildCommand
+          ? [
+              'tsconfig.json',
+              // Include internal library aliases in development mode, so hot reload is enabled for libraries.
+              '../twenty-ui/tsconfig.json',
+            ]
+          : ['tsconfig.build.json'],
       }),
       svgr(),
       checker(checkers),
