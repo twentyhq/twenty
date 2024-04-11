@@ -6,9 +6,6 @@ import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/st
 import { GoogleCalendarSyncCronCommand } from 'src/modules/calendar/crons/commands/google-calendar-sync.cron.command';
 
 @Module({
-  imports: [
-    ObjectMetadataRepositoryModule.forFeature([ConnectedAccountObjectMetadata]),
-  ],
-  providers: [GoogleCalendarSyncCommand, GoogleCalendarSyncCronCommand],
+  providers: [GoogleCalendarSyncCronCommand],
 })
 export class CalendarCronCommandsModule {}
