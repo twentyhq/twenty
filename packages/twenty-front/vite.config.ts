@@ -43,11 +43,7 @@ export default defineConfig(({ command, mode }) => {
     plugins: [
       react({ jsxImportSource: '@emotion/react' }),
       tsconfigPaths({
-        projects: [
-          'tsconfig.json',
-          // Include internal library aliases in development mode, so hot reload is enabled for libraries.
-          mode === 'development' ? '../twenty-ui/tsconfig.json' : undefined,
-        ].filter(Boolean) as string[],
+        projects: ['tsconfig.json', '../twenty-ui/tsconfig.json'],
       }),
       svgr(),
       checker(checkers),

@@ -1,8 +1,12 @@
 import { renderHook } from '@testing-library/react';
 import * as recoil from 'recoil';
-import { Icon123, IconBuildingSkyscraper, IconUser } from 'twenty-ui';
 
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
+import {
+  Icon123,
+  IconBuildingSkyscraper,
+  IconUser,
+} from '@ui/display/icon/components/TablerIcons';
+import { useIcons } from '@ui/display/icon/hooks/useIcons';
 
 describe('useIcons', () => {
   const mockedStateIcons = {
