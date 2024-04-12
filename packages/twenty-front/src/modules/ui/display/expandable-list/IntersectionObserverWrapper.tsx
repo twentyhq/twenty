@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 
 const StyledDiv = styled.div<{ inView?: boolean }>`
-  opacity: ${({ inView }) => (inView === undefined || inView ? 1 : 0)};
+  border: 1px solid black;
+  display: ${({ inView }) =>
+    inView === undefined || inView ? 'block' : 'none'};
 `;
 
 export const IntersectionObserverWrapper = ({
@@ -17,20 +19,23 @@ export const IntersectionObserverWrapper = ({
   rootRef?: React.RefObject<HTMLElement>;
   children: React.ReactNode;
 }) => {
-  const { ref, inView } = useInView({
+  const [isViewCustom, setIsViewCustom] = useState(true);
+  const { ref } = useInView({
     threshold: 1,
-    onChange: (inView) => {
-      if (inView) {
-        set((prev: Set<number>) => {
+    onChange: (inView, entry) => {
+      console.log('entry', id, inView, entry.intersectionRatio);
+      if (inView || (!inView && entry.intersectionRatio > 0.2)) {
+        setIsViewCustom(true);
+        set((prev: Set<any>) => {
           const newSet = new Set(prev);
-          newSet.add(id);
+          newSet.add({ id, ref });
           return newSet;
         });
-      }
-      if (!inView) {
-        set((prev: Set<number>) => {
+      } else {
+        setIsViewCustom(false);
+        set((prev: Set<any>) => {
           const newSet = new Set(prev);
-          newSet.delete(id);
+          newSet.delete({ id, ref });
           return newSet;
         });
       }
@@ -39,9 +44,11 @@ export const IntersectionObserverWrapper = ({
     rootMargin: '0px 0px -50px 0px',
   });
 
+  console.log(`${id} -- ${isViewCustom} `);
   return (
-    <StyledDiv ref={ref} inView={inView}>
+    <>{children}</>
+    /*<StyledDiv ref={ref} inView={isViewCustom}>
       {children}
-    </StyledDiv>
+    </StyledDiv>*/
   );
 };
