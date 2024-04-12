@@ -12,23 +12,23 @@ type MonthAndYearDropdownProps = {
 };
 
 const months = [
-  { label: 'January', value: 1 },
-  { label: 'February', value: 2 },
-  { label: 'March', value: 3 },
-  { label: 'April', value: 4 },
-  { label: 'May', value: 5 },
-  { label: 'June', value: 6 },
-  { label: 'July', value: 7 },
-  { label: 'August', value: 8 },
-  { label: 'September', value: 9 },
-  { label: 'October', value: 10 },
-  { label: 'November', value: 11 },
-  { label: 'December', value: 12 },
+  { label: 'January', value: 0 },
+  { label: 'February', value: 1 },
+  { label: 'March', value: 2 },
+  { label: 'April', value: 3 },
+  { label: 'May', value: 4 },
+  { label: 'June', value: 5 },
+  { label: 'July', value: 6 },
+  { label: 'August', value: 7 },
+  { label: 'September', value: 8 },
+  { label: 'October', value: 9 },
+  { label: 'November', value: 10 },
+  { label: 'December', value: 11 },
 ];
 
 const years = Array.from(
   { length: 200 },
-  (_, i) => new Date().getFullYear() + 30 - i,
+  (_, i) => new Date().getFullYear() + 5 - i,
 ).map((year) => ({ label: year.toString(), value: year }));
 
 export const MONTH_AND_YEAR_DROPDOWN_ID = 'date-picker-month-and-year-dropdown';
@@ -71,7 +71,7 @@ export const MonthAndYearDropdown = ({
             fullWidth
             disableBlur
             onChange={handleChangeMonth}
-            value={date.getMonth() + 1}
+            value={date.getMonth()}
           />
           <Select
             dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
