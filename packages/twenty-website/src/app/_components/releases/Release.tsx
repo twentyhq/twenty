@@ -1,10 +1,8 @@
 'use client';
 
+import { JSXElementConstructor, ReactElement } from 'react';
 import styled from '@emotion/styled';
 import { Gabarito } from 'next/font/google';
-import { compileMDX } from 'next-mdx-remote/rsc';
-import remarkBehead from 'remark-behead';
-import gfm from 'remark-gfm';
 
 import { Theme } from '@/app/_components/ui/theme/theme';
 import { ReleaseNote } from '@/app/releases/api/route';
@@ -91,24 +89,13 @@ const gabarito = Gabarito({
   variable: '--font-gabarito',
 });
 
-export const Release = async ({ release }: { release: ReleaseNote }) => {
-  let mdxSource;
-  try {
-    mdxSource = await compileMDX({
-      source: release.content,
-      options: {
-        mdxOptions: {
-          development: process.env.NODE_ENV === 'development',
-          remarkPlugins: [gfm, [remarkBehead, { depth: 2 }]],
-        },
-      },
-    });
-    mdxSource = mdxSource.content;
-  } catch (error) {
-    console.error('An error occurred during MDX rendering:', error);
-    mdxSource = `<p>Oops! Something went wrong.</p> ${error}`;
-  }
-
+export const Release = ({
+  release,
+  mdxReleaseContent,
+}: {
+  release: ReleaseNote;
+  mdxReleaseContent: ReactElement<any, string | JSXElementConstructor<any>>;
+}) => {
   return (
     <StyledContainer className={gabarito.className}>
       <StyledVersion>
@@ -119,8 +106,7 @@ export const Release = async ({ release }: { release: ReleaseNote }) => {
             : release.date}
         </StyledDate>
       </StyledVersion>
-
-      <StlyedContent>{mdxSource}</StlyedContent>
+      <StlyedContent>{mdxReleaseContent}</StlyedContent>
     </StyledContainer>
   );
 };
