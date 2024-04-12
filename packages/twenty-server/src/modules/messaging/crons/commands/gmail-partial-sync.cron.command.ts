@@ -4,8 +4,9 @@ import { Command, CommandRunner } from 'nest-commander';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { GmailPartialSyncCronJob } from 'src/modules/messaging/jobs/crons/gmail-partial-sync.cron.job';
-import { fetchAllWorkspacesMessagesCronPattern } from 'src/modules/messaging/jobs/crons/patterns/fetch-all-workspaces-messages.cron.pattern';
+import { GmailPartialSyncCronJob } from 'src/modules/messaging/crons/jobs/gmail-partial-sync.cron.job';
+
+const GMAIL_PARTIAL_SYNC_CRON_PATTERN = '*/5 * * * *';
 
 @Command({
   name: 'cron:messaging:gmail-partial-sync',
@@ -25,7 +26,7 @@ export class GmailPartialSyncCronCommand extends CommandRunner {
       GmailPartialSyncCronJob.name,
       undefined,
       {
-        repeat: { pattern: fetchAllWorkspacesMessagesCronPattern },
+        repeat: { pattern: GMAIL_PARTIAL_SYNC_CRON_PATTERN },
       },
     );
   }

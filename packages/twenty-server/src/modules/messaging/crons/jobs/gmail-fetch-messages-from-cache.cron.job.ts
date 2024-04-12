@@ -13,7 +13,7 @@ import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-obj
 import { GmailFetchMessageContentFromCacheService } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.service';
 
 @Injectable()
-export class FetchAllMessagesFromCacheCronJob
+export class GmailFetchMessagesFromCacheCronJob
   implements MessageQueueJob<undefined>
 {
   constructor(

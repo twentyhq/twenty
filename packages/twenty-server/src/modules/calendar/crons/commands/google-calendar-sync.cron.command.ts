@@ -4,13 +4,15 @@ import { Command, CommandRunner } from 'nest-commander';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { FetchAllMessagesFromCacheCronJob } from 'src/modules/messaging/jobs/crons/fetch-all-messages-from-cache.cron.job';
+import { GoogleCalendarSyncCronJob } from 'src/modules/calendar/crons/jobs/google-calendar-sync.cron.job';
+
+const GOOGLE_CALENDAR_SYNC_CRON_PATTERN = '*/5 * * * *';
 
 @Command({
-  name: 'cron:messaging:gmail-fetch-messages-from-cache',
-  description: 'Starts a cron job to fetch all messages from cache',
+  name: 'cron:calendar:google-calendar-sync',
+  description: 'Starts a cron job to sync google calendar for all workspaces.',
 })
-export class GmailFetchMessagesFromCacheCronCommand extends CommandRunner {
+export class GoogleCalendarSyncCronCommand extends CommandRunner {
   constructor(
     @Inject(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
@@ -20,12 +22,10 @@ export class GmailFetchMessagesFromCacheCronCommand extends CommandRunner {
 
   async run(): Promise<void> {
     await this.messageQueueService.addCron<undefined>(
-      FetchAllMessagesFromCacheCronJob.name,
+      GoogleCalendarSyncCronJob.name,
       undefined,
       {
-        repeat: {
-          every: 5000,
-        },
+        repeat: { pattern: GOOGLE_CALENDAR_SYNC_CRON_PATTERN },
       },
     );
   }
