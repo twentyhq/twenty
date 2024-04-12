@@ -1,7 +1,7 @@
 import { PlacesType, PositionStrategy, Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 
-import { RGBA } from '@/ui/theme/constants/Rgba';
+import { RGBA } from '@ui/theme/constants/Rgba';
 
 export enum TooltipPosition {
   Top = 'top',

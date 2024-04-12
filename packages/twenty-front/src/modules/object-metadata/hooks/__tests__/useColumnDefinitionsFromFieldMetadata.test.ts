@@ -1,9 +1,9 @@
 import { renderHook } from '@testing-library/react';
+import { Nullable } from 'twenty-ui';
 
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
-import { Nullable } from '~/types/Nullable';
 
 describe('useColumnDefinitionsFromFieldMetadata', () => {
   it('should return empty definitions if no object is passed', () => {

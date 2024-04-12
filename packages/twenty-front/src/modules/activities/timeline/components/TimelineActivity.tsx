@@ -2,17 +2,17 @@ import { Tooltip } from 'react-tooltip';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { IconCheckbox, IconNotes } from 'twenty-ui';
+import { Avatar, IconCheckbox, IconNotes } from 'twenty-ui';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { timelineActivityWithoutTargetsFamilyState } from '@/activities/timeline/states/timelineActivityWithoutTargetsFamilyState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { Avatar } from '@/users/components/Avatar';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 const StyledAvatarContainer = styled.div`
   align-items: center;
@@ -170,7 +170,9 @@ export const TimelineActivity = ({
       <StyledTimelineItemContainer>
         <StyledAvatarContainer>
           <Avatar
-            avatarUrl={activityForTimeline.author?.avatarUrl}
+            avatarUrl={getImageAbsoluteURIOrBase64(
+              activityForTimeline.author?.avatarUrl,
+            )}
             placeholder={activityForTimeline.author?.name.firstName ?? ''}
             size="sm"
             type="rounded"

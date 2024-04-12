@@ -1,8 +1,8 @@
-import * as React from 'react';
+import { EntityChip } from 'twenty-ui';
 
 import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { EntityChip } from '@/ui/display/chip/components/EntityChip';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 export type RecordChipProps = {
   objectNameSingular: string;
@@ -28,7 +28,9 @@ export const RecordChip = ({
       entityId={record.id}
       name={objectRecordIdentifier.name}
       avatarType={objectRecordIdentifier.avatarType}
-      avatarUrl={objectRecordIdentifier.avatarUrl}
+      avatarUrl={
+        getImageAbsoluteURIOrBase64(objectRecordIdentifier.avatarUrl) || ''
+      }
       linkToEntity={objectRecordIdentifier.linkToShowPage}
       maxWidth={maxWidth}
       className={className}

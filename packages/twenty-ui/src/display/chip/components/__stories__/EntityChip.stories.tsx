@@ -1,13 +1,13 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { ComponentDecorator, RouterDecorator } from '@ui/testing';
 
 import { EntityChip } from '../EntityChip';
 
 const meta: Meta<typeof EntityChip> = {
   title: 'UI/Display/Chip/EntityChip',
   component: EntityChip,
-  decorators: [ComponentWithRouterDecorator],
+  decorators: [RouterDecorator, ComponentDecorator],
   args: {
     name: 'Entity name',
     linkToEntity: '/entity-link',

@@ -6,8 +6,8 @@ import {
   motion,
   useAnimation,
 } from 'framer-motion';
-
 import { Checkmark } from 'twenty-ui';
+
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 
 const StyledColorSchemeBackground = styled.div<

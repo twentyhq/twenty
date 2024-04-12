@@ -5,11 +5,7 @@ export const getImageAbsoluteURIOrBase64 = (imageUrl?: string | null) => {
     return null;
   }
 
-  if (imageUrl?.startsWith('data:')) {
-    return imageUrl;
-  }
-
-  if (imageUrl?.startsWith('https:')) {
+  if (imageUrl?.startsWith('data:') || imageUrl?.startsWith('https:')) {
     return imageUrl;
   }
 

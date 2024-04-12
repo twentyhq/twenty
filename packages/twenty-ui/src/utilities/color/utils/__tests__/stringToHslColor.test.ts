@@ -1,4 +1,4 @@
-import { stringToHslColor } from '../string-to-hsl';
+import { stringToHslColor } from '../stringToHslColor';
 
 describe('stringToHslColor', () => {
   it('should return a color based on a string', () => {

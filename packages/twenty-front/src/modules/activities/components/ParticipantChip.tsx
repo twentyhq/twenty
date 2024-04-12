@@ -1,9 +1,10 @@
 import styled from '@emotion/styled';
+import { Avatar } from 'twenty-ui';
 
 import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { Avatar } from '@/users/components/Avatar';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 const StyledAvatar = styled(Avatar)`
   margin-right: ${({ theme }) => theme.spacing(1)};
@@ -67,7 +68,7 @@ export const ParticipantChip = ({
       ) : (
         <StyledChip>
           <StyledAvatar
-            avatarUrl={avatarUrl}
+            avatarUrl={getImageAbsoluteURIOrBase64(avatarUrl)}
             type="rounded"
             placeholder={displayName}
             size="sm"

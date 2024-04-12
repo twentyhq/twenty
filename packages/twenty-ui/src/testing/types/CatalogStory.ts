@@ -4,7 +4,7 @@ import { StoryObj } from '@storybook/react';
 import {
   CatalogDimension,
   CatalogOptions,
-} from './decorators/CatalogDecorator';
+} from '../decorators/CatalogDecorator';
 
 export type CatalogStory<
   StoryType extends StoryObj<ComponentType>,
