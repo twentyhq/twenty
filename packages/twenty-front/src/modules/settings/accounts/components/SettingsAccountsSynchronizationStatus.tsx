@@ -25,13 +25,13 @@ const getText = (syncStatus?: MessageChannelSyncStatus | null) => {
     case MessageChannelSyncStatus.FAILED:
       return 'Sync failed';
     case MessageChannelSyncStatus.PENDING:
-      return 'Sync pending';
+      return 'Not synced';
     case MessageChannelSyncStatus.ONGOING:
       return 'Syncing';
     case MessageChannelSyncStatus.SUCCEEDED:
       return 'Synced';
     default:
-      return 'Sync pending';
+      return 'Not synced';
   }
 };
 
