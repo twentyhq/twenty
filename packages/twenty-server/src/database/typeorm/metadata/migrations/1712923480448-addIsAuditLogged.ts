@@ -5,7 +5,7 @@ export class AddIsAuditLogged1712923480448 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "metadata"."objectMetadata" ADD "isAuditLogged" boolean NOT NULL DEFAULT false`,
+      `ALTER TABLE "metadata"."objectMetadata" ADD "isAuditLogged" boolean NOT NULL DEFAULT true`,
     );
   }
 
