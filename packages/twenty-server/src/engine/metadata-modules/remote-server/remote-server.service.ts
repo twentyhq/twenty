@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { v4 } from 'uuid';
@@ -17,12 +17,9 @@ import {
 } from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-input';
 import { ForeignDataWrapperQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/foreign-data-wrapper-query.factory';
 import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
-import { RemoteTableStatus } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
 
 @Injectable()
 export class RemoteServerService<T extends RemoteServerType> {
-  private readonly logger = new Logger(RemoteServerService.name);
-
   constructor(
     @InjectRepository(RemoteServerEntity, 'metadata')
     private readonly remoteServerRepository: Repository<
@@ -119,32 +116,20 @@ export class RemoteServerService<T extends RemoteServerType> {
       throw new NotFoundException('Object does not exist');
     }
 
-    try {
-      const remoteTablesToRemove = (
-        await this.remoteTableService.findAvailableRemoteTablesByServerId(
-          id,
-          workspaceId,
-        )
-      ).filter(
-        (remoteTable) => remoteTable.status === RemoteTableStatus.SYNCED,
+    const foreignTablesToRemove =
+      await this.remoteTableService.fetchForeignTableNamesWithinWorkspace(
+        workspaceId,
+        remoteServer.foreignDataWrapperId,
       );
 
-      if (remoteTablesToRemove.length) {
-        for (const remoteTable of remoteTablesToRemove) {
-          await this.remoteTableService.unsyncRemoteTable(
-            {
-              remoteServerId: id,
-              name: remoteTable.name,
-            },
-            workspaceId,
-          );
-        }
+    if (foreignTablesToRemove.length) {
+      for (const foreignTableName of foreignTablesToRemove) {
+        await this.remoteTableService.removeForeignTableAndMetadata(
+          foreignTableName,
+          workspaceId,
+          remoteServer,
+        );
       }
-    } catch (error) {
-      this.logger.error(
-        `Failed to retrieve tables while deleting server ${id}`,
-        error,
-      );
     }
 
     return this.metadataDataSource.transaction(
