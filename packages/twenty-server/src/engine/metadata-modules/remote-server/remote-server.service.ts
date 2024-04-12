@@ -117,23 +117,32 @@ export class RemoteServerService<T extends RemoteServerType> {
       throw new NotFoundException('Object does not exist');
     }
 
-    const remoteTablesToRemove = (
-      await this.remoteTableService.findAvailableRemoteTablesByServerId(
-        id,
-        workspaceId,
-      )
-    ).filter((remoteTable) => remoteTable.status === RemoteTableStatus.SYNCED);
-
-    if (remoteTablesToRemove.length) {
-      for (const remoteTable of remoteTablesToRemove) {
-        await this.remoteTableService.unsyncRemoteTable(
-          {
-            remoteServerId: id,
-            name: remoteTable.name,
-          },
+    try {
+      const remoteTablesToRemove = (
+        await this.remoteTableService.findAvailableRemoteTablesByServerId(
+          id,
           workspaceId,
-        );
+        )
+      ).filter(
+        (remoteTable) => remoteTable.status === RemoteTableStatus.SYNCED,
+      );
+
+      if (remoteTablesToRemove.length) {
+        for (const remoteTable of remoteTablesToRemove) {
+          await this.remoteTableService.unsyncRemoteTable(
+            {
+              remoteServerId: id,
+              name: remoteTable.name,
+            },
+            workspaceId,
+          );
+        }
       }
+    } catch (error) {
+      console.error(
+        `Failed to retrieve tables while deleting server ${id}`,
+        error,
+      );
     }
 
     return this.metadataDataSource.transaction(
