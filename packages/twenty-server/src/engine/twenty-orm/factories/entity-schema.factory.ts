@@ -29,6 +29,7 @@ export class EntitySchemaFactory {
     const columns = this.entitySchemaColumnFactory.create(fieldMetadataMap);
 
     const relations = this.entitySchemaRelationFactory.create(
+      target,
       relationMetadataCollection,
     );
 

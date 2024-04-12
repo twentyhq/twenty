@@ -31,6 +31,7 @@ export function FieldMetadata<T extends FieldMetadataType>(
           {
             ...restParams,
             standardId,
+            joinColumn,
           },
           fieldKey,
           isNullable,
@@ -49,6 +50,7 @@ export function FieldMetadata<T extends FieldMetadataType>(
                   defaultValue: null,
                   options: undefined,
                   settings: undefined,
+                  joinColumn,
                 },
                 joinColumn,
                 isNullable,
