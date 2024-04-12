@@ -26,6 +26,7 @@ const AvatarItem = styled.div`
   border-radius: 16px;
   overflow: hidden;
   transition: 200ms;
+  background-color: white;
 
   &:hover {
     -webkit-box-shadow: -6px 6px 0px 1px rgba(0, 0, 0, 1);
