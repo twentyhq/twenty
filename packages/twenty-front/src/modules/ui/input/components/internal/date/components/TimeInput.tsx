@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useIMask } from 'react-imask';
 import styled from '@emotion/styled';
+import { DateTime } from 'luxon';
 import { IconClockHour8 } from 'twenty-ui';
 
 import { TIME_BLOCKS } from '@/ui/input/components/internal/date/constants/TimeBlocks';
@@ -43,9 +44,6 @@ type TimeInputProps = {
 };
 
 export const TimeInput = ({ date, onChange }: TimeInputProps) => {
-  const hours = date.getHours();
-  const minutes = date.getMinutes();
-
   const handleComplete = (value: string) => {
     const [hours, minutes] = value.split(':');
 
@@ -68,8 +66,10 @@ export const TimeInput = ({ date, onChange }: TimeInputProps) => {
   );
 
   useEffect(() => {
-    setValue(`${hours}:${minutes}`);
-  }, [hours, minutes, setValue]);
+    const formattedDate = DateTime.fromJSDate(date).toFormat('HH:mm');
+
+    setValue(formattedDate);
+  }, [date, setValue]);
 
   return (
     <StyledTimeInputContainer>

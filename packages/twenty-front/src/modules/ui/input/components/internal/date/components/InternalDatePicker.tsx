@@ -1,15 +1,13 @@
 import { useState } from 'react';
 import ReactDatePicker from 'react-datepicker';
-import { useIMask } from 'react-imask';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
 import { IconCalendarDue, IconCalendarX } from 'twenty-ui';
 
+import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
 import { MonthAndYearDropdown } from '@/ui/input/components/internal/date/components/MonthAndYearDropdown';
 import { TimeInput } from '@/ui/input/components/internal/date/components/TimeInput';
-import { DATE_TIME_BLOCKS } from '@/ui/input/components/internal/date/constants/DateTimeBlocks';
-import { DATE_TIME_FORMAT } from '@/ui/input/components/internal/date/constants/DateTimeFormat';
 import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
 import { StyledHoverableMenuItemBase } from '@/ui/navigation/menu-item/internals/components/StyledMenuItemBase';
 import { OVERLAY_BACKGROUND } from '@/ui/theme/constants/OverlayBackground';
@@ -280,28 +278,10 @@ const StyledIconButton = styled.button<{ isOpen: boolean }>`
 export type InternalDatePickerProps = {
   date: Date;
   onMouseSelect?: (date: Date | null) => void;
-  onChange?: (date: Date) => void;
+  onChange?: (date: Date | null) => void;
   clearable?: boolean;
   isDateTimeInput?: boolean;
 };
-
-const StyledInputContainer = styled.div`
-  width: 100%;
-  display: flex;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  height: ${({ theme }) => theme.spacing(8)};
-`;
-
-const StyledInput = styled.input`
-  background: ${({ theme }) => theme.background.secondary};
-  border: none;
-  color: ${({ theme }) => theme.font.color.primary};
-  outline: none;
-  padding: 8px;
-  font-weight: 500;
-  font-size: ${({ theme }) => theme.font.size.md};
-  width: 100%;
-`;
 
 const PICKER_DATE_FORMAT = 'MM/dd/yyyy';
 
@@ -332,51 +312,6 @@ export const InternalDatePicker = ({
     onMouseSelect?.(null);
   };
 
-  const parseDateToString = (date: any) => {
-    const asDate = new Date(date);
-
-    const day = asDate.getDate();
-    const month = asDate.getMonth() + 1;
-    const year = asDate.getFullYear();
-    const hours = asDate.getHours();
-    const mins = asDate.getMinutes();
-
-    const formattedDay = day < 10 ? `0${day}` : day;
-    const formattedMonth = month < 10 ? `0${month}` : month;
-
-    return `${formattedMonth}/${formattedDay}/${year} ${hours}:${mins}`;
-  };
-
-  const parseStringToDate = (str: string) => {
-    const [date, time] = str.split(' ');
-    const [month, day, year] = date.split('/');
-    const [hours, minutes] = time.split(':');
-    return new Date(
-      Number(year),
-      Number(month) - 1,
-      Number(day),
-      Number(hours),
-      Number(minutes),
-    );
-  };
-
-  const { ref, setValue } = useIMask(
-    {
-      mask: Date,
-      pattern: DATE_TIME_FORMAT,
-      blocks: DATE_TIME_BLOCKS,
-      min: new Date(1970, 0, 1),
-      max: new Date(2100, 0, 1),
-      format: parseDateToString,
-      parse: parseStringToDate,
-    },
-    {
-      onComplete: (value) => {
-        onChange?.(parseStringToDate(value));
-      },
-    },
-  );
-
   const initialDate = date
     ? DateTime.fromJSDate(date).toFormat(PICKER_DATE_FORMAT)
     : DateTime.now().toFormat(PICKER_DATE_FORMAT);
@@ -392,33 +327,11 @@ export const InternalDatePicker = ({
     <StyledContainer>
       <div className={clearable ? 'clearable ' : ''}>
         {isDateTimeInput && <TimeInput date={date} onChange={onChange} />}
-        <StyledInputContainer>
-          <StyledInput
-            type="text"
-            placeholder={`Type date${
-              isDateTimeInput ? ' and time' : ' (mm/dd/yyyy)'
-            }`}
-            inputMode="numeric"
-            value={dateValue}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              setDateValue(inputValue);
-
-              const parsedInputDate = DateTime.fromFormat(
-                inputValue,
-                PICKER_DATE_FORMAT,
-                { zone: 'utc' },
-              );
-
-              const isValid = parsedInputDate.isValid;
-
-              if (isValid) {
-                onChange?.(parsedInputDate.toJSDate());
-              }
-            }}
-          />
-        </StyledInputContainer>
-
+        <DateTimeInput
+          isDateTimeInput={isDateTimeInput}
+          date={date}
+          onChange={onChange}
+        />
         <ReactDatePicker
           open={true}
           selected={dateValueAsJSDate}

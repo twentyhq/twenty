@@ -65,7 +65,7 @@ export const DateInput = ({
     ],
   });
 
-  const handleChange = (newDate: Date) => {
+  const handleChange = (newDate: Date | null) => {
     setInternalValue(newDate);
     onChange?.(newDate);
   };
