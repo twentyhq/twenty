@@ -20,7 +20,7 @@ export const RecordChip = ({
   record,
   maxWidth,
   className,
-  variant = EntityChipVariant.Transparent,
+  variant,
 }: RecordChipProps) => {
   const { mapToObjectRecordIdentifier } = useMapToObjectRecordIdentifier({
     objectNameSingular,
