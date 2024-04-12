@@ -7,12 +7,13 @@ import {
   CheckboxShape,
   CheckboxSize,
   CheckboxVariant,
+  Select,
   TextArea,
   TextInput,
 } from 'tsup.ui.index';
 import base64 from 'base64-js';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import { AnimatedPlaceholderEmptyTextContainer } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import {
@@ -20,7 +21,10 @@ import {
   AnimatedPlaceholderErrorTitle,
 } from '@/ui/layout/animated-placeholder/components/ErrorPlaceholderStyled';
 import { Spinner } from '@/ui/feedback/loader/components/spinner';
-
+import { addTracingExtensions } from '@sentry/react';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import axios from 'axios';
+import { AppPath } from '@/types/AppPath';
 const StyledCard = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.medium};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -30,17 +34,28 @@ const StyledCard = styled.div`
   flex-direction: column;
   justify-content: center;
   background: ${({ theme }) => theme.background.primary};
-  height: 95%;
+  height: 120%%;
   width: 70%;
   margin: auto;
   align-items: center;
-  margin-bottom: ${({ theme }) => theme.spacing(2)}
-  overflow-y: scroll;
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledFormTitle = styled.h3`
-  color: ${({ theme }) => theme.font.color.primary};
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+const StyledDiv = styled.div`
+  overflow-y: scroll;
+  border: 1px solid ${({ theme }) => theme.border.color.medium};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  color: ${({ theme }) => theme.font.color.secondary};
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: ${({ theme }) => theme.background.primary};
+  height: auto%;
+  width: 100%;
+  margin: auto;
+  align-items: center;
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTitleContainer = styled.div`
@@ -81,6 +96,8 @@ const StyledButton = styled.span`
   display: flex;
   justify-content: space-between;
   width: 100%;
+  margin-bottom: ${({ theme }) => theme.spacing(6)};
+  margin-top: ${({ theme }) => theme.spacing(6)};
 `;
 
 const StyledCheckboxLabel = styled.span`
@@ -95,18 +112,18 @@ const StyledComboInputContainer = styled.div`
   }
 `;
 
-// const generateRandomId = (username: string, formId: string, campaignname: string) => {
-//   const randomId = `${username}-${formId}-${campaignname}`;
-//   const encodedRandomId = base64.fromByteArray(new TextEncoder().encode(randomId));
-//   return encodedRandomId;
-// }
+  // const generateRandomId = (username: string, formId: string, campaignname: string) => {
+  //   const randomId = `${username}-${formId}-${campaignname}`;
+  //   const encodedRandomId = base64.fromByteArray(new TextEncoder().encode(randomId));
+  //   return encodedRandomId;
+  // }
 
-// const username = "Ertha Creboe";
-// const formname = "abc";
-// const campaignname = "Healthy Lives";
+  // const username = "Ertha Creboe";
+  // const formname = "abc";
+  // const campaignname = "Healthy Lives";
 
-// const randomId = generateRandomId(username, formname, campaignname);
-// console.log("Encoded Random ID:", randomId);
+  // const randomId = generateRandomId(username, formname, campaignname);
+  // console.log("Encoded Random ID:", randomId);
 
 export const CampaignForm = () => {
   const [firstName, setFirstName] = useState('');
@@ -116,23 +133,65 @@ export const CampaignForm = () => {
   const [comments, setComments] = useState('');
   const [loading, setLoading] = useState(true);
   const [errorType, setErrorType] = useState('');
+  const [location, setLocation] = useState('');
+  const [apptDate, setAptDate] = useState(null);
+  const [apptType, setApptType] = useState('');
   const { userid } = useParams<{ userid: string }>();
+  const { enqueueSnackBar } = useSnackBar();
   console.log('USERID', userid);
+  const navigate = useNavigate();
+  const createOptions = (options: any[]) =>
+    options.map((option: any) => ({ label: option, value: option }));
+  const locationOptions = createOptions([
+    'Yelhanka',
+    'Rajajinagar',
+    'Nagawara',
+  ]);
+  const apptTypeOptions = createOptions(['Initial Consultation', 'Follow-up']);
 
+
+  const handleSubmit = async () => {
+    const formData = {
+      email,
+      firstName,
+      lastName,
+      appointmentDate: apptDate, 
+      contactNumber: contact,
+      appointmentLocation: location,
+      reasonForAppointment: comments,
+      consent: 'I agree', 
+      appointmentType: apptType,
+    };
+
+    try{
+      const response = await axios.post(`http://localhost:3000/campaign/save/${userid}`, formData);
+      console.log('Form data saved,', response.data);
+      enqueueSnackBar('Form Submitted Successfully!',{
+        variant: 'success',
+      });
+      if(response.data){
+        navigate(AppPath.SignIn)
+      }
+    }
+    catch(error){
+      console.log("error in saving form data:", error)
+    }
+  }
   useEffect(() => {
     const fetchUserDetails = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3000/campaign?id=${userid}`,
+          `http://localhost:3000/campaign/${userid}`, 
         );
-        if (!response.ok) {
+        const userData = await response.json();
+        if(!userData.name){
           throw new Error('Failed to fetch user details');
         }
-        const userData = await response.json();
         console.log('setting user details....');
         setFirstName(userData.name);
         setEmail(userData.email);
         setLoading(false);
+        
       } catch (error: any) {
         console.error('error in fetching user details', error);
         if (error.message === 'Form expired') {
@@ -174,7 +233,8 @@ export const CampaignForm = () => {
   }
 
   return (
-    <>
+    //div id - save id in form
+    <StyledDiv >
       <StyledCard>
         <StyledTitleContainer>
           <StyledTitle>Campaign Form</StyledTitle>
@@ -192,17 +252,6 @@ export const CampaignForm = () => {
             />
           </Section>
           <Section>
-            <H2Title title="Email" description="Enter your email address" />
-            <TextInput
-              placeholder={'Enter email address'}
-              value={email}
-              name="email"
-              required
-              fullWidth
-              onChange={(e) => setEmail(e)}
-            />
-          </Section>
-          <Section>
             <H2Title title="Last Name" description="Enter your last name" />
             <TextInput
               placeholder={'Enter last name'}
@@ -213,6 +262,18 @@ export const CampaignForm = () => {
               onChange={(e) => setLastName(e)}
             />
           </Section>
+          <Section>
+            <H2Title title="Email" description="Enter your email address" />
+            <TextInput
+              placeholder={'Enter email address'}
+              value={email}
+              name="email"
+              required
+              fullWidth
+              onChange={(e) => setEmail(e)}
+            />
+          </Section>
+
           <Section>
             <H2Title
               title="Contact Number"
@@ -231,8 +292,8 @@ export const CampaignForm = () => {
           <StyledAreaLabel>
             <Section>
               <H2Title
-                title="Campaign Description"
-                description="Describe the main objectives and goals of the campaign "
+                title="Reason for Appointment"
+                description="State the reason for your appointment"
               />
             </Section>
             <TextArea
@@ -241,7 +302,34 @@ export const CampaignForm = () => {
               minRows={5}
               onChange={(e) => setComments(e)}
             />
+            <Section>
+              <H2Title
+                title="Appointment Type"
+                description="Is this your first consultation or a follow-up?"
+              />
+              <Select
+                fullWidth
+                dropdownId={'appointmentType'}
+                value={apptType}
+                onChange={(e) => setApptType(e)}
+                options={apptTypeOptions}
+              />
+            </Section>
+            <Section>
+              <H2Title
+                title="Appointment Location"
+                description="Select your appointment location"
+              />
+              <Select
+                fullWidth
+                dropdownId={'appointmentLocation'}
+                value={location}
+                onChange={(e) => setLocation(e)}
+                options={locationOptions}
+              />
+            </Section>
 
+            
             <StyledCheckboxInput>
               <H2Title
                 title="Consent*"
@@ -262,10 +350,11 @@ export const CampaignForm = () => {
             </StyledComboInputContainer>
           </StyledAreaLabel>
           <StyledButton>
-            <Button title="Submit" variant="primary" accent="blue" />
+            <Button title="Submit" variant="primary" accent="blue"  onClick={handleSubmit}/>
           </StyledButton>
         </StyledInputCard>
+
       </StyledCard>
-    </>
+    </StyledDiv>
   );
 };

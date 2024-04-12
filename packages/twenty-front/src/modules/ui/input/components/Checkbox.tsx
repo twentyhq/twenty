@@ -131,6 +131,7 @@ export const Checkbox = ({
     onChange?.(event);
     onCheckedChange?.(event.target.checked);
     setIsInternalChecked(event.target.checked ?? false);
+    
   };
 
   const checkboxId = 'checkbox' + v4();

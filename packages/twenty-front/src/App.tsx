@@ -54,6 +54,7 @@ import { TextTemplate } from '~/pages/Templates/TextTemplate';
 import { VideoTemplate } from '~/pages/Templates/VideoTemplate';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 import { Segment } from '~/pages/Segment/Segment';
+import { RunCampaign } from '~/pages/campaigns/RunCampaign';
 
 export const App = () => {
   const isSelfBillingEnabled = useIsFeatureEnabled('IS_SELF_BILLING_ENABLED');
@@ -227,6 +228,8 @@ export const App = () => {
           <Route path={CustomPath.TemplatesPage} element={<TemplatesList />} />
 
           <Route path={CustomPath.SegmentPage} element={<Segment />} />
+          <Route path={CustomPath.RunCampaign} element={<RunCampaign />} />
+
         </Routes>
       </DefaultLayout>
     </>

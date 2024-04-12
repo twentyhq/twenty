@@ -8,6 +8,8 @@ import { DEFAULT_CELL_SCOPE } from '@/object-record/record-table/record-table-ce
 import { useSelectedTableCellEditMode } from '@/object-record/record-table/record-table-cell/hooks/useSelectedTableCellEditMode';
 import { RGBA } from '@/ui/theme/constants/Rgba';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { useContext } from 'react';
 export const TemplatesList = () => {
   // const objectNameSingular = 'people';
   // const { updateOneRecord } = useUpdateOneRecord({
@@ -21,6 +23,9 @@ export const TemplatesList = () => {
   //   });
   // };
 
+  const { recordId } = useContext(RecordTableRowContext);
+
+  
   const objectNamePlural = useParams().objectNamePlural ?? 'campaignLists';
 
   const { objectNameSingular } = useObjectNameSingularFromPlural({

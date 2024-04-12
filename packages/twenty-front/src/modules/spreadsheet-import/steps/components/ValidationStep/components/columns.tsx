@@ -77,6 +77,7 @@ export const generateColumns = <T extends string>(
       const [isRowSelected, onRowSelectionChange] = useRowSelection();
 
       return (
+        <>
         <StyledCheckboxContainer>
           <Checkbox
             aria-label="Select"
@@ -91,6 +92,21 @@ export const generateColumns = <T extends string>(
             }}
           />
         </StyledCheckboxContainer>
+        <StyledCheckboxContainer>
+          <Checkbox
+            aria-label="Select"
+            checked={isRowSelected}
+            variant={CheckboxVariant.Tertiary}
+            onChange={(event) => {
+              onRowSelectionChange({
+                row: props.row,
+                checked: event.target.checked,
+                isShiftClick: (event.nativeEvent as MouseEvent).shiftKey,
+              });
+            }}
+          />
+        </StyledCheckboxContainer>
+        </>
       );
     },
   },

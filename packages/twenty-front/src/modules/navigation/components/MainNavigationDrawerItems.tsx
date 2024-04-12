@@ -80,10 +80,10 @@ export const MainNavigationDrawerItems = () => {
           Icon={IconMail}
         />
 
-        <NavigationDrawerItem
-          label="Campaigns"
+<NavigationDrawerItem
+          label="Run Campaign"
           onClick={() => {
-            navigate('/campaigns');
+            navigate('/runcampaign');
           }}
           Icon={IconMail}
         />
