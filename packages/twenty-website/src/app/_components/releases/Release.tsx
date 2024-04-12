@@ -4,6 +4,7 @@ import { JSXElementConstructor, ReactElement } from 'react';
 import styled from '@emotion/styled';
 import { Gabarito } from 'next/font/google';
 
+import MotionContainer from '@/app/_components/ui/layout/LoaderAnimation';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import { ReleaseNote } from '@/app/releases/api/route';
 
@@ -97,16 +98,18 @@ export const Release = ({
   mdxReleaseContent: ReactElement<any, string | JSXElementConstructor<any>>;
 }) => {
   return (
-    <StyledContainer className={gabarito.className}>
-      <StyledVersion>
-        <StyledRelease>{release.release}</StyledRelease>
-        <StyledDate>
-          {release.date.endsWith(new Date().getFullYear().toString())
-            ? release.date.slice(0, -5)
-            : release.date}
-        </StyledDate>
-      </StyledVersion>
-      <StlyedContent>{mdxReleaseContent}</StlyedContent>
-    </StyledContainer>
+    <MotionContainer>
+      <StyledContainer className={gabarito.className}>
+        <StyledVersion>
+          <StyledRelease>{release.release}</StyledRelease>
+          <StyledDate>
+            {release.date.endsWith(new Date().getFullYear().toString())
+              ? release.date.slice(0, -5)
+              : release.date}
+          </StyledDate>
+        </StyledVersion>
+        <StlyedContent>{mdxReleaseContent}</StlyedContent>
+      </StyledContainer>
+    </MotionContainer>
   );
 };
