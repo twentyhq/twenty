@@ -3,10 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import {
-  ParticipantWithId,
-  ParticipantWithMessageId,
-} from 'src/modules/messaging/types/gmail-message';
+import { ParticipantWithMessageId } from 'src/modules/messaging/types/gmail-message';
 import { PersonRepository } from 'src/modules/person/repositories/person.repository';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
@@ -27,10 +24,14 @@ export class MessageParticipantService {
   ) {}
 
   public async updateMessageParticipantsAfterPeopleCreation(
-    participants: ParticipantWithId[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
+    const participants =
+      await this.messageParticipantRepository.getWithoutPersonIdAndWorkspaceMemberId(
+        workspaceId,
+      );
+
     if (!participants) return;
 
     const dataSourceSchema =

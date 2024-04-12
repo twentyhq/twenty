@@ -6,7 +6,10 @@ import { getNodeTypename } from '@/object-record/cache/utils/getNodeTypename';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  RelationDefinitionType,
+} from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { lowerAndCapitalize } from '~/utils/string/lowerAndCapitalize';
 
@@ -65,12 +68,16 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
           return undefined;
         }
 
-        if (Array.isArray(value)) {
-          const objectMetadataItem = objectMetadataItems.find(
-            (objectMetadataItem) => objectMetadataItem.namePlural === fieldName,
+        if (
+          field.type === FieldMetadataType.Relation &&
+          field.relationDefinition?.direction ===
+            RelationDefinitionType.OneToMany
+        ) {
+          const oneToManyObjectMetadataItem = objectMetadataItems.find(
+            (item) => item.namePlural === fieldName,
           );
 
-          if (!objectMetadataItem) {
+          if (!oneToManyObjectMetadataItem) {
             return undefined;
           }
 
@@ -78,7 +85,7 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
             fieldName,
             getRecordConnectionFromRecords({
               objectMetadataItems,
-              objectMetadataItem: objectMetadataItem,
+              objectMetadataItem: oneToManyObjectMetadataItem,
               records: value as ObjectRecord[],
               queryFields:
                 queryFields?.[fieldName] === true ||

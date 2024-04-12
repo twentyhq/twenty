@@ -43,6 +43,75 @@ export class ConnectedAccountRepository {
     );
   }
 
+  public async getAllByHandleAndWorkspaceMemberId(
+    handle: string,
+    workspaceMemberId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<ConnectedAccountObjectMetadata>[] | undefined> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const connectedAccounts =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT * FROM ${dataSourceSchema}."connectedAccount" WHERE "handle" = $1 AND "accountOwnerId" = $2 LIMIT 1`,
+        [handle, workspaceMemberId],
+        workspaceId,
+        transactionManager,
+      );
+
+    return connectedAccounts;
+  }
+
+  public async create(
+    connectedAccount: Pick<
+      ObjectRecord<ConnectedAccountObjectMetadata>,
+      | 'id'
+      | 'handle'
+      | 'provider'
+      | 'accessToken'
+      | 'refreshToken'
+      | 'accountOwnerId'
+    >,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<ConnectedAccountObjectMetadata>> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `INSERT INTO ${dataSourceSchema}."connectedAccount" ("id", "handle", "provider", "accessToken", "refreshToken", "accountOwnerId") VALUES ($1, $2, $3, $4, $5, $6)`,
+      [
+        connectedAccount.id,
+        connectedAccount.handle,
+        connectedAccount.provider,
+        connectedAccount.accessToken,
+        connectedAccount.refreshToken,
+        connectedAccount.accountOwnerId,
+      ],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async updateAccessTokenAndRefreshToken(
+    accessToken: string,
+    refreshToken: string,
+    connectedAccountId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."connectedAccount" SET "accessToken" = $1, "refreshToken" = $2 WHERE "id" = $3`,
+      [accessToken, refreshToken, connectedAccountId],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async getById(
     connectedAccountId: string,
     workspaceId: string,

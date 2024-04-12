@@ -1,18 +1,12 @@
 import { useEffect } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { IconSettings } from 'twenty-ui';
 
 import { useDeleteOneDatabaseConnection } from '@/databases/hooks/useDeleteOneDatabaseConnection';
 import { useGetDatabaseConnection } from '@/databases/hooks/useGetDatabaseConnection';
 import { useGetDatabaseConnectionTables } from '@/databases/hooks/useGetDatabaseConnectionTables';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import {
-  SettingsIntegrationDatabaseTablesListCard,
-  SettingsIntegrationsDatabaseTablesFormValues,
-  settingsIntegrationsDatabaseTablesSchema,
-} from '@/settings/integrations/components/SettingsIntegrationDatabaseTablesListCard';
+import { SettingsIntegrationDatabaseTablesListCard } from '@/settings/integrations/components/SettingsIntegrationDatabaseTablesListCard';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { getConnectionDbName } from '@/settings/integrations/utils/getConnectionDbName';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
@@ -79,11 +73,6 @@ export const SettingsIntegrationDatabaseConnection = () => {
     skip: !isIntegrationAvailable || !connection,
   });
 
-  const formConfig = useForm<SettingsIntegrationsDatabaseTablesFormValues>({
-    mode: 'onTouched',
-    resolver: zodResolver(settingsIntegrationsDatabaseTablesSchema),
-  });
-
   if (!isIntegrationAvailable || !connection) return null;
 
   const settingsIntegrationsPagePath = getSettingsPagePath(
@@ -93,41 +82,43 @@ export const SettingsIntegrationDatabaseConnection = () => {
   const connectionName = getConnectionDbName({ integration, connection });
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    <FormProvider {...formConfig}>
-      <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-        <SettingsPageContainer>
-          <Breadcrumb
-            links={[
-              {
-                children: 'Integrations',
-                href: settingsIntegrationsPagePath,
-              },
-              {
-                children: integration.text,
-                href: `${settingsIntegrationsPagePath}/${databaseKey}`,
-              },
-              { children: connectionName },
-            ]}
+    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+      <SettingsPageContainer>
+        <Breadcrumb
+          links={[
+            {
+              children: 'Integrations',
+              href: settingsIntegrationsPagePath,
+            },
+            {
+              children: integration.text,
+              href: `${settingsIntegrationsPagePath}/${databaseKey}`,
+            },
+            { children: connectionName },
+          ]}
+        />
+        <Section>
+          <H2Title title="About" description="About this remote object" />
+          <SettingsIntegrationDatabaseConnectionSummaryCard
+            databaseLogoUrl={integration.from.image}
+            connectionId={connectionId}
+            connectionName={connectionName}
+            onRemove={deleteConnection}
           />
-          <Section>
-            <H2Title title="About" description="About this remote object" />
-            <SettingsIntegrationDatabaseConnectionSummaryCard
-              databaseLogoUrl={integration.from.image}
+        </Section>
+        <Section>
+          <H2Title
+            title="Tables"
+            description="Select the tables that should be tracked"
+          />
+          {!!tables.length && (
+            <SettingsIntegrationDatabaseTablesListCard
               connectionId={connectionId}
-              connectionName={connectionName}
-              onRemove={deleteConnection}
+              tables={tables}
             />
-          </Section>
-          <Section>
-            <H2Title
-              title="Tables"
-              description="Select the tables that should be tracked"
-            />
-            <SettingsIntegrationDatabaseTablesListCard tables={tables} />
-          </Section>
-        </SettingsPageContainer>
-      </SubMenuTopBarContainer>
-    </FormProvider>
+          )}
+        </Section>
+      </SettingsPageContainer>
+    </SubMenuTopBarContainer>
   );
 };

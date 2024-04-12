@@ -58,6 +58,12 @@ export class FieldMetadataDefaultValueDateTime {
   value: Date | null;
 }
 
+export class FieldMetadataDefaultValueDate {
+  @ValidateIf((object, value) => value !== null)
+  @IsDate()
+  value: Date | null;
+}
+
 export class FieldMetadataDefaultValueLink {
   @ValidateIf((object, value) => value !== null)
   @IsQuotedString()

@@ -92,6 +92,7 @@ export const RecordInlineCell = ({ readonly }: RecordInlineCellProps) => {
           onTab={handleTab}
           onShiftTab={handleShiftTab}
           onClickOutside={handleClickOutside}
+          isReadOnly={readonly}
         />
       }
       displayModeContent={<FieldDisplay />}

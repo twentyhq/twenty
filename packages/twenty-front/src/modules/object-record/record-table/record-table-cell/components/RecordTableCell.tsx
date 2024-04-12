@@ -4,6 +4,7 @@ import { FieldDisplay } from '@/object-record/record-field/components/FieldDispl
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
 import { RecordTableCellContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellContainer';
 import { useCloseRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useCloseRecordTableCell';
@@ -21,6 +22,7 @@ export const RecordTableCell = ({
   const { moveLeft, moveRight, moveDown } = useRecordTableMoveFocus();
 
   const { entityId, fieldDefinition } = useContext(FieldContext);
+  const { isReadOnly } = useContext(RecordTableRowContext);
 
   const handleEnter: FieldInputEvent = (persistField) => {
     upsertRecord(persistField);
@@ -78,6 +80,7 @@ export const RecordTableCell = ({
           onShiftTab={handleShiftTab}
           onSubmit={handleSubmit}
           onTab={handleTab}
+          isReadOnly={isReadOnly}
         />
       }
       nonEditModeContent={<FieldDisplay />}
