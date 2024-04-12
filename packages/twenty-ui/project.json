@@ -17,8 +17,7 @@
       ],
       "outputs": ["{projectRoot}/src/index.ts", "{projectRoot}/src/*/index.ts"],
       "options": {
-        "outputPath": "{projectRoot}/dist",
-        "command": "npx ts-node --esm {projectRoot}/scripts/generateBarrels.ts"
+        "command": "node {projectRoot}/scripts/generateBarrels.js"
       }
     },
     "lint": {

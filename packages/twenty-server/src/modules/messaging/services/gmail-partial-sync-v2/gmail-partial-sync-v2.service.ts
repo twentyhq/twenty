@@ -21,9 +21,9 @@ import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decora
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import {
-  GmailFullSyncV2Job,
-  GmailFullSyncV2JobData,
-} from 'src/modules/messaging/jobs/gmail-full-sync-v2.job';
+  GmailFullSyncJob,
+  GmailFullSyncJobData,
+} from 'src/modules/messaging/jobs/gmail-full-sync.job';
 
 @Injectable()
 export class GmailPartialSyncV2Service {
@@ -330,8 +330,8 @@ export class GmailPartialSyncV2Service {
     workspaceId: string,
     connectedAccountId: string,
   ) {
-    await this.messageQueueService.add<GmailFullSyncV2JobData>(
-      GmailFullSyncV2Job.name,
+    await this.messageQueueService.add<GmailFullSyncJobData>(
+      GmailFullSyncJob.name,
       { workspaceId, connectedAccountId },
     );
   }

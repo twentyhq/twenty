@@ -235,7 +235,7 @@ export class EnvironmentVariables {
     (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
   )
   @IsString()
-  SENTRY_DSN_FRONT: string;
+  SENTRY_FRONT_DSN: string;
 
   @ValidateIf(
     (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,

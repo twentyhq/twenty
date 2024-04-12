@@ -1,10 +1,8 @@
 import { useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { IconApps } from 'twenty-ui';
+import { IconApps, IconComponent, useIcons } from 'twenty-ui';
 
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
