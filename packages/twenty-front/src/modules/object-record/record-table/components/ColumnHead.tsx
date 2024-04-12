@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
-import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
+import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftComponentState';
 
 import { ColumnDefinition } from '../types/ColumnDefinition';
 

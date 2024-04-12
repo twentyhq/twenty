@@ -3,11 +3,8 @@ import styled from '@emotion/styled';
 import { OverlayScrollbars } from 'overlayscrollbars';
 import { useOverlayScrollbars } from 'overlayscrollbars-react';
 import { useRecoilCallback } from 'recoil';
-
-import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
-import { scrollTopState } from '@/ui/utilities/scroll/states/scrollTopState';
-
 import 'overlayscrollbars/overlayscrollbars.css';
+import { useScrollStates } from '@/ui/utilities/scroll/hooks/useScrollSates';
 
 export const ScrollWrapperContext = createContext<RefObject<HTMLDivElement>>({
   current: null,
@@ -37,6 +34,7 @@ export const ScrollWrapper = ({
   hideY,
 }: ScrollWrapperProps) => {
   const scrollableRef = useRef<HTMLDivElement>(null);
+  const {scrollLeftState, scrollTopState} = useScrollStates()
 
   const handleScroll = useRecoilCallback(
     ({ set }) =>

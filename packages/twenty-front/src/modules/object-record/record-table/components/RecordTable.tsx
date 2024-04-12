@@ -11,8 +11,8 @@ import { useRecordTableStates } from '@/object-record/record-table/hooks/interna
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { RGBA } from '@/ui/theme/constants/Rgba';
-import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
-import { scrollTopState } from '@/ui/utilities/scroll/states/scrollTopState';
+import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftComponentState';
+import { scrollTopState } from '@/ui/utilities/scroll/states/scrollTopComponentState';
 
 const StyledTable = styled.table<{
   freezeFirstColumns?: boolean;

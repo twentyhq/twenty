@@ -12,7 +12,7 @@ import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { useTrackPointer } from '@/ui/utilities/pointer-event/hooks/useTrackPointer';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
+import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftComponentState';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 
 import { ColumnHeadWithDropdown } from './ColumnHeadWithDropdown';
