@@ -36,25 +36,19 @@ export const DateTimeInput = ({
   date,
   onChange,
   isDateTimeInput,
-  onError,
 }: DateTimeInputProps) => {
   const [hasError, setHasError] = useState(false);
 
   const parseDateToString = (date: any) => {
-    console.log({ date });
-
     const dateParsed = DateTime.fromJSDate(date);
 
     const formattedDate = dateParsed.toFormat('MM/dd/yyyy HH:mm');
-
-    console.log({ formattedDate });
 
     return formattedDate;
   };
 
   const parseStringToDate = (str: string) => {
     setHasError(false);
-    console.log({ str });
 
     const parsedDate = DateTime.fromFormat(str, 'MM/dd/yyyy HH:mm');
 
@@ -71,7 +65,7 @@ export const DateTimeInput = ({
     return jsDate;
   };
 
-  const { ref, setValue, value, unmaskedValue, typedValue, maskRef } = useIMask(
+  const { ref, setValue, value } = useIMask(
     {
       mask: Date,
       pattern: DATE_TIME_MASK,
@@ -85,30 +79,15 @@ export const DateTimeInput = ({
     },
     {
       onComplete: (value) => {
-        console.log({
-          value,
-        });
-
         const parsedDate = parseStringToDate(value);
 
         onChange?.(parsedDate);
       },
-      onAccept: (value) => {
+      onAccept: () => {
         setHasError(false);
-        console.log({
-          value,
-        });
       },
     },
   );
-
-  console.log({
-    value,
-    unmaskedValue,
-    typedValue,
-    maskRef: maskRef?.current,
-    ref: ref?.current,
-  });
 
   useEffect(() => {
     setValue(parseDateToString(date));
