@@ -1,4 +1,5 @@
 import { MOCK_REMOTE_DATABASES } from '@/settings/integrations/constants/MockRemoteDatabases';
+import { SETTINGS_INTEGRATION_EXTENSION_CATEGORY } from '@/settings/integrations/constants/SettingsIntegrationExtensions';
 import { SETTINGS_INTEGRATION_REQUEST_CATEGORY } from '@/settings/integrations/constants/SettingsIntegrationRequest';
 import { SETTINGS_INTEGRATION_WINDMILL_CATEGORY } from '@/settings/integrations/constants/SettingsIntegrationWindmill';
 import { SETTINGS_INTEGRATION_ZAPIER_CATEGORY } from '@/settings/integrations/constants/SettingsIntegrationZapier';
@@ -30,6 +31,7 @@ export const useSettingsIntegrationCategories =
       }),
       SETTINGS_INTEGRATION_ZAPIER_CATEGORY,
       SETTINGS_INTEGRATION_WINDMILL_CATEGORY,
+      SETTINGS_INTEGRATION_EXTENSION_CATEGORY,
       SETTINGS_INTEGRATION_REQUEST_CATEGORY,
     ];
   };
