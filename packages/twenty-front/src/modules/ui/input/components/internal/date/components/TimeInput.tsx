@@ -16,15 +16,14 @@ const StyledTimeInputContainer = styled.div`
   background-color: ${({ theme }) => theme.background.tertiary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
-  margin-left: ${({ theme }) => theme.spacing(1)};
   margin-right: 0;
   padding: 0 ${({ theme }) => theme.spacing(2)};
-  position: absolute;
+
   text-align: left;
   width: 136px;
   height: 32px;
   gap: ${({ theme }) => theme.spacing(1)};
-  top: 56px;
+
   z-index: 10;
 `;
 
@@ -59,6 +58,7 @@ export const TimeInput = ({ date, onChange }: TimeInputProps) => {
     {
       mask: TIME_MASK,
       blocks: TIME_BLOCKS,
+      lazy: false,
     },
     {
       onComplete: handleComplete,

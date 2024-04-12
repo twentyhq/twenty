@@ -23,6 +23,7 @@ export const DateTimeFieldInput = ({
   const persistField = usePersistField();
 
   const persistDate = (newDate: Nullable<Date>) => {
+    console.log('persistDate', newDate);
     if (!newDate) {
       persistField(null);
     } else {
@@ -44,6 +45,7 @@ export const DateTimeFieldInput = ({
     _event: MouseEvent | TouchEvent,
     newDate: Nullable<Date>,
   ) => {
+    console.log('handleClickOutside', newDate);
     onClickOutside?.(() => persistDate(newDate));
   };
 

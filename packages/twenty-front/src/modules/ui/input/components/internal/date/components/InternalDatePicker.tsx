@@ -1,13 +1,18 @@
-import { useState } from 'react';
 import ReactDatePicker from 'react-datepicker';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
-import { IconCalendarDue, IconCalendarX } from 'twenty-ui';
+import { IconCalendarX, IconChevronLeft, IconChevronRight } from 'twenty-ui';
 
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
-import { MonthAndYearDropdown } from '@/ui/input/components/internal/date/components/MonthAndYearDropdown';
+import {
+  MONTH_AND_YEAR_DROPDOWN_ID,
+  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+  MonthAndYearDropdown,
+} from '@/ui/input/components/internal/date/components/MonthAndYearDropdown';
 import { TimeInput } from '@/ui/input/components/internal/date/components/TimeInput';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
 import { StyledHoverableMenuItemBase } from '@/ui/navigation/menu-item/internals/components/StyledMenuItemBase';
 import { OVERLAY_BACKGROUND } from '@/ui/theme/constants/OverlayBackground';
@@ -49,6 +54,7 @@ const StyledContainer = styled.div`
   & .react-datepicker__header {
     background: transparent;
     border: none;
+    padding: 0;
   }
 
   &
@@ -250,29 +256,15 @@ const StyledButton = styled(MenuItemLeftContent)`
   justify-content: start;
 `;
 
-const StyledIconButton = styled.button<{ isOpen: boolean }>`
-  display: flex;
-  justify-content: center;
+const StyledCustomDatePickerHeader = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.background.transparent.primary};
-  border: none;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  cursor: pointer;
-  height: 32px;
-  right: 75px;
-  position: absolute;
-  top: 56px;
-  transition: opacity 200ms ease-in-out;
-  width: 32px;
-  z-index: ${({ isOpen }) => (isOpen ? 0 : 10)};
+  display: flex;
+  justify-content: space-between;
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(2)};
 
-  &:focus {
-    outline: none;
-  }
-
-  &:hover {
-    background: ${({ theme }) => theme.background.tertiary};
-  }
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 export type InternalDatePickerProps = {
@@ -281,6 +273,7 @@ export type InternalDatePickerProps = {
   onChange?: (date: Date | null) => void;
   clearable?: boolean;
   isDateTimeInput?: boolean;
+  onClickOutside?: (event: MouseEvent | TouchEvent, date: Date | null) => void;
 };
 
 const PICKER_DATE_FORMAT = 'MM/dd/yyyy';
@@ -291,90 +284,99 @@ export const InternalDatePicker = ({
   onMouseSelect,
   clearable = true,
   isDateTimeInput,
+  onClickOutside,
 }: InternalDatePickerProps) => {
-  const theme = useTheme();
+  const internalDate = date ?? new Date();
 
-  const [isMonthAndYearDropdownOpen, setIsMonthAndYearDropdownOpen] =
-    useState(false);
+  const dateFormatted =
+    DateTime.fromJSDate(internalDate).toFormat(PICKER_DATE_FORMAT);
 
-  const updateMonth = (month: number) => {
-    const newDate = new Date(date);
-    newDate.setMonth(month);
-    onChange?.(newDate);
-  };
-  const updateYear = (year: number) => {
-    const newDate = new Date(date);
-    newDate.setFullYear(year);
-    onChange?.(newDate);
-  };
+  const { closeDropdown } = useDropdown(MONTH_AND_YEAR_DROPDOWN_ID);
+  const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
+    MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+  );
+  const { closeDropdown: closeDropdownYearSelect } = useDropdown(
+    MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+  );
 
   const handleClear = () => {
+    closeDropdowns();
     onMouseSelect?.(null);
   };
 
-  const initialDate = date
-    ? DateTime.fromJSDate(date).toFormat(PICKER_DATE_FORMAT)
-    : DateTime.now().toFormat(PICKER_DATE_FORMAT);
+  const closeDropdowns = () => {
+    closeDropdownYearSelect();
+    closeDropdownMonthSelect();
+    closeDropdown();
+  };
 
-  const [dateValue, setDateValue] = useState(initialDate);
+  const handleClickOutside = (event: any) => {
+    closeDropdowns();
+    onClickOutside?.(event, internalDate);
+  };
 
-  const dateValueAsJSDate = DateTime.fromFormat(dateValue, PICKER_DATE_FORMAT)
-    .isValid
-    ? DateTime.fromFormat(dateValue, PICKER_DATE_FORMAT).toJSDate()
-    : null;
+  const handleMouseSelect = (newDate: Date) => {
+    closeDropdowns();
+    onMouseSelect?.(newDate);
+  };
+
+  // TODO: implement keyboard events here
 
   return (
     <StyledContainer>
       <div className={clearable ? 'clearable ' : ''}>
-        {isDateTimeInput && <TimeInput date={date} onChange={onChange} />}
-        <DateTimeInput
-          isDateTimeInput={isDateTimeInput}
-          date={date}
-          onChange={onChange}
-        />
         <ReactDatePicker
           open={true}
-          selected={dateValueAsJSDate}
-          value={dateValue}
-          onChange={() => {
-            // We need to use onSelect here but onChange is almost redundant with onSelect but is require
+          selected={internalDate}
+          value={dateFormatted}
+          onChange={(newDate) => {
+            onChange?.(newDate);
           }}
+          renderCustomHeader={({
+            decreaseMonth,
+            increaseMonth,
+            prevMonthButtonDisabled,
+            nextMonthButtonDisabled,
+          }) => (
+            <>
+              <DateTimeInput
+                date={internalDate}
+                isDateTimeInput={isDateTimeInput}
+                onChange={onChange}
+              />
+              <StyledCustomDatePickerHeader>
+                <TimeInput date={internalDate} onChange={onChange} />
+                <MonthAndYearDropdown date={internalDate} onChange={onChange} />
+                <LightIconButton
+                  Icon={IconChevronLeft}
+                  onClick={() => decreaseMonth()}
+                  size="medium"
+                  disabled={prevMonthButtonDisabled}
+                />
+                <LightIconButton
+                  Icon={IconChevronRight}
+                  onClick={() => increaseMonth()}
+                  size="medium"
+                  disabled={nextMonthButtonDisabled}
+                />
+              </StyledCustomDatePickerHeader>
+            </>
+          )}
           customInput={<></>}
           onSelect={(date: Date, event) => {
-            // Setting the time to midnight might sometimes return the previous day
-            // We set to 21:00 to avoid any timezone issues
-            const dateForDateField = new Date(date.setHours(21, 0, 0, 0));
-
-            setDateValue(
-              DateTime.fromJSDate(date).toFormat(PICKER_DATE_FORMAT),
-            );
+            const dateUTC = DateTime.fromJSDate(date, {
+              zone: 'utc',
+            }).toJSDate();
 
             if (event?.type === 'click') {
-              onMouseSelect?.(isDateTimeInput ? date : dateForDateField);
+              handleMouseSelect?.(dateUTC);
             } else {
-              onChange?.(isDateTimeInput ? date : dateForDateField);
+              onChange?.(dateUTC);
             }
           }}
+          onClickOutside={handleClickOutside}
         ></ReactDatePicker>
       </div>
-      <StyledIconButton
-        isOpen={isMonthAndYearDropdownOpen}
-        onClick={() => setIsMonthAndYearDropdownOpen(true)}
-      >
-        <IconCalendarDue color={theme.font.color.tertiary} size={16} />
-      </StyledIconButton>
-      <MonthAndYearDropdown
-        isOpen={isMonthAndYearDropdownOpen}
-        onCloseDropdown={() => {
-          setIsMonthAndYearDropdownOpen(false);
-          // persist date
-          onMouseSelect?.(date);
-        }}
-        month={date.getMonth()}
-        year={date.getFullYear()}
-        updateMonth={updateMonth}
-        updateYear={updateYear}
-      />
       {clearable && (
         <StyledButtonContainer onClick={handleClear} isMenuOpen={false}>
           <StyledButton LeftIcon={IconCalendarX} text="Clear" />
