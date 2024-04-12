@@ -1,7 +1,4 @@
-/* eslint-disable @nx/enforce-module-boundaries,import/no-relative-packages */
 import { JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
-
-import { compilerOptions as twentyUiCompilerOptions } from '../twenty-ui/tsconfig.json';
 
 import { compilerOptions } from './tsconfig.json';
 
@@ -21,10 +18,6 @@ const jestConfig: JestConfigWithTsJest = {
       '<rootDir>/__mocks__/imageMock.js',
     '\\.css$': '<rootDir>/__mocks__/styleMock.js',
     ...pathsToModuleNameMapper(compilerOptions.paths),
-    // Include internal library aliases, so there is no need to build the library before tests.
-    ...pathsToModuleNameMapper(twentyUiCompilerOptions.paths, {
-      prefix: '<rootDir>/../../',
-    }),
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   extensionsToTreatAsEsm: ['.ts', '.tsx'],

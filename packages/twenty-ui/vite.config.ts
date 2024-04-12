@@ -7,6 +7,9 @@ import dts from 'vite-plugin-dts';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
+// eslint-disable-next-line @nx/enforce-module-boundaries, import/no-relative-packages
+import packageJson from '../../package.json';
+
 export default defineConfig({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/packages/twenty-ui',
@@ -45,14 +48,7 @@ export default defineConfig({
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
-      external: [
-        '@emotion/react',
-        '@emotion/styled',
-        'react-dom',
-        'react',
-        'react/jsx-runtime',
-        'recoil',
-      ],
+      external: Object.keys(packageJson.dependencies || {}),
     },
   },
 });

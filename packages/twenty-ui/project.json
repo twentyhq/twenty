@@ -17,7 +17,6 @@
       ],
       "outputs": ["{projectRoot}/src/index.ts", "{projectRoot}/src/*/index.ts"],
       "options": {
-        "outputPath": "{projectRoot}/dist",
         "command": "node {projectRoot}/scripts/generateBarrels.js"
       }
     },

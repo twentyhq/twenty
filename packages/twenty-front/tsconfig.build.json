@@ -1,9 +1,0 @@
-{
-  "extends": "./tsconfig.app.json",
-  "compilerOptions": {
-    "paths": {
-      "@/*": ["packages/twenty-front/src/modules/*"],
-      "~/*": ["packages/twenty-front/src/*"]
-    }
-  }
-}
