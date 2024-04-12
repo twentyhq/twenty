@@ -7,7 +7,10 @@ import {
   RemoteServerType,
   RemoteServerEntity,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
-import { RemoteTableStatus } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
+import {
+  RemoteTableDTO,
+  RemoteTableStatus,
+} from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
 import {
   isPostgreSQLIntegrationEnabled,
   mapUdtNameToFieldType,
@@ -86,10 +89,7 @@ export class RemoteTableService {
     }));
   }
 
-  public async updateRemoteTableSyncStatus(
-    input: RemoteTableInput,
-    workspaceId: string,
-  ) {
+  public async syncRemoteTable(input: RemoteTableInput, workspaceId: string) {
     const remoteServer = await this.remoteServerRepository.findOne({
       where: {
         id: input.remoteServerId,
@@ -101,31 +101,33 @@ export class RemoteTableService {
       throw new NotFoundException('Remote server does not exist');
     }
 
-    switch (input.status) {
-      case RemoteTableStatus.SYNCED:
-        await this.createForeignTableAndMetadata(
-          input,
-          remoteServer,
-          workspaceId,
-        );
-        break;
-      case RemoteTableStatus.NOT_SYNCED:
-        await this.removeForeignTableAndMetadata(input, workspaceId);
-        break;
-      default:
-        throw new Error('Unsupported remote table status');
-    }
+    const remoteTable = await this.createForeignTableAndMetadata(
+      input,
+      remoteServer,
+      workspaceId,
+    );
 
     await this.workspaceCacheVersionService.incrementVersion(workspaceId);
 
-    return input;
+    return remoteTable;
+  }
+
+  public async unsyncRemoteTable(input: RemoteTableInput, workspaceId: string) {
+    const remoteTable = await this.removeForeignTableAndMetadata(
+      input,
+      workspaceId,
+    );
+
+    await this.workspaceCacheVersionService.incrementVersion(workspaceId);
+
+    return remoteTable;
   }
 
   private async createForeignTableAndMetadata(
     input: RemoteTableInput,
     remoteServer: RemoteServerEntity<RemoteServerType>,
     workspaceId: string,
-  ) {
+  ): Promise<RemoteTableDTO> {
     if (!input.schema) {
       throw new Error('Schema is required for syncing remote table');
     }
@@ -195,10 +197,10 @@ export class RemoteTableService {
       description: 'Remote table',
       dataSourceId: dataSourceMetatada.id,
       workspaceId: workspaceId,
-      icon: 'IconUser',
+      icon: 'IconPlug',
       isRemote: true,
       remoteTablePrimaryKeyColumnType: remoteTableIdColumn.udtName,
-    } as CreateObjectInput);
+    } satisfies CreateObjectInput);
 
     for (const column of remoteTableColumns) {
       const field = await this.fieldMetadataService.createOne({
@@ -211,8 +213,8 @@ export class RemoteTableService {
         objectMetadataId: objectMetadata.id,
         isRemoteCreation: true,
         isNullable: true,
-        icon: 'IconUser',
-      } as CreateFieldInput);
+        icon: 'IconPlug',
+      } satisfies CreateFieldInput);
 
       if (column.columnName === 'id') {
         await this.objectMetadataService.updateOne(objectMetadata.id, {
@@ -220,12 +222,18 @@ export class RemoteTableService {
         });
       }
     }
+
+    return {
+      name: input.name,
+      schema: input.schema,
+      status: RemoteTableStatus.SYNCED,
+    };
   }
 
   private async removeForeignTableAndMetadata(
     input: RemoteTableInput,
     workspaceId: string,
-  ) {
+  ): Promise<RemoteTableDTO> {
     const remoteTableName = getRemoteTableName(input.name);
 
     const currentForeignTableNames =
@@ -261,6 +269,12 @@ export class RemoteTableService {
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
       workspaceId,
     );
+
+    return {
+      name: input.name,
+      schema: input.schema,
+      status: RemoteTableStatus.NOT_SYNCED,
+    };
   }
 
   private async fetchTableColumnsSchema(

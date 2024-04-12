@@ -15,7 +15,10 @@ import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export type SettingsDataModelFieldPreviewProps = {
-  fieldMetadataItem: Pick<FieldMetadataItem, 'icon' | 'label' | 'type'> & {
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'icon' | 'label' | 'type' | 'defaultValue'
+  > & {
     id?: string;
     name?: string;
   };
@@ -106,6 +109,7 @@ export const SettingsDataModelFieldPreview = ({
                   relationObjectMetadataItem?.nameSingular,
                 options: selectOptions,
               },
+              defaultValue: fieldMetadataItem.defaultValue,
             },
             hotkeyScope: 'field-preview',
           }}

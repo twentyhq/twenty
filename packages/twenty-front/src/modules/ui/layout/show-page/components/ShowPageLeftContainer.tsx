@@ -20,6 +20,7 @@ const StyledInnerContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: ${() => (useIsMobile() ? `100%` : '348px')};
+  overflow-x: hidden;
 `;
 
 const StyledIntermediateContainer = styled.div`

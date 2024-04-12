@@ -23,7 +23,7 @@ export const DEFAULT_CELL_SCOPE: HotkeyScope = {
 };
 
 export const useOpenRecordTableCell = () => {
-  const { pathToShowPage } = useContext(RecordTableRowContext);
+  const { pathToShowPage, isReadOnly } = useContext(RecordTableRowContext);
 
   const { setCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
   const setHotkeyScope = useSetHotkeyScope();
@@ -46,6 +46,10 @@ export const useOpenRecordTableCell = () => {
 
   const openTableCell = useRecoilCallback(
     () => (options?: { initialValue?: string }) => {
+      if (isReadOnly) {
+        return;
+      }
+
       if (isFirstColumnCell && !isEmpty) {
         leaveTableFocus();
         navigate(pathToShowPage);
@@ -70,15 +74,16 @@ export const useOpenRecordTableCell = () => {
       }
     },
     [
+      isReadOnly,
       isFirstColumnCell,
       isEmpty,
-      leaveTableFocus,
-      navigate,
-      pathToShowPage,
       setDragSelectionStartEnabled,
       setCurrentTableCellInEditMode,
       initFieldInputDraftValue,
       customCellHotkeyScope,
+      leaveTableFocus,
+      navigate,
+      pathToShowPage,
       setHotkeyScope,
     ],
   );

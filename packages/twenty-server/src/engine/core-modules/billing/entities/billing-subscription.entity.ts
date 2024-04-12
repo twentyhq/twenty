@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import {
   Column,
@@ -15,11 +15,12 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @Entity({ name: 'billingSubscription', schema: 'core' })
 @ObjectType('BillingSubscription')
 export class BillingSubscription {
-  @IDField(() => ID)
+  @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

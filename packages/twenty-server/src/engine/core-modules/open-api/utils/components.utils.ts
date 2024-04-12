@@ -31,6 +31,7 @@ const getSchemaComponentsProperties = (
       case FieldMetadataType.PHONE:
       case FieldMetadataType.EMAIL:
       case FieldMetadataType.DATE_TIME:
+      case FieldMetadataType.DATE:
         itemProperty.type = 'string';
         break;
       case FieldMetadataType.NUMBER:
@@ -72,7 +73,7 @@ const getSchemaComponentsProperties = (
         };
         break;
       case FieldMetadataType.RAW_JSON:
-        type: 'object';
+        itemProperty.type = 'object';
         break;
       default:
         itemProperty.type = 'string';

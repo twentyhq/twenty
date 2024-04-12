@@ -63,6 +63,14 @@ export class GmailFetchMessageContentFromCacheService {
       return;
     }
 
+    if (connectedAccount.authFailedAt) {
+      this.logger.error(
+        `Connected account ${connectedAccountId} in workspace ${workspaceId} is in a failed state. Skipping...`,
+      );
+
+      return;
+    }
+
     const accessToken = connectedAccount.accessToken;
     const refreshToken = connectedAccount.refreshToken;
 
@@ -232,6 +240,14 @@ export class GmailFetchMessageContentFromCacheService {
           `messages-to-import:${workspaceId}:gmail:${gmailMessageChannelId}`,
           messageIdsToFetch,
         );
+
+        if (error?.message?.code === 429) {
+          this.logger.error(
+            `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: Resource has been exhausted, locking for ${GMAIL_ONGOING_SYNC_TIMEOUT}ms...`,
+          );
+
+          return;
+        }
 
         await this.messageChannelRepository.updateSyncStatus(
           gmailMessageChannelId,

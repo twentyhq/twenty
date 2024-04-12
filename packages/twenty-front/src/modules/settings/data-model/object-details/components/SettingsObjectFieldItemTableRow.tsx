@@ -22,6 +22,7 @@ type SettingsObjectFieldItemTableRowProps = {
   fieldMetadataItem: FieldMetadataItem;
   identifierType?: Nullable<FieldIdentifierType>;
   variant?: 'field-type' | 'identifier';
+  isRemoteObjectField?: boolean;
 };
 
 export const StyledObjectFieldTableRow = styled(TableRow)`
@@ -43,6 +44,7 @@ export const SettingsObjectFieldItemTableRow = ({
   fieldMetadataItem,
   identifierType,
   variant = 'field-type',
+  isRemoteObjectField,
 }: SettingsObjectFieldItemTableRowProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
@@ -76,7 +78,11 @@ export const SettingsObjectFieldItemTableRow = ({
       </StyledNameTableCell>
       <TableCell>
         {variant === 'field-type' &&
-          (fieldMetadataItem.isCustom ? 'Custom' : 'Standard')}
+          (isRemoteObjectField
+            ? 'Remote'
+            : fieldMetadataItem.isCustom
+              ? 'Custom'
+              : 'Standard')}
         {variant === 'identifier' &&
           !!identifierType &&
           (identifierType === 'label' ? 'Record text' : 'Record image')}

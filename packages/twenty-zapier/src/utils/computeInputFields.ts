@@ -18,6 +18,8 @@ const getTypeFromFieldMetadataType = (
       return 'string';
     case FieldMetadataType.DATE_TIME:
       return 'datetime';
+    case FieldMetadataType.DATE:
+      return 'date';
     case FieldMetadataType.BOOLEAN:
       return 'boolean';
     case FieldMetadataType.NUMBER:
@@ -177,6 +179,7 @@ export const computeInputFields = (
       case FieldMetadataType.PHONE:
       case FieldMetadataType.EMAIL:
       case FieldMetadataType.DATE_TIME:
+      case FieldMetadataType.DATE:
       case FieldMetadataType.BOOLEAN:
       case FieldMetadataType.NUMBER:
       case FieldMetadataType.NUMERIC:
