@@ -1,3 +1,5 @@
+export * from './checkmark/components/AnimatedCheckmark';
+export * from './checkmark/components/Checkmark';
 export * from './icon/components/IconAddressBook';
 export * from './icon/components/IconGmail';
 export * from './icon/components/IconGoogle';

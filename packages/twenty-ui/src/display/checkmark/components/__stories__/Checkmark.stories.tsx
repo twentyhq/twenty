@@ -1,11 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { ComponentDecorator } from '@ui/testing/decorators/ComponentDecorator';
 
 import { Checkmark } from '../Checkmark';
 
 const meta: Meta<typeof Checkmark> = {
-  title: 'UI/Display/Checkmark/Checkmark',
+  title: 'UI/Display/Checkmark',
   component: Checkmark,
   decorators: [ComponentDecorator],
 };
