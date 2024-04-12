@@ -95,14 +95,18 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
     const formValues = formConfig.getValues();
 
     try {
-      await createOneDatabaseConnection(
+      const createdConnection = await createOneDatabaseConnection(
         createRemoteServerInputSchema.parse({
           ...formValues,
           foreignDataWrapperType: getForeignDataWrapperType(databaseKey),
         }),
       );
 
-      navigate(`${settingsIntegrationsPagePath}/${databaseKey}`);
+      const connectionId = createdConnection.data?.createOneRemoteServer.id;
+
+      navigate(
+        `${settingsIntegrationsPagePath}/${databaseKey}/${connectionId}`,
+      );
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
         variant: 'error',
