@@ -284,6 +284,7 @@ export enum FieldMetadataType {
   Address = 'ADDRESS',
   Boolean = 'BOOLEAN',
   Currency = 'CURRENCY',
+  Date = 'DATE',
   DateTime = 'DATE_TIME',
   Email = 'EMAIL',
   FullName = 'FULL_NAME',
@@ -803,6 +804,8 @@ export enum RemoteTableStatus {
 export type Sentry = {
   __typename?: 'Sentry';
   dsn?: Maybe<Scalars['String']['output']>;
+  environment?: Maybe<Scalars['String']['output']>;
+  release?: Maybe<Scalars['String']['output']>;
 };
 
 export type SessionEntity = {

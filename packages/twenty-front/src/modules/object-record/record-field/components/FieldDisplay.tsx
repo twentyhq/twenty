@@ -5,6 +5,7 @@ import { AddressFieldDisplay } from '../meta-types/display/components/AddressFie
 import { ChipFieldDisplay } from '../meta-types/display/components/ChipFieldDisplay';
 import { CurrencyFieldDisplay } from '../meta-types/display/components/CurrencyFieldDisplay';
 import { DateFieldDisplay } from '../meta-types/display/components/DateFieldDisplay';
+import { DateTimeFieldDisplay } from '../meta-types/display/components/DateTimeFieldDisplay';
 import { EmailFieldDisplay } from '../meta-types/display/components/EmailFieldDisplay';
 import { FullNameFieldDisplay } from '../meta-types/display/components/FullNameFieldDisplay';
 import { JsonFieldDisplay } from '../meta-types/display/components/JsonFieldDisplay';
@@ -18,6 +19,7 @@ import { TextFieldDisplay } from '../meta-types/display/components/TextFieldDisp
 import { UuidFieldDisplay } from '../meta-types/display/components/UuidFieldDisplay';
 import { isFieldAddress } from '../types/guards/isFieldAddress';
 import { isFieldCurrency } from '../types/guards/isFieldCurrency';
+import { isFieldDate } from '../types/guards/isFieldDate';
 import { isFieldDateTime } from '../types/guards/isFieldDateTime';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
 import { isFieldFullName } from '../types/guards/isFieldFullName';
@@ -34,13 +36,18 @@ import { isFieldUuid } from '../types/guards/isFieldUuid';
 export const FieldDisplay = () => {
   const { fieldDefinition, isLabelIdentifier } = useContext(FieldContext);
 
-  return isLabelIdentifier &&
+  const isChipDisplay =
+    isLabelIdentifier &&
     (isFieldText(fieldDefinition) ||
       isFieldFullName(fieldDefinition) ||
-      isFieldNumber(fieldDefinition)) ? (
+      isFieldNumber(fieldDefinition));
+
+  return isChipDisplay ? (
     <ChipFieldDisplay />
   ) : isFieldRelation(fieldDefinition) ? (
     <RelationFieldDisplay />
+  ) : isFieldPhone(fieldDefinition) ? (
+    <PhoneFieldDisplay />
   ) : isFieldText(fieldDefinition) ? (
     <TextFieldDisplay />
   ) : isFieldUuid(fieldDefinition) ? (
@@ -48,6 +55,8 @@ export const FieldDisplay = () => {
   ) : isFieldEmail(fieldDefinition) ? (
     <EmailFieldDisplay />
   ) : isFieldDateTime(fieldDefinition) ? (
+    <DateTimeFieldDisplay />
+  ) : isFieldDate(fieldDefinition) ? (
     <DateFieldDisplay />
   ) : isFieldNumber(fieldDefinition) ? (
     <NumberFieldDisplay />
@@ -57,8 +66,6 @@ export const FieldDisplay = () => {
     <CurrencyFieldDisplay />
   ) : isFieldFullName(fieldDefinition) ? (
     <FullNameFieldDisplay />
-  ) : isFieldPhone(fieldDefinition) ? (
-    <PhoneFieldDisplay />
   ) : isFieldSelect(fieldDefinition) ? (
     <SelectFieldDisplay />
   ) : isFieldMultiSelect(fieldDefinition) ? (

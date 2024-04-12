@@ -4,7 +4,7 @@ import { RatingInput } from '@/ui/field/input/components/RatingInput';
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useRatingField } from '../../hooks/useRatingField';
 
-import { FieldInputEvent } from './DateFieldInput';
+import { FieldInputEvent } from './DateTimeFieldInput';
 
 export type RatingFieldInputProps = {
   onSubmit?: FieldInputEvent;

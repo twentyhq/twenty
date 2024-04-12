@@ -20,6 +20,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       },
       iconName: 'IconLink',
       isVisible: true,
+      defaultValue: '',
     },
     {
       position: 1,
@@ -36,6 +37,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       },
       iconName: 'IconUsers',
       isVisible: true,
+      defaultValue: 0,
     },
     {
       position: 2,
@@ -52,6 +54,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       },
       iconName: 'IconBuildingSkyscraper',
       isVisible: true,
+      defaultValue: '',
     },
     {
       position: 3,
@@ -69,6 +72,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       },
       iconName: 'IconHeart',
       isVisible: true,
+      defaultValue: [],
     },
     {
       position: 4,
@@ -85,6 +89,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       },
       iconName: 'IconMap',
       isVisible: true,
+      defaultValue: '',
     },
     {
       position: 5,
@@ -102,6 +107,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       },
       iconName: 'IconUserCircle',
       isVisible: true,
+      defaultValue: null,
     },
     {
       position: 6,
@@ -119,6 +125,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       },
       iconName: 'IconUsers',
       isVisible: true,
+      defaultValue: [],
     },
     {
       position: 7,
@@ -136,6 +143,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       },
       iconName: 'IconFileImport',
       isVisible: true,
+      defaultValue: [],
     },
     {
       position: 8,
@@ -152,6 +160,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       },
       iconName: 'IconCalendar',
       isVisible: true,
+      defaultValue: '',
     },
     {
       position: 9,
@@ -168,6 +177,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       },
       iconName: 'IconTarget',
       isVisible: true,
+      defaultValue: false,
     },
     {
       position: 10,
@@ -184,6 +194,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       },
       iconName: 'IconBrandLinkedin',
       isVisible: true,
+      defaultValue: '',
     },
     {
       position: 11,
@@ -201,6 +212,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       },
       iconName: 'IconTargetArrow',
       isVisible: true,
+      defaultValue: [],
     },
     {
       position: 12,
@@ -217,6 +229,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       },
       iconName: 'IconBrandX',
       isVisible: true,
+      defaultValue: '',
     },
     {
       position: 13,
@@ -234,6 +247,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       },
       iconName: 'IconCheckbox',
       isVisible: true,
+      defaultValue: [],
     },
     {
       position: 14,
@@ -250,6 +264,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COLUMN_DEFINITIONS = (
       },
       iconName: 'IconMoneybag',
       isVisible: true,
+      defaultValue: 0,
     },
   ] satisfies ColumnDefinition<FieldMetadata>[]
 ).filter(filterAvailableTableColumns);

@@ -1,10 +1,13 @@
 import { useCallback } from 'react';
-import { ApolloClient, useMutation } from '@apollo/client';
+import { ApolloClient, useApolloClient, useMutation } from '@apollo/client';
 import { getOperationName } from '@apollo/client/utilities';
 
 import { SYNC_REMOTE_TABLE } from '@/databases/graphql/mutations/syncRemoteTable';
 import { GET_MANY_REMOTE_TABLES } from '@/databases/graphql/queries/findManyRemoteTables';
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
+import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import {
   RemoteTableInput,
   SyncRemoteTableMutation,
@@ -13,6 +16,14 @@ import {
 
 export const useSyncRemoteTable = () => {
   const apolloMetadataClient = useApolloMetadataClient();
+  const apolloClient = useApolloClient();
+
+  const { refetch: refetchObjectMetadataItems } =
+    useFindManyObjectMetadataItems();
+
+  const { findManyRecordsQuery: findManyViewsQuery } = useFindManyRecordsQuery({
+    objectNameSingular: CoreObjectNameSingular.View,
+  });
 
   const [mutate] = useMutation<
     SyncRemoteTableMutation,
@@ -23,15 +34,24 @@ export const useSyncRemoteTable = () => {
 
   const syncRemoteTable = useCallback(
     async (input: RemoteTableInput) => {
-      return await mutate({
+      const remoteTable = await mutate({
         variables: {
           input,
         },
         awaitRefetchQueries: true,
         refetchQueries: [getOperationName(GET_MANY_REMOTE_TABLES) ?? ''],
       });
+
+      // TODO: we should return the tables with the columns and store in cache instead of refetching
+      await refetchObjectMetadataItems();
+      await apolloClient.query({
+        query: findManyViewsQuery,
+        fetchPolicy: 'network-only',
+      });
+
+      return remoteTable;
     },
-    [mutate],
+    [apolloClient, findManyViewsQuery, mutate, refetchObjectMetadataItems],
   );
 
   return {

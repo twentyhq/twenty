@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconChevronDown } from 'twenty-ui';
@@ -6,7 +5,6 @@ import { IconChevronDown } from 'twenty-ui';
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { isDefined } from '~/utils/isDefined';
 
 import { CurrencyPickerHotkeyScope } from '../types/CurrencyPickerHotkeyScope';
 
@@ -64,8 +62,6 @@ export const CurrencyPickerDropdownButton = ({
 }) => {
   const theme = useTheme();
 
-  const [selectedCurrency, setSelectedCurrency] = useState<Currency>();
-
   const { isDropdownOpen, closeDropdown } = useDropdown(
     CurrencyPickerHotkeyScope.CurrencyPicker,
   );
@@ -75,12 +71,9 @@ export const CurrencyPickerDropdownButton = ({
     closeDropdown();
   };
 
-  useEffect(() => {
-    const currency = currencies.find(({ value }) => value === valueCode);
-    if (isDefined(currency)) {
-      setSelectedCurrency(currency);
-    }
-  }, [valueCode, currencies]);
+  const currency = currencies.find(({ value }) => value === valueCode);
+
+  const currencyCode = currency?.value ?? CurrencyCode.USD;
 
   return (
     <Dropdown
@@ -90,7 +83,7 @@ export const CurrencyPickerDropdownButton = ({
       clickableComponent={
         <StyledDropdownButtonContainer isUnfolded={isDropdownOpen}>
           <StyledIconContainer>
-            {selectedCurrency ? selectedCurrency.value : CurrencyCode.USD}
+            {currencyCode}
             <IconChevronDown size={theme.icon.size.sm} />
           </StyledIconContainer>
         </StyledDropdownButtonContainer>
@@ -98,7 +91,7 @@ export const CurrencyPickerDropdownButton = ({
       dropdownComponents={
         <CurrencyPickerDropdownSelect
           currencies={currencies}
-          selectedCurrency={selectedCurrency}
+          selectedCurrency={currency}
           onChange={handleChange}
         />
       }

@@ -1,7 +1,9 @@
 'use client';
 
+import React from 'react';
 import styled from '@emotion/styled';
 
+import { AnimatedFigures } from '@/app/_components/contributors/AnimatedFigures';
 import { CardContainer } from '@/app/_components/contributors/CardContainer';
 import { Theme } from '@/app/_components/ui/theme/theme';
 
@@ -64,22 +66,23 @@ export const ProfileInfo = ({
   rank,
   activeDays,
 }: ProfileInfoProps) => {
+  const parsedValue = parseFloat(rank.replace('%', ''));
   return (
     <>
       <Container>
         <div className="item">
           <p className="title">Merged PR</p>
-          <span className="value">{mergedPRsCount}</span>
+          <AnimatedFigures value={mergedPRsCount} />
         </div>
         <div className="separator"></div>
         <div className="item">
           <p className="title">Ranking</p>
-          <span className="value">{rank}%</span>
+          <AnimatedFigures value={parsedValue}>%</AnimatedFigures>
         </div>
         <div className="separator"></div>
         <div className="item">
           <p className="title">Active Days</p>
-          <span className="value">{activeDays}</span>
+          <AnimatedFigures value={activeDays} />
         </div>
       </Container>
     </>

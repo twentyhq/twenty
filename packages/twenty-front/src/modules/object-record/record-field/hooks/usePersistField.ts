@@ -3,6 +3,8 @@ import { useRecoilCallback } from 'recoil';
 
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
 import { isFieldAddressValue } from '@/object-record/record-field/types/guards/isFieldAddressValue';
+import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
+import { isFieldDateValue } from '@/object-record/record-field/types/guards/isFieldDateValue';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
 import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect.ts';
@@ -61,6 +63,9 @@ export const usePersistField = () => {
           isFieldDateTime(fieldDefinition) &&
           isFieldDateTimeValue(valueToPersist);
 
+        const fieldIsDate =
+          isFieldDate(fieldDefinition) && isFieldDateValue(valueToPersist);
+
         const fieldIsLink =
           isFieldLink(fieldDefinition) && isFieldLinkValue(valueToPersist);
 
@@ -108,6 +113,7 @@ export const usePersistField = () => {
           fieldIsProbability ||
           fieldIsNumber ||
           fieldIsDateTime ||
+          fieldIsDate ||
           fieldIsPhone ||
           fieldIsLink ||
           fieldIsCurrency ||

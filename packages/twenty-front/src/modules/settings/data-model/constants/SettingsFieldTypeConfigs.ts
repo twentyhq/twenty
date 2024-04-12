@@ -2,6 +2,7 @@ import {
   IconCalendarEvent,
   IconCheck,
   IconCoins,
+  IconComponent,
   IconJson,
   IconKey,
   IconLink,
@@ -13,14 +14,13 @@ import {
   IconTag,
   IconTags,
   IconTextSize,
+  IconTwentyStar,
   IconUser,
 } from 'twenty-ui';
 
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { DEFAULT_DATE_VALUE } from '@/settings/data-model/constants/DefaultDateValue';
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
-import { IconTwentyStar } from '@/ui/display/icon/components/IconTwentyStar';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 DEFAULT_DATE_VALUE.setFullYear(DEFAULT_DATE_VALUE.getFullYear() + 2);
@@ -68,6 +68,11 @@ export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
   },
   [FieldMetadataType.DateTime]: {
     label: 'Date & Time',
+    Icon: IconCalendarEvent,
+    defaultValue: DEFAULT_DATE_VALUE.toISOString(),
+  },
+  [FieldMetadataType.Date]: {
+    label: 'Date',
     Icon: IconCalendarEvent,
     defaultValue: DEFAULT_DATE_VALUE.toISOString(),
   },

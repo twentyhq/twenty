@@ -1,10 +1,11 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconArchive, IconDotsVertical, IconPencil } from 'twenty-ui';
+import { IconArchive, IconDotsVertical, IconPencil, useIcons } from 'twenty-ui';
 
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { SettingsSummaryCard } from '@/settings/components/SettingsSummaryCard';
-import { SettingsDataModelIsCustomTag } from '@/settings/data-model/objects/SettingsDataModelIsCustomTag';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
+import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/SettingsDataModelObjectTypeTag';
+import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -13,14 +14,14 @@ import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsObjectSummaryCardProps = {
+  objectMetadataItem: ObjectMetadataItem;
   iconKey?: string;
-  isCustom: boolean;
   name: string;
   onDeactivate: () => void;
   onEdit: () => void;
 };
 
-const StyledIsCustomTag = styled(SettingsDataModelIsCustomTag)`
+const StyledObjectTypeTag = styled(SettingsDataModelObjectTypeTag)`
   box-sizing: border-box;
   height: ${({ theme }) => theme.spacing(6)};
 `;
@@ -28,8 +29,8 @@ const StyledIsCustomTag = styled(SettingsDataModelIsCustomTag)`
 const dropdownId = 'settings-object-edit-about-menu-dropdown';
 
 export const SettingsObjectSummaryCard = ({
+  objectMetadataItem,
   iconKey = '',
-  isCustom,
   name,
   onDeactivate,
   onEdit,
@@ -50,6 +51,8 @@ export const SettingsObjectSummaryCard = ({
     closeDropdown();
   };
 
+  const objectTypeLabel = getObjectTypeLabel(objectMetadataItem);
+
   return (
     <SettingsSummaryCard
       title={
@@ -60,7 +63,7 @@ export const SettingsObjectSummaryCard = ({
       }
       rightComponent={
         <>
-          <StyledIsCustomTag isCustom={isCustom} />
+          <StyledObjectTypeTag objectTypeLabel={objectTypeLabel} />
           <Dropdown
             dropdownId={dropdownId}
             clickableComponent={

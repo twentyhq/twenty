@@ -1,6 +1,7 @@
-import React from 'react';
+import { useState } from 'react';
 import ReactDatePicker from 'react-datepicker';
 import styled from '@emotion/styled';
+import { DateTime } from 'luxon';
 import { IconCalendarX } from 'twenty-ui';
 
 import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
@@ -235,7 +236,7 @@ const StyledButtonContainer = styled(StyledHoverableMenuItemBase)`
 `;
 
 const StyledButton = styled(MenuItemLeftContent)`
-  justify-content: center;
+  justify-content: start;
 `;
 
 export type InternalDatePickerProps = {
@@ -243,24 +244,100 @@ export type InternalDatePickerProps = {
   onMouseSelect?: (date: Date | null) => void;
   onChange?: (date: Date) => void;
   clearable?: boolean;
+  isDateTimeInput?: boolean;
 };
+
+const StyledInputContainer = styled.div`
+  width: 100%;
+  display: flex;
+  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  height: ${({ theme }) => theme.spacing(8)};
+`;
+
+const StyledInput = styled.input`
+  background: ${({ theme }) => theme.background.secondary};
+  border: none;
+  color: ${({ theme }) => theme.font.color.primary};
+  outline: none;
+  padding: 8px;
+  font-weight: 500;
+  font-size: ${({ theme }) => theme.font.size.md};
+  width: 100%;
+`;
+
+const PICKER_DATE_FORMAT = 'MM/dd/yyyy';
 
 export const InternalDatePicker = ({
   date,
   onChange,
   onMouseSelect,
   clearable = true,
+  isDateTimeInput,
 }: InternalDatePickerProps) => {
   const handleClear = () => {
     onMouseSelect?.(null);
   };
 
+  const initialDate = date
+    ? DateTime.fromJSDate(date).toFormat(PICKER_DATE_FORMAT)
+    : DateTime.now().toFormat(PICKER_DATE_FORMAT);
+
+  const [dateValue, setDateValue] = useState(initialDate);
+
+  const dateValueAsJSDate = DateTime.fromFormat(dateValue, PICKER_DATE_FORMAT)
+    .isValid
+    ? DateTime.fromFormat(dateValue, PICKER_DATE_FORMAT).toJSDate()
+    : null;
+
   return (
     <StyledContainer>
       <div className={clearable ? 'clearable ' : ''}>
+        <StyledInputContainer>
+          <StyledInput
+            type="text"
+            placeholder={`Type date${
+              isDateTimeInput ? ' and time' : ' (mm/dd/yyyy)'
+            }`}
+            inputMode="numeric"
+            value={dateValue}
+            onChange={(e) => {
+              const inputValue = e.target.value;
+              setDateValue(inputValue);
+
+              if (!isDateTimeInput) {
+                const parsedInputDate = DateTime.fromFormat(
+                  inputValue,
+                  PICKER_DATE_FORMAT,
+                  { zone: 'utc' },
+                );
+
+                const isValid = parsedInputDate.isValid;
+
+                if (isValid) {
+                  onChange?.(parsedInputDate.toJSDate());
+                }
+              } else {
+                // TODO: implement time also
+                const parsedInputDate = DateTime.fromFormat(
+                  inputValue,
+                  PICKER_DATE_FORMAT,
+                  { zone: 'utc' },
+                );
+
+                const isValid = parsedInputDate.isValid;
+
+                if (isValid) {
+                  onChange?.(parsedInputDate.toJSDate());
+                }
+              }
+            }}
+          />
+        </StyledInputContainer>
+
         <ReactDatePicker
           open={true}
-          selected={date}
+          selected={dateValueAsJSDate}
+          value={dateValue}
           showMonthDropdown
           showYearDropdown
           onChange={() => {
@@ -268,10 +345,18 @@ export const InternalDatePicker = ({
           }}
           customInput={<></>}
           onSelect={(date: Date, event) => {
+            // Setting the time to midnight might sometimes return the previous day
+            // We set to 21:00 to avoid any timezone issues
+            const dateForDateField = new Date(date.setHours(21, 0, 0, 0));
+
+            setDateValue(
+              DateTime.fromJSDate(date).toFormat(PICKER_DATE_FORMAT),
+            );
+
             if (event?.type === 'click') {
-              onMouseSelect?.(date);
+              onMouseSelect?.(isDateTimeInput ? date : dateForDateField);
             } else {
-              onChange?.(date);
+              onChange?.(isDateTimeInput ? date : dateForDateField);
             }
           }}
         ></ReactDatePicker>

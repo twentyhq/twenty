@@ -2,13 +2,13 @@ import { ReactNode, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useIcons } from 'twenty-ui';
 
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { getObjectSlug } from '@/object-metadata/utils/getObjectSlug';
 import { FieldIdentifierType } from '@/settings/data-model/types/FieldIdentifierType';
 import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { Nullable } from '~/types/Nullable';
@@ -22,6 +22,7 @@ type SettingsObjectFieldItemTableRowProps = {
   fieldMetadataItem: FieldMetadataItem;
   identifierType?: Nullable<FieldIdentifierType>;
   variant?: 'field-type' | 'identifier';
+  isRemoteObjectField?: boolean;
 };
 
 export const StyledObjectFieldTableRow = styled(TableRow)`
@@ -43,6 +44,7 @@ export const SettingsObjectFieldItemTableRow = ({
   fieldMetadataItem,
   identifierType,
   variant = 'field-type',
+  isRemoteObjectField,
 }: SettingsObjectFieldItemTableRowProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
@@ -76,7 +78,11 @@ export const SettingsObjectFieldItemTableRow = ({
       </StyledNameTableCell>
       <TableCell>
         {variant === 'field-type' &&
-          (fieldMetadataItem.isCustom ? 'Custom' : 'Standard')}
+          (isRemoteObjectField
+            ? 'Remote'
+            : fieldMetadataItem.isCustom
+              ? 'Custom'
+              : 'Standard')}
         {variant === 'identifier' &&
           !!identifierType &&
           (identifierType === 'label' ? 'Record text' : 'Record image')}

@@ -197,7 +197,7 @@ export class RemoteTableService {
       description: 'Remote table',
       dataSourceId: dataSourceMetatada.id,
       workspaceId: workspaceId,
-      icon: 'IconUser',
+      icon: 'IconPlug',
       isRemote: true,
       remoteTablePrimaryKeyColumnType: remoteTableIdColumn.udtName,
     } satisfies CreateObjectInput);
@@ -213,7 +213,7 @@ export class RemoteTableService {
         objectMetadataId: objectMetadata.id,
         isRemoteCreation: true,
         isNullable: true,
-        icon: 'IconUser',
+        icon: 'IconPlug',
       } satisfies CreateFieldInput);
 
       if (column.columnName === 'id') {
