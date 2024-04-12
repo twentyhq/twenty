@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { v4 } from 'uuid';
@@ -21,6 +21,8 @@ import { RemoteTableStatus } from 'src/engine/metadata-modules/remote-server/rem
 
 @Injectable()
 export class RemoteServerService<T extends RemoteServerType> {
+  private readonly logger = new Logger(RemoteServerService.name);
+
   constructor(
     @InjectRepository(RemoteServerEntity, 'metadata')
     private readonly remoteServerRepository: Repository<
@@ -139,7 +141,7 @@ export class RemoteServerService<T extends RemoteServerType> {
         }
       }
     } catch (error) {
-      console.error(
+      this.logger.error(
         `Failed to retrieve tables while deleting server ${id}`,
         error,
       );
