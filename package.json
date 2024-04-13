@@ -152,6 +152,7 @@
     "react-hook-form": "^7.45.1",
     "react-hotkeys-hook": "^4.4.4",
     "react-icons": "^4.12.0",
+    "react-imask": "^7.6.0",
     "react-intersection-observer": "^9.5.2",
     "react-loading-skeleton": "^3.3.1",
     "react-phone-number-input": "^3.3.4",

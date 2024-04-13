@@ -3387,6 +3387,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/runtime-corejs3@npm:^7.24.4":
+  version: 7.24.4
+  resolution: "@babel/runtime-corejs3@npm:7.24.4"
+  dependencies:
+    core-js-pure: "npm:^3.30.2"
+    regenerator-runtime: "npm:^0.14.0"
+  checksum: 121bec9a0b505e2995c4b71cf480167e006e8ee423f77bccc38975bfbfbfdb191192ff03557c18fad6de8f2b85c12c49aaa4b92d1d5fe0c0e136da664129be1e
+  languageName: node
+  linkType: hard
+
 "@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.1.2, @babel/runtime@npm:^7.10.3, @babel/runtime@npm:^7.12.1, @babel/runtime@npm:^7.12.13, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.17.8, @babel/runtime@npm:^7.18.3, @babel/runtime@npm:^7.20.13, @babel/runtime@npm:^7.21.0, @babel/runtime@npm:^7.22.6, @babel/runtime@npm:^7.23.2, @babel/runtime@npm:^7.8.4, @babel/runtime@npm:^7.9.2":
   version: 7.23.5
   resolution: "@babel/runtime@npm:7.23.5"
@@ -30042,6 +30052,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"imask@npm:^7.6.0":
+  version: 7.6.0
+  resolution: "imask@npm:7.6.0"
+  dependencies:
+    "@babel/runtime-corejs3": "npm:^7.24.4"
+  checksum: c754210124efbb5dcaa37e9e21497dc9f166e7fb5759853840e49c4cde1bac61bc12f23ca5c6150a2fa57246d762d3849ad3203f5c803fc22d928e8b546b95d1
+  languageName: node
+  linkType: hard
+
 "immer@npm:^10.0.2":
   version: 10.0.3
   resolution: "immer@npm:10.0.3"
@@ -40738,6 +40757,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-imask@npm:^7.6.0":
+  version: 7.6.0
+  resolution: "react-imask@npm:7.6.0"
+  dependencies:
+    imask: "npm:^7.6.0"
+    prop-types: "npm:^15.8.1"
+  peerDependencies:
+    react: ">=0.14.0"
+  checksum: f5e7d9a865943ebf05d1c28819d8489a9f36cdeb2a005de340121636dbcb5e3b265017f2b64d7c40268bb5b16b9cf969721f371f18528bfe68a3b86cd8be2373
+  languageName: node
+  linkType: hard
+
 "react-intersection-observer@npm:^9.5.2":
   version: 9.5.3
   resolution: "react-intersection-observer@npm:9.5.3"
@@ -45980,6 +46011,7 @@ __metadata:
     react-hook-form: "npm:^7.45.1"
     react-hotkeys-hook: "npm:^4.4.4"
     react-icons: "npm:^4.12.0"
+    react-imask: "npm:^7.6.0"
     react-intersection-observer: "npm:^9.5.2"
     react-loading-skeleton: "npm:^3.3.1"
     react-phone-number-input: "npm:^3.3.4"
