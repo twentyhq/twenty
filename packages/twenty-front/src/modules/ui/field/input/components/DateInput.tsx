@@ -3,14 +3,9 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { flip, offset, useFloating } from '@floating-ui/react';
 
+import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { DateDisplay } from '@/ui/field/display/components/DateDisplay';
 import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
-import {
-  MONTH_AND_YEAR_DROPDOWN_ID,
-  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-} from '@/ui/input/components/internal/date/components/MonthAndYearDropdown';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { Nullable } from '~/types/Nullable';
 
 const StyledCalendarContainer = styled.div`
@@ -46,9 +41,9 @@ export type DateInputProps = {
 
 export const DateInput = ({
   value,
-  hotkeyScope,
   onEnter,
   onEscape,
+  hotkeyScope,
   onClickOutside,
   clearable,
   onChange,
@@ -70,37 +65,18 @@ export const DateInput = ({
     ],
   });
 
-  const { closeDropdown } = useDropdown(MONTH_AND_YEAR_DROPDOWN_ID);
-  const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
-    MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  );
-  const { closeDropdown: closeDropdownYearSelect } = useDropdown(
-    MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-  );
-
-  const closeDropdowns = () => {
-    closeDropdownYearSelect();
-    closeDropdownMonthSelect();
-    closeDropdown();
-  };
-
   const handleChange = (newDate: Date | null) => {
     setInternalValue(newDate);
     onChange?.(newDate);
   };
 
-  // TODO: implement events in Internal date picker
-  // useRegisterInputEvents({
-  //   inputRef: wrapperRef,
-  //   inputValue: internalValue,
-  //   onEnter,
-  //   onEscape,
-  //   onClickOutside,
-  //   hotkeyScope,
-  // });
-
-  console.log({
-    internalValue,
+  useRegisterInputEvents({
+    inputRef: wrapperRef,
+    inputValue: internalValue,
+    onEnter,
+    onEscape,
+    onClickOutside,
+    hotkeyScope,
   });
 
   return (
