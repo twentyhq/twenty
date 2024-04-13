@@ -1,3 +1,5 @@
+import { useEffect } from 'react';
+
 import { ObjectMetadataItemsRelationPickerEffect } from '@/object-metadata/components/ObjectMetadataItemsRelationPickerEffect';
 import {
   SingleEntitySelectMenuItems,
@@ -16,6 +18,7 @@ export type SingleEntitySelectMenuItemsWithSearchProps = {
   relationObjectNameSingular: string;
   relationPickerScopeId?: string;
   selectedRelationRecordIds: string[];
+  clearOnOpen?: boolean;
 } & Pick<
   SingleEntitySelectMenuItemsProps,
   | 'EmptyIcon'
@@ -36,11 +39,24 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
   relationPickerScopeId = 'relation-picker',
   selectedEntity,
   selectedRelationRecordIds,
+  clearOnOpen = false,
 }: SingleEntitySelectMenuItemsWithSearchProps) => {
-  const { searchFilter, searchQuery, handleSearchFilterChange } =
-    useEntitySelectSearch({
-      relationPickerScopeId,
-    });
+  const {
+    searchFilter,
+    searchQuery,
+    handleSearchFilterChange,
+    resetSearchFilterChange,
+  } = useEntitySelectSearch({
+    relationPickerScopeId,
+  });
+
+  useEffect(() => {
+    if (clearOnOpen) {
+      resetSearchFilterChange();
+    }
+    // We only want to clear the search filter when the dropdown is opened
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const showCreateButton = isDefined(onCreate) && searchFilter !== '';
 

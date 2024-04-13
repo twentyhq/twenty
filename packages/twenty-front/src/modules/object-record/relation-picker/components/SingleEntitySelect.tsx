@@ -26,6 +26,7 @@ export const SingleEntitySelect = ({
   selectedEntity,
   selectedRelationRecordIds,
   width = 200,
+  clearOnOpen,
 }: SingleEntitySelectProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -63,6 +64,7 @@ export const SingleEntitySelect = ({
           relationPickerScopeId,
           selectedEntity,
           selectedRelationRecordIds,
+          clearOnOpen,
         }}
       />
     </DropdownMenu>

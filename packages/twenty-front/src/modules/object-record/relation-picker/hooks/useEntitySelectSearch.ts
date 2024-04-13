@@ -22,6 +22,11 @@ export const useEntitySelectSearch = ({
     },
   );
 
+  const resetSearchFilterChange = () => {
+    debouncedSetSearchFilter('');
+    setRelationPickerPreselectedId('');
+  };
+
   const handleSearchFilterChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -33,5 +38,6 @@ export const useEntitySelectSearch = ({
     searchFilter: relationPickerSearchFilter,
     searchQuery,
     handleSearchFilterChange,
+    resetSearchFilterChange,
   };
 };

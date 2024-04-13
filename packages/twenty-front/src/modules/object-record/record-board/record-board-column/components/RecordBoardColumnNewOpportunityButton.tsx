@@ -79,6 +79,7 @@ export const RecordBoardColumnNewOpportunityButton = () => {
           relationObjectNameSingular={CoreObjectNameSingular.Company}
           relationPickerScopeId="relation-picker"
           selectedRelationRecordIds={[]}
+          clearOnOpen={true}
         />
       ) : (
         <StyledButton onClick={handleNewClick}>
