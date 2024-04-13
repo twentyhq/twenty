@@ -1,9 +1,7 @@
 import React from 'react';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Pill } from 'twenty-ui';
-
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { IconComponent, Pill } from 'twenty-ui';
 
 export type ButtonSize = 'medium' | 'small';
 export type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';

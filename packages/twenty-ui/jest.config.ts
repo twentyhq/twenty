@@ -19,4 +19,3 @@ export default {
   extensionsToTreatAsEsm: ['.ts', '.tsx'],
   coverageDirectory: './coverage',
 };
-

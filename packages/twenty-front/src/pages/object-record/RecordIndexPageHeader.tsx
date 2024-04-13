@@ -1,9 +1,9 @@
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { useIcons } from 'twenty-ui';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { PageAddButton } from '@/ui/layout/page/PageAddButton';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { PageHotkeysEffect } from '@/ui/layout/page/PageHotkeysEffect';

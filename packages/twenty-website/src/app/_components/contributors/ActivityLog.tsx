@@ -5,6 +5,7 @@ import { TimeRange } from '@nivo/calendar';
 
 import { CardContainer } from '@/app/_components/contributors/CardContainer';
 import { Title } from '@/app/_components/contributors/Title';
+import { getActivityEndDate } from '@/app/contributors/utils/get-activity-end-date';
 
 const CalendarContentContainer = styled.div`
   @media (max-width: 890px) {
@@ -23,6 +24,8 @@ export const ActivityLog = ({
   if (!data.length) {
     return null;
   }
+  const endDate = getActivityEndDate(data);
+
   return (
     <CardContainer>
       <Title>Activity</Title>
@@ -31,6 +34,7 @@ export const ActivityLog = ({
           height={150}
           width={725}
           data={data}
+          to={endDate}
           emptyColor="#F4EFFF"
           colors={['#E9DFFF', '#B28FFE', '#915FFD']}
           weekdayTicks={[]}

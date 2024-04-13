@@ -1443,7 +1443,7 @@ const mockedCalendarEventsMetadata = {
             __typename: 'field',
             id: '07880d2d-4f08-458f-be0b-876402d2a769',
             type: 'RELATION',
-            name: 'eventParticipants',
+            name: 'calendarEventParticipants',
             label: 'Event Participants',
             description: 'Event Participants',
             icon: 'IconUserCircle',
