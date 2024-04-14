@@ -22,6 +22,7 @@ export enum FeatureFlagKeys {
   IsPostgreSQLIntegrationEnabled = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IsMultiSelectEnabled = 'IS_MULTI_SELECT_ENABLED',
   IsRelationForRemoteObjectsEnabled = 'IS_RELATION_FOR_REMOTE_OBJECTS_ENABLED',
+  IsRealTimeSyncEnabled = 'IS_REAL_TIME_SYNC_ENABLED',
 }
 
 @Entity({ name: 'featureFlag', schema: 'core' })
