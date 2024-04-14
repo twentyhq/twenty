@@ -34,20 +34,6 @@ export const getPageTitleFromPath = (pathname: string): string => {
       return 'Calendars - Settings';
     case `${AppBasePath.Settings}/${SettingsPath.AccountsCalendarsSettings}`:
       return 'Calendars Settings - Settings';
-    case `${AppBasePath.Settings}/${SettingsPath.Billing}`:
-      return 'Billing - Settings';
-    case `${AppBasePath.Settings}/${SettingsPath.Objects}`:
-      return 'Objects - Settings';
-    case `${AppBasePath.Settings}/${SettingsPath.NewObject}`:
-      return 'New Object - Settings';
-    case `${AppBasePath.Settings}/${SettingsPath.Developers}`:
-      return 'Developers - Settings';
-    case `${AppBasePath.Settings}/${SettingsPath.Developers}/${SettingsPath.DevelopersNewApiKey}`:
-      return 'New API Key - Settings';
-    case `${AppBasePath.Settings}/${SettingsPath.Integrations}`:
-      return 'Integrations - Settings';
-    case `${AppBasePath.Settings}/${SettingsPath.Developers}/${SettingsPath.DevelopersNewWebhook}`:
-      return 'New webhook - Settings';
     case `${AppBasePath.Settings}/${SettingsPath.WorkspaceMembersPage}`:
       return 'Workspace Members - Settings';
     case `${AppBasePath.Settings}/${SettingsPath.Workspace}`:

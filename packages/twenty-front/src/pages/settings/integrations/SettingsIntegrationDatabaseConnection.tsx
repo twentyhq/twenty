@@ -16,7 +16,6 @@ import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SettingsIntegrationDatabaseConnectionSummaryCard } from '~/pages/settings/integrations/SettingsIntegrationDatabaseConnectionSummaryCard';
 
@@ -84,7 +83,6 @@ export const SettingsIntegrationDatabaseConnection = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <PageTitle title={`${connectionName} Connection - Settings`} />
       <SettingsPageContainer>
         <Breadcrumb
           links={[

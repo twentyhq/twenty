@@ -32,7 +32,6 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -91,9 +90,6 @@ export const SettingsObjectDetail = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <PageTitle
-        title={`${activeObjectMetadataItem.labelPlural} Object - Settings`}
-      />
       <SettingsPageContainer>
         <Breadcrumb
           links={[

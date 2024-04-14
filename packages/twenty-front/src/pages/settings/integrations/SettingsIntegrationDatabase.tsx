@@ -14,7 +14,6 @@ import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const SettingsIntegrationDatabase = () => {
@@ -52,7 +51,6 @@ export const SettingsIntegrationDatabase = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <PageTitle title={`${integration.text} Database - Settings`} />
       <SettingsPageContainer>
         <Breadcrumb
           links={[

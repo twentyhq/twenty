@@ -26,7 +26,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled.ts';
@@ -296,9 +295,6 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <PageTitle
-        title={`(Step 2) New ${activeObjectMetadataItem.labelPlural} Field - Settings`}
-      />
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <Breadcrumb

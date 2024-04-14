@@ -26,7 +26,6 @@ import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import {
   FieldMetadataType,
   RelationMetadataType,
@@ -227,7 +226,6 @@ export const SettingsObjectFieldEdit = () => {
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <PageTitle title={`Edit ${activeMetadataField.label} Field - Settings`} />
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <Breadcrumb

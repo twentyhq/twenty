@@ -28,7 +28,6 @@ import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 
 const objectEditFormSchema = z
   .object({})
@@ -101,9 +100,6 @@ export const SettingsObjectEdit = () => {
     // eslint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
       <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-        <PageTitle
-          title={`Edit ${activeObjectMetadataItem.labelPlural} Object - Settings`}
-        />
         <SettingsPageContainer>
           <SettingsHeaderContainer>
             <Breadcrumb

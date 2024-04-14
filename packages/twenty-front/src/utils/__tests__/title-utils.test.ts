@@ -37,27 +37,6 @@ describe('title-utils', () => {
     expect(getPageTitleFromPath('/settings/accounts/emails/:accountUuid')).toBe(
       'Emails Settings - Settings',
     );
-    expect(getPageTitleFromPath('/settings/billing')).toBe(
-      'Billing - Settings',
-    );
-    expect(getPageTitleFromPath('/settings/objects')).toBe(
-      'Objects - Settings',
-    );
-    expect(getPageTitleFromPath('/settings/objects/new')).toBe(
-      'New Object - Settings',
-    );
-    expect(getPageTitleFromPath('/settings/developers')).toBe(
-      'Developers - Settings',
-    );
-    expect(getPageTitleFromPath('/settings/developers/api-keys/new')).toBe(
-      'New API Key - Settings',
-    );
-    expect(getPageTitleFromPath('/settings/integrations')).toBe(
-      'Integrations - Settings',
-    );
-    expect(getPageTitleFromPath('/settings/developers/webhooks/new')).toBe(
-      'New webhook - Settings',
-    );
     expect(getPageTitleFromPath('/settings/workspace-members')).toBe(
       'Workspace Members - Settings',
     );

@@ -25,7 +25,6 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { useGenerateApiKeyTokenMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -131,7 +130,6 @@ export const SettingsDevelopersApiKeyDetail = () => {
     <>
       {apiKeyData?.name && (
         <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-          <PageTitle title={`${apiKeyData.name} API Key - Settings`} />
           <SettingsPageContainer>
             <SettingsHeaderContainer>
               <Breadcrumb
