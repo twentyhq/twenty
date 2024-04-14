@@ -14,7 +14,7 @@ const StyledContainer = styled.div`
   border: none;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
-  width:100%;
+  width: 100%;
 
   display: flex;
   justify-content: start;
@@ -50,7 +50,7 @@ const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
 
 const StyledLightIconButtonContainer = styled.div`
   position: absolute;
-  top: 50%; 
+  top: 50%;
   transform: translateY(-50%);
   right: 0;
 `;
@@ -118,11 +118,11 @@ export const PhoneInput = ({
         withCountryCallingCode={true}
         countrySelectComponent={PhoneCountryPickerDropdownButton}
       />
-    {copyButton && (
-      <StyledLightIconButtonContainer ref={copyRef}>
-        <LightCopyIconButton copyText={value} />
-      </StyledLightIconButtonContainer>
-    )}
+      {copyButton && (
+        <StyledLightIconButtonContainer ref={copyRef}>
+          <LightCopyIconButton copyText={value} />
+        </StyledLightIconButtonContainer>
+      )}
     </StyledContainer>
   );
 };
