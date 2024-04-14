@@ -7,6 +7,7 @@ import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
 
 import 'react-phone-number-input/style.css';
+import { TEXT_INPUT_STYLE } from 'twenty-ui';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -23,6 +24,7 @@ const StyledContainer = styled.div`
 const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
   font-family: ${({ theme }) => theme.font.family};
   height: 32px;
+  ${TEXT_INPUT_STYLE}
 
   .PhoneInputInput {
     background: ${({ theme }) => theme.background.transparent.secondary};
