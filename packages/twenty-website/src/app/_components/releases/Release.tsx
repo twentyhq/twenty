@@ -75,6 +75,12 @@ const StlyedContent = styled.div`
     max-width: 100%;
   }
 
+  code {
+    background: var(--Transparency-Lighter, #1414140a);
+    padding: 4px;
+    border-radius: 4px;
+  }
+
   @media (max-width: 810px) {
     h3 {
       font-size: 24px;
