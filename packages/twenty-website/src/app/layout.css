@@ -13,6 +13,17 @@ body {
     font-family: var(--font-gabarito);
 }
 
+@media (max-width: 810px) {
+    body {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    body::-webkit-scrollbar {
+        display: none;
+    }
+}
+
 .container {
     display: flex;
     flex-direction: column;
