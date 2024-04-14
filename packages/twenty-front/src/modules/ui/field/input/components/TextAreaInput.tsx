@@ -20,6 +20,7 @@ export type TextAreaInputProps = {
   onClickOutside: (event: MouseEvent | TouchEvent, inputValue: string) => void;
   hotkeyScope: string;
   onChange?: (newText: string) => void;
+  maxRows?: number;
   copyButton?: boolean;
 };
 
@@ -62,6 +63,7 @@ export const TextAreaInput = ({
   onShiftTab,
   onClickOutside,
   onChange,
+  maxRows,
   copyButton = true,
 }: TextAreaInputProps) => {
   const [internalText, setInternalText] = useState(value);
@@ -105,6 +107,7 @@ export const TextAreaInput = ({
         onChange={handleChange}
         autoFocus={autoFocus}
         value={internalText}
+        maxRows={maxRows}
       />
       {copyButton && (
         <StyledLightIconButtonContainer ref={copyRef}>

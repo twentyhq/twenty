@@ -20,8 +20,11 @@ export const mapFieldMetadataToGraphqlQuery = (
     FieldMetadataType.TEXT,
     FieldMetadataType.PHONE,
     FieldMetadataType.DATE_TIME,
+    FieldMetadataType.DATE,
     FieldMetadataType.EMAIL,
     FieldMetadataType.NUMBER,
+    FieldMetadataType.SELECT,
+    FieldMetadataType.RATING,
     FieldMetadataType.BOOLEAN,
     FieldMetadataType.POSITION,
   ].includes(fieldType);

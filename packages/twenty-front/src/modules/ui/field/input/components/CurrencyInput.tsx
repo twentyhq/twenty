@@ -1,13 +1,12 @@
 import { ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconComponent } from 'twenty-ui';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton';
 import { TEXT_INPUT_STYLE } from '@/ui/theme/constants/TextInputStyle';
-import { isDefined } from '~/utils/isDefined';
 
 export const StyledInput = styled.input`
   margin: 0;
@@ -77,9 +76,6 @@ export const CurrencyInput = ({
   const theme = useTheme();
 
   const [internalText, setInternalText] = useState(value);
-  const [internalCurrency, setInternalCurrency] = useState<Currency | null>(
-    null,
-  );
 
   const wrapperRef = useRef<HTMLInputElement>(null);
 
@@ -89,7 +85,6 @@ export const CurrencyInput = ({
   };
 
   const handleCurrencyChange = (currency: Currency) => {
-    setInternalCurrency(currency);
     onSelect?.(currency.value);
   };
 
@@ -116,23 +111,18 @@ export const CurrencyInput = ({
     [],
   );
 
-  useEffect(() => {
-    const currency = currencies.find(({ value }) => value === currencyCode);
-    if (isDefined(currency)) {
-      setInternalCurrency(currency);
-    }
-  }, [currencies, currencyCode]);
+  const currency = currencies.find(({ value }) => value === currencyCode);
 
   useEffect(() => {
     setInternalText(value);
   }, [value]);
 
-  const Icon: IconComponent = internalCurrency?.Icon;
+  const Icon: IconComponent = currency?.Icon;
 
   return (
     <StyledContainer ref={wrapperRef}>
       <CurrencyPickerDropdownButton
-        valueCode={internalCurrency?.value ?? ''}
+        valueCode={currency?.value ?? ''}
         onChange={handleCurrencyChange}
         currencies={currencies}
       />

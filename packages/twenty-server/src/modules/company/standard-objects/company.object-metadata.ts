@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { CurrencyMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
 import { LinkMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/link.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -135,7 +137,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
-  people: PersonObjectMetadata[];
+  people: Relation<PersonObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: companyStandardFieldIds.accountOwner,
@@ -162,7 +164,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  activityTargets: ActivityTargetObjectMetadata[];
+  activityTargets: Relation<ActivityTargetObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: companyStandardFieldIds.opportunities,
@@ -177,7 +179,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
-  opportunities: OpportunityObjectMetadata[];
+  opportunities: Relation<OpportunityObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: companyStandardFieldIds.favorites,
@@ -193,7 +195,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   @IsSystem()
-  favorites: FavoriteObjectMetadata[];
+  favorites: Relation<FavoriteObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: companyStandardFieldIds.attachments,
@@ -208,7 +210,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  attachments: AttachmentObjectMetadata[];
+  attachments: Relation<AttachmentObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: companyStandardFieldIds.events,
@@ -224,5 +226,5 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   @IsSystem()
-  events: EventObjectMetadata[];
+  events: Relation<EventObjectMetadata[]>;
 }

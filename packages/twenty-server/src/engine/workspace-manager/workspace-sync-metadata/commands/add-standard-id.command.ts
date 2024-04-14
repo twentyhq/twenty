@@ -59,6 +59,7 @@ export class AddStandardIdCommand extends CommandRunner {
             IS_AIRTABLE_INTEGRATION_ENABLED: true,
             IS_POSTGRESQL_INTEGRATION_ENABLED: true,
             IS_MULTI_SELECT_ENABLED: false,
+            IS_RELATION_FOR_REMOTE_OBJECTS_ENABLED: false,
           },
         );
       const standardFieldMetadataCollection = this.standardFieldFactory.create(
@@ -74,6 +75,7 @@ export class AddStandardIdCommand extends CommandRunner {
           IS_AIRTABLE_INTEGRATION_ENABLED: true,
           IS_POSTGRESQL_INTEGRATION_ENABLED: true,
           IS_MULTI_SELECT_ENABLED: false,
+          IS_RELATION_FOR_REMOTE_OBJECTS_ENABLED: false,
         },
       );
 

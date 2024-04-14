@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
   OneToMany,
   ManyToOne,
+  Relation,
 } from 'typeorm';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
@@ -72,7 +73,7 @@ export class User {
   @ManyToOne(() => Workspace, (workspace) => workspace.users, {
     onDelete: 'SET NULL',
   })
-  defaultWorkspace: Workspace;
+  defaultWorkspace: Relation<Workspace>;
 
   @Field()
   @Column()
@@ -89,12 +90,12 @@ export class User {
   @OneToMany(() => AppToken, (appToken) => appToken.user, {
     cascade: true,
   })
-  appTokens: AppToken[];
+  appTokens: Relation<AppToken[]>;
 
   @Field(() => WorkspaceMember, { nullable: true })
-  workspaceMember: WorkspaceMember;
+  workspaceMember: Relation<WorkspaceMember>;
 
   @Field(() => [UserWorkspace])
   @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.user)
-  workspaces: UserWorkspace[];
+  workspaces: Relation<UserWorkspace[]>;
 }

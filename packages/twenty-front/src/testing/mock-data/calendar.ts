@@ -10,10 +10,28 @@ export const mockedCalendarEvents: CalendarEvent[] = [
     isFullDay: false,
     startsAt: addDays(new Date().setHours(10, 0), 1).toISOString(),
     visibility: 'METADATA',
-    participants: [
-      { displayName: 'John Doe', workspaceMemberId: 'john-doe' },
-      { displayName: 'Jane Doe', workspaceMemberId: 'jane-doe' },
-      { displayName: 'Tim Apple', workspaceMemberId: 'tim-apple' },
+    calendarEventParticipants: [
+      {
+        id: '1',
+        handle: 'jdoe',
+        isOrganizer: false,
+        responseStatus: 'ACCEPTED',
+        displayName: 'John Doe',
+      },
+      {
+        id: '2',
+        handle: 'jadoe',
+        isOrganizer: false,
+        responseStatus: 'ACCEPTED',
+        displayName: 'Jane Doe',
+      },
+      {
+        id: '3',
+        handle: 'tapple',
+        isOrganizer: false,
+        responseStatus: 'ACCEPTED',
+        displayName: 'Tim Apple',
+      },
     ],
   },
   {

@@ -1,7 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconComponent } from 'twenty-ui';
 
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
 import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 

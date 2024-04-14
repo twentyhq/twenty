@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { attachmentStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -59,7 +61,7 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
     icon: 'IconCircleUser',
     joinColumn: 'authorId',
   })
-  author: WorkspaceMemberObjectMetadata;
+  author: Relation<WorkspaceMemberObjectMetadata>;
 
   @FieldMetadata({
     standardId: attachmentStandardFieldIds.activity,
@@ -70,7 +72,7 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'activityId',
   })
   @IsNullable()
-  activity: ActivityObjectMetadata;
+  activity: Relation<ActivityObjectMetadata>;
 
   @FieldMetadata({
     standardId: attachmentStandardFieldIds.person,
@@ -81,7 +83,7 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'personId',
   })
   @IsNullable()
-  person: PersonObjectMetadata;
+  person: Relation<PersonObjectMetadata>;
 
   @FieldMetadata({
     standardId: attachmentStandardFieldIds.company,
@@ -92,7 +94,7 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'companyId',
   })
   @IsNullable()
-  company: CompanyObjectMetadata;
+  company: Relation<CompanyObjectMetadata>;
 
   @FieldMetadata({
     standardId: attachmentStandardFieldIds.opportunity,
@@ -103,7 +105,7 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'opportunityId',
   })
   @IsNullable()
-  opportunity: OpportunityObjectMetadata;
+  opportunity: Relation<OpportunityObjectMetadata>;
 
   @DynamicRelationFieldMetadata((oppositeObjectMetadata) => ({
     standardId: attachmentStandardFieldIds.custom,
@@ -113,5 +115,5 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
     joinColumn: `${oppositeObjectMetadata.nameSingular}Id`,
     icon: 'IconBuildingSkyscraper',
   }))
-  custom: CustomObjectMetadata;
+  custom: Relation<CustomObjectMetadata>;
 }

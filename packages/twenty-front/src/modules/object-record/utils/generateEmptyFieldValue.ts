@@ -39,6 +39,9 @@ export const generateEmptyFieldValue = (
     case FieldMetadataType.DateTime: {
       return null;
     }
+    case FieldMetadataType.Date: {
+      return null;
+    }
     case FieldMetadataType.Number:
     case FieldMetadataType.Rating:
     case FieldMetadataType.Position:
@@ -73,7 +76,10 @@ export const generateEmptyFieldValue = (
       return null;
     }
     case FieldMetadataType.MultiSelect: {
-      throw new Error('Not implemented yet');
+      return null;
+    }
+    case FieldMetadataType.RawJson: {
+      return null;
     }
     default: {
       throw new Error('Unhandled FieldMetadataType');

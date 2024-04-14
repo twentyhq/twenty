@@ -56,7 +56,7 @@ export class GoogleAPIsAuthController {
       throw new Error('Workspace not found');
     }
 
-    await this.googleAPIsService.saveOrUpdateConnectedAccount({
+    await this.googleAPIsService.refreshGoogleRefreshToken({
       handle: email,
       workspaceMemberId: workspaceMemberId,
       workspaceId: workspaceId,

@@ -1,12 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { IconGoogle } from 'twenty-ui';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
 import { SettingsAccountsRowDropdownMenu } from '@/settings/accounts/components/SettingsAccountsRowDropdownMenu';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
 import { Status } from '@/ui/display/status/components/Status';
 
 import { SettingsListCard } from '../../components/SettingsListCard';

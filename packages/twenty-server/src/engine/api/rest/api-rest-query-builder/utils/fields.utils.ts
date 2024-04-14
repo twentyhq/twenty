@@ -1,13 +1,14 @@
 import { BadRequestException } from '@nestjs/common';
 
+import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
+
 import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
 export const getFieldType = (
-  objectMetadata: ObjectMetadataEntity,
+  objectMetadata: ObjectMetadataInterface,
   fieldName: string,
 ): FieldMetadataType | undefined => {
   for (const fieldMetdata of objectMetadata.fields) {
@@ -18,7 +19,7 @@ export const getFieldType = (
 };
 
 export const checkFields = (
-  objectMetadata: ObjectMetadataEntity,
+  objectMetadata: ObjectMetadataInterface,
   fieldNames: string[],
 ): void => {
   const fieldMetadataNames = objectMetadata.fields

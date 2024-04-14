@@ -6,8 +6,6 @@ import SearchBar from '@theme-original/SearchBar';
 const CustomComponents = {
   'search-bar': () => {
     const openSearchModal = () => {
-      console.log('yo');
-
       const searchInput = document.querySelector('#search-bar');
       if (searchInput) {
         searchInput.focus();
