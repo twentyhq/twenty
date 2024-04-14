@@ -25,13 +25,28 @@ export type TextAreaInputProps = {
 
 const StyledTextArea = styled(TextareaAutosize)`
   ${TEXT_INPUT_STYLE}
-  width: 100%;
+  width: calc(100% - ${({ theme }) => theme.spacing(7)});
   resize: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const StyledTextAreaContainer = styled.div`
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
   border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  padding: ${({ theme }) => theme.spacing(2)};
+  position: relative;
+  width:100%;
+  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(1)};
   background-color: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
+`;
+
+const StyledLightIconButtonContainer = styled.div`
+  position: absolute;
+  top: 50%; 
+  transform: translateY(-50%);
+  right: 0;
 `;
 
 export const TextAreaInput = ({
@@ -81,7 +96,7 @@ export const TextAreaInput = ({
   });
 
   return (
-    <>
+    <StyledTextAreaContainer>
       <StyledTextArea
         placeholder={placeholder}
         disabled={disabled}
@@ -92,10 +107,10 @@ export const TextAreaInput = ({
         value={internalText}
       />
       {copyButton && (
-        <div ref={copyRef}>
+        <StyledLightIconButtonContainer ref={copyRef}>
           <LightCopyIconButton copyText={internalText} />
-        </div>
+        </StyledLightIconButtonContainer>
       )}
-    </>
+    </StyledTextAreaContainer>
   );
 };
