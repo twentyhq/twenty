@@ -5,7 +5,6 @@ import styled from '@emotion/styled';
 import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { PhoneCountryPickerDropdownButton } from '@/ui/input/components/internal/phone/components/PhoneCountryPickerDropdownButton';
-import { TEXT_INPUT_STYLE } from '@/ui/theme/constants/TextInputStyle';
 
 import 'react-phone-number-input/style.css';
 
@@ -13,21 +12,20 @@ const StyledContainer = styled.div`
   align-items: center;
 
   border: none;
+  border-radius: ${({ theme }) => theme.border.radius.sm};
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
+  width:100%;
 
   display: flex;
   justify-content: start;
-
-  width: 75%;
 `;
 
 const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
-  margin: 0;
-  ${TEXT_INPUT_STYLE}
   font-family: ${({ theme }) => theme.font.family};
   height: 32px;
 
   .PhoneInputInput {
-    background-color: transparent;
+    background: ${({ theme }) => theme.background.transparent.secondary};
     border: none;
     color: ${({ theme }) => theme.font.color.primary};
 
@@ -47,6 +45,14 @@ const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
     border-radius: ${({ theme }) => theme.border.radius.xs};
     height: 12px;
   }
+  width: calc(100% - ${({ theme }) => theme.spacing(7)});
+`;
+
+const StyledLightIconButtonContainer = styled.div`
+  position: absolute;
+  top: 50%; 
+  transform: translateY(-50%);
+  right: 0;
 `;
 
 export type PhoneInputProps = {
@@ -102,23 +108,21 @@ export const PhoneInput = ({
   });
 
   return (
-    <>
-      <StyledContainer ref={wrapperRef}>
-        <StyledCustomPhoneInput
-          autoFocus={autoFocus}
-          placeholder="Phone number"
-          value={value}
-          onChange={handleChange}
-          international={true}
-          withCountryCallingCode={true}
-          countrySelectComponent={PhoneCountryPickerDropdownButton}
-        />
-      </StyledContainer>
-      {copyButton && (
-        <div ref={copyRef}>
-          <LightCopyIconButton copyText={value} />
-        </div>
-      )}
-    </>
+    <StyledContainer ref={wrapperRef}>
+      <StyledCustomPhoneInput
+        autoFocus={autoFocus}
+        placeholder="Phone number"
+        value={value}
+        onChange={handleChange}
+        international={true}
+        withCountryCallingCode={true}
+        countrySelectComponent={PhoneCountryPickerDropdownButton}
+      />
+    {copyButton && (
+      <StyledLightIconButtonContainer ref={copyRef}>
+        <LightCopyIconButton copyText={value} />
+      </StyledLightIconButtonContainer>
+    )}
+    </StyledContainer>
   );
 };
