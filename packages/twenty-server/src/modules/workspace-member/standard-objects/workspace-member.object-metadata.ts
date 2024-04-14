@@ -25,6 +25,7 @@ import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/fa
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
   standardId: standardObjectIds.workspaceMember,
@@ -35,6 +36,7 @@ import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.ob
   icon: 'IconUserCircle',
 })
 @IsSystem()
+@IsNotAuditLogged()
 export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: workspaceMemberStandardFieldIds.name,
