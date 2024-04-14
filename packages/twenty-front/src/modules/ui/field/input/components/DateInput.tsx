@@ -41,9 +41,9 @@ export type DateInputProps = {
 
 export const DateInput = ({
   value,
-  hotkeyScope,
   onEnter,
   onEscape,
+  hotkeyScope,
   onClickOutside,
   clearable,
   onChange,
@@ -65,7 +65,7 @@ export const DateInput = ({
     ],
   });
 
-  const handleChange = (newDate: Date) => {
+  const handleChange = (newDate: Date | null) => {
     setInternalValue(newDate);
     onChange?.(newDate);
   };
@@ -96,6 +96,7 @@ export const DateInput = ({
             }}
             clearable={clearable ? clearable : false}
             isDateTimeInput={isDateTimeInput}
+            onClickOutside={onClickOutside}
           />
         </StyledCalendarContainer>
       </div>

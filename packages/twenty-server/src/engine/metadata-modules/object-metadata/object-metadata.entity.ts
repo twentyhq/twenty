@@ -7,6 +7,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  Relation,
 } from 'typeorm';
 
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
@@ -79,7 +80,7 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
   @OneToMany(() => FieldMetadataEntity, (field) => field.object, {
     cascade: true,
   })
-  fields: FieldMetadataEntity[];
+  fields: Relation<FieldMetadataEntity[]>;
 
   @OneToMany(
     () => RelationMetadataEntity,
@@ -88,7 +89,7 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
       cascade: true,
     },
   )
-  fromRelations: RelationMetadataEntity[];
+  fromRelations: Relation<RelationMetadataEntity[]>;
 
   @OneToMany(
     () => RelationMetadataEntity,
@@ -97,12 +98,12 @@ export class ObjectMetadataEntity implements ObjectMetadataInterface {
       cascade: true,
     },
   )
-  toRelations: RelationMetadataEntity[];
+  toRelations: Relation<RelationMetadataEntity[]>;
 
   @ManyToOne(() => DataSourceEntity, (dataSource) => dataSource.objects, {
     onDelete: 'CASCADE',
   })
-  dataSource: DataSourceEntity;
+  dataSource: Relation<DataSourceEntity>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

@@ -1,4 +1,4 @@
-[
+export const peopleDemo = [
   {
     "firstName": "Mark",
     "lastName": "Young",

@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { calendarChannelEventAssociationStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
@@ -30,7 +32,7 @@ export class CalendarChannelEventAssociationObjectMetadata extends BaseObjectMet
     icon: 'IconCalendar',
     joinColumn: 'calendarChannelId',
   })
-  calendarChannel: CalendarEventObjectMetadata;
+  calendarChannel: Relation<CalendarEventObjectMetadata>;
 
   @FieldMetadata({
     standardId: calendarChannelEventAssociationStandardFieldIds.calendarEvent,
@@ -40,7 +42,7 @@ export class CalendarChannelEventAssociationObjectMetadata extends BaseObjectMet
     icon: 'IconCalendar',
     joinColumn: 'calendarEventId',
   })
-  calendarEvent: CalendarEventObjectMetadata;
+  calendarEvent: Relation<CalendarEventObjectMetadata>;
 
   @FieldMetadata({
     standardId: calendarChannelEventAssociationStandardFieldIds.eventExternalId,
