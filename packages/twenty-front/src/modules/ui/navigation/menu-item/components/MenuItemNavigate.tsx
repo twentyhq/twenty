@@ -1,7 +1,5 @@
 import { useTheme } from '@emotion/react';
-import { IconChevronRight } from 'twenty-ui';
-
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { IconChevronRight, IconComponent } from 'twenty-ui';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
 import {

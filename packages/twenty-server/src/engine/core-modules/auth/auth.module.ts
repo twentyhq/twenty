@@ -19,10 +19,13 @@ import { TokenService } from 'src/engine/core-modules/auth/services/token.servic
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { SignUpService } from 'src/engine/core-modules/auth/services/sign-up.service';
-import { GoogleGmailAuthController } from 'src/engine/core-modules/auth/controllers/google-gmail-auth.controller';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
+import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
+import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -52,13 +55,17 @@ const jwtModule = JwtModule.registerAsync({
       [Workspace, User, AppToken, FeatureFlagEntity],
       'core',
     ),
+    ObjectMetadataRepositoryModule.forFeature([
+      ConnectedAccountObjectMetadata,
+      MessageChannelObjectMetadata,
+      CalendarChannelObjectMetadata,
+    ]),
     HttpModule,
     UserWorkspaceModule,
   ],
   controllers: [
     GoogleAuthController,
     GoogleAPIsAuthController,
-    GoogleGmailAuthController,
     VerifyAuthController,
   ],
   providers: [

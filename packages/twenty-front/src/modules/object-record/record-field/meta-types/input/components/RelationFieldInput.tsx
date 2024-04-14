@@ -6,7 +6,7 @@ import { EntityForSelect } from '@/object-record/relation-picker/types/EntityFor
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useRelationField } from '../../hooks/useRelationField';
 
-import { FieldInputEvent } from './DateFieldInput';
+import { FieldInputEvent } from './DateTimeFieldInput';
 
 const StyledRelationPickerContainer = styled.div`
   left: -1px;

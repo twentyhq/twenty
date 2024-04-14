@@ -73,6 +73,7 @@ const RelationFieldInputWithContext = ({
             relationObjectMetadataNamePlural: 'workspaceMembers',
             relationObjectMetadataNameSingular:
               CoreObjectNameSingular.WorkspaceMember,
+            objectMetadataNameSingular: 'person',
           },
         }}
         entityId={entityId}

@@ -8,7 +8,7 @@ import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -28,6 +28,7 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled.ts';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -41,6 +42,7 @@ export const SettingsObjectNewFieldStep2 = () => {
   const navigate = useNavigate();
   const { objectSlug = '' } = useParams();
   const { enqueueSnackBar } = useSnackBar();
+  const isMultiSelectEnabled = useIsFeatureEnabled('IS_MULTI_SELECT_ENABLED');
 
   const {
     findActiveObjectMetadataItemBySlug,
@@ -85,10 +87,9 @@ export const SettingsObjectNewFieldStep2 = () => {
   const [objectViews, setObjectViews] = useState<View[]>([]);
   const [relationObjectViews, setRelationObjectViews] = useState<View[]>([]);
 
-  const { objectMetadataItem: viewObjectMetadataItem } =
-    useObjectMetadataItemOnly({
-      objectNameSingular: CoreObjectNameSingular.View,
-    });
+  const { objectMetadataItem: viewObjectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.View,
+  });
 
   useFindManyRecords<View>({
     objectNameSingular: CoreObjectNameSingular.View,
@@ -133,12 +134,14 @@ export const SettingsObjectNewFieldStep2 = () => {
             description: validatedFormValues.description,
             icon: validatedFormValues.icon,
             label: validatedFormValues.label,
+            type: validatedFormValues.type,
           },
           objectMetadataId: activeObjectMetadataItem.id,
           connect: {
             field: {
               icon: validatedFormValues.relation.field.icon,
               label: validatedFormValues.relation.field.label,
+              type: validatedFormValues.relation.field.type,
             },
             objectMetadataId: validatedFormValues.relation.objectMetadataId,
           },
@@ -148,7 +151,7 @@ export const SettingsObjectNewFieldStep2 = () => {
           validatedFormValues.relation.objectMetadataId,
         );
 
-        objectViews.forEach(async (view) => {
+        objectViews.map(async (view) => {
           const viewFieldToCreate = {
             viewId: view.id,
             fieldMetadataId:
@@ -181,7 +184,7 @@ export const SettingsObjectNewFieldStep2 = () => {
             recordId: view.id,
           });
 
-          relationObjectViews.forEach(async (view) => {
+          relationObjectViews.map(async (view) => {
             const viewFieldToCreate = {
               viewId: view.id,
               fieldMetadataId:
@@ -231,10 +234,12 @@ export const SettingsObjectNewFieldStep2 = () => {
           options:
             validatedFormValues.type === FieldMetadataType.Select
               ? validatedFormValues.select
-              : undefined,
+              : validatedFormValues.type === FieldMetadataType.MultiSelect
+                ? validatedFormValues.multiSelect
+                : undefined,
         });
 
-        objectViews.forEach(async (view) => {
+        objectViews.map(async (view) => {
           const viewFieldToCreate = {
             viewId: view.id,
             fieldMetadataId: createdMetadataField.data?.createOneField.id,
@@ -275,16 +280,18 @@ export const SettingsObjectNewFieldStep2 = () => {
   };
 
   const excludedFieldTypes: SettingsSupportedFieldType[] = [
-    FieldMetadataType.Currency,
     FieldMetadataType.Email,
     FieldMetadataType.FullName,
     FieldMetadataType.Link,
-    FieldMetadataType.MultiSelect,
     FieldMetadataType.Numeric,
     FieldMetadataType.Phone,
     FieldMetadataType.Probability,
     FieldMetadataType.Uuid,
   ];
+
+  if (!isMultiSelectEnabled) {
+    excludedFieldTypes.push(FieldMetadataType.MultiSelect);
+  }
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
@@ -336,6 +343,7 @@ export const SettingsObjectNewFieldStep2 = () => {
               currency: formValues.currency,
               relation: formValues.relation,
               select: formValues.select,
+              multiSelect: formValues.multiSelect,
               defaultValue: formValues.defaultValue,
             }}
           />

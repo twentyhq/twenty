@@ -31,11 +31,13 @@ export const mapFieldMetadataToGraphQLQuery = ({
       'TEXT',
       'PHONE',
       'DATE_TIME',
+      'DATE',
       'EMAIL',
       'NUMBER',
       'BOOLEAN',
       'RATING',
       'SELECT',
+      'MULTI_SELECT',
       'POSITION',
       'RAW_JSON',
     ] as FieldMetadataType[]

@@ -19,6 +19,10 @@ import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-obj
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
+export enum ConnectedAccountProvider {
+  GOOGLE = 'google',
+}
+
 @ObjectMetadata({
   standardId: standardObjectIds.connectedAccount,
   namePlural: 'connectedAccounts',
@@ -45,7 +49,7 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
     description: 'The account provider',
     icon: 'IconSettings',
   })
-  provider: string;
+  provider: ConnectedAccountProvider; // field metadata should be a SELECT
 
   @FieldMetadata({
     standardId: connectedAccountStandardFieldIds.accessToken,

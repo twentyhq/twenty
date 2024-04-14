@@ -264,6 +264,7 @@ export const RecordBoardCard = () => {
                       iconName: fieldDefinition.iconName,
                       type: fieldDefinition.type,
                       metadata: fieldDefinition.metadata,
+                      defaultValue: fieldDefinition.defaultValue,
                     },
                     useUpdateRecord: useUpdateOneRecordHook,
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,

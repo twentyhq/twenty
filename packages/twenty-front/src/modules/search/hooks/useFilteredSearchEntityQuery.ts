@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
 import { OrderBy } from '@/object-metadata/types/OrderBy';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -33,9 +33,10 @@ export const useFilteredSearchEntityQuery = ({
   excludeEntityIds?: string[];
   objectNameSingular: string;
 }): EntitiesForMultipleEntitySelect<EntityForSelect> => {
-  const { mapToObjectRecordIdentifier } = useObjectMetadataItem({
+  const { mapToObjectRecordIdentifier } = useMapToObjectRecordIdentifier({
     objectNameSingular,
   });
+
   const mappingFunction = (record: ObjectRecord) => ({
     ...mapToObjectRecordIdentifier(record),
     record,

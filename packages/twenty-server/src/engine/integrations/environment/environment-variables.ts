@@ -231,6 +231,26 @@ export class EnvironmentVariables {
   @IsString()
   SENTRY_DSN: string;
 
+  @ValidateIf(
+    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
+  )
+  @IsString()
+  SENTRY_FRONT_DSN: string;
+
+  @ValidateIf(
+    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
+  )
+  @IsString()
+  @IsOptional()
+  SENTRY_RELEASE: string;
+
+  @ValidateIf(
+    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
+  )
+  @IsString()
+  @IsOptional()
+  SENTRY_ENVIRONMENT: string;
+
   @IsDuration()
   @IsOptional()
   PASSWORD_RESET_TOKEN_EXPIRES_IN: string = '5m';
@@ -271,8 +291,6 @@ export class EnvironmentVariables {
 
   @CastToBoolean()
   MESSAGING_PROVIDER_GMAIL_ENABLED: boolean = false;
-
-  MESSAGING_PROVIDER_GMAIL_CALLBACK_URL: string;
 
   MESSAGE_QUEUE_TYPE: string = MessageQueueDriverType.Sync;
 

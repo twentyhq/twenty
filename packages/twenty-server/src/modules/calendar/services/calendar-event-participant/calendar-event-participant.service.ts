@@ -7,26 +7,31 @@ import { PersonRepository } from 'src/modules/person/repositories/person.reposit
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/getFlattenedValuesAndValuesStringForBatchRawQuery.util';
-import {
-  CalendarEventParticipant,
-  CalendarEventParticipantWithId,
-} from 'src/modules/calendar/types/calendar-event';
+import { CalendarEventParticipant } from 'src/modules/calendar/types/calendar-event';
 import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/connected-account/services/add-person-id-and-workspace-member-id/add-person-id-and-workspace-member-id.service';
+import { CalendarEventParticipantRepository } from 'src/modules/calendar/repositories/calendar-event-participant.repository';
+import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
 
 @Injectable()
 export class CalendarEventParticipantService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    @InjectObjectMetadataRepository(CalendarEventParticipantObjectMetadata)
+    private readonly calendarEventParticipantRepository: CalendarEventParticipantRepository,
     @InjectObjectMetadataRepository(PersonObjectMetadata)
     private readonly personRepository: PersonRepository,
     private readonly addPersonIdAndWorkspaceMemberIdService: AddPersonIdAndWorkspaceMemberIdService,
   ) {}
 
-  public async updateCalendarEventParticipantsAfterContactCreation(
-    participants: CalendarEventParticipantWithId[],
+  public async updateCalendarEventParticipantsAfterPeopleCreation(
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
+    const participants =
+      await this.calendarEventParticipantRepository.getWithoutPersonIdAndWorkspaceMemberId(
+        workspaceId,
+      );
+
     if (!participants) return;
 
     const dataSourceSchema =
@@ -109,5 +114,56 @@ export class CalendarEventParticipantService {
       workspaceId,
       transactionManager,
     );
+  }
+
+  public async matchCalendarEventParticipants(
+    workspaceId: string,
+    email: string,
+    personId?: string,
+    workspaceMemberId?: string,
+  ) {
+    const calendarEventParticipantsToUpdate =
+      await this.calendarEventParticipantRepository.getByHandles(
+        [email],
+        workspaceId,
+      );
+
+    const calendarEventParticipantIdsToUpdate =
+      calendarEventParticipantsToUpdate.map((participant) => participant.id);
+
+    if (personId) {
+      await this.calendarEventParticipantRepository.updateParticipantsPersonId(
+        calendarEventParticipantIdsToUpdate,
+        personId,
+        workspaceId,
+      );
+    }
+    if (workspaceMemberId) {
+      await this.calendarEventParticipantRepository.updateParticipantsWorkspaceMemberId(
+        calendarEventParticipantIdsToUpdate,
+        workspaceMemberId,
+        workspaceId,
+      );
+    }
+  }
+
+  public async unmatchCalendarEventParticipants(
+    workspaceId: string,
+    handle: string,
+    personId?: string,
+    workspaceMemberId?: string,
+  ) {
+    if (personId) {
+      await this.calendarEventParticipantRepository.removePersonIdByHandle(
+        handle,
+        workspaceId,
+      );
+    }
+    if (workspaceMemberId) {
+      await this.calendarEventParticipantRepository.removeWorkspaceMemberIdByHandle(
+        handle,
+        workspaceId,
+      );
+    }
   }
 }

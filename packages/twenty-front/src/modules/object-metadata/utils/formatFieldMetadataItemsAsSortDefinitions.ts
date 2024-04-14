@@ -12,6 +12,7 @@ export const formatFieldMetadataItemsAsSortDefinitions = ({
     if (
       ![
         FieldMetadataType.DateTime,
+        FieldMetadataType.Date,
         FieldMetadataType.Number,
         FieldMetadataType.Text,
         FieldMetadataType.Boolean,

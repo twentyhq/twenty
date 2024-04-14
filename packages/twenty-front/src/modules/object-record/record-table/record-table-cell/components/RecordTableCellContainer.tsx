@@ -90,7 +90,7 @@ export const RecordTableCellContainer = ({
     openTableCell();
   };
 
-  const { isSelected } = useContext(RecordTableRowContext);
+  const { isSelected, isReadOnly } = useContext(RecordTableRowContext);
 
   const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
   const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
@@ -146,7 +146,8 @@ export const RecordTableCellContainer = ({
     hasSoftFocus &&
     !isCurrentTableCellInEditMode &&
     !editModeContentOnly &&
-    (!isFirstColumn || !isEmpty);
+    (!isFirstColumn || !isEmpty) &&
+    !isReadOnly;
 
   return (
     <StyledTd

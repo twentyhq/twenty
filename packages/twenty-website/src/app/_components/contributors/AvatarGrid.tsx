@@ -3,6 +3,8 @@
 import styled from '@emotion/styled';
 import Link from 'next/link';
 
+import MotionContainer from '@/app/_components/ui/layout/LoaderAnimation';
+
 export interface User {
   id: string;
   avatarUrl: string;
@@ -26,6 +28,7 @@ const AvatarItem = styled.div`
   border-radius: 16px;
   overflow: hidden;
   transition: 200ms;
+  background-color: white;
 
   &:hover {
     -webkit-box-shadow: -6px 6px 0px 1px rgba(0, 0, 0, 1);
@@ -66,16 +69,18 @@ import React from 'react';
 
 const AvatarGrid = ({ users }: { users: User[] }) => {
   return (
-    <AvatarGridContainer>
-      {users.map((user) => (
-        <Link href={`/contributors/${user.id}`} key={`l_${user.id}`}>
-          <AvatarItem key={user.id}>
-            <img src={user.avatarUrl} alt={user.id} />
-            <span className="username">{user.id}</span>
-          </AvatarItem>
-        </Link>
-      ))}
-    </AvatarGridContainer>
+    <MotionContainer>
+      <AvatarGridContainer>
+        {users.map((user) => (
+          <Link href={`/contributors/${user.id}`} key={`l_${user.id}`}>
+            <AvatarItem key={user.id}>
+              <img src={user.avatarUrl} alt={user.id} />
+              <span className="username">{user.id}</span>
+            </AvatarItem>
+          </Link>
+        ))}
+      </AvatarGridContainer>
+    </MotionContainer>
   );
 };
 
