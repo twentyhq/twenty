@@ -47,7 +47,7 @@ const StyledCustomPhoneInput = styled(ReactPhoneNumberInput)`
     border-radius: ${({ theme }) => theme.border.radius.xs};
     height: 12px;
   }
-  width: calc(100% - ${({ theme }) => theme.spacing(7)});
+  width: calc(100% - ${({ theme }) => theme.spacing(8)});
 `;
 
 const StyledLightIconButtonContainer = styled.div`
