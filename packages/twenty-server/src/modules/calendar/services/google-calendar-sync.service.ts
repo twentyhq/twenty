@@ -29,6 +29,11 @@ import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-
 import { CalendarEventCleanerService } from 'src/modules/calendar/services/calendar-event-cleaner/calendar-event-cleaner.service';
 import { CalendarEventParticipantService } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.service';
 import { CalendarEventParticipant } from 'src/modules/calendar/types/calendar-event';
+import {
+  GoogleCalendarSyncJobData,
+  GoogleCalendarSyncJob,
+} from 'src/modules/calendar/jobs/google-calendar-sync.job';
+import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 
 @Injectable()
 export class GoogleCalendarSyncService {
@@ -56,6 +61,7 @@ export class GoogleCalendarSyncService {
     private readonly eventEmitter: EventEmitter2,
     private readonly calendarEventCleanerService: CalendarEventCleanerService,
     private readonly calendarEventParticipantsService: CalendarEventParticipantService,
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   public async startGoogleCalendarSync(
@@ -407,5 +413,29 @@ export class GoogleCalendarSyncService {
         syncToken ? `and ${syncToken} syncToken ` : ''
       }done.`,
     );
+  }
+
+  public async startWorkspaceGoogleCalendarSync(
+    workspaceId: string,
+  ): Promise<void> {
+    const calendarChannels =
+      await this.calendarChannelRepository.getAll(workspaceId);
+
+    for (const calendarChannel of calendarChannels) {
+      if (!calendarChannel?.isSyncEnabled) {
+        continue;
+      }
+
+      await this.messageQueueService.add<GoogleCalendarSyncJobData>(
+        GoogleCalendarSyncJob.name,
+        {
+          workspaceId,
+          connectedAccountId: calendarChannel.connectedAccountId,
+        },
+        {
+          retryLimit: 2,
+        },
+      );
+    }
   }
 }
