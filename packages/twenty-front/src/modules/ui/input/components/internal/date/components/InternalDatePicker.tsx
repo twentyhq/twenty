@@ -282,7 +282,6 @@ export type InternalDatePickerProps = {
   onChange?: (date: Date | null) => void;
   clearable?: boolean;
   isDateTimeInput?: boolean;
-  onClickOutside?: (event: MouseEvent | TouchEvent, date: Date | null) => void;
   onEnter?: (date: Date | null) => void;
   onEscape?: (date: Date | null) => void;
   keyboardEventsDisabled?: boolean;
@@ -297,7 +296,6 @@ export const InternalDatePicker = ({
   onEscape,
   clearable = true,
   isDateTimeInput,
-  onClickOutside,
   keyboardEventsDisabled,
   onClear,
 }: InternalDatePickerProps) => {
@@ -323,11 +321,6 @@ export const InternalDatePicker = ({
     closeDropdownYearSelect();
     closeDropdownMonthSelect();
     closeDropdown();
-  };
-
-  const handleClickOutside = (event: any) => {
-    closeDropdowns();
-    onClickOutside?.(event, internalDate);
   };
 
   const handleMouseSelect = (newDate: Date) => {
@@ -429,7 +422,6 @@ export const InternalDatePicker = ({
               onChange?.(dateUTC);
             }
           }}
-          onClickOutside={handleClickOutside}
         />
       </div>
       {clearable && (

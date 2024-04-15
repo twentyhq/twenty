@@ -33,7 +33,6 @@ export type DateInputProps = {
     event: MouseEvent | TouchEvent,
     newDate: Nullable<Date>,
   ) => void;
-  hotkeyScope: string;
   clearable?: boolean;
   onChange?: (newDate: Nullable<Date>) => void;
   isDateTimeInput?: boolean;
@@ -44,7 +43,6 @@ export const DateInput = ({
   value,
   onEnter,
   onEscape,
-  hotkeyScope,
   onClickOutside,
   clearable,
   onChange,
