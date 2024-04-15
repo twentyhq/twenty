@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
+import { ComponentDecorator } from 'twenty-ui';
 
 import {
   mockedCompanyObjectMetadataItem,
@@ -10,7 +11,6 @@ import {
   FieldMetadataType,
   RelationMetadataType,
 } from '~/generated-metadata/graphql';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';

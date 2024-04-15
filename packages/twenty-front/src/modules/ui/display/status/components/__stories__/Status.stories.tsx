@@ -1,12 +1,12 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
+import { ComponentDecorator } from 'twenty-ui';
 
 import {
   MAIN_COLOR_NAMES,
   ThemeColor,
 } from '@/ui/theme/constants/MainColorNames';
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { CatalogStory } from '~/testing/types';
 
 import { Status } from '../Status';

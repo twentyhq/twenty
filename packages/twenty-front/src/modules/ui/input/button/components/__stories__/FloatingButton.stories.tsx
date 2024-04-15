@@ -1,8 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { IconSearch } from 'twenty-ui';
+import { ComponentDecorator, IconSearch } from 'twenty-ui';
 
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { CatalogStory } from '~/testing/types';
 
 import { FloatingButton, FloatingButtonSize } from '../FloatingButton';
