@@ -29,8 +29,8 @@ import { gmailSearchFilterExcludeEmails } from 'src/modules/messaging/utils/gmai
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 @Injectable()
-export class GmailFullSyncV2Service {
-  private readonly logger = new Logger(GmailFullSyncV2Service.name);
+export class GmailFullSyncService {
+  private readonly logger = new Logger(GmailFullSyncService.name);
 
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
@@ -196,6 +196,18 @@ export class GmailFullSyncV2Service {
               messageExternalId,
             ),
         );
+
+        const messageIdsToDelete = existingMessageChannelMessageAssociations
+          .filter(
+            (messageChannelMessageAssociation) =>
+              !messageExternalIds.includes(
+                messageChannelMessageAssociation.messageExternalId,
+              ),
+          )
+          .map(
+            (messageChannelMessageAssociation) =>
+              messageChannelMessageAssociation.id,
+          );
 
         if (messageIdsToImport && messageIdsToImport.length) {
           await this.cacheStorage.setAdd(

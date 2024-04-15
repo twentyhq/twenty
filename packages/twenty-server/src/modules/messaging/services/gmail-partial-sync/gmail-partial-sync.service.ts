@@ -24,6 +24,8 @@ import {
   GmailFullSyncJob,
   GmailFullSyncJobData,
 } from 'src/modules/messaging/jobs/gmail-full-sync.job';
+import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
+import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
 
 @Injectable()
 export class GmailPartialSyncV2Service {
@@ -40,6 +42,10 @@ export class GmailPartialSyncV2Service {
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
     private readonly cacheStorage: CacheStorageService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    @InjectObjectMetadataRepository(
+      MessageChannelMessageAssociationObjectMetadata,
+    )
+    private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
   ) {}
 
   public async fetchConnectedAccountThreads(
@@ -201,9 +207,11 @@ export class GmailPartialSyncV2Service {
           messagesAdded,
         );
 
-        await this.cacheStorage.setAdd(
-          `messages-to-delete:${workspaceId}:gmail:${gmailMessageChannel.id}`,
+        await this.messageChannelMessageAssociationRepository.deleteByMessageExternalIdsAndMessageChannelId(
           messagesDeleted,
+          gmailMessageChannel.id,
+          workspaceId,
+          transactionManager,
         );
 
         await this.messageChannelRepository.updateLastSyncCursorIfHigher(
