@@ -25,7 +25,7 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 import { getImageBufferFromUrl } from 'src/utils/image';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
-export type SignUpServiceInput = {
+export type SignInUpServiceInput = {
   email: string;
   password?: string;
   firstName?: string | null;
@@ -35,7 +35,7 @@ export type SignUpServiceInput = {
 };
 
 @Injectable()
-export class SignUpService {
+export class SignInUpService {
   constructor(
     private readonly fileUploadService: FileUploadService,
     @InjectRepository(Workspace, 'core')
@@ -54,7 +54,7 @@ export class SignUpService {
     firstName,
     lastName,
     picture,
-  }: SignUpServiceInput) {
+  }: SignInUpServiceInput) {
     if (!firstName) firstName = '';
     if (!lastName) lastName = '';
 
