@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { useSetRecoilState } from 'recoil';
+import { ComponentDecorator } from 'twenty-ui';
 
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 import { contextMenuIsOpenState } from '../../states/contextMenuIsOpenState';
