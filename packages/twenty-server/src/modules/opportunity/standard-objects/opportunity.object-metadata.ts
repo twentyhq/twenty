@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { CurrencyMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
@@ -109,7 +111,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'pointOfContactId',
   })
   @IsNullable()
-  pointOfContact: PersonObjectMetadata;
+  pointOfContact: Relation<PersonObjectMetadata>;
 
   @FieldMetadata({
     standardId: opportunityStandardFieldIds.company,
@@ -120,7 +122,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'companyId',
   })
   @IsNullable()
-  company: CompanyObjectMetadata;
+  company: Relation<CompanyObjectMetadata>;
 
   @FieldMetadata({
     standardId: opportunityStandardFieldIds.favorites,
@@ -136,7 +138,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   @IsSystem()
-  favorites: FavoriteObjectMetadata[];
+  favorites: Relation<FavoriteObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: opportunityStandardFieldIds.activityTargets,
@@ -151,7 +153,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  activityTargets: ActivityTargetObjectMetadata[];
+  activityTargets: Relation<ActivityTargetObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: opportunityStandardFieldIds.attachments,
@@ -166,7 +168,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  attachments: AttachmentObjectMetadata[];
+  attachments: Relation<AttachmentObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: opportunityStandardFieldIds.events,
@@ -181,5 +183,5 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
-  events: EventObjectMetadata[];
+  events: Relation<EventObjectMetadata[]>;
 }

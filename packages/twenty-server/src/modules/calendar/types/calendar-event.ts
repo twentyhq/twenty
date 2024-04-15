@@ -8,7 +8,6 @@ export type CalendarEvent = Omit<
   | 'updatedAt'
   | 'calendarChannelEventAssociations'
   | 'calendarEventParticipants'
-  | 'eventParticipants'
   | 'conferenceLink'
 > & {
   conferenceLinkLabel: string;

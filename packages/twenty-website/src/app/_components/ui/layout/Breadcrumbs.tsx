@@ -21,6 +21,7 @@ const InternalLinkItem = styled(Link)`
   color: #b3b3b3;
   &:hover {
     color: ${Theme.text.color.quarternary};
+    text-decoration: underline;
   }
 `;
 

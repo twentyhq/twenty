@@ -1,8 +1,7 @@
 import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { IconComponent } from 'twenty-ui';
 
 export type FloatingButtonSize = 'small' | 'medium';
 export type FloatingButtonPosition = 'standalone' | 'left' | 'middle' | 'right';

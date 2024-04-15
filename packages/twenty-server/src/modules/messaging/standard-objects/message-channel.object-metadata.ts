@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
@@ -68,7 +70,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
         color: 'orange',
       },
     ],
-    defaultValue: MessageChannelVisibility.SHARE_EVERYTHING,
+    defaultValue: `'${MessageChannelVisibility.SHARE_EVERYTHING}'`,
   })
   visibility: string;
 
@@ -89,7 +91,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
     icon: 'IconUserCircle',
     joinColumn: 'connectedAccountId',
   })
-  connectedAccount: ConnectedAccountObjectMetadata;
+  connectedAccount: Relation<ConnectedAccountObjectMetadata>;
 
   @FieldMetadata({
     standardId: messageChannelStandardFieldIds.type,
@@ -111,7 +113,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
         color: 'blue',
       },
     ],
-    defaultValue: MessageChannelType.EMAIL,
+    defaultValue: `'${MessageChannelType.EMAIL}'`,
   })
   type: string;
 
@@ -139,7 +141,9 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  messageChannelMessageAssociations: MessageChannelMessageAssociationObjectMetadata[];
+  messageChannelMessageAssociations: Relation<
+    MessageChannelMessageAssociationObjectMetadata[]
+  >;
 
   @FieldMetadata({
     standardId: messageChannelStandardFieldIds.syncCursor,

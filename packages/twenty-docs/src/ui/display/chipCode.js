@@ -1,4 +1,4 @@
-import { Chip } from "@/ui/display/chip/components/Chip";
+import { Chip } from 'twenty-ui';
 
 export const MyComponent = () => {
   return (

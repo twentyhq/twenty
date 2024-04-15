@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilCallback } from 'recoil';
+import { Avatar } from 'twenty-ui';
 
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
@@ -8,9 +9,9 @@ import { emailThreadIdWhenEmailThreadWasClosedState } from '@/activities/emails/
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { GRAY_SCALE } from '@/ui/theme/constants/GrayScale';
-import { Avatar } from '@/users/components/Avatar';
 import { TimelineThread } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 const StyledCardContent = styled(CardContent)<{ visibility: string }>`
   align-items: center;
@@ -152,20 +153,24 @@ export const EmailThreadPreview = ({
       <StyledHeading unread={!thread.read}>
         <StyledParticipantsContainer>
           <Avatar
-            avatarUrl={thread?.firstParticipant?.avatarUrl}
+            avatarUrl={getImageAbsoluteURIOrBase64(
+              thread?.firstParticipant?.avatarUrl,
+            )}
             placeholder={thread.firstParticipant.displayName}
             type="rounded"
           />
           {thread?.lastTwoParticipants?.[0] && (
             <StyledAvatar
-              avatarUrl={thread.lastTwoParticipants[0].avatarUrl}
+              avatarUrl={getImageAbsoluteURIOrBase64(
+                thread.lastTwoParticipants[0].avatarUrl,
+              )}
               placeholder={thread.lastTwoParticipants[0].displayName}
               type="rounded"
             />
           )}
           {finalDisplayedName && (
             <StyledAvatar
-              avatarUrl={finalAvatarUrl}
+              avatarUrl={getImageAbsoluteURIOrBase64(finalAvatarUrl)}
               placeholder={finalDisplayedName}
               type="rounded"
               color={isCountIcon ? GRAY_SCALE.gray50 : undefined}

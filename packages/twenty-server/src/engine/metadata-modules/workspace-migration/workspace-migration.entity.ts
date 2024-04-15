@@ -88,7 +88,7 @@ export enum WorkspaceMigrationTableActionType {
   ALTER = 'alter',
   DROP = 'drop',
   CREATE_FOREIGN_TABLE = 'create_foreign_table',
-  DROP_FOREIGN_TABLE = 'drop_foreign_table'
+  DROP_FOREIGN_TABLE = 'drop_foreign_table',
 }
 
 export type WorkspaceMigrationTableAction = {

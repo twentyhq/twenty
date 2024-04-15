@@ -21,6 +21,7 @@
     },
     "storybook:build": {
       "cache": true,
+      "dependsOn": ["^build"],
       "inputs": [
         "default",
         "^default",

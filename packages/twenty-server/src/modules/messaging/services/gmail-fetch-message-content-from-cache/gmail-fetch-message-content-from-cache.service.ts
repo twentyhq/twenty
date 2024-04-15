@@ -19,9 +19,9 @@ import { GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/const
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { SaveMessageAndEmitContactCreationEventService } from 'src/modules/messaging/services/save-message-and-emit-contact-creation-event/save-message-and-emit-contact-creation-event.service';
 import {
-  GmailFullSyncV2JobData,
-  GmailFullSyncV2Job,
-} from 'src/modules/messaging/jobs/gmail-full-sync-v2.job';
+  GmailFullSyncJobData,
+  GmailFullSyncJob,
+} from 'src/modules/messaging/jobs/gmail-full-sync.job';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { GMAIL_ONGOING_SYNC_TIMEOUT } from 'src/modules/messaging/constants/gmail-ongoing-sync-timeout.constant';
@@ -265,8 +265,8 @@ export class GmailFetchMessageContentFromCacheService {
     workspaceId: string,
     connectedAccountId: string,
   ) {
-    await this.messageQueueService.add<GmailFullSyncV2JobData>(
-      GmailFullSyncV2Job.name,
+    await this.messageQueueService.add<GmailFullSyncJobData>(
+      GmailFullSyncJob.name,
       { workspaceId, connectedAccountId },
     );
   }

@@ -13,7 +13,7 @@ export default defineConfig(({ command, mode }) => {
   /*
     Using explicit env variables, there is no need to expose all of them (security).
   */
-  const { REACT_APP_SERVER_BASE_URL, SENTRY_RELEASE, ENVIRONMENT } = env;
+  const { REACT_APP_SERVER_BASE_URL, VITE_BUILD_SOURCEMAP } = env;
 
   const isBuildCommand = command === 'build';
 
@@ -43,11 +43,7 @@ export default defineConfig(({ command, mode }) => {
     plugins: [
       react({ jsxImportSource: '@emotion/react' }),
       tsconfigPaths({
-        projects: [
-          'tsconfig.json',
-          // Include internal library aliases in development mode, so hot reload is enabled for libraries.
-          mode === 'development' ? '../twenty-ui/tsconfig.json' : undefined,
-        ].filter(Boolean) as string[],
+        projects: ['tsconfig.json', '../twenty-ui/tsconfig.json'],
       }),
       svgr(),
       checker(checkers),
@@ -55,6 +51,7 @@ export default defineConfig(({ command, mode }) => {
 
     build: {
       outDir: 'build',
+      sourcemap: VITE_BUILD_SOURCEMAP === 'true',
     },
 
     envPrefix: 'REACT_APP_',
@@ -62,8 +59,6 @@ export default defineConfig(({ command, mode }) => {
     define: {
       'process.env': {
         REACT_APP_SERVER_BASE_URL,
-        SENTRY_RELEASE,
-        ENVIRONMENT,
       },
     },
   };
