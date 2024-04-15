@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
 
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { ComponentDecorator } from '@ui/testing';
 
 import { OverflowingTextWithTooltip } from '../OverflowingTextWithTooltip';
 

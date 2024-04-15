@@ -2,10 +2,10 @@ import * as React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { IconComponent } from 'twenty-ui';
 
-import { Avatar, AvatarType } from '@/users/components/Avatar';
-import { Nullable } from '~/types/Nullable';
+import { Avatar, AvatarType } from '@ui/display/avatar/components/Avatar';
+import { IconComponent } from '@ui/display/icon/types/IconComponent';
+import { Nullable } from '@ui/utilities/types/Nullable';
 
 import { Chip, ChipVariant } from './Chip';
 

@@ -1,7 +1,8 @@
 import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconCheck } from 'twenty-ui';
+
+import { IconCheck } from '@ui/display/icon/components/TablerIcons';
 
 const StyledContainer = styled.div`
   align-items: center;

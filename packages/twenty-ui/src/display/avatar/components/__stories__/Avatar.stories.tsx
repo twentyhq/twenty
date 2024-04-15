@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
-import { avatarUrl } from '~/testing/mock-data/users';
+import { AVATAR_URL_MOCK, ComponentDecorator } from '@ui/testing';
 
 import { Avatar } from '../Avatar';
 
@@ -9,7 +8,12 @@ const meta: Meta<typeof Avatar> = {
   title: 'Modules/Users/Avatar',
   component: Avatar,
   decorators: [ComponentDecorator],
-  args: { avatarUrl, size: 'md', placeholder: 'L', type: 'rounded' },
+  args: {
+    avatarUrl: AVATAR_URL_MOCK,
+    size: 'md',
+    placeholder: 'L',
+    type: 'rounded',
+  },
 };
 
 export default meta;

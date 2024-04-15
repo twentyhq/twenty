@@ -5,10 +5,12 @@ import {
   AvatarProps,
   AvatarSize,
   AvatarType,
-} from '@/users/components/Avatar';
-import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
-import { avatarUrl } from '~/testing/mock-data/users';
+} from '@ui/display/avatar/components/Avatar';
+import {
+  AVATAR_URL_MOCK,
+  CatalogDecorator,
+  ComponentDecorator,
+} from '@ui/testing';
 
 import { AvatarGroup, AvatarGroupProps } from '../AvatarGroup';
 
@@ -18,7 +20,7 @@ const makeAvatar = (userName: string, props: Partial<AvatarProps> = {}) => (
 );
 
 const getAvatars = (commonProps: Partial<AvatarProps> = {}) => [
-  makeAvatar('Matthew', { avatarUrl, ...commonProps }),
+  makeAvatar('Matthew', { avatarUrl: AVATAR_URL_MOCK, ...commonProps }),
   makeAvatar('Sophie', commonProps),
   makeAvatar('Jane', commonProps),
   makeAvatar('Lily', commonProps),
