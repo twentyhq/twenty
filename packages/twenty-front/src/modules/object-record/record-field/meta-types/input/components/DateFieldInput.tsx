@@ -1,6 +1,7 @@
+import { Nullable } from 'twenty-ui';
+
 import { useDateField } from '@/object-record/record-field/meta-types/hooks/useDateField';
 import { DateInput } from '@/ui/field/input/components/DateInput';
-import { Nullable } from '~/types/Nullable';
 import { isDefined } from '~/utils/isDefined';
 
 import { usePersistField } from '../../../hooks/usePersistField';
@@ -20,7 +21,7 @@ export const DateFieldInput = ({
   onClickOutside,
   onClear,
 }: DateFieldInputProps) => {
-  const { fieldValue, hotkeyScope, setDraftValue } = useDateField();
+  const { fieldValue, setDraftValue } = useDateField();
 
   const persistField = usePersistField();
 
@@ -61,7 +62,6 @@ export const DateFieldInput = ({
 
   return (
     <DateInput
-      hotkeyScope={hotkeyScope}
       onClickOutside={handleClickOutside}
       onEnter={handleEnter}
       onEscape={handleEscape}

@@ -18,8 +18,7 @@ export const DateTimeFieldInput = ({
   onEscape,
   onClickOutside,
 }: DateTimeFieldInputProps) => {
-  const { fieldValue, hotkeyScope, clearable, setDraftValue } =
-    useDateTimeField();
+  const { fieldValue, clearable, setDraftValue } = useDateTimeField();
 
   const persistField = usePersistField();
 
@@ -56,7 +55,6 @@ export const DateTimeFieldInput = ({
 
   return (
     <DateInput
-      hotkeyScope={hotkeyScope}
       onClickOutside={handleClickOutside}
       onEnter={handleEnter}
       onEscape={handleEscape}
