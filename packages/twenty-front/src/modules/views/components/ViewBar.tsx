@@ -37,7 +37,7 @@ export const ViewBar = ({
 }: ViewBarProps) => {
   const { objectNamePlural } = useParams();
 
-  const { currentViewWithCombinedFiltersAndSorts } =
+  const { currentViewWithCombinedFiltersAndSorts: currentView } =
     useGetCurrentView(viewBarId);
 
   const filterDropdownId = 'view-filter';
@@ -46,6 +46,10 @@ export const ViewBar = ({
   if (!objectNamePlural) {
     return;
   }
+
+  const pageTitle = currentView?.name
+    ? `${currentView?.name} - ${capitalize(objectNamePlural)}`
+    : capitalize(objectNamePlural);
 
   return (
     <ViewScope
@@ -58,11 +62,7 @@ export const ViewBar = ({
       <QueryParamsFiltersEffect />
       <QueryParamsViewIdEffect />
 
-      <PageTitle
-        title={`${currentViewWithCombinedFiltersAndSorts?.name} - ${capitalize(
-          objectNamePlural,
-        )}`}
-      />
+      <PageTitle title={pageTitle} />
       <TopBar
         className={className}
         leftComponent={

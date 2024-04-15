@@ -81,13 +81,20 @@ export const RecordShowPage = () => {
 
   const labelIdentifierFieldValue =
     record?.[labelIdentifierFieldMetadataItem?.name ?? ''];
+
   const pageName =
     labelIdentifierFieldMetadataItem?.type === FieldMetadataType.FullName
       ? [
           labelIdentifierFieldValue?.firstName,
           labelIdentifierFieldValue?.lastName,
         ].join(' ')
-      : `${labelIdentifierFieldValue}`;
+      : isDefined(labelIdentifierFieldValue)
+        ? `${labelIdentifierFieldValue}`
+        : '';
+
+  const pageTitle = pageName.trim()
+    ? `${pageName} - ${capitalize(objectNameSingular)}`
+    : capitalize(objectNameSingular);
 
   // Temporarily since we don't have relations for remote objects yet
   if (objectMetadataItem.isRemote) {
@@ -96,7 +103,7 @@ export const RecordShowPage = () => {
 
   return (
     <PageContainer>
-      <PageTitle title={`${pageName} - ${capitalize(objectNameSingular)}`} />
+      <PageTitle title={pageTitle} />
       <PageHeader
         title={pageName ?? ''}
         hasBackButton
