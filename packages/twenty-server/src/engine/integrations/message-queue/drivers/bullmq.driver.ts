@@ -97,6 +97,8 @@ export class BullMQDriver implements MessageQueueDriver {
       jobId: options?.id,
       priority: options?.priority,
       attempts: 1 + (options?.retryLimit || 0),
+      removeOnComplete: 1000,
+      removeOnFail: 5000,
     };
 
     await this.queueMap[queueName].add(jobName, data, queueOptions);
