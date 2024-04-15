@@ -1,12 +1,13 @@
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator, IconBell, IconMinus } from 'twenty-ui';
-
 import {
   CatalogDecorator,
   CatalogDimension,
   CatalogOptions,
-} from '~/testing/decorators/CatalogDecorator';
+  ComponentDecorator,
+  IconBell,
+  IconMinus,
+} from 'twenty-ui';
 
 import { MenuItemAccent } from '../../types/MenuItemAccent';
 import { MenuItemDraggable } from '../MenuItemDraggable';
