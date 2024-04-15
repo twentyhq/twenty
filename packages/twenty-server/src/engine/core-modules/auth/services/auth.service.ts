@@ -80,7 +80,7 @@ export class AuthService {
     return user;
   }
 
-  async signUp({
+  async signInUp({
     email,
     password,
     workspaceInviteHash,
@@ -95,7 +95,7 @@ export class AuthService {
     workspaceInviteHash?: string | null;
     picture?: string | null;
   }) {
-    return await this.signUpService.signUp({
+    return await this.signUpService.signInUp({
       email,
       password,
       firstName,

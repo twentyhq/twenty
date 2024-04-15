@@ -28,7 +28,7 @@ export class GoogleAuthController {
     const { firstName, lastName, email, picture, workspaceInviteHash } =
       req.user;
 
-    const user = await this.authService.signUp({
+    const user = await this.authService.signInUp({
       email,
       firstName,
       lastName,

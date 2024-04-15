@@ -47,7 +47,7 @@ export class SignUpService {
     private readonly environmentService: EnvironmentService,
   ) {}
 
-  async signUp({
+  async signInUp({
     email,
     workspaceInviteHash,
     password,
@@ -90,13 +90,14 @@ export class SignUpService {
     }
 
     if (workspaceInviteHash) {
-      return await this.signUpOnExistingWorkspace({
+      return await this.signInUpOnExistingWorkspace({
         email,
         passwordHash,
         workspaceInviteHash,
         firstName,
         lastName,
         imagePath,
+        existingUser,
       });
     }
     if (!existingUser) {
@@ -112,13 +113,14 @@ export class SignUpService {
     return existingUser;
   }
 
-  private async signUpOnExistingWorkspace({
+  private async signInUpOnExistingWorkspace({
     email,
     passwordHash,
     workspaceInviteHash,
     firstName,
     lastName,
     imagePath,
+    existingUser,
   }: {
     email: string;
     passwordHash: string | undefined;
@@ -126,14 +128,8 @@ export class SignUpService {
     firstName: string;
     lastName: string;
     imagePath: string | undefined;
+    existingUser: User | null;
   }) {
-    const existingUser = await this.userRepository.findOne({
-      where: {
-        email: email,
-      },
-      relations: ['defaultWorkspace'],
-    });
-
     const workspace = await this.workspaceRepository.findOneBy({
       inviteHash: workspaceInviteHash,
     });
@@ -200,17 +196,6 @@ export class SignUpService {
     lastName: string;
     imagePath: string | undefined;
   }) {
-    const existingUser = await this.userRepository.findOne({
-      where: {
-        email: email,
-      },
-      relations: ['defaultWorkspace'],
-    });
-
-    if (existingUser) {
-      assert(!existingUser, 'This user already exists', ForbiddenException);
-    }
-
     assert(
       !this.environmentService.get('IS_SIGN_UP_DISABLED'),
       'Sign up is disabled',
