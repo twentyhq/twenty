@@ -3,8 +3,6 @@ import { isDate, isNumber, isString } from '@sniptt/guards';
 import { differenceInCalendarDays, formatDistanceToNow } from 'date-fns';
 import { DateTime } from 'luxon';
 
-import { NEVER_EXPIRE_DELTA_IN_YEARS } from '@/settings/developers/constants/NeverExpireDeltaInYears.ts';
-
 import { logError } from './logError';
 
 export const DEFAULT_DATE_LOCALE = 'en-EN';
@@ -119,15 +117,12 @@ export const beautifyDateDiff = (
   date: string,
   dateToCompareWith?: string,
   short = false,
-  infiniteDiffTriggerInYears = NEVER_EXPIRE_DELTA_IN_YEARS / 10,
 ) => {
   const dateDiff = DateTime.fromISO(date).diff(
     dateToCompareWith ? DateTime.fromISO(dateToCompareWith) : DateTime.now(),
     ['years', 'days'],
   );
   let result = '';
-  if (dateDiff.years && dateDiff.years >= infiniteDiffTriggerInYears)
-    return '+∞';
   if (dateDiff.years) result = result + `${dateDiff.years} year`;
   if (![0, 1].includes(dateDiff.years)) result = result + 's';
   if (short && dateDiff.years) return result;

@@ -241,12 +241,6 @@ describe('hasDatePassed', () => {
 });
 
 describe('beautifyDateDiff', () => {
-  it('should return the correct date diff for Never expiration date', () => {
-    const date = '2123-11-05T00:00:00.000Z';
-    const dateToCompareWith = '2023-11-01T00:00:00.000Z';
-    const result = beautifyDateDiff(date, dateToCompareWith);
-    expect(result).toEqual('+∞');
-  });
   it('should return the correct date diff', () => {
     const date = '2023-11-05T00:00:00.000Z';
     const dateToCompareWith = '2023-11-01T00:00:00.000Z';

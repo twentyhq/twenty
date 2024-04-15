@@ -3,6 +3,13 @@ import { formatExpiration } from '@/settings/developers/utils/format-expiration'
 jest.useFakeTimers().setSystemTime(new Date('2024-01-01T00:00:00.000Z'));
 
 describe('formatExpiration', () => {
+  it('should format properly when expiresAt is great', () => {
+    const expiresAt = '2044-01-10T00:00:00.000Z';
+    const result = formatExpiration(expiresAt);
+    expect(result).toEqual('Never');
+    const resultWithExpiresMention = formatExpiration(expiresAt, true);
+    expect(resultWithExpiresMention).toEqual('Never expires');
+  });
   it('should format properly when expiresAt is null', () => {
     const expiresAt = null;
     const result = formatExpiration(expiresAt);
