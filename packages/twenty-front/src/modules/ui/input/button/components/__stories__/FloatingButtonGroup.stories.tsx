@@ -1,13 +1,12 @@
 import { Meta, StoryObj } from '@storybook/react';
 import {
+  CatalogDecorator,
+  CatalogStory,
   ComponentDecorator,
   IconCheckbox,
   IconNotes,
   IconTimelineEvent,
 } from 'twenty-ui';
-
-import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
-import { CatalogStory } from '~/testing/types';
 
 import { FloatingButton, FloatingButtonSize } from '../FloatingButton';
 import { FloatingButtonGroup } from '../FloatingButtonGroup';

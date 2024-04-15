@@ -1,8 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator, IconSearch } from 'twenty-ui';
-
-import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
-import { CatalogStory } from '~/testing/types';
+import {
+  CatalogDecorator,
+  CatalogStory,
+  ComponentDecorator,
+  IconSearch,
+} from 'twenty-ui';
 
 import { LightButton, LightButtonAccent } from '../LightButton';
 
