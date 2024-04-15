@@ -3,17 +3,13 @@ import { onError } from "@apollo/client/link/error";
 import { isDefined } from '~/utils/isDefined';
 
 const clearStore = () => {
-  chrome.storage.local.set({
-    loginToken: null,
-  });
+  chrome.storage.local.remove('loginToken');
 
-  chrome.storage.local.set({
-    accessToken: null,
-  });
+  chrome.storage.local.remove('accessToken');
 
-  chrome.storage.local.set({
-    refreshToken: null,
-  });
+  chrome.storage.local.remove('refreshToken');
+
+  chrome.storage.local.set({ isAuthenticated: false });
 }
 
 const getApolloClient = async () => {
