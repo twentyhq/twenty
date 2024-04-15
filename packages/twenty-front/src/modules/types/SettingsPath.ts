@@ -22,7 +22,7 @@ export enum SettingsPath {
   DevelopersApiKeyDetail = 'api-keys/:apiKeyId',
   Integrations = 'integrations',
   IntegrationDatabase = 'integrations/:databaseKey',
-  IntegrationDatabaseConnection = 'integrations/:databaseKey/:connectionKey',
+  IntegrationDatabaseConnection = 'integrations/:databaseKey/:connectionId',
   IntegrationNewDatabaseConnection = 'integrations/:databaseKey/new',
   DevelopersNewWebhook = 'webhooks/new',
   DevelopersNewWebhookDetail = 'webhooks/:webhookId',

@@ -1,14 +1,14 @@
 import { Meta, StoryObj } from '@storybook/react';
-
-import { Avatar } from '@/users/components/Avatar';
 import {
+  Avatar,
   CatalogDecorator,
   CatalogDimension,
   CatalogOptions,
-} from '~/testing/decorators/CatalogDecorator';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+  CatalogStory,
+  ComponentDecorator,
+} from 'twenty-ui';
+
 import { avatarUrl } from '~/testing/mock-data/users';
-import { CatalogStory } from '~/testing/types';
 
 import { MenuItemSelectAvatar } from '../MenuItemSelectAvatar';
 

@@ -17,8 +17,7 @@
       ],
       "outputs": ["{projectRoot}/src/index.ts", "{projectRoot}/src/*/index.ts"],
       "options": {
-        "outputPath": "{projectRoot}/dist",
-        "command": "npx ts-node --esm {projectRoot}/scripts/generateBarrels.ts"
+        "command": "node {projectRoot}/scripts/generateBarrels.js"
       }
     },
     "lint": {
@@ -32,7 +31,6 @@
         ]
       },
       "configurations": {
-        "ci": { "lintFilePatterns": ["{projectRoot}/**/*.{ts,tsx,json}"] },
         "fix": { "fix": true }
       }
     },
@@ -41,6 +39,13 @@
       "outputs": ["{projectRoot}/coverage"],
       "options": {
         "jestConfig": "{projectRoot}/jest.config.ts"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsc -b tsconfig.json --incremental"
       }
     },
     "storybook:dev": {

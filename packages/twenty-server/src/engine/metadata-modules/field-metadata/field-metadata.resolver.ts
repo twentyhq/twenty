@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import {
   Args,
+  Context,
   Mutation,
   Parent,
   ResolveField,
@@ -12,6 +13,7 @@ import {
 } from '@nestjs/graphql';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { CreateOneFieldMetadataInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
@@ -89,7 +91,21 @@ export class FieldMetadataResolver {
   @ResolveField(() => RelationDefinitionDTO, { nullable: true })
   async relationDefinition(
     @Parent() fieldMetadata: FieldMetadataDTO,
+    @Context() context: { loaders: IDataloaders },
   ): Promise<RelationDefinitionDTO | null> {
-    return await this.fieldMetadataService.getRelationDefinition(fieldMetadata);
+    if (fieldMetadata.type !== FieldMetadataType.RELATION) {
+      return null;
+    }
+
+    const relationMetadataItem =
+      await context.loaders.relationMetadataLoader.load(fieldMetadata.id);
+
+    const relationDefinition =
+      await this.fieldMetadataService.getRelationDefinitionFromRelationMetadata(
+        fieldMetadata,
+        relationMetadataItem,
+      );
+
+    return relationDefinition;
   }
 }

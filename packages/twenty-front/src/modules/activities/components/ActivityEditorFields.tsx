@@ -4,7 +4,6 @@ import { useRecoilValue } from 'recoil';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { Activity } from '@/activities/types/Activity';
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
@@ -28,12 +27,8 @@ export const ActivityEditorFields = ({
 }) => {
   const { upsertActivity } = useUpsertActivity();
 
-  const { objectMetadataItem } = useObjectMetadataItemOnly({
-    objectNameSingular: CoreObjectNameSingular.Activity,
-  });
-
   const getRecordFromCache = useGetRecordFromCache({
-    objectMetadataItem,
+    objectNameSingular: CoreObjectNameSingular.Activity,
   });
 
   const activityFromCache = getRecordFromCache<Activity>(activityId);

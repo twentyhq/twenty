@@ -1,9 +1,9 @@
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import { useIcons } from 'twenty-ui';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
 

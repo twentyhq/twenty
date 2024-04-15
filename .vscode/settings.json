@@ -39,12 +39,6 @@
     "twentyhq"
   ],
   "typescript.preferences.importModuleSpecifier": "non-relative",
-  "[javascript][typescript][typescriptreact]": {
-    "editor.codeActionsOnSave": {
-      "source.fixAll.eslint": "explicit",
-      "source.addMissingImports": "always"
-    }
-  },
   "search.exclude": {
     "**/.yarn": true,
   },

@@ -26,6 +26,12 @@ export type FieldDateTimeMetadata = {
   fieldName: string;
 };
 
+export type FieldDateMetadata = {
+  objectMetadataNameSingular?: string;
+  placeHolder: string;
+  fieldName: string;
+};
+
 export type FieldNumberMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
@@ -78,6 +84,7 @@ export type FieldAddressMetadata = {
 export type FieldRawJsonMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
+  placeHolder: string;
 };
 
 export type FieldDefinitionRelationType =
@@ -102,10 +109,17 @@ export type FieldSelectMetadata = {
   options: { label: string; color: ThemeColor; value: string }[];
 };
 
+export type FieldMultiSelectMetadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
+  options: { label: string; color: ThemeColor; value: string }[];
+};
+
 export type FieldMetadata =
   | FieldBooleanMetadata
   | FieldCurrencyMetadata
   | FieldDateTimeMetadata
+  | FieldDateMetadata
   | FieldEmailMetadata
   | FieldFullNameMetadata
   | FieldLinkMetadata
@@ -114,6 +128,7 @@ export type FieldMetadata =
   | FieldRatingMetadata
   | FieldRelationMetadata
   | FieldSelectMetadata
+  | FieldMultiSelectMetadata
   | FieldTextMetadata
   | FieldUuidMetadata
   | FieldAddressMetadata;
@@ -121,6 +136,7 @@ export type FieldMetadata =
 export type FieldTextValue = string;
 export type FieldUUidValue = string;
 export type FieldDateTimeValue = string | null;
+export type FieldDateValue = string | null;
 export type FieldNumberValue = number | null;
 export type FieldBooleanValue = boolean;
 
@@ -144,5 +160,7 @@ export type FieldAddressValue = {
 };
 export type FieldRatingValue = (typeof RATING_VALUES)[number];
 export type FieldSelectValue = string | null;
+export type FieldMultiSelectValue = string[] | null;
 
 export type FieldRelationValue = EntityForSelect | null;
+export type FieldJsonValue = string;

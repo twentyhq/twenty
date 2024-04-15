@@ -21,7 +21,6 @@ export const getFieldDefaultPreviewValue = ({
   relationObjectMetadataItem?: ObjectMetadataItem;
   selectOptions?: SettingsObjectFieldSelectFormValues;
 }) => {
-  // Select field
   if (
     fieldMetadataItem.type === FieldMetadataType.Select &&
     isDefined(selectOptions)
@@ -31,7 +30,13 @@ export const getFieldDefaultPreviewValue = ({
     return defaultSelectOption.value;
   }
 
-  // Relation field
+  if (
+    fieldMetadataItem.type === FieldMetadataType.MultiSelect &&
+    isDefined(selectOptions)
+  ) {
+    return selectOptions.map((selectOption) => selectOption.value);
+  }
+
   if (
     fieldMetadataItem.type === FieldMetadataType.Relation &&
     isDefined(relationObjectMetadataItem)
@@ -60,7 +65,6 @@ export const getFieldDefaultPreviewValue = ({
     return defaultRelationRecord;
   }
 
-  // Other fields
   const isLabelIdentifier =
     !!fieldMetadataItem.id &&
     !!fieldMetadataItem.name &&

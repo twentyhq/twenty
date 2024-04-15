@@ -6,6 +6,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
+import { useRecordBoardQueryFields } from '@/object-record/record-index/hooks/useRecordBoardQueryFields';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
 import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
@@ -55,6 +56,11 @@ export const useLoadRecordIndexBoard = ({
     recordIndexIsCompactModeActiveState,
   );
 
+  const queryFields = useRecordBoardQueryFields({
+    objectMetadataItem,
+    recordBoardId,
+  });
+
   const {
     records,
     totalCount,
@@ -65,6 +71,7 @@ export const useLoadRecordIndexBoard = ({
     objectNameSingular,
     filter: requestFilters,
     orderBy,
+    queryFields,
   });
 
   const { setRecordCountInCurrentView } =

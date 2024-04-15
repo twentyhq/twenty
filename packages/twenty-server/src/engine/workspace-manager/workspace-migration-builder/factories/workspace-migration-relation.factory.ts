@@ -7,6 +7,7 @@ import {
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationEntity,
   WorkspaceMigrationTableAction,
+  WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import {
@@ -90,7 +91,7 @@ export class WorkspaceMigrationRelationFactory {
       const migrations: WorkspaceMigrationTableAction[] = [
         {
           name: computeObjectTargetTable(toObjectMetadata),
-          action: 'alter',
+          action: WorkspaceMigrationTableActionType.ALTER,
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.DROP_FOREIGN_KEY,
@@ -100,7 +101,7 @@ export class WorkspaceMigrationRelationFactory {
         },
         {
           name: computeObjectTargetTable(toObjectMetadata),
-          action: 'alter',
+          action: WorkspaceMigrationTableActionType.ALTER,
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
@@ -166,7 +167,7 @@ export class WorkspaceMigrationRelationFactory {
       const migrations: WorkspaceMigrationTableAction[] = [
         {
           name: computeObjectTargetTable(toObjectMetadata),
-          action: 'alter',
+          action: WorkspaceMigrationTableActionType.ALTER,
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,

@@ -10,7 +10,7 @@ import { RemoteTableDTO } from 'src/engine/metadata-modules/remote-server/remote
 import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
 
 @UseGuards(JwtAuthGuard)
-@Resolver(() => RemoteTableDTO)
+@Resolver()
 export class RemoteTableResolver {
   constructor(private readonly remoteTableService: RemoteTableService) {}
 
@@ -26,13 +26,18 @@ export class RemoteTableResolver {
   }
 
   @Mutation(() => RemoteTableDTO)
-  async updateRemoteTableSyncStatus(
+  async syncRemoteTable(
     @Args('input') input: RemoteTableInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.remoteTableService.updateRemoteTableSyncStatus(
-      input,
-      workspaceId,
-    );
+    return this.remoteTableService.syncRemoteTable(input, workspaceId);
+  }
+
+  @Mutation(() => RemoteTableDTO)
+  async unsyncRemoteTable(
+    @Args('input') input: RemoteTableInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    return this.remoteTableService.unsyncRemoteTable(input, workspaceId);
   }
 }

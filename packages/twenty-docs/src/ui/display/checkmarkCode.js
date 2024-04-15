@@ -1,4 +1,4 @@
-import { Checkmark } from "@/ui/display/checkmark/components/Checkmark";
+import { Checkmark } from 'twenty-ui';
 
 export const MyComponent = () => {
   return <Checkmark />;

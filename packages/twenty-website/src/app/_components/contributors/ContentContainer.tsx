@@ -2,6 +2,8 @@
 
 import styled from '@emotion/styled';
 
+import MotionContainer from '@/app/_components/ui/layout/LoaderAnimation';
+
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -22,5 +24,9 @@ export const ContentContainer = ({
 }: {
   children?: React.ReactNode;
 }) => {
-  return <Container>{children}</Container>;
+  return (
+    <MotionContainer>
+      <Container>{children}</Container>
+    </MotionContainer>
+  );
 };

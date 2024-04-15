@@ -1,11 +1,9 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-
 export const getBasePathToShowPage = ({
-  objectMetadataItem,
+  objectNameSingular,
 }: {
-  objectMetadataItem: ObjectMetadataItem;
+  objectNameSingular: string;
 }) => {
-  const basePathToShowPage = `/object/${objectMetadataItem.nameSingular}/`;
+  const basePathToShowPage = `/object/${objectNameSingular}/`;
 
   return basePathToShowPage;
 };

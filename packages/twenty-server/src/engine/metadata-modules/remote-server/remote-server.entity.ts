@@ -39,7 +39,7 @@ export class RemoteServerEntity<T extends RemoteServerType> {
   @Generated('uuid')
   foreignDataWrapperId: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   foreignDataWrapperType: T;
 
   @Column({ nullable: true, type: 'jsonb' })

@@ -42,7 +42,7 @@ export class MessagingConnectedAccountListener {
       value: true,
     });
 
-    this.messageQueueService.add<DeleteConnectedAccountAssociatedMessagingDataJobData>(
+    await this.messageQueueService.add<DeleteConnectedAccountAssociatedMessagingDataJobData>(
       DeleteConnectedAccountAssociatedMessagingDataJob.name,
       {
         workspaceId: payload.workspaceId,
@@ -51,7 +51,7 @@ export class MessagingConnectedAccountListener {
     );
 
     if (isCalendarEnabled) {
-      this.calendarQueueService.add<DeleteConnectedAccountAssociatedCalendarDataJobData>(
+      await this.calendarQueueService.add<DeleteConnectedAccountAssociatedCalendarDataJobData>(
         DeleteConnectedAccountAssociatedCalendarDataJob.name,
         {
           workspaceId: payload.workspaceId,

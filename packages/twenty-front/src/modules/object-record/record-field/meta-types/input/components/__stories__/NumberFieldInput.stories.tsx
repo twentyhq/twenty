@@ -50,6 +50,7 @@ const NumberFieldInputWithContext = ({
           metadata: {
             fieldName: 'number',
             placeHolder: 'Enter number',
+            objectMetadataNameSingular: 'person',
           },
         }}
         entityId={entityId}
