@@ -1,11 +1,11 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { ComponentDecorator } from 'twenty-ui';
 
 import {
   mockedCompanyObjectMetadataItem,
   mockedPersonObjectMetadataItem,
 } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
