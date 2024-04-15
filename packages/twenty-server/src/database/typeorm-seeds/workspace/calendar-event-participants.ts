@@ -2,6 +2,7 @@ import { EntityManager } from 'typeorm';
 
 import { DEV_SEED_PERSON_IDS } from 'src/database/typeorm-seeds/workspace/people';
 import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
+import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
 
 const tableName = 'calendarEventParticipant';
 
@@ -30,7 +31,7 @@ export const seedCalendarEventParticipants = async (
         handle: 'christoph.calisto@linkedin.com',
         displayName: 'Christoph Calisto',
         isOrganizer: true,
-        responseStatus: 'accepted',
+        responseStatus: CalendarEventParticipantResponseStatus.ACCEPTED,
         personId: DEV_SEED_PERSON_IDS.CHRISTOPH,
         workspaceMemberId: null,
       },
@@ -40,7 +41,7 @@ export const seedCalendarEventParticipants = async (
         handle: 'tim@apple.com',
         displayName: 'Tim Apple',
         isOrganizer: false,
-        responseStatus: 'accepted',
+        responseStatus: CalendarEventParticipantResponseStatus.ACCEPTED,
         personId: null,
         workspaceMemberId: DEV_SEED_WORKSPACE_MEMBER_IDS.TIM,
       },
