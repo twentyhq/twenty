@@ -43,7 +43,9 @@ const Options = () => {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [error, setError] = useState('');
-  const [serverBaseUrl, setServerBaseUrl] = useState(import.meta.env.VITE_SERVER_BASE_URL);
+  const [serverBaseUrl, setServerBaseUrl] = useState(
+    import.meta.env.VITE_SERVER_BASE_URL,
+  );
   const authenticate = () => {
     setIsAuthenticating(true);
     chrome.runtime.sendMessage({ action: 'CONNECT' }, ({ status, message }) => {
@@ -59,7 +61,7 @@ const Options = () => {
   };
 
   useEffect(() => {
-    const getState = async() => {
+    const getState = async () => {
       const store = await chrome.storage.local.get();
       if (store.serverBaseUrl !== '') {
         setServerBaseUrl(store.serverBaseUrl);
@@ -68,32 +70,34 @@ const Options = () => {
       }
 
       if (store.isAuthenticated === true) setIsAuthenticated(true);
-    }
-    void getState();  
+    };
+    void getState();
   }, []);
 
   const handleBaseUrlChange = (value: string) => {
     setServerBaseUrl(value);
     chrome.storage.local.set({ serverBaseUrl: value });
-  }
+  };
 
   return (
     <StyledWrapper>
       <StyledContainer>
         <img src="/logo/32-32.svg" alt="twenty-logo" height={64} width={64} />
         <StyledButtonContainer>
-        <TextInput
-          label="Server URL"
-          value={serverBaseUrl}
-          onChange={handleBaseUrlChange}
-          placeholder="My base server URL"
-          error={error}
-          fullWidth
-        />
-        {isAuthenticating ? (
-          <Loader />
-        ) : (
-            isAuthenticated ? <StyledLabel>Connected!</StyledLabel> : <>
+          <TextInput
+            label="Server URL"
+            value={serverBaseUrl}
+            onChange={handleBaseUrlChange}
+            placeholder="My base server URL"
+            error={error}
+            fullWidth
+          />
+          {isAuthenticating ? (
+            <Loader />
+          ) : isAuthenticated ? (
+            <StyledLabel>Connected!</StyledLabel>
+          ) : (
+            <>
               <MainButton
                 title="Connect your account"
                 onClick={() => authenticate()}
@@ -102,13 +106,11 @@ const Options = () => {
               <MainButton
                 title="Sign up"
                 variant="secondary"
-                onClick={() =>
-                  window.open(`${serverBaseUrl}`, '_blank')
-                }
+                onClick={() => window.open(`${serverBaseUrl}`, '_blank')}
                 fullWidth
               />
             </>
-        )}
+          )}
         </StyledButtonContainer>
       </StyledContainer>
     </StyledWrapper>

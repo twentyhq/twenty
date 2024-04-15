@@ -1,5 +1,6 @@
-import { ApolloClient, HttpLink, InMemoryCache, from } from "@apollo/client";
-import { onError } from "@apollo/client/link/error";
+import { ApolloClient, from, HttpLink, InMemoryCache } from '@apollo/client';
+import { onError } from '@apollo/client/link/error';
+
 import { isDefined } from '~/utils/isDefined';
 
 const clearStore = () => {
@@ -10,18 +11,19 @@ const clearStore = () => {
   chrome.storage.local.remove('refreshToken');
 
   chrome.storage.local.set({ isAuthenticated: false });
-}
+};
 
 const getApolloClient = async () => {
   const store = await chrome.storage.local.get();
   const serverUrl = `${
-    isDefined(store.serverBaseUrl) ? store.serverBaseUrl : import.meta.env.VITE_SERVER_BASE_URL
+    isDefined(store.serverBaseUrl)
+      ? store.serverBaseUrl
+      : import.meta.env.VITE_SERVER_BASE_URL
   }/graphql`;
 
-  
   const errorLink = onError(({ graphQLErrors, networkError }) => {
     if (isDefined(graphQLErrors)) {
-      for (const graphQLError of graphQLErrors) { 
+      for (const graphQLError of graphQLErrors) {
         if (graphQLError.message === 'Unauthorized') {
           //TODO: replace this with renewToken mutation
           clearStore();
@@ -34,10 +36,9 @@ const getApolloClient = async () => {
             break;
           }
           default:
+            // eslint-disable-next-line no-console
             console.error(
-              `[GraphQL error]: Message: ${
-                graphQLError.message
-              }, Location: ${
+              `[GraphQL error]: Message: ${graphQLError.message}, Location: ${
                 graphQLError.locations
                   ? JSON.stringify(graphQLError.locations)
                   : graphQLError.locations
@@ -47,15 +48,21 @@ const getApolloClient = async () => {
         }
       }
     }
-    if (networkError) console.error(`[Network error]: ${networkError}`);
+
+    if (isDefined(networkError)) {
+      // eslint-disable-next-line no-console
+      console.error(`[Network error]: ${networkError}`);
+    }
   });
 
-  const httpLink = new HttpLink({ 
-    uri: serverUrl, 
-    headers: isDefined(store.accessToken) ? {
-      Authorization: `Bearer ${store.accessToken.token}`
-    } : {}
-  })
+  const httpLink = new HttpLink({
+    uri: serverUrl,
+    headers: isDefined(store.accessToken)
+      ? {
+          Authorization: `Bearer ${store.accessToken.token}`,
+        }
+      : {},
+  });
 
   const client = new ApolloClient({
     cache: new InMemoryCache(),
