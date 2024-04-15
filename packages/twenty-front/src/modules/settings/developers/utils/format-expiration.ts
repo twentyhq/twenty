@@ -11,6 +11,9 @@ export const formatExpiration = (
 ) => {
   if (isNonEmptyString(expiresAt)) {
     const dateDiff = beautifyDateDiff(expiresAt, undefined, short);
+    if (dateDiff === '+∞') {
+      return withExpiresMention ? 'Never expires' : 'Never';
+    }
     if (dateDiff.includes('-')) {
       return 'Expired';
     }
