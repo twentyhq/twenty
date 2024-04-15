@@ -197,18 +197,6 @@ export class GmailFullSyncService {
             ),
         );
 
-        const messageIdsToDelete = existingMessageChannelMessageAssociations
-          .filter(
-            (messageChannelMessageAssociation) =>
-              !messageExternalIds.includes(
-                messageChannelMessageAssociation.messageExternalId,
-              ),
-          )
-          .map(
-            (messageChannelMessageAssociation) =>
-              messageChannelMessageAssociation.id,
-          );
-
         if (messageIdsToImport && messageIdsToImport.length) {
           await this.cacheStorage.setAdd(
             `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
