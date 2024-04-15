@@ -13,6 +13,7 @@ export const seedCalendarEventParticipants = async (
     .createQueryBuilder()
     .insert()
     .into(`${schemaName}.${tableName}`, [
+      'id',
       'calendarEventId',
       'handle',
       'displayName',
@@ -24,6 +25,7 @@ export const seedCalendarEventParticipants = async (
     .orIgnore()
     .values([
       {
+        id: 'da8f47c3-8055-49ad-b7e4-9c9d5bbc1ecc',
         calendarEventId: '86083141-1c0e-494c-a1b6-85b1c6fefaa5',
         handle: 'christoph.calisto@linkedin.com',
         displayName: 'Christoph Calisto',
@@ -33,6 +35,7 @@ export const seedCalendarEventParticipants = async (
         workspaceMemberId: null,
       },
       {
+        id: 'e1ab9e1b-df6e-438e-a788-11c96dcecdd3',
         calendarEventId: '86083141-1c0e-494c-a1b6-85b1c6fefaa5',
         handle: 'tim@apple.com',
         displayName: 'Tim Apple',
