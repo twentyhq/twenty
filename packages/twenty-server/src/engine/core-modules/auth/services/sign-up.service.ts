@@ -16,6 +16,7 @@ import { assert } from 'src/utils/assert';
 import {
   PASSWORD_REGEX,
   hashPassword,
+  compareHash,
 } from 'src/engine/core-modules/auth/auth.util';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -78,6 +79,15 @@ export class SignUpService {
       },
       relations: ['defaultWorkspace'],
     });
+
+    if (existingUser && existingUser.passwordHash) {
+      const isValid = await compareHash(
+        password || '',
+        existingUser.passwordHash,
+      );
+
+      assert(isValid, 'Wrong password', ForbiddenException);
+    }
 
     if (workspaceInviteHash) {
       return await this.signUpOnExistingWorkspace({
