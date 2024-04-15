@@ -74,6 +74,8 @@ export class GmailFetchMessageContentFromCacheService {
     const accessToken = connectedAccount.accessToken;
     const refreshToken = connectedAccount.refreshToken;
 
+    // TODO: Check if connected account has a authFailedAt date
+
     if (!refreshToken) {
       throw new Error(
         `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId}`,

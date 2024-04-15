@@ -34,6 +34,8 @@ import {
   GoogleCalendarSyncJob,
 } from 'src/modules/calendar/jobs/google-calendar-sync.job';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 
 @Injectable()
 export class GoogleCalendarSyncService {
@@ -61,6 +63,7 @@ export class GoogleCalendarSyncService {
     private readonly eventEmitter: EventEmitter2,
     private readonly calendarEventCleanerService: CalendarEventCleanerService,
     private readonly calendarEventParticipantsService: CalendarEventParticipantService,
+    @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
