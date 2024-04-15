@@ -369,7 +369,7 @@ export class TokenService {
       }
 
       await this.appTokenRepository.save({
-        id: codeChallengeAppToken.userId,
+        id: codeChallengeAppToken.id,
         revokedAt: new Date(),
       });
 
