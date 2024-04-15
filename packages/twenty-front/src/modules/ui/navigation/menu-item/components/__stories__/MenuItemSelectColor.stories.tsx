@@ -1,17 +1,17 @@
 import { Meta, StoryObj } from '@storybook/react';
+import {
+  CatalogDecorator,
+  CatalogDimension,
+  CatalogOptions,
+  CatalogStory,
+  ComponentDecorator,
+} from 'twenty-ui';
 
 import { ColorSampleVariant } from '@/ui/display/color/components/ColorSample';
 import {
   MAIN_COLOR_NAMES,
   ThemeColor,
 } from '@/ui/theme/constants/MainColorNames';
-import {
-  CatalogDecorator,
-  CatalogDimension,
-  CatalogOptions,
-} from '~/testing/decorators/CatalogDecorator';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
-import { CatalogStory } from '~/testing/types';
 
 import { MenuItemSelectColor } from '../MenuItemSelectColor';
 

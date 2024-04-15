@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
@@ -43,7 +45,7 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'messageThreadId',
   })
   @IsNullable()
-  messageThread: MessageThreadObjectMetadata;
+  messageThread: Relation<MessageThreadObjectMetadata>;
 
   @FieldMetadata({
     standardId: messageStandardFieldIds.direction,
@@ -101,7 +103,7 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  messageParticipants: MessageParticipantObjectMetadata[];
+  messageParticipants: Relation<MessageParticipantObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: messageStandardFieldIds.messageChannelMessageAssociations,
@@ -116,5 +118,7 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  messageChannelMessageAssociations: MessageChannelMessageAssociationObjectMetadata[];
+  messageChannelMessageAssociations: Relation<
+    MessageChannelMessageAssociationObjectMetadata[]
+  >;
 }

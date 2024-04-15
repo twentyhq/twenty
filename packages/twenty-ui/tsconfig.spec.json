@@ -1,11 +1,11 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc",
     "module": "commonjs",
     "types": ["jest", "node"]
   },
   "include": [
+    "vite.config.ts",
     "jest.config.ts",
     "setupTests.ts",
     "src/**/*.d.ts",

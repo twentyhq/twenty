@@ -1,5 +1,4 @@
 import { useContext } from 'react';
-import styled from '@emotion/styled';
 
 import { CalendarDayCardContent } from '@/activities/calendar/components/CalendarDayCardContent';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
@@ -9,15 +8,11 @@ type CalendarMonthCardProps = {
   dayTimes: number[];
 };
 
-const StyledCard = styled(Card)`
-  overflow: visible;
-`;
-
 export const CalendarMonthCard = ({ dayTimes }: CalendarMonthCardProps) => {
   const { calendarEventsByDayTime } = useContext(CalendarContext);
 
   return (
-    <StyledCard fullWidth>
+    <Card fullWidth>
       {dayTimes.map((dayTime, index) => {
         const dayCalendarEvents = calendarEventsByDayTime[dayTime] || [];
 
@@ -29,6 +24,6 @@ export const CalendarMonthCard = ({ dayTimes }: CalendarMonthCardProps) => {
           />
         );
       })}
-    </StyledCard>
+    </Card>
   );
 };

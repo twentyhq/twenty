@@ -97,7 +97,7 @@ export const calendarEventStandardFieldIds = {
   conferenceLink: '20202020-35da-43ef-9ca0-e936e9dc237b',
   recurringEventExternalId: '20202020-4b96-43d0-8156-4c7a9717635c',
   calendarChannelEventAssociations: '20202020-bdf8-4572-a2cc-ecbb6bcc3a02',
-  eventParticipants: '20202020-e07e-4ccb-88f5-6f3d00458eec',
+  calendarEventParticipants: '20202020-e07e-4ccb-88f5-6f3d00458eec',
 };
 
 export const commentStandardFieldIds = {

@@ -2,11 +2,11 @@ import { useRef, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { flip, offset, useFloating } from '@floating-ui/react';
+import { Nullable } from 'twenty-ui';
 
 import { DateDisplay } from '@/ui/field/display/components/DateDisplay';
 import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
-import { Nullable } from '~/types/Nullable';
 
 const StyledCalendarContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
@@ -44,6 +44,7 @@ export const DateInput = ({
   value,
   onEnter,
   onEscape,
+  hotkeyScope,
   onClickOutside,
   clearable,
   onChange,

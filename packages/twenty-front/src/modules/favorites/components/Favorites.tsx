@@ -1,11 +1,12 @@
 import styled from '@emotion/styled';
+import { Avatar } from 'twenty-ui';
 
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
-import { Avatar } from '@/users/components/Avatar';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 import { useFavorites } from '../hooks/useFavorites';
 
@@ -63,7 +64,7 @@ export const Favorites = () => {
                       Icon={() => (
                         <StyledAvatar
                           entityId={recordId}
-                          avatarUrl={avatarUrl}
+                          avatarUrl={getImageAbsoluteURIOrBase64(avatarUrl)}
                           type={avatarType}
                           placeholder={labelIdentifier}
                           className="fav-avatar"

@@ -10,8 +10,7 @@ export default async function OssFriends() {
   const listJson = await ossList.json();
 
   return (
-    <>
-      <Background />
+    <Background>
       <ContentContainer>
         <Header />
         <CardContainer>
@@ -20,6 +19,6 @@ export default async function OssFriends() {
           ))}
         </CardContainer>
       </ContentContainer>
-    </>
+    </Background>
   );
 }

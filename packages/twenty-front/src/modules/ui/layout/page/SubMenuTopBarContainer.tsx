@@ -1,7 +1,7 @@
 import { JSX } from 'react';
 import styled from '@emotion/styled';
+import { IconComponent } from 'twenty-ui';
 
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { PageHeader } from './PageHeader';

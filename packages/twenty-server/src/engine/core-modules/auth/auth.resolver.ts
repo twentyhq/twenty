@@ -97,7 +97,7 @@ export class AuthResolver {
 
   @Mutation(() => LoginToken)
   async signUp(@Args() signUpInput: SignUpInput): Promise<LoginToken> {
-    const user = await this.authService.signUp(signUpInput);
+    const user = await this.authService.signInUp(signUpInput);
 
     const loginToken = await this.tokenService.generateLoginToken(user.email);
 

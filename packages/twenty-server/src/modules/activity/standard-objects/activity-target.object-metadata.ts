@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { activityTargetStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -32,7 +34,7 @@ export class ActivityTargetObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'activityId',
   })
   @IsNullable()
-  activity: ActivityObjectMetadata;
+  activity: Relation<ActivityObjectMetadata>;
 
   @FieldMetadata({
     standardId: activityTargetStandardFieldIds.person,
@@ -43,7 +45,7 @@ export class ActivityTargetObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'personId',
   })
   @IsNullable()
-  person: PersonObjectMetadata;
+  person: Relation<PersonObjectMetadata>;
 
   @FieldMetadata({
     standardId: activityTargetStandardFieldIds.company,
@@ -54,7 +56,7 @@ export class ActivityTargetObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'companyId',
   })
   @IsNullable()
-  company: CompanyObjectMetadata;
+  company: Relation<CompanyObjectMetadata>;
 
   @FieldMetadata({
     standardId: activityTargetStandardFieldIds.opportunity,
@@ -65,7 +67,7 @@ export class ActivityTargetObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'opportunityId',
   })
   @IsNullable()
-  opportunity: OpportunityObjectMetadata;
+  opportunity: Relation<OpportunityObjectMetadata>;
 
   @DynamicRelationFieldMetadata((oppositeObjectMetadata) => ({
     standardId: activityTargetStandardFieldIds.custom,
@@ -75,5 +77,5 @@ export class ActivityTargetObjectMetadata extends BaseObjectMetadata {
     joinColumn: `${oppositeObjectMetadata.nameSingular}Id`,
     icon: 'IconBuildingSkyscraper',
   }))
-  custom: CustomObjectMetadata;
+  custom: Relation<CustomObjectMetadata>;
 }

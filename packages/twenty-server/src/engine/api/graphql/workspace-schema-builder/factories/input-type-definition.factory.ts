@@ -30,7 +30,7 @@ export interface InputTypeDefinition {
 export class InputTypeDefinitionFactory {
   constructor(
     @Inject(forwardRef(() => InputTypeFactory))
-    private readonly inputTypeFactory: InputTypeFactory,
+    private readonly inputTypeFactory: CircularDep<InputTypeFactory>,
     private readonly typeMapperService: TypeMapperService,
   ) {}
 

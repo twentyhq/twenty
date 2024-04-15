@@ -1,14 +1,14 @@
 export const gmailSearchFilterNonPersonalEmails =
-  'noreply|no-reply|do_not_reply|no.reply|accounts@|info@|admin@|contact@|hello@|support@|sales@|feedback@|service@|help@|mailer-daemon|notifications|digest|auto|apps|assign|comments|customer-success|enterprise|esign|express|forum|gc@|learn|mailer|marketing|messages|news|notification|payments|receipts|recrutement|security|service|support|team';
+  '*noreply@|*no-reply@|*do_not_reply@|*no.reply@|*info@|*contact@|*hello@|*support@|*feedback@|*service@|*help@';
 
 export const gmailSearchFilterExcludeEmails = (emails: string[]): string => {
   if (emails.length === 0) {
-    return `from:-(${gmailSearchFilterNonPersonalEmails}`;
+    return `from:-(${gmailSearchFilterNonPersonalEmails} -category:promotions -category:social -category:forums`;
   }
 
   return `(in:inbox from:-(${gmailSearchFilterNonPersonalEmails}|${emails.join(
     '|',
   )})|(in:sent to:-(${gmailSearchFilterNonPersonalEmails}|${emails.join(
     '|',
-  )}))`;
+  )})) -category:promotions -category:social -category:forums`;
 };
