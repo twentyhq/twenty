@@ -24,11 +24,13 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(2)};
 `;
 
-const StyledButtonContainer = styled.div`
+const StyledActionContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
   width: 300px;
+  align-items: center;
+  justify-content: center;
 `;
 
 const StyledLabel = styled.span`
@@ -76,6 +78,7 @@ const Options = () => {
 
   const handleBaseUrlChange = (value: string) => {
     setServerBaseUrl(value);
+    setError('');
     chrome.storage.local.set({ serverBaseUrl: value });
   };
 
@@ -83,7 +86,7 @@ const Options = () => {
     <StyledWrapper>
       <StyledContainer>
         <img src="/logo/32-32.svg" alt="twenty-logo" height={64} width={64} />
-        <StyledButtonContainer>
+        <StyledActionContainer>
           <TextInput
             label="Server URL"
             value={serverBaseUrl}
@@ -94,7 +97,8 @@ const Options = () => {
           />
           {isAuthenticating ? (
             <Loader />
-          ) : isAuthenticated ? (
+          ) : 
+            isAuthenticated ? (
             <StyledLabel>Connected!</StyledLabel>
           ) : (
             <>
@@ -110,8 +114,9 @@ const Options = () => {
                 fullWidth
               />
             </>
-          )}
-        </StyledButtonContainer>
+          )
+          }
+        </StyledActionContainer>
       </StyledContainer>
     </StyledWrapper>
   );
