@@ -32,7 +32,9 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
       openOptionsPage();
       break;
     case 'CONNECT':
-      launchOAuth();
+      launchOAuth(({ status, message }) => {
+        sendResponse({ status, message });
+      });
       break;
     default:
       break;
@@ -63,38 +65,41 @@ const generateCodeVerifierAndChallenge = () => {
   return { codeVerifier, codeChallenge };
 };
 
-const launchOAuth = () => {
+const launchOAuth = (callback: ({ status, message }: { status: boolean; message: string }) => void) => {
   const { codeVerifier, codeChallenge } = generateCodeVerifierAndChallenge();
+  const redirectUrl = chrome.identity.getRedirectURL();
   chrome.identity.launchWebAuthFlow(
     {
       url: `${
         import.meta.env.VITE_FRONT_BASE_URL
-      }/authorize?clientId=chrome&codeChallenge=${codeChallenge}`,
+      }/authorize?clientId=chrome&codeChallenge=${codeChallenge}&redirectUrl=${redirectUrl}`,
       interactive: true,
     },
-    async (responseUrl) => {
-      if (typeof responseUrl === 'string') {
-        const url = new URL(responseUrl);
-        const authorizationCode = url.searchParams.get(
-          'authorizationCode',
-        ) as string;
-        const tokens = await exchangeAuthorizationCode({
-          authorizationCode,
-          codeVerifier,
-        });
+  ).then((responseUrl) => {
+    if (typeof responseUrl === 'string') {
+      const url = new URL(responseUrl);
+      const authorizationCode = url.searchParams.get(
+        'authorizationCode',
+      ) as string;
+      exchangeAuthorizationCode({
+        authorizationCode,
+        codeVerifier,
+      }).then((tokens) => {
         if (isDefined(tokens)) {
           chrome.storage.local.set({
             loginToken: tokens.loginToken,
           });
-
+  
           chrome.storage.local.set({
             accessToken: tokens.accessToken,
           });
-
+  
           chrome.storage.local.set({
             refreshToken: tokens.refreshToken,
           });
 
+          callback({ status: true, message: '' });
+  
           chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (isDefined(tabs) && isDefined(tabs[0])) {
               chrome.tabs.sendMessage(tabs[0].id ?? 0, {
@@ -103,9 +108,11 @@ const launchOAuth = () => {
             }
           });
         }
-      }
-    },
-  );
+      });
+    }
+  }).catch((error) => {
+    callback({ status: false, message: error.message });
+  });
 };
 
 // Keep track of the tabs in which the "Add to Twenty" button has already been injected.
