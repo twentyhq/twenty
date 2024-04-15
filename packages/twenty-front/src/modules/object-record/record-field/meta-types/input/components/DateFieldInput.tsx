@@ -1,6 +1,7 @@
 import { useDateField } from '@/object-record/record-field/meta-types/hooks/useDateField';
 import { DateInput } from '@/ui/field/input/components/DateInput';
 import { Nullable } from '~/types/Nullable';
+import { isDefined } from '~/utils/isDefined';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 
@@ -10,19 +11,21 @@ export type DateFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
+  onClear?: FieldInputEvent;
 };
 
 export const DateFieldInput = ({
   onEnter,
   onEscape,
   onClickOutside,
+  onClear,
 }: DateFieldInputProps) => {
   const { fieldValue, hotkeyScope, setDraftValue } = useDateField();
 
   const persistField = usePersistField();
 
   const persistDate = (newDate: Nullable<Date>) => {
-    if (!newDate) {
+    if (!isDefined(newDate)) {
       persistField(null);
     } else {
       const newDateISO = newDate?.toISOString();
@@ -32,7 +35,6 @@ export const DateFieldInput = ({
   };
 
   const handleEnter = (newDate: Nullable<Date>) => {
-    console.log('newDate enter', newDate);
     onEnter?.(() => persistDate(newDate));
   };
 
@@ -51,6 +53,10 @@ export const DateFieldInput = ({
     setDraftValue(newDate?.toDateString() ?? '');
   };
 
+  const handleClear = () => {
+    onClear?.(() => persistDate(null));
+  };
+
   const dateValue = fieldValue ? new Date(fieldValue) : null;
 
   return (
@@ -62,6 +68,7 @@ export const DateFieldInput = ({
       value={dateValue}
       clearable
       onChange={handleChange}
+      onClear={handleClear}
     />
   );
 };

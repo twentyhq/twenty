@@ -110,6 +110,7 @@ export const FieldInput = ({
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}
+          onClear={onSubmit}
         />
       ) : isFieldNumber(fieldDefinition) ? (
         <NumberFieldInput

@@ -5,12 +5,7 @@ import { flip, offset, useFloating } from '@floating-ui/react';
 
 import { DateDisplay } from '@/ui/field/display/components/DateDisplay';
 import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
-import {
-  MONTH_AND_YEAR_DROPDOWN_ID,
-  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-} from '@/ui/input/components/internal/date/components/MonthAndYearDropdown';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 import { Nullable } from '~/types/Nullable';
 
 const StyledCalendarContainer = styled.div`
@@ -42,17 +37,18 @@ export type DateInputProps = {
   clearable?: boolean;
   onChange?: (newDate: Nullable<Date>) => void;
   isDateTimeInput?: boolean;
+  onClear?: () => void;
 };
 
 export const DateInput = ({
   value,
-  hotkeyScope,
   onEnter,
   onEscape,
   onClickOutside,
   clearable,
   onChange,
   isDateTimeInput,
+  onClear,
 }: DateInputProps) => {
   const theme = useTheme();
 
@@ -70,37 +66,24 @@ export const DateInput = ({
     ],
   });
 
-  const { closeDropdown } = useDropdown(MONTH_AND_YEAR_DROPDOWN_ID);
-  const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
-    MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
-  );
-  const { closeDropdown: closeDropdownYearSelect } = useDropdown(
-    MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-  );
-
-  const closeDropdowns = () => {
-    closeDropdownYearSelect();
-    closeDropdownMonthSelect();
-    closeDropdown();
-  };
-
   const handleChange = (newDate: Date | null) => {
     setInternalValue(newDate);
     onChange?.(newDate);
   };
 
-  // TODO: implement events in Internal date picker
-  // useRegisterInputEvents({
-  //   inputRef: wrapperRef,
-  //   inputValue: internalValue,
-  //   onEnter,
-  //   onEscape,
-  //   onClickOutside,
-  //   hotkeyScope,
-  // });
+  const handleClear = () => {
+    setInternalValue(null);
+    onClear?.();
+  };
 
-  console.log({
-    internalValue,
+  useListenClickOutsideV2({
+    refs: [wrapperRef],
+    listenerId: 'DateInput',
+    callback: (event) => {
+      event.stopImmediatePropagation();
+
+      onClickOutside(event, internalValue);
+    },
   });
 
   return (
@@ -120,7 +103,9 @@ export const DateInput = ({
             }}
             clearable={clearable ? clearable : false}
             isDateTimeInput={isDateTimeInput}
-            onClickOutside={onClickOutside}
+            onEnter={onEnter}
+            onEscape={onEscape}
+            onClear={handleClear}
           />
         </StyledCalendarContainer>
       </div>
