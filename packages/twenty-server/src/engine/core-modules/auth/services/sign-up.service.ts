@@ -72,6 +72,12 @@ export class SignUpService {
     if (picture) {
       imagePath = await this.uploadPicture(picture);
     }
+    const existingUser = await this.userRepository.findOne({
+      where: {
+        email: email,
+      },
+      relations: ['defaultWorkspace'],
+    });
 
     if (workspaceInviteHash) {
       return await this.signUpOnExistingWorkspace({
@@ -82,7 +88,8 @@ export class SignUpService {
         lastName,
         imagePath,
       });
-    } else {
+    }
+    if (!existingUser) {
       return await this.signUpOnNewWorkspace({
         email,
         passwordHash,
@@ -91,6 +98,8 @@ export class SignUpService {
         imagePath,
       });
     }
+
+    return existingUser;
   }
 
   private async signUpOnExistingWorkspace({
