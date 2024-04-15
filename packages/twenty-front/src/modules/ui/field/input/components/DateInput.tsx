@@ -1,20 +1,18 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { flip, offset, useFloating } from '@floating-ui/react';
+import { Nullable } from 'twenty-ui';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { DateDisplay } from '@/ui/field/display/components/DateDisplay';
 import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
-import { Nullable } from '~/types/Nullable';
 
 const StyledCalendarContainer = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
-
-  margin-top: 1px;
 
   position: absolute;
 
@@ -38,16 +36,18 @@ export type DateInputProps = {
   hotkeyScope: string;
   clearable?: boolean;
   onChange?: (newDate: Nullable<Date>) => void;
+  isDateTimeInput?: boolean;
 };
 
 export const DateInput = ({
   value,
-  hotkeyScope,
   onEnter,
   onEscape,
+  hotkeyScope,
   onClickOutside,
   clearable,
   onChange,
+  isDateTimeInput,
 }: DateInputProps) => {
   const theme = useTheme();
 
@@ -60,19 +60,15 @@ export const DateInput = ({
     middleware: [
       flip(),
       offset({
-        mainAxis: theme.spacingMultiplicator * 2,
+        mainAxis: theme.spacingMultiplicator * -6,
       }),
     ],
   });
 
-  const handleChange = (newDate: Date) => {
+  const handleChange = (newDate: Date | null) => {
     setInternalValue(newDate);
     onChange?.(newDate);
   };
-
-  useEffect(() => {
-    setInternalValue(value);
-  }, [value]);
 
   useRegisterInputEvents({
     inputRef: wrapperRef,
@@ -99,6 +95,8 @@ export const DateInput = ({
               onEnter(newDate);
             }}
             clearable={clearable ? clearable : false}
+            isDateTimeInput={isDateTimeInput}
+            onClickOutside={onClickOutside}
           />
         </StyledCalendarContainer>
       </div>

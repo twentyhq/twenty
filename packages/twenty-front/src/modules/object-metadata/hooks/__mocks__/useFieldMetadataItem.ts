@@ -16,7 +16,7 @@ const baseFields = `
 
 export const queries = {
   eraseMetadataField: gql`
-    mutation DeleteOneFieldMetadataItem($idToDelete: ID!) {
+    mutation DeleteOneFieldMetadataItem($idToDelete: UUID!) {
       deleteOneField(input: { id: $idToDelete }) {
         ${baseFields}
       }
@@ -24,7 +24,7 @@ export const queries = {
   `,
   activateMetadataField: gql`
     mutation UpdateOneFieldMetadataItem(
-      $idToUpdate: ID!
+      $idToUpdate: UUID!
       $updatePayload: UpdateFieldInput!
     ) {
       updateOneField(input: { id: $idToUpdate, update: $updatePayload }) {

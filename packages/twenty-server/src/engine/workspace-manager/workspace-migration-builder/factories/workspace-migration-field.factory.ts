@@ -11,6 +11,7 @@ import {
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationEntity,
   WorkspaceMigrationTableAction,
+  WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { WorkspaceMigrationFactory } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.factory';
@@ -94,7 +95,7 @@ export class WorkspaceMigrationFieldFactory {
           name: computeObjectTargetTable(
             originalObjectMetadataMap[fieldMetadata.objectMetadataId],
           ),
-          action: 'alter',
+          action: WorkspaceMigrationTableActionType.ALTER,
           columns: this.workspaceMigrationFactory.createColumnActions(
             WorkspaceMigrationColumnActionType.CREATE,
             fieldMetadata,
@@ -132,7 +133,7 @@ export class WorkspaceMigrationFieldFactory {
               fieldMetadataUpdate.current.objectMetadataId
             ],
           ),
-          action: 'alter',
+          action: WorkspaceMigrationTableActionType.ALTER,
           columns: this.workspaceMigrationFactory.createColumnActions(
             WorkspaceMigrationColumnActionType.ALTER,
             fieldMetadataUpdate.current,
@@ -171,7 +172,7 @@ export class WorkspaceMigrationFieldFactory {
           name: computeObjectTargetTable(
             originalObjectMetadataMap[fieldMetadata.objectMetadataId],
           ),
-          action: 'alter',
+          action: WorkspaceMigrationTableActionType.ALTER,
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.DROP,

@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import {
   IconChevronDown,
+  IconComponent,
   IconDotsVertical,
   IconTrash,
   IconUnlink,
@@ -30,7 +31,6 @@ import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-
 import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';

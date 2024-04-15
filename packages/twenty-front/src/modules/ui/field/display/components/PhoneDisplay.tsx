@@ -18,7 +18,7 @@ export const PhoneDisplay = ({ value }: PhoneDisplayProps) => (
           event.stopPropagation();
         }}
       >
-        {parsePhoneNumber(value, 'FR')?.formatInternational() || value}
+        {parsePhoneNumber(value, 'FR')?.formatNational() || value}
       </ContactLink>
     ) : (
       <ContactLink href="#">{value}</ContactLink>

@@ -140,6 +140,7 @@ export const SettingsObjectNewFieldStep1 = () => {
                   <SettingsObjectFieldItemTableRow
                     key={activeMetadataField.id}
                     fieldMetadataItem={activeMetadataField}
+                    isRemoteObjectField={activeObjectMetadataItem.isRemote}
                     ActionIcon={
                       isLabelIdentifierField({
                         fieldMetadataItem: activeMetadataField,

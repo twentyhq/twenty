@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
+import { ComponentDecorator } from 'twenty-ui';
 
 import { FieldMetadataType } from '~/generated/graphql';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { FieldContext } from '../../../../contexts/FieldContext';
 import { useNumberField } from '../../../hooks/useNumberField';
@@ -35,6 +35,7 @@ const meta: Meta = {
               fieldName: 'Number',
               placeHolder: 'Number',
               isPositive: true,
+              objectMetadataNameSingular: 'person',
             },
           },
           hotkeyScope: 'hotkey-scope',
