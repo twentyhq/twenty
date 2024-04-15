@@ -208,8 +208,12 @@ export class AuthService {
       throw new NotFoundException(`Invalid client '${clientId}'`);
     }
 
-    if (!client.redirectUrl && !authorizeAppInput.redirectUrl) {
+    if (!client.redirectUrl || !authorizeAppInput.redirectUrl) {
       throw new NotFoundException(`redirectUrl not found for '${clientId}'`);
+    }
+
+    if (client.redirectUrl !== authorizeAppInput.redirectUrl) {
+      throw new ForbiddenException(`redirectUrl mismatch for '${clientId}'`);
     }
 
     const authorizationCode = crypto.randomBytes(42).toString('hex');
