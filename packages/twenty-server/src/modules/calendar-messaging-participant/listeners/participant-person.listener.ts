@@ -7,13 +7,13 @@ import { objectRecordChangedProperties as objectRecordUpdateEventChangedProperti
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import {
-  MatchParticipantJob,
   MatchParticipantJobData,
-} from 'src/modules/connected-account/jobs/match-participant.job';
+  MatchParticipantJob,
+} from 'src/modules/calendar-messaging-participant/jobs/match-participant.job';
 import {
   UnmatchParticipantJobData,
   UnmatchParticipantJob,
-} from 'src/modules/connected-account/jobs/unmatch-participant.job';
+} from 'src/modules/calendar-messaging-participant/jobs/unmatch-participant.job';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 
 @Injectable()
