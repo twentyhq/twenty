@@ -8,6 +8,7 @@
     "start": "npx vite --host",
     "start:clean": "yarn start --force",
     "build": "yarn tsc && npx vite build && yarn build:inject-runtime-env",
+    "build:sourcemaps": "VITE_BUILD_SOURCEMAP=true NODE_OPTIONS=--max-old-space-size=3000 yarn build",
     "build:inject-runtime-env": "sh ./scripts/inject-runtime-env.sh",
     "tsc": "npx tsc --project tsconfig.app.json",
     "tsc:ci": "yarn tsc --project tsconfig.json",
