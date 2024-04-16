@@ -23,7 +23,7 @@ const StyledContainer = styled.div`
 `;
 
 const StyledContent = styled.div`
-  position: fixed;
+  position: absolute;
 `;
 
 const StyledHeadingText = styled.div`
@@ -37,7 +37,7 @@ const UserGuideTableContents = () => {
     <StyledContainer>
       <StyledContent>
         <StyledHeadingText onClick={() => router.push('/user-guide')}>
-          Table of Contents
+          Table of Content
         </StyledHeadingText>
       </StyledContent>
     </StyledContainer>
