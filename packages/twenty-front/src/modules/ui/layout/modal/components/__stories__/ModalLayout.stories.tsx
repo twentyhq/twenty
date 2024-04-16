@@ -1,15 +1,15 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
-import { UIModal } from '@/ui/layout/modal/components/UIModal';
+import { ModalLayout } from '@/ui/layout/modal/components/ModalLayout';
 
-const meta: Meta<typeof UIModal> = {
-  title: 'UI/Layout/Modal/UIModal',
-  component: UIModal,
+const meta: Meta<typeof ModalLayout> = {
+  title: 'UI/Layout/Modal/ModalLayout',
+  component: ModalLayout,
 };
 
 export default meta;
-type Story = StoryObj<typeof UIModal>;
+type Story = StoryObj<typeof ModalLayout>;
 
 export const Default: Story = {
   args: {
@@ -18,15 +18,15 @@ export const Default: Story = {
     padding: 'medium',
     children: (
       <>
-        <UIModal.Header>Stay in touch</UIModal.Header>
-        <UIModal.Content>
+        <ModalLayout.Header>Stay in touch</ModalLayout.Header>
+        <ModalLayout.Content>
           This is a dummy newletter form so don't bother trying to test it. Not
           that I expect you to, anyways. :)
-        </UIModal.Content>
-        <UIModal.Footer>
+        </ModalLayout.Content>
+        <ModalLayout.Footer>
           By using Twenty, you're opting for the finest CRM experience you'll
           ever encounter.
-        </UIModal.Footer>
+        </ModalLayout.Footer>
       </>
     ),
   },

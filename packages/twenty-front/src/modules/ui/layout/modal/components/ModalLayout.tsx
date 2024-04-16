@@ -87,27 +87,30 @@ const StyledBackDrop = styled(motion.div)`
 /**
  * Modal components
  */
-type UIModalHeaderProps = React.PropsWithChildren & {
+type ModalLayoutHeaderProps = React.PropsWithChildren & {
   className?: string;
 };
 
-const UIModalHeader = ({ children, className }: UIModalHeaderProps) => (
+const ModalLayoutHeader = ({ children, className }: ModalLayoutHeaderProps) => (
   <StyledHeader className={className}>{children}</StyledHeader>
 );
 
-type UIModalContentProps = React.PropsWithChildren & {
+type ModalLayoutContentProps = React.PropsWithChildren & {
   className?: string;
 };
 
-const UIModalContent = ({ children, className }: UIModalContentProps) => (
+const ModalLayoutContent = ({
+  children,
+  className,
+}: ModalLayoutContentProps) => (
   <StyledContent className={className}>{children}</StyledContent>
 );
 
-type UIModalFooterProps = React.PropsWithChildren & {
+type ModalLayoutFooterProps = React.PropsWithChildren & {
   className?: string;
 };
 
-const UIModalFooter = ({ children, className }: UIModalFooterProps) => (
+const ModalLayoutFooter = ({ children, className }: ModalLayoutFooterProps) => (
   <StyledFooter className={className}>{children}</StyledFooter>
 );
 
@@ -117,9 +120,7 @@ const UIModalFooter = ({ children, className }: UIModalFooterProps) => (
 export type ModalSize = 'small' | 'medium' | 'large';
 export type ModalPadding = 'none' | 'small' | 'medium' | 'large';
 
-export type UIModalProps = React.PropsWithChildren & {
-  isOpen?: boolean;
-  onEnter?: () => void;
+export type ModalLayoutProps = React.PropsWithChildren & {
   size?: ModalSize;
   padding?: ModalPadding;
   className?: string;
@@ -132,16 +133,15 @@ const modalVariants = {
   exit: { opacity: 0 },
 };
 
-// This component should be used over Modal when seeking a modal feel for what is actually a page
-export const UIModal = ({
-  isOpen = false,
+// This component should be used over Modal when seeking a modal feel without modal state (hotkeyScope etc)
+export const ModalLayout = ({
   children,
   size = 'medium',
   padding = 'medium',
   modalRef,
   className,
-}: UIModalProps) => {
-  return isOpen ? (
+}: ModalLayoutProps) => {
+  return (
     <StyledBackDrop>
       <StyledModalDiv
         // framer-motion seems to have typing problems with refs
@@ -160,11 +160,9 @@ export const UIModal = ({
         {children}
       </StyledModalDiv>
     </StyledBackDrop>
-  ) : (
-    <></>
   );
 };
 
-UIModal.Header = UIModalHeader;
-UIModal.Content = UIModalContent;
-UIModal.Footer = UIModalFooter;
+ModalLayout.Header = ModalLayoutHeader;
+ModalLayout.Content = ModalLayoutContent;
+ModalLayout.Footer = ModalLayoutFooter;

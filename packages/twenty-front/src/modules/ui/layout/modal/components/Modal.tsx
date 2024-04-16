@@ -1,7 +1,10 @@
 import React, { useEffect, useRef } from 'react';
 import { Key } from 'ts-key-enum';
 
-import { UIModal, UIModalProps } from '@/ui/layout/modal/components/UIModal';
+import {
+  ModalLayout,
+  ModalLayoutProps,
+} from '@/ui/layout/modal/components/ModalLayout';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import {
@@ -11,9 +14,11 @@ import {
 
 import { ModalHotkeyScope } from './types/ModalHotkeyScope';
 
-type ModalProps = UIModalProps & {
-  onClose?: () => void;
+type ModalProps = ModalLayoutProps & {
+  isOpen?: boolean;
   hotkeyScope?: ModalHotkeyScope;
+  onClose?: () => void;
+  onEnter?: () => void;
 };
 
 export const Modal = ({
@@ -69,20 +74,20 @@ export const Modal = ({
     mode: ClickOutsideMode.comparePixels,
   });
 
-  return (
-    <UIModal
-      isOpen={isOpen}
-      onEnter={onEnter}
+  return isOpen ? (
+    <ModalLayout
       className={className}
       modalRef={modalRef}
       size={size}
       padding={padding}
     >
       {children}
-    </UIModal>
+    </ModalLayout>
+  ) : (
+    <></>
   );
 };
 
-Modal.Header = UIModal.Header;
-Modal.Content = UIModal.Content;
-Modal.Footer = UIModal.Footer;
+Modal.Header = ModalLayout.Header;
+Modal.Content = ModalLayout.Content;
+Modal.Footer = ModalLayout.Footer;
