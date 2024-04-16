@@ -20,7 +20,6 @@ export class GmailFullSyncJob implements MessageQueueJob<GmailFullSyncJobData> {
   ) {}
 
   async handle(data: GmailFullSyncJobData): Promise<void> {
-    console.log(data);
     this.logger.log(
       `gmail full-sync for workspace ${data.workspaceId} and account ${data.connectedAccountId}`,
     );
