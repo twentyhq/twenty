@@ -6,6 +6,12 @@ import { Nullable } from 'twenty-ui';
 
 import { DateDisplay } from '@/ui/field/display/components/DateDisplay';
 import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
+import {
+  MONTH_AND_YEAR_DROPDOWN_ID,
+  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+} from '@/ui/input/components/internal/date/components/MonthAndYearDropdown';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 
 const StyledCalendarContainer = styled.div`
@@ -75,12 +81,23 @@ export const DateInput = ({
     onClear?.();
   };
 
+  const { closeDropdown } = useDropdown(MONTH_AND_YEAR_DROPDOWN_ID);
+  const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
+    MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+  );
+  const { closeDropdown: closeDropdownYearSelect } = useDropdown(
+    MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+  );
+
   useListenClickOutsideV2({
     refs: [wrapperRef],
     listenerId: 'DateInput',
     callback: (event) => {
       event.stopImmediatePropagation();
 
+      closeDropdownYearSelect();
+      closeDropdownMonthSelect();
+      closeDropdown();
       onClickOutside(event, internalValue);
     },
   });

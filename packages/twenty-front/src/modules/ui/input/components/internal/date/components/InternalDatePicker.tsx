@@ -39,6 +39,10 @@ const StyledContainer = styled.div`
     padding: 0 !important;
   }
 
+  & .react-datepicker__triangle {
+    display: none;
+  }
+
   & .react-datepicker__triangle::after {
     display: none;
   }
