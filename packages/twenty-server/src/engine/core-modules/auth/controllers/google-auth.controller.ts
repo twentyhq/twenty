@@ -23,7 +23,7 @@ export class GoogleAuthController {
   }
 
   @Get('redirect')
-  @UseGuards(GoogleOauthGuard)
+  @UseGuards(GoogleProviderEnabledGuard, GoogleOauthGuard)
   async googleAuthRedirect(@Req() req: GoogleRequest, @Res() res: Response) {
     const { firstName, lastName, email, picture, workspaceInviteHash } =
       req.user;

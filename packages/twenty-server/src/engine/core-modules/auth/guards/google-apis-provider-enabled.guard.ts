@@ -34,21 +34,26 @@ export class GoogleAPIsProviderEnabledGuard implements CanActivate {
       throw new NotFoundException('Google apis auth is not enabled');
     }
 
-    const { workspaceId } = await this.tokenService.verifyTransientToken(
-      getRequest(context)?.query?.transientToken ?? '',
-    );
+    const transientToken = getRequest(context)?.query?.transientToken;
 
-    const isCalendarEnabledFlag = await this.featureFlagRepository.findOneBy({
-      workspaceId,
-      key: FeatureFlagKeys.IsCalendarEnabled,
-      value: true,
-    });
+    const scopeConfig = {
+      isCalendarEnabled: false,
+    };
 
-    const isCalendarEnabled = !!isCalendarEnabledFlag?.value;
+    if (transientToken && typeof transientToken === 'string') {
+      const { workspaceId } =
+        await this.tokenService.verifyTransientToken(transientToken);
 
-    new GoogleAPIsStrategy(this.environmentService, {
-      isCalendarEnabled,
-    });
+      const isCalendarEnabledFlag = await this.featureFlagRepository.findOneBy({
+        workspaceId,
+        key: FeatureFlagKeys.IsCalendarEnabled,
+        value: true,
+      });
+
+      scopeConfig.isCalendarEnabled = !!isCalendarEnabledFlag?.value;
+    }
+
+    new GoogleAPIsStrategy(this.environmentService, scopeConfig);
 
     return true;
   }
