@@ -2,6 +2,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
+import { ArticleContent } from '@/app/_components/ui/layout/ArticleContent';
 import { Breadcrumbs } from '@/app/_components/ui/layout/Breadcrumbs';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
@@ -63,36 +64,6 @@ const StyledRectangle = styled.div`
   background: ${Theme.background.transparent.medium};
 `;
 
-const StyledContent = styled.div`
-  h1 {
-    margin-top: 64px;
-    font-family: var(--font-gabarito);
-  }
-
-  h2 {
-    margin: 64px 0px 32px;
-    font-family: var(--font-gabarito);
-  }
-
-  p {
-    margin: 32px 0px;
-    color: ${Theme.text.color.secondary};
-    font-family: ${Theme.font.family};
-    line-height: 28.8px;
-  }
-
-  li {
-    margin: 32px 0px;
-    line-height: 28.8px;
-    font-family: ${Theme.font.family};
-    color: ${Theme.text.color.secondary};
-  }
-
-  @media (min-width: 2200px) {
-    max-width: 1050px;
-  }
-`;
-
 const StyledImageContainer = styled.div`
   border: 2px solid ${Theme.text.color.primary};
   display: flex;
@@ -141,7 +112,7 @@ export default function UserGuideContent({ item }: { item: FileContent }) {
           </StyledHeaderInfoSection>
           <StyledRectangle />
         </StyledHeader>
-        <StyledContent>{item.content}</StyledContent>
+        <ArticleContent>{item.content}</ArticleContent>
       </StyledWrapper>
     </StyledContainer>
   );
