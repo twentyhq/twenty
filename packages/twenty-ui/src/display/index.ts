@@ -1,3 +1,9 @@
+export * from './avatar/components/Avatar';
+export * from './avatar/components/AvatarGroup';
+export * from './checkmark/components/AnimatedCheckmark';
+export * from './checkmark/components/Checkmark';
+export * from './chip/components/Chip';
+export * from './chip/components/EntityChip';
 export * from './icon/components/IconAddressBook';
 export * from './icon/components/IconGmail';
 export * from './icon/components/IconGoogle';
@@ -9,3 +15,5 @@ export * from './icon/hooks/useIcons';
 export * from './icon/providers/IconsProvider';
 export * from './icon/states/iconsState';
 export * from './icon/types/IconComponent';
+export * from './tooltip/AppTooltip';
+export * from './tooltip/OverflowingTextWithTooltip';

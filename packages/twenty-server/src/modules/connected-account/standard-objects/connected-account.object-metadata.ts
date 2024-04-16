@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
@@ -75,7 +77,7 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
     icon: 'IconUserCircle',
     joinColumn: 'accountOwnerId',
   })
-  accountOwner: WorkspaceMemberObjectMetadata;
+  accountOwner: Relation<WorkspaceMemberObjectMetadata>;
 
   @FieldMetadata({
     standardId: connectedAccountStandardFieldIds.lastSyncHistoryId,
@@ -108,7 +110,7 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
     inverseSideTarget: () => MessageChannelObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  messageChannels: MessageChannelObjectMetadata[];
+  messageChannels: Relation<MessageChannelObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: connectedAccountStandardFieldIds.calendarChannels,
@@ -125,5 +127,5 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
   @Gate({
     featureFlag: FeatureFlagKeys.IsCalendarEnabled,
   })
-  calendarChannels: CalendarChannelObjectMetadata[];
+  calendarChannels: Relation<CalendarChannelObjectMetadata[]>;
 }

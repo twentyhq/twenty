@@ -60,7 +60,7 @@ export class TokenService {
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly emailService: EmailService,
-  ) { }
+  ) {}
 
   async generateAccessToken(
     userId: string,
@@ -322,13 +322,13 @@ export class TokenService {
       assert(
         authorizationCodeAppToken,
         'Authorization code does not exist',
-        ForbiddenException,
+        NotFoundException,
       );
 
       assert(
         authorizationCodeAppToken.expiresAt.getTime() >= Date.now(),
         'Authorization code expired.',
-        NotFoundException,
+        ForbiddenException,
       );
 
       const codeChallenge = crypto
@@ -355,7 +355,7 @@ export class TokenService {
       assert(
         codeChallengeAppToken.expiresAt.getTime() >= Date.now(),
         'code challenge expired.',
-        NotFoundException,
+        ForbiddenException,
       );
 
       assert(
@@ -363,6 +363,15 @@ export class TokenService {
         'authorization code / code verifier was not created by same client',
         ForbiddenException,
       );
+
+      if (codeChallengeAppToken.revokedAt) {
+        throw new ForbiddenException('Token has been revoked.');
+      }
+
+      await this.appTokenRepository.save({
+        id: codeChallengeAppToken.id,
+        revokedAt: new Date(),
+      });
 
       userId = codeChallengeAppToken.userId;
     }
@@ -373,7 +382,9 @@ export class TokenService {
     });
 
     if (!user) {
-      throw new NotFoundException('User who generated the token does not exist');
+      throw new NotFoundException(
+        'User who generated the token does not exist',
+      );
     }
 
     if (!user.defaultWorkspace) {

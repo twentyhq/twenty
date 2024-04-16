@@ -27,6 +27,8 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { CleanInactiveWorkspaceJob } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-inactive-workspace.job';
+import { MatchParticipantJob } from 'src/modules/calendar-messaging-participant/jobs/match-participant.job';
+import { UnmatchParticipantJob } from 'src/modules/calendar-messaging-participant/jobs/unmatch-participant.job';
 import { GoogleCalendarSyncCronJob } from 'src/modules/calendar/crons/jobs/google-calendar-sync.cron.job';
 import { CalendarCreateCompanyAndContactAfterSyncJob } from 'src/modules/calendar/jobs/calendar-create-company-and-contact-after-sync.job';
 import { DeleteConnectedAccountAssociatedCalendarDataJob } from 'src/modules/calendar/jobs/delete-connected-account-associated-calendar-data.job';
@@ -36,8 +38,6 @@ import { CalendarEventParticipantModule } from 'src/modules/calendar/services/ca
 import { GoogleCalendarSyncModule } from 'src/modules/calendar/services/google-calendar-sync.module';
 import { AutoCompaniesAndContactsCreationModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/auto-companies-and-contacts-creation.module';
 import { CreateCompanyAndContactJob } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
-import { MatchParticipantJob } from 'src/modules/connected-account/jobs/match-participant.job';
-import { UnmatchParticipantJob } from 'src/modules/connected-account/jobs/unmatch-participant.job';
 import { GoogleAPIRefreshAccessTokenModule } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.module';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
@@ -48,8 +48,8 @@ import { GmailFullSyncJob } from 'src/modules/messaging/jobs/gmail-full-sync.job
 import { GmailPartialSyncJob } from 'src/modules/messaging/jobs/gmail-partial-sync.job';
 import { MessagingCreateCompanyAndContactAfterSyncJob } from 'src/modules/messaging/jobs/messaging-create-company-and-contact-after-sync.job';
 import { GmailFetchMessageContentFromCacheModule } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.module';
-import { GmailFullSynV2Module } from 'src/modules/messaging/services/gmail-full-sync-v2/gmail-full-sync.v2.module';
-import { GmailPartialSyncV2Module } from 'src/modules/messaging/services/gmail-partial-sync-v2/gmail-partial-sync-v2.module';
+import { GmailFullSyncModule } from 'src/modules/messaging/services/gmail-full-sync/gmail-full-sync.module';
+import { GmailPartialSyncModule } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync.module';
 import { MessageParticipantModule } from 'src/modules/messaging/services/message-participant/message-participant.module';
 import { ThreadCleanerModule } from 'src/modules/messaging/services/thread-cleaner/thread-cleaner.module';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
@@ -81,9 +81,9 @@ import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-obj
       MessageChannelObjectMetadata,
       EventObjectMetadata,
     ]),
-    GmailFullSynV2Module,
+    GmailFullSyncModule,
     GmailFetchMessageContentFromCacheModule,
-    GmailPartialSyncV2Module,
+    GmailPartialSyncModule,
     CalendarEventParticipantModule,
   ],
   providers: [

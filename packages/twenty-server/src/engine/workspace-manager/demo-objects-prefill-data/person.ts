@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 
-import peopleDemo from './people-demo.json';
+import { peopleDemo } from 'src/engine/workspace-manager/demo-objects-prefill-data/people-demo.json';
 
 export const personPrefillDemoData = async (
   entityManager: EntityManager,

@@ -1,12 +1,23 @@
-import { useState } from 'react';
 import ReactDatePicker from 'react-datepicker';
 import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
-import { IconCalendarX } from 'twenty-ui';
+import { Key } from 'ts-key-enum';
+import { IconCalendarX, IconChevronLeft, IconChevronRight } from 'twenty-ui';
 
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
+import {
+  MONTH_AND_YEAR_DROPDOWN_ID,
+  MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+  MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+  MonthAndYearDropdown,
+} from '@/ui/input/components/internal/date/components/MonthAndYearDropdown';
+import { TimeInput } from '@/ui/input/components/internal/date/components/TimeInput';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
 import { StyledHoverableMenuItemBase } from '@/ui/navigation/menu-item/internals/components/StyledMenuItemBase';
 import { OVERLAY_BACKGROUND } from '@/ui/theme/constants/OverlayBackground';
+import { isDefined } from '~/utils/isDefined';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
@@ -28,6 +39,10 @@ const StyledContainer = styled.div`
     padding: 0 !important;
   }
 
+  & .react-datepicker__triangle {
+    display: none;
+  }
+
   & .react-datepicker__triangle::after {
     display: none;
   }
@@ -45,13 +60,21 @@ const StyledContainer = styled.div`
   & .react-datepicker__header {
     background: transparent;
     border: none;
+    padding: 0;
+  }
+
+  &
+    .react-datepicker__input-time-container
+    .react-datepicker-time__input-container
+    .react-datepicker-time__input {
+    outline: none;
   }
 
   & .react-datepicker__header__dropdown {
     display: flex;
     color: ${({ theme }) => theme.font.color.primary};
     margin-left: ${({ theme }) => theme.spacing(1)};
-    margin-bottom: ${({ theme }) => theme.spacing(1)};
+    margin-bottom: ${({ theme }) => theme.spacing(10)};
   }
 
   & .react-datepicker__month-dropdown-container,
@@ -177,7 +200,7 @@ const StyledContainer = styled.div`
   }
   & .react-datepicker__navigation--previous {
     right: 38px;
-    top: 8px;
+    top: 6px;
     left: auto;
 
     & > span {
@@ -187,7 +210,7 @@ const StyledContainer = styled.div`
 
   & .react-datepicker__navigation--next {
     right: 6px;
-    top: 8px;
+    top: 6px;
 
     & > span {
       margin-left: 6px;
@@ -239,127 +262,171 @@ const StyledButton = styled(MenuItemLeftContent)`
   justify-content: start;
 `;
 
+const StyledCustomDatePickerHeader = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(2)};
+
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledMonthText = styled.div`
+  color: ${({ theme }) => theme.font.color.secondary};
+  font-family: ${({ theme }) => theme.font.family};
+  font-size: ${({ theme }) => theme.font.size.md};
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
 export type InternalDatePickerProps = {
-  date: Date | null;
+  date: Date;
   onMouseSelect?: (date: Date | null) => void;
-  onChange?: (date: Date) => void;
+  onChange?: (date: Date | null) => void;
   clearable?: boolean;
   isDateTimeInput?: boolean;
+  onEnter?: (date: Date | null) => void;
+  onEscape?: (date: Date | null) => void;
+  keyboardEventsDisabled?: boolean;
+  onClear?: () => void;
 };
-
-const StyledInputContainer = styled.div`
-  width: 100%;
-  display: flex;
-  border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
-  height: ${({ theme }) => theme.spacing(8)};
-`;
-
-const StyledInput = styled.input`
-  background: ${({ theme }) => theme.background.secondary};
-  border: none;
-  color: ${({ theme }) => theme.font.color.primary};
-  outline: none;
-  padding: 8px;
-  font-weight: 500;
-  font-size: ${({ theme }) => theme.font.size.md};
-  width: 100%;
-`;
-
-const PICKER_DATE_FORMAT = 'MM/dd/yyyy';
 
 export const InternalDatePicker = ({
   date,
   onChange,
   onMouseSelect,
+  onEnter,
+  onEscape,
   clearable = true,
   isDateTimeInput,
+  keyboardEventsDisabled,
+  onClear,
 }: InternalDatePickerProps) => {
+  const internalDate = date ?? new Date();
+
+  const monthLabel = DateTime.fromJSDate(internalDate).toFormat('LLLL');
+  const yearLabel = DateTime.fromJSDate(internalDate).toFormat('yyyy');
+
+  const { closeDropdown } = useDropdown(MONTH_AND_YEAR_DROPDOWN_ID);
+  const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
+    MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+  );
+  const { closeDropdown: closeDropdownYearSelect } = useDropdown(
+    MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+  );
+
   const handleClear = () => {
-    onMouseSelect?.(null);
+    closeDropdowns();
+    onClear?.();
   };
 
-  const initialDate = date
-    ? DateTime.fromJSDate(date).toFormat(PICKER_DATE_FORMAT)
-    : DateTime.now().toFormat(PICKER_DATE_FORMAT);
+  const closeDropdowns = () => {
+    closeDropdownYearSelect();
+    closeDropdownMonthSelect();
+    closeDropdown();
+  };
 
-  const [dateValue, setDateValue] = useState(initialDate);
+  const handleMouseSelect = (newDate: Date) => {
+    closeDropdowns();
+    onMouseSelect?.(newDate);
+  };
 
-  const dateValueAsJSDate = DateTime.fromFormat(dateValue, PICKER_DATE_FORMAT)
-    .isValid
-    ? DateTime.fromFormat(dateValue, PICKER_DATE_FORMAT).toJSDate()
-    : null;
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (isDefined(keyboardEventsDisabled) && keyboardEventsDisabled) {
+      return;
+    }
+
+    switch (event.key) {
+      case Key.Enter: {
+        event.stopPropagation();
+        event.preventDefault();
+
+        closeDropdowns();
+        onEnter?.(internalDate);
+        break;
+      }
+      case Key.Escape: {
+        event.stopPropagation();
+        event.preventDefault();
+
+        closeDropdowns();
+        onEscape?.(internalDate);
+        break;
+      }
+    }
+  };
 
   return (
-    <StyledContainer>
+    <StyledContainer onKeyDown={handleKeyDown}>
       <div className={clearable ? 'clearable ' : ''}>
-        <StyledInputContainer>
-          <StyledInput
-            type="text"
-            placeholder={`Type date${
-              isDateTimeInput ? ' and time' : ' (mm/dd/yyyy)'
-            }`}
-            inputMode="numeric"
-            value={dateValue}
-            onChange={(e) => {
-              const inputValue = e.target.value;
-              setDateValue(inputValue);
-
-              if (!isDateTimeInput) {
-                const parsedInputDate = DateTime.fromFormat(
-                  inputValue,
-                  PICKER_DATE_FORMAT,
-                  { zone: 'utc' },
-                );
-
-                const isValid = parsedInputDate.isValid;
-
-                if (isValid) {
-                  onChange?.(parsedInputDate.toJSDate());
-                }
-              } else {
-                // TODO: implement time also
-                const parsedInputDate = DateTime.fromFormat(
-                  inputValue,
-                  PICKER_DATE_FORMAT,
-                  { zone: 'utc' },
-                );
-
-                const isValid = parsedInputDate.isValid;
-
-                if (isValid) {
-                  onChange?.(parsedInputDate.toJSDate());
-                }
-              }
-            }}
-          />
-        </StyledInputContainer>
-
         <ReactDatePicker
           open={true}
-          selected={dateValueAsJSDate}
-          value={dateValue}
-          showMonthDropdown
-          showYearDropdown
-          onChange={() => {
-            // We need to use onSelect here but onChange is almost redundant with onSelect but is require
+          selected={internalDate}
+          openToDate={internalDate}
+          onChange={(newDate) => {
+            onChange?.(newDate);
           }}
-          customInput={<></>}
+          customInput={
+            <DateTimeInput
+              date={internalDate}
+              isDateTimeInput={isDateTimeInput}
+              onChange={onChange}
+            />
+          }
+          onMonthChange={(newDate) => {
+            onChange?.(newDate);
+          }}
+          onYearChange={(newDate) => {
+            onChange?.(newDate);
+          }}
+          renderCustomHeader={({
+            decreaseMonth,
+            increaseMonth,
+            prevMonthButtonDisabled,
+            nextMonthButtonDisabled,
+          }) => (
+            <>
+              <DateTimeInput
+                date={internalDate}
+                isDateTimeInput={isDateTimeInput}
+                onChange={onChange}
+              />
+              <StyledCustomDatePickerHeader>
+                {isDateTimeInput && (
+                  <TimeInput date={internalDate} onChange={onChange} />
+                )}
+                <MonthAndYearDropdown date={internalDate} onChange={onChange} />
+                <LightIconButton
+                  Icon={IconChevronLeft}
+                  onClick={() => decreaseMonth()}
+                  size="medium"
+                  disabled={prevMonthButtonDisabled}
+                />
+                <LightIconButton
+                  Icon={IconChevronRight}
+                  onClick={() => increaseMonth()}
+                  size="medium"
+                  disabled={nextMonthButtonDisabled}
+                />
+              </StyledCustomDatePickerHeader>
+              <StyledMonthText>
+                {monthLabel} - {yearLabel}
+              </StyledMonthText>
+            </>
+          )}
           onSelect={(date: Date, event) => {
-            // Setting the time to midnight might sometimes return the previous day
-            // We set to 21:00 to avoid any timezone issues
-            const dateForDateField = new Date(date.setHours(21, 0, 0, 0));
-
-            setDateValue(
-              DateTime.fromJSDate(date).toFormat(PICKER_DATE_FORMAT),
-            );
+            const dateUTC = DateTime.fromJSDate(date, {
+              zone: 'utc',
+            }).toJSDate();
 
             if (event?.type === 'click') {
-              onMouseSelect?.(isDateTimeInput ? date : dateForDateField);
+              handleMouseSelect?.(dateUTC);
             } else {
-              onChange?.(isDateTimeInput ? date : dateForDateField);
+              onChange?.(dateUTC);
             }
           }}
-        ></ReactDatePicker>
+        />
       </div>
       {clearable && (
         <StyledButtonContainer onClick={handleClear} isMenuOpen={false}>

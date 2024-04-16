@@ -1,6 +1,7 @@
+import { Nullable } from 'twenty-ui';
+
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
-import { Nullable } from '~/types/Nullable';
 
 export type ObjectRecordConnection<T extends ObjectRecord = ObjectRecord> = {
   __typename?: string;

@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { viewFilterStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -60,5 +62,5 @@ export class ViewFilterObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'viewId',
   })
   @IsNullable()
-  view: ViewObjectMetadata;
+  view: Relation<ViewObjectMetadata>;
 }

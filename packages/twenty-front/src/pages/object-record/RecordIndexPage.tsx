@@ -9,7 +9,9 @@ import { useSelectedTableCellEditMode } from '@/object-record/record-table/recor
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
+import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { RecordIndexPageHeader } from '~/pages/object-record/RecordIndexPageHeader';
+import { capitalize } from '~/utils/string/capitalize';
 
 const StyledIndexContainer = styled.div`
   display: flex;
@@ -40,6 +42,7 @@ export const RecordIndexPage = () => {
 
   return (
     <PageContainer>
+      <PageTitle title={`${capitalize(objectNamePlural)}`} />
       <RecordIndexPageHeader createRecord={handleAddButtonClick} />
       <PageBody>
         <StyledIndexContainer>

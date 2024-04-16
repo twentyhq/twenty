@@ -11,7 +11,6 @@ import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
-import { seedCalendarEvents } from 'src/database/typeorm-seeds/workspace/calendar-events';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import {
   SEED_APPLE_WORKSPACE_ID,
@@ -24,6 +23,10 @@ import { seedMessageChannelMessageAssociation } from 'src/database/typeorm-seeds
 import { seedMessageParticipant } from 'src/database/typeorm-seeds/workspace/message-participants';
 import { seedMessageThread } from 'src/database/typeorm-seeds/workspace/message-threads';
 import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
+import { seedCalendarEvents } from 'src/database/typeorm-seeds/workspace/calendar-events';
+import { seedCalendarChannels } from 'src/database/typeorm-seeds/workspace/calendar-channel';
+import { seedCalendarChannelEventAssociations } from 'src/database/typeorm-seeds/workspace/calendar-channel-event-association';
+import { seedCalendarEventParticipants } from 'src/database/typeorm-seeds/workspace/calendar-event-participants';
 
 // TODO: implement dry-run
 @Command({
@@ -117,7 +120,6 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
             await seedCompanies(entityManager, dataSourceMetadata.schema);
             await seedPeople(entityManager, dataSourceMetadata.schema);
             await seedOpportunity(entityManager, dataSourceMetadata.schema);
-            await seedCalendarEvents(entityManager, dataSourceMetadata.schema);
             await seedWorkspaceMember(
               entityManager,
               dataSourceMetadata.schema,
@@ -140,6 +142,23 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
                 dataSourceMetadata.schema,
               );
               await seedMessageParticipant(
+                entityManager,
+                dataSourceMetadata.schema,
+              );
+
+              await seedCalendarEvents(
+                entityManager,
+                dataSourceMetadata.schema,
+              );
+              await seedCalendarChannels(
+                entityManager,
+                dataSourceMetadata.schema,
+              );
+              await seedCalendarChannelEventAssociations(
+                entityManager,
+                dataSourceMetadata.schema,
+              );
+              await seedCalendarEventParticipants(
                 entityManager,
                 dataSourceMetadata.schema,
               );

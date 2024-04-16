@@ -16,6 +16,7 @@ export type LightIconButtonGroupProps = Pick<
   iconButtons: {
     Icon: IconComponent;
     onClick?: (event: MouseEvent<any>) => void;
+    disabled?: boolean;
   }[];
 };
 

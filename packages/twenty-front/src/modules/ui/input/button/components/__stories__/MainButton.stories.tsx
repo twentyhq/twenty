@@ -1,8 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
-import { IconBrandGoogle } from 'twenty-ui';
-
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { ComponentDecorator, IconBrandGoogle } from 'twenty-ui';
 
 import { MainButton } from '../MainButton';
 
