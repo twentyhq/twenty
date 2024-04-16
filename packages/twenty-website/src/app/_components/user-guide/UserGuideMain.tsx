@@ -13,6 +13,7 @@ const StyledContainer = styled.div`
     flexDirection: 'row',
     justifyContent: 'center',
   })};
+  margin-top: 64px;
 `;
 
 const StyledWrapper = styled.div`

@@ -16,6 +16,7 @@ const StyledContainer = styled('div')`
     borderBottom: `1px solid ${Theme.background.transparent.medium}`,
     fontFamily: `${Theme.font.family}`,
   })};
+  margin-top: 64px;
 `;
 
 const StyledWrapper = styled.div`
