@@ -61,7 +61,7 @@ export class WorkspaceMigrationService {
     workspaceId: string,
     migrations: WorkspaceMigrationTableAction[],
   ) {
-    await this.workspaceMigrationRepository.save({
+    return this.workspaceMigrationRepository.save({
       name,
       migrations,
       workspaceId,

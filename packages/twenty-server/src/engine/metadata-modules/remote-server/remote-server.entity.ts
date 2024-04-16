@@ -5,9 +5,13 @@ import {
   CreateDateColumn,
   Entity,
   Generated,
+  OneToMany,
   PrimaryGeneratedColumn,
+  Relation,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { RemoteTableEntity } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.entity';
 
 export enum RemoteServerType {
   POSTGRES_FDW = 'postgres_fdw',
@@ -50,6 +54,11 @@ export class RemoteServerEntity<T extends RemoteServerType> {
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
+
+  @OneToMany(() => RemoteTableEntity, (table) => table.server, {
+    cascade: true,
+  })
+  tables: Relation<RemoteTableEntity[]>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
