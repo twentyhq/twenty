@@ -364,32 +364,42 @@ export class RemoteTableService {
       );
     }
 
-    await this.workspaceMigrationService.createCustomMigration(
-      generateMigrationName(`create-foreign-table-${localTableName}`),
-      workspaceId,
-      [
-        {
-          name: localTableName,
-          action: WorkspaceMigrationTableActionType.CREATE_FOREIGN_TABLE,
-          foreignTable: {
-            columns: remoteTableColumns.map(
-              (column) =>
-                ({
-                  columnName: column.columnName,
-                  columnType: column.dataType,
-                }) satisfies WorkspaceMigrationColumnDefinition,
-            ),
-            referencedTableName: remoteTableInput.name,
-            referencedTableSchema: remoteTableInput.schema,
-            foreignDataWrapperId: remoteServer.foreignDataWrapperId,
-          } satisfies WorkspaceMigrationForeignTable,
-        },
-      ],
-    );
+    const workspaceMigration =
+      await this.workspaceMigrationService.createCustomMigration(
+        generateMigrationName(`create-foreign-table-${localTableName}`),
+        workspaceId,
+        [
+          {
+            name: localTableName,
+            action: WorkspaceMigrationTableActionType.CREATE_FOREIGN_TABLE,
+            foreignTable: {
+              columns: remoteTableColumns.map(
+                (column) =>
+                  ({
+                    columnName: column.columnName,
+                    columnType: column.dataType,
+                  }) satisfies WorkspaceMigrationColumnDefinition,
+              ),
+              referencedTableName: remoteTableInput.name,
+              referencedTableSchema: remoteTableInput.schema,
+              foreignDataWrapperId: remoteServer.foreignDataWrapperId,
+            } satisfies WorkspaceMigrationForeignTable,
+          },
+        ],
+      );
 
-    await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
-      workspaceId,
-    );
+    // TODO: This should be done in a transaction. Waiting for a global refactoring of transaction management.
+    try {
+      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+        workspaceId,
+      );
+    } catch (exception) {
+      this.workspaceMigrationService.deleteById(workspaceMigration.id);
+
+      throw new BadRequestException(
+        'Could not create foreign table. Please check if the table already exists.',
+      );
+    }
   }
 
   private async createRemoteTableMetadata(

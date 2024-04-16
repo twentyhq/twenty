@@ -69,7 +69,11 @@ export class WorkspaceMigrationService {
     });
   }
 
-  public async delete(workspaceId: string) {
+  public async deleteAllWithinWorkspace(workspaceId: string) {
     await this.workspaceMigrationRepository.delete({ workspaceId });
+  }
+
+  public async deleteById(id: string) {
+    await this.workspaceMigrationRepository.delete({ id });
   }
 }
