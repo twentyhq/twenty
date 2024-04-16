@@ -11,7 +11,7 @@ const StyledContent = styled(ModalLayout.Content)`
 type AuthModalProps = { children: React.ReactNode };
 
 export const AuthModal = ({ children }: AuthModalProps) => (
-  <ModalLayout isOpen={true} padding={'none'}>
+  <ModalLayout padding={'none'}>
     <StyledContent>{children}</StyledContent>
   </ModalLayout>
 );

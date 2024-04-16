@@ -13,7 +13,6 @@ type Story = StoryObj<typeof ModalLayout>;
 
 export const Default: Story = {
   args: {
-    isOpen: true,
     size: 'medium',
     padding: 'medium',
     children: (

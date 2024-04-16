@@ -11,13 +11,11 @@ import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm.ts';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle.ts';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts';
 import { authProvidersState } from '@/client-config/states/authProvidersState.ts';
-import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ActionLink } from '@/ui/navigation/link/components/ActionLink.tsx';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 import { Logo } from '../../components/Logo';
 import { Title } from '../../components/Title';
@@ -64,33 +62,22 @@ export const SignInUpForm = () => {
     submitCredentials,
   } = useSignInUp(form);
 
-  useScopedHotkeys(
-    'enter',
-    () => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+
       if (signInUpStep === SignInUpStep.Init) {
         continueWithEmail();
-      }
-
-      if (signInUpStep === SignInUpStep.Email) {
+      } else if (signInUpStep === SignInUpStep.Email) {
         continueWithCredentials();
-      }
-
-      if (signInUpStep === SignInUpStep.Password) {
+      } else if (signInUpStep === SignInUpStep.Password) {
         if (!form.formState.isSubmitting) {
           setShowErrors(true);
           form.handleSubmit(submitCredentials)();
         }
       }
-    },
-    PageHotkeyScope.SignInUp,
-    [
-      continueWithEmail,
-      signInUpStep,
-      continueWithCredentials,
-      form,
-      submitCredentials,
-    ],
-  );
+    }
+  };
 
   const buttonTitle = useMemo(() => {
     if (signInUpStep === SignInUpStep.Init) {
@@ -179,6 +166,7 @@ export const SignInUpForm = () => {
                       error={showErrors ? error?.message : undefined}
                       fullWidth
                       disableHotkeys
+                      onKeyDown={handleKeyDown}
                     />
                   </StyledInputContainer>
                 )}
@@ -213,6 +201,7 @@ export const SignInUpForm = () => {
                       error={showErrors ? error?.message : undefined}
                       fullWidth
                       disableHotkeys
+                      onKeyDown={handleKeyDown}
                     />
                   </StyledInputContainer>
                 )}
