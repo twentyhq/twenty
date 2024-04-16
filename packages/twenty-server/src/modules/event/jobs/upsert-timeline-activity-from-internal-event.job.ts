@@ -17,7 +17,7 @@ export class UpsertTimelineActivityFromInternalEvent
     @InjectObjectMetadataRepository(WorkspaceMemberObjectMetadata)
     private readonly workspaceMemberService: WorkspaceMemberRepository,
     @InjectObjectMetadataRepository(TimelineActivityObjectMetadata)
-    private readonly timelineActivityService: TimelineActivityRepository,
+    private readonly timelineActivityRepository: TimelineActivityRepository,
   ) {}
 
   async handle(data: ObjectRecordBaseEvent): Promise<void> {
@@ -39,7 +39,7 @@ export class UpsertTimelineActivityFromInternalEvent
       };
     }
 
-    await this.timelineActivityService.upsert(
+    await this.timelineActivityRepository.upsert(
       data.name,
       data.details,
       workspaceMemberId,

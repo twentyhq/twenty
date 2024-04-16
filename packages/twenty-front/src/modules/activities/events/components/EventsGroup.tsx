@@ -8,7 +8,7 @@ type EventsGroupProps = {
   group: EventGroup;
   month: string;
   year?: number;
-  mainObjectMetadata: ObjectMetadataItem | null;
+  mainObjectMetadataItem: ObjectMetadataItem | null;
 };
 
 const StyledActivityGroup = styled.div`
@@ -57,7 +57,7 @@ export const EventsGroup = ({
   group,
   month,
   year,
-  mainObjectMetadata,
+  mainObjectMetadataItem,
 }: EventsGroupProps) => {
   return (
     <StyledActivityGroup>
@@ -69,7 +69,7 @@ export const EventsGroup = ({
         <StyledActivityGroupBar />
         {group.items.map((event, index) => (
           <EventRow
-            mainObjectMetadata={mainObjectMetadata}
+            mainObjectMetadataItem={mainObjectMetadataItem}
             key={event.id}
             event={event}
             isLastEvent={index === group.items.length - 1}

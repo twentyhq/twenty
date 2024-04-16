@@ -109,18 +109,17 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: timelineActivitiestandardFieldIds.linkedRecordCachedName,
     type: FieldMetadataType.TEXT,
-    label: 'Record cached name',
+    label: 'Liked Record cached name',
     description: 'Cached record name',
     icon: 'IconAbc',
   })
-  @IsNullable()
   linkedRecordCachedName: string;
 
   @FieldMetadata({
     standardId: timelineActivitiestandardFieldIds.linkedRecordId,
     type: FieldMetadataType.TEXT,
-    label: 'Record name',
-    description: 'Cached record name',
+    label: 'Linked Record id',
+    description: 'Linked Record id',
     icon: 'IconAbc',
   })
   @IsNullable()
@@ -129,8 +128,8 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: timelineActivitiestandardFieldIds.linkedObjectMetadataId,
     type: FieldMetadataType.TEXT,
-    label: 'Record name',
-    description: 'Cached record name',
+    label: 'Linked Object Metadata Id',
+    description: 'inked Object Metadata Id',
     icon: 'IconAbc',
   })
   @IsNullable()

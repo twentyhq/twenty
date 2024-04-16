@@ -155,9 +155,9 @@ export const behavioralEventStandardFieldIds = {
 };
 
 export const timelineActivitiestandardFieldIds = {
-  happensAt: '073174de-9526-4993-b339-c4318c4d39f1',
-  type: 'b4b4d436-5e7b-4ccd-8b8a-86b94b474135',
-  name: '4360514a-7207-46e8-9dab-849505ae8498',
+  happensAt: '20202020-9526-4993-b339-c4318c4d39f1',
+  type: '20202020-5e7b-4ccd-8b8a-86b94b474135',
+  name: '20202020-7207-46e8-9dab-849505ae8498',
   properties: '20202020-f142-4b04-b91b-6a2b4af3bf10',
   workspaceMember: '20202020-af23-4479-9a30-868edc474b35',
   person: '20202020-c414-45b9-a60a-ac27aa96229e',
@@ -327,5 +327,5 @@ export const customObjectStandardFieldIds = {
   activityTargets: '20202020-7f42-40ae-b96c-c8a61acc83bf',
   favorites: '20202020-a4a7-4686-b296-1c6c3482ee21',
   attachments: '20202020-8d59-46ca-b7b2-73d167712134',
-  timelineActivities: '040fa45d-f1ef-4ba4-8f33-1a4577afa477',
+  timelineActivities: '20202020-f1ef-4ba4-8f33-1a4577afa477',
 };

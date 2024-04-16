@@ -1,12 +1,11 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 import { EventsGroup } from '@/activities/events/components/EventsGroup';
 import { TimelineActivity } from '@/activities/events/types/TimelineActivity';
 import { groupEventsByMonth } from '@/activities/events/utils/groupEventsByMonth';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 type EventListProps = {
@@ -33,19 +32,16 @@ const StyledTimelineContainer = styled.div`
 export const EventList = ({ events, targetableObject }: EventListProps) => {
   const groupedEvents = groupEventsByMonth(events);
 
-  const mainObjectMetadata = useRecoilValue(
-    objectMetadataItemFamilySelector({
-      objectName: targetableObject.targetObjectNameSingular,
-      objectNameType: 'singular',
-    }),
-  );
+  const mainObjectMetadataItem = useObjectMetadataItem({
+    objectNameSingular: targetableObject.targetObjectNameSingular,
+  }).objectMetadataItem;
 
   return (
     <ScrollWrapper>
       <StyledTimelineContainer>
         {groupedEvents.map((group, index) => (
           <EventsGroup
-            mainObjectMetadata={mainObjectMetadata}
+            mainObjectMetadataItem={mainObjectMetadataItem}
             key={group.year.toString() + group.month}
             group={group}
             month={new Date(group.items[0].createdAt).toLocaleString(

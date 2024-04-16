@@ -48,8 +48,8 @@ export class EntityEventsToDbListener {
   private async handle(payload: ObjectRecordCreateEvent<any>) {
     if (
       payload.objectMetadata.isSystem &&
-      payload.objectMetadata.nameSingular != 'activity' &&
-      payload.objectMetadata.nameSingular != 'activityTarget'
+      payload.objectMetadata.nameSingular !== 'activity' &&
+      payload.objectMetadata.nameSingular !== 'activityTarget'
     ) {
       return;
     }

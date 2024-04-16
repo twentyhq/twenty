@@ -15,9 +15,12 @@ export const objectRecordChangedValues = (
         objectMetadata.fields.find(
           (field) =>
             field.type === FieldMetadataType.RELATION && field.name === key,
-        ) ||
-        (objectMetadata.nameSingular === 'activity' && key === 'body')
+        )
       ) {
+        return acc;
+      }
+
+      if (objectMetadata.nameSingular === 'activity' && key === 'body') {
         return acc;
       }
 

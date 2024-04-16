@@ -19,6 +19,7 @@ import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const StyledIconContainer = styled.div`
   align-items: center;
@@ -127,7 +128,7 @@ const StyledSummary = styled.summary`
 `;
 
 type EventRowProps = {
-  mainObjectMetadata: ObjectMetadataItem | null;
+  mainObjectMetadataItem: ObjectMetadataItem | null;
   isLastEvent?: boolean;
   event: TimelineActivity;
 };
@@ -135,7 +136,7 @@ type EventRowProps = {
 export const EventRow = ({
   isLastEvent,
   event,
-  mainObjectMetadata,
+  mainObjectMetadataItem,
 }: EventRowProps) => {
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(event.createdAt);
   const exactCreatedAt = beautifyExactDateTime(event.createdAt);
@@ -193,11 +194,11 @@ export const EventRow = ({
   if (linkedObjectMetadata !== null) {
     description = 'a ' + linkedObjectLabel;
   } else if (!event.linkedObjectMetadataId && isEventType('created')) {
-    description = `a new ${mainObjectMetadata?.labelSingular}`;
+    description = `a new ${mainObjectMetadataItem?.labelSingular}`;
   } else if (isEventType('updated')) {
     const diffKeys = Object.keys(diff);
     if (diffKeys.length === 0) {
-      description = `a ${mainObjectMetadata?.labelSingular}`;
+      description = `a ${mainObjectMetadataItem?.labelSingular}`;
     } else if (diffKeys.length === 1) {
       const [key, value] = Object.entries(diff)[0];
       description = [
@@ -208,11 +209,13 @@ export const EventRow = ({
       ];
     } else if (diffKeys.length === 2) {
       description =
-        mainObjectMetadata?.fields.find((field) => diffKeys[0] === field.name)
-          ?.label +
+        mainObjectMetadataItem?.fields.find(
+          (field) => diffKeys[0] === field.name,
+        )?.label +
         ' and ' +
-        mainObjectMetadata?.fields.find((field) => diffKeys[1] === field.name)
-          ?.label;
+        mainObjectMetadataItem?.fields.find(
+          (field) => diffKeys[1] === field.name,
+        )?.label;
     } else if (diffKeys.length > 2) {
       description =
         diffKeys[0] + ' and ' + (diffKeys.length - 1) + ' other fields';
@@ -234,7 +237,7 @@ export const EventRow = ({
               <StyledItemAuthorText>{author}</StyledItemAuthorText>
               <StyledActionName>{action}</StyledActionName>
               <StyledItemTitle>
-                {!linkedObjectMetadata ? (
+                {!isUndefinedOrNull(linkedObjectMetadata) ? (
                   description
                 ) : (
                   <>
