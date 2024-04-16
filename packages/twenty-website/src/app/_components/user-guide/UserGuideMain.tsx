@@ -16,11 +16,21 @@ const StyledContainer = styled.div`
 `;
 
 const StyledWrapper = styled.div`
-  width: 79.3%;
-  padding: ${Theme.spacing(10)} 0px ${Theme.spacing(20)} 0px;
+  padding: ${Theme.spacing(10)} 92px ${Theme.spacing(20)};
   display: flex;
   flex-direction: column;
   gap: ${Theme.spacing(8)};
+  width: 100%;
+
+  @media (max-width: 800px) {
+    padding: ${Theme.spacing(10)} 24px ${Theme.spacing(20)};
+  }
+`;
+
+const StyledTitle = styled.div`
+  font-size: ${Theme.font.size.sm};
+  color: ${Theme.text.color.quarternary};
+  font-weight: ${Theme.font.weight.medium};
 `;
 
 const StyledHeader = styled.div`
@@ -38,8 +48,7 @@ const StyledHeading = styled.h1`
 `;
 
 const StyledSubHeading = styled.h1`
-  line-height: 12px;
-  font-family: ${Theme.font.family};
+  line-height: 28.8px;
   font-size: ${Theme.font.size.sm};
   font-weight: ${Theme.font.weight.regular};
   color: ${Theme.text.color.tertiary};
@@ -55,12 +64,19 @@ const StyledContent = styled.div`
     gridTemplateColumns: 'auto auto',
     gap: `${Theme.spacing(6)}`,
   })};
+  @media (max-width: 810px) {
+    align-items: center;
+  }
+  @media (min-width: 1200px) {
+    justify-content: left;
+  }
 `;
 
 export default function UserGuideMain() {
   return (
     <StyledContainer>
       <StyledWrapper>
+        <StyledTitle>User Guide</StyledTitle>
         <StyledHeader>
           <StyledHeading>User Guide</StyledHeading>
           <StyledSubHeading>

@@ -32,6 +32,7 @@ const StyledHeader = styled.div`
 const StyledHeading = styled.div`
   font-size: 40px;
   font-weight: 700;
+  font-family: var(--font-gabarito);
 `;
 
 const StyledHeaderInfoSection = styled.div`
@@ -45,6 +46,7 @@ const StyledHeaderInfoSectionTitle = styled.div`
   padding: ${Theme.spacing(2)} 0px;
   color: ${Theme.text.color.secondary};
   font-weight: ${Theme.font.weight.medium};
+  font-family: var(--font-gabarito);
 `;
 
 const StyledHeaderInfoSectionSub = styled.div`
@@ -52,13 +54,54 @@ const StyledHeaderInfoSectionSub = styled.div`
   flex-direction: column;
   gap: ${Theme.spacing(4)};
   color: ${Theme.text.color.tertiary};
-  font-family: ${Theme.font.family};
+  line-height: 28.8px;
 `;
 
 const StyledRectangle = styled.div`
   width: 100%;
   height: 1px;
   background: ${Theme.background.transparent.medium};
+`;
+
+const StyledContent = styled.div`
+  h1 {
+    margin-top: 64px;
+    font-family: var(--font-gabarito);
+  }
+
+  h2 {
+    margin: 64px 0px 32px;
+    font-family: var(--font-gabarito);
+  }
+
+  p {
+    margin: 32px 0px;
+    color: ${Theme.text.color.secondary};
+    font-family: ${Theme.font.family};
+    line-height: 28.8px;
+  }
+
+  li {
+    margin: 32px 0px;
+    line-height: 28.8px;
+    font-family: ${Theme.font.family};
+    color: ${Theme.text.color.secondary};
+  }
+
+  @media (min-width: 2200px) {
+    max-width: 1050px;
+  }
+`;
+
+const StyledImageContainer = styled.div`
+  border: 2px solid ${Theme.text.color.primary};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 16px;
+  height: 340px;
+  max-width: 1050px;
 `;
 
 export default function UserGuideContent({ item }: { item: FileContent }) {
@@ -68,6 +111,7 @@ export default function UserGuideContent({ item }: { item: FileContent }) {
       label: 'User Guide',
     },
   ];
+
   return (
     <StyledContainer>
       <StyledWrapper>
@@ -78,13 +122,15 @@ export default function UserGuideContent({ item }: { item: FileContent }) {
             separator="/"
           />
           <StyledHeading>{item.itemInfo.title}</StyledHeading>
-          {item.itemInfo.image && (
-            <img
-              id={`img-${item.itemInfo.title}`}
-              src={item.itemInfo.image}
-              alt={item.itemInfo.title}
-            />
-          )}
+          <StyledImageContainer>
+            {item.itemInfo.image && (
+              <img
+                id={`img-${item.itemInfo.title}`}
+                src={item.itemInfo.image}
+                alt={item.itemInfo.title}
+              />
+            )}
+          </StyledImageContainer>
           <StyledHeaderInfoSection>
             <StyledHeaderInfoSectionTitle>
               In this article
@@ -95,7 +141,7 @@ export default function UserGuideContent({ item }: { item: FileContent }) {
           </StyledHeaderInfoSection>
           <StyledRectangle />
         </StyledHeader>
-        <div>{item.content}</div>
+        <StyledContent>{item.content}</StyledContent>
       </StyledWrapper>
     </StyledContainer>
   );

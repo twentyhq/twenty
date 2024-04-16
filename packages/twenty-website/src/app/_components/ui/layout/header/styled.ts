@@ -95,6 +95,8 @@ export const StyledButton = styled.div`
   border: none;
   outline: inherit;
   cursor: pointer;
+  max-width: fit-content;
+  font-family: var(--font-gabarito);
 `;
 
 export const CallToActionContainer = styled.div`
