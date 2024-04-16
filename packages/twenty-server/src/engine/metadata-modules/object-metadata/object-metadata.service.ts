@@ -361,7 +361,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       [
         createdObjectMetadata.id,
         'table',
-        `All ${createdObjectMetadata.namePlural}`,
+        `All ${createdObjectMetadata.labelPlural}`,
         'INDEX',
         createdObjectMetadata.icon,
       ],

@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import { Avatar } from 'twenty-ui';
 import { v4 } from 'uuid';
 
 import { MULTI_OBJECT_RECORD_SELECT_SELECTABLE_LIST_ID } from '@/object-record/relation-picker/constants/MultiObjectRecordSelectSelectableListId';
@@ -7,7 +8,7 @@ import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/use
 import { SelectableItem } from '@/ui/layout/selectable-list/components/SelectableItem';
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
-import { Avatar } from '@/users/components/Avatar';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 export const StyledSelectableItem = styled(SelectableItem)`
   height: 100%;
@@ -42,7 +43,9 @@ export const MultipleObjectRecordSelectItem = ({
         isKeySelected={isSelectedByKeyboard}
         avatar={
           <Avatar
-            avatarUrl={objectRecordForSelect.recordIdentifier.avatarUrl}
+            avatarUrl={getImageAbsoluteURIOrBase64(
+              objectRecordForSelect.recordIdentifier.avatarUrl,
+            )}
             entityId={objectRecordForSelect.record.id}
             placeholder={objectRecordForSelect.recordIdentifier.name}
             size="md"

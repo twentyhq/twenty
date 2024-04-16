@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
@@ -108,7 +110,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
-  viewFields: ViewFieldObjectMetadata[];
+  viewFields: Relation<ViewFieldObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: viewStandardFieldIds.viewFilters,
@@ -123,7 +125,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
-  viewFilters: ViewFilterObjectMetadata[];
+  viewFilters: Relation<ViewFilterObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: viewStandardFieldIds.viewSorts,
@@ -138,5 +140,5 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
-  viewSorts: ViewSortObjectMetadata[];
+  viewSorts: Relation<ViewSortObjectMetadata[]>;
 }

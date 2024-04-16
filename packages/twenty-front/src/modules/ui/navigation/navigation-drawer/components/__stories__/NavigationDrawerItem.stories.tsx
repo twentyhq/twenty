@@ -1,11 +1,9 @@
 import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
-import { IconSearch } from 'twenty-ui';
+import { CatalogDecorator, CatalogStory, IconSearch } from 'twenty-ui';
 
-import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
-import { CatalogStory } from '~/testing/types';
 
 import { NavigationDrawerItem } from '../NavigationDrawerItem';
 

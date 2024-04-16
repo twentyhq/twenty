@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { messageChannelMessageAssociationStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -29,7 +31,7 @@ export class MessageChannelMessageAssociationObjectMetadata extends BaseObjectMe
     joinColumn: 'messageChannelId',
   })
   @IsNullable()
-  messageChannel: MessageChannelObjectMetadata;
+  messageChannel: Relation<MessageChannelObjectMetadata>;
 
   @FieldMetadata({
     standardId: messageChannelMessageAssociationStandardFieldIds.message,
@@ -40,7 +42,7 @@ export class MessageChannelMessageAssociationObjectMetadata extends BaseObjectMe
     joinColumn: 'messageId',
   })
   @IsNullable()
-  message: MessageObjectMetadata;
+  message: Relation<MessageObjectMetadata>;
 
   @FieldMetadata({
     standardId:
@@ -62,7 +64,7 @@ export class MessageChannelMessageAssociationObjectMetadata extends BaseObjectMe
     joinColumn: 'messageThreadId',
   })
   @IsNullable()
-  messageThread: MessageThreadObjectMetadata;
+  messageThread: Relation<MessageThreadObjectMetadata>;
 
   @FieldMetadata({
     standardId:

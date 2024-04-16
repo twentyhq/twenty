@@ -1,6 +1,6 @@
 export enum SettingsPath {
   ProfilePage = 'profile',
-  Appearance = 'profile/appearance',
+  Appearance = 'appearance',
   Accounts = 'accounts',
   NewAccount = 'accounts/new',
   AccountsCalendars = 'accounts/calendars',

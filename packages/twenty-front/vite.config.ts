@@ -13,7 +13,7 @@ export default defineConfig(({ command, mode }) => {
   /*
     Using explicit env variables, there is no need to expose all of them (security).
   */
-  const { REACT_APP_SERVER_BASE_URL, SENTRY_RELEASE, ENVIRONMENT } = env;
+  const { REACT_APP_SERVER_BASE_URL, VITE_BUILD_SOURCEMAP } = env;
 
   const isBuildCommand = command === 'build';
 
@@ -51,6 +51,7 @@ export default defineConfig(({ command, mode }) => {
 
     build: {
       outDir: 'build',
+      sourcemap: VITE_BUILD_SOURCEMAP === 'true',
     },
 
     envPrefix: 'REACT_APP_',
@@ -58,8 +59,6 @@ export default defineConfig(({ command, mode }) => {
     define: {
       'process.env': {
         REACT_APP_SERVER_BASE_URL,
-        SENTRY_RELEASE,
-        ENVIRONMENT,
       },
     },
   };

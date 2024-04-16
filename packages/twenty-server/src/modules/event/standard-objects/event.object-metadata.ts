@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { eventStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -53,7 +55,7 @@ export class EventObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'workspaceMemberId',
   })
   @IsNullable()
-  workspaceMember: WorkspaceMemberObjectMetadata;
+  workspaceMember: Relation<WorkspaceMemberObjectMetadata>;
 
   @FieldMetadata({
     standardId: eventStandardFieldIds.person,
@@ -64,7 +66,7 @@ export class EventObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'personId',
   })
   @IsNullable()
-  person: PersonObjectMetadata;
+  person: Relation<PersonObjectMetadata>;
 
   @FieldMetadata({
     standardId: eventStandardFieldIds.company,
@@ -75,7 +77,7 @@ export class EventObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'companyId',
   })
   @IsNullable()
-  company: CompanyObjectMetadata;
+  company: Relation<CompanyObjectMetadata>;
 
   @FieldMetadata({
     standardId: eventStandardFieldIds.opportunity,
@@ -86,7 +88,7 @@ export class EventObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'opportunityId',
   })
   @IsNullable()
-  opportunity: OpportunityObjectMetadata;
+  opportunity: Relation<OpportunityObjectMetadata>;
 
   @DynamicRelationFieldMetadata((oppositeObjectMetadata) => ({
     standardId: eventStandardFieldIds.custom,
@@ -96,5 +98,5 @@ export class EventObjectMetadata extends BaseObjectMetadata {
     joinColumn: `${oppositeObjectMetadata.nameSingular}Id`,
     icon: 'IconBuildingSkyscraper',
   }))
-  custom: CustomObjectMetadata;
+  custom: Relation<CustomObjectMetadata>;
 }

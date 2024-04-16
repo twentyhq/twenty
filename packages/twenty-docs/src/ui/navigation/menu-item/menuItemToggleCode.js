@@ -1,5 +1,6 @@
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemToggle } from "@/ui/navigation/menu-item/components/MenuItemToggle";
+import { IconBell } from '@tabler/icons-react';
+
+import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemToggle';
 
 export const MyComponent = () => {
   const handleToggleChange = (toggled) => {

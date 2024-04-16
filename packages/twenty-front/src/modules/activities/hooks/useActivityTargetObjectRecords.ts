@@ -1,5 +1,6 @@
 import { useApolloClient } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
+import { Nullable } from 'twenty-ui';
 
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
@@ -7,7 +8,6 @@ import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTarge
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
-import { Nullable } from '~/types/Nullable';
 import { isDefined } from '~/utils/isDefined';
 
 export const useActivityTargetObjectRecords = (activity: Activity) => {

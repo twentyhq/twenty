@@ -8,6 +8,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  Relation,
   UpdateDateColumn,
 } from 'typeorm';
 import Stripe from 'stripe';
@@ -37,7 +38,7 @@ export class BillingSubscription {
     onDelete: 'CASCADE',
   })
   @JoinColumn()
-  workspace: Workspace;
+  workspace: Relation<Workspace>;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
@@ -48,17 +49,17 @@ export class BillingSubscription {
   @Column({ unique: true, nullable: false })
   stripeSubscriptionId: string;
 
-  @Field()
-  @Column({ nullable: false })
+  @Field(() => String)
+  @Column({ type: 'text', nullable: false })
   status: Stripe.Subscription.Status;
 
-  @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'text', nullable: true })
   interval: Stripe.Price.Recurring.Interval;
 
   @OneToMany(
     () => BillingSubscriptionItem,
     (billingSubscriptionItem) => billingSubscriptionItem.billingSubscription,
   )
-  billingSubscriptionItems: BillingSubscriptionItem[];
+  billingSubscriptionItems: Relation<BillingSubscriptionItem[]>;
 }

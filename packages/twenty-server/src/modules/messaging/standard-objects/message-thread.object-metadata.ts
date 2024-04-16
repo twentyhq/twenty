@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
@@ -37,7 +39,7 @@ export class MessageThreadObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  messages: MessageObjectMetadata[];
+  messages: Relation<MessageObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: messageThreadStandardFieldIds.messageChannelMessageAssociations,
@@ -52,5 +54,7 @@ export class MessageThreadObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.RESTRICT,
   })
   @IsNullable()
-  messageChannelMessageAssociations: MessageChannelMessageAssociationObjectMetadata[];
+  messageChannelMessageAssociations: Relation<
+    MessageChannelMessageAssociationObjectMetadata[]
+  >;
 }
