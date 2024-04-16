@@ -39,6 +39,15 @@ export class UpsertTimelineActivityFromInternalEvent
       };
     }
 
+    // If data.objectMetadata.nameSingular is not activityTarget, company
+    if (
+      data.objectMetadata.isSystem &&
+      data.objectMetadata.nameSingular !== 'activityTarget' &&
+      data.objectMetadata.nameSingular !== 'activity'
+    ) {
+      return;
+    }
+
     await this.timelineActivityRepository.upsert(
       data.name,
       data.details,

@@ -475,10 +475,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       return;
     }
 
-    const { timelineActivityObjectMetadata } = await this.createEventRelation(
-      objectMetadataInput.workspaceId,
-      createdObjectMetadata,
-    );
+    const { timelineActivityObjectMetadata } =
+      await this.createTimelineActivityRelation(
+        objectMetadataInput.workspaceId,
+        createdObjectMetadata,
+      );
 
     const { activityTargetObjectMetadata } =
       await this.createActivityTargetRelation(
@@ -708,13 +709,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     return { attachmentObjectMetadata };
   }
 
-  private async createEventRelation(
+  private async createTimelineActivityRelation(
     workspaceId: string,
     createdObjectMetadata: ObjectMetadataEntity,
   ) {
     const timelineActivityObjectMetadata =
       await this.objectMetadataRepository.findOneByOrFail({
-        nameSingular: 'event',
+        nameSingular: 'timelineActivity',
         workspaceId: workspaceId,
       });
 
@@ -747,7 +748,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           type: FieldMetadataType.RELATION,
           name: createdObjectMetadata.nameSingular,
           label: createdObjectMetadata.labelSingular,
-          description: `Event ${createdObjectMetadata.labelSingular}`,
+          description: `Timeline Activity ${createdObjectMetadata.labelSingular}`,
           icon: 'IconBuildingSkyscraper',
           isNullable: true,
         },
@@ -764,7 +765,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           type: FieldMetadataType.UUID,
           name: `${createdObjectMetadata.nameSingular}Id`,
           label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
-          description: `Event ${createdObjectMetadata.labelSingular} id foreign key`,
+          description: `Timeline Activity ${createdObjectMetadata.labelSingular} id foreign key`,
           icon: undefined,
           isNullable: true,
           isSystem: true,

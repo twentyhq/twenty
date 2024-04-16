@@ -17,6 +17,7 @@ const mockObjectMetadata: ObjectMetadataInterface = {
   isCustom: false,
   isActive: true,
   isRemote: false,
+  isAuditLogged: true,
 };
 
 describe('objectRecordChangedValues', () => {
@@ -79,6 +80,7 @@ it('correctly handles a mix of changed, unchanged, and special case values', () 
   };
   const expectedChanges = {
     name: { before: 'Original', after: 'Updated' },
+    config: { before: { theme: 'dark' }, after: { theme: 'light' } },
   };
 
   const result = objectRecordChangedValues(

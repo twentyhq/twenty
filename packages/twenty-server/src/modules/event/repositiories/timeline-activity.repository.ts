@@ -192,7 +192,7 @@ export class TimelineActivityRepository {
         properties,
         workspaceMemberId,
         objectId,
-        linkedRecordCachedName,
+        linkedRecordCachedName ?? '',
         linkedRecordId,
         linkedObjectMetadataId,
       ],

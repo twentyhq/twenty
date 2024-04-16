@@ -1,19 +1,18 @@
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 import {
   IconCheckbox,
   IconCirclePlus,
   IconEditCircle,
   IconFocusCentered,
   IconNotes,
+  useIcons,
 } from 'twenty-ui';
 
 import { EventUpdateProperty } from '@/activities/events/components/EventUpdateProperty';
 import { TimelineActivity } from '@/activities/events/types/TimelineActivity';
-import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
+import { useLinkedObject } from '@/activities/timeline/hooks/useLinkedObject';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
   beautifyExactDateTime,
@@ -153,12 +152,7 @@ export const EventRow = ({
 
   const { getIcon } = useIcons();
 
-  const linkedObjectMetadata = useRecoilValue(
-    objectMetadataItemFamilySelector({
-      objectName: event.linkedObjectMetadataId,
-      objectNameType: 'id',
-    }),
-  );
+  const linkedObjectMetadata = useLinkedObject(event.linkedObjectMetadataId);
 
   const linkedObjectLabel = event.name.includes('Note')
     ? 'Note'
