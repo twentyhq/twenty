@@ -28,4 +28,4 @@ import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-obj
   providers: [GmailFullSyncV2Service],
   exports: [GmailFullSyncV2Service],
 })
-export class GmailFullSynV2Module {}
+export class GmailFullSyncV2Module {}
