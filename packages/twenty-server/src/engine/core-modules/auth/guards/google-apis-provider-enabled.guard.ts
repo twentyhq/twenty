@@ -9,7 +9,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
-import { GoogleAPIsStrategy } from 'src/engine/core-modules/auth/strategies/google-apis.auth.strategy';
+import {
+  GoogleAPIScopeConfig,
+  GoogleAPIsStrategy,
+} from 'src/engine/core-modules/auth/strategies/google-apis.auth.strategy';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
@@ -36,7 +39,7 @@ export class GoogleAPIsProviderEnabledGuard implements CanActivate {
 
     const transientToken = getRequest(context)?.query?.transientToken;
 
-    const scopeConfig = {
+    const scopeConfig: GoogleAPIScopeConfig = {
       isCalendarEnabled: false,
     };
 

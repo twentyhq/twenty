@@ -67,9 +67,7 @@ export class GoogleAPIsStrategy extends PassportStrategy(
       }),
     };
 
-    const auth = super.authenticate(req, options);
-
-    return auth;
+    return super.authenticate(req, options);
   }
 
   async validate(
