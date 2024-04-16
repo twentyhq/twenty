@@ -59,9 +59,9 @@ export const DateTimeInput = ({
   const parseStringToDate = (str: string) => {
     setHasError(false);
 
-    const parsedDate = DateTime.fromFormat(str, parsingFormat, {
-      zone: isDateTimeInput ? undefined : 'utc',
-    });
+    const parsedDate = isDateTimeInput
+      ? DateTime.fromFormat(str, parsingFormat)
+      : DateTime.fromFormat(str, parsingFormat, { zone: 'utc' });
 
     const isValid = parsedDate.isValid;
 
