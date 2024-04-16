@@ -248,10 +248,10 @@ describe('beautifyDateDiff', () => {
     expect(result).toEqual('4 days');
   });
   it('should return the correct date diff for large diff', () => {
-    const date = '2033-11-05T00:00:00.000Z';
+    const date = '2031-11-05T00:00:00.000Z';
     const dateToCompareWith = '2023-11-01T00:00:00.000Z';
     const result = beautifyDateDiff(date, dateToCompareWith);
-    expect(result).toEqual('10 years and 4 days');
+    expect(result).toEqual('8 years and 4 days');
   });
   it('should return the correct date for negative diff', () => {
     const date = '2013-11-05T00:00:00.000Z';
@@ -260,10 +260,10 @@ describe('beautifyDateDiff', () => {
     expect(result).toEqual('-9 years and -361 days');
   });
   it('should return the correct date diff for large diff', () => {
-    const date = '2033-11-01T00:00:00.000Z';
+    const date = '2031-11-01T00:00:00.000Z';
     const dateToCompareWith = '2023-11-01T00:00:00.000Z';
     const result = beautifyDateDiff(date, dateToCompareWith);
-    expect(result).toEqual('10 years');
+    expect(result).toEqual('8 years');
   });
   it('should return the proper english date diff', () => {
     const date = '2024-11-02T00:00:00.000Z';
@@ -283,10 +283,10 @@ describe('beautifyDateDiff', () => {
     expect(result).toEqual('3 years and 9 days');
   });
   it('should return short version', () => {
-    const date = '2033-11-05T00:00:00.000Z';
+    const date = '2031-11-05T00:00:00.000Z';
     const dateToCompareWith = '2023-11-01T00:00:00.000Z';
     const result = beautifyDateDiff(date, dateToCompareWith, true);
-    expect(result).toEqual('10 years');
+    expect(result).toEqual('8 years');
   });
   it('should return short version for short differences', () => {
     const date = '2023-11-05T00:00:00.000Z';

@@ -24,9 +24,13 @@ const StyledContainer = styled.div`
   display: flex;
 `;
 
-const StyledRecordChip = styled(RecordChip)<{ variant: 'default' | 'bold' }>`
-  font-weight: ${({ theme, variant }) =>
-    variant === 'bold' ? theme.font.weight.medium : theme.font.weight.regular};
+const StyledRecordChip = styled(RecordChip)<{
+  participantChipVariant: 'default' | 'bold';
+}>`
+  font-weight: ${({ theme, participantChipVariant }) =>
+    participantChipVariant === 'bold'
+      ? theme.font.weight.medium
+      : theme.font.weight.regular};
 `;
 
 const StyledChip = styled.div`
@@ -63,7 +67,7 @@ export const ParticipantChip = ({
         <StyledRecordChip
           objectNameSingular={CoreObjectNameSingular.Person}
           record={person}
-          variant={variant}
+          participantChipVariant={variant}
         />
       ) : (
         <StyledChip>

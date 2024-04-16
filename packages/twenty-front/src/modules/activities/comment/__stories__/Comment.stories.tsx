@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import { useSetRecoilState } from 'recoil';
+import { ComponentDecorator } from 'twenty-ui';
 
 import { viewableActivityIdState } from '@/activities/states/viewableActivityIdState';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { ActivityActionBar } from '../../right-drawer/components/ActivityActionBar';
 import { Comment } from '../Comment';

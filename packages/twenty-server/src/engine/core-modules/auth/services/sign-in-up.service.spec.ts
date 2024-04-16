@@ -5,17 +5,17 @@ import { HttpService } from '@nestjs/axios';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { SignUpService } from 'src/engine/core-modules/auth/services/sign-up.service';
+import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { FileUploadService } from 'src/engine/core-modules/file/file-upload/services/file-upload.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
-describe('SignUpService', () => {
-  let service: SignUpService;
+describe('SignInUpService', () => {
+  let service: SignInUpService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        SignUpService,
+        SignInUpService,
         {
           provide: FileUploadService,
           useValue: {},
@@ -43,7 +43,7 @@ describe('SignUpService', () => {
       ],
     }).compile();
 
-    service = module.get<SignUpService>(SignUpService);
+    service = module.get<SignInUpService>(SignInUpService);
   });
 
   it('should be defined', () => {

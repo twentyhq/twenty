@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { EntityChip } from 'twenty-ui';
+import { EntityChip, EntityChipVariant } from 'twenty-ui';
 
 import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
@@ -11,6 +11,7 @@ export type RecordChipProps = {
   record: ObjectRecord;
   maxWidth?: number;
   className?: string;
+  variant?: EntityChipVariant;
 };
 
 export const RecordChip = ({
@@ -18,6 +19,7 @@ export const RecordChip = ({
   record,
   maxWidth,
   className,
+  variant,
 }: RecordChipProps) => {
   const { mapToObjectRecordIdentifier } = useMapToObjectRecordIdentifier({
     objectNameSingular,
@@ -44,6 +46,7 @@ export const RecordChip = ({
       linkToEntity={linkToEntity}
       maxWidth={maxWidth}
       className={className}
+      variant={variant}
     />
   );
 };
