@@ -95,6 +95,12 @@ export class RemoteTableService {
   }
 
   public async syncRemoteTable(input: RemoteTableInput, workspaceId: string) {
+    if (!input.schema) {
+      throw new BadRequestException(
+        'Schema is required for syncing remote table',
+      );
+    }
+
     const remoteServer = await this.remoteServerRepository.findOne({
       where: {
         id: input.remoteServerId,
@@ -104,12 +110,6 @@ export class RemoteTableService {
 
     if (!remoteServer) {
       throw new NotFoundException('Remote server does not exist');
-    }
-
-    if (!input.schema) {
-      throw new BadRequestException(
-        'Schema is required for syncing remote table',
-      );
     }
 
     const currentRemoteTableWithSameDistantName =
@@ -132,7 +132,7 @@ export class RemoteTableService {
 
     const localTableName = getRemoteTableLocalName(input.name);
 
-    this.validateTableNameDoesNotExists(
+    await this.validateTableNameDoesNotExists(
       localTableName,
       workspaceId,
       dataSourceMetatada.schema,
@@ -202,7 +202,7 @@ export class RemoteTableService {
       throw new NotFoundException('Remote table does not exist');
     }
 
-    await this.unsyncByTableInput(workspaceId, remoteTable, remoteServer);
+    await this.unsyncOne(workspaceId, remoteTable, remoteServer);
 
     return {
       name: input.name,
@@ -211,7 +211,7 @@ export class RemoteTableService {
     };
   }
 
-  public async unsyncByServerInput(
+  public async unsyncAll(
     workspaceId: string,
     remoteServer: RemoteServerEntity<RemoteServerType>,
   ) {
@@ -223,11 +223,11 @@ export class RemoteTableService {
     });
 
     for (const remoteTable of remoteTables) {
-      await this.unsyncByTableInput(workspaceId, remoteTable, remoteServer);
+      await this.unsyncOne(workspaceId, remoteTable, remoteServer);
     }
   }
 
-  private async unsyncByTableInput(
+  private async unsyncOne(
     workspaceId: string,
     remoteTable: RemoteTableEntity,
     remoteServer: RemoteServerEntity<RemoteServerType>,
@@ -360,7 +360,7 @@ export class RemoteTableService {
   ) {
     if (!remoteTableInput.schema) {
       throw new BadRequestException(
-        'Schema is required for syncing remote table',
+        'Schema is required for creating foreign table',
       );
     }
 

@@ -1,5 +1,3 @@
-import { ObjectType } from '@nestjs/graphql';
-
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -17,7 +15,6 @@ import {
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 
 @Entity('remoteTable')
-@ObjectType('RemoteTable')
 export class RemoteTableEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

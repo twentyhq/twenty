@@ -1,5 +1,3 @@
-import { ObjectType } from '@nestjs/graphql';
-
 import {
   Column,
   CreateDateColumn,
@@ -34,7 +32,6 @@ export type UserMappingOptions = {
 };
 
 @Entity('remoteServer')
-@ObjectType('RemoteServer')
 export class RemoteServerEntity<T extends RemoteServerType> {
   @PrimaryGeneratedColumn('uuid')
   id: string;

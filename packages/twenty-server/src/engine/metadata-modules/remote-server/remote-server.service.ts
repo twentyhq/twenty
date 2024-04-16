@@ -116,10 +116,7 @@ export class RemoteServerService<T extends RemoteServerType> {
       throw new NotFoundException('Remote server does not exist');
     }
 
-    await this.remoteTableService.unsyncByServerInput(
-      workspaceId,
-      remoteServer,
-    );
+    await this.remoteTableService.unsyncAll(workspaceId, remoteServer);
 
     return this.metadataDataSource.transaction(
       async (entityManager: EntityManager) => {
