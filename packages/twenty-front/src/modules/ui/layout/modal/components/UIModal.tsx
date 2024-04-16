@@ -1,11 +1,6 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-
-import {
-  ClickOutsideMode,
-  useListenClickOutside,
-} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 const StyledModalDiv = styled(motion.div)<{
   size?: ModalSize;
@@ -92,27 +87,27 @@ const StyledBackDrop = styled(motion.div)`
 /**
  * Modal components
  */
-type ModalHeaderProps = React.PropsWithChildren & {
+type UIModalHeaderProps = React.PropsWithChildren & {
   className?: string;
 };
 
-const ModalHeader = ({ children, className }: ModalHeaderProps) => (
+const UIModalHeader = ({ children, className }: UIModalHeaderProps) => (
   <StyledHeader className={className}>{children}</StyledHeader>
 );
 
-type ModalContentProps = React.PropsWithChildren & {
+type UIModalContentProps = React.PropsWithChildren & {
   className?: string;
 };
 
-const ModalContent = ({ children, className }: ModalContentProps) => (
+const UIModalContent = ({ children, className }: UIModalContentProps) => (
   <StyledContent className={className}>{children}</StyledContent>
 );
 
-type ModalFooterProps = React.PropsWithChildren & {
+type UIModalFooterProps = React.PropsWithChildren & {
   className?: string;
 };
 
-const ModalFooter = ({ children, className }: ModalFooterProps) => (
+const UIModalFooter = ({ children, className }: UIModalFooterProps) => (
   <StyledFooter className={className}>{children}</StyledFooter>
 );
 
@@ -122,13 +117,13 @@ const ModalFooter = ({ children, className }: ModalFooterProps) => (
 export type ModalSize = 'small' | 'medium' | 'large';
 export type ModalPadding = 'none' | 'small' | 'medium' | 'large';
 
-type UIModalProps = React.PropsWithChildren & {
+export type UIModalProps = React.PropsWithChildren & {
   isOpen?: boolean;
-  onClose?: () => void;
   onEnter?: () => void;
   size?: ModalSize;
   padding?: ModalPadding;
   className?: string;
+  modalRef?: React.RefObject<HTMLElement>;
 };
 
 const modalVariants = {
@@ -141,19 +136,11 @@ const modalVariants = {
 export const UIModal = ({
   isOpen = false,
   children,
-  onClose,
   size = 'medium',
   padding = 'medium',
+  modalRef,
   className,
 }: UIModalProps) => {
-  const modalRef = useRef<HTMLDivElement>(null);
-
-  useListenClickOutside({
-    refs: [modalRef],
-    callback: () => onClose?.(),
-    mode: ClickOutsideMode.comparePixels,
-  });
-
   return isOpen ? (
     <StyledBackDrop>
       <StyledModalDiv
@@ -178,6 +165,6 @@ export const UIModal = ({
   );
 };
 
-UIModal.Header = ModalHeader;
-UIModal.Content = ModalContent;
-UIModal.Footer = ModalFooter;
+UIModal.Header = UIModalHeader;
+UIModal.Content = UIModalContent;
+UIModal.Footer = UIModalFooter;
