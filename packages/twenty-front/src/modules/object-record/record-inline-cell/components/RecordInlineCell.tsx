@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import styled from '@emotion/styled';
 import { useIcons } from 'twenty-ui';
 
 import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
@@ -18,6 +19,10 @@ import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 type RecordInlineCellProps = {
   readonly?: boolean;
 };
+
+const StyledAbsolutePosition = styled.div`
+  position: absolute;
+`;
 
 export const RecordInlineCell = ({ readonly }: RecordInlineCellProps) => {
   const { fieldDefinition, entityId } = useContext(FieldContext);
@@ -65,6 +70,20 @@ export const RecordInlineCell = ({ readonly }: RecordInlineCellProps) => {
 
   const { getIcon } = useIcons();
 
+  const fieldInput = (
+    <FieldInput
+      recordFieldInputdId={`${entityId}-${fieldDefinition?.metadata?.fieldName}`}
+      onEnter={handleEnter}
+      onCancel={handleCancel}
+      onEscape={handleEscape}
+      onSubmit={handleSubmit}
+      onTab={handleTab}
+      onShiftTab={handleShiftTab}
+      onClickOutside={handleClickOutside}
+      isReadOnly={readonly}
+    />
+  );
+
   return (
     <RecordInlineCellContainer
       readonly={readonly}
@@ -83,17 +102,11 @@ export const RecordInlineCell = ({ readonly }: RecordInlineCellProps) => {
       labelWidth={fieldDefinition.labelWidth}
       showLabel={fieldDefinition.showLabel}
       editModeContent={
-        <FieldInput
-          recordFieldInputdId={`${entityId}-${fieldDefinition?.metadata?.fieldName}`}
-          onEnter={handleEnter}
-          onCancel={handleCancel}
-          onEscape={handleEscape}
-          onSubmit={handleSubmit}
-          onTab={handleTab}
-          onShiftTab={handleShiftTab}
-          onClickOutside={handleClickOutside}
-          isReadOnly={readonly}
-        />
+        fieldDefinition.type === 'DATE_TIME' ? (
+          <StyledAbsolutePosition>{fieldInput}</StyledAbsolutePosition>
+        ) : (
+          fieldInput
+        )
       }
       displayModeContent={<FieldDisplay />}
       isDisplayModeContentEmpty={isFieldEmpty}

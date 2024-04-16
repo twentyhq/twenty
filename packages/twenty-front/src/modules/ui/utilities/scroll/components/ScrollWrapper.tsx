@@ -17,9 +17,14 @@ const StyledScrollWrapper = styled.div`
   display: flex;
   height: 100%;
   width: 100%;
+  overflow: visible;
 
   .os-scrollbar-handle {
     background-color: ${({ theme }) => theme.border.color.medium};
+  }
+  [data-overlayscrollbars-viewport] {
+    position: static;
+    z-index: 10;
   }
 `;
 

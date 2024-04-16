@@ -7,7 +7,6 @@ const StyledInlineCellEditModeContainer = styled.div<RecordInlineCellEditModePro
   height: 24px;
 
   margin-left: -${({ theme }) => theme.spacing(1)};
-  position: relative;
   z-index: 10;
 `;
 
