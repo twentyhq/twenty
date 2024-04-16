@@ -9,6 +9,6 @@ export const TIME_BLOCKS = {
   mm: {
     mask: IMask.MaskedRange, // Use MaskedRange for valid minute range (0-59)
     from: 0,
-    to: 61,
+    to: 59,
   },
 };

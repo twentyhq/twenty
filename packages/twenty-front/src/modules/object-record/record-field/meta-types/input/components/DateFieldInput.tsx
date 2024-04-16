@@ -2,6 +2,7 @@ import { Nullable } from 'twenty-ui';
 
 import { useDateField } from '@/object-record/record-field/meta-types/hooks/useDateField';
 import { DateInput } from '@/ui/field/input/components/DateInput';
+import { isDefined } from '~/utils/isDefined';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 
@@ -11,19 +12,21 @@ export type DateFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
+  onClear?: FieldInputEvent;
 };
 
 export const DateFieldInput = ({
   onEnter,
   onEscape,
   onClickOutside,
+  onClear,
 }: DateFieldInputProps) => {
-  const { fieldValue, hotkeyScope, setDraftValue } = useDateField();
+  const { fieldValue, setDraftValue } = useDateField();
 
   const persistField = usePersistField();
 
   const persistDate = (newDate: Nullable<Date>) => {
-    if (!newDate) {
+    if (!isDefined(newDate)) {
       persistField(null);
     } else {
       const newDateISO = newDate?.toISOString();
@@ -51,17 +54,21 @@ export const DateFieldInput = ({
     setDraftValue(newDate?.toDateString() ?? '');
   };
 
+  const handleClear = () => {
+    onClear?.(() => persistDate(null));
+  };
+
   const dateValue = fieldValue ? new Date(fieldValue) : null;
 
   return (
     <DateInput
-      hotkeyScope={hotkeyScope}
       onClickOutside={handleClickOutside}
       onEnter={handleEnter}
       onEscape={handleEscape}
       value={dateValue}
       clearable
       onChange={handleChange}
+      onClear={handleClear}
     />
   );
 };
