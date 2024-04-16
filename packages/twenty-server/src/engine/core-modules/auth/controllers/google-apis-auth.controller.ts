@@ -32,7 +32,7 @@ export class GoogleAPIsAuthController {
   }
 
   @Get('get-access-token')
-  @UseGuards(GoogleAPIsProviderEnabledGuard, GoogleAPIsOauthGuard)
+  @UseGuards(GoogleAPIsOauthGuard)
   async googleAuthGetAccessToken(
     @Req() req: GoogleAPIsRequest,
     @Res() res: Response,
