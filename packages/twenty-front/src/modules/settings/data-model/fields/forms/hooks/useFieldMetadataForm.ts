@@ -41,12 +41,14 @@ const fieldSchema = z.object({
   icon: z.string().startsWith('Icon'),
   label: z.string().min(1),
   defaultValue: z.any(),
-  type: z.enum(
-    Object.values(FieldMetadataType) as [
-      FieldMetadataType,
-      ...FieldMetadataType[],
-    ],
-  ),
+  type: z
+    .enum(
+      Object.values(FieldMetadataType) as [
+        FieldMetadataType,
+        ...FieldMetadataType[],
+      ],
+    )
+    .optional(),
 });
 
 const currencySchema = fieldSchema.merge(
