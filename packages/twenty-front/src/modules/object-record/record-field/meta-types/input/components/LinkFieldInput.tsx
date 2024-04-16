@@ -3,7 +3,7 @@ import { TextInput } from '@/ui/field/input/components/TextInput';
 import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
 import { useLinkField } from '../../hooks/useLinkField';
 
-import { FieldInputEvent } from './DateFieldInput';
+import { FieldInputEvent } from './DateTimeFieldInput';
 
 export type LinkFieldInputProps = {
   onClickOutside?: FieldInputEvent;

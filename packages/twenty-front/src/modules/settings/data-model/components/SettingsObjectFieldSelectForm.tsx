@@ -24,6 +24,7 @@ export type SettingsObjectFieldSelectFormValues =
 type SettingsObjectFieldSelectFormProps = {
   onChange: (values: SettingsObjectFieldSelectFormValues) => void;
   values: SettingsObjectFieldSelectFormValues;
+  isMultiSelect?: boolean;
 };
 
 const StyledContainer = styled(CardContent)`
@@ -60,6 +61,7 @@ const getNextColor = (currentColor: ThemeColor) => {
 export const SettingsObjectFieldSelectForm = ({
   onChange,
   values,
+  isMultiSelect = false,
 }: SettingsObjectFieldSelectFormProps) => {
   const handleDragEnd = (result: DropResult) => {
     if (!result.destination) return;
@@ -70,6 +72,38 @@ export const SettingsObjectFieldSelectForm = ({
     });
 
     onChange(nextOptions);
+  };
+
+  const handleDefaultValueChange = (
+    index: number,
+    option: SettingsObjectFieldSelectFormOption,
+    nextOption: SettingsObjectFieldSelectFormOption,
+    forceUniqueDefaultValue: boolean,
+  ) => {
+    const computeUniqueDefaultValue =
+      forceUniqueDefaultValue && option.isDefault !== nextOption.isDefault;
+
+    const nextOptions = computeUniqueDefaultValue
+      ? values.map((value) => ({
+          ...value,
+          isDefault: false,
+        }))
+      : [...values];
+
+    nextOptions.splice(index, 1, nextOption);
+    onChange(nextOptions);
+  };
+
+  const findNewLabel = () => {
+    let optionIndex = values.length + 1;
+    while (optionIndex < 100) {
+      const newLabel = `Option ${optionIndex}`;
+      if (!values.map((value) => value.label).includes(newLabel)) {
+        return newLabel;
+      }
+      optionIndex += 1;
+    }
+    return `Option 100`;
   };
 
   return (
@@ -91,18 +125,12 @@ export const SettingsObjectFieldSelectForm = ({
                       key={option.value}
                       isDefault={option.isDefault}
                       onChange={(nextOption) => {
-                        const hasDefaultOptionChanged =
-                          !option.isDefault && nextOption.isDefault;
-                        const nextOptions = hasDefaultOptionChanged
-                          ? values.map((value) => ({
-                              ...value,
-                              isDefault: false,
-                            }))
-                          : [...values];
-
-                        nextOptions.splice(index, 1, nextOption);
-
-                        onChange(nextOptions);
+                        handleDefaultValueChange(
+                          index,
+                          option,
+                          nextOption,
+                          !isMultiSelect,
+                        );
                       }}
                       onRemove={
                         values.length > 1
@@ -131,7 +159,7 @@ export const SettingsObjectFieldSelectForm = ({
               ...values,
               {
                 color: getNextColor(values[values.length - 1].color),
-                label: `Option ${values.length + 1}`,
+                label: findNewLabel(),
                 value: v4(),
               },
             ])

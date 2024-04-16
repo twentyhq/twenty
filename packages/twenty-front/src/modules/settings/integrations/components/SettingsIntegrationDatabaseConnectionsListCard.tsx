@@ -3,11 +3,11 @@ import styled from '@emotion/styled';
 import { IconChevronRight } from 'twenty-ui';
 
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { SettingsIntegrationDatabaseConnectedTablesStatus } from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectedTablesStatus';
+import { SettingsIntegrationDatabaseConnectionSyncStatus } from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectionSyncStatus';
 import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
+import { getConnectionDbName } from '@/settings/integrations/utils/getConnectionDbName';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { RemoteServer } from '~/generated-metadata/graphql';
-import { mockedRemoteObjectIntegrations } from '~/testing/mock-data/remoteObjectDatabases';
 
 type SettingsIntegrationDatabaseConnectionsListCardProps = {
   integration: SettingsIntegration;
@@ -38,14 +38,6 @@ export const SettingsIntegrationDatabaseConnectionsListCard = ({
 }: SettingsIntegrationDatabaseConnectionsListCardProps) => {
   const navigate = useNavigate();
 
-  // TODO: Use real remote database tables data from backend
-  const tables = mockedRemoteObjectIntegrations[0].connections[0].tables;
-
-  const getConnectionDbName = (connection: RemoteServer) =>
-    integration.from.key === 'postgresql'
-      ? connection.foreignDataWrapperOptions?.dbname
-      : '';
-
   return (
     <SettingsListCard
       items={connections}
@@ -54,18 +46,18 @@ export const SettingsIntegrationDatabaseConnectionsListCard = ({
           <StyledDatabaseLogo alt="" src={integration.from.image} />
         </StyledDatabaseLogoContainer>
       )}
-      RowRightComponent={({ item: _connection }) => (
+      RowRightComponent={({ item: connection }) => (
         <StyledRowRightContainer>
-          <SettingsIntegrationDatabaseConnectedTablesStatus
-            connectedTablesCount={tables.length}
+          <SettingsIntegrationDatabaseConnectionSyncStatus
+            connectionId={connection.id}
           />
           <LightIconButton Icon={IconChevronRight} accent="tertiary" />
         </StyledRowRightContainer>
       )}
-      onRowClick={(connection) =>
-        navigate(`./${getConnectionDbName(connection)}`)
+      onRowClick={(connection) => navigate(`./${connection.id}`)}
+      getItemLabel={(connection) =>
+        getConnectionDbName({ integration, connection })
       }
-      getItemLabel={getConnectionDbName}
       hasFooter
       footerButtonLabel="Add connection"
       onFooterButtonClick={() => navigate('./new')}

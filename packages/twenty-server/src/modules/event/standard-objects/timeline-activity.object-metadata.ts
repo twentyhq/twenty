@@ -1,9 +1,11 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { timelineActivitiestandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { timelineActivityStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { CustomObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/custom-objects/custom.object-metadata';
 import { DynamicRelationFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/dynamic-field-metadata.interface';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
@@ -12,6 +14,8 @@ import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/comp
 import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
 
 @ObjectMetadata({
   standardId: standardObjectIds.timelineActivity,
@@ -22,9 +26,13 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
   icon: 'IconIconTimelineEvent',
 })
 @IsSystem()
+@IsNotAuditLogged()
+@Gate({
+  featureFlag: FeatureFlagKeys.IsEventObjectEnabled,
+})
 export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    standardId: timelineActivitiestandardFieldIds.happensAt,
+    standardId: timelineActivityStandardFieldIds.happensAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Creation date',
     description: 'Creation date',
@@ -34,7 +42,7 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
   happensAt: Date;
 
   @FieldMetadata({
-    standardId: timelineActivitiestandardFieldIds.name,
+    standardId: timelineActivityStandardFieldIds.name,
     type: FieldMetadataType.TEXT,
     label: 'Event name',
     description: 'Event name',
@@ -43,7 +51,7 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
   name: string;
 
   @FieldMetadata({
-    standardId: timelineActivitiestandardFieldIds.properties,
+    standardId: timelineActivityStandardFieldIds.properties,
     type: FieldMetadataType.RAW_JSON,
     label: 'Event details',
     description: 'Json value for event details',
@@ -53,7 +61,7 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
   properties: JSON;
 
   @FieldMetadata({
-    standardId: timelineActivitiestandardFieldIds.workspaceMember,
+    standardId: timelineActivityStandardFieldIds.workspaceMember,
     type: FieldMetadataType.RELATION,
     label: 'Workspace Member',
     description: 'Event workspace member',
@@ -61,10 +69,10 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'workspaceMemberId',
   })
   @IsNullable()
-  workspaceMember: WorkspaceMemberObjectMetadata;
+  workspaceMember: Relation<WorkspaceMemberObjectMetadata>;
 
   @FieldMetadata({
-    standardId: timelineActivitiestandardFieldIds.person,
+    standardId: timelineActivityStandardFieldIds.person,
     type: FieldMetadataType.RELATION,
     label: 'Person',
     description: 'Event person',
@@ -72,10 +80,10 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'personId',
   })
   @IsNullable()
-  person: PersonObjectMetadata;
+  person: Relation<PersonObjectMetadata>;
 
   @FieldMetadata({
-    standardId: timelineActivitiestandardFieldIds.company,
+    standardId: timelineActivityStandardFieldIds.company,
     type: FieldMetadataType.RELATION,
     label: 'Company',
     description: 'Event company',
@@ -83,10 +91,10 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'companyId',
   })
   @IsNullable()
-  company: CompanyObjectMetadata;
+  company: Relation<CompanyObjectMetadata>;
 
   @FieldMetadata({
-    standardId: timelineActivitiestandardFieldIds.opportunity,
+    standardId: timelineActivityStandardFieldIds.opportunity,
     type: FieldMetadataType.RELATION,
     label: 'Opportunity',
     description: 'Events opportunity',
@@ -94,20 +102,18 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'opportunityId',
   })
   @IsNullable()
-  opportunity: OpportunityObjectMetadata;
+  opportunity: Relation<OpportunityObjectMetadata>;
 
   @DynamicRelationFieldMetadata((oppositeObjectMetadata) => ({
-    standardId: timelineActivitiestandardFieldIds.custom,
+    standardId: timelineActivityStandardFieldIds.custom,
     name: oppositeObjectMetadata.nameSingular,
     label: oppositeObjectMetadata.labelSingular,
     description: `Event ${oppositeObjectMetadata.labelSingular}`,
     joinColumn: `${oppositeObjectMetadata.nameSingular}Id`,
     icon: 'IconBuildingSkyscraper',
   }))
-  custom: CustomObjectMetadata;
-
   @FieldMetadata({
-    standardId: timelineActivitiestandardFieldIds.linkedRecordCachedName,
+    standardId: timelineActivityStandardFieldIds.linkedRecordCachedName,
     type: FieldMetadataType.TEXT,
     label: 'Liked Record cached name',
     description: 'Cached record name',
@@ -116,7 +122,7 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
   linkedRecordCachedName: string;
 
   @FieldMetadata({
-    standardId: timelineActivitiestandardFieldIds.linkedRecordId,
+    standardId: timelineActivityStandardFieldIds.linkedRecordId,
     type: FieldMetadataType.TEXT,
     label: 'Linked Record id',
     description: 'Linked Record id',
@@ -126,7 +132,7 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
   linkedRecordId: string;
 
   @FieldMetadata({
-    standardId: timelineActivitiestandardFieldIds.linkedObjectMetadataId,
+    standardId: timelineActivityStandardFieldIds.linkedObjectMetadataId,
     type: FieldMetadataType.TEXT,
     label: 'Linked Object Metadata Id',
     description: 'inked Object Metadata Id',

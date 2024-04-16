@@ -14,6 +14,7 @@ import {
 import { getFieldArgumentsByKey } from 'src/engine/api/graphql/workspace-query-builder/utils/get-field-arguments-by-key.util';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
+import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 
 import { FieldsStringFactory } from './fields-string.factory';
 import { ArgsStringFactory } from './args-string.factory';
@@ -24,7 +25,7 @@ export class RelationFieldAliasFactory {
 
   constructor(
     @Inject(forwardRef(() => FieldsStringFactory))
-    private readonly fieldsStringFactory: FieldsStringFactory,
+    private readonly fieldsStringFactory: CircularDep<FieldsStringFactory>,
     private readonly argsStringFactory: ArgsStringFactory,
     private readonly objectMetadataService: ObjectMetadataService,
   ) {}
@@ -118,9 +119,7 @@ export class RelationFieldAliasFactory {
       `;
     }
 
-    let relationAlias = fieldMetadata.isCustom
-      ? `${fieldKey}: _${fieldMetadata.name}`
-      : fieldKey;
+    let relationAlias = `${fieldKey}: ${computeColumnName(fieldMetadata)}`;
 
     // For one to one relations, pg_graphql use the target TableName on the side that is not storing the foreign key
     // so we need to alias it to the field key

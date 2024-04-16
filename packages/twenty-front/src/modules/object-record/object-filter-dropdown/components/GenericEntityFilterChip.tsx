@@ -1,5 +1,6 @@
-import { EntityChip } from '@/ui/display/chip/components/EntityChip';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { EntityChip, IconComponent } from 'twenty-ui';
+
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 import { Filter } from '../types/Filter';
 
@@ -16,7 +17,7 @@ export const GenericEntityFilterChip = ({
     entityId={filter.value}
     name={filter.displayValue}
     avatarType="rounded"
-    avatarUrl={filter.displayAvatarUrl}
+    avatarUrl={getImageAbsoluteURIOrBase64(filter.displayAvatarUrl) || ''}
     LeftIcon={Icon}
   />
 );

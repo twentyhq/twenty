@@ -1,9 +1,9 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { ComponentDecorator } from 'twenty-ui';
 
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
 import { mockedCompanyObjectMetadataItem } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RecordStoreDecorator } from '~/testing/decorators/RecordStoreDecorator';

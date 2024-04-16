@@ -20,10 +20,16 @@ export function generateFrontConfig(): void {
   )};`;
 
   const distPath = path.join(__dirname, '../..', 'front');
+  const filePath = path.join(distPath, 'env-config.js');
 
   if (!fs.existsSync(distPath)) {
     fs.mkdirSync(distPath, { recursive: true });
   }
 
-  fs.writeFileSync(path.join(distPath, 'env-config.js'), configString, 'utf8');
+  if (
+    !fs.existsSync(filePath) ||
+    fs.readFileSync(filePath, 'utf8') !== configString
+  ) {
+    fs.writeFileSync(filePath, configString, 'utf8');
+  }
 }

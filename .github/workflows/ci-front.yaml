@@ -6,10 +6,12 @@ on:
     paths:
       - 'package.json'
       - 'packages/twenty-front/**'
+      - 'packages/twenty-ui/**'
   pull_request:
     paths:
       - 'package.json'
       - 'packages/twenty-front/**'
+      - 'packages/twenty-ui/**'
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -146,6 +148,10 @@ jobs:
           path: node_modules
           key: root-node_modules-${{hashFiles('yarn.lock')}}
           restore-keys: root-node_modules-
+      - name: UI / Run linter
+        run: yarn nx lint twenty-ui
+      - name: UI / Run Typescript Check
+        run: yarn nx typecheck twenty-ui
       - name: Front / Run linter
         run: yarn nx lint:ci twenty-front
       - name: Front / Run Typescript Check

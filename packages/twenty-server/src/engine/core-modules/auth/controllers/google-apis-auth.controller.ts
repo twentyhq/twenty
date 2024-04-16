@@ -1,4 +1,11 @@
-import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Req,
+  Res,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 
 import { Response } from 'express';
 
@@ -40,14 +47,16 @@ export class GoogleAPIsAuthController {
     const demoWorkspaceIds = this.environmentService.get('DEMO_WORKSPACE_IDS');
 
     if (demoWorkspaceIds.includes(workspaceId)) {
-      throw new Error('Cannot connect Google account to demo workspace');
+      throw new UnauthorizedException(
+        'Cannot connect Google account to demo workspace',
+      );
     }
 
     if (!workspaceId) {
       throw new Error('Workspace not found');
     }
 
-    await this.googleAPIsService.saveOrUpdateConnectedAccount({
+    await this.googleAPIsService.refreshGoogleRefreshToken({
       handle: email,
       workspaceMemberId: workspaceMemberId,
       workspaceId: workspaceId,

@@ -1,14 +1,15 @@
 import { useTheme } from '@emotion/react';
 import { useRecoilState } from 'recoil';
-import { IconCheckbox, IconNotes } from 'twenty-ui';
-
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
   Chip,
   ChipAccent,
   ChipSize,
   ChipVariant,
-} from '@/ui/display/chip/components/Chip';
+  IconCheckbox,
+  IconNotes,
+} from 'twenty-ui';
+
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
 type ActivityTypeDropdownProps = {
   activityId: string;

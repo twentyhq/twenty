@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
+import { IconComponentProps } from 'twenty-ui';
 
-import { IconComponentProps } from '@/ui/display/icon/types/IconComponent';
 import { SELECT_COUNTRY_DROPDOWN_ID } from '@/ui/input/components/internal/country/constants/SelectCountryDropdownId';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { Select, SelectOption } from '@/ui/input/components/Select';

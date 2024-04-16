@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
+import { AvatarType } from 'twenty-ui';
 
-import { AvatarType } from '@/users/components/Avatar';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 
 export const mockId = '8f3b2121-f194-4ba4-9fbf-2d5a37126806';
@@ -177,7 +177,7 @@ export const mocks = [
   {
     request: {
       query: gql`
-        mutation DeleteOneFavorite($idToDelete: ID!) {
+        mutation DeleteOneFavorite($idToDelete: UUID!) {
           deleteFavorite(id: $idToDelete) {
             id
           }
@@ -197,7 +197,7 @@ export const mocks = [
     request: {
       query: gql`
         mutation UpdateOneFavorite(
-          $idToUpdate: ID!
+          $idToUpdate: UUID!
           $input: FavoriteUpdateInput!
         ) {
           updateFavorite(id: $idToUpdate, data: $input) {

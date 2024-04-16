@@ -26,7 +26,7 @@ export class ColumnActionAbstractFactory<
     currentFieldMetadata: FieldMetadataInterface<T> | undefined,
     alteredFieldMetadata: FieldMetadataInterface<T>,
     options?: WorkspaceColumnActionOptions,
-  ): WorkspaceMigrationColumnAction {
+  ): WorkspaceMigrationColumnAction[] {
     switch (action) {
       case WorkspaceMigrationColumnActionType.CREATE:
         return this.handleCreateAction(alteredFieldMetadata, options);
@@ -52,7 +52,7 @@ export class ColumnActionAbstractFactory<
   protected handleCreateAction(
     _fieldMetadata: FieldMetadataInterface<T>,
     _options?: WorkspaceColumnActionOptions,
-  ): WorkspaceMigrationColumnCreate {
+  ): WorkspaceMigrationColumnCreate[] {
     throw new Error('handleCreateAction method not implemented.');
   }
 
@@ -60,7 +60,7 @@ export class ColumnActionAbstractFactory<
     _currentFieldMetadata: FieldMetadataInterface<T>,
     _alteredFieldMetadata: FieldMetadataInterface<T>,
     _options?: WorkspaceColumnActionOptions,
-  ): WorkspaceMigrationColumnAlter {
+  ): WorkspaceMigrationColumnAlter[] {
     throw new Error('handleAlterAction method not implemented.');
   }
 }

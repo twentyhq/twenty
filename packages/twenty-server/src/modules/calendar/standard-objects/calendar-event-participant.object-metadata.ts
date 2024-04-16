@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { calendarEventParticipantStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -39,7 +41,7 @@ export class CalendarEventParticipantObjectMetadata extends BaseObjectMetadata {
     icon: 'IconCalendar',
     joinColumn: 'calendarEventId',
   })
-  calendarEvent: CalendarEventObjectMetadata;
+  calendarEvent: Relation<CalendarEventObjectMetadata>;
 
   @FieldMetadata({
     standardId: calendarEventParticipantStandardFieldIds.handle,
@@ -114,7 +116,7 @@ export class CalendarEventParticipantObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'personId',
   })
   @IsNullable()
-  person: PersonObjectMetadata;
+  person: Relation<PersonObjectMetadata>;
 
   @FieldMetadata({
     standardId: calendarEventParticipantStandardFieldIds.workspaceMember,
@@ -125,5 +127,5 @@ export class CalendarEventParticipantObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'workspaceMemberId',
   })
   @IsNullable()
-  workspaceMember: WorkspaceMemberObjectMetadata;
+  workspaceMember: Relation<WorkspaceMemberObjectMetadata>;
 }

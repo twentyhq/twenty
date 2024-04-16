@@ -9,11 +9,11 @@ import {
   size,
   useFloating,
 } from '@floating-ui/react';
+import { AppTooltip } from 'twenty-ui';
 import { ReadonlyDeep } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { SelectOption } from '@/spreadsheet-import/types';
-import { AppTooltip } from '@/ui/display/tooltip/AppTooltip';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';

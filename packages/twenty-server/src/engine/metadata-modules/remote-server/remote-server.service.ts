@@ -16,6 +16,7 @@ import {
   validateString,
 } from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-input';
 import { ForeignDataWrapperQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/foreign-data-wrapper-query.factory';
+import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
 
 @Injectable()
 export class RemoteServerService<T extends RemoteServerType> {
@@ -28,6 +29,7 @@ export class RemoteServerService<T extends RemoteServerType> {
     private readonly metadataDataSource: DataSource,
     private readonly environmentService: EnvironmentService,
     private readonly foreignDataWrapperQueryFactory: ForeignDataWrapperQueryFactory,
+    private readonly remoteTableService: RemoteTableService,
   ) {}
 
   async createOneRemoteServer(
@@ -112,6 +114,22 @@ export class RemoteServerService<T extends RemoteServerType> {
 
     if (!remoteServer) {
       throw new NotFoundException('Object does not exist');
+    }
+
+    const foreignTablesToRemove =
+      await this.remoteTableService.fetchForeignTableNamesWithinWorkspace(
+        workspaceId,
+        remoteServer.foreignDataWrapperId,
+      );
+
+    if (foreignTablesToRemove.length) {
+      for (const foreignTableName of foreignTablesToRemove) {
+        await this.remoteTableService.removeForeignTableAndMetadata(
+          foreignTableName,
+          workspaceId,
+          remoteServer,
+        );
+      }
     }
 
     return this.metadataDataSource.transaction(

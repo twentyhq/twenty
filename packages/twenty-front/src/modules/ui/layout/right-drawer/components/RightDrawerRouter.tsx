@@ -23,7 +23,7 @@ const StyledRightDrawerBody = styled.div`
   height: calc(
     100vh - ${({ theme }) => theme.spacing(14)} - 1px
   ); // (-1 for border)
-  overflow: auto;
+  //overflow: auto;
   position: relative;
 `;
 

@@ -97,7 +97,7 @@ export const calendarEventStandardFieldIds = {
   conferenceLink: '20202020-35da-43ef-9ca0-e936e9dc237b',
   recurringEventExternalId: '20202020-4b96-43d0-8156-4c7a9717635c',
   calendarChannelEventAssociations: '20202020-bdf8-4572-a2cc-ecbb6bcc3a02',
-  eventParticipants: '20202020-e07e-4ccb-88f5-6f3d00458eec',
+  calendarEventParticipants: '20202020-e07e-4ccb-88f5-6f3d00458eec',
 };
 
 export const commentStandardFieldIds = {
@@ -154,7 +154,7 @@ export const behavioralEventStandardFieldIds = {
   objectId: '20202020-6d8b-4ca5-9869-f882cb335673',
 };
 
-export const timelineActivitiestandardFieldIds = {
+export const timelineActivityStandardFieldIds = {
   happensAt: '20202020-9526-4993-b339-c4318c4d39f1',
   type: '20202020-5e7b-4ccd-8b8a-86b94b474135',
   name: '20202020-7207-46e8-9dab-849505ae8498',

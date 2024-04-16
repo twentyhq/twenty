@@ -4,26 +4,30 @@ import { useQuery } from '@apollo/client';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
+import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
 
-// TODO: fix connection in relation => automatically change to an array
 export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
   objectNameSingular,
   objectRecordId = '',
   onCompleted,
-  depth,
   skip,
+  depth,
 }: ObjectMetadataItemIdentifier & {
   objectRecordId: string | undefined;
   onCompleted?: (data: T) => void;
   skip?: boolean;
   depth?: number;
 }) => {
-  const { objectMetadataItem, findOneRecordQuery } = useObjectMetadataItem(
-    { objectNameSingular },
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
+  const { findOneRecordQuery } = useFindOneRecordQuery({
+    objectNameSingular,
     depth,
-  );
+  });
 
   const { data, loading, error } = useQuery<
     { [nameSingular: string]: T },
@@ -42,6 +46,7 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
     },
   });
 
+  // TODO: Remove connection from record
   const recordWithoutConnection = useMemo(
     () =>
       data?.[objectNameSingular]

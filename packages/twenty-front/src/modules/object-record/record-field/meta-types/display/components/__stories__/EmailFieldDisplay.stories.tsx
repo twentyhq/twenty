@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
+import { ComponentDecorator } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useEmailField } from '@/object-record/record-field/meta-types/hooks/useEmailField';
 import { FieldMetadataType } from '~/generated/graphql';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 import { EmailFieldDisplay } from '../EmailFieldDisplay';
@@ -36,6 +36,7 @@ const meta: Meta = {
             metadata: {
               fieldName: 'Email',
               placeHolder: 'Email',
+              objectMetadataNameSingular: 'person',
             },
           },
           hotkeyScope: 'hotkey-scope',

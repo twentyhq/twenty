@@ -42,27 +42,39 @@ export class SyncWorkspaceMetadataCommand extends CommandRunner {
       : await this.workspaceService.getWorkspaceIds();
 
     for (const workspaceId of workspaceIds) {
-      const issues = await this.workspaceHealthService.healthCheck(workspaceId);
+      try {
+        const issues =
+          await this.workspaceHealthService.healthCheck(workspaceId);
 
-      // Security: abort if there are issues.
-      if (issues.length > 0) {
+        // Security: abort if there are issues.
+        if (issues.length > 0) {
+          if (!options.force) {
+            this.logger.error(
+              `Workspace contains ${issues.length} issues, aborting.`,
+            );
+
+            this.logger.log(
+              'If you want to force the migration, use --force flag',
+            );
+            this.logger.log(
+              'Please use `workspace:health` command to check issues and fix them before running this command.',
+            );
+
+            return;
+          }
+
+          this.logger.warn(
+            `Workspace contains ${issues.length} issues, sync has been forced.`,
+          );
+        }
+      } catch (error) {
         if (!options.force) {
-          this.logger.error(
-            `Workspace contains ${issues.length} issues, aborting.`,
-          );
-
-          this.logger.log(
-            'If you want to force the migration, use --force flag',
-          );
-          this.logger.log(
-            'Please use `workspace:health` command to check issues and fix them before running this command.',
-          );
-
-          return;
+          throw error;
         }
 
         this.logger.warn(
-          `Workspace contains ${issues.length} issues, sync has been forced.`,
+          `Workspace health check failed with error, but sync has been forced.`,
+          error,
         );
       }
 
