@@ -9,7 +9,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
-import { GoogleAPIsStrategy } from 'src/engine/core-modules/auth/strategies/google-apis.auth.strategy';
+import {
+  GoogleAPIScopeConfig,
+  GoogleAPIsStrategy,
+} from 'src/engine/core-modules/auth/strategies/google-apis.auth.strategy';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
@@ -34,21 +37,26 @@ export class GoogleAPIsProviderEnabledGuard implements CanActivate {
       throw new NotFoundException('Google apis auth is not enabled');
     }
 
-    const { workspaceId } = await this.tokenService.verifyTransientToken(
-      getRequest(context)?.query?.transientToken ?? '',
-    );
+    const transientToken = getRequest(context)?.query?.transientToken;
 
-    const isCalendarEnabledFlag = await this.featureFlagRepository.findOneBy({
-      workspaceId,
-      key: FeatureFlagKeys.IsCalendarEnabled,
-      value: true,
-    });
+    const scopeConfig: GoogleAPIScopeConfig = {
+      isCalendarEnabled: false,
+    };
 
-    const isCalendarEnabled = !!isCalendarEnabledFlag?.value;
+    if (transientToken && typeof transientToken === 'string') {
+      const { workspaceId } =
+        await this.tokenService.verifyTransientToken(transientToken);
 
-    new GoogleAPIsStrategy(this.environmentService, {
-      isCalendarEnabled,
-    });
+      const isCalendarEnabledFlag = await this.featureFlagRepository.findOneBy({
+        workspaceId,
+        key: FeatureFlagKeys.IsCalendarEnabled,
+        value: true,
+      });
+
+      scopeConfig.isCalendarEnabled = !!isCalendarEnabledFlag?.value;
+    }
+
+    new GoogleAPIsStrategy(this.environmentService, scopeConfig);
 
     return true;
   }

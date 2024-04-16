@@ -22,6 +22,10 @@ export type GoogleAPIsRequest = Omit<
   };
 };
 
+export type GoogleAPIScopeConfig = {
+  isCalendarEnabled?: boolean;
+};
+
 @Injectable()
 export class GoogleAPIsStrategy extends PassportStrategy(
   Strategy,
@@ -29,9 +33,7 @@ export class GoogleAPIsStrategy extends PassportStrategy(
 ) {
   constructor(
     environmentService: EnvironmentService,
-    scopeConfig: {
-      isCalendarEnabled?: boolean;
-    },
+    scopeConfig: GoogleAPIScopeConfig,
   ) {
     const scope = ['email', 'profile'];
 
