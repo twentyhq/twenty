@@ -6,6 +6,9 @@ import path from 'path';
 import rehypeSlug from 'rehype-slug';
 import gfm from 'remark-gfm';
 
+import UserGuideEditContent from '@/app/_components/user-guide/UserGuideEditContent';
+import UserGuideWarning from '@/app/_components/user-guide/UserGuideWarning';
+
 interface ItemInfo {
   title: string;
   position?: number;
@@ -103,6 +106,14 @@ export async function compileMDXFile(filePath: string, addToc = true) {
   const fileContent = fs.readFileSync(filePath, 'utf8');
   const compiled = await compileMDX<{ title: string; position?: number }>({
     source: fileContent,
+    components: {
+      UserGuideWarning(properties) {
+        return <UserGuideWarning {...properties} />;
+      },
+      UserGuideEditContent() {
+        return <UserGuideEditContent />;
+      },
+    },
     options: {
       parseFrontmatter: true,
       mdxOptions: {
