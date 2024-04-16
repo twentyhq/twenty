@@ -8,40 +8,39 @@ import {
   FieldTextMetadata,
 } from '@/object-record/record-field/types/FieldMetadata';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import {
-  mockedCompaniesMetadata,
-  mockedCustomMetadata,
-  mockedPeopleMetadata,
-} from '~/testing/mock-data/metadata';
+import { mockedCompanyObjectMetadataItemNode, mockedCustomObjectMetadataItemNode, mockedPersonObjectMetadataItemNode } from '~/testing/mock-data/metadata';
+;
 
 export const fieldMetadataId = 'fieldMetadataId';
 
-export const mockedPersonObjectMetadataItem = {
-  ...mockedPeopleMetadata.node,
-  fields: mockedPeopleMetadata.node.fields.edges.map(({ node }) => node),
+export const mockedPersonObjectMetadataItem =  {
+  ...mockedPersonObjectMetadataItemNode,
+  fields: mockedPersonObjectMetadataItemNode.fields.edges.map(({ node }) => node),
 };
 
 export const mockedCompanyObjectMetadataItem = {
-  ...mockedCompaniesMetadata.node,
-  fields: mockedCompaniesMetadata.node.fields.edges.map(({ node }) => node),
+  ...mockedCompanyObjectMetadataItemNode,
+  fields: mockedCompanyObjectMetadataItemNode.fields.edges.map(({ node }) => node),
 };
 
 export const mockedCustomObjectMetadataItem = {
-  ...mockedCustomMetadata.node,
-  fields: mockedCustomMetadata.node.fields.edges.map(({ node }) => node),
+  ...mockedCustomObjectMetadataItemNode,
+  fields: mockedCustomObjectMetadataItemNode.fields.edges.map(({ node }) => node),
 };
 
 export const textfieldDefinition: FieldDefinition<FieldTextMetadata> = {
   fieldMetadataId,
   label: 'User Name',
   iconName: 'User',
+  defaultValue: '',
   type: FieldMetadataType.Text,
   metadata: { placeHolder: 'John Doe', fieldName: 'userName' },
 };
 
-const relationFieldMetadataItem = mockedPersonObjectMetadataItem.fields.find(
+const relationFieldMetadataItem = mockedPersonObjectMetadataItem.fields?.find(
   ({ name }) => name === 'company',
 );
+
 export const relationFieldDefinition = formatFieldMetadataItemAsFieldDefinition(
   {
     field: relationFieldMetadataItem!,
@@ -54,6 +53,7 @@ export const selectFieldDefinition: FieldDefinition<FieldSelectMetadata> = {
   label: 'Account Owner',
   iconName: 'iconName',
   type: FieldMetadataType.Select,
+  defaultValue: null,
   metadata: {
     fieldName: 'accountOwner',
     options: [{ label: 'Elon Musk', color: 'blue', value: 'userId' }],
@@ -65,6 +65,7 @@ export const fullNameFieldDefinition: FieldDefinition<FieldFullNameMetadata> = {
   label: 'Display Name',
   iconName: 'profile',
   type: FieldMetadataType.FullName,
+  defaultValue: { firstName: '', lastName: '' },
   metadata: {
     fieldName: 'displayName',
     placeHolder: 'Mr Miagi',
@@ -76,13 +77,14 @@ export const linkFieldDefinition: FieldDefinition<FieldLinkMetadata> = {
   label: 'LinkedIn URL',
   iconName: 'url',
   type: FieldMetadataType.Link,
+  defaultValue: { label: '', url: ''},
   metadata: {
     fieldName: 'linkedInURL',
     placeHolder: 'https://linkedin.com/user',
   },
 };
 
-const phoneFieldMetadataItem = mockedPersonObjectMetadataItem.fields.find(
+const phoneFieldMetadataItem = mockedPersonObjectMetadataItem.fields?.find(
   ({ name }) => name === 'phone',
 );
 export const phoneFieldDefinition = formatFieldMetadataItemAsFieldDefinition({
@@ -95,12 +97,13 @@ export const ratingfieldDefinition: FieldDefinition<FieldRatingMetadata> = {
   label: 'Rating',
   iconName: 'iconName',
   type: FieldMetadataType.Rating,
+  defaultValue: null,
   metadata: {
     fieldName: 'rating',
   },
 };
 
-const booleanFieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
+const booleanFieldMetadataItem = mockedCompanyObjectMetadataItem.fields?.find(
   ({ name }) => name === 'idealCustomerProfile',
 );
 export const booleanFieldDefinition = formatFieldMetadataItemAsFieldDefinition({

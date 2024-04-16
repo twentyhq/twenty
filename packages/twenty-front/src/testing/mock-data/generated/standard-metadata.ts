@@ -3,7 +3,7 @@ import { ObjectEdge } from "~/generated-metadata/graphql";
 // This file is not designed to be manually edited. 
 // It's an extract from the dev seeded environment metadata call
 // TODO: automate the generation of this file
-export const mockedObjectMetadataItems = {
+export const mockedStandardObjectMetadataItemConnection = {
   __typename: 'ObjectConnection',
   pageInfo: {
     __typename: 'PageInfo',
