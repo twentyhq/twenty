@@ -35,7 +35,8 @@ import { DeleteConnectedAccountAssociatedCalendarDataJob } from 'src/modules/cal
 import { GoogleCalendarSyncJob } from 'src/modules/calendar/jobs/google-calendar-sync.job';
 import { CalendarEventCleanerModule } from 'src/modules/calendar/services/calendar-event-cleaner/calendar-event-cleaner.module';
 import { CalendarEventParticipantModule } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.module';
-import { GoogleCalendarSyncModule } from 'src/modules/calendar/services/google-calendar-sync.module';
+import { GoogleCalendarSyncModule } from 'src/modules/calendar/services/google-calendar-sync/google-calendar-sync.module';
+import { WorkspaceGoogleCalendarSyncModule } from 'src/modules/calendar/services/workspace-google-calendar-sync/workspace-google-calendar-sync.module';
 import { AutoCompaniesAndContactsCreationModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/auto-companies-and-contacts-creation.module';
 import { CreateCompanyAndContactJob } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
 import { GoogleAPIRefreshAccessTokenModule } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.module';
@@ -63,6 +64,7 @@ import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-obj
     EnvironmentModule,
     HttpModule,
     GoogleCalendarSyncModule,
+    WorkspaceGoogleCalendarSyncModule,
     ObjectMetadataModule,
     StripeModule,
     ThreadCleanerModule,
