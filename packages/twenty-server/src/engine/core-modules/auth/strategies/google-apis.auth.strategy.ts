@@ -1,8 +1,6 @@
 import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 
-import console from 'console';
-
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
 import { Request } from 'express';
 
@@ -47,8 +45,6 @@ export class GoogleAPIsStrategy extends PassportStrategy(
     ) {
       scope.push('https://www.googleapis.com/auth/calendar.events');
     }
-
-    console.log(scopeConfig?.isCalendarEnabled);
 
     super({
       clientID: environmentService.get('AUTH_GOOGLE_CLIENT_ID'),
