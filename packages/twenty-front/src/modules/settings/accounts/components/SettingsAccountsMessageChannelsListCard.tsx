@@ -4,10 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { IconChevronRight, IconGmail } from 'twenty-ui';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
-import {
-  MessageChannel,
-  MessageChannelSyncStatus,
-} from '@/accounts/types/MessageChannel';
+import { MessageChannel } from '@/accounts/types/MessageChannel';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
@@ -58,9 +55,7 @@ export const SettingsAccountsMessageChannelsListCard = () => {
   } & SettingsAccountsSynchronizationStatusProps)[] = messageChannels.map(
     (messageChannel) => ({
       ...messageChannel,
-      syncStatus: messageChannel.connectedAccount?.authFailedAt
-        ? MessageChannelSyncStatus.FAILED
-        : messageChannel.syncStatus,
+      syncStatus: messageChannel.syncStatus,
     }),
   );
 

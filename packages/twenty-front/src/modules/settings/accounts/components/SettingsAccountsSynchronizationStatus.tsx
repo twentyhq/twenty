@@ -1,46 +1,24 @@
-import { MessageChannelSyncStatus } from '@/accounts/types/MessageChannel';
+import { useGetSyncStatusMetadata } from '@/object-metadata/hooks/useGetSyncStatusMetadata';
 import { Status } from '@/ui/display/status/components/Status';
 
 export type SettingsAccountsSynchronizationStatusProps = {
-  syncStatus: MessageChannelSyncStatus;
-};
-
-const getColor = (syncStatus?: MessageChannelSyncStatus | null) => {
-  switch (syncStatus) {
-    case MessageChannelSyncStatus.FAILED:
-      return 'red';
-    case MessageChannelSyncStatus.PENDING:
-      return 'gray';
-    case MessageChannelSyncStatus.ONGOING:
-      return 'yellow';
-    case MessageChannelSyncStatus.SUCCEEDED:
-      return 'green';
-    default:
-      return 'gray';
-  }
-};
-
-const getText = (syncStatus?: MessageChannelSyncStatus | null) => {
-  switch (syncStatus) {
-    case MessageChannelSyncStatus.FAILED:
-      return 'Sync failed';
-    case MessageChannelSyncStatus.PENDING:
-      return 'Not synced';
-    case MessageChannelSyncStatus.ONGOING:
-      return 'Syncing';
-    case MessageChannelSyncStatus.SUCCEEDED:
-      return 'Synced';
-    default:
-      return 'Not synced';
-  }
+  syncStatus: string;
 };
 
 export const SettingsAccountsSynchronizationStatus = ({
   syncStatus,
-}: SettingsAccountsSynchronizationStatusProps) => (
-  <Status
-    color={getColor(syncStatus)}
-    text={getText(syncStatus)}
-    weight="medium"
-  />
-);
+}: SettingsAccountsSynchronizationStatusProps) => {
+  const syncMetadataOptions = useGetSyncStatusMetadata();
+
+  const syncStatusOption = syncMetadataOptions?.find(
+    (option) => option.value === syncStatus,
+  );
+
+  return (
+    <Status
+      color={syncStatusOption?.color ?? 'gray'}
+      text={syncStatusOption?.label ?? 'Not synced'}
+      weight="medium"
+    />
+  );
+};
