@@ -11,15 +11,16 @@ export type DateTimeFieldInputProps = {
   onClickOutside?: FieldInputEvent;
   onEnter?: FieldInputEvent;
   onEscape?: FieldInputEvent;
+  onClear?: FieldInputEvent;
 };
 
 export const DateTimeFieldInput = ({
   onEnter,
   onEscape,
   onClickOutside,
+  onClear,
 }: DateTimeFieldInputProps) => {
-  const { fieldValue, hotkeyScope, clearable, setDraftValue } =
-    useDateTimeField();
+  const { fieldValue, setDraftValue } = useDateTimeField();
 
   const persistField = usePersistField();
 
@@ -52,18 +53,22 @@ export const DateTimeFieldInput = ({
     setDraftValue(newDate?.toDateString() ?? '');
   };
 
+  const handleClear = () => {
+    onClear?.(() => persistDate(null));
+  };
+
   const dateValue = fieldValue ? new Date(fieldValue) : null;
 
   return (
     <DateInput
-      hotkeyScope={hotkeyScope}
       onClickOutside={handleClickOutside}
       onEnter={handleEnter}
       onEscape={handleEscape}
       value={dateValue}
-      clearable={clearable}
+      clearable
       onChange={handleChange}
       isDateTimeInput
+      onClear={handleClear}
     />
   );
 };
