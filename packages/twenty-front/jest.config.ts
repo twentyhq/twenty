@@ -1,6 +1,7 @@
 import { JestConfigWithTsJest, pathsToModuleNameMapper } from 'ts-jest';
 
-import { compilerOptions } from './tsconfig.json';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const tsConfig = require('./tsconfig.json');
 
 const jestConfig: JestConfigWithTsJest = {
   // to enable logs, comment out the following line
@@ -17,7 +18,7 @@ const jestConfig: JestConfigWithTsJest = {
     '\\.(jpg|jpeg|png|gif|webp|svg|svg\\?react)$':
       '<rootDir>/__mocks__/imageMock.js',
     '\\.css$': '<rootDir>/__mocks__/styleMock.js',
-    ...pathsToModuleNameMapper(compilerOptions.paths),
+    ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths),
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   extensionsToTreatAsEsm: ['.ts', '.tsx'],

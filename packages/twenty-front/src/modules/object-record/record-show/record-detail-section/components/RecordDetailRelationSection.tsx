@@ -62,6 +62,7 @@ export const RecordDetailRelationSection = () => {
     fieldValue && isToOneObject
       ? [fieldValue as ObjectRecord]
       : (fieldValue as ObjectRecord[]) ?? [];
+
   const relationRecordIds = relationRecords.map(({ id }) => id);
 
   const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}`;

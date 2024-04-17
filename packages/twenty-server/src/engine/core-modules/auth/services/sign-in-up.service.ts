@@ -140,6 +140,13 @@ export class SignInUpService {
       ForbiddenException,
     );
 
+    assert(
+      !this.environmentService.get('IS_BILLING_ENABLED') ||
+        workspace.subscriptionStatus === 'active',
+      'Workspace subscription status needs to be active',
+      ForbiddenException,
+    );
+
     if (existingUser) {
       const userWorkspaceExists =
         await this.userWorkspaceService.checkUserWorkspaceExists(

@@ -5,9 +5,7 @@ import { useParams } from 'react-router-dom';
 import { useNavigateAfterSignInUp } from '@/auth/sign-in-up/hooks/useNavigateAfterSignInUp.ts';
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm.ts';
 import { AppPath } from '@/types/AppPath';
-import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 import { useAuth } from '../../hooks/useAuth';
@@ -115,31 +113,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       workspaceInviteHash,
       navigateAfterSignInUp,
       enqueueSnackBar,
-    ],
-  );
-
-  useScopedHotkeys(
-    'enter',
-    () => {
-      if (signInUpStep === SignInUpStep.Init) {
-        continueWithEmail();
-      }
-
-      if (signInUpStep === SignInUpStep.Email) {
-        continueWithCredentials();
-      }
-
-      if (signInUpStep === SignInUpStep.Password) {
-        form.handleSubmit(submitCredentials)();
-      }
-    },
-    PageHotkeyScope.SignInUp,
-    [
-      continueWithEmail,
-      signInUpStep,
-      continueWithCredentials,
-      form,
-      submitCredentials,
     ],
   );
 

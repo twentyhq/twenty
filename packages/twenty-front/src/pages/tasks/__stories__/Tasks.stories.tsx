@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { graphql, HttpResponse } from 'msw';
 
 import { AppPath } from '@/types/AppPath';
 import {
@@ -6,6 +7,7 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 import { sleep } from '~/testing/sleep';
 
 import { Tasks } from '../Tasks';
@@ -16,7 +18,18 @@ const meta: Meta<PageDecoratorArgs> = {
   decorators: [PageDecorator],
   args: { routePath: AppPath.TasksPage },
   parameters: {
-    msw: graphqlMocks,
+    msw: {
+      handlers: [
+        graphql.query('FindOneWorkspaceMember', () => {
+          return HttpResponse.json({
+            data: {
+              workspaceMember: mockedWorkspaceMemberData,
+            },
+          });
+        }),
+        graphqlMocks.handlers,
+      ],
+    },
   },
 };
 
