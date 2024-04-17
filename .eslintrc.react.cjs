@@ -1,3 +1,5 @@
+var path = require('path');
+
 module.exports = {
   extends: [
     'plugin:@nx/react',
@@ -72,7 +74,9 @@ module.exports = {
       rules: {
         'storybook/no-uninstalled-addons': [
           'error',
-          { packageJsonLocation: '../../package.json' },
+          {
+            packageJsonLocation: path.resolve(__dirname, './package.json'),
+          },
         ],
       },
     },

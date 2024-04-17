@@ -15,6 +15,7 @@ import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-me
 import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 export enum MessageChannelSyncStatus {
   PENDING = 'PENDING',
@@ -42,6 +43,7 @@ export enum MessageChannelType {
   description: 'Message Channels',
   icon: 'IconMessage',
 })
+@IsNotAuditLogged()
 @IsSystem()
 export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
