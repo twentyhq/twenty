@@ -151,11 +151,11 @@ jobs:
       - name: UI / Run linter
         run: npx nx lint twenty-ui
       - name: UI / Run Typescript Check
-        run: npx nx typecheck twenty-ui
+        run: npx nx run twenty-ui:typecheck:ci
       - name: Front / Run linter
-        run: npx nx lint twenty-front --configuration=ci
+        run: npx nx run twenty-front:lint:ci
       - name: Front / Run Typescript Check
-        run: npx nx typecheck twenty-front
+        run: npx nx run twenty-front:typecheck:ci
   front-jest:
     needs: front-yarn-install
     runs-on: ubuntu-latest

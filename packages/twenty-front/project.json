@@ -28,9 +28,11 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "tsc -b tsconfig.json --incremental"
+        "command": "tsc -b tsconfig.json",
+        "incremental": true
       },
       "configurations": {
+        "ci": { "incremental": false },
         "watch": { "watch": true }
       }
     },
