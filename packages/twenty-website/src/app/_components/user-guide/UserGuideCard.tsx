@@ -25,6 +25,9 @@ const StyledHeading = styled.div`
   color: ${Theme.text.color.primary};
   padding: 0 16px;
   font-weight: ${Theme.font.weight.medium};
+  @media (max-width: 800px) {
+    font-size: ${Theme.font.size.base};
+  }
 `;
 
 const StyledSubHeading = styled.div`

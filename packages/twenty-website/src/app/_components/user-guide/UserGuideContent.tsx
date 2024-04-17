@@ -34,6 +34,9 @@ const StyledHeading = styled.div`
   font-size: 40px;
   font-weight: 700;
   font-family: var(--font-gabarito);
+  @media (max-width: 800px) {
+    font-size: 32px;
+  }
 `;
 
 const StyledHeaderInfoSection = styled.div`

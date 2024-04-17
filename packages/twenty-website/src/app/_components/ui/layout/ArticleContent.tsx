@@ -20,6 +20,7 @@ const StyledContent = styled.div`
 
   h1 {
     margin-top: 64px;
+    margin-bottom: 8px;
     font-family: var(--font-gabarito);
     font-size: 40px;
     color: ${Theme.text.color.primary};
@@ -27,7 +28,8 @@ const StyledContent = styled.div`
   }
 
   h2 {
-    margin-top: 64px;
+    margin-top: 40px;
+    margin-bottom: 8px;
     font-family: var(--font-gabarito);
     font-size: 32px;
     color: ${Theme.text.color.primary};
@@ -36,10 +38,10 @@ const StyledContent = styled.div`
 
   @media (max-width: 810px) {
     h1 {
-      font-size: 32px;
+      font-size: 28px;
     }
     h2 {
-      font-size: 28px;
+      font-size: 24px;
     }
   }
 

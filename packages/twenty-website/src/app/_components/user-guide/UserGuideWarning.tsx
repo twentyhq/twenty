@@ -19,6 +19,9 @@ const StyledIconContainer = styled.div`
 `;
 
 const StyledText = styled.div`
+  h1 {
+    margin: 0px !important;
+  }
   p {
     color: var(--Palette-Red-50, #b43232) !important;
     margin: 0px !important;
