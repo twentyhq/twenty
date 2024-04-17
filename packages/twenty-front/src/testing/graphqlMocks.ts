@@ -12,7 +12,7 @@ import {
   mockedDuplicateCompanyData,
 } from '~/testing/mock-data/companies';
 import { mockedClientConfig } from '~/testing/mock-data/config';
-import { mockedObjectMetadataItemsConnection } from '~/testing/mock-data/metadata';
+import { mockedObjectMetadataItemsQueryResult } from '~/testing/mock-data/metadata';
 import { mockedUsersData } from '~/testing/mock-data/users';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
@@ -49,7 +49,7 @@ export const graphqlMocks = {
       getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? '',
       () => {
         return HttpResponse.json({
-          data: { objects: mockedObjectMetadataItemsConnection },
+          data: mockedObjectMetadataItemsQueryResult,
         });
       },
     ),

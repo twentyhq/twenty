@@ -14,7 +14,7 @@ type MockedUser = Pick<
   workspaceMember: WorkspaceMember | null;
   locale: string;
   defaultWorkspace: Workspace;
-  workspaces: Array<Workspace>;
+  workspaces: Array<{ workspace: Workspace }>;
 };
 
 export const avatarUrl =
@@ -55,6 +55,7 @@ export const mockDefaultWorkspace: Workspace = {
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
   currentCacheVersion: '1',
   currentBillingSubscription: {
+    __typename: 'BillingSubscription',
     id: '7efbc3f7-6e5e-4128-957e-8d86808cdf6a',
     interval: 'month',
     status: 'active',
@@ -62,6 +63,7 @@ export const mockDefaultWorkspace: Workspace = {
 };
 
 export const mockedWorkspaceMemberData: WorkspaceMember = {
+  __typename: 'WorkspaceMember',
   id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
   colorScheme: 'Light',
   avatarUrl,
@@ -89,7 +91,7 @@ export const mockedUsersData: Array<MockedUser> = [
     workspaceMember: mockedWorkspaceMemberData,
     defaultWorkspace: mockDefaultWorkspace,
     locale: 'en',
-    workspaces: [mockDefaultWorkspace],
+    workspaces: [{ workspace: mockDefaultWorkspace }],
   },
   {
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6c',
@@ -111,7 +113,7 @@ export const mockedUsersData: Array<MockedUser> = [
     },
     defaultWorkspace: mockDefaultWorkspace,
     locale: 'en',
-    workspaces: [mockDefaultWorkspace],
+    workspaces: [{ workspace: mockDefaultWorkspace }],
   },
 ];
 
@@ -137,7 +139,7 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
     },
     defaultWorkspace: mockDefaultWorkspace,
     locale: 'en',
-    workspaces: [mockDefaultWorkspace],
+    workspaces: [{ workspace: mockDefaultWorkspace }],
   },
   {
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
@@ -152,6 +154,6 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
       activationStatus: 'inactive',
     },
     locale: 'en',
-    workspaces: [mockDefaultWorkspace],
+    workspaces: [{ workspace: mockDefaultWorkspace }],
   },
 ];

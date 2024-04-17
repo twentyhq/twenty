@@ -237,7 +237,7 @@ const customObjectMetadataItemEdge: ObjectEdge = {
   },
 } as ObjectEdge;
 
-export const mockedObjectMetadataItemsConnection = {
+export const mockedObjectMetadataItemsQueryResult = {
   ...mockedStandardObjectMetadataQueryResult,
   objects: {
     ...mockedStandardObjectMetadataQueryResult.objects,
@@ -250,7 +250,7 @@ export const mockedObjectMetadataItemsConnection = {
 
 export const mockedObjectMetadataItems =
   mapPaginatedObjectMetadataItemsToObjectMetadataItems({
-    pagedObjectMetadataItems: mockedObjectMetadataItemsConnection,
+    pagedObjectMetadataItems: mockedObjectMetadataItemsQueryResult,
   });
 
 export const mockedCompanyObjectMetadataItem = mockedObjectMetadataItems?.find(

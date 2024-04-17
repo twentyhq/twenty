@@ -22,6 +22,8 @@ export const mockedClientConfig: ClientConfig = {
   },
   sentry: {
     dsn: 'MOCKED_DSN',
+    release: 'MOCKED_RELEASE',
+    environment: 'MOCKED_ENVIRONMENT',
     __typename: 'Sentry',
   },
   billing: {

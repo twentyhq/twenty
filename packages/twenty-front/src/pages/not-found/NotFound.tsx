@@ -33,6 +33,7 @@ const StyledButtonContainer = styled.div`
 `;
 
 export const NotFound = () => {
+  console.log('coucou');
   const navigate = useNavigate();
 
   return (
