@@ -8,12 +8,14 @@ import { RecordTableBodyEffect } from '@/object-record/record-table/components/R
 import { RecordTableHeader } from '@/object-record/record-table/components/RecordTableHeader';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
 import {
   OpenTableCellArgs,
   useOpenRecordTableCellV2,
 } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { useUpsertRecordV2 } from '@/object-record/record-table/record-table-cell/hooks/useUpsertRecordV2';
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
+import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { RGBA } from '@/ui/theme/constants/Rgba';
 import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
@@ -172,6 +174,12 @@ export const RecordTable = ({
     openTableCell(args);
   };
 
+  const { moveFocus } = useRecordTableMoveFocus(scopeId);
+
+  const handleMoveFocus = (direction: MoveFocusDirection) => {
+    moveFocus(direction);
+  };
+
   return (
     <RecordTableScope
       recordTableScopeId={scopeId}
@@ -183,6 +191,7 @@ export const RecordTable = ({
             objectMetadataItem,
             onUpsertRecord: handleUpsertRecord,
             onOpenTableCell: handleOpenTableCell,
+            onMoveFocus: handleMoveFocus,
           }}
         >
           <StyledTable

@@ -6,7 +6,6 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
 import { RecordTableCellContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellContainer';
 import { useCloseRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useCloseRecordTableCell';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -16,11 +15,10 @@ export const RecordTableCell = ({
 }: {
   customHotkeyScope: HotkeyScope;
 }) => {
-  const { onUpsertRecord } = useContext(RecordTableContext);
+  const { onUpsertRecord, onMoveFocus } = useContext(RecordTableContext);
   const { entityId, fieldDefinition } = useContext(FieldContext);
   const { isReadOnly } = useContext(RecordTableRowContext);
 
-  const { moveLeft, moveRight, moveDown } = useRecordTableMoveFocus();
   const { closeTableCell } = useCloseRecordTableCell();
 
   const handleEnter: FieldInputEvent = (persistField) => {
@@ -31,7 +29,7 @@ export const RecordTableCell = ({
     });
 
     closeTableCell();
-    moveDown();
+    onMoveFocus('down');
   };
 
   const handleSubmit: FieldInputEvent = (persistField) => {
@@ -76,7 +74,7 @@ export const RecordTableCell = ({
     });
 
     closeTableCell();
-    moveRight();
+    onMoveFocus('right');
   };
 
   const handleShiftTab: FieldInputEvent = (persistField) => {
@@ -87,7 +85,7 @@ export const RecordTableCell = ({
     });
 
     closeTableCell();
-    moveLeft();
+    onMoveFocus('left');
   };
 
   return (
