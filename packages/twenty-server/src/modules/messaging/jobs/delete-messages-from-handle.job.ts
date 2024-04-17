@@ -33,11 +33,13 @@ export class DeleteMessagesFromHandleJob
 
     const { handle, workspaceId, workspaceMemberId } = data;
 
-    const messageChannelIds =
-      await this.messageChannelRepository.getMessageChannelIdsByWorkspaceMemberId(
+    const messageChannels =
+      await this.messageChannelRepository.getByWorkspaceMemberId(
         workspaceMemberId,
         workspaceId,
       );
+
+    const messageChannelIds = messageChannels.map(({ id }) => id);
 
     await this.messageChannelMessageAssociationRepository.deleteByMessageParticipantHandleAndMessageChannelIds(
       handle,
