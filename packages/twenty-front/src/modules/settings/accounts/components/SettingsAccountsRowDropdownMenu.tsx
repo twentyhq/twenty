@@ -54,7 +54,9 @@ export const SettingsAccountsRowDropdownMenu = ({
               LeftIcon={IconMail}
               text="Emails settings"
               onClick={() => {
-                navigate(`/settings/accounts/emails`);
+                navigate(
+                  `/settings/accounts/emails/${account.messageChannels[0].id}`,
+                );
                 closeDropdown();
               }}
             />
@@ -62,7 +64,9 @@ export const SettingsAccountsRowDropdownMenu = ({
               LeftIcon={IconCalendarEvent}
               text="Calendar settings"
               onClick={() => {
-                navigate(`/settings/accounts/calendars`);
+                navigate(
+                  `/settings/accounts/calendars/${account.calendarChannels[0].id}`,
+                );
                 closeDropdown();
               }}
             />
