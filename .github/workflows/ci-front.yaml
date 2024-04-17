@@ -74,13 +74,11 @@ jobs:
           restore-keys: root-node_modules-
       - name: Install Playwright
         run: cd packages/twenty-front && npx playwright install
-      - name: Build Storybook
-        run: npx nx storybook:build:pages twenty-front --quiet
       - name: Run storybook tests
         run: |
-          cd packages/twenty-front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
-            "npx http-server storybook-static --silent --port 6006" \
-            "npx nx run twenty-front:storybook:test:pages"
+          npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
+            "STORYBOOK_SCOPE=pages npx nx run twenty-front:storybook:static" \
+            "npx wait-on tcp:6006 && STORYBOOK_SCOPE=pages npx nx run twenty-front:storybook:test"
   front-modules-sb-test:
     needs: front-yarn-install
     runs-on: ci-4-cores
@@ -114,13 +112,11 @@ jobs:
           restore-keys: root-node_modules-
       - name: Install Playwright
         run: cd packages/twenty-front && npx playwright install
-      - name: Build Storybook
-        run: npx nx storybook:build:modules twenty-front --quiet
       - name: Run storybook tests
         run: |
-          cd packages/twenty-front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
-            "npx http-server storybook-static --silent --port 6006" \
-            "npx nx run twenty-front:storybook:test:modules"
+          npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
+            "STORYBOOK_SCOPE=modules npx nx run twenty-front:storybook:static" \
+            "npx wait-on tcp:6006 && STORYBOOK_SCOPE=modules npx nx run twenty-front:storybook:test"
   front-lint-tsc:
     needs: front-yarn-install
     runs-on: ubuntu-latest

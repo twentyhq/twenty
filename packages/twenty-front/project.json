@@ -101,26 +101,22 @@
         "ci": { "quiet": true }
       }
     },
+    "storybook:static": {
+      "executor": "@nx/web:file-server",
+      "options": {
+        "buildTarget": "twenty-front:storybook:build",
+        "staticFilePath": "{projectRoot}/storybook-static",
+        "port": 6006
+      }
+    },
     "storybook:test": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
         "commands": [
-          "STORYBOOK_SCOPE={args.scope} test-storybook --url=http://localhost:6006 --maxWorkers=3 --coverage",
+          "test-storybook --url http://localhost:6006 --maxWorkers=3 --coverage",
           "nyc report --reporter=lcov -t coverage/storybook --report-dir coverage/storybook --check-coverage"
-        ],
-        "args": ["--scope=all"]
-      },
-      "configurations": {
-        "docs": {
-          "args": ["--scope=ui-docs"]
-        },
-        "modules": {
-          "args": ["--scope=modules"]
-        },
-        "pages": {
-          "args": ["--scope=pages"]
-        }
+        ]
       }
     },
     "graphql:generate": {

@@ -8,8 +8,6 @@
     "build:sourcemaps": "VITE_BUILD_SOURCEMAP=true NODE_OPTIONS=--max-old-space-size=3000 npx nx build",
     "start:prod": "NODE_ENV=production npx nx exec -- vite --host",
     "storybook:build": "npx nx exec -- storybook build",
-    "storybook:build:pages": "STORYBOOK_SCOPE=pages npx nx storybook:build",
-    "storybook:build:modules": "STORYBOOK_SCOPE=modules npx nx storybook:build",
     "tsup": "npx nx exec -- tsup"
   },
   "engines": {
