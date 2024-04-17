@@ -64,11 +64,16 @@ export interface AssignableUsers {
   nodes: AssignableUserNode[];
 }
 
+export interface Stargazers {
+  totalCount: number;
+}
+
 export interface Repository {
   repository: {
     pullRequests: PullRequests;
     issues: Issues;
     assignableUsers: AssignableUsers;
+    stargazers: Stargazers;
   };
 }
 

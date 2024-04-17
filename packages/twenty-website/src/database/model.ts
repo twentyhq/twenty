@@ -1,4 +1,5 @@
 import {
+  pgGithubStars,
   pgIssueLabels,
   pgIssues,
   pgLabels,
@@ -7,6 +8,7 @@ import {
   pgUsers,
 } from '@/database/postgres/schema-postgres';
 import {
+  sqlGithubStars,
   sqlLiteIssueLabels,
   sqlLiteIssues,
   sqlLiteLabels,
@@ -31,6 +33,8 @@ export const issueLabelModel = isSqliteDriver
   ? sqlLiteIssueLabels
   : pgIssueLabels;
 
+export const githubStarsModel = isSqliteDriver ? sqlGithubStars : pgGithubStars;
+
 export type User = typeof sqlLiteUsers.$inferSelect;
 export type PullRequest = typeof sqlLitePullRequests.$inferSelect;
 export type Issue = typeof sqlLiteIssues.$inferSelect;
@@ -45,3 +49,4 @@ export type LabelInsert = typeof sqlLiteLabels.$inferInsert;
 export type PullRequestLabelInsert =
   typeof sqlLitePullRequestLabels.$inferInsert;
 export type IssueLabelInsert = typeof sqlLiteIssueLabels.$inferInsert;
+export type GithubStars = typeof sqlGithubStars.$inferInsert;

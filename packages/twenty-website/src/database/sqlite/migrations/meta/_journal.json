@@ -8,6 +8,13 @@
       "when": 1707920913359,
       "tag": "0000_small_karma",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1713337482356,
+      "tag": "0001_easy_norman_osborn",
+      "breakpoints": true
     }
   ]
 }

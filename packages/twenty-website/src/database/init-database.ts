@@ -1,5 +1,3 @@
-export const dynamic = 'force-dynamic';
-
 import { global } from '@apollo/client/utilities/globals';
 import { graphql } from '@octokit/graphql';
 
@@ -11,10 +9,12 @@ import { savePRsToDB } from '@/app/contributors/api/save-prs-to-db';
 import { IssueNode, PullRequestNode } from '@/app/contributors/api/types';
 import { migrate } from '@/database/database';
 
-export async function GET() {
+export const initDatabase = async () => {
   if (!global.process.env.GITHUB_TOKEN) {
-    return new Response('No GitHub token provided', { status: 500 });
+    return new Error('No GitHub token provided');
   }
+
+  console.log('Synching data..');
 
   const query = graphql.defaults({
     headers: {
@@ -43,7 +43,8 @@ export async function GET() {
   savePRsToDB(fetchedPRs, assignableUsers);
   saveIssuesToDB(fetchedIssues, assignableUsers);
 
-  return new Response('Data synced', {
-    status: 200,
-  });
-}
+  console.log('data synched!');
+  process.exit(0);
+};
+
+initDatabase();
