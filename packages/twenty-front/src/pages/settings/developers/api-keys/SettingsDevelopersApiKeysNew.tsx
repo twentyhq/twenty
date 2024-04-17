@@ -40,6 +40,7 @@ export const SettingsDevelopersApiKeysNew = () => {
     const expiresAt = DateTime.now()
       .plus({ days: formValues.expirationDate ?? 30 })
       .toString();
+
     const newApiKey = await createOneApiKey?.({
       name: formValues.name,
       expiresAt,

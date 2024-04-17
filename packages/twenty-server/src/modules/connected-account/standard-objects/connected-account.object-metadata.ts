@@ -18,6 +18,7 @@ import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-
 import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 export enum ConnectedAccountProvider {
   GOOGLE = 'google',
@@ -32,6 +33,7 @@ export enum ConnectedAccountProvider {
   icon: 'IconAt',
 })
 @IsSystem()
+@IsNotAuditLogged()
 export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: connectedAccountStandardFieldIds.handle,

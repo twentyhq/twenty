@@ -29,10 +29,6 @@ import { useRecordTable } from '../hooks/useRecordTable';
 import { RecordTableInternalEffect } from './RecordTableInternalEffect';
 
 const StyledTableWithHeader = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  width: 100%;
   height: 100%;
 `;
 

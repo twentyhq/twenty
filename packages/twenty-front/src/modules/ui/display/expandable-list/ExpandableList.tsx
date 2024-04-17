@@ -1,8 +1,8 @@
 import React, { ReactElement, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import styled from '@emotion/styled';
+import { Chip, ChipVariant } from 'twenty-ui';
 
-import { Chip, ChipVariant } from '@/ui/display/chip/components/Chip';
 import { IntersectionObserverWrapper } from '@/ui/display/expandable-list/IntersectionObserverWrapper';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 

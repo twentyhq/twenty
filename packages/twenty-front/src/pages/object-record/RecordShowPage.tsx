@@ -18,6 +18,7 @@ import { ShowPageMoreButton } from '@/ui/layout/show-page/components/ShowPageMor
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { capitalize } from '~/utils/string/capitalize';
 
 export const RecordShowPage = () => {
   const { objectNameSingular, objectRecordId } = useParams<{
@@ -80,13 +81,20 @@ export const RecordShowPage = () => {
 
   const labelIdentifierFieldValue =
     record?.[labelIdentifierFieldMetadataItem?.name ?? ''];
+
   const pageName =
     labelIdentifierFieldMetadataItem?.type === FieldMetadataType.FullName
       ? [
           labelIdentifierFieldValue?.firstName,
           labelIdentifierFieldValue?.lastName,
         ].join(' ')
-      : `${labelIdentifierFieldValue}`;
+      : isDefined(labelIdentifierFieldValue)
+        ? `${labelIdentifierFieldValue}`
+        : '';
+
+  const pageTitle = pageName.trim()
+    ? `${pageName} - ${capitalize(objectNameSingular)}`
+    : capitalize(objectNameSingular);
 
   // Temporarily since we don't have relations for remote objects yet
   if (objectMetadataItem.isRemote) {
@@ -95,7 +103,7 @@ export const RecordShowPage = () => {
 
   return (
     <PageContainer>
-      <PageTitle title={pageName} />
+      <PageTitle title={pageTitle} />
       <PageHeader
         title={pageName ?? ''}
         hasBackButton

@@ -63,16 +63,15 @@ export class GmailFetchMessageContentFromCacheService {
       return;
     }
 
-    if (connectedAccount.authFailedAt) {
+    const { accessToken, refreshToken, authFailedAt } = connectedAccount;
+
+    if (authFailedAt) {
       this.logger.error(
         `Connected account ${connectedAccountId} in workspace ${workspaceId} is in a failed state. Skipping...`,
       );
 
       return;
     }
-
-    const accessToken = connectedAccount.accessToken;
-    const refreshToken = connectedAccount.refreshToken;
 
     if (!refreshToken) {
       throw new Error(
