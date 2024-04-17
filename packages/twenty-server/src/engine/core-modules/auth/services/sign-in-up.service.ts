@@ -132,11 +132,12 @@ export class SignInUpService {
   }) {
     const workspace = await this.workspaceRepository.findOneBy({
       inviteHash: workspaceInviteHash,
+      subscriptionStatus: 'active',
     });
 
     assert(
       workspace,
-      'This workspace inviteHash is invalid',
+      'This workspace inviteHash is invalid or the workspace is not active',
       ForbiddenException,
     );
 
