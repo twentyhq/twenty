@@ -15,6 +15,7 @@ import { getFieldArgumentsByKey } from 'src/engine/api/graphql/workspace-query-b
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { capitalize } from 'src/utils/capitalize';
 
 import { FieldsStringFactory } from './fields-string.factory';
 import { ArgsStringFactory } from './args-string.factory';
@@ -110,10 +111,12 @@ export class RelationFieldAliasFactory {
           objectMetadataCollection,
         );
 
+      const fieldType = fieldMetadata.isCustom
+        ? capitalize(fieldKey)
+        : `${computeObjectTargetTable(referencedObjectMetadata)}Collection`;
+
       return `
-        ${fieldKey}: ${computeObjectTargetTable(
-          referencedObjectMetadata,
-        )}Collection${argsString ? `(${argsString})` : ''} {
+        ${fieldKey}: ${fieldType}${argsString ? `(${argsString})` : ''} {
           ${fieldsString}
         }
       `;
