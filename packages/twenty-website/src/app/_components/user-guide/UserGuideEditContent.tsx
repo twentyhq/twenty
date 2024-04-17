@@ -19,7 +19,7 @@ const StyledContainer = styled.div`
 
   p {
     font-size: ${Theme.font.size.xs};
-    margin-top: 24px;
+    margin: 32px 0px;
     color: ${Theme.text.color.tertiary};
   }
 
