@@ -8,6 +8,11 @@ import { RecordTableBodyEffect } from '@/object-record/record-table/components/R
 import { RecordTableHeader } from '@/object-record/record-table/components/RecordTableHeader';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import {
+  OpenTableCellArgs,
+  useOpenRecordTableCellV2,
+} from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
+import { useUpsertRecordV2 } from '@/object-record/record-table/record-table-cell/hooks/useUpsertRecordV2';
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { RGBA } from '@/ui/theme/constants/Rgba';
@@ -145,6 +150,28 @@ export const RecordTable = ({
     objectNameSingular,
   });
 
+  const { upsertRecord } = useUpsertRecordV2({
+    objectNameSingular,
+  });
+
+  const handleUpsertRecord = ({
+    persistField,
+    entityId,
+    fieldName,
+  }: {
+    persistField: () => void;
+    entityId: string;
+    fieldName: string;
+  }) => {
+    upsertRecord(persistField, entityId, fieldName, scopeId);
+  };
+
+  const { openTableCell } = useOpenRecordTableCellV2(scopeId);
+
+  const handleOpenTableCell = (args: OpenTableCellArgs) => {
+    openTableCell(args);
+  };
+
   return (
     <RecordTableScope
       recordTableScopeId={scopeId}
@@ -154,6 +181,8 @@ export const RecordTable = ({
         <RecordTableContext.Provider
           value={{
             objectMetadataItem,
+            onUpsertRecord: handleUpsertRecord,
+            onOpenTableCell: handleOpenTableCell,
           }}
         >
           <StyledTable
