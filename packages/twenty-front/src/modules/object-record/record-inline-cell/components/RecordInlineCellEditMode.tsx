@@ -32,12 +32,7 @@ export const RecordInlineCellEditMode = ({
 }: RecordInlineCellEditModeProps) => {
   const { refs, floatingStyles } = useFloating({
     placement: 'right',
-    middleware: [
-      flip(),
-      offset(() => {
-        return -1;
-      }),
-    ],
+    middleware: [flip(), offset(-1)],
     whileElementsMounted: autoUpdate,
   });
 

@@ -19,8 +19,6 @@ const StyledCalendarContainer = styled.div`
   top: 0;
 
   position: absolute;
-
-  z-index: 100;
 `;
 
 export type DateInputProps = {

@@ -34,12 +34,7 @@ export const RecordTableCellEditMode = ({
 }: RecordTableCellEditModeProps) => {
   const { refs, floatingStyles } = useFloating({
     placement: 'top-start',
-    middleware: [
-      flip(),
-      offset(() => {
-        return -32;
-      }),
-    ],
+    middleware: [flip(), offset(-32)],
     whileElementsMounted: autoUpdate,
   });
 
