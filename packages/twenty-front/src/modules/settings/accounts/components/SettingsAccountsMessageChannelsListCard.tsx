@@ -57,7 +57,9 @@ export const SettingsAccountsMessageChannelsListCard = () => {
       ...messageChannel,
       syncStatus: messageChannel.connectedAccount?.authFailedAt
         ? 'failed'
-        : 'synced',
+        : messageChannel.isSyncEnabled
+          ? 'synced'
+          : 'notSynced',
     }),
   );
 

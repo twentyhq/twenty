@@ -7,6 +7,7 @@ import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { RemoteServerEntity } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import { RemotePostgresTableModule } from 'src/engine/metadata-modules/remote-server/remote-table/remote-postgres-table/remote-postgres-table.module';
+import { RemoteTableEntity } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.entity';
 import { RemoteTableResolver } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.resolver';
 import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
 import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
@@ -16,7 +17,10 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([RemoteServerEntity], 'metadata'),
+    TypeOrmModule.forFeature(
+      [RemoteServerEntity, RemoteTableEntity],
+      'metadata',
+    ),
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     DataSourceModule,
     ObjectMetadataModule,

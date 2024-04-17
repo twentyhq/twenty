@@ -1,12 +1,11 @@
 import { Key } from 'ts-key-enum';
 
+import { SOFT_FOCUS_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/SoftFocusClickOutsideListenerId';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-import {
-  useListenClickOutside,
-  useListenClickOutsideByClassName,
-} from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
+import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 
 type RecordTableInternalEffectProps = {
   recordTableId: string;
@@ -21,6 +20,10 @@ export const RecordTableInternalEffect = ({
     useRecordTable({ recordTableId });
 
   useMapKeyboardToSoftFocus();
+
+  const { useListenClickOutside } = useClickOutsideListener(
+    SOFT_FOCUS_CLICK_OUTSIDE_LISTENER_ID,
+  );
 
   useListenClickOutside({
     refs: [tableBodyRef],

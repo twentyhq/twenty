@@ -1,7 +1,5 @@
 import { useContext } from 'react';
 
-import { isFieldDateTime } from '@/object-record/record-field/types/guards/isFieldDateTime';
-
 import { FieldContext } from '../contexts/FieldContext';
 
 // TODO: have a better clearable settings in metadata ?
@@ -9,13 +7,9 @@ import { FieldContext } from '../contexts/FieldContext';
 // Instead of passing it in the context
 // See: https://github.com/twentyhq/twenty/issues/4403
 export const useIsFieldClearable = (): boolean => {
-  const { clearable, isLabelIdentifier, fieldDefinition } =
-    useContext(FieldContext);
+  const { clearable, isLabelIdentifier } = useContext(FieldContext);
 
-  const isDateField = isFieldDateTime(fieldDefinition);
-
-  const fieldCanBeCleared =
-    !isLabelIdentifier && !isDateField && clearable !== false;
+  const fieldCanBeCleared = !isLabelIdentifier && clearable !== false;
 
   return fieldCanBeCleared;
 };

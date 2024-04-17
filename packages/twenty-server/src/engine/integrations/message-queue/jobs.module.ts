@@ -35,7 +35,8 @@ import { DeleteConnectedAccountAssociatedCalendarDataJob } from 'src/modules/cal
 import { GoogleCalendarSyncJob } from 'src/modules/calendar/jobs/google-calendar-sync.job';
 import { CalendarEventCleanerModule } from 'src/modules/calendar/services/calendar-event-cleaner/calendar-event-cleaner.module';
 import { CalendarEventParticipantModule } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.module';
-import { GoogleCalendarSyncModule } from 'src/modules/calendar/services/google-calendar-sync.module';
+import { GoogleCalendarSyncModule } from 'src/modules/calendar/services/google-calendar-sync/google-calendar-sync.module';
+import { WorkspaceGoogleCalendarSyncModule } from 'src/modules/calendar/services/workspace-google-calendar-sync/workspace-google-calendar-sync.module';
 import { AutoCompaniesAndContactsCreationModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/auto-companies-and-contacts-creation.module';
 import { CreateCompanyAndContactJob } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
 import { GoogleAPIRefreshAccessTokenModule } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.module';
@@ -48,8 +49,8 @@ import { GmailFullSyncJob } from 'src/modules/messaging/jobs/gmail-full-sync.job
 import { GmailPartialSyncJob } from 'src/modules/messaging/jobs/gmail-partial-sync.job';
 import { MessagingCreateCompanyAndContactAfterSyncJob } from 'src/modules/messaging/jobs/messaging-create-company-and-contact-after-sync.job';
 import { GmailFetchMessageContentFromCacheModule } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.module';
-import { GmailFullSynV2Module } from 'src/modules/messaging/services/gmail-full-sync-v2/gmail-full-sync.v2.module';
-import { GmailPartialSyncV2Module } from 'src/modules/messaging/services/gmail-partial-sync-v2/gmail-partial-sync-v2.module';
+import { GmailFullSyncModule } from 'src/modules/messaging/services/gmail-full-sync/gmail-full-sync.module';
+import { GmailPartialSyncModule } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync.module';
 import { MessageParticipantModule } from 'src/modules/messaging/services/message-participant/message-participant.module';
 import { ThreadCleanerModule } from 'src/modules/messaging/services/thread-cleaner/thread-cleaner.module';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
@@ -63,6 +64,7 @@ import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-obj
     EnvironmentModule,
     HttpModule,
     GoogleCalendarSyncModule,
+    WorkspaceGoogleCalendarSyncModule,
     ObjectMetadataModule,
     StripeModule,
     ThreadCleanerModule,
@@ -81,9 +83,9 @@ import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-obj
       MessageChannelObjectMetadata,
       EventObjectMetadata,
     ]),
-    GmailFullSynV2Module,
+    GmailFullSyncModule,
     GmailFetchMessageContentFromCacheModule,
-    GmailPartialSyncV2Module,
+    GmailPartialSyncModule,
     CalendarEventParticipantModule,
   ],
   providers: [

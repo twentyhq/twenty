@@ -5,17 +5,17 @@ import { Repository, In } from 'typeorm';
 
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import {
-  GmailPartialSyncJob as GmailPartialSyncJob,
-  GmailPartialSyncJobData as GmailPartialSyncJobData,
+  GmailPartialSyncJobData,
+  GmailPartialSyncJob,
 } from 'src/modules/messaging/jobs/gmail-partial-sync.job';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
+import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 
 @Injectable()
 export class GmailPartialSyncCronJob implements MessageQueueJob<undefined> {
@@ -28,8 +28,8 @@ export class GmailPartialSyncCronJob implements MessageQueueJob<undefined> {
     private readonly dataSourceRepository: Repository<DataSourceEntity>,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
-    private readonly connectedAccountRepository: ConnectedAccountRepository,
+    @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
+    private readonly messageChannelRepository: MessageChannelRepository,
   ) {}
 
   async handle(): Promise<void> {
@@ -59,15 +59,22 @@ export class GmailPartialSyncCronJob implements MessageQueueJob<undefined> {
 
   private async enqueuePartialSyncs(workspaceId: string): Promise<void> {
     try {
-      const connectedAccounts =
-        await this.connectedAccountRepository.getAll(workspaceId);
+      const messageChannels =
+        await this.messageChannelRepository.getAll(workspaceId);
 
-      for (const connectedAccount of connectedAccounts) {
+      for (const messageChannel of messageChannels) {
+        if (!messageChannel?.isSyncEnabled) {
+          continue;
+        }
+
         await this.messageQueueService.add<GmailPartialSyncJobData>(
           GmailPartialSyncJob.name,
           {
             workspaceId,
-            connectedAccountId: connectedAccount.id,
+            connectedAccountId: messageChannel.connectedAccountId,
+          },
+          {
+            retryLimit: 2,
           },
         );
       }
