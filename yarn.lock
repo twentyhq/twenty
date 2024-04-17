@@ -46345,6 +46345,7 @@ __metadata:
     pg-boss: "npm:^9.0.3"
     planer: "npm:^1.2.0"
     playwright: "npm:^1.40.1"
+    pluralize: "npm:^8.0.0"
     prettier: "npm:^3.1.1"
     prism-react-renderer: "npm:^2.1.0"
     qs: "npm:^6.11.2"

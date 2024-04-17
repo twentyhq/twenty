@@ -139,6 +139,7 @@
     "pg": "^8.11.3",
     "pg-boss": "^9.0.3",
     "planer": "^1.2.0",
+    "pluralize": "^8.0.0",
     "prettier": "^3.0.3",
     "prism-react-renderer": "^2.1.0",
     "qs": "^6.11.2",
