@@ -38,7 +38,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
 
   return (
     <>
-      {hiddenTableColumns.length > 0 ? (
+      {hiddenTableColumns.length > 0 && (
         <>
           <DropdownMenuItemsContainer>
             {hiddenTableColumns.map((column) => (
@@ -52,7 +52,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
           </DropdownMenuItemsContainer>
           <DropdownMenuSeparator />
         </>
-      ) : null}
+      )}
       <DropdownMenuItemsContainer>
         <StyledMenuItemLink to="/settings/objects">
           <MenuItem LeftIcon={IconSettings} text="Customize fields" />
