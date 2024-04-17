@@ -20,6 +20,7 @@ import { FullHeightStorybookLayout } from '../FullHeightStorybookLayout';
 export type PageDecoratorArgs = {
   routePath: string;
   routeParams: RouteParams;
+  additionalRoutes?: string[];
 };
 
 type RouteParams = {
@@ -44,37 +45,47 @@ const ApolloStorybookDevLogEffect = () => {
 export const PageDecorator: Decorator<{
   routePath: string;
   routeParams: RouteParams;
-}> = (Story, { args }) => (
-  <RecoilRoot>
-    <ApolloProvider client={mockedApolloClient}>
-      <ApolloStorybookDevLogEffect />
-      <ApolloMetadataClientMockedProvider>
-        <UserProviderEffect />
-        <UserProvider>
-          <ClientConfigProviderEffect />
-          <ClientConfigProvider>
-            <MemoryRouter
-              initialEntries={[
-                computeLocation(args.routePath, args.routeParams),
-              ]}
-            >
-              <FullHeightStorybookLayout>
-                <HelmetProvider>
-                  <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-                    <ObjectMetadataItemsProvider>
-                      <Routes>
-                        <Route element={<DefaultLayout />}>
-                          <Route path={args.routePath} element={<Story />} />
-                        </Route>
-                      </Routes>
-                    </ObjectMetadataItemsProvider>
-                  </SnackBarProviderScope>
-                </HelmetProvider>
-              </FullHeightStorybookLayout>
-            </MemoryRouter>
-          </ClientConfigProvider>
-        </UserProvider>
-      </ApolloMetadataClientMockedProvider>
-    </ApolloProvider>
-  </RecoilRoot>
-);
+  additionalRoutes?: string[];
+}> = (Story, { args }) => {
+  return (
+    <RecoilRoot>
+      <ApolloProvider client={mockedApolloClient}>
+        <ApolloStorybookDevLogEffect />
+        <ApolloMetadataClientMockedProvider>
+          <UserProviderEffect />
+          <UserProvider>
+            <ClientConfigProviderEffect />
+            <ClientConfigProvider>
+              <MemoryRouter
+                initialEntries={[
+                  computeLocation(args.routePath, args.routeParams),
+                ]}
+              >
+                <FullHeightStorybookLayout>
+                  <HelmetProvider>
+                    <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+                      <ObjectMetadataItemsProvider>
+                        <Routes>
+                          <Route element={<DefaultLayout />}>
+                            <Route path={args.routePath} element={<Story />} />
+                            {args.additionalRoutes?.map((route) => (
+                              <Route
+                                key={route}
+                                path={route}
+                                element={<div>Navigated to {route}</div>}
+                              />
+                            ))}
+                          </Route>
+                        </Routes>
+                      </ObjectMetadataItemsProvider>
+                    </SnackBarProviderScope>
+                  </HelmetProvider>
+                </FullHeightStorybookLayout>
+              </MemoryRouter>
+            </ClientConfigProvider>
+          </UserProvider>
+        </ApolloMetadataClientMockedProvider>
+      </ApolloProvider>
+    </RecoilRoot>
+  );
+};
