@@ -7,12 +7,8 @@ export const useEntitySelectSearch = ({
 }: {
   relationPickerScopeId?: string;
 } = {}) => {
-  const {
-    relationPickerSearchFilter,
-    searchQuery,
-    setRelationPickerPreselectedId,
-    setRelationPickerSearchFilter,
-  } = useRelationPicker({ relationPickerScopeId });
+  const { setRelationPickerSearchFilter, setRelationPickerPreselectedId } =
+    useRelationPicker({ relationPickerScopeId });
 
   const debouncedSetSearchFilter = useDebouncedCallback(
     setRelationPickerSearchFilter,
@@ -22,7 +18,7 @@ export const useEntitySelectSearch = ({
     },
   );
 
-  const resetSearchFilterChange = () => {
+  const resetSearchFilter = () => {
     debouncedSetSearchFilter('');
     setRelationPickerPreselectedId('');
   };
@@ -35,9 +31,7 @@ export const useEntitySelectSearch = ({
   };
 
   return {
-    searchFilter: relationPickerSearchFilter,
-    searchQuery,
     handleSearchFilterChange,
-    resetSearchFilterChange,
+    resetSearchFilter,
   };
 };

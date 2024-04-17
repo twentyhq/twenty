@@ -42,14 +42,14 @@ export const RecordBoardColumnNewOpportunityButton = () => {
     setHotkeyScopeAndMemorizePreviousScope,
   } = usePreviousHotkeyScope();
 
-  const { resetSearchFilterChange } = useEntitySelectSearch({
+  const { resetSearchFilter } = useEntitySelectSearch({
     relationPickerScopeId: 'relation-picker',
   });
 
   const handleEntitySelect = (company?: EntityForSelect) => {
     setIsCreatingCard(false);
     goBackToPreviousHotkeyScope();
-    resetSearchFilterChange();
+    resetSearchFilter();
 
     if (!company) {
       return;
@@ -71,7 +71,7 @@ export const RecordBoardColumnNewOpportunityButton = () => {
   }, [setIsCreatingCard, setHotkeyScopeAndMemorizePreviousScope]);
 
   const handleCancel = () => {
-    resetSearchFilterChange();
+    resetSearchFilter();
     goBackToPreviousHotkeyScope();
     setIsCreatingCard(false);
   };
