@@ -255,14 +255,11 @@ export class WorkspaceMigrationRunnerService {
             tableName,
             columnMigration,
           );
-          break;
-        case WorkspaceMigrationColumnActionType.COMMENT_ON_CONSTRAINT:
           await this.commentConstraint(
             queryRunner,
             schemaName,
             tableName,
-            columnMigration.foreignKeyName,
-            columnMigration.comment,
+            columnMigration,
           );
           break;
         case WorkspaceMigrationColumnActionType.DROP_FOREIGN_KEY:
@@ -492,11 +489,10 @@ export class WorkspaceMigrationRunnerService {
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
-    constraintName: string,
-    comment: string,
+    migrationColumn: WorkspaceMigrationColumnCreateRelation,
   ) {
     await queryRunner.query(`
-      COMMENT ON CONSTRAINT "${constraintName}" ON "${schemaName}"."${tableName}" IS e'${comment}';
+      COMMENT ON CONSTRAINT "${migrationColumn.foreignKeyName}" ON "${schemaName}"."${tableName}" IS e'${migrationColumn.comment}';
     `);
   }
 

@@ -1,3 +1,5 @@
+import { v4 } from 'uuid';
+
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
@@ -47,6 +49,8 @@ export const createWorkspaceMigrationsForCustomObject = (
         referencedTableName: computeObjectTargetTable(createdObjectMetadata),
         referencedTableColumnName: 'id',
         onDelete: RelationOnDeleteAction.CASCADE,
+        foreignKeyName: `FK_${v4()}`,
+        comment: '',
       },
     ],
   },
@@ -77,6 +81,8 @@ export const createWorkspaceMigrationsForCustomObject = (
         referencedTableName: computeObjectTargetTable(createdObjectMetadata),
         referencedTableColumnName: 'id',
         onDelete: RelationOnDeleteAction.CASCADE,
+        foreignKeyName: `FK_${v4()}`,
+        comment: '',
       },
     ],
   },
@@ -107,6 +113,8 @@ export const createWorkspaceMigrationsForCustomObject = (
         referencedTableName: computeObjectTargetTable(createdObjectMetadata),
         referencedTableColumnName: 'id',
         onDelete: RelationOnDeleteAction.CASCADE,
+        foreignKeyName: `FK_${v4()}`,
+        comment: '',
       },
     ],
   },
@@ -137,6 +145,8 @@ export const createWorkspaceMigrationsForCustomObject = (
         referencedTableName: computeObjectTargetTable(createdObjectMetadata),
         referencedTableColumnName: 'id',
         onDelete: RelationOnDeleteAction.CASCADE,
+        foreignKeyName: `FK_${v4()}`,
+        comment: '',
       },
     ],
   },

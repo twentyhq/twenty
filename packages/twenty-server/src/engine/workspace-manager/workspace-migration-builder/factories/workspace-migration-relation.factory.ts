@@ -16,6 +16,7 @@ import {
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { camelCase } from 'src/utils/camel-case';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
+import { capitalize } from 'src/utils/capitalize';
 
 @Injectable()
 export class WorkspaceMigrationRelationFactory {
@@ -112,6 +113,12 @@ export class WorkspaceMigrationRelationFactory {
                 relationMetadata.relationType ===
                 RelationMetadataType.ONE_TO_ONE,
               onDelete: relationMetadata.onDeleteAction,
+              foreignKeyName: `FK_${fromObjectMetadata.nameSingular}.${relationMetadata.toFieldMetadata.name}`,
+              comment: `@graphql({"foreign_name": "${
+                toFieldMetadata.name
+              }", "local_name": "${capitalize(
+                fromObjectMetadata.nameSingular,
+              )}"})`,
             },
           ],
         },
@@ -163,6 +170,10 @@ export class WorkspaceMigrationRelationFactory {
           `FieldMetadata with id ${relationMetadata.toFieldMetadataId} not found`,
         );
       }
+      console.log('rrrrrrrrrr');
+      console.log(toFieldMetadata);
+      console.log(fromObjectMetadata);
+      console.log('----------------------');
 
       const migrations: WorkspaceMigrationTableAction[] = [
         {
@@ -178,6 +189,13 @@ export class WorkspaceMigrationRelationFactory {
                 relationMetadata.relationType ===
                 RelationMetadataType.ONE_TO_ONE,
               onDelete: relationMetadata.onDeleteAction,
+              foreignKeyName: `FK_${fromObjectMetadata.namePlural}.${toFieldMetadata.name}`,
+              //@grapqwhql({"foreign_name": "foundedCompany", "local_name": "founders"})
+              comment: `@graphql({"foreign_name": "${
+                toFieldMetadata.name
+              }", "local_name": "${capitalize(
+                fromObjectMetadata.namePlural,
+              )}"})`,
             },
           ],
         },

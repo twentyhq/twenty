@@ -111,12 +111,10 @@ export class RelationFieldAliasFactory {
           objectMetadataCollection,
         );
 
-      const fieldType = fieldMetadata.isCustom
-        ? capitalize(fieldKey)
-        : `${computeObjectTargetTable(referencedObjectMetadata)}Collection`;
-
       return `
-        ${fieldKey}: ${fieldType}${argsString ? `(${argsString})` : ''} {
+        ${fieldKey}: ${capitalize(fieldKey)}${
+          argsString ? `(${argsString})` : ''
+        } {
           ${fieldsString}
         }
       `;

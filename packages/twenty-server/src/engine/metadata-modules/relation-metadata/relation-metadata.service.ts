@@ -169,7 +169,6 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     const name = computeObjectTargetTable(
       objectMetadataMap[relationMetadataInput.toObjectMetadataId],
     );
-    const foreignKeyName = `FK_${relationMetadataInput.fromName}.${relationMetadataInput.toName}`;
 
     await this.workspaceMigrationService.createCustomMigration(
       generateMigrationName(`create-${relationMetadataInput.fromName}`),
@@ -195,7 +194,6 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
-              foreignKeyName,
               columnName,
               referencedTableName: computeObjectTargetTable(
                 objectMetadataMap[relationMetadataInput.fromObjectMetadataId],
@@ -205,17 +203,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
                 relationMetadataInput.relationType ===
                 RelationMetadataType.ONE_TO_ONE,
               onDelete: RelationOnDeleteAction.SET_NULL,
-            },
-          ],
-        },
-        // Create the graphql comment
-        {
-          name,
-          action: WorkspaceMigrationTableActionType.ALTER,
-          columns: [
-            {
-              action: WorkspaceMigrationColumnActionType.COMMENT_ON_CONSTRAINT,
-              foreignKeyName,
+              foreignKeyName: `FK_${relationMetadataInput.fromName}.${relationMetadataInput.toName}`,
               comment: `@graphql({"foreign_name": "${
                 relationMetadataInput.toName
               }", "local_name": "${capitalize(
