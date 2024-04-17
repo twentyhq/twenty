@@ -3,11 +3,9 @@
   "$schema": "node_modules/nx/schemas/project-schema.json",
   "targets": {
     "start": {
-      "executor": "nx:run-commands",
+      "executor": "nx:run-script",
       "options": {
-        "cwd": ".",
-        "commands": ["nx start twenty-server", "nx start twenty-front"],
-        "parallel": true
+        "command": "nx run-many -t start -p twenty-server twenty-front"
       }
     }
   }

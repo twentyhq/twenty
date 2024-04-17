@@ -28,7 +28,8 @@
         "lintFilePatterns": [
           "{projectRoot}/src/**/*.{ts,tsx,json}",
           "{projectRoot}/package.json"
-        ]
+        ],
+        "cache": true
       },
       "configurations": {
         "fix": { "fix": true }

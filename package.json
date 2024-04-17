@@ -270,6 +270,7 @@
     "danger": "^11.3.0",
     "dotenv-cli": "^7.2.1",
     "drizzle-kit": "^0.20.14",
+    "esbuild": "^0.20.2",
     "eslint": "^8.53.0",
     "eslint-config-next": "14.0.4",
     "eslint-config-prettier": "^9.1.0",

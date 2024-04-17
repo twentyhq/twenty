@@ -4,14 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "nx": "NX_DEFAULT_PROJECT=twenty-front node ../../node_modules/nx/bin/nx.js",
-    "start:prod": "NODE_ENV=production vite --host",
-    "build:sourcemaps": "VITE_BUILD_SOURCEMAP=true NODE_OPTIONS=--max-old-space-size=3000 yarn build",
-    "tsup": "tsup",
-    "storybook:build": "npx storybook build",
-    "storybook:modules:build": "STORYBOOK_SCOPE=modules npx nx storybook:build",
-    "storybook:pages:build": "STORYBOOK_SCOPE=pages npx nx storybook:build",
-    "storybook:docs:build": "STORYBOOK_SCOPE=ui-docs npx nx storybook:build"
+    "build": "npx nx exec -- vite build && sh ./scripts/inject-runtime-env.sh",
+    "build:sourcemaps": "VITE_BUILD_SOURCEMAP=true NODE_OPTIONS=--max-old-space-size=3000 npx nx build",
+    "start:prod": "NODE_ENV=production npx nx exec -- vite --host",
+    "storybook:build": "npx nx exec -- storybook build",
+    "storybook:build:pages": "STORYBOOK_SCOPE=pages npx nx storybook:build",
+    "storybook:build:modules": "STORYBOOK_SCOPE=modules npx nx storybook:build",
+    "tsup": "npx nx exec -- tsup"
   },
   "engines": {
     "node": "^18.17.1",
