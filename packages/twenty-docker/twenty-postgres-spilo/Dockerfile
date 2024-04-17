@@ -58,9 +58,19 @@ RUN make USE_PGXS=1 install
 FROM ghcr.io/zalando/spilo-${POSTGRES_VERSION}:${SPILO_VERSION}
 ARG POSTGRES_VERSION
 ARG WRAPPERS_VERSION
+ARG TARGETARCH
 
 # Install precompiled supabase wrappers extensions
-RUN curl -L "https://github.com/supabase/wrappers/releases/download/v${WRAPPERS_VERSION}/wrappers-v${WRAPPERS_VERSION}-pg${POSTGRES_VERSION}-amd64-linux-gnu.deb" -o wrappers.deb
+RUN set -eux; \
+    ARCH="$(dpkg --print-architecture)"; \
+    case "${ARCH}" in \
+      aarch64|arm64) TARGETARCH='arm64';; \
+      amd64|x86_64) TARGETARCH='amd64';; \
+      *) echo "Unsupported arch: ${ARCH}"; exit 1;; \
+    esac;
+
+
+RUN curl -L "https://github.com/supabase/wrappers/releases/download/v${WRAPPERS_VERSION}/wrappers-v${WRAPPERS_VERSION}-pg${POSTGRES_VERSION}-${TARGETARCH}-linux-gnu.deb" -o wrappers.deb
 RUN dpkg --install wrappers.deb
 
 # Copy pg_graphql
