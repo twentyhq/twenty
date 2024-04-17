@@ -1,4 +1,4 @@
-import { useGetSyncStatusMetadata } from '@/object-metadata/hooks/useGetSyncStatusMetadata';
+import { useGetSyncStatusMetadata } from '@/settings/accounts/hooks/useGetSyncStatusMetadata';
 import { Status } from '@/ui/display/status/components/Status';
 
 export type SettingsAccountsSynchronizationStatusProps = {
