@@ -52,7 +52,7 @@ const StyledButtonContainer = styled.div`
   gap: 10px;
   width: 100%;
 `;
-const Authorize = () => {
+export const Authorize = () => {
   const navigate = useNavigate();
   const [searchParam] = useSearchParams();
   //TODO: Replace with db call for registered third party apps
@@ -127,5 +127,3 @@ const Authorize = () => {
     </StyledContainer>
   );
 };
-
-export default Authorize;
