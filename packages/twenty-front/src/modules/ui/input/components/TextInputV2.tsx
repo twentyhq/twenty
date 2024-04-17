@@ -13,7 +13,9 @@ import { IconAlertCircle, IconComponent, IconEye, IconEyeOff } from 'twenty-ui';
 
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 
-const StyledContainer = styled.div<Pick<TextInputComponentProps, 'fullWidth'>>`
+const StyledContainer = styled.div<
+  Pick<TextInputV2ComponentProps, 'fullWidth'>
+>`
   display: inline-flex;
   flex-direction: column;
   width: ${({ fullWidth }) => (fullWidth ? `100%` : 'auto')};

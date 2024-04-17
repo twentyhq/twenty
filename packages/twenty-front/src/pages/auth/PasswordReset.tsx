@@ -18,13 +18,13 @@ import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
+import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 import {
   useUpdatePasswordViaResetTokenMutation,
   useValidatePasswordResetTokenQuery,
 } from '~/generated/graphql';
 import { logError } from '~/utils/logError';
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 
 const validationSchema = z
   .object({
