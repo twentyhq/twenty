@@ -14,7 +14,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "\n  fragment RemoteServerFields on RemoteServer {\n    id\n    createdAt\n    foreignDataWrapperId\n    foreignDataWrapperOptions\n    foreignDataWrapperType\n    updatedAt\n  }\n": types.RemoteServerFieldsFragmentDoc,
-    "\n  fragment RemoteTableFields on RemoteTable {\n    name\n    schema\n    status\n  }\n": types.RemoteTableFieldsFragmentDoc,
+    "\n  fragment RemoteTableFields on RemoteTable {\n    id\n    name\n    schema\n    status\n  }\n": types.RemoteTableFieldsFragmentDoc,
     "\n  \n  mutation createServer($input: CreateRemoteServerInput!) {\n    createOneRemoteServer(input: $input) {\n      ...RemoteServerFields\n    }\n  }\n": types.CreateServerDocument,
     "\n  mutation deleteServer($input: RemoteServerIdInput!) {\n    deleteOneRemoteServer(input: $input) {\n      id\n    }\n  }\n": types.DeleteServerDocument,
     "\n  \n  mutation syncRemoteTable($input: RemoteTableInput!) {\n    syncRemoteTable(input: $input) {\n      ...RemoteTableFields\n    }\n  }\n": types.SyncRemoteTableDocument,
@@ -53,7 +53,7 @@ export function graphql(source: "\n  fragment RemoteServerFields on RemoteServer
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  fragment RemoteTableFields on RemoteTable {\n    name\n    schema\n    status\n  }\n"): (typeof documents)["\n  fragment RemoteTableFields on RemoteTable {\n    name\n    schema\n    status\n  }\n"];
+export function graphql(source: "\n  fragment RemoteTableFields on RemoteTable {\n    id\n    name\n    schema\n    status\n  }\n"): (typeof documents)["\n  fragment RemoteTableFields on RemoteTable {\n    id\n    name\n    schema\n    status\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
