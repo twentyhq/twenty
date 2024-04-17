@@ -14,34 +14,55 @@ const StyledContent = styled.div`
     font-size: ${Theme.font.size.sm};
     line-height: 28.8px;
     font-weight: ${Theme.font.weight.regular};
-    margin: 32px 0px;
+    margin: 32px 0px 0px;
     text-align: justify;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    margin-bottom: 8px;
+    font-family: var(--font-gabarito);
+    color: ${Theme.text.color.primary};
+    font-weight: 700;
   }
 
   h1 {
     margin-top: 64px;
-    margin-bottom: 8px;
-    font-family: var(--font-gabarito);
-    font-size: 40px;
-    color: ${Theme.text.color.primary};
-    font-weight: 700;
+    font-size: 32px;
+  }
+
+  h2,
+  h3,
+  h4 {
+    margin-top: 40px;
   }
 
   h2 {
-    margin-top: 40px;
-    margin-bottom: 8px;
-    font-family: var(--font-gabarito);
-    font-size: 32px;
-    color: ${Theme.text.color.primary};
-    font-weight: 700;
+    font-size: 28px;
+  }
+
+  h3 {
+    font-size: 24px;
+  }
+
+  h4 {
+    font-size: 20px;
   }
 
   @media (max-width: 810px) {
     h1 {
-      font-size: 28px;
+      font-size: 24px;
     }
     h2 {
-      font-size: 24px;
+      font-size: 20px;
+    }
+    h3 {
+      font-size: 18px;
+    }
+    h4 {
+      font-size: 16px;
     }
   }
 

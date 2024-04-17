@@ -15,7 +15,7 @@ const StyledContainer = styled.div`
   cursor: pointer;
   width: 340px;
 
-  @media (max-width: 360px) {
+  @media (max-width: 385px) {
     width: 280px;
   }
 `;

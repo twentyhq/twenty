@@ -35,7 +35,7 @@ const StyledHeading = styled.div`
   font-weight: 700;
   font-family: var(--font-gabarito);
   @media (max-width: 800px) {
-    font-size: 32px;
+    font-size: 28px;
   }
 `;
 

@@ -25,7 +25,7 @@ const StyledWrapper = styled.div`
     padding: ${Theme.spacing(10)} 24px ${Theme.spacing(20)};
   }
 
-  @media (min-width: 390px) and (max-width: 800px) {
+  @media (max-width: 800px) {
     align-items: center;
   }
 `;
@@ -35,9 +35,12 @@ const StyledTitle = styled.div`
   color: ${Theme.text.color.quarternary};
   font-weight: ${Theme.font.weight.medium};
   margin-bottom: 32px;
-  @media (min-width: 390px) and (max-width: 800px) {
+  @media (min-width: 380px) and (max-width: 800px) {
     width: 340px;
     margin-bottom: 24px;
+  }
+  @media (max-width: 380px) {
+    width: 280px;
   }
 `;
 
@@ -45,8 +48,11 @@ const StyledHeader = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0px;
-  @media (min-width: 390px) and (max-width: 800px) {
+  @media (min-width: 380px) and (max-width: 800px) {
     width: 340px;
+  }
+  @media (max-width: 380px) {
+    width: 280px;
   }
 `;
 
@@ -57,15 +63,18 @@ const StyledHeading = styled.h1`
   color: ${Theme.text.color.primary};
   margin: 0px;
   @media (max-width: 800px) {
-    font-size: 32px;
+    font-size: 28px;
   }
 `;
 
 const StyledSubHeading = styled.h1`
   line-height: 28.8px;
-  font-size: ${Theme.font.size.sm};
+  font-size: ${Theme.font.size.lg};
   font-weight: ${Theme.font.weight.regular};
   color: ${Theme.text.color.tertiary};
+  @media (max-width: 800px) {
+    font-size: ${Theme.font.size.sm};
+  }
 `;
 
 const StyledContent = styled.div`
