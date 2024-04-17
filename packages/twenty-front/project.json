@@ -103,7 +103,8 @@
       "options": {
         "buildTarget": "twenty-front:storybook:build",
         "staticFilePath": "{projectRoot}/storybook-static",
-        "port": 6006
+        "port": 6006,
+        "watch": false
       }
     },
     "storybook:test": {
