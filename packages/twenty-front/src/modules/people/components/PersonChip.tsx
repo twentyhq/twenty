@@ -1,7 +1,6 @@
-import {
-  EntityChip,
-  EntityChipVariant,
-} from '@/ui/display/chip/components/EntityChip';
+import { EntityChip, EntityChipVariant } from 'twenty-ui';
+
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 export type PersonChipProps = {
   id: string;
@@ -21,7 +20,7 @@ export const PersonChip = ({
     linkToEntity={`/person/${id}`}
     name={name}
     avatarType="rounded"
-    avatarUrl={avatarUrl}
+    avatarUrl={getImageAbsoluteURIOrBase64(avatarUrl) || ''}
     variant={variant}
   />
 );

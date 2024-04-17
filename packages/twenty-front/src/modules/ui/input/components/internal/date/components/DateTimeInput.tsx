@@ -1,10 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useIMask } from 'react-imask';
 import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
 
+import { DATE_BLOCKS } from '@/ui/input/components/internal/date/constants/DateBlocks';
+import { DATE_MASK } from '@/ui/input/components/internal/date/constants/DateMask';
 import { DATE_TIME_BLOCKS } from '@/ui/input/components/internal/date/constants/DateTimeBlocks';
 import { DATE_TIME_MASK } from '@/ui/input/components/internal/date/constants/DateTimeMask';
+import { MAX_DATE } from '@/ui/input/components/internal/date/constants/MaxDate';
+import { MIN_DATE } from '@/ui/input/components/internal/date/constants/MinDate';
 
 const StyledInputContainer = styled.div`
   width: 100%;
@@ -37,20 +41,27 @@ export const DateTimeInput = ({
   onChange,
   isDateTimeInput,
 }: DateTimeInputProps) => {
+  const parsingFormat = isDateTimeInput ? 'MM/dd/yyyy HH:mm' : 'MM/dd/yyyy';
+
   const [hasError, setHasError] = useState(false);
 
-  const parseDateToString = (date: any) => {
-    const dateParsed = DateTime.fromJSDate(date);
+  const parseDateToString = useCallback(
+    (date: any) => {
+      const dateParsed = DateTime.fromJSDate(date);
 
-    const formattedDate = dateParsed.toFormat('MM/dd/yyyy HH:mm');
+      const formattedDate = dateParsed.toFormat(parsingFormat);
 
-    return formattedDate;
-  };
+      return formattedDate;
+    },
+    [parsingFormat],
+  );
 
   const parseStringToDate = (str: string) => {
     setHasError(false);
 
-    const parsedDate = DateTime.fromFormat(str, 'MM/dd/yyyy HH:mm');
+    const parsedDate = isDateTimeInput
+      ? DateTime.fromFormat(str, parsingFormat)
+      : DateTime.fromFormat(str, parsingFormat, { zone: 'utc' });
 
     const isValid = parsedDate.isValid;
 
@@ -65,13 +76,16 @@ export const DateTimeInput = ({
     return jsDate;
   };
 
+  const pattern = isDateTimeInput ? DATE_TIME_MASK : DATE_MASK;
+  const blocks = isDateTimeInput ? DATE_TIME_BLOCKS : DATE_BLOCKS;
+
   const { ref, setValue, value } = useIMask(
     {
       mask: Date,
-      pattern: DATE_TIME_MASK,
-      blocks: DATE_TIME_BLOCKS,
-      min: new Date(1970, 0, 1),
-      max: new Date(2100, 0, 1),
+      pattern,
+      blocks,
+      min: MIN_DATE,
+      max: MAX_DATE,
       format: parseDateToString,
       parse: parseStringToDate,
       lazy: false,
@@ -91,7 +105,7 @@ export const DateTimeInput = ({
 
   useEffect(() => {
     setValue(parseDateToString(date));
-  }, [date, setValue]);
+  }, [date, setValue, parseDateToString]);
 
   return (
     <StyledInputContainer>
@@ -102,6 +116,7 @@ export const DateTimeInput = ({
           isDateTimeInput ? ' and time' : ' (mm/dd/yyyy)'
         }`}
         value={value}
+        onChange={() => {}} // Prevent React warning
         hasError={hasError}
       />
     </StyledInputContainer>

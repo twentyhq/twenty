@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { messageParticipantStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -9,6 +11,7 @@ import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-
 import { MessageObjectMetadata } from 'src/modules/messaging/standard-objects/message.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
   standardId: standardObjectIds.messageParticipant,
@@ -18,6 +21,7 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
   description: 'Message Participants',
   icon: 'IconUserCircle',
 })
+@IsNotAuditLogged()
 @IsSystem()
 export class MessageParticipantObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
@@ -28,7 +32,7 @@ export class MessageParticipantObjectMetadata extends BaseObjectMetadata {
     icon: 'IconMessage',
     joinColumn: 'messageId',
   })
-  message: MessageObjectMetadata;
+  message: Relation<MessageObjectMetadata>;
 
   @FieldMetadata({
     standardId: messageParticipantStandardFieldIds.role,
@@ -73,7 +77,7 @@ export class MessageParticipantObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'personId',
   })
   @IsNullable()
-  person: PersonObjectMetadata;
+  person: Relation<PersonObjectMetadata>;
 
   @FieldMetadata({
     standardId: messageParticipantStandardFieldIds.workspaceMember,
@@ -84,5 +88,5 @@ export class MessageParticipantObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'workspaceMemberId',
   })
   @IsNullable()
-  workspaceMember: WorkspaceMemberObjectMetadata;
+  workspaceMember: Relation<WorkspaceMemberObjectMetadata>;
 }

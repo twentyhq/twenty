@@ -46,3 +46,7 @@ jobs:
           commit_user_name: Github Action Deploy
           commit_user_email: github-action-deploy@twenty.com
           commit_author: Github Action Deploy <github-action-deploy@twenty.com>
+
+      - uses: release-drafter/release-drafter@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

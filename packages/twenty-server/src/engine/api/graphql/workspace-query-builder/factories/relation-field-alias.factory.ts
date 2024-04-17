@@ -25,7 +25,7 @@ export class RelationFieldAliasFactory {
 
   constructor(
     @Inject(forwardRef(() => FieldsStringFactory))
-    private readonly fieldsStringFactory: FieldsStringFactory,
+    private readonly fieldsStringFactory: CircularDep<FieldsStringFactory>,
     private readonly argsStringFactory: ArgsStringFactory,
     private readonly objectMetadataService: ObjectMetadataService,
   ) {}

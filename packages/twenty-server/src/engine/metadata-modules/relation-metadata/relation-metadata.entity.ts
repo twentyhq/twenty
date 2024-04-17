@@ -6,6 +6,7 @@ import {
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
+  Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -65,7 +66,7 @@ export class RelationMetadataEntity implements RelationMetadataInterface {
       onDelete: 'CASCADE',
     },
   )
-  fromObjectMetadata: ObjectMetadataEntity;
+  fromObjectMetadata: Relation<ObjectMetadataEntity>;
 
   @ManyToOne(
     () => ObjectMetadataEntity,
@@ -74,21 +75,21 @@ export class RelationMetadataEntity implements RelationMetadataInterface {
       onDelete: 'CASCADE',
     },
   )
-  toObjectMetadata: ObjectMetadataEntity;
+  toObjectMetadata: Relation<ObjectMetadataEntity>;
 
   @OneToOne(
     () => FieldMetadataEntity,
     (field: FieldMetadataEntity) => field.fromRelationMetadata,
   )
   @JoinColumn()
-  fromFieldMetadata: FieldMetadataEntity;
+  fromFieldMetadata: Relation<FieldMetadataEntity>;
 
   @OneToOne(
     () => FieldMetadataEntity,
     (field: FieldMetadataEntity) => field.toRelationMetadata,
   )
   @JoinColumn()
-  toFieldMetadata: FieldMetadataEntity;
+  toFieldMetadata: Relation<FieldMetadataEntity>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

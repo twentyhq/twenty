@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
@@ -13,6 +15,7 @@ import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-me
 import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 export enum MessageChannelSyncStatus {
   PENDING = 'PENDING',
@@ -40,6 +43,7 @@ export enum MessageChannelType {
   description: 'Message Channels',
   icon: 'IconMessage',
 })
+@IsNotAuditLogged()
 @IsSystem()
 export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
@@ -89,7 +93,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
     icon: 'IconUserCircle',
     joinColumn: 'connectedAccountId',
   })
-  connectedAccount: ConnectedAccountObjectMetadata;
+  connectedAccount: Relation<ConnectedAccountObjectMetadata>;
 
   @FieldMetadata({
     standardId: messageChannelStandardFieldIds.type,
@@ -126,6 +130,16 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   isContactAutoCreationEnabled: boolean;
 
   @FieldMetadata({
+    standardId: messageChannelStandardFieldIds.isSyncEnabled,
+    type: FieldMetadataType.BOOLEAN,
+    label: 'Is Sync Enabled',
+    description: 'Is Sync Enabled',
+    icon: 'IconRefresh',
+    defaultValue: true,
+  })
+  isSyncEnabled: boolean;
+
+  @FieldMetadata({
     standardId:
       messageChannelStandardFieldIds.messageChannelMessageAssociations,
     type: FieldMetadataType.RELATION,
@@ -139,7 +153,9 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  messageChannelMessageAssociations: MessageChannelMessageAssociationObjectMetadata[];
+  messageChannelMessageAssociations: Relation<
+    MessageChannelMessageAssociationObjectMetadata[]
+  >;
 
   @FieldMetadata({
     standardId: messageChannelStandardFieldIds.syncCursor,

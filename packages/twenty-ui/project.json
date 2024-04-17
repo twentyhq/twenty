@@ -28,10 +28,10 @@
         "lintFilePatterns": [
           "{projectRoot}/src/**/*.{ts,tsx,json}",
           "{projectRoot}/package.json"
-        ]
+        ],
+        "cache": true
       },
       "configurations": {
-        "ci": { "lintFilePatterns": ["{projectRoot}/**/*.{ts,tsx,json}"] },
         "fix": { "fix": true }
       }
     },
@@ -40,6 +40,18 @@
       "outputs": ["{projectRoot}/coverage"],
       "options": {
         "jestConfig": "{projectRoot}/jest.config.ts"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsc -b tsconfig.json",
+        "incremental": true
+      },
+      "configurations": {
+        "ci": { "incremental": false },
+        "watch": { "watch": true }
       }
     },
     "storybook:dev": {
