@@ -37,6 +37,14 @@ export class DeleteMessagesFromHandleJob
       workspaceId,
     );
 
+    if (!blocklistItem) {
+      this.logger.log(
+        `Blocklist item with id ${blocklistItemId} not found in workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
     const { handle, workspaceMemberId } = blocklistItem;
 
     this.logger.log(

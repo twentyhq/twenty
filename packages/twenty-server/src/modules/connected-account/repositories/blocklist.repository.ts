@@ -12,6 +12,29 @@ export class BlocklistRepository {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
+  public async getById(
+    id: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<BlocklistObjectMetadata> | null> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const blocklistItems =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT * FROM ${dataSourceSchema}."blocklist" WHERE "id" = $1`,
+        [id],
+        workspaceId,
+        transactionManager,
+      );
+
+    if (!blocklistItems || blocklistItems.length === 0) {
+      return null;
+    }
+
+    return blocklistItems[0];
+  }
+
   public async getByWorkspaceMemberId(
     workspaceMemberId: string,
     workspaceId: string,
