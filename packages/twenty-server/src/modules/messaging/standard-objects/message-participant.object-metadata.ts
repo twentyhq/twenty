@@ -11,6 +11,7 @@ import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-
 import { MessageObjectMetadata } from 'src/modules/messaging/standard-objects/message.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
   standardId: standardObjectIds.messageParticipant,
@@ -20,6 +21,7 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
   description: 'Message Participants',
   icon: 'IconUserCircle',
 })
+@IsNotAuditLogged()
 @IsSystem()
 export class MessageParticipantObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
