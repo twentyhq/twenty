@@ -113,24 +113,10 @@ export class RemoteServerService<T extends RemoteServerType> {
     });
 
     if (!remoteServer) {
-      throw new NotFoundException('Object does not exist');
+      throw new NotFoundException('Remote server does not exist');
     }
 
-    const foreignTablesToRemove =
-      await this.remoteTableService.fetchForeignTableNamesWithinWorkspace(
-        workspaceId,
-        remoteServer.foreignDataWrapperId,
-      );
-
-    if (foreignTablesToRemove.length) {
-      for (const foreignTableName of foreignTablesToRemove) {
-        await this.remoteTableService.removeForeignTableAndMetadata(
-          foreignTableName,
-          workspaceId,
-          remoteServer,
-        );
-      }
-    }
+    await this.remoteTableService.unsyncAll(workspaceId, remoteServer);
 
     return this.metadataDataSource.transaction(
       async (entityManager: EntityManager) => {

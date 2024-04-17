@@ -1,6 +1,7 @@
 import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
 
 import { IsEnum } from 'class-validator';
+import { PrimaryGeneratedColumn } from 'typeorm';
 
 export enum RemoteTableStatus {
   SYNCED = 'SYNCED',
@@ -14,6 +15,9 @@ registerEnumType(RemoteTableStatus, {
 
 @ObjectType('RemoteTable')
 export class RemoteTableDTO {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
   @Field(() => String)
   name: string;
 

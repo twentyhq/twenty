@@ -3,12 +3,12 @@ export const gmailSearchFilterNonPersonalEmails =
 
 export const gmailSearchFilterExcludeEmails = (emails: string[]): string => {
   if (emails.length === 0) {
-    return `from:-(${gmailSearchFilterNonPersonalEmails} -category:promotions -category:social -category:forums`;
+    return `from:-(${gmailSearchFilterNonPersonalEmails}) -category:promotions -category:social -category:forums -filename:.ics`;
   }
 
   return `(in:inbox from:-(${gmailSearchFilterNonPersonalEmails}|${emails.join(
     '|',
   )})|(in:sent to:-(${gmailSearchFilterNonPersonalEmails}|${emails.join(
     '|',
-  )})) -category:promotions -category:social -category:forums`;
+  )})) -category:promotions -category:social -category:forums -filename:.ics`;
 };

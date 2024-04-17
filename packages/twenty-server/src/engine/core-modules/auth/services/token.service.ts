@@ -60,7 +60,7 @@ export class TokenService {
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     private readonly emailService: EmailService,
-  ) { }
+  ) {}
 
   async generateAccessToken(
     userId: string,
@@ -382,7 +382,9 @@ export class TokenService {
     });
 
     if (!user) {
-      throw new NotFoundException('User who generated the token does not exist');
+      throw new NotFoundException(
+        'User who generated the token does not exist',
+      );
     }
 
     if (!user.defaultWorkspace) {
