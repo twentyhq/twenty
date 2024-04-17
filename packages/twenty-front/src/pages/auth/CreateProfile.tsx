@@ -127,7 +127,7 @@ export const CreateProfile = () => {
     return null;
   }
 
-  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const onNameInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       event.preventDefault();
       onSubmit(getValues());
@@ -166,7 +166,7 @@ export const CreateProfile = () => {
                   placeholder="Tim"
                   error={error?.message}
                   fullWidth
-                  onKeyDown={onKeyDown}
+                  onKeyDown={onNameInputKeyDown}
                   disableHotkeys
                 />
               )}
@@ -186,7 +186,7 @@ export const CreateProfile = () => {
                   placeholder="Cook"
                   error={error?.message}
                   fullWidth
-                  onKeyDown={onKeyDown}
+                  onKeyDown={onNameInputKeyDown}
                   disableHotkeys
                 />
               )}
