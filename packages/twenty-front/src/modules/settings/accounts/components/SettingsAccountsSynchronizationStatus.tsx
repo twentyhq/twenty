@@ -1,4 +1,4 @@
-import { useGetSyncStatusMetadata } from '@/settings/accounts/hooks/useGetSyncStatusMetadata';
+import { useGetSyncStatusOptions } from '@/settings/accounts/hooks//useGetSyncStatusOptions';
 import { Status } from '@/ui/display/status/components/Status';
 
 export type SettingsAccountsSynchronizationStatusProps = {
@@ -8,9 +8,9 @@ export type SettingsAccountsSynchronizationStatusProps = {
 export const SettingsAccountsSynchronizationStatus = ({
   syncStatus,
 }: SettingsAccountsSynchronizationStatusProps) => {
-  const syncMetadataOptions = useGetSyncStatusMetadata();
+  const syncStatusOptions = useGetSyncStatusOptions();
 
-  const syncStatusOption = syncMetadataOptions?.find(
+  const syncStatusOption = syncStatusOptions?.find(
     (option) => option.value === syncStatus,
   );
 

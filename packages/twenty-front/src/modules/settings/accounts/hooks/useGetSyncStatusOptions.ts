@@ -2,7 +2,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-export const useGetSyncStatusMetadata = () => {
+export const useGetSyncStatusOptions = () => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.MessageChannel,
   });
