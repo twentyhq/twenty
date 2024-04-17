@@ -83,12 +83,10 @@ describe('useCreateActivityInCache', () => {
     act(() => {
       const res = result.current.createActivityInCache({
         type: 'Note',
-        targetableObjects: [
-          {
-            targetObjectNameSingular: 'person',
-            id: '1234',
-          },
-        ],
+        targetObject: {
+          targetObjectNameSingular: 'person',
+          id: '1234',
+        },
       });
 
       expect(res.createdActivityInCache).toHaveProperty('id');
