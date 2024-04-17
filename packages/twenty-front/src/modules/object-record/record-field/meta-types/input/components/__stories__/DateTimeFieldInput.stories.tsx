@@ -138,6 +138,7 @@ export const ClickOutside: Story = {
 
     await expect(clickOutsideJestFn).toHaveBeenCalledTimes(0);
 
+    await canvas.findByText('February - 2022');
     const emptyDiv = canvas.getByTestId('data-field-input-click-outside-div');
     await userEvent.click(emptyDiv);
 
@@ -146,9 +147,11 @@ export const ClickOutside: Story = {
 };
 
 export const Escape: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
     await expect(escapeJestFn).toHaveBeenCalledTimes(0);
+    const canvas = within(canvasElement);
 
+    await canvas.findByText('February - 2022');
     await userEvent.keyboard('{escape}');
 
     await expect(escapeJestFn).toHaveBeenCalledTimes(1);
@@ -156,9 +159,11 @@ export const Escape: Story = {
 };
 
 export const Enter: Story = {
-  play: async () => {
+  play: async ({ canvasElement }) => {
     await expect(enterJestFn).toHaveBeenCalledTimes(0);
+    const canvas = within(canvasElement);
 
+    await canvas.findByText('February - 2022');
     await userEvent.keyboard('{enter}');
 
     await expect(enterJestFn).toHaveBeenCalledTimes(1);
