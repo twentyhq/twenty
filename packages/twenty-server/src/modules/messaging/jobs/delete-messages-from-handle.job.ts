@@ -3,14 +3,15 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
+import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 
 export type DeleteMessagesFromHandleJobData = {
   workspaceId: string;
-  workspaceMemberId: string;
-  handle: string;
+  blocklistItemId: string;
 };
 
 @Injectable()
@@ -24,14 +25,23 @@ export class DeleteMessagesFromHandleJob
     private readonly messageChannelRepository: MessageChannelRepository,
     @InjectObjectMetadataRepository(MessageChannelMessageAssociationRepository)
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
+    @InjectObjectMetadataRepository(BlocklistObjectMetadata)
+    private readonly blocklistRepository: BlocklistRepository,
   ) {}
 
   async handle(data: DeleteMessagesFromHandleJobData): Promise<void> {
-    this.logger.log(
-      `Deleting messages from ${data.handle} in workspace ${data.workspaceId} for workspace member ${data.workspaceMemberId}`,
+    const { workspaceId, blocklistItemId } = data;
+
+    const blocklistItem = await this.blocklistRepository.getById(
+      blocklistItemId,
+      workspaceId,
     );
 
-    const { handle, workspaceId, workspaceMemberId } = data;
+    const { handle, workspaceMemberId } = blocklistItem;
+
+    this.logger.log(
+      `Deleting messages from ${handle} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
+    );
 
     const messageChannels =
       await this.messageChannelRepository.getByWorkspaceMemberId(
@@ -48,7 +58,7 @@ export class DeleteMessagesFromHandleJob
     );
 
     this.logger.log(
-      `Deleting messages from handle ${data.handle} in workspace ${data.workspaceId} for workspace member ${data.workspaceMemberId} done`,
+      `Deleting messages from handle ${handle} in workspace ${workspaceId} for workspace member ${workspaceMemberId} done`,
     );
   }
 }
