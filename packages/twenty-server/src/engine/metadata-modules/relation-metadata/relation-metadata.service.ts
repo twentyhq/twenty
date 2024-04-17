@@ -24,6 +24,7 @@ import {
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
+import { capitalize } from 'src/utils/capitalize';
 
 import {
   RelationMetadataEntity,
@@ -165,15 +166,18 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     objectMetadataMap: { [key: string]: ObjectMetadataEntity },
     columnName: string,
   ) {
+    const name = computeObjectTargetTable(
+      objectMetadataMap[relationMetadataInput.toObjectMetadataId],
+    );
+    const foreignKeyName = `FK_${relationMetadataInput.fromName}.${relationMetadataInput.toName}`;
+
     await this.workspaceMigrationService.createCustomMigration(
       generateMigrationName(`create-${relationMetadataInput.fromName}`),
       relationMetadataInput.workspaceId,
       [
         // Create the column
         {
-          name: computeObjectTargetTable(
-            objectMetadataMap[relationMetadataInput.toObjectMetadataId],
-          ),
+          name,
           action: WorkspaceMigrationTableActionType.ALTER,
           columns: [
             {
@@ -186,13 +190,12 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
         },
         // Create the foreignKey
         {
-          name: computeObjectTargetTable(
-            objectMetadataMap[relationMetadataInput.toObjectMetadataId],
-          ),
+          name,
           action: WorkspaceMigrationTableActionType.ALTER,
           columns: [
             {
               action: WorkspaceMigrationColumnActionType.CREATE_FOREIGN_KEY,
+              foreignKeyName,
               columnName,
               referencedTableName: computeObjectTargetTable(
                 objectMetadataMap[relationMetadataInput.fromObjectMetadataId],
@@ -202,6 +205,22 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
                 relationMetadataInput.relationType ===
                 RelationMetadataType.ONE_TO_ONE,
               onDelete: RelationOnDeleteAction.SET_NULL,
+            },
+          ],
+        },
+        // Create the graphql comment
+        {
+          name,
+          action: WorkspaceMigrationTableActionType.ALTER,
+          columns: [
+            {
+              action: WorkspaceMigrationColumnActionType.COMMENT_ON_CONSTRAINT,
+              foreignKeyName,
+              comment: `@graphql({"foreign_name": "${
+                relationMetadataInput.toName
+              }", "local_name": "${capitalize(
+                relationMetadataInput.fromName,
+              )}"})`,
             },
           ],
         },

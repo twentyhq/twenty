@@ -8,12 +8,13 @@ import {
 import { RelationOnDeleteAction } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
 export enum WorkspaceMigrationColumnActionType {
-  CREATE = 'CREATE',
   ALTER = 'ALTER',
-  CREATE_FOREIGN_KEY = 'CREATE_FOREIGN_KEY',
-  DROP_FOREIGN_KEY = 'DROP_FOREIGN_KEY',
-  DROP = 'DROP',
+  COMMENT_ON_CONSTRAINT = 'COMMENT_ON_CONSTRAINT',
+  CREATE = 'CREATE',
   CREATE_COMMENT = 'CREATE_COMMENT',
+  CREATE_FOREIGN_KEY = 'CREATE_FOREIGN_KEY',
+  DROP = 'DROP',
+  DROP_FOREIGN_KEY = 'DROP_FOREIGN_KEY',
 }
 export type WorkspaceMigrationRenamedEnum = { from: string; to: string };
 export type WorkspaceMigrationEnum = string | WorkspaceMigrationRenamedEnum;
@@ -43,9 +44,15 @@ export type WorkspaceMigrationColumnCreateRelation = {
   columnName: string;
   referencedTableName: string;
   referencedTableColumnName: string;
+  foreignKeyName?: string;
   isUnique?: boolean;
   onDelete?: RelationOnDeleteAction;
 };
+export interface WorkspaceMigrationColumnCommentOnConstraint {
+  action: WorkspaceMigrationColumnActionType.COMMENT_ON_CONSTRAINT;
+  foreignKeyName: string;
+  comment: string;
+}
 
 export type WorkspaceMigrationColumnDropRelation = {
   action: WorkspaceMigrationColumnActionType.DROP_FOREIGN_KEY;
@@ -78,6 +85,7 @@ export type WorkspaceMigrationColumnAction = {
   | WorkspaceMigrationColumnDropRelation
   | WorkspaceMigrationColumnDrop
   | WorkspaceMigrationCreateComment
+  | WorkspaceMigrationColumnCommentOnConstraint
 );
 
 /**

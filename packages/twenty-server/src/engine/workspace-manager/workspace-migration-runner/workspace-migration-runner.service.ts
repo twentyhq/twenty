@@ -256,6 +256,15 @@ export class WorkspaceMigrationRunnerService {
             columnMigration,
           );
           break;
+        case WorkspaceMigrationColumnActionType.COMMENT_ON_CONSTRAINT:
+          await this.commentConstraint(
+            queryRunner,
+            schemaName,
+            tableName,
+            columnMigration.foreignKeyName,
+            columnMigration.comment,
+          );
+          break;
         case WorkspaceMigrationColumnActionType.DROP_FOREIGN_KEY:
           await this.dropRelation(
             queryRunner,
@@ -271,7 +280,7 @@ export class WorkspaceMigrationRunnerService {
           );
           break;
         case WorkspaceMigrationColumnActionType.CREATE_COMMENT:
-          await this.createComment(
+          await this.commentTable(
             queryRunner,
             schemaName,
             tableName,
@@ -394,6 +403,7 @@ export class WorkspaceMigrationRunnerService {
     await queryRunner.createForeignKey(
       `${schemaName}.${tableName}`,
       new TableForeignKey({
+        name: migrationColumn.foreignKeyName,
         columnNames: [migrationColumn.columnName],
         referencedColumnNames: [migrationColumn.referencedTableColumnName],
         referencedTableName: migrationColumn.referencedTableName,
@@ -467,7 +477,7 @@ export class WorkspaceMigrationRunnerService {
     return foreignKeys[0]?.constraint_name;
   }
 
-  private async createComment(
+  private async commentTable(
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
@@ -475,6 +485,18 @@ export class WorkspaceMigrationRunnerService {
   ) {
     await queryRunner.query(`
       COMMENT ON TABLE "${schemaName}"."${tableName}" IS e'${comment}';
+    `);
+  }
+
+  private async commentConstraint(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    tableName: string,
+    constraintName: string,
+    comment: string,
+  ) {
+    await queryRunner.query(`
+      COMMENT ON CONSTRAINT "${constraintName}" ON "${schemaName}"."${tableName}" IS e'${comment}';
     `);
   }
 
