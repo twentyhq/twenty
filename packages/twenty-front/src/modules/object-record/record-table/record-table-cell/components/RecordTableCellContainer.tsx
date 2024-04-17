@@ -48,8 +48,6 @@ const StyledCellBaseContainer = styled.div`
 export type RecordTableCellContainerProps = {
   editModeContent: ReactElement;
   nonEditModeContent: ReactElement;
-  editModeHorizontalAlign?: 'left' | 'right';
-  editModeVerticalPosition?: 'over' | 'below';
   editHotkeyScope?: HotkeyScope;
   transparent?: boolean;
   maxContentWidth?: number;
@@ -62,8 +60,6 @@ const DEFAULT_CELL_SCOPE: HotkeyScope = {
 };
 
 export const RecordTableCellContainer = ({
-  editModeHorizontalAlign = 'left',
-  editModeVerticalPosition = 'over',
   editModeContent,
   nonEditModeContent,
   editHotkeyScope,
@@ -163,12 +159,7 @@ export const RecordTableCellContainer = ({
           onMouseLeave={handleContainerMouseLeave}
         >
           {isCurrentTableCellInEditMode ? (
-            <RecordTableCellEditMode
-              editModeHorizontalAlign={editModeHorizontalAlign}
-              editModeVerticalPosition={editModeVerticalPosition}
-            >
-              {editModeContent}
-            </RecordTableCellEditMode>
+            <RecordTableCellEditMode>{editModeContent}</RecordTableCellEditMode>
           ) : hasSoftFocus ? (
             <>
               {showButton && (

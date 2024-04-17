@@ -72,7 +72,6 @@ const StyledInlineCellBaseContainer = styled.div`
 
   gap: ${({ theme }) => theme.spacing(1)};
 
-  position: relative;
   user-select: none;
 `;
 
