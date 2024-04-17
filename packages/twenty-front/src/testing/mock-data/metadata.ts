@@ -1,6 +1,9 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '@/object-metadata/utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
-import { ObjectEdge } from '~/generated-metadata/graphql';
+import {
+  ObjectEdge,
+  ObjectMetadataItemsQuery,
+} from '~/generated-metadata/graphql';
 import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/standard-metadata-query-result';
 
 const customObjectMetadataItemEdge: ObjectEdge = {
@@ -246,7 +249,7 @@ export const mockedObjectMetadataItemsQueryResult = {
       customObjectMetadataItemEdge,
     ],
   },
-};
+} as ObjectMetadataItemsQuery;
 
 export const mockedObjectMetadataItems =
   mapPaginatedObjectMetadataItemsToObjectMetadataItems({

@@ -32,15 +32,7 @@ describe('useEntitySelectSearch', () => {
         wrapper: Wrapper,
       },
     );
-    const { result: relationPickerScopedStatesHook } = renderHook(
-      () =>
-        useRelationPickerScopedStates({
-          relationPickerScopedId: 'relation-picker',
-        }),
-      {
-        wrapper: Wrapper,
-      },
-    );
+
     const filter = 'value';
 
     act(() => {

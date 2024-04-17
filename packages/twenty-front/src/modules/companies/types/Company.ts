@@ -1,5 +1,3 @@
-import { id } from "date-fns/locale";
-
 export type Company = {
   __typename: 'Company';
   id: string;
