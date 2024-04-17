@@ -7,7 +7,6 @@ import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEv
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellContainer';
-import { useCloseRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useCloseRecordTableCell';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 export const RecordTableCell = ({
@@ -15,11 +14,10 @@ export const RecordTableCell = ({
 }: {
   customHotkeyScope: HotkeyScope;
 }) => {
-  const { onUpsertRecord, onMoveFocus } = useContext(RecordTableContext);
+  const { onUpsertRecord, onMoveFocus, onCloseTableCell } =
+    useContext(RecordTableContext);
   const { entityId, fieldDefinition } = useContext(FieldContext);
   const { isReadOnly } = useContext(RecordTableRowContext);
-
-  const { closeTableCell } = useCloseRecordTableCell();
 
   const handleEnter: FieldInputEvent = (persistField) => {
     onUpsertRecord({
@@ -28,7 +26,7 @@ export const RecordTableCell = ({
       fieldName: fieldDefinition.metadata.fieldName,
     });
 
-    closeTableCell();
+    onCloseTableCell();
     onMoveFocus('down');
   };
 
@@ -39,11 +37,11 @@ export const RecordTableCell = ({
       fieldName: fieldDefinition.metadata.fieldName,
     });
 
-    closeTableCell();
+    onCloseTableCell();
   };
 
   const handleCancel = () => {
-    closeTableCell();
+    onCloseTableCell();
   };
 
   const handleClickOutside: FieldInputEvent = (persistField) => {
@@ -53,7 +51,7 @@ export const RecordTableCell = ({
       fieldName: fieldDefinition.metadata.fieldName,
     });
 
-    closeTableCell();
+    onCloseTableCell();
   };
 
   const handleEscape: FieldInputEvent = (persistField) => {
@@ -63,7 +61,7 @@ export const RecordTableCell = ({
       fieldName: fieldDefinition.metadata.fieldName,
     });
 
-    closeTableCell();
+    onCloseTableCell();
   };
 
   const handleTab: FieldInputEvent = (persistField) => {
@@ -73,7 +71,7 @@ export const RecordTableCell = ({
       fieldName: fieldDefinition.metadata.fieldName,
     });
 
-    closeTableCell();
+    onCloseTableCell();
     onMoveFocus('right');
   };
 
@@ -84,7 +82,7 @@ export const RecordTableCell = ({
       fieldName: fieldDefinition.metadata.fieldName,
     });
 
-    closeTableCell();
+    onCloseTableCell();
     onMoveFocus('left');
   };
 

@@ -17,6 +17,7 @@ type RecordTableContextProps = {
   }) => void;
   onOpenTableCell: (args: OpenTableCellArgs) => void;
   onMoveFocus: (direction: MoveFocusDirection) => void;
+  onCloseTableCell: () => void;
 };
 
 export const RecordTableContext = createContext<RecordTableContextProps>(

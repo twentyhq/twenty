@@ -22,11 +22,11 @@ export const useInitDraftValueV2 = <FieldValue>() => {
         entityId: string;
         fieldDefinition: FieldDefinition<FieldMetadata>;
       }) => {
-        const recordFieldInputId = `${entityId}-${fieldDefinition?.metadata?.fieldName}`;
+        const recordFieldInputScopeId = `${entityId}-${fieldDefinition?.metadata?.fieldName}-scope`;
 
         const getDraftValueSelector = extractComponentSelector<
           FieldInputDraftValue<FieldValue> | undefined
-        >(recordFieldInputDraftValueComponentSelector, recordFieldInputId);
+        >(recordFieldInputDraftValueComponentSelector, recordFieldInputScopeId);
 
         const recordFieldValue = snapshot
           .getLoadable(

@@ -9,6 +9,7 @@ import { RecordTableHeader } from '@/object-record/record-table/components/Recor
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
+import { useCloseRecordTableCellV2 } from '@/object-record/record-table/record-table-cell/hooks/useCloseRecordTableCellV2';
 import {
   OpenTableCellArgs,
   useOpenRecordTableCellV2,
@@ -165,19 +166,25 @@ export const RecordTable = ({
     entityId: string;
     fieldName: string;
   }) => {
-    upsertRecord(persistField, entityId, fieldName, scopeId);
+    upsertRecord(persistField, entityId, fieldName, recordTableId);
   };
 
-  const { openTableCell } = useOpenRecordTableCellV2(scopeId);
+  const { openTableCell } = useOpenRecordTableCellV2(recordTableId);
 
   const handleOpenTableCell = (args: OpenTableCellArgs) => {
     openTableCell(args);
   };
 
-  const { moveFocus } = useRecordTableMoveFocus(scopeId);
+  const { moveFocus } = useRecordTableMoveFocus(recordTableId);
 
   const handleMoveFocus = (direction: MoveFocusDirection) => {
     moveFocus(direction);
+  };
+
+  const { closeTableCell } = useCloseRecordTableCellV2(recordTableId);
+
+  const handleCloseTableCell = () => {
+    closeTableCell();
   };
 
   return (
@@ -192,6 +199,7 @@ export const RecordTable = ({
             onUpsertRecord: handleUpsertRecord,
             onOpenTableCell: handleOpenTableCell,
             onMoveFocus: handleMoveFocus,
+            onCloseTableCell: handleCloseTableCell,
           }}
         >
           <StyledTable

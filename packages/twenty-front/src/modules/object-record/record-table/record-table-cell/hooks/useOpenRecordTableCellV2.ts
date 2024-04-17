@@ -59,6 +59,16 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
         fieldDefinition,
         entityId,
       }: OpenTableCellArgs) => {
+        console.log('open', {
+          initialValue,
+          cellPosition,
+          isReadOnly,
+          pathToShowPage,
+          customCellHotkeyScope,
+          fieldDefinition,
+          entityId,
+        });
+
         if (isReadOnly) {
           return;
         }
@@ -73,9 +83,16 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
           }),
         );
 
+        console.log('fieldValue', fieldValue);
+
         const isEmpty = isFieldValueEmpty({
           fieldDefinition,
           fieldValue,
+        });
+
+        console.log({
+          isFirstColumnCell,
+          isEmpty,
         });
 
         if (isFirstColumnCell && !isEmpty) {
@@ -88,7 +105,11 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
 
         moveEditModeToTableCellPosition(cellPosition);
 
-        initDraftValue({ value: initialValue, entityId, fieldDefinition });
+        initDraftValue({
+          value: initialValue,
+          entityId,
+          fieldDefinition,
+        });
 
         toggleClickOutsideListener(false);
 

@@ -17,6 +17,10 @@ export const useCloseCurrentTableCellInEditMode = (recordTableId?: string) => {
           currentTableCellInEditModePositionState,
         );
 
+        console.log({
+          currentTableCellInEditModePosition,
+        });
+
         set(
           isTableCellInEditModeFamilyState(currentTableCellInEditModePosition),
           false,

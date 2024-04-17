@@ -14,6 +14,9 @@ export const useMoveEditModeToTableCellPosition = (recordTableId?: string) => {
   return useRecoilCallback(
     ({ set, snapshot }) => {
       return (newPosition: TableCellPosition) => {
+        console.log('move edit mode', {
+          newPosition,
+        });
         const currentTableCellInEditModePosition = getSnapshotValue(
           snapshot,
           currentTableCellInEditModePositionState,
