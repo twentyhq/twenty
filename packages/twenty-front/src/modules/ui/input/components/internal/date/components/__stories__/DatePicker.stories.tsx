@@ -23,11 +23,16 @@ export const WithOpenMonthSelect: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const monthSelect = canvas.getByText('January');
+    const monthAndYearButton = await canvas.findByTestId(
+      'month-and-year-dropdown',
+    );
+
+    await userEvent.click(monthAndYearButton);
+
+    const monthSelect = await canvas.findByText('January');
 
     await userEvent.click(monthSelect);
 
-    expect(canvas.getAllByText('January')).toHaveLength(2);
     [
       'February',
       'March',

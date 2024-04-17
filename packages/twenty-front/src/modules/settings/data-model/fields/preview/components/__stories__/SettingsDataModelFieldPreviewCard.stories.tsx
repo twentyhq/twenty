@@ -1,15 +1,15 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
-import {
-  mockedCompanyObjectMetadataItem,
-  mockedPersonObjectMetadataItem,
-} from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import {
+  mockedCompanyObjectMetadataItem,
+  mockedPersonObjectMetadataItem,
+} from '~/testing/mock-data/metadata';
 
 import { SettingsDataModelFieldPreviewCard } from '../SettingsDataModelFieldPreviewCard';
 
