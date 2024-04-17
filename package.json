@@ -270,6 +270,7 @@
     "danger": "^11.3.0",
     "dotenv-cli": "^7.2.1",
     "drizzle-kit": "^0.20.14",
+    "esbuild": "^0.20.2",
     "eslint": "^8.53.0",
     "eslint-config-next": "14.0.4",
     "eslint-config-prettier": "^9.1.0",
@@ -329,7 +330,7 @@
   },
   "version": "0.2.1",
   "scripts": {
-    "start": "cross-env FORCE_COLOR=true concurrently -n \"twenty-server,twenty-front\" -c \"bgBlue.bold,bgGreen.bold\" \"yarn nx start twenty-server\" \"yarn nx start twenty-front\""
+    "start:prod": "cross-env FORCE_COLOR=true concurrently -n \"twenty-server,twenty-front\" -c \"bgBlue.bold,bgGreen.bold\" \"yarn nx start twenty-server\" \"yarn nx start twenty-front\""
   },
   "workspaces": {
     "packages": [
