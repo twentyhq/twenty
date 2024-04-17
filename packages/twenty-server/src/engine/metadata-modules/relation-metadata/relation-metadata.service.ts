@@ -24,7 +24,6 @@ import {
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
-import { capitalize } from 'src/utils/capitalize';
 
 import {
   RelationMetadataEntity,
@@ -203,12 +202,8 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
                 relationMetadataInput.relationType ===
                 RelationMetadataType.ONE_TO_ONE,
               onDelete: RelationOnDeleteAction.SET_NULL,
-              foreignKeyName: `FK_${relationMetadataInput.fromName}.${relationMetadataInput.toName}`,
-              comment: `@graphql({"foreign_name": "${
-                relationMetadataInput.toName
-              }", "local_name": "${capitalize(
-                relationMetadataInput.fromName,
-              )}"})`,
+              foreignName: relationMetadataInput.toName,
+              localName: relationMetadataInput.fromName,
             },
           ],
         },

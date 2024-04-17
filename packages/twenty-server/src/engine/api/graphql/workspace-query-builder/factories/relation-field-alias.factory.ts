@@ -112,7 +112,7 @@ export class RelationFieldAliasFactory {
         );
 
       return `
-        ${fieldKey}: ${capitalize(fieldKey)}${
+        ${fieldKey}: ${capitalize(fieldMetadata.name)}${
           argsString ? `(${argsString})` : ''
         } {
           ${fieldsString}

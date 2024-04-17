@@ -24,6 +24,7 @@ import {
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { WorkspaceMigrationEnumService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-enum.service';
 import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration-runner/utils/convert-on-delete-action-to-on-delete.util';
+import { capitalize } from 'src/utils/capitalize';
 
 import { customTableDefaultColumns } from './utils/custom-table-default-column.util';
 import { WorkspaceMigrationTypeService } from './services/workspace-migration-type.service';
@@ -255,12 +256,6 @@ export class WorkspaceMigrationRunnerService {
             tableName,
             columnMigration,
           );
-          await this.commentConstraint(
-            queryRunner,
-            schemaName,
-            tableName,
-            columnMigration,
-          );
           break;
         case WorkspaceMigrationColumnActionType.DROP_FOREIGN_KEY:
           await this.dropRelation(
@@ -397,16 +392,26 @@ export class WorkspaceMigrationRunnerService {
     tableName: string,
     migrationColumn: WorkspaceMigrationColumnCreateRelation,
   ) {
+    const foreignKeyName = `FK_${migrationColumn.foreignName}_${migrationColumn.localName}`;
+
     await queryRunner.createForeignKey(
       `${schemaName}.${tableName}`,
       new TableForeignKey({
-        name: migrationColumn.foreignKeyName,
+        name: foreignKeyName,
         columnNames: [migrationColumn.columnName],
         referencedColumnNames: [migrationColumn.referencedTableColumnName],
         referencedTableName: migrationColumn.referencedTableName,
         referencedSchema: schemaName,
         onDelete: convertOnDeleteActionToOnDelete(migrationColumn.onDelete),
       }),
+    );
+
+    await this.commentConstraint(
+      queryRunner,
+      schemaName,
+      tableName,
+      foreignKeyName,
+      migrationColumn,
     );
 
     // Create unique constraint if for one to one relation
@@ -489,10 +494,13 @@ export class WorkspaceMigrationRunnerService {
     queryRunner: QueryRunner,
     schemaName: string,
     tableName: string,
+    foreignKeyName: string,
     migrationColumn: WorkspaceMigrationColumnCreateRelation,
   ) {
     await queryRunner.query(`
-      COMMENT ON CONSTRAINT "${migrationColumn.foreignKeyName}" ON "${schemaName}"."${tableName}" IS e'${migrationColumn.comment}';
+      COMMENT ON CONSTRAINT "${foreignKeyName}" ON "${schemaName}"."${tableName}" IS e'@graphql({"foreign_name": "${
+        migrationColumn.foreignName
+      }", "local_name": "${capitalize(migrationColumn.localName)}"})';
     `);
   }
 

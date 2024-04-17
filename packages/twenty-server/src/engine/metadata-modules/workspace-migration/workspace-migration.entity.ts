@@ -43,8 +43,8 @@ export type WorkspaceMigrationColumnCreateRelation = {
   columnName: string;
   referencedTableName: string;
   referencedTableColumnName: string;
-  foreignKeyName: string;
-  comment: string;
+  foreignName: string;
+  localName: string;
   isUnique?: boolean;
   onDelete?: RelationOnDeleteAction;
 };
