@@ -67,13 +67,14 @@ const StyledContent = styled.div`
   }
 
   li {
-    margin: 32px 0px;
+    margin: 32px 0px 0px;
     line-height: 28.8px;
     font-family: ${Theme.font.family};
     color: ${Theme.text.color.secondary};
   }
 
   img {
+    margin: 32px 0px 0px;
     max-width: 100%;
   }
 `;
