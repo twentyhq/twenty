@@ -153,6 +153,7 @@ describe('useMultiObjectSearch', () => {
           isActive: true,
           isCustom: true,
           isSystem: false,
+          isRemote: false,
           labelPlural: 'labelPlural',
           labelSingular: 'labelSingular',
           namePlural: 'namePlural',
