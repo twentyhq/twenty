@@ -1,4 +1,6 @@
+import { createPortal } from 'react-dom';
 import styled from '@emotion/styled';
+import { autoUpdate, flip, offset, useFloating } from '@floating-ui/react';
 
 const StyledInlineCellEditModeContainer = styled.div<RecordInlineCellEditModeProps>`
   align-items: center;
@@ -27,8 +29,29 @@ type RecordInlineCellEditModeProps = {
 
 export const RecordInlineCellEditMode = ({
   children,
-}: RecordInlineCellEditModeProps) => (
-  <StyledInlineCellEditModeContainer data-testid="inline-cell-edit-mode-container">
-    <StyledInlineCellInput>{children}</StyledInlineCellInput>
-  </StyledInlineCellEditModeContainer>
-);
+}: RecordInlineCellEditModeProps) => {
+  const { refs, floatingStyles } = useFloating({
+    placement: 'right',
+    middleware: [
+      flip(),
+      offset(() => {
+        return -1;
+      }),
+    ],
+    whileElementsMounted: autoUpdate,
+  });
+
+  return (
+    <StyledInlineCellEditModeContainer
+      ref={refs.setReference}
+      data-testid="inline-cell-edit-mode-container"
+    >
+      {createPortal(
+        <StyledInlineCellInput ref={refs.setFloating} style={floatingStyles}>
+          {children}
+        </StyledInlineCellInput>,
+        document.body,
+      )}
+    </StyledInlineCellEditModeContainer>
+  );
+};
