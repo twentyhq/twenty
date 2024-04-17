@@ -16,6 +16,7 @@ import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
+import { CustomObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/custom-objects/custom.object-metadata';
 
 @ObjectMetadata({
   standardId: standardObjectIds.timelineActivity,
@@ -60,6 +61,7 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
   @IsNullable()
   properties: JSON;
 
+  // Who made the action
   @FieldMetadata({
     standardId: timelineActivityStandardFieldIds.workspaceMember,
     type: FieldMetadataType.RELATION,
@@ -110,12 +112,15 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
     label: oppositeObjectMetadata.labelSingular,
     description: `Event ${oppositeObjectMetadata.labelSingular}`,
     joinColumn: `${oppositeObjectMetadata.nameSingular}Id`,
-    icon: 'IconBuildingSkyscraper',
+    icon: 'IconTimeline',
   }))
+  custom: Relation<CustomObjectMetadata>;
+
+  // Special objects that don't have their own timeline and are 'link' to the main object
   @FieldMetadata({
     standardId: timelineActivityStandardFieldIds.linkedRecordCachedName,
     type: FieldMetadataType.TEXT,
-    label: 'Liked Record cached name',
+    label: 'Linked Record cached name',
     description: 'Cached record name',
     icon: 'IconAbc',
   })
@@ -123,7 +128,7 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     standardId: timelineActivityStandardFieldIds.linkedRecordId,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.UUID,
     label: 'Linked Record id',
     description: 'Linked Record id',
     icon: 'IconAbc',
@@ -133,7 +138,7 @@ export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     standardId: timelineActivityStandardFieldIds.linkedObjectMetadataId,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.UUID,
     label: 'Linked Object Metadata Id',
     description: 'inked Object Metadata Id',
     icon: 'IconAbc',

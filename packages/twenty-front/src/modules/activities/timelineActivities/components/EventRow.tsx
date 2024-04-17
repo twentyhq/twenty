@@ -9,9 +9,9 @@ import {
   useIcons,
 } from 'twenty-ui';
 
-import { EventUpdateProperty } from '@/activities/events/components/EventUpdateProperty';
-import { TimelineActivity } from '@/activities/events/types/TimelineActivity';
 import { useLinkedObject } from '@/activities/timeline/hooks/useLinkedObject';
+import { EventUpdateProperty } from '@/activities/timelineActivities/components/EventUpdateProperty';
+import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
@@ -154,9 +154,9 @@ export const EventRow = ({
 
   const linkedObjectMetadata = useLinkedObject(event.linkedObjectMetadataId);
 
-  const linkedObjectLabel = event.name.includes('Note')
+  const linkedObjectLabel = event.name.includes('note')
     ? 'Note'
-    : event.name.includes('Task')
+    : event.name.includes('task')
       ? 'Task'
       : linkedObjectMetadata?.labelSingular;
 
@@ -185,7 +185,7 @@ export const EventRow = ({
 
   let description;
 
-  if (linkedObjectMetadata !== null) {
+  if (!isUndefinedOrNull(linkedObjectMetadata)) {
     description = 'a ' + linkedObjectLabel;
   } else if (!event.linkedObjectMetadataId && isEventType('created')) {
     description = `a new ${mainObjectMetadataItem?.labelSingular}`;
@@ -231,12 +231,10 @@ export const EventRow = ({
               <StyledItemAuthorText>{author}</StyledItemAuthorText>
               <StyledActionName>{action}</StyledActionName>
               <StyledItemTitle>
-                {!isUndefinedOrNull(linkedObjectMetadata) ? (
+                {isUndefinedOrNull(linkedObjectMetadata) ? (
                   description
                 ) : (
-                  <>
-                    {linkedObjectLabel} : {event.linkedRecordCachedName}
-                  </>
+                  <>: {event.linkedRecordCachedName}</>
                 )}
               </StyledItemTitle>
             </StyledSummary>

@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 
-import { EventRow } from '@/activities/events/components/EventRow';
-import { EventGroup } from '@/activities/events/utils/groupEventsByMonth';
+import { EventRow } from '@/activities/timelineActivities/components/EventRow';
+import { EventGroup } from '@/activities/timelineActivities/utils/groupEventsByMonth';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 type EventsGroupProps = {

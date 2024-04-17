@@ -62,7 +62,6 @@ export class AuditLogObjectMetadata extends BaseObjectMetadata {
     description: 'If the event is related to a particular object',
     icon: 'IconAbc',
   })
-  @IsNullable()
   objectName: string;
 
   @FieldMetadata({

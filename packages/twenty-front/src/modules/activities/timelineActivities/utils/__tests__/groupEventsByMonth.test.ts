@@ -1,4 +1,4 @@
-import { TimelineActivity } from '@/activities/events/types/TimelineActivity';
+import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
 import { mockedTimelineActivities } from '~/testing/mock-data/timeline-activities';
 
 import { groupEventsByMonth } from '../groupEventsByMonth';

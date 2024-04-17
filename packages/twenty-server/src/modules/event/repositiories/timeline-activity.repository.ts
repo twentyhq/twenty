@@ -75,12 +75,16 @@ export class TimelineActivityRepository {
 
       if (activity.length === 0) return;
 
+      const activityObjectMetadataId = objectMetadata.fields.find(
+        (field) => field.name === 'activity',
+      )?.toRelationMetadata?.fromObjectMetadataId;
+
       Object.entries(activityTarget[0]).forEach(
         ([columnName, columnValue]: [string, string]) => {
           if (columnName === 'activityId' || !columnName.endsWith('Id')) return;
           if (columnValue === null) return;
           this.upsertOne(
-            activity[0].type + '.' + name.split('.')[1],
+            activity[0].type.toLowerCase() + '.' + name.split('.')[1],
             {},
             workspaceMemberId,
             columnName.replace(/Id$/, ''),
@@ -88,7 +92,7 @@ export class TimelineActivityRepository {
             workspaceId,
             activity[0].title,
             activityTarget[0].id,
-            objectMetadata.id,
+            activityObjectMetadataId,
           );
         },
       );
@@ -120,7 +124,7 @@ export class TimelineActivityRepository {
               return;
             if (columnValue === null) return;
             this.upsertOne(
-              activity[0].type + '.' + name.split('.')[1],
+              activity[0].type.toLowerCase() + '.' + name.split('.')[1],
               properties,
               workspaceMemberId,
               columnName.replace(/Id$/, ''),
@@ -156,12 +160,14 @@ export class TimelineActivityRepository {
       WHERE "${objectName}Id" = $1
       AND ("name" = $2 OR "name" = $3)
       AND "workspaceMemberId" = $4
+      AND "linkedRecordId" = $5
       AND "createdAt" >= NOW() - interval '10 minutes'`,
         [
           objectId,
           name,
           name.replace(/\.updated$/, '.created'),
           workspaceMemberId,
+          linkedRecordId,
         ],
         workspaceId,
       );

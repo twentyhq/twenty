@@ -6,7 +6,7 @@ export function objectRecordDiffMerge(
 
   // Iterate over the keys in the oldRecord diff
   Object.keys(oldRecord.diff ?? {}).forEach((key) => {
-    if (newRecord.diff[key]) {
+    if (newRecord.diff && newRecord.diff[key]) {
       // If the key also exists in the newRecord, merge the 'before' from the oldRecord and the 'after' from the newRecord
       result.diff[key] = {
         before: oldRecord.diff[key].before,

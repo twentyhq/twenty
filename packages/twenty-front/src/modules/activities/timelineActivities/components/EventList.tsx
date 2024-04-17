@@ -1,9 +1,9 @@
 import { ReactElement } from 'react';
 import styled from '@emotion/styled';
 
-import { EventsGroup } from '@/activities/events/components/EventsGroup';
-import { TimelineActivity } from '@/activities/events/types/TimelineActivity';
-import { groupEventsByMonth } from '@/activities/events/utils/groupEventsByMonth';
+import { EventsGroup } from '@/activities/timelineActivities/components/EventsGroup';
+import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
+import { groupEventsByMonth } from '@/activities/timelineActivities/utils/groupEventsByMonth';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';

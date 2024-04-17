@@ -1,4 +1,4 @@
-import { TimelineActivity } from '@/activities/events/types/TimelineActivity';
+import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
