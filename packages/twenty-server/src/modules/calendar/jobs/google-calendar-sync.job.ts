@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
-import { GoogleCalendarSyncService } from 'src/modules/calendar/services/google-calendar-sync.service';
+import { GoogleCalendarSyncService } from 'src/modules/calendar/services/google-calendar-sync/google-calendar-sync.service';
 
 export type GoogleCalendarSyncJobData = {
   workspaceId: string;

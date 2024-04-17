@@ -12,6 +12,7 @@ import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-
 import { CalendarEventObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 export enum CalendarEventParticipantResponseStatus {
   NEEDS_ACTION = 'NEEDS_ACTION',
@@ -29,6 +30,7 @@ export enum CalendarEventParticipantResponseStatus {
   icon: 'IconCalendar',
 })
 @IsSystem()
+@IsNotAuditLogged()
 @Gate({
   featureFlag: 'IS_CALENDAR_ENABLED',
 })

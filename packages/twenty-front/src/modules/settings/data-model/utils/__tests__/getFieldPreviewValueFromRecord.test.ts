@@ -1,9 +1,10 @@
-import {
-  mockedCompanyObjectMetadataItem,
-  mockedPersonObjectMetadataItem,
-} from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { SettingsObjectFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
+import {
+  mockedCompanyObjectMetadataItem,
+  mockedOpportunityObjectMetadataItem,
+  mockedPersonObjectMetadataItem,
+} from '~/testing/mock-data/metadata';
 
 import { getFieldPreviewValueFromRecord } from '../getFieldPreviewValueFromRecord';
 
@@ -11,28 +12,12 @@ describe('getFieldPreviewValueFromRecord', () => {
   describe('SELECT field', () => {
     it('returns the select option corresponding to the record field value', () => {
       // Given
-      const record: ObjectRecord = { id: '', industry: 'GREEN_TECH' };
-      const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
-        ({ name }) => name === 'industry',
+      const record: ObjectRecord = { id: '', stage: 'MEETING' };
+      const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
+        ({ name }) => name === 'stage',
       )!;
-      const selectOptions: SettingsObjectFieldSelectFormValues = [
-        {
-          color: 'purple',
-          label: '🏭 Industry',
-          value: 'INDUSTRY',
-        },
-        {
-          color: 'pink',
-          isDefault: true,
-          label: '💊 Health',
-          value: 'HEALTH',
-        },
-        {
-          color: 'turquoise',
-          label: '🌿 Green tech',
-          value: 'GREEN_TECH',
-        },
-      ];
+      const selectOptions: SettingsObjectFieldSelectFormValues =
+        fieldMetadataItem.options ?? [];
 
       // When
       const result = getFieldPreviewValueFromRecord({
@@ -47,28 +32,12 @@ describe('getFieldPreviewValueFromRecord', () => {
 
     it('returns undefined if the select option was not found', () => {
       // Given
-      const record: ObjectRecord = { id: '', industry: 'MOBILITY' };
-      const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
-        ({ name }) => name === 'industry',
+      const record: ObjectRecord = { id: '', industry: 'DOES_NOT_EXIST' };
+      const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
+        ({ name }) => name === 'stage',
       )!;
-      const selectOptions: SettingsObjectFieldSelectFormValues = [
-        {
-          color: 'purple',
-          label: '🏭 Industry',
-          value: 'INDUSTRY',
-        },
-        {
-          color: 'pink',
-          isDefault: true,
-          label: '💊 Health',
-          value: 'HEALTH',
-        },
-        {
-          color: 'turquoise',
-          label: '🌿 Green tech',
-          value: 'GREEN_TECH',
-        },
-      ];
+      const selectOptions: SettingsObjectFieldSelectFormValues =
+        fieldMetadataItem.options ?? [];
 
       // When
       const result = getFieldPreviewValueFromRecord({

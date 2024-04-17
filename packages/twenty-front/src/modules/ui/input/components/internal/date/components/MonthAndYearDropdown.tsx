@@ -60,7 +60,11 @@ export const MonthAndYearDropdown = ({
       }}
       dropdownPlacement="bottom-start"
       clickableComponent={
-        <LightIconButton Icon={IconCalendarDue} size="medium" />
+        <LightIconButton
+          testId="month-and-year-dropdown"
+          Icon={IconCalendarDue}
+          size="medium"
+        />
       }
       dropdownComponents={
         <DropdownMenuItemsContainer>
