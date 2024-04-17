@@ -10,7 +10,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 import { InputHotkeyScope } from '../types/InputHotkeyScope';
 
-export type TextInputV1Props = {
+export type TextInputProps = {
   disableHotkeys?: boolean;
   onBlur?: () => void;
 };
@@ -20,8 +20,7 @@ const TextInputComponent = ({
   onBlur,
   disableHotkeys = false,
   ...props
-}: Omit<TextInputV2ComponentProps, 'onBlur'> &
-  TextInputV1Props): JSX.Element => {
+}: Omit<TextInputV2ComponentProps, 'onBlur'> & TextInputProps): JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const {
