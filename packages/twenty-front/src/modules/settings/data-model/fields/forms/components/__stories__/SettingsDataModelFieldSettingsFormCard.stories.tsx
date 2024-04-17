@@ -35,6 +35,7 @@ const meta: Meta<typeof SettingsDataModelFieldSettingsFormCard> = {
     'Modules/Settings/DataModel/Fields/Forms/SettingsDataModelFieldSettingsFormCard',
   component: SettingsDataModelFieldSettingsFormCard,
   decorators: [
+    MemoryRouterDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
@@ -61,7 +62,6 @@ const relationFieldMetadataItem = mockedPersonObjectMetadataItem.fields.find(
 )!;
 
 export const WithRelationForm: Story = {
-  decorators: [MemoryRouterDecorator],
   args: {
     fieldMetadataItem: mockedCompanyObjectMetadataItem.fields.find(
       ({ name }) => name === 'people',
