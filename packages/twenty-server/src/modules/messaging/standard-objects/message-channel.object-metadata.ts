@@ -128,6 +128,16 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   isContactAutoCreationEnabled: boolean;
 
   @FieldMetadata({
+    standardId: messageChannelStandardFieldIds.isSyncEnabled,
+    type: FieldMetadataType.BOOLEAN,
+    label: 'Is Sync Enabled',
+    description: 'Is Sync Enabled',
+    icon: 'IconRefresh',
+    defaultValue: true,
+  })
+  isSyncEnabled: boolean;
+
+  @FieldMetadata({
     standardId:
       messageChannelStandardFieldIds.messageChannelMessageAssociations,
     type: FieldMetadataType.RELATION,
