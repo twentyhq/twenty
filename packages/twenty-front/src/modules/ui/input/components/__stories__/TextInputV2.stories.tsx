@@ -2,9 +2,12 @@ import { useState } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
-import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import {
+  TextInputV2,
+  TextInputV2ComponentProps,
+} from '@/ui/input/components/TextInputV2';
 
-type RenderProps = TextInputComponentProps;
+type RenderProps = TextInputV2ComponentProps;
 
 const Render = (args: RenderProps) => {
   const [value, setValue] = useState(args.value);
