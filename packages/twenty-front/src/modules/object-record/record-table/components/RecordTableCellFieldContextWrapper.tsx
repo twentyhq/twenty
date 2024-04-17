@@ -12,7 +12,7 @@ import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkey
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-export const RecordTableCellContainer = () => {
+export const RecordTableCellFieldContextWrapper = () => {
   const { objectMetadataItem } = useContext(RecordTableContext);
   const { columnDefinition } = useContext(RecordTableCellContext);
   const { recordId, pathToShowPage } = useContext(RecordTableRowContext);
