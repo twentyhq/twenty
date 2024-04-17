@@ -7,26 +7,13 @@ import {
   FieldSelectMetadata,
   FieldTextMetadata,
 } from '@/object-record/record-field/types/FieldMetadata';
+import { type } from 'os';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { mockedCompanyObjectMetadataItemNode, mockedCustomObjectMetadataItemNode, mockedPersonObjectMetadataItemNode } from '~/testing/mock-data/metadata';
+import { mockedCompanyObjectMetadataItem, mockedPersonObjectMetadataItem } from '~/testing/mock-data/metadata';
 ;
 
 export const fieldMetadataId = 'fieldMetadataId';
 
-export const mockedPersonObjectMetadataItem =  {
-  ...mockedPersonObjectMetadataItemNode,
-  fields: mockedPersonObjectMetadataItemNode.fields.edges.map(({ node }) => node),
-};
-
-export const mockedCompanyObjectMetadataItem = {
-  ...mockedCompanyObjectMetadataItemNode,
-  fields: mockedCompanyObjectMetadataItemNode.fields.edges.map(({ node }) => node),
-};
-
-export const mockedCustomObjectMetadataItem = {
-  ...mockedCustomObjectMetadataItemNode,
-  fields: mockedCustomObjectMetadataItemNode.fields.edges.map(({ node }) => node),
-};
 
 export const textfieldDefinition: FieldDefinition<FieldTextMetadata> = {
   fieldMetadataId,

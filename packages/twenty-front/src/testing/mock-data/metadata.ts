@@ -1,7 +1,9 @@
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { mapPaginatedObjectMetadataItemsToObjectMetadataItems } from '@/object-metadata/utils/mapPaginatedObjectMetadataItemsToObjectMetadataItems';
 import { ObjectEdge } from '~/generated-metadata/graphql';
-import { mockedStandardObjectMetadataItemConnection } from '~/testing/mock-data/generated/standard-metadata';
+import { mockedStandardObjectMetadataQueryResult } from '~/testing/mock-data/generated/standard-metadata-query-result';
 
-const customObjectMetadataItemEdge = {
+const customObjectMetadataItemEdge: ObjectEdge = {
   __typename: 'objectEdge',
   node: {
     __typename: 'object',
@@ -233,30 +235,37 @@ const customObjectMetadataItemEdge = {
       ],
     },
   },
-};
+} as ObjectEdge;
 
 export const mockedObjectMetadataItemsConnection = {
-  ...mockedStandardObjectMetadataItemConnection,
-  edges: {
-    ...mockedStandardObjectMetadataItemConnection.edges,
-    customObjectMetadataItemEdge,
+  ...mockedStandardObjectMetadataQueryResult,
+  objects: {
+    ...mockedStandardObjectMetadataQueryResult.objects,
+    edges: [
+      ...mockedStandardObjectMetadataQueryResult.objects.edges,
+      customObjectMetadataItemEdge,
+    ],
   },
 };
 
-export const mockedCompanyObjectMetadataItemNode = (
-  mockedObjectMetadataItemsConnection.edges.find(
-    (edge) => edge.node.nameSingular === 'company',
-  ) as ObjectEdge
-).node;
+export const mockedObjectMetadataItems =
+  mapPaginatedObjectMetadataItemsToObjectMetadataItems({
+    pagedObjectMetadataItems: mockedObjectMetadataItemsConnection,
+  });
 
-export const mockedPersonObjectMetadataItemNode = (
-  mockedObjectMetadataItemsConnection.edges.find(
-    (edge) => edge.node.nameSingular === 'person',
-  ) as ObjectEdge
-).node;
+export const mockedCompanyObjectMetadataItem = mockedObjectMetadataItems?.find(
+  (object) => object.nameSingular === 'company',
+) as ObjectMetadataItem;
 
-export const mockedCustomObjectMetadataItemNode = (
-  mockedObjectMetadataItemsConnection.edges.find(
-    (edge) => edge.node.nameSingular === 'myCustom',
-  ) as ObjectEdge
-).node;
+export const mockedPersonObjectMetadataItem = mockedObjectMetadataItems?.find(
+  (object) => object.nameSingular === 'person',
+) as ObjectMetadataItem;
+
+export const mockedCustomObjectMetadataItem = mockedObjectMetadataItems?.find(
+  (object) => object.nameSingular === 'myCustom',
+) as ObjectMetadataItem;
+
+export const mockedOpportunityObjectMetadataItem =
+  mockedObjectMetadataItems?.find(
+    (object) => object.nameSingular === 'opportunity',
+  ) as ObjectMetadataItem;
