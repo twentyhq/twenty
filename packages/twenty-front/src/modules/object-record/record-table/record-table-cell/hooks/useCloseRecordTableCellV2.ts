@@ -10,7 +10,6 @@ import { useCloseCurrentTableCellInEditMode } from '../../hooks/internal/useClos
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 export const useCloseRecordTableCellV2 = (recordTableScopeId: string) => {
-  console.log('recordTableScopeId close table cell', recordTableScopeId);
   const setHotkeyScope = useSetHotkeyScope();
   const { setDragSelectionStartEnabled } = useDragSelect();
   const { pendingRecordIdState } = useRecordTableStates(recordTableScopeId);
