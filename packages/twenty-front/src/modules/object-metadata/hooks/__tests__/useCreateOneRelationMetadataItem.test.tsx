@@ -51,7 +51,6 @@ describe('useCreateOneRelationMetadataItem', () => {
         connect: {
           field: {
             label: 'Another label',
-            type: FieldMetadataType.Relation,
           },
           objectMetadataId: 'objectMetadataId1',
         },
