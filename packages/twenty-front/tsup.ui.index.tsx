@@ -1,6 +1,6 @@
 import { ThemeType } from './src/modules/ui/theme/constants/ThemeLight';
 
-export {ThemeProvider} from '@emotion/react';
+export { ThemeProvider } from '@emotion/react';
 
 export { THEME_DARK } from './src/modules/ui/theme/constants/ThemeDark';
 export { THEME_LIGHT } from './src/modules/ui/theme/constants/ThemeLight';
@@ -10,13 +10,8 @@ declare module '@emotion/react' {
   export interface Theme extends ThemeType {}
 }
 
-export * from './src/modules/ui/display/checkmark/components/Checkmark';
-export * from './src/modules/ui/display/checkmark/components/AnimatedCheckmark'
-export * from './src/modules/ui/display/chip/components/Chip'
-export * from './src/modules/ui/display/chip/components/EntityChip'
+export * from 'twenty-ui';
 export * from './src/modules/ui/display/tag/components/Tag'
-export * from './src/modules/ui/display/tooltip/AppTooltip'
-export * from './src/modules/ui/display/tooltip/OverflowingTextWithTooltip'
 export * from './src/modules/ui/feedback/progress-bar/components/ProgressBar'
 export * from './src/modules/ui/feedback/progress-bar/components/CircularProgressBar'
 export * from './src/modules/ui/input/button/components/Button'

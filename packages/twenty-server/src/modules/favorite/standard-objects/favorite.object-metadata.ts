@@ -14,6 +14,7 @@ import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/comp
 import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
   standardId: standardObjectIds.favorite,
@@ -23,6 +24,7 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
   description: 'A favorite',
   icon: 'IconHeart',
 })
+@IsNotAuditLogged()
 @IsSystem()
 export class FavoriteObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({

@@ -397,7 +397,7 @@ export class RemoteTableService {
       this.workspaceMigrationService.deleteById(workspaceMigration.id);
 
       throw new BadRequestException(
-        'Could not create foreign table. Please check if the table already exists.',
+        'Could not create foreign table. The table may already exists or a column type may not be supported.',
       );
     }
   }

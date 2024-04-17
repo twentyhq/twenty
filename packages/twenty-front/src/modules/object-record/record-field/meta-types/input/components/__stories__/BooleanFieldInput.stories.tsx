@@ -41,6 +41,7 @@ const BooleanFieldInputWithContext = ({
   return (
     <FieldContextProvider
       fieldDefinition={{
+        defaultValue: false,
         fieldMetadataId: 'boolean',
         label: 'Boolean',
         iconName: 'Icon123',
