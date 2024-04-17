@@ -7,6 +7,7 @@ import rehypeSlug from 'rehype-slug';
 import gfm from 'remark-gfm';
 
 import UserGuideEditContent from '@/app/_components/user-guide/UserGuideEditContent';
+import UserGuideLink from '@/app/_components/user-guide/UserGuideLink';
 import UserGuideWarning from '@/app/_components/user-guide/UserGuideWarning';
 
 interface ItemInfo {
@@ -112,6 +113,9 @@ export async function compileMDXFile(filePath: string, addToc = true) {
       },
       UserGuideEditContent() {
         return <UserGuideEditContent />;
+      },
+      UserGuideLink(properties) {
+        return <UserGuideLink {...properties} />;
       },
     },
     options: {
