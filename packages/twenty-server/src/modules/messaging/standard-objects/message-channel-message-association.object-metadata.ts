@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { messageChannelMessageAssociationStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -9,6 +11,7 @@ import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { MessageThreadObjectMetadata } from 'src/modules/messaging/standard-objects/message-thread.object-metadata';
 import { MessageObjectMetadata } from 'src/modules/messaging/standard-objects/message.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
   standardId: standardObjectIds.messageChannelMessageAssociation,
@@ -18,6 +21,7 @@ import { MessageObjectMetadata } from 'src/modules/messaging/standard-objects/me
   description: 'Message Synced with a Message Channel',
   icon: 'IconMessage',
 })
+@IsNotAuditLogged()
 @IsSystem()
 export class MessageChannelMessageAssociationObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
@@ -29,7 +33,7 @@ export class MessageChannelMessageAssociationObjectMetadata extends BaseObjectMe
     joinColumn: 'messageChannelId',
   })
   @IsNullable()
-  messageChannel: MessageChannelObjectMetadata;
+  messageChannel: Relation<MessageChannelObjectMetadata>;
 
   @FieldMetadata({
     standardId: messageChannelMessageAssociationStandardFieldIds.message,
@@ -40,7 +44,7 @@ export class MessageChannelMessageAssociationObjectMetadata extends BaseObjectMe
     joinColumn: 'messageId',
   })
   @IsNullable()
-  message: MessageObjectMetadata;
+  message: Relation<MessageObjectMetadata>;
 
   @FieldMetadata({
     standardId:
@@ -62,7 +66,7 @@ export class MessageChannelMessageAssociationObjectMetadata extends BaseObjectMe
     joinColumn: 'messageThreadId',
   })
   @IsNullable()
-  messageThread: MessageThreadObjectMetadata;
+  messageThread: Relation<MessageThreadObjectMetadata>;
 
   @FieldMetadata({
     standardId:

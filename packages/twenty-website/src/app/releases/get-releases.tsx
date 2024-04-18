@@ -1,5 +1,9 @@
+import { JSXElementConstructor, ReactElement } from 'react';
 import fs from 'fs';
 import matter from 'gray-matter';
+import { compileMDX } from 'next-mdx-remote/rsc';
+import remarkBehead from 'remark-behead';
+import gfm from 'remark-gfm';
 
 import { ReleaseNote } from '@/app/releases/api/route';
 import { compareSemanticVersions } from '@/shared-utils/compareSemanticVersions';
@@ -44,4 +48,24 @@ export async function getReleases(baseUrl?: string): Promise<ReleaseNote[]> {
   releasenotes.sort((a, b) => compareSemanticVersions(b.release, a.release));
 
   return releasenotes;
+}
+
+export async function getMdxReleasesContent(
+  releases: ReleaseNote[],
+): Promise<ReactElement<any, string | JSXElementConstructor<any>>[]> {
+  const mdxSourcesPromises = releases.map(async (release) => {
+    const mdxSource = await compileMDX<{ title: string; position?: number }>({
+      source: release.content,
+      options: {
+        parseFrontmatter: true,
+        mdxOptions: {
+          development: process.env.NODE_ENV === 'development',
+          remarkPlugins: [gfm, [remarkBehead, { depth: 2 }]],
+        },
+      },
+    });
+    return mdxSource.content;
+  });
+
+  return await Promise.all(mdxSourcesPromises);
 }

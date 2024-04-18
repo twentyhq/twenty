@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/relation-metadata.decorator';
 import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -16,6 +18,7 @@ import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { calendarEventStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { LinkMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/link.composite-type';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
   standardId: standardObjectIds.calendarEvent,
@@ -26,6 +29,7 @@ import { LinkMetadata } from 'src/engine/metadata-modules/field-metadata/composi
   icon: 'IconCalendar',
 })
 @IsSystem()
+@IsNotAuditLogged()
 @Gate({
   featureFlag: FeatureFlagKeys.IsCalendarEnabled,
 })
@@ -168,10 +172,12 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   @Gate({
     featureFlag: 'IS_CALENDAR_ENABLED',
   })
-  calendarChannelEventAssociations: CalendarChannelEventAssociationObjectMetadata[];
+  calendarChannelEventAssociations: Relation<
+    CalendarChannelEventAssociationObjectMetadata[]
+  >;
 
   @FieldMetadata({
-    standardId: calendarEventStandardFieldIds.eventParticipants,
+    standardId: calendarEventStandardFieldIds.calendarEventParticipants,
     type: FieldMetadataType.RELATION,
     label: 'Event Participants',
     description: 'Event Participants',
@@ -182,5 +188,5 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
     inverseSideTarget: () => CalendarEventParticipantObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  eventParticipants: CalendarEventParticipantObjectMetadata[];
+  calendarEventParticipants: Relation<CalendarEventParticipantObjectMetadata[]>;
 }

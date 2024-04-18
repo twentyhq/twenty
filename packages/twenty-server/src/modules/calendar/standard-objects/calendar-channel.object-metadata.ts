@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
@@ -14,6 +16,7 @@ import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
 import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/relation-metadata.decorator';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 export enum CalendarChannelVisibility {
   METADATA = 'METADATA',
@@ -29,6 +32,7 @@ export enum CalendarChannelVisibility {
   icon: 'IconCalendar',
 })
 @IsSystem()
+@IsNotAuditLogged()
 @Gate({
   featureFlag: FeatureFlagKeys.IsCalendarEnabled,
 })
@@ -41,7 +45,7 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
     icon: 'IconUserCircle',
     joinColumn: 'connectedAccountId',
   })
-  connectedAccount: ConnectedAccountObjectMetadata;
+  connectedAccount: Relation<ConnectedAccountObjectMetadata>;
 
   @FieldMetadata({
     standardId: calendarChannelStandardFieldIds.handle,
@@ -119,5 +123,7 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
     inverseSideTarget: () => CalendarChannelEventAssociationObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  calendarChannelEventAssociations: CalendarChannelEventAssociationObjectMetadata[];
+  calendarChannelEventAssociations: Relation<
+    CalendarChannelEventAssociationObjectMetadata[]
+  >;
 }

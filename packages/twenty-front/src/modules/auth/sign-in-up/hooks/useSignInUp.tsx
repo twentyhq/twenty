@@ -6,9 +6,7 @@ import { useGenerateCaptchaToken } from '@/auth/hooks/useGenerateCaptchaToken';
 import { useNavigateAfterSignInUp } from '@/auth/sign-in-up/hooks/useNavigateAfterSignInUp.ts';
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm.ts';
 import { AppPath } from '@/types/AppPath';
-import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useInsertCaptchaScript } from '~/hooks/useInsertCaptchaScript';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -137,32 +135,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       workspaceInviteHash,
       navigateAfterSignInUp,
       enqueueSnackBar,
-    ],
-  );
-
-  useScopedHotkeys(
-    'enter',
-    async () => {
-      if (signInUpStep === SignInUpStep.Init) {
-        continueWithEmail();
-      }
-
-      if (signInUpStep === SignInUpStep.Email) {
-        continueWithCredentials();
-      }
-
-      if (signInUpStep === SignInUpStep.Password) {
-        await getCaptchaToken();
-        form.handleSubmit(submitCredentials)();
-      }
-    },
-    PageHotkeyScope.SignInUp,
-    [
-      continueWithEmail,
-      signInUpStep,
-      continueWithCredentials,
-      form,
-      submitCredentials,
     ],
   );
 

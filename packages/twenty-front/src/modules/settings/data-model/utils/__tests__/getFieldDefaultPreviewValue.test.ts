@@ -1,9 +1,10 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { SettingsObjectFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
 import {
   mockedCompanyObjectMetadataItem,
+  mockedOpportunityObjectMetadataItem,
   mockedPersonObjectMetadataItem,
-} from '@/object-record/record-field/__mocks__/fieldDefinitions';
-import { SettingsObjectFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
+} from '~/testing/mock-data/metadata';
 
 import { getFieldDefaultPreviewValue } from '../getFieldDefaultPreviewValue';
 
@@ -11,23 +12,12 @@ describe('getFieldDefaultPreviewValue', () => {
   describe('SELECT field', () => {
     it('returns the default select option', () => {
       // Given
-      const objectMetadataItem = mockedCompanyObjectMetadataItem;
-      const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
-        ({ name }) => name === 'industry',
+      const objectMetadataItem = mockedOpportunityObjectMetadataItem;
+      const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
+        ({ name }) => name === 'stage',
       )!;
-      const selectOptions: SettingsObjectFieldSelectFormValues = [
-        {
-          color: 'purple',
-          label: '🏭 Industry',
-          value: 'INDUSTRY',
-        },
-        {
-          color: 'pink',
-          isDefault: true,
-          label: '💊 Health',
-          value: 'HEALTH',
-        },
-      ];
+      const selectOptions: SettingsObjectFieldSelectFormValues =
+        fieldMetadataItem.options ?? [];
 
       // When
       const result = getFieldDefaultPreviewValue({
@@ -37,27 +27,17 @@ describe('getFieldDefaultPreviewValue', () => {
       });
 
       // Then
-      expect(result).toEqual(selectOptions[1].value);
+      expect(result).toEqual(selectOptions[0].value);
     });
 
     it('returns the first select option if no default option was found', () => {
       // Given
-      const objectMetadataItem = mockedCompanyObjectMetadataItem;
-      const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
-        ({ name }) => name === 'industry',
+      const objectMetadataItem = mockedOpportunityObjectMetadataItem;
+      const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
+        ({ name }) => name === 'stage',
       )!;
-      const selectOptions: SettingsObjectFieldSelectFormValues = [
-        {
-          color: 'purple' as const,
-          label: '🏭 Industry',
-          value: 'INDUSTRY',
-        },
-        {
-          color: 'pink' as const,
-          label: '💊 Health',
-          value: 'HEALTH',
-        },
-      ];
+      const selectOptions: SettingsObjectFieldSelectFormValues =
+        fieldMetadataItem.options ?? [];
 
       // When
       const result = getFieldDefaultPreviewValue({

@@ -8,6 +8,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  Relation,
 } from 'typeorm';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
@@ -43,7 +44,7 @@ export class FeatureFlagEntity {
   @ManyToOne(() => Workspace, (workspace) => workspace.featureFlags, {
     onDelete: 'CASCADE',
   })
-  workspace: Workspace;
+  workspace: Relation<Workspace>;
 
   @Field()
   @Column({ nullable: false })

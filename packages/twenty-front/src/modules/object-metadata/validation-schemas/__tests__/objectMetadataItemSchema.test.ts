@@ -1,7 +1,7 @@
 import { SafeParseSuccess } from 'zod';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { mockedCompanyObjectMetadataItem } from '@/object-record/record-field/__mocks__/fieldDefinitions';
+import { mockedCompanyObjectMetadataItem } from '~/testing/mock-data/metadata';
 
 import { objectMetadataItemSchema } from '../objectMetadataItemSchema';
 

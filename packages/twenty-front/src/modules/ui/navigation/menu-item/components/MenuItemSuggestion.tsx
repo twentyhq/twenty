@@ -1,7 +1,7 @@
 import { MouseEvent } from 'react';
 import styled from '@emotion/styled';
+import { IconComponent } from 'twenty-ui';
 
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { HOVER_BACKGROUND } from '@/ui/theme/constants/HoverBackground';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';

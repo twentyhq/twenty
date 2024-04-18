@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
+import { OverflowingTextWithTooltip } from 'twenty-ui';
 
 import { ActivityType } from '@/activities/types/Activity';
-import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
 
 const StyledTitleContainer = styled.div`

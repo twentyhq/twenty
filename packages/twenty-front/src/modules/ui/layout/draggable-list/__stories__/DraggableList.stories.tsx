@@ -1,9 +1,8 @@
 import { action } from '@storybook/addon-actions';
 import { Meta, StoryObj } from '@storybook/react';
-import { IconBell } from 'twenty-ui';
+import { ComponentDecorator, IconBell } from 'twenty-ui';
 
 import { MenuItemDraggable } from '@/ui/navigation/menu-item/components/MenuItemDraggable';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { DraggableItem } from '../components/DraggableItem';
 import { DraggableList } from '../components/DraggableList';

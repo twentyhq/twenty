@@ -100,8 +100,7 @@ export default async function ({ params }: { params: { slug: string } }) {
     .sort((a, b) => new Date(a.day).getTime() - new Date(b.day).getTime());
 
   return (
-    <>
-      <Background />
+    <Background>
       <ContentContainer>
         <Breadcrumb active={contributor.id} />
         <ProfileCard
@@ -129,6 +128,6 @@ export default async function ({ params }: { params: { slug: string } }) {
         />
         <ThankYou username={contributor.id} />
       </ContentContainer>
-    </>
+    </Background>
   );
 }

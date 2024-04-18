@@ -4,7 +4,7 @@ import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { PersonRepository } from 'src/modules/person/repositories/person.repository';
-import { getFirstNameAndLastNameFromHandleAndDisplayName } from 'src/modules/messaging/utils/get-first-name-and-last-name-from-handle-and-display-name.util';
+import { getFirstNameAndLastNameFromHandleAndDisplayName } from 'src/modules/calendar-messaging-participant/utils/get-first-name-and-last-name-from-handle-and-display-name.util';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 

@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { commentStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -7,6 +9,7 @@ import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-meta
 import { ActivityObjectMetadata } from 'src/modules/activity/standard-objects/activity.object-metadata';
 import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
   standardId: standardObjectIds.comment,
@@ -17,6 +20,7 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
   icon: 'IconMessageCircle',
 })
 @IsSystem()
+@IsNotAuditLogged()
 export class CommentObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: commentStandardFieldIds.body,
@@ -35,7 +39,7 @@ export class CommentObjectMetadata extends BaseObjectMetadata {
     icon: 'IconCircleUser',
     joinColumn: 'authorId',
   })
-  author: WorkspaceMemberObjectMetadata;
+  author: Relation<WorkspaceMemberObjectMetadata>;
 
   @FieldMetadata({
     standardId: commentStandardFieldIds.activity,
@@ -45,5 +49,5 @@ export class CommentObjectMetadata extends BaseObjectMetadata {
     icon: 'IconNotes',
     joinColumn: 'activityId',
   })
-  activity: ActivityObjectMetadata;
+  activity: Relation<ActivityObjectMetadata>;
 }

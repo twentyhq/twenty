@@ -4,7 +4,7 @@ import { groupEventsByMonth } from '../groupEventsByMonth';
 
 describe('groupEventsByMonth', () => {
   it('should group activities by month', () => {
-    const grouped = groupEventsByMonth(mockedEvents as unknown as Event[]);
+    const grouped = groupEventsByMonth(mockedEvents);
 
     expect(grouped).toHaveLength(2);
     expect(grouped[0].items).toHaveLength(1);

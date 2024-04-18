@@ -1,7 +1,6 @@
 import { MouseEvent } from 'react';
 import styled from '@emotion/styled';
-
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { IconComponent } from 'twenty-ui';
 
 import { LightIconButton, LightIconButtonProps } from './LightIconButton';
 
@@ -17,6 +16,7 @@ export type LightIconButtonGroupProps = Pick<
   iconButtons: {
     Icon: IconComponent;
     onClick?: (event: MouseEvent<any>) => void;
+    disabled?: boolean;
   }[];
 };
 

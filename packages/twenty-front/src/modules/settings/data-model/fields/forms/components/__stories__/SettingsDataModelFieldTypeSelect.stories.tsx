@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
+import { ComponentDecorator } from 'twenty-ui';
 
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { SettingsDataModelFieldTypeSelect } from '../SettingsDataModelFieldTypeSelect';

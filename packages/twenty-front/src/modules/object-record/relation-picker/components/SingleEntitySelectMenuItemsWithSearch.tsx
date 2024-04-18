@@ -1,8 +1,11 @@
+import { useRecoilValue } from 'recoil';
+
 import { ObjectMetadataItemsRelationPickerEffect } from '@/object-metadata/components/ObjectMetadataItemsRelationPickerEffect';
 import {
   SingleEntitySelectMenuItems,
   SingleEntitySelectMenuItemsProps,
 } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItems';
+import { useRelationPickerScopedStates } from '@/object-record/relation-picker/hooks/internal/useRelationPickerScopedStates';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -37,19 +40,29 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
   selectedEntity,
   selectedRelationRecordIds,
 }: SingleEntitySelectMenuItemsWithSearchProps) => {
-  const { searchFilter, searchQuery, handleSearchFilterChange } =
-    useEntitySelectSearch({
-      relationPickerScopeId,
+  const { handleSearchFilterChange } = useEntitySelectSearch({
+    relationPickerScopeId,
+  });
+
+  const { searchQueryState, relationPickerSearchFilterState } =
+    useRelationPickerScopedStates({
+      relationPickerScopedId: relationPickerScopeId,
     });
 
-  const showCreateButton = isDefined(onCreate) && searchFilter !== '';
+  const searchQuery = useRecoilValue(searchQueryState);
+  const relationPickerSearchFilter = useRecoilValue(
+    relationPickerSearchFilterState,
+  );
+
+  const showCreateButton =
+    isDefined(onCreate) && relationPickerSearchFilter !== '';
 
   const entities = useFilteredSearchEntityQuery({
     filters: [
       {
         fieldNames:
           searchQuery?.computeFilterFields?.(relationObjectNameSingular) ?? [],
-        filter: searchFilter,
+        filter: relationPickerSearchFilter,
       },
     ],
     orderByField: 'createdAt',
@@ -63,11 +76,7 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
       <ObjectMetadataItemsRelationPickerEffect
         relationPickerScopeId={relationPickerScopeId}
       />
-      <DropdownMenuSearchInput
-        value={searchFilter}
-        onChange={handleSearchFilterChange}
-        autoFocus
-      />
+      <DropdownMenuSearchInput onChange={handleSearchFilterChange} autoFocus />
       <DropdownMenuSeparator />
       <SingleEntitySelectMenuItems
         entitiesToSelect={entities.entitiesToSelect}

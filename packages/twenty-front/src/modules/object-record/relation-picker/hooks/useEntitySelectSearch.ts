@@ -7,12 +7,8 @@ export const useEntitySelectSearch = ({
 }: {
   relationPickerScopeId?: string;
 } = {}) => {
-  const {
-    relationPickerSearchFilter,
-    searchQuery,
-    setRelationPickerPreselectedId,
-    setRelationPickerSearchFilter,
-  } = useRelationPicker({ relationPickerScopeId });
+  const { setRelationPickerSearchFilter, setRelationPickerPreselectedId } =
+    useRelationPicker({ relationPickerScopeId });
 
   const debouncedSetSearchFilter = useDebouncedCallback(
     setRelationPickerSearchFilter,
@@ -22,6 +18,11 @@ export const useEntitySelectSearch = ({
     },
   );
 
+  const resetSearchFilter = () => {
+    debouncedSetSearchFilter('');
+    setRelationPickerPreselectedId('');
+  };
+
   const handleSearchFilterChange = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
@@ -30,8 +31,7 @@ export const useEntitySelectSearch = ({
   };
 
   return {
-    searchFilter: relationPickerSearchFilter,
-    searchQuery,
     handleSearchFilterChange,
+    resetSearchFilter,
   };
 };

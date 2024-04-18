@@ -58,6 +58,11 @@ export class TimelineMessagingService {
           ${dataSourceSchema}."messageParticipant" "messageParticipant" ON "messageParticipant"."messageId" = message.id
       WHERE
           "messageParticipant"."personId" = ANY($1)
+      AND EXISTS (
+          SELECT 1
+          FROM ${dataSourceSchema}."messageChannelMessageAssociation" mcma
+          WHERE mcma."messageId" = message.id
+      )
       GROUP BY
           message."messageThreadId",
           message.id
@@ -128,6 +133,11 @@ export class TimelineMessagingService {
           ${dataSourceSchema}."message" message
       WHERE
           message."messageThreadId" = ANY($1)
+      AND EXISTS (
+          SELECT 1
+          FROM ${dataSourceSchema}."messageChannelMessageAssociation" mcma
+          WHERE mcma."messageId" = message.id
+      )
       GROUP BY
           message."messageThreadId"
       `,
@@ -248,6 +258,11 @@ export class TimelineMessagingService {
           ${dataSourceSchema}."messageParticipant" "messageParticipant" ON "messageParticipant"."messageId" = message.id
       WHERE
           "messageParticipant"."personId" = ANY($1)
+      AND EXISTS (
+          SELECT 1
+          FROM ${dataSourceSchema}."messageChannelMessageAssociation" mcma
+          WHERE mcma."messageId" = message.id
+      )
       `,
         [personIds],
         workspaceId,

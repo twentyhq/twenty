@@ -30,7 +30,7 @@ import { UserService } from 'src/engine/core-modules/user/services/user.service'
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { EmailService } from 'src/engine/integrations/email/email.service';
 import { UpdatePassword } from 'src/engine/core-modules/auth/dto/update-password.entity';
-import { SignUpService } from 'src/engine/core-modules/auth/services/sign-up.service';
+import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
 import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.entity';
 import {
@@ -51,7 +51,7 @@ export class AuthService {
   constructor(
     private readonly tokenService: TokenService,
     private readonly userService: UserService,
-    private readonly signUpService: SignUpService,
+    private readonly signInUpService: SignInUpService,
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
     @InjectRepository(User, 'core')
@@ -80,7 +80,7 @@ export class AuthService {
     return user;
   }
 
-  async signUp({
+  async signInUp({
     email,
     password,
     workspaceInviteHash,
@@ -95,7 +95,7 @@ export class AuthService {
     workspaceInviteHash?: string | null;
     picture?: string | null;
   }) {
-    return await this.signUpService.signUp({
+    return await this.signInUpService.signInUp({
       email,
       password,
       firstName,

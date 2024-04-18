@@ -18,7 +18,7 @@ import { VerifyAuthController } from 'src/engine/core-modules/auth/controllers/v
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import { GoogleAPIsService } from 'src/engine/core-modules/auth/services/google-apis.service';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
-import { SignUpService } from 'src/engine/core-modules/auth/services/sign-up.service';
+import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
@@ -69,7 +69,7 @@ const jwtModule = JwtModule.registerAsync({
     VerifyAuthController,
   ],
   providers: [
-    SignUpService,
+    SignInUpService,
     AuthService,
     TokenService,
     JwtAuthStrategy,

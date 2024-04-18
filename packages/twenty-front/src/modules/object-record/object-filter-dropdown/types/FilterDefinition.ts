@@ -1,4 +1,4 @@
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { IconComponent } from 'twenty-ui';
 
 import { FilterType } from './FilterType';
 

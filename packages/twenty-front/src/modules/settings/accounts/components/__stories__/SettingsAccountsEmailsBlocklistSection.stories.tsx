@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { ComponentDecorator } from 'twenty-ui';
 
 import { SettingsAccountsEmailsBlocklistInput } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistInput';
 import { SettingsAccountsEmailsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistSection';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 const meta: Meta<typeof SettingsAccountsEmailsBlocklistSection> = {
   title:
