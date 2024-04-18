@@ -10,9 +10,9 @@ export type TokenFormProps = {
   setOpenApiJson?: (json: object) => void;
   setToken?: (token: string) => void;
   setBaseUrl?: (baseUrl: string) => void;
-  isTokenValid: boolean;
-  setIsTokenValid: (boolean) => void;
-  setLoadingState: (boolean) => void;
+  isTokenValid?: boolean;
+  setIsTokenValid?: (boolean) => void;
+  setLoadingState?: (boolean) => void;
   subDoc?: SubDoc;
 };
 
