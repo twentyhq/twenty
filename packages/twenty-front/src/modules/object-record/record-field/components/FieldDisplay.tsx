@@ -24,7 +24,7 @@ import { isFieldDateTime } from '../types/guards/isFieldDateTime';
 import { isFieldEmail } from '../types/guards/isFieldEmail';
 import { isFieldFullName } from '../types/guards/isFieldFullName';
 import { isFieldLink } from '../types/guards/isFieldLink';
-import { isFieldMultiSelect } from '../types/guards/isFieldMultiSelect.ts';
+import { isFieldMultiSelect } from '../types/guards/isFieldMultiSelect';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldPhone } from '../types/guards/isFieldPhone';
 import { isFieldRawJson } from '../types/guards/isFieldRawJson';

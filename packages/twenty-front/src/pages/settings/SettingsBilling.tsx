@@ -9,13 +9,13 @@ import {
   IconCurrencyDollar,
 } from 'twenty-ui';
 
-import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus.ts';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState.ts';
-import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus.ts';
+import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SupportChat } from '@/support/components/SupportChat';
-import { AppPath } from '@/types/AppPath.ts';
+import { AppPath } from '@/types/AppPath';
 import { Info } from '@/ui/display/info/components/Info';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
