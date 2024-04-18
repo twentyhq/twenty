@@ -40,7 +40,7 @@ const StyledSubHeading = styled.div`
 `;
 
 const StyledImage = styled.img`
-  border-bottom: 1.13px solid var(--Transparency-Strong, #14141429);
+  border-bottom: 1.5px solid #14141429;
 `;
 
 export default function UserGuideCard({

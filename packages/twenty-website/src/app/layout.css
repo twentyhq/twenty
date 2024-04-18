@@ -19,6 +19,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-top: 53px;
 }
 
 .warning {
@@ -38,9 +39,13 @@ a {
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 nav.toc {
   width: 20%;
-  position: absolute;
+  position: fixed;
   top: 135px;
   right: 0;
   font-family: var(--font-gabarito);
@@ -64,7 +69,17 @@ nav.toc li {
 
 .toc-link.toc-link-h3 {
   color: rgb(129, 129, 129);
-  margin-left: 5px;
+  margin-left: -56px;
+}
+
+.toc-link.toc-link-h4 {
+  color: rgb(129, 129, 129);
+  margin-left: -84px;
+}
+
+.toc-link.toc-link-h5 {
+  color: rgb(129, 129, 129);
+  margin-left: -112px;
 }
 
 nav.toc a {

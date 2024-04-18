@@ -19,11 +19,13 @@ const StyledContainer = styled.div`
 
   p {
     font-size: ${Theme.font.size.xs};
-    margin: 32px 0px;
+    margin: 24px 0px 32px;
     color: ${Theme.text.color.tertiary};
+    line-height: 1.5;
+    text-align: left;
   }
 
-  @media (min-width: 900px) {
+  @media (min-width: 950px) {
     padding: 32px 0px 0px 32px;
   }
 `;
@@ -38,7 +40,7 @@ const StyledRightColumn = styled.div`
   border-bottom-right-radius: 16px;
   overflow: hidden;
   min-width: 40%;
-  @media (max-width: 900px) {
+  @media (max-width: 950px) {
     display: none;
   }
 
@@ -50,31 +52,38 @@ const StyledRightColumn = styled.div`
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    height: 100%;
+    max-width: fit-content;
+    margin: 0;
   }
 `;
 
 const StyledButtonContainer = styled.div`
   text-decoration: none;
 
-  @media (min-width: 900px) {
+  @media (min-width: 950px) {
     padding-bottom: 32px;
   }
 `;
 
-export default function UserGuideEditContent() {
+interface UserGuideEditContentProps {
+  articleTitle: string;
+}
+
+export default function UserGuideEditContent({
+  articleTitle,
+}: UserGuideEditContentProps) {
   return (
     <StyledContainer>
       <div>
         <h1>Noticed something to modify ?</h1>
         <p>
-          As an open-source company, we invite modifications to our GitHub user
-          guide for real-time updates, accuracy improvement, and broader
-          comprehensibility through community contributions.
+          As an open-source company, we welcome contributions to our GitHub user
+          guide. Help us keep it up-to-date, accurate, and easy to understand by
+          getting involved and sharing your ideas !
         </p>
         <StyledButtonContainer>
           <a
-            href="https://github.com/twentyhq/twenty"
+            href={`https://github.com/twentyhq/twenty/blob/main/packages/twenty-website/src/content/user-guide/${articleTitle}`}
             target="_blank"
             style={{ textDecoration: 'none' }}
           >

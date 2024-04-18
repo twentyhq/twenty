@@ -42,7 +42,7 @@ const StyledHeading = styled.div`
 const StyledHeaderInfoSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${Theme.spacing(4)};
+  gap: ${Theme.spacing(1)};
 `;
 
 const StyledHeaderInfoSectionTitle = styled.div`
@@ -58,7 +58,7 @@ const StyledHeaderInfoSectionSub = styled.div`
   flex-direction: column;
   gap: ${Theme.spacing(4)};
   color: ${Theme.text.color.tertiary};
-  line-height: 28.8px;
+  line-height: 1.8;
 `;
 
 const StyledRectangle = styled.div`
@@ -75,7 +75,34 @@ const StyledImageContainer = styled.div`
   overflow: hidden;
   border-radius: 16px;
   height: 340px;
-  max-width: 1050px;
+  max-width: fit-content;
+
+  @media (max-width: 414px) {
+    height: 160px;
+  }
+
+  @media (min-width: 415px) and (max-width: 800px) {
+    height: 240px;
+  }
+  @media (min-width: 1500px) {
+    height: 450px;
+  }
+
+  img {
+    height: 340px;
+
+    @media (max-width: 414px) {
+      height: 160px;
+    }
+
+    @media (min-width: 415px) and (max-width: 800px) {
+      height: 240px;
+    }
+
+    @media (min-width: 1500px) {
+      height: 450px;
+    }
+  }
 `;
 
 export default function UserGuideContent({ item }: { item: FileContent }) {

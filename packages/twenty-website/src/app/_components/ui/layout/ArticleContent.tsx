@@ -7,6 +7,7 @@ import { Theme } from '@/app/_components/ui/theme/theme';
 
 const StyledContent = styled.div`
   flex: 1;
+  max-width: 950px;
 
   p {
     color: ${Theme.text.color.secondary};
@@ -30,7 +31,7 @@ const StyledContent = styled.div`
 
   h1 {
     margin-top: 64px;
-    font-size: 32px;
+    font-size: 40px;
   }
 
   h2,
@@ -40,34 +41,42 @@ const StyledContent = styled.div`
   }
 
   h2 {
-    font-size: 28px;
+    font-size: 32px;
   }
 
   h3 {
-    font-size: 24px;
+    font-size: 28px;
   }
 
   h4 {
+    font-size: 24px;
+  }
+
+  h5 {
     font-size: 20px;
   }
 
   @media (max-width: 810px) {
     h1 {
-      font-size: 24px;
+      font-size: 28px;
     }
     h2 {
-      font-size: 20px;
+      font-size: 24px;
     }
     h3 {
-      font-size: 18px;
+      font-size: 20px;
     }
     h4 {
       font-size: 16px;
     }
   }
 
-  li {
+  ol {
     margin: 32px 0px 0px;
+  }
+
+  li {
+    margin: 16px 0px 0px;
     line-height: 28.8px;
     font-family: ${Theme.font.family};
     color: ${Theme.text.color.secondary};

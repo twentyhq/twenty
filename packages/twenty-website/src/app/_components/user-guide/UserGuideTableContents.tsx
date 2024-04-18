@@ -23,7 +23,7 @@ const StyledContainer = styled.div`
 `;
 
 const StyledContent = styled.div`
-  position: absolute;
+  position: fixed;
 `;
 
 const StyledHeadingText = styled.div`

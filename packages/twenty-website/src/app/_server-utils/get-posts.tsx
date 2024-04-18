@@ -111,8 +111,8 @@ export async function compileMDXFile(filePath: string, addToc = true) {
       UserGuideWarning(properties) {
         return <UserGuideWarning {...properties} />;
       },
-      UserGuideEditContent() {
-        return <UserGuideEditContent />;
+      UserGuideEditContent(properties) {
+        return <UserGuideEditContent {...properties} />;
       },
       UserGuideLink(properties) {
         return <UserGuideLink {...properties} />;
