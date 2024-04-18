@@ -1,6 +1,5 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordTableBody } from '@/object-record/record-table/components/RecordTableBody';
@@ -23,12 +22,9 @@ import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocus
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { RGBA } from '@/ui/theme/constants/Rgba';
-import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
-import { scrollTopState } from '@/ui/utilities/scroll/states/scrollTopState';
 
 const StyledTable = styled.table<{
   freezeFirstColumns?: boolean;
-  freezeHeaders?: boolean;
 }>`
   border-radius: ${({ theme }) => theme.border.radius.sm};
   border-spacing: 0;
@@ -150,8 +146,6 @@ export const RecordTable = ({
   createRecord,
 }: RecordTableProps) => {
   const { scopeId } = useRecordTableStates(recordTableId);
-  const scrollLeft = useRecoilValue(scrollLeftState);
-  const scrollTop = useRecoilValue(scrollTopState);
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -228,11 +222,7 @@ export const RecordTable = ({
             onCellMouseEnter: handleContainerMouseEnter,
           }}
         >
-          <StyledTable
-            freezeFirstColumns={scrollLeft > 0}
-            freezeHeaders={scrollTop > 0}
-            className="entity-table-cell"
-          >
+          <StyledTable className="entity-table-cell">
             <RecordTableHeader createRecord={createRecord} />
             <RecordTableBodyEffect objectNameSingular={objectNameSingular} />
             <RecordTableBody objectNameSingular={objectNameSingular} />
