@@ -6,31 +6,31 @@ import { useExecuteQuickActionOnOneRecordMutation } from '@/object-record/hooks/
 
 const expectedQueryTemplate = `
   mutation ExecuteQuickActionOnOnePerson($idToExecuteQuickActionOn: UUID!) {
-        executeQuickActionOnPerson(id: $idToExecuteQuickActionOn) {
-          __typename
-          xLink {
-            label
-            url
-          }
-          id
-          createdAt
-          city
-          email
-          jobTitle
-          name {
-            firstName
-            lastName
-          }
-          phone
-          linkedinLink {
-            label
-            url
-          }
-          updatedAt
-          avatarUrl
-          companyId
-        }
+    executeQuickActionOnPerson(id: $idToExecuteQuickActionOn) {
+      __typename
+      xLink {
+        label
+        url
       }
+      id
+      createdAt
+      city
+      email
+      jobTitle
+      name {
+        firstName
+        lastName
+      }
+      phone
+      linkedinLink {
+        label
+        url
+      }
+      updatedAt
+      avatarUrl
+      companyId
+    }
+  }
 `.replace(/\s/g, '');
 
 describe('useExecuteQuickActionOnOneRecordMutation', () => {

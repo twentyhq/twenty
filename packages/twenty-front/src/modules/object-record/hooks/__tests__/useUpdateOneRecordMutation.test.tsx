@@ -5,32 +5,32 @@ import { RecoilRoot } from 'recoil';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 
 const expectedQueryTemplate = `
-  mutation UpdateOnePerson($idToUpdate: UUID!, $input: PersonUpdateInput!) {
-        updatePerson(id: $idToUpdate, data: $input) {
-          __typename
-          xLink {
-            label
-            url
-          }
-          id
-          createdAt
-          city
-          email
-          jobTitle
-          name {
-            firstName
-            lastName
-          }
-          phone
-          linkedinLink {
-            label
-            url
-          }
-          updatedAt
-          avatarUrl
-          companyId
-        }
-      }
+mutation UpdateOnePerson($idToUpdate: UUID!, $input: PersonUpdateInput!) {
+  updatePerson(id: $idToUpdate, data: $input) {
+    __typename
+    xLink {
+      label
+      url
+    }
+    id
+    createdAt
+    city
+    email
+    jobTitle
+    name {
+      firstName
+      lastName
+    }
+    phone
+    linkedinLink {
+      label
+      url
+    }
+    updatedAt
+    avatarUrl
+    companyId
+  }
+}
 `.replace(/\s/g, '');
 
 describe('useUpdateOneRecordMutation', () => {

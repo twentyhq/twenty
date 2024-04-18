@@ -6,10 +6,10 @@ import { useDeleteManyRecordsMutation } from '@/object-record/hooks/useDeleteMan
 
 const expectedQueryTemplate = `
   mutation DeleteManyPeople($filter: PersonFilterInput!) {
-      deletePeople(filter: $filter) {
-        id
-      }
+    deletePeople(filter: $filter) {
+      id
     }
+  }
 `.replace(/\s/g, '');
 
 describe('useDeleteManyRecordsMutation', () => {

@@ -5,32 +5,32 @@ import { RecoilRoot } from 'recoil';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 
 const expectedQueryTemplate = `
-  query FindOnePerson($objectRecordId: UUID!) {
-        person(filter: {id: {eq: $objectRecordId}}) {
-          __typename
-          xLink {
-            label
-            url
-          }
-          id
-          createdAt
-          city
-          email
-          jobTitle
-          name {
-            firstName
-            lastName
-          }
-          phone
-          linkedinLink {
-            label
-            url
-          }
-          updatedAt
-          avatarUrl
-          companyId
-        }
-      }
+query FindOnePerson($objectRecordId: UUID!) {
+  person(filter: { id: { eq: $objectRecordId } }) {
+    __typename
+    xLink {
+      label
+      url
+    }
+    id
+    createdAt
+    city
+    email
+    jobTitle
+    name {
+      firstName
+      lastName
+    }
+    phone
+    linkedinLink {
+      label
+      url
+    }
+    updatedAt
+    avatarUrl
+    companyId
+  }
+}
 `.replace(/\s/g, '');
 
 describe('useFindOneRecordQuery', () => {

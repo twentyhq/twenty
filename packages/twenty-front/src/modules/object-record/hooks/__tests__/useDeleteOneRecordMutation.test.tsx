@@ -6,10 +6,10 @@ import { useDeleteOneRecordMutation } from '@/object-record/hooks/useDeleteOneRe
 
 const expectedQueryTemplate = `
   mutation DeleteOnePerson($idToDelete: UUID!) {
-        deletePerson(id: $idToDelete) {
-          id
-        }
-      }
+    deletePerson(id: $idToDelete) {
+      id
+    }
+  }
 `.replace(/\s/g, '');
 
 describe('useDeleteOneRecordMutation', () => {

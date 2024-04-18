@@ -6,32 +6,31 @@ import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRe
 
 const expectedQueryTemplate = `
   mutation CreateOnePerson($input: PersonCreateInput!) {
-        createPerson(data: $input) {
-          __typename
-          xLink {
-            label
-            url
-          }
-          id
-          createdAt
-          city
-          email
-          jobTitle
-          name {
-            firstName
-            lastName
-          }
-          phone
-          linkedinLink {
-            label
-            url
-          }
-          updatedAt
-          avatarUrl
-          companyId
-        }
+    createPerson(data: $input) {
+      __typename
+      xLink {
+        label
+        url
       }
-
+      id
+      createdAt
+      city
+      email
+      jobTitle
+      name {
+        firstName
+        lastName
+      }
+      phone
+      linkedinLink {
+        label
+        url
+      }
+      updatedAt
+      avatarUrl
+      companyId
+    }
+  }
 `.replace(/\s/g, '');
 
 describe('useCreateOneRecordMutation', () => {

@@ -6,42 +6,42 @@ import { useFindDuplicateRecordsQuery } from '@/object-record/hooks/useFindDupli
 
 const expectedQueryTemplate = `
   query FindDuplicatePerson($id: UUID) {
-      personDuplicates(id: $id) {
-          edges {
-            node {
-              __typename
-              xLink {
-                label
-                url
-              }
-              id
-              createdAt
-              city
-              email
-              jobTitle
-              name {
-                firstName
-                lastName
-              }
-              phone
-              linkedinLink {
-                label
-                url
-              }
-             updatedAt
-              avatarUrl
-              companyId
-            }
-           cursor
+    personDuplicates(id: $id) {
+      edges {
+        node {
+          __typename
+          xLink {
+            label
+            url
           }
-         pageInfo {
-           hasNextPage
-           startCursor
-            endCursor
+          id
+          createdAt
+          city
+          email
+          jobTitle
+          name {
+            firstName
+            lastName
           }
-         totalCount
-       }
+          phone
+          linkedinLink {
+            label
+            url
+          }
+         updatedAt
+          avatarUrl
+          companyId
+        }
+       cursor
       }
+      pageInfo {
+        hasNextPage
+        startCursor
+        endCursor
+      }
+      totalCount
+     }
+    }
 `.replace(/\s/g, '');
 
 describe('useFindDuplicateRecordsQuery', () => {

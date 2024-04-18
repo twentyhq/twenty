@@ -6,43 +6,42 @@ import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecord
 
 const expectedQueryTemplate = `
   query FindManyPeople($filter: PersonFilterInput, $orderBy: PersonOrderByInput, $lastCursor: String, $limit: Float) {
-        people(filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor) {
-          edges {
-            node {
-              __typename
-              xLink {
-                label
-                url
-              }
-              id
-              createdAt
-              city
-              email
-              jobTitle
-              name {
-                firstName
-                lastName
-              }
-              phone
-              linkedinLink {
-                label
-                url
-              }
-              updatedAt
-              avatarUrl
-              companyId
-            }
-            cursor
+    people(filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor) {
+      edges {
+        node {
+          __typename
+          xLink {
+            label
+            url
           }
-          pageInfo {
-            hasNextPage
-            startCursor
-            endCursor
+          id
+          createdAt
+          city
+          email
+          jobTitle
+          name {
+            firstName
+            lastName
           }
-          totalCount
+          phone
+          linkedinLink {
+            label
+            url
+          }
+          updatedAt
+          avatarUrl
+          companyId
         }
+        cursor
       }
-
+      pageInfo {
+        hasNextPage
+        startCursor
+        endCursor
+      }
+      totalCount
+    }
+  }
 `.replace(/\s/g, '');
 
 describe('useFindManyRecordsQuery', () => {
