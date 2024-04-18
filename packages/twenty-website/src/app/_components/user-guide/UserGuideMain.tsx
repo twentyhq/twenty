@@ -13,9 +13,6 @@ const StyledContainer = styled.div`
     flexDirection: 'row',
     justifyContent: 'center',
   })};
-  @media (max-width: 810px) {
-    margin-top: 64px;
-  }
 `;
 
 const StyledWrapper = styled.div`

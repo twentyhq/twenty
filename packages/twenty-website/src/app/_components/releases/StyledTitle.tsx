@@ -9,6 +9,7 @@ const StyledTitle = styled.div`
 
   @media (max-width: 810px) {
     font-size: 1em;
+    margin: 64px auto;
   }
 `;
 const StyledHeader = styled.h1`
