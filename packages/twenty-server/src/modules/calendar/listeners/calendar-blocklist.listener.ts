@@ -11,7 +11,7 @@ import {
 import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
 
 @Injectable()
-export class CalendarEventBlocklistListener {
+export class CalendarBlocklistListener {
   constructor(
     @Inject(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,
