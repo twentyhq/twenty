@@ -1,4 +1,4 @@
-import { generateILikeFilters } from '~/utils/array/generateILikeFilters.ts';
+import { generateILikeFilters } from '~/utils/array/generateILikeFilters';
 
 describe('formatCompositeFilters', () => {
   it('should format composite filters for simple filter string', () => {

@@ -13,7 +13,7 @@ import {
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
-import { generateILikeFilters } from '~/utils/array/generateILikeFilters.ts';
+import { generateILikeFilters } from '~/utils/array/generateILikeFilters';
 import { isDefined } from '~/utils/isDefined';
 
 import { Filter } from '../../object-filter-dropdown/types/Filter';

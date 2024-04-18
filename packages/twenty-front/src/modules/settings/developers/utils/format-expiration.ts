@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { DateTime } from 'luxon';
 
-import { NEVER_EXPIRE_DELTA_IN_YEARS } from '@/settings/developers/constants/NeverExpireDeltaInYears.ts';
+import { NEVER_EXPIRE_DELTA_IN_YEARS } from '@/settings/developers/constants/NeverExpireDeltaInYears';
 import { ApiFieldItem } from '@/settings/developers/types/api-key/ApiFieldItem';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
 import { beautifyDateDiff } from '~/utils/date-utils';

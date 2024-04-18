@@ -22,7 +22,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { getLogoUrlFromDomainName } from '~/utils';
-import { generateILikeFilters } from '~/utils/array/generateILikeFilters.ts';
+import { generateILikeFilters } from '~/utils/array/generateILikeFilters';
 import { isDefined } from '~/utils/isDefined';
 
 import { useCommandMenu } from '../hooks/useCommandMenu';

@@ -5,7 +5,7 @@ import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { FieldMetadataType } from '~/generated/graphql';
-import { generateILikeFilters } from '~/utils/array/generateILikeFilters.ts';
+import { generateILikeFilters } from '~/utils/array/generateILikeFilters';
 import { isDefined } from '~/utils/isDefined';
 
 export const useSearchFilterPerMetadataItem = ({
