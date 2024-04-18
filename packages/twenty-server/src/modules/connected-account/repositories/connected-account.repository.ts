@@ -105,7 +105,7 @@ export class ConnectedAccountRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."connectedAccount" SET "accessToken" = $1, "refreshToken" = $2 WHERE "id" = $3`,
+      `UPDATE ${dataSourceSchema}."connectedAccount" SET "accessToken" = $1, "refreshToken" = $2, "authFailedAt" = NULL WHERE "id" = $3`,
       [accessToken, refreshToken, connectedAccountId],
       workspaceId,
       transactionManager,

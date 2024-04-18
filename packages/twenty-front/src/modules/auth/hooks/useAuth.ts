@@ -11,7 +11,7 @@ import { iconsState } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState.ts';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
 import { workspacesState } from '@/auth/states/workspaces';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
