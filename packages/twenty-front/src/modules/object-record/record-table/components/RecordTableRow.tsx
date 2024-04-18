@@ -33,7 +33,9 @@ export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
   const scrollWrapperRef = useContext(ScrollWrapperContext);
 
   const { ref: elementRef, inView } = useInView({
-    root: scrollWrapperRef.current,
+    root: scrollWrapperRef.current?.querySelector(
+      '[data-overlayscrollbars-viewport="scrollbarHidden"]',
+    ),
     rootMargin: '1000px',
   });
 
@@ -58,21 +60,21 @@ export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
         <StyledTd>
           <CheckboxCell />
         </StyledTd>
-        {visibleTableColumns.map((column, columnIndex) =>
-          inView ? (
-            <RecordTableCellContext.Provider
-              value={{
-                columnDefinition: column,
-                columnIndex,
-              }}
-              key={column.fieldMetadataId}
-            >
-              <RecordTableCellFieldContextWrapper />
-            </RecordTableCellContext.Provider>
-          ) : (
-            <td key={column.fieldMetadataId}></td>
-          ),
-        )}
+        {inView
+          ? visibleTableColumns.map((column, columnIndex) => (
+              <RecordTableCellContext.Provider
+                value={{
+                  columnDefinition: column,
+                  columnIndex,
+                }}
+                key={column.fieldMetadataId}
+              >
+                <RecordTableCellFieldContextWrapper />
+              </RecordTableCellContext.Provider>
+            ))
+          : visibleTableColumns.map((column, columnIndex) => (
+              <td key={column.fieldMetadataId}></td>
+            ))}
         <td></td>
       </tr>
     </RecordTableRowContext.Provider>
