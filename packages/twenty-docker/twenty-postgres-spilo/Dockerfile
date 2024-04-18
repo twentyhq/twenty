@@ -47,11 +47,27 @@ RUN apt update && \
         libmysqlclient-dev && \
     rm -rf /var/lib/apt/lists/*
 
-# Install musql_fdw
+# Install mysql_fdw
 RUN git clone https://github.com/EnterpriseDB/mysql_fdw.git
 WORKDIR mysql_fdw
 RUN make USE_PGXS=1
 RUN make USE_PGXS=1 install
+
+
+# Build libssl for wrappers
+FROM ubuntu:22.04 as build-libssl
+
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt update && \
+    apt install -y \
+        build-essential \
+        git && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /build
+RUN git clone --branch OpenSSL_1_1_1-stable https://github.com/openssl/openssl.git
+WORKDIR /build/openssl
+RUN ./config && make && make install
 
 
 # Extend the Spilo image with the pg_graphql and mysql_fdw extensions
@@ -69,13 +85,16 @@ RUN set -eux; \
       *) echo "Unsupported arch: ${ARCH}"; exit 1;; \
     esac;
 
+RUN curl -L "https://github.com/supabase/wrappers/releases/download/v${WRAPPERS_VERSION}/wrappers-v${WRAPPERS_VERSION}-pg${POSTGRES_VERSION}-${TARGETARCH}-linux-gnu.deb" -o wrappers.deb && \
+    dpkg --install wrappers.deb && \
+    rm wrappers.deb
 
-RUN curl -L "https://github.com/supabase/wrappers/releases/download/v${WRAPPERS_VERSION}/wrappers-v${WRAPPERS_VERSION}-pg${POSTGRES_VERSION}-${TARGETARCH}-linux-gnu.deb" -o wrappers.deb
-RUN dpkg --install wrappers.deb
+COPY --from=build-libssl /usr/local/lib/libssl* /usr/local/lib/
 
 # Copy pg_graphql
 COPY --from=build-pg_graphql /build/pg_graphql/target/release/libpg_graphql.so /usr/lib/postgresql/${POSTGRES_VERSION}/lib/pg_graphql.so
-COPY --from=build-pg_graphql /build/pg_graphql/pg_graphql.control /usr/share/postgresql/${POSTGRES_VERSION}/extensions/pg_graphql.control
+COPY --from=build-pg_graphql /build/pg_graphql/pg_graphql.control /usr/share/postgresql/${POSTGRES_VERSION}/extension/pg_graphql.control
 
 # Copy mysql_fdw
 COPY --from=build-mysql_fdw /mysql_fdw/mysql_fdw.so /usr/lib/postgresql/${POSTGRES_VERSION}/lib/mysql_fdw.so
+COPY --from=build-mysql_fdw /mysql_fdw/mysql_fdw.so /usr/share/postgresql/${POSTGRES_VERSION}/extension/mysql_fdw.control
