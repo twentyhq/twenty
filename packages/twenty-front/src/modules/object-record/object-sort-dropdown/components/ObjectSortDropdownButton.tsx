@@ -135,7 +135,10 @@ export const ObjectSortDropdownButton = ({
                       <MenuItem
                         testId={`select-sort-${index}`}
                         key={index}
-                        onClick={() => handleAddSort(availableSortDefinition)}
+                        onClick={() => {
+                          setSearchText('');
+                          handleAddSort(availableSortDefinition);
+                        }}
                         LeftIcon={getIcon(availableSortDefinition.iconName)}
                         text={availableSortDefinition.label}
                       />
