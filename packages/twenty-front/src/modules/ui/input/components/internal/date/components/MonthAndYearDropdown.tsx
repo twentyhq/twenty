@@ -10,7 +10,7 @@ type MonthAndYearDropdownProps = {
   onChange?: (newDate: Date) => void;
 };
 
-const months = [
+export const months = [
   { label: 'January', value: 0 },
   { label: 'February', value: 1 },
   { label: 'March', value: 2 },
@@ -25,7 +25,7 @@ const months = [
   { label: 'December', value: 11 },
 ];
 
-const years = Array.from(
+export const years = Array.from(
   { length: 200 },
   (_, i) => new Date().getFullYear() + 5 - i,
 ).map((year) => ({ label: year.toString(), value: year }));
