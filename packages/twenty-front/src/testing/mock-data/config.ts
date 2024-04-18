@@ -1,8 +1,8 @@
-export const mockedClientConfig = {
+import { ClientConfig } from '~/generated-metadata/graphql';
+
+export const mockedClientConfig: ClientConfig = {
   signInPrefilled: true,
   signUpDisabled: false,
-  dataModelSettingsEnabled: true,
-  developersSettingsEnabled: true,
   debugMode: false,
   authProviders: {
     google: true,
@@ -19,6 +19,12 @@ export const mockedClientConfig = {
     supportDriver: 'front',
     supportFrontChatId: null,
     __typename: 'Support',
+  },
+  sentry: {
+    dsn: 'MOCKED_DSN',
+    release: 'MOCKED_RELEASE',
+    environment: 'MOCKED_ENVIRONMENT',
+    __typename: 'Sentry',
   },
   billing: {
     isBillingEnabled: true,

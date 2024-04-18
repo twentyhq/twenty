@@ -29,7 +29,7 @@ export const WorkspaceInviteLink = ({
   const { enqueueSnackBar } = useSnackBar();
 
   return (
-    <StyledContainer>
+    <StyledContainer data-chromatic="ignore">
       <StyledLinkContainer>
         <TextInput value={inviteLink} disabled fullWidth />
       </StyledLinkContainer>

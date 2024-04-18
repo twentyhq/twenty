@@ -8,6 +8,7 @@ import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/d
 import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
   standardId: standardObjectIds.blocklist,
@@ -18,6 +19,7 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
   icon: 'IconForbid2',
 })
 @IsSystem()
+@IsNotAuditLogged()
 export class BlocklistObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: blocklistStandardFieldIds.handle,

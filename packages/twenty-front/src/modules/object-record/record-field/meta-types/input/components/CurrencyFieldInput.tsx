@@ -1,3 +1,5 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
 import { CurrencyInput } from '@/ui/field/input/components/CurrencyInput';
@@ -30,13 +32,24 @@ export const CurrencyFieldInput = ({
     defaultValue,
   } = useCurrencyField();
 
-  const currencyCode =
-    draftValue?.currencyCode ??
-    ((defaultValue as FieldCurrencyValue).currencyCode.replace(
-      /'/g,
-      '',
-    ) as CurrencyCode) ??
-    CurrencyCode.USD;
+  const defaultCurrencyCodeWithoutSQLQuotes = (
+    defaultValue as FieldCurrencyValue
+  ).currencyCode.replace(/'/g, '') as CurrencyCode;
+
+  const defaultCurrencyCodeIsNotEmpty = isNonEmptyString(
+    defaultCurrencyCodeWithoutSQLQuotes,
+  );
+
+  const draftCurrencyCode = draftValue?.currencyCode;
+
+  const draftCurrencyCodeIsEmptyIsNotEmpty =
+    isNonEmptyString(draftCurrencyCode);
+
+  const currencyCode = draftCurrencyCodeIsEmptyIsNotEmpty
+    ? draftCurrencyCode
+    : defaultCurrencyCodeIsNotEmpty
+      ? defaultCurrencyCodeWithoutSQLQuotes
+      : CurrencyCode.USD;
 
   const handleEnter = (newValue: string) => {
     onEnter?.(() => {
