@@ -12,8 +12,8 @@ import {
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
   MonthAndYearDropdown,
   months,
+  years,
 } from '@/ui/input/components/internal/date/components/MonthAndYearDropdown';
-import { TimeInput } from '@/ui/input/components/internal/date/components/TimeInput';
 import { Select } from '@/ui/input/components/Select';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
@@ -365,6 +365,12 @@ export const InternalDatePicker = ({
     onChange?.(newDate);
   };
 
+  const handleChangeYear = (year: number) => {
+    const newDate = new Date(date);
+    newDate.setFullYear(year);
+    onChange?.(newDate);
+  };
+
   return (
     <StyledContainer onKeyDown={handleKeyDown}>
       <div className={clearable ? 'clearable ' : ''}>
@@ -401,9 +407,6 @@ export const InternalDatePicker = ({
                 onChange={onChange}
               />
               <StyledCustomDatePickerHeader>
-                {isDateTimeInput && (
-                  <TimeInput date={internalDate} onChange={onChange} />
-                )}
                 <Select
                   dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
                   options={months}
@@ -411,6 +414,14 @@ export const InternalDatePicker = ({
                   disableBlur
                   onChange={handleChangeMonth}
                   value={date.getMonth()}
+                />
+                <Select
+                  dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
+                  onChange={handleChangeYear}
+                  value={date.getFullYear()}
+                  options={years}
+                  fullWidth
+                  disableBlur
                 />
                 <MonthAndYearDropdown date={internalDate} onChange={onChange} />
                 <LightIconButton
