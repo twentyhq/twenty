@@ -1,20 +1,8 @@
-import { defineConfig } from "tsup";
-import svgr from 'esbuild-plugin-svgr'
- 
-export default defineConfig([
-  {
-    entry: {"index": './tsup.ui.index.tsx'},
-    treeshake: true,
-    minify: true,
-    verbose: true,
-    dts: true,
-    clean: true,
-    outDir: "../twenty-docs/src/ui/generated",
-    esbuildPlugins: [svgr({ template })],
-  },
-]);
+import { defineConfig } from 'tsup';
+import svgr from 'esbuild-plugin-svgr';
+import { Config } from '@svgr/core';
 
-function template(variables, { tpl }) {
+const template: Config['template'] = (variables, { tpl }) => {
   return tpl`
     ${variables.imports};
     ${variables.interfaces};
@@ -25,3 +13,17 @@ function template(variables, { tpl }) {
     export const ReactComponent = ${variables.componentName};
   `;
 };
+
+export default defineConfig([
+  {
+    entry: { index: './tsup.ui.index.tsx' },
+    treeshake: true,
+    minify: true,
+    dts: true,
+    clean: true,
+    outDir: '../twenty-docs/src/ui/generated',
+    esbuildPlugins: [svgr({ template })],
+  },
+]);
+
+

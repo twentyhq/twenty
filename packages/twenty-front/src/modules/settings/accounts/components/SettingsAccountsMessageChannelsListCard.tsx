@@ -55,11 +55,7 @@ export const SettingsAccountsMessageChannelsListCard = () => {
   } & SettingsAccountsSynchronizationStatusProps)[] = messageChannels.map(
     (messageChannel) => ({
       ...messageChannel,
-      syncStatus: messageChannel.connectedAccount?.authFailedAt
-        ? 'failed'
-        : messageChannel.isSyncEnabled
-          ? 'synced'
-          : 'notSynced',
+      syncStatus: messageChannel.syncStatus,
     }),
   );
 

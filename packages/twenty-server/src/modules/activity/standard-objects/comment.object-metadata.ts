@@ -9,6 +9,7 @@ import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-meta
 import { ActivityObjectMetadata } from 'src/modules/activity/standard-objects/activity.object-metadata';
 import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
   standardId: standardObjectIds.comment,
@@ -19,6 +20,7 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
   icon: 'IconMessageCircle',
 })
 @IsSystem()
+@IsNotAuditLogged()
 export class CommentObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: commentStandardFieldIds.body,
