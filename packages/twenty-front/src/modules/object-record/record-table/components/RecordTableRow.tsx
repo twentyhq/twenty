@@ -72,7 +72,7 @@ export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
                 <RecordTableCellFieldContextWrapper />
               </RecordTableCellContext.Provider>
             ))
-          : visibleTableColumns.map((column, columnIndex) => (
+          : visibleTableColumns.map((column) => (
               <td key={column.fieldMetadataId}></td>
             ))}
         <td></td>
