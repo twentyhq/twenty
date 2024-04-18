@@ -3,6 +3,7 @@ import { useRecoilCallback } from 'recoil';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { recordFieldInputDraftValueComponentSelector } from '@/object-record/record-field/states/selectors/recordFieldInputDraftValueComponentSelector';
 import { recordTablePendingRecordIdComponentState } from '@/object-record/record-table/states/recordTablePendingRecordIdComponentState';
+import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { extractComponentSelector } from '@/ui/utilities/state/component-state/utils/extractComponentSelector';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
@@ -23,8 +24,10 @@ export const useUpsertRecordV2 = ({
         persistField: () => void,
         entityId: string,
         fieldName: string,
-        tableScopeId: string,
+        recordTableId: string,
       ) => {
+        const tableScopeId = getScopeIdFromComponentId(recordTableId);
+
         const recordTablePendingRecordIdState = extractComponentState(
           recordTablePendingRecordIdComponentState,
           tableScopeId,
@@ -34,7 +37,9 @@ export const useUpsertRecordV2 = ({
           snapshot,
           recordTablePendingRecordIdState,
         );
-        const fieldScopeId = `${entityId}-${fieldName}`;
+        const fieldScopeId = getScopeIdFromComponentId(
+          `${entityId}-${fieldName}`,
+        );
 
         const draftValueSelector = extractComponentSelector(
           recordFieldInputDraftValueComponentSelector,

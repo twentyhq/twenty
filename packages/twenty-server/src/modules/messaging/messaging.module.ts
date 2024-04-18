@@ -6,6 +6,7 @@ import { MessagingConnectedAccountListener } from 'src/modules/messaging/listene
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { ParticipantPersonListener } from 'src/modules/calendar-messaging-participant/listeners/participant-person.listener';
 import { ParticipantWorkspaceMemberListener } from 'src/modules/calendar-messaging-participant/listeners/participant-workspace-member.listener';
+import { MessagingBlocklistListener } from 'src/modules/messaging/listeners/messaging-blocklist.listener';
 
 @Module({
   imports: [TypeOrmModule.forFeature([FeatureFlagEntity], 'core')],
@@ -14,6 +15,7 @@ import { ParticipantWorkspaceMemberListener } from 'src/modules/calendar-messagi
     ParticipantWorkspaceMemberListener,
     MessagingMessageChannelListener,
     MessagingConnectedAccountListener,
+    MessagingBlocklistListener,
   ],
   exports: [],
 })

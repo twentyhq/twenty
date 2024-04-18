@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField.ts';
+import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField';
 import { Tag } from '@/ui/display/tag/components/Tag';
 
 const StyledTagContainer = styled.div`
