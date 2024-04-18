@@ -64,9 +64,12 @@ export class BlocklistItemDeleteMessagesJob
 
     const messageChannelIds = messageChannels.map(({ id }) => id);
 
-    await this.messageChannelMessageAssociationRepository.deleteByMessageParticipantHandleAndMessageChannelIds(
+    const rolesToDelete: ('from' | 'to')[] = ['from', 'to'];
+
+    await this.messageChannelMessageAssociationRepository.deleteByMessageParticipantHandleAndMessageChannelIdsAndRoles(
       handle,
       messageChannelIds,
+      rolesToDelete,
       workspaceId,
     );
 

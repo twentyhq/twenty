@@ -67,9 +67,10 @@ export class MessageChannelMessageAssociationRepository {
     );
   }
 
-  public async deleteByMessageParticipantHandleAndMessageChannelIds(
+  public async deleteByMessageParticipantHandleAndMessageChannelIdsAndRoles(
     messageParticipantHandle: string,
     messageChannelIds: string[],
+    rolesToDelete: ('from' | 'to' | 'cc' | 'bcc')[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ) {
@@ -83,7 +84,7 @@ export class MessageChannelMessageAssociationRepository {
       JOIN ${dataSourceSchema}."message" ON "messageChannelMessageAssociation"."messageId" = ${dataSourceSchema}."message"."id"
       JOIN ${dataSourceSchema}."messageParticipant" "messageParticipant" ON ${dataSourceSchema}."message"."id" = "messageParticipant"."messageId"
       WHERE "messageParticipant"."handle" = $1 AND "messageParticipant"."role"= ANY($2) AND "messageChannelMessageAssociation"."messageChannelId" = ANY($3)`,
-        [messageParticipantHandle, ['from', 'to'], messageChannelIds],
+        [messageParticipantHandle, rolesToDelete, messageChannelIds],
         workspaceId,
         transactionManager,
       );
