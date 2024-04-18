@@ -1,28 +1,26 @@
-import { ReactElement, useContext, useState } from 'react';
+import React, { ReactElement, useContext, useState } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilCallback, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { IconArrowUpRight } from 'twenty-ui';
 
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
 import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
+import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { useGetIsSomeCellInEditModeState } from '@/object-record/record-table/hooks/internal/useGetIsSomeCellInEditMode';
-import { useOpenRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
-import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
-import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
-import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
-import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
+import { useCurrentTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useCurrentCellPosition';
+import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
+import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
+import { isSoftFocusOnTableCellComponentFamilyState } from '@/object-record/record-table/states/isSoftFocusOnTableCellComponentFamilyState';
+import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
+import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
+import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
+import { extractComponentFamilyState } from '@/ui/utilities/state/component-state/utils/extractComponentFamilyState';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
-import { useCurrentTableCellEditMode } from '../hooks/useCurrentTableCellEditMode';
-import { useIsSoftFocusOnCurrentTableCell } from '../hooks/useIsSoftFocusOnCurrentTableCell';
-import { useMoveSoftFocusToCurrentCellOnHover } from '../hooks/useMoveSoftFocusToCurrentCellOnHover';
-import { useSetSoftFocusOnCurrentTableCell } from '../hooks/useSetSoftFocusOnCurrentTableCell';
 
 import { RecordTableCellButton } from './RecordTableCellButton';
 import { RecordTableCellDisplayMode } from './RecordTableCellDisplayMode';
@@ -64,65 +62,60 @@ export const RecordTableCellContainer = ({
   nonEditModeContent,
   editHotkeyScope,
 }: RecordTableCellContainerProps) => {
+  const { columnIndex } = useContext(RecordTableCellContext);
+  const { isReadOnly, isSelected, recordId } = useContext(
+    RecordTableRowContext,
+  );
+  const { onMoveSoftFocusToCell, onContextMenu, onCellMouseEnter } =
+    useContext(RecordTableContext);
+
+  const cellPosition = useCurrentTableCellPosition();
+
   const [isHovered, setIsHovered] = useState(false);
 
-  const { isCurrentTableCellInEditMode } = useCurrentTableCellEditMode();
-  const isSomeCellInEditModeState = useGetIsSomeCellInEditModeState();
+  const { openTableCell } = useOpenRecordTableCellFromCell();
 
-  const setIsSoftFocusUsingMouseState = useSetRecoilState(
-    isSoftFocusUsingMouseState,
+  const tableScopeId = useAvailableScopeIdOrThrow(
+    RecordTableScopeInternalContext,
+    getScopeIdOrUndefinedFromComponentId(),
   );
 
-  const moveSoftFocusToCurrentCellOnHover =
-    useMoveSoftFocusToCurrentCellOnHover();
+  const isTableCellInEditModeFamilyState = extractComponentFamilyState(
+    isTableCellInEditModeComponentFamilyState,
+    tableScopeId,
+  );
 
-  const hasSoftFocus = useIsSoftFocusOnCurrentTableCell();
-  const setSoftFocusOnCurrentTableCell = useSetSoftFocusOnCurrentTableCell();
+  const isSoftFocusOnTableCellFamilyState = extractComponentFamilyState(
+    isSoftFocusOnTableCellComponentFamilyState,
+    tableScopeId,
+  );
 
-  const { openTableCell } = useOpenRecordTableCell();
+  const isCurrentTableCellInEditMode = useRecoilValue(
+    isTableCellInEditModeFamilyState(cellPosition),
+  );
+
+  const hasSoftFocus = useRecoilValue(
+    isSoftFocusOnTableCellFamilyState(cellPosition),
+  );
+
+  const isEmpty = useIsFieldEmpty();
 
   const handleButtonClick = () => {
-    setSoftFocusOnCurrentTableCell();
+    onMoveSoftFocusToCell(cellPosition);
     openTableCell();
   };
 
-  const { isSelected, isReadOnly } = useContext(RecordTableRowContext);
-
-  const setContextMenuPosition = useSetRecoilState(contextMenuPositionState);
-  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
-
-  const { setCurrentRowSelected } = useSetCurrentRowSelected();
-
   const handleContextMenu = (event: React.MouseEvent) => {
-    event.preventDefault();
-    setCurrentRowSelected(true);
-    setContextMenuPosition({
-      x: event.clientX,
-      y: event.clientY,
-    });
-    setContextMenuOpenState(true);
+    onContextMenu(event, recordId);
   };
 
-  const handleContainerMouseEnter = useRecoilCallback(
-    ({ snapshot }) =>
-      () => {
-        const isSomeCellInEditMode = getSnapshotValue(
-          snapshot,
-          isSomeCellInEditModeState(),
-        );
-        if (!isHovered && !isSomeCellInEditMode) {
-          setIsHovered(true);
-          moveSoftFocusToCurrentCellOnHover();
-          setIsSoftFocusUsingMouseState(true);
-        }
-      },
-    [
+  const handleContainerMouseEnter = () => {
+    onCellMouseEnter({
+      cellPosition,
       isHovered,
-      isSomeCellInEditModeState,
-      moveSoftFocusToCurrentCellOnHover,
-      setIsSoftFocusUsingMouseState,
-    ],
-  );
+      setIsHovered,
+    });
+  };
 
   const handleContainerMouseLeave = () => {
     setIsHovered(false);
@@ -130,9 +123,6 @@ export const RecordTableCellContainer = ({
 
   const editModeContentOnly = useIsFieldInputOnly();
 
-  const isEmpty = useIsFieldEmpty();
-
-  const { columnIndex } = useContext(RecordTableCellContext);
   const isFirstColumn = columnIndex === 0;
   const customButtonIcon = useGetButtonIcon();
   const buttonIcon = isFirstColumn ? IconArrowUpRight : customButtonIcon;
@@ -148,7 +138,7 @@ export const RecordTableCellContainer = ({
   return (
     <StyledTd
       isSelected={isSelected}
-      onContextMenu={(event) => handleContextMenu(event)}
+      onContextMenu={handleContextMenu}
       isInEditMode={isCurrentTableCellInEditMode}
     >
       <CellHotkeyScopeContext.Provider
@@ -180,9 +170,11 @@ export const RecordTableCellContainer = ({
                   Icon={buttonIcon}
                 />
               )}
-              <RecordTableCellDisplayMode>
-                {editModeContentOnly ? editModeContent : nonEditModeContent}
-              </RecordTableCellDisplayMode>
+              {!isEmpty && (
+                <RecordTableCellDisplayMode>
+                  {editModeContentOnly ? editModeContent : nonEditModeContent}
+                </RecordTableCellDisplayMode>
+              )}
             </>
           )}
         </StyledCellBaseContainer>

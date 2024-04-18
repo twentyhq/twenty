@@ -28,7 +28,8 @@
         "lintFilePatterns": [
           "{projectRoot}/src/**/*.{ts,tsx,json}",
           "{projectRoot}/package.json"
-        ]
+        ],
+        "cache": true
       },
       "configurations": {
         "fix": { "fix": true }
@@ -45,7 +46,12 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "tsc -b tsconfig.json --incremental"
+        "command": "tsc -b tsconfig.json",
+        "incremental": true
+      },
+      "configurations": {
+        "ci": { "incremental": false },
+        "watch": { "watch": true }
       }
     },
     "storybook:dev": {

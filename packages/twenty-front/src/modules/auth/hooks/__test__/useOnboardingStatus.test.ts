@@ -4,7 +4,10 @@ import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import {
+  CurrentWorkspace,
+  currentWorkspaceState,
+} from '@/auth/states/currentWorkspaceState';
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { billingState } from '@/client-config/states/billingState';
@@ -84,7 +87,7 @@ describe('useOnboardingStatus', () => {
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'incomplete',
-      });
+      } as CurrentWorkspace);
       setCurrentWorkspaceMember(currentWorkspaceMember);
     });
 
@@ -106,7 +109,7 @@ describe('useOnboardingStatus', () => {
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'canceled',
-      });
+      } as CurrentWorkspace);
       setCurrentWorkspaceMember({
         ...currentWorkspaceMember,
         name: {
@@ -130,7 +133,7 @@ describe('useOnboardingStatus', () => {
         ...currentWorkspace,
         activationStatus: 'inactive',
         subscriptionStatus: 'active',
-      });
+      } as CurrentWorkspace);
     });
 
     expect(result.current.onboardingStatus).toBe(
@@ -153,7 +156,7 @@ describe('useOnboardingStatus', () => {
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'active',
-      });
+      } as CurrentWorkspace);
       setCurrentWorkspaceMember(currentWorkspaceMember);
     });
 
@@ -175,7 +178,7 @@ describe('useOnboardingStatus', () => {
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'active',
-      });
+      } as CurrentWorkspace);
       setCurrentWorkspaceMember({
         ...currentWorkspaceMember,
         name: {
@@ -203,7 +206,7 @@ describe('useOnboardingStatus', () => {
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'past_due',
-      });
+      } as CurrentWorkspace);
       setCurrentWorkspaceMember({
         ...currentWorkspaceMember,
         name: {
@@ -231,7 +234,7 @@ describe('useOnboardingStatus', () => {
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'unpaid',
-      });
+      } as CurrentWorkspace);
       setCurrentWorkspaceMember({
         ...currentWorkspaceMember,
         name: {

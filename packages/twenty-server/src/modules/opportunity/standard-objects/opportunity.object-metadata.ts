@@ -20,6 +20,7 @@ import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/comp
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
   standardId: standardObjectIds.opportunity,
@@ -29,6 +30,7 @@ import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.ob
   description: 'An opportunity',
   icon: 'IconTargetArrow',
 })
+@IsNotAuditLogged()
 export class OpportunityObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: opportunityStandardFieldIds.name,

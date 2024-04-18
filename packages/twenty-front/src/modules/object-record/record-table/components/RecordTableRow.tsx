@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
-import { RecordTableCellContainer } from '@/object-record/record-table/components/RecordTableCellContainer';
+import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/components/RecordTableCellFieldContextWrapper';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
@@ -67,7 +67,7 @@ export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
               }}
               key={column.fieldMetadataId}
             >
-              <RecordTableCellContainer />
+              <RecordTableCellFieldContextWrapper />
             </RecordTableCellContext.Provider>
           ) : (
             <td key={column.fieldMetadataId}></td>
