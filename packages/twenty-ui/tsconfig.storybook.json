@@ -1,8 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "emitDecoratorMetadata": true,
-    "outDir": ""
+    "emitDecoratorMetadata": true
   },
   "include": [
     ".storybook/*.ts",

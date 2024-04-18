@@ -1,6 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { ComponentDecorator } from 'twenty-ui';
 
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { workspaceLogoUrl } from '~/testing/mock-data/users';
 
 import { ImageInput } from '../ImageInput';

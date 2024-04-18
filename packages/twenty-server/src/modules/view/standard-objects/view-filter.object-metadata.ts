@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { viewFilterStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
@@ -7,6 +9,7 @@ import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/d
 import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { ViewObjectMetadata } from 'src/modules/view/standard-objects/view.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
   standardId: standardObjectIds.viewFilter,
@@ -16,6 +19,7 @@ import { ViewObjectMetadata } from 'src/modules/view/standard-objects/view.objec
   description: '(System) View Filters',
   icon: 'IconFilterBolt',
 })
+@IsNotAuditLogged()
 @IsSystem()
 export class ViewFilterObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
@@ -60,5 +64,5 @@ export class ViewFilterObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'viewId',
   })
   @IsNullable()
-  view: ViewObjectMetadata;
+  view: Relation<ViewObjectMetadata>;
 }

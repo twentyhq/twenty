@@ -4,13 +4,13 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
+import { IconGoogle } from 'twenty-ui';
 
-import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword.ts';
-import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm.ts';
-import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle.ts';
-import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts';
-import { authProvidersState } from '@/client-config/states/authProvidersState.ts';
-import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
+import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
+import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
+import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
+import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -164,9 +164,9 @@ export const SignInUpForm = () => {
                         }
                       }}
                       error={showErrors ? error?.message : undefined}
-                      onKeyDown={handleKeyDown}
                       fullWidth
                       disableHotkeys
+                      onKeyDown={handleKeyDown}
                     />
                   </StyledInputContainer>
                 )}
@@ -198,10 +198,10 @@ export const SignInUpForm = () => {
                       placeholder="Password"
                       onBlur={onBlur}
                       onChange={onChange}
-                      onKeyDown={handleKeyDown}
                       error={showErrors ? error?.message : undefined}
                       fullWidth
                       disableHotkeys
+                      onKeyDown={handleKeyDown}
                     />
                   </StyledInputContainer>
                 )}

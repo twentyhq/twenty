@@ -1,8 +1,8 @@
 import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconComponent } from 'twenty-ui';
 
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 
 const StyledRow = styled(CardContent)`

@@ -22,7 +22,8 @@
     "paths": {
       "@/*": ["packages/twenty-front/src/modules/*"],
       "~/*": ["packages/twenty-front/src/*"],
-      "twenty-ui": ["packages/twenty-ui/src/index.ts"]
+      "twenty-ui": ["packages/twenty-ui/src/index.ts"],
+      "@ui/*": ["packages/twenty-ui/src/*"]
     }
   },
   "files": [],

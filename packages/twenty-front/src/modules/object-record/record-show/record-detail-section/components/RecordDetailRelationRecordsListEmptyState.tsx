@@ -1,8 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useIcons } from 'twenty-ui';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 
 type RecordDetailRelationRecordsListEmptyStateProps = {
   relationObjectMetadataItem: ObjectMetadataItem;

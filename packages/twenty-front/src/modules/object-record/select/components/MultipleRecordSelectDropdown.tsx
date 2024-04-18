@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
+import { Avatar } from 'twenty-ui';
 
 import { SelectableRecord } from '@/object-record/select/types/SelectableRecord';
 import { DropdownMenuSkeletonItem } from '@/ui/input/relation-picker/components/skeletons/DropdownMenuSkeletonItem';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemMultiSelectAvatar } from '@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar';
-import { Avatar } from '@/users/components/Avatar';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 export const MultipleRecordSelectDropdown = ({
   recordsToSelect,
@@ -68,7 +69,7 @@ export const MultipleRecordSelectDropdown = ({
           }
           avatar={
             <Avatar
-              avatarUrl={record.avatarUrl}
+              avatarUrl={getImageAbsoluteURIOrBase64(record.avatarUrl)}
               entityId={record.id}
               placeholder={record.name}
               size="md"

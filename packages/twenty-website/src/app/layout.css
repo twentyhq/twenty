@@ -15,6 +15,17 @@ body {
   font-family: var(--font-gabarito);
 }
 
+@media (max-width: 810px) {
+    body {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    body::-webkit-scrollbar {
+        display: none;
+    }
+}
+
 .container {
   display: flex;
   flex-direction: column;
@@ -95,4 +106,14 @@ strong,
   b {
     color: #141414;
     -webkit-font-smoothing: auto;
+    font-family: var(--font-inter);
+    font-size: 15px;
+    font-weight: 500;
+    text-decoration: none;
+}
+
+code {
+    background: var(--Transparency-Lighter, #1414140a);
+    padding: 4px;
+    border-radius: 4px;
   }

@@ -1,6 +1,9 @@
-import { IconLayersLinked, IconRelationOneToOne } from 'twenty-ui';
+import {
+  IconComponent,
+  IconLayersLinked,
+  IconRelationOneToOne,
+} from 'twenty-ui';
 
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { RelationMetadataType } from '~/generated-metadata/graphql';
 
 import OneToManySvg from '../assets/OneToMany.svg';

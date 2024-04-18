@@ -2,13 +2,12 @@ import { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { IconSettings } from 'twenty-ui';
+import { IconSettings, useIcons } from 'twenty-ui';
 
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { useTableColumns } from '@/object-record/record-table/hooks/useTableColumns';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -39,17 +38,21 @@ export const RecordTableHeaderPlusButtonContent = () => {
 
   return (
     <>
-      <DropdownMenuItemsContainer>
-        {hiddenTableColumns.map((column) => (
-          <MenuItem
-            key={column.fieldMetadataId}
-            onClick={() => handleAddColumn(column)}
-            LeftIcon={getIcon(column.iconName)}
-            text={column.label}
-          />
-        ))}
-      </DropdownMenuItemsContainer>
-      <DropdownMenuSeparator />
+      {hiddenTableColumns.length > 0 && (
+        <>
+          <DropdownMenuItemsContainer>
+            {hiddenTableColumns.map((column) => (
+              <MenuItem
+                key={column.fieldMetadataId}
+                onClick={() => handleAddColumn(column)}
+                LeftIcon={getIcon(column.iconName)}
+                text={column.label}
+              />
+            ))}
+          </DropdownMenuItemsContainer>
+          <DropdownMenuSeparator />
+        </>
+      )}
       <DropdownMenuItemsContainer>
         <StyledMenuItemLink to="/settings/objects">
           <MenuItem LeftIcon={IconSettings} text="Customize fields" />

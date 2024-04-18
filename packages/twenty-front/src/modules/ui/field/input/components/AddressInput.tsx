@@ -1,7 +1,5 @@
 import { RefObject, useEffect, useRef, useState } from 'react';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { flip, offset, useFloating } from '@floating-ui/react';
 import { Key } from 'ts-key-enum';
 
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
@@ -57,8 +55,6 @@ export const AddressInput = ({
   onClickOutside,
   onChange,
 }: AddressInputProps) => {
-  const theme = useTheme();
-
   const [internalValue, setInternalValue] = useState(value);
   const addressStreet1InputRef = useRef<HTMLInputElement>(null);
   const addressStreet2InputRef = useRef<HTMLInputElement>(null);
@@ -80,16 +76,6 @@ export const AddressInput = ({
     useState<keyof FieldAddressDraftValue>('addressStreet1');
 
   const wrapperRef = useRef<HTMLDivElement>(null);
-
-  const { refs, floatingStyles } = useFloating({
-    placement: 'top-start',
-    middleware: [
-      flip(),
-      offset({
-        mainAxis: theme.spacingMultiplicator * 2,
-      }),
-    ],
-  });
 
   const getChangeHandler =
     (field: keyof FieldAddressDraftValue) => (updatedAddressPart: string) => {
@@ -192,63 +178,61 @@ export const AddressInput = ({
   }, [value]);
 
   return (
-    <div ref={refs.setFloating} style={floatingStyles}>
-      <StyledAddressContainer ref={wrapperRef}>
+    <StyledAddressContainer ref={wrapperRef}>
+      <TextInput
+        autoFocus
+        value={internalValue.addressStreet1 ?? ''}
+        ref={inputRefs['addressStreet1']}
+        label="ADDRESS 1"
+        fullWidth
+        onChange={getChangeHandler('addressStreet1')}
+        onFocus={getFocusHandler('addressStreet1')}
+        disableHotkeys
+      />
+      <TextInput
+        value={internalValue.addressStreet2 ?? ''}
+        ref={inputRefs['addressStreet2']}
+        label="ADDRESS 2"
+        fullWidth
+        onChange={getChangeHandler('addressStreet2')}
+        onFocus={getFocusHandler('addressStreet2')}
+        disableHotkeys
+      />
+      <StyledHalfRowContainer>
         <TextInput
-          autoFocus
-          value={internalValue.addressStreet1 ?? ''}
-          ref={inputRefs['addressStreet1']}
-          label="ADDRESS 1"
+          value={internalValue.addressCity ?? ''}
+          ref={inputRefs['addressCity']}
+          label="CITY"
           fullWidth
-          onChange={getChangeHandler('addressStreet1')}
-          onFocus={getFocusHandler('addressStreet1')}
+          onChange={getChangeHandler('addressCity')}
+          onFocus={getFocusHandler('addressCity')}
           disableHotkeys
         />
         <TextInput
-          value={internalValue.addressStreet2 ?? ''}
-          ref={inputRefs['addressStreet2']}
-          label="ADDRESS 2"
+          value={internalValue.addressState ?? ''}
+          ref={inputRefs['addressState']}
+          label="STATE"
           fullWidth
-          onChange={getChangeHandler('addressStreet2')}
-          onFocus={getFocusHandler('addressStreet2')}
+          onChange={getChangeHandler('addressState')}
+          onFocus={getFocusHandler('addressState')}
           disableHotkeys
         />
-        <StyledHalfRowContainer>
-          <TextInput
-            value={internalValue.addressCity ?? ''}
-            ref={inputRefs['addressCity']}
-            label="CITY"
-            fullWidth
-            onChange={getChangeHandler('addressCity')}
-            onFocus={getFocusHandler('addressCity')}
-            disableHotkeys
-          />
-          <TextInput
-            value={internalValue.addressState ?? ''}
-            ref={inputRefs['addressState']}
-            label="STATE"
-            fullWidth
-            onChange={getChangeHandler('addressState')}
-            onFocus={getFocusHandler('addressState')}
-            disableHotkeys
-          />
-        </StyledHalfRowContainer>
-        <StyledHalfRowContainer>
-          <TextInput
-            value={internalValue.addressPostcode ?? ''}
-            ref={inputRefs['addressPostcode']}
-            label="POST CODE"
-            fullWidth
-            onChange={getChangeHandler('addressPostcode')}
-            onFocus={getFocusHandler('addressPostcode')}
-            disableHotkeys
-          />
-          <CountrySelect
-            onChange={getChangeHandler('addressCountry')}
-            selectedCountryName={internalValue.addressCountry ?? ''}
-          />
-        </StyledHalfRowContainer>
-      </StyledAddressContainer>
-    </div>
+      </StyledHalfRowContainer>
+      <StyledHalfRowContainer>
+        <TextInput
+          value={internalValue.addressPostcode ?? ''}
+          ref={inputRefs['addressPostcode']}
+          label="POST CODE"
+          fullWidth
+          onChange={getChangeHandler('addressPostcode')}
+          onFocus={getFocusHandler('addressPostcode')}
+          disableHotkeys
+        />
+        <CountrySelect
+          onChange={getChangeHandler('addressCountry')}
+          selectedCountryName={internalValue.addressCountry ?? ''}
+        />
+      </StyledHalfRowContainer>
+    </StyledAddressContainer>
   );
 };
