@@ -87,6 +87,7 @@ export class AuthService {
     firstName,
     lastName,
     picture,
+    fromSSO,
   }: {
     email: string;
     password?: string;
@@ -94,6 +95,7 @@ export class AuthService {
     lastName?: string | null;
     workspaceInviteHash?: string | null;
     picture?: string | null;
+    fromSSO: boolean;
   }) {
     return await this.signInUpService.signInUp({
       email,
@@ -102,6 +104,7 @@ export class AuthService {
       lastName,
       workspaceInviteHash,
       picture,
+      fromSSO,
     });
   }
 
