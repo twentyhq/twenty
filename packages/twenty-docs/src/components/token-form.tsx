@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { TbApi, TbChevronLeft, TbLink } from 'react-icons/tb';
 import { useHistory, useLocation } from '@docusaurus/router';
-import { TbApi, TbChevronLeft, TbLink } from '@theme/icons';
 import { parseJson } from 'nx/src/utils/json';
 
 import tokenForm from '!css-loader!./token-form.css';
