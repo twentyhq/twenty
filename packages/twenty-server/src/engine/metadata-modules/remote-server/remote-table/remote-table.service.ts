@@ -151,6 +151,15 @@ export class RemoteTableService {
       input.schema,
     );
 
+    // We only support remote tables with an id column for now.
+    const remoteTableIdColumn = remoteTableColumns.find(
+      (column) => column.columnName === 'id',
+    );
+
+    if (!remoteTableIdColumn) {
+      throw new BadRequestException('Remote table must have an id column');
+    }
+
     await this.createForeignTable(
       workspaceId,
       localTableName,
@@ -163,6 +172,7 @@ export class RemoteTableService {
       workspaceId,
       localTableName,
       remoteTableColumns,
+      remoteTableIdColumn,
       dataSourceMetatada.id,
     );
 
@@ -406,17 +416,9 @@ export class RemoteTableService {
     workspaceId: string,
     localTableName: string,
     remoteTableColumns: RemoteTableColumn[],
+    remoteTableIdColumn: RemoteTableColumn,
     dataSourceMetadataId: string,
   ) {
-    // We only support remote tables with an id column for now.
-    const remoteTableIdColumn = remoteTableColumns.filter(
-      (column) => column.columnName === 'id',
-    )?.[0];
-
-    if (!remoteTableIdColumn) {
-      throw new BadRequestException('Remote table must have an id column');
-    }
-
     const objectMetadata = await this.objectMetadataService.createOne({
       nameSingular: localTableName,
       namePlural: plural(localTableName),

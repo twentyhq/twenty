@@ -4,8 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRecoilValue } from 'recoil';
 import { z } from 'zod';
 
-import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex.ts';
-import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState.ts';
+import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
+import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 
 const validationSchema = z
   .object({

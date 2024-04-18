@@ -2,7 +2,7 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 import { VerifyEffect } from '@/auth/components/VerifyEffect';
-import { billingState } from '@/client-config/states/billingState.ts';
+import { billingState } from '@/client-config/states/billingState';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { BlankLayout } from '@/ui/layout/page/BlankLayout';
