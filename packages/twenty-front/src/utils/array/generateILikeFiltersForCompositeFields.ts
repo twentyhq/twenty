@@ -1,9 +1,6 @@
-import {
-  FullNameFilter,
-  ObjectRecordQueryFilter,
-} from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
+import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 
-export const generateILikeFilters = (
+export const generateILikeFiltersForCompositeFields = (
   filterString: string,
   baseFieldName: string,
   subFields: string[],
@@ -19,7 +16,7 @@ export const generateILikeFilters = (
               [subField]: {
                 ilike: `%${currentValue}%`,
               },
-            } as FullNameFilter,
+            },
           };
         }),
       ];

@@ -5,7 +5,7 @@ import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { FieldMetadataType } from '~/generated/graphql';
-import { generateILikeFilters } from '~/utils/array/generateILikeFilters';
+import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 import { isDefined } from '~/utils/isDefined';
 
 export const useSearchFilterPerMetadataItem = ({
@@ -31,7 +31,7 @@ export const useSearchFilterPerMetadataItem = ({
               case FieldMetadataType.FullName: {
                 if (isNonEmptyString(searchFilterValue)) {
                   const compositeFilter = makeOrFilterVariables(
-                    generateILikeFilters(
+                    generateILikeFiltersForCompositeFields(
                       searchFilterValue,
                       labelIdentifierFieldMetadataItem.name,
                       ['firstName', 'lastName'],

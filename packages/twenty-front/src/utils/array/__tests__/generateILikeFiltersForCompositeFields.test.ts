@@ -1,9 +1,12 @@
-import { generateILikeFilters } from '~/utils/array/generateILikeFilters';
+import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 
-describe('formatCompositeFilters', () => {
+describe('generateILikeFiltersForCompositeFields', () => {
   it('should format composite filters for simple filter string', () => {
     expect(
-      generateILikeFilters('john', 'baseField', ['subField1', 'subField2']),
+      generateILikeFiltersForCompositeFields('john', 'baseField', [
+        'subField1',
+        'subField2',
+      ]),
     ).toEqual([
       {
         baseField: {
@@ -23,7 +26,10 @@ describe('formatCompositeFilters', () => {
   });
   it('should format composite filters for complex filter string', () => {
     expect(
-      generateILikeFilters('john doe', 'name', ['firstName', 'lastName']),
+      generateILikeFiltersForCompositeFields('john doe', 'name', [
+        'firstName',
+        'lastName',
+      ]),
     ).toEqual([
       {
         name: {

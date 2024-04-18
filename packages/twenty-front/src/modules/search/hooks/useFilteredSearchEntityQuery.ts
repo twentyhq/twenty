@@ -10,7 +10,7 @@ import { EntityForSelect } from '@/object-record/relation-picker/types/EntityFor
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
-import { generateILikeFilters } from '~/utils/array/generateILikeFilters';
+import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 import { isDefined } from '~/utils/isDefined';
 
 type SearchFilter = { fieldNames: string[]; filter: string | number };
@@ -66,7 +66,9 @@ export const useFilteredSearchEntityQuery = ({
           // Composite field
           return [
             ...previousValue,
-            ...generateILikeFilters(filter, parentFieldName, [subFieldName]),
+            ...generateILikeFiltersForCompositeFields(filter, parentFieldName, [
+              subFieldName,
+            ]),
           ];
         }
 
