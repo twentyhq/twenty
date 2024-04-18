@@ -1,6 +1,6 @@
 import { v4 } from 'uuid';
 
-import { FieldMetadataOption } from '@/object-metadata/types/FieldMetadataOption.ts';
+import { FieldMetadataOption } from '@/object-metadata/types/FieldMetadataOption';
 import { getDefaultValueForBackend } from '@/object-metadata/utils/getDefaultValueForBackend';
 import { Field } from '~/generated/graphql';
 
