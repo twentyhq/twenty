@@ -11,16 +11,16 @@ import { ThreadCleanerService } from 'src/modules/messaging/services/thread-clea
 import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 
-export type DeleteMessagesFromHandleJobData = {
+export type BlocklistItemDeleteMessagesJobData = {
   workspaceId: string;
   blocklistItemId: string;
 };
 
 @Injectable()
-export class DeleteMessagesFromHandleJob
-  implements MessageQueueJob<DeleteMessagesFromHandleJobData>
+export class BlocklistItemDeleteMessagesJob
+  implements MessageQueueJob<BlocklistItemDeleteMessagesJobData>
 {
-  private readonly logger = new Logger(DeleteMessagesFromHandleJob.name);
+  private readonly logger = new Logger(BlocklistItemDeleteMessagesJob.name);
 
   constructor(
     @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
@@ -34,7 +34,7 @@ export class DeleteMessagesFromHandleJob
     private readonly threadCleanerService: ThreadCleanerService,
   ) {}
 
-  async handle(data: DeleteMessagesFromHandleJobData): Promise<void> {
+  async handle(data: BlocklistItemDeleteMessagesJobData): Promise<void> {
     const { workspaceId, blocklistItemId } = data;
 
     const blocklistItem = await this.blocklistRepository.getById(

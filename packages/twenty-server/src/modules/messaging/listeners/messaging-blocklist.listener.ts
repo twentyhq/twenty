@@ -6,9 +6,9 @@ import { MessageQueue } from 'src/engine/integrations/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
 import {
-  DeleteMessagesFromHandleJobData,
-  DeleteMessagesFromHandleJob,
-} from 'src/modules/messaging/jobs/delete-messages-from-handle.job';
+  BlocklistItemDeleteMessagesJobData,
+  BlocklistItemDeleteMessagesJob,
+} from 'src/modules/messaging/jobs/blocklist-item-delete-messages.job';
 
 @Injectable()
 export class MessagingBlocklistListener {
@@ -21,8 +21,8 @@ export class MessagingBlocklistListener {
   handleCreatedEvent(
     payload: ObjectRecordCreateEvent<BlocklistObjectMetadata>,
   ) {
-    this.messageQueueService.add<DeleteMessagesFromHandleJobData>(
-      DeleteMessagesFromHandleJob.name,
+    this.messageQueueService.add<BlocklistItemDeleteMessagesJobData>(
+      BlocklistItemDeleteMessagesJob.name,
       {
         workspaceId: payload.workspaceId,
         blocklistItemId: payload.recordId,

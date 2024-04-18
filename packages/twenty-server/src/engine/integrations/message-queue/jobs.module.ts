@@ -45,7 +45,7 @@ import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.ob
 import { GmailFetchMessagesFromCacheCronJob } from 'src/modules/messaging/crons/jobs/gmail-fetch-messages-from-cache.cron.job';
 import { GmailPartialSyncCronJob } from 'src/modules/messaging/crons/jobs/gmail-partial-sync.cron.job';
 import { DeleteConnectedAccountAssociatedMessagingDataJob } from 'src/modules/messaging/jobs/delete-connected-account-associated-messaging-data.job';
-import { DeleteMessagesFromHandleJob } from 'src/modules/messaging/jobs/delete-messages-from-handle.job';
+import { BlocklistItemDeleteMessagesJob } from 'src/modules/messaging/jobs/blocklist-item-delete-messages.job';
 import { GmailFullSyncJob } from 'src/modules/messaging/jobs/gmail-full-sync.job';
 import { GmailPartialSyncJob } from 'src/modules/messaging/jobs/gmail-partial-sync.job';
 import { MessagingCreateCompanyAndContactAfterSyncJob } from 'src/modules/messaging/jobs/messaging-create-company-and-contact-after-sync.job';
@@ -176,8 +176,8 @@ import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-obj
       useClass: GoogleCalendarSyncCronJob,
     },
     {
-      provide: DeleteMessagesFromHandleJob.name,
-      useClass: DeleteMessagesFromHandleJob,
+      provide: BlocklistItemDeleteMessagesJob.name,
+      useClass: BlocklistItemDeleteMessagesJob,
     },
   ],
 })
