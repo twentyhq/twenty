@@ -1,6 +1,5 @@
 import { IconCalendarDue } from 'twenty-ui';
 
-import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Select } from '@/ui/input/components/Select';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -57,11 +56,15 @@ export const MonthAndYearDropdown = ({
     <Dropdown
       dropdownId={MONTH_AND_YEAR_DROPDOWN_ID}
       dropdownHotkeyScope={{
-        scope: TableHotkeyScope.CellEditMode,
+        scope: MONTH_AND_YEAR_DROPDOWN_ID,
       }}
       dropdownPlacement="bottom-start"
       clickableComponent={
-        <LightIconButton Icon={IconCalendarDue} size="medium" />
+        <LightIconButton
+          testId="month-and-year-dropdown"
+          Icon={IconCalendarDue}
+          size="medium"
+        />
       }
       dropdownComponents={
         <DropdownMenuItemsContainer>

@@ -23,8 +23,8 @@ export const getOptionValueFromLabel = (label: string) => {
 export const formatFieldMetadataItemInput = (
   input: Pick<
     Field,
-    'label' | 'icon' | 'description' | 'defaultValue' | 'type' | 'options'
-  >,
+    'label' | 'icon' | 'description' | 'defaultValue' | 'options'
+  > & { type?: FieldMetadataType },
 ) => {
   const options = input.options as FieldMetadataOption[];
   let defaultValue = input.defaultValue;

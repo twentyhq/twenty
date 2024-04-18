@@ -3,7 +3,6 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRecoilState } from 'recoil';
-import { Key } from 'ts-key-enum';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
@@ -14,12 +13,10 @@ import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
-import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
 const StyledContentContainer = styled.div`
@@ -126,18 +123,16 @@ export const CreateProfile = () => {
     ],
   );
 
-  useScopedHotkeys(
-    Key.Enter,
-    () => {
-      onSubmit(getValues());
-    },
-    PageHotkeyScope.CreateProfile,
-    [onSubmit],
-  );
-
   if (onboardingStatus !== OnboardingStatus.OngoingProfileCreation) {
     return null;
   }
+
+  const onNameInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      onSubmit(getValues());
+    }
+  };
 
   return (
     <>
@@ -171,6 +166,7 @@ export const CreateProfile = () => {
                   placeholder="Tim"
                   error={error?.message}
                   fullWidth
+                  onKeyDown={onNameInputKeyDown}
                   disableHotkeys
                 />
               )}
@@ -190,6 +186,7 @@ export const CreateProfile = () => {
                   placeholder="Cook"
                   error={error?.message}
                   fullWidth
+                  onKeyDown={onNameInputKeyDown}
                   disableHotkeys
                 />
               )}

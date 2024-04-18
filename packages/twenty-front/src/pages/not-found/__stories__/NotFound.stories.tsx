@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { HelmetProviderDecorator } from '~/testing/decorators/HelmetProviderDecorator';
 import { PageDecoratorArgs } from '~/testing/decorators/PageDecorator';
 import { RelationPickerDecorator } from '~/testing/decorators/RelationPickerDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -12,6 +13,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/NotFound/Default',
   component: NotFound,
   decorators: [
+    HelmetProviderDecorator,
     ComponentWithRouterDecorator,
     SnackBarDecorator,
     RelationPickerDecorator,
