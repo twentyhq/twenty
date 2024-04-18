@@ -59,13 +59,25 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
 
   const getCaptchaToken = useCallback(async () => {
     setIsGeneratingCaptchaToken(true);
-    const captchaToken = await generateCaptchaToken(isCaptchaScriptLoaded);
-    setIsGeneratingCaptchaToken(false);
-    if (!isUndefinedOrNull(captchaToken)) {
-      form.setValue('captchaToken', captchaToken);
+    try {
+      const captchaToken = await generateCaptchaToken(isCaptchaScriptLoaded);
+      if (!isUndefinedOrNull(captchaToken)) {
+        form.setValue('captchaToken', captchaToken);
+      }
+      return captchaToken;
+    } catch (error) {
+      console.error('Failed to generate captcha token:', error);
+      enqueueSnackBar(
+        'You were identified as a bot by Cloudflare. Please try again.',
+        {
+          variant: 'error',
+        },
+      );
+      return null;
+    } finally {
+      setIsGeneratingCaptchaToken(false);
     }
-    return captchaToken;
-  }, [form, generateCaptchaToken, isCaptchaScriptLoaded]);
+  }, [form, generateCaptchaToken, isCaptchaScriptLoaded, enqueueSnackBar]);
 
   const continueWithEmail = useCallback(() => {
     setSignInUpStep(SignInUpStep.Email);

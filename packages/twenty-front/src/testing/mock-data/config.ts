@@ -1,3 +1,4 @@
+import { CaptchaDriverType } from '~/generated/graphql';
 import { ClientConfig } from '~/generated-metadata/graphql';
 
 export const mockedClientConfig: ClientConfig = {
@@ -32,5 +33,9 @@ export const mockedClientConfig: ClientConfig = {
     billingFreeTrialDurationInDays: 10,
     __typename: 'Billing',
   },
-  __typename: 'ClientConfig',
+  captcha: {
+    provider: CaptchaDriverType.GoogleRecatpcha,
+    siteKey: 'MOCKED_SITE_KEY',
+    __typename: 'Captcha',
+  },
 };

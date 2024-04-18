@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -73,12 +73,10 @@ export const SignInUpForm = () => {
       if (signInUpStep === SignInUpStep.Init) {
         continueWithEmail();
       } else if (signInUpStep === SignInUpStep.Email) {
-        await getCaptchaToken();
         continueWithCredentials();
       } else if (signInUpStep === SignInUpStep.Password) {
         if (!form.formState.isSubmitting) {
           setShowErrors(true);
-          await getCaptchaToken();
           form.handleSubmit(submitCredentials)();
         }
       }
@@ -115,6 +113,10 @@ export const SignInUpForm = () => {
   }, [signInUpMode, workspace?.displayName, isInviteMode, signInUpStep]);
 
   const theme = useTheme();
+
+  useEffect(() => {
+    getCaptchaToken();
+  }, [getCaptchaToken]);
 
   return (
     <>
@@ -226,21 +228,14 @@ export const SignInUpForm = () => {
                 return;
               }
               if (signInUpStep === SignInUpStep.Email) {
-                await getCaptchaToken();
                 continueWithCredentials();
                 return;
               }
               setShowErrors(true);
 
-              await getCaptchaToken();
-
               form.handleSubmit(submitCredentials)();
             }}
-            Icon={() =>
-              (isGeneratingCaptchaToken || form.formState.isSubmitting) && (
-                <Loader />
-              )
-            }
+            Icon={() => form.formState.isSubmitting && <Loader />}
             disabled={
               signInUpStep === SignInUpStep.Init
                 ? false
