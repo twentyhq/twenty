@@ -5,6 +5,7 @@ import { parseJson } from 'nx/src/utils/json';
 
 import tokenForm from '!css-loader!./token-form.css';
 
+export type SubDoc = 'core' | 'metadata';
 export type TokenFormProps = {
   setOpenApiJson?: (json: object) => void;
   setToken?: (token: string) => void;
@@ -12,7 +13,7 @@ export type TokenFormProps = {
   isTokenValid: boolean;
   setIsTokenValid: (boolean) => void;
   setLoadingState: (boolean) => void;
-  subDoc?: string;
+  subDoc?: SubDoc;
 };
 
 const TokenForm = ({
