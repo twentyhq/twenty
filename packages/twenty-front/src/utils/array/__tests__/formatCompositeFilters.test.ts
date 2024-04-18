@@ -1,18 +1,20 @@
-import { formatCompositeFilters } from '~/utils/array/formatCompositeFilters.ts';
+import { generateILikeFilters } from '~/utils/array/generateILikeFilters.ts';
 
 describe('formatCompositeFilters', () => {
   it('should format composite filters for simple filter string', () => {
-    expect(formatCompositeFilters('john')).toEqual([
+    expect(
+      generateILikeFilters('john', 'baseField', ['subField1', 'subField2']),
+    ).toEqual([
       {
-        name: {
-          firstName: {
+        baseField: {
+          subField1: {
             ilike: '%john%',
           },
         },
       },
       {
-        name: {
-          lastName: {
+        baseField: {
+          subField2: {
             ilike: '%john%',
           },
         },
@@ -20,7 +22,9 @@ describe('formatCompositeFilters', () => {
     ]);
   });
   it('should format composite filters for complex filter string', () => {
-    expect(formatCompositeFilters('john doe')).toEqual([
+    expect(
+      generateILikeFilters('john doe', 'name', ['firstName', 'lastName']),
+    ).toEqual([
       {
         name: {
           firstName: {

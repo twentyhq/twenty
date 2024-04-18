@@ -13,7 +13,7 @@ import {
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
-import { formatCompositeFilters } from '~/utils/array/formatCompositeFilters.ts';
+import { generateILikeFilters } from '~/utils/array/generateILikeFilters.ts';
 import { isDefined } from '~/utils/isDefined';
 
 import { Filter } from '../../object-filter-dropdown/types/Filter';
@@ -204,9 +204,10 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
         }
         break;
       case 'FULL_NAME': {
-        const fullNameFilters = formatCompositeFilters(
+        const fullNameFilters = generateILikeFilters(
           rawUIFilter.value,
           correspondingField.name,
+          ['firstName', 'lastName'],
         );
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.Contains:

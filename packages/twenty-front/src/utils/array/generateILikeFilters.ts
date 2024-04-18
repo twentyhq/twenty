@@ -3,10 +3,10 @@ import {
   ObjectRecordQueryFilter,
 } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 
-export const formatCompositeFilters = (
+export const generateILikeFilters = (
   filterString: string,
-  baseFieldName = 'name',
-  subFields = ['firstName', 'lastName'],
+  baseFieldName: string,
+  subFields: string[],
 ) => {
   return filterString
     .split(' ')
