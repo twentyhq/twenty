@@ -5,8 +5,8 @@ import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/t
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import {
-  BlocklistItemDeleteCalendatEventsJobData,
-  BlocklistItemDeleteCalendatEventsJob,
+  BlocklistItemDeleteCalendarEventsJobData,
+  BlocklistItemDeleteCalendarEventsJob,
 } from 'src/modules/calendar/jobs/blocklist-item-delete-calendar-events.job';
 import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
 
@@ -21,8 +21,8 @@ export class CalendarBlocklistListener {
   handleCreatedEvent(
     payload: ObjectRecordCreateEvent<BlocklistObjectMetadata>,
   ) {
-    this.messageQueueService.add<BlocklistItemDeleteCalendatEventsJobData>(
-      BlocklistItemDeleteCalendatEventsJob.name,
+    this.messageQueueService.add<BlocklistItemDeleteCalendarEventsJobData>(
+      BlocklistItemDeleteCalendarEventsJob.name,
       {
         workspaceId: payload.workspaceId,
         blocklistItemId: payload.recordId,

@@ -56,6 +56,7 @@ import { MessageParticipantModule } from 'src/modules/messaging/services/message
 import { ThreadCleanerModule } from 'src/modules/messaging/services/thread-cleaner/thread-cleaner.module';
 import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { BlocklistItemDeleteCalendarEventsJob } from 'src/modules/calendar/jobs/blocklist-item-delete-calendar-events.job';
 
 @Module({
   imports: [
@@ -178,6 +179,10 @@ import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-obj
     {
       provide: BlocklistItemDeleteMessagesJob.name,
       useClass: BlocklistItemDeleteMessagesJob,
+    },
+    {
+      provide: BlocklistItemDeleteCalendarEventsJob.name,
+      useClass: BlocklistItemDeleteCalendarEventsJob,
     },
   ],
 })
