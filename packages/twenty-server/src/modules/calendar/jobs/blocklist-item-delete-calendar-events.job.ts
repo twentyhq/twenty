@@ -11,17 +11,17 @@ import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-obj
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
 import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
 
-export type DeleteCalendarEventsFromBlocklistItemJobData = {
+export type BlocklistItemDeleteCalendatEventsJobData = {
   workspaceId: string;
   blocklistItemId: string;
 };
 
 @Injectable()
-export class DeleteCalendarEventsFromBlocklistItemJob
-  implements MessageQueueJob<DeleteCalendarEventsFromBlocklistItemJobData>
+export class BlocklistItemDeleteCalendatEventsJob
+  implements MessageQueueJob<BlocklistItemDeleteCalendatEventsJobData>
 {
   private readonly logger = new Logger(
-    DeleteCalendarEventsFromBlocklistItemJob.name,
+    BlocklistItemDeleteCalendatEventsJob.name,
   );
 
   constructor(
@@ -36,9 +36,7 @@ export class DeleteCalendarEventsFromBlocklistItemJob
     private readonly calendarEventCleanerService: CalendarEventCleanerService,
   ) {}
 
-  async handle(
-    data: DeleteCalendarEventsFromBlocklistItemJobData,
-  ): Promise<void> {
+  async handle(data: BlocklistItemDeleteCalendatEventsJobData): Promise<void> {
     const { workspaceId, blocklistItemId } = data;
 
     const blocklistItem = await this.blocklistRepository.getById(
