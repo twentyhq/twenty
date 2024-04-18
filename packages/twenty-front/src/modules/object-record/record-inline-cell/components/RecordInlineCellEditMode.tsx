@@ -9,7 +9,6 @@ const StyledInlineCellEditModeContainer = styled.div<RecordInlineCellEditModePro
   height: 24px;
 
   margin-left: -${({ theme }) => theme.spacing(1)};
-  z-index: 10;
 `;
 
 const StyledInlineCellInput = styled.div`
@@ -20,7 +19,7 @@ const StyledInlineCellInput = styled.div`
   min-width: 200px;
   width: inherit;
 
-  z-index: 10;
+  z-index: 1000;
 `;
 
 type RecordInlineCellEditModeProps = {
