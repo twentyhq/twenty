@@ -4,11 +4,13 @@ import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapTo
 import { OrderBy } from '@/object-metadata/types/OrderBy';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter.ts';
 import { EntitiesForMultipleEntitySelect } from '@/object-record/relation-picker/types/EntitiesForMultipleEntitySelect';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
+import { formatCompositeFilters } from '~/utils/array/formatCompositeFilters.ts';
 import { isDefined } from '~/utils/isDefined';
 
 type SearchFilter = { fieldNames: string[]; filter: string | number };
@@ -56,28 +58,31 @@ export const useFilteredSearchEntityQuery = ({
       return undefined;
     }
 
-    return makeOrFilterVariables(
-      fieldNames.map((fieldName) => {
+    const formattedFilters = fieldNames.reduce(
+      (previousValue: ObjectRecordQueryFilter[], fieldName) => {
         const [parentFieldName, subFieldName] = fieldName.split('.');
 
         if (isNonEmptyString(subFieldName)) {
           // Composite field
-          return {
-            [parentFieldName]: {
-              [subFieldName]: {
-                ilike: `%${filter}%`,
-              },
-            },
-          };
+          return [
+            ...previousValue,
+            ...formatCompositeFilters(filter, parentFieldName, [subFieldName]),
+          ];
         }
 
-        return {
-          [fieldName]: {
-            ilike: `%${filter}%`,
+        return [
+          ...previousValue,
+          {
+            [fieldName]: {
+              ilike: `%${filter}%`,
+            },
           },
-        };
-      }),
+        ];
+      },
+      [],
     );
+
+    return makeOrFilterVariables(formattedFilters);
   });
 
   const {
