@@ -10,7 +10,6 @@ import { LightButton } from '@/ui/input/button/components/LightButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
@@ -23,7 +22,6 @@ export const StyledInput = styled.input`
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: 0;
   color: ${({ theme }) => theme.font.color.primary};
-  
   margin: 0;
   outline: none;
   padding: ${({ theme }) => theme.spacing(2)};
@@ -37,7 +35,7 @@ export const StyledInput = styled.input`
   text-decoration: none;
 
   &::placeholder {
-    color: ${({ theme }) => theme.font.color.extraLight};
+    color: ${({ theme }) => theme.font.color.light};
   }
 `;
 
@@ -53,8 +51,7 @@ export const ObjectSortDropdownButton = ({
   sortDropdownId,
   hotkeyScope,
 }: ObjectSortDropdownButtonProps) => {
-
-  const [searchText, setSearchText] = useState("");
+  const [searchText, setSearchText] = useState('');
 
   const {
     isSortDirectionMenuUnfolded,
@@ -78,18 +75,12 @@ export const ObjectSortDropdownButton = ({
 
   const { getIcon } = useIcons();
 
-  const debouncedSetSearchFilter = useDebouncedCallback(
-    setSearchText,
-    100,
-    {
-      leading: true,
-    },
-  );
-
+  const debouncedSetSearchFilter = useDebouncedCallback(setSearchText, 100, {
+    leading: true,
+  });
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // setSearchText(event.target.value);
     debouncedSetSearchFilter(event.target.value);
-  }
+  };
 
   return (
     <ObjectSortDropdownScope sortScopeId={sortDropdownId}>
@@ -127,7 +118,6 @@ export const ObjectSortDropdownButton = ({
                 >
                   {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
                 </DropdownMenuHeader>
-                {/* <DropdownMenuSeparator /> */}
                 <StyledInput
                   value={searchText}
                   placeholder="Search fields"
@@ -136,7 +126,11 @@ export const ObjectSortDropdownButton = ({
                 <DropdownMenuItemsContainer>
                   {[...availableSortDefinitions]
                     .sort((a, b) => a.label.localeCompare(b.label))
-                    .filter((item) => item.label.toLocaleLowerCase().includes(searchText.toLocaleLowerCase()))
+                    .filter((item) =>
+                      item.label
+                        .toLocaleLowerCase()
+                        .includes(searchText.toLocaleLowerCase()),
+                    )
                     .map((availableSortDefinition, index) => (
                       <MenuItem
                         testId={`select-sort-${index}`}
