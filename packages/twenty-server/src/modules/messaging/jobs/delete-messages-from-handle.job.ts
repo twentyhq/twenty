@@ -55,7 +55,7 @@ export class DeleteMessagesFromHandleJob
     );
 
     const messageChannels =
-      await this.messageChannelRepository.getByWorkspaceMemberId(
+      await this.messageChannelRepository.getIdsByWorkspaceMemberId(
         workspaceMemberId,
         workspaceId,
       );

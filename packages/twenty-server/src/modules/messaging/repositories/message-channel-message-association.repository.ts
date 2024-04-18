@@ -82,7 +82,7 @@ export class MessageChannelMessageAssociationRepository {
       FROM ${dataSourceSchema}."messageChannelMessageAssociation" "messageChannelMessageAssociation"
       JOIN ${dataSourceSchema}."message" ON "messageChannelMessageAssociation"."messageId" = ${dataSourceSchema}."message"."id"
       JOIN ${dataSourceSchema}."messageParticipant" "messageParticipant" ON ${dataSourceSchema}."message"."id" = "messageParticipant"."messageId"
-      WHERE "messageParticipant"."handle" = $1 AND "messageParticipant"."role"= ANY($2) AND "messageChannelId" = ANY($3)`,
+      WHERE "messageParticipant"."handle" = $1 AND "messageParticipant"."role"= ANY($2) AND "messageChannelMessageAssociation"."messageChannelId" = ANY($3)`,
         [messageParticipantHandle, ['from', 'to'], messageChannelIds],
         workspaceId,
         transactionManager,

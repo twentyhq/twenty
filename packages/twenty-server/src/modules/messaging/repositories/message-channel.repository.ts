@@ -137,7 +137,7 @@ export class MessageChannelRepository {
     );
   }
 
-  public async getByWorkspaceMemberId(
+  public async getIdsByWorkspaceMemberId(
     workspaceMemberId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
@@ -147,7 +147,7 @@ export class MessageChannelRepository {
 
     const messageChannelIds =
       await this.workspaceDataSourceService.executeRawQuery(
-        `SELECT * FROM ${dataSourceSchema}."messageChannel" "messageChannel"
+        `SELECT "messageChannel".id FROM ${dataSourceSchema}."messageChannel" "messageChannel"
         JOIN ${dataSourceSchema}."connectedAccount" ON "messageChannel"."connectedAccountId" = ${dataSourceSchema}."connectedAccount"."id"
         WHERE ${dataSourceSchema}."connectedAccount"."accountOwnerId" = $1`,
         [workspaceMemberId],
