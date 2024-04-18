@@ -132,12 +132,18 @@ export class SignInUpService {
   }) {
     const workspace = await this.workspaceRepository.findOneBy({
       inviteHash: workspaceInviteHash,
-      subscriptionStatus: 'active',
     });
 
     assert(
       workspace,
-      'This workspace inviteHash is invalid or the workspace is not active',
+      'This workspace inviteHash is invalid',
+      ForbiddenException,
+    );
+
+    assert(
+      !this.environmentService.get('IS_BILLING_ENABLED') ||
+        workspace.subscriptionStatus === 'active',
+      'Workspace subscription status needs to be active',
       ForbiddenException,
     );
 

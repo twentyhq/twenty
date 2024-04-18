@@ -2,6 +2,7 @@ import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/fi
 import { webhookStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
@@ -14,6 +15,7 @@ import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-
   description: 'A webhook',
   icon: 'IconRobot',
 })
+@IsNotAuditLogged()
 @IsSystem()
 export class WebhookObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
