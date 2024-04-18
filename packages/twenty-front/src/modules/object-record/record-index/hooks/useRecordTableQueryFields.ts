@@ -12,6 +12,7 @@ export const useRecordTableQueryFields = () => {
     ...Object.fromEntries(
       visibleTableColumns.map((column) => [column.metadata.fieldName, true]),
     ),
+    position: true,
   };
 
   return queryFields;
