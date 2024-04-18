@@ -54,6 +54,7 @@ import { GmailFullSyncModule } from 'src/modules/messaging/services/gmail-full-s
 import { GmailPartialSyncModule } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync.module';
 import { MessageParticipantModule } from 'src/modules/messaging/services/message-participant/message-participant.module';
 import { ThreadCleanerModule } from 'src/modules/messaging/services/thread-cleaner/thread-cleaner.module';
+import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 
 @Module({
@@ -83,6 +84,7 @@ import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-obj
       ConnectedAccountObjectMetadata,
       MessageChannelObjectMetadata,
       EventObjectMetadata,
+      MessageChannelMessageAssociationObjectMetadata,
     ]),
     GmailFullSyncModule,
     GmailFetchMessageContentFromCacheModule,
