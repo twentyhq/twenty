@@ -25,4 +25,3 @@ dist
 storybook-static
 *.tsbuildinfo
 .eslintcache
-**/**/vite.config.ts.timestamp-*

@@ -11,6 +11,6 @@
     }
   },
   "scripts": {
-    "build": "npx nx exec -- vite build"
+    "build": "npx vite build"
   }
 }
