@@ -2,7 +2,7 @@ import toCamelCase from 'lodash.camelcase';
 import toSnakeCase from 'lodash.snakecase';
 
 import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined.ts';
+import { isDefined } from '~/utils/isDefined';
 
 import { FieldMetadataOption } from '../types/FieldMetadataOption';
 
