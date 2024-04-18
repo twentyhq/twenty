@@ -68,7 +68,7 @@ export class DeleteCalendarEventsFromBlocklistItemJob
 
     const calendarChannelIds = calendarChannels.map(({ id }) => id);
 
-    await this.calendarChannelEventAssociationRepository.deleteByMessageParticipantHandleAndMessageChannelIds(
+    await this.calendarChannelEventAssociationRepository.deleteByCalendarEventParticipantHandleAndCalendarChannelIds(
       handle,
       calendarChannelIds,
       workspaceId,
