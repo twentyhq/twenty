@@ -9,6 +9,7 @@ import {
   useIcons,
 } from 'twenty-ui';
 
+import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { useLinkedObject } from '@/activities/timeline/hooks/useLinkedObject';
 import { EventUpdateProperty } from '@/activities/timelineActivities/components/EventUpdateProperty';
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
@@ -64,6 +65,11 @@ const StyledItemTitle = styled.span`
   flex-flow: row nowrap;
   overflow: hidden;
   white-space: nowrap;
+`;
+
+const StyledLinkedObject = styled.span`
+  cursor: pointer;
+  text-decoration: underline;
 `;
 
 const StyledItemTitleDate = styled.div`
@@ -155,15 +161,15 @@ export const EventRow = ({
   const linkedObjectMetadata = useLinkedObject(event.linkedObjectMetadataId);
 
   const linkedObjectLabel = event.name.includes('note')
-    ? 'Note'
+    ? 'note'
     : event.name.includes('task')
-      ? 'Task'
+      ? 'task'
       : linkedObjectMetadata?.labelSingular;
 
   const ActivityIcon = event.linkedObjectMetadataId
-    ? event.name.includes('Note')
+    ? event.name.includes('note')
       ? IconNotes
-      : event.name.includes('Task')
+      : event.name.includes('task')
         ? IconCheckbox
         : getIcon(linkedObjectMetadata?.icon)
     : isEventType('created')
@@ -219,6 +225,8 @@ export const EventRow = ({
   }
   const details = JSON.stringify(diff);
 
+  const openActivityRightDrawer = useOpenActivityRightDrawer();
+
   return (
     <>
       <StyledTimelineItemContainer>
@@ -230,13 +238,16 @@ export const EventRow = ({
             <StyledSummary>
               <StyledItemAuthorText>{author}</StyledItemAuthorText>
               <StyledActionName>{action}</StyledActionName>
-              <StyledItemTitle>
-                {isUndefinedOrNull(linkedObjectMetadata) ? (
-                  description
-                ) : (
-                  <>: {event.linkedRecordCachedName}</>
-                )}
-              </StyledItemTitle>
+              <StyledItemTitle>{description}</StyledItemTitle>
+              {isUndefinedOrNull(linkedObjectMetadata) ? (
+                <></>
+              ) : (
+                <StyledLinkedObject
+                  onClick={() => openActivityRightDrawer(event.linkedRecordId)}
+                >
+                  {event.linkedRecordCachedName}
+                </StyledLinkedObject>
+              )}
             </StyledSummary>
             {details}
           </details>
