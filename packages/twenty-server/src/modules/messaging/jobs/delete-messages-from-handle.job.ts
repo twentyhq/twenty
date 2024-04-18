@@ -7,6 +7,7 @@ import { BlocklistRepository } from 'src/modules/connected-account/repositories/
 import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
+import { ThreadCleanerService } from 'src/modules/messaging/services/thread-cleaner/thread-cleaner.service';
 import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 
@@ -30,6 +31,7 @@ export class DeleteMessagesFromHandleJob
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
     @InjectObjectMetadataRepository(BlocklistObjectMetadata)
     private readonly blocklistRepository: BlocklistRepository,
+    private readonly threadCleanerService: ThreadCleanerService,
   ) {}
 
   async handle(data: DeleteMessagesFromHandleJobData): Promise<void> {
@@ -68,8 +70,10 @@ export class DeleteMessagesFromHandleJob
       workspaceId,
     );
 
+    await this.threadCleanerService.cleanWorkspaceThreads(workspaceId);
+
     this.logger.log(
-      `Deleting messages from handle ${handle} in workspace ${workspaceId} for workspace member ${workspaceMemberId} done`,
+      `Deleted messages from handle ${handle} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
     );
   }
 }
