@@ -5,11 +5,13 @@ import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/d
 import { UpdateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { formatString } from 'src/engine/metadata-modules/utils/format-string.util';
 
-export const formatObjectMetadataInput = (
-  objectMetadataInput: CreateObjectInput | UpdateObjectInput,
-) => {
+export const formatObjectMetadataInput = <
+  T extends UpdateObjectInput | CreateObjectInput,
+>(
+  objectMetadataInput: T,
+): T => {
   try {
-    objectMetadataInput = {
+    return (objectMetadataInput = {
       ...objectMetadataInput,
       nameSingular: objectMetadataInput.nameSingular
         ? formatString(objectMetadataInput.nameSingular)
@@ -17,7 +19,7 @@ export const formatObjectMetadataInput = (
       namePlural: objectMetadataInput.namePlural
         ? formatString(objectMetadataInput.namePlural)
         : objectMetadataInput.namePlural,
-    };
+    });
   } catch (error) {
     if (error instanceof ChararactersNotSupportedException) {
       console.error(error.message);

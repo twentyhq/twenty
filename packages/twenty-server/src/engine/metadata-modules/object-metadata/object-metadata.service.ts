@@ -238,7 +238,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectMetadataInput.workspaceId,
       );
 
-    formatObjectMetadataInput(objectMetadataInput);
+    objectMetadataInput = formatObjectMetadataInput(objectMetadataInput);
 
     if (
       objectMetadataInput.nameSingular.toLowerCase() ===

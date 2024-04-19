@@ -101,7 +101,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectInput>
       }
     }
 
-    formatObjectMetadataInput(instance.update);
+    instance.update = formatObjectMetadataInput<T>(instance.update);
 
     this.checkIfFieldIsEditable(instance.update, objectMetadata);
 
