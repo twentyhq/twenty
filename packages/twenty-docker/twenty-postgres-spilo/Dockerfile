@@ -60,6 +60,7 @@ RUN curl -L "https://github.com/supabase/wrappers/releases/download/v${WRAPPERS_
 
 COPY --from=build-libssl /usr/local/lib/libssl* /usr/local/lib/libcrypto*  /usr/lib/
 COPY --from=build-libssl /usr/local/lib/engines-1.1 /usr/lib/engines-1.1
+#RUN curl http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb -o libssl.deb && dpkg -i libssl.deb && rm libssl.deb
 
 # Copy pg_graphql
 COPY ./packages/twenty-postgres/linux/${TARGETARCH}/${POSTGRES_VERSION}/pg_graphql/${PG_GRAPHQL_VERSION}/pg_graphql--${PG_GRAPHQL_VERSION}.sql \
@@ -72,5 +73,5 @@ COPY ./packages/twenty-postgres/linux/${TARGETARCH}/${POSTGRES_VERSION}/pg_graph
 # Copy mysql_fdw
 COPY --from=build-mysql_fdw /mysql_fdw/mysql_fdw.so \
     /usr/lib/postgresql/${POSTGRES_VERSION}/lib/mysql_fdw.so
-COPY --from=build-mysql_fdw /mysql_fdw/mysql_fdw.control \
-    /usr/share/postgresql/${POSTGRES_VERSION}/extension/mysql_fdw.control
+COPY --from=build-mysql_fdw /mysql_fdw/mysql_fdw*.sql /mysql_fdw/mysql_fdw.control /mysql_fdw/mysql_fdw_pushdown.config \
+    /usr/share/postgresql/${POSTGRES_VERSION}/extension/
