@@ -1,8 +1,10 @@
+import { useContext, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
+import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
 import { GRAY_SCALE } from '@/ui/theme/constants/GrayScale';
 
 const StyledText = styled.div`
@@ -16,17 +18,20 @@ const StyledText = styled.div`
 `;
 
 export const RecordBoardColumnFetchMoreLoader = () => {
-  const { isFetchingRecordState, onFetchMoreVisibilityChangeState } =
+  const { columnDefinition } = useContext(RecordBoardColumnContext);
+  const { isFetchingRecordState, shouldFetchMoreInColumnFamilyState } =
     useRecordBoardStates();
   const isFetchingRecord = useRecoilValue(isFetchingRecordState);
 
-  const onFetchMoreVisibilityChange = useRecoilValue(
-    onFetchMoreVisibilityChangeState,
+  const shouldFetchMore = useSetRecoilState(
+    shouldFetchMoreInColumnFamilyState(columnDefinition.id),
   );
 
-  const { ref } = useInView({
-    onChange: onFetchMoreVisibilityChange,
-  });
+  const { ref, inView } = useInView();
+
+  useEffect(() => {
+    shouldFetchMore(inView);
+  }, [shouldFetchMore, inView]);
 
   return (
     <div ref={ref}>
