@@ -170,7 +170,7 @@ export class GoogleCalendarSyncService {
       blocklistedEmails,
     );
 
-    const eventExternalIds = events.map((event) => event.id as string);
+    const eventExternalIds = filteredEvents.map((event) => event.id as string);
 
     startTime = Date.now();
 
@@ -206,7 +206,7 @@ export class GoogleCalendarSyncService {
         workspaceId,
       );
 
-    const formattedEvents = events
+    const formattedEvents = filteredEvents
       .filter((event) => event.status !== 'cancelled')
       .map((event) =>
         formatGoogleCalendarEvent(event, iCalUIDCalendarEventIdMap),
@@ -220,7 +220,7 @@ export class GoogleCalendarSyncService {
       existingEventExternalIds.includes(event.externalId),
     );
 
-    const cancelledEventExternalIds = events
+    const cancelledEventExternalIds = filteredEvents
       .filter((event) => event.status === 'cancelled')
       .map((event) => event.id as string);
 
@@ -242,7 +242,7 @@ export class GoogleCalendarSyncService {
 
     let newCalendarEventParticipants: CalendarEventParticipant[] = [];
 
-    if (events.length > 0) {
+    if (filteredEvents.length > 0) {
       const dataSourceMetadata =
         await this.workspaceDataSourceService.connectToWorkspaceDataSource(
           workspaceId,
