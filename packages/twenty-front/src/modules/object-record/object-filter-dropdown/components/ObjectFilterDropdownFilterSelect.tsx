@@ -64,41 +64,41 @@ export const ObjectFilterDropdownFilterSelect = () => {
 
   return (
     <>
-    <StyledInput
-      value={searchText}
-      placeholder="Search fields"
-      onChange={handleSearchChange}
-    />
-    <DropdownMenuItemsContainer>
-      {[...availableFilterDefinitions]
-        .sort((a, b) => a.label.localeCompare(b.label))
-        .filter((item) =>
-          item.label
-            .toLocaleLowerCase()
-            .includes(searchText.toLocaleLowerCase()),
-        )
-        .map((availableFilterDefinition, index) => (
-          <MenuItem
-            key={`select-filter-${index}`}
-            testId={`select-filter-${index}`}
-            onClick={() => {
-              setFilterDefinitionUsedInDropdown(availableFilterDefinition);
+      <StyledInput
+        value={searchText}
+        placeholder="Search fields"
+        onChange={handleSearchChange}
+      />
+      <DropdownMenuItemsContainer>
+        {[...availableFilterDefinitions]
+          .sort((a, b) => a.label.localeCompare(b.label))
+          .filter((item) =>
+            item.label
+              .toLocaleLowerCase()
+              .includes(searchText.toLocaleLowerCase()),
+          )
+          .map((availableFilterDefinition, index) => (
+            <MenuItem
+              key={`select-filter-${index}`}
+              testId={`select-filter-${index}`}
+              onClick={() => {
+                setFilterDefinitionUsedInDropdown(availableFilterDefinition);
 
-              if (availableFilterDefinition.type === 'RELATION') {
-                setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
-              }
+                if (availableFilterDefinition.type === 'RELATION') {
+                  setHotkeyScope(RelationPickerHotkeyScope.RelationPicker);
+                }
 
-              setSelectedOperandInDropdown(
-                getOperandsForFilterType(availableFilterDefinition.type)?.[0],
-              );
+                setSelectedOperandInDropdown(
+                  getOperandsForFilterType(availableFilterDefinition.type)?.[0],
+                );
 
-              setObjectFilterDropdownSearchInput('');
-            }}
-            LeftIcon={getIcon(availableFilterDefinition.iconName)}
-            text={availableFilterDefinition.label}
-          />
-        ))}
-    </DropdownMenuItemsContainer>
+                setObjectFilterDropdownSearchInput('');
+              }}
+              LeftIcon={getIcon(availableFilterDefinition.iconName)}
+              text={availableFilterDefinition.label}
+            />
+          ))}
+      </DropdownMenuItemsContainer>
     </>
   );
 };
