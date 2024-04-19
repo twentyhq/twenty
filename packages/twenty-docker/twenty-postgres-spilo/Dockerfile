@@ -45,8 +45,6 @@ ARG PG_GRAPHQL_VERSION
 ARG WRAPPERS_VERSION
 ARG TARGETARCH
 
-ENV PATH="${PATH}:/usr/local/lib/"
-
 # Install precompiled supabase wrappers extensions
 RUN set -eux; \
     ARCH="$(dpkg --print-architecture)"; \
@@ -60,7 +58,7 @@ RUN curl -L "https://github.com/supabase/wrappers/releases/download/v${WRAPPERS_
     dpkg --install wrappers.deb && \
     rm wrappers.deb
 
-COPY --from=build-libssl /usr/local/lib/libssl* /usr/local/lib/
+COPY --from=build-libssl /usr/local/lib/libssl* /usr/local/bin/
 
 # Copy pg_graphql
 COPY ./packages/twenty-postgres/linux/${TARGETARCH}/${POSTGRES_VERSION}/pg_graphql/${PG_GRAPHQL_VERSION}/pg_graphql--${PG_GRAPHQL_VERSION}.sql \
