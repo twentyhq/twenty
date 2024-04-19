@@ -10,7 +10,7 @@ describe('transformMetadataForComparison', () => {
 
     expect(result).toEqual({
       name: 'Test',
-      properties: '{"a":1,"nested":{"b":2}}',
+      details: '{"a":1,"nested":{"b":2}}',
     });
   });
 
