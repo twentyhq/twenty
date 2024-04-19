@@ -144,8 +144,8 @@ export class SignInUpService {
 
     assert(
       !this.environmentService.get('IS_BILLING_ENABLED') ||
-        workspace.subscriptionStatus === 'active',
-      'Workspace subscription status needs to be active',
+        workspace.subscriptionStatus !== 'incomplete',
+      'Workspace subscription status is incomplete',
       ForbiddenException,
     );
 
