@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 
-import { useAuth } from '@/auth/hooks/useAuth.ts';
+import { useAuth } from '@/auth/hooks/useAuth';
 
 export const useSignInWithGoogle = () => {
   const workspaceInviteHash = useParams().workspaceInviteHash;

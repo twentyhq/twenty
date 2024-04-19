@@ -40,11 +40,13 @@ import { CalendarCreateCompanyAndContactAfterSyncJob } from 'src/modules/calenda
 import { GoogleCalendarSyncJob } from 'src/modules/calendar/jobs/google-calendar-sync.job';
 import { CalendarEventCleanerModule } from 'src/modules/calendar/services/calendar-event-cleaner/calendar-event-cleaner.module';
 import { CalendarEventParticipantModule } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.module';
-import { GoogleCalendarSyncModule } from 'src/modules/calendar/services/google-calendar-sync.module';
+import { GoogleCalendarSyncModule } from 'src/modules/calendar/services/google-calendar-sync/google-calendar-sync.module';
+import { WorkspaceGoogleCalendarSyncModule } from 'src/modules/calendar/services/workspace-google-calendar-sync/workspace-google-calendar-sync.module';
 import { AutoCompaniesAndContactsCreationModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/auto-companies-and-contacts-creation.module';
 import { GmailFetchMessagesFromCacheCronJob } from 'src/modules/messaging/crons/jobs/gmail-fetch-messages-from-cache.cron.job';
 import { GmailPartialSyncCronJob } from 'src/modules/messaging/crons/jobs/gmail-partial-sync.cron.job';
 import { DeleteConnectedAccountAssociatedMessagingDataJob } from 'src/modules/messaging/jobs/delete-connected-account-associated-messaging-data.job';
+import { DeleteMessagesFromHandleJob } from 'src/modules/messaging/jobs/delete-messages-from-handle.job';
 import { GmailFullSyncJob } from 'src/modules/messaging/jobs/gmail-full-sync.job';
 import { GmailPartialSyncJob } from 'src/modules/messaging/jobs/gmail-partial-sync.job';
 import { MessagingCreateCompanyAndContactAfterSyncJob } from 'src/modules/messaging/jobs/messaging-create-company-and-contact-after-sync.job';
@@ -55,6 +57,7 @@ import { GmailFullSyncModule } from 'src/modules/messaging/services/gmail-full-s
 import { GmailPartialSyncModule } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync.module';
 import { ThreadCleanerModule } from 'src/modules/messaging/services/thread-cleaner/thread-cleaner.module';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
+import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
 
 @Module({
   imports: [
@@ -65,6 +68,7 @@ import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.m
     EnvironmentModule,
     HttpModule,
     GoogleCalendarSyncModule,
+    WorkspaceGoogleCalendarSyncModule,
     ObjectMetadataModule,
     StripeModule,
     ThreadCleanerModule,
@@ -82,6 +86,7 @@ import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.m
       ConnectedAccountObjectMetadata,
       MessageChannelObjectMetadata,
       AuditLogObjectMetadata,
+      MessageChannelMessageAssociationObjectMetadata,
     ]),
     GmailFullSyncModule,
     GmailFetchMessageContentFromCacheModule,
@@ -176,6 +181,10 @@ import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.m
     {
       provide: GoogleCalendarSyncCronJob.name,
       useClass: GoogleCalendarSyncCronJob,
+    },
+    {
+      provide: DeleteMessagesFromHandleJob.name,
+      useClass: DeleteMessagesFromHandleJob,
     },
   ],
 })

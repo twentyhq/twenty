@@ -74,13 +74,11 @@ jobs:
           restore-keys: root-node_modules-
       - name: Install Playwright
         run: cd packages/twenty-front && npx playwright install
-      - name: Build Storybook
-        run: yarn nx storybook:pages:build twenty-front --quiet
       - name: Run storybook tests
         run: |
-          cd packages/twenty-front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
-            "npx http-server storybook-static --silent --port 6006" \
-            "yarn storybook:pages:coverage"
+          npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
+            "STORYBOOK_SCOPE=pages npx nx run twenty-front:storybook:static" \
+            "npx wait-on tcp:6006 && STORYBOOK_SCOPE=pages npx nx run twenty-front:storybook:test"
   front-modules-sb-test:
     needs: front-yarn-install
     runs-on: ci-4-cores
@@ -114,13 +112,11 @@ jobs:
           restore-keys: root-node_modules-
       - name: Install Playwright
         run: cd packages/twenty-front && npx playwright install
-      - name: Build Storybook
-        run: yarn nx storybook:modules:build twenty-front --quiet
       - name: Run storybook tests
         run: |
-          cd packages/twenty-front && npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
-            "npx http-server storybook-static --silent --port 6006" \
-            "yarn storybook:modules:coverage"
+          npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
+            "STORYBOOK_SCOPE=modules npx nx run twenty-front:storybook:static" \
+            "npx wait-on tcp:6006 && STORYBOOK_SCOPE=modules npx nx run twenty-front:storybook:test"
   front-lint-tsc:
     needs: front-yarn-install
     runs-on: ubuntu-latest
@@ -149,13 +145,13 @@ jobs:
           key: root-node_modules-${{hashFiles('yarn.lock')}}
           restore-keys: root-node_modules-
       - name: UI / Run linter
-        run: yarn nx lint twenty-ui
+        run: npx nx lint twenty-ui
       - name: UI / Run Typescript Check
-        run: yarn nx typecheck twenty-ui
+        run: npx nx run twenty-ui:typecheck:ci
       - name: Front / Run linter
-        run: yarn nx lint:ci twenty-front
+        run: npx nx run twenty-front:lint:ci
       - name: Front / Run Typescript Check
-        run: yarn nx tsc:ci twenty-front
+        run: npx nx run twenty-front:typecheck:ci
   front-jest:
     needs: front-yarn-install
     runs-on: ubuntu-latest
@@ -184,4 +180,4 @@ jobs:
           key: root-node_modules-${{hashFiles('yarn.lock')}}
           restore-keys: root-node_modules-
       - name: Front / Run jest
-        run: yarn nx coverage twenty-front
+        run: npx nx test twenty-front --configuration=ci

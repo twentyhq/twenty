@@ -1,27 +1,24 @@
+import { useGetSyncStatusOptions } from '@/settings/accounts/hooks//useGetSyncStatusOptions';
 import { Status } from '@/ui/display/status/components/Status';
 
 export type SettingsAccountsSynchronizationStatusProps = {
-  syncStatus: 'synced' | 'failed' | 'notSynced';
+  syncStatus: string;
 };
 
 export const SettingsAccountsSynchronizationStatus = ({
   syncStatus,
-}: SettingsAccountsSynchronizationStatusProps) => (
-  <Status
-    color={
-      syncStatus === 'synced'
-        ? 'green'
-        : syncStatus === 'failed'
-          ? 'red'
-          : 'gray'
-    }
-    text={
-      syncStatus === 'synced'
-        ? 'Synced'
-        : syncStatus === 'failed'
-          ? 'Sync failed'
-          : 'Not synced'
-    }
-    weight="medium"
-  />
-);
+}: SettingsAccountsSynchronizationStatusProps) => {
+  const syncStatusOptions = useGetSyncStatusOptions();
+
+  const syncStatusOption = syncStatusOptions?.find(
+    (option) => option.value === syncStatus,
+  );
+
+  return (
+    <Status
+      color={syncStatusOption?.color ?? 'gray'}
+      text={syncStatusOption?.label ?? 'Not synced'}
+      weight="medium"
+    />
+  );
+};

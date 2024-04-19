@@ -1,13 +1,10 @@
-import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
 import { mockedTimelineActivities } from '~/testing/mock-data/timeline-activities';
 
 import { groupEventsByMonth } from '../groupEventsByMonth';
 
 describe('groupEventsByMonth', () => {
   it('should group activities by month', () => {
-    const grouped = groupEventsByMonth(
-      mockedTimelineActivities as unknown as TimelineActivity[],
-    );
+    const grouped = groupEventsByMonth(mockedTimelineActivities);
 
     expect(grouped).toHaveLength(2);
     expect(grouped[0].items).toHaveLength(1);
