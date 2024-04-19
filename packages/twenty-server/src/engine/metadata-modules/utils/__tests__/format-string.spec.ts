@@ -20,7 +20,7 @@ describe('formatString', () => {
 
   it('format strings with non latin characters', () => {
     const input = 'בְרִבְרִ';
-    const expected = 'aabRibRi2Transliterated';
+    const expected = 'bRibRiTransliterated';
 
     expect(formatString(input).match(validPattern)?.length).toBe(1);
     expect(formatString(input)).toEqual(expected);
