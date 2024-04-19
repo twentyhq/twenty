@@ -37,16 +37,19 @@ jobs:
       - name: Pull changes
         run: git pull --rebase
 
-      - uses: stefanzweifel/git-auto-commit-action@v4
-        with:
-          branch: ${{ github.event.inputs.ref }}
-          commit_message: "chore: release v${{ steps.sanitize.outputs.version }}"
-          tagging_message: v${{ steps.sanitize.outputs.version }}
+      - name: Debug
+        run: git status
 
-          commit_user_name: Github Action Deploy
-          commit_user_email: github-action-deploy@twenty.com
-          commit_author: Github Action Deploy <github-action-deploy@twenty.com>
+      # - uses: stefanzweifel/git-auto-commit-action@v4
+      #   with:
+      #     branch: ${{ github.event.inputs.ref }}
+      #     commit_message: "chore: release v${{ steps.sanitize.outputs.version }}"
+      #     tagging_message: v${{ steps.sanitize.outputs.version }}
 
-      - uses: release-drafter/release-drafter@v5
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #     commit_user_name: Github Action Deploy
+      #     commit_user_email: github-action-deploy@twenty.com
+      #     commit_author: Github Action Deploy <github-action-deploy@twenty.com>
+
+      # - uses: release-drafter/release-drafter@v5
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
