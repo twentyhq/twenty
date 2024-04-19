@@ -39,6 +39,8 @@ import {
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { formatString } from 'src/engine/metadata-modules/utils/format-string.util';
+import { ChararactersNotSupportedException } from 'src/engine/metadata-modules/errors/CharactersNotSupportedException';
 
 import {
   FieldMetadataEntity,
@@ -113,6 +115,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       if (fieldMetadataInput.type === FieldMetadataType.RATING) {
         fieldMetadataInput.options = generateRatingOptions();
       }
+
+      fieldMetadataInput =
+        this.formatFieldMetadataInput<CreateFieldInput>(fieldMetadataInput);
 
       const fieldAlreadyExists = await fieldMetadataRepository.findOne({
         where: {
@@ -292,6 +297,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           }
         }
       }
+
+      fieldMetadataInput =
+        this.formatFieldMetadataInput<UpdateFieldInput>(fieldMetadataInput);
 
       const updatableFieldInput =
         existingFieldMetadata.isCustom === false
@@ -532,5 +540,31 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         direction,
       };
     }
+  }
+
+  private formatFieldMetadataInput<
+    T extends UpdateFieldInput | CreateFieldInput,
+  >(fieldMetadataInput: T): T {
+    if (fieldMetadataInput.name) {
+      try {
+        fieldMetadataInput = {
+          ...fieldMetadataInput,
+          name: formatString(fieldMetadataInput.name),
+        };
+
+        return fieldMetadataInput;
+      } catch (error) {
+        if (error instanceof ChararactersNotSupportedException) {
+          console.error(error.message);
+          throw new BadRequestException(
+            `Characters used in name "${fieldMetadataInput.name}" are not supported`,
+          );
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    return fieldMetadataInput;
   }
 }
