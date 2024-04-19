@@ -5,6 +5,7 @@ import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Toggle } from '@/ui/input/components/Toggle';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledContainer = styled.div<{ isToggleOn: boolean }>`
   width: 400px;
@@ -71,11 +72,11 @@ export const ApiKeyForm = () => {
     const getState = async () => {
       const localStorage = await chrome.storage.local.get();
 
-      if (localStorage.apiKey) {
+      if (isDefined(localStorage.apiKey)) {
         setApiKey(localStorage.apiKey);
       }
 
-      if (localStorage.serverBaseUrl) {
+      if (isDefined(localStorage.serverBaseUrl)) {
         setShowSection(true);
         setRoute(localStorage.serverBaseUrl);
       }

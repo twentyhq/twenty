@@ -1,8 +1,9 @@
 import styled from '@emotion/styled';
 import { isNonEmptyArray } from '@sniptt/guards';
 
-import { EventList } from '@/activities/events/components/EventList';
-import { useEvents } from '@/activities/events/hooks/useEvents';
+import { TimelineCreateButtonGroup } from '@/activities/timeline/components/TimelineCreateButtonGroup';
+import { EventList } from '@/activities/timelineActivities/components/EventList';
+import { useTimelineActivities } from '@/activities/timelineActivities/hooks/useTimelineActivities';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
@@ -25,25 +26,26 @@ const StyledMainContainer = styled.div`
   justify-content: center;
 `;
 
-export const Events = ({
+export const TimelineActivities = ({
   targetableObject,
 }: {
   targetableObject: ActivityTargetableObject;
 }) => {
-  const { events } = useEvents(targetableObject);
+  const { timelineActivities } = useTimelineActivities(targetableObject);
 
-  if (!isNonEmptyArray(events)) {
+  if (!isNonEmptyArray(timelineActivities)) {
     return (
       <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="emptyTimeline" />
         <AnimatedPlaceholderEmptyTextContainer>
           <AnimatedPlaceholderEmptyTitle>
-            No Events
+            Add your first Activity
           </AnimatedPlaceholderEmptyTitle>
           <AnimatedPlaceholderEmptySubTitle>
-            There are no events associated with this record.{' '}
+            There are no activities associated with this record.{' '}
           </AnimatedPlaceholderEmptySubTitle>
         </AnimatedPlaceholderEmptyTextContainer>
+        <TimelineCreateButtonGroup targetableObject={targetableObject} />
       </AnimatedPlaceholderEmptyContainer>
     );
   }
@@ -53,7 +55,7 @@ export const Events = ({
       <EventList
         targetableObject={targetableObject}
         title="All"
-        events={events ?? []}
+        events={timelineActivities ?? []}
       />
     </StyledMainContainer>
   );

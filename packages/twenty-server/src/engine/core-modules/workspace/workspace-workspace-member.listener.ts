@@ -21,7 +21,7 @@ export class WorkspaceWorkspaceMemberListener {
   async handleDeleteEvent(
     payload: ObjectRecordDeleteEvent<WorkspaceMemberObjectMetadata>,
   ) {
-    const userId = payload.details.before.userId;
+    const userId = payload.properties.before.userId;
 
     if (!userId) {
       return;

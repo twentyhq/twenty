@@ -21,7 +21,7 @@ import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/fa
 import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
-import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { TimelineActivityObjectMetadata } from 'src/modules/timeline/standard-objects/timeline-activity.object-metadata';
 
 @ObjectMetadata({
   standardId: standardObjectIds.company,
@@ -213,18 +213,18 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   attachments: Relation<AttachmentObjectMetadata[]>;
 
   @FieldMetadata({
-    standardId: companyStandardFieldIds.events,
+    standardId: companyStandardFieldIds.timelineActivities,
     type: FieldMetadataType.RELATION,
-    label: 'Events',
-    description: 'Events linked to the company',
+    label: 'Timeline Activities',
+    description: 'Timeline Activities linked to the company',
     icon: 'IconIconTimelineEvent',
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => EventObjectMetadata,
+    inverseSideTarget: () => TimelineActivityObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
   @IsSystem()
-  events: Relation<EventObjectMetadata[]>;
+  timelineActivities: Relation<TimelineActivityObjectMetadata[]>;
 }

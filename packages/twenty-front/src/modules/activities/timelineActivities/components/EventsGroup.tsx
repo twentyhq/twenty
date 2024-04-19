@@ -1,14 +1,14 @@
 import styled from '@emotion/styled';
 
-import { EventRow } from '@/activities/events/components/EventRow';
-import { EventGroup } from '@/activities/events/utils/groupEventsByMonth';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { EventRow } from '@/activities/timelineActivities/components/EventRow';
+import { EventGroup } from '@/activities/timelineActivities/utils/groupEventsByMonth';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 type EventsGroupProps = {
   group: EventGroup;
   month: string;
   year?: number;
-  targetableObject: ActivityTargetableObject;
+  mainObjectMetadataItem: ObjectMetadataItem | null;
 };
 
 const StyledActivityGroup = styled.div`
@@ -57,7 +57,7 @@ export const EventsGroup = ({
   group,
   month,
   year,
-  targetableObject,
+  mainObjectMetadataItem,
 }: EventsGroupProps) => {
   return (
     <StyledActivityGroup>
@@ -69,7 +69,7 @@ export const EventsGroup = ({
         <StyledActivityGroupBar />
         {group.items.map((event, index) => (
           <EventRow
-            targetableObject={targetableObject}
+            mainObjectMetadataItem={mainObjectMetadataItem}
             key={event.id}
             event={event}
             isLastEvent={index === group.items.length - 1}
