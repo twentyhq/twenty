@@ -30,7 +30,7 @@ export const HeaderDesktop = ({ numberOfStars }: Props) => {
           Docs <ExternalArrow />
         </ListItem>
         <ListItem href="https://github.com/twentyhq/twenty">
-          <GithubIcon color="rgb(71,71,71)" />{' '}
+          <GithubIcon color="rgb(71,71,71)" />
           {formatNumberOfStars(numberOfStars)}
           <ExternalArrow />
         </ListItem>
