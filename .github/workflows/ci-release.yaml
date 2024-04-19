@@ -29,7 +29,7 @@ jobs:
           for dir in twenty-docs twenty-emails twenty-front twenty-server twenty-ui twenty-website
           do
             cd $dir
-            npm version ${{ steps.sanitize.outputs.version }} --no-git-tag-version
+            yarn version ${{ steps.sanitize.outputs.version }}
             cd ..
           done
 
