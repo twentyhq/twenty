@@ -23,10 +23,10 @@ export class MessagingBlocklistListener {
   ) {}
 
   @OnEvent('blocklist.created')
-  handleCreatedEvent(
+  async handleCreatedEvent(
     payload: ObjectRecordCreateEvent<BlocklistObjectMetadata>,
   ) {
-    this.messageQueueService.add<DeleteMessagesFromHandleJobData>(
+    await this.messageQueueService.add<DeleteMessagesFromHandleJobData>(
       DeleteMessagesFromHandleJob.name,
       {
         workspaceId: payload.workspaceId,
@@ -36,10 +36,10 @@ export class MessagingBlocklistListener {
   }
 
   @OnEvent('blocklist.deleted')
-  handleDeletedEvent(
+  async handleDeletedEvent(
     payload: ObjectRecordDeleteEvent<BlocklistObjectMetadata>,
   ) {
-    this.messageQueueService.add<BlocklistReimportMessagesJobData>(
+    await this.messageQueueService.add<BlocklistReimportMessagesJobData>(
       BlocklistReimportMessagesJob.name,
       {
         workspaceId: payload.workspaceId,

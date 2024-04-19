@@ -47,6 +47,7 @@ import { NotFoundError } from 'src/engine/utils/graphql-errors.util';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters.factory';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
@@ -429,6 +430,12 @@ export class WorkspaceQueryRunnerService {
       workspaceId,
       objectMetadataItem,
     );
+
+    const deletedBlocklistItem = await this.handleDeleteBlocklistItem(
+      args.id,
+      workspaceId,
+      objectMetadataItem,
+    );
     // TODO END
 
     const result = await this.execute(query, workspaceId);
@@ -455,6 +462,7 @@ export class WorkspaceQueryRunnerService {
       details: {
         before: {
           ...(deletedWorkspaceMember ?? {}),
+          ...(deletedBlocklistItem ?? {}),
           ...this.removeNestedProperties(parsedResults?.[0]),
         },
       },
@@ -610,5 +618,37 @@ export class WorkspaceQueryRunnerService {
     );
 
     return workspaceMemberResult.edges?.[0]?.node;
+  }
+
+  async handleDeleteBlocklistItem(
+    id: string,
+    workspaceId: string,
+    objectMetadataItem: ObjectMetadataInterface,
+  ) {
+    if (objectMetadataItem.standardId !== standardObjectIds.blocklist) {
+      return;
+    }
+
+    const blocklistItemResult = await this.executeAndParse<IRecord>(
+      `
+      query {
+        blocklistCollection(filter: {id: {eq: "${id}"}}) {
+          edges {
+            node {
+              handle
+              workspaceMember {
+                id
+              }
+            }
+          }
+        }
+      }
+      `,
+      objectMetadataItem,
+      '',
+      workspaceId,
+    );
+
+    return blocklistItemResult.edges?.[0]?.node;
   }
 }
