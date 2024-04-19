@@ -142,7 +142,7 @@ export const auditLogStandardFieldIds = {
   properties: '20202020-5d36-470e-8fad-d56ea3ab2fd0',
   context: '20202020-b9d1-4058-9a75-7469cab5ca8c',
   objectName: '20202020-76ba-4c47-b7e5-96034005d00a',
-  objectId: '20202020-c578-4acf-bf94-eb53b035cea2',
+  recordId: '20202020-c578-4acf-bf94-eb53b035cea2',
   workspaceMember: '20202020-6e96-4300-b3f5-67a707147385',
 };
 
@@ -151,7 +151,7 @@ export const behavioralEventStandardFieldIds = {
   properties: '20202020-5d36-470e-8fad-d56ea3ab2fd0',
   context: '20202020-bd62-4b5b-8385-6caeed8f8078',
   objectName: '20202020-a744-406c-a2e1-9d83d74f4341',
-  objectId: '20202020-6d8b-4ca5-9869-f882cb335673',
+  recordId: '20202020-6d8b-4ca5-9869-f882cb335673',
 };
 
 export const timelineActivityStandardFieldIds = {

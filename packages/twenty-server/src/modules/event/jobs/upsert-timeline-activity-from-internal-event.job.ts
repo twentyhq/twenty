@@ -6,8 +6,7 @@ import { ObjectRecordBaseEvent } from 'src/engine/integrations/event-emitter/typ
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
-import { TimelineActivityRepository } from 'src/modules/event/repositiories/timeline-activity.repository';
-import { TimelineActivityObjectMetadata } from 'src/modules/event/standard-objects/timeline-activity.object-metadata';
+import { TimelineActivityService } from 'src/modules/event/services/timeline-activity.service';
 
 @Injectable()
 export class UpsertTimelineActivityFromInternalEvent
@@ -16,30 +15,28 @@ export class UpsertTimelineActivityFromInternalEvent
   constructor(
     @InjectObjectMetadataRepository(WorkspaceMemberObjectMetadata)
     private readonly workspaceMemberService: WorkspaceMemberRepository,
-    @InjectObjectMetadataRepository(TimelineActivityObjectMetadata)
-    private readonly timelineActivityRepository: TimelineActivityRepository,
+    private readonly timelineActivityService: TimelineActivityService,
   ) {}
 
   async handle(data: ObjectRecordBaseEvent): Promise<void> {
-    let workspaceMemberId: string | null = null;
-
     if (data.userId) {
       const workspaceMember = await this.workspaceMemberService.getByIdOrFail(
         data.userId,
         data.workspaceId,
       );
 
-      workspaceMemberId = workspaceMember.id;
+      data.workspaceMemberId = workspaceMember.id;
     }
 
-    if (data.details.diff) {
+    if (data.properties.diff) {
       // we remove "before" and "after" property for a cleaner/slimmer event payload
-      data.details = {
-        diff: data.details.diff,
+      data.properties = {
+        diff: data.properties.diff,
       };
     }
 
-    // If data.objectMetadata.nameSingular is not activityTarget, company
+    // Temporary
+    // We ignore every that is not a LinkedObject or a Business Object
     if (
       data.objectMetadata.isSystem &&
       data.objectMetadata.nameSingular !== 'activityTarget' &&
@@ -48,13 +45,6 @@ export class UpsertTimelineActivityFromInternalEvent
       return;
     }
 
-    await this.timelineActivityRepository.upsert(
-      data.name,
-      data.details,
-      workspaceMemberId,
-      data.objectMetadata,
-      data.recordId,
-      data.workspaceId,
-    );
+    await this.timelineActivityService.upsertEvent(data);
   }
 }

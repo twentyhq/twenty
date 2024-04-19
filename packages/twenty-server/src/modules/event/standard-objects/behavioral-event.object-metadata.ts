@@ -79,12 +79,12 @@ export class BehavioralEventObjectMetadata extends BaseObjectMetadata {
   objectName: string;
 
   @FieldMetadata({
-    standardId: behavioralEventStandardFieldIds.objectId,
+    standardId: behavioralEventStandardFieldIds.recordId,
     type: FieldMetadataType.UUID,
     label: 'Object id',
     description: 'Event name/type',
     icon: 'IconAbc',
   })
   @IsNullable()
-  objectId: string;
+  recordId: string;
 }

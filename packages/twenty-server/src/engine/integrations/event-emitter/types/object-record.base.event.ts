@@ -5,6 +5,7 @@ export class ObjectRecordBaseEvent {
   workspaceId: string;
   recordId: string;
   userId?: string;
+  workspaceMemberId?: string;
   objectMetadata: ObjectMetadataInterface;
-  details: any;
+  properties: any;
 }

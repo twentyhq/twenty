@@ -254,7 +254,7 @@ export class WorkspaceQueryRunnerService {
         userId,
         recordId: record.id,
         objectMetadata: objectMetadataItem,
-        details: {
+        properties: {
           after: record,
         },
       } satisfies ObjectRecordCreateEvent<any>);
@@ -312,7 +312,7 @@ export class WorkspaceQueryRunnerService {
       userId,
       recordId: (existingRecord as Record).id,
       objectMetadata: objectMetadataItem,
-      details: {
+      properties: {
         before: this.removeNestedProperties(existingRecord as Record),
         after: this.removeNestedProperties(parsedResults?.[0]),
       },
@@ -404,7 +404,7 @@ export class WorkspaceQueryRunnerService {
         userId,
         recordId: record.id,
         objectMetadata: objectMetadataItem,
-        details: {
+        properties: {
           before: [this.removeNestedProperties(record)],
         },
       } satisfies ObjectRecordDeleteEvent<any>);
@@ -456,7 +456,7 @@ export class WorkspaceQueryRunnerService {
       userId,
       recordId: args.id,
       objectMetadata: objectMetadataItem,
-      details: {
+      properties: {
         before: {
           ...(deletedWorkspaceMember ?? {}),
           ...this.removeNestedProperties(parsedResults?.[0]),

@@ -51,10 +51,10 @@ import { MessagingCreateCompanyAndContactAfterSyncJob } from 'src/modules/messag
 import { GmailFetchMessageContentFromCacheModule } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.module';
 import { CreateAuditLogFromInternalEvent } from 'src/modules/event/jobs/create-audit-log-from-internal-event';
 import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/event/jobs/upsert-timeline-activity-from-internal-event.job';
-import { TimelineActivityObjectMetadata } from 'src/modules/event/standard-objects/timeline-activity.object-metadata';
 import { GmailFullSyncModule } from 'src/modules/messaging/services/gmail-full-sync/gmail-full-sync.module';
 import { GmailPartialSyncModule } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync.module';
 import { ThreadCleanerModule } from 'src/modules/messaging/services/thread-cleaner/thread-cleaner.module';
+import { TimelineActivityModule } from 'src/modules/event/timeline-activity.module';
 
 @Module({
   imports: [
@@ -82,12 +82,12 @@ import { ThreadCleanerModule } from 'src/modules/messaging/services/thread-clean
       ConnectedAccountObjectMetadata,
       MessageChannelObjectMetadata,
       AuditLogObjectMetadata,
-      TimelineActivityObjectMetadata,
     ]),
     GmailFullSyncModule,
     GmailFetchMessageContentFromCacheModule,
     GmailPartialSyncModule,
     CalendarEventParticipantModule,
+    TimelineActivityModule,
   ],
   providers: [
     {

@@ -65,14 +65,14 @@ export class AuditLogObjectMetadata extends BaseObjectMetadata {
   objectName: string;
 
   @FieldMetadata({
-    standardId: auditLogStandardFieldIds.objectId,
+    standardId: auditLogStandardFieldIds.recordId,
     type: FieldMetadataType.UUID,
     label: 'Object id',
     description: 'Event name/type',
     icon: 'IconAbc',
   })
   @IsNullable()
-  objectId: string;
+  recordId: string;
 
   @FieldMetadata({
     standardId: auditLogStandardFieldIds.workspaceMember,

@@ -32,16 +32,16 @@ export class CreateAuditLogFromInternalEvent
       workspaceMemberId = workspaceMember.id;
     }
 
-    if (data.details.diff) {
+    if (data.properties.diff) {
       // we remove "before" and "after" property for a cleaner/slimmer event payload
-      data.details = {
-        diff: data.details.diff,
+      data.properties = {
+        diff: data.properties.diff,
       };
     }
 
     await this.auditLogService.insert(
       data.name,
-      data.details,
+      data.properties,
       workspaceMemberId,
       data.name.split('.')[0],
       data.recordId,

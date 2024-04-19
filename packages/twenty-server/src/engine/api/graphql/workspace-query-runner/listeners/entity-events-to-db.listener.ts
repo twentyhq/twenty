@@ -33,9 +33,9 @@ export class EntityEventsToDbListener {
 
   @OnEvent('*.updated')
   async handleUpdate(payload: ObjectRecordUpdateEvent<any>) {
-    payload.details.diff = objectRecordChangedValues(
-      payload.details.before,
-      payload.details.after,
+    payload.properties.diff = objectRecordChangedValues(
+      payload.properties.before,
+      payload.properties.after,
       payload.objectMetadata,
     );
 
