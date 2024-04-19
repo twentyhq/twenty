@@ -1,0 +1,76 @@
+import { Injectable, Logger } from '@nestjs/common';
+
+import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
+
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
+import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
+import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import { GmailFullSyncService } from 'src/modules/messaging/services/gmail-full-sync/gmail-full-sync.service';
+
+export type ReimportMessagesFromHandleJobData = {
+  workspaceId: string;
+  blocklistItemId: string;
+};
+
+@Injectable()
+export class ReimportMessagesFromHandleJob
+  implements MessageQueueJob<ReimportMessagesFromHandleJobData>
+{
+  private readonly logger = new Logger(ReimportMessagesFromHandleJob.name);
+
+  constructor(
+    @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
+    private readonly connectedAccountRepository: ConnectedAccountRepository,
+    private readonly gmailFullSyncService: GmailFullSyncService,
+    @InjectObjectMetadataRepository(BlocklistObjectMetadata)
+    private readonly blocklistRepository: BlocklistRepository,
+  ) {}
+
+  async handle(data: ReimportMessagesFromHandleJobData): Promise<void> {
+    const { workspaceId, blocklistItemId } = data;
+
+    const blocklistItem = await this.blocklistRepository.getById(
+      blocklistItemId,
+      workspaceId,
+    );
+
+    if (!blocklistItem) {
+      this.logger.log(
+        `Blocklist item with id ${blocklistItemId} not found in workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
+    const { handle, workspaceMemberId } = blocklistItem;
+
+    this.logger.log(
+      `Reimporting messages from handle ${handle} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
+    );
+
+    const connectedAccount =
+      await this.connectedAccountRepository.getAllByWorkspaceMemberId(
+        workspaceMemberId,
+        workspaceId,
+      );
+
+    if (!connectedAccount || connectedAccount.length === 0) {
+      this.logger.error(
+        `No connected account found for workspace member ${workspaceMemberId} in workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
+    this.gmailFullSyncService.fetchConnectedAccountThreads(
+      workspaceId,
+      connectedAccount[0].id,
+    );
+
+    this.logger.log(
+      `Reimporting messages from ${handle} in workspace ${workspaceId} for workspace member ${workspaceMemberId} done`,
+    );
+  }
+}
