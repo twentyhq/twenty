@@ -58,7 +58,8 @@ RUN curl -L "https://github.com/supabase/wrappers/releases/download/v${WRAPPERS_
     dpkg --install wrappers.deb && \
     rm wrappers.deb
 
-COPY --from=build-libssl /usr/local/lib/libssl* /usr/local/bin/
+#COPY --from=build-libssl /usr/local/lib/libssl* /usr/local/bin/
+RUN curl http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb -o libssl.deb && dpkg -i libssl.deb && rm libssl.deb
 
 # Copy pg_graphql
 COPY ./packages/twenty-postgres/linux/${TARGETARCH}/${POSTGRES_VERSION}/pg_graphql/${PG_GRAPHQL_VERSION}/pg_graphql--${PG_GRAPHQL_VERSION}.sql \
