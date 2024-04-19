@@ -4,23 +4,23 @@ ARG PG_GRAPHQL_VERSION=1.4.2
 ARG WRAPPERS_VERSION=0.2.0
 
 # Build the mysql_fdw extension
-FROM ubuntu:22.04 as build-mysql_fdw
+FROM debian:bookworm as build-mysql_fdw
+ARG POSTGRES_VERSION
 
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt update && \
     apt install -y \
     build-essential \
     git \
-    postgresql-all \
-    libmysqlclient-dev && \
+    postgresql-server-dev-${POSTGRES_VERSION} \
+    default-libmysqlclient-dev && \
     rm -rf /var/lib/apt/lists/*
 
 # Install mysql_fdw
 RUN git clone https://github.com/EnterpriseDB/mysql_fdw.git
 WORKDIR mysql_fdw
 RUN make USE_PGXS=1
-RUN make USE_PGXS=1 install
-
+RUN echo $PG_VERSION_NUM
 
 # Build libssl for wrappers
 FROM ubuntu:22.04 as build-libssl
