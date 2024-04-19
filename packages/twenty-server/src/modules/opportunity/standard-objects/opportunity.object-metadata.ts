@@ -19,7 +19,7 @@ import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-
 import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
-import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { TimelineActivityObjectMetadata } from 'src/modules/timeline/standard-objects/timeline-activity.object-metadata';
 import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
@@ -173,17 +173,17 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   attachments: Relation<AttachmentObjectMetadata[]>;
 
   @FieldMetadata({
-    standardId: opportunityStandardFieldIds.events,
+    standardId: opportunityStandardFieldIds.timelineActivities,
     type: FieldMetadataType.RELATION,
-    label: 'Events',
-    description: 'Events linked to the opportunity.',
+    label: 'Timeline Activities',
+    description: 'Timeline Activities linked to the opportunity.',
     icon: 'IconTimelineEvent',
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => EventObjectMetadata,
+    inverseSideTarget: () => TimelineActivityObjectMetadata,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
-  events: Relation<EventObjectMetadata[]>;
+  timelineActivities: Relation<TimelineActivityObjectMetadata[]>;
 }

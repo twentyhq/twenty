@@ -2,32 +2,25 @@ import { Injectable } from '@nestjs/common';
 
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
+import { ObjectRecordBaseEvent } from 'src/engine/integrations/event-emitter/types/object-record.base.event';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { EventRepository } from 'src/modules/event/repositiories/event.repository';
-import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { AuditLogRepository } from 'src/modules/timeline/repositiories/audit-log.repository';
+import { AuditLogObjectMetadata } from 'src/modules/timeline/standard-objects/audit-log.object-metadata';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
-export type SaveEventToDbJobData = {
-  workspaceId: string;
-  recordId: string;
-  userId: string | undefined;
-  objectName: string;
-  operation: string;
-  details: any;
-};
-
 @Injectable()
-export class SaveEventToDbJob implements MessageQueueJob<SaveEventToDbJobData> {
+export class CreateAuditLogFromInternalEvent
+  implements MessageQueueJob<ObjectRecordBaseEvent>
+{
   constructor(
     @InjectObjectMetadataRepository(WorkspaceMemberObjectMetadata)
     private readonly workspaceMemberService: WorkspaceMemberRepository,
-    @InjectObjectMetadataRepository(EventObjectMetadata)
-    private readonly eventService: EventRepository,
+    @InjectObjectMetadataRepository(AuditLogObjectMetadata)
+    private readonly auditLogRepository: AuditLogRepository,
   ) {}
 
-  // TODO: need to support objects others than "person", "company", "opportunity"
-  async handle(data: SaveEventToDbJobData): Promise<void> {
+  async handle(data: ObjectRecordBaseEvent): Promise<void> {
     let workspaceMemberId: string | null = null;
 
     if (data.userId) {
@@ -39,18 +32,19 @@ export class SaveEventToDbJob implements MessageQueueJob<SaveEventToDbJobData> {
       workspaceMemberId = workspaceMember.id;
     }
 
-    if (data.details.diff) {
+    if (data.properties.diff) {
       // we remove "before" and "after" property for a cleaner/slimmer event payload
-      data.details = {
-        diff: data.details.diff,
+      data.properties = {
+        diff: data.properties.diff,
       };
     }
 
-    await this.eventService.insert(
-      `${data.operation}.${data.objectName}`,
-      data.details,
+    await this.auditLogRepository.insert(
+      data.name,
+      data.properties,
       workspaceMemberId,
-      data.objectName,
+      data.name.split('.')[0],
+      data.objectMetadata.id,
       data.recordId,
       data.workspaceId,
     );
