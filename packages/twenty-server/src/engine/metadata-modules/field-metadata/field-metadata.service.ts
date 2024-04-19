@@ -547,12 +547,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   >(fieldMetadataInput: T): T {
     if (fieldMetadataInput.name) {
       try {
-        fieldMetadataInput = {
+        return (fieldMetadataInput = {
           ...fieldMetadataInput,
           name: formatString(fieldMetadataInput.name),
-        };
-
-        return fieldMetadataInput;
+        });
       } catch (error) {
         if (error instanceof ChararactersNotSupportedException) {
           console.error(error.message);
