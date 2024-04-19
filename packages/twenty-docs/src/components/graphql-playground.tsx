@@ -22,9 +22,6 @@ const GraphQlComponent = ({ token, baseUrl, path }) => {
   const explorer = explorerPlugin({
     showAttribution: true,
   });
-  if (!baseUrl || !token) {
-    return <></>;
-  }
 
   const fetcher = createGraphiQLFetcher({
     url: baseUrl + '/' + path,
@@ -47,6 +44,10 @@ const GraphQlComponent = ({ token, baseUrl, path }) => {
       styleElement2.remove();
     };
   }, []);
+
+  if (!baseUrl || !token) {
+    return <></>;
+  }
 
   return (
     <div className="fullHeightPlayground">

@@ -146,12 +146,11 @@ const TokenForm = ({
           <select
             className="select"
             onChange={(event) =>
-              window.open(
+              history.replace(
                 '/' +
                   location.pathname.split('/').at(-2) +
                   '/' +
                   event.target.value,
-                '_self',
               )
             }
             value={location.pathname.split('/').at(-1)}
