@@ -1,10 +1,13 @@
-import insertButtonForCompany from '~/contentScript/extractCompanyProfile';
-import insertButtonForPerson from '~/contentScript/extractPersonProfile';
+import { insertButtonForCompany } from '~/contentScript/extractCompanyProfile';
+import { insertButtonForPerson } from '~/contentScript/extractPersonProfile';
 
 // Inject buttons into the DOM when SPA is reloaded on the resource url.
 // e.g. reload the page when on https://www.linkedin.com/in/mabdullahabaid/
-await insertButtonForCompany();
-await insertButtonForPerson();
+// await insertButtonForCompany();
+(async () => {
+  await insertButtonForCompany();
+  await insertButtonForPerson();
+})();
 
 // The content script gets executed upon load, so the the content script is executed when a user visits https://www.linkedin.com/feed/.
 // However, there would never be another reload in a single page application unless triggered manually.

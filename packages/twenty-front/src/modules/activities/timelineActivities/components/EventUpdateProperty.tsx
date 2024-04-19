@@ -4,6 +4,7 @@ import { IconArrowRight } from 'twenty-ui';
 
 type EventUpdatePropertyProps = {
   propertyName: string;
+  before?: string;
   after?: string;
 };
 
@@ -23,9 +24,9 @@ export const EventUpdateProperty = ({
   const theme = useTheme();
   return (
     <StyledContainer>
-      <StyledPropertyName>{propertyName}</StyledPropertyName>
+      <StyledPropertyName>{propertyName ?? '(empty)'}</StyledPropertyName>
       <IconArrowRight size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
-      {after}
+      {JSON.stringify(after)}
     </StyledContainer>
   );
 };

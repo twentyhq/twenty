@@ -21,7 +21,6 @@ import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogMa
 import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
-import { ThemeType } from '@/ui/theme/constants/ThemeLight';
 import { UserProvider } from '@/users/components/UserProvider';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
 import { PageChangeEffect } from '~/effect-components/PageChangeEffect';
@@ -82,7 +81,3 @@ root.render(
     </AppErrorBoundary>
   </RecoilRoot>,
 );
-
-declare module '@emotion/react' {
-  export interface Theme extends ThemeType {}
-}

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 @Injectable()
-export class EventRepository {
+export class AuditLogRepository {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
@@ -13,17 +13,25 @@ export class EventRepository {
     properties: string,
     workspaceMemberId: string | null,
     objectName: string,
-    objectId: string,
+    objectMetadataId: string,
+    recordId: string,
     workspaceId: string,
   ): Promise<void> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}."event"
-      ("name", "properties", "workspaceMemberId", "${objectName}Id")
-      VALUES ($1, $2, $3, $4)`,
-      [name, properties, workspaceMemberId, objectId],
+      `INSERT INTO ${dataSourceSchema}."auditLog"
+      ("name", "properties", "workspaceMemberId", "objectName", "objectMetadataId", "recordId")
+      VALUES ($1, $2, $3, $4, $5, $6)`,
+      [
+        name,
+        properties,
+        workspaceMemberId,
+        objectName,
+        objectMetadataId,
+        recordId,
+      ],
       workspaceId,
     );
   }
