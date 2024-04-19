@@ -1,3 +1,5 @@
+import { Field, ID, ObjectType } from '@nestjs/graphql';
+
 import {
   Column,
   CreateDateColumn,
@@ -29,11 +31,14 @@ export enum RelationOnDeleteAction {
 }
 
 @Entity('relationMetadata')
+@ObjectType()
 export class RelationMetadataEntity implements RelationMetadataInterface {
   @PrimaryGeneratedColumn('uuid')
+  @Field(() => ID)
   id: string;
 
   @Column({ nullable: false })
+  @Field(() => RelationMetadataType)
   relationType: RelationMetadataType;
 
   @Column({
@@ -42,21 +47,27 @@ export class RelationMetadataEntity implements RelationMetadataInterface {
     type: 'enum',
     enum: RelationOnDeleteAction,
   })
+  @Field(() => String)
   onDeleteAction: RelationOnDeleteAction;
 
   @Column({ nullable: false, type: 'uuid' })
+  @Field(() => String)
   fromObjectMetadataId: string;
 
   @Column({ nullable: false, type: 'uuid' })
+  @Field(() => String)
   toObjectMetadataId: string;
 
   @Column({ nullable: false, type: 'uuid' })
+  @Field(() => String)
   fromFieldMetadataId: string;
 
   @Column({ nullable: false, type: 'uuid' })
+  @Field(() => String)
   toFieldMetadataId: string;
 
   @Column({ nullable: false, type: 'uuid' })
+  @Field(() => String)
   workspaceId: string;
 
   @ManyToOne(
@@ -91,9 +102,11 @@ export class RelationMetadataEntity implements RelationMetadataInterface {
   @JoinColumn()
   toFieldMetadata: Relation<FieldMetadataEntity>;
 
+  @Field(() => Date)
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 
+  @Field(() => Date)
   @UpdateDateColumn({ type: 'timestamptz' })
   updatedAt: Date;
 }
