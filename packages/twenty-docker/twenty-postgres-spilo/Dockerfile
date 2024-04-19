@@ -20,7 +20,6 @@ RUN apt update && \
 RUN git clone https://github.com/EnterpriseDB/mysql_fdw.git
 WORKDIR mysql_fdw
 RUN make USE_PGXS=1
-RUN echo $PG_VERSION_NUM
 
 # Build libssl for wrappers
 FROM ubuntu:22.04 as build-libssl
