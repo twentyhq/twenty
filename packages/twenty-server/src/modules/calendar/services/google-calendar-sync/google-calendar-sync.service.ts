@@ -12,7 +12,6 @@ import {
   FeatureFlagKeys,
 } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { GoogleCalendarClientProvider } from 'src/modules/calendar/services/providers/google-calendar/google-calendar.provider';
-import { googleCalendarSearchFilterExcludeEmails } from 'src/modules/calendar/utils/google-calendar-search-filter.util';
 import { CalendarChannelEventAssociationRepository } from 'src/modules/calendar/repositories/calendar-channel-event-association.repository';
 import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
@@ -29,6 +28,7 @@ import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-
 import { CalendarEventCleanerService } from 'src/modules/calendar/services/calendar-event-cleaner/calendar-event-cleaner.service';
 import { CalendarEventParticipantService } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.service';
 import { CalendarEventParticipant } from 'src/modules/calendar/types/calendar-event';
+import { filterOutBlocklistedEvents } from 'src/modules/calendar/utils/filter-out-blocklisted-events.util';
 
 @Injectable()
 export class GoogleCalendarSyncService {
@@ -131,7 +131,6 @@ export class GoogleCalendarSyncService {
         syncToken,
         pageToken: nextPageToken,
         showDeleted: true,
-        q: googleCalendarSearchFilterExcludeEmails(blocklistedEmails),
       });
 
       nextSyncToken = googleCalendarEvents.data.nextSyncToken;
@@ -165,6 +164,11 @@ export class GoogleCalendarSyncService {
 
       return;
     }
+
+    const filteredEvents = filterOutBlocklistedEvents(
+      events,
+      blocklistedEmails,
+    );
 
     const eventExternalIds = events.map((event) => event.id as string);
 
