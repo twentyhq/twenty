@@ -12,6 +12,7 @@ type RoundedLinkProps = {
 const StyledClickable = styled.div`
   overflow: hidden;
   white-space: nowrap;
+  max-width: 180px;
 
   a {
     color: inherit;
@@ -21,12 +22,16 @@ const StyledClickable = styled.div`
   }
 `;
 
+const StyledChip = styled(Chip)`
+  display: flex;
+`;
+
 export const RoundedLink = ({ children, href, onClick }: RoundedLinkProps) => (
   <div>
     {children !== '' ? (
       <StyledClickable>
         <ReactLink target="_blank" to={href} onClick={onClick}>
-          <Chip
+          <StyledChip
             label={`${children}`}
             variant={ChipVariant.Rounded}
             size={ChipSize.Small}
