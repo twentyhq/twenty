@@ -54,6 +54,8 @@ RUN set -eux; \
     *) echo "Unsupported arch: ${ARCH}"; exit 1;; \
     esac;
 
+RUN apt update && apt install default-libmysqlclient-dev -y && rm -rf /var/lib/apt/lists/*
+
 RUN curl -L "https://github.com/supabase/wrappers/releases/download/v${WRAPPERS_VERSION}/wrappers-v${WRAPPERS_VERSION}-pg${POSTGRES_VERSION}-${TARGETARCH}-linux-gnu.deb" -o wrappers.deb && \
     dpkg --install wrappers.deb && \
     rm wrappers.deb
