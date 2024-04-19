@@ -95,7 +95,11 @@ export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
     Icon: IconRelationManyToMany,
   },
   [FieldMetadataType.Email]: { label: 'Email', Icon: IconMail },
-  [FieldMetadataType.Phone]: { label: 'Phone', Icon: IconPhone },
+  [FieldMetadataType.Phone]: {
+    label: 'Phone',
+    Icon: IconPhone,
+    defaultValue: '+1234-567-890',
+  },
   [FieldMetadataType.Probability]: {
     label: 'Rating',
     Icon: IconTwentyStar,
