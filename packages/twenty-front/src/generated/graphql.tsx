@@ -562,6 +562,7 @@ export type RemoteServer = {
 
 export type RemoteTable = {
   __typename?: 'RemoteTable';
+  id?: Maybe<Scalars['UUID']>;
   name: Scalars['String'];
   schema: Scalars['String'];
   status: RemoteTableStatus;
@@ -730,7 +731,9 @@ export type User = {
   id: Scalars['UUID'];
   lastName: Scalars['String'];
   passwordHash?: Maybe<Scalars['String']>;
+  /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
   passwordResetToken?: Maybe<Scalars['String']>;
+  /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
   passwordResetTokenExpiresAt?: Maybe<Scalars['DateTime']>;
   supportUserHash?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];

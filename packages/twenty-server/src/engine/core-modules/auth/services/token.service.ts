@@ -12,10 +12,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import crypto from 'crypto';
 
-import { addMilliseconds, differenceInMilliseconds, isFuture } from 'date-fns';
+import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import { Request } from 'express';
 import { ExtractJwt } from 'passport-jwt';
 import { render } from '@react-email/render';
@@ -520,22 +520,23 @@ export class TokenService {
       InternalServerErrorException,
     );
 
-    if (
-      user.passwordResetToken &&
-      user.passwordResetTokenExpiresAt &&
-      isFuture(user.passwordResetTokenExpiresAt)
-    ) {
+    const existingToken = await this.appTokenRepository.findOne({
+      where: {
+        userId: user.id,
+        type: AppTokenType.PasswordResetToken,
+        expiresAt: MoreThan(new Date()),
+      },
+    });
+
+    if (existingToken) {
+      const timeToWait = ms(
+        differenceInMilliseconds(existingToken.expiresAt, new Date()),
+        { long: true },
+      );
+
       assert(
         false,
-        `Token has been already generated. Please wait for ${ms(
-          differenceInMilliseconds(
-            user.passwordResetTokenExpiresAt,
-            new Date(),
-          ),
-          {
-            long: true,
-          },
-        )} to generate again.`,
+        `Token has already been generated. Please wait for ${timeToWait} to generate again.`,
         BadRequestException,
       );
     }
@@ -548,9 +549,11 @@ export class TokenService {
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
-    await this.userRepository.update(user.id, {
-      passwordResetToken: hashedResetToken,
-      passwordResetTokenExpiresAt: expiresAt,
+    await this.appTokenRepository.save({
+      userId: user.id,
+      value: hashedResetToken,
+      expiresAt,
+      type: AppTokenType.PasswordResetToken,
     });
 
     return {
@@ -615,19 +618,21 @@ export class TokenService {
       .update(resetToken)
       .digest('hex');
 
+    const token = await this.appTokenRepository.findOne({
+      where: {
+        value: hashedResetToken,
+        type: AppTokenType.PasswordResetToken,
+        expiresAt: MoreThan(new Date()),
+      },
+    });
+
+    assert(token, 'Token is invalid', NotFoundException);
+
     const user = await this.userRepository.findOneBy({
-      passwordResetToken: hashedResetToken,
+      id: token.userId,
     });
 
     assert(user, 'Token is invalid', NotFoundException);
-
-    const tokenExpiresAt = user.passwordResetTokenExpiresAt;
-
-    assert(
-      tokenExpiresAt && isFuture(tokenExpiresAt),
-      'Token has expired. Please regenerate',
-      NotFoundException,
-    );
 
     return {
       id: user.id,
