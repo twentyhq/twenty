@@ -1,14 +1,14 @@
 import React, { ReactNode } from 'react';
 
-interface UserGuideLinkProps {
+interface ArticleLinkProps {
   href: string;
   children: ReactNode;
 }
 
-const UserGuideLink: React.FC<UserGuideLinkProps> = ({ href, children }) => (
+const ArticleLink: React.FC<ArticleLinkProps> = ({ href, children }) => (
   <a href={href} target="_blank" rel="noopener noreferrer">
     {children}
   </a>
 );
 
-export default UserGuideLink;
+export default ArticleLink;

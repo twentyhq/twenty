@@ -6,9 +6,9 @@ import path from 'path';
 import rehypeSlug from 'rehype-slug';
 import gfm from 'remark-gfm';
 
-import UserGuideEditContent from '@/app/_components/user-guide/UserGuideEditContent';
-import UserGuideLink from '@/app/_components/user-guide/UserGuideLink';
-import UserGuideWarning from '@/app/_components/user-guide/UserGuideWarning';
+import ArticleEditContent from '@/app/_components/ui/layout/articles/ArticleEditContent';
+import ArticleLink from '@/app/_components/ui/layout/articles/ArticleLink';
+import ArticleWarning from '@/app/_components/ui/layout/articles/ArticleWarning';
 
 interface ItemInfo {
   title: string;
@@ -108,14 +108,14 @@ export async function compileMDXFile(filePath: string, addToc = true) {
   const compiled = await compileMDX<{ title: string; position?: number }>({
     source: fileContent,
     components: {
-      UserGuideWarning(properties) {
-        return <UserGuideWarning {...properties} />;
+      ArticleWarning(properties) {
+        return <ArticleWarning {...properties} />;
       },
-      UserGuideEditContent(properties) {
-        return <UserGuideEditContent {...properties} />;
+      ArticleEditContent(properties) {
+        return <ArticleEditContent {...properties} />;
       },
-      UserGuideLink(properties) {
-        return <UserGuideLink {...properties} />;
+      ArticleLink(properties) {
+        return <ArticleLink {...properties} />;
       },
     },
     options: {

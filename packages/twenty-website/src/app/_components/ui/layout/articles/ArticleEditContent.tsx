@@ -65,13 +65,13 @@ const StyledButtonContainer = styled.div`
   }
 `;
 
-interface UserGuideEditContentProps {
+interface ArticleEditContentProps {
   articleTitle: string;
 }
 
-export default function UserGuideEditContent({
+export default function ArticleEditContent({
   articleTitle,
-}: UserGuideEditContentProps) {
+}: ArticleEditContentProps) {
   return (
     <StyledContainer>
       <div>

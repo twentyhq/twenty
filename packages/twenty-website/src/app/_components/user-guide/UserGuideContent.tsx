@@ -2,7 +2,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import { ArticleContent } from '@/app/_components/ui/layout/ArticleContent';
+import { ArticleContent } from '@/app/_components/ui/layout/articles/ArticleContent';
 import { Breadcrumbs } from '@/app/_components/ui/layout/Breadcrumbs';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';

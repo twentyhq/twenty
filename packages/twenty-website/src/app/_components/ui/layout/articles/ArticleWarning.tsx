@@ -10,7 +10,7 @@ const StyledContainer = styled.div`
   gap: 12px;
   border-radius: 8px;
   padding: 16px 24px;
-  margin-bottom: 32px;
+  margin: 32px 0px;
 `;
 
 const StyledIconContainer = styled.div`
@@ -25,14 +25,11 @@ const StyledText = styled.div`
   p {
     color: var(--Palette-Red-50, #b43232) !important;
     margin: 0px !important;
+    text-align: left;
   }
 `;
 
-export default function UserGuideWarning({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function ArticleWarning({ children }: { children: ReactNode }) {
   return (
     <StyledContainer>
       <StyledIconContainer>
