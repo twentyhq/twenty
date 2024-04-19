@@ -13,7 +13,7 @@ import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-me
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { AttachmentObjectMetadata } from 'src/modules/attachment/standard-objects/attachment.object-metadata';
 import { customObjectStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { TimelineActivityObjectMetadata } from 'src/modules/event/standard-objects/timeline-activity.object-metadata';
+import { TimelineActivityObjectMetadata } from 'src/modules/timeline/standard-objects/timeline-activity.object-metadata';
 
 @BaseCustomObjectMetadata()
 export class CustomObjectMetadata extends BaseObjectMetadata {

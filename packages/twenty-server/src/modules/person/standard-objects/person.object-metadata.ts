@@ -23,7 +23,7 @@ import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/comp
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
-import { TimelineActivityObjectMetadata } from 'src/modules/event/standard-objects/timeline-activity.object-metadata';
+import { TimelineActivityObjectMetadata } from 'src/modules/timeline/standard-objects/timeline-activity.object-metadata';
 
 @ObjectMetadata({
   standardId: standardObjectIds.person,

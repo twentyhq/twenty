@@ -3,8 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { ObjectRecordBaseEvent } from 'src/engine/integrations/event-emitter/types/object-record.base.event';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { TimelineActivityRepository } from 'src/modules/event/repositiories/timeline-activity.repository';
-import { TimelineActivityObjectMetadata } from 'src/modules/event/standard-objects/timeline-activity.object-metadata';
+import { TimelineActivityRepository } from 'src/modules/timeline/repositiories/timeline-activity.repository';
+import { TimelineActivityObjectMetadata } from 'src/modules/timeline/standard-objects/timeline-activity.object-metadata';
 
 type TransformedEvent = ObjectRecordBaseEvent & {
   objectName?: string;

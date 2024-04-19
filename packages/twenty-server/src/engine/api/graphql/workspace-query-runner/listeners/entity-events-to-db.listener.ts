@@ -7,7 +7,7 @@ import { Repository } from 'typeorm';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
-import { CreateAuditLogFromInternalEvent } from 'src/modules/event/jobs/create-audit-log-from-internal-event';
+import { CreateAuditLogFromInternalEvent } from 'src/modules/timeline/jobs/create-audit-log-from-internal-event';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
@@ -15,7 +15,7 @@ import {
 import { objectRecordChangedValues } from 'src/engine/integrations/event-emitter/utils/object-record-changed-values';
 import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
 import { ObjectRecordBaseEvent } from 'src/engine/integrations/event-emitter/types/object-record.base.event';
-import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/event/jobs/upsert-timeline-activity-from-internal-event.job';
+import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
 
 @Injectable()
 export class EntityEventsToDbListener {

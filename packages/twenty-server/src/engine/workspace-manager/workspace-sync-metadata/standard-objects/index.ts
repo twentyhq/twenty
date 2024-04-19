@@ -24,9 +24,9 @@ import { ViewObjectMetadata } from 'src/modules/view/standard-objects/view.objec
 import { WebhookObjectMetadata } from 'src/modules/webhook/standard-objects/webhook.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
-import { AuditLogObjectMetadata } from 'src/modules/event/standard-objects/audit-log.object-metadata';
-import { TimelineActivityObjectMetadata } from 'src/modules/event/standard-objects/timeline-activity.object-metadata';
-import { BehavioralEventObjectMetadata } from 'src/modules/event/standard-objects/behavioral-event.object-metadata';
+import { AuditLogObjectMetadata } from 'src/modules/timeline/standard-objects/audit-log.object-metadata';
+import { TimelineActivityObjectMetadata } from 'src/modules/timeline/standard-objects/timeline-activity.object-metadata';
+import { BehavioralEventObjectMetadata } from 'src/modules/timeline/standard-objects/behavioral-event.object-metadata';
 
 export const standardObjectMetadataDefinitions = [
   ActivityTargetObjectMetadata,

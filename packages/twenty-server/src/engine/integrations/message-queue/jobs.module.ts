@@ -17,7 +17,7 @@ import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repos
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { CreateCompanyAndContactJob } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
-import { AuditLogObjectMetadata } from 'src/modules/event/standard-objects/audit-log.object-metadata';
+import { AuditLogObjectMetadata } from 'src/modules/timeline/standard-objects/audit-log.object-metadata';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { UpdateSubscriptionJob } from 'src/engine/core-modules/billing/jobs/update-subscription.job';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
@@ -49,12 +49,12 @@ import { GmailFullSyncJob } from 'src/modules/messaging/jobs/gmail-full-sync.job
 import { GmailPartialSyncJob } from 'src/modules/messaging/jobs/gmail-partial-sync.job';
 import { MessagingCreateCompanyAndContactAfterSyncJob } from 'src/modules/messaging/jobs/messaging-create-company-and-contact-after-sync.job';
 import { GmailFetchMessageContentFromCacheModule } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.module';
-import { CreateAuditLogFromInternalEvent } from 'src/modules/event/jobs/create-audit-log-from-internal-event';
-import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/event/jobs/upsert-timeline-activity-from-internal-event.job';
+import { CreateAuditLogFromInternalEvent } from 'src/modules/timeline/jobs/create-audit-log-from-internal-event';
+import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
 import { GmailFullSyncModule } from 'src/modules/messaging/services/gmail-full-sync/gmail-full-sync.module';
 import { GmailPartialSyncModule } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync.module';
 import { ThreadCleanerModule } from 'src/modules/messaging/services/thread-cleaner/thread-cleaner.module';
-import { TimelineActivityModule } from 'src/modules/event/timeline-activity.module';
+import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 
 @Module({
   imports: [

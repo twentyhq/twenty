@@ -6,7 +6,7 @@ import { ObjectRecordBaseEvent } from 'src/engine/integrations/event-emitter/typ
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
-import { TimelineActivityService } from 'src/modules/event/services/timeline-activity.service';
+import { TimelineActivityService } from 'src/modules/timeline/services/timeline-activity.service';
 
 @Injectable()
 export class UpsertTimelineActivityFromInternalEvent
