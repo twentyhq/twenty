@@ -21,7 +21,7 @@ jobs:
       - name: Sanitize version
         id: sanitize
         run: |
-          echo version=$(echo ${{ github.event.inputs.version }} | sed 's/^v//') >> $GITHUB_ENV
+          echo version=$(echo ${{ github.event.inputs.version }} | sed 's/^v//') >> $GITHUB_OUTPUT
 
       - name: Update versions
         working-directory: packages
