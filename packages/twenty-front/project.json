@@ -29,10 +29,10 @@
       "options": {
         "cwd": "{projectRoot}",
         "command": "tsc -b tsconfig.json",
-        "incremental": true
+        "args": ["--incremental"]
       },
       "configurations": {
-        "ci": { "incremental": false },
+        "ci": { "args": [] },
         "watch": { "watch": true }
       }
     },
