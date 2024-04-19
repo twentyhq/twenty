@@ -67,6 +67,7 @@ export class BlocklistReimportMessagesJob
     this.gmailFullSyncService.fetchConnectedAccountThreads(
       workspaceId,
       connectedAccount[0].id,
+      [handle],
     );
 
     this.logger.log(
