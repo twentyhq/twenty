@@ -9,16 +9,16 @@ import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { GmailFullSyncService } from 'src/modules/messaging/services/gmail-full-sync/gmail-full-sync.service';
 
-export type ReimportMessagesFromHandleJobData = {
+export type BlocklistReimportMessagesJobData = {
   workspaceId: string;
   blocklistItemId: string;
 };
 
 @Injectable()
-export class ReimportMessagesFromHandleJob
-  implements MessageQueueJob<ReimportMessagesFromHandleJobData>
+export class BlocklistReimportMessagesJob
+  implements MessageQueueJob<BlocklistReimportMessagesJobData>
 {
-  private readonly logger = new Logger(ReimportMessagesFromHandleJob.name);
+  private readonly logger = new Logger(BlocklistReimportMessagesJob.name);
 
   constructor(
     @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
@@ -28,7 +28,7 @@ export class ReimportMessagesFromHandleJob
     private readonly blocklistRepository: BlocklistRepository,
   ) {}
 
-  async handle(data: ReimportMessagesFromHandleJobData): Promise<void> {
+  async handle(data: BlocklistReimportMessagesJobData): Promise<void> {
     const { workspaceId, blocklistItemId } = data;
 
     const blocklistItem = await this.blocklistRepository.getById(

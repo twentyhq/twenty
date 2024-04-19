@@ -6,6 +6,10 @@ import { MessageQueue } from 'src/engine/integrations/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
 import {
+  BlocklistReimportMessagesJob,
+  BlocklistReimportMessagesJobData,
+} from 'src/modules/messaging/jobs/blocklist-reimport-messages.job';
+import {
   DeleteMessagesFromHandleJobData,
   DeleteMessagesFromHandleJob,
 } from 'src/modules/messaging/jobs/delete-messages-from-handle.job';
@@ -23,6 +27,19 @@ export class MessagingBlocklistListener {
   ) {
     this.messageQueueService.add<DeleteMessagesFromHandleJobData>(
       DeleteMessagesFromHandleJob.name,
+      {
+        workspaceId: payload.workspaceId,
+        blocklistItemId: payload.recordId,
+      },
+    );
+  }
+
+  @OnEvent('blocklist.deleted')
+  handleDeletedEvent(
+    payload: ObjectRecordCreateEvent<BlocklistObjectMetadata>,
+  ) {
+    this.messageQueueService.add<BlocklistReimportMessagesJobData>(
+      BlocklistReimportMessagesJob.name,
       {
         workspaceId: payload.workspaceId,
         blocklistItemId: payload.recordId,
