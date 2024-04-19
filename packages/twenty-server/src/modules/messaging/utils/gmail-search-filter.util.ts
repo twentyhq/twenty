@@ -12,3 +12,15 @@ export const gmailSearchFilterExcludeEmails = (emails: string[]): string => {
     '|',
   )})) -category:promotions -category:social -category:forums -filename:.ics`;
 };
+
+export const gmailSearchFilterIncludeOnlyEmailAdresses = (
+  emails?: string[],
+): string | undefined => {
+  if (!emails || emails.length === 0) {
+    return undefined;
+  }
+
+  return `(in:inbox from:(${emails.join('|')})|(in:sent to:(${emails.join(
+    '|',
+  )}))`;
+};
