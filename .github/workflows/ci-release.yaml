@@ -37,21 +37,16 @@ jobs:
       - name: Pull changes
         run: git pull
 
-      - name: Debug
-        run: |
-          git status
-          git diff
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          branch: ${{ github.event.inputs.ref }}
+          commit_message: "chore: release v${{ steps.sanitize.outputs.version }}"
+          tagging_message: v${{ steps.sanitize.outputs.version }}
 
-      # - uses: stefanzweifel/git-auto-commit-action@v4
-      #   with:
-      #     branch: ${{ github.event.inputs.ref }}
-      #     commit_message: "chore: release v${{ steps.sanitize.outputs.version }}"
-      #     tagging_message: v${{ steps.sanitize.outputs.version }}
+          commit_user_name: Github Action Deploy
+          commit_user_email: github-action-deploy@twenty.com
+          commit_author: Github Action Deploy <github-action-deploy@twenty.com>
 
-      #     commit_user_name: Github Action Deploy
-      #     commit_user_email: github-action-deploy@twenty.com
-      #     commit_author: Github Action Deploy <github-action-deploy@twenty.com>
-
-      # - uses: release-drafter/release-drafter@v5
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: release-drafter/release-drafter@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
