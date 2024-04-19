@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
+import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
@@ -36,13 +37,14 @@ export class MessagingBlocklistListener {
 
   @OnEvent('blocklist.deleted')
   handleDeletedEvent(
-    payload: ObjectRecordCreateEvent<BlocklistObjectMetadata>,
+    payload: ObjectRecordDeleteEvent<BlocklistObjectMetadata>,
   ) {
     this.messageQueueService.add<BlocklistReimportMessagesJobData>(
       BlocklistReimportMessagesJob.name,
       {
         workspaceId: payload.workspaceId,
-        blocklistItemId: payload.recordId,
+        workspaceMemberId: payload.details.before.workspaceMember.id,
+        handle: payload.details.before.handle,
       },
     );
   }

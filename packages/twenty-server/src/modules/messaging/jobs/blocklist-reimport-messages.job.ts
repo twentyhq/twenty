@@ -3,15 +3,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
-import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { GmailFullSyncService } from 'src/modules/messaging/services/gmail-full-sync/gmail-full-sync.service';
 
 export type BlocklistReimportMessagesJobData = {
   workspaceId: string;
-  blocklistItemId: string;
+  workspaceMemberId: string;
+  handle: string;
 };
 
 @Injectable()
@@ -24,27 +23,10 @@ export class BlocklistReimportMessagesJob
     @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly gmailFullSyncService: GmailFullSyncService,
-    @InjectObjectMetadataRepository(BlocklistObjectMetadata)
-    private readonly blocklistRepository: BlocklistRepository,
   ) {}
 
   async handle(data: BlocklistReimportMessagesJobData): Promise<void> {
-    const { workspaceId, blocklistItemId } = data;
-
-    const blocklistItem = await this.blocklistRepository.getById(
-      blocklistItemId,
-      workspaceId,
-    );
-
-    if (!blocklistItem) {
-      this.logger.log(
-        `Blocklist item with id ${blocklistItemId} not found in workspace ${workspaceId}`,
-      );
-
-      return;
-    }
-
-    const { handle, workspaceMemberId } = blocklistItem;
+    const { workspaceId, workspaceMemberId, handle } = data;
 
     this.logger.log(
       `Reimporting messages from handle ${handle} in workspace ${workspaceId} for workspace member ${workspaceMemberId}`,
