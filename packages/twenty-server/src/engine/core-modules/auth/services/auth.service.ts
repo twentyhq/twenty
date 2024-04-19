@@ -14,6 +14,8 @@ import { PasswordUpdateNotifyEmail } from 'twenty-emails';
 import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 
+import { NodeEnvironment } from 'src/engine/integrations/environment/interfaces/node-environment.interface';
+
 import { ChallengeInput } from 'src/engine/core-modules/auth/dto/challenge.input';
 import { assert } from 'src/utils/assert';
 import {
@@ -194,9 +196,11 @@ export class AuthService {
       {
         id: 'chrome',
         name: 'Chrome Extension',
-        redirectUrl: `${this.environmentService.get(
-          'CHROME_EXTENSION_REDIRECT_URL',
-        )}`,
+        redirectUrl:
+          this.environmentService.get('NODE_ENV') ===
+          NodeEnvironment.development
+            ? authorizeAppInput.redirectUrl
+            : `${this.environmentService.get('CHROME_EXTENSION_REDIRECT_URL')}`,
       },
     ];
 

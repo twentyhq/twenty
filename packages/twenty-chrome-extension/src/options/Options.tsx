@@ -25,12 +25,12 @@ const StyledContainer = styled.div`
 `;
 
 const StyledActionContainer = styled.div`
+  align-items: center;
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: 300px;
-  align-items: center;
   justify-content: center;
+  width: 300px;
 `;
 
 const StyledLabel = styled.span`
@@ -50,6 +50,7 @@ const Options = () => {
   );
   const authenticate = () => {
     setIsAuthenticating(true);
+    setError('');
     chrome.runtime.sendMessage({ action: 'CONNECT' }, ({ status, message }) => {
       if (status === true) {
         setIsAuthenticated(true);
@@ -97,8 +98,7 @@ const Options = () => {
           />
           {isAuthenticating ? (
             <Loader />
-          ) : 
-            isAuthenticated ? (
+          ) : isAuthenticated ? (
             <StyledLabel>Connected!</StyledLabel>
           ) : (
             <>
@@ -114,8 +114,7 @@ const Options = () => {
                 fullWidth
               />
             </>
-          )
-          }
+          )}
         </StyledActionContainer>
       </StyledContainer>
     </StyledWrapper>
