@@ -142,25 +142,24 @@ const TokenForm = ({
             onBlur={() => submitToken(token)}
           />
         </div>
-        {!location.pathname.includes('rest-api') && (
-          <div className="inputWrapper" style={{ maxWidth: '100px' }}>
-            <select
-              className="select"
-              onChange={(event) =>
-                history.replace(
+        <div className="inputWrapper" style={{ maxWidth: '100px' }}>
+          <select
+            className="select"
+            onChange={(event) =>
+              window.open(
+                '/' +
+                  location.pathname.split('/').at(-2) +
                   '/' +
-                    location.pathname.split('/').at(-2) +
-                    '/' +
-                    event.target.value,
-                )
-              }
-              value={location.pathname.split('/').at(-1)}
-            >
-              <option value="core">Core</option>
-              <option value="metadata">Metadata</option>
-            </select>
-          </div>
-        )}
+                  event.target.value,
+                '_self',
+              )
+            }
+            value={location.pathname.split('/').at(-1)}
+          >
+            <option value="core">Core</option>
+            <option value="metadata">Metadata</option>
+          </select>
+        </div>
       </form>
     </div>
   );
