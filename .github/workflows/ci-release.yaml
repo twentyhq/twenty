@@ -35,10 +35,12 @@ jobs:
 
       # Make sure we have the latest changes before committing
       - name: Pull changes
-        run: git pull --rebase
+        run: git pull
 
       - name: Debug
-        run: git status
+        run: |
+          git status
+          git diff
 
       # - uses: stefanzweifel/git-auto-commit-action@v4
       #   with:
