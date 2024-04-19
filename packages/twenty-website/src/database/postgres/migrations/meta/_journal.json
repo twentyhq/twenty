@@ -8,13 +8,6 @@
       "when": 1707921820164,
       "tag": "0000_absent_giant_man",
       "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "5",
-      "when": 1713337221021,
-      "tag": "0001_soft_jocasta",
-      "breakpoints": true
     }
   ]
 }

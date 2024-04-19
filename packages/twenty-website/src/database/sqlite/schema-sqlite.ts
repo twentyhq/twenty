@@ -1,4 +1,4 @@
-import { integer, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 export const sqlLiteUsers = sqliteTable('users', {
   id: text('id').primaryKey(),
@@ -49,9 +49,4 @@ export const sqlLitePullRequestLabels = sqliteTable('pullRequestLabels', {
 export const sqlLiteIssueLabels = sqliteTable('issueLabels', {
   issueId: text('issueId').references(() => sqlLiteIssues.id),
   labelId: text('labelId').references(() => sqlLiteLabels.id),
-});
-
-export const sqlGithubStars = sqliteTable('githubStars', {
-  id: text('id').primaryKey(),
-  numberOfStars: integer('numberOfStars'),
 });

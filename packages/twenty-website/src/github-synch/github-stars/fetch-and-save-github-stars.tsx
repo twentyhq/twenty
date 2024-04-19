@@ -1,8 +1,8 @@
 import { graphql } from '@octokit/graphql';
 
-import { Repository } from '@/app/contributors/api/types';
 import { insertMany } from '@/database/database';
 import { githubStarsModel } from '@/database/model';
+import { Repository } from '@/github-synch/contributors/types';
 
 export const fetchAndSaveGithubStars = async (
   query: typeof graphql,
@@ -19,14 +19,9 @@ export const fetchAndSaveGithubStars = async (
 
   const numberOfStars = repository.stargazers.totalCount;
 
-  await insertMany(
-    githubStarsModel,
-    [
-      {
-        id: 1,
-        numberOfStars,
-      },
-    ],
-    { onConflictKey: 'id', onConflictUpdateObject: { numberOfStars } },
-  );
+  await insertMany(githubStarsModel, [
+    {
+      numberOfStars,
+    },
+  ]);
 };

@@ -1,4 +1,4 @@
 CREATE TABLE IF NOT EXISTS "githubStars" (
-	"id" text PRIMARY KEY NOT NULL,
+	"timestamp" timestamp DEFAULT now() NOT NULL,
 	"numberOfStars" integer
 );

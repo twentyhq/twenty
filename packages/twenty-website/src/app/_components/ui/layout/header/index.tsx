@@ -8,7 +8,7 @@ import { githubStarsModel } from '@/database/model';
 export const AppHeader = async () => {
   const githubStars = await findOne(
     githubStarsModel,
-    desc(githubStarsModel.id),
+    desc(githubStarsModel.timestamp),
   );
 
   return (

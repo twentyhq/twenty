@@ -11,20 +11,13 @@ import {
   LogoContainer,
 } from '@/app/_components/ui/layout/header/styled';
 import { Logo } from '@/app/_components/ui/layout/Logo';
+import { formatNumberOfStars } from '@/shared-utils/formatNumberOfStars';
 
 type Props = {
   numberOfStars: number;
 };
 
 export const HeaderDesktop = ({ numberOfStars }: Props) => {
-  const formatNumberOfStars = (numberOfStars: number) => {
-    if (numberOfStars < 1000) {
-      return numberOfStars.toString();
-    } else {
-      return Math.floor(numberOfStars / 100) / 10 + 'k';
-    }
-  };
-
   return (
     <DesktopNav>
       <LogoContainer>
