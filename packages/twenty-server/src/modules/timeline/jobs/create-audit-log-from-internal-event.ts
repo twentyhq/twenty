@@ -17,7 +17,7 @@ export class CreateAuditLogFromInternalEvent
     @InjectObjectMetadataRepository(WorkspaceMemberObjectMetadata)
     private readonly workspaceMemberService: WorkspaceMemberRepository,
     @InjectObjectMetadataRepository(AuditLogObjectMetadata)
-    private readonly auditLogService: AuditLogRepository,
+    private readonly auditLogRepository: AuditLogRepository,
   ) {}
 
   async handle(data: ObjectRecordBaseEvent): Promise<void> {
@@ -39,11 +39,12 @@ export class CreateAuditLogFromInternalEvent
       };
     }
 
-    await this.auditLogService.insert(
+    await this.auditLogRepository.insert(
       data.name,
       data.properties,
       workspaceMemberId,
       data.name.split('.')[0],
+      data.objectMetadata.id,
       data.recordId,
       data.workspaceId,
     );

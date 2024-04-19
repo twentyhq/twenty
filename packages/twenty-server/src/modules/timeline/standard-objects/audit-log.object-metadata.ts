@@ -65,6 +65,15 @@ export class AuditLogObjectMetadata extends BaseObjectMetadata {
   objectName: string;
 
   @FieldMetadata({
+    standardId: auditLogStandardFieldIds.objectName,
+    type: FieldMetadataType.TEXT,
+    label: 'Object name',
+    description: 'If the event is related to a particular object',
+    icon: 'IconAbc',
+  })
+  objectMetadataId: string;
+
+  @FieldMetadata({
     standardId: auditLogStandardFieldIds.recordId,
     type: FieldMetadataType.UUID,
     label: 'Object id',

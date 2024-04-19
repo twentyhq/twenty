@@ -137,6 +137,15 @@ export const connectedAccountStandardFieldIds = {
   calendarChannels: '20202020-af4a-47bb-99ec-51911c1d3977',
 };
 
+export const eventStandardFieldIds = {
+  properties: '20202020-f142-4b04-b91b-6a2b4af3bf10',
+  workspaceMember: '20202020-af23-4479-9a30-868edc474b35',
+  person: '20202020-c414-45b9-a60a-ac27aa96229e',
+  company: '20202020-04ad-4221-a744-7a8278a5ce20',
+  opportunity: '20202020-7664-4a35-a3df-580d389fd5f0',
+  custom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
+};
+
 export const auditLogStandardFieldIds = {
   name: '20202020-2462-4b9d-b5d9-745febb3b095',
   properties: '20202020-5d36-470e-8fad-d56ea3ab2fd0',
@@ -155,18 +164,18 @@ export const behavioralEventStandardFieldIds = {
 };
 
 export const timelineActivityStandardFieldIds = {
-  happensAt: '20202020-9526-4993-b339-c4318c4d39f1',
-  type: '20202020-5e7b-4ccd-8b8a-86b94b474135',
-  name: '20202020-7207-46e8-9dab-849505ae8498',
-  properties: '20202020-f142-4b04-b91b-6a2b4af3bf10',
-  workspaceMember: '20202020-af23-4479-9a30-868edc474b35',
-  person: '20202020-c414-45b9-a60a-ac27aa96229e',
-  company: '20202020-04ad-4221-a744-7a8278a5ce20',
-  opportunity: '20202020-7664-4a35-a3df-580d389fd5f0',
-  custom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
-  linkedRecordCachedName: '20202020-cfdb-4bef-bbce-a29f41230933',
-  linkedRecordId: '20202020-2e0e-48c0-b445-ee6c1e61687f',
-  linkedObjectMetadataId: '20202020-c595-449d-9f89-562758c9ee67',
+  happensAt: '20202020-9526-4993-b339-c4318c4d39f0',
+  type: '20202020-5e7b-4ccd-8b8a-86b94b474134',
+  name: '20202020-7207-46e8-9dab-849505ae8497',
+  properties: '20202020-f142-4b04-b91b-6a2b4af3bf11',
+  workspaceMember: '20202020-af23-4479-9a30-868edc474b36',
+  person: '20202020-c414-45b9-a60a-ac27aa96229f',
+  company: '20202020-04ad-4221-a744-7a8278a5ce21',
+  opportunity: '20202020-7664-4a35-a3df-580d389fd527',
+  custom: '20202020-4a71-41b0-9f83-9cdcca3f8b15',
+  linkedRecordCachedName: '20202020-cfdb-4bef-bbce-a29f41230934',
+  linkedRecordId: '20202020-2e0e-48c0-b445-ee6c1e61687d',
+  linkedObjectMetadataId: '20202020-c595-449d-9f89-562758c9ee69',
 };
 
 export const favoriteStandardFieldIds = {

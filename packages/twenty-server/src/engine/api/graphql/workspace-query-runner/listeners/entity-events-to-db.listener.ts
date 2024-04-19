@@ -42,7 +42,10 @@ export class EntityEventsToDbListener {
     return this.handle(payload);
   }
 
-  // @OnEvent('*.deleted') - TODO: implement when we have soft deleted
+  // @OnEvent('*.deleted') - TODO: implement when we soft delete has been implemented
+  // ....
+
+  // @OnEvent('*.restored') - TODO: implement when we soft delete has been implemented
   // ....
 
   private async handle(payload: ObjectRecordCreateEvent<any>) {

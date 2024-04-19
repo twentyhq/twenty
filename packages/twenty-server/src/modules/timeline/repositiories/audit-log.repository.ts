@@ -13,6 +13,7 @@ export class AuditLogRepository {
     properties: string,
     workspaceMemberId: string | null,
     objectName: string,
+    objectMetadataId: string,
     recordId: string,
     workspaceId: string,
   ): Promise<void> {
@@ -21,9 +22,16 @@ export class AuditLogRepository {
 
     await this.workspaceDataSourceService.executeRawQuery(
       `INSERT INTO ${dataSourceSchema}."auditLog"
-      ("name", "properties", "workspaceMemberId", "objectName", "recordId")
-      VALUES ($1, $2, $3, $4, $5)`,
-      [name, properties, workspaceMemberId, objectName, recordId],
+      ("name", "properties", "workspaceMemberId", "objectName", "objectMetadataId", "recordId")
+      VALUES ($1, $2, $3, $4, $5, $6)`,
+      [
+        name,
+        properties,
+        workspaceMemberId,
+        objectName,
+        objectMetadataId,
+        recordId,
+      ],
       workspaceId,
     );
   }
