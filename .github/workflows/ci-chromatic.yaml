@@ -41,4 +41,4 @@ jobs:
       - name: Publish to Chromatic
         run: |
           cd packages/twenty-front
-          yarn nx chromatic:ci
+          npx nx chromatic:ci
