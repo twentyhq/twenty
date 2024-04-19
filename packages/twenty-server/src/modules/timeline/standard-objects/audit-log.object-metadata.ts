@@ -1,11 +1,9 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { auditLogStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
@@ -21,9 +19,6 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
   icon: 'IconIconTimelineEvent',
 })
 @IsSystem()
-@Gate({
-  featureFlag: FeatureFlagKeys.IsEventObjectEnabled,
-})
 export class AuditLogObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: auditLogStandardFieldIds.name,

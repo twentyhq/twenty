@@ -14,8 +14,6 @@ import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/comp
 import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
-import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
 import { CustomObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/custom-objects/custom.object-metadata';
 
 @ObjectMetadata({
@@ -28,9 +26,6 @@ import { CustomObjectMetadata } from 'src/engine/workspace-manager/workspace-syn
 })
 @IsSystem()
 @IsNotAuditLogged()
-@Gate({
-  featureFlag: FeatureFlagKeys.IsEventObjectEnabled,
-})
 export class TimelineActivityObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: timelineActivityStandardFieldIds.happensAt,
