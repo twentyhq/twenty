@@ -39,6 +39,7 @@ const StyledLabelAndIconContainer = styled.div`
 
 const StyledValueContainer = styled.div`
   display: flex;
+  min-width: 0;
 `;
 
 const StyledLabelContainer = styled.div<{ width?: number }>`
@@ -50,6 +51,8 @@ const StyledLabelContainer = styled.div<{ width?: number }>`
 const StyledEditButtonContainer = styled(motion.div)`
   align-items: center;
   display: flex;
+  position: absolute;
+  right: 12px;
 `;
 
 const StyledClickableContainer = styled.div<{ readonly?: boolean }>`
