@@ -7,9 +7,9 @@ import {
 } from '@hello-pangea/dnd';
 import {
   AppTooltip,
+  IconEye,
+  IconEyeOff,
   IconInfoCircle,
-  IconMinus,
-  IconPlus,
   useIcons,
 } from 'twenty-ui';
 
@@ -69,7 +69,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
       field.isLabelIdentifier
         ? null
         : {
-            Icon: field.isVisible ? IconMinus : IconPlus,
+            Icon: field.isVisible ? IconEye : IconEyeOff,
             onClick: () => onVisibilityChange(field),
           },
     ].filter(isDefined);
