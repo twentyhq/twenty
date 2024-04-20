@@ -172,7 +172,7 @@ export const timelineActivityStandardFieldIds = {
   person: '20202020-c414-45b9-a60a-ac27aa96229f',
   company: '20202020-04ad-4221-a744-7a8278a5ce21',
   opportunity: '20202020-7664-4a35-a3df-580d389fd527',
-  custom: '20202020-4a71-41b0-9f83-9cdcca3f8b15',
+  custom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
   linkedRecordCachedName: '20202020-cfdb-4bef-bbce-a29f41230934',
   linkedRecordId: '20202020-2e0e-48c0-b445-ee6c1e61687d',
   linkedObjectMetadataId: '20202020-c595-449d-9f89-562758c9ee69',
