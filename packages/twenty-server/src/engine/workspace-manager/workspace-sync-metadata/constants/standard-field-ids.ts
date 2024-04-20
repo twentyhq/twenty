@@ -122,7 +122,7 @@ export const companyStandardFieldIds = {
   opportunities: '20202020-add3-4658-8e23-d70dccb6d0ec',
   favorites: '20202020-4d1d-41ac-b13b-621631298d55',
   attachments: '20202020-c1b5-4120-b0f0-987ca401ed53',
-  timelineActivities: '72d5d7d3-8782-446c-a54b-1c25024f55db',
+  timelineActivities: '20202020-0414-4daf-9c0d-64fe7b27f89f',
 };
 
 export const connectedAccountStandardFieldIds = {
@@ -246,7 +246,7 @@ export const opportunityStandardFieldIds = {
   favorites: '20202020-a1c2-4500-aaae-83ba8a0e827a',
   activityTargets: '20202020-220a-42d6-8261-b2102d6eab35',
   attachments: '20202020-87c7-4118-83d6-2f4031005209',
-  timelineActivities: '863a6f5c-493a-47c8-9e14-34ed929d2ba6',
+  timelineActivities: '20202020-30e2-421f-96c7-19c69d1cf631',
 };
 
 export const personStandardFieldIds = {
@@ -266,7 +266,7 @@ export const personStandardFieldIds = {
   attachments: '20202020-cd97-451f-87fa-bcb789bdbf3a',
   messageParticipants: '20202020-498e-4c61-8158-fa04f0638334',
   calendarEventParticipants: '20202020-52ee-45e9-a702-b64b3753e3a9',
-  timelineActivities: 'f23d6471-78e0-458a-bdd0-9a84cd7d0b70',
+  timelineActivities: '20202020-a43e-4873-9c23-e522de906ce5',
 };
 
 export const viewFieldStandardFieldIds = {
@@ -327,7 +327,7 @@ export const workspaceMemberStandardFieldIds = {
   messageParticipants: '20202020-8f99-48bc-a5eb-edd33dd54188',
   blocklist: '20202020-6cb2-4161-9f29-a4b7f1283859',
   calendarEventParticipants: '20202020-0dbc-4841-9ce1-3e793b5b3512',
-  timelineActivities: '20202020-f0d9-4ba3-a123-69cc2c185071',
+  timelineActivities: '20202020-e15b-47b8-94fe-8200e3c66615',
   auditLogs: '20202020-2f54-4739-a5e2-99563385e83d',
 };
 
