@@ -13,7 +13,6 @@ const StyledClickable = styled.div`
   display: flex;
   overflow: hidden;
   white-space: nowrap;
-  max-width: 180px;
 
   a {
     color: inherit;
