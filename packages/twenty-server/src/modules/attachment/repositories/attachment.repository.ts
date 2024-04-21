@@ -18,6 +18,7 @@ export class AttachmentRepository {
     personId,
     storageDriverType,
     type,
+    authorId,
     workspaceId,
     transactionManager,
   }: {
@@ -28,14 +29,15 @@ export class AttachmentRepository {
     storageDriverType: StorageDriverType;
     name: string;
     type: string;
+    authorId: string;
     transactionManager?: EntityManager;
   }): Promise<void> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}."attachment" ("id", "personId", "messageId", "storageDriverType", "name", "type") VALUES ($1, $2, $3, $4, $5, $6)`,
-      [id, personId, messageId, storageDriverType, name, type],
+      `INSERT INTO ${dataSourceSchema}."attachment" ("id", "personId", "messageId", "storageDriverType", "name", "type", "authorId") VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      [id, personId, messageId, storageDriverType, name, type, authorId],
       workspaceId,
       transactionManager,
     );
