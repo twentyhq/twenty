@@ -17,6 +17,9 @@ import { MessageChannelRepository } from 'src/modules/messaging/repositories/mes
 import { MessageThreadService } from 'src/modules/messaging/services/message-thread/message-thread.service';
 import { MessageThreadObjectMetadata } from 'src/modules/messaging/standard-objects/message-thread.object-metadata';
 import { MessageThreadRepository } from 'src/modules/messaging/repositories/message-thread.repository';
+import { AttachmentObjectMetadata } from 'src/modules/attachment/standard-objects/attachment.object-metadata';
+import { AttachmentRepository } from 'src/modules/attachment/repositories/attachment.repository';
+import { StorageDriverType } from 'src/engine/integrations/file-storage/interfaces';
 
 @Injectable()
 export class MessageService {
@@ -30,6 +33,8 @@ export class MessageService {
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
     @InjectObjectMetadataRepository(MessageObjectMetadata)
     private readonly messageRepository: MessageRepository,
+    @InjectObjectMetadataRepository(AttachmentObjectMetadata)
+    private readonly attachmentRepository: AttachmentRepository,
     @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
     private readonly messageChannelRepository: MessageChannelRepository,
     @InjectObjectMetadataRepository(MessageThreadObjectMetadata)
@@ -76,6 +81,14 @@ export class MessageService {
           workspaceId,
           transactionManager,
         );
+
+      await this.saveAttachmentsToMessage(
+        message,
+        savedOrExistingMessageId,
+        connectedAccount,
+        workspaceId,
+        transactionManager,
+      );
 
       messageExternalIdsAndIdsMap.set(
         message.externalId,
@@ -226,6 +239,30 @@ export class MessageService {
     );
 
     return Promise.resolve(newMessageId);
+  }
+
+  private async saveAttachmentsToMessage(
+    message: GmailMessage,
+    savedMessageId: string,
+    connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
+    workspaceId: string,
+    manager: EntityManager,
+  ): Promise<void> {
+    await Promise.all(
+      message.attachments.map((attachment) =>
+        this.attachmentRepository.insert({
+          id: v4(),
+          messageId: savedMessageId,
+          name: attachment.filename ?? '',
+          personId: null,
+          storageDriverType: StorageDriverType.Gmail,
+          type: attachment.contentType,
+          authorId: connectedAccount.accountOwnerId,
+          workspaceId,
+          transactionManager: manager,
+        }),
+      ),
+    );
   }
 
   public async deleteMessages(

@@ -14,8 +14,10 @@ import { MessageThreadRepository } from 'src/modules/messaging/repositories/mess
 import { MessageRepository } from 'src/modules/messaging/repositories/message.repository';
 import { PersonRepository } from 'src/modules/person/repositories/person.repository';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
+import { AttachmentRepository } from 'src/modules/attachment/repositories/attachment.repository';
 
 export const metadataToRepositoryMapping = {
+  AttachmentObjectMetadata: AttachmentRepository,
   AuditLogObjectMetadata: AuditLogRepository,
   BlocklistObjectMetadata: BlocklistRepository,
   CalendarChannelEventAssociationObjectMetadata:
