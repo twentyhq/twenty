@@ -151,7 +151,7 @@ export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
       cache: cache,
       objectMetadataItem: objectMetadataItemActivity,
     });
-  }, 500);
+  }, 0);
 
   const handleTitleChange = (newTitle: string) => {
     setActivityTitle(newTitle);
