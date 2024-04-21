@@ -17,6 +17,7 @@ import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/mess
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { MessageThreadObjectMetadata } from 'src/modules/messaging/standard-objects/message-thread.object-metadata';
 import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
+import { AttachmentObjectMetadata } from 'src/modules/attachment/standard-objects/attachment.object-metadata';
 
 @ObjectMetadata({
   standardId: standardObjectIds.message,
@@ -106,6 +107,22 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   messageParticipants: Relation<MessageParticipantObjectMetadata[]>;
+
+  @FieldMetadata({
+    standardId: messageStandardFieldIds.attachments,
+    type: FieldMetadataType.RELATION,
+    label: 'Message Attachments',
+    description: 'Message Attachments',
+    icon: 'IconPaperclip',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    inverseSideTarget: () => AttachmentObjectMetadata,
+    inverseSideFieldKey: 'message',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @IsNullable()
+  attachments: Relation<AttachmentObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: messageStandardFieldIds.messageChannelMessageAssociations,
