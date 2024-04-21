@@ -5,6 +5,7 @@ import { LocalDriverOptions } from 'src/engine/integrations/file-storage/drivers
 
 export enum StorageDriverType {
   S3 = 's3',
+  Gmail = 'gmail',
   Local = 'local',
 }
 
