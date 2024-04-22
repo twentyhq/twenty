@@ -24,8 +24,8 @@ import {
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
-import { formatString } from 'src/engine/metadata-modules/utils/format-string.util';
-import { ChararactersNotSupportedException } from 'src/engine/metadata-modules/errors/CharactersNotSupportedException';
+import { InvalidStringException } from 'src/engine/metadata-modules/errors/InvalidStringException';
+import { validateString } from 'src/engine/metadata-modules/utils/validate-string.utils';
 
 import {
   RelationMetadataEntity,
@@ -54,13 +54,10 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     );
 
     try {
-      relationMetadataInput = {
-        ...relationMetadataInput,
-        fromName: formatString(relationMetadataInput.fromName),
-        toName: formatString(relationMetadataInput.toName),
-      };
+      validateString(relationMetadataInput.fromName);
+      validateString(relationMetadataInput.toName);
     } catch (error) {
-      if (error instanceof ChararactersNotSupportedException) {
+      if (error instanceof InvalidStringException) {
         console.error(error.message);
         throw new BadRequestException(
           `Characters used in name "${relationMetadataInput.fromName}" or "${relationMetadataInput.toName}" are not supported`,

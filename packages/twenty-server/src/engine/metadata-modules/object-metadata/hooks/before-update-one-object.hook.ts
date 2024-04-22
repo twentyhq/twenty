@@ -15,7 +15,6 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { UpdateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { formatObjectMetadataInput } from 'src/engine/metadata-modules/object-metadata/utils/format-object-metadata-input.util';
 
 @Injectable()
 export class BeforeUpdateOneObject<T extends UpdateObjectInput>
@@ -100,8 +99,6 @@ export class BeforeUpdateOneObject<T extends UpdateObjectInput>
         throw new BadRequestException('This image identifier does not exist');
       }
     }
-
-    instance.update = formatObjectMetadataInput<T>(instance.update);
 
     this.checkIfFieldIsEditable(instance.update, objectMetadata);
 

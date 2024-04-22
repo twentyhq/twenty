@@ -59,7 +59,7 @@ import {
   FeatureFlagKeys,
 } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
-import { formatObjectMetadataInput } from 'src/engine/metadata-modules/object-metadata/utils/format-object-metadata-input.util';
+import { validateObjectMetadataInput } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -238,7 +238,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectMetadataInput.workspaceId,
       );
 
-    objectMetadataInput = formatObjectMetadataInput(objectMetadataInput);
+    validateObjectMetadataInput(objectMetadataInput);
 
     if (
       objectMetadataInput.nameSingular.toLowerCase() ===
