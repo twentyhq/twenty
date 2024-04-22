@@ -9,7 +9,7 @@
         "cwd": "packages/twenty-server",
         "commands": ["rimraf dist", "nest build --path ./tsconfig.build.json"]
       }
-    },  
+    },
     "build:packageJson": {
       "executor": "@nx/js:tsc",
       "options": {
@@ -81,10 +81,15 @@
       }
     },
     "lint": {
-      "executor": "nx:run-commands",
+      "executor": "@nx/eslint:lint",
       "options": {
-        "cwd": "packages/twenty-server",
-        "command": "eslint \"src/**/*.ts\" --fix"
+        "eslintConfig": "{projectRoot}/.eslintrc.cjs",
+        "ignorePath": "{workspaceRoot}/.gitignore",
+        "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"]
+      },
+      "configurations": {
+        "ci": { "lintFilePatterns": ["{projectRoot}/**/*.{ts,json}"] },
+        "fix": { "fix": true }
       }
     },
     "test:unit": {
