@@ -6,7 +6,7 @@ export const authProvidersState = createState<AuthProviders>({
   defaultValue: {
     google: false,
     magicLink: false,
-    password: false,
+    password: true,
     microsoft: false,
   },
 });

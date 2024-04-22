@@ -149,13 +149,13 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  AUTH_PASSWORD_ENABLED: boolean = false;
+  AUTH_PASSWORD_ENABLED: boolean = true;
 
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
   @ValidateIf((env) => env.AUTH_PASSWORD_ENABLED === true)
-  SIGN_IN_PREFILLED: boolean = false;
+  SIGN_IN_PREFILLED: boolean = true;
 
   @CastToBoolean()
   @IsOptional()
