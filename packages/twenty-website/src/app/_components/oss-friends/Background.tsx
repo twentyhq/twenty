@@ -39,6 +39,10 @@ const Container = styled.div`
   max-width: 100vw;
   z-index: 0;
 
+  @media (max-width: 810px) {
+    margin-top: 64px;
+  }
+
   &::before {
     content: '';
     position: absolute;

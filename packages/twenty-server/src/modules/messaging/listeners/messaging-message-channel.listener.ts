@@ -24,10 +24,10 @@ export class MessagingMessageChannelListener {
   ) {
     if (
       objectRecordChangedProperties(
-        payload.details.before,
-        payload.details.after,
+        payload.properties.before,
+        payload.properties.after,
       ).includes('isContactAutoCreationEnabled') &&
-      payload.details.after.isContactAutoCreationEnabled
+      payload.properties.after.isContactAutoCreationEnabled
     ) {
       await this.messageQueueService.add<MessagingCreateCompanyAndContactAfterSyncJobData>(
         MessagingCreateCompanyAndContactAfterSyncJob.name,

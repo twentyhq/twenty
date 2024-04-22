@@ -2,7 +2,7 @@ import toCamelCase from 'lodash.camelcase';
 import toSnakeCase from 'lodash.snakecase';
 
 import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined.ts';
+import { isDefined } from '~/utils/isDefined';
 
 import { FieldMetadataOption } from '../types/FieldMetadataOption';
 
@@ -23,8 +23,8 @@ export const getOptionValueFromLabel = (label: string) => {
 export const formatFieldMetadataItemInput = (
   input: Pick<
     Field,
-    'label' | 'icon' | 'description' | 'defaultValue' | 'type' | 'options'
-  >,
+    'label' | 'icon' | 'description' | 'defaultValue' | 'options'
+  > & { type?: FieldMetadataType },
 ) => {
   const options = input.options as FieldMetadataOption[];
   let defaultValue = input.defaultValue;

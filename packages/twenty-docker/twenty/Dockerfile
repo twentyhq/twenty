@@ -41,7 +41,7 @@ ARG REACT_APP_SERVER_BASE_URL
 
 COPY ./packages/twenty-front /app/packages/twenty-front
 COPY ./packages/twenty-ui /app/packages/twenty-ui
-RUN yarn nx build twenty-front
+RUN npx nx build twenty-front
 
 
 # Final stage: Run the application

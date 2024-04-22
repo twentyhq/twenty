@@ -16,6 +16,9 @@ import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-obje
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
+// TODO: Depricate
+// This should be removed in the next release
+// We use AuditLog and ActivityTimeline instead
 @ObjectMetadata({
   standardId: standardObjectIds.event,
   namePlural: 'events',

@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState.ts';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { objectMetadataItemFamilySelector } from '@/object-metadata/states/objectMetadataItemFamilySelector';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { isDefined } from '~/utils/isDefined';

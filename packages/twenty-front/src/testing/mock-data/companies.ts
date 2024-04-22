@@ -11,6 +11,7 @@ type MockedCompany = Omit<Company, 'deletedAt'> & {
 
 export const mockedCompaniesData: Array<MockedCompany> = [
   {
+    __typename: 'Company',
     id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
     domainName: 'airbnb.com',
     name: 'Airbnb',
@@ -31,6 +32,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     Favorite: null,
     accountOwnerId: mockedUsersData[0].id,
     accountOwner: {
+      __typename: 'WorkspaceMember',
       name: {
         firstName: 'Charles',
         lastName: 'Test',
@@ -46,6 +48,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     },
   },
   {
+    __typename: 'Company',
     id: 'b396e6b9-dc5c-4643-bcff-61b6cf7523ae',
     domainName: 'aircall.io',
     name: 'Aircall',
@@ -68,6 +71,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     Favorite: null,
   },
   {
+    __typename: 'Company',
     id: 'a674fa6c-1455-4c57-afaf-dd5dc086361d',
     domainName: 'algolia.com',
     name: 'Algolia',
@@ -90,6 +94,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     accountOwnerId: null,
   },
   {
+    __typename: 'Company',
     id: 'b1cfd51b-a831-455f-ba07-4e30671e1dc3',
     domainName: 'apple.com',
     name: 'Apple',
@@ -112,6 +117,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     accountOwnerId: null,
   },
   {
+    __typename: 'Company',
     id: '5c21e19e-e049-4393-8c09-3e3f8fb09ecb',
     domainName: 'qonto.com',
     name: 'Qonto',
@@ -134,6 +140,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     accountOwnerId: null,
   },
   {
+    __typename: 'Company',
     id: '9d162de6-cfbf-4156-a790-e39854dcd4eb',
     domainName: 'facebook.com',
     name: 'Facebook',
@@ -156,6 +163,7 @@ export const mockedCompaniesData: Array<MockedCompany> = [
     accountOwnerId: null,
   },
   {
+    __typename: 'Company',
     id: '9d162de6-cfbf-4156-a790-e39854dcd4ef',
     domainName: 'sequoia.com',
     name: 'Sequoia',

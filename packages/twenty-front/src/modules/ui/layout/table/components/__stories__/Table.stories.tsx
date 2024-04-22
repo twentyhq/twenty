@@ -1,6 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { ComponentDecorator } from 'twenty-ui';
 
 import { Table } from '../Table';
 import { TableCell } from '../TableCell';

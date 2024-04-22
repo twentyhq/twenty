@@ -14,6 +14,7 @@ import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-
 import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
 import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
   standardId: standardObjectIds.activityTarget,
@@ -24,6 +25,7 @@ import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person
   icon: 'IconCheckbox',
 })
 @IsSystem()
+@IsNotAuditLogged()
 export class ActivityTargetObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: activityTargetStandardFieldIds.activity,

@@ -38,7 +38,6 @@ export const EntityChip = ({
   maxWidth,
 }: EntityChipProps) => {
   const navigate = useNavigate();
-
   const theme = useTheme();
 
   const handleLinkClick = (event: React.MouseEvent<HTMLDivElement>) => {

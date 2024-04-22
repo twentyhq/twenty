@@ -19,7 +19,9 @@ export const SettingsAccountsEmailsBlocklistTableRow = ({
     <TableRow key={blocklistItem.id}>
       <TableCell>{blocklistItem.handle}</TableCell>
       <TableCell>
-        {formatToHumanReadableDate(blocklistItem.createdAt)}
+        {blocklistItem.createdAt
+          ? formatToHumanReadableDate(blocklistItem.createdAt)
+          : ''}
       </TableCell>
       <TableCell align="right">
         <IconButton

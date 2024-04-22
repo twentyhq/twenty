@@ -35,8 +35,11 @@ export const RecordIndexPageHeader = ({
   const canAddRecord =
     recordIndexViewType === ViewType.Table && !objectMetadataItem?.isRemote;
 
+  const pageHeaderTitle =
+    objectMetadataItem?.labelPlural ?? capitalize(objectNamePlural);
+
   return (
-    <PageHeader title={capitalize(objectNamePlural)} Icon={Icon}>
+    <PageHeader title={pageHeaderTitle} Icon={Icon}>
       <PageHotkeysEffect onAddButtonClick={createRecord} />
       {canAddRecord && <PageAddButton onClick={createRecord} />}
     </PageHeader>

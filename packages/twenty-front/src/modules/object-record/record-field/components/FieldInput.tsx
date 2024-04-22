@@ -9,7 +9,7 @@ import { SelectFieldInput } from '@/object-record/record-field/meta-types/input/
 import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
 import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
-import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect.ts';
+import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
@@ -106,12 +106,14 @@ export const FieldInput = ({
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}
+          onClear={onSubmit}
         />
       ) : isFieldDate(fieldDefinition) ? (
         <DateFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}
+          onClear={onSubmit}
         />
       ) : isFieldNumber(fieldDefinition) ? (
         <NumberFieldInput

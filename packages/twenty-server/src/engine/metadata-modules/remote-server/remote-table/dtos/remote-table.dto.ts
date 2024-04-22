@@ -1,6 +1,9 @@
 import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
 
+import { IDField } from '@ptc-org/nestjs-query-graphql';
 import { IsEnum } from 'class-validator';
+
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 export enum RemoteTableStatus {
   SYNCED = 'SYNCED',
@@ -14,6 +17,9 @@ registerEnumType(RemoteTableStatus, {
 
 @ObjectType('RemoteTable')
 export class RemoteTableDTO {
+  @IDField(() => UUIDScalarType, { nullable: true })
+  id?: string;
+
   @Field(() => String)
   name: string;
 
