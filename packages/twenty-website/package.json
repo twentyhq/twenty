@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "github:sync": "npx tsx src/database/init-database.ts",
+    "github:sync": "npx tsx src/github-sync/github-sync",
+    "database:init": "npx tsx src/database/init-database.ts",
     "database:generate:pg": "drizzle-kit generate:pg --config=src/database/postgres/drizzle-posgres.config.ts",
     "database:generate:sqlite": "drizzle-kit generate:sqlite --config=src/database/sqlite/drizzle-sqlite.config.ts"
   },
