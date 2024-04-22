@@ -1,3 +1,8 @@
+CREATE TABLE IF NOT EXISTS "githubStars" (
+	"timestamp" timestamp DEFAULT now() NOT NULL,
+	"numberOfStars" integer
+);
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "issueLabels" (
 	"issueId" text,
 	"labelId" text
