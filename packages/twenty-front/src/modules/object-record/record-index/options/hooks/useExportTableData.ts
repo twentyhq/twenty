@@ -34,11 +34,13 @@ export const generateCsv: GenerateExport = ({
   columns,
   rows,
 }: GenerateExportOptions): string => {
-  const columnsWithoutRelations = columns.filter(
-    (col) => !('relationType' in col.metadata && col.metadata.relationType),
+  const columnsToExport = columns.filter(
+    (col) =>
+      !('relationType' in col.metadata && col.metadata.relationType) ||
+      col.metadata.relationType === 'TO_ONE_OBJECT',
   );
 
-  const keys = columnsWithoutRelations.flatMap((col) => {
+  const keys = columnsToExport.flatMap((col) => {
     const column = {
       field: col.metadata.fieldName,
       title: col.label,
@@ -57,7 +59,9 @@ export const generateCsv: GenerateExport = ({
       const nestedFieldsWithoutTypename = Object.keys(
         (fieldsWithSubFields as any)[column.field],
       )
-        .filter((key) => key !== '__typename')
+        .filter((key) =>
+          col.type === 'RELATION' ? key === 'id' : key !== '__typename',
+        )
         .map((key) => ({
           field: `${column.field}.${key}`,
           title: `${column.title} ${key[0].toUpperCase() + key.slice(1)}`,
