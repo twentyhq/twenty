@@ -14,7 +14,7 @@ export const AppHeader = async () => {
   return (
     <>
       <HeaderDesktop numberOfStars={githubStars?.[0]?.numberOfStars} />
-      <HeaderMobile />
+      <HeaderMobile numberOfStars={githubStars?.[0]?.numberOfStars} />
     </>
   );
 };
