@@ -1,4 +1,4 @@
-import { Module, Global, Inject, OnModuleDestroy } from '@nestjs/common';
+import { Module, Global } from '@nestjs/common';
 import { CacheModule, CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { ConfigModule } from '@nestjs/config';
 
@@ -28,12 +28,4 @@ import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/typ
   ],
   exports: [...Object.values(CacheStorageNamespace)],
 })
-export class CacheStorageModule implements OnModuleDestroy {
-  constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
-
-  async onModuleDestroy() {
-    if ((this.cacheManager.store as any)?.name === 'redis') {
-      await (this.cacheManager.store as any).client.quit();
-    }
-  }
-}
+export class CacheStorageModule {}

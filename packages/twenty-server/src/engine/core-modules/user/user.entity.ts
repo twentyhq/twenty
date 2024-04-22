@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { ID, Field, ObjectType } from '@nestjs/graphql';
 
 import {
   Entity,
@@ -8,7 +8,6 @@ import {
   UpdateDateColumn,
   OneToMany,
   ManyToOne,
-  Relation,
 } from 'typeorm';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
@@ -16,12 +15,11 @@ import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @Entity({ name: 'user', schema: 'core' })
 @ObjectType('User')
 export class User {
-  @IDField(() => UUIDScalarType)
+  @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -73,7 +71,7 @@ export class User {
   @ManyToOne(() => Workspace, (workspace) => workspace.users, {
     onDelete: 'SET NULL',
   })
-  defaultWorkspace: Relation<Workspace>;
+  defaultWorkspace: Workspace;
 
   @Field()
   @Column()
@@ -90,12 +88,12 @@ export class User {
   @OneToMany(() => AppToken, (appToken) => appToken.user, {
     cascade: true,
   })
-  appTokens: Relation<AppToken[]>;
+  appTokens: AppToken[];
 
   @Field(() => WorkspaceMember, { nullable: true })
-  workspaceMember: Relation<WorkspaceMember>;
+  workspaceMember: WorkspaceMember;
 
   @Field(() => [UserWorkspace])
   @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.user)
-  workspaces: Relation<UserWorkspace[]>;
+  workspaces: UserWorkspace[];
 }

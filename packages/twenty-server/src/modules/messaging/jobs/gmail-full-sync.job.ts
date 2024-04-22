@@ -8,6 +8,7 @@ import { GmailFullSyncService } from 'src/modules/messaging/services/gmail-full-
 export type GmailFullSyncJobData = {
   workspaceId: string;
   connectedAccountId: string;
+  nextPageToken?: string;
 };
 
 @Injectable()
@@ -16,12 +17,14 @@ export class GmailFullSyncJob implements MessageQueueJob<GmailFullSyncJobData> {
 
   constructor(
     private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
-    private readonly gmailFullSyncV2Service: GmailFullSyncService,
+    private readonly gmailFullSyncService: GmailFullSyncService,
   ) {}
 
   async handle(data: GmailFullSyncJobData): Promise<void> {
     this.logger.log(
-      `gmail full-sync for workspace ${data.workspaceId} and account ${data.connectedAccountId}`,
+      `gmail full-sync for workspace ${data.workspaceId} and account ${
+        data.connectedAccountId
+      } ${data.nextPageToken ? `and ${data.nextPageToken} pageToken` : ''}`,
     );
 
     try {
@@ -38,7 +41,7 @@ export class GmailFullSyncJob implements MessageQueueJob<GmailFullSyncJobData> {
       return;
     }
 
-    await this.gmailFullSyncV2Service.fetchConnectedAccountThreads(
+    await this.gmailFullSyncService.fetchConnectedAccountThreads(
       data.workspaceId,
       data.connectedAccountId,
     );

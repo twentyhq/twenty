@@ -40,6 +40,11 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
     return this.mainDataSource;
   }
 
+  /**
+   * Connects to a data source using metadata. Returns a cached connection if it exists.
+   * @param dataSource DataSourceEntity
+   * @returns Promise<DataSource | undefined>
+   */
   public async connectToDataSource(
     dataSource: DataSourceEntity,
   ): Promise<DataSource | undefined> {
@@ -91,6 +96,12 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
     return workspaceDataSource;
   }
 
+  /**
+   * Disconnects from a workspace data source.
+   * @param dataSourceId
+   * @returns Promise<void>
+   *
+   */
   public async disconnectFromDataSource(dataSourceId: string) {
     if (!this.dataSources.has(dataSourceId)) {
       return;
@@ -103,6 +114,11 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
     this.dataSources.delete(dataSourceId);
   }
 
+  /**
+   * Creates a new schema
+   * @param workspaceId
+   * @returns Promise<void>
+   */
   public async createSchema(schemaName: string): Promise<string> {
     const queryRunner = this.mainDataSource.createQueryRunner();
 

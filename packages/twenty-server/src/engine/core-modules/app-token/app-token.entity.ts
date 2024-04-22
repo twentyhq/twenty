@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 import {
   Entity,
@@ -8,25 +8,21 @@ import {
   JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  Relation,
 } from 'typeorm';
 import { BeforeCreateOne, IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { BeforeCreateOneAppToken } from 'src/engine/core-modules/app-token/hooks/before-create-one-app-token.hook';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 export enum AppTokenType {
   RefreshToken = 'REFRESH_TOKEN',
-  CodeChallenge = 'CODE_CHALLENGE',
-  AuthorizationCode = 'AUTHORIZATION_CODE',
 }
 
 @Entity({ name: 'appToken', schema: 'core' })
 @ObjectType('AppToken')
 @BeforeCreateOne(BeforeCreateOneAppToken)
 export class AppToken {
-  @IDField(() => UUIDScalarType)
+  @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -34,7 +30,7 @@ export class AppToken {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'userId' })
-  user: Relation<User>;
+  user: User;
 
   @Column()
   userId: string;
@@ -43,7 +39,7 @@ export class AppToken {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'workspaceId' })
-  workspace: Relation<Workspace>;
+  workspace: Workspace;
 
   @Column({ nullable: true })
   workspaceId: string;

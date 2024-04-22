@@ -16,7 +16,7 @@ export const IsStrictlyLowerThan = (
       constraints: [property],
       options: validationOptions,
       validator: {
-        validate(value: any, args: ValidationArguments) {
+        validate: (value: any, args: ValidationArguments) => {
           const [relatedPropertyName] = args.constraints;
           const relatedValue = (args.object as any)[relatedPropertyName];
 

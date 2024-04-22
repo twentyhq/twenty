@@ -1,10 +1,8 @@
 import { Module } from '@nestjs/common';
 
-import { CalendarChannelListener } from 'src/modules/calendar/listeners/calendar-channel.listener';
-
 @Module({
   imports: [],
-  providers: [CalendarChannelListener],
+  providers: [],
   exports: [],
 })
 export class CalendarModule {}

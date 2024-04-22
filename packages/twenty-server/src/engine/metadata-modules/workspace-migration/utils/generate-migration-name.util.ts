@@ -1,3 +1,2 @@
-export function generateMigrationName(name?: string): string {
-  return `${new Date().getTime()}${name ? `-${name}` : ''}`;
-}
+export const generateMigrationName = (name?: string): string =>
+  `${new Date().getTime()}${name ? `-${name}` : ''}`;

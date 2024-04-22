@@ -23,7 +23,6 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { isFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/is-function-default-value.util';
 import { FieldMetadataDefaultValueFunctionNames } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
-import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 
 @Injectable()
 export class DatabaseStructureService {
@@ -157,40 +156,22 @@ export class DatabaseStructureService {
     return results.length >= 1;
   }
 
-  getPostgresDataTypes(fieldMetadata: FieldMetadataEntity): string[] {
+  getPostgresDataType(fieldMetadata: FieldMetadataEntity): string {
+    const typeORMType = fieldMetadataTypeToColumnType(fieldMetadata.type);
     const mainDataSource = this.typeORMService.getMainDataSource();
 
-    const normalizer = (type: FieldMetadataType, columnName: string) => {
-      const typeORMType = fieldMetadataTypeToColumnType(type);
+    // Compute enum name to compare data type properly
+    if (typeORMType === 'enum') {
+      const objectName = fieldMetadata.object?.nameSingular;
+      const prefix = fieldMetadata.isCustom ? '_' : '';
+      const fieldName = fieldMetadata.name;
 
-      // Compute enum name to compare data type properly
-      if (typeORMType === 'enum') {
-        const objectName = fieldMetadata.object?.nameSingular;
-        const prefix = fieldMetadata.isCustom ? '_' : '';
-
-        return `${objectName}_${prefix}${columnName}_enum`;
-      }
-
-      return mainDataSource.driver.normalizeType({
-        type: typeORMType,
-      });
-    };
-
-    if (isCompositeFieldMetadataType(fieldMetadata.type)) {
-      const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
-
-      if (!compositeType) {
-        throw new Error(
-          `Composite type definition not found for ${fieldMetadata.type}`,
-        );
-      }
-
-      return compositeType.properties.map((compositeProperty) =>
-        normalizer(compositeProperty.type, compositeProperty.name),
-      );
+      return `${objectName}_${prefix}${fieldName}_enum`;
     }
 
-    return [normalizer(fieldMetadata.type, fieldMetadata.name)];
+    return mainDataSource.driver.normalizeType({
+      type: typeORMType,
+    });
   }
 
   getFieldMetadataTypeFromPostgresDataType(
@@ -226,84 +207,57 @@ export class DatabaseStructureService {
     return null;
   }
 
-  getPostgresDefaults(
+  getPostgresDefault(
     fieldMetadataType: FieldMetadataType,
-    initialDefaultValue:
+    defaultValue:
       | FieldMetadataDefaultValue
       // Old format for default values
       // TODO: Should be removed once all default values are migrated
       | { type: FieldMetadataDefaultValueFunctionNames }
       | null,
-  ): (string | null | undefined)[] {
-    const normalizer = (
-      type: FieldMetadataType,
-      defaultValue:
-        | FieldMetadataDefaultValue
-        | { type: FieldMetadataDefaultValueFunctionNames }
-        | null,
-    ) => {
-      const typeORMType = fieldMetadataTypeToColumnType(type) as ColumnType;
-      const mainDataSource = this.typeORMService.getMainDataSource();
+  ): string | null | undefined {
+    const typeORMType = fieldMetadataTypeToColumnType(
+      fieldMetadataType,
+    ) as ColumnType;
+    const mainDataSource = this.typeORMService.getMainDataSource();
 
-      let value: any =
-        // Old formart default values
-        defaultValue &&
-        typeof defaultValue === 'object' &&
-        'value' in defaultValue
-          ? defaultValue.value
-          : defaultValue;
+    let value: any =
+      // Old formart default values
+      defaultValue &&
+      typeof defaultValue === 'object' &&
+      'value' in defaultValue
+        ? defaultValue.value
+        : defaultValue;
 
-      // Old format for default values
-      // TODO: Should be removed once all default values are migrated
-      if (
-        defaultValue &&
-        typeof defaultValue === 'object' &&
-        'type' in defaultValue
-      ) {
-        return this.computeFunctionDefaultValue(defaultValue.type);
-      }
-
-      if (isFunctionDefaultValue(value)) {
-        return this.computeFunctionDefaultValue(value);
-      }
-
-      if (typeof value === 'number') {
-        return value.toString();
-      }
-
-      // Remove leading and trailing single quotes for string default values as it's already handled by TypeORM
-      if (typeof value === 'string' && value.match(/^'.*'$/)) {
-        value = value.replace(/^'/, '').replace(/'$/, '');
-      }
-
-      return mainDataSource.driver.normalizeDefault({
-        type: typeORMType,
-        default: value,
-        isArray: false,
-        // Workaround to use normalizeDefault without a complete ColumnMetadata object
-      } as ColumnMetadata);
-    };
-
-    if (isCompositeFieldMetadataType(fieldMetadataType)) {
-      const compositeType = compositeTypeDefintions.get(fieldMetadataType);
-
-      if (!compositeType) {
-        throw new Error(
-          `Composite type definition not found for ${fieldMetadataType}`,
-        );
-      }
-
-      return compositeType.properties.map((compositeProperty) =>
-        normalizer(
-          compositeProperty.type,
-          typeof initialDefaultValue === 'object'
-            ? initialDefaultValue?.[compositeProperty.name]
-            : null,
-        ),
-      );
+    // Old format for default values
+    // TODO: Should be removed once all default values are migrated
+    if (
+      defaultValue &&
+      typeof defaultValue === 'object' &&
+      'type' in defaultValue
+    ) {
+      return this.computeFunctionDefaultValue(defaultValue.type);
     }
 
-    return [normalizer(fieldMetadataType, initialDefaultValue)];
+    if (isFunctionDefaultValue(value)) {
+      return this.computeFunctionDefaultValue(value);
+    }
+
+    if (typeof value === 'number') {
+      return value.toString();
+    }
+
+    // Remove leading and trailing single quotes for string default values as it's already handled by TypeORM
+    if (typeof value === 'string' && value.match(/^'.*'$/)) {
+      value = value.replace(/^'/, '').replace(/'$/, '');
+    }
+
+    return mainDataSource.driver.normalizeDefault({
+      type: typeORMType,
+      default: value,
+      isArray: false,
+      // Workaround to use normalizeDefault without a complete ColumnMetadata object
+    } as ColumnMetadata);
   }
 
   private computeFunctionDefaultValue(

@@ -1,12 +1,10 @@
-import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
-
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { messageStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { MESSAGE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
@@ -16,21 +14,19 @@ import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-
 import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { MessageThreadObjectMetadata } from 'src/modules/messaging/standard-objects/message-thread.object-metadata';
-import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
-  standardId: standardObjectIds.message,
+  standardId: STANDARD_OBJECT_IDS.message,
   namePlural: 'messages',
   labelSingular: 'Message',
   labelPlural: 'Messages',
   description: 'Message',
   icon: 'IconMessage',
 })
-@IsNotAuditLogged()
 @IsSystem()
 export class MessageObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    standardId: messageStandardFieldIds.headerMessageId,
+    standardId: MESSAGE_STANDARD_FIELD_IDS.headerMessageId,
     type: FieldMetadataType.TEXT,
     label: 'Header message Id',
     description: 'Message id from the message header',
@@ -39,7 +35,7 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   headerMessageId: string;
 
   @FieldMetadata({
-    standardId: messageStandardFieldIds.messageThread,
+    standardId: MESSAGE_STANDARD_FIELD_IDS.messageThread,
     type: FieldMetadataType.RELATION,
     label: 'Message Thread Id',
     description: 'Message Thread Id',
@@ -47,10 +43,10 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'messageThreadId',
   })
   @IsNullable()
-  messageThread: Relation<MessageThreadObjectMetadata>;
+  messageThread: MessageThreadObjectMetadata;
 
   @FieldMetadata({
-    standardId: messageStandardFieldIds.direction,
+    standardId: MESSAGE_STANDARD_FIELD_IDS.direction,
     type: FieldMetadataType.SELECT,
     label: 'Direction',
     description: 'Message Direction',
@@ -64,7 +60,7 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   direction: string;
 
   @FieldMetadata({
-    standardId: messageStandardFieldIds.subject,
+    standardId: MESSAGE_STANDARD_FIELD_IDS.subject,
     type: FieldMetadataType.TEXT,
     label: 'Subject',
     description: 'Subject',
@@ -73,7 +69,7 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   subject: string;
 
   @FieldMetadata({
-    standardId: messageStandardFieldIds.text,
+    standardId: MESSAGE_STANDARD_FIELD_IDS.text,
     type: FieldMetadataType.TEXT,
     label: 'Text',
     description: 'Text',
@@ -82,7 +78,7 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   text: string;
 
   @FieldMetadata({
-    standardId: messageStandardFieldIds.receivedAt,
+    standardId: MESSAGE_STANDARD_FIELD_IDS.receivedAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Received At',
     description: 'The date the message was received',
@@ -92,7 +88,7 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   receivedAt: string;
 
   @FieldMetadata({
-    standardId: messageStandardFieldIds.messageParticipants,
+    standardId: MESSAGE_STANDARD_FIELD_IDS.messageParticipants,
     type: FieldMetadataType.RELATION,
     label: 'Message Participants',
     description: 'Message Participants',
@@ -105,10 +101,10 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  messageParticipants: Relation<MessageParticipantObjectMetadata[]>;
+  messageParticipants: MessageParticipantObjectMetadata[];
 
   @FieldMetadata({
-    standardId: messageStandardFieldIds.messageChannelMessageAssociations,
+    standardId: MESSAGE_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
     type: FieldMetadataType.RELATION,
     label: 'Message Channel Association',
     description: 'Messages from the channel.',
@@ -120,7 +116,5 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  messageChannelMessageAssociations: Relation<
-    MessageChannelMessageAssociationObjectMetadata[]
-  >;
+  messageChannelMessageAssociations: MessageChannelMessageAssociationObjectMetadata[];
 }

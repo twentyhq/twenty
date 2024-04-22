@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 import { IDField, UnPagedRelation } from '@ptc-org/nestjs-query-graphql';
 import {
@@ -7,7 +7,6 @@ import {
   Entity,
   OneToMany,
   PrimaryGeneratedColumn,
-  Relation,
   UpdateDateColumn,
 } from 'typeorm';
 import Stripe from 'stripe';
@@ -17,7 +16,6 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType('Workspace')
@@ -26,7 +24,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
   nullable: true,
 })
 export class Workspace {
-  @IDField(() => UUIDScalarType)
+  @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -61,25 +59,25 @@ export class Workspace {
   @OneToMany(() => AppToken, (appToken) => appToken.workspace, {
     cascade: true,
   })
-  appTokens: Relation<AppToken[]>;
+  appTokens: AppToken[];
 
   @OneToMany(() => User, (user) => user.defaultWorkspace)
-  users: Relation<User[]>;
+  users: User[];
 
   @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.workspace, {
     onDelete: 'CASCADE',
   })
-  workspaceUsers: Relation<UserWorkspace[]>;
+  workspaceUsers: UserWorkspace[];
 
   @Field()
   @Column({ default: true })
   allowImpersonation: boolean;
 
   @OneToMany(() => FeatureFlagEntity, (featureFlag) => featureFlag.workspace)
-  featureFlags: Relation<FeatureFlagEntity[]>;
+  featureFlags: FeatureFlagEntity[];
 
-  @Field(() => String)
-  @Column({ type: 'text', default: 'incomplete' })
+  @Field()
+  @Column({ default: 'incomplete' })
   subscriptionStatus: Stripe.Subscription.Status;
 
   @Field({ nullable: true })
@@ -92,5 +90,5 @@ export class Workspace {
     () => BillingSubscription,
     (billingSubscription) => billingSubscription.workspace,
   )
-  billingSubscriptions: Relation<BillingSubscription[]>;
+  billingSubscriptions: BillingSubscription[];
 }

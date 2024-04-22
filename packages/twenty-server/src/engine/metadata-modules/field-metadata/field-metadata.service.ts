@@ -18,8 +18,8 @@ import {
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnDrop,
   WorkspaceMigrationTableAction,
-  WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import { generateTargetColumnMap } from 'src/engine/metadata-modules/field-metadata/utils/generate-target-column-map.util';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { UpdateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/update-field.input';
@@ -37,7 +37,7 @@ import {
   RelationMetadataType,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
-import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { computeCustomName } from 'src/engine/utils/compute-custom-name.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 
 import {
@@ -128,6 +128,11 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
       const createdFieldMetadata = await fieldMetadataRepository.save({
         ...fieldMetadataInput,
+        targetColumnMap: generateTargetColumnMap(
+          fieldMetadataInput.type,
+          !fieldMetadataInput.isRemoteCreation,
+          fieldMetadataInput.name,
+        ),
         isNullable: generateNullable(
           fieldMetadataInput.type,
           fieldMetadataInput.isNullable,
@@ -153,7 +158,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           [
             {
               name: computeObjectTargetTable(objectMetadata),
-              action: WorkspaceMigrationTableActionType.ALTER,
+              action: 'alter',
               columns: this.workspaceMigrationFactory.createColumnActions(
                 WorkspaceMigrationColumnActionType.CREATE,
                 createdFieldMetadata,
@@ -306,15 +311,21 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         ...updatableFieldInput,
         defaultValue:
           // Todo: we handle default value for all field types.
-          ![
-            FieldMetadataType.SELECT,
-            FieldMetadataType.MULTI_SELECT,
-            FieldMetadataType.BOOLEAN,
-          ].includes(existingFieldMetadata.type)
+          ![FieldMetadataType.SELECT, FieldMetadataType.BOOLEAN].includes(
+            existingFieldMetadata.type,
+          )
             ? existingFieldMetadata.defaultValue
             : updatableFieldInput.defaultValue !== null
               ? updatableFieldInput.defaultValue
               : null,
+        // If the name is updated, the targetColumnMap should be updated as well
+        targetColumnMap: updatableFieldInput.name
+          ? generateTargetColumnMap(
+              existingFieldMetadata.type,
+              existingFieldMetadata.isCustom,
+              updatableFieldInput.name,
+            )
+          : existingFieldMetadata.targetColumnMap,
       });
       const updatedFieldMetadata = await fieldMetadataRepository.findOneOrFail({
         where: { id },
@@ -331,7 +342,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           [
             {
               name: computeObjectTargetTable(objectMetadata),
-              action: WorkspaceMigrationTableActionType.ALTER,
+              action: 'alter',
               columns: this.workspaceMigrationFactory.createColumnActions(
                 WorkspaceMigrationColumnActionType.ALTER,
                 existingFieldMetadata,
@@ -402,11 +413,14 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         [
           {
             name: computeObjectTargetTable(objectMetadata),
-            action: WorkspaceMigrationTableActionType.ALTER,
+            action: 'alter',
             columns: [
               {
                 action: WorkspaceMigrationColumnActionType.DROP,
-                columnName: computeColumnName(fieldMetadata),
+                columnName: computeCustomName(
+                  fieldMetadata.name,
+                  fieldMetadata.isCustom,
+                ),
               } satisfies WorkspaceMigrationColumnDrop,
             ],
           } satisfies WorkspaceMigrationTableAction,
@@ -487,48 +501,68 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     return fieldMetadataInputOverrided as UpdateFieldInput;
   }
 
-  public async getRelationDefinitionFromRelationMetadata(
-    fieldMetadataDTO: FieldMetadataDTO,
-    relationMetadata: RelationMetadataEntity,
+  public async getRelationDefinition(
+    fieldMetadata: FieldMetadataDTO,
   ): Promise<RelationDefinitionDTO | null> {
-    if (fieldMetadataDTO.type !== FieldMetadataType.RELATION) {
+    if (fieldMetadata.type !== FieldMetadataType.RELATION) {
       return null;
     }
 
+    const foundRelationMetadata = await this.relationMetadataRepository.findOne(
+      {
+        where: [
+          { fromFieldMetadataId: fieldMetadata.id },
+          { toFieldMetadataId: fieldMetadata.id },
+        ],
+        relations: [
+          'fromObjectMetadata',
+          'toObjectMetadata',
+          'fromFieldMetadata',
+          'toFieldMetadata',
+        ],
+      },
+    );
+
+    if (!foundRelationMetadata) {
+      throw new Error('RelationMetadata not found');
+    }
+
     const isRelationFromSource =
-      relationMetadata.fromFieldMetadata.id === fieldMetadataDTO.id;
+      foundRelationMetadata.fromFieldMetadata.id === fieldMetadata.id;
 
     // TODO: implement MANY_TO_MANY
-    if (relationMetadata.relationType === RelationMetadataType.MANY_TO_MANY) {
+    if (
+      foundRelationMetadata.relationType === RelationMetadataType.MANY_TO_MANY
+    ) {
       throw new Error(`
-        Relation type ${relationMetadata.relationType} not supported
+        Relation type ${foundRelationMetadata.relationType} not supported
       `);
     }
 
     if (isRelationFromSource) {
       const direction =
-        relationMetadata.relationType === RelationMetadataType.ONE_TO_ONE
+        foundRelationMetadata.relationType === RelationMetadataType.ONE_TO_ONE
           ? RelationDefinitionType.ONE_TO_ONE
           : RelationDefinitionType.ONE_TO_MANY;
 
       return {
-        sourceObjectMetadata: relationMetadata.fromObjectMetadata,
-        sourceFieldMetadata: relationMetadata.fromFieldMetadata,
-        targetObjectMetadata: relationMetadata.toObjectMetadata,
-        targetFieldMetadata: relationMetadata.toFieldMetadata,
+        sourceObjectMetadata: foundRelationMetadata.fromObjectMetadata,
+        sourceFieldMetadata: foundRelationMetadata.fromFieldMetadata,
+        targetObjectMetadata: foundRelationMetadata.toObjectMetadata,
+        targetFieldMetadata: foundRelationMetadata.toFieldMetadata,
         direction,
       };
     } else {
       const direction =
-        relationMetadata.relationType === RelationMetadataType.ONE_TO_ONE
+        foundRelationMetadata.relationType === RelationMetadataType.ONE_TO_ONE
           ? RelationDefinitionType.ONE_TO_ONE
           : RelationDefinitionType.MANY_TO_ONE;
 
       return {
-        sourceObjectMetadata: relationMetadata.toObjectMetadata,
-        sourceFieldMetadata: relationMetadata.toFieldMetadata,
-        targetObjectMetadata: relationMetadata.fromObjectMetadata,
-        targetFieldMetadata: relationMetadata.fromFieldMetadata,
+        sourceObjectMetadata: foundRelationMetadata.toObjectMetadata,
+        sourceFieldMetadata: foundRelationMetadata.toFieldMetadata,
+        targetObjectMetadata: foundRelationMetadata.fromObjectMetadata,
+        targetFieldMetadata: foundRelationMetadata.fromFieldMetadata,
         direction,
       };
     }

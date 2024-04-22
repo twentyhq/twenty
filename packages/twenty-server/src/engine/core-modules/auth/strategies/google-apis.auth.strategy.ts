@@ -22,36 +22,28 @@ export type GoogleAPIsRequest = Omit<
   };
 };
 
-export type GoogleAPIScopeConfig = {
-  isCalendarEnabled?: boolean;
-};
-
 @Injectable()
 export class GoogleAPIsStrategy extends PassportStrategy(
   Strategy,
   'google-apis',
 ) {
-  constructor(
-    environmentService: EnvironmentService,
-    scopeConfig: GoogleAPIScopeConfig,
-  ) {
+  constructor(environmentService: EnvironmentService) {
     const scope = ['email', 'profile'];
 
     if (environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED')) {
       scope.push('https://www.googleapis.com/auth/gmail.readonly');
     }
 
-    if (
-      environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED') &&
-      scopeConfig?.isCalendarEnabled
-    ) {
-      scope.push('https://www.googleapis.com/auth/calendar.events');
+    if (environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED')) {
+      scope.push('https://www.googleapis.com/auth/calendar');
     }
 
     super({
       clientID: environmentService.get('AUTH_GOOGLE_CLIENT_ID'),
       clientSecret: environmentService.get('AUTH_GOOGLE_CLIENT_SECRET'),
-      callbackURL: environmentService.get('AUTH_GOOGLE_APIS_CALLBACK_URL'),
+      callbackURL: environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED')
+        ? environmentService.get('AUTH_GOOGLE_APIS_CALLBACK_URL')
+        : environmentService.get('MESSAGING_PROVIDER_GMAIL_CALLBACK_URL'),
       scope,
       passReqToCallback: true,
     });

@@ -3,13 +3,14 @@ import { Injectable, Logger } from '@nestjs/common';
 import { GraphQLOutputType } from 'graphql';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import {
   TypeMapperService,
   TypeOptions,
 } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 
 import { ObjectTypeDefinitionKind } from './object-type-definition.factory';
 
@@ -23,24 +24,28 @@ export class OutputTypeFactory {
   ) {}
 
   public create(
-    target: string,
-    type: FieldMetadataType,
+    fieldMetadata: FieldMetadataInterface,
     kind: ObjectTypeDefinitionKind,
     buildOtions: WorkspaceBuildSchemaOptions,
     typeOptions: TypeOptions,
   ): GraphQLOutputType {
+    const target = isCompositeFieldMetadataType(fieldMetadata.type)
+      ? fieldMetadata.type.toString()
+      : fieldMetadata.id;
     let gqlType: GraphQLOutputType | undefined =
       this.typeMapperService.mapToScalarType(
-        type,
+        fieldMetadata.type,
         buildOtions.dateScalarMode,
         buildOtions.numberScalarMode,
       );
 
-    gqlType ??= this.typeDefinitionsStorage.getOutputTypeByKey(target, kind);
+    gqlType ??= this.typeDefinitionsStorage.getObjectTypeByKey(target, kind);
+
+    gqlType ??= this.typeDefinitionsStorage.getEnumTypeByKey(target);
 
     if (!gqlType) {
       this.logger.error(`Could not find a GraphQL type for ${target}`, {
-        type,
+        fieldMetadata,
         buildOtions,
         typeOptions,
       });

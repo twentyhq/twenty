@@ -1,6 +1,5 @@
-import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
+import { ObjectType, ID, Field, registerEnumType } from '@nestjs/graphql';
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { TimelineCalendarEventParticipant } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-event-participant.dto';
 
 export enum TimelineCalendarEventVisibility {
@@ -24,7 +23,7 @@ export class LinkMetadata {
 
 @ObjectType('TimelineCalendarEvent')
 export class TimelineCalendarEvent {
-  @Field(() => UUIDScalarType)
+  @Field(() => ID)
   id: string;
 
   @Field()

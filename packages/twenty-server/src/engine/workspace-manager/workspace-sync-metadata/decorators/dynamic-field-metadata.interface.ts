@@ -3,10 +3,9 @@ import { DynamicRelationFieldMetadataDecoratorParams } from 'src/engine/workspac
 import { TypedReflect } from 'src/utils/typed-reflect';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
-export function DynamicRelationFieldMetadata(
-  params: DynamicRelationFieldMetadataDecoratorParams,
-): PropertyDecorator {
-  return (target: object, fieldKey: string) => {
+export const DynamicRelationFieldMetadata =
+  (params: DynamicRelationFieldMetadataDecoratorParams): PropertyDecorator =>
+  (target: object, fieldKey: string) => {
     const isSystem =
       TypedReflect.getMetadata('isSystem', target, fieldKey) ?? false;
     const gate = TypedReflect.getMetadata('gate', target, fieldKey);
@@ -24,4 +23,3 @@ export function DynamicRelationFieldMetadata(
       target.constructor,
     );
   };
-}

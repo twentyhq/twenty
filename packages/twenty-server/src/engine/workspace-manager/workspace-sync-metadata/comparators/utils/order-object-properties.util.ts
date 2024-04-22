@@ -1,10 +1,6 @@
-export function orderObjectProperties<T extends object>(data: T[]): T[];
-
-export function orderObjectProperties<T extends object>(data: T): T;
-
-export function orderObjectProperties<T extends Array<any> | object>(
+export const orderObjectProperties = <T extends object[] | object>(
   data: T,
-): T {
+): T => {
   if (Array.isArray(data)) {
     return data.map(orderObjectProperties) as T;
   }
@@ -18,4 +14,4 @@ export function orderObjectProperties<T extends Array<any> | object>(
   }
 
   return data;
-}
+};

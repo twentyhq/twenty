@@ -8,7 +8,6 @@ import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metad
 import { pascalCase } from 'src/utils/pascal-case';
 import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-metadata-type.util';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 
 import { OutputTypeFactory } from './output-type.factory';
 
@@ -57,20 +56,10 @@ export class ObjectTypeDefinitionFactory {
         continue;
       }
 
-      const target = isCompositeFieldMetadataType(fieldMetadata.type)
-        ? fieldMetadata.type.toString()
-        : fieldMetadata.id;
-
-      const type = this.outputTypeFactory.create(
-        target,
-        fieldMetadata.type,
-        kind,
-        options,
-        {
-          nullable: fieldMetadata.isNullable,
-          isArray: fieldMetadata.type === FieldMetadataType.MULTI_SELECT,
-        },
-      );
+      const type = this.outputTypeFactory.create(fieldMetadata, kind, options, {
+        nullable: fieldMetadata.isNullable,
+        isArray: fieldMetadata.type === FieldMetadataType.MULTI_SELECT,
+      });
 
       fields[fieldMetadata.name] = {
         type,

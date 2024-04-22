@@ -53,7 +53,9 @@ export class AnalyticsService {
 
     try {
       await this.httpService.axiosRef.post('/v1', data);
-    } catch {}
+    } catch {
+      // Do nothing
+    }
 
     return { success: true };
   }

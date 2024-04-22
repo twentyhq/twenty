@@ -1,8 +1,18 @@
-import { createCompositeFieldKey } from 'src/engine/api/graphql/workspace-query-builder/utils/composite-field-metadata.util';
 import {
-  handleCompositeKey,
+  isSpecialKey,
+  handleSpecialKey,
   parseResult,
 } from 'src/engine/api/graphql/workspace-query-runner/utils/parse-result.util';
+
+describe('isSpecialKey', () => {
+  test('should return true if the key starts with "___"', () => {
+    expect(isSpecialKey('___specialKey')).toBe(true);
+  });
+
+  test('should return false if the key does not start with "___"', () => {
+    expect(isSpecialKey('normalKey')).toBe(false);
+  });
+});
 
 describe('handleSpecialKey', () => {
   let result;
@@ -11,12 +21,8 @@ describe('handleSpecialKey', () => {
     result = {};
   });
 
-  test('should correctly process a composite key and add it to the result object', () => {
-    handleCompositeKey(
-      result,
-      createCompositeFieldKey('complexField', 'link'),
-      'value1',
-    );
+  test('should correctly process a special key and add it to the result object', () => {
+    handleSpecialKey(result, '___complexField_link', 'value1');
     expect(result).toEqual({
       complexField: {
         link: 'value1',
@@ -25,16 +31,8 @@ describe('handleSpecialKey', () => {
   });
 
   test('should add values under the same newKey if called multiple times', () => {
-    handleCompositeKey(
-      result,
-      createCompositeFieldKey('complexField', 'link'),
-      'value1',
-    );
-    handleCompositeKey(
-      result,
-      createCompositeFieldKey('complexField', 'text'),
-      'value2',
-    );
+    handleSpecialKey(result, '___complexField_link', 'value1');
+    handleSpecialKey(result, '___complexField_text', 'value2');
     expect(result).toEqual({
       complexField: {
         link: 'value1',
@@ -43,8 +41,8 @@ describe('handleSpecialKey', () => {
     });
   });
 
-  test('should not create a new field if the composite key is not correctly formed', () => {
-    handleCompositeKey(result, 'COMPOSITE___complexField', 'value1');
+  test('should not create a new field if the special key is not correctly formed', () => {
+    handleSpecialKey(result, '___complexField', 'value1');
     expect(result).toEqual({});
   });
 });
@@ -53,9 +51,9 @@ describe('parseResult', () => {
   test('should recursively parse an object and handle special keys', () => {
     const obj = {
       normalField: 'value1',
-      COMPOSITE___specialField_part1: 'value2',
+      ___specialField_part1: 'value2',
       nested: {
-        COMPOSITE___specialFieldNested_part2: 'value3',
+        ___specialFieldNested_part2: 'value3',
       },
     };
 
@@ -77,10 +75,10 @@ describe('parseResult', () => {
   test('should handle arrays and parse each element', () => {
     const objArray = [
       {
-        COMPOSITE___specialField_part1: 'value1',
+        ___specialField_part1: 'value1',
       },
       {
-        COMPOSITE___specialField_part2: 'value2',
+        ___specialField_part2: 'value2',
       },
     ];
 

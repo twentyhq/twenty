@@ -19,9 +19,9 @@ import { GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/const
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { SaveMessageAndEmitContactCreationEventService } from 'src/modules/messaging/services/save-message-and-emit-contact-creation-event/save-message-and-emit-contact-creation-event.service';
 import {
-  GmailFullSyncJobData,
-  GmailFullSyncJob,
-} from 'src/modules/messaging/jobs/gmail-full-sync.job';
+  GmailFullSyncV2JobData,
+  GmailFullSyncV2Job,
+} from 'src/modules/messaging/jobs/gmail-full-sync-v2.job';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { GMAIL_ONGOING_SYNC_TIMEOUT } from 'src/modules/messaging/constants/gmail-ongoing-sync-timeout.constant';
@@ -63,15 +63,8 @@ export class GmailFetchMessageContentFromCacheService {
       return;
     }
 
-    const { accessToken, refreshToken, authFailedAt } = connectedAccount;
-
-    if (authFailedAt) {
-      this.logger.error(
-        `Connected account ${connectedAccountId} in workspace ${workspaceId} is in a failed state. Skipping...`,
-      );
-
-      return;
-    }
+    const accessToken = connectedAccount.accessToken;
+    const refreshToken = connectedAccount.refreshToken;
 
     if (!refreshToken) {
       throw new Error(
@@ -240,14 +233,6 @@ export class GmailFetchMessageContentFromCacheService {
           messageIdsToFetch,
         );
 
-        if (error?.message?.code === 429) {
-          this.logger.error(
-            `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: Resource has been exhausted, locking for ${GMAIL_ONGOING_SYNC_TIMEOUT}ms...`,
-          );
-
-          return;
-        }
-
         await this.messageChannelRepository.updateSyncStatus(
           gmailMessageChannelId,
           MessageChannelSyncStatus.FAILED,
@@ -264,8 +249,8 @@ export class GmailFetchMessageContentFromCacheService {
     workspaceId: string,
     connectedAccountId: string,
   ) {
-    await this.messageQueueService.add<GmailFullSyncJobData>(
-      GmailFullSyncJob.name,
+    await this.messageQueueService.add<GmailFullSyncV2JobData>(
+      GmailFullSyncV2Job.name,
       { workspaceId, connectedAccountId },
     );
   }

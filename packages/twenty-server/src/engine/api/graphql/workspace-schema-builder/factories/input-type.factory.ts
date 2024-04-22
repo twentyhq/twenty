@@ -1,17 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { GraphQLInputObjectType, GraphQLInputType, GraphQLList } from 'graphql';
+import { GraphQLInputType } from 'graphql';
 
 import { WorkspaceBuildSchemaOptions } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/workspace-build-schema-optionts.interface';
+import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
 import {
   TypeMapperService,
   TypeOptions,
 } from 'src/engine/api/graphql/workspace-schema-builder/services/type-mapper.service';
 import { TypeDefinitionsStorage } from 'src/engine/api/graphql/workspace-schema-builder/storages/type-definitions.storage';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { FilterIs } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/filter-is.input-type';
-import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 
 import { InputTypeDefinitionKind } from './input-type-definition.factory';
 
@@ -25,60 +24,30 @@ export class InputTypeFactory {
   ) {}
 
   public create(
-    target: string,
-    type: FieldMetadataType,
+    fieldMetadata: FieldMetadataInterface,
     kind: InputTypeDefinitionKind,
-    buildOptions: WorkspaceBuildSchemaOptions,
+    buildOtions: WorkspaceBuildSchemaOptions,
     typeOptions: TypeOptions,
   ): GraphQLInputType {
-    let inputType: GraphQLInputType | undefined;
+    const target = isCompositeFieldMetadataType(fieldMetadata.type)
+      ? fieldMetadata.type.toString()
+      : fieldMetadata.id;
+    let inputType: GraphQLInputType | undefined =
+      this.typeMapperService.mapToScalarType(
+        fieldMetadata.type,
+        buildOtions.dateScalarMode,
+        buildOtions.numberScalarMode,
+      );
 
-    switch (kind) {
-      /**
-       * Create and Update input types are classic scalar types
-       */
-      case InputTypeDefinitionKind.Create:
-      case InputTypeDefinitionKind.Update:
-        inputType = this.typeMapperService.mapToScalarType(
-          type,
-          buildOptions.dateScalarMode,
-          buildOptions.numberScalarMode,
-        );
-        break;
-      /**
-       * Filter input maps to special filter type
-       */
-      case InputTypeDefinitionKind.Filter: {
-        if (isEnumFieldMetadataType(type)) {
-          inputType = this.createEnumFilterType(target);
-        } else {
-          inputType = this.typeMapperService.mapToFilterType(
-            type,
-            buildOptions.dateScalarMode,
-            buildOptions.numberScalarMode,
-          );
-        }
-
-        break;
-      }
-      /**
-       * OrderBy input maps to special order by type
-       */
-      case InputTypeDefinitionKind.OrderBy:
-        inputType = this.typeMapperService.mapToOrderByType(type);
-        break;
-    }
-
-    /**
-     * If input type is not scalar, we're looking for it in the type definitions storage as it can be an object type
-     */
     inputType ??= this.typeDefinitionsStorage.getInputTypeByKey(target, kind);
+
+    inputType ??= this.typeDefinitionsStorage.getEnumTypeByKey(target);
 
     if (!inputType) {
       this.logger.error(`Could not find a GraphQL type for ${target}`, {
-        type,
+        fieldMetadata,
         kind,
-        buildOptions,
+        buildOtions,
         typeOptions,
       });
 
@@ -86,25 +55,5 @@ export class InputTypeFactory {
     }
 
     return this.typeMapperService.mapToGqlType(inputType, typeOptions);
-  }
-
-  private createEnumFilterType(target: string): GraphQLInputObjectType {
-    const enumType = this.typeDefinitionsStorage.getEnumTypeByKey(target);
-
-    if (!enumType) {
-      this.logger.error(`Could not find a GraphQL enum type for ${target}`);
-
-      throw new Error(`Could not find a GraphQL enum type for ${target}`);
-    }
-
-    return new GraphQLInputObjectType({
-      name: `${enumType.name}Filter`,
-      fields: () => ({
-        eq: { type: enumType },
-        neq: { type: enumType },
-        in: { type: new GraphQLList(enumType) },
-        is: { type: FilterIs },
-      }),
-    });
   }
 }

@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 import {
   Column,
@@ -8,7 +8,6 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  Relation,
   UpdateDateColumn,
 } from 'typeorm';
 import Stripe from 'stripe';
@@ -16,12 +15,11 @@ import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @Entity({ name: 'billingSubscription', schema: 'core' })
 @ObjectType('BillingSubscription')
 export class BillingSubscription {
-  @IDField(() => UUIDScalarType)
+  @IDField(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -38,7 +36,7 @@ export class BillingSubscription {
     onDelete: 'CASCADE',
   })
   @JoinColumn()
-  workspace: Relation<Workspace>;
+  workspace: Workspace;
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
@@ -49,17 +47,17 @@ export class BillingSubscription {
   @Column({ unique: true, nullable: false })
   stripeSubscriptionId: string;
 
-  @Field(() => String)
-  @Column({ type: 'text', nullable: false })
+  @Field()
+  @Column({ nullable: false })
   status: Stripe.Subscription.Status;
 
-  @Field(() => String, { nullable: true })
-  @Column({ type: 'text', nullable: true })
+  @Field({ nullable: true })
+  @Column({ nullable: true })
   interval: Stripe.Price.Recurring.Interval;
 
   @OneToMany(
     () => BillingSubscriptionItem,
     (billingSubscriptionItem) => billingSubscriptionItem.billingSubscription,
   )
-  billingSubscriptionItems: Relation<BillingSubscriptionItem[]>;
+  billingSubscriptionItems: BillingSubscriptionItem[];
 }

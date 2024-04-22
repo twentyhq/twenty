@@ -36,7 +36,7 @@ export const useThrottler = (
   });
 
   return {
-    onPluginInit({ addPlugin }) {
+    onPluginInit: ({ addPlugin }) => {
       addPlugin(
         useOnResolve(async ({ args, root, context, info }) => {
           if (options.limit && options.ttl) {
@@ -73,7 +73,7 @@ export const useThrottler = (
         }),
       );
     },
-    async onContextBuilding({ extendContext }) {
+    onContextBuilding: async ({ extendContext }) => {
       extendContext({
         rateLimiterFn,
       });
@@ -81,6 +81,5 @@ export const useThrottler = (
   };
 };
 
-function interpolate(message: string, args: { [key: string]: string }) {
-  return message.replace(/\{{([^)]*)\}}/g, (_, key) => args[key.trim()]);
-}
+const interpolate = (message: string, args: { [key: string]: string }) =>
+  message.replace(/\{{([^)]*)\}}/g, (_, key) => args[key.trim()]);

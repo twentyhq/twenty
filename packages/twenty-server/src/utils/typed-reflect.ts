@@ -16,7 +16,6 @@ export interface ReflectMetadataTypeMap {
   gate: GateDecoratorParams;
   isNullable: true;
   isSystem: true;
-  isAuditLogged: false;
 }
 
 export class TypedReflect {

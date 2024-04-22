@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CreateCompanyAndContactService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/services/create-company-and-contact.service';
 import { CreateCompanyModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company/create-company.module';
@@ -12,7 +11,6 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { CreateCompanyAndContactListener } from 'src/modules/connected-account/auto-companies-and-contacts-creation/listeners/create-company-and-contact.listener';
 import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
 import { CalendarEventParticipantModule } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.module';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @Module({
   imports: [
@@ -26,7 +24,6 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
     MessageParticipantModule,
     WorkspaceDataSourceModule,
     CalendarEventParticipantModule,
-    TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
   ],
   providers: [CreateCompanyAndContactService, CreateCompanyAndContactListener],
   exports: [CreateCompanyAndContactService],

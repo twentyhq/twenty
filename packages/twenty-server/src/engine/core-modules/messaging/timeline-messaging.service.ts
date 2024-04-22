@@ -24,7 +24,7 @@ export class TimelineMessagingService {
     workspaceMemberId: string,
     workspaceId: string,
     personIds: string[],
-    page: number = 1,
+    page = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
   ): Promise<TimelineThreadsWithTotal> {
     const offset = (page - 1) * pageSize;
@@ -58,11 +58,6 @@ export class TimelineMessagingService {
           ${dataSourceSchema}."messageParticipant" "messageParticipant" ON "messageParticipant"."messageId" = message.id
       WHERE
           "messageParticipant"."personId" = ANY($1)
-      AND EXISTS (
-          SELECT 1
-          FROM ${dataSourceSchema}."messageChannelMessageAssociation" mcma
-          WHERE mcma."messageId" = message.id
-      )
       GROUP BY
           message."messageThreadId",
           message.id
@@ -133,11 +128,6 @@ export class TimelineMessagingService {
           ${dataSourceSchema}."message" message
       WHERE
           message."messageThreadId" = ANY($1)
-      AND EXISTS (
-          SELECT 1
-          FROM ${dataSourceSchema}."messageChannelMessageAssociation" mcma
-          WHERE mcma."messageId" = message.id
-      )
       GROUP BY
           message."messageThreadId"
       `,
@@ -258,11 +248,6 @@ export class TimelineMessagingService {
           ${dataSourceSchema}."messageParticipant" "messageParticipant" ON "messageParticipant"."messageId" = message.id
       WHERE
           "messageParticipant"."personId" = ANY($1)
-      AND EXISTS (
-          SELECT 1
-          FROM ${dataSourceSchema}."messageChannelMessageAssociation" mcma
-          WHERE mcma."messageId" = message.id
-      )
       `,
         [personIds],
         workspaceId,
@@ -478,7 +463,7 @@ export class TimelineMessagingService {
     workspaceMemberId: string,
     workspaceId: string,
     companyId: string,
-    page: number = 1,
+    page = 1,
     pageSize: number = TIMELINE_THREADS_DEFAULT_PAGE_SIZE,
   ): Promise<TimelineThreadsWithTotal> {
     const dataSourceSchema =

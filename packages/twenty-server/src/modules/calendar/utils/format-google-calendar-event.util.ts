@@ -1,15 +1,13 @@
-import { calendar_v3 as calendarV3 } from 'googleapis';
+import { calendar_v3 } from 'googleapis';
 import { v4 } from 'uuid';
 
 import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
 import { CalendarEventWithParticipants } from 'src/modules/calendar/types/calendar-event';
 
 export const formatGoogleCalendarEvent = (
-  event: calendarV3.Schema$Event,
-  iCalUIDCalendarEventIdMap: Map<string, string>,
+  event: calendar_v3.Schema$Event,
 ): CalendarEventWithParticipants => {
-  const id =
-    (event.iCalUID && iCalUIDCalendarEventIdMap.get(event.iCalUID)) ?? v4();
+  const id = v4();
 
   const formatResponseStatus = (status: string | null | undefined) => {
     switch (status) {

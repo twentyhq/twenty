@@ -16,5 +16,4 @@ export interface ObjectMetadataInterface {
   isCustom: boolean;
   isActive: boolean;
   isRemote: boolean;
-  isAuditLogged: boolean;
 }

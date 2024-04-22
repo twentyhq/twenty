@@ -63,8 +63,8 @@ export class BaseGraphQLError extends Error implements GraphQLError {
   }
 }
 
-function toGraphQLError(error: BaseGraphQLError): GraphQLError {
-  return new GraphQLError(error.message, {
+const toGraphQLError = (error: BaseGraphQLError): GraphQLError =>
+  new GraphQLError(error.message, {
     nodes: error.nodes,
     source: error.source,
     positions: error.positions,
@@ -72,7 +72,6 @@ function toGraphQLError(error: BaseGraphQLError): GraphQLError {
     originalError: error.originalError,
     extensions: error.extensions,
   });
-}
 
 export class SyntaxError extends BaseGraphQLError {
   constructor(message: string) {

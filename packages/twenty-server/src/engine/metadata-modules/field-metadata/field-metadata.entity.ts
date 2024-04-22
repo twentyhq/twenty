@@ -8,10 +8,10 @@ import {
   OneToOne,
   CreateDateColumn,
   UpdateDateColumn,
-  Relation,
 } from 'typeorm';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { FieldMetadataTargetColumnMap } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-target-column-map.interface';
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 
@@ -24,7 +24,6 @@ export enum FieldMetadataType {
   PHONE = 'PHONE',
   EMAIL = 'EMAIL',
   DATE_TIME = 'DATE_TIME',
-  DATE = 'DATE',
   BOOLEAN = 'BOOLEAN',
   NUMBER = 'NUMBER',
   NUMERIC = 'NUMERIC',
@@ -64,7 +63,7 @@ export class FieldMetadataEntity<
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'objectMetadataId' })
-  object: Relation<ObjectMetadataEntity>;
+  object: ObjectMetadataEntity;
 
   @Column({ nullable: false })
   type: FieldMetadataType;
@@ -74,6 +73,9 @@ export class FieldMetadataEntity<
 
   @Column({ nullable: false })
   label: string;
+
+  @Column({ nullable: false, type: 'jsonb' })
+  targetColumnMap: FieldMetadataTargetColumnMap<T>;
 
   @Column({ nullable: true, type: 'jsonb' })
   defaultValue: FieldMetadataDefaultValue<T>;
@@ -106,13 +108,13 @@ export class FieldMetadataEntity<
     () => RelationMetadataEntity,
     (relation: RelationMetadataEntity) => relation.fromFieldMetadata,
   )
-  fromRelationMetadata: Relation<RelationMetadataEntity>;
+  fromRelationMetadata: RelationMetadataEntity;
 
   @OneToOne(
     () => RelationMetadataEntity,
     (relation: RelationMetadataEntity) => relation.toFieldMetadata,
   )
-  toRelationMetadata: Relation<RelationMetadataEntity>;
+  toRelationMetadata: RelationMetadataEntity;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

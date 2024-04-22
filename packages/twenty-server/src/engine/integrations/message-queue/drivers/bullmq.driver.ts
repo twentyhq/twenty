@@ -1,4 +1,4 @@
-import { JobsOptions, Queue, QueueOptions, Worker } from 'bullmq';
+import { Queue, QueueOptions, Worker } from 'bullmq';
 
 import {
   QueueCronJobOptions,
@@ -63,12 +63,10 @@ export class BullMQDriver implements MessageQueueDriver {
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
       );
     }
-    const queueOptions: JobsOptions = {
+    const queueOptions = {
       jobId: options?.id,
       priority: options?.priority,
       repeat: options?.repeat,
-      removeOnComplete: 100,
-      removeOnFail: 500,
     };
 
     await this.queueMap[queueName].add(jobName, data, queueOptions);
@@ -95,12 +93,10 @@ export class BullMQDriver implements MessageQueueDriver {
         `Queue ${queueName} is not registered, make sure you have added it as a queue provider`,
       );
     }
-    const queueOptions: JobsOptions = {
+    const queueOptions = {
       jobId: options?.id,
       priority: options?.priority,
       attempts: 1 + (options?.retryLimit || 0),
-      removeOnComplete: 100,
-      removeOnFail: 500,
     };
 
     await this.queueMap[queueName].add(jobName, data, queueOptions);

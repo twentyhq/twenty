@@ -1,15 +1,13 @@
+import { ObjectType } from '@nestjs/graphql';
+
 import {
   Column,
   CreateDateColumn,
   Entity,
   Generated,
-  OneToMany,
   PrimaryGeneratedColumn,
-  Relation,
   UpdateDateColumn,
 } from 'typeorm';
-
-import { RemoteTableEntity } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.entity';
 
 export enum RemoteServerType {
   POSTGRES_FDW = 'postgres_fdw',
@@ -32,6 +30,7 @@ export type UserMappingOptions = {
 };
 
 @Entity('remoteServer')
+@ObjectType('RemoteServer')
 export class RemoteServerEntity<T extends RemoteServerType> {
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -40,7 +39,7 @@ export class RemoteServerEntity<T extends RemoteServerType> {
   @Generated('uuid')
   foreignDataWrapperId: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ nullable: true })
   foreignDataWrapperType: T;
 
   @Column({ nullable: true, type: 'jsonb' })
@@ -51,11 +50,6 @@ export class RemoteServerEntity<T extends RemoteServerType> {
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
-
-  @OneToMany(() => RemoteTableEntity, (table) => table.server, {
-    cascade: true,
-  })
-  tables: Relation<RemoteTableEntity[]>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

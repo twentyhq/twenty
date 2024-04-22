@@ -4,7 +4,6 @@ import {
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
-  Relation,
   Unique,
   UpdateDateColumn,
 } from 'typeorm';
@@ -43,7 +42,7 @@ export class BillingSubscriptionItem {
       onDelete: 'CASCADE',
     },
   )
-  billingSubscription: Relation<BillingSubscription>;
+  billingSubscription: BillingSubscription;
 
   @Column({ nullable: false })
   stripeProductId: string;

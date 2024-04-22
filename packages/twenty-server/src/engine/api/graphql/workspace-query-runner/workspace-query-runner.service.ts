@@ -249,12 +249,11 @@ export class WorkspaceQueryRunnerService {
 
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.created`, {
-        name: `${objectMetadataItem.nameSingular}.created`,
         workspaceId,
         userId,
         recordId: record.id,
         objectMetadata: objectMetadataItem,
-        properties: {
+        details: {
           after: record,
         },
       } satisfies ObjectRecordCreateEvent<any>);
@@ -307,12 +306,11 @@ export class WorkspaceQueryRunnerService {
     );
 
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.updated`, {
-      name: `${objectMetadataItem.nameSingular}.updated`,
       workspaceId,
       userId,
       recordId: (existingRecord as Record).id,
       objectMetadata: objectMetadataItem,
-      properties: {
+      details: {
         before: this.removeNestedProperties(existingRecord as Record),
         after: this.removeNestedProperties(parsedResults?.[0]),
       },
@@ -399,12 +397,11 @@ export class WorkspaceQueryRunnerService {
 
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
-        name: `${objectMetadataItem.nameSingular}.deleted`,
         workspaceId,
         userId,
         recordId: record.id,
         objectMetadata: objectMetadataItem,
-        properties: {
+        details: {
           before: [this.removeNestedProperties(record)],
         },
       } satisfies ObjectRecordDeleteEvent<any>);
@@ -451,12 +448,11 @@ export class WorkspaceQueryRunnerService {
     );
 
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
-      name: `${objectMetadataItem.nameSingular}.deleted`,
       workspaceId,
       userId,
       recordId: args.id,
       objectMetadata: objectMetadataItem,
-      properties: {
+      details: {
         before: {
           ...(deletedWorkspaceMember ?? {}),
           ...this.removeNestedProperties(parsedResults?.[0]),

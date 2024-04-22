@@ -17,12 +17,7 @@ import {
   ObjectTypeDefinitionKind,
 } from 'src/engine/api/graphql/workspace-schema-builder/factories/object-type-definition.factory';
 
-export type GqlInputType = InputTypeDefinition | EnumTypeDefinition;
-
-export type GqlOutputType = ObjectTypeDefinition | EnumTypeDefinition;
-
-// Must be scoped on REQUEST level, because we need to recreate it for each workspaces
-// TODO: Implement properly durable by workspace
+// Must be scoped on REQUEST level
 @Injectable({ scope: Scope.REQUEST, durable: true })
 export class TypeDefinitionsStorage {
   private readonly enumTypeDefinitions = new Map<string, EnumTypeDefinition>();
@@ -73,27 +68,10 @@ export class TypeDefinitionsStorage {
   getInputTypeByKey(
     target: string,
     kind: InputTypeDefinitionKind,
-  ): GraphQLInputObjectType | GraphQLEnumType | undefined {
-    const key = this.generateCompositeKey(target, kind);
-    let definition: GqlInputType | undefined;
-
-    definition ??= this.inputTypeDefinitions.get(key);
-    definition ??= this.enumTypeDefinitions.get(target);
-
-    return definition?.type;
-  }
-
-  getOutputTypeByKey(
-    target: string,
-    kind: ObjectTypeDefinitionKind,
-  ): GraphQLObjectType | GraphQLEnumType | undefined {
-    const key = this.generateCompositeKey(target, kind);
-    let definition: GqlOutputType | undefined;
-
-    definition ??= this.objectTypeDefinitions.get(key);
-    definition ??= this.enumTypeDefinitions.get(target);
-
-    return definition?.type;
+  ): GraphQLInputObjectType | undefined {
+    return this.inputTypeDefinitions.get(
+      this.generateCompositeKey(target, kind),
+    )?.type;
   }
 
   getEnumTypeByKey(target: string): GraphQLEnumType | undefined {

@@ -27,9 +27,6 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.DATE_TIME]:
     | FieldMetadataDefaultValueDateTime
     | FieldMetadataDefaultValueNowFunction;
-  [FieldMetadataType.DATE]:
-    | FieldMetadataDefaultValueDateTime
-    | FieldMetadataDefaultValueNowFunction;
   [FieldMetadataType.BOOLEAN]: FieldMetadataDefaultValueBoolean;
   [FieldMetadataType.NUMBER]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.POSITION]: FieldMetadataDefaultValueNumber;

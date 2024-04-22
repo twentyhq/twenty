@@ -1,4 +1,4 @@
-import { ObjectType, Field, HideField } from '@nestjs/graphql';
+import { ObjectType, ID, Field, HideField } from '@nestjs/graphql';
 
 import {
   Authorize,
@@ -9,7 +9,6 @@ import {
   QueryOptions,
 } from '@ptc-org/nestjs-query-graphql';
 
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { BeforeDeleteOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-delete-one-object.hook';
 
@@ -27,7 +26,7 @@ import { BeforeDeleteOneObject } from 'src/engine/metadata-modules/object-metada
 @BeforeDeleteOne(BeforeDeleteOneObject)
 @CursorConnection('fields', () => FieldMetadataDTO)
 export class ObjectMetadataDTO {
-  @IDField(() => UUIDScalarType)
+  @IDField(() => ID)
   id: string;
 
   @Field()

@@ -15,6 +15,5 @@ export interface ReflectObjectMetadata extends ObjectMetadataDecoratorParams {
   isSystem: boolean;
   isCustom: boolean;
   isRemote: boolean;
-  isAuditLogged: boolean;
   gate?: GateDecoratorParams;
 }

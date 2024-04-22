@@ -33,9 +33,7 @@ export interface ComparatorDeleteResult<T> {
 export type ObjectComparatorResult =
   | ComparatorSkipResult
   | ComparatorCreateResult<ComputedPartialObjectMetadata>
-  | ComparatorUpdateResult<
-      Partial<ComputedPartialObjectMetadata> & { id: string }
-    >;
+  | ComparatorUpdateResult<Partial<ComputedPartialObjectMetadata>>;
 
 export type FieldComparatorResult =
   | ComparatorSkipResult

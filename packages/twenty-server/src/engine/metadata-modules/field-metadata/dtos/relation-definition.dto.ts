@@ -1,7 +1,6 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IsEnum, IsNotEmpty } from 'class-validator';
-import { Relation } from 'typeorm';
 
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
@@ -23,19 +22,19 @@ registerEnumType(RelationDefinitionType, {
 export class RelationDefinitionDTO {
   @IsNotEmpty()
   @Field(() => ObjectMetadataDTO)
-  sourceObjectMetadata: Relation<ObjectMetadataDTO>;
+  sourceObjectMetadata: ObjectMetadataDTO;
 
   @IsNotEmpty()
   @Field(() => ObjectMetadataDTO)
-  targetObjectMetadata: Relation<ObjectMetadataDTO>;
+  targetObjectMetadata: ObjectMetadataDTO;
 
   @IsNotEmpty()
   @Field(() => FieldMetadataDTO)
-  sourceFieldMetadata: Relation<FieldMetadataDTO>;
+  sourceFieldMetadata: FieldMetadataDTO;
 
   @IsNotEmpty()
   @Field(() => FieldMetadataDTO)
-  targetFieldMetadata: Relation<FieldMetadataDTO>;
+  targetFieldMetadata: FieldMetadataDTO;
 
   @IsEnum(RelationDefinitionType)
   @IsNotEmpty()

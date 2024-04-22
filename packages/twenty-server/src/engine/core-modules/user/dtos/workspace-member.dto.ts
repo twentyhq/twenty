@@ -1,8 +1,6 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
-
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @ObjectType('FullName')
 export class FullName {
@@ -15,7 +13,7 @@ export class FullName {
 
 @ObjectType('WorkspaceMember')
 export class WorkspaceMember {
-  @IDField(() => UUIDScalarType)
+  @IDField(() => ID)
   id: string;
 
   @Field(() => FullName)

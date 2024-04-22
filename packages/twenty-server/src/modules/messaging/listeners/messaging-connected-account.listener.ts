@@ -10,7 +10,7 @@ import { MessageQueueService } from 'src/engine/integrations/message-queue/servi
 import {
   DeleteConnectedAccountAssociatedCalendarDataJobData,
   DeleteConnectedAccountAssociatedCalendarDataJob,
-} from 'src/modules/calendar/jobs/delete-connected-account-associated-calendar-data.job';
+} from 'src/modules/messaging/jobs/delete-connected-account-associated-calendar-data.job';
 import {
   DeleteConnectedAccountAssociatedMessagingDataJobData,
   DeleteConnectedAccountAssociatedMessagingDataJob,
@@ -42,7 +42,7 @@ export class MessagingConnectedAccountListener {
       value: true,
     });
 
-    await this.messageQueueService.add<DeleteConnectedAccountAssociatedMessagingDataJobData>(
+    this.messageQueueService.add<DeleteConnectedAccountAssociatedMessagingDataJobData>(
       DeleteConnectedAccountAssociatedMessagingDataJob.name,
       {
         workspaceId: payload.workspaceId,
@@ -51,7 +51,7 @@ export class MessagingConnectedAccountListener {
     );
 
     if (isCalendarEnabled) {
-      await this.calendarQueueService.add<DeleteConnectedAccountAssociatedCalendarDataJobData>(
+      this.calendarQueueService.add<DeleteConnectedAccountAssociatedCalendarDataJobData>(
         DeleteConnectedAccountAssociatedCalendarDataJob.name,
         {
           workspaceId: payload.workspaceId,

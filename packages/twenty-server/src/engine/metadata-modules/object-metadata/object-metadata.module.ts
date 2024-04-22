@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 
 import {
   NestjsQueryGraphQLModule,
@@ -16,8 +15,6 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { ObjectMetadataResolver } from 'src/engine/metadata-modules/object-metadata/object-metadata.resolver';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 import { ObjectMetadataService } from './object-metadata.service';
 import { ObjectMetadataEntity } from './object-metadata.entity';
@@ -35,11 +32,9 @@ import { ObjectMetadataDTO } from './dtos/object-metadata.dto';
           [ObjectMetadataEntity, FieldMetadataEntity, RelationMetadataEntity],
           'metadata',
         ),
-        TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
         DataSourceModule,
         WorkspaceMigrationModule,
         WorkspaceMigrationRunnerModule,
-        FeatureFlagModule,
       ],
       services: [ObjectMetadataService],
       resolvers: [

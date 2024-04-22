@@ -7,8 +7,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { EmailService } from 'src/engine/integrations/email/email.service';
-import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
-import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
+import { SignUpService } from 'src/engine/core-modules/auth/services/sign-up.service';
 
 import { AuthService } from './auth.service';
 import { TokenService } from './token.service';
@@ -29,7 +28,7 @@ describe('AuthService', () => {
           useValue: {},
         },
         {
-          provide: SignInUpService,
+          provide: SignUpService,
           useValue: {},
         },
         {
@@ -42,10 +41,6 @@ describe('AuthService', () => {
         },
         {
           provide: getRepositoryToken(User, 'core'),
-          useValue: {},
-        },
-        {
-          provide: getRepositoryToken(AppToken, 'core'),
           useValue: {},
         },
         {

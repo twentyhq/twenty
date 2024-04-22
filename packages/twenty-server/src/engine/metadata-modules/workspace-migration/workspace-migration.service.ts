@@ -61,7 +61,7 @@ export class WorkspaceMigrationService {
     workspaceId: string,
     migrations: WorkspaceMigrationTableAction[],
   ) {
-    return this.workspaceMigrationRepository.save({
+    await this.workspaceMigrationRepository.save({
       name,
       migrations,
       workspaceId,
@@ -69,11 +69,7 @@ export class WorkspaceMigrationService {
     });
   }
 
-  public async deleteAllWithinWorkspace(workspaceId: string) {
+  public async delete(workspaceId: string) {
     await this.workspaceMigrationRepository.delete({ workspaceId });
-  }
-
-  public async deleteById(id: string) {
-    await this.workspaceMigrationRepository.delete({ id });
   }
 }

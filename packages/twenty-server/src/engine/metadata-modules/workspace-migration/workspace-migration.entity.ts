@@ -15,8 +15,8 @@ export enum WorkspaceMigrationColumnActionType {
   DROP = 'DROP',
   CREATE_COMMENT = 'CREATE_COMMENT',
 }
-export type WorkspaceMigrationRenamedEnum = { from: string; to: string };
-export type WorkspaceMigrationEnum = string | WorkspaceMigrationRenamedEnum;
+
+export type WorkspaceMigrationEnum = string | { from: string; to: string };
 
 export interface WorkspaceMigrationColumnDefinition {
   columnName: string;
@@ -62,13 +62,6 @@ export type WorkspaceMigrationCreateComment = {
   comment: string;
 };
 
-export type WorkspaceMigrationForeignTable = {
-  columns: WorkspaceMigrationColumnDefinition[];
-  referencedTableName: string;
-  referencedTableSchema: string;
-  foreignDataWrapperId: string;
-};
-
 export type WorkspaceMigrationColumnAction = {
   action: WorkspaceMigrationColumnActionType;
 } & (
@@ -80,23 +73,10 @@ export type WorkspaceMigrationColumnAction = {
   | WorkspaceMigrationCreateComment
 );
 
-/**
- * Enum values are lowercase to avoid issues with already existing enum values
- */
-export enum WorkspaceMigrationTableActionType {
-  CREATE = 'create',
-  ALTER = 'alter',
-  DROP = 'drop',
-  CREATE_FOREIGN_TABLE = 'create_foreign_table',
-  DROP_FOREIGN_TABLE = 'drop_foreign_table',
-}
-
 export type WorkspaceMigrationTableAction = {
   name: string;
-  newName?: string;
-  action: WorkspaceMigrationTableActionType;
+  action: 'create' | 'alter' | 'drop';
   columns?: WorkspaceMigrationColumnAction[];
-  foreignTable?: WorkspaceMigrationForeignTable;
 };
 
 @Entity('workspaceMigration')

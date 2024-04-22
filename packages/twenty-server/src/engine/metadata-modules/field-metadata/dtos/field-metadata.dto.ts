@@ -1,6 +1,7 @@
 import {
   Field,
   HideField,
+  ID,
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
@@ -32,7 +33,6 @@ import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/fi
 import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
 import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-options.validator';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
-import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 registerEnumType(FieldMetadataType, {
   name: 'FieldMetadataType',
@@ -61,7 +61,7 @@ export class FieldMetadataDTO<
 > {
   @IsUUID()
   @IsNotEmpty()
-  @IDField(() => UUIDScalarType)
+  @IDField(() => ID)
   id: string;
 
   @IsEnum(FieldMetadataType)

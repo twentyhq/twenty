@@ -1,7 +1,5 @@
 import { BadRequestException } from '@nestjs/common';
 
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
-
 import { parseFilterContent } from 'src/engine/api/rest/api-rest-query-builder/factories/input-factories/filter-utils/parse-filter-content.utils';
 import { parseBaseFilter } from 'src/engine/api/rest/api-rest-query-builder/factories/input-factories/filter-utils/parse-base-filter.utils';
 import {
@@ -10,7 +8,6 @@ import {
 } from 'src/engine/api/rest/api-rest-query-builder/utils/fields.utils';
 import { formatFieldValue } from 'src/engine/api/rest/api-rest-query-builder/factories/input-factories/filter-utils/format-field-values.utils';
 import { FieldValue } from 'src/engine/api/rest/types/api-rest-field-value.type';
-import { checkFilterEnumValues } from 'src/engine/api/rest/api-rest-query-builder/factories/input-factories/filter-utils/check-filter-enum-values';
 
 export enum Conjunctions {
   or = 'or',
@@ -20,7 +17,7 @@ export enum Conjunctions {
 
 export const parseFilter = (
   filterQuery: string,
-  objectMetadataItem: ObjectMetadataInterface,
+  objectMetadataItem,
 ): Record<string, FieldValue> => {
   const result = {};
   const match = filterQuery.match(
@@ -54,13 +51,8 @@ export const parseFilter = (
   }
   const { fields, comparator, value } = parseBaseFilter(filterQuery);
 
-  const fieldName = fields[0];
-
   checkFields(objectMetadataItem, fields);
-  const fieldType = getFieldType(objectMetadataItem, fieldName);
-
-  checkFilterEnumValues(fieldType, fieldName, value, objectMetadataItem);
-
+  const fieldType = getFieldType(objectMetadataItem, fields[0]);
   const formattedValue = formatFieldValue(value, fieldType, comparator);
 
   return fields.reverse().reduce(

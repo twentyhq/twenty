@@ -17,6 +17,9 @@ describe('deduceRelationDirection', () => {
       name: 'field_name',
       label: 'Field Name',
       description: 'Field Description',
+      targetColumnMap: {
+        default: 'default_column',
+      },
     };
 
     const relationMetadata = {
@@ -45,6 +48,9 @@ describe('deduceRelationDirection', () => {
       name: 'field_name',
       label: 'Field Name',
       description: 'Field Description',
+      targetColumnMap: {
+        default: 'default_column',
+      },
     };
 
     const relationMetadata = {
@@ -72,6 +78,9 @@ describe('deduceRelationDirection', () => {
       name: 'field_name',
       label: 'Field Name',
       description: 'Field Description',
+      targetColumnMap: {
+        default: 'default_column',
+      },
     };
 
     const relationMetadata = {

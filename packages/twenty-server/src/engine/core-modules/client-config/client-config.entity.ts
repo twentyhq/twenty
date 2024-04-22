@@ -45,12 +45,6 @@ class Support {
 @ObjectType()
 class Sentry {
   @Field(() => String, { nullable: true })
-  environment?: string;
-
-  @Field(() => String, { nullable: true })
-  release?: string;
-
-  @Field(() => String, { nullable: true })
   dsn?: string;
 }
 
