@@ -1,7 +1,7 @@
 module.exports = {
   plugins: ['@stylistic'],
   extends: ['../../.eslintrc.cjs'],
-  ignorePatterns: ['!**/*', 'src/core/@generated/**'],
+  ignorePatterns: ['src/engine/workspace-manager/demo-objects-prefill-data/**'],
   overrides: [
     {
       files: ['*.ts'],
@@ -81,10 +81,9 @@ module.exports = {
             pathGroupsExcludedImportTypes: ['@nestjs/**'],
           },
         ],
-
         'simple-import-sort/imports': 'off',
-
         'unicorn/filename-case': 'off',
+        'prefer-arrow/prefer-arrow-functions': 'off',
       },
     },
   ],
