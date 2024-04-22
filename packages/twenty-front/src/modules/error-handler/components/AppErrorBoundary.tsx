@@ -10,6 +10,7 @@ export const AppErrorBoundary = ({ children }: { children: ReactNode }) => {
 
   return (
     <ErrorBoundary
+      key={window.location.pathname}
       FallbackComponent={GenericErrorFallback}
       onError={handleError}
     >
