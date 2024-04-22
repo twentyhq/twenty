@@ -29,10 +29,10 @@
       "options": {
         "cwd": "{projectRoot}",
         "command": "tsc -b tsconfig.json",
-        "incremental": true
+        "args": ["--incremental"]
       },
       "configurations": {
-        "ci": { "incremental": false },
+        "ci": { "args": [] },
         "watch": { "watch": true }
       }
     },
@@ -91,6 +91,14 @@
         "watch": { "watch": true }
       }
     },
+    "storybook:build": {
+      "executor": "@nx/storybook:build",
+      "outputs": ["{options.outputDir}"],
+      "options": {
+        "outputDir": "{projectRoot}/storybook-static",
+        "configDir": "{projectRoot}/.storybook"
+      }
+    },
     "storybook:dev": {
       "executor": "@nx/storybook:storybook",
       "options": {
@@ -102,8 +110,8 @@
       "executor": "@nx/web:file-server",
       "options": {
         "buildTarget": "twenty-front:storybook:build",
-        "staticFilePath": "{projectRoot}/storybook-static",
         "port": 6006,
+        "staticFilePath": "{projectRoot}/storybook-static",
         "watch": false
       }
     },

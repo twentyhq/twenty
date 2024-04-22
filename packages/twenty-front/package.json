@@ -7,7 +7,6 @@
     "build": "npx vite build && sh ./scripts/inject-runtime-env.sh",
     "build:sourcemaps": "VITE_BUILD_SOURCEMAP=true NODE_OPTIONS=--max-old-space-size=3000 npx nx build",
     "start:prod": "NODE_ENV=production npx vite --host",
-    "storybook:build": "npx storybook build",
     "tsup": "npx tsup"
   },
   "engines": {
