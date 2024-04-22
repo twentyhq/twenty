@@ -41,7 +41,7 @@ export const gmailSearchFilterEmailAdresses = (
 
   return `(in:inbox from:((${includedEmails.join(
     '|',
-  )}) -(${gmailSearchFilterNonPersonalEmails} ${excludedEmails.join(
+  )}) -(${gmailSearchFilterNonPersonalEmails}|${excludedEmails.join(
     '|',
   )}))|(in:sent to:((${includedEmails.join(
     '|',
