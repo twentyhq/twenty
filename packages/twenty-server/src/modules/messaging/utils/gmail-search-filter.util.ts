@@ -31,13 +31,6 @@ export const gmailSearchFilterEmailAdresses = (
   includedEmails?: string[] | undefined,
   excludedEmails?: string[] | undefined,
 ): string | undefined => {
-  if (
-    (!includedEmails || includedEmails.length === 0) &&
-    (!excludedEmails || excludedEmails.length === 0)
-  ) {
-    return '';
-  }
-
   if (!includedEmails || includedEmails.length === 0) {
     return gmailSearchFilterExcludeEmailAdresses(excludedEmails);
   }
