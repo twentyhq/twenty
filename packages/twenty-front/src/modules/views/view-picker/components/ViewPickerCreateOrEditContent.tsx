@@ -166,7 +166,10 @@ export const ViewPickerCreateOrEditContent = () => {
                 label="Stages"
                 fullWidth
                 value={viewPickerKanbanFieldMetadataId}
-                onChange={(value) => setViewPickerKanbanFieldMetadataId(value)}
+                onChange={(value) => {
+                  setViewPickerIsDirty(true);
+                  setViewPickerKanbanFieldMetadataId(value);
+                }}
                 options={
                   availableFieldsForKanban.length > 0
                     ? availableFieldsForKanban.map((field) => ({

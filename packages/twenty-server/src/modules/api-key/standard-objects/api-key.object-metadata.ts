@@ -2,6 +2,7 @@ import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/fi
 import { apiKeyStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
@@ -16,6 +17,7 @@ import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-
   icon: 'IconRobot',
 })
 @IsSystem()
+@IsNotAuditLogged()
 export class ApiKeyObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: apiKeyStandardFieldIds.name,

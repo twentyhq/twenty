@@ -5,12 +5,14 @@ import { useRecoilCallback } from 'recoil';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
+import { SOFT_FOCUS_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/SoftFocusClickOutsideListenerId';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useLeaveTableFocus } from '@/object-record/record-table/hooks/internal/useLeaveTableFocus';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { isDefined } from '~/utils/isDefined';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
@@ -33,6 +35,9 @@ export const useOpenRecordTableCell = () => {
 
   const navigate = useNavigate();
   const leaveTableFocus = useLeaveTableFocus();
+  const { toggleClickOutsideListener } = useClickOutsideListener(
+    SOFT_FOCUS_CLICK_OUTSIDE_LISTENER_ID,
+  );
 
   const { columnIndex } = useContext(RecordTableCellContext);
   const isFirstColumnCell = columnIndex === 0;
@@ -60,6 +65,7 @@ export const useOpenRecordTableCell = () => {
       setCurrentTableCellInEditMode();
 
       initFieldInputDraftValue(options?.initialValue);
+      toggleClickOutsideListener(false);
 
       if (isDefined(customCellHotkeyScope)) {
         setHotkeyScope(
@@ -80,6 +86,7 @@ export const useOpenRecordTableCell = () => {
       setDragSelectionStartEnabled,
       setCurrentTableCellInEditMode,
       initFieldInputDraftValue,
+      toggleClickOutsideListener,
       customCellHotkeyScope,
       leaveTableFocus,
       navigate,

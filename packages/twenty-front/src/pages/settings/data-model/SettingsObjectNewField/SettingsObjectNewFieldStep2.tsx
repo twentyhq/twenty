@@ -28,7 +28,7 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled.ts';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -141,7 +141,6 @@ export const SettingsObjectNewFieldStep2 = () => {
             field: {
               icon: validatedFormValues.relation.field.icon,
               label: validatedFormValues.relation.field.label,
-              type: validatedFormValues.relation.field.type,
             },
             objectMetadataId: validatedFormValues.relation.objectMetadataId,
           },

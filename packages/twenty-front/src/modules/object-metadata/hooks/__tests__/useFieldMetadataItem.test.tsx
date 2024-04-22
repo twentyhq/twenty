@@ -159,6 +159,7 @@ describe('useFieldMetadataItem', () => {
       const res = await result.current.editMetadataField({
         id: fieldMetadataItem.id,
         label: 'New label',
+        type: FieldMetadataType.Text,
       });
 
       expect(res.data).toEqual({

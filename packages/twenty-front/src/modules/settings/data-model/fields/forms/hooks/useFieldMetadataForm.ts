@@ -36,6 +36,12 @@ export const fieldMetadataFormDefaultValues: FormValues = {
   select: [{ color: 'green', label: 'Option 1', value: v4() }],
   multiSelect: [{ color: 'green', label: 'Option 1', value: v4() }],
 };
+const relationTargetFieldSchema = z.object({
+  description: z.string().optional(),
+  icon: z.string().startsWith('Icon'),
+  label: z.string().min(1),
+  defaultValue: z.any(),
+});
 const fieldSchema = z.object({
   description: z.string().optional(),
   icon: z.string().startsWith('Icon'),
@@ -62,7 +68,7 @@ const relationSchema = fieldSchema.merge(
   z.object({
     type: z.literal(FieldMetadataType.Relation),
     relation: z.object({
-      field: fieldSchema,
+      field: relationTargetFieldSchema,
       objectMetadataId: z.string().uuid(),
       type: z.enum([
         RelationMetadataType.OneToMany,

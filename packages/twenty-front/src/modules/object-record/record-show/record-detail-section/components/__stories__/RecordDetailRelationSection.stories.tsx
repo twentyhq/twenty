@@ -2,7 +2,6 @@ import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
 import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
-import { mockedCompanyObjectMetadataItem } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
@@ -10,6 +9,7 @@ import { RecordStoreDecorator } from '~/testing/decorators/RecordStoreDecorator'
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedCompaniesData } from '~/testing/mock-data/companies';
+import { mockedCompanyObjectMetadataItem } from '~/testing/mock-data/metadata';
 import { mockedPeopleData } from '~/testing/mock-data/people';
 
 import { RecordDetailRelationSection } from '../RecordDetailRelationSection';
@@ -59,7 +59,7 @@ export const WithRecords: Story = {
     records: [
       {
         ...mockedCompaniesData[0],
-        people: { edges: mockedPeopleData.map((person) => ({ node: person })) },
+        people: mockedPeopleData,
       },
       ...mockedPeopleData,
     ],

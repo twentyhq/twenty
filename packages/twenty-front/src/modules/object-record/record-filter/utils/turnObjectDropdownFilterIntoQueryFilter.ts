@@ -5,7 +5,6 @@ import {
   CurrencyFilter,
   DateFilter,
   FloatFilter,
-  FullNameFilter,
   ObjectRecordQueryFilter,
   StringFilter,
   URLFilter,
@@ -14,6 +13,7 @@ import {
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
+import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 import { isDefined } from '~/utils/isDefined';
 
 import { Filter } from '../../object-filter-dropdown/types/Filter';
@@ -203,50 +203,25 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             );
         }
         break;
-      case 'FULL_NAME':
+      case 'FULL_NAME': {
+        const fullNameFilters = generateILikeFiltersForCompositeFields(
+          rawUIFilter.value,
+          correspondingField.name,
+          ['firstName', 'lastName'],
+        );
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.Contains:
             objectRecordFilters.push({
-              or: [
-                {
-                  [correspondingField.name]: {
-                    firstName: {
-                      ilike: `%${rawUIFilter.value}%`,
-                    },
-                  } as FullNameFilter,
-                },
-                {
-                  [correspondingField.name]: {
-                    lastName: {
-                      ilike: `%${rawUIFilter.value}%`,
-                    },
-                  } as FullNameFilter,
-                },
-              ],
+              or: fullNameFilters,
             });
             break;
           case ViewFilterOperand.DoesNotContain:
             objectRecordFilters.push({
-              and: [
-                {
-                  not: {
-                    [correspondingField.name]: {
-                      firstName: {
-                        ilike: `%${rawUIFilter.value}%`,
-                      },
-                    } as FullNameFilter,
-                  },
-                },
-                {
-                  not: {
-                    [correspondingField.name]: {
-                      lastName: {
-                        ilike: `%${rawUIFilter.value}%`,
-                      },
-                    } as FullNameFilter,
-                  },
-                },
-              ],
+              and: fullNameFilters.map((filter) => {
+                return {
+                  not: filter,
+                };
+              }),
             });
             break;
           default:
@@ -255,6 +230,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             );
         }
         break;
+      }
       case 'ADDRESS':
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.Contains:

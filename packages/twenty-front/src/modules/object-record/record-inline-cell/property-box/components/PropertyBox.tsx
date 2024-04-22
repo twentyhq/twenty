@@ -7,7 +7,6 @@ interface PropertyBoxProps {
 
 export const StyledPropertyBoxContainer = styled.div`
   align-self: stretch;
-  background: ${({ theme }) => theme.background.secondary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
   flex-direction: column;
