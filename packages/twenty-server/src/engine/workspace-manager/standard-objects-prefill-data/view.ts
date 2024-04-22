@@ -4,8 +4,8 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { viewCompanyFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-company-fields';
 import { viewPersonFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-person-fields';
 import { viewOpportunityFields } from 'src/engine/workspace-manager/standard-objects-prefill-data/view-opportunity-fields';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { opportunityStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
 export const viewPrefillData = async (
   entityManager: EntityManager,
@@ -27,7 +27,7 @@ export const viewPrefillData = async (
     .values([
       {
         name: 'All Companies',
-        objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.company].id,
+        objectMetadataId: objectMetadataMap[standardObjectIds.company].id,
         type: 'table',
         key: 'INDEX',
         position: 0,
@@ -36,7 +36,7 @@ export const viewPrefillData = async (
       },
       {
         name: 'All People',
-        objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.person].id,
+        objectMetadataId: objectMetadataMap[standardObjectIds.person].id,
         type: 'table',
         key: 'INDEX',
         position: 0,
@@ -45,7 +45,7 @@ export const viewPrefillData = async (
       },
       {
         name: 'All Opportunities',
-        objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].id,
+        objectMetadataId: objectMetadataMap[standardObjectIds.opportunity].id,
         type: 'table',
         key: 'INDEX',
         position: 0,
@@ -54,14 +54,14 @@ export const viewPrefillData = async (
       },
       {
         name: 'By Stage',
-        objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].id,
+        objectMetadataId: objectMetadataMap[standardObjectIds.opportunity].id,
         type: 'kanban',
         key: null,
         position: 1,
         icon: 'IconLayoutKanban',
         kanbanFieldMetadataId:
-          objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].fields[
-            OPPORTUNITY_STANDARD_FIELD_IDS.stage
+          objectMetadataMap[standardObjectIds.opportunity].fields[
+            opportunityStandardFieldIds.stage
           ],
       },
     ])

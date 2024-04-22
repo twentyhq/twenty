@@ -4,7 +4,7 @@ import { Kind } from 'graphql/language';
 export const DateTimeScalarType = new GraphQLScalarType({
   name: 'DateTime',
   description: 'A custom scalar that represents a datetime in ISO format',
-  serialize: (value: string): string => {
+  serialize(value: string): string {
     const date = new Date(value);
 
     if (isNaN(date.getTime())) {
@@ -13,7 +13,7 @@ export const DateTimeScalarType = new GraphQLScalarType({
 
     return date.toISOString();
   },
-  parseValue: (value: string): Date => {
+  parseValue(value: string): Date {
     const date = new Date(value);
 
     if (isNaN(date.getTime())) {
@@ -22,7 +22,7 @@ export const DateTimeScalarType = new GraphQLScalarType({
 
     return date;
   },
-  parseLiteral: (ast): Date => {
+  parseLiteral(ast): Date {
     if (ast.kind !== Kind.STRING) {
       throw new Error('Invalid date format, expected ISO date string');
     }

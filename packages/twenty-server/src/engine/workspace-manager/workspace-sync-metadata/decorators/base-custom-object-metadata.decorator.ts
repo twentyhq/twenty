@@ -2,9 +2,10 @@ import { BaseCustomObjectMetadataDecoratorParams } from 'src/engine/workspace-ma
 
 import { TypedReflect } from 'src/utils/typed-reflect';
 
-export const BaseCustomObjectMetadata =
-  (params?: BaseCustomObjectMetadataDecoratorParams): ClassDecorator =>
-  (target) => {
+export function BaseCustomObjectMetadata(
+  params?: BaseCustomObjectMetadataDecoratorParams,
+): ClassDecorator {
+  return (target) => {
     const gate = TypedReflect.getMetadata('gate', target);
 
     TypedReflect.defineMetadata(
@@ -16,3 +17,4 @@ export const BaseCustomObjectMetadata =
       target,
     );
   };
+}

@@ -41,11 +41,6 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKeys.IsFullSyncV2Enabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKeys.IsMultiSelectEnabled,
         workspaceId: workspaceId,
         value: true,

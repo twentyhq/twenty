@@ -46,7 +46,6 @@ import { JwtData } from 'src/engine/core-modules/auth/types/jwt-data.type';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { ExchangeAuthCodeInput } from 'src/engine/core-modules/auth/dto/exchange-auth-code.input';
 import { ExchangeAuthCode } from 'src/engine/core-modules/auth/dto/exchange-auth-code.entity';
-import { DEV_SEED_USER_IDS } from 'src/database/typeorm-seeds/core/users';
 
 @Injectable()
 export class TokenService {
@@ -290,7 +289,8 @@ export class TokenService {
   async verifyAuthorizationCode(
     exchangeAuthCodeInput: ExchangeAuthCodeInput,
   ): Promise<ExchangeAuthCode> {
-    const { authorizationCode, codeVerifier } = exchangeAuthCodeInput;
+    const { authorizationCode, codeVerifier, clientSecret } =
+      exchangeAuthCodeInput;
 
     assert(
       authorizationCode,
@@ -298,40 +298,93 @@ export class TokenService {
       NotFoundException,
     );
 
-    assert(codeVerifier, 'code verifier not found', NotFoundException);
+    assert(
+      !codeVerifier || !clientSecret,
+      'client secret or code verifier not found',
+      NotFoundException,
+    );
 
-    // TODO: replace this with call to stateless table
+    let userId = '';
 
-    // assert(authObj, 'Authorization code does not exist', NotFoundException);
+    if (clientSecret) {
+      // TODO: replace this with call to third party apps table
+      // assert(client.secret, 'client secret code does not exist', ForbiddenException);
+      throw new ForbiddenException();
+    }
 
-    // assert(
-    //   authObj.expiresAt.getTime() <= Date.now(),
-    //   'Authorization code expired.',
-    //   NotFoundException,
-    // );
+    if (codeVerifier) {
+      const authorizationCodeAppToken = await this.appTokenRepository.findOne({
+        where: {
+          value: authorizationCode,
+        },
+      });
 
-    // const codeChallenge = crypto
-    //   .createHash('sha256')
-    //   .update(codeVerifier)
-    //   .digest()
-    //   .toString('base64')
-    //   .replace(/\+/g, '-')
-    //   .replace(/\//g, '_')
-    //   .replace(/=/g, '');
+      assert(
+        authorizationCodeAppToken,
+        'Authorization code does not exist',
+        NotFoundException,
+      );
 
-    // assert(
-    //   authObj.codeChallenge !== codeChallenge,
-    //   'code verifier doesnt match the challenge',
-    //   ForbiddenException,
-    // );
+      assert(
+        authorizationCodeAppToken.expiresAt.getTime() >= Date.now(),
+        'Authorization code expired.',
+        ForbiddenException,
+      );
+
+      const codeChallenge = crypto
+        .createHash('sha256')
+        .update(codeVerifier)
+        .digest()
+        .toString('base64')
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=/g, '');
+
+      const codeChallengeAppToken = await this.appTokenRepository.findOne({
+        where: {
+          value: codeChallenge,
+        },
+      });
+
+      assert(
+        codeChallengeAppToken,
+        'code verifier doesnt match the challenge',
+        ForbiddenException,
+      );
+
+      assert(
+        codeChallengeAppToken.expiresAt.getTime() >= Date.now(),
+        'code challenge expired.',
+        ForbiddenException,
+      );
+
+      assert(
+        codeChallengeAppToken.userId === authorizationCodeAppToken.userId,
+        'authorization code / code verifier was not created by same client',
+        ForbiddenException,
+      );
+
+      if (codeChallengeAppToken.revokedAt) {
+        throw new ForbiddenException('Token has been revoked.');
+      }
+
+      await this.appTokenRepository.save({
+        id: codeChallengeAppToken.id,
+        revokedAt: new Date(),
+      });
+
+      userId = codeChallengeAppToken.userId;
+    }
 
     const user = await this.userRepository.findOne({
-      where: { id: DEV_SEED_USER_IDS.TIM }, // TODO: replace this id with corresponding authenticated user id mappeed to authorization code
+      where: { id: userId },
       relations: ['defaultWorkspace'],
     });
 
     if (!user) {
-      throw new NotFoundException('User is not found');
+      throw new NotFoundException(
+        'User who generated the token does not exist',
+      );
     }
 
     if (!user.defaultWorkspace) {

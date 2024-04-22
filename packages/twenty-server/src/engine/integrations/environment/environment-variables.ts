@@ -38,24 +38,24 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  DEBUG_MODE = false;
+  DEBUG_MODE: boolean = false;
 
   @CastToPositiveNumber()
   @IsOptional()
   @IsNumber()
   @Min(0)
   @Max(65535)
-  DEBUG_PORT = 9000;
+  DEBUG_PORT: number = 9000;
 
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  SIGN_IN_PREFILLED = false;
+  SIGN_IN_PREFILLED: boolean = false;
 
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  IS_BILLING_ENABLED = false;
+  IS_BILLING_ENABLED: boolean = false;
 
   @IsString()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
@@ -69,7 +69,7 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   @IsOptional()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
-  BILLING_FREE_TRIAL_DURATION_IN_DAYS = 7;
+  BILLING_FREE_TRIAL_DURATION_IN_DAYS: number = 7;
 
   @IsString()
   @ValidateIf((env) => env.IS_BILLING_ENABLED === true)
@@ -82,17 +82,17 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  TELEMETRY_ENABLED = true;
+  TELEMETRY_ENABLED: boolean = true;
 
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  TELEMETRY_ANONYMIZATION_ENABLED = true;
+  TELEMETRY_ANONYMIZATION_ENABLED: boolean = true;
 
   @CastToPositiveNumber()
   @IsNumber()
   @IsOptional()
-  PORT = 3000;
+  PORT: number = 3000;
 
   // Database
   @IsDefined()
@@ -118,33 +118,33 @@ export class EnvironmentVariables {
 
   @IsDuration()
   @IsOptional()
-  ACCESS_TOKEN_EXPIRES_IN = '30m';
+  ACCESS_TOKEN_EXPIRES_IN: string = '30m';
 
   @IsString()
   REFRESH_TOKEN_SECRET: string;
 
   @IsDuration()
   @IsOptional()
-  REFRESH_TOKEN_EXPIRES_IN = '30m';
+  REFRESH_TOKEN_EXPIRES_IN: string = '30m';
 
   @IsDuration()
   @IsOptional()
-  REFRESH_TOKEN_COOL_DOWN = '1m';
+  REFRESH_TOKEN_COOL_DOWN: string = '1m';
 
   @IsString()
-  LOGIN_TOKEN_SECRET = '30m';
+  LOGIN_TOKEN_SECRET: string = '30m';
 
   @IsDuration()
   @IsOptional()
-  LOGIN_TOKEN_EXPIRES_IN = '15m';
+  LOGIN_TOKEN_EXPIRES_IN: string = '15m';
 
   @IsString()
   @IsOptional()
-  FILE_TOKEN_SECRET = 'random_string';
+  FILE_TOKEN_SECRET: string = 'random_string';
 
   @IsDuration()
   @IsOptional()
-  FILE_TOKEN_EXPIRES_IN = '1d';
+  FILE_TOKEN_EXPIRES_IN: string = '1d';
 
   // Auth
   @IsUrl({ require_tld: false })
@@ -154,7 +154,7 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  AUTH_GOOGLE_ENABLED = false;
+  AUTH_GOOGLE_ENABLED: boolean = false;
 
   @IsString()
   @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED === true)
@@ -188,7 +188,7 @@ export class EnvironmentVariables {
 
   @IsString()
   @ValidateIf((env) => env.STORAGE_TYPE === StorageDriverType.Local)
-  STORAGE_LOCAL_PATH = '.local-storage';
+  STORAGE_LOCAL_PATH: string = '.local-storage';
 
   // Support
   @IsEnum(SupportDriver)
@@ -210,7 +210,7 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsBoolean()
   @IsOptional()
-  LOGGER_IS_BUFFER_ENABLED = true;
+  LOGGER_IS_BUFFER_ENABLED: boolean = true;
 
   @IsEnum(ExceptionHandlerDriver)
   @IsOptional()
@@ -231,9 +231,29 @@ export class EnvironmentVariables {
   @IsString()
   SENTRY_DSN: string;
 
+  @ValidateIf(
+    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
+  )
+  @IsString()
+  SENTRY_FRONT_DSN: string;
+
+  @ValidateIf(
+    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
+  )
+  @IsString()
+  @IsOptional()
+  SENTRY_RELEASE: string;
+
+  @ValidateIf(
+    (env) => env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.Sentry,
+  )
+  @IsString()
+  @IsOptional()
+  SENTRY_ENVIRONMENT: string;
+
   @IsDuration()
   @IsOptional()
-  PASSWORD_RESET_TOKEN_EXPIRES_IN = '5m';
+  PASSWORD_RESET_TOKEN_EXPIRES_IN: string = '5m';
 
   @CastToPositiveNumber()
   @IsNumber()
@@ -243,48 +263,49 @@ export class EnvironmentVariables {
       '"WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION" should be strictly lower that "WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION"',
   })
   @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION > 0)
-  WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION = 30;
+  WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION: number = 30;
 
   @CastToPositiveNumber()
   @IsNumber()
   @ValidateIf((env) => env.WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION > 0)
-  WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION = 60;
+  WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION: number = 60;
 
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  IS_SIGN_UP_DISABLED = false;
+  IS_SIGN_UP_DISABLED: boolean = false;
 
   @CastToPositiveNumber()
   @IsOptional()
   @IsNumber()
-  MUTATION_MAXIMUM_RECORD_AFFECTED = 100;
+  MUTATION_MAXIMUM_RECORD_AFFECTED: number = 100;
 
-  REDIS_HOST = '127.0.0.1';
+  REDIS_HOST: string = '127.0.0.1';
 
-  REDIS_PORT = 6379;
+  @CastToPositiveNumber()
+  REDIS_PORT: number = 6379;
 
-  API_TOKEN_EXPIRES_IN = '100y';
+  API_TOKEN_EXPIRES_IN: string = '100y';
 
-  SHORT_TERM_TOKEN_EXPIRES_IN = '5m';
+  SHORT_TERM_TOKEN_EXPIRES_IN: string = '5m';
 
-  MESSAGING_PROVIDER_GMAIL_ENABLED = false;
-
-  MESSAGING_PROVIDER_GMAIL_CALLBACK_URL: string;
+  @CastToBoolean()
+  MESSAGING_PROVIDER_GMAIL_ENABLED: boolean = false;
 
   MESSAGE_QUEUE_TYPE: string = MessageQueueDriverType.Sync;
 
-  EMAIL_FROM_ADDRESS = 'noreply@yourdomain.com';
+  EMAIL_FROM_ADDRESS: string = 'noreply@yourdomain.com';
 
-  EMAIL_SYSTEM_ADDRESS = 'system@yourdomain.com';
+  EMAIL_SYSTEM_ADDRESS: string = 'system@yourdomain.com';
 
-  EMAIL_FROM_NAME = 'Felix from Twenty';
+  EMAIL_FROM_NAME: string = 'Felix from Twenty';
 
   EMAIL_DRIVER: EmailDriver = EmailDriver.Logger;
 
   EMAIL_SMTP_HOST: string;
 
-  EMAIL_SMTP_PORT = 587;
+  @CastToPositiveNumber()
+  EMAIL_SMTP_PORT: number = 587;
 
   EMAIL_SMTP_USER: string;
 
@@ -292,22 +313,28 @@ export class EnvironmentVariables {
 
   OPENROUTER_API_KEY: string;
 
-  API_RATE_LIMITING_TTL = 100;
+  @CastToPositiveNumber()
+  API_RATE_LIMITING_TTL: number = 100;
 
-  API_RATE_LIMITING_LIMIT = 500;
+  @CastToPositiveNumber()
+  API_RATE_LIMITING_LIMIT: number = 500;
 
-  CACHE_STORAGE_TYPE = 'memory';
+  CACHE_STORAGE_TYPE: string = 'memory';
 
+  @CastToPositiveNumber()
   CACHE_STORAGE_TTL: number = 3600 * 24 * 7;
 
-  CALENDAR_PROVIDER_GOOGLE_ENABLED = false;
+  @CastToBoolean()
+  CALENDAR_PROVIDER_GOOGLE_ENABLED: boolean = false;
 
   AUTH_GOOGLE_APIS_CALLBACK_URL: string;
 
   CHROME_EXTENSION_REDIRECT_URL: string;
 }
 
-export const validate = (config: Record<string, unknown>) => {
+export const validate = (
+  config: Record<string, unknown>,
+): EnvironmentVariables => {
   const validatedConfig = plainToClass(EnvironmentVariables, config);
 
   const errors = validateSync(validatedConfig);

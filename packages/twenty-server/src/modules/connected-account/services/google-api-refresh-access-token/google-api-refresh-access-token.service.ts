@@ -30,6 +30,12 @@ export class GoogleAPIRefreshAccessTokenService {
       );
     }
 
+    if (connectedAccount.authFailedAt) {
+      throw new Error(
+        `Skipping refresh of access token for connected account ${connectedAccountId} in workspace ${workspaceId} because auth already failed, a new refresh token is needed`,
+      );
+    }
+
     const refreshToken = connectedAccount.refreshToken;
 
     if (!refreshToken) {
@@ -80,6 +86,7 @@ export class GoogleAPIRefreshAccessTokenService {
         connectedAccountId,
         workspaceId,
       );
+
       throw new Error(`Error refreshing access token: ${error.message}`);
     }
   }

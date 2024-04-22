@@ -7,11 +7,10 @@ import {
 
 import { TypedReflect } from 'src/utils/typed-reflect';
 
-export const RelationMetadata =
-  <TClass extends object>(
-    params: RelationMetadataDecoratorParams<TClass>,
-  ): PropertyDecorator =>
-  (target: object, fieldKey: string) => {
+export function RelationMetadata<TClass extends object>(
+  params: RelationMetadataDecoratorParams<TClass>,
+): PropertyDecorator {
+  return (target: object, fieldKey: string) => {
     const relationMetadataCollection =
       TypedReflect.getMetadata(
         'reflectRelationMetadataCollection',
@@ -33,3 +32,4 @@ export const RelationMetadata =
       target.constructor,
     );
   };
+}

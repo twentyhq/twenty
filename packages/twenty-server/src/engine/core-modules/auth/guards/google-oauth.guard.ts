@@ -9,18 +9,19 @@ export class GoogleOauthGuard extends AuthGuard('google') {
     });
   }
 
-  /**
-   * @throws
-   */
   async canActivate(context: ExecutionContext) {
-    const request = context.switchToHttp().getRequest();
-    const workspaceInviteHash = request.query.inviteHash;
+    try {
+      const request = context.switchToHttp().getRequest();
+      const workspaceInviteHash = request.query.inviteHash;
 
-    if (workspaceInviteHash && typeof workspaceInviteHash === 'string') {
-      request.params.workspaceInviteHash = workspaceInviteHash;
+      if (workspaceInviteHash && typeof workspaceInviteHash === 'string') {
+        request.params.workspaceInviteHash = workspaceInviteHash;
+      }
+      const activate = (await super.canActivate(context)) as boolean;
+
+      return activate;
+    } catch (ex) {
+      throw ex;
     }
-    const activate = (await super.canActivate(context)) as boolean;
-
-    return activate;
   }
 }

@@ -6,16 +6,14 @@ import { GateDecoratorParams } from 'src/engine/workspace-manager/workspace-sync
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { generateTargetColumnMap } from 'src/engine/metadata-modules/field-metadata/utils/generate-target-column-map.util';
 import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 import { TypedReflect } from 'src/utils/typed-reflect';
 import { createDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
-export const FieldMetadata =
-  <T extends FieldMetadataType>(
-    params: FieldMetadataDecoratorParams<T>,
-  ): PropertyDecorator =>
-  (target: object, fieldKey: string) => {
+export function FieldMetadata<T extends FieldMetadataType>(
+  params: FieldMetadataDecoratorParams<T>,
+): PropertyDecorator {
+  return (target: object, fieldKey: string) => {
     const existingFieldMetadata =
       TypedReflect.getMetadata('fieldMetadataMap', target.constructor) ?? {};
     const isNullable =
@@ -62,15 +60,15 @@ export const FieldMetadata =
       target.constructor,
     );
   };
+}
 
-const generateFieldMetadata = <T extends FieldMetadataType>(
+function generateFieldMetadata<T extends FieldMetadataType>(
   params: FieldMetadataDecoratorParams<T>,
   fieldKey: string,
   isNullable: boolean,
   isSystem: boolean,
   gate: GateDecoratorParams | undefined = undefined,
-): ReflectFieldMetadata[string] => {
-  const targetColumnMap = generateTargetColumnMap(params.type, false, fieldKey);
+): ReflectFieldMetadata[string] {
   const defaultValue = (params.defaultValue ??
     generateDefaultValue(
       params.type,
@@ -79,7 +77,6 @@ const generateFieldMetadata = <T extends FieldMetadataType>(
   return {
     name: fieldKey,
     ...params,
-    targetColumnMap,
     isNullable: params.type === FieldMetadataType.RELATION ? true : isNullable,
     isSystem,
     isCustom: false,
@@ -89,4 +86,4 @@ const generateFieldMetadata = <T extends FieldMetadataType>(
     defaultValue,
     gate,
   };
-};
+}

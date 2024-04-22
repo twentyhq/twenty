@@ -179,7 +179,7 @@ export class WorkspaceManagerService {
   public async delete(workspaceId: string): Promise<void> {
     // Delete data from metadata tables
     await this.objectMetadataService.deleteObjectsMetadata(workspaceId);
-    await this.workspaceMigrationService.delete(workspaceId);
+    await this.workspaceMigrationService.deleteAllWithinWorkspace(workspaceId);
     await this.dataSourceService.delete(workspaceId);
     // Delete schema
     await this.workspaceDataSourceService.deleteWorkspaceDBSchema(workspaceId);

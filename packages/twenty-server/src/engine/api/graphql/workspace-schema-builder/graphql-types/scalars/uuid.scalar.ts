@@ -17,7 +17,7 @@ export const UUIDScalarType = new GraphQLScalarType({
   description: 'A UUID scalar type',
   serialize: checkUUID,
   parseValue: checkUUID,
-  parseLiteral: (ast): string => {
+  parseLiteral(ast): string {
     if (ast.kind !== Kind.STRING) {
       throw new Error('UUID must be a string');
     }

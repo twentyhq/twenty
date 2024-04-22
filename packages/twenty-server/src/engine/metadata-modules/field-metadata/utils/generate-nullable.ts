@@ -1,10 +1,10 @@
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
-export const generateNullable = (
+export function generateNullable(
   type: FieldMetadataType,
   inputNullableValue?: boolean,
   isRemoteCreation?: boolean,
-): boolean => {
+): boolean {
   if (isRemoteCreation) {
     return true;
   }
@@ -17,4 +17,4 @@ export const generateNullable = (
     default:
       return inputNullableValue ?? true;
   }
-};
+}

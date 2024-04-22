@@ -1,9 +1,9 @@
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
-  BASE_OBJECT_STANDARD_FIELD_IDS,
-  PERSON_STANDARD_FIELD_IDS,
+  baseObjectStandardFieldIds,
+  personStandardFieldIds,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 export const viewPersonFields = (
   viewId: string,
@@ -12,8 +12,8 @@ export const viewPersonFields = (
   return [
     {
       fieldMetadataId:
-        objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
-          PERSON_STANDARD_FIELD_IDS.name
+        objectMetadataMap[standardObjectIds.person].fields[
+          personStandardFieldIds.name
         ],
       viewId: viewId,
       position: 0,
@@ -22,8 +22,8 @@ export const viewPersonFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
-          PERSON_STANDARD_FIELD_IDS.email
+        objectMetadataMap[standardObjectIds.person].fields[
+          personStandardFieldIds.email
         ],
       viewId: viewId,
       position: 1,
@@ -32,8 +32,8 @@ export const viewPersonFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
-          PERSON_STANDARD_FIELD_IDS.company
+        objectMetadataMap[standardObjectIds.person].fields[
+          personStandardFieldIds.company
         ],
       viewId: viewId,
       position: 2,
@@ -42,8 +42,8 @@ export const viewPersonFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
-          PERSON_STANDARD_FIELD_IDS.phone
+        objectMetadataMap[standardObjectIds.person].fields[
+          personStandardFieldIds.phone
         ],
       viewId: viewId,
       position: 3,
@@ -52,8 +52,8 @@ export const viewPersonFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
-          BASE_OBJECT_STANDARD_FIELD_IDS.createdAt
+        objectMetadataMap[standardObjectIds.person].fields[
+          baseObjectStandardFieldIds.createdAt
         ],
       viewId: viewId,
       position: 4,
@@ -62,8 +62,8 @@ export const viewPersonFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
-          PERSON_STANDARD_FIELD_IDS.city
+        objectMetadataMap[standardObjectIds.person].fields[
+          personStandardFieldIds.city
         ],
       viewId: viewId,
       position: 5,
@@ -72,8 +72,8 @@ export const viewPersonFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
-          PERSON_STANDARD_FIELD_IDS.jobTitle
+        objectMetadataMap[standardObjectIds.person].fields[
+          personStandardFieldIds.jobTitle
         ],
       viewId: viewId,
       position: 6,
@@ -82,8 +82,8 @@ export const viewPersonFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
-          PERSON_STANDARD_FIELD_IDS.linkedinLink
+        objectMetadataMap[standardObjectIds.person].fields[
+          personStandardFieldIds.linkedinLink
         ],
       viewId: viewId,
       position: 7,
@@ -92,8 +92,8 @@ export const viewPersonFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap[STANDARD_OBJECT_IDS.person].fields[
-          PERSON_STANDARD_FIELD_IDS.xLink
+        objectMetadataMap[standardObjectIds.person].fields[
+          personStandardFieldIds.xLink
         ],
       viewId: viewId,
       position: 8,

@@ -1,6 +1,8 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { FAVORITE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { favoriteStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CustomObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/custom-objects/custom.object-metadata';
 import { DynamicRelationFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/dynamic-field-metadata.interface';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
@@ -12,19 +14,21 @@ import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/comp
 import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
-  standardId: STANDARD_OBJECT_IDS.favorite,
+  standardId: standardObjectIds.favorite,
   namePlural: 'favorites',
   labelSingular: 'Favorite',
   labelPlural: 'Favorites',
   description: 'A favorite',
   icon: 'IconHeart',
 })
+@IsNotAuditLogged()
 @IsSystem()
 export class FavoriteObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    standardId: FAVORITE_STANDARD_FIELD_IDS.position,
+    standardId: favoriteStandardFieldIds.position,
     type: FieldMetadataType.NUMBER,
     label: 'Position',
     description: 'Favorite position',
@@ -35,17 +39,17 @@ export class FavoriteObjectMetadata extends BaseObjectMetadata {
 
   // Relations
   @FieldMetadata({
-    standardId: FAVORITE_STANDARD_FIELD_IDS.workspaceMember,
+    standardId: favoriteStandardFieldIds.workspaceMember,
     type: FieldMetadataType.RELATION,
     label: 'Workspace Member',
     description: 'Favorite workspace member',
     icon: 'IconCircleUser',
     joinColumn: 'workspaceMemberId',
   })
-  workspaceMember: WorkspaceMemberObjectMetadata;
+  workspaceMember: Relation<WorkspaceMemberObjectMetadata>;
 
   @FieldMetadata({
-    standardId: FAVORITE_STANDARD_FIELD_IDS.person,
+    standardId: favoriteStandardFieldIds.person,
     type: FieldMetadataType.RELATION,
     label: 'Person',
     description: 'Favorite person',
@@ -53,10 +57,10 @@ export class FavoriteObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'personId',
   })
   @IsNullable()
-  person: PersonObjectMetadata;
+  person: Relation<PersonObjectMetadata>;
 
   @FieldMetadata({
-    standardId: FAVORITE_STANDARD_FIELD_IDS.company,
+    standardId: favoriteStandardFieldIds.company,
     type: FieldMetadataType.RELATION,
     label: 'Company',
     description: 'Favorite company',
@@ -64,10 +68,10 @@ export class FavoriteObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'companyId',
   })
   @IsNullable()
-  company: CompanyObjectMetadata;
+  company: Relation<CompanyObjectMetadata>;
 
   @FieldMetadata({
-    standardId: FAVORITE_STANDARD_FIELD_IDS.opportunity,
+    standardId: favoriteStandardFieldIds.opportunity,
     type: FieldMetadataType.RELATION,
     label: 'Opportunity',
     description: 'Favorite opportunity',
@@ -75,15 +79,15 @@ export class FavoriteObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'opportunityId',
   })
   @IsNullable()
-  opportunity: OpportunityObjectMetadata;
+  opportunity: Relation<OpportunityObjectMetadata>;
 
   @DynamicRelationFieldMetadata((oppositeObjectMetadata) => ({
-    standardId: FAVORITE_STANDARD_FIELD_IDS.custom,
+    standardId: favoriteStandardFieldIds.custom,
     name: oppositeObjectMetadata.nameSingular,
     label: oppositeObjectMetadata.labelSingular,
     description: `Favorite ${oppositeObjectMetadata.labelSingular}`,
     joinColumn: `${oppositeObjectMetadata.nameSingular}Id`,
     icon: 'IconBuildingSkyscraper',
   }))
-  custom: CustomObjectMetadata;
+  custom: Relation<CustomObjectMetadata>;
 }

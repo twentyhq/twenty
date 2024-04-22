@@ -2,7 +2,7 @@ import console from 'console';
 
 import { connectionSource, performQuery } from './utils';
 
-const dropSchemasSequentially = async () => {
+async function dropSchemasSequentially() {
   try {
     await connectionSource.initialize();
 
@@ -31,6 +31,6 @@ const dropSchemasSequentially = async () => {
   } catch (err) {
     console.error('Error during schema dropping:', err);
   }
-};
+}
 
 dropSchemasSequentially();

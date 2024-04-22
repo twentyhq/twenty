@@ -16,9 +16,10 @@ export class IntelligenceService {
     const enrichedCompany = await this.httpService.axiosRef.get(
       `https://companies.twenty.com/${domainName}`,
       {
-        validateStatus: () =>
+        validateStatus: function () {
           // This ensures the promise is always resolved, preventing axios from throwing an error
-          true,
+          return true;
+        },
       },
     );
 

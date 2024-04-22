@@ -202,9 +202,7 @@ export class BillingService {
       quantity = await this.userWorkspaceService.getWorkspaceMemberCount(
         user.defaultWorkspaceId,
       );
-    } catch (e) {
-      // Do nothing
-    }
+    } catch (e) {}
 
     const session = await this.stripeService.createCheckoutSession(
       user,

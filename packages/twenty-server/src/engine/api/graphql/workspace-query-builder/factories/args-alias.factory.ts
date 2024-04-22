@@ -1,9 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 
+import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+
 @Injectable()
 export class ArgsAliasFactory {
+  private readonly logger = new Logger(ArgsAliasFactory.name);
+
   create(
     args: Record<string, any>,
     fieldMetadataCollection: FieldMetadataInterface[],
@@ -39,25 +45,42 @@ export class ArgsAliasFactory {
     for (const [key, value] of Object.entries(args)) {
       const fieldMetadata = fieldMetadataMap.get(key);
 
-      // If it's a special complex field, we need to map all columns
+      // If it's a composite type, we need to transform args to properly map column name
       if (
         fieldMetadata &&
-        typeof value === 'object' &&
         value !== null &&
-        Object.values(fieldMetadata.targetColumnMap).length > 1
+        isCompositeFieldMetadataType(fieldMetadata.type)
       ) {
-        for (const [subKey, subValue] of Object.entries(value)) {
-          const mappedKey = fieldMetadata.targetColumnMap[subKey];
+        // Get composite type definition
+        const compositeType = compositeTypeDefintions.get(fieldMetadata.type);
 
-          if (mappedKey) {
-            newArgs[mappedKey] = subValue;
+        if (!compositeType) {
+          this.logger.error(
+            `Composite type definition not found for type: ${fieldMetadata.type}`,
+          );
+          throw new Error(
+            `Composite type definition not found for type: ${fieldMetadata.type}`,
+          );
+        }
+
+        // Loop through sub values and map them to composite property
+        for (const [subKey, subValue] of Object.entries(value)) {
+          // Find composite property
+          const compositeProperty = compositeType.properties.find(
+            (property) => property.name === subKey,
+          );
+
+          if (compositeProperty) {
+            const columnName = computeCompositeColumnName(
+              fieldMetadata,
+              compositeProperty,
+            );
+
+            newArgs[columnName] = subValue;
           }
         }
       } else if (fieldMetadata) {
-        // Otherwise we just need to map the value
-        const mappedKey = fieldMetadata.targetColumnMap.value;
-
-        newArgs[mappedKey ?? key] = value;
+        newArgs[key] = value;
       } else {
         // Recurse if value is a nested object, otherwise append field or alias
         newArgs[key] = this.createArgsObjectRecursive(value, fieldMetadataMap);

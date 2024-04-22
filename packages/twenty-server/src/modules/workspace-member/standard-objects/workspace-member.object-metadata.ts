@@ -1,11 +1,13 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FullNameMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/full-name.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { WORKSPACE_MEMBER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { workspaceMemberStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
@@ -22,10 +24,12 @@ import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/st
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
-import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { TimelineActivityObjectMetadata } from 'src/modules/timeline/standard-objects/timeline-activity.object-metadata';
+import { AuditLogObjectMetadata } from 'src/modules/timeline/standard-objects/audit-log.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
-  standardId: STANDARD_OBJECT_IDS.workspaceMember,
+  standardId: standardObjectIds.workspaceMember,
   namePlural: 'workspaceMembers',
   labelSingular: 'Workspace Member',
   labelPlural: 'Workspace Members',
@@ -33,9 +37,10 @@ import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.ob
   icon: 'IconUserCircle',
 })
 @IsSystem()
+@IsNotAuditLogged()
 export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.name,
+    standardId: workspaceMemberStandardFieldIds.name,
     type: FieldMetadataType.FULL_NAME,
     label: 'Name',
     description: 'Workspace member name',
@@ -44,7 +49,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   name: FullNameMetadata;
 
   @FieldMetadata({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.colorScheme,
+    standardId: workspaceMemberStandardFieldIds.colorScheme,
     type: FieldMetadataType.TEXT,
     label: 'Color Scheme',
     description: 'Preferred color scheme',
@@ -54,7 +59,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   colorScheme: string;
 
   @FieldMetadata({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.locale,
+    standardId: workspaceMemberStandardFieldIds.locale,
     type: FieldMetadataType.TEXT,
     label: 'Language',
     description: 'Preferred language',
@@ -64,7 +69,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   locale: string;
 
   @FieldMetadata({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.avatarUrl,
+    standardId: workspaceMemberStandardFieldIds.avatarUrl,
     type: FieldMetadataType.TEXT,
     label: 'Avatar Url',
     description: 'Workspace member avatar',
@@ -73,7 +78,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   avatarUrl: string;
 
   @FieldMetadata({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userEmail,
+    standardId: workspaceMemberStandardFieldIds.userEmail,
     type: FieldMetadataType.TEXT,
     label: 'User Email',
     description: 'Related user email address',
@@ -82,7 +87,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   userEmail: string;
 
   @FieldMetadata({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.userId,
+    standardId: workspaceMemberStandardFieldIds.userId,
     type: FieldMetadataType.UUID,
     label: 'User Id',
     description: 'Associated User Id',
@@ -92,7 +97,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
 
   // Relations
   @FieldMetadata({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredActivities,
+    standardId: workspaceMemberStandardFieldIds.authoredActivities,
     type: FieldMetadataType.RELATION,
     label: 'Authored activities',
     description: 'Activities created by the workspace member',
@@ -104,10 +109,10 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     inverseSideFieldKey: 'author',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  authoredActivities: ActivityObjectMetadata[];
+  authoredActivities: Relation<ActivityObjectMetadata[]>;
 
   @FieldMetadata({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.assignedActivities,
+    standardId: workspaceMemberStandardFieldIds.assignedActivities,
     type: FieldMetadataType.RELATION,
     label: 'Assigned activities',
     description: 'Activities assigned to the workspace member',
@@ -119,10 +124,10 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     inverseSideFieldKey: 'assignee',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  assignedActivities: ActivityObjectMetadata[];
+  assignedActivities: Relation<ActivityObjectMetadata[]>;
 
   @FieldMetadata({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.favorites,
+    standardId: workspaceMemberStandardFieldIds.favorites,
     type: FieldMetadataType.RELATION,
     label: 'Favorites',
     description: 'Favorites linked to the workspace member',
@@ -133,10 +138,10 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     inverseSideTarget: () => FavoriteObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  favorites: FavoriteObjectMetadata[];
+  favorites: Relation<FavoriteObjectMetadata[]>;
 
   @FieldMetadata({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.accountOwnerForCompanies,
+    standardId: workspaceMemberStandardFieldIds.accountOwnerForCompanies,
     type: FieldMetadataType.RELATION,
     label: 'Account Owner For Companies',
     description: 'Account owner for companies',
@@ -148,10 +153,10 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     inverseSideFieldKey: 'accountOwner',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  accountOwnerForCompanies: CompanyObjectMetadata[];
+  accountOwnerForCompanies: Relation<CompanyObjectMetadata[]>;
 
   @FieldMetadata({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredAttachments,
+    standardId: workspaceMemberStandardFieldIds.authoredAttachments,
     type: FieldMetadataType.RELATION,
     label: 'Authored attachments',
     description: 'Attachments created by the workspace member',
@@ -163,10 +168,10 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     inverseSideFieldKey: 'author',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  authoredAttachments: AttachmentObjectMetadata[];
+  authoredAttachments: Relation<AttachmentObjectMetadata[]>;
 
   @FieldMetadata({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredComments,
+    standardId: workspaceMemberStandardFieldIds.authoredComments,
     type: FieldMetadataType.RELATION,
     label: 'Authored comments',
     description: 'Authored comments',
@@ -178,10 +183,10 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     inverseSideFieldKey: 'author',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  authoredComments: CommentObjectMetadata[];
+  authoredComments: Relation<CommentObjectMetadata[]>;
 
   @FieldMetadata({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.connectedAccounts,
+    standardId: workspaceMemberStandardFieldIds.connectedAccounts,
     type: FieldMetadataType.RELATION,
     label: 'Connected accounts',
     description: 'Connected accounts',
@@ -193,10 +198,10 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     inverseSideFieldKey: 'accountOwner',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  connectedAccounts: ConnectedAccountObjectMetadata[];
+  connectedAccounts: Relation<ConnectedAccountObjectMetadata[]>;
 
   @FieldMetadata({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.messageParticipants,
+    standardId: workspaceMemberStandardFieldIds.messageParticipants,
     type: FieldMetadataType.RELATION,
     label: 'Message Participants',
     description: 'Message Participants',
@@ -208,10 +213,10 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     inverseSideFieldKey: 'workspaceMember',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  messageParticipants: MessageParticipantObjectMetadata[];
+  messageParticipants: Relation<MessageParticipantObjectMetadata[]>;
 
   @FieldMetadata({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.blocklist,
+    standardId: workspaceMemberStandardFieldIds.blocklist,
     type: FieldMetadataType.RELATION,
     label: 'Blocklist',
     description: 'Blocklisted handles',
@@ -223,10 +228,10 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     inverseSideFieldKey: 'workspaceMember',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  blocklist: BlocklistObjectMetadata[];
+  blocklist: Relation<BlocklistObjectMetadata[]>;
 
   @FieldMetadata({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.calendarEventParticipants,
+    standardId: workspaceMemberStandardFieldIds.calendarEventParticipants,
     type: FieldMetadataType.RELATION,
     label: 'Calendar Event Participants',
     description: 'Calendar Event Participants',
@@ -241,10 +246,10 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   @Gate({
     featureFlag: 'IS_CALENDAR_ENABLED',
   })
-  calendarEventParticipants: CalendarEventParticipantObjectMetadata[];
+  calendarEventParticipants: Relation<CalendarEventParticipantObjectMetadata[]>;
 
   @FieldMetadata({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.events,
+    standardId: workspaceMemberStandardFieldIds.timelineActivities,
     type: FieldMetadataType.RELATION,
     label: 'Events',
     description: 'Events linked to the workspace member',
@@ -252,10 +257,26 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => EventObjectMetadata,
+    inverseSideTarget: () => TimelineActivityObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
   @IsSystem()
-  events: EventObjectMetadata[];
+  timelineActivities: Relation<TimelineActivityObjectMetadata[]>;
+
+  @FieldMetadata({
+    standardId: workspaceMemberStandardFieldIds.auditLogs,
+    type: FieldMetadataType.RELATION,
+    label: 'Aud tLogs',
+    description: 'Audit Logs linked to the workspace member',
+    icon: 'IconTimelineEvent',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    inverseSideTarget: () => AuditLogObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @IsNullable()
+  @IsSystem()
+  auditLogs: Relation<AuditLogObjectMetadata[]>;
 }

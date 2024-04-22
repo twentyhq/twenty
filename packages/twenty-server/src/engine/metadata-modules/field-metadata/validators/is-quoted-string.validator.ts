@@ -4,19 +4,21 @@ import {
   registerDecorator,
 } from 'class-validator';
 
-export const IsQuotedString =
-  (validationOptions?: ValidationOptions) =>
-  (object: object, propertyName: string) => {
+export function IsQuotedString(validationOptions?: ValidationOptions) {
+  return function (object: object, propertyName: string) {
     registerDecorator({
       name: 'isQuotedString',
       target: object.constructor,
       propertyName: propertyName,
       options: validationOptions,
       validator: {
-        validate: (value: any) =>
-          typeof value === 'string' && /^'.*'$/.test(value),
-        defaultMessage: (args: ValidationArguments) =>
-          `${args.property} must be a quoted string`,
+        validate(value: any) {
+          return typeof value === 'string' && /^'.*'$/.test(value);
+        },
+        defaultMessage(args: ValidationArguments) {
+          return `${args.property} must be a quoted string`;
+        },
       },
     });
   };
+}

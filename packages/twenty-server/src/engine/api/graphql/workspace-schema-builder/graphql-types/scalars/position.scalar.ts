@@ -22,7 +22,7 @@ export const PositionScalarType = new GraphQLScalarType({
     'A custom scalar type for representing record position in a list',
   serialize: checkPosition,
   parseValue: checkPosition,
-  parseLiteral: (ast): PositionType => {
+  parseLiteral(ast): PositionType {
     if (
       ast.kind == Kind.STRING &&
       (ast.value === 'first' || ast.value === 'last')

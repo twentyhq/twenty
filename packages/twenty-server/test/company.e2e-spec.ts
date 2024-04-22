@@ -81,13 +81,11 @@ describe('CompanyResolver (e2e)', () => {
       .expect(200)
       .expect((res) => {
         const data = res.body.data.findManyCompany;
-
         expect(data).toBeDefined();
         expect(Array.isArray(data)).toBe(true);
         expect(data.length).toBeGreaterThan(0);
 
         const company = data.find((c) => c.id === companyId);
-
         expect(company).toBeDefined();
         expect(company).toHaveProperty('id');
         expect(company).toHaveProperty('name', 'New Company');
@@ -96,7 +94,6 @@ describe('CompanyResolver (e2e)', () => {
 
         // Check if we have access to ressources outside of our workspace
         const instagramCompany = data.find((c) => c.name === 'Instagram');
-
         expect(instagramCompany).toBeUndefined();
       });
   });

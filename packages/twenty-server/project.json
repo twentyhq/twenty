@@ -9,7 +9,7 @@
         "cwd": "packages/twenty-server",
         "commands": ["rimraf dist", "nest build --path ./tsconfig.build.json"]
       }
-    },
+    },  
     "build:packageJson": {
       "executor": "@nx/js:tsc",
       "options": {

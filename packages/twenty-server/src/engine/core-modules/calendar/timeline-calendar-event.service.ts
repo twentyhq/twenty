@@ -32,7 +32,7 @@ export class TimelineCalendarEventService {
     workspaceMemberId: string,
     workspaceId: string,
     personIds: string[],
-    page = 1,
+    page: number = 1,
     pageSize: number = TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
   ): Promise<TimelineCalendarEventsWithTotal> {
     const offset = (page - 1) * pageSize;
@@ -234,7 +234,7 @@ export class TimelineCalendarEventService {
     workspaceMemberId: string,
     workspaceId: string,
     companyId: string,
-    page = 1,
+    page: number = 1,
     pageSize: number = TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE,
   ): Promise<TimelineCalendarEventsWithTotal> {
     const dataSourceSchema =

@@ -1,13 +1,13 @@
-import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { MESSAGE_CHANNEL_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { messageChannelStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
@@ -15,6 +15,7 @@ import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-me
 import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 export enum MessageChannelSyncStatus {
   PENDING = 'PENDING',
@@ -23,38 +24,60 @@ export enum MessageChannelSyncStatus {
   FAILED = 'FAILED',
 }
 
+export enum MessageChannelVisibility {
+  METADATA = 'metadata',
+  SUBJECT = 'subject',
+  SHARE_EVERYTHING = 'share_everything',
+}
+
+export enum MessageChannelType {
+  EMAIL = 'email',
+  SMS = 'sms',
+}
+
 @ObjectMetadata({
-  standardId: STANDARD_OBJECT_IDS.messageChannel,
+  standardId: standardObjectIds.messageChannel,
   namePlural: 'messageChannels',
   labelSingular: 'Message Channel',
   labelPlural: 'Message Channels',
   description: 'Message Channels',
   icon: 'IconMessage',
 })
+@IsNotAuditLogged()
 @IsSystem()
 export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.visibility,
+    standardId: messageChannelStandardFieldIds.visibility,
     type: FieldMetadataType.SELECT,
     label: 'Visibility',
     description: 'Visibility',
     icon: 'IconEyeglass',
     options: [
-      { value: 'metadata', label: 'Metadata', position: 0, color: 'green' },
-      { value: 'subject', label: 'Subject', position: 1, color: 'blue' },
       {
-        value: 'share_everything',
+        value: MessageChannelVisibility.METADATA,
+        label: 'Metadata',
+        position: 0,
+        color: 'green',
+      },
+      {
+        value: MessageChannelVisibility.SUBJECT,
+        label: 'Subject',
+        position: 1,
+        color: 'blue',
+      },
+      {
+        value: MessageChannelVisibility.SHARE_EVERYTHING,
         label: 'Share Everything',
         position: 2,
         color: 'orange',
       },
     ],
-    defaultValue: "'share_everything'",
+    defaultValue: `'${MessageChannelVisibility.SHARE_EVERYTHING}'`,
   })
   visibility: string;
 
   @FieldMetadata({
-    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.handle,
+    standardId: messageChannelStandardFieldIds.handle,
     type: FieldMetadataType.TEXT,
     label: 'Handle',
     description: 'Handle',
@@ -63,31 +86,41 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   handle: string;
 
   @FieldMetadata({
-    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.connectedAccount,
+    standardId: messageChannelStandardFieldIds.connectedAccount,
     type: FieldMetadataType.RELATION,
     label: 'Connected Account',
     description: 'Connected Account',
     icon: 'IconUserCircle',
     joinColumn: 'connectedAccountId',
   })
-  connectedAccount: ConnectedAccountObjectMetadata;
+  connectedAccount: Relation<ConnectedAccountObjectMetadata>;
 
   @FieldMetadata({
-    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.type,
+    standardId: messageChannelStandardFieldIds.type,
     type: FieldMetadataType.SELECT,
     label: 'Type',
     description: 'Channel Type',
     icon: 'IconMessage',
     options: [
-      { value: 'email', label: 'Email', position: 0, color: 'green' },
-      { value: 'sms', label: 'SMS', position: 1, color: 'blue' },
+      {
+        value: MessageChannelType.EMAIL,
+        label: 'Email',
+        position: 0,
+        color: 'green',
+      },
+      {
+        value: MessageChannelType.SMS,
+        label: 'SMS',
+        position: 1,
+        color: 'blue',
+      },
     ],
-    defaultValue: "'email'",
+    defaultValue: `'${MessageChannelType.EMAIL}'`,
   })
   type: string;
 
   @FieldMetadata({
-    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.isContactAutoCreationEnabled,
+    standardId: messageChannelStandardFieldIds.isContactAutoCreationEnabled,
     type: FieldMetadataType.BOOLEAN,
     label: 'Is Contact Auto Creation Enabled',
     description: 'Is Contact Auto Creation Enabled',
@@ -97,8 +130,18 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   isContactAutoCreationEnabled: boolean;
 
   @FieldMetadata({
+    standardId: messageChannelStandardFieldIds.isSyncEnabled,
+    type: FieldMetadataType.BOOLEAN,
+    label: 'Is Sync Enabled',
+    description: 'Is Sync Enabled',
+    icon: 'IconRefresh',
+    defaultValue: true,
+  })
+  isSyncEnabled: boolean;
+
+  @FieldMetadata({
     standardId:
-      MESSAGE_CHANNEL_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
+      messageChannelStandardFieldIds.messageChannelMessageAssociations,
     type: FieldMetadataType.RELATION,
     label: 'Message Channel Association',
     description: 'Messages from the channel.',
@@ -110,35 +153,31 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  messageChannelMessageAssociations: MessageChannelMessageAssociationObjectMetadata[];
+  messageChannelMessageAssociations: Relation<
+    MessageChannelMessageAssociationObjectMetadata[]
+  >;
 
   @FieldMetadata({
-    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncCursor,
+    standardId: messageChannelStandardFieldIds.syncCursor,
     type: FieldMetadataType.TEXT,
     label: 'Last sync cursor',
     description: 'Last sync cursor',
     icon: 'IconHistory',
   })
-  @Gate({
-    featureFlag: FeatureFlagKeys.IsFullSyncV2Enabled,
-  })
   syncCursor: string;
 
   @FieldMetadata({
-    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncedAt,
+    standardId: messageChannelStandardFieldIds.syncedAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Last sync date',
     description: 'Last sync date',
     icon: 'IconHistory',
   })
-  @Gate({
-    featureFlag: FeatureFlagKeys.IsFullSyncV2Enabled,
-  })
   @IsNullable()
   syncedAt: string;
 
   @FieldMetadata({
-    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
+    standardId: messageChannelStandardFieldIds.syncStatus,
     type: FieldMetadataType.SELECT,
     label: 'Last sync status',
     description: 'Last sync status',
@@ -170,21 +209,15 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
       },
     ],
   })
-  @Gate({
-    featureFlag: FeatureFlagKeys.IsFullSyncV2Enabled,
-  })
   @IsNullable()
   syncStatus: MessageChannelSyncStatus;
 
   @FieldMetadata({
-    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.ongoingSyncStartedAt,
+    standardId: messageChannelStandardFieldIds.ongoingSyncStartedAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Ongoing sync started at',
     description: 'Ongoing sync started at',
     icon: 'IconHistory',
-  })
-  @Gate({
-    featureFlag: FeatureFlagKeys.IsFullSyncV2Enabled,
   })
   @IsNullable()
   ongoingSyncStartedAt: string;

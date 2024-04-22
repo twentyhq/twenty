@@ -10,19 +10,20 @@ describe('WorkspaceFieldComparator', () => {
     comparator = new WorkspaceFieldComparator();
   });
 
-  const createMockFieldMetadata = (values: any) => ({
-    workspaceId: 'some-workspace-id',
-    type: 'TEXT',
-    name: 'DefaultFieldName',
-    label: 'Default Field Label',
-    targetColumnMap: 'default_column',
-    defaultValue: null,
-    description: 'Default description',
-    isCustom: false,
-    isSystem: false,
-    isNullable: true,
-    ...values,
-  });
+  function createMockFieldMetadata(values: any) {
+    return {
+      workspaceId: 'some-workspace-id',
+      type: 'TEXT',
+      name: 'DefaultFieldName',
+      label: 'Default Field Label',
+      defaultValue: null,
+      description: 'Default description',
+      isCustom: false,
+      isSystem: false,
+      isNullable: true,
+      ...values,
+    };
+  }
 
   it('should generate CREATE action for new fields', () => {
     const original = { fields: [] } as any;

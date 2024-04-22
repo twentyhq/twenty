@@ -3,104 +3,103 @@ import { validateDefaultValueForType } from 'src/engine/metadata-modules/field-m
 
 describe('validateDefaultValueForType', () => {
   it('should return true for null defaultValue', () => {
-    expect(validateDefaultValueForType(FieldMetadataType.TEXT, null)).toBe(
-      true,
-    );
+    expect(
+      validateDefaultValueForType(FieldMetadataType.TEXT, null).isValid,
+    ).toBe(true);
   });
 
   // Dynamic default values
   it('should validate uuid dynamic default value for UUID type', () => {
-    expect(validateDefaultValueForType(FieldMetadataType.UUID, 'uuid')).toBe(
-      true,
-    );
+    expect(
+      validateDefaultValueForType(FieldMetadataType.UUID, 'uuid').isValid,
+    ).toBe(true);
   });
 
   it('should validate now dynamic default value for DATE_TIME type', () => {
     expect(
-      validateDefaultValueForType(FieldMetadataType.DATE_TIME, 'now'),
+      validateDefaultValueForType(FieldMetadataType.DATE_TIME, 'now').isValid,
     ).toBe(true);
   });
 
   it('should return false for mismatched dynamic default value', () => {
-    expect(validateDefaultValueForType(FieldMetadataType.UUID, 'now')).toBe(
-      false,
-    );
+    expect(
+      validateDefaultValueForType(FieldMetadataType.UUID, 'now').isValid,
+    ).toBe(false);
   });
 
   // Static default values
   it('should validate string default value for TEXT type', () => {
-    expect(validateDefaultValueForType(FieldMetadataType.TEXT, "'test'")).toBe(
-      true,
-    );
+    expect(
+      validateDefaultValueForType(FieldMetadataType.TEXT, "'test'").isValid,
+    ).toBe(true);
   });
 
   it('should return false for invalid string default value for TEXT type', () => {
-    expect(validateDefaultValueForType(FieldMetadataType.TEXT, 123)).toBe(
-      false,
-    );
+    expect(
+      validateDefaultValueForType(FieldMetadataType.TEXT, 123).isValid,
+    ).toBe(false);
   });
 
   it('should validate string default value for PHONE type', () => {
     expect(
-      validateDefaultValueForType(FieldMetadataType.PHONE, "'+123456789'"),
+      validateDefaultValueForType(FieldMetadataType.PHONE, "'+123456789'")
+        .isValid,
     ).toBe(true);
   });
 
   it('should return false for invalid string default value for PHONE type', () => {
-    expect(validateDefaultValueForType(FieldMetadataType.PHONE, 123)).toBe(
-      false,
-    );
+    expect(
+      validateDefaultValueForType(FieldMetadataType.PHONE, 123).isValid,
+    ).toBe(false);
   });
 
   it('should validate string default value for EMAIL type', () => {
     expect(
-      validateDefaultValueForType(
-        FieldMetadataType.EMAIL,
-        "'test@example.com'",
-      ),
+      validateDefaultValueForType(FieldMetadataType.EMAIL, "'test@example.com'")
+        .isValid,
     ).toBe(true);
   });
 
   it('should return false for invalid string default value for EMAIL type', () => {
-    expect(validateDefaultValueForType(FieldMetadataType.EMAIL, 123)).toBe(
-      false,
-    );
+    expect(
+      validateDefaultValueForType(FieldMetadataType.EMAIL, 123).isValid,
+    ).toBe(false);
   });
 
   it('should validate number default value for NUMBER type', () => {
-    expect(validateDefaultValueForType(FieldMetadataType.NUMBER, 100)).toBe(
-      true,
-    );
+    expect(
+      validateDefaultValueForType(FieldMetadataType.NUMBER, 100).isValid,
+    ).toBe(true);
   });
 
   it('should return false for invalid number default value for NUMBER type', () => {
-    expect(validateDefaultValueForType(FieldMetadataType.NUMBER, '100')).toBe(
-      false,
-    );
+    expect(
+      validateDefaultValueForType(FieldMetadataType.NUMBER, '100').isValid,
+    ).toBe(false);
   });
 
   it('should validate number default value for PROBABILITY type', () => {
     expect(
-      validateDefaultValueForType(FieldMetadataType.PROBABILITY, 0.5),
+      validateDefaultValueForType(FieldMetadataType.PROBABILITY, 0.5).isValid,
     ).toBe(true);
   });
 
   it('should return false for invalid number default value for PROBABILITY type', () => {
     expect(
-      validateDefaultValueForType(FieldMetadataType.PROBABILITY, '50%'),
+      validateDefaultValueForType(FieldMetadataType.PROBABILITY, '50%').isValid,
     ).toBe(false);
   });
 
   it('should validate boolean default value for BOOLEAN type', () => {
-    expect(validateDefaultValueForType(FieldMetadataType.BOOLEAN, true)).toBe(
-      true,
-    );
+    expect(
+      validateDefaultValueForType(FieldMetadataType.BOOLEAN, true).isValid,
+    ).toBe(true);
   });
 
   it('should return false for invalid boolean default value for BOOLEAN type', () => {
-    expect(validateDefaultValueForType(FieldMetadataType.BOOLEAN, 'true')).toBe(
-      false,
-    );
+    expect(
+      validateDefaultValueForType(FieldMetadataType.BOOLEAN, 'true').isValid,
+    ).toBe(false);
   });
 
   // LINK type
@@ -109,7 +108,7 @@ describe('validateDefaultValueForType', () => {
       validateDefaultValueForType(FieldMetadataType.LINK, {
         label: "'http://example.com'",
         url: "'Example'",
-      }),
+      }).isValid,
     ).toBe(true);
   });
 
@@ -120,7 +119,7 @@ describe('validateDefaultValueForType', () => {
         // @ts-expect-error Just for testing purposes
         { label: 123, url: {} },
         FieldMetadataType.LINK,
-      ),
+      ).isValid,
     ).toBe(false);
   });
 
@@ -130,7 +129,7 @@ describe('validateDefaultValueForType', () => {
       validateDefaultValueForType(FieldMetadataType.CURRENCY, {
         amountMicros: '100',
         currencyCode: "'USD'",
-      }),
+      }).isValid,
     ).toBe(true);
   });
 
@@ -141,14 +140,15 @@ describe('validateDefaultValueForType', () => {
         // @ts-expect-error Just for testing purposes
         { amountMicros: 100, currencyCode: "'USD'" },
         FieldMetadataType.CURRENCY,
-      ),
+      ).isValid,
     ).toBe(false);
   });
 
   // Unknown type
   it('should return false for unknown type', () => {
     expect(
-      validateDefaultValueForType('unknown' as FieldMetadataType, "'test'"),
+      validateDefaultValueForType('unknown' as FieldMetadataType, "'test'")
+        .isValid,
     ).toBe(false);
   });
 });

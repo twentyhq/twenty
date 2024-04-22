@@ -25,7 +25,7 @@ const commonFieldPropertiesToIgnore = [
   'options',
 ];
 
-const fieldPropertiesToStringify = ['targetColumnMap', 'defaultValue'] as const;
+const fieldPropertiesToStringify = ['defaultValue'] as const;
 
 @Injectable()
 export class WorkspaceFieldComparator {
@@ -63,9 +63,10 @@ export class WorkspaceFieldComparator {
           return false;
         },
         propertiesToStringify: fieldPropertiesToStringify,
-        keyFactory: (
-          datum, // Happen when the field is custom
-        ) => datum.standardId || datum.name,
+        keyFactory(datum) {
+          // Happen when the field is custom
+          return datum.standardId || datum.name;
+        },
       },
     );
     const standardFieldMetadataMap = transformMetadataForComparison(
@@ -87,9 +88,10 @@ export class WorkspaceFieldComparator {
           return false;
         },
         propertiesToStringify: fieldPropertiesToStringify,
-        keyFactory: (
-          datum, // Happen when the field is custom
-        ) => datum.standardId || datum.name,
+        keyFactory(datum) {
+          // Happen when the field is custom
+          return datum.standardId || datum.name;
+        },
       },
     );
 

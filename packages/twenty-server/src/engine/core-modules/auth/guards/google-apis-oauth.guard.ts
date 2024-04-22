@@ -9,18 +9,19 @@ export class GoogleAPIsOauthGuard extends AuthGuard('google-apis') {
     });
   }
 
-  /**
-   * @throws
-   */
   async canActivate(context: ExecutionContext) {
-    const request = context.switchToHttp().getRequest();
-    const transientToken = request.query.transientToken;
+    try {
+      const request = context.switchToHttp().getRequest();
+      const transientToken = request.query.transientToken;
 
-    if (transientToken && typeof transientToken === 'string') {
-      request.params.transientToken = transientToken;
+      if (transientToken && typeof transientToken === 'string') {
+        request.params.transientToken = transientToken;
+      }
+      const activate = (await super.canActivate(context)) as boolean;
+
+      return activate;
+    } catch (ex) {
+      throw ex;
     }
-    const activate = (await super.canActivate(context)) as boolean;
-
-    return activate;
   }
 }

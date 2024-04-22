@@ -3,12 +3,10 @@ import uniqBy from 'lodash.uniqby';
 
 import { Contacts } from 'src/modules/connected-account/auto-companies-and-contacts-creation/types/contact.type';
 
-export const getUniqueContactsAndHandles = (
-  contacts: Contacts,
-): {
+export function getUniqueContactsAndHandles(contacts: Contacts): {
   uniqueContacts: Contacts;
   uniqueHandles: string[];
-} => {
+} {
   if (contacts.length === 0) {
     return { uniqueContacts: [], uniqueHandles: [] };
   }
@@ -18,4 +16,4 @@ export const getUniqueContactsAndHandles = (
   const uniqueContacts = uniqBy(contacts, 'handle');
 
   return { uniqueContacts, uniqueHandles };
-};
+}
