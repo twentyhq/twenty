@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
+import { IconCheck, IconX } from 'twenty-ui';
 
-import { IconCheck, IconX } from '@/ui/display/icon';
 import { Select } from '@/ui/input/components/Select';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 

@@ -1,16 +1,5 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-
-import { Calendar } from '@/activities/calendar/components/Calendar';
-import { EmailThreads } from '@/activities/emails/components/EmailThreads';
-import { Events } from '@/activities/events/components/Events';
-import { Attachments } from '@/activities/files/components/Attachments';
-import { Notes } from '@/activities/notes/components/Notes';
-import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
-import { Timeline } from '@/activities/timeline/components/Timeline';
-import { TimelineQueryEffect } from '@/activities/timeline/components/TimelineQueryEffect';
-import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import {
   IconCalendarEvent,
   IconCheckbox,
@@ -18,7 +7,18 @@ import {
   IconNotes,
   IconPaperclip,
   IconTimelineEvent,
-} from '@/ui/display/icon';
+} from 'twenty-ui';
+
+import { Calendar } from '@/activities/calendar/components/Calendar';
+import { EmailThreads } from '@/activities/emails/components/EmailThreads';
+import { Attachments } from '@/activities/files/components/Attachments';
+import { Notes } from '@/activities/notes/components/Notes';
+import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
+import { Timeline } from '@/activities/timeline/components/Timeline';
+import { TimelineQueryEffect } from '@/activities/timeline/components/TimelineQueryEffect';
+import { TimelineActivities } from '@/activities/timelineActivities/components/TimelineActivities';
+import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { TabList } from '@/ui/layout/tab/components/TabList';
 import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -144,7 +144,9 @@ export const ShowPageRightContainer = ({
       {activeTabId === 'calendar' && (
         <Calendar targetableObject={targetableObject} />
       )}
-      {activeTabId === 'logs' && <Events targetableObject={targetableObject} />}
+      {activeTabId === 'logs' && (
+        <TimelineActivities targetableObject={targetableObject} />
+      )}
     </StyledShowPageRightContainer>
   );
 };

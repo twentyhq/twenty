@@ -58,6 +58,7 @@ const AddressInputWithContext = ({
           metadata: {
             fieldName: 'Address',
             placeHolder: 'Enter text',
+            objectMetadataNameSingular: 'person',
           },
         }}
         entityId={entityId}
@@ -68,7 +69,7 @@ const AddressInputWithContext = ({
           onEscape={onEscape}
           onClickOutside={onClickOutside}
           value={value}
-          hotkeyScope=""
+          hotkeyScope="hotkey-scope"
           onTab={onTab}
           onShiftTab={onShiftTab}
         />
@@ -96,7 +97,7 @@ const clearMocksDecorator: Decorator = (Story, context) => {
 };
 
 const meta: Meta = {
-  title: 'UI/Data/Field/Input/AddressInput',
+  title: 'UI/Data/Field/Input/AddressFieldInput',
   component: AddressInputWithContext,
   args: {
     value: 'text',

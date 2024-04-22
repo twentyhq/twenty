@@ -4,15 +4,14 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
+import { IconGoogle, IconMicrosoft } from 'twenty-ui';
 
-import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword.ts';
-import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm.ts';
-import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle.ts';
+import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
+import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
 import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
-import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash.ts';
-import { authProvidersState } from '@/client-config/states/authProvidersState.ts';
-import { IconGoogle } from '@/ui/display/icon/components/IconGoogle';
-import { IconMicrosoft } from '@/ui/display/icon/components/IconMicrosoft';
+import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
+import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -74,8 +73,10 @@ export const SignInUpForm = () => {
       } else if (signInUpStep === SignInUpStep.Email) {
         continueWithCredentials();
       } else if (signInUpStep === SignInUpStep.Password) {
-        setShowErrors(true);
-        form.handleSubmit(submitCredentials)();
+        if (!form.formState.isSubmitting) {
+          setShowErrors(true);
+          form.handleSubmit(submitCredentials)();
+        }
       }
     }
   };
@@ -177,9 +178,9 @@ export const SignInUpForm = () => {
                         }
                       }}
                       error={showErrors ? error?.message : undefined}
-                      onKeyDown={handleKeyDown}
                       fullWidth
                       disableHotkeys
+                      onKeyDown={handleKeyDown}
                     />
                   </StyledInputContainer>
                 )}
@@ -211,10 +212,10 @@ export const SignInUpForm = () => {
                       placeholder="Password"
                       onBlur={onBlur}
                       onChange={onChange}
-                      onKeyDown={handleKeyDown}
                       error={showErrors ? error?.message : undefined}
                       fullWidth
                       disableHotkeys
+                      onKeyDown={handleKeyDown}
                     />
                   </StyledInputContainer>
                 )}
@@ -240,7 +241,7 @@ export const SignInUpForm = () => {
             }}
             Icon={() => form.formState.isSubmitting && <Loader />}
             disabled={
-              SignInUpStep.Init
+              signInUpStep === SignInUpStep.Init
                 ? false
                 : signInUpStep === SignInUpStep.Email
                   ? !form.watch('email')

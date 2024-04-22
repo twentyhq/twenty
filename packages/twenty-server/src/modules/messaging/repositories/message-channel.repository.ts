@@ -15,6 +15,49 @@ export class MessageChannelRepository {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
+  public async create(
+    messageChannel: Pick<
+      ObjectRecord<MessageChannelObjectMetadata>,
+      'id' | 'connectedAccountId' | 'type' | 'handle' | 'visibility'
+    >,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<void> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `INSERT INTO ${dataSourceSchema}."messageChannel" ("id", "connectedAccountId", "type", "handle", "visibility")
+      VALUES ($1, $2, $3, $4, $5)`,
+      [
+        messageChannel.id,
+        messageChannel.connectedAccountId,
+        messageChannel.type,
+        messageChannel.handle,
+        messageChannel.visibility,
+      ],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async resetSync(
+    connectedAccountId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<void> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."messageChannel" SET "syncStatus" = NULL, "syncCursor" = '', "ongoingSyncStartedAt" = NULL
+      WHERE "connectedAccountId" = $1`,
+      [connectedAccountId],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async getAll(
     workspaceId: string,
     transactionManager?: EntityManager,
@@ -94,6 +137,27 @@ export class MessageChannelRepository {
     );
   }
 
+  public async getIdsByWorkspaceMemberId(
+    workspaceMemberId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<MessageChannelObjectMetadata>[]> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const messageChannelIds =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT "messageChannel".id FROM ${dataSourceSchema}."messageChannel" "messageChannel"
+        JOIN ${dataSourceSchema}."connectedAccount" ON "messageChannel"."connectedAccountId" = ${dataSourceSchema}."connectedAccount"."id"
+        WHERE ${dataSourceSchema}."connectedAccount"."accountOwnerId" = $1`,
+        [workspaceMemberId],
+        workspaceId,
+        transactionManager,
+      );
+
+    return messageChannelIds;
+  }
+
   public async updateSyncStatus(
     id: string,
     syncStatus: MessageChannelSyncStatus,
@@ -123,9 +187,9 @@ export class MessageChannelRepository {
     );
   }
 
-  public async updateLastSyncExternalIdIfHigher(
+  public async updateLastSyncCursorIfHigher(
     id: string,
-    syncExternalId: string,
+    syncCursor: string,
     workspaceId: string,
     transactionManager?: EntityManager,
   ) {
@@ -133,16 +197,16 @@ export class MessageChannelRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."messageChannel" SET "syncExternalId" = $1
+      `UPDATE ${dataSourceSchema}."messageChannel" SET "syncCursor" = $1
       WHERE "id" = $2
-      AND ("syncExternalId" < $1 OR "syncExternalId" = '')`,
-      [syncExternalId, id],
+      AND ("syncCursor" < $1 OR "syncCursor" = '')`,
+      [syncCursor, id],
       workspaceId,
       transactionManager,
     );
   }
 
-  public async resetSyncExternalId(
+  public async resetSyncCursor(
     id: string,
     workspaceId: string,
     transactionManager?: EntityManager,
@@ -151,7 +215,7 @@ export class MessageChannelRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."messageChannel" SET "syncExternalId" = ''
+      `UPDATE ${dataSourceSchema}."messageChannel" SET "syncCursor" = ''
       WHERE "id" = $1`,
       [id],
       workspaceId,

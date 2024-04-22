@@ -1,3 +1,5 @@
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+
 import {
   formatFieldMetadataItemInput,
   getOptionValueFromLabel,
@@ -46,6 +48,7 @@ describe('formatFieldMetadataItemInput', () => {
     const input = {
       label: 'Example Label',
       icon: 'example-icon',
+      type: FieldMetadataType.Select,
       description: 'Example description',
       options: [
         { id: '1', label: 'Option 1', color: 'red' as const, isDefault: true },
@@ -86,6 +89,70 @@ describe('formatFieldMetadataItemInput', () => {
     const input = {
       label: 'Example Label',
       icon: 'example-icon',
+      type: FieldMetadataType.Select,
+      description: 'Example description',
+    };
+
+    const expected = {
+      description: 'Example description',
+      icon: 'example-icon',
+      label: 'Example Label',
+      name: 'exampleLabel',
+      options: undefined,
+      defaultValue: undefined,
+    };
+
+    const result = formatFieldMetadataItemInput(input);
+
+    expect(result).toEqual(expected);
+  });
+
+  it('should format the field metadata item multi select input correctly', () => {
+    const input = {
+      label: 'Example Label',
+      icon: 'example-icon',
+      type: FieldMetadataType.MultiSelect,
+      description: 'Example description',
+      options: [
+        { id: '1', label: 'Option 1', color: 'red' as const, isDefault: true },
+        { id: '2', label: 'Option 2', color: 'blue' as const, isDefault: true },
+      ],
+    };
+
+    const expected = {
+      description: 'Example description',
+      icon: 'example-icon',
+      label: 'Example Label',
+      name: 'exampleLabel',
+      options: [
+        {
+          id: '1',
+          label: 'Option 1',
+          color: 'red',
+          position: 0,
+          value: 'OPTION_1',
+        },
+        {
+          id: '2',
+          label: 'Option 2',
+          color: 'blue',
+          position: 1,
+          value: 'OPTION_2',
+        },
+      ],
+      defaultValue: ["'OPTION_1'", "'OPTION_2'"],
+    };
+
+    const result = formatFieldMetadataItemInput(input);
+
+    expect(result).toEqual(expected);
+  });
+
+  it('should handle multi select input without options', () => {
+    const input = {
+      label: 'Example Label',
+      icon: 'example-icon',
+      type: FieldMetadataType.MultiSelect,
       description: 'Example description',
     };
 

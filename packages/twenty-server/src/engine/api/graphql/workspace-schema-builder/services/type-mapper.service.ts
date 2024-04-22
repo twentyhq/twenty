@@ -5,7 +5,6 @@ import {
   GraphQLBoolean,
   GraphQLEnumType,
   GraphQLFloat,
-  GraphQLID,
   GraphQLInputObjectType,
   GraphQLInputType,
   GraphQLInt,
@@ -15,7 +14,6 @@ import {
   GraphQLString,
   GraphQLType,
 } from 'graphql';
-import GraphQLJSON from 'graphql-type-json';
 
 import {
   DateScalarMode,
@@ -35,8 +33,12 @@ import {
   RawJsonFilterType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input';
 import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
-import { BigFloatScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import {
+  BigFloatScalarType,
+  UUIDScalarType,
+} from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { PositionScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/position.scalar';
+import { JsonScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/json.scalar';
 
 export interface TypeOptions<T = any> {
   nullable?: boolean;
@@ -57,20 +59,20 @@ export class TypeMapperService {
     const numberScalar =
       numberScalarMode === 'float' ? GraphQLFloat : GraphQLInt;
 
-    // LINK and CURRENCY are handled in the factories because they are objects
     const typeScalarMapping = new Map<FieldMetadataType, GraphQLScalarType>([
-      [FieldMetadataType.UUID, GraphQLID],
+      [FieldMetadataType.UUID, UUIDScalarType],
       [FieldMetadataType.TEXT, GraphQLString],
       [FieldMetadataType.PHONE, GraphQLString],
       [FieldMetadataType.EMAIL, GraphQLString],
       [FieldMetadataType.DATE_TIME, dateScalar],
+      [FieldMetadataType.DATE, dateScalar],
       [FieldMetadataType.BOOLEAN, GraphQLBoolean],
       [FieldMetadataType.NUMBER, numberScalar],
       [FieldMetadataType.NUMERIC, BigFloatScalarType],
       [FieldMetadataType.PROBABILITY, GraphQLFloat],
-      [FieldMetadataType.RELATION, GraphQLID],
+      [FieldMetadataType.RELATION, UUIDScalarType],
       [FieldMetadataType.POSITION, PositionScalarType],
-      [FieldMetadataType.RAW_JSON, GraphQLJSON],
+      [FieldMetadataType.RAW_JSON, JsonScalarType],
     ]);
 
     return typeScalarMapping.get(fieldMetadataType);
@@ -86,7 +88,6 @@ export class TypeMapperService {
     const numberScalar =
       numberScalarMode === 'float' ? FloatFilterType : IntFilterType;
 
-    // LINK and CURRENCY are handled in the factories because they are objects
     const typeFilterMapping = new Map<
       FieldMetadataType,
       GraphQLInputObjectType | GraphQLScalarType
@@ -96,6 +97,7 @@ export class TypeMapperService {
       [FieldMetadataType.PHONE, StringFilterType],
       [FieldMetadataType.EMAIL, StringFilterType],
       [FieldMetadataType.DATE_TIME, dateFilter],
+      [FieldMetadataType.DATE, DateFilterType],
       [FieldMetadataType.BOOLEAN, BooleanFilterType],
       [FieldMetadataType.NUMBER, numberScalar],
       [FieldMetadataType.NUMERIC, BigFloatFilterType],
@@ -111,13 +113,13 @@ export class TypeMapperService {
   mapToOrderByType(
     fieldMetadataType: FieldMetadataType,
   ): GraphQLInputType | undefined {
-    // LINK and CURRENCY are handled in the factories because they are objects
     const typeOrderByMapping = new Map<FieldMetadataType, GraphQLEnumType>([
       [FieldMetadataType.UUID, OrderByDirectionType],
       [FieldMetadataType.TEXT, OrderByDirectionType],
       [FieldMetadataType.PHONE, OrderByDirectionType],
       [FieldMetadataType.EMAIL, OrderByDirectionType],
       [FieldMetadataType.DATE_TIME, OrderByDirectionType],
+      [FieldMetadataType.DATE, OrderByDirectionType],
       [FieldMetadataType.BOOLEAN, OrderByDirectionType],
       [FieldMetadataType.NUMBER, OrderByDirectionType],
       [FieldMetadataType.NUMERIC, OrderByDirectionType],
@@ -146,7 +148,7 @@ export class TypeMapperService {
       );
     }
 
-    if (!options.nullable && !options.defaultValue) {
+    if (options.nullable === false && options.defaultValue === null) {
       graphqlType = new GraphQLNonNull(graphqlType) as unknown as T;
     }
 

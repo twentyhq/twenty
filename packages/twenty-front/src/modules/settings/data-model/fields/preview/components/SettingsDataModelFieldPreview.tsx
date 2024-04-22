@@ -1,5 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useIcons } from 'twenty-ui';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -11,11 +12,13 @@ import { SettingsObjectFieldSelectFormValues } from '@/settings/data-model/compo
 import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetFieldValueEffect';
 import { SettingsDataModelSetRecordEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetRecordEffect';
 import { useFieldPreview } from '@/settings/data-model/fields/preview/hooks/useFieldPreview';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export type SettingsDataModelFieldPreviewProps = {
-  fieldMetadataItem: Pick<FieldMetadataItem, 'icon' | 'label' | 'type'> & {
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'icon' | 'label' | 'type' | 'defaultValue'
+  > & {
     id?: string;
     name?: string;
   };
@@ -106,6 +109,7 @@ export const SettingsDataModelFieldPreview = ({
                   relationObjectMetadataItem?.nameSingular,
                 options: selectOptions,
               },
+              defaultValue: fieldMetadataItem.defaultValue,
             },
             hotkeyScope: 'field-preview',
           }}

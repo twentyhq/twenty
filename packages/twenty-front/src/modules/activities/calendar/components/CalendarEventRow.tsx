@@ -3,6 +3,7 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { format } from 'date-fns';
 import { useRecoilValue } from 'recoil';
+import { Avatar, AvatarGroup, IconArrowRight, IconLock } from 'twenty-ui';
 
 import { CalendarCurrentEventCursor } from '@/activities/calendar/components/CalendarCurrentEventCursor';
 import { CalendarContext } from '@/activities/calendar/contexts/CalendarContext';
@@ -11,12 +12,10 @@ import { getCalendarEventEndDate } from '@/activities/calendar/utils/getCalendar
 import { getCalendarEventStartDate } from '@/activities/calendar/utils/getCalendarEventStartDate';
 import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEventEnded';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { IconArrowRight, IconLock } from '@/ui/display/icon';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
-import { Avatar } from '@/users/components/Avatar';
-import { AvatarGroup } from '@/users/components/AvatarGroup';
 import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 import { isDefined } from '~/utils/isDefined';
 
 type CalendarEventRowProps = {
@@ -115,7 +114,7 @@ export const CalendarEventRow = ({
     : format(startsAt, 'HH:mm');
   const endTimeLabel = calendarEvent.isFullDay ? '' : format(endsAt, 'HH:mm');
 
-  const isCurrentWorkspaceMemberAttending = calendarEvent.attendees?.some(
+  const isCurrentWorkspaceMemberAttending = calendarEvent.participants?.some(
     ({ workspaceMemberId }) => workspaceMemberId === currentWorkspaceMember?.id,
   );
   const showTitle = calendarEvent.visibility === 'SHARE_EVERYTHING';
@@ -154,19 +153,20 @@ export const CalendarEventRow = ({
           </StyledVisibilityCard>
         )}
       </StyledLabels>
-      {!!calendarEvent.attendees?.length && (
+      {!!calendarEvent.participants?.length && (
         <AvatarGroup
-          avatars={calendarEvent.attendees.map((attendee) => (
+          avatars={calendarEvent.participants.map((participant) => (
             <Avatar
-              key={[attendee.workspaceMemberId, attendee.displayName]
+              key={[participant.workspaceMemberId, participant.displayName]
                 .filter(isDefined)
                 .join('-')}
-              avatarUrl={
-                attendee.workspaceMemberId === currentWorkspaceMember?.id
-                  ? currentWorkspaceMember?.avatarUrl
-                  : undefined
+              avatarUrl={getImageAbsoluteURIOrBase64(participant.avatarUrl)}
+              placeholder={
+                participant.firstName && participant.lastName
+                  ? `${participant.firstName} ${participant.lastName}`
+                  : participant.displayName
               }
-              placeholder={attendee.displayName}
+              entityId={participant.workspaceMemberId ?? participant.personId}
               type="rounded"
             />
           ))}

@@ -1,12 +1,12 @@
 import { Meta, StoryObj } from '@storybook/react';
-
 import {
+  ComponentDecorator,
   IconCheckbox,
   IconList,
   IconSearch,
   IconSettings,
-} from '@/ui/display/icon';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+} from 'twenty-ui';
+
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 
 import { NavigationBar } from '../NavigationBar';

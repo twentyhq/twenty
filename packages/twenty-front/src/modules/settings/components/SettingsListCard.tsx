@@ -1,10 +1,9 @@
 import { ComponentType } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconComponent, IconPlus } from 'twenty-ui';
 
 import { SettingsListSkeletonCard } from '@/settings/components/SettingsListSkeletonCard';
-import { IconPlus } from '@/ui/display/icon';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardFooter } from '@/ui/layout/card/components/CardFooter';
 
@@ -42,7 +41,7 @@ type SettingsListCardProps<ListItem extends { id: string }> = {
   hasFooter?: boolean;
   isLoading?: boolean;
   onRowClick?: (item: ListItem) => void;
-  RowIcon: IconComponent;
+  RowIcon?: IconComponent;
   RowRightComponent: ComponentType<{ item: ListItem }>;
   footerButtonLabel?: string;
   onFooterButtonClick?: () => void;

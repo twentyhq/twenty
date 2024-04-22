@@ -1,7 +1,6 @@
 import {
   Field,
   HideField,
-  ID,
   InputType,
   OmitType,
   PartialType,
@@ -10,6 +9,7 @@ import {
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsUUID, ValidateNested } from 'class-validator';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 
 @InputType()
@@ -28,7 +28,9 @@ export class UpdateFieldInput extends OmitType(
 export class UpdateOneFieldMetadataInput {
   @IsUUID()
   @IsNotEmpty()
-  @Field(() => ID, { description: 'The id of the record to update' })
+  @Field(() => UUIDScalarType, {
+    description: 'The id of the record to update',
+  })
   id!: string;
 
   @Type(() => UpdateFieldInput)

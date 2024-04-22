@@ -41,12 +41,14 @@ const BooleanFieldInputWithContext = ({
   return (
     <FieldContextProvider
       fieldDefinition={{
+        defaultValue: false,
         fieldMetadataId: 'boolean',
         label: 'Boolean',
         iconName: 'Icon123',
         type: FieldMetadataType.Boolean,
         metadata: {
           fieldName: 'Boolean',
+          objectMetadataNameSingular: 'person',
         },
       }}
       entityId={entityId}

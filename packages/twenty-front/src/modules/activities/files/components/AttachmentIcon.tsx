@@ -1,8 +1,7 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-
-import { AttachmentType } from '@/activities/files/types/Attachment';
 import {
+  IconComponent,
   IconFile,
   IconFileText,
   IconFileZip,
@@ -11,8 +10,9 @@ import {
   IconPresentation,
   IconTable,
   IconVideo,
-} from '@/ui/display/icon';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+} from 'twenty-ui';
+
+import { AttachmentType } from '@/activities/files/types/Attachment';
 
 const StyledIconContainer = styled.div<{ background: string }>`
   align-items: center;

@@ -46,6 +46,7 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 import { NotFoundError } from 'src/engine/utils/graphql-errors.util';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters.factory';
+import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
@@ -217,6 +218,9 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { workspaceId, userId, objectMetadataItem } = options;
+
+    assertMutationNotOnRemoteObject(objectMetadataItem);
+
     const computedArgs = await this.queryRunnerArgsFactory.create(
       args,
       options,
@@ -245,11 +249,12 @@ export class WorkspaceQueryRunnerService {
 
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.created`, {
+        name: `${objectMetadataItem.nameSingular}.created`,
         workspaceId,
         userId,
         recordId: record.id,
         objectMetadata: objectMetadataItem,
-        details: {
+        properties: {
           after: record,
         },
       } satisfies ObjectRecordCreateEvent<any>);
@@ -272,6 +277,8 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     const { workspaceId, userId, objectMetadataItem } = options;
+
+    assertMutationNotOnRemoteObject(objectMetadataItem);
 
     const existingRecord = await this.findOne(
       { filter: { id: { eq: args.id } } } as FindOneResolverArgs,
@@ -300,11 +307,12 @@ export class WorkspaceQueryRunnerService {
     );
 
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.updated`, {
+      name: `${objectMetadataItem.nameSingular}.updated`,
       workspaceId,
       userId,
       recordId: (existingRecord as Record).id,
       objectMetadata: objectMetadataItem,
-      details: {
+      properties: {
         before: this.removeNestedProperties(existingRecord as Record),
         after: this.removeNestedProperties(parsedResults?.[0]),
       },
@@ -318,6 +326,9 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { workspaceId, objectMetadataItem } = options;
+
+    assertMutationNotOnRemoteObject(objectMetadataItem);
+
     const maximumRecordAffected = this.environmentService.get(
       'MUTATION_MAXIMUM_RECORD_AFFECTED',
     );
@@ -359,6 +370,9 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
     const { workspaceId, userId, objectMetadataItem } = options;
+
+    assertMutationNotOnRemoteObject(objectMetadataItem);
+
     const maximumRecordAffected = this.environmentService.get(
       'MUTATION_MAXIMUM_RECORD_AFFECTED',
     );
@@ -385,11 +399,12 @@ export class WorkspaceQueryRunnerService {
 
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
+        name: `${objectMetadataItem.nameSingular}.deleted`,
         workspaceId,
         userId,
         recordId: record.id,
         objectMetadata: objectMetadataItem,
-        details: {
+        properties: {
           before: [this.removeNestedProperties(record)],
         },
       } satisfies ObjectRecordDeleteEvent<any>);
@@ -403,6 +418,9 @@ export class WorkspaceQueryRunnerService {
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record | undefined> {
     const { workspaceId, userId, objectMetadataItem } = options;
+
+    assertMutationNotOnRemoteObject(objectMetadataItem);
+
     const query = await this.workspaceQueryBuilderFactory.deleteOne(
       args,
       options,
@@ -433,11 +451,12 @@ export class WorkspaceQueryRunnerService {
     );
 
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
+      name: `${objectMetadataItem.nameSingular}.deleted`,
       workspaceId,
       userId,
       recordId: args.id,
       objectMetadata: objectMetadataItem,
-      details: {
+      properties: {
         before: {
           ...(deletedWorkspaceMember ?? {}),
           ...this.removeNestedProperties(parsedResults?.[0]),

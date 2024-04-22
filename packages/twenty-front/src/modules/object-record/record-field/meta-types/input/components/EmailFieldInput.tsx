@@ -4,7 +4,7 @@ import { FieldInputOverlay } from '../../../../../ui/field/input/components/Fiel
 import { usePersistField } from '../../../hooks/usePersistField';
 import { useEmailField } from '../../hooks/useEmailField';
 
-import { FieldInputEvent } from './DateFieldInput';
+import { FieldInputEvent } from './DateTimeFieldInput';
 
 export type EmailFieldInputProps = {
   onClickOutside?: FieldInputEvent;

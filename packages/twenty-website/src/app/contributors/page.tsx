@@ -43,15 +43,12 @@ const Contributors = async () => {
     .filter((contributor) => contributor.pullRequestCount > 0);
 
   return (
-    <>
-      <Background />
+    <Background>
       <ContentContainer>
         <Header />
-        <div>
-          <AvatarGrid users={fitlerContributors as Contributor[]} />
-        </div>
+        <AvatarGrid users={fitlerContributors as Contributor[]} />
       </ContentContainer>
-    </>
+    </Background>
   );
 };
 

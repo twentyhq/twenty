@@ -1,10 +1,10 @@
-import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
-import { DEFAULT_DATE_VALUE } from '@/settings/data-model/constants/DefaultDateValue';
-import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import {
   IconCalendarEvent,
+  IconCalendarTime,
   IconCheck,
   IconCoins,
+  IconComponent,
+  IconJson,
   IconKey,
   IconLink,
   IconMail,
@@ -13,11 +13,15 @@ import {
   IconPhone,
   IconRelationManyToMany,
   IconTag,
+  IconTags,
   IconTextSize,
+  IconTwentyStar,
   IconUser,
-} from '@/ui/display/icon';
-import { IconTwentyStar } from '@/ui/display/icon/components/IconTwentyStar';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+} from 'twenty-ui';
+
+import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
+import { DEFAULT_DATE_VALUE } from '@/settings/data-model/constants/DefaultDateValue';
+import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 DEFAULT_DATE_VALUE.setFullYear(DEFAULT_DATE_VALUE.getFullYear() + 2);
@@ -64,7 +68,12 @@ export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
     defaultValue: true,
   },
   [FieldMetadataType.DateTime]: {
-    label: 'Date & Time',
+    label: 'Date and Time',
+    Icon: IconCalendarTime,
+    defaultValue: DEFAULT_DATE_VALUE.toISOString(),
+  },
+  [FieldMetadataType.Date]: {
+    label: 'Date',
     Icon: IconCalendarEvent,
     defaultValue: DEFAULT_DATE_VALUE.toISOString(),
   },
@@ -73,8 +82,8 @@ export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
     Icon: IconTag,
   },
   [FieldMetadataType.MultiSelect]: {
-    label: 'MultiSelect',
-    Icon: IconTag,
+    label: 'Multi-select',
+    Icon: IconTags,
   },
   [FieldMetadataType.Currency]: {
     label: 'Currency',
@@ -115,5 +124,10 @@ export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
       addressLat: 34.0522,
       addressLng: -118.2437,
     },
+  },
+  [FieldMetadataType.RawJson]: {
+    label: 'JSON',
+    Icon: IconJson,
+    defaultValue: `{ "key": "value" }`,
   },
 };

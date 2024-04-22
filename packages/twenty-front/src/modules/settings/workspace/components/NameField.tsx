@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
-import debounce from 'lodash.debounce';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useDebouncedCallback } from 'use-debounce';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -28,6 +28,7 @@ export const NameField = ({
   onNameUpdate,
 }: NameFieldProps) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
 
   const [displayName, setDisplayName] = useState(
     currentWorkspace?.displayName ?? '',
@@ -38,7 +39,18 @@ export const NameField = ({
   // TODO: Enhance this with react-web-hook-form (https://www.react-hook-form.com)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedUpdate = useCallback(
-    debounce(async (name: string) => {
+    useDebouncedCallback(async (name: string) => {
+      // update local recoil state when workspace name is updated
+      setCurrentWorkspace((currentValue) => {
+        if (currentValue === null) {
+          return null;
+        }
+
+        return {
+          ...currentValue,
+          displayName: name,
+        };
+      });
       if (isDefined(onNameUpdate)) {
         onNameUpdate(displayName);
       }
@@ -61,7 +73,7 @@ export const NameField = ({
         logError(error);
       }
     }, 500),
-    [updateWorkspace],
+    [updateWorkspace, setCurrentWorkspace],
   );
 
   useEffect(() => {

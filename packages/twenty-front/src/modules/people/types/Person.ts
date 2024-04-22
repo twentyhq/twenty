@@ -1,4 +1,5 @@
 export type Person = {
+  __typename: 'Person';
   id: string;
   createdAt: string;
   updatedAt: string;

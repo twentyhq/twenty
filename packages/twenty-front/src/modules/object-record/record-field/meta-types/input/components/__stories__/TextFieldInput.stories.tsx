@@ -50,6 +50,7 @@ const TextFieldInputWithContext = ({
           metadata: {
             fieldName: 'Text',
             placeHolder: 'Enter text',
+            objectMetadataNameSingular: 'person',
           },
         }}
         entityId={entityId}

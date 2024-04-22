@@ -11,7 +11,7 @@ export class UpdateQueryFactory {
     return `
       mutation Update${capitalize(
         objectNameSingular,
-      )}($id: ID!, $data: ${capitalize(objectNameSingular)}UpdateInput!) {
+      )}($id: UUID!, $data: ${capitalize(objectNameSingular)}UpdateInput!) {
         update${capitalize(objectNameSingular)}(id: $id, data: $data) {
           id
           ${objectMetadata.objectMetadataItem.fields

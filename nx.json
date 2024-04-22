@@ -19,6 +19,20 @@
       "cache": true,
       "dependsOn": ["^build"]
     },
+    "storybook:build": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": [
+        "default",
+        "^default",
+        "{projectRoot}/.storybook/**/*",
+        "{projectRoot}/tsconfig.storybook.json"
+      ]
+    },
+    "storybook:dev": {
+      "cache": true,
+      "dependsOn": ["^build"]
+    },
     "@nx/jest:jest": {
       "cache": true,
       "inputs": ["default", "^default", "{workspaceRoot}/jest.preset.js"],
@@ -32,43 +46,57 @@
         }
       }
     },
+    "@nx/eslint:lint": {
+      "cache": true,
+      "inputs": [
+        "default",
+        "{workspaceRoot}/.eslintrc.js",
+        "{workspaceRoot}/tools/eslint-rules/**/*"
+      ]
+    },
     "@nx/vite:test": {
       "cache": true,
+      "inputs": ["default", "^default"]
+    },
+    "@nx/vite:build": {
+      "cache": true,
+      "dependsOn": ["^build"],
       "inputs": ["default", "^default"]
     }
   },
   "installation": {
-    "version": "17.2.8"
-  },
-  "affected": {
-    "defaultBase": "main"
+    "version": "18.1.3"
   },
   "generators": {
     "@nx/react": {
       "application": {
-        "babel": true
+        "style": "@emotion/styled",
+        "linter": "eslint",
+        "bundler": "vite",
+        "compiler": "swc",
+        "unitTestRunner": "jest",
+        "projectNameAndRootFormat": "derived"
       },
       "library": {
-        "unitTestRunner": "none"
+        "style": "@emotion/styled",
+        "linter": "eslint",
+        "bundler": "vite",
+        "compiler": "swc",
+        "unitTestRunner": "jest",
+        "projectNameAndRootFormat": "derived"
+      },
+      "component": {
+        "style": "@emotion/styled"
       }
     }
   },
-  "plugins": [
-    {
-      "plugin": "@nx/storybook/plugin",
-      "options": {
-        "buildStorybookTargetName": "build-storybook",
-        "serveStorybookTargetName": "storybook",
-        "testStorybookTargetName": "test-storybook",
-        "staticStorybookTargetName": "static-storybook"
-      }
-    }
-  ],
   "tasksRunnerOptions": {
     "default": {
       "options": {
-        "cacheableOperations": ["build-storybook"]
+        "cacheableOperations": ["storybook:build"]
       }
     }
-  }
+  },
+  "useInferencePlugins": false,
+  "defaultBase": "main"
 }

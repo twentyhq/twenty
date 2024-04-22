@@ -1,10 +1,13 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
+import { FieldCurrencyValue } from '@/object-record/record-field/types/FieldMetadata';
 import { CurrencyInput } from '@/ui/field/input/components/CurrencyInput';
 
 import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
 import { useCurrencyField } from '../../hooks/useCurrencyField';
 
-import { FieldInputEvent } from './DateFieldInput';
+import { FieldInputEvent } from './DateTimeFieldInput';
 
 export type CurrencyFieldInputProps = {
   onClickOutside?: FieldInputEvent;
@@ -21,14 +24,38 @@ export const CurrencyFieldInput = ({
   onTab,
   onShiftTab,
 }: CurrencyFieldInputProps) => {
-  const { hotkeyScope, draftValue, persistCurrencyField, setDraftValue } =
-    useCurrencyField();
+  const {
+    hotkeyScope,
+    draftValue,
+    persistCurrencyField,
+    setDraftValue,
+    defaultValue,
+  } = useCurrencyField();
+
+  const defaultCurrencyCodeWithoutSQLQuotes = (
+    defaultValue as FieldCurrencyValue
+  ).currencyCode.replace(/'/g, '') as CurrencyCode;
+
+  const defaultCurrencyCodeIsNotEmpty = isNonEmptyString(
+    defaultCurrencyCodeWithoutSQLQuotes,
+  );
+
+  const draftCurrencyCode = draftValue?.currencyCode;
+
+  const draftCurrencyCodeIsEmptyIsNotEmpty =
+    isNonEmptyString(draftCurrencyCode);
+
+  const currencyCode = draftCurrencyCodeIsEmptyIsNotEmpty
+    ? draftCurrencyCode
+    : defaultCurrencyCodeIsNotEmpty
+      ? defaultCurrencyCodeWithoutSQLQuotes
+      : CurrencyCode.USD;
 
   const handleEnter = (newValue: string) => {
     onEnter?.(() => {
       persistCurrencyField({
         amountText: newValue,
-        currencyCode: draftValue?.currencyCode ?? CurrencyCode.USD,
+        currencyCode,
       });
     });
   };
@@ -37,7 +64,7 @@ export const CurrencyFieldInput = ({
     onEscape?.(() => {
       persistCurrencyField({
         amountText: newValue,
-        currencyCode: draftValue?.currencyCode ?? CurrencyCode.USD,
+        currencyCode,
       });
     });
   };
@@ -49,7 +76,7 @@ export const CurrencyFieldInput = ({
     onClickOutside?.(() => {
       persistCurrencyField({
         amountText: newValue,
-        currencyCode: draftValue?.currencyCode ?? CurrencyCode.USD,
+        currencyCode,
       });
     });
   };
@@ -58,7 +85,7 @@ export const CurrencyFieldInput = ({
     onTab?.(() => {
       persistCurrencyField({
         amountText: newValue,
-        currencyCode: draftValue?.currencyCode ?? CurrencyCode.USD,
+        currencyCode,
       });
     });
   };
@@ -67,7 +94,7 @@ export const CurrencyFieldInput = ({
     onShiftTab?.(() =>
       persistCurrencyField({
         amountText: newValue,
-        currencyCode: draftValue?.currencyCode ?? CurrencyCode.USD,
+        currencyCode,
       }),
     );
   };
@@ -75,7 +102,7 @@ export const CurrencyFieldInput = ({
   const handleChange = (newValue: string) => {
     setDraftValue({
       amount: newValue,
-      currencyCode: draftValue?.currencyCode ?? CurrencyCode.USD,
+      currencyCode,
     });
   };
 
@@ -90,7 +117,7 @@ export const CurrencyFieldInput = ({
     <FieldInputOverlay>
       <CurrencyInput
         value={draftValue?.amount?.toString() ?? ''}
-        currencyCode={draftValue?.currencyCode ?? CurrencyCode.USD}
+        currencyCode={currencyCode}
         autoFocus
         placeholder="Currency"
         onClickOutside={handleClickOutside}

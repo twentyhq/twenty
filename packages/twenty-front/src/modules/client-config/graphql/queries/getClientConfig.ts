@@ -26,6 +26,8 @@ export const GET_CLIENT_CONFIG = gql`
       }
       sentry {
         dsn
+        environment
+        release
       }
     }
   }

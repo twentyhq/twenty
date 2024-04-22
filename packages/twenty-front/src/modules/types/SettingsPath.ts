@@ -1,6 +1,6 @@
 export enum SettingsPath {
   ProfilePage = 'profile',
-  Appearance = 'profile/appearance',
+  Appearance = 'appearance',
   Accounts = 'accounts',
   NewAccount = 'accounts/new',
   AccountsCalendars = 'accounts/calendars',
@@ -21,8 +21,9 @@ export enum SettingsPath {
   DevelopersNewApiKey = 'api-keys/new',
   DevelopersApiKeyDetail = 'api-keys/:apiKeyId',
   Integrations = 'integrations',
-  IntegrationDetail = 'integrations/:integrationKey',
-  IntegrationNewDatabase = 'integrations/:integrationKey/new',
+  IntegrationDatabase = 'integrations/:databaseKey',
+  IntegrationDatabaseConnection = 'integrations/:databaseKey/:connectionId',
+  IntegrationNewDatabaseConnection = 'integrations/:databaseKey/new',
   DevelopersNewWebhook = 'webhooks/new',
   DevelopersNewWebhookDetail = 'webhooks/:webhookId',
 }

@@ -52,7 +52,7 @@ describe('useAvailableScopeIdOrThrow', () => {
   });
 
   it('should throw an error if no scopeId is provided and scopeId is undefined in the context', () => {
-    console.error = jest.fn();
+    global.console.error = jest.fn();
 
     const renderFunction = () =>
       renderHook(() => ({

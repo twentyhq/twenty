@@ -1,12 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { IconComponent, useIcons } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
 import { getSpreadSheetValidation } from '@/object-record/spreadsheet-import/util/getSpreadSheetValidation';
 import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
 import { SpreadsheetOptions, Validation } from '@/spreadsheet-import/types';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
@@ -19,7 +18,9 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
   const { enqueueSnackBar } = useSnackBar();
   const { getIcon } = useIcons();
 
-  const { objectMetadataItem } = useObjectMetadataItem({ objectNameSingular });
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
   const fields = objectMetadataItem.fields
     .filter(
       (x) =>

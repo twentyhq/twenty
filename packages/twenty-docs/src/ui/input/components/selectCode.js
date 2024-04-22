@@ -1,6 +1,7 @@
-import { RecoilRoot } from "recoil";
-import { Select } from "@/ui/input/components/Select";
-import { IconComponent } from "@/ui/display/icon/types/IconComponent";
+import { RecoilRoot } from 'recoil';
+import { IconTwentyStar } from 'twenty-ui';
+
+import { Select } from '@/ui/input/components/Select';
 
 export const MyComponent = () => {
   const handleSelectChange = (selectedValue) => {
@@ -16,8 +17,8 @@ export const MyComponent = () => {
         label="Select an option"
         onChange={handleSelectChange}
         options={[
-          { value: "option1", label: "Option A", Icon: IconComponent },
-          { value: "option2", label: "Option B", Icon: IconComponent },
+          { value: 'option1', label: 'Option A', Icon: IconTwentyStar },
+          { value: 'option2', label: 'Option B', Icon: IconTwentyStar },
         ]}
         value="option1"
       />

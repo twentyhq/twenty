@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { IconMinus, IconPlus, IconSettings } from 'twenty-ui';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
-import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
@@ -13,7 +14,6 @@ import {
   StyledObjectFieldTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { AppPath } from '@/types/AppPath';
-import { IconMinus, IconPlus, IconSettings } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
@@ -39,7 +39,7 @@ export const SettingsObjectNewFieldStep1 = () => {
 
   const { objectSlug = '' } = useParams();
   const { findActiveObjectMetadataItemBySlug } =
-    useObjectMetadataItemForSettings();
+    useFilteredObjectMetadataItems();
 
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
@@ -114,11 +114,13 @@ export const SettingsObjectNewFieldStep1 = () => {
               { children: 'New Field' },
             ]}
           />
-          <SaveAndCancelButtons
-            isSaveDisabled={!canSave}
-            onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-            onSave={handleSave}
-          />
+          {!activeObjectMetadataItem.isRemote && (
+            <SaveAndCancelButtons
+              isSaveDisabled={!canSave}
+              onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
+              onSave={handleSave}
+            />
+          )}
         </SettingsHeaderContainer>
         <StyledSection>
           <H2Title
@@ -138,6 +140,7 @@ export const SettingsObjectNewFieldStep1 = () => {
                   <SettingsObjectFieldItemTableRow
                     key={activeMetadataField.id}
                     fieldMetadataItem={activeMetadataField}
+                    isRemoteObjectField={activeObjectMetadataItem.isRemote}
                     ActionIcon={
                       isLabelIdentifierField({
                         fieldMetadataItem: activeMetadataField,

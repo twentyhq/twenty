@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconChevronDown, IconWorld } from 'twenty-ui';
 
-import { IconChevronDown, IconWorld } from '@/ui/display/icon';
 import { useCountries } from '@/ui/input/components/internal/hooks/useCountries';
 import { Country } from '@/ui/input/components/internal/types/Country';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -22,7 +22,8 @@ type StyledDropdownButtonProps = {
 export const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProps>`
   align-items: center;
   background: ${({ theme }) => theme.background.primary};
-  border-radius: ${({ theme }) => theme.border.radius.xs};
+  border-radius: ${({ theme }) => theme.border.radius.xs} 0 0
+    ${({ theme }) => theme.border.radius.xs};
   color: ${({ color }) => color ?? 'none'};
   cursor: pointer;
   display: flex;
@@ -34,6 +35,8 @@ export const StyledDropdownButtonContainer = styled.div<StyledDropdownButtonProp
 
   padding-right: ${({ theme }) => theme.spacing(2)};
   user-select: none;
+
+  border-right: 1px solid ${({ theme }) => theme.border.color.light};
 
   &:hover {
     filter: brightness(0.95);
@@ -50,7 +53,7 @@ const StyledIconContainer = styled.div`
   svg {
     align-items: center;
     display: flex;
-    height: 16px;
+    height: 12px;
     justify-content: center;
   }
 `;

@@ -1,9 +1,20 @@
 'use client';
 
-import { ResponsiveTimeRange } from '@nivo/calendar';
+import styled from '@emotion/styled';
+import { TimeRange } from '@nivo/calendar';
 
 import { CardContainer } from '@/app/_components/contributors/CardContainer';
 import { Title } from '@/app/_components/contributors/Title';
+import { getActivityEndDate } from '@/app/contributors/utils/get-activity-end-date';
+
+const CalendarContentContainer = styled.div`
+  @media (max-width: 890px) {
+    overflow-x: auto;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+`;
 
 export const ActivityLog = ({
   data,
@@ -13,20 +24,26 @@ export const ActivityLog = ({
   if (!data.length) {
     return null;
   }
+  const endDate = getActivityEndDate(data);
+
   return (
     <CardContainer>
       <Title>Activity</Title>
-      <div style={{ width: '100%', height: '214px' }}>
-        <ResponsiveTimeRange
+      <CalendarContentContainer>
+        <TimeRange
+          height={150}
+          width={725}
           data={data}
+          to={endDate}
           emptyColor="#F4EFFF"
           colors={['#E9DFFF', '#B28FFE', '#915FFD']}
-          dayBorderWidth={2}
-          dayBorderColor="#ffffff"
+          weekdayTicks={[]}
+          weekdayLegendOffset={0}
+          dayBorderWidth={0}
           dayRadius={4}
-          daySpacing={2}
+          daySpacing={4}
         />
-      </div>
+      </CalendarContentContainer>
     </CardContainer>
   );
 };

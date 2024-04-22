@@ -5,7 +5,7 @@ import { AttachmentObjectMetadata } from 'src/modules/attachment/standard-object
 import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
 import { CalendarEventObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event.object-metadata';
 import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
-import { CalendarEventAttendeeObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-attendee.object-metadata';
+import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
 import { CommentObjectMetadata } from 'src/modules/activity/standard-objects/comment.object-metadata';
 import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
@@ -24,21 +24,29 @@ import { ViewObjectMetadata } from 'src/modules/view/standard-objects/view.objec
 import { WebhookObjectMetadata } from 'src/modules/webhook/standard-objects/webhook.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
-import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { AuditLogObjectMetadata } from 'src/modules/timeline/standard-objects/audit-log.object-metadata';
+import { TimelineActivityObjectMetadata } from 'src/modules/timeline/standard-objects/timeline-activity.object-metadata';
+import { BehavioralEventObjectMetadata } from 'src/modules/timeline/standard-objects/behavioral-event.object-metadata';
 
 export const standardObjectMetadataDefinitions = [
   ActivityTargetObjectMetadata,
   ActivityObjectMetadata,
   ApiKeyObjectMetadata,
+  AuditLogObjectMetadata,
   AttachmentObjectMetadata,
+  BehavioralEventObjectMetadata,
   BlocklistObjectMetadata,
+  CalendarEventObjectMetadata,
+  CalendarChannelObjectMetadata,
+  CalendarChannelEventAssociationObjectMetadata,
+  CalendarEventParticipantObjectMetadata,
   CommentObjectMetadata,
   CompanyObjectMetadata,
   ConnectedAccountObjectMetadata,
-  EventObjectMetadata,
   FavoriteObjectMetadata,
   OpportunityObjectMetadata,
   PersonObjectMetadata,
+  TimelineActivityObjectMetadata,
   ViewFieldObjectMetadata,
   ViewFilterObjectMetadata,
   ViewSortObjectMetadata,
@@ -50,8 +58,4 @@ export const standardObjectMetadataDefinitions = [
   MessageChannelObjectMetadata,
   MessageParticipantObjectMetadata,
   MessageChannelMessageAssociationObjectMetadata,
-  CalendarEventObjectMetadata,
-  CalendarChannelObjectMetadata,
-  CalendarChannelEventAssociationObjectMetadata,
-  CalendarEventAttendeeObjectMetadata,
 ];

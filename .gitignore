@@ -16,9 +16,12 @@
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-coverage
 .vercel
 
 **/**/logs/**
 
+coverage
+dist
 storybook-static
+*.tsbuildinfo
+.eslintcache

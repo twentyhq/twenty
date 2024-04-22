@@ -10,10 +10,8 @@ import {
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
+import { IconAlertCircle, IconComponent, IconEye, IconEyeOff } from 'twenty-ui';
 
-import { IconAlertCircle } from '@/ui/display/icon';
-import { IconEye, IconEyeOff } from '@/ui/display/icon/index';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
@@ -146,6 +144,7 @@ const TextInputComponent = (
 
   const handleFocus: FocusEventHandler<HTMLInputElement> = (e) => {
     onFocus?.(e);
+
     if (!disableHotkeys) {
       setHotkeyScopeAndMemorizePreviousScope(InputHotkeyScope.TextInput);
     }
@@ -153,6 +152,7 @@ const TextInputComponent = (
 
   const handleBlur: FocusEventHandler<HTMLInputElement> = (e) => {
     onBlur?.(e);
+
     if (!disableHotkeys) {
       goBackToPreviousHotkeyScope();
     }

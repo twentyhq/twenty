@@ -1,5 +1,10 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import {
+  RelationMetadataType,
+  RelationOnDeleteAction,
+} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { activityStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
@@ -12,6 +17,7 @@ import { AttachmentObjectMetadata } from 'src/modules/attachment/standard-object
 import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { CommentObjectMetadata } from 'src/modules/activity/standard-objects/comment.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
   standardId: standardObjectIds.activity,
@@ -21,6 +27,7 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
   description: 'An activity',
   icon: 'IconCheckbox',
 })
+@IsNotAuditLogged()
 @IsSystem()
 export class ActivityObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
@@ -91,9 +98,10 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => ActivityTargetObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
-  activityTargets: ActivityTargetObjectMetadata[];
+  activityTargets: Relation<ActivityTargetObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: activityStandardFieldIds.attachments,
@@ -105,9 +113,10 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => AttachmentObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
-  attachments: AttachmentObjectMetadata[];
+  attachments: Relation<AttachmentObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: activityStandardFieldIds.comments,
@@ -119,9 +128,10 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => CommentObjectMetadata,
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  comments: CommentObjectMetadata[];
+  comments: Relation<CommentObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: activityStandardFieldIds.author,
@@ -131,7 +141,8 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
     icon: 'IconUserCircle',
     joinColumn: 'authorId',
   })
-  author: WorkspaceMemberObjectMetadata;
+  @IsNullable()
+  author: Relation<WorkspaceMemberObjectMetadata>;
 
   @FieldMetadata({
     standardId: activityStandardFieldIds.assignee,
@@ -142,5 +153,5 @@ export class ActivityObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'assigneeId',
   })
   @IsNullable()
-  assignee: WorkspaceMemberObjectMetadata;
+  assignee: Relation<WorkspaceMemberObjectMetadata>;
 }

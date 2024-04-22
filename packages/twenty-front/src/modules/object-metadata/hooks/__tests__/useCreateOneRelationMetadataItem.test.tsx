@@ -4,9 +4,8 @@ import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
-import { RelationMetadataType } from '~/generated/graphql';
+import { FieldMetadataType, RelationMetadataType } from '~/generated/graphql';
 
-import { TestApolloMetadataClientProvider } from '../__mocks__/ApolloMetadataClientProvider';
 import {
   query,
   responseData,
@@ -30,9 +29,7 @@ const mocks = [
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
     <MockedProvider mocks={mocks} addTypename={false}>
-      <TestApolloMetadataClientProvider>
-        {children}
-      </TestApolloMetadataClientProvider>
+      {children}
     </MockedProvider>
   </RecoilRoot>
 );
@@ -48,6 +45,7 @@ describe('useCreateOneRelationMetadataItem', () => {
         relationType: RelationMetadataType.OneToOne,
         field: {
           label: 'label',
+          type: FieldMetadataType.Relation,
         },
         objectMetadataId: 'objectMetadataId',
         connect: {

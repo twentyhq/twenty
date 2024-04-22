@@ -1,0 +1,59 @@
+name: 'Test Docker Compose'
+on:
+  pull_request:
+    paths:
+      - 'packages/twenty-docker/**'
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Run compose
+      run: |
+        echo "Patching docker-compose.yml..."
+        # change image to localbuild using yq
+        yq eval 'del(.services.server.image)' -i docker-compose.yml
+        yq eval '.services.server.build.context = "../../"' -i docker-compose.yml
+        yq eval '.services.server.build.dockerfile = "./packages/twenty-docker/twenty/Dockerfile"' -i docker-compose.yml
+        yq eval '.services.server.restart = "no"' -i docker-compose.yml
+
+        yq eval 'del(.services.db.image)' -i docker-compose.yml
+        yq eval '.services.db.build.context = "../../"' -i docker-compose.yml
+        yq eval '.services.db.build.dockerfile = "./packages/twenty-docker/twenty-postgres/Dockerfile"' -i docker-compose.yml
+
+        echo "Setting up .env file..."
+        cp .env.example .env
+        echo "Generating secrets..."
+        echo "# === Randomly generated secrets ===" >>.env
+        echo "ACCESS_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
+        echo "LOGIN_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
+        echo "REFRESH_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
+        echo "FILE_TOKEN_SECRET=$(openssl rand -base64 32)" >>.env
+        echo "POSTGRES_ADMIN_PASSWORD=$(openssl rand -base64 32)" >>.env
+
+        echo "Starting server..."
+        docker compose up -d
+        docker compose logs db server -f &
+        pid=$!
+
+        echo "Waiting for server to start..."
+        count=0
+        while [ ! $(docker inspect --format='{{.State.Health.Status}}' twenty-server-1) = "healthy" ]; do
+            sleep 1;
+            count=$((count+1));
+            if [ $(docker inspect --format='{{.State.Status}}' twenty-server-1) = "exited" ]; then
+                echo "Server exited"
+                exit 1
+            fi
+            if [ $count -gt 300 ]; then
+                echo "Failed to start server"
+                exit 1
+            fi
+        done
+      working-directory: ./packages/twenty-docker/

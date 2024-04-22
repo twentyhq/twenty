@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { CurrencyMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
 import { LinkMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/link.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -19,7 +21,7 @@ import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/fa
 import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
-import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { TimelineActivityObjectMetadata } from 'src/modules/timeline/standard-objects/timeline-activity.object-metadata';
 
 @ObjectMetadata({
   standardId: standardObjectIds.company,
@@ -51,7 +53,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     standardId: companyStandardFieldIds.address,
-    type: FieldMetadataType.ADDRESS,
+    type: FieldMetadataType.TEXT,
     label: 'Address',
     description: 'The company address',
     icon: 'IconMap',
@@ -132,9 +134,10 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => PersonObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
-  people: PersonObjectMetadata[];
+  people: Relation<PersonObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: companyStandardFieldIds.accountOwner,
@@ -161,7 +164,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  activityTargets: ActivityTargetObjectMetadata[];
+  activityTargets: Relation<ActivityTargetObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: companyStandardFieldIds.opportunities,
@@ -173,9 +176,10 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => OpportunityObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
-  opportunities: OpportunityObjectMetadata[];
+  opportunities: Relation<OpportunityObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: companyStandardFieldIds.favorites,
@@ -191,7 +195,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   @IsSystem()
-  favorites: FavoriteObjectMetadata[];
+  favorites: Relation<FavoriteObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: companyStandardFieldIds.attachments,
@@ -206,21 +210,21 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  attachments: AttachmentObjectMetadata[];
+  attachments: Relation<AttachmentObjectMetadata[]>;
 
   @FieldMetadata({
-    standardId: companyStandardFieldIds.events,
+    standardId: companyStandardFieldIds.timelineActivities,
     type: FieldMetadataType.RELATION,
-    label: 'Events',
-    description: 'Events linked to the company',
+    label: 'Timeline Activities',
+    description: 'Timeline Activities linked to the company',
     icon: 'IconIconTimelineEvent',
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => EventObjectMetadata,
+    inverseSideTarget: () => TimelineActivityObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
   @IsSystem()
-  events: EventObjectMetadata[];
+  timelineActivities: Relation<TimelineActivityObjectMetadata[]>;
 }

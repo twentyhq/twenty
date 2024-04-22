@@ -1,20 +1,20 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { fn } from '@storybook/test';
+import { ComponentDecorator } from 'twenty-ui';
 
-import {
-  mockedCompanyObjectMetadataItem,
-  mockedPersonObjectMetadataItem,
-} from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { fieldMetadataFormDefaultValues } from '@/settings/data-model/fields/forms/hooks/useFieldMetadataForm';
 import {
   FieldMetadataType,
   RelationMetadataType,
 } from '~/generated-metadata/graphql';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import {
+  mockedCompanyObjectMetadataItem,
+  mockedPersonObjectMetadataItem,
+} from '~/testing/mock-data/metadata';
 
 import { SettingsDataModelFieldSettingsFormCard } from '../SettingsDataModelFieldSettingsFormCard';
 
@@ -26,6 +26,7 @@ const defaultValues = {
   currency: fieldMetadataFormDefaultValues.currency,
   relation: fieldMetadataFormDefaultValues.relation,
   select: fieldMetadataFormDefaultValues.select,
+  multiSelect: fieldMetadataFormDefaultValues.multiSelect,
   defaultValue: fieldMetadataFormDefaultValues.defaultValue,
 };
 
@@ -34,6 +35,7 @@ const meta: Meta<typeof SettingsDataModelFieldSettingsFormCard> = {
     'Modules/Settings/DataModel/Fields/Forms/SettingsDataModelFieldSettingsFormCard',
   component: SettingsDataModelFieldSettingsFormCard,
   decorators: [
+    MemoryRouterDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
@@ -60,7 +62,6 @@ const relationFieldMetadataItem = mockedPersonObjectMetadataItem.fields.find(
 )!;
 
 export const WithRelationForm: Story = {
-  decorators: [MemoryRouterDecorator],
   args: {
     fieldMetadataItem: mockedCompanyObjectMetadataItem.fields.find(
       ({ name }) => name === 'people',

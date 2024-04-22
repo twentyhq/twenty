@@ -1,8 +1,6 @@
 import { ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
-
-import { IconCheck } from '@/ui/display/icon';
-import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
+import { IconCheck, OverflowingTextWithTooltip } from 'twenty-ui';
 
 import {
   StyledMenuItemLabel,

@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelDefaultValueForm } from '@/settings/data-model/components/SettingsDataModelDefaultValue';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
@@ -27,6 +27,7 @@ export type SettingsDataModelFieldSettingsFormValues = {
   currency: SettingsObjectFieldCurrencyFormValues;
   relation: SettingsObjectFieldRelationFormValues;
   select: SettingsObjectFieldSelectFormValues;
+  multiSelect: SettingsObjectFieldSelectFormValues;
   defaultValue: any;
 };
 
@@ -62,13 +63,16 @@ const previewableTypes = [
   FieldMetadataType.Boolean,
   FieldMetadataType.Currency,
   FieldMetadataType.DateTime,
+  FieldMetadataType.Date,
   FieldMetadataType.Select,
+  FieldMetadataType.MultiSelect,
   FieldMetadataType.Link,
   FieldMetadataType.Number,
   FieldMetadataType.Rating,
   FieldMetadataType.Relation,
   FieldMetadataType.Text,
   FieldMetadataType.Address,
+  FieldMetadataType.RawJson,
 ];
 
 export const SettingsDataModelFieldSettingsFormCard = ({
@@ -79,7 +83,7 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   relationFieldMetadataItem,
   values,
 }: SettingsDataModelFieldSettingsFormCardProps) => {
-  const { findObjectMetadataItemById } = useObjectMetadataItemForSettings();
+  const { findObjectMetadataItemById } = useFilteredObjectMetadataItems();
 
   if (!previewableTypes.includes(fieldMetadataItem.type)) return null;
 
@@ -97,7 +101,11 @@ export const SettingsDataModelFieldSettingsFormCard = ({
             shrink={fieldMetadataItem.type === FieldMetadataType.Relation}
             objectMetadataItem={objectMetadataItem}
             relationObjectMetadataItem={relationObjectMetadataItem}
-            selectOptions={values.select}
+            selectOptions={
+              fieldMetadataItem.type === FieldMetadataType.MultiSelect
+                ? values.multiSelect
+                : values.select
+            }
           />
           {fieldMetadataItem.type === FieldMetadataType.Relation &&
             !!relationObjectMetadataItem && (
@@ -153,6 +161,14 @@ export const SettingsDataModelFieldSettingsFormCard = ({
             onChange={(nextSelectValues) =>
               onChange({ select: nextSelectValues })
             }
+          />
+        ) : fieldMetadataItem.type === FieldMetadataType.MultiSelect ? (
+          <SettingsObjectFieldSelectForm
+            values={values.multiSelect}
+            onChange={(nextMultiSelectValues) =>
+              onChange({ multiSelect: nextMultiSelectValues })
+            }
+            isMultiSelect={true}
           />
         ) : fieldMetadataItem.type === FieldMetadataType.Boolean ? (
           <SettingsDataModelDefaultValueForm

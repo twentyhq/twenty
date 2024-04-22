@@ -1,10 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import {
+  AddressFilter,
   CurrencyFilter,
   DateFilter,
   FloatFilter,
-  FullNameFilter,
   ObjectRecordQueryFilter,
   StringFilter,
   URLFilter,
@@ -13,6 +13,7 @@ import {
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
+import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 import { isDefined } from '~/utils/isDefined';
 
 import { Filter } from '../../object-filter-dropdown/types/Filter';
@@ -202,24 +203,59 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
             );
         }
         break;
-      case 'FULL_NAME':
+      case 'FULL_NAME': {
+        const fullNameFilters = generateILikeFiltersForCompositeFields(
+          rawUIFilter.value,
+          correspondingField.name,
+          ['firstName', 'lastName'],
+        );
+        switch (rawUIFilter.operand) {
+          case ViewFilterOperand.Contains:
+            objectRecordFilters.push({
+              or: fullNameFilters,
+            });
+            break;
+          case ViewFilterOperand.DoesNotContain:
+            objectRecordFilters.push({
+              and: fullNameFilters.map((filter) => {
+                return {
+                  not: filter,
+                };
+              }),
+            });
+            break;
+          default:
+            throw new Error(
+              `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
+            );
+        }
+        break;
+      }
+      case 'ADDRESS':
         switch (rawUIFilter.operand) {
           case ViewFilterOperand.Contains:
             objectRecordFilters.push({
               or: [
                 {
                   [correspondingField.name]: {
-                    firstName: {
+                    addressStreet1: {
                       ilike: `%${rawUIFilter.value}%`,
                     },
-                  } as FullNameFilter,
+                  } as AddressFilter,
                 },
                 {
                   [correspondingField.name]: {
-                    lastName: {
+                    addressStreet2: {
                       ilike: `%${rawUIFilter.value}%`,
                     },
-                  } as FullNameFilter,
+                  } as AddressFilter,
+                },
+                {
+                  [correspondingField.name]: {
+                    addressCity: {
+                      ilike: `%${rawUIFilter.value}%`,
+                    },
+                  } as AddressFilter,
                 },
               ],
             });
@@ -230,19 +266,28 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
                 {
                   not: {
                     [correspondingField.name]: {
-                      firstName: {
+                      addressStreet1: {
                         ilike: `%${rawUIFilter.value}%`,
                       },
-                    } as FullNameFilter,
+                    } as AddressFilter,
                   },
                 },
                 {
                   not: {
                     [correspondingField.name]: {
-                      lastName: {
+                      addressStreet2: {
                         ilike: `%${rawUIFilter.value}%`,
                       },
-                    } as FullNameFilter,
+                    } as AddressFilter,
+                  },
+                },
+                {
+                  not: {
+                    [correspondingField.name]: {
+                      addressCity: {
+                        ilike: `%${rawUIFilter.value}%`,
+                      },
+                    } as AddressFilter,
                   },
                 },
               ],

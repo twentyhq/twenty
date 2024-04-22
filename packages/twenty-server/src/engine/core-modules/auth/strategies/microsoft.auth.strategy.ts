@@ -6,7 +6,10 @@ import { Strategy } from 'passport-microsoft';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
-export type MicrosoftRequest = Request & {
+export type MicrosoftRequest = Omit<
+  Request,
+  'user' | 'workspace' | 'cacheVersion'
+> & {
   user: {
     firstName?: string | null;
     lastName?: string | null;

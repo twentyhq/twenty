@@ -1,9 +1,9 @@
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { useIcons } from 'twenty-ui';
 
-import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { PageAddButton } from '@/ui/layout/page/PageAddButton';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { PageHotkeysEffect } from '@/ui/layout/page/PageHotkeysEffect';
@@ -20,7 +20,10 @@ export const RecordIndexPageHeader = ({
   const objectNamePlural = useParams().objectNamePlural ?? '';
 
   const { findObjectMetadataItemByNamePlural } =
-    useObjectMetadataItemForSettings();
+    useFilteredObjectMetadataItems();
+
+  const objectMetadataItem =
+    findObjectMetadataItemByNamePlural(objectNamePlural);
 
   const { getIcon } = useIcons();
   const Icon = getIcon(
@@ -29,12 +32,16 @@ export const RecordIndexPageHeader = ({
 
   const recordIndexViewType = useRecoilValue(recordIndexViewTypeState);
 
+  const canAddRecord =
+    recordIndexViewType === ViewType.Table && !objectMetadataItem?.isRemote;
+
+  const pageHeaderTitle =
+    objectMetadataItem?.labelPlural ?? capitalize(objectNamePlural);
+
   return (
-    <PageHeader title={capitalize(objectNamePlural)} Icon={Icon}>
+    <PageHeader title={pageHeaderTitle} Icon={Icon}>
       <PageHotkeysEffect onAddButtonClick={createRecord} />
-      {recordIndexViewType === ViewType.Table && (
-        <PageAddButton onClick={createRecord} />
-      )}
+      {canAddRecord && <PageAddButton onClick={createRecord} />}
     </PageHeader>
   );
 };

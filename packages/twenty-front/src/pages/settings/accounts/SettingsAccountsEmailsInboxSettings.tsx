@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
+import { IconRefresh, IconSettings, IconUser } from 'twenty-ui';
 
 import { MessageChannel } from '@/accounts/types/MessageChannel';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -14,7 +15,6 @@ import {
 import { SettingsAccountsToggleSettingCard } from '@/settings/accounts/components/SettingsAccountsToggleSettingCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { AppPath } from '@/types/AppPath';
-import { IconSettings, IconUser } from '@/ui/display/icon';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
@@ -52,6 +52,15 @@ export const SettingsAccountsEmailsInboxSettings = () => {
     });
   };
 
+  const handleIsSyncEnabledToggle = (value: boolean) => {
+    updateOneRecord({
+      idToUpdate: messageChannelId,
+      updateOneRecordInput: {
+        isSyncEnabled: value,
+      },
+    });
+  };
+
   useEffect(() => {
     if (!loading && !messageChannel) navigate(AppPath.NotFound);
   }, [loading, messageChannel, navigate]);
@@ -68,7 +77,6 @@ export const SettingsAccountsEmailsInboxSettings = () => {
             { children: messageChannel.handle || '' },
           ]}
         />
-        {/* TODO : discuss the desired sync behaviour and add Synchronization section */}
         <Section>
           <H2Title
             title="Email visibility"
@@ -96,6 +104,25 @@ export const SettingsAccountsEmailsInboxSettings = () => {
             title="Auto-creation"
             value={!!messageChannel.isContactAutoCreationEnabled}
             onToggle={handleContactAutoCreationToggle}
+          />
+        </Section>
+        <Section>
+          <H2Title
+            title="Synchronization"
+            description="Past and future emails will automatically be synced to this workspace"
+          />
+          <SettingsAccountsToggleSettingCard
+            cardMedia={
+              <SettingsAccountsCardMedia>
+                <IconRefresh
+                  size={theme.icon.size.sm}
+                  stroke={theme.icon.stroke.lg}
+                />
+              </SettingsAccountsCardMedia>
+            }
+            title="Sync emails"
+            value={!!messageChannel.isSyncEnabled}
+            onToggle={handleIsSyncEnabledToggle}
           />
         </Section>
       </SettingsPageContainer>

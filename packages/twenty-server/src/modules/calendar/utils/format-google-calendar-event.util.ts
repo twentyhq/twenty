@@ -1,24 +1,26 @@
-import { calendar_v3 } from 'googleapis';
+import { calendar_v3 as calendarV3 } from 'googleapis';
 import { v4 } from 'uuid';
 
-import { CalendarEventWithAttendees } from 'src/modules/calendar/types/calendar-event';
-import { CalendarEventAttendeeResponseStatus } from 'src/modules/calendar/standard-objects/calendar-event-attendee.object-metadata';
+import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
+import { CalendarEventWithParticipants } from 'src/modules/calendar/types/calendar-event';
 
 export const formatGoogleCalendarEvent = (
-  event: calendar_v3.Schema$Event,
-): CalendarEventWithAttendees => {
-  const id = v4();
+  event: calendarV3.Schema$Event,
+  iCalUIDCalendarEventIdMap: Map<string, string>,
+): CalendarEventWithParticipants => {
+  const id =
+    (event.iCalUID && iCalUIDCalendarEventIdMap.get(event.iCalUID)) ?? v4();
 
   const formatResponseStatus = (status: string | null | undefined) => {
     switch (status) {
       case 'accepted':
-        return CalendarEventAttendeeResponseStatus.ACCEPTED;
+        return CalendarEventParticipantResponseStatus.ACCEPTED;
       case 'declined':
-        return CalendarEventAttendeeResponseStatus.DECLINED;
+        return CalendarEventParticipantResponseStatus.DECLINED;
       case 'tentative':
-        return CalendarEventAttendeeResponseStatus.TENTATIVE;
+        return CalendarEventParticipantResponseStatus.TENTATIVE;
       default:
-        return CalendarEventAttendeeResponseStatus.NEEDS_ACTION;
+        return CalendarEventParticipantResponseStatus.NEEDS_ACTION;
     }
   };
 
@@ -40,7 +42,7 @@ export const formatGoogleCalendarEvent = (
     conferenceLinkLabel: event.conferenceData?.entryPoints?.[0]?.uri ?? '',
     conferenceLinkUrl: event.conferenceData?.entryPoints?.[0]?.uri ?? '',
     recurringEventExternalId: event.recurringEventId ?? '',
-    attendees:
+    participants:
       event.attendees?.map((attendee) => ({
         calendarEventId: id,
         iCalUID: event.iCalUID ?? '',

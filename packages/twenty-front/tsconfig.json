@@ -7,14 +7,6 @@
     "skipLibCheck": true,
     "allowJs": true,
     "esModuleInterop": true,
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["src/modules/*"],
-      "~/*": ["src/*"],
-      "twenty-ui": ["../twenty-ui/src/index.ts"]
-    },
-
-    /* Bundler mode */
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
     "allowImportingTsExtensions": true,
@@ -22,13 +14,18 @@
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-
-    /* Linting */
     "strict": true,
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
+    "outDir": "../../dist/out-tsc",
+    "paths": {
+      "@/*": ["packages/twenty-front/src/modules/*"],
+      "~/*": ["packages/twenty-front/src/*"],
+      "twenty-ui": ["packages/twenty-ui/src/index.ts"],
+      "@ui/*": ["packages/twenty-ui/src/*"]
+    }
   },
   "files": [],
   "include": [],
@@ -38,6 +35,10 @@
     },
     {
       "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "./tsconfig.storybook.json"
     }
   ],
+  "extends": "../../tsconfig.base.json"
 }

@@ -84,14 +84,5 @@ describe('useFindManyRecords', () => {
     expect(result.current.loading).toBe(true);
     expect(result.current.error).toBeUndefined();
     expect(result.current.records.length).toBe(0);
-
-    // FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
-    // await waitFor(() => {
-    //   expect(result.current.loading).toBe(false);
-    //   expect(result.current.records).toBeDefined();
-
-    //   console.log({ res: result.current.records });
-    //   expect(result.current.records.length > 0).toBe(true);
-    // });
   });
 });

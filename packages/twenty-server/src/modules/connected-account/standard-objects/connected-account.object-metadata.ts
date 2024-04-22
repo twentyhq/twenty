@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
@@ -8,6 +10,7 @@ import { connectedAccountStandardFieldIds } from 'src/engine/workspace-manager/w
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
+import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/relation-metadata.decorator';
@@ -15,6 +18,11 @@ import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-
 import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
+
+export enum ConnectedAccountProvider {
+  GOOGLE = 'google',
+}
 
 @ObjectMetadata({
   standardId: standardObjectIds.connectedAccount,
@@ -25,6 +33,7 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
   icon: 'IconAt',
 })
 @IsSystem()
+@IsNotAuditLogged()
 export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: connectedAccountStandardFieldIds.handle,
@@ -42,7 +51,7 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
     description: 'The account provider',
     icon: 'IconSettings',
   })
-  provider: string;
+  provider: ConnectedAccountProvider; // field metadata should be a SELECT
 
   @FieldMetadata({
     standardId: connectedAccountStandardFieldIds.accessToken,
@@ -70,7 +79,7 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
     icon: 'IconUserCircle',
     joinColumn: 'accountOwnerId',
   })
-  accountOwner: WorkspaceMemberObjectMetadata;
+  accountOwner: Relation<WorkspaceMemberObjectMetadata>;
 
   @FieldMetadata({
     standardId: connectedAccountStandardFieldIds.lastSyncHistoryId,
@@ -80,6 +89,16 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
     icon: 'IconHistory',
   })
   lastSyncHistoryId: string;
+
+  @FieldMetadata({
+    standardId: connectedAccountStandardFieldIds.authFailedAt,
+    type: FieldMetadataType.DATE_TIME,
+    label: 'Auth failed at',
+    description: 'Auth failed at',
+    icon: 'IconX',
+  })
+  @IsNullable()
+  authFailedAt: Date;
 
   @FieldMetadata({
     standardId: connectedAccountStandardFieldIds.messageChannels,
@@ -93,7 +112,7 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
     inverseSideTarget: () => MessageChannelObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  messageChannels: MessageChannelObjectMetadata[];
+  messageChannels: Relation<MessageChannelObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: connectedAccountStandardFieldIds.calendarChannels,
@@ -110,5 +129,5 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
   @Gate({
     featureFlag: FeatureFlagKeys.IsCalendarEnabled,
   })
-  calendarChannels: CalendarChannelObjectMetadata[];
+  calendarChannels: Relation<CalendarChannelObjectMetadata[]>;
 }

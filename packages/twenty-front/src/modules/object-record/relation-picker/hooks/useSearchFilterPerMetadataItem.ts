@@ -5,6 +5,7 @@ import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { FieldMetadataType } from '~/generated/graphql';
+import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 import { isDefined } from '~/utils/isDefined';
 
 export const useSearchFilterPerMetadataItem = ({
@@ -29,25 +30,16 @@ export const useSearchFilterPerMetadataItem = ({
             switch (labelIdentifierFieldMetadataItem.type) {
               case FieldMetadataType.FullName: {
                 if (isNonEmptyString(searchFilterValue)) {
-                  const fullNameFilter = makeOrFilterVariables([
-                    {
-                      [labelIdentifierFieldMetadataItem.name]: {
-                        firstName: {
-                          ilike: `%${searchFilterValue}%`,
-                        },
-                      },
-                    },
-                    {
-                      [labelIdentifierFieldMetadataItem.name]: {
-                        lastName: {
-                          ilike: `%${searchFilterValue}%`,
-                        },
-                      },
-                    },
-                  ]);
+                  const compositeFilter = makeOrFilterVariables(
+                    generateILikeFiltersForCompositeFields(
+                      searchFilterValue,
+                      labelIdentifierFieldMetadataItem.name,
+                      ['firstName', 'lastName'],
+                    ),
+                  );
 
-                  if (isDefined(fullNameFilter)) {
-                    searchFilter = fullNameFilter;
+                  if (isDefined(compositeFilter)) {
+                    searchFilter = compositeFilter;
                   }
                 }
                 break;

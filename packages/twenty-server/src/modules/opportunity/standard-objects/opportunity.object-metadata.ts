@@ -1,3 +1,5 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { CurrencyMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/currency.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
@@ -17,7 +19,8 @@ import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-
 import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
-import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { TimelineActivityObjectMetadata } from 'src/modules/timeline/standard-objects/timeline-activity.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
   standardId: standardObjectIds.opportunity,
@@ -27,6 +30,7 @@ import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.ob
   description: 'An opportunity',
   icon: 'IconTargetArrow',
 })
+@IsNotAuditLogged()
 export class OpportunityObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: opportunityStandardFieldIds.name,
@@ -109,7 +113,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'pointOfContactId',
   })
   @IsNullable()
-  pointOfContact: PersonObjectMetadata;
+  pointOfContact: Relation<PersonObjectMetadata>;
 
   @FieldMetadata({
     standardId: opportunityStandardFieldIds.company,
@@ -120,7 +124,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     joinColumn: 'companyId',
   })
   @IsNullable()
-  company: CompanyObjectMetadata;
+  company: Relation<CompanyObjectMetadata>;
 
   @FieldMetadata({
     standardId: opportunityStandardFieldIds.favorites,
@@ -136,7 +140,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   })
   @IsNullable()
   @IsSystem()
-  favorites: FavoriteObjectMetadata[];
+  favorites: Relation<FavoriteObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: opportunityStandardFieldIds.activityTargets,
@@ -151,7 +155,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  activityTargets: ActivityTargetObjectMetadata[];
+  activityTargets: Relation<ActivityTargetObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: opportunityStandardFieldIds.attachments,
@@ -163,21 +167,23 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => AttachmentObjectMetadata,
+    onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  attachments: AttachmentObjectMetadata[];
+  attachments: Relation<AttachmentObjectMetadata[]>;
 
   @FieldMetadata({
-    standardId: opportunityStandardFieldIds.events,
+    standardId: opportunityStandardFieldIds.timelineActivities,
     type: FieldMetadataType.RELATION,
-    label: 'Events',
-    description: 'Events linked to the opportunity.',
+    label: 'Timeline Activities',
+    description: 'Timeline Activities linked to the opportunity.',
     icon: 'IconTimelineEvent',
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => EventObjectMetadata,
+    inverseSideTarget: () => TimelineActivityObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
-  events: EventObjectMetadata[];
+  timelineActivities: Relation<TimelineActivityObjectMetadata[]>;
 }

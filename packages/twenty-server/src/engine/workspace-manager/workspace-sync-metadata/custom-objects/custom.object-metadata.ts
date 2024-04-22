@@ -13,7 +13,7 @@ import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-me
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { AttachmentObjectMetadata } from 'src/modules/attachment/standard-objects/attachment.object-metadata';
 import { customObjectStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { TimelineActivityObjectMetadata } from 'src/modules/timeline/standard-objects/timeline-activity.object-metadata';
 
 @BaseCustomObjectMetadata()
 export class CustomObjectMetadata extends BaseObjectMetadata {
@@ -88,18 +88,20 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
   attachments: AttachmentObjectMetadata[];
 
   @FieldMetadata({
-    standardId: customObjectStandardFieldIds.events,
+    standardId: customObjectStandardFieldIds.timelineActivities,
     type: FieldMetadataType.RELATION,
-    label: 'Events',
+    label: 'Timeline Activities',
     description: (objectMetadata) =>
-      `Events tied to the ${objectMetadata.labelSingular}`,
-    icon: 'IconJson',
+      `Timeline Activities tied to the ${objectMetadata.labelSingular}`,
+
+    icon: 'IconIconTimelineEvent',
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => EventObjectMetadata,
+    inverseSideTarget: () => TimelineActivityObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  events: EventObjectMetadata[];
+  @IsSystem()
+  timelineActivities: TimelineActivityObjectMetadata[];
 }

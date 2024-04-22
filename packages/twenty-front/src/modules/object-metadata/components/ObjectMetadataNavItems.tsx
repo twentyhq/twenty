@@ -1,15 +1,15 @@
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useIcons } from 'twenty-ui';
 
-import { useObjectMetadataItemForSettings } from '@/object-metadata/hooks/useObjectMetadataItemForSettings';
+import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
 
 export const ObjectMetadataNavItems = () => {
-  const { activeObjectMetadataItems } = useObjectMetadataItemForSettings();
+  const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
   const navigate = useNavigate();
   const { getIcon } = useIcons();
   const currentPath = useLocation().pathname;

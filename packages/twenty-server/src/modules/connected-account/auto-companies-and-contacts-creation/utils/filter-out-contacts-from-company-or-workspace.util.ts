@@ -1,4 +1,4 @@
-import { getDomainNameFromHandle } from 'src/modules/messaging/utils/get-domain-name-from-handle.util';
+import { getDomainNameFromHandle } from 'src/modules/calendar-messaging-participant/utils/get-domain-name-from-handle.util';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { Contacts } from 'src/modules/connected-account/auto-companies-and-contacts-creation/types/contact.type';

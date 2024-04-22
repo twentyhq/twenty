@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const query = gql`
-  mutation DeleteOneObjectMetadataItem($idToDelete: ID!) {
+  mutation DeleteOneObjectMetadataItem($idToDelete: UUID!) {
     deleteOneObject(input: { id: $idToDelete }) {
       id
       dataSourceId

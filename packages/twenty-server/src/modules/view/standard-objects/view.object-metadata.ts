@@ -1,5 +1,10 @@
+import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
+
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import {
+  RelationMetadataType,
+  RelationOnDeleteAction,
+} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { viewStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
@@ -11,6 +16,7 @@ import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-
 import { ViewFieldObjectMetadata } from 'src/modules/view/standard-objects/view-field.object-metadata';
 import { ViewFilterObjectMetadata } from 'src/modules/view/standard-objects/view-filter.object-metadata';
 import { ViewSortObjectMetadata } from 'src/modules/view/standard-objects/view-sort.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
   standardId: standardObjectIds.view,
@@ -20,6 +26,7 @@ import { ViewSortObjectMetadata } from 'src/modules/view/standard-objects/view-s
   description: '(System) Views',
   icon: 'IconLayoutCollage',
 })
+@IsNotAuditLogged()
 @IsSystem()
 export class ViewObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
@@ -102,9 +109,10 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => ViewFieldObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
-  viewFields: ViewFieldObjectMetadata[];
+  viewFields: Relation<ViewFieldObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: viewStandardFieldIds.viewFilters,
@@ -116,9 +124,10 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => ViewFilterObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
-  viewFilters: ViewFilterObjectMetadata[];
+  viewFilters: Relation<ViewFilterObjectMetadata[]>;
 
   @FieldMetadata({
     standardId: viewStandardFieldIds.viewSorts,
@@ -130,7 +139,8 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => ViewSortObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @IsNullable()
-  viewSorts: ViewSortObjectMetadata[];
+  viewSorts: Relation<ViewSortObjectMetadata[]>;
 }

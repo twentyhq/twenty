@@ -1,6 +1,6 @@
 import { MouseEvent } from 'react';
+import { IconComponent } from 'twenty-ui';
 
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { LightIconButtonGroup } from '@/ui/input/button/components/LightIconButtonGroup';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
@@ -20,6 +20,7 @@ export type MenuItemProps = {
   accent?: MenuItemAccent;
   text: string;
   iconButtons?: MenuItemIconButton[];
+  isIconDisplayedOnHoverOnly?: boolean;
   isTooltipOpen?: boolean;
   className?: string;
   testId?: string;
@@ -32,6 +33,7 @@ export const MenuItem = ({
   text,
   iconButtons,
   isTooltipOpen,
+  isIconDisplayedOnHoverOnly = true,
   className,
   testId,
   onClick,
@@ -53,6 +55,7 @@ export const MenuItem = ({
       className={className}
       accent={accent}
       isMenuOpen={!!isTooltipOpen}
+      isIconDisplayedOnHoverOnly={isIconDisplayedOnHoverOnly}
     >
       <StyledMenuItemLeftContent>
         <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />

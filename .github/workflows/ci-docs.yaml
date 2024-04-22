@@ -3,15 +3,23 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'package.json'
+      - 'packages/twenty-docs/**'
+      - 'packages/twenty-ui/**'
   pull_request:
+    paths:
+      - 'package.json'
+      - 'packages/twenty-docs/**'
+      - 'packages/twenty-ui/**'
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   docs-build:
     runs-on: ubuntu-latest
     steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-            access_token: ${{ github.token }}
       - uses: actions/checkout@v4
       - name: Setup Node.js
         uses: actions/setup-node@v3
@@ -20,7 +28,7 @@ jobs:
       - name: Docs / Install Dependencies
         run: yarn
       - name: Docs / Build Documentation
-        run: yarn nx build twenty-docs
+        run: npx nx build twenty-docs
   vale:
     name: runner / vale
     runs-on: ubuntu-latest

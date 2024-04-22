@@ -1,26 +1,33 @@
 /// <reference types='vitest' />
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import react from '@vitejs/plugin-react-swc';
 import * as path from 'path';
 import { defineConfig } from 'vite';
+import checker from 'vite-plugin-checker';
 import dts from 'vite-plugin-dts';
+import svgr from 'vite-plugin-svgr';
+import tsconfigPaths from 'vite-tsconfig-paths';
+
+// eslint-disable-next-line @nx/enforce-module-boundaries, import/no-relative-packages
+import packageJson from '../../package.json';
 
 export default defineConfig({
   root: __dirname,
   cacheDir: '../../node_modules/.vite/packages/twenty-ui',
 
   plugins: [
-    nxViteTsPaths(),
+    react({ jsxImportSource: '@emotion/react' }),
+    tsconfigPaths(),
+    svgr(),
     dts({
       entryRoot: 'src',
-      tsConfigFilePath: path.join(__dirname, 'tsconfig.lib.json'),
-      skipDiagnostics: true,
+      tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
+    }),
+    checker({
+      typescript: {
+        tsconfigPath: path.join(__dirname, 'tsconfig.lib.json'),
+      },
     }),
   ],
-
-  // Uncomment this if you are using workers.
-  // worker: {
-  //  plugins: [ nxViteTsPaths() ],
-  // },
 
   // Configuration for building your library.
   // See: https://vitejs.dev/guide/build.html#library-mode
@@ -41,7 +48,7 @@ export default defineConfig({
     },
     rollupOptions: {
       // External packages that should not be bundled into your library.
-      external: [],
+      external: Object.keys(packageJson.dependencies || {}),
     },
   },
 });

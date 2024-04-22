@@ -1,9 +1,9 @@
 import React from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { IconChevronRight } from 'twenty-ui';
 
 import { WebhookFieldItem } from '@/settings/developers/types/webhook/WebhookFieldItem';
-import { IconChevronRight } from '@/ui/display/icon';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 

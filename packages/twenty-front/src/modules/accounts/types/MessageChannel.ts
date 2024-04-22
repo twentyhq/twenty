@@ -4,6 +4,7 @@ export type MessageChannel = {
   id: string;
   handle: string;
   isContactAutoCreationEnabled?: boolean;
-  isSynced?: boolean;
+  isSyncEnabled: boolean;
   visibility: InboxSettingsVisibilityValue;
+  syncStatus: string;
 };

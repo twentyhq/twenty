@@ -1,0 +1,29 @@
+name: CI Website
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'package.json'
+      - 'packages/twenty-website/**'
+  pull_request:
+    paths:
+      - 'package.json'
+      - 'packages/twenty-website/**'
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  website-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+      - name: Website / Install Dependencies
+        run: yarn
+      - name: Website / Build Website
+        run: npx nx build twenty-website

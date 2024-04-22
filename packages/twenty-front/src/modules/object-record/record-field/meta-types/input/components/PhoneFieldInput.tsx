@@ -3,7 +3,7 @@ import { PhoneInput } from '@/ui/field/input/components/PhoneInput';
 import { FieldInputOverlay } from '../../../../../ui/field/input/components/FieldInputOverlay';
 import { usePhoneField } from '../../hooks/usePhoneField';
 
-import { FieldInputEvent } from './DateFieldInput';
+import { FieldInputEvent } from './DateTimeFieldInput';
 
 export type PhoneFieldInputProps = {
   onClickOutside?: FieldInputEvent;

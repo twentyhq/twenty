@@ -9,11 +9,13 @@ export const getOperandsForFilterType = (
     case 'TEXT':
     case 'EMAIL':
     case 'FULL_NAME':
+    case 'ADDRESS':
     case 'LINK':
       return [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain];
     case 'CURRENCY':
     case 'NUMBER':
     case 'DATE_TIME':
+    case 'DATE':
       return [ViewFilterOperand.GreaterThan, ViewFilterOperand.LessThan];
     case 'RELATION':
     case 'SELECT':

@@ -1,10 +1,9 @@
 import { useQuery } from '@apollo/client';
 import { useRecoilValue } from 'recoil';
 
-import { EMPTY_QUERY } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
+import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
+import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/multiple-objects/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
 import { useLimitPerMetadataItem } from '@/object-record/relation-picker/hooks/useLimitPerMetadataItem';
 import {
   MultiObjectRecordQueryResult,
@@ -31,8 +30,7 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const nonSystemObjectMetadataItems = objectMetadataItems.filter(
-    ({ nameSingular, isSystem }) =>
-      !isSystem && nameSingular !== CoreObjectNameSingular.Opportunity,
+    ({ isSystem }) => !isSystem,
   );
 
   const { searchFilterPerMetadataItemNameSingular } =

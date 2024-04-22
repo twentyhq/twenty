@@ -1,9 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, within } from '@storybook/test';
+import { ComponentDecorator, IconCheckbox } from 'twenty-ui';
 
-import { IconCheckbox } from '@/ui/display/icon';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { TabList } from '../TabList';
 

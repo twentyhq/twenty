@@ -9,7 +9,7 @@ import { formatFieldMetadataItemInput } from './formatFieldMetadataItemInput';
 
 export type FormatRelationMetadataInputParams = {
   relationType: RelationType;
-  field: Pick<Field, 'label' | 'icon' | 'description'>;
+  field: Pick<Field, 'label' | 'icon' | 'description' | 'type'>;
   objectMetadataId: string;
   connect: {
     field: Pick<Field, 'label' | 'icon'>;

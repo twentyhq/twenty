@@ -63,6 +63,38 @@ export class MessageParticipantRepository {
     );
   }
 
+  public async removePersonIdByHandle(
+    handle: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."messageParticipant" SET "personId" = NULL WHERE "handle" = $1`,
+      [handle],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async removeWorkspaceMemberIdByHandle(
+    handle: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."messageParticipant" SET "workspaceMemberId" = NULL WHERE "handle" = $1`,
+      [handle],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberIdAndMessageOutgoing(
     messageChannelId: string,
     workspaceId: string,

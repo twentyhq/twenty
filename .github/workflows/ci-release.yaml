@@ -1,0 +1,52 @@
+name: Release Twenty
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        description: Version to release, without the v (e.g. 1.2.3)
+      ref:
+        default: main
+        description: Ref to start the release from (e.g. main, sha)
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.inputs.ref }}
+
+      - name: Sanitize version
+        id: sanitize
+        run: |
+          echo version=$(echo ${{ github.event.inputs.version }} | sed 's/^v//') >> $GITHUB_OUTPUT
+
+      - name: Update versions
+        working-directory: packages
+        run: |
+          for dir in twenty-docs twenty-emails twenty-front twenty-server twenty-ui twenty-website
+          do
+            cd $dir
+            yarn version ${{ steps.sanitize.outputs.version }}
+            cd ..
+          done
+
+      # Make sure we have the latest changes before committing
+      - name: Pull changes
+        run: git pull
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          branch: ${{ github.event.inputs.ref }}
+          commit_message: "chore: release v${{ steps.sanitize.outputs.version }}"
+          tagging_message: v${{ steps.sanitize.outputs.version }}
+
+          commit_user_name: Github Action Deploy
+          commit_user_email: github-action-deploy@twenty.com
+          commit_author: Github Action Deploy <github-action-deploy@twenty.com>
+
+      - uses: release-drafter/release-drafter@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

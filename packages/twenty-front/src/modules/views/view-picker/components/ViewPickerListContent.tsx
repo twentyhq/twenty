@@ -1,9 +1,8 @@
 import { MouseEvent } from 'react';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
+import { IconLock, IconPencil, IconPlus, useIcons } from 'twenty-ui';
 
-import { IconLock, IconPencil, IconPlus } from '@/ui/display/icon';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
@@ -74,6 +73,7 @@ export const ViewPickerListContent = () => {
                     Icon: IconLock,
                   },
             ].filter(isDefined)}
+            isIconDisplayedOnHoverOnly={view.key !== 'INDEX'}
             onClick={() => handleViewSelect(view.id)}
             LeftIcon={getIcon(view.icon)}
             text={view.name}

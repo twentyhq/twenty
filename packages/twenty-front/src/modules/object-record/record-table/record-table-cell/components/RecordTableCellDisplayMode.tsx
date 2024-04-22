@@ -1,21 +1,23 @@
-import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
-import { useOpenRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
+import { useContext } from 'react';
 
-import { useSetSoftFocusOnCurrentTableCell } from '../hooks/useSetSoftFocusOnCurrentTableCell';
+import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
+import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { useCurrentTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useCurrentCellPosition';
+import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 
 import { RecordTableCellDisplayContainer } from './RecordTableCellDisplayContainer';
 
 export const RecordTableCellDisplayMode = ({
   children,
 }: React.PropsWithChildren<unknown>) => {
-  const setSoftFocusOnCurrentCell = useSetSoftFocusOnCurrentTableCell();
+  const cellPosition = useCurrentTableCellPosition();
+  const { onMoveSoftFocusToCell } = useContext(RecordTableContext);
+  const { openTableCell } = useOpenRecordTableCellFromCell();
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
-  const { openTableCell } = useOpenRecordTableCell();
-
   const handleClick = () => {
-    setSoftFocusOnCurrentCell();
+    onMoveSoftFocusToCell(cellPosition);
 
     if (!isFieldInputOnly) {
       openTableCell();

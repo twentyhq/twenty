@@ -102,12 +102,14 @@ export const StyledMenuItemRightContent = styled.div`
 
 export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
   isMenuOpen: boolean;
+  isIconDisplayedOnHoverOnly?: boolean;
 }>`
   & .hoverable-buttons {
     pointer-events: none;
     position: fixed;
     right: ${({ theme }) => theme.spacing(2)};
-    opacity: 0;
+    opacity: ${({ isIconDisplayedOnHoverOnly }) =>
+      isIconDisplayedOnHoverOnly ? 0 : 1};
     transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
   }
 

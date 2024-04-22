@@ -1,6 +1,7 @@
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { extractComponentState } from '@/ui/utilities/state/component-state/utils/extractComponentState';
 import { viewPickerInputNameComponentState } from '@/views/view-picker/states/viewPickerInputNameComponentState';
+import { viewPickerIsDirtyComponentState } from '@/views/view-picker/states/viewPickerIsDirtyComponentState';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerKanbanFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerKanbanFieldMetadataIdComponentState';
 import { viewPickerModeComponentState } from '@/views/view-picker/states/viewPickerModeComponentState';
@@ -44,6 +45,10 @@ export const useViewPickerStates = (viewComponentId?: string) => {
     ),
     viewPickerTypeState: extractComponentState(
       viewPickerTypeComponentState,
+      componentId,
+    ),
+    viewPickerIsDirtyState: extractComponentState(
+      viewPickerIsDirtyComponentState,
       componentId,
     ),
   };

@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import { IconChevronRight, IconGoogleCalendar } from 'twenty-ui';
 
 import { CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
@@ -8,10 +9,11 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
-import { SettingsAccountsSynchronizationStatus } from '@/settings/accounts/components/SettingsAccountsSynchronizationStatus';
+import {
+  SettingsAccountsSynchronizationStatus,
+  SettingsAccountsSynchronizationStatusProps,
+} from '@/settings/accounts/components/SettingsAccountsSynchronizationStatus';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { IconChevronRight } from '@/ui/display/icon';
-import { IconGoogleCalendar } from '@/ui/display/icon/components/IconGoogleCalendar';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 
 const StyledRowRightContainer = styled.div`
@@ -35,7 +37,11 @@ export const SettingsAccountsCalendarChannelsListCard = () => {
     });
 
   const { records: calendarChannels, loading: calendarChannelsLoading } =
-    useFindManyRecords<CalendarChannel>({
+    useFindManyRecords<
+      CalendarChannel & {
+        connectedAccount: ConnectedAccount;
+      }
+    >({
       objectNameSingular: CoreObjectNameSingular.CalendarChannel,
       skip: !accounts.length,
       filter: {
@@ -49,9 +55,22 @@ export const SettingsAccountsCalendarChannelsListCard = () => {
     return <SettingsAccountsListEmptyStateCard />;
   }
 
+  const calendarChannelsWithSyncStatus: (CalendarChannel & {
+    connectedAccount: ConnectedAccount;
+  } & SettingsAccountsSynchronizationStatusProps)[] = calendarChannels.map(
+    (calendarChannel) => ({
+      ...calendarChannel,
+      syncStatus: calendarChannel.connectedAccount?.authFailedAt
+        ? 'failed'
+        : calendarChannel.isSyncEnabled
+          ? 'synced'
+          : 'notSynced',
+    }),
+  );
+
   return (
     <SettingsListCard
-      items={calendarChannels}
+      items={calendarChannelsWithSyncStatus}
       getItemLabel={(calendarChannel) => calendarChannel.handle}
       isLoading={accountsLoading || calendarChannelsLoading}
       onRowClick={(calendarChannel) =>
@@ -61,7 +80,7 @@ export const SettingsAccountsCalendarChannelsListCard = () => {
       RowRightComponent={({ item: calendarChannel }) => (
         <StyledRowRightContainer>
           <SettingsAccountsSynchronizationStatus
-            synced={!!calendarChannel.isSyncEnabled}
+            syncStatus={calendarChannel.syncStatus}
           />
           <LightIconButton Icon={IconChevronRight} accent="tertiary" />
         </StyledRowRightContainer>

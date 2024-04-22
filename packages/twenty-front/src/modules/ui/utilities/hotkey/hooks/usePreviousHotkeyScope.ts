@@ -1,5 +1,8 @@
 import { useRecoilCallback } from 'recoil';
 
+import { DEBUG_HOTKEY_SCOPE } from '@/ui/utilities/hotkey/hooks/useScopedHotkeyCallback';
+import { logDebug } from '~/utils/logDebug';
+
 import { currentHotkeyScopeState } from '../states/internal/currentHotkeyScopeState';
 import { previousHotkeyScopeState } from '../states/internal/previousHotkeyScopeState';
 import { CustomHotkeyScopes } from '../types/CustomHotkeyScope';
@@ -20,6 +23,10 @@ export const usePreviousHotkeyScope = () => {
           return;
         }
 
+        if (DEBUG_HOTKEY_SCOPE) {
+          logDebug('DEBUG: goBackToPreviousHotkeyScope', previousHotkeyScope);
+        }
+
         setHotkeyScope(
           previousHotkeyScope.scope,
           previousHotkeyScope.customScopes,
@@ -36,6 +43,14 @@ export const usePreviousHotkeyScope = () => {
         const currentHotkeyScope = snapshot
           .getLoadable(currentHotkeyScopeState)
           .getValue();
+
+        if (DEBUG_HOTKEY_SCOPE) {
+          logDebug('DEBUG: setHotkeyScopeAndMemorizePreviousScope', {
+            currentHotkeyScope,
+            scope,
+            customScopes,
+          });
+        }
 
         setHotkeyScope(scope, customScopes);
         set(previousHotkeyScopeState, currentHotkeyScope);

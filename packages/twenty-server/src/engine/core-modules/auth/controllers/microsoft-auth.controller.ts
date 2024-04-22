@@ -8,7 +8,6 @@ import { MicrosoftProviderEnabledGuard } from 'src/engine/core-modules/auth/guar
 import { AuthService } from 'src/engine/core-modules/auth/services/auth.service';
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import { MicrosoftRequest } from 'src/engine/core-modules/auth/strategies/microsoft.auth.strategy';
-import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Controller('auth/microsoft')
 export class MicrosoftAuthController {
@@ -34,28 +33,13 @@ export class MicrosoftAuthController {
     const { firstName, lastName, email, picture, workspaceInviteHash } =
       req.user;
 
-    const mainDataSource = this.typeORMService.getMainDataSource();
-
-    const existingUser = await mainDataSource
-      .getRepository(User)
-      .findOneBy({ email: email });
-
-    if (existingUser) {
-      const loginToken = await this.tokenService.generateLoginToken(
-        existingUser.email,
-      );
-
-      return res.redirect(
-        this.tokenService.computeRedirectURI(loginToken.token),
-      );
-    }
-
-    const user = await this.authService.signUp({
+    const user = await this.authService.signInUp({
       email,
       firstName,
       lastName,
       picture,
       workspaceInviteHash,
+      fromSSO: true,
     });
 
     const loginToken = await this.tokenService.generateLoginToken(user.email);

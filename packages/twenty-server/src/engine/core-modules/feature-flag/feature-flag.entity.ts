@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 import {
   Entity,
@@ -8,10 +8,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  Relation,
 } from 'typeorm';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 export enum FeatureFlagKeys {
   IsBlocklistEnabled = 'IS_BLOCKLIST_ENABLED',
@@ -19,14 +21,15 @@ export enum FeatureFlagKeys {
   IsEventObjectEnabled = 'IS_EVENT_OBJECT_ENABLED',
   IsAirtableIntegrationEnabled = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IsPostgreSQLIntegrationEnabled = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
-  IsFullSyncV2Enabled = 'IS_FULL_SYNC_V2_ENABLED',
+  IsMultiSelectEnabled = 'IS_MULTI_SELECT_ENABLED',
+  IsRelationForRemoteObjectsEnabled = 'IS_RELATION_FOR_REMOTE_OBJECTS_ENABLED',
 }
 
 @Entity({ name: 'featureFlag', schema: 'core' })
 @ObjectType('FeatureFlag')
 @Unique('IndexOnKeyAndWorkspaceIdUnique', ['key', 'workspaceId'])
 export class FeatureFlagEntity {
-  @IDField(() => ID)
+  @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -41,7 +44,7 @@ export class FeatureFlagEntity {
   @ManyToOne(() => Workspace, (workspace) => workspace.featureFlags, {
     onDelete: 'CASCADE',
   })
-  workspace: Workspace;
+  workspace: Relation<Workspace>;
 
   @Field()
   @Column({ nullable: false })

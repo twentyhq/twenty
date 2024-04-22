@@ -34,13 +34,25 @@ export const fieldMetadataFormDefaultValues: FormValues = {
   },
   defaultValue: null,
   select: [{ color: 'green', label: 'Option 1', value: v4() }],
+  multiSelect: [{ color: 'green', label: 'Option 1', value: v4() }],
 };
-
+const relationTargetFieldSchema = z.object({
+  description: z.string().optional(),
+  icon: z.string().startsWith('Icon'),
+  label: z.string().min(1),
+  defaultValue: z.any(),
+});
 const fieldSchema = z.object({
   description: z.string().optional(),
   icon: z.string().startsWith('Icon'),
   label: z.string().min(1),
   defaultValue: z.any(),
+  type: z.enum(
+    Object.values(FieldMetadataType) as [
+      FieldMetadataType,
+      ...FieldMetadataType[],
+    ],
+  ),
 });
 
 const currencySchema = fieldSchema.merge(
@@ -56,7 +68,7 @@ const relationSchema = fieldSchema.merge(
   z.object({
     type: z.literal(FieldMetadataType.Relation),
     relation: z.object({
-      field: fieldSchema,
+      field: relationTargetFieldSchema,
       objectMetadataId: z.string().uuid(),
       type: z.enum([
         RelationMetadataType.OneToMany,
@@ -83,10 +95,27 @@ const selectSchema = fieldSchema.merge(
   }),
 );
 
+const multiSelectSchema = fieldSchema.merge(
+  z.object({
+    type: z.literal(FieldMetadataType.MultiSelect),
+    multiSelect: z
+      .array(
+        z.object({
+          color: themeColorSchema,
+          id: z.string().optional(),
+          isDefault: z.boolean().optional(),
+          label: z.string().min(1),
+        }),
+      )
+      .nonempty(),
+  }),
+);
+
 const {
   Currency: _Currency,
   Relation: _Relation,
   Select: _Select,
+  MultiSelect: _MultiSelect,
   ...otherFieldTypes
 } = FieldMetadataType;
 
@@ -95,6 +124,7 @@ type OtherFieldType = Exclude<
   | FieldMetadataType.Currency
   | FieldMetadataType.Relation
   | FieldMetadataType.Select
+  | FieldMetadataType.MultiSelect
 >;
 
 const otherFieldTypesSchema = fieldSchema.merge(
@@ -109,6 +139,7 @@ const schema = z.discriminatedUnion('type', [
   currencySchema,
   relationSchema,
   selectSchema,
+  multiSelectSchema,
   otherFieldTypesSchema,
 ]);
 
@@ -127,6 +158,8 @@ export const useFieldMetadataForm = () => {
   const [hasCurrencyFormChanged, setHasCurrencyFormChanged] = useState(false);
   const [hasRelationFormChanged, setHasRelationFormChanged] = useState(false);
   const [hasSelectFormChanged, setHasSelectFormChanged] = useState(false);
+  const [hasMultiSelectFormChanged, setHasMultiSelectFormChanged] =
+    useState(false);
   const [hasDefaultValueChanged, setHasDefaultValueFormChanged] =
     useState(false);
   const [validationResult, setValidationResult] = useState(
@@ -174,13 +207,15 @@ export const useFieldMetadataForm = () => {
       currency: initialCurrencyFormValues,
       relation: initialRelationFormValues,
       select: initialSelectFormValues,
-      defaultValue: initalDefaultValue,
+      multiSelect: initialMultiSelectFormValues,
+      defaultValue: initialDefaultValue,
       ...initialFieldFormValues
     } = initialFormValues;
     const {
       currency: nextCurrencyFormValues,
       relation: nextRelationFormValues,
       select: nextSelectFormValues,
+      multiSelect: nextMultiSelectFormValues,
       defaultValue: nextDefaultValue,
       ...nextFieldFormValues
     } = nextFormValues;
@@ -200,9 +235,13 @@ export const useFieldMetadataForm = () => {
       nextFieldFormValues.type === FieldMetadataType.Select &&
         !isDeeplyEqual(initialSelectFormValues, nextSelectFormValues),
     );
+    setHasMultiSelectFormChanged(
+      nextFieldFormValues.type === FieldMetadataType.MultiSelect &&
+        !isDeeplyEqual(initialMultiSelectFormValues, nextMultiSelectFormValues),
+    );
     setHasDefaultValueFormChanged(
       nextFieldFormValues.type === FieldMetadataType.Boolean &&
-        !isDeeplyEqual(initalDefaultValue, nextDefaultValue),
+        !isDeeplyEqual(initialDefaultValue, nextDefaultValue),
     );
   };
 
@@ -215,9 +254,11 @@ export const useFieldMetadataForm = () => {
       hasCurrencyFormChanged ||
       hasRelationFormChanged ||
       hasSelectFormChanged ||
+      hasMultiSelectFormChanged ||
       hasDefaultValueChanged,
     hasRelationFormChanged,
     hasSelectFormChanged,
+    hasMultiSelectFormChanged,
     hasDefaultValueChanged,
     initForm,
     isInitialized,

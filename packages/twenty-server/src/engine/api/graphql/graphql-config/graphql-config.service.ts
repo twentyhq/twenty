@@ -26,8 +26,6 @@ import { useThrottler } from 'src/engine/api/graphql/graphql-config/hooks/use-th
 import { JwtData } from 'src/engine/core-modules/auth/types/jwt-data.type';
 import { useSentryTracing } from 'src/engine/integrations/exception-handler/hooks/use-sentry-tracing';
 
-import { CreateContextFactory } from './factories/create-context.factory';
-
 export interface GraphQLContext extends YogaDriverServerContext<'express'> {
   user?: User;
   workspace?: Workspace;
@@ -38,7 +36,6 @@ export class GraphQLConfigService
   implements GqlOptionsFactory<YogaDriverConfig<'express'>>
 {
   constructor(
-    private readonly createContextFactory: CreateContextFactory,
     private readonly tokenService: TokenService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly environmentService: EnvironmentService,
@@ -52,7 +49,7 @@ export class GraphQLConfigService
         ttl: this.environmentService.get('API_RATE_LIMITING_TTL'),
         limit: this.environmentService.get('API_RATE_LIMITING_LIMIT'),
         identifyFn: (context) => {
-          return context.user?.id ?? context.req.ip ?? 'anonymous';
+          return context.req.user?.id ?? context.req.ip ?? 'anonymous';
         },
       }),
       useExceptionHandler({
@@ -65,7 +62,6 @@ export class GraphQLConfigService
     }
 
     const config: YogaDriverConfig = {
-      context: (context) => this.createContextFactory.create(context),
       autoSchemaFile: true,
       include: [CoreEngineModule],
       conditionalSchema: async (context) => {

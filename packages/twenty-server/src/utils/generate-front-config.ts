@@ -1,17 +1,14 @@
-import { ConfigService } from '@nestjs/config';
-
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-
-const environmentService = new EnvironmentService(new ConfigService());
+import { config } from 'dotenv';
+config();
 
 export function generateFrontConfig(): void {
   const configObject = {
     window: {
       _env_: {
-        REACT_APP_SERVER_BASE_URL: environmentService.get('SERVER_URL'),
+        REACT_APP_SERVER_BASE_URL: process.env.SERVER_URL,
       },
     },
   };
@@ -23,10 +20,16 @@ export function generateFrontConfig(): void {
   )};`;
 
   const distPath = path.join(__dirname, '../..', 'front');
+  const filePath = path.join(distPath, 'env-config.js');
 
   if (!fs.existsSync(distPath)) {
     fs.mkdirSync(distPath, { recursive: true });
   }
 
-  fs.writeFileSync(path.join(distPath, 'env-config.js'), configString, 'utf8');
+  if (
+    !fs.existsSync(filePath) ||
+    fs.readFileSync(filePath, 'utf8') !== configString
+  ) {
+    fs.writeFileSync(filePath, configString, 'utf8');
+  }
 }

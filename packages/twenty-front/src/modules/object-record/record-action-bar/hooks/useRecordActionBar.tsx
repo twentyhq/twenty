@@ -1,13 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
-
-import { useFavorites } from '@/favorites/hooks/useFavorites';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
-import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
-import { useExportTableData } from '@/object-record/record-index/options/hooks/useExportTableData';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import {
   IconClick,
   IconFileExport,
@@ -16,7 +9,14 @@ import {
   IconMail,
   IconPuzzle,
   IconTrash,
-} from '@/ui/display/icon';
+} from 'twenty-ui';
+
+import { useFavorites } from '@/favorites/hooks/useFavorites';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
+import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
+import { useExportTableData } from '@/object-record/record-index/options/hooks/useExportTableData';
+import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuEntriesState } from '@/ui/navigation/context-menu/states/contextMenuEntriesState';
@@ -106,7 +106,21 @@ export const useRecordActionBar = ({
     recordIndexId: objectMetadataItem.namePlural,
   });
 
+  const isRemoteObject = objectMetadataItem.isRemote;
+
   const baseActions: ContextMenuEntry[] = useMemo(
+    () => [
+      {
+        label: `${progress === undefined ? `Export` : `Export (${progress}%)`}`,
+        Icon: IconFileExport,
+        accent: 'default',
+        onClick: () => download(),
+      },
+    ],
+    [download, progress],
+  );
+
+  const deletionActions: ContextMenuEntry[] = useMemo(
     () => [
       {
         label: 'Delete',
@@ -130,17 +144,9 @@ export const useRecordActionBar = ({
           />
         ),
       },
-      {
-        label: `${progress === undefined ? `Export` : `Export (${progress}%)`}`,
-        Icon: IconFileExport,
-        accent: 'default',
-        onClick: () => download(),
-      },
     ],
     [
       handleDeleteClick,
-      download,
-      progress,
       selectedRecordIds,
       isDeleteRecordsModalOpen,
       setIsDeleteRecordsModalOpen,
@@ -160,8 +166,9 @@ export const useRecordActionBar = ({
   return {
     setContextMenuEntries: useCallback(() => {
       setContextMenuEntries([
+        ...(isRemoteObject ? [] : deletionActions),
         ...baseActions,
-        ...(isFavorite && hasOnlyOneRecordSelected
+        ...(!isRemoteObject && isFavorite && hasOnlyOneRecordSelected
           ? [
               {
                 label: 'Remove from favorites',
@@ -170,7 +177,7 @@ export const useRecordActionBar = ({
               },
             ]
           : []),
-        ...(!isFavorite && hasOnlyOneRecordSelected
+        ...(!isRemoteObject && !isFavorite && hasOnlyOneRecordSelected
           ? [
               {
                 label: 'Add to favorites',
@@ -182,9 +189,11 @@ export const useRecordActionBar = ({
       ]);
     }, [
       baseActions,
+      deletionActions,
       handleFavoriteButtonClick,
       hasOnlyOneRecordSelected,
       isFavorite,
+      isRemoteObject,
       setContextMenuEntries,
     ]),
 
@@ -209,12 +218,15 @@ export const useRecordActionBar = ({
               },
             ]
           : []),
+        ...(isRemoteObject ? [] : deletionActions),
         ...baseActions,
       ]);
     }, [
       baseActions,
       dataExecuteQuickActionOnmentEnabled,
+      deletionActions,
       handleExecuteQuickActionOnClick,
+      isRemoteObject,
       setActionBarEntriesState,
     ]),
   };
