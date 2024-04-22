@@ -5,7 +5,7 @@
  * For readability keys can be edited but the values should not be changed.
  */
 
-export const activityTargetStandardFieldIds = {
+export const ACTIVITY_TARGET_STANDARD_FIELD_IDS = {
   activity: '20202020-ca58-478c-a4f5-ae825671c30e',
   person: '20202020-4afd-4ae7-99c2-de57d795a93f',
   company: '20202020-7cc0-44a1-8068-f11171fdd02e',
@@ -13,7 +13,7 @@ export const activityTargetStandardFieldIds = {
   custom: '20202020-7f21-442f-94be-32462281b1ca',
 };
 
-export const activityStandardFieldIds = {
+export const ACTIVITY_STANDARD_FIELD_IDS = {
   title: '20202020-24a1-4d94-a071-617f3eeed7b0',
   body: '20202020-209b-440a-b2a8-043fa36a7d37',
   type: '20202020-0f2b-4aab-8827-ee5d3f07d993',
@@ -27,13 +27,13 @@ export const activityStandardFieldIds = {
   assignee: '20202020-4259-48e4-9e77-6b92991906d5',
 };
 
-export const apiKeyStandardFieldIds = {
+export const API_KEY_STANDARD_FIELD_IDS = {
   name: '20202020-72e6-4079-815b-436ce8a62f23',
   expiresAt: '20202020-659b-4241-af59-66515b8e7d40',
   revokedAt: '20202020-06ab-44b5-8faf-f6e407685001',
 };
 
-export const attachmentStandardFieldIds = {
+export const ATTACHMENT_STANDARD_FIELD_IDS = {
   name: '20202020-87a5-48f8-bbf7-ade388825a57',
   fullPath: '20202020-0d19-453d-8e8d-fbcda8ca3747',
   type: '20202020-a417-49b8-a40b-f6a7874caa0d',
@@ -45,24 +45,24 @@ export const attachmentStandardFieldIds = {
   custom: '20202020-302d-43b3-9aea-aa4f89282a9f',
 };
 
-export const baseObjectStandardFieldIds = {
+export const BASE_OBJECT_STANDARD_FIELD_IDS = {
   id: '20202020-eda0-4cee-9577-3eb357e3c22b',
   createdAt: '20202020-66ac-4502-9975-e4d959c50311',
   updatedAt: '20202020-d767-4622-bdcf-d8a084834d86',
 };
 
-export const blocklistStandardFieldIds = {
+export const BLOCKLIST_STANDARD_FIELD_IDS = {
   handle: '20202020-eef3-44ed-aa32-4641d7fd4a3e',
   workspaceMember: '20202020-548d-4084-a947-fa20a39f7c06',
 };
 
-export const calendarChannelEventAssociationStandardFieldIds = {
+export const CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS = {
   calendarChannel: '20202020-93ee-4da4-8d58-0282c4a9cb7d',
   calendarEvent: '20202020-5aa5-437e-bb86-f42d457783e3',
   eventExternalId: '20202020-9ec8-48bb-b279-21d0734a75a1',
 };
 
-export const calendarChannelStandardFieldIds = {
+export const CALENDAR_CHANNEL_STANDARD_FIELD_IDS = {
   connectedAccount: '20202020-95b1-4f44-82dc-61b042ae2414',
   handle: '20202020-1d08-420a-9aa7-22e0f298232d',
   visibility: '20202020-1b07-4796-9f01-d626bab7ca4d',
@@ -72,7 +72,7 @@ export const calendarChannelStandardFieldIds = {
   calendarChannelEventAssociations: '20202020-afb0-4a9f-979f-2d5087d71d09',
 };
 
-export const calendarEventParticipantStandardFieldIds = {
+export const CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS = {
   calendarEvent: '20202020-fe3a-401c-b889-af4f4657a861',
   handle: '20202020-8692-4580-8210-9e09cbd031a7',
   displayName: '20202020-ee1e-4f9f-8ac1-5c0b2f69691e',
@@ -82,7 +82,7 @@ export const calendarEventParticipantStandardFieldIds = {
   workspaceMember: '20202020-20e4-4591-93ed-aeb17a4dcbd2',
 };
 
-export const calendarEventStandardFieldIds = {
+export const CALENDAR_EVENT_STANDARD_FIELD_IDS = {
   title: '20202020-080e-49d1-b21d-9702a7e2525c',
   isCanceled: '20202020-335b-4e04-b470-43b84b64863c',
   isFullDay: '20202020-551c-402c-bb6d-dfe9efe86bcb',
@@ -100,13 +100,13 @@ export const calendarEventStandardFieldIds = {
   calendarEventParticipants: '20202020-e07e-4ccb-88f5-6f3d00458eec',
 };
 
-export const commentStandardFieldIds = {
+export const COMMENT_STANDARD_FIELD_IDS = {
   body: '20202020-d5eb-49d2-b3e0-1ed04145ebb7',
   author: '20202020-2ab1-427e-a981-cf089de3a9bd',
   activity: '20202020-c8d9-4c30-a35e-dc7f44388070',
 };
 
-export const companyStandardFieldIds = {
+export const COMPANY_STANDARD_FIELD_IDS = {
   name: '20202020-4d99-4e2e-a84c-4a27837b1ece',
   domainName: '20202020-0c28-43d8-8ba5-3659924d3489',
   address: '20202020-a82a-4ee2-96cc-a18a3259d953',
@@ -125,7 +125,7 @@ export const companyStandardFieldIds = {
   timelineActivities: '20202020-0414-4daf-9c0d-64fe7b27f89f',
 };
 
-export const connectedAccountStandardFieldIds = {
+export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
   handle: '20202020-c804-4a50-bb05-b3a9e24f1dec',
   provider: '20202020-ebb0-4516-befc-a9e95935efd5',
   accessToken: '20202020-707b-4a0a-8753-2ad42efe1e29',
@@ -137,7 +137,7 @@ export const connectedAccountStandardFieldIds = {
   calendarChannels: '20202020-af4a-47bb-99ec-51911c1d3977',
 };
 
-export const eventStandardFieldIds = {
+export const EVENT_STANDARD_FIELD_IDS = {
   properties: '20202020-f142-4b04-b91b-6a2b4af3bf10',
   workspaceMember: '20202020-af23-4479-9a30-868edc474b35',
   person: '20202020-c414-45b9-a60a-ac27aa96229e',
@@ -146,7 +146,7 @@ export const eventStandardFieldIds = {
   custom: '20202020-4a71-41b0-9f83-9cdcca3f8b14',
 };
 
-export const auditLogStandardFieldIds = {
+export const AUDIT_LOGS_STANDARD_FIELD_IDS = {
   name: '20202020-2462-4b9d-b5d9-745febb3b095',
   properties: '20202020-5d36-470e-8fad-d56ea3ab2fd0',
   context: '20202020-b9d1-4058-9a75-7469cab5ca8c',
@@ -155,7 +155,7 @@ export const auditLogStandardFieldIds = {
   workspaceMember: '20202020-6e96-4300-b3f5-67a707147385',
 };
 
-export const behavioralEventStandardFieldIds = {
+export const BEHAVIORAL_EVENT_STANDARD_FIELD_IDS = {
   name: '20202020-2462-4b9d-b5d9-745febb3b095',
   properties: '20202020-5d36-470e-8fad-d56ea3ab2fd0',
   context: '20202020-bd62-4b5b-8385-6caeed8f8078',
@@ -163,7 +163,7 @@ export const behavioralEventStandardFieldIds = {
   recordId: '20202020-6d8b-4ca5-9869-f882cb335673',
 };
 
-export const timelineActivityStandardFieldIds = {
+export const TIMELINE_ACTIVITY_STANDARD_FIELD_IDS = {
   happensAt: '20202020-9526-4993-b339-c4318c4d39f0',
   type: '20202020-5e7b-4ccd-8b8a-86b94b474134',
   name: '20202020-7207-46e8-9dab-849505ae8497',
@@ -178,7 +178,7 @@ export const timelineActivityStandardFieldIds = {
   linkedObjectMetadataId: '20202020-c595-449d-9f89-562758c9ee69',
 };
 
-export const favoriteStandardFieldIds = {
+export const FAVORITE_STANDARD_FIELD_IDS = {
   position: '20202020-dd26-42c6-8c3c-2a7598c204f6',
   workspaceMember: '20202020-ce63-49cb-9676-fdc0c45892cd',
   person: '20202020-c428-4f40-b6f3-86091511c41c',
@@ -187,7 +187,7 @@ export const favoriteStandardFieldIds = {
   custom: '20202020-855a-4bc8-9861-79deef37011f',
 };
 
-export const messageChannelMessageAssociationStandardFieldIds = {
+export const MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_STANDARD_FIELD_IDS = {
   messageChannel: '20202020-b658-408f-bd46-3bd2d15d7e52',
   message: '20202020-da5d-4ac5-8743-342ab0a0336b',
   messageExternalId: '20202020-37d6-438f-b6fd-6503596c8f34',
@@ -195,7 +195,7 @@ export const messageChannelMessageAssociationStandardFieldIds = {
   messageThreadExternalId: '20202020-35fb-421e-afa0-0b8e8f7f9018',
 };
 
-export const messageChannelStandardFieldIds = {
+export const MESSAGE_CHANNEL_STANDARD_FIELD_IDS = {
   visibility: '20202020-6a6b-4532-9767-cbc61b469453',
   handle: '20202020-2c96-43c3-93e3-ed6b1acb69bc',
   connectedAccount: '20202020-49a2-44a4-b470-282c0440d15d',
@@ -209,7 +209,7 @@ export const messageChannelStandardFieldIds = {
   ongoingSyncStartedAt: '20202020-8c61-4a42-ae63-73c1c3c52e06',
 };
 
-export const messageParticipantStandardFieldIds = {
+export const MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS = {
   message: '20202020-985b-429a-9db9-9e55f4898a2a',
   role: '20202020-65d1-42f4-8729-c9ec1f52aecd',
   handle: '20202020-2456-464e-b422-b965a4db4a0b',
@@ -218,12 +218,12 @@ export const messageParticipantStandardFieldIds = {
   workspaceMember: '20202020-77a7-4845-99ed-1bcbb478be6f',
 };
 
-export const messageThreadStandardFieldIds = {
+export const MESSAGE_THREAD_STANDARD_FIELD_IDS = {
   messages: '20202020-3115-404f-aade-e1154b28e35a',
   messageChannelMessageAssociations: '20202020-314e-40a4-906d-a5d5d6c285f6',
 };
 
-export const messageStandardFieldIds = {
+export const MESSAGE_STANDARD_FIELD_IDS = {
   headerMessageId: '20202020-72b5-416d-aed8-b55609067d01',
   messageThread: '20202020-30f2-4ccd-9f5c-e41bb9d26214',
   direction: '20202020-0203-4118-8e2a-05b9bdae6dab',
@@ -234,7 +234,7 @@ export const messageStandardFieldIds = {
   messageChannelMessageAssociations: '20202020-3cef-43a3-82c6-50e7cfbc9ae4',
 };
 
-export const opportunityStandardFieldIds = {
+export const OPPORTUNITY_STANDARD_FIELD_IDS = {
   name: '20202020-8609-4f65-a2d9-44009eb422b5',
   amount: '20202020-583e-4642-8533-db761d5fa82f',
   closeDate: '20202020-527e-44d6-b1ac-c4158d307b97',
@@ -249,7 +249,7 @@ export const opportunityStandardFieldIds = {
   timelineActivities: '20202020-30e2-421f-96c7-19c69d1cf631',
 };
 
-export const personStandardFieldIds = {
+export const PERSON_STANDARD_FIELD_IDS = {
   name: '20202020-3875-44d5-8c33-a6239011cab8',
   email: '20202020-a740-42bb-8849-8980fb3f12e1',
   linkedinLink: '20202020-f1af-48f7-893b-2007a73dd508',
@@ -269,7 +269,7 @@ export const personStandardFieldIds = {
   timelineActivities: '20202020-a43e-4873-9c23-e522de906ce5',
 };
 
-export const viewFieldStandardFieldIds = {
+export const VIEW_FIELD_STANDARD_FIELD_IDS = {
   fieldMetadataId: '20202020-135f-4c5b-b361-15f24870473c',
   isVisible: '20202020-e966-473c-9c18-f00d3347e0ba',
   size: '20202020-6fab-4bd0-ae72-20f3ee39d581',
@@ -277,7 +277,7 @@ export const viewFieldStandardFieldIds = {
   view: '20202020-e8da-4521-afab-d6d231f9fa18',
 };
 
-export const viewFilterStandardFieldIds = {
+export const VIEW_FILTER_STANDARD_FIELD_IDS = {
   fieldMetadataId: '20202020-c9aa-4c94-8d0e-9592f5008fb0',
   operand: '20202020-bd23-48c4-9fab-29d1ffb80310',
   value: '20202020-1e55-4a1e-a1d2-fefb86a5fce5',
@@ -285,13 +285,13 @@ export const viewFilterStandardFieldIds = {
   view: '20202020-4f5b-487e-829c-3d881c163611',
 };
 
-export const viewSortStandardFieldIds = {
+export const VIEW_SORT_STANDARD_FIELD_IDS = {
   fieldMetadataId: '20202020-8240-4657-aee4-7f0df8e94eca',
   direction: '20202020-b06e-4eb3-9b58-0a62e5d79836',
   view: '20202020-bd6c-422b-9167-5c105f2d02c8',
 };
 
-export const viewStandardFieldIds = {
+export const VIEW_STANDARD_FIELD_IDS = {
   name: '20202020-12c6-4f37-b588-c9b9bf57328d',
   objectMetadataId: '20202020-d6de-4fd5-84dd-47f9e730368b',
   type: '20202020-dd11-4607-9ec7-c57217262a7f',
@@ -305,12 +305,12 @@ export const viewStandardFieldIds = {
   viewSorts: '20202020-891b-45c3-9fe1-80a75b4aa043',
 };
 
-export const webhookStandardFieldIds = {
+export const WEBHOOK_STANDARD_FIELD_IDS = {
   targetUrl: '20202020-1229-45a8-8cf4-85c9172aae12',
   operation: '20202020-15b7-458e-bf30-74770a54410c',
 };
 
-export const workspaceMemberStandardFieldIds = {
+export const WORKSPACE_MEMBER_STANDARD_FIELD_IDS = {
   name: '20202020-e914-43a6-9c26-3603c59065f4',
   colorScheme: '20202020-66bc-47f2-adac-f2ef7c598b63',
   locale: '20202020-402e-4695-b169-794fa015afbe',
@@ -331,7 +331,7 @@ export const workspaceMemberStandardFieldIds = {
   auditLogs: '20202020-2f54-4739-a5e2-99563385e83d',
 };
 
-export const customObjectStandardFieldIds = {
+export const CUSTOM_OBJECT_STANDARD_FIELD_IDS = {
   name: '20202020-ba07-4ffd-ba63-009491f5749c',
   position: '20202020-c2bd-4e16-bb9a-c8b0411bf49d',
   activityTargets: '20202020-7f42-40ae-b96c-c8a61acc83bf',

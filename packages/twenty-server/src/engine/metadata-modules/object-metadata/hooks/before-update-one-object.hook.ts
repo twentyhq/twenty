@@ -52,6 +52,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectInput>
     if (!objectMetadata.isCustom) {
       if (
         Object.keys(instance.update).length === 1 &&
+        // eslint-disable-next-line no-prototype-builtins
         instance.update.hasOwnProperty('isActive') &&
         instance.update.isActive !== undefined
       ) {

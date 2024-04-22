@@ -37,7 +37,7 @@ const UserGuideTableContents = () => {
     <StyledContainer>
       <StyledContent>
         <StyledHeadingText onClick={() => router.push('/user-guide')}>
-          Table of Contents
+          Table of Content
         </StyledHeadingText>
       </StyledContent>
     </StyledContainer>
