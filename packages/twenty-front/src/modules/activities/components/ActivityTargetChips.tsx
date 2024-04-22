@@ -19,7 +19,7 @@ const StyledContainer = styled.div`
 const StyledRelationsListContainer = styled(StyledContainer)`
   padding: ${({ theme }) => theme.spacing(2)};
   border-radius: ${({ theme }) => theme.spacing(1)};
-  background-color: ${({ theme }) => RGBA(theme.color.gray10, 0.8)};
+  background-color: ${({ theme }) => theme.background.secondary};
   box-shadow: '0px 2px 4px ${({ theme }) =>
     theme.boxShadow.light}, 2px 4px 16px ${({ theme }) =>
     theme.boxShadow.strong}';
