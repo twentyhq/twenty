@@ -3,11 +3,11 @@ import { desc } from 'drizzle-orm';
 
 import { findOne } from '@/database/database';
 import { issueModel, pullRequestModel } from '@/database/model';
-import { fetchAssignableUsers } from '@/github-synch/contributors/fetch-assignable-users';
-import { saveIssuesToDB } from '@/github-synch/contributors/save-issues-to-db';
-import { savePRsToDB } from '@/github-synch/contributors/save-prs-to-db';
-import { searchIssuesPRs } from '@/github-synch/contributors/search-issues-prs';
-import { IssueNode, PullRequestNode } from '@/github-synch/contributors/types';
+import { fetchAssignableUsers } from '@/github-sync/contributors/fetch-assignable-users';
+import { saveIssuesToDB } from '@/github-sync/contributors/save-issues-to-db';
+import { savePRsToDB } from '@/github-sync/contributors/save-prs-to-db';
+import { searchIssuesPRs } from '@/github-sync/contributors/search-issues-prs';
+import { IssueNode, PullRequestNode } from '@/github-sync/contributors/types';
 
 export async function GET() {
   if (!global.process.env.GITHUB_TOKEN) {
