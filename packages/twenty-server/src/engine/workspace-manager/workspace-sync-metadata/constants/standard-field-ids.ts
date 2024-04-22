@@ -37,13 +37,13 @@ export const attachmentStandardFieldIds = {
   name: '20202020-87a5-48f8-bbf7-ade388825a57',
   fullPath: '20202020-0d19-453d-8e8d-fbcda8ca3747',
   type: '20202020-a417-49b8-a40b-f6a7874caa0d',
-  storageDriverType: '20202020-a417-49b8-a40b-f6a7874caa0e',
+  storageDriverType: '20202020-e32c-41c1-9e45-1c5a34cc1f9e',
   author: '20202020-6501-4ac5-a4ef-b2f8522ef6cd',
   activity: '20202020-b569-481b-a13f-9b94e47e54fe',
   person: '20202020-0158-4aa2-965c-5cdafe21ffa2',
   company: '20202020-ceab-4a28-b546-73b06b4c08d5',
   opportunity: '20202020-7374-499d-bea3-9354890755b5',
-  message: '20202020-7374-499d-bea3-9354890755b6',
+  message: '20202020-b505-4257-9efa-1dd72aa43c8e',
   custom: '20202020-302d-43b3-9aea-aa4f89282a9f',
 };
 
@@ -233,7 +233,7 @@ export const messageStandardFieldIds = {
   text: '20202020-d2ee-4e7e-89de-9a0a9044a143',
   receivedAt: '20202020-140a-4a2a-9f86-f13b6a979afc',
   messageParticipants: '20202020-7cff-4a74-b63c-73228448cbd9',
-  attachments: '20202020-7cff-4a74-b63c-73228448cbda',
+  attachments: '20202020-afe1-4d5e-b0ae-fcaa099e2683',
   messageChannelMessageAssociations: '20202020-3cef-43a3-82c6-50e7cfbc9ae4',
 };
 
