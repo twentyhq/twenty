@@ -26,4 +26,4 @@ jobs:
       - name: Website / Install Dependencies
         run: yarn
       - name: Website / Build Website
-        run: yarn nx build twenty-website
+        run: npx nx build twenty-website

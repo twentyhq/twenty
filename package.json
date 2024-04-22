@@ -329,8 +329,9 @@
     "typescript": "5.3.3"
   },
   "version": "0.2.1",
+  "nx": {},
   "scripts": {
-    "start:prod": "cross-env FORCE_COLOR=true concurrently -n \"twenty-server,twenty-front\" -c \"bgBlue.bold,bgGreen.bold\" \"yarn nx start twenty-server\" \"yarn nx start twenty-front\""
+    "start": "nx run-many -t start -p twenty-server twenty-front"
   },
   "workspaces": {
     "packages": [

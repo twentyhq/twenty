@@ -69,4 +69,4 @@ jobs:
           key: root-node_modules-${{hashFiles('yarn.lock')}}
           restore-keys: root-node_modules-
       - name: Chrome Extension / Run build
-        run: yarn nx build twenty-chrome-extension
+        run: npx nx build twenty-chrome-extension

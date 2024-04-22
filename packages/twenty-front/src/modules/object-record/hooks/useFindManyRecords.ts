@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { useQuery } from '@apollo/client';
+import { useQuery, WatchQueryFetchPolicy } from '@apollo/client';
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -32,6 +32,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   onCompleted,
   skip,
   queryFields,
+  fetchPolicy,
 }: ObjectMetadataItemIdentifier &
   ObjectRecordQueryVariables & {
     onCompleted?: (
@@ -44,6 +45,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     skip?: boolean;
     depth?: number;
     queryFields?: Record<string, any>;
+    fetchPolicy?: WatchQueryFetchPolicy;
   }) => {
   const findManyQueryStateIdentifier =
     objectNameSingular +
@@ -84,6 +86,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       limit,
       orderBy,
     },
+    fetchPolicy: fetchPolicy,
     onCompleted: (data) => {
       if (!isDefined(data)) {
         onCompleted?.([]);
