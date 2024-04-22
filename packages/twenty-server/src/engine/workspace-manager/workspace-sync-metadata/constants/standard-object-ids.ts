@@ -5,7 +5,7 @@
  * For readability keys can be edited but the values should not be changed.
  */
 
-export const standardObjectIds = {
+export const STANDARD_OBJECT_IDS = {
   activityTarget: '20202020-2945-440e-8d1a-f84672d33d5e',
   activity: '20202020-39aa-4a89-843b-eb5f2a8b677f',
   apiKey: '20202020-4c00-401d-8cda-ec6a4c41cd7d',

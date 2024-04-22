@@ -23,6 +23,7 @@ const StyledTitle = styled.div`
   padding-bottom: ${Theme.spacing(2)};
   font-family: ${Theme.font.family};
   font-size: ${Theme.font.size.xs};
+  font-weight: 600;
 `;
 
 const StyledSubTopicItem = styled.div<{ isselected: boolean }>`
@@ -53,10 +54,20 @@ const StyledSubTopicItem = styled.div<{ isselected: boolean }>`
   &:active {
     text-decoration: none;
   }
+
+  &:hover {
+    background: #1414140a;
+  }
+
+  &:active {
+    background: #1414140f;
+  }
 `;
 
 const StyledIcon = styled.div`
   padding: 0px 4px 0px 4px;
+  display: flex;
+  align-items: center;
 `;
 
 const StyledRectangle = styled.div<{ isselected: boolean }>`

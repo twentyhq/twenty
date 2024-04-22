@@ -1,9 +1,9 @@
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
-  baseObjectStandardFieldIds,
-  companyStandardFieldIds,
+  BASE_OBJECT_STANDARD_FIELD_IDS,
+  COMPANY_STANDARD_FIELD_IDS,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 export const viewCompanyFields = (
   viewId: string,
@@ -12,8 +12,8 @@ export const viewCompanyFields = (
   return [
     {
       fieldMetadataId:
-        objectMetadataMap[standardObjectIds.company].fields[
-          companyStandardFieldIds.name
+        objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+          COMPANY_STANDARD_FIELD_IDS.name
         ],
       viewId: viewId,
       position: 0,
@@ -22,8 +22,8 @@ export const viewCompanyFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap[standardObjectIds.company].fields[
-          companyStandardFieldIds.domainName
+        objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+          COMPANY_STANDARD_FIELD_IDS.domainName
         ],
       viewId: viewId,
       position: 1,
@@ -32,8 +32,8 @@ export const viewCompanyFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap[standardObjectIds.company].fields[
-          companyStandardFieldIds.accountOwner
+        objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+          COMPANY_STANDARD_FIELD_IDS.accountOwner
         ],
       viewId: viewId,
       position: 2,
@@ -42,8 +42,8 @@ export const viewCompanyFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap[standardObjectIds.company].fields[
-          baseObjectStandardFieldIds.createdAt
+        objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+          BASE_OBJECT_STANDARD_FIELD_IDS.createdAt
         ],
       viewId: viewId,
       position: 3,
@@ -52,8 +52,8 @@ export const viewCompanyFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap[standardObjectIds.company].fields[
-          companyStandardFieldIds.employees
+        objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+          COMPANY_STANDARD_FIELD_IDS.employees
         ],
       viewId: viewId,
       position: 4,
@@ -62,8 +62,8 @@ export const viewCompanyFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap[standardObjectIds.company].fields[
-          companyStandardFieldIds.linkedinLink
+        objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+          COMPANY_STANDARD_FIELD_IDS.linkedinLink
         ],
       viewId: viewId,
       position: 5,
@@ -72,8 +72,8 @@ export const viewCompanyFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap[standardObjectIds.company].fields[
-          companyStandardFieldIds.address
+        objectMetadataMap[STANDARD_OBJECT_IDS.company].fields[
+          COMPANY_STANDARD_FIELD_IDS.address
         ],
       viewId: viewId,
       position: 6,
