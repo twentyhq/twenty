@@ -31,6 +31,12 @@ export function generateDefaultValue(
         url: "''",
         label: "''",
       };
+    case FieldMetadataType.FILE:
+      return {
+        fileName: "''",
+        fileExtension: "''",
+        storageType: "'server'",
+      };
     case FieldMetadataType.CURRENCY:
       return {
         amountMicros: null,

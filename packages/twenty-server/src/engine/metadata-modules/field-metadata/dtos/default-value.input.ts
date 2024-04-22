@@ -138,3 +138,17 @@ export class FieldMetadataDefaultValueAddress {
   @IsNumber()
   addressLng: number | null;
 }
+
+export class FieldMetadataDefaultValueFile {
+  @ValidateIf((_object, value) => value !== null)
+  @IsString()
+  fileName: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsString()
+  fileExtension: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsString()
+  storageType: string | null;
+}

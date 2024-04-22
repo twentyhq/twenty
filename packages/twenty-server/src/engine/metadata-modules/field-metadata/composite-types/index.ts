@@ -6,6 +6,7 @@ import { fullNameCompositeType } from 'src/engine/metadata-modules/field-metadat
 import { linkCompositeType } from 'src/engine/metadata-modules/field-metadata/composite-types/link.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { addressCompositeType } from 'src/engine/metadata-modules/field-metadata/composite-types/address.composite-type';
+import { fileCompositeType } from 'src/engine/metadata-modules/field-metadata/composite-types/file.composite-type';
 
 export type CompositeFieldsDefinitionFunction = (
   fieldMetadata?: FieldMetadataInterface,
@@ -19,4 +20,5 @@ export const compositeTypeDefintions = new Map<
   [FieldMetadataType.CURRENCY, currencyCompositeType],
   [FieldMetadataType.FULL_NAME, fullNameCompositeType],
   [FieldMetadataType.ADDRESS, addressCompositeType],
+  [FieldMetadataType.FILE, fileCompositeType],
 ]);

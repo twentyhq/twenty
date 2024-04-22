@@ -37,7 +37,7 @@ export const attachmentStandardFieldIds = {
   name: '20202020-87a5-48f8-bbf7-ade388825a57',
   fullPath: '20202020-0d19-453d-8e8d-fbcda8ca3747',
   type: '20202020-a417-49b8-a40b-f6a7874caa0d',
-  storageDriverType: '20202020-e32c-41c1-9e45-1c5a34cc1f9e',
+  file: '20202020-e32c-41c1-9e45-1c5a34cc1f9e',
   author: '20202020-6501-4ac5-a4ef-b2f8522ef6cd',
   activity: '20202020-b569-481b-a13f-9b94e47e54fe',
   person: '20202020-0158-4aa2-965c-5cdafe21ffa2',

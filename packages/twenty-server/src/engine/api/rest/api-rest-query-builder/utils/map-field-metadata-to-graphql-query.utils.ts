@@ -122,5 +122,15 @@ export const mapFieldMetadataToGraphqlQuery = (
         addressLng
       }
     `;
+  } else if (fieldType === FieldMetadataType.FILE) {
+    return `
+      ${field.name}
+      {
+        fileName
+        fileExtension
+        uploadedAt
+        storageType
+      }
+    `;
   }
 };

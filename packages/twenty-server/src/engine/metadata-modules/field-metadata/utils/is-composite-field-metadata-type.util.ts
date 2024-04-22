@@ -10,6 +10,7 @@ export const isCompositeFieldMetadataType = (
     type === FieldMetadataType.LINK ||
     type === FieldMetadataType.CURRENCY ||
     type === FieldMetadataType.FULL_NAME ||
-    type === FieldMetadataType.ADDRESS
+    type === FieldMetadataType.ADDRESS ||
+    type === FieldMetadataType.FILE
   );
 };

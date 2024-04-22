@@ -16,6 +16,7 @@ import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metad
 
 export type CompositeFieldMetadataType =
   | FieldMetadataType.ADDRESS
+  | FieldMetadataType.FILE
   | FieldMetadataType.CURRENCY
   | FieldMetadataType.FULL_NAME
   | FieldMetadataType.LINK;

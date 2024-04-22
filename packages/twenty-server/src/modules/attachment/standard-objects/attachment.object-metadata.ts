@@ -17,7 +17,7 @@ import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 import { MessageObjectMetadata } from 'src/modules/messaging/standard-objects/message.object-metadata';
-import { StorageDriverType } from 'src/engine/integrations/file-storage/interfaces';
+import { FileMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/file.composite-type';
 
 @ObjectMetadata({
   standardId: standardObjectIds.attachment,
@@ -58,34 +58,14 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
   type: string;
 
   @FieldMetadata({
-    standardId: attachmentStandardFieldIds.storageDriverType,
-    type: FieldMetadataType.SELECT,
-    label: 'Storage driver type',
-    description: 'Attachment storage driver type',
+    standardId: attachmentStandardFieldIds.file,
+    type: FieldMetadataType.FILE,
+    label: 'File',
+    description: 'Attachment file',
     icon: 'IconCloud',
-    options: [
-      {
-        value: StorageDriverType.Local,
-        label: 'Local',
-        position: 0,
-        color: 'blue',
-      },
-      {
-        value: StorageDriverType.S3,
-        label: 'S3',
-        position: 1,
-        color: 'yellow',
-      },
-      {
-        value: StorageDriverType.Gmail,
-        label: 'Gmail',
-        position: 2,
-        color: 'red',
-      },
-    ],
   })
   @IsNullable()
-  storageDriverType: StorageDriverType;
+  file: FileMetadata;
 
   @FieldMetadata({
     standardId: attachmentStandardFieldIds.author,

@@ -60,6 +60,7 @@ const getSchemaComponentsProperties = (
       case FieldMetadataType.CURRENCY:
       case FieldMetadataType.FULL_NAME:
       case FieldMetadataType.ADDRESS:
+      case FieldMetadataType.FILE:
         itemProperty = {
           type: 'object',
           properties: compositeTypeDefintions

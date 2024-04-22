@@ -90,6 +90,7 @@ export class WorkspaceMigrationFactory {
         FieldMetadataType.ADDRESS,
         { factory: this.compositeColumnActionFactory },
       ],
+      [FieldMetadataType.FILE, { factory: this.compositeColumnActionFactory }],
       [
         FieldMetadataType.FULL_NAME,
         { factory: this.compositeColumnActionFactory },
