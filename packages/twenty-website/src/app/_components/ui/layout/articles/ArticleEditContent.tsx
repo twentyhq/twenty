@@ -75,11 +75,11 @@ export default function ArticleEditContent({
   return (
     <StyledContainer>
       <div>
-        <h1>Noticed something to modify ?</h1>
+        <h1>Noticed something to modify?</h1>
         <p>
           As an open-source company, we welcome contributions to our GitHub user
           guide. Help us keep it up-to-date, accurate, and easy to understand by
-          getting involved and sharing your ideas !
+          getting involved and sharing your ideas!
         </p>
         <StyledButtonContainer>
           <a

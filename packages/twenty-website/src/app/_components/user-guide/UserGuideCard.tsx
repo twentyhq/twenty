@@ -15,6 +15,10 @@ const StyledContainer = styled.div`
   cursor: pointer;
   width: 340px;
 
+  &:hover {
+    box-shadow: -8px 8px 0px -4px ${Theme.color.gray60};
+  }
+
   @media (max-width: 385px) {
     width: 280px;
   }

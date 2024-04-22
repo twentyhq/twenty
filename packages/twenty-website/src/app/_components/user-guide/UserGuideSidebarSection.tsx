@@ -54,6 +54,10 @@ const StyledSubTopicItem = styled.div<{ isselected: boolean }>`
   &:active {
     text-decoration: none;
   }
+
+  &:hover {
+    background: #1414140a;
+  }
 `;
 
 const StyledIcon = styled.div`
