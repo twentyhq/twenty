@@ -46276,6 +46276,8 @@ __metadata:
 "twenty-front@workspace:packages/twenty-front":
   version: 0.0.0-use.local
   resolution: "twenty-front@workspace:packages/twenty-front"
+  dependencies:
+    transliteration: "npm:^2.3.5"
   languageName: unknown
   linkType: soft
 
@@ -46312,7 +46314,6 @@ __metadata:
     passport: "npm:^0.7.0"
     psl: "npm:^1.9.0"
     rimraf: "npm:^5.0.5"
-    transliteration: "npm:^2.3.5"
     tsconfig-paths: "npm:^4.2.0"
     typescript: "npm:5.3.3"
   languageName: unknown

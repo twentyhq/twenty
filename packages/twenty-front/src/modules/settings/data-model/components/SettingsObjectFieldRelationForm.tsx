@@ -3,6 +3,7 @@ import { useIcons } from 'twenty-ui';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
+import { validateMetadataLabel } from '@/object-metadata/utils/validateMetadataLabel';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -120,9 +121,11 @@ export const SettingsObjectFieldRelationForm = ({
           placeholder="Field name"
           value={values.field.label}
           onChange={(value) => {
-            onChange({
-              field: { ...values.field, label: value },
-            });
+            if (!value || validateMetadataLabel(value)) {
+              onChange({
+                field: { ...values.field, label: value },
+              });
+            }
           }}
           fullWidth
         />
