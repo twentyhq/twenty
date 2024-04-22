@@ -1,18 +1,26 @@
 export const gmailSearchFilterNonPersonalEmails =
   '*noreply@|*no-reply@|*do_not_reply@|*no.reply@|*info@|*contact@|*hello@|*support@|*feedback@|*service@|*help@';
 
+export const excludedCategories = ['promotions', 'social', 'forums'];
+
+export const excludedFileTypes = ['.ics'];
+
+const excludedCategoriesAndFileTypesString = `-category:${excludedCategories.join(
+  ' -category:',
+)} -filename:${excludedFileTypes.join(' -filename:')}`;
+
 export const gmailSearchFilterExcludeEmailAdresses = (
   emails?: string[],
 ): string => {
   if (!emails || emails.length === 0) {
-    return `from:-(${gmailSearchFilterNonPersonalEmails}) -category:promotions -category:social -category:forums -filename:.ics`;
+    return `from:-(${gmailSearchFilterNonPersonalEmails}) ${excludedCategoriesAndFileTypesString}`;
   }
 
   return `(in:inbox from:-(${gmailSearchFilterNonPersonalEmails}|${emails.join(
     '|',
   )})|(in:sent to:-(${gmailSearchFilterNonPersonalEmails}|${emails.join(
     '|',
-  )})) -category:promotions -category:social -category:forums -filename:.ics`;
+  )})) ${excludedCategoriesAndFileTypesString}`;
 };
 
 export const gmailSearchFilterIncludeOnlyEmailAdresses = (
@@ -24,7 +32,7 @@ export const gmailSearchFilterIncludeOnlyEmailAdresses = (
 
   return `(in:inbox from:(${emails.join('|')})|(in:sent to:(${emails.join(
     '|',
-  )}))`;
+  )})) ${excludedCategoriesAndFileTypesString}`;
 };
 
 export const gmailSearchFilterEmailAdresses = (
@@ -45,5 +53,7 @@ export const gmailSearchFilterEmailAdresses = (
     '|',
   )}))|(in:sent to:((${includedEmails.join(
     '|',
-  )}) -(${gmailSearchFilterNonPersonalEmails}|${excludedEmails.join('|')}))`;
+  )}) -(${gmailSearchFilterNonPersonalEmails}|${excludedEmails.join(
+    '|',
+  )}))) ${excludedCategoriesAndFileTypesString}`;
 };
