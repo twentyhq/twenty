@@ -1,7 +1,6 @@
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
-import { BrowserRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import { IconsProvider } from 'twenty-ui';
 
@@ -41,43 +40,41 @@ root.render(
     <AppErrorBoundary>
       <RecoilDebugObserverEffect />
       <ApolloDevLogEffect />
-      <BrowserRouter>
-        <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-          <IconsProvider>
-            <ExceptionHandlerProvider>
-              <ApolloProvider>
-                <HelmetProvider>
-                  <ClientConfigProviderEffect />
-                  <ClientConfigProvider>
-                    <UserProviderEffect />
-                    <UserProvider>
-                      <ApolloMetadataClientProvider>
-                        <ObjectMetadataItemsProvider>
-                          <PrefetchDataProvider>
-                            <AppThemeProvider>
-                              <SnackBarProvider>
-                                <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                                  <DialogManager>
-                                    <StrictMode>
-                                      <PromiseRejectionEffect />
-                                      <App />
-                                    </StrictMode>
-                                  </DialogManager>
-                                </DialogManagerScope>
-                              </SnackBarProvider>
-                            </AppThemeProvider>
-                          </PrefetchDataProvider>
-                          <PageChangeEffect />
-                        </ObjectMetadataItemsProvider>
-                      </ApolloMetadataClientProvider>
-                    </UserProvider>
-                  </ClientConfigProvider>
-                </HelmetProvider>
-              </ApolloProvider>
-            </ExceptionHandlerProvider>
-          </IconsProvider>
-        </SnackBarProviderScope>
-      </BrowserRouter>
+      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+        <IconsProvider>
+          <ExceptionHandlerProvider>
+            <ApolloProvider>
+              <HelmetProvider>
+                <ClientConfigProviderEffect />
+                <ClientConfigProvider>
+                  <UserProviderEffect />
+                  <UserProvider>
+                    <ApolloMetadataClientProvider>
+                      <ObjectMetadataItemsProvider>
+                        <PrefetchDataProvider>
+                          <AppThemeProvider>
+                            <SnackBarProvider>
+                              <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                                <DialogManager>
+                                  <StrictMode>
+                                    <PromiseRejectionEffect />
+                                    <App />
+                                  </StrictMode>
+                                </DialogManager>
+                              </DialogManagerScope>
+                            </SnackBarProvider>
+                          </AppThemeProvider>
+                        </PrefetchDataProvider>
+                        <PageChangeEffect />
+                      </ObjectMetadataItemsProvider>
+                    </ApolloMetadataClientProvider>
+                  </UserProvider>
+                </ClientConfigProvider>
+              </HelmetProvider>
+            </ApolloProvider>
+          </ExceptionHandlerProvider>
+        </IconsProvider>
+      </SnackBarProviderScope>
     </AppErrorBoundary>
   </RecoilRoot>,
 );

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { matchPath, useLocation, useNavigate } from 'react-router-dom';
+import { matchPath } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { IconCheckbox } from 'twenty-ui';
 
@@ -18,10 +18,13 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useGetWorkspaceFromInviteHashLazyQuery } from '~/generated/graphql';
+import {
+  useIsMatchingLocation,
+  useLocation,
+  useNavigate,
+} from '~/hooks/withoutRouter';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-
-import { useIsMatchingLocation } from '../hooks/useIsMatchingLocation';
 
 // TODO: break down into smaller functions and / or hooks
 export const PageChangeEffect = () => {

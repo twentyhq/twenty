@@ -1,5 +1,6 @@
 import { Keys } from 'react-hotkeys-hook/dist/types';
-import { useNavigate } from 'react-router-dom';
+
+import { useNavigate } from '~/hooks/withoutRouter';
 
 import { AppHotkeyScope } from '../types/AppHotkeyScope';
 

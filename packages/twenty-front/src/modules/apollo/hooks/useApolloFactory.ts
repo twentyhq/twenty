@@ -1,5 +1,4 @@
 import { useMemo, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
@@ -9,8 +8,12 @@ import { tokenPairState } from '@/auth/states/tokenPairState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { AppPath } from '@/types/AppPath';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { useUpdateEffect } from '~/hooks/useUpdateEffect';
+import {
+  useIsMatchingLocation,
+  useLocation,
+  useNavigate,
+} from '~/hooks/withoutRouter';
 import { isDefined } from '~/utils/isDefined';
 
 import { ApolloFactory, Options } from '../services/apollo.factory';

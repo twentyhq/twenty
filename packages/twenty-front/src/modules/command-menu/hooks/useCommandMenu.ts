@@ -1,5 +1,4 @@
 import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
@@ -7,6 +6,7 @@ import { commandMenuSearchState } from '@/command-menu/states/commandMenuSearchS
 import { useSelectableList } from '@/ui/layout/selectable-list/hooks/useSelectableList';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
+import { useNavigate } from '~/hooks/withoutRouter';
 import { isDefined } from '~/utils/isDefined';
 
 import { COMMAND_MENU_COMMANDS } from '../constants/CommandMenuCommands';
