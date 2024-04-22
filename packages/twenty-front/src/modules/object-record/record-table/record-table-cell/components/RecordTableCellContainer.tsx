@@ -1,23 +1,15 @@
 import React, { ReactElement, useContext, useState } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 import { IconArrowUpRight } from 'twenty-ui';
 
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
-import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useCurrentTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useCurrentCellPosition';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
-import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
-import { isSoftFocusOnTableCellComponentFamilyState } from '@/object-record/record-table/states/isSoftFocusOnTableCellComponentFamilyState';
-import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
-import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
-import { extractComponentFamilyState } from '@/ui/utilities/state/component-state/utils/extractComponentFamilyState';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
@@ -62,7 +54,7 @@ export const RecordTableCellContainer = ({
   nonEditModeContent,
   editHotkeyScope,
 }: RecordTableCellContainerProps) => {
-  const { columnIndex } = useContext(RecordTableCellContext);
+  const { columnIndex, fieldCellValue } = useContext(RecordTableCellContext);
   const { isReadOnly, isSelected, recordId } = useContext(
     RecordTableRowContext,
   );
@@ -74,31 +66,6 @@ export const RecordTableCellContainer = ({
   const [isHovered, setIsHovered] = useState(false);
 
   const { openTableCell } = useOpenRecordTableCellFromCell();
-
-  const tableScopeId = useAvailableScopeIdOrThrow(
-    RecordTableScopeInternalContext,
-    getScopeIdOrUndefinedFromComponentId(),
-  );
-
-  const isTableCellInEditModeFamilyState = extractComponentFamilyState(
-    isTableCellInEditModeComponentFamilyState,
-    tableScopeId,
-  );
-
-  const isSoftFocusOnTableCellFamilyState = extractComponentFamilyState(
-    isSoftFocusOnTableCellComponentFamilyState,
-    tableScopeId,
-  );
-
-  const isCurrentTableCellInEditMode = useRecoilValue(
-    isTableCellInEditModeFamilyState(cellPosition),
-  );
-
-  const hasSoftFocus = useRecoilValue(
-    isSoftFocusOnTableCellFamilyState(cellPosition),
-  );
-
-  const isEmpty = useIsFieldEmpty();
 
   const handleButtonClick = () => {
     onMoveSoftFocusToCell(cellPosition);
@@ -126,6 +93,12 @@ export const RecordTableCellContainer = ({
   const isFirstColumn = columnIndex === 0;
   const customButtonIcon = useGetButtonIcon();
   const buttonIcon = isFirstColumn ? IconArrowUpRight : customButtonIcon;
+
+  const {
+    hasSoftFocus,
+    isEmpty,
+    isInEditMode: isCurrentTableCellInEditMode,
+  } = fieldCellValue;
 
   const showButton =
     !!buttonIcon &&
