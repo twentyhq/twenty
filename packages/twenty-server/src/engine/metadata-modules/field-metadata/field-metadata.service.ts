@@ -548,7 +548,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         validateString(fieldMetadataInput.name);
       } catch (error) {
         if (error instanceof InvalidStringException) {
-          console.error(error.message);
           throw new BadRequestException(
             `Characters used in name "${fieldMetadataInput.name}" are not supported`,
           );

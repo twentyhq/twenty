@@ -1,7 +1,7 @@
 import toSnakeCase from 'lodash.snakecase';
 
 import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
-import { formatString } from '~/pages/settings/data-model/utils/format-string.util';
+import { formatMetadataLabel } from '~/pages/settings/data-model/utils/format-metadata-label.util';
 import { isDefined } from '~/utils/isDefined';
 
 import { FieldMetadataOption } from '../types/FieldMetadataOption';
@@ -64,7 +64,7 @@ export const formatFieldMetadataItemInput = (
     description: input.description?.trim() ?? null,
     icon: input.icon,
     label: input.label.trim(),
-    name: formatString(input.label.trim()),
+    name: formatMetadataLabel(input.label.trim()),
     options: options?.map((option, index) => ({
       color: option.color,
       id: option.id,

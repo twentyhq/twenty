@@ -2,7 +2,7 @@ import { InvalidStringException } from 'src/engine/metadata-modules/errors/Inval
 
 const VALID_STRING_PATTERN = /^[a-zA-Z][a-zA-Z0-9 ]*$/;
 
-export const validateString = (string: string) => {
+export const validateMetadataName = (string: string) => {
   if (!string.match(VALID_STRING_PATTERN)) {
     throw new InvalidStringException(string);
   }

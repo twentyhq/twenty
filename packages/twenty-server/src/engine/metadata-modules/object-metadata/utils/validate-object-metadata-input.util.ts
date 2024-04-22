@@ -3,7 +3,7 @@ import { BadRequestException } from '@nestjs/common';
 import { InvalidStringException } from 'src/engine/metadata-modules/errors/InvalidStringException';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { UpdateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
-import { validateString } from 'src/engine/metadata-modules/utils/validate-string.utils';
+import { validateMetadataName } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 
 export const validateObjectMetadataInput = <
   T extends UpdateObjectInput | CreateObjectInput,
@@ -12,11 +12,11 @@ export const validateObjectMetadataInput = <
 ): void => {
   try {
     if (objectMetadataInput.nameSingular) {
-      validateString(objectMetadataInput.nameSingular);
+      validateMetadataName(objectMetadataInput.nameSingular);
     }
 
     if (objectMetadataInput.namePlural) {
-      validateString(objectMetadataInput.namePlural);
+      validateMetadataName(objectMetadataInput.namePlural);
     }
   } catch (error) {
     if (error instanceof InvalidStringException) {
