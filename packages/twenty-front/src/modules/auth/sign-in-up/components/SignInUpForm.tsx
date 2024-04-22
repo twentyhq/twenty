@@ -28,7 +28,6 @@ import { HorizontalSeparator } from './HorizontalSeparator';
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
   margin-top: ${({ theme }) => theme.spacing(4)};
-  width: 200px;
 `;
 
 const StyledForm = styled.form`
@@ -127,7 +126,7 @@ export const SignInUpForm = () => {
               onClick={signInWithGoogle}
               fullWidth
             />
-            <HorizontalSeparator />
+            <HorizontalSeparator visible={!authProviders.microsoft} />
           </>
         )}
 
