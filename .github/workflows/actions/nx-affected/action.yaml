@@ -1,0 +1,21 @@
+name: Nx Affected CI
+inputs:
+  parallel:
+    required: false
+    types: [number]
+  tag:
+    required: false
+    types: [string]
+  target:
+    required: true
+    types: [string]
+
+runs:
+  using: "composite"
+  steps:
+    - name: Nx Affected CI / Get last successful commit
+      id: setSHAs
+      uses: nrwl/nx-set-shas@v4
+    - name: Run affected command
+      shell: bash
+      run: npx nx affected --nxBail --configuration=ci -t ${{ inputs.target }} --parallel=${{ inputs.parallel }} --exclude='*,!tag:${{ inputs.tag }}'

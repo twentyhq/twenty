@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/twenty-ui/src",
   "projectType": "library",
+  "tags": ["scope:frontend"],
   "targets": {
     "build": {
       "dependsOn": ["^build", "generateBarrels"]
@@ -83,6 +84,5 @@
         "command": "test-storybook -c {projectRoot}/.storybook --url=http://localhost:6007"
       }
     }
-  },
-  "tags": []
+  }
 }

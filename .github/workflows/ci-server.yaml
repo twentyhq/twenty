@@ -28,22 +28,26 @@ jobs:
         ports:
           - 5432:5432
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Fetch local actions and base branch history
+        uses: actions/checkout@v4
         with:
-          node-version: "18"
-      - name: Server / Install Dependencies
-        run: yarn
-      - name: Server / Run linter
-        run: npx nx lint twenty-server
+          fetch-depth: 0
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/yarn-install
+      - name: Server / Run linter & typecheck
+        uses: ./.github/workflows/actions/nx-affected
+        with:
+          tag: scope:backend
+          target: lint typecheck
       - name: Server / Run jest tests
-        run: npx nx test:unit twenty-server
+        uses: ./.github/workflows/actions/nx-affected
+        with:
+          parallel: 1
+          tag: scope:backend
+          target: test
       - name: Server / Build
         run: npx nx build twenty-server
       - name: Server / Write .env
-        run: |
-          cd packages/twenty-server
-          cp .env.example .env
+        run: npx nx reset:env twenty-server
       - name: Worker / Run
         run: MESSAGE_QUEUE_TYPE=sync npx nx worker twenty-server

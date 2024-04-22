@@ -1,0 +1,60 @@
+{
+  "name": "twenty-emails",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "tags": ["scope:backend"],
+  "targets": {
+    "build": {
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "{projectRoot}/dist"
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsc -b tsconfig.json",
+        "args": ["--incremental"]
+      },
+      "configurations": {
+        "ci": { "args": [] },
+        "watch": { "watch": true }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "eslintConfig": "{projectRoot}/.eslintrc.cjs",
+        "ignorePath": "{workspaceRoot}/.gitignore",
+        "lintFilePatterns": [
+          "{projectRoot}/src/**/*.{ts,tsx,json}",
+          "{projectRoot}/package.json"
+        ],
+        "reportUnusedDisableDirectives": "error",
+        "cache": true
+      },
+      "configurations": {
+        "ci": {
+          "cache": false
+        },
+        "fix": {
+          "fix": true
+        }
+      }
+    },
+    "fmt": {
+      "executor": "nx:run-commands",
+      "inputs": ["{projectRoot}/src/**/*"],
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "prettier src --check"
+      },
+      "configurations": {
+        "fix": { "args": ["--write"] }
+      }
+    }
+  }
+}

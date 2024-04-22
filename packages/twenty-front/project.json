@@ -2,6 +2,7 @@
   "name": "twenty-front",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
+  "tags": ["scope:frontend"],
   "targets": {
     "build": {
       "outputs": ["{options.outputPath}"],
@@ -22,6 +23,16 @@
         "buildTarget": "twenty-front:build",
         "port": 3001,
         "open": true
+      }
+    },
+    "reset:env": {
+      "executor": "nx:run-commands",
+      "inputs": ["{projectRoot}/.env.example"],
+      "outputs": ["{projectRoot}/.env"],
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "cp .env.example .env"
       }
     },
     "typecheck": {

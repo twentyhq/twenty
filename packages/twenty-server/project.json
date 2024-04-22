@@ -2,6 +2,7 @@
   "name": "twenty-server",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
+  "tags": ["scope:backend"],
   "targets": {
     "build": {
       "executor": "nx:run-commands",
@@ -33,6 +34,16 @@
       "options": {
         "cwd": "packages/twenty-server",
         "command": "nx start --debug"
+      }
+    },
+    "reset:env": {
+      "executor": "nx:run-commands",
+      "inputs": ["{projectRoot}/.env.example"],
+      "outputs": ["{projectRoot}/.env"],
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "cp .env.example .env"
       }
     },
     "command": {
