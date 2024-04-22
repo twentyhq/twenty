@@ -43,8 +43,8 @@ export class MessagingBlocklistListener {
       BlocklistReimportMessagesJob.name,
       {
         workspaceId: payload.workspaceId,
-        workspaceMemberId: payload.details.before.workspaceMember.id,
-        handle: payload.details.before.handle,
+        workspaceMemberId: payload.properties.before.workspaceMember.id,
+        handle: payload.properties.before.handle,
       },
     );
   }
