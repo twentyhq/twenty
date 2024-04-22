@@ -84,6 +84,7 @@ module.exports = {
         'simple-import-sort/imports': 'off',
         'unicorn/filename-case': 'off',
         'prefer-arrow/prefer-arrow-functions': 'off',
+        '@nx/workspace-max-consts-per-file': 'off',
       },
     },
   ],
