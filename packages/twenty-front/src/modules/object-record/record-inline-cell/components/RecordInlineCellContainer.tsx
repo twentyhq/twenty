@@ -72,7 +72,6 @@ const StyledInlineCellBaseContainer = styled.div`
 
   gap: ${({ theme }) => theme.spacing(1)};
 
-  position: relative;
   user-select: none;
 `;
 
@@ -142,7 +141,11 @@ export const RecordInlineCellContainer = ({
   };
 
   const showEditButton =
-    buttonIcon && !isInlineCellInEditMode && isHovered && !editModeContentOnly;
+    buttonIcon &&
+    !isInlineCellInEditMode &&
+    isHovered &&
+    !editModeContentOnly &&
+    !isDisplayModeContentEmpty;
 
   const theme = useTheme();
   const labelId = `label-${entityId}-${fieldDefinition?.metadata?.fieldName}`;

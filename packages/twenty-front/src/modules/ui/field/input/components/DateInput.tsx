@@ -1,10 +1,7 @@
 import { useRef, useState } from 'react';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { flip, offset, useFloating } from '@floating-ui/react';
 import { Nullable } from 'twenty-ui';
 
-import { DateDisplay } from '@/ui/field/display/components/DateDisplay';
 import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import {
   MONTH_AND_YEAR_DROPDOWN_ID,
@@ -19,16 +16,9 @@ const StyledCalendarContainer = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
+  top: 0;
 
   position: absolute;
-
-  z-index: 1;
-`;
-
-const StyledInputContainer = styled.div`
-  padding: ${({ theme }) => theme.spacing(0)} ${({ theme }) => theme.spacing(2)};
-
-  width: 100%;
 `;
 
 export type DateInputProps = {
@@ -55,21 +45,9 @@ export const DateInput = ({
   isDateTimeInput,
   onClear,
 }: DateInputProps) => {
-  const theme = useTheme();
-
   const [internalValue, setInternalValue] = useState(value);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
-
-  const { refs, floatingStyles } = useFloating({
-    placement: 'bottom-start',
-    middleware: [
-      flip(),
-      offset({
-        mainAxis: theme.spacingMultiplicator * -6,
-      }),
-    ],
-  });
 
   const handleChange = (newDate: Date | null) => {
     setInternalValue(newDate);
@@ -104,27 +82,20 @@ export const DateInput = ({
 
   return (
     <div ref={wrapperRef}>
-      <div ref={refs.setReference}>
-        <StyledInputContainer>
-          <DateDisplay value={internalValue ?? new Date()} />
-        </StyledInputContainer>
-      </div>
-      <div ref={refs.setFloating} style={floatingStyles}>
-        <StyledCalendarContainer>
-          <InternalDatePicker
-            date={internalValue ?? new Date()}
-            onChange={handleChange}
-            onMouseSelect={(newDate: Date | null) => {
-              onEnter(newDate);
-            }}
-            clearable={clearable ? clearable : false}
-            isDateTimeInput={isDateTimeInput}
-            onEnter={onEnter}
-            onEscape={onEscape}
-            onClear={handleClear}
-          />
-        </StyledCalendarContainer>
-      </div>
+      <StyledCalendarContainer>
+        <InternalDatePicker
+          date={internalValue ?? new Date()}
+          onChange={handleChange}
+          onMouseSelect={(newDate: Date | null) => {
+            onEnter(newDate);
+          }}
+          clearable={clearable ? clearable : false}
+          isDateTimeInput={isDateTimeInput}
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClear={handleClear}
+        />
+      </StyledCalendarContainer>
     </div>
   );
 };

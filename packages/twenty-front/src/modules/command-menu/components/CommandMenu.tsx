@@ -22,6 +22,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { getLogoUrlFromDomainName } from '~/utils';
+import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 import { isDefined } from '~/utils/isDefined';
 
 import { useCommandMenu } from '../hooks/useCommandMenu';
@@ -142,8 +143,10 @@ export const CommandMenu = () => {
     objectNameSingular: CoreObjectNameSingular.Person,
     filter: commandMenuSearch
       ? makeOrFilterVariables([
-          { name: { firstName: { ilike: `%${commandMenuSearch}%` } } },
-          { name: { lastName: { ilike: `%${commandMenuSearch}%` } } },
+          ...generateILikeFiltersForCompositeFields(commandMenuSearch, 'name', [
+            'firstName',
+            'lastName',
+          ]),
           { email: { ilike: `%${commandMenuSearch}%` } },
           { phone: { ilike: `%${commandMenuSearch}%` } },
         ])

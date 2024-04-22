@@ -38,8 +38,8 @@ export const SettingsIntegrationDatabaseTablesListCard = ({
   // We need to use a state because the table status update re-render the whole list of toggles
   const [items] = useState(
     tables.map((table) => ({
-      id: table.name,
       ...table,
+      id: table.name,
     })),
   );
 

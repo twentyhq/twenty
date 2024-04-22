@@ -19,6 +19,7 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
+    "outDir": "../../dist/out-tsc",
     "paths": {
       "@/*": ["packages/twenty-front/src/modules/*"],
       "~/*": ["packages/twenty-front/src/*"],
@@ -34,6 +35,9 @@
     },
     {
       "path": "./tsconfig.spec.json"
+    },
+    {
+      "path": "./tsconfig.storybook.json"
     }
   ],
   "extends": "../../tsconfig.base.json"

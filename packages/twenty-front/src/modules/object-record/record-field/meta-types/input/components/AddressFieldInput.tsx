@@ -1,7 +1,6 @@
 import { useAddressField } from '@/object-record/record-field/meta-types/hooks/useAddressField';
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { AddressInput } from '@/ui/field/input/components/AddressInput';
-import { FieldInputOverlay } from '@/ui/field/input/components/FieldInputOverlay';
 
 import { usePersistField } from '../../../hooks/usePersistField';
 
@@ -69,17 +68,15 @@ export const AddressFieldInput = ({
   };
 
   return (
-    <FieldInputOverlay>
-      <AddressInput
-        value={convertToAddress(draftValue)}
-        onClickOutside={handleClickOutside}
-        onEnter={handleEnter}
-        onEscape={handleEscape}
-        hotkeyScope={hotkeyScope}
-        onChange={handleChange}
-        onTab={handleTab}
-        onShiftTab={handleShiftTab}
-      />
-    </FieldInputOverlay>
+    <AddressInput
+      value={convertToAddress(draftValue)}
+      onClickOutside={handleClickOutside}
+      onEnter={handleEnter}
+      onEscape={handleEscape}
+      hotkeyScope={hotkeyScope}
+      onChange={handleChange}
+      onTab={handleTab}
+      onShiftTab={handleShiftTab}
+    />
   );
 };

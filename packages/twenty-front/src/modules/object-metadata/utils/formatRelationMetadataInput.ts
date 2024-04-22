@@ -12,7 +12,7 @@ export type FormatRelationMetadataInputParams = {
   field: Pick<Field, 'label' | 'icon' | 'description' | 'type'>;
   objectMetadataId: string;
   connect: {
-    field: Pick<Field, 'label' | 'icon' | 'type'>;
+    field: Pick<Field, 'label' | 'icon'>;
     objectMetadataId: string;
   };
 };

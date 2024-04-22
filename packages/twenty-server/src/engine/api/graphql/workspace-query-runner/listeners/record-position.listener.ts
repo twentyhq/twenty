@@ -24,7 +24,7 @@ export class RecordPositionListener {
       return;
     }
 
-    if (hasPositionSet(payload.details.after)) {
+    if (hasPositionSet(payload.properties.after)) {
       return;
     }
 

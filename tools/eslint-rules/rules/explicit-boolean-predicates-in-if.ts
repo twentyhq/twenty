@@ -1,6 +1,12 @@
 import { ESLintUtils, TSESTree } from '@typescript-eslint/experimental-utils';
+import ts from 'typescript';
 
 export const RULE_NAME = 'explicit-boolean-predicates-in-if';
+
+const isBooleanType = (type: ts.Type) => {
+  // check if boolean flag(s) is set on the type (e.g. boolean, true, false, etc.)
+  return type && (type.flags & ts.TypeFlags.BooleanLike) !== 0;
+};
 
 export const rule = ESLintUtils.RuleCreator(() => __filename)({
   name: RULE_NAME,
@@ -27,9 +33,8 @@ export const rule = ESLintUtils.RuleCreator(() => __filename)({
         const tsNode = parserServices.esTreeNodeToTSNodeMap.get(node.test);
         const type = typeChecker.getTypeAtLocation(tsNode);
 
-        if (typeChecker.typeToString(type) !== 'boolean') {
+        if (!isBooleanType(type)) {
           const { test } = node;
-
           context.report({
             node: test,
             messageId: 'nonExplicitPredicate',

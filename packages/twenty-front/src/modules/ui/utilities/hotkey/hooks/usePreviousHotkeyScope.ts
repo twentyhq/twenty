@@ -23,7 +23,6 @@ export const usePreviousHotkeyScope = () => {
           return;
         }
 
-        // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
         if (DEBUG_HOTKEY_SCOPE) {
           logDebug('DEBUG: goBackToPreviousHotkeyScope', previousHotkeyScope);
         }
@@ -45,7 +44,6 @@ export const usePreviousHotkeyScope = () => {
           .getLoadable(currentHotkeyScopeState)
           .getValue();
 
-        // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
         if (DEBUG_HOTKEY_SCOPE) {
           logDebug('DEBUG: setHotkeyScopeAndMemorizePreviousScope', {
             currentHotkeyScope,

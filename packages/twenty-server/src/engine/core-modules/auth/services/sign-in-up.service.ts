@@ -32,6 +32,7 @@ export type SignInUpServiceInput = {
   lastName?: string | null;
   workspaceInviteHash?: string | null;
   picture?: string | null;
+  fromSSO: boolean;
 };
 
 @Injectable()
@@ -54,6 +55,7 @@ export class SignInUpService {
     firstName,
     lastName,
     picture,
+    fromSSO,
   }: SignInUpServiceInput) {
     if (!firstName) firstName = '';
     if (!lastName) lastName = '';
@@ -80,7 +82,7 @@ export class SignInUpService {
       relations: ['defaultWorkspace'],
     });
 
-    if (existingUser && existingUser.passwordHash) {
+    if (existingUser && !fromSSO) {
       const isValid = await compareHash(
         password || '',
         existingUser.passwordHash,
@@ -137,6 +139,13 @@ export class SignInUpService {
     assert(
       workspace,
       'This workspace inviteHash is invalid',
+      ForbiddenException,
+    );
+
+    assert(
+      !this.environmentService.get('IS_BILLING_ENABLED') ||
+        workspace.subscriptionStatus !== 'incomplete',
+      'Workspace subscription status is incomplete',
       ForbiddenException,
     );
 

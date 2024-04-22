@@ -70,7 +70,6 @@
   "generators": {
     "@nx/react": {
       "application": {
-        "babel": true,
         "style": "@emotion/styled",
         "linter": "eslint",
         "bundler": "vite",

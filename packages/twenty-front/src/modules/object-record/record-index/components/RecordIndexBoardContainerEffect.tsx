@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
@@ -33,7 +33,7 @@ export const RecordIndexBoardContainerEffect = ({
     setObjectSingularName,
     selectedRecordIdsSelector,
     setFieldDefinitions,
-    onFetchMoreVisibilityChangeState,
+    shouldFetchMoreSelector,
     setKanbanFieldMetadataName,
   } = useRecordBoard(recordBoardId);
 
@@ -43,27 +43,30 @@ export const RecordIndexBoardContainerEffect = ({
     viewBarId,
   });
 
-  const setOnFetchMoreVisibilityChange = useSetRecoilState(
-    onFetchMoreVisibilityChangeState,
-  );
-
   const recordIndexKanbanFieldMetadataId = useRecoilValue(
     recordIndexKanbanFieldMetadataIdState,
   );
-
-  useEffect(() => {
-    setOnFetchMoreVisibilityChange(() => () => {
-      if (!loading) {
-        fetchMoreRecords?.();
-      }
-    });
-  }, [fetchMoreRecords, loading, setOnFetchMoreVisibilityChange]);
 
   const navigate = useNavigate();
 
   const navigateToSelectSettings = useCallback(() => {
     navigate(`/settings/objects/${objectMetadataItem.namePlural}`);
   }, [navigate, objectMetadataItem.namePlural]);
+
+  const columnDefinitions =
+    computeRecordBoardColumnDefinitionsFromObjectMetadata(
+      objectMetadataItem,
+      recordIndexKanbanFieldMetadataId ?? '',
+      navigateToSelectSettings,
+    );
+
+  const shouldFetchMore = useRecoilValue(shouldFetchMoreSelector());
+
+  useEffect(() => {
+    if (!loading && shouldFetchMore) {
+      fetchMoreRecords?.();
+    }
+  }, [columnDefinitions, fetchMoreRecords, loading, shouldFetchMore]);
 
   const { resetRecordSelection } = useRecordBoardSelection(recordBoardId);
 
