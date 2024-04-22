@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
+import { TbApi, TbChevronLeft, TbLink } from 'react-icons/tb';
 import { useHistory, useLocation } from '@docusaurus/router';
-import { TbApi, TbChevronLeft, TbLink } from '@theme/icons';
 import { parseJson } from 'nx/src/utils/json';
 
 import tokenForm from '!css-loader!./token-form.css';
 
+export type SubDoc = 'core' | 'metadata';
 export type TokenFormProps = {
   setOpenApiJson?: (json: object) => void;
   setToken?: (token: string) => void;
   setBaseUrl?: (baseUrl: string) => void;
-  isTokenValid: boolean;
-  setIsTokenValid: (boolean) => void;
-  setLoadingState: (boolean) => void;
-  subDoc?: string;
+  isTokenValid?: boolean;
+  setIsTokenValid?: (boolean) => void;
+  setLoadingState?: (boolean) => void;
+  subDoc?: SubDoc;
 };
 
 const TokenForm = ({
@@ -141,25 +142,23 @@ const TokenForm = ({
             onBlur={() => submitToken(token)}
           />
         </div>
-        {!location.pathname.includes('rest-api') && (
-          <div className="inputWrapper" style={{ maxWidth: '100px' }}>
-            <select
-              className="select"
-              onChange={(event) =>
-                history.replace(
+        <div className="inputWrapper" style={{ maxWidth: '100px' }}>
+          <select
+            className="select"
+            onChange={(event) =>
+              history.replace(
+                '/' +
+                  location.pathname.split('/').at(-2) +
                   '/' +
-                    location.pathname.split('/').at(-2) +
-                    '/' +
-                    event.target.value,
-                )
-              }
-              value={location.pathname.split('/').at(-1)}
-            >
-              <option value="core">Core</option>
-              <option value="metadata">Metadata</option>
-            </select>
-          </div>
-        )}
+                  event.target.value,
+              )
+            }
+            value={location.pathname.split('/').at(-1)}
+          >
+            <option value="core">Core</option>
+            <option value="metadata">Metadata</option>
+          </select>
+        </div>
       </form>
     </div>
   );

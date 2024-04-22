@@ -24,7 +24,8 @@ import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/st
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
-import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { TimelineActivityObjectMetadata } from 'src/modules/timeline/standard-objects/timeline-activity.object-metadata';
+import { AuditLogObjectMetadata } from 'src/modules/timeline/standard-objects/audit-log.object-metadata';
 import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
@@ -248,7 +249,7 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   calendarEventParticipants: Relation<CalendarEventParticipantObjectMetadata[]>;
 
   @FieldMetadata({
-    standardId: workspaceMemberStandardFieldIds.events,
+    standardId: workspaceMemberStandardFieldIds.timelineActivities,
     type: FieldMetadataType.RELATION,
     label: 'Events',
     description: 'Events linked to the workspace member',
@@ -256,10 +257,26 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => EventObjectMetadata,
+    inverseSideTarget: () => TimelineActivityObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
   @IsSystem()
-  events: Relation<EventObjectMetadata[]>;
+  timelineActivities: Relation<TimelineActivityObjectMetadata[]>;
+
+  @FieldMetadata({
+    standardId: workspaceMemberStandardFieldIds.auditLogs,
+    type: FieldMetadataType.RELATION,
+    label: 'Aud tLogs',
+    description: 'Audit Logs linked to the workspace member',
+    icon: 'IconTimelineEvent',
+  })
+  @RelationMetadata({
+    type: RelationMetadataType.ONE_TO_MANY,
+    inverseSideTarget: () => AuditLogObjectMetadata,
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  @IsNullable()
+  @IsSystem()
+  auditLogs: Relation<AuditLogObjectMetadata[]>;
 }
