@@ -110,20 +110,20 @@ export class GmailFullSyncService {
         workspaceId,
       );
 
+    const gmailClient: gmail_v1.Gmail =
+      await this.gmailClientProvider.getGmailClient(refreshToken);
+
+    const blocklistedEmails = await this.fetchBlocklistEmails(
+      connectedAccount.accountOwnerId,
+      workspaceId,
+    );
+
     await workspaceDataSource
       ?.transaction(async (transactionManager) => {
-        const gmailClient: gmail_v1.Gmail =
-          await this.gmailClientProvider.getGmailClient(refreshToken);
-
-        const blocklistedEmails = await this.fetchBlocklistEmails(
-          connectedAccount.accountOwnerId,
-          workspaceId,
-        );
-
         await this.fetchAllMessageIdsFromGmailAndStoreInCache(
           gmailClient,
           gmailMessageChannel.id,
-          includedEmails ?? [],
+          includedEmails || [],
           blocklistedEmails,
           workspaceId,
           transactionManager,
