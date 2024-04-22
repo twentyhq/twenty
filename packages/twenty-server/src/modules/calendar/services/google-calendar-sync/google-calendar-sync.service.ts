@@ -124,7 +124,9 @@ export class GoogleCalendarSyncService {
     let nextPageToken: string | undefined;
     const events: calendarV3.Schema$Event[] = [];
 
-    while (true) {
+    let hasMoreEvents = true;
+
+    while (hasMoreEvents) {
       const googleCalendarEvents = await googleCalendarClient.events.list({
         calendarId: 'primary',
         maxResults: 500,
@@ -146,7 +148,7 @@ export class GoogleCalendarSyncService {
       events.push(...items);
 
       if (!nextPageToken) {
-        break;
+        hasMoreEvents = false;
       }
     }
 

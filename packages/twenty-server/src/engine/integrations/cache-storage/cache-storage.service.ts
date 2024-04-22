@@ -44,7 +44,7 @@ export class CacheStorageService {
     });
   }
 
-  async setPop(key: string, size: number = 1) {
+  async setPop(key: string, size = 1) {
     if (this.isRedisCache()) {
       return (this.cache as RedisCache).store.client.sPop(
         `${this.namespace}:${key}`,
