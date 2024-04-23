@@ -3,6 +3,7 @@ inputs:
   parallel:
     required: false
     types: [number]
+    default: 3
   tag:
     required: false
     types: [string]
