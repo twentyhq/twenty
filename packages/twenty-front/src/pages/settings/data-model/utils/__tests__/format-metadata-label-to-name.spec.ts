@@ -1,4 +1,4 @@
-import { formatMetadataLabelToMetadataNameOrThrows } from '~/pages/settings/data-model/utils/format-metadata-label.util';
+import { formatMetadataLabelToMetadataNameOrThrows } from '~/pages/settings/data-model/utils/format-metadata-label-to-name.util';
 
 const VALID_STRING_PATTERN = /^[a-zA-Z][a-zA-Z0-9 ]*$/;
 
