@@ -1,7 +1,6 @@
-import camelCase from 'lodash.camelcase';
-
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { UpdateObjectInput } from '~/generated-metadata/graphql';
+import { formatMetadataLabelToMetadataNameOrThrows } from '~/pages/settings/data-model/utils/format-metadata-label-to-name.util';
 
 export const settingsUpdateObjectInputSchema = objectMetadataItemSchema
   .pick({
@@ -17,7 +16,9 @@ export const settingsUpdateObjectInputSchema = objectMetadataItemSchema
   .transform<UpdateObjectInput>((value) => ({
     ...value,
     nameSingular: value.labelSingular
-      ? camelCase(value.labelSingular)
+      ? formatMetadataLabelToMetadataNameOrThrows(value.labelSingular)
       : undefined,
-    namePlural: value.labelPlural ? camelCase(value.labelPlural) : undefined,
+    namePlural: value.labelPlural
+      ? formatMetadataLabelToMetadataNameOrThrows(value.labelPlural)
+      : undefined,
   }));
