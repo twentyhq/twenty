@@ -5,7 +5,7 @@ export const excludedCategories = ['promotions', 'social', 'forums'];
 
 export const excludedFileTypes = ['.ics'];
 
-const excludedCategoriesAndFileTypesString = `-category:${excludedCategories.join(
+export const excludedCategoriesAndFileTypesString = `-category:${excludedCategories.join(
   ' -category:',
 )} -filename:${excludedFileTypes.join(' -filename:')}`;
 
@@ -55,5 +55,5 @@ export const gmailSearchFilterEmailAdresses = (
     '|',
   )}) -(${gmailSearchFilterNonPersonalEmails}|${excludedEmails.join(
     '|',
-  )}))) ${excludedCategoriesAndFileTypesString}`;
+  )})) ${excludedCategoriesAndFileTypesString}`;
 };

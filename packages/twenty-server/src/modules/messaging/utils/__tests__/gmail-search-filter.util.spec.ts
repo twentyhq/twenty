@@ -1,4 +1,6 @@
 import {
+  excludedCategoriesAndFileTypesString,
+  gmailSearchFilterEmailAdresses,
   gmailSearchFilterExcludeEmailAdresses,
   gmailSearchFilterIncludeOnlyEmailAdresses,
   gmailSearchFilterNonPersonalEmails,
@@ -35,5 +37,22 @@ describe('gmailSearchFilterIncludeOnlyEmailAdresses', () => {
     const result = gmailSearchFilterIncludeOnlyEmailAdresses();
 
     expect(result).toBe(undefined);
+  });
+});
+
+describe('gmailSearchFilterEmailAdresses', () => {
+  it('should return correct search filter for including emails and excluding emails', () => {
+    const includedEmails = ['hello@twenty.com', 'hey@twenty.com'];
+
+    const excludedEmails = ['noreply@twenty.com', 'no-reply@twenty.com'];
+
+    const result = gmailSearchFilterEmailAdresses(
+      includedEmails,
+      excludedEmails,
+    );
+
+    expect(result).toBe(
+      `(in:inbox from:((hello@twenty.com|hey@twenty.com) -(${gmailSearchFilterNonPersonalEmails}|noreply@twenty.com|no-reply@twenty.com))|(in:sent to:((hello@twenty.com|hey@twenty.com) -(${gmailSearchFilterNonPersonalEmails}|noreply@twenty.com|no-reply@twenty.com)) ${excludedCategoriesAndFileTypesString}`,
+    );
   });
 });
