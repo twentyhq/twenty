@@ -1,6 +1,6 @@
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { UpdateObjectInput } from '~/generated-metadata/graphql';
-import { formatMetadataLabel } from '~/pages/settings/data-model/utils/format-metadata-label.util';
+import { formatMetadataLabelToMetadataNameOrThrows } from '~/pages/settings/data-model/utils/format-metadata-label-to-name.util';
 
 export const settingsUpdateObjectInputSchema = objectMetadataItemSchema
   .pick({
@@ -16,9 +16,9 @@ export const settingsUpdateObjectInputSchema = objectMetadataItemSchema
   .transform<UpdateObjectInput>((value) => ({
     ...value,
     nameSingular: value.labelSingular
-      ? formatMetadataLabel(value.labelSingular)
+      ? formatMetadataLabelToMetadataNameOrThrows(value.labelSingular)
       : undefined,
     namePlural: value.labelPlural
-      ? formatMetadataLabel(value.labelPlural)
+      ? formatMetadataLabelToMetadataNameOrThrows(value.labelPlural)
       : undefined,
   }));
