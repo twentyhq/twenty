@@ -4,16 +4,16 @@ import { OnEvent } from '@nestjs/event-emitter';
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
 import {
-  BlocklistItemDeleteMessagesJobData,
-  BlocklistItemDeleteMessagesJob,
-} from 'src/modules/messaging/jobs/blocklist-item-delete-messages.job';
+  BlocklistItemDeleteCalendarEventsJobData,
+  BlocklistItemDeleteCalendarEventsJob,
+} from 'src/modules/calendar/jobs/blocklist-item-delete-calendar-events.job';
+import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
 
 @Injectable()
-export class MessagingBlocklistListener {
+export class CalendarBlocklistListener {
   constructor(
-    @Inject(MessageQueue.messagingQueue)
+    @Inject(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
@@ -21,8 +21,8 @@ export class MessagingBlocklistListener {
   handleCreatedEvent(
     payload: ObjectRecordCreateEvent<BlocklistObjectMetadata>,
   ) {
-    this.messageQueueService.add<BlocklistItemDeleteMessagesJobData>(
-      BlocklistItemDeleteMessagesJob.name,
+    this.messageQueueService.add<BlocklistItemDeleteCalendarEventsJobData>(
+      BlocklistItemDeleteCalendarEventsJob.name,
       {
         workspaceId: payload.workspaceId,
         blocklistItemId: payload.recordId,

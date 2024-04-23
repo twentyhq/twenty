@@ -39,6 +39,8 @@ import {
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { validateString } from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-input';
+import { InvalidStringException } from 'src/engine/metadata-modules/errors/InvalidStringException';
 
 import {
   FieldMetadataEntity,
@@ -113,6 +115,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       if (fieldMetadataInput.type === FieldMetadataType.RATING) {
         fieldMetadataInput.options = generateRatingOptions();
       }
+
+      this.validateFieldMetadataInput<CreateFieldInput>(fieldMetadataInput);
 
       const fieldAlreadyExists = await fieldMetadataRepository.findOne({
         where: {
@@ -292,6 +296,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           }
         }
       }
+
+      this.validateFieldMetadataInput<UpdateFieldInput>(fieldMetadataInput);
 
       const updatableFieldInput =
         existingFieldMetadata.isCustom === false
@@ -532,5 +538,25 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         direction,
       };
     }
+  }
+
+  private validateFieldMetadataInput<
+    T extends UpdateFieldInput | CreateFieldInput,
+  >(fieldMetadataInput: T): T {
+    if (fieldMetadataInput.name) {
+      try {
+        validateString(fieldMetadataInput.name);
+      } catch (error) {
+        if (error instanceof InvalidStringException) {
+          throw new BadRequestException(
+            `Characters used in name "${fieldMetadataInput.name}" are not supported`,
+          );
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    return fieldMetadataInput;
   }
 }

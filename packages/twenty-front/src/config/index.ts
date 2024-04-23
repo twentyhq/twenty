@@ -10,7 +10,7 @@ const getDefaultUrl = () => {
     window.location.hostname === 'localhost' ||
     window.location.hostname === '127.0.0.1'
   ) {
-    // In development environment front and backend usually run on seperate ports
+    // In development environment front and backend usually run on separate ports
     // we set the default value to localhost:3000.
     // It dev context, we use env vars to overwrite it
     return 'http://localhost:3000';
