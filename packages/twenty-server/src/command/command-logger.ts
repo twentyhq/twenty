@@ -22,7 +22,7 @@ export class CommandLogger {
   async writeLog(
     fileName: string,
     data: unknown,
-    append: boolean = false,
+    append = false,
   ): Promise<void> {
     const path = `./logs/${kebabCase(this.className)}`;
 

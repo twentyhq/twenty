@@ -28,5 +28,8 @@
   },
   "msw": {
     "workerDirectory": "public"
+  },
+  "dependencies": {
+    "transliteration": "^2.3.5"
   }
 }

@@ -45804,6 +45804,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"transliteration@npm:^2.3.5":
+  version: 2.3.5
+  resolution: "transliteration@npm:2.3.5"
+  dependencies:
+    yargs: "npm:^17.5.1"
+  bin:
+    slugify: dist/bin/slugify
+    transliterate: dist/bin/transliterate
+  checksum: 68397225c2ca59b8e33206c65f905724e86b64460cbf90576d352dc2366e763ded97e2c7b8b1f140fb36a565d61a97c51080df9fa638e6b1769f6cb24f383756
+  languageName: node
+  linkType: hard
+
 "traverse@npm:0.6.7":
   version: 0.6.7
   resolution: "traverse@npm:0.6.7"
@@ -46264,6 +46276,8 @@ __metadata:
 "twenty-front@workspace:packages/twenty-front":
   version: 0.0.0-use.local
   resolution: "twenty-front@workspace:packages/twenty-front"
+  dependencies:
+    transliteration: "npm:^2.3.5"
   languageName: unknown
   linkType: soft
 
@@ -49452,7 +49466,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yargs@npm:^17.0.0, yargs@npm:^17.3.1, yargs@npm:^17.6.2, yargs@npm:^17.7.2":
+"yargs@npm:^17.0.0, yargs@npm:^17.3.1, yargs@npm:^17.5.1, yargs@npm:^17.6.2, yargs@npm:^17.7.2":
   version: 17.7.2
   resolution: "yargs@npm:17.7.2"
   dependencies:

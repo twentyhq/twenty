@@ -49,6 +49,7 @@ const StyledHeadingText = styled.div`
   cursor: pointer;
   font-size: ${Theme.font.size.sm};
   font-weight: ${Theme.font.weight.medium};
+  color: ${Theme.text.color.secondary};
 `;
 
 const UserGuideSidebar = () => {

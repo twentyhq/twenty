@@ -6,8 +6,8 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { opportunityStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
@@ -23,7 +23,7 @@ import { TimelineActivityObjectMetadata } from 'src/modules/timeline/standard-ob
 import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
-  standardId: standardObjectIds.opportunity,
+  standardId: STANDARD_OBJECT_IDS.opportunity,
   namePlural: 'opportunities',
   labelSingular: 'Opportunity',
   labelPlural: 'Opportunities',
@@ -33,7 +33,7 @@ import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-me
 @IsNotAuditLogged()
 export class OpportunityObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    standardId: opportunityStandardFieldIds.name,
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: 'Name',
     description: 'The opportunity name',
@@ -42,7 +42,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   name: string;
 
   @FieldMetadata({
-    standardId: opportunityStandardFieldIds.amount,
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.amount,
     type: FieldMetadataType.CURRENCY,
     label: 'Amount',
     description: 'Opportunity amount',
@@ -52,7 +52,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   amount: CurrencyMetadata;
 
   @FieldMetadata({
-    standardId: opportunityStandardFieldIds.closeDate,
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.closeDate,
     type: FieldMetadataType.DATE_TIME,
     label: 'Close date',
     description: 'Opportunity close date',
@@ -62,7 +62,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   closeDate: Date;
 
   @FieldMetadata({
-    standardId: opportunityStandardFieldIds.probability,
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.probability,
     type: FieldMetadataType.TEXT,
     label: 'Probability',
     description: 'Opportunity probability',
@@ -72,7 +72,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   probability: string;
 
   @FieldMetadata({
-    standardId: opportunityStandardFieldIds.stage,
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.stage,
     type: FieldMetadataType.SELECT,
     label: 'Stage',
     description: 'Opportunity stage',
@@ -94,7 +94,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   stage: string;
 
   @FieldMetadata({
-    standardId: opportunityStandardFieldIds.position,
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: 'Position',
     description: 'Opportunity record position',
@@ -105,7 +105,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   position: number;
 
   @FieldMetadata({
-    standardId: opportunityStandardFieldIds.pointOfContact,
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.pointOfContact,
     type: FieldMetadataType.RELATION,
     label: 'Point of Contact',
     description: 'Opportunity point of contact',
@@ -116,7 +116,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   pointOfContact: Relation<PersonObjectMetadata>;
 
   @FieldMetadata({
-    standardId: opportunityStandardFieldIds.company,
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.company,
     type: FieldMetadataType.RELATION,
     label: 'Company',
     description: 'Opportunity company',
@@ -127,7 +127,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   company: Relation<CompanyObjectMetadata>;
 
   @FieldMetadata({
-    standardId: opportunityStandardFieldIds.favorites,
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.favorites,
     type: FieldMetadataType.RELATION,
     label: 'Favorites',
     description: 'Favorites linked to the opportunity',
@@ -143,7 +143,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   favorites: Relation<FavoriteObjectMetadata[]>;
 
   @FieldMetadata({
-    standardId: opportunityStandardFieldIds.activityTargets,
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.activityTargets,
     type: FieldMetadataType.RELATION,
     label: 'Activities',
     description: 'Activities tied to the opportunity',
@@ -158,7 +158,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   activityTargets: Relation<ActivityTargetObjectMetadata[]>;
 
   @FieldMetadata({
-    standardId: opportunityStandardFieldIds.attachments,
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.attachments,
     type: FieldMetadataType.RELATION,
     label: 'Attachments',
     description: 'Attachments linked to the opportunity.',
@@ -173,7 +173,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   attachments: Relation<AttachmentObjectMetadata[]>;
 
   @FieldMetadata({
-    standardId: opportunityStandardFieldIds.timelineActivities,
+    standardId: OPPORTUNITY_STANDARD_FIELD_IDS.timelineActivities,
     type: FieldMetadataType.RELATION,
     label: 'Timeline Activities',
     description: 'Timeline Activities linked to the opportunity.',

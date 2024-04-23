@@ -13,7 +13,7 @@ export function IsValidMetadataName(validationOptions?: ValidationOptions) {
       options: validationOptions,
       validator: {
         validate(value: any) {
-          return /^(?!(?:not|or|and|Int|Float|Boolean|String|ID)$)[^'\"\\;.=*/]+$/.test(
+          return /^(?!(?:not|or|and|Int|Float|Boolean|String|ID)$)[^'"\\;.=*/]+$/.test(
             value,
           );
         },

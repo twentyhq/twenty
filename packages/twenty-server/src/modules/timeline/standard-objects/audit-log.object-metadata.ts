@@ -1,11 +1,9 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { auditLogStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { AUDIT_LOGS_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
@@ -13,7 +11,7 @@ import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
 @ObjectMetadata({
-  standardId: standardObjectIds.auditLog,
+  standardId: STANDARD_OBJECT_IDS.auditLog,
   namePlural: 'auditLogs',
   labelSingular: 'Audit Log',
   labelPlural: 'Audit Logs',
@@ -21,12 +19,9 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
   icon: 'IconIconTimelineEvent',
 })
 @IsSystem()
-@Gate({
-  featureFlag: FeatureFlagKeys.IsEventObjectEnabled,
-})
 export class AuditLogObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    standardId: auditLogStandardFieldIds.name,
+    standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: 'Event name',
     description: 'Event name/type',
@@ -35,7 +30,7 @@ export class AuditLogObjectMetadata extends BaseObjectMetadata {
   name: string;
 
   @FieldMetadata({
-    standardId: auditLogStandardFieldIds.properties,
+    standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.properties,
     type: FieldMetadataType.RAW_JSON,
     label: 'Event details',
     description: 'Json value for event details',
@@ -45,7 +40,7 @@ export class AuditLogObjectMetadata extends BaseObjectMetadata {
   properties: JSON;
 
   @FieldMetadata({
-    standardId: auditLogStandardFieldIds.context,
+    standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.context,
     type: FieldMetadataType.RAW_JSON,
     label: 'Event context',
     description:
@@ -56,7 +51,7 @@ export class AuditLogObjectMetadata extends BaseObjectMetadata {
   context: JSON;
 
   @FieldMetadata({
-    standardId: auditLogStandardFieldIds.objectName,
+    standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.objectName,
     type: FieldMetadataType.TEXT,
     label: 'Object name',
     description: 'If the event is related to a particular object',
@@ -65,7 +60,7 @@ export class AuditLogObjectMetadata extends BaseObjectMetadata {
   objectName: string;
 
   @FieldMetadata({
-    standardId: auditLogStandardFieldIds.objectName,
+    standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.objectName,
     type: FieldMetadataType.TEXT,
     label: 'Object name',
     description: 'If the event is related to a particular object',
@@ -74,7 +69,7 @@ export class AuditLogObjectMetadata extends BaseObjectMetadata {
   objectMetadataId: string;
 
   @FieldMetadata({
-    standardId: auditLogStandardFieldIds.recordId,
+    standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.recordId,
     type: FieldMetadataType.UUID,
     label: 'Object id',
     description: 'Event name/type',
@@ -84,7 +79,7 @@ export class AuditLogObjectMetadata extends BaseObjectMetadata {
   recordId: string;
 
   @FieldMetadata({
-    standardId: auditLogStandardFieldIds.workspaceMember,
+    standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.workspaceMember,
     type: FieldMetadataType.RELATION,
     label: 'Workspace Member',
     description: 'Event workspace member',
