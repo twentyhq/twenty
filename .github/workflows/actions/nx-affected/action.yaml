@@ -16,20 +16,6 @@ runs:
   steps:
     - name: Get last successful commit
       uses: nrwl/nx-set-shas@v4
-    - name: Compute tasks key
-      id: tasks-key
-      shell: bash
-      run: echo "key=${{ inputs.tasks }}" | tr , - >> $GITHUB_OUTPUT
-    - name: Restore tasks cache
-      uses: actions/cache@v3
-      with:
-        path: |
-          .cache
-          .nx/cache
-        key: tasks-cache-${{ github.ref_name }}-${{ inputs.tag }}-${{ steps.tasks-key.outputs.key }}-${{ github.sha }}
-        restore-keys: |
-          tasks-cache-${{ github.ref_name }}-${{ inputs.tag }}-${{ steps.tasks-key.outputs.key }}-
-          tasks-cache-${{ github.ref_name }}-${{ inputs.tag }}-
     - name: Run affected command
       shell: bash
       run: npx nx affected --nxBail --configuration=ci -t=${{ inputs.tasks }} --parallel=${{ inputs.parallel }} --exclude='*,!tag:${{ inputs.tag }}'

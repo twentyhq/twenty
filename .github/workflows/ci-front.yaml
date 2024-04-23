@@ -36,6 +36,12 @@ jobs:
         uses: ./.github/workflows/actions/yarn-install
       - name: Install Playwright
         run: cd packages/twenty-front && npx playwright install
+      - name: Front / Restore Storybook Task Cache
+        uses: ./.github/workflows/actions/task-cache
+        with:
+          tag: scope:frontend
+          tasks: storybook:build
+          suffix: _${{ matrix.storybook_scope }}
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
@@ -43,8 +49,11 @@ jobs:
           npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
             "npx nx run twenty-front:storybook:static:ci" \
             "npx wait-on tcp:6006 && npx nx run twenty-front:storybook:test"
-  front-lint-tsc:
+  front-task:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        task: [lint, typecheck, test]
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
     steps:
@@ -58,29 +67,13 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
-      - name: Front / Run linter & typecheck
+      - name: Front / Restore Task Cache
+        uses: ./.github/workflows/actions/task-cache
+        with:
+          tag: scope:frontend
+          tasks: ${{ matrix.task }}
+      - name: Front / Run task
         uses: ./.github/workflows/actions/nx-affected
         with:
           tag: scope:frontend
-          tasks: lint,typecheck
-  front-jest:
-    runs-on: ubuntu-latest
-    env:
-      REACT_APP_SERVER_BASE_URL: http://localhost:3000
-    steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ github.token }}
-      - name: Fetch local actions and base branch history
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Install dependencies
-        uses: ./.github/workflows/actions/yarn-install
-      - name: Front / Run jest
-        uses: ./.github/workflows/actions/nx-affected
-        with:
-          parallel: 1
-          tag: scope:frontend
-          tasks: test
+          tasks: ${{ matrix.task }}
