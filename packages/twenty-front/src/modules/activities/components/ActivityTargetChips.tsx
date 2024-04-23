@@ -6,7 +6,6 @@ import { v4 } from 'uuid';
 import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { RGBA } from '@/ui/theme/constants/Rgba';
 
 const MAX_RECORD_CHIPS_DISPLAY = 2;
 
