@@ -6,5 +6,5 @@ runs:
     - name: Restore typecheck cache
       uses: actions/cache@v3
       with:
-        path: .cache/tsc/
+        path: .cache/tsc
         key: tsc-cache-${{ github.head_ref || github.ref_name }}

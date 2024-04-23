@@ -90,7 +90,8 @@
       "options": {
         "jestConfig": "{projectRoot}/jest.config.ts",
         "coverage": true,
-        "coverageReporters": ["text-summary"]
+        "coverageReporters": ["text-summary"],
+        "cacheDirectory": "../../.cache/jest/{projectRoot}"
       },
       "configurations": {
         "ci": {

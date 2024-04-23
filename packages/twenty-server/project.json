@@ -108,31 +108,27 @@
         "fix": { "fix": true }
       }
     },
-    "test:unit": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["build"],
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{projectRoot}/coverage"],
       "options": {
-        "cwd": "packages/twenty-server",
-        "command": "jest"
+        "jestConfig": "{projectRoot}/jest.config.ts",
+        "coverage": true,
+        "coverageReporters": ["text-summary"],
+        "cacheDirectory": "../../.cache/jest/{projectRoot}"
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "maxWorkers": 3
+        },
+        "coverage": {
+          "coverageReporters": ["lcov", "text"]
+        },
+        "watch": { "watch": true }
       }
     },
-    "test:unit:watch": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["build"],
-      "options": {
-        "cwd": "packages/twenty-server",
-        "command": "jest --watch"
-      }
-    },
-    "test:unit:coverage": {
-      "executor": "nx:run-commands",
-      "dependsOn": ["build"],
-      "options": {
-        "cwd": "packages/twenty-server",
-        "command": "jest --coverage"
-      }
-    },
-    "test:unit:debug": {
+    "test:debug": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-server",

@@ -42,7 +42,20 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{projectRoot}/coverage"],
       "options": {
-        "jestConfig": "{projectRoot}/jest.config.ts"
+        "jestConfig": "{projectRoot}/jest.config.ts",
+        "coverage": true,
+        "coverageReporters": ["text-summary"],
+        "cacheDirectory": "../../.cache/jest/{projectRoot}"
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "maxWorkers": 3
+        },
+        "coverage": {
+          "coverageReporters": ["lcov", "text"]
+        },
+        "watch": { "watch": true }
       }
     },
     "typecheck": {

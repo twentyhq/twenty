@@ -102,6 +102,8 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
+      - name: Restore test cache
+        uses: ./.github/workflows/actions/test-cache
       - name: Front / Run jest
         uses: ./.github/workflows/actions/nx-affected
         with:
