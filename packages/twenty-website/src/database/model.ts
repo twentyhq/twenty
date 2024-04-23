@@ -1,4 +1,5 @@
 import {
+  pgGithubReleasesModel,
   pgGithubStars,
   pgIssueLabels,
   pgIssues,
@@ -33,6 +34,7 @@ export const issueLabelModel = isSqliteDriver
   : pgIssueLabels;
 
 export const githubStarsModel = pgGithubStars;
+export const githubReleasesModel = pgGithubReleasesModel;
 
 export type User = typeof pgUsers.$inferSelect;
 export type PullRequest = typeof pgPullRequests.$inferSelect;
@@ -48,3 +50,4 @@ export type LabelInsert = typeof pgLabels.$inferInsert;
 export type PullRequestLabelInsert = typeof pgPullRequestLabels.$inferInsert;
 export type IssueLabelInsert = typeof pgIssueLabels.$inferInsert;
 export type GithubStars = typeof pgGithubStars.$inferInsert;
+export type GithubReleases = typeof pgGithubReleasesModel.$inferInsert;

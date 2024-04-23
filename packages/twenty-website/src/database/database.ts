@@ -61,7 +61,11 @@ const findOne = (model: SQLiteTableWithColumns<any>, orderBy: any) => {
   throw new Error('Unsupported database driver');
 };
 
-const findAll = (model: SQLiteTableWithColumns<any>) => {
+const findAll = (model: SQLiteTableWithColumns<any>, orderBy?: any) => {
+  if (orderBy && isPgDriver) {
+    return pgDb.select().from(model).orderBy(orderBy).execute();
+  }
+
   if (isSqliteDriver) {
     return sqliteDb.select().from(model).all();
   }

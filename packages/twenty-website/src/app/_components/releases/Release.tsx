@@ -93,8 +93,10 @@ const gabarito = Gabarito({
 export const Release = ({
   release,
   mdxReleaseContent,
+  githubPublishedAt,
 }: {
   release: ReleaseNote;
+  githubPublishedAt: string;
   mdxReleaseContent: ReactElement<any, string | JSXElementConstructor<any>>;
 }) => {
   return (
@@ -103,9 +105,9 @@ export const Release = ({
         <StyledVersion>
           <StyledRelease>{release.release}</StyledRelease>
           <StyledDate>
-            {release.date.endsWith(new Date().getFullYear().toString())
-              ? release.date.slice(0, -5)
-              : release.date}
+            {githubPublishedAt.endsWith(new Date().getFullYear().toString())
+              ? githubPublishedAt.slice(0, -5)
+              : githubPublishedAt}
           </StyledDate>
         </StyledVersion>
         <StlyedContent>{mdxReleaseContent}</StlyedContent>
