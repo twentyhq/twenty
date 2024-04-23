@@ -21,6 +21,7 @@
     },
     "storybook:build": {
       "cache": true,
+      "dependsOn": ["^build"],
       "inputs": [
         "default",
         "^default",
@@ -69,7 +70,6 @@
   "generators": {
     "@nx/react": {
       "application": {
-        "babel": true,
         "style": "@emotion/styled",
         "linter": "eslint",
         "bundler": "vite",

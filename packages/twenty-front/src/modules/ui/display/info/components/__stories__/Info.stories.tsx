@@ -1,12 +1,10 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { CatalogDecorator, CatalogStory, ComponentDecorator } from 'twenty-ui';
 
-import { Info, InfoAccent } from '@/ui/display/info/components/Info.tsx';
-import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator.tsx';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator.tsx';
-import { CatalogStory } from '~/testing/types.ts';
+import { Info, InfoAccent } from '@/ui/display/info/components/Info';
 
 const meta: Meta<typeof Info> = {
-  title: 'UI/Display/Info/Info',
+  title: 'UI/Display/Info',
   component: Info,
 };
 

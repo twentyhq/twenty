@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField.ts';
+import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';

@@ -10,10 +10,11 @@ COPY ./.yarnrc.yml .
 COPY ./.yarn/releases /app/.yarn/releases
 COPY ./packages/twenty-docs/package.json /app/packages/twenty-docs/package.json
 COPY ./packages/twenty-emails /app/packages/twenty-emails
+COPY ./packages/twenty-ui /app/packages/twenty-ui
 RUN yarn
 
 COPY ./packages/twenty-docs /app/packages/twenty-docs
-RUN yarn nx build twenty-docs
+RUN npx nx build twenty-docs
 
 CMD ["tail", "-f", "/dev/null"]
 

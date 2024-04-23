@@ -3,7 +3,7 @@
 import styled from '@emotion/styled';
 
 const StyledTitle = styled.div`
-  margin: 64px auto;
+  margin: 64px auto 0px;
   text-align: center;
   font-size: 1.8em;
 

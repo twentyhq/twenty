@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
+import { AvatarType } from 'twenty-ui';
 
-import { AvatarType } from '@/users/components/Avatar';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 
 export const mockId = '8f3b2121-f194-4ba4-9fbf-2d5a37126806';
@@ -84,77 +84,77 @@ export const mocks = [
       query: gql`
         mutation CreateOneFavorite($input: FavoriteCreateInput!) {
           createFavorite(data: $input) {
-        __typename
-        id
-        companyId
-        createdAt
-        personId
-        person {
-          __typename
-          xLink {
-            label
-            url
+            __typename
+            id
+            companyId
+            createdAt
+            personId
+            person {
+              __typename
+              xLink {
+                label
+                url
+              }
+              id
+              createdAt
+              city
+              email
+              jobTitle
+              name {
+                firstName
+                lastName
+              }
+              phone
+              linkedinLink {
+                label
+                url
+              }
+              updatedAt
+              avatarUrl
+              companyId
+            }
+            position
+            workspaceMemberId
+            workspaceMember {
+              __typename
+              colorScheme
+              name {
+                firstName
+                lastName
+              }
+              locale
+              userId
+              avatarUrl
+              createdAt
+              updatedAt
+              id
+            }
+            company {
+              __typename
+              xLink {
+                label
+                url
+              }
+              linkedinLink {
+                label
+                url
+              }
+              domainName
+              annualRecurringRevenue {
+                amountMicros
+                currencyCode
+              }
+              createdAt
+              address
+              updatedAt
+              name
+              accountOwnerId
+              employees
+              id
+              idealCustomerProfile
+            }
+            updatedAt
           }
-          id
-          createdAt
-          city
-          email
-          jobTitle
-          name {
-            firstName
-            lastName
-          }
-          phone
-          linkedinLink {
-            label
-            url
-          }
-          updatedAt
-          avatarUrl
-          companyId
-        }
-        position
-        workspaceMemberId
-        workspaceMember {
-          __typename
-          colorScheme
-          name {
-            firstName
-            lastName
-          }
-          locale
-          userId
-          avatarUrl
-          createdAt
-          updatedAt
-          id
-        }
-        company {
-          __typename
-          xLink {
-            label
-            url
-          }
-          linkedinLink {
-            label
-            url
-          }
-          domainName
-          annualRecurringRevenue {
-            amountMicros
-            currencyCode
-          }
-          createdAt
-          address
-          updatedAt
-          name
-          accountOwnerId
-          employees
-          id
-          idealCustomerProfile
-        }
-        updatedAt
-      }
         }
       `,
       variables: {
@@ -201,77 +201,77 @@ export const mocks = [
           $input: FavoriteUpdateInput!
         ) {
           updateFavorite(id: $idToUpdate, data: $input) {
-        __typename
-        id
-        companyId
-        createdAt
-        personId
-        person {
-          __typename
-          xLink {
-            label
-            url
+            __typename
+            id
+            companyId
+            createdAt
+            personId
+            person {
+              __typename
+              xLink {
+                label
+                url
+              }
+              id
+              createdAt
+              city
+              email
+              jobTitle
+              name {
+                firstName
+                lastName
+              }
+              phone
+              linkedinLink {
+                label
+                url
+              }
+              updatedAt
+              avatarUrl
+              companyId
+            }
+            position
+            workspaceMemberId
+            workspaceMember {
+              __typename
+              colorScheme
+              name {
+                firstName
+                lastName
+              }
+              locale
+              userId
+              avatarUrl
+              createdAt
+              updatedAt
+              id
+            }
+            company {
+              __typename
+              xLink {
+                label
+                url
+              }
+              linkedinLink {
+                label
+                url
+              }
+              domainName
+              annualRecurringRevenue {
+                amountMicros
+                currencyCode
+              }
+              createdAt
+              address
+              updatedAt
+              name
+              accountOwnerId
+              employees
+              id
+              idealCustomerProfile
+            }
+            updatedAt
           }
-          id
-          createdAt
-          city
-          email
-          jobTitle
-          name {
-            firstName
-            lastName
-          }
-          phone
-          linkedinLink {
-            label
-            url
-          }
-          updatedAt
-          avatarUrl
-          companyId
-        }
-        position
-        workspaceMemberId
-        workspaceMember {
-          __typename
-          colorScheme
-          name {
-            firstName
-            lastName
-          }
-          locale
-          userId
-          avatarUrl
-          createdAt
-          updatedAt
-          id
-        }
-        company {
-          __typename
-          xLink {
-            label
-            url
-          }
-          linkedinLink {
-            label
-            url
-          }
-          domainName
-          annualRecurringRevenue {
-            amountMicros
-            currencyCode
-          }
-          createdAt
-          address
-          updatedAt
-          name
-          accountOwnerId
-          employees
-          id
-          idealCustomerProfile
-        }
-        updatedAt
-      }
         }
       `,
       variables: {

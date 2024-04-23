@@ -33,7 +33,6 @@ export const objectMetadataItemFamilySelector = selectorFamily<
           ) ?? null
         );
       }
-
       return null;
     },
 });

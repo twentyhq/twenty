@@ -73,7 +73,7 @@ export class CleanInactiveWorkspaceJob
         await workspaceDataSource?.query(
           `SELECT MAX("updatedAt") FROM ${dataSource.schema}."${tableName}"`,
         )
-      )[0].max;
+      )?.[0]?.max;
 
       if (mostRecentTableUpdatedAt) {
         const mostRecentTableUpdatedAtDate = new Date(mostRecentTableUpdatedAt);

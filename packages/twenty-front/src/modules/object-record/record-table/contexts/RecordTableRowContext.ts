@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-type RecordTableRowContextProps = {
+export type RecordTableRowContextProps = {
   pathToShowPage: string;
   recordId: string;
   rowIndex: number;

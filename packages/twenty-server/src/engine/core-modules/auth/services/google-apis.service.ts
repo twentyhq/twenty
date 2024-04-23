@@ -84,23 +84,23 @@ export class GoogleAPIsService {
 
     const isCalendarEnabled =
       this.environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED') &&
-      !!isCalendarEnabledFlag;
+      !!isCalendarEnabledFlag?.value;
+
+    const connectedAccounts =
+      await this.connectedAccountRepository.getAllByHandleAndWorkspaceMemberId(
+        handle,
+        workspaceMemberId,
+        workspaceId,
+      );
+
+    const existingAccountId = connectedAccounts?.[0]?.id;
+    const newOrExistingConnectedAccountId = existingAccountId ?? v4();
 
     await workspaceDataSource?.transaction(async (manager: EntityManager) => {
-      const connectedAccounts =
-        await this.connectedAccountRepository.getAllByHandleAndWorkspaceMemberId(
-          handle,
-          workspaceMemberId,
-          workspaceId,
-          manager,
-        );
-
-      if (!connectedAccounts || connectedAccounts?.length === 0) {
-        const newConnectedAccountId = v4();
-
+      if (!existingAccountId) {
         await this.connectedAccountRepository.create(
           {
-            id: newConnectedAccountId,
+            id: newOrExistingConnectedAccountId,
             handle,
             provider: ConnectedAccountProvider.GOOGLE,
             accessToken: input.accessToken,
@@ -114,7 +114,7 @@ export class GoogleAPIsService {
         await this.messageChannelRepository.create(
           {
             id: v4(),
-            connectedAccountId: newConnectedAccountId,
+            connectedAccountId: newOrExistingConnectedAccountId,
             type: MessageChannelType.EMAIL,
             handle,
             visibility: MessageChannelVisibility.SHARE_EVERYTHING,
@@ -127,7 +127,7 @@ export class GoogleAPIsService {
           await this.calendarChannelRepository.create(
             {
               id: v4(),
-              connectedAccountId: newConnectedAccountId,
+              connectedAccountId: newOrExistingConnectedAccountId,
               handle,
               visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
             },
@@ -135,34 +135,28 @@ export class GoogleAPIsService {
             manager,
           );
         }
-
-        await this.enqueueSyncJobs(
-          newConnectedAccountId,
-          workspaceId,
-          isCalendarEnabled,
-        );
       } else {
         await this.connectedAccountRepository.updateAccessTokenAndRefreshToken(
           input.accessToken,
           input.refreshToken,
-          connectedAccounts[0].id,
+          newOrExistingConnectedAccountId,
           workspaceId,
           manager,
         );
 
         await this.messageChannelRepository.resetSync(
-          connectedAccounts[0].id,
+          newOrExistingConnectedAccountId,
           workspaceId,
           manager,
         );
-
-        await this.enqueueSyncJobs(
-          connectedAccounts[0].id,
-          workspaceId,
-          isCalendarEnabled,
-        );
       }
     });
+
+    await this.enqueueSyncJobs(
+      newOrExistingConnectedAccountId,
+      workspaceId,
+      isCalendarEnabled,
+    );
   }
 
   private async enqueueSyncJobs(

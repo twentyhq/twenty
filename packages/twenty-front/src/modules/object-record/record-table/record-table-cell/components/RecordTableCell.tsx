@@ -4,11 +4,9 @@ import { FieldDisplay } from '@/object-record/record-field/components/FieldDispl
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
+import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
 import { RecordTableCellContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellContainer';
-import { useCloseRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useCloseRecordTableCell';
-import { useUpsertRecord } from '@/object-record/record-table/record-table-cell/hooks/useUpsertRecord';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 export const RecordTableCell = ({
@@ -16,55 +14,76 @@ export const RecordTableCell = ({
 }: {
   customHotkeyScope: HotkeyScope;
 }) => {
-  const { closeTableCell } = useCloseRecordTableCell();
-  const { upsertRecord } = useUpsertRecord();
-
-  const { moveLeft, moveRight, moveDown } = useRecordTableMoveFocus();
-
+  const { onUpsertRecord, onMoveFocus, onCloseTableCell } =
+    useContext(RecordTableContext);
   const { entityId, fieldDefinition } = useContext(FieldContext);
   const { isReadOnly } = useContext(RecordTableRowContext);
 
   const handleEnter: FieldInputEvent = (persistField) => {
-    upsertRecord(persistField);
+    onUpsertRecord({
+      persistField,
+      entityId,
+      fieldName: fieldDefinition.metadata.fieldName,
+    });
 
-    closeTableCell();
-    moveDown();
+    onCloseTableCell();
+    onMoveFocus('down');
   };
 
   const handleSubmit: FieldInputEvent = (persistField) => {
-    upsertRecord(persistField);
+    onUpsertRecord({
+      persistField,
+      entityId,
+      fieldName: fieldDefinition.metadata.fieldName,
+    });
 
-    closeTableCell();
+    onCloseTableCell();
   };
 
   const handleCancel = () => {
-    closeTableCell();
+    onCloseTableCell();
   };
 
   const handleClickOutside: FieldInputEvent = (persistField) => {
-    upsertRecord(persistField);
+    onUpsertRecord({
+      persistField,
+      entityId,
+      fieldName: fieldDefinition.metadata.fieldName,
+    });
 
-    closeTableCell();
+    onCloseTableCell();
   };
 
   const handleEscape: FieldInputEvent = (persistField) => {
-    upsertRecord(persistField);
+    onUpsertRecord({
+      persistField,
+      entityId,
+      fieldName: fieldDefinition.metadata.fieldName,
+    });
 
-    closeTableCell();
+    onCloseTableCell();
   };
 
   const handleTab: FieldInputEvent = (persistField) => {
-    upsertRecord(persistField);
+    onUpsertRecord({
+      persistField,
+      entityId,
+      fieldName: fieldDefinition.metadata.fieldName,
+    });
 
-    closeTableCell();
-    moveRight();
+    onCloseTableCell();
+    onMoveFocus('right');
   };
 
   const handleShiftTab: FieldInputEvent = (persistField) => {
-    upsertRecord(persistField);
+    onUpsertRecord({
+      persistField,
+      entityId,
+      fieldName: fieldDefinition.metadata.fieldName,
+    });
 
-    closeTableCell();
-    moveLeft();
+    onCloseTableCell();
+    onMoveFocus('left');
   };
 
   return (

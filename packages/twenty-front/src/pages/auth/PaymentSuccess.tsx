@@ -6,9 +6,9 @@ import { IconCheck } from 'twenty-ui';
 
 import { SubTitle } from '@/auth/components/SubTitle.tsx';
 import { Title } from '@/auth/components/Title.tsx';
-import { AppPath } from '@/types/AppPath.ts';
+import { AppPath } from '@/types/AppPath';
 import { MainButton } from '@/ui/input/button/components/MainButton.tsx';
-import { RGBA } from '@/ui/theme/constants/Rgba.ts';
+import { RGBA } from '@/ui/theme/constants/Rgba';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn.tsx';
 
 const StyledCheckContainer = styled.div`

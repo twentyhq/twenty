@@ -1,7 +1,7 @@
 import { SuggestionMenuProps } from '@blocknote/react';
 import styled from '@emotion/styled';
+import { IconComponent } from 'twenty-ui';
 
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItemSuggestion } from '@/ui/navigation/menu-item/components/MenuItemSuggestion';

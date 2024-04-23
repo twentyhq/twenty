@@ -35,7 +35,7 @@ export class StandardObjectFactory {
 
     if (!objectMetadata) {
       throw new Error(
-        `Object metadata decorator not found, can\'t parse ${metadata.name}`,
+        `Object metadata decorator not found, can't parse ${metadata.name}`,
       );
     }
 

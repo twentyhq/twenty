@@ -202,7 +202,11 @@ export class BillingService {
       quantity = await this.userWorkspaceService.getWorkspaceMemberCount(
         user.defaultWorkspaceId,
       );
-    } catch (e) {}
+    } catch (e) {
+      this.logger.error(
+        `Failed to get workspace member count for workspace ${user.defaultWorkspaceId}`,
+      );
+    }
 
     const session = await this.stripeService.createCheckoutSession(
       user,

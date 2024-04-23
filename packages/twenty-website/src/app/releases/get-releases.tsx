@@ -2,7 +2,6 @@ import { JSXElementConstructor, ReactElement } from 'react';
 import fs from 'fs';
 import matter from 'gray-matter';
 import { compileMDX } from 'next-mdx-remote/rsc';
-import remarkBehead from 'remark-behead';
 import gfm from 'remark-gfm';
 
 import { ReleaseNote } from '@/app/releases/api/route';
@@ -60,7 +59,7 @@ export async function getMdxReleasesContent(
         parseFrontmatter: true,
         mdxOptions: {
           development: process.env.NODE_ENV === 'development',
-          remarkPlugins: [gfm, [remarkBehead, { depth: 2 }]],
+          remarkPlugins: [gfm],
         },
       },
     });

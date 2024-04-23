@@ -8,6 +8,8 @@ export function ObjectMetadata(
 ): ClassDecorator {
   return (target) => {
     const isSystem = TypedReflect.getMetadata('isSystem', target) ?? false;
+    const isAuditLogged =
+      TypedReflect.getMetadata('isAuditLogged', target) ?? true;
     const gate = TypedReflect.getMetadata('gate', target);
     const objectName = convertClassNameToObjectMetadataName(target.name);
 
@@ -20,6 +22,7 @@ export function ObjectMetadata(
         isSystem,
         isCustom: false,
         isRemote: false,
+        isAuditLogged,
         description: params.description,
         icon: params.icon,
         gate,

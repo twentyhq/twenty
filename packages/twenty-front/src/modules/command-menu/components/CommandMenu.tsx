@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { IconNotes } from 'twenty-ui';
+import { Avatar, IconNotes } from 'twenty-ui';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { Activity } from '@/activities/types/Activity';
@@ -21,8 +21,8 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { Avatar } from '@/users/components/Avatar';
 import { getLogoUrlFromDomainName } from '~/utils';
+import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 import { isDefined } from '~/utils/isDefined';
 
 import { useCommandMenu } from '../hooks/useCommandMenu';
@@ -143,8 +143,10 @@ export const CommandMenu = () => {
     objectNameSingular: CoreObjectNameSingular.Person,
     filter: commandMenuSearch
       ? makeOrFilterVariables([
-          { name: { firstName: { ilike: `%${commandMenuSearch}%` } } },
-          { name: { lastName: { ilike: `%${commandMenuSearch}%` } } },
+          ...generateILikeFiltersForCompositeFields(commandMenuSearch, 'name', [
+            'firstName',
+            'lastName',
+          ]),
           { email: { ilike: `%${commandMenuSearch}%` } },
           { phone: { ilike: `%${commandMenuSearch}%` } },
         ])

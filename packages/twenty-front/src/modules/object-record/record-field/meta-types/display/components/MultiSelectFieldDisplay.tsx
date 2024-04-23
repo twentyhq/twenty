@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { IconPencil } from 'twenty-ui';
 
-import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField.ts';
+import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField';
 import { Chip, ChipVariant } from '@/ui/display/chip/components/Chip.tsx';
 import { Tag } from '@/ui/display/tag/components/Tag';
 import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconButton.tsx';

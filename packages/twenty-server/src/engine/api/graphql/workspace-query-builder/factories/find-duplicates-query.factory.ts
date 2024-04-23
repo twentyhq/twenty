@@ -10,7 +10,7 @@ import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metad
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { stringifyWithoutKeyQuote } from 'src/engine/api/graphql/workspace-query-builder/utils/stringify-without-key-quote.util';
 import { ArgsAliasFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/args-alias.factory';
-import { duplicateCriteriaCollection } from 'src/engine/api/graphql/workspace-resolver-builder/constants/duplicate-criteria.constants';
+import { DUPLICATE_CRITERIA_COLLECTION } from 'src/engine/api/graphql/workspace-resolver-builder/constants/duplicate-criteria.constants';
 import { settings } from 'src/engine/constants/settings';
 
 import { FieldsStringFactory } from './fields-string.factory';
@@ -145,7 +145,7 @@ export class FindDuplicatesQueryFactory {
   private getApplicableDuplicateCriteriaCollection(
     objectMetadataItem: ObjectMetadataInterface,
   ) {
-    return duplicateCriteriaCollection.filter(
+    return DUPLICATE_CRITERIA_COLLECTION.filter(
       (duplicateCriteria) =>
         duplicateCriteria.objectName === objectMetadataItem.nameSingular,
     );

@@ -10,6 +10,18 @@ export const formatToHumanReadableDate = (date: Date | string) => {
   }).format(parsedJSDate);
 };
 
+export const formatToHumanReadableDateTime = (date: Date | string) => {
+  const parsedJSDate = parseDate(date).toJSDate();
+
+  return new Intl.DateTimeFormat(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+  }).format(parsedJSDate);
+};
+
 export const sanitizeURL = (link: string | null | undefined) => {
   return link
     ? link.replace(/(https?:\/\/)|(www\.)/g, '').replace(/\/$/, '')
