@@ -60,6 +60,7 @@ import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.m
 import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { BlocklistItemDeleteCalendarEventsJob } from 'src/modules/calendar/jobs/blocklist-item-delete-calendar-events.job';
+import { BlocklistReimportCalendarEventsJob } from 'src/modules/calendar/jobs/blocklist-reimport-calendar-events.job';
 
 @Module({
   imports: [
@@ -195,6 +196,10 @@ import { BlocklistItemDeleteCalendarEventsJob } from 'src/modules/calendar/jobs/
     {
       provide: BlocklistReimportMessagesJob.name,
       useClass: BlocklistReimportMessagesJob,
+    },
+    {
+      provide: BlocklistReimportCalendarEventsJob.name,
+      useClass: BlocklistReimportCalendarEventsJob,
     },
   ],
 })
