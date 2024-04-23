@@ -179,26 +179,16 @@ export class CalendarChannelEventAssociationRepository {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const calendarChannelEventAssociationIdsToDelete =
-      await this.workspaceDataSourceService.executeRawQuery(
-        `SELECT "calendarChannelEventAssociation"."id"
+    await this.workspaceDataSourceService.executeRawQuery(
+      `DELETE FROM ${dataSourceSchema}."calendarChannelEventAssociation"
+      WHERE "id" IN (
+      SELECT "calendarChannelEventAssociation"."id"
       FROM ${dataSourceSchema}."calendarChannelEventAssociation" "calendarChannelEventAssociation"
       JOIN ${dataSourceSchema}."calendarEvent" "calendarEvent" ON "calendarChannelEventAssociation"."calendarEventId" = "calendarEvent"."id"
       JOIN ${dataSourceSchema}."calendarEventParticipant" "calendarEventParticipant" ON "calendarEvent"."id" = "calendarEventParticipant"."calendarEventId"
-      WHERE "calendarEventParticipant"."handle" = $1 AND "calendarChannelEventAssociation"."calendarChannelId" = ANY($2)`,
-        [calendarEventParticipantHandle, calendarChannelIds],
-        workspaceId,
-        transactionManager,
-      );
-
-    const calendarChannelEventAssociationIdsToDeleteArray =
-      calendarChannelEventAssociationIdsToDelete.map(
-        (messageChannelMessageAssociation: { id: string }) =>
-          messageChannelMessageAssociation.id,
-      );
-
-    await this.deleteByIds(
-      calendarChannelEventAssociationIdsToDeleteArray,
+      WHERE "calendarEventParticipant"."handle" = $1 AND "calendarChannelEventAssociation"."calendarChannelId" = ANY($2)
+      )`,
+      [calendarEventParticipantHandle, calendarChannelIds],
       workspaceId,
       transactionManager,
     );
