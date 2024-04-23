@@ -58,8 +58,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly metadataDataSource: DataSource,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectRepository(RelationMetadataEntity, 'metadata')
-    private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationService: WorkspaceMigrationService,

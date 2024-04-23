@@ -1,5 +1,7 @@
 import { Repository } from 'typeorm/repository/Repository';
 
+import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+
 import { decryptText } from 'src/engine/core-modules/auth/auth.util';
 import {
   FeatureFlagEntity,
@@ -42,8 +44,29 @@ export const mapUdtNameToFieldType = (udtName: string): FieldMetadataType => {
     case 'timestamp':
     case 'timestamptz':
       return FieldMetadataType.DATE_TIME;
+    case 'integer':
+    case 'int2':
+    case 'int4':
+    case 'int8':
+      return FieldMetadataType.NUMBER;
     default:
       return FieldMetadataType.TEXT;
+  }
+};
+
+export const mapUdtNameToSettings = (
+  udtName: string,
+): FieldMetadataSettings<FieldMetadataType> | undefined => {
+  switch (udtName) {
+    case 'integer':
+    case 'int2':
+    case 'int4':
+    case 'int8':
+      return {
+        precision: 0,
+      } satisfies FieldMetadataSettings<FieldMetadataType.NUMBER>;
+    default:
+      return undefined;
   }
 };
 

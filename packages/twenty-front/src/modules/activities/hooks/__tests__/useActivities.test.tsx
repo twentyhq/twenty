@@ -51,7 +51,7 @@ const mocks: MockedResponse[] = [
           $filter: ActivityTargetFilterInput
           $orderBy: ActivityTargetOrderByInput
           $lastCursor: String
-          $limit: Float
+          $limit: Int
         ) {
           activityTargets(
             filter: $filter
@@ -105,7 +105,7 @@ const mocks: MockedResponse[] = [
           $filter: ActivityFilterInput
           $orderBy: ActivityOrderByInput
           $lastCursor: String
-          $limit: Float
+          $limit: Int
         ) {
           activities(
             filter: $filter

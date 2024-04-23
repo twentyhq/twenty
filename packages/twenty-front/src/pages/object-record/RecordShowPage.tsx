@@ -96,11 +96,6 @@ export const RecordShowPage = () => {
     ? `${pageName} - ${capitalize(objectNameSingular)}`
     : capitalize(objectNameSingular);
 
-  // Temporarily since we don't have relations for remote objects yet
-  if (objectMetadataItem.isRemote) {
-    return null;
-  }
-
   return (
     <PageContainer>
       <PageTitle title={pageTitle} />

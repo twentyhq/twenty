@@ -7,8 +7,8 @@ import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDa
 import { isFieldDateValue } from '@/object-record/record-field/types/guards/isFieldDateValue';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
-import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
-import { isFieldMultiSelectValue } from '@/object-record/record-field/types/guards/isFieldMultiSelectValue';
+import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect.ts';
+import { isFieldMultiSelectValue } from '@/object-record/record-field/types/guards/isFieldMultiSelectValue.ts';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
 import { isFieldRawJsonValue } from '@/object-record/record-field/types/guards/isFieldRawJsonValue';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';

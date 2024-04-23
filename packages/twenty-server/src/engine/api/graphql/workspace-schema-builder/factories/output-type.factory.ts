@@ -32,8 +32,8 @@ export class OutputTypeFactory {
     let gqlType: GraphQLOutputType | undefined =
       this.typeMapperService.mapToScalarType(
         type,
-        buildOtions.dateScalarMode,
-        buildOtions.numberScalarMode,
+        typeOptions.settings,
+        // typeOptions.isIdField,
       );
 
     gqlType ??= this.typeDefinitionsStorage.getOutputTypeByKey(target, kind);

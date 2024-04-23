@@ -12,6 +12,7 @@ import { RemoteTableStatus } from 'src/engine/metadata-modules/remote-server/rem
 import {
   isPostgreSQLIntegrationEnabled,
   mapUdtNameToFieldType,
+  mapUdtNameToSettings,
 } from 'src/engine/metadata-modules/remote-server/remote-table/remote-postgres-table/utils/remote-postgres-table.util';
 import { RemoteTableInput } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table-input';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
@@ -429,7 +430,11 @@ export class RemoteTableService {
       workspaceId: workspaceId,
       icon: 'IconPlug',
       isRemote: true,
-      remoteTablePrimaryKeyColumnType: remoteTableIdColumn.udtName,
+      primaryKeyColumnType: remoteTableIdColumn.udtName,
+      // TODO: function should work for other types than Postgres
+      primaryKeyFieldMetadataSettings: mapUdtNameToSettings(
+        remoteTableIdColumn.udtName,
+      ),
     } satisfies CreateObjectInput);
 
     for (const column of remoteTableColumns) {
@@ -444,6 +449,8 @@ export class RemoteTableService {
         isRemoteCreation: true,
         isNullable: true,
         icon: 'IconPlug',
+        // TODO: function should work for other types than Postgres
+        settings: mapUdtNameToSettings(column.udtName),
       } satisfies CreateFieldInput);
 
       if (column.columnName === 'id') {
