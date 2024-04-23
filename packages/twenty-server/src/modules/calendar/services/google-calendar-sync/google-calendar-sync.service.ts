@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { Repository } from 'typeorm';
 import { calendar_v3 as calendarV3 } from 'googleapis';
@@ -29,6 +28,13 @@ import { CalendarEventCleanerService } from 'src/modules/calendar/services/calen
 import { CalendarEventParticipantService } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.service';
 import { CalendarEventParticipant } from 'src/modules/calendar/types/calendar-event';
 import { filterOutBlocklistedEvents } from 'src/modules/calendar/utils/filter-out-blocklisted-events.util';
+import {
+  CreateCompanyAndContactJobData,
+  CreateCompanyAndContactJob,
+} from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 
 @Injectable()
 export class GoogleCalendarSyncService {
@@ -53,9 +59,10 @@ export class GoogleCalendarSyncService {
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly eventEmitter: EventEmitter2,
     private readonly calendarEventCleanerService: CalendarEventCleanerService,
     private readonly calendarEventParticipantsService: CalendarEventParticipantService,
+    @InjectMessageQueue(MessageQueue.emailQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   public async startGoogleCalendarSync(
@@ -369,11 +376,14 @@ export class GoogleCalendarSyncService {
         );
 
         if (calendarChannel.isContactAutoCreationEnabled) {
-          this.eventEmitter.emit(`createContacts`, {
-            workspaceId,
-            connectedAccountHandle: connectedAccount.handle,
-            contactsToCreate: participantsToSave,
-          });
+          await this.messageQueueService.add<CreateCompanyAndContactJobData>(
+            CreateCompanyAndContactJob.name,
+            {
+              workspaceId,
+              connectedAccountHandle: connectedAccount.handle,
+              contactsToCreate: participantsToSave,
+            },
+          );
         }
       } catch (error) {
         this.logger.error(
