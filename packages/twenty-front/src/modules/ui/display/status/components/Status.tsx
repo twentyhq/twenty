@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 
+import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
 import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 
@@ -41,6 +42,7 @@ const StyledContent = styled.span`
 type StatusProps = {
   className?: string;
   color: ThemeColor;
+  isLoaderVisible?: boolean;
   text: string;
   onClick?: () => void;
   weight?: 'regular' | 'medium';
@@ -49,6 +51,7 @@ type StatusProps = {
 export const Status = ({
   className,
   color,
+  isLoaderVisible = false,
   text,
   onClick,
   weight = 'regular',
@@ -60,5 +63,6 @@ export const Status = ({
     weight={weight}
   >
     <StyledContent>{text}</StyledContent>
+    {isLoaderVisible ? <Loader /> : null}
   </StyledStatus>
 );
