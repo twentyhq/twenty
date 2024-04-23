@@ -12,14 +12,14 @@ describe('gmailSearchFilterExcludeEmailAdresses', () => {
     const result = gmailSearchFilterExcludeEmailAdresses(emails);
 
     expect(result).toBe(
-      `(in:inbox from:-(${gmailSearchFilterNonPersonalEmails}|hello@twenty.com|hey@twenty.com)|(in:sent to:-(${gmailSearchFilterNonPersonalEmails}|hello@twenty.com|hey@twenty.com)) -category:promotions -category:social -category:forums -filename:.ics`,
+      `(in:inbox from:-(${gmailSearchFilterNonPersonalEmails}|hello@twenty.com|hey@twenty.com)|(in:sent to:-(${gmailSearchFilterNonPersonalEmails}|hello@twenty.com|hey@twenty.com)) ${excludedCategoriesAndFileTypesString}`,
     );
   });
   it('should return correct search filter for excluding emails when no emails are provided', () => {
     const result = gmailSearchFilterExcludeEmailAdresses();
 
     expect(result).toBe(
-      `from:-(${gmailSearchFilterNonPersonalEmails}) -category:promotions -category:social -category:forums -filename:.ics`,
+      `from:-(${gmailSearchFilterNonPersonalEmails}) ${excludedCategoriesAndFileTypesString}`,
     );
   });
 });
@@ -30,7 +30,7 @@ describe('gmailSearchFilterIncludeOnlyEmailAdresses', () => {
     const result = gmailSearchFilterIncludeOnlyEmailAdresses(emails);
 
     expect(result).toBe(
-      `(in:inbox from:(hello@twenty.com|hey@twenty.com)|(in:sent to:(hello@twenty.com|hey@twenty.com)) -category:promotions -category:social -category:forums -filename:.ics`,
+      `(in:inbox from:(hello@twenty.com|hey@twenty.com)|(in:sent to:(hello@twenty.com|hey@twenty.com)) ${excludedCategoriesAndFileTypesString}`,
     );
   });
   it('should return undefined when no emails are provided', () => {
