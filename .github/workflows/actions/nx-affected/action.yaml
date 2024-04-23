@@ -13,7 +13,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Nx Affected CI / Get last successful commit
+    - name: Get last successful commit
       id: setSHAs
       uses: nrwl/nx-set-shas@v4
     - name: Run affected command

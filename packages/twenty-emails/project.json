@@ -27,17 +27,18 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "eslintConfig": "{projectRoot}/.eslintrc.cjs",
+        "cache": true,
+        "cacheLocation": "{workspaceRoot}/.cache/eslint",
         "ignorePath": "{workspaceRoot}/.gitignore",
         "lintFilePatterns": [
           "{projectRoot}/src/**/*.{ts,tsx,json}",
           "{projectRoot}/package.json"
         ],
-        "reportUnusedDisableDirectives": "error",
-        "cache": true
+        "reportUnusedDisableDirectives": "error"
       },
       "configurations": {
         "ci": {
-          "cache": false
+          "cacheStrategy": "content"
         },
         "fix": {
           "fix": true

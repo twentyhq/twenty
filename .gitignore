@@ -25,3 +25,4 @@ dist
 storybook-static
 *.tsbuildinfo
 .eslintcache
+.cache

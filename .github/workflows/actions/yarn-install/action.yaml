@@ -15,7 +15,6 @@ runs:
         path: node_modules
         key: root-node_modules-${{ hashFiles('yarn.lock') }}
         restore-keys: root-node_modules-
-    - name: Yarn Install / Install Dependencies
+    - name: Install Dependencies
       shell: bash
       run: yarn --immutable --check-cache
-      if: steps.node-modules-cache.outputs.cache-hit != 'true'

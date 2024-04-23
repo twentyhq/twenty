@@ -1,7 +1,7 @@
 {
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
-    "sharedGlobals": ["{workspaceRoot}/.github/workflows/ci-front.yaml"]
+    "sharedGlobals": ["{workspaceRoot}/.github/workflows/**/*"]
   },
   "targetDefaults": {
     "build": {

@@ -95,11 +95,16 @@
       "executor": "@nx/eslint:lint",
       "options": {
         "eslintConfig": "{projectRoot}/.eslintrc.cjs",
+        "cache": true,
+        "cacheLocation": "{workspaceRoot}/.cache/eslint",
         "ignorePath": "{workspaceRoot}/.gitignore",
         "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"]
       },
       "configurations": {
-        "ci": { "lintFilePatterns": ["{projectRoot}/**/*.{ts,json}"] },
+        "ci": {
+          "lintFilePatterns": ["{projectRoot}/**/*.{ts,json}"],
+          "cacheStrategy": "content"
+        },
         "fix": { "fix": true }
       }
     },
