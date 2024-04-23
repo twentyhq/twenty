@@ -46,7 +46,7 @@ export class BlocklistReimportCalendarEventsJob
       return;
     }
 
-    this.googleCalendarSyncService.startGoogleCalendarSync(
+    await this.googleCalendarSyncService.startGoogleCalendarSync(
       workspaceId,
       connectedAccount[0].id,
     );
