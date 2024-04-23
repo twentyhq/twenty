@@ -3,11 +3,19 @@ name: Yarn Install
 runs:
   using: "composite"
   steps:
-    - name: Yarn Install / Setup Node.js and get cached dependencies
+    - name: Setup Node.js and get yarn cache
       uses: actions/setup-node@v3
       with:
         node-version: "18"
         cache: yarn
+    - name: Cache node modules
+      id: node-modules-cache
+      uses: actions/cache@v3
+      with:
+        path: node_modules
+        key: root-node_modules-${{ hashFiles('yarn.lock') }}
+        restore-keys: root-node_modules-
     - name: Yarn Install / Install Dependencies
       shell: bash
-      run: yarn --immutable
+      run: yarn --immutable --check-cache
+      if: steps.node-modules-cache.outputs.cache-hit != 'true'
