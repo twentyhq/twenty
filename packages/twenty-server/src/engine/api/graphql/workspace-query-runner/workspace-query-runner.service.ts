@@ -47,7 +47,7 @@ import { NotFoundError } from 'src/engine/utils/graphql-errors.util';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters.factory';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
@@ -629,7 +629,7 @@ export class WorkspaceQueryRunnerService {
     workspaceId: string,
     objectMetadataItem: ObjectMetadataInterface,
   ) {
-    if (objectMetadataItem.standardId !== standardObjectIds.blocklist) {
+    if (objectMetadataItem.standardId !== STANDARD_OBJECT_IDS.blocklist) {
       return;
     }
 
