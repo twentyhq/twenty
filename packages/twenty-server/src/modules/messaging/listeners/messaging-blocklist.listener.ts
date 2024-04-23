@@ -11,9 +11,9 @@ import {
   BlocklistReimportMessagesJobData,
 } from 'src/modules/messaging/jobs/blocklist-reimport-messages.job';
 import {
-  DeleteMessagesFromHandleJobData,
-  DeleteMessagesFromHandleJob,
-} from 'src/modules/messaging/jobs/delete-messages-from-handle.job';
+  BlocklistItemDeleteMessagesJobData,
+  BlocklistItemDeleteMessagesJob,
+} from 'src/modules/messaging/jobs/blocklist-item-delete-messages.job';
 
 @Injectable()
 export class MessagingBlocklistListener {
@@ -26,8 +26,8 @@ export class MessagingBlocklistListener {
   async handleCreatedEvent(
     payload: ObjectRecordCreateEvent<BlocklistObjectMetadata>,
   ) {
-    await this.messageQueueService.add<DeleteMessagesFromHandleJobData>(
-      DeleteMessagesFromHandleJob.name,
+    this.messageQueueService.add<BlocklistItemDeleteMessagesJobData>(
+      BlocklistItemDeleteMessagesJob.name,
       {
         workspaceId: payload.workspaceId,
         blocklistItemId: payload.recordId,

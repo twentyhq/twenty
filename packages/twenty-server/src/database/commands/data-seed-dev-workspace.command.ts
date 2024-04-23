@@ -175,11 +175,6 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
         console.error(error);
       }
 
-      try {
-      } catch (error) {
-        console.error(error);
-      }
-
       await this.typeORMService.disconnectFromDataSource(dataSourceMetadata.id);
     }
   }
