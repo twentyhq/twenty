@@ -15,7 +15,6 @@ import { GoogleAPIRefreshAccessTokenModule } from 'src/modules/connected-account
 import { MessageParticipantModule } from 'src/modules/messaging/services/message-participant/message-participant.module';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
-import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { CreateCompanyAndContactJob } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
 import { AuditLogObjectMetadata } from 'src/modules/timeline/standard-objects/audit-log.object-metadata';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
@@ -46,7 +45,7 @@ import { AutoCompaniesAndContactsCreationModule } from 'src/modules/connected-ac
 import { GmailFetchMessagesFromCacheCronJob } from 'src/modules/messaging/crons/jobs/gmail-fetch-messages-from-cache.cron.job';
 import { GmailPartialSyncCronJob } from 'src/modules/messaging/crons/jobs/gmail-partial-sync.cron.job';
 import { DeleteConnectedAccountAssociatedMessagingDataJob } from 'src/modules/messaging/jobs/delete-connected-account-associated-messaging-data.job';
-import { DeleteMessagesFromHandleJob } from 'src/modules/messaging/jobs/delete-messages-from-handle.job';
+import { BlocklistItemDeleteMessagesJob } from 'src/modules/messaging/jobs/blocklist-item-delete-messages.job';
 import { GmailFullSyncJob } from 'src/modules/messaging/jobs/gmail-full-sync.job';
 import { GmailPartialSyncJob } from 'src/modules/messaging/jobs/gmail-partial-sync.job';
 import { MessagingCreateCompanyAndContactAfterSyncJob } from 'src/modules/messaging/jobs/messaging-create-company-and-contact-after-sync.job';
@@ -58,6 +57,8 @@ import { GmailPartialSyncModule } from 'src/modules/messaging/services/gmail-par
 import { ThreadCleanerModule } from 'src/modules/messaging/services/thread-cleaner/thread-cleaner.module';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
+import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { BlocklistItemDeleteCalendarEventsJob } from 'src/modules/calendar/jobs/blocklist-item-delete-calendar-events.job';
 
 @Module({
   imports: [
@@ -183,8 +184,12 @@ import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/mess
       useClass: GoogleCalendarSyncCronJob,
     },
     {
-      provide: DeleteMessagesFromHandleJob.name,
-      useClass: DeleteMessagesFromHandleJob,
+      provide: BlocklistItemDeleteMessagesJob.name,
+      useClass: BlocklistItemDeleteMessagesJob,
+    },
+    {
+      provide: BlocklistItemDeleteCalendarEventsJob.name,
+      useClass: BlocklistItemDeleteCalendarEventsJob,
     },
   ],
 })

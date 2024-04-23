@@ -14,7 +14,7 @@ import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-obj
 @Injectable()
 export class CalendarChannelListener {
   constructor(
-    @Inject(MessageQueue.messagingQueue)
+    @Inject(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
