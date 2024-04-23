@@ -7,9 +7,7 @@
   "license": "AGPL-3.0",
   "main": "./dist/index.js",
   "scripts": {
-    "nx": "NX_DEFAULT_PROJECT=twenty-emails node ../../node_modules/nx/bin/nx.js",
-    "build": "npx vite build",
-    "lint": "eslint"
+    "build": "npx vite build"
   },
   "exports": {
     ".": {
@@ -21,8 +19,5 @@
     "node": "^18.17.1",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
-  },
-  "nx": {
-    "projectType": "library"
   }
 }
