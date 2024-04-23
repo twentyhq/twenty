@@ -6,7 +6,7 @@ inputs:
   tag:
     required: false
     types: [string]
-  target:
+  tasks:
     required: true
     types: [string]
 
@@ -14,8 +14,19 @@ runs:
   using: "composite"
   steps:
     - name: Get last successful commit
-      id: setSHAs
       uses: nrwl/nx-set-shas@v4
+    - name: Compute tasks key
+      id: tasks-key
+      shell: bash
+      run: echo "key=${{ inputs.tasks }}" | tr , - >> $GITHUB_OUTPUT
+    - name: Restore tasks cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          .cache
+          .nx/cache
+        key: tasks-cache-${{ steps.tasks-key.outputs.key }}-${{ inputs.tag }}-${{ github.sha }}
+        restore-keys: tasks-cache-${{ steps.tasks-key.outputs.key }}-${{ inputs.tag }}-${{ env.NX_BASE }}
     - name: Run affected command
       shell: bash
-      run: npx nx affected --nxBail --configuration=ci -t ${{ inputs.target }} --parallel=${{ inputs.parallel }} --exclude='*,!tag:${{ inputs.tag }}'
+      run: npx nx affected --nxBail --configuration=ci -t=${{ inputs.tasks }} --parallel=${{ inputs.parallel }} --exclude='*,!tag:${{ inputs.tag }}'

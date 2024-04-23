@@ -34,23 +34,17 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
-      - name: Restore lint cache
-        uses: ./.github/workflows/actions/lint-cache
-      - name: Restore typecheck cache
-        uses: ./.github/workflows/actions/typecheck-cache
       - name: Server / Run linter & typecheck
         uses: ./.github/workflows/actions/nx-affected
         with:
           tag: scope:backend
-          target: lint typecheck
-      - name: Restore test cache
-        uses: ./.github/workflows/actions/test-cache
+          tasks: lint,typecheck
       - name: Server / Run jest tests
         uses: ./.github/workflows/actions/nx-affected
         with:
           parallel: 1
           tag: scope:backend
-          target: test
+          tasks: test
       - name: Server / Build
         run: npx nx build twenty-server
       - name: Server / Write .env
