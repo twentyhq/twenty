@@ -77,7 +77,7 @@ jobs:
       - name: Run storybook tests
         run: |
           npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
-            "STORYBOOK_SCOPE=pages npx nx run twenty-front:storybook:static" \
+            "STORYBOOK_SCOPE=pages npx nx run twenty-front:storybook:static:ci" \
             "npx wait-on tcp:6006 && STORYBOOK_SCOPE=pages npx nx run twenty-front:storybook:test"
   front-modules-sb-test:
     needs: front-yarn-install
@@ -115,7 +115,7 @@ jobs:
       - name: Run storybook tests
         run: |
           npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
-            "STORYBOOK_SCOPE=modules npx nx run twenty-front:storybook:static" \
+            "STORYBOOK_SCOPE=modules npx nx run twenty-front:storybook:static:ci" \
             "npx wait-on tcp:6006 && STORYBOOK_SCOPE=modules npx nx run twenty-front:storybook:test"
   front-lint-tsc:
     needs: front-yarn-install
