@@ -17,39 +17,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  front-pages-sb-test:
+  front-sb-test:
     runs-on: ci-8-cores
+    strategy:
+      matrix:
+        storybook_scope: [pages, modules]
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
-      STORYBOOK_SCOPE: pages
+      STORYBOOK_SCOPE: ${{ matrix.storybook_scope }}
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
         with:
           access_token: ${{ github.token }}
-      - name: Fetch local actions
-        uses: actions/checkout@v4
-      - name: Install dependencies
-        uses: ./.github/workflows/actions/yarn-install
-      - name: Install Playwright
-        run: cd packages/twenty-front && npx playwright install
-      - name: Front / Write .env
-        run: npx nx reset:env twenty-front
-      - name: Run storybook tests
-        run: |
-          npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
-            "npx nx run twenty-front:storybook:static:ci" \
-            "npx wait-on tcp:6006 && npx nx run twenty-front:storybook:test"
-  front-modules-sb-test:
-    runs-on: ci-4-cores
-    env:
-      REACT_APP_SERVER_BASE_URL: http://localhost:3000
-      STORYBOOK_SCOPE: modules
-    steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-            access_token: ${{ github.token }}
       - name: Fetch local actions
         uses: actions/checkout@v4
       - name: Install dependencies
