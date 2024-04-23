@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 
 import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
@@ -18,6 +18,7 @@ export const RecordTableCell = ({
     useContext(RecordTableContext);
   const { entityId, fieldDefinition } = useContext(FieldContext);
   const { isReadOnly } = useContext(RecordTableRowContext);
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleEnter: FieldInputEvent = (persistField) => {
     onUpsertRecord({
@@ -88,6 +89,8 @@ export const RecordTableCell = ({
 
   return (
     <RecordTableCellContainer
+      isHovered={isHovered}
+      setIsHovered={setIsHovered}
       editHotkeyScope={customHotkeyScope}
       editModeContent={
         <FieldInput
@@ -102,7 +105,7 @@ export const RecordTableCell = ({
           isReadOnly={isReadOnly}
         />
       }
-      nonEditModeContent={<FieldDisplay />}
+      nonEditModeContent={<FieldDisplay isHovered={isHovered} />}
     />
   );
 };

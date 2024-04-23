@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { Tooltip } from 'react-tooltip';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -100,6 +100,8 @@ type RecordInlineCellContainerProps = {
   isDisplayModeContentEmpty?: boolean;
   isDisplayModeFixHeight?: boolean;
   disableHoverEffect?: boolean;
+  isHovered: boolean;
+  setIsHovered: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 export const RecordInlineCellContainer = ({
@@ -116,9 +118,10 @@ export const RecordInlineCellContainer = ({
   editModeContentOnly,
   isDisplayModeFixHeight,
   disableHoverEffect,
+  isHovered,
+  setIsHovered,
 }: RecordInlineCellContainerProps) => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
-  const [isHovered, setIsHovered] = useState(false);
 
   const handleContainerMouseEnter = () => {
     if (!readonly) {

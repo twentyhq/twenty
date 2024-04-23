@@ -119,7 +119,7 @@ export const SettingsDataModelFieldPreview = ({
           ) : fieldMetadataItem.type === FieldMetadataType.Rating ? (
             <RatingFieldInput readonly />
           ) : (
-            <FieldDisplay />
+            <FieldDisplay isHovered={false} />
           )}
         </FieldContext.Provider>
       </StyledFieldPreview>

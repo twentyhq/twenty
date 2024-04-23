@@ -1,13 +1,12 @@
-import styled from '@emotion/styled';
-
+import { ExpandableCell } from '@/object-record/record-field/meta-types/display/components/ExpandableCell.tsx';
 import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField';
 import { Tag } from '@/ui/display/tag/components/Tag';
 
-const StyledTagContainer = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
-export const MultiSelectFieldDisplay = () => {
+export const MultiSelectFieldDisplay = ({
+  isHovered,
+}: {
+  isHovered: boolean;
+}) => {
   const { fieldValues, fieldDefinition } = useMultiSelectField();
 
   const selectedOptions = fieldValues
@@ -17,7 +16,7 @@ export const MultiSelectFieldDisplay = () => {
     : [];
 
   return selectedOptions ? (
-    <StyledTagContainer>
+    <ExpandableCell isHovered={isHovered}>
       {selectedOptions.map((selectedOption, index) => (
         <Tag
           key={index}
@@ -25,7 +24,7 @@ export const MultiSelectFieldDisplay = () => {
           text={selectedOption.label}
         />
       ))}
-    </StyledTagContainer>
+    </ExpandableCell>
   ) : (
     <></>
   );

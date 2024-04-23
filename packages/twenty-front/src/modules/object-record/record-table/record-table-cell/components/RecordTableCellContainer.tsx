@@ -1,4 +1,4 @@
-import React, { ReactElement, useContext, useState } from 'react';
+import { ReactElement, useContext } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { IconArrowUpRight } from 'twenty-ui';
@@ -44,6 +44,8 @@ const StyledCellBaseContainer = styled.div`
 `;
 
 export type RecordTableCellContainerProps = {
+  isHovered: boolean;
+  setIsHovered: React.Dispatch<React.SetStateAction<boolean>>;
   editModeContent: ReactElement;
   nonEditModeContent: ReactElement;
   editHotkeyScope?: HotkeyScope;
@@ -58,6 +60,8 @@ const DEFAULT_CELL_SCOPE: HotkeyScope = {
 };
 
 export const RecordTableCellContainer = ({
+  isHovered,
+  setIsHovered,
   editModeContent,
   nonEditModeContent,
   editHotkeyScope,
@@ -70,8 +74,6 @@ export const RecordTableCellContainer = ({
     useContext(RecordTableContext);
 
   const cellPosition = useCurrentTableCellPosition();
-
-  const [isHovered, setIsHovered] = useState(false);
 
   const { openTableCell } = useOpenRecordTableCellFromCell();
 

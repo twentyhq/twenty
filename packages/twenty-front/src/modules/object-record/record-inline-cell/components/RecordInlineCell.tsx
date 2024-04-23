@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { useIcons } from 'twenty-ui';
 
 import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
@@ -21,6 +21,7 @@ type RecordInlineCellProps = {
 
 export const RecordInlineCell = ({ readonly }: RecordInlineCellProps) => {
   const { fieldDefinition, entityId } = useContext(FieldContext);
+  const [isHovered, setIsHovered] = useState(false);
 
   const buttonIcon = useGetButtonIcon();
 
@@ -67,6 +68,8 @@ export const RecordInlineCell = ({ readonly }: RecordInlineCellProps) => {
 
   return (
     <RecordInlineCellContainer
+      isHovered={isHovered}
+      setIsHovered={setIsHovered}
       readonly={readonly}
       buttonIcon={buttonIcon}
       customEditHotkeyScope={
@@ -95,7 +98,7 @@ export const RecordInlineCell = ({ readonly }: RecordInlineCellProps) => {
           isReadOnly={readonly}
         />
       }
-      displayModeContent={<FieldDisplay />}
+      displayModeContent={<FieldDisplay isHovered={isHovered} />}
       isDisplayModeContentEmpty={isFieldEmpty}
       isDisplayModeFixHeight
       editModeContentOnly={isFieldInputOnly}

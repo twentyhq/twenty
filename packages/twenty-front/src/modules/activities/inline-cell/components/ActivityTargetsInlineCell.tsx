@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { IconArrowUpRight, IconPencil } from 'twenty-ui';
 
@@ -20,6 +21,7 @@ export const ActivityTargetsInlineCell = ({
 }: ActivityTargetsInlineCellProps) => {
   const { activityTargetObjectRecords } =
     useActivityTargetObjectRecords(activity);
+  const [isHovered, setIsHovered] = useState(false);
   const { closeInlineCell } = useInlineCell();
 
   useScopedHotkeys(
@@ -33,6 +35,8 @@ export const ActivityTargetsInlineCell = ({
   return (
     <RecordFieldInputScope recordFieldInputScopeId={activity?.id ?? ''}>
       <RecordInlineCellContainer
+        isHovered={isHovered}
+        setIsHovered={setIsHovered}
         buttonIcon={IconPencil}
         customEditHotkeyScope={{
           scope: ActivityEditorHotkeyScope.ActivityTargets,
