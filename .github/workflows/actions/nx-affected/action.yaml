@@ -25,8 +25,10 @@ runs:
         path: |
           .cache
           .nx/cache
-        key: tasks-cache-${{ steps.tasks-key.outputs.key }}-${{ inputs.tag }}-${{ github.sha }}
-        restore-keys: tasks-cache-${{ steps.tasks-key.outputs.key }}-${{ inputs.tag }}-${{ env.NX_BASE }}
+        key: tasks-cache-${{ github.ref_name }}-${{ inputs.tag }}-${{ steps.tasks-key.outputs.key }}-${{ github.sha }}
+        restore-keys: |
+          tasks-cache-${{ github.ref_name }}-${{ inputs.tag }}-${{ steps.tasks-key.outputs.key }}-
+          tasks-cache-${{ github.ref_name }}-${{ inputs.tag }}-
     - name: Run affected command
       shell: bash
       run: npx nx affected --nxBail --configuration=ci -t=${{ inputs.tasks }} --parallel=${{ inputs.parallel }} --exclude='*,!tag:${{ inputs.tag }}'
