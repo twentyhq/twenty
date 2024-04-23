@@ -149,7 +149,7 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  AUTH_PASSWORD_ENABLED = false;
+  AUTH_PASSWORD_ENABLED = true;
 
   @CastToBoolean()
   @IsOptional()
