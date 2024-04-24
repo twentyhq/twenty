@@ -235,7 +235,7 @@ const StyledContainer = styled.div`
 
   & .react-datepicker__day--selected {
     background-color: ${({ theme }) => theme.color.blue};
-    color: ${({ theme }) => theme.font.color.inverted};
+    color: ${({ theme }) => theme.grayScale.gray0};
   }
 
   & .react-datepicker__day--outside-month {
