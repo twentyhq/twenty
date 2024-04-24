@@ -14,9 +14,12 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
   migrationsRun: false,
   migrationsTableName: '_typeorm_migrations',
   migrations: ['dist/src/database/typeorm/core/migrations/*{.ts,.js}'],
-  ssl: environmentService.get('PG_DATABASE_SSL') ? {
-    rejectUnauthorized: false,
-  } : undefined,
+  ssl:
+    process.env.PG_DATABASE_SSL === 'true'
+      ? {
+          rejectUnauthorized: false,
+        }
+      : undefined,
 };
 export const connectionSource = new DataSource(
   typeORMCoreModuleOptions as DataSourceOptions,
