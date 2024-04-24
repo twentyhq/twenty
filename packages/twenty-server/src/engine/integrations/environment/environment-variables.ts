@@ -16,6 +16,7 @@ import {
 } from 'class-validator';
 
 import { EmailDriver } from 'src/engine/integrations/email/interfaces/email.interface';
+import { NodeEnvironment } from 'src/engine/integrations/environment/interfaces/node-environment.interface';
 
 import { assert } from 'src/utils/assert';
 import { CastToStringArray } from 'src/engine/integrations/environment/decorators/cast-to-string-array.decorator';
@@ -39,6 +40,10 @@ export class EnvironmentVariables {
   @IsOptional()
   @IsBoolean()
   DEBUG_MODE = false;
+
+  @IsEnum(NodeEnvironment)
+  @IsString()
+  NODE_ENV: NodeEnvironment = NodeEnvironment.development;
 
   @CastToPositiveNumber()
   @IsOptional()
