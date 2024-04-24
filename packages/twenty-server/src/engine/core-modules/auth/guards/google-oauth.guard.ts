@@ -16,8 +16,7 @@ export class GoogleOauthGuard extends AuthGuard('google') {
     if (workspaceInviteHash && typeof workspaceInviteHash === 'string') {
       request.params.workspaceInviteHash = workspaceInviteHash;
     }
-    const activate = (await super.canActivate(context)) as boolean;
 
-    return activate;
+    return (await super.canActivate(context)) as boolean;
   }
 }

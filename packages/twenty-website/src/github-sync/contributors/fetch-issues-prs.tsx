@@ -4,7 +4,7 @@ import {
   IssueNode,
   PullRequestNode,
   Repository,
-} from '@/app/contributors/api/types';
+} from '@/github-sync/contributors/types';
 
 export async function fetchIssuesPRs(
   query: typeof graphql,

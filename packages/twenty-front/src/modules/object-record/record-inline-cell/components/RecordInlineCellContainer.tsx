@@ -39,6 +39,7 @@ const StyledLabelAndIconContainer = styled.div`
 
 const StyledValueContainer = styled.div`
   display: flex;
+  min-width: 0;
 `;
 
 const StyledLabelContainer = styled.div<{ width?: number }>`

@@ -12,7 +12,8 @@ import {
 
 export const metadata: Metadata = {
   title: 'Twenty - Releases',
-  description: 'Latest releases of Twenty',
+  description:
+    'Discover the newest features and improvements in Twenty, the #1 open-source CRM.',
 };
 
 const Home = async () => {

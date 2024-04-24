@@ -1,6 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { Repository } from 'typeorm';
 import { calendar_v3 as calendarV3 } from 'googleapis';
@@ -12,7 +11,6 @@ import {
   FeatureFlagKeys,
 } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { GoogleCalendarClientProvider } from 'src/modules/calendar/services/providers/google-calendar/google-calendar.provider';
-import { googleCalendarSearchFilterExcludeEmails } from 'src/modules/calendar/utils/google-calendar-search-filter.util';
 import { CalendarChannelEventAssociationRepository } from 'src/modules/calendar/repositories/calendar-channel-event-association.repository';
 import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
@@ -29,6 +27,14 @@ import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-
 import { CalendarEventCleanerService } from 'src/modules/calendar/services/calendar-event-cleaner/calendar-event-cleaner.service';
 import { CalendarEventParticipantService } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.service';
 import { CalendarEventParticipant } from 'src/modules/calendar/types/calendar-event';
+import { filterOutBlocklistedEvents } from 'src/modules/calendar/utils/filter-out-blocklisted-events.util';
+import {
+  CreateCompanyAndContactJobData,
+  CreateCompanyAndContactJob,
+} from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 
 @Injectable()
 export class GoogleCalendarSyncService {
@@ -53,14 +59,16 @@ export class GoogleCalendarSyncService {
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly eventEmitter: EventEmitter2,
     private readonly calendarEventCleanerService: CalendarEventCleanerService,
     private readonly calendarEventParticipantsService: CalendarEventParticipantService,
+    @InjectMessageQueue(MessageQueue.emailQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   public async startGoogleCalendarSync(
     workspaceId: string,
     connectedAccountId: string,
+    emailOrDomainToReimport?: string,
   ): Promise<void> {
     const connectedAccount = await this.connectedAccountRepository.getById(
       connectedAccountId,
@@ -130,10 +138,10 @@ export class GoogleCalendarSyncService {
       const googleCalendarEvents = await googleCalendarClient.events.list({
         calendarId: 'primary',
         maxResults: 500,
-        syncToken,
+        syncToken: emailOrDomainToReimport ? undefined : syncToken,
         pageToken: nextPageToken,
+        q: emailOrDomainToReimport,
         showDeleted: true,
-        q: googleCalendarSearchFilterExcludeEmails(blocklistedEmails),
       });
 
       nextSyncToken = googleCalendarEvents.data.nextSyncToken;
@@ -168,7 +176,21 @@ export class GoogleCalendarSyncService {
       return;
     }
 
-    const eventExternalIds = events.map((event) => event.id as string);
+    let filteredEvents = filterOutBlocklistedEvents(events, blocklistedEmails);
+
+    if (emailOrDomainToReimport) {
+      // We still need to filter the events to only keep the ones that have the email or domain we want to reimport
+      // because the q parameter in the list method also filters the events that have the email or domain in their summary, description ...
+      // The q parameter allows us to narrow down the events
+      filteredEvents = filteredEvents.filter(
+        (event) =>
+          event.attendees?.some(
+            (attendee) => attendee.email?.endsWith(emailOrDomainToReimport),
+          ),
+      );
+    }
+
+    const eventExternalIds = filteredEvents.map((event) => event.id as string);
 
     startTime = Date.now();
 
@@ -204,7 +226,7 @@ export class GoogleCalendarSyncService {
         workspaceId,
       );
 
-    const formattedEvents = events
+    const formattedEvents = filteredEvents
       .filter((event) => event.status !== 'cancelled')
       .map((event) =>
         formatGoogleCalendarEvent(event, iCalUIDCalendarEventIdMap),
@@ -218,7 +240,7 @@ export class GoogleCalendarSyncService {
       existingEventExternalIds.includes(event.externalId),
     );
 
-    const cancelledEventExternalIds = events
+    const cancelledEventExternalIds = filteredEvents
       .filter((event) => event.status === 'cancelled')
       .map((event) => event.id as string);
 
@@ -240,7 +262,7 @@ export class GoogleCalendarSyncService {
 
     let newCalendarEventParticipants: CalendarEventParticipant[] = [];
 
-    if (events.length > 0) {
+    if (filteredEvents.length > 0) {
       const dataSourceMetadata =
         await this.workspaceDataSourceService.connectToWorkspaceDataSource(
           workspaceId,
@@ -365,11 +387,14 @@ export class GoogleCalendarSyncService {
         );
 
         if (calendarChannel.isContactAutoCreationEnabled) {
-          this.eventEmitter.emit(`createContacts`, {
-            workspaceId,
-            connectedAccountHandle: connectedAccount.handle,
-            contactsToCreate: participantsToSave,
-          });
+          await this.messageQueueService.add<CreateCompanyAndContactJobData>(
+            CreateCompanyAndContactJob.name,
+            {
+              workspaceId,
+              connectedAccountHandle: connectedAccount.handle,
+              contactsToCreate: participantsToSave,
+            },
+          );
         }
       } catch (error) {
         this.logger.error(

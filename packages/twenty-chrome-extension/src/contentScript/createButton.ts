@@ -52,12 +52,13 @@ export const createDefaultButton = (
     Object.assign(div.style, divStyles);
   });
 
+  // Handle the click event.
   div.addEventListener('click', async (e) => {
     e.preventDefault();
     const store = await chrome.storage.local.get();
 
     // If an api key is not set, the options page opens up to allow the user to configure an api key.
-    if (!store.apiKey) {
+    if (!store.accessToken) {
       chrome.runtime.sendMessage({ action: 'openOptionsPage' });
       return;
     }

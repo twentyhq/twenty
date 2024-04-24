@@ -234,6 +234,14 @@ export const useAuth = () => {
       }` || '';
   }, []);
 
+  const handleMicrosoftLogin = useCallback((workspaceInviteHash?: string) => {
+    const authServerUrl = REACT_APP_SERVER_BASE_URL;
+    window.location.href =
+      `${authServerUrl}/auth/microsoft/${
+        workspaceInviteHash ? '?inviteHash=' + workspaceInviteHash : ''
+      }` || '';
+  }, []);
+
   return {
     challenge: handleChallenge,
     verify: handleVerify,
@@ -244,5 +252,6 @@ export const useAuth = () => {
     signUpWithCredentials: handleCredentialsSignUp,
     signInWithCredentials: handleCrendentialsSignIn,
     signInWithGoogle: handleGoogleLogin,
+    signInWithMicrosoft: handleMicrosoftLogin,
   };
 };

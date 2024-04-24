@@ -1,4 +1,3 @@
-import { PullRequestNode } from '@/app/contributors/api/types';
 import { insertMany } from '@/database/database';
 import {
   labelModel,
@@ -6,6 +5,7 @@ import {
   pullRequestModel,
   userModel,
 } from '@/database/model';
+import { PullRequestNode } from '@/github-sync/contributors/types';
 
 export async function savePRsToDB(
   prs: Array<PullRequestNode>,

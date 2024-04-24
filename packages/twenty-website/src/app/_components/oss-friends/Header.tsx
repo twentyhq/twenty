@@ -2,15 +2,17 @@
 
 import styled from '@emotion/styled';
 
-const Title = styled.h2`
+import { Theme } from '@/app/_components/ui/theme/theme';
+
+const Title = styled.h1`
   font-size: 56px;
-  font-weight: 600;
+  font-weight: 700;
   color: #b3b3b3;
-  margin-bottom: 0px;
+  margin-bottom: 24px;
   margin-top: 64px;
 
-  @media (max-width: 810px) {
-    font-size: 28px;
+  @media (max-width: 1200px) {
+    font-size: 32px;
   }
 `;
 
@@ -20,6 +22,9 @@ const Description = styled.h2`
   margin-top: 0px;
   margin-bottom: 36px;
   font-weight: 400;
+  line-height: ${Theme.text.lineHeight.lg};
+  margin: 0 auto;
+  max-width: 600px;
   @media (max-width: 810px) {
     font-size: 18px;
   }
@@ -27,15 +32,15 @@ const Description = styled.h2`
 
 export const Header = () => {
   return (
-    <>
+    <div>
       <Title>
         Open-source <br /> <span style={{ color: 'black' }}>friends</span>
       </Title>
 
       <Description>
-        We are proud to collaborate with a diverse group of partners to <br />
-        promote open-source software.
+        We are proud to collaborate with a diverse group of partners to promote
+        open-source software.
       </Description>
-    </>
+    </div>
   );
 };

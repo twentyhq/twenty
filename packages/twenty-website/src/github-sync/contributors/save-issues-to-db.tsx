@@ -1,4 +1,3 @@
-import { IssueNode } from '@/app/contributors/api/types';
 import { insertMany } from '@/database/database';
 import {
   issueLabelModel,
@@ -6,6 +5,7 @@ import {
   labelModel,
   userModel,
 } from '@/database/model';
+import { IssueNode } from '@/github-sync/contributors/types';
 
 export async function saveIssuesToDB(
   issues: Array<IssueNode>,

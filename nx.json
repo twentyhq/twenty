@@ -65,7 +65,7 @@
     }
   },
   "installation": {
-    "version": "18.1.3"
+    "version": "18.3.3"
   },
   "generators": {
     "@nx/react": {

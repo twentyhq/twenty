@@ -27,12 +27,8 @@
           "name": "issueLabels_issueId_issues_id_fk",
           "tableFrom": "issueLabels",
           "tableTo": "issues",
-          "columnsFrom": [
-            "issueId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["issueId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -40,12 +36,8 @@
           "name": "issueLabels_labelId_labels_id_fk",
           "tableFrom": "issueLabels",
           "tableTo": "labels",
-          "columnsFrom": [
-            "labelId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["labelId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -118,12 +110,8 @@
           "name": "issues_authorId_users_id_fk",
           "tableFrom": "issues",
           "tableTo": "users",
-          "columnsFrom": [
-            "authorId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["authorId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -194,12 +182,8 @@
           "name": "pullRequestLabels_pullRequestExternalId_pullRequests_id_fk",
           "tableFrom": "pullRequestLabels",
           "tableTo": "pullRequests",
-          "columnsFrom": [
-            "pullRequestExternalId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["pullRequestExternalId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         },
@@ -207,12 +191,8 @@
           "name": "pullRequestLabels_labelId_labels_id_fk",
           "tableFrom": "pullRequestLabels",
           "tableTo": "labels",
-          "columnsFrom": [
-            "labelId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["labelId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -285,12 +265,8 @@
           "name": "pullRequests_authorId_users_id_fk",
           "tableFrom": "pullRequests",
           "tableTo": "users",
-          "columnsFrom": [
-            "authorId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["authorId"],
+          "columnsTo": ["id"],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
