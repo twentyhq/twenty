@@ -23,6 +23,15 @@ const StyledChipContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledChildContainer = styled.div<{
+  shrink: number;
+  isHovered?: boolean;
+}>`
+  display: flex;
+  flex-shrink: ${({ shrink }) => shrink};
+  overflow: ${({ isHovered }) => (isHovered ? 'hidden' : 'none')};
+`;
+
 export const ExpandableCell = ({
   children,
   isHovered,
@@ -32,7 +41,15 @@ export const ExpandableCell = ({
 }) => {
   return (
     <StyledContainer>
-      <StyledChildrenContainer>{children}</StyledChildrenContainer>
+      <StyledChildrenContainer>
+        {children.map((child, index) => {
+          return (
+            <StyledChildContainer isHovered={isHovered} shrink={index}>
+              {child}
+            </StyledChildContainer>
+          );
+        })}
+      </StyledChildrenContainer>
       {isHovered && (
         <StyledChipContainer>
           <Chip label={`+3`} variant={ChipVariant.Highlighted} />
