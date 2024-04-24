@@ -101,14 +101,12 @@ export class RemoteTableService {
     remoteServerId: string;
     workspaceId: string;
   }) {
-    const tables = await this.remoteTableRepository.find({
+    return this.remoteTableRepository.find({
       where: {
         remoteServerId,
         workspaceId,
       },
     });
-
-    return tables;
   }
 
   public async syncRemoteTable(input: RemoteTableInput, workspaceId: string) {
