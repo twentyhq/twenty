@@ -1,8 +1,8 @@
 import { migrate } from '@/database/database';
 
-export const initDatabase = async () => {
+export const migrateDatabase = async () => {
   await migrate();
   process.exit(0);
 };
 
-initDatabase();
+migrateDatabase();
