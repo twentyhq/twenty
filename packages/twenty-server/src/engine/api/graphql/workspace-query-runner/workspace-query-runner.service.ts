@@ -47,7 +47,11 @@ import { NotFoundError } from 'src/engine/utils/graphql-errors.util';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters.factory';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+<<<<<<< HEAD
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+=======
+import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assertIsValidUuid.util';
+>>>>>>> 75d9a2349 (Add checks to assert valid uuid)
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
@@ -222,6 +226,12 @@ export class WorkspaceQueryRunnerService {
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
 
+    args.data.forEach((record) => {
+      if (record.id) {
+        assertIsValidUuid(record.id);
+      }
+    });
+
     const computedArgs = await this.queryRunnerArgsFactory.create(
       args,
       options,
@@ -288,6 +298,7 @@ export class WorkspaceQueryRunnerService {
     const { workspaceId, userId, objectMetadataItem } = options;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
+    assertIsValidUuid(args.id);
 
     const existingRecord = await this.findOne(
       { filter: { id: { eq: args.id } } } as FindOneResolverArgs,
@@ -337,6 +348,7 @@ export class WorkspaceQueryRunnerService {
     const { workspaceId, objectMetadataItem } = options;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
+    assertIsValidUuid(args.data.id);
 
     const maximumRecordAffected = this.environmentService.get(
       'MUTATION_MAXIMUM_RECORD_AFFECTED',
