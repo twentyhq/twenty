@@ -32,8 +32,7 @@
       "cache": true,
       "options": {
         "cwd": "{projectRoot}",
-        "command": "tsc -b tsconfig.json",
-        "incremental": true
+        "command": "tsc -b tsconfig.json --incremental"
       },
       "configurations": {
         "watch": { "watch": true }
