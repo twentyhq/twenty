@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 
 import { Request } from 'express';
@@ -56,8 +57,14 @@ export class MicrosoftStrategy extends PassportStrategy(Strategy, 'microsoft') {
         ? JSON.parse(request.query.state)
         : undefined;
 
+    const email = emails?.[0]?.value ?? null;
+
+    if (!email) {
+      throw new BadRequestException('No email found in your Microsoft profile');
+    }
+
     const user: MicrosoftRequest['user'] = {
-      email: emails[0].value,
+      email,
       firstName: name.givenName,
       lastName: name.familyName,
       picture: photos?.[0]?.value,
