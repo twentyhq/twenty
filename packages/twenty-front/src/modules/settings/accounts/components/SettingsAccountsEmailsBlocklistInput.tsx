@@ -6,6 +6,7 @@ import { z } from 'zod';
 
 import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { isDomain } from '~/utils/is-domain';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -23,7 +24,18 @@ type SettingsAccountsEmailsBlocklistInputProps = {
 
 const validationSchema = z
   .object({
-    email: z.string().trim().email('Email must be a valid email'),
+    emailOrDomain: z
+      .string()
+      .trim()
+      .email('Invalid email or domain')
+      .or(
+        z
+          .string()
+          .refine(
+            (value) => value.startsWith('@') && isDomain(value.slice(1)),
+            'Invalid email or domain',
+          ),
+      ),
   })
   .required();
 
@@ -34,13 +46,12 @@ export const SettingsAccountsEmailsBlocklistInput = ({
 }: SettingsAccountsEmailsBlocklistInputProps) => {
   const { reset, handleSubmit, control } = useForm<FormInput>({
     mode: 'onSubmit',
-    reValidateMode: 'onSubmit',
     resolver: zodResolver(validationSchema),
   });
 
   const submit = handleSubmit((data) => {
-    updateBlockedEmailList(data.email);
-    reset({ email: '' });
+    updateBlockedEmailList(data.emailOrDomain);
+    reset({ emailOrDomain: '' });
   });
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -54,7 +65,7 @@ export const SettingsAccountsEmailsBlocklistInput = ({
       <StyledContainer>
         <StyledLinkContainer>
           <Controller
-            name="email"
+            name="emailOrDomain"
             control={control}
             render={({ field: { value, onChange }, fieldState: { error } }) => (
               <TextInput
