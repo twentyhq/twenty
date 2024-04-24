@@ -4,8 +4,9 @@ inputs:
     required: false
     types: [string]
   tasks:
-    required: true
+    required: false
     types: [string]
+    default: all
   suffix:
     required: false
     types: [string]
