@@ -12,7 +12,7 @@ import {
 } from '@/app/_components/ui/layout/header/styled';
 import { Logo } from '@/app/_components/ui/layout/Logo';
 
-export const HeaderDesktop = () => {
+export const HeaderDesktop = ({ stars }: { stars: string | null }) => {
   return (
     <DesktopNav>
       <LogoContainer>
@@ -25,9 +25,11 @@ export const HeaderDesktop = () => {
         <ListItem href="https://docs.twenty.com">
           Docs <ExternalArrow />
         </ListItem>
-        <ListItem href="https://github.com/twentyhq/twenty">
-          <GithubIcon color="rgb(71,71,71)" /> 8.3k <ExternalArrow />
-        </ListItem>
+        {stars && (
+          <ListItem href="https://github.com/twentyhq/twenty">
+            <GithubIcon color="rgb(71,71,71)" /> {stars} <ExternalArrow />
+          </ListItem>
+        )}
       </LinkList>
       <CallToAction />
     </DesktopNav>

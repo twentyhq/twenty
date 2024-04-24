@@ -25,7 +25,7 @@ const IBMPlexMono = IBM_Plex_Mono({
   display: 'swap',
 });
 
-export const HeaderMobile = () => {
+export const HeaderMobile = ({ stars }: { stars: string | null }) => {
   const isTwentyDev = false;
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -63,9 +63,11 @@ export const HeaderMobile = () => {
           <ListItem href="https://docs.twenty.com">
             Docs <ExternalArrow />
           </ListItem>
-          <ListItem href="https://github.com/twentyhq/twenty">
-            <GithubIcon color="rgb(71,71,71)" /> 8.3k <ExternalArrow />
-          </ListItem>
+          {stars && (
+            <ListItem href="https://github.com/twentyhq/twenty">
+              <GithubIcon color="rgb(71,71,71)" /> {stars} <ExternalArrow />
+            </ListItem>
+          )}
         </MobileLinkList>
         <CallToAction />
       </NavOpen>
