@@ -26,7 +26,7 @@ export class MessagingBlocklistListener {
   async handleCreatedEvent(
     payload: ObjectRecordCreateEvent<BlocklistObjectMetadata>,
   ) {
-    this.messageQueueService.add<BlocklistItemDeleteMessagesJobData>(
+    await this.messageQueueService.add<BlocklistItemDeleteMessagesJobData>(
       BlocklistItemDeleteMessagesJob.name,
       {
         workspaceId: payload.workspaceId,
