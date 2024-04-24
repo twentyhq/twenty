@@ -1,12 +1,12 @@
 import { global } from '@apollo/client/utilities/globals';
-import { drizzle as pgDrizzle } from 'drizzle-orm/postgres-js';
+import { drizzle } from 'drizzle-orm/postgres-js';
 import { migrate as postgresMigrate } from 'drizzle-orm/postgres-js/migrator';
 import postgres from 'postgres';
 
 import 'dotenv/config';
 
 const pgClient = postgres(`${global.process.env.DATABASE_PG_URL}`);
-const pgDb = pgDrizzle(pgClient, { logger: false });
+const pgDb = drizzle(pgClient, { logger: false });
 
 const migrate = async () => {
   await postgresMigrate(pgDb, {
