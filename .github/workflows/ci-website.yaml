@@ -33,6 +33,8 @@ jobs:
           node-version: "18"
       - name: Website / Install Dependencies
         run: yarn
+      - name: Website / Run migrations
+        run: npx nx database:migrate twenty-website 
       - name: Website / Build Website
         run: npx nx build twenty-website
         env:
