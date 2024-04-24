@@ -14,6 +14,9 @@ export const typeORMMetadataModuleOptions: TypeOrmModuleOptions = {
   migrationsRun: false,
   migrationsTableName: '_typeorm_migrations',
   migrations: ['dist/src/database/typeorm/metadata/migrations/*{.ts,.js}'],
+  ssl: {
+    rejectUnauthorized: false
+  },
 };
 export const connectionSource = new DataSource(
   typeORMMetadataModuleOptions as DataSourceOptions,

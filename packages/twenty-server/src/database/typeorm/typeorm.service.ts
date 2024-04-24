@@ -33,6 +33,9 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         BillingSubscription,
         BillingSubscriptionItem,
       ],
+      ssl: {
+        rejectUnauthorized: false
+      },
     });
   }
 

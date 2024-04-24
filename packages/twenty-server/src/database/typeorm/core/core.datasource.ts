@@ -14,6 +14,9 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
   migrationsRun: false,
   migrationsTableName: '_typeorm_migrations',
   migrations: ['dist/src/database/typeorm/core/migrations/*{.ts,.js}'],
+  ssl: {
+    rejectUnauthorized: false
+  },
 };
 export const connectionSource = new DataSource(
   typeORMCoreModuleOptions as DataSourceOptions,
