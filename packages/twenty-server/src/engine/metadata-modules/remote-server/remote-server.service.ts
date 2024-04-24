@@ -108,7 +108,9 @@ export class RemoteServerService<T extends RemoteServerType> {
     remoteServerInput: UpdateRemoteServerInput<T>,
     workspaceId: string,
   ): Promise<RemoteServerEntity<RemoteServerType>> {
-    validateObject(remoteServerInput.foreignDataWrapperOptions);
+    if (remoteServerInput.foreignDataWrapperOptions) {
+      validateObject(remoteServerInput.foreignDataWrapperOptions);
+    }
 
     if (remoteServerInput.userMappingOptions) {
       validateObject(remoteServerInput.userMappingOptions);
@@ -137,23 +139,23 @@ export class RemoteServerService<T extends RemoteServerType> {
 
     const foreignDataWrapperId = remoteServer.foreignDataWrapperId;
 
-    let updatedRemoteServer = {
+    let partialRemoteServerWithUpdates = {
       ...remoteServerInput,
       workspaceId,
       foreignDataWrapperId,
     };
 
-    if (remoteServerInput.userMappingOptions) {
+    if (remoteServerInput?.userMappingOptions?.password) {
       const key = this.environmentService.get('LOGIN_TOKEN_SECRET');
       const encryptedPassword = encryptText(
         remoteServerInput.userMappingOptions.password,
         key,
       );
 
-      updatedRemoteServer = {
-        ...updatedRemoteServer,
+      partialRemoteServerWithUpdates = {
+        ...partialRemoteServerWithUpdates,
         userMappingOptions: {
-          ...remoteServerInput.userMappingOptions,
+          ...partialRemoteServerWithUpdates.userMappingOptions,
           password: encryptedPassword,
         },
       };
@@ -161,26 +163,43 @@ export class RemoteServerService<T extends RemoteServerType> {
 
     return this.metadataDataSource.transaction(
       async (entityManager: EntityManager) => {
+        const completeRemoteServerWithUpdates = {
+          ...remoteServer,
+          ...partialRemoteServerWithUpdates,
+          userMappingOptions: {
+            ...remoteServer.userMappingOptions,
+            ...partialRemoteServerWithUpdates.userMappingOptions,
+          },
+          foreignDataWrapperOptions: {
+            ...remoteServer.foreignDataWrapperOptions,
+            ...partialRemoteServerWithUpdates.foreignDataWrapperOptions,
+          },
+        };
+
         await entityManager.update(
           RemoteServerEntity,
-          remoteServerInput.id,
-          updatedRemoteServer,
+          completeRemoteServerWithUpdates.id,
+          completeRemoteServerWithUpdates,
         );
 
-        const foreignDataWrapperQuery =
-          this.foreignDataWrapperQueryFactory.updateForeignDataWrapper(
-            foreignDataWrapperId,
-            remoteServerInput.foreignDataWrapperType,
-            remoteServerInput.foreignDataWrapperOptions,
-          );
+        if (partialRemoteServerWithUpdates.foreignDataWrapperOptions) {
+          const foreignDataWrapperQuery =
+            this.foreignDataWrapperQueryFactory.updateForeignDataWrapper({
+              foreignDataWrapperId,
+              foreignDataWrapperType:
+                partialRemoteServerWithUpdates.foreignDataWrapperType,
+              foreignDataWrapperOptions:
+                partialRemoteServerWithUpdates.foreignDataWrapperOptions,
+            });
 
-        await entityManager.query(foreignDataWrapperQuery);
+          await entityManager.query(foreignDataWrapperQuery);
+        }
 
-        if (remoteServerInput.userMappingOptions) {
+        if (partialRemoteServerWithUpdates.userMappingOptions) {
           const userMappingQuery =
             this.foreignDataWrapperQueryFactory.updateUserMapping(
               foreignDataWrapperId,
-              remoteServerInput.userMappingOptions,
+              partialRemoteServerWithUpdates.userMappingOptions,
             );
 
           await entityManager.query(userMappingQuery);
@@ -188,7 +207,7 @@ export class RemoteServerService<T extends RemoteServerType> {
 
         const savedRemoteServer = await entityManager.save(
           RemoteServerEntity,
-          updatedRemoteServer,
+          completeRemoteServerWithUpdates,
         );
 
         return savedRemoteServer;

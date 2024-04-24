@@ -15,13 +15,13 @@ export class UpdateRemoteServerInput<T extends RemoteServerType> {
   id: T;
 
   @Field(() => String)
-  foreignDataWrapperType: T;
+  foreignDataWrapperType?: T;
 
   @IsOptional()
   @Field(() => GraphQLJSON)
-  foreignDataWrapperOptions: ForeignDataWrapperOptions<T>;
+  foreignDataWrapperOptions?: Partial<ForeignDataWrapperOptions<T>>;
 
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
-  userMappingOptions?: UserMappingOptions;
+  userMappingOptions?: Partial<UserMappingOptions>;
 }
