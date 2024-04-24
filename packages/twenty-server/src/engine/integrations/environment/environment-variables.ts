@@ -55,11 +55,6 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
-  SIGN_IN_PREFILLED = false;
-
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
   IS_BILLING_ENABLED = false;
 
   @IsString()
@@ -159,18 +154,50 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
+  AUTH_PASSWORD_ENABLED = true;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  @ValidateIf((env) => env.AUTH_PASSWORD_ENABLED)
+  SIGN_IN_PREFILLED = false;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  AUTH_MICROSOFT_ENABLED = false;
+
+  @IsString()
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
+  AUTH_MICROSOFT_CLIENT_ID: string;
+
+  @IsString()
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
+  AUTH_MICROSOFT_TENANT_ID: string;
+
+  @IsString()
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
+  AUTH_MICROSOFT_CLIENT_SECRET: string;
+
+  @IsUrl({ require_tld: false })
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
+  AUTH_MICROSOFT_CALLBACK_URL: string;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
   AUTH_GOOGLE_ENABLED = false;
 
   @IsString()
-  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED === true)
+  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CLIENT_ID: string;
 
   @IsString()
-  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED === true)
+  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CLIENT_SECRET: string;
 
   @IsUrl({ require_tld: false })
-  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED === true)
+  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CALLBACK_URL: string;
 
   // Storage

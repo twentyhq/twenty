@@ -17093,6 +17093,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/passport-microsoft@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@types/passport-microsoft@npm:1.0.3"
+  dependencies:
+    "@types/passport-oauth2": "npm:*"
+  checksum: d177f63ae4976253242966146030b9913dc3b77c4eb192f5491d397f9036b64f258325157c244960ef4539e9c46807d0bba53497630253f4ef98d1318142b3d8
+  languageName: node
+  linkType: hard
+
 "@types/passport-oauth2@npm:*":
   version: 1.4.15
   resolution: "@types/passport-oauth2@npm:1.4.15"
@@ -38165,6 +38174,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"oauth@npm:0.10.x":
+  version: 0.10.0
+  resolution: "oauth@npm:0.10.0"
+  checksum: 76f3e186cfd76cb33e5d5d442861c86680a5c3b71b2db1b854212087532c265a69de1a2ab9db683e6c6df733e17cfc67476527b81b224a19c1917de2bc3f75fa
+  languageName: node
+  linkType: hard
+
 "oauth@npm:0.9.x":
   version: 0.9.15
   resolution: "oauth@npm:0.9.15"
@@ -39107,6 +39123,28 @@ __metadata:
   dependencies:
     passport-strategy: "npm:1.x.x"
   checksum: 59becb988014921a5d6056470d9373c41db452fcf113323064f39d53baa6f184e72151bf269ca6770511f7f0260e13632dacc7b6afdbf60ebf63e90327e186d4
+  languageName: node
+  linkType: hard
+
+"passport-microsoft@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "passport-microsoft@npm:2.0.0"
+  dependencies:
+    passport-oauth2: "npm:1.8.0"
+  checksum: 6b7d053673d5af6cbbce3812a628afff2435aa321d70c9feaa3309d7a610a2e61c753a7cde8c0febee2cacf74b971fcdc7699fa1c073c72052bc4334f1b203ec
+  languageName: node
+  linkType: hard
+
+"passport-oauth2@npm:1.8.0":
+  version: 1.8.0
+  resolution: "passport-oauth2@npm:1.8.0"
+  dependencies:
+    base64url: "npm:3.x.x"
+    oauth: "npm:0.10.x"
+    passport-strategy: "npm:1.x.x"
+    uid2: "npm:0.0.x"
+    utils-merge: "npm:1.x.x"
+  checksum: 16b431bd856b84dfe0c9c913dcbea6ff54875befac1035171b0dce1c77f79072dc5e26d785b13c2e62c034c8174a1a47571751d1066bdbcdb9108de217c0b19b
   languageName: node
   linkType: hard
 
@@ -46629,6 +46667,7 @@ __metadata:
     "@types/nodemailer": "npm:^6.4.14"
     "@types/passport-google-oauth20": "npm:^2.0.11"
     "@types/passport-jwt": "npm:^3.0.8"
+    "@types/passport-microsoft": "npm:^1.0.3"
     "@types/react": "npm:^18.2.39"
     "@types/react-datepicker": "npm:^6.2.0"
     "@types/react-dom": "npm:^18.2.15"
@@ -46745,6 +46784,7 @@ __metadata:
     passport-google-oauth20: "npm:^2.0.0"
     passport-jwt: "npm:^4.0.1"
     passport-local: "npm:^1.0.0"
+    passport-microsoft: "npm:^2.0.0"
     patch-package: "npm:^8.0.0"
     pg: "npm:^8.11.3"
     pg-boss: "npm:^9.0.3"
