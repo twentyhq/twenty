@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { v4 } from 'uuid';
@@ -17,6 +21,9 @@ import {
 } from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-input';
 import { ForeignDataWrapperQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/foreign-data-wrapper-query.factory';
 import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
+import { UpdateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/update-remote-server.input';
+import { RemoteTableStatus } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
+import { DatabaseConnectionError } from 'src/engine/metadata-modules/remote-server/remote-table/remote-postgres-table/remote-postgres-table.service';
 
 @Injectable()
 export class RemoteServerService<T extends RemoteServerType> {
@@ -95,6 +102,105 @@ export class RemoteServerService<T extends RemoteServerType> {
         await entityManager.save(RemoteServerEntity, createdRemoteServer);
 
         return createdRemoteServer;
+      },
+    );
+  }
+
+  async updateOneRemoteServer(
+    remoteServerInput: UpdateRemoteServerInput<T>,
+    workspaceId: string,
+  ): Promise<RemoteServerEntity<RemoteServerType>> {
+    validateObject(remoteServerInput.foreignDataWrapperOptions);
+
+    if (remoteServerInput.userMappingOptions) {
+      validateObject(remoteServerInput.userMappingOptions);
+    }
+
+    const remoteServer = await this.findOneByIdWithinWorkspace(
+      remoteServerInput.id,
+      workspaceId,
+    );
+
+    if (!remoteServer) {
+      throw new NotFoundException('Remote server does not exist');
+    }
+
+    try {
+      (
+        await this.remoteTableService.findAvailableRemoteTablesByServerId(
+          remoteServer.id,
+          workspaceId,
+        )
+      ).map((table) => {
+        if (table.status === RemoteTableStatus.SYNCED) {
+          throw new ForbiddenException(
+            'Cannot update remote server with synchronized tables',
+          );
+        }
+      });
+    } catch (error) {
+      if (!(error instanceof DatabaseConnectionError)) {
+        throw error;
+      }
+    }
+
+    const foreignDataWrapperId = remoteServer.foreignDataWrapperId;
+
+    let updatedRemoteServer = {
+      ...remoteServerInput,
+      workspaceId,
+      foreignDataWrapperId,
+    };
+
+    if (remoteServerInput.userMappingOptions) {
+      const key = this.environmentService.get('LOGIN_TOKEN_SECRET');
+      const encryptedPassword = encryptText(
+        remoteServerInput.userMappingOptions.password,
+        key,
+      );
+
+      updatedRemoteServer = {
+        ...updatedRemoteServer,
+        userMappingOptions: {
+          ...remoteServerInput.userMappingOptions,
+          password: encryptedPassword,
+        },
+      };
+    }
+
+    return this.metadataDataSource.transaction(
+      async (entityManager: EntityManager) => {
+        await entityManager.update(
+          RemoteServerEntity,
+          remoteServerInput.id,
+          updatedRemoteServer,
+        );
+
+        const foreignDataWrapperQuery =
+          this.foreignDataWrapperQueryFactory.updateForeignDataWrapper(
+            foreignDataWrapperId,
+            remoteServerInput.foreignDataWrapperType,
+            remoteServerInput.foreignDataWrapperOptions,
+          );
+
+        await entityManager.query(foreignDataWrapperQuery);
+
+        if (remoteServerInput.userMappingOptions) {
+          const userMappingQuery =
+            this.foreignDataWrapperQueryFactory.updateUserMapping(
+              foreignDataWrapperId,
+              remoteServerInput.userMappingOptions,
+            );
+
+          await entityManager.query(userMappingQuery);
+        }
+
+        const savedRemoteServer = await entityManager.save(
+          RemoteServerEntity,
+          updatedRemoteServer,
+        );
+
+        return savedRemoteServer;
       },
     );
   }

@@ -14,6 +14,8 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 import { RemoteTableColumn } from 'src/engine/metadata-modules/remote-server/remote-table/types/remote-table-column';
 import { RemoteTable } from 'src/engine/metadata-modules/remote-server/remote-table/types/remote-table';
 
+export class DatabaseConnectionError extends Error {}
+
 @Injectable()
 export class RemotePostgresTableService {
   constructor(private readonly environmentService: EnvironmentService) {}
@@ -59,7 +61,11 @@ export class RemotePostgresTableService {
       logging: true,
     });
 
-    await dataSource.initialize();
+    try {
+      await dataSource.initialize();
+    } catch (e) {
+      throw new DatabaseConnectionError(e.message);
+    }
 
     const schemaNames = await dataSource.query(
       `SELECT schema_name FROM information_schema.schemata where schema_name not in ( ${EXCLUDED_POSTGRES_SCHEMAS.map(
