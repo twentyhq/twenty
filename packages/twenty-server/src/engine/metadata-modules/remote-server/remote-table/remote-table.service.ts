@@ -73,14 +73,14 @@ export class RemoteTableService {
       throw new NotFoundException('Remote server does not exist');
     }
 
-    const currentRemoteTableDistantNames = (
-      await this.remoteTableRepository.find({
-        where: {
-          remoteServerId: id,
-          workspaceId,
-        },
-      })
-    ).map((remoteTable) => remoteTable.distantTableName);
+    const currentRemoteTables = await this.findCurrentRemoteTablesByServerId({
+      remoteServerId: id,
+      workspaceId,
+    });
+
+    const currentRemoteTableDistantNames = currentRemoteTables.map(
+      (remoteTable) => remoteTable.distantTableName,
+    );
 
     const tablesInRemoteSchema =
       await this.fetchTablesFromRemoteSchema(remoteServer);
@@ -92,6 +92,23 @@ export class RemoteTableService {
         ? RemoteTableStatus.SYNCED
         : RemoteTableStatus.NOT_SYNCED,
     }));
+  }
+
+  public async findCurrentRemoteTablesByServerId({
+    remoteServerId,
+    workspaceId,
+  }: {
+    remoteServerId: string;
+    workspaceId: string;
+  }) {
+    const tables = await this.remoteTableRepository.find({
+      where: {
+        remoteServerId,
+        workspaceId,
+      },
+    });
+
+    return tables;
   }
 
   public async syncRemoteTable(input: RemoteTableInput, workspaceId: string) {

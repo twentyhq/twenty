@@ -22,8 +22,6 @@ import {
 import { ForeignDataWrapperQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/foreign-data-wrapper-query.factory';
 import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
 import { UpdateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/update-remote-server.input';
-import { RemoteTableStatus } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
-import { DatabaseConnectionError } from 'src/engine/metadata-modules/remote-server/remote-table/remote-postgres-table/remote-postgres-table.service';
 
 @Injectable()
 export class RemoteServerService<T extends RemoteServerType> {
@@ -125,23 +123,16 @@ export class RemoteServerService<T extends RemoteServerType> {
       throw new NotFoundException('Remote server does not exist');
     }
 
-    try {
-      (
-        await this.remoteTableService.findAvailableRemoteTablesByServerId(
-          remoteServer.id,
-          workspaceId,
-        )
-      ).map((table) => {
-        if (table.status === RemoteTableStatus.SYNCED) {
-          throw new ForbiddenException(
-            'Cannot update remote server with synchronized tables',
-          );
-        }
+    const currentRemoteTablesForServer =
+      await this.remoteTableService.findCurrentRemoteTablesByServerId({
+        remoteServerId: remoteServer.id,
+        workspaceId,
       });
-    } catch (error) {
-      if (!(error instanceof DatabaseConnectionError)) {
-        throw error;
-      }
+
+    if (currentRemoteTablesForServer.length > 0) {
+      throw new ForbiddenException(
+        'Cannot update remote server with synchronized tables',
+      );
     }
 
     const foreignDataWrapperId = remoteServer.foreignDataWrapperId;
