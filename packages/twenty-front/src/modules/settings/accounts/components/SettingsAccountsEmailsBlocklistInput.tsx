@@ -27,13 +27,13 @@ type SettingsAccountsEmailsBlocklistInputProps = {
 export const SettingsAccountsEmailsBlocklistInput = ({
   updateBlockedEmailList,
 }: SettingsAccountsEmailsBlocklistInputProps) => {
-  const { setValue, handleSubmit, control } = useForm<FormInput>({
+  const { reset, handleSubmit, control } = useForm<FormInput>({
     mode: 'onChange',
   });
 
   const submit = handleSubmit((data) => {
     updateBlockedEmailList(data.email);
-    setValue('email', '');
+    reset({ email: '' });
   });
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
