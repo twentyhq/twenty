@@ -35,6 +35,8 @@ jobs:
         run: yarn
       - name: Website / Run migrations
         run: npx nx database:migrate twenty-website 
+        env:
+          DATABASE_PG_URL: postgres://twenty:twenty@localhost:5432/default
       - name: Website / Build Website
         run: npx nx build twenty-website
         env:
