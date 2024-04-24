@@ -1,5 +1,3 @@
-import { Attachment } from 'mailparser';
-
 export type GmailMessage = {
   historyId: string;
   externalId: string;
@@ -24,4 +22,11 @@ export type ParticipantWithMessageId = Participant & { messageId: string };
 
 export type ParticipantWithId = Participant & {
   id: string;
+};
+
+export type Attachment = {
+  id: string;
+  filename: string;
+  size: number;
+  mimeType: string;
 };

@@ -1,12 +1,6 @@
-export type GmailMessageParsedResponse = {
-  id: string;
-  threadId: string;
-  labelIds: string[];
-  snippet: string;
-  sizeEstimate: number;
-  raw: string;
-  historyId: string;
-  internalDate: string;
+import { gmail_v1 } from 'googleapis';
+
+export type GmailMessageParsedResponse = gmail_v1.Schema$Message & {
   error?: {
     code: number;
     message: string;
