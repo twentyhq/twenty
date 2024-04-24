@@ -31,9 +31,10 @@ export class WorkspaceDatasourceFactory {
         dataSourceMetadata.url ??
         this.environmentService.get('PG_DATABASE_URL'),
       type: 'postgres',
-      logging: this.environmentService.get('DEBUG_MODE')
-        ? ['query', 'error']
-        : ['error'],
+      // logging: this.environmentService.get('DEBUG_MODE')
+      //   ? ['query', 'error']
+      //   : ['error'],
+      logging: 'all',
       schema: dataSourceMetadata.schema,
       entities,
     });

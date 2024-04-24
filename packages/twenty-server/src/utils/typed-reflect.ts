@@ -6,6 +6,7 @@ import { ReflectDynamicRelationFieldMetadata } from 'src/engine/workspace-manage
 import { ReflectFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/reflect-field-metadata.interface';
 import { ReflectObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/reflect-object-metadata.interface';
 import { ReflectRelationMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/reflect-relation-metadata.interface';
+import { WorkspaceGateMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-gate-metadata-args.interface';
 
 export interface ReflectMetadataTypeMap {
   objectMetadata: ReflectObjectMetadata;
@@ -17,6 +18,10 @@ export interface ReflectMetadataTypeMap {
   isNullable: true;
   isSystem: true;
   isAuditLogged: false;
+
+  ['workspace:gate-metadata-args']: WorkspaceGateMetadataArgs;
+  ['workspace:is-system-metadata-args']: true;
+  ['workspace:is-audit-logged-metadata-args']: false;
 }
 
 export class TypedReflect {

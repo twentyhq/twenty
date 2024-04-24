@@ -1,14 +1,12 @@
-import { Injectable, Type } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { EntitySchemaRelationOptions } from 'typeorm';
 import { RelationType } from 'typeorm/metadata/types/RelationTypes';
 
-import { ReflectRelationMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/reflect-relation-metadata.interface';
+import { WorkspaceRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-relation-metadata-args.interface';
 
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { TypedReflect } from 'src/utils/typed-reflect';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 type EntitySchemaRelationMap = {
   [key: string]: EntitySchemaRelationOptions;
@@ -17,101 +15,41 @@ type EntitySchemaRelationMap = {
 @Injectable()
 export class EntitySchemaRelationFactory {
   create(
-    target: Type,
-    reflectRelationMetadataCollection: ReflectRelationMetadata[],
+    relationMetadataArgsCollection: WorkspaceRelationMetadataArgs[],
   ): EntitySchemaRelationMap {
-    const objectName = convertClassNameToObjectMetadataName(target.name);
     const entitySchemaRelationMap: EntitySchemaRelationMap = {};
 
-    /**
-     * 
-     * ACTIVITY
-     *   @FieldMetadata({
-    standardId: activityStandardFieldIds.attachments,
-    type: FieldMetadataType.RELATION,
-    label: 'Attachments',
-    description: 'Activity attachments',
-    icon: 'IconFileImport',
-  })
-  @RelationMetadata({
-    type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => AttachmentObjectMetadata,
-    onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  attachments: AttachmentObjectMetadata[];
-
-  ATTACHMENTS
-
-    @FieldMetadata({
-    standardId: attachmentStandardFieldIds.activity,
-    type: FieldMetadataType.RELATION,
-    label: 'Activity',
-    description: 'Attachment activity',
-    icon: 'IconNotes',
-    joinColumn: 'activityId',
-  })
-  activity: ActivityObjectMetadata;
-     */
-
-    for (const reflectRelationMetadata of reflectRelationMetadataCollection) {
-      const oppositeTarget = reflectRelationMetadata.inverseSideTarget();
+    for (const relationMetadataArgs of relationMetadataArgsCollection) {
+      const oppositeTarget = relationMetadataArgs.inverseSideTarget();
       const oppositeObjectName = convertClassNameToObjectMetadataName(
         oppositeTarget.name,
       );
-      const oppositeReflectFieldMetadataMap = TypedReflect.getMetadata(
-        'fieldMetadataMap',
-        oppositeTarget,
-      );
-      const oppositeReflectFieldMetadata = Object.values(
-        oppositeReflectFieldMetadataMap ?? {},
-      ).find((reflectFieldMetadata) => {
-        if (reflectFieldMetadata.type !== FieldMetadataType.RELATION) {
-          return false;
-        }
 
-        return (
-          reflectFieldMetadata.joinColumn === reflectRelationMetadata.fieldKey
-        );
-      });
+      const relationType = this.getRelationType(relationMetadataArgs);
 
-      const relationType = this.getRelationType(reflectRelationMetadata);
-
-      entitySchemaRelationMap[reflectRelationMetadata.fieldKey] = {
+      entitySchemaRelationMap[relationMetadataArgs.name] = {
         type: relationType,
-        target: () => oppositeObjectName,
-        inverseSide: objectName,
-        joinColumn: oppositeReflectFieldMetadata?.joinColumn
+        target: oppositeObjectName,
+        inverseSide: relationMetadataArgs.inverseSideFieldKey,
+        joinColumn: relationMetadataArgs.joinColumn
           ? {
-              name: oppositeReflectFieldMetadata.joinColumn,
-              referencedColumnName: 'id',
+              name: relationMetadataArgs.joinColumn,
             }
           : undefined,
       };
-
-      // // TODO: Not working for now as we can have names that doens't match the object name
-      // // To fix that we should totally refactor @RelationMetadata decorator and RelationMetadata
-      // if (oppositeReflectFieldMetadata) {
-      //   entitySchemaRelationMap[oppositeReflectFieldMetadata.name] = {
-      //     type: relationType === 'one-to-many' ? 'many-to-one' : relationType,
-      //     target: () => objectName,
-      //     inverseSide: oppositeObjectName,
-      //     joinColumn: {
-      //       name: oppositeReflectFieldMetadata.joinColumn,
-      //       referencedColumnName: 'id',
-      //     },
-      //   };
-      // }
     }
 
     return entitySchemaRelationMap;
   }
 
   private getRelationType(
-    reflectRelationMetadata: ReflectRelationMetadata,
+    relationMetadataArgs: WorkspaceRelationMetadataArgs,
   ): RelationType {
-    switch (reflectRelationMetadata.type) {
+    switch (relationMetadataArgs.type) {
       case RelationMetadataType.ONE_TO_MANY:
         return 'one-to-many';
+      case RelationMetadataType.MANY_TO_ONE:
+        return 'many-to-one';
       case RelationMetadataType.ONE_TO_ONE:
         return 'one-to-one';
       case RelationMetadataType.MANY_TO_MANY:

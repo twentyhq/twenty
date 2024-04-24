@@ -4,7 +4,7 @@ import { EntitySchema } from 'typeorm';
 
 import { EntitySchemaColumnFactory } from 'src/engine/twenty-orm/factories/entity-schema-column.factory';
 import { EntitySchemaRelationFactory } from 'src/engine/twenty-orm/factories/entity-schema-relation.factory';
-import { TypedReflect } from 'src/utils/typed-reflect';
+import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 
 @Injectable()
 export class EntitySchemaFactory {
@@ -14,27 +14,28 @@ export class EntitySchemaFactory {
   ) {}
 
   create<T>(target: Type<T>): EntitySchema {
-    const objectMetadata = TypedReflect.getMetadata('objectMetadata', target);
+    const objectMetadataArgs = metadataArgsStorage.filterObjects(target);
 
-    if (!objectMetadata) {
-      throw new Error('ObjectMetadata is missing on the target entity');
+    if (!objectMetadataArgs) {
+      throw new Error('Object metadata args are missing on this target');
     }
 
-    const fieldMetadataMap =
-      TypedReflect.getMetadata('fieldMetadataMap', target) || {};
-    const relationMetadataCollection =
-      TypedReflect.getMetadata('reflectRelationMetadataCollection', target) ||
-      [];
+    const fieldMetadataArgsCollection =
+      metadataArgsStorage.filterFields(target);
+    const relationMetadataArgsCollection =
+      metadataArgsStorage.filterRelations(target);
 
-    const columns = this.entitySchemaColumnFactory.create(fieldMetadataMap);
+    const columns = this.entitySchemaColumnFactory.create(
+      fieldMetadataArgsCollection,
+    );
 
     const relations = this.entitySchemaRelationFactory.create(
-      target,
-      relationMetadataCollection,
+      relationMetadataArgsCollection,
     );
 
     return new EntitySchema({
-      name: objectMetadata.nameSingular,
+      name: objectMetadataArgs.nameSingular,
+      tableName: objectMetadataArgs.nameSingular,
       columns,
       relations,
     });

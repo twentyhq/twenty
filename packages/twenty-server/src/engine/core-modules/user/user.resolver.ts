@@ -27,7 +27,7 @@ import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { TwentyORMService } from 'src/engine/twenty-orm/twenty-orm.service';
-import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
+import { WorkspaceMemberObjectMetadata } from 'src/engine/twenty-orm/workspace-object-tests/workspace-member.object-metadata';
 
 import { UserService } from './services/user.service';
 
@@ -63,14 +63,14 @@ export class UserResolver {
     assert(user, 'User not found');
 
     const repository = this.twentyORMService.getRepository(
-      CompanyObjectMetadata,
+      WorkspaceMemberObjectMetadata,
     );
 
-    const companyObjectMetadata = await repository.find({
-      relations: ['people'],
+    const workspaceMembers = await repository.find({
+      relations: ['authoredAttachments'],
     });
 
-    console.log('TEST: ', companyObjectMetadata);
+    console.log('TEST: ', workspaceMembers);
 
     return user;
   }

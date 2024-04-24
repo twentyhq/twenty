@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { ColumnType, EntitySchemaColumnOptions } from 'typeorm';
 
-import { ReflectFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/reflect-field-metadata.interface';
+import { WorkspaceFieldMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-field-metadata-args.interface';
 
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
@@ -18,20 +18,23 @@ type EntitySchemaColumnMap = {
 
 @Injectable()
 export class EntitySchemaColumnFactory {
-  create(reflectFieldMetadataMap: ReflectFieldMetadata): EntitySchemaColumnMap {
+  create(
+    fieldMetadataArgsCollection: WorkspaceFieldMetadataArgs[],
+  ): EntitySchemaColumnMap {
     let entitySchemaColumnMap: EntitySchemaColumnMap = {};
 
-    for (const [key, reflectFieldMetadata] of Object.entries(
-      reflectFieldMetadataMap,
-    )) {
+    for (const fieldMetadataArgs of fieldMetadataArgsCollection) {
+      const key = fieldMetadataArgs.name;
+
+      console.log('KEY: ', key, fieldMetadataArgs);
+
       // Skip relation fields
-      if (reflectFieldMetadata.type === FieldMetadataType.RELATION) {
+      if (fieldMetadataArgs.type === FieldMetadataType.RELATION) {
         continue;
       }
 
-      if (isCompositeFieldMetadataType(reflectFieldMetadata.type)) {
-        const compositeColumns =
-          this.createCompositeColumns(reflectFieldMetadata);
+      if (isCompositeFieldMetadataType(fieldMetadataArgs.type)) {
+        const compositeColumns = this.createCompositeColumns(fieldMetadataArgs);
 
         entitySchemaColumnMap = {
           ...entitySchemaColumnMap,
@@ -41,27 +44,24 @@ export class EntitySchemaColumnFactory {
         continue;
       }
 
-      const columnType = fieldMetadataTypeToColumnType(
-        reflectFieldMetadata.type,
-      );
+      const columnType = fieldMetadataTypeToColumnType(fieldMetadataArgs.type);
       const defaultValue = serializeDefaultValue(
-        reflectFieldMetadata.defaultValue,
+        fieldMetadataArgs.defaultValue,
       );
 
       entitySchemaColumnMap[key] = {
         name: key,
         type: columnType as ColumnType,
-        nullable: reflectFieldMetadata.isNullable,
+        // TODO: Implement nullable
+        // nullable: fieldMetadataArgs.isNullable,
         primary: key === 'id',
         createDate: key === 'createdAt',
         updateDate: key === 'updatedAt',
         default: defaultValue,
       };
 
-      if (isEnumFieldMetadataType(reflectFieldMetadata.type)) {
-        const values = reflectFieldMetadata.options?.map(
-          (option) => option.value,
-        );
+      if (isEnumFieldMetadataType(fieldMetadataArgs.type)) {
+        const values = fieldMetadataArgs.options?.map((option) => option.value);
 
         if (values && values.length > 0) {
           entitySchemaColumnMap[key].enum = values;
@@ -73,22 +73,20 @@ export class EntitySchemaColumnFactory {
   }
 
   private createCompositeColumns(
-    reflectFieldMetadata: ReflectFieldMetadata['string'],
+    fieldMetadataArgs: WorkspaceFieldMetadataArgs,
   ): EntitySchemaColumnMap {
     const entitySchemaColumnMap: EntitySchemaColumnMap = {};
-    const compositeType = compositeTypeDefintions.get(
-      reflectFieldMetadata.type,
-    );
+    const compositeType = compositeTypeDefintions.get(fieldMetadataArgs.type);
 
     if (!compositeType) {
       throw new Error(
-        `Composite type ${reflectFieldMetadata.type} is not defined in compositeTypeDefintions`,
+        `Composite type ${fieldMetadataArgs.type} is not defined in compositeTypeDefintions`,
       );
     }
 
     for (const compositeProperty of compositeType.properties) {
       const columnName = computeCompositeColumnName(
-        reflectFieldMetadata.name,
+        fieldMetadataArgs.name,
         compositeProperty,
       );
       const columnType = fieldMetadataTypeToColumnType(compositeProperty.type);
