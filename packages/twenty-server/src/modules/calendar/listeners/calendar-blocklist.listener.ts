@@ -62,11 +62,13 @@ export class CalendarBlocklistListener {
       },
     );
 
+    console.log('payload', payload);
+
     await this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
       BlocklistReimportCalendarEventsJob.name,
       {
         workspaceId: payload.workspaceId,
-        workspaceMemberId: payload.properties.before.workspaceMember.id,
+        workspaceMemberId: payload.properties.after.workspaceMember.id,
         handle: payload.properties.before.handle,
       },
     );
