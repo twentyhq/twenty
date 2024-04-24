@@ -26,4 +26,3 @@ runs:
         key: tasks-cache-${{ github.ref_name }}-${{ inputs.tag }}-${{ steps.tasks-key.outputs.key }}${{ inputs.suffix }}-${{ github.sha }}
         restore-keys: |
           tasks-cache-${{ github.ref_name }}-${{ inputs.tag }}-${{ steps.tasks-key.outputs.key }}${{ inputs.suffix }}-
-          tasks-cache-${{ github.ref_name }}-${{ inputs.tag }}-

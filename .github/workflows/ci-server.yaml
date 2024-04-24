@@ -34,15 +34,19 @@ jobs:
           fetch-depth: 0
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
-      - name: Server / Run linter & typecheck
+      - name: Server / Restore Tasks Cache
+        uses: ./.github/workflows/actions/task-cache
+        with:
+          tag: scope:backend
+          tasks: lint,typecheck,test
+      - name: Server / Run lint & typecheck
         uses: ./.github/workflows/actions/nx-affected
         with:
           tag: scope:backend
           tasks: lint,typecheck
-      - name: Server / Run jest tests
+      - name: Server / Run tests
         uses: ./.github/workflows/actions/nx-affected
         with:
-          parallel: 1
           tag: scope:backend
           tasks: test
       - name: Server / Build
