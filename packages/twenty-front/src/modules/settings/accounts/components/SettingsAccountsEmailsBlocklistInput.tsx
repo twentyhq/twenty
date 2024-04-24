@@ -34,6 +34,7 @@ export const SettingsAccountsEmailsBlocklistInput = ({
 }: SettingsAccountsEmailsBlocklistInputProps) => {
   const { reset, handleSubmit, control } = useForm<FormInput>({
     mode: 'onSubmit',
+    reValidateMode: 'onSubmit',
     resolver: zodResolver(validationSchema),
   });
 
