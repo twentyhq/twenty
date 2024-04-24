@@ -7,7 +7,7 @@ import { IsOptional } from 'class-validator';
 export class UserMappingOptions {
   @IsOptional()
   @Field(() => String, { nullable: true })
-  username: string;
+  user: string;
 
   @IsOptional()
   @Field(() => String, { nullable: true })
@@ -18,7 +18,7 @@ export class UserMappingOptions {
 export class UserMappingOptionsUpdateInput {
   @IsOptional()
   @Field(() => String, { nullable: true })
-  username?: string;
+  user?: string;
 
   @IsOptional()
   @Field(() => String, { nullable: true })

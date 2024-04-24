@@ -28,7 +28,7 @@ export const getFormDefaultValuesFromConnection = ({
         dbname: connection.foreignDataWrapperOptions.dbname,
         host: connection.foreignDataWrapperOptions.host,
         port: connection.foreignDataWrapperOptions.port,
-        username: connection.userMappingOptions?.username || undefined,
+        user: connection.userMappingOptions?.user || undefined,
         schema: connection.schema || undefined,
         password: '',
       };
@@ -51,7 +51,7 @@ export const formatValuesForUpdate = ({
       const formattedValues = {
         userMappingOptions: pickBy(
           {
-            username: formValues.username,
+            user: formValues.user,
             password: formValues.password,
           },
           identity,

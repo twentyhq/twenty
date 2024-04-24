@@ -10,7 +10,7 @@ import {
 import {
   UserMappingOptions,
   UserMappingOptionsUpdateInput,
-} from 'src/engine/metadata-modules/remote-server/utils/user-mapping-options.utils';
+} from 'src/engine/metadata-modules/remote-server/types/user-mapping-options';
 
 @InputType()
 export class UpdateRemoteServerInput<T extends RemoteServerType> {

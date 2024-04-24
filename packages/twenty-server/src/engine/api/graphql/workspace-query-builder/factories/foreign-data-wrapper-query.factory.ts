@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'class-validator';
-
 import {
   ForeignDataWrapperOptions,
   RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
-import { UserMappingOptions } from 'src/engine/metadata-modules/remote-server/utils/user-mapping-options.utils';
+import { UserMappingOptions } from 'src/engine/metadata-modules/remote-server/types/user-mapping-options';
 
 @Injectable()
 export class ForeignDataWrapperQueryFactory {
@@ -15,12 +13,9 @@ export class ForeignDataWrapperQueryFactory {
     foreignDataWrapperType: RemoteServerType,
     foreignDataWrapperOptions: ForeignDataWrapperOptions<RemoteServerType>,
   ) {
-    const [name, options] = this.buildNameAndOptionsFromType(
-      foreignDataWrapperType,
-      foreignDataWrapperOptions,
-    );
+    const options = this.buildFDWQueryOptions(foreignDataWrapperOptions, false);
 
-    return `CREATE SERVER "${foreignDataWrapperId}" FOREIGN DATA WRAPPER ${name} OPTIONS (${options})`;
+    return `CREATE SERVER "${foreignDataWrapperId}" FOREIGN DATA WRAPPER ${foreignDataWrapperType} OPTIONS (${options})`;
   }
 
   updateForeignDataWrapper({
@@ -32,7 +27,7 @@ export class ForeignDataWrapperQueryFactory {
       ForeignDataWrapperOptions<RemoteServerType>
     >;
   }) {
-    const options = this.buildUpdateOptions(foreignDataWrapperOptions);
+    const options = this.buildFDWQueryOptions(foreignDataWrapperOptions, true);
 
     return `ALTER SERVER "${foreignDataWrapperId}" OPTIONS (${options})`;
   }
@@ -41,65 +36,34 @@ export class ForeignDataWrapperQueryFactory {
     foreignDataWrapperId: string,
     userMappingOptions: UserMappingOptions,
   ) {
+    const options = this.buildFDWQueryOptions(userMappingOptions, false);
+
     // CURRENT_USER works for now since we are using only one user. But if we switch to a user per workspace, we need to change this.
-    return `CREATE USER MAPPING IF NOT EXISTS FOR CURRENT_USER SERVER "${foreignDataWrapperId}" OPTIONS (user '${userMappingOptions.username}', password '${userMappingOptions.password}')`;
+    return `CREATE USER MAPPING IF NOT EXISTS FOR CURRENT_USER SERVER "${foreignDataWrapperId}" OPTIONS (${options})`;
   }
 
   updateUserMapping(
     foreignDataWrapperId: string,
     userMappingOptions: Partial<UserMappingOptions>,
   ) {
-    const options = this.buildUpdateUserMappingOptions(userMappingOptions);
+    const options = this.buildFDWQueryOptions(userMappingOptions, true);
 
     // CURRENT_USER works for now since we are using only one user. But if we switch to a user per workspace, we need to change this.
     return `ALTER USER MAPPING FOR CURRENT_USER SERVER "${foreignDataWrapperId}" OPTIONS (${options})`;
   }
 
-  private buildNameAndOptionsFromType(
-    type: RemoteServerType,
-    options: ForeignDataWrapperOptions<RemoteServerType>,
+  private buildFDWQueryOptions(
+    options:
+      | ForeignDataWrapperOptions<RemoteServerType>
+      | Partial<ForeignDataWrapperOptions<RemoteServerType>>
+      | UserMappingOptions
+      | Partial<UserMappingOptions>,
+    isUpdate: boolean,
   ) {
-    switch (type) {
-      case RemoteServerType.POSTGRES_FDW:
-        return ['postgres_fdw', this.buildPostgresFDWQueryOptions(options)];
-      default:
-        throw new Error('Foreign data wrapper type not supported');
-    }
-  }
+    const prefix = isUpdate ? 'SET ' : '';
 
-  private buildUpdateOptions(
-    options: Partial<ForeignDataWrapperOptions<RemoteServerType>>,
-  ) {
-    const rawQuerySetStatements: string[] = [];
-
-    Object.entries(options).forEach(([key, value]) => {
-      if (isDefined(value)) {
-        rawQuerySetStatements.push(`SET ${key} '${value}'`);
-      }
-    });
-
-    return rawQuerySetStatements.join(', ');
-  }
-
-  private buildUpdateUserMappingOptions(
-    userMappingOptions?: Partial<UserMappingOptions>,
-  ) {
-    const setStatements: string[] = [];
-
-    if (isDefined(userMappingOptions?.username)) {
-      setStatements.push(`SET user '${userMappingOptions?.username}'`);
-    }
-
-    if (isDefined(userMappingOptions?.password)) {
-      setStatements.push(`SET password '${userMappingOptions?.password}'`);
-    }
-
-    return setStatements.join(', ');
-  }
-
-  private buildPostgresFDWQueryOptions(
-    foreignDataWrapperOptions: ForeignDataWrapperOptions<RemoteServerType>,
-  ) {
-    return `dbname '${foreignDataWrapperOptions.dbname}', host '${foreignDataWrapperOptions.host}', port '${foreignDataWrapperOptions.port}'`;
+    return Object.entries(options)
+      .map(([key, value]) => `${prefix}${key} '${value}'`)
+      .join(', ');
   }
 }

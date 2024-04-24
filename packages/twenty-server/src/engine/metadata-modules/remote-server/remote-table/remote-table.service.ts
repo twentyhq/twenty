@@ -26,6 +26,7 @@ import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
+  ReferencedTable,
   WorkspaceMigrationForeignColumnDefinition,
   WorkspaceMigrationForeignTable,
   WorkspaceMigrationTableActionType,
@@ -338,6 +339,15 @@ export class RemoteTableService {
     remoteServer: RemoteServerEntity<RemoteServerType>,
     distantTableColumns: DistantTableColumn[],
   ) {
+    const referencedTable: ReferencedTable = remoteServer.schema
+      ? {
+          table_name: remoteTableInput.name,
+          schema_name: remoteServer.schema,
+        }
+      : {
+          object: remoteTableInput.name,
+        };
+
     const workspaceMigration =
       await this.workspaceMigrationService.createCustomMigration(
         generateMigrationName(`create-foreign-table-${localTableName}`),
@@ -355,8 +365,7 @@ export class RemoteTableService {
                     distantColumnName: column.columnName,
                   }) satisfies WorkspaceMigrationForeignColumnDefinition,
               ),
-              referencedTableName: remoteTableInput.name,
-              referencedTableSchema: remoteServer.schema,
+              referencedTable,
               foreignDataWrapperId: remoteServer.foreignDataWrapperId,
             } satisfies WorkspaceMigrationForeignTable,
           },

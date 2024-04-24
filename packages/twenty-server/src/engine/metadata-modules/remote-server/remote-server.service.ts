@@ -24,7 +24,7 @@ import { ForeignDataWrapperQueryFactory } from 'src/engine/api/graphql/workspace
 import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
 import { UpdateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/update-remote-server.input';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { updateRemoteServerRawQuery } from 'src/engine/metadata-modules/remote-server/utils/build-update-remote-server-raw-query.utils';
+import { buildUpdateRemoteServerRawQuery } from 'src/engine/metadata-modules/remote-server/utils/build-update-remote-server-raw-query.utils';
 import { validateRemoteServerType } from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-type.util';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
@@ -254,7 +254,7 @@ export class RemoteServerService<T extends RemoteServerType> {
       Pick<RemoteServerEntity<RemoteServerType>, 'workspaceId' | 'id'>,
   ): Promise<RemoteServerEntity<RemoteServerType>> {
     const [parameters, rawQuery] =
-      updateRemoteServerRawQuery(remoteServerToUpdate);
+      buildUpdateRemoteServerRawQuery(remoteServerToUpdate);
 
     const updateResult = await this.workspaceDataSourceService.executeRawQuery(
       rawQuery,
