@@ -70,7 +70,8 @@ export class ObjectTypeDefinitionFactory {
           nullable: fieldMetadata.isNullable,
           isArray: fieldMetadata.type === FieldMetadataType.MULTI_SELECT,
           settings: fieldMetadata.settings,
-          // isIdField: fieldMetadata.name === 'id',
+          // Scalar type is already defined in the entity itself.
+          isIdField: false,
         },
       );
 

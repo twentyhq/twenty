@@ -49,7 +49,7 @@ export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
             objectNameSingular: objectMetadataItem.nameSingular,
           }) + recordId,
         isSelected: currentRowSelected,
-        isReadOnly: false,
+        isReadOnly: objectMetadataItem.isRemote ?? false,
       }}
     >
       <tr

@@ -56,10 +56,7 @@ import {
 import { createWorkspaceMigrationsForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/create-workspace-migrations-for-custom-object.util';
 import { createWorkspaceMigrationsForRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/create-workspace-migrations-for-remote-object.util';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { validateObjectMetadataInput } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/remote-postgres-table/utils/remote-postgres-table.util';
@@ -472,15 +469,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     workspaceDataSource: DataSource | undefined,
     isRemoteObject = false,
   ) {
-    // const isRelationEnabledForRemoteObjects =
-    //   await this.isRelationEnabledForRemoteObjects(
-    //     objectMetadataInput.workspaceId,
-    //   );
-
-    // if (isRemoteObject && !isRelationEnabledForRemoteObjects) {
-    //   return;
-    // }
-
     const { timelineActivityObjectMetadata } =
       await this.createTimelineActivityRelation(
         objectMetadataInput.workspaceId,
@@ -934,15 +922,5 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     ]);
 
     return { favoriteObjectMetadata };
-  }
-
-  private async isRelationEnabledForRemoteObjects(workspaceId: string) {
-    const featureFlag = await this.featureFlagRepository.findOneBy({
-      workspaceId,
-      key: FeatureFlagKeys.IsRelationForRemoteObjectsEnabled,
-      value: true,
-    });
-
-    return featureFlag && featureFlag.value;
   }
 }

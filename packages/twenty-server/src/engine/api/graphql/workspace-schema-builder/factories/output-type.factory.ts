@@ -33,7 +33,7 @@ export class OutputTypeFactory {
       this.typeMapperService.mapToScalarType(
         type,
         typeOptions.settings,
-        // typeOptions.isIdField,
+        typeOptions.isIdField,
       );
 
     gqlType ??= this.typeDefinitionsStorage.getOutputTypeByKey(target, kind);
