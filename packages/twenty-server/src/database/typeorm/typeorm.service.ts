@@ -33,9 +33,9 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         BillingSubscription,
         BillingSubscriptionItem,
       ],
-      ssl: {
+      ssl: environmentService.get('PG_DATABASE_SSL') ? {
         rejectUnauthorized: false,
-      },
+      } : undefined,
     });
   }
 

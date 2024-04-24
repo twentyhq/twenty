@@ -108,6 +108,12 @@ export class EnvironmentVariables {
   })
   PG_DATABASE_URL: string;
 
+  @CastToBoolean()
+  @IsBoolean()
+  @IsOptional()
+  PG_DATABASE_SSL = false;
+
+
   // Frontend URL
   @IsUrl({ require_tld: false })
   FRONT_BASE_URL: string;
