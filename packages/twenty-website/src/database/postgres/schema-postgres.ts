@@ -1,4 +1,4 @@
-import { pgTable, text } from 'drizzle-orm/pg-core';
+import { integer, pgTable, text, timestamp } from 'drizzle-orm/pg-core';
 
 export const pgUsers = pgTable('users', {
   id: text('id').primaryKey(),
@@ -49,4 +49,9 @@ export const pgPullRequestLabels = pgTable('pullRequestLabels', {
 export const pgIssueLabels = pgTable('issueLabels', {
   issueId: text('issueId').references(() => pgIssues.id),
   labelId: text('labelId').references(() => pgLabels.id),
+});
+
+export const pgGithubStars = pgTable('githubStars', {
+  timestamp: timestamp('timestamp').notNull().defaultNow(),
+  numberOfStars: integer('numberOfStars'),
 });

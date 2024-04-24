@@ -11,8 +11,13 @@ import {
   LogoContainer,
 } from '@/app/_components/ui/layout/header/styled';
 import { Logo } from '@/app/_components/ui/layout/Logo';
+import { formatNumberOfStars } from '@/shared-utils/formatNumberOfStars';
 
-export const HeaderDesktop = () => {
+type Props = {
+  numberOfStars: number;
+};
+
+export const HeaderDesktop = ({ numberOfStars }: Props) => {
   return (
     <DesktopNav>
       <LogoContainer>
@@ -26,7 +31,9 @@ export const HeaderDesktop = () => {
           Docs <ExternalArrow />
         </ListItem>
         <ListItem href="https://github.com/twentyhq/twenty">
-          <GithubIcon color="rgb(71,71,71)" /> 8.3k <ExternalArrow />
+          <GithubIcon color="rgb(71,71,71)" />
+          {formatNumberOfStars(numberOfStars)}
+          <ExternalArrow />
         </ListItem>
       </LinkList>
       <CallToAction />

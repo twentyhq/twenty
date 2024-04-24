@@ -4,7 +4,7 @@ import {
   IssueNode,
   PullRequestNode,
   SearchIssuesPRsQuery,
-} from '@/app/contributors/api/types';
+} from '@/github-sync/contributors/types';
 
 export async function searchIssuesPRs(
   query: typeof graphql,

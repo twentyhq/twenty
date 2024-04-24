@@ -1,4 +1,5 @@
 import {
+  pgGithubStars,
   pgIssueLabels,
   pgIssues,
   pgLabels,
@@ -31,17 +32,19 @@ export const issueLabelModel = isSqliteDriver
   ? sqlLiteIssueLabels
   : pgIssueLabels;
 
-export type User = typeof sqlLiteUsers.$inferSelect;
-export type PullRequest = typeof sqlLitePullRequests.$inferSelect;
-export type Issue = typeof sqlLiteIssues.$inferSelect;
-export type Label = typeof sqlLiteLabels.$inferSelect;
-export type PullRequestLabel = typeof sqlLitePullRequestLabels.$inferSelect;
-export type IssueLabel = typeof sqlLiteIssueLabels.$inferSelect;
+export const githubStarsModel = pgGithubStars;
 
-export type UserInsert = typeof sqlLiteUsers.$inferInsert;
-export type PullRequestInsert = typeof sqlLitePullRequests.$inferInsert;
-export type IssueInsert = typeof sqlLiteIssues.$inferInsert;
-export type LabelInsert = typeof sqlLiteLabels.$inferInsert;
-export type PullRequestLabelInsert =
-  typeof sqlLitePullRequestLabels.$inferInsert;
-export type IssueLabelInsert = typeof sqlLiteIssueLabels.$inferInsert;
+export type User = typeof pgUsers.$inferSelect;
+export type PullRequest = typeof pgPullRequests.$inferSelect;
+export type Issue = typeof pgIssues.$inferSelect;
+export type Label = typeof pgLabels.$inferSelect;
+export type PullRequestLabel = typeof pgPullRequestLabels.$inferSelect;
+export type IssueLabel = typeof pgIssueLabels.$inferSelect;
+
+export type UserInsert = typeof pgUsers.$inferInsert;
+export type PullRequestInsert = typeof pgPullRequests.$inferInsert;
+export type IssueInsert = typeof pgIssues.$inferInsert;
+export type LabelInsert = typeof pgLabels.$inferInsert;
+export type PullRequestLabelInsert = typeof pgPullRequestLabels.$inferInsert;
+export type IssueLabelInsert = typeof pgIssueLabels.$inferInsert;
+export type GithubStars = typeof pgGithubStars.$inferInsert;

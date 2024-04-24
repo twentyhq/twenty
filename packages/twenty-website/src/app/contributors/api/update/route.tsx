@@ -1,13 +1,13 @@
 import { graphql } from '@octokit/graphql';
 import { desc } from 'drizzle-orm';
 
-import { fetchAssignableUsers } from '@/app/contributors/api/fetch-assignable-users';
-import { saveIssuesToDB } from '@/app/contributors/api/save-issues-to-db';
-import { savePRsToDB } from '@/app/contributors/api/save-prs-to-db';
-import { searchIssuesPRs } from '@/app/contributors/api/search-issues-prs';
-import { IssueNode, PullRequestNode } from '@/app/contributors/api/types';
 import { findOne } from '@/database/database';
 import { issueModel, pullRequestModel } from '@/database/model';
+import { fetchAssignableUsers } from '@/github-sync/contributors/fetch-assignable-users';
+import { saveIssuesToDB } from '@/github-sync/contributors/save-issues-to-db';
+import { savePRsToDB } from '@/github-sync/contributors/save-prs-to-db';
+import { searchIssuesPRs } from '@/github-sync/contributors/search-issues-prs';
+import { IssueNode, PullRequestNode } from '@/github-sync/contributors/types';
 
 export async function GET() {
   if (!global.process.env.GITHUB_TOKEN) {

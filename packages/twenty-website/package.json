@@ -8,6 +8,8 @@
     "build": "npx next build",
     "start": "npx next start",
     "lint": "npx next lint",
+    "github:sync": "npx tsx src/github-sync/github-sync.ts",
+    "database:migrate": "npx tsx src/database/migrate-database.ts",
     "database:generate:pg": "npx drizzle-kit generate:pg --config=src/database/postgres/drizzle-posgres.config.ts",
     "database:generate:sqlite": "npx drizzle-kit generate:sqlite --config=src/database/sqlite/drizzle-sqlite.config.ts"
   },
