@@ -13,6 +13,7 @@ import { RemoteTableEntity } from 'src/engine/metadata-modules/remote-server/rem
 
 export enum RemoteServerType {
   POSTGRES_FDW = 'postgres_fdw',
+  STRIPE_FDW = 'stripe_fdw',
 }
 
 type PostgresForeignDataWrapperOptions = {
@@ -21,10 +22,16 @@ type PostgresForeignDataWrapperOptions = {
   dbname: string;
 };
 
+type StripeForeignDataWrapperOptions = {
+  apiKey: string;
+};
+
 export type ForeignDataWrapperOptions<T extends RemoteServerType> =
   T extends RemoteServerType.POSTGRES_FDW
     ? PostgresForeignDataWrapperOptions
-    : never;
+    : T extends RemoteServerType.STRIPE_FDW
+      ? StripeForeignDataWrapperOptions
+      : never;
 
 export type UserMappingOptions = {
   username: string;

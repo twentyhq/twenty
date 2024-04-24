@@ -19,7 +19,7 @@ export class RemotePostgresTableService {
   constructor(private readonly environmentService: EnvironmentService) {}
 
   public async fetchPostgresTableColumnsSchema(
-    remoteServer: RemoteServerEntity<RemoteServerType>,
+    remoteServer: RemoteServerEntity<RemoteServerType.POSTGRES_FDW>,
     tableName: string,
     tableSchema: string,
   ): Promise<RemoteTableColumn[]> {
@@ -48,7 +48,7 @@ export class RemotePostgresTableService {
   }
 
   public async fetchTablesFromRemotePostgresSchema(
-    remoteServer: RemoteServerEntity<RemoteServerType>,
+    remoteServer: RemoteServerEntity<RemoteServerType.POSTGRES_FDW>,
   ): Promise<RemoteTable[]> {
     const dataSource = new DataSource({
       url: buildPostgresUrl(

@@ -298,7 +298,7 @@ export class RemoteTableService {
         );
 
         return this.remotePostgresTableService.fetchPostgresTableColumnsSchema(
-          remoteServer,
+          remoteServer as RemoteServerEntity<RemoteServerType.POSTGRES_FDW>,
           tableName,
           tableSchema,
         );
@@ -318,7 +318,7 @@ export class RemoteTableService {
         );
 
         return this.remotePostgresTableService.fetchTablesFromRemotePostgresSchema(
-          remoteServer,
+          remoteServer as RemoteServerEntity<RemoteServerType.POSTGRES_FDW>,
         );
       default:
         throw new BadRequestException('Unsupported foreign data wrapper type');

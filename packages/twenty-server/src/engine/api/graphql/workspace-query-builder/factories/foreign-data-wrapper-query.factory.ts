@@ -35,15 +35,33 @@ export class ForeignDataWrapperQueryFactory {
   ) {
     switch (type) {
       case RemoteServerType.POSTGRES_FDW:
-        return ['postgres_fdw', this.buildPostgresFDWQueryOptions(options)];
+        return [
+          'postgres_fdw',
+          this.buildPostgresFDWQueryOptions(
+            options as ForeignDataWrapperOptions<RemoteServerType.POSTGRES_FDW>,
+          ),
+        ];
+      case RemoteServerType.STRIPE_FDW:
+        return [
+          'stripe_fdw',
+          this.buildStripeFDWQueryOptions(
+            options as ForeignDataWrapperOptions<RemoteServerType.STRIPE_FDW>,
+          ),
+        ];
       default:
         throw new Error('Foreign data wrapper type not supported');
     }
   }
 
   private buildPostgresFDWQueryOptions(
-    foreignDataWrapperOptions: ForeignDataWrapperOptions<RemoteServerType>,
+    foreignDataWrapperOptions: ForeignDataWrapperOptions<RemoteServerType.POSTGRES_FDW>,
   ) {
     return `dbname '${foreignDataWrapperOptions.dbname}', host '${foreignDataWrapperOptions.host}', port '${foreignDataWrapperOptions.port}'`;
+  }
+
+  private buildStripeFDWQueryOptions(
+    foreignDataWrapperOptions: ForeignDataWrapperOptions<RemoteServerType.STRIPE_FDW>,
+  ) {
+    return `api_key '${foreignDataWrapperOptions.apiKey}'`;
   }
 }

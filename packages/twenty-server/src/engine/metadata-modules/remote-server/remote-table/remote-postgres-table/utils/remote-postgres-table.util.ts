@@ -21,7 +21,7 @@ export const EXCLUDED_POSTGRES_SCHEMAS = [
 
 export const buildPostgresUrl = (
   secretKey: string,
-  remoteServer: RemoteServerEntity<RemoteServerType>,
+  remoteServer: RemoteServerEntity<RemoteServerType.POSTGRES_FDW>,
 ): string => {
   const foreignDataWrapperOptions = remoteServer.foreignDataWrapperOptions;
   const userMappingOptions = remoteServer.userMappingOptions;
