@@ -23,7 +23,7 @@ type SettingsAccountsEmailsBlocklistInputProps = {
 
 const validationSchema = z
   .object({
-    email: z.string(),
+    email: z.string().trim().email('Email must be a valid email'),
   })
   .required();
 
@@ -32,8 +32,8 @@ type FormInput = z.infer<typeof validationSchema>;
 export const SettingsAccountsEmailsBlocklistInput = ({
   updateBlockedEmailList,
 }: SettingsAccountsEmailsBlocklistInputProps) => {
-  const { reset, handleSubmit, control, formState } = useForm<FormInput>({
-    mode: 'onChange',
+  const { reset, handleSubmit, control } = useForm<FormInput>({
+    mode: 'onSubmit',
     resolver: zodResolver(validationSchema),
   });
 
@@ -55,12 +55,12 @@ export const SettingsAccountsEmailsBlocklistInput = ({
           <Controller
             name="email"
             control={control}
-            render={({ field: { value, onChange } }) => (
+            render={({ field: { value, onChange }, fieldState: { error } }) => (
               <TextInput
                 placeholder="eddy@gmail.com, @apple.com"
                 value={value}
                 onChange={onChange}
-                error={formState.errors.email?.message}
+                error={error?.message}
                 onKeyDown={handleKeyDown}
                 fullWidth
               />
