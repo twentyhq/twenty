@@ -62,8 +62,6 @@ export class CalendarBlocklistListener {
       },
     );
 
-    console.log('payload', payload);
-
     await this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
       BlocklistReimportCalendarEventsJob.name,
       {
