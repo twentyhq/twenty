@@ -21,8 +21,8 @@ jobs:
       postgres:
         image: twentycrm/twenty-postgres
         env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: twenty
+          POSTGRES_USER: twenty
         ports:
           - 5432:5432
     steps:
@@ -36,4 +36,4 @@ jobs:
       - name: Website / Build Website
         run: npx nx build twenty-website
         env:
-          DATABASE_PG_URL: postgres://postgres:postgres@postgres:5432/website
+          DATABASE_PG_URL: postgres://twenty:twenty@localhost:5432/website
