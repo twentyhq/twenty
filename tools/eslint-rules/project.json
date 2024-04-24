@@ -5,18 +5,15 @@
   "tags": ["scope:shared"],
   "targets": {
     "lint": {
-      "executor": "@nx/eslint:lint",
       "options": {
-        "lintFilePatterns": ["{projectRoot}/**/*.ts"],
-        "fix": true
+        "eslintConfig": "{workspaceRoot}/.eslintrc.cjs",
+        "lintFilePatterns": ["{projectRoot}/**/*.ts"]
+      },
+      "configurations": {
+        "fix": { "fix": true }
       }
     },
-    "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
-      "options": {
-        "jestConfig": "tools/eslint-rules/jest.config.ts"
-      }
-    }
+    "typecheck": {},
+    "test": {}
   }
 }

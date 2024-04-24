@@ -10,26 +10,9 @@
         "outputPath": "{projectRoot}/dist"
       }
     },
-    "typecheck": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "tsc -b tsconfig.json",
-        "args": ["--incremental"]
-      },
-      "configurations": {
-        "ci": { "args": [] },
-        "watch": { "watch": true }
-      }
-    },
+    "typecheck": {},
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
       "options": {
-        "eslintConfig": "{projectRoot}/.eslintrc.cjs",
-        "cache": true,
-        "cacheLocation": "{workspaceRoot}/.cache/eslint",
-        "ignorePath": "{workspaceRoot}/.gitignore",
         "lintFilePatterns": [
           "{projectRoot}/src/**/*.{ts,tsx,json}",
           "{projectRoot}/package.json"
@@ -37,12 +20,7 @@
         "reportUnusedDisableDirectives": "error"
       },
       "configurations": {
-        "ci": {
-          "cacheStrategy": "content"
-        },
-        "fix": {
-          "fix": true
-        }
+        "fix": { "fix": true }
       }
     },
     "fmt": {

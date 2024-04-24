@@ -92,12 +92,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
       "options": {
-        "eslintConfig": "{projectRoot}/.eslintrc.cjs",
-        "cache": true,
-        "cacheLocation": "{workspaceRoot}/.cache/eslint",
-        "ignorePath": "{workspaceRoot}/.gitignore",
         "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"]
       },
       "configurations": {
@@ -108,26 +103,7 @@
         "fix": { "fix": true }
       }
     },
-    "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{projectRoot}/coverage"],
-      "options": {
-        "jestConfig": "{projectRoot}/jest.config.ts",
-        "coverage": true,
-        "coverageReporters": ["text-summary"],
-        "cacheDirectory": "../../.cache/jest/{projectRoot}"
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "maxWorkers": 3
-        },
-        "coverage": {
-          "coverageReporters": ["lcov", "text"]
-        },
-        "watch": { "watch": true }
-      }
-    },
+    "test": {},
     "test:debug": {
       "executor": "nx:run-commands",
       "options": {

@@ -47,8 +47,8 @@ jobs:
       - name: Run storybook tests
         run: |
           npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
-            "npx nx run twenty-front:storybook:static:ci" \
-            "npx wait-on tcp:6006 && npx nx run twenty-front:storybook:test"
+            "npx nx storybook:static twenty-front" \
+            "npx wait-on tcp:6006 && npx nx storybook:test twenty-front"
   front-task:
     runs-on: ubuntu-latest
     strategy:

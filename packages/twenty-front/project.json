@@ -35,26 +35,9 @@
         "command": "cp .env.example .env"
       }
     },
-    "typecheck": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "tsc -b tsconfig.json",
-        "args": ["--incremental"]
-      },
-      "configurations": {
-        "ci": { "args": [] },
-        "watch": { "watch": true }
-      }
-    },
+    "typecheck": {},
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
       "options": {
-        "eslintConfig": "{projectRoot}/.eslintrc.cjs",
-        "cache": true,
-        "cacheLocation": "{workspaceRoot}/.cache/eslint",
-        "ignorePath": "{workspaceRoot}/.gitignore",
         "lintFilePatterns": [
           "{projectRoot}/src/**/*.{ts,tsx,json}",
           "{projectRoot}/package.json"
@@ -67,9 +50,7 @@
           "eslintConfig": "{projectRoot}/.eslintrc-ci.cjs",
           "cacheStrategy": "content"
         },
-        "fix": {
-          "fix": true
-        }
+        "fix": { "fix": true }
       }
     },
     "fmt": {
@@ -84,59 +65,20 @@
         "fix": { "args": ["--write"] }
       }
     },
-    "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{projectRoot}/coverage"],
-      "options": {
-        "jestConfig": "{projectRoot}/jest.config.ts",
-        "coverage": true,
-        "coverageReporters": ["text-summary"],
-        "cacheDirectory": "../../.cache/jest/{projectRoot}"
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "maxWorkers": 3
-        },
-        "coverage": {
-          "coverageReporters": ["lcov", "text"]
-        },
-        "watch": { "watch": true }
-      }
-    },
-    "storybook:build": {
-      "executor": "@nx/storybook:build",
-      "outputs": ["{options.outputDir}"],
-      "options": {
-        "outputDir": "{projectRoot}/storybook-static",
-        "configDir": "{projectRoot}/.storybook"
-      }
-    },
+    "test": {},
+    "storybook:build": {},
     "storybook:dev": {
-      "executor": "@nx/storybook:storybook",
-      "options": {
-        "port": 6006,
-        "configDir": "{projectRoot}/.storybook"
-      }
+      "options": { "port": 6006 }
     },
     "storybook:static": {
-      "executor": "@nx/web:file-server",
       "options": {
         "buildTarget": "twenty-front:storybook:build",
-        "port": 6006,
-        "staticFilePath": "{projectRoot}/storybook-static",
-        "watch": false
+        "port": 6006
       }
     },
     "storybook:test": {
-      "executor": "nx:run-commands",
       "options": {
-        "cwd": "{projectRoot}",
-        "commands": [
-          "test-storybook --url http://localhost:6006 --maxWorkers=3 --coverage",
-          "nyc report --reporter=lcov --reporter=text-summary -t coverage/storybook --report-dir coverage/storybook --check-coverage"
-        ],
-        "parallel": false
+        "url": "http://localhost:6006"
       },
       "configurations": {
         "docs": {
