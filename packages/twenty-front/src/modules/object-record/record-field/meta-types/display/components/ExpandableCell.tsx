@@ -44,7 +44,8 @@ export const ExpandableCell = ({
   const [childrenContainerWidth, setChildrenContainerWidth] = useState<
     Record<number, number>
   >({});
-  const [chipContainerWidth, setChipContainerWidth] = useState(0);
+
+  const chipContainerWidth = 52;
 
   const computeChildProperties = (index: number) => {
     const availableWidth = containerWidth - chipContainerWidth;
@@ -53,6 +54,9 @@ export const ExpandableCell = ({
       (acc, currentIndex) => acc + childrenContainerWidth[currentIndex],
       0,
     );
+    if (!isHovered) {
+      return { shrink: 1, isVisible: true };
+    }
     if (cumulatedChildrenWidth > availableWidth) {
       return { shrink: 1, isVisible: false };
     }
@@ -61,6 +65,22 @@ export const ExpandableCell = ({
     }
     return { shrink: 1, isVisible: true };
   };
+
+  const computeHiddenChildrenNumber = () => {
+    const childrenContainerWidthValues = Object.values(childrenContainerWidth);
+    let result = 0;
+    let cumulatedWidth = 0;
+    childrenContainerWidthValues.forEach((childrenContainerWidthValue) => {
+      cumulatedWidth += childrenContainerWidthValue;
+      if (cumulatedWidth > containerWidth - chipContainerWidth) {
+        result += 1;
+      }
+    });
+    return Math.max(result - 1, 0);
+  };
+
+  const hiddenChildrenCount = computeHiddenChildrenNumber();
+
   return (
     <StyledContainer
       ref={(el) => {
@@ -91,13 +111,13 @@ export const ExpandableCell = ({
         })}
       </StyledChildrenContainer>
       {isHovered && (
-        <StyledChipContainer
-          ref={(el) => {
-            if (!el || chipContainerWidth > 0) return;
-            setChipContainerWidth(el.getBoundingClientRect().width);
-          }}
-        >
-          <Chip label={`+3`} variant={ChipVariant.Highlighted} />
+        <StyledChipContainer>
+          {hiddenChildrenCount > 0 && (
+            <Chip
+              label={`+${hiddenChildrenCount}`}
+              variant={ChipVariant.Highlighted}
+            />
+          )}
           <FloatingIconButton Icon={IconPencil} />
         </StyledChipContainer>
       )}
