@@ -6,7 +6,7 @@ import {
   pgPullRequestLabels,
   pgPullRequests,
   pgUsers,
-} from '@/database/postgres/schema-postgres';
+} from '@/database/schema-postgres';
 
 export const userModel = pgUsers;
 export const pullRequestModel = pgPullRequests;

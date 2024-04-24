@@ -10,7 +10,7 @@ const pgDb = pgDrizzle(pgClient, { logger: false });
 
 const migrate = async () => {
   await postgresMigrate(pgDb, {
-    migrationsFolder: './src/database/postgres/migrations',
+    migrationsFolder: './src/database/migrations',
   });
 };
 
