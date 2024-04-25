@@ -47,7 +47,7 @@ export const SettingsDataModelFieldAboutForm = ({
           render={({ field: { onChange, value } }) => (
             <IconPicker
               disabled={disabled}
-              selectedIconKey={value}
+              selectedIconKey={value ?? ''}
               onChange={({ iconKey }) => onChange(iconKey)}
               variant="primary"
             />
