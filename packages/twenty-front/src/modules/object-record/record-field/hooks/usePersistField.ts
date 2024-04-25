@@ -5,6 +5,8 @@ import { isFieldAddress } from '@/object-record/record-field/types/guards/isFiel
 import { isFieldAddressValue } from '@/object-record/record-field/types/guards/isFieldAddressValue';
 import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
 import { isFieldDateValue } from '@/object-record/record-field/types/guards/isFieldDateValue';
+import { isFieldDomain } from '@/object-record/record-field/types/guards/isFieldDomain';
+import { isFieldDomainValue } from '@/object-record/record-field/types/guards/isFieldDomainValue';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
 import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
@@ -105,6 +107,9 @@ export const usePersistField = () => {
           isFieldRawJson(fieldDefinition) &&
           isFieldRawJsonValue(valueToPersist);
 
+        const fieldIsDomain =
+          isFieldDomain(fieldDefinition) && isFieldDomainValue(valueToPersist);
+
         const isValuePersistable =
           fieldIsRelation ||
           fieldIsText ||
@@ -121,9 +126,10 @@ export const usePersistField = () => {
           fieldIsSelect ||
           fieldIsMultiSelect ||
           fieldIsAddress ||
-          fieldIsRawJson;
+          fieldIsRawJson ||
+          fieldIsDomain;
 
-        if (isValuePersistable === true) {
+        if (isValuePersistable) {
           const fieldName = fieldDefinition.metadata.fieldName;
           set(
             recordStoreFamilySelector({ recordId: entityId, fieldName }),

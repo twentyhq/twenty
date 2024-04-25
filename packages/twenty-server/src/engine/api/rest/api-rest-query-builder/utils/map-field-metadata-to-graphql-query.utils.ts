@@ -122,5 +122,13 @@ export const mapFieldMetadataToGraphqlQuery = (
         addressLng
       }
     `;
+  } else if (fieldType === FieldMetadataType.DOMAIN) {
+    return `
+      ${field.name}
+      {
+        primaryLink
+        secondaryLinks
+      }
+    `;
   }
 };

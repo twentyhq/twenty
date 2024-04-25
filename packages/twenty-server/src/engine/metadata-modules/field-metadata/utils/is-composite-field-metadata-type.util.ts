@@ -5,11 +5,14 @@ export const isCompositeFieldMetadataType = (
 ): type is
   | FieldMetadataType.LINK
   | FieldMetadataType.CURRENCY
-  | FieldMetadataType.FULL_NAME => {
-  return (
-    type === FieldMetadataType.LINK ||
-    type === FieldMetadataType.CURRENCY ||
-    type === FieldMetadataType.FULL_NAME ||
-    type === FieldMetadataType.ADDRESS
-  );
+  | FieldMetadataType.FULL_NAME
+  | FieldMetadataType.ADDRESS
+  | FieldMetadataType.DOMAIN => {
+  return [
+    FieldMetadataType.LINK,
+    FieldMetadataType.CURRENCY,
+    FieldMetadataType.FULL_NAME,
+    FieldMetadataType.ADDRESS,
+    FieldMetadataType.DOMAIN,
+  ].includes(type);
 };

@@ -81,6 +81,9 @@ export const generateEmptyFieldValue = (
     case FieldMetadataType.RawJson: {
       return null;
     }
+    case FieldMetadataType.Domain: {
+      return { primaryLink: '' };
+    }
     default: {
       throw new Error('Unhandled FieldMetadataType');
     }

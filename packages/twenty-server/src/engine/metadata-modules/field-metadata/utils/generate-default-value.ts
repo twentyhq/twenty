@@ -36,6 +36,11 @@ export function generateDefaultValue(
         amountMicros: null,
         currencyCode: "''",
       };
+    case FieldMetadataType.DOMAIN:
+      return {
+        primaryLink: "''",
+        secondaryLinks: [],
+      };
     default:
       return null;
   }

@@ -4,6 +4,7 @@ import {
   FieldBooleanValue,
   FieldCurrencyValue,
   FieldDateTimeValue,
+  FieldDomainValue,
   FieldEmailValue,
   FieldFullNameValue,
   FieldLinkValue,
@@ -26,6 +27,10 @@ export type FieldSelectDraftValue = string;
 export type FieldMultiSelectDraftValue = string[];
 export type FieldRelationDraftValue = string;
 export type FieldLinkDraftValue = { url: string; label: string };
+export type FieldDomainDraftValue = {
+  primaryLink: string;
+  secondaryLinks?: string[] | null;
+};
 export type FieldCurrencyDraftValue = {
   currencyCode: CurrencyCode;
   amount: string;
@@ -72,4 +77,6 @@ export type FieldInputDraftValue<FieldValue> = FieldValue extends FieldTextValue
                             ? FieldRelationDraftValue
                             : FieldValue extends FieldAddressValue
                               ? FieldAddressDraftValue
-                              : never;
+                              : FieldValue extends FieldDomainValue
+                                ? FieldDomainDraftValue
+                                : never;

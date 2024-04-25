@@ -1,5 +1,8 @@
 import { useContext } from 'react';
 
+import { DomainFieldDisplay } from '@/object-record/record-field/meta-types/display/components/DomainFieldDisplay.tsx';
+import { isFieldDomain } from '@/object-record/record-field/types/guards/isFieldDomain.ts';
+
 import { FieldContext } from '../contexts/FieldContext';
 import { AddressFieldDisplay } from '../meta-types/display/components/AddressFieldDisplay';
 import { ChipFieldDisplay } from '../meta-types/display/components/ChipFieldDisplay';
@@ -74,5 +77,7 @@ export const FieldDisplay = () => {
     <AddressFieldDisplay />
   ) : isFieldRawJson(fieldDefinition) ? (
     <JsonFieldDisplay />
+  ) : isFieldDomain(fieldDefinition) ? (
+    <DomainFieldDisplay />
   ) : null;
 };

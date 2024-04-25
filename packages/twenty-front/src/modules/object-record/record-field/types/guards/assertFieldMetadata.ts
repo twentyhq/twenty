@@ -7,6 +7,7 @@ import {
   FieldCurrencyMetadata,
   FieldDateMetadata,
   FieldDateTimeMetadata,
+  FieldDomainMetadata,
   FieldEmailMetadata,
   FieldFullNameMetadata,
   FieldLinkMetadata,
@@ -60,7 +61,9 @@ type AssertFieldMetadataFunction = <
                                     ? FieldAddressMetadata
                                     : E extends 'RAW_JSON'
                                       ? FieldRawJsonMetadata
-                                      : never,
+                                      : E extends 'DOMAIN'
+                                        ? FieldDomainMetadata
+                                        : never,
 >(
   fieldType: E,
   fieldTypeGuard: (

@@ -7,6 +7,8 @@ import { isFieldCurrency } from '@/object-record/record-field/types/guards/isFie
 import { isFieldCurrencyValue } from '@/object-record/record-field/types/guards/isFieldCurrencyValue';
 import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
 import { isFieldDateTime } from '@/object-record/record-field/types/guards/isFieldDateTime';
+import { isFieldDomain } from '@/object-record/record-field/types/guards/isFieldDomain';
+import { isFieldDomainValue } from '@/object-record/record-field/types/guards/isFieldDomainValue';
 import { isFieldEmail } from '@/object-record/record-field/types/guards/isFieldEmail';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
@@ -92,6 +94,12 @@ export const isFieldValueEmpty = ({
         isValueEmpty(fieldValue?.addressState) &&
         isValueEmpty(fieldValue?.addressPostcode) &&
         isValueEmpty(fieldValue?.addressCountry))
+    );
+  }
+
+  if (isFieldDomain(fieldDefinition)) {
+    return (
+      !isFieldDomainValue(fieldValue) || isValueEmpty(fieldValue.primaryLink)
     );
   }
 

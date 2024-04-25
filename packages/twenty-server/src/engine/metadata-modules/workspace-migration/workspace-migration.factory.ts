@@ -94,6 +94,10 @@ export class WorkspaceMigrationFactory {
         FieldMetadataType.FULL_NAME,
         { factory: this.compositeColumnActionFactory },
       ],
+      [
+        FieldMetadataType.DOMAIN,
+        { factory: this.compositeColumnActionFactory },
+      ],
     ]);
   }
 

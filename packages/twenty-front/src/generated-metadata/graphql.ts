@@ -301,6 +301,7 @@ export enum FieldMetadataType {
   Currency = 'CURRENCY',
   Date = 'DATE',
   DateTime = 'DATE_TIME',
+  Domain = 'DOMAIN',
   Email = 'EMAIL',
   FullName = 'FULL_NAME',
   Link = 'LINK',
