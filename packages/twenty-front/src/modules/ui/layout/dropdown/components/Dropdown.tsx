@@ -1,12 +1,7 @@
 import { useRef } from 'react';
 import { Keys } from 'react-hotkeys-hook';
-import {
-  autoUpdate,
-  flip,
-  offset,
-  Placement,
-  useFloating,
-} from '@floating-ui/react';
+import { autoUpdate, offset, Placement, useFloating } from '@floating-ui/react';
+import { Alignment } from '@floating-ui/utils';
 import { Key } from 'ts-key-enum';
 
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
@@ -33,13 +28,14 @@ type DropdownProps = {
   };
   dropdownHotkeyScope: HotkeyScope;
   dropdownId: string;
-  dropdownPlacement?: Placement;
+  dropdownPlacement?: Placement | Alignment;
   dropdownMenuWidth?: `${string}px` | `${number}%` | 'auto' | number;
   dropdownOffset?: { x?: number; y?: number };
   disableBlur?: boolean;
   onClickOutside?: () => void;
   onClose?: () => void;
   onOpen?: () => void;
+  reference?: HTMLDivElement;
 };
 
 export const Dropdown = ({
@@ -56,6 +52,7 @@ export const Dropdown = ({
   onClickOutside,
   onClose,
   onOpen,
+  reference,
 }: DropdownProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -71,10 +68,20 @@ export const Dropdown = ({
     offsetMiddlewares.push(offset({ mainAxis: dropdownOffset.y }));
   }
 
+  if (isDefined(reference)) {
+    dropdownMenuWidth = Math.max(
+      dropdownWidth || 0,
+      reference.getBoundingClientRect().width,
+    );
+  }
   const { refs, floatingStyles } = useFloating({
+    // @ts-expect-error placement accepts 'start' as value even if the typing does not permit it
     placement: dropdownPlacement,
-    middleware: [flip(), ...offsetMiddlewares],
+    middleware: [...offsetMiddlewares],
     whileElementsMounted: autoUpdate,
+    elements: {
+      reference: reference,
+    },
   });
 
   const handleHotkeyTriggered = () => {
@@ -111,8 +118,9 @@ export const Dropdown = ({
       <div ref={containerRef} className={className}>
         {clickableComponent && (
           <div
-            ref={refs.setReference}
-            onClick={() => {
+            ref={!reference ? refs.setReference : null}
+            onClick={(event) => {
+              event?.stopPropagation();
               toggleDropdown();
               onClickOutside?.();
             }}

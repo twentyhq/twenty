@@ -4,8 +4,10 @@ import { Tag } from '@/ui/display/tag/components/Tag';
 
 export const MultiSelectFieldDisplay = ({
   isHovered,
+  reference,
 }: {
   isHovered: boolean;
+  reference?: HTMLDivElement;
 }) => {
   const { fieldValues, fieldDefinition } = useMultiSelectField();
 
@@ -16,7 +18,7 @@ export const MultiSelectFieldDisplay = ({
     : [];
 
   return selectedOptions ? (
-    <ExpandableCell isHovered={isHovered}>
+    <ExpandableCell isHovered={isHovered} reference={reference}>
       {selectedOptions.map((selectedOption, index) => (
         <Tag
           key={index}

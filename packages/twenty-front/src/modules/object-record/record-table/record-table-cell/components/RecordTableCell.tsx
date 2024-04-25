@@ -19,6 +19,7 @@ export const RecordTableCell = ({
   const { entityId, fieldDefinition } = useContext(FieldContext);
   const { isReadOnly } = useContext(RecordTableRowContext);
   const [isHovered, setIsHovered] = useState(false);
+  const [reference, setReference] = useState<HTMLDivElement | undefined>();
 
   const handleEnter: FieldInputEvent = (persistField) => {
     onUpsertRecord({
@@ -91,6 +92,7 @@ export const RecordTableCell = ({
     <RecordTableCellContainer
       isHovered={isHovered}
       setIsHovered={setIsHovered}
+      setReference={setReference}
       editHotkeyScope={customHotkeyScope}
       editModeContent={
         <FieldInput
@@ -105,7 +107,9 @@ export const RecordTableCell = ({
           isReadOnly={isReadOnly}
         />
       }
-      nonEditModeContent={<FieldDisplay isHovered={isHovered} />}
+      nonEditModeContent={
+        <FieldDisplay isHovered={isHovered} reference={reference} />
+      }
     />
   );
 };

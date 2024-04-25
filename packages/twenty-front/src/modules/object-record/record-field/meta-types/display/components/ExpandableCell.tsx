@@ -1,10 +1,13 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 import { Chip, ChipVariant, IconPencil } from 'twenty-ui';
+import { v4 } from 'uuid';
 
 import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconButton';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown.tsx';
 const StyledContainer = styled.div`
   display: flex;
+  align-items: center;
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: space-between;
   width: 100%;
@@ -33,12 +36,27 @@ const StyledChildContainer = styled.div<{
   overflow: ${({ isHovered }) => (isHovered ? 'hidden' : 'none')};
 `;
 
+const StyledRelationsListContainer = styled.div`
+  backdrop-filter: ${({ theme }) => theme.blur.strong};
+  background-color: ${({ theme }) => theme.background.secondary};
+  border-radius: ${({ theme }) => theme.spacing(1)};
+  box-shadow: '0px 2px 4px ${({ theme }) =>
+    theme.boxShadow.light}, 2px 4px 16px ${({ theme }) =>
+    theme.boxShadow.strong}';
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${({ theme }) => theme.spacing(1)};
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
 export const ExpandableCell = ({
   children,
   isHovered,
+  reference,
 }: {
   children: ReactElement[];
   isHovered?: boolean;
+  reference?: HTMLDivElement;
 }) => {
   const [containerWidth, setContainerWidth] = useState(0);
   const [childrenContainerWidth, setChildrenContainerWidth] = useState<
@@ -81,6 +99,8 @@ export const ExpandableCell = ({
 
   const hiddenChildrenCount = computeHiddenChildrenNumber();
 
+  const dropdownId = useMemo(() => `expanded-cell-dropdown-${v4()}`, []);
+
   return (
     <StyledContainer
       ref={(el) => {
@@ -113,14 +133,32 @@ export const ExpandableCell = ({
       {isHovered && (
         <StyledChipContainer>
           {hiddenChildrenCount > 0 && (
-            <Chip
-              label={`+${hiddenChildrenCount}`}
-              variant={ChipVariant.Highlighted}
-            />
+            <>
+              <Dropdown
+                dropdownId={dropdownId}
+                dropdownHotkeyScope={{
+                  scope: dropdownId,
+                }}
+                clickableComponent={
+                  <Chip
+                    label={`+${hiddenChildrenCount}`}
+                    variant={ChipVariant.Highlighted}
+                  />
+                }
+                reference={reference}
+                dropdownPlacement="start"
+                dropdownComponents={
+                  <StyledRelationsListContainer>
+                    {children}
+                  </StyledRelationsListContainer>
+                }
+              />
+            </>
           )}
           <FloatingIconButton Icon={IconPencil} />
         </StyledChipContainer>
       )}
+      {hiddenChildrenCount > 0 && <div></div>}
     </StyledContainer>
   );
 };

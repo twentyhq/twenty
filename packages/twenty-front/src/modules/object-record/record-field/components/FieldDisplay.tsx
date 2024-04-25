@@ -33,7 +33,13 @@ import { isFieldSelect } from '../types/guards/isFieldSelect';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldUuid } from '../types/guards/isFieldUuid';
 
-export const FieldDisplay = ({ isHovered }: { isHovered: boolean }) => {
+export const FieldDisplay = ({
+  isHovered,
+  reference,
+}: {
+  isHovered: boolean;
+  reference?: HTMLDivElement;
+}) => {
   const { fieldDefinition, isLabelIdentifier } = useContext(FieldContext);
 
   const isChipDisplay =
@@ -69,7 +75,7 @@ export const FieldDisplay = ({ isHovered }: { isHovered: boolean }) => {
   ) : isFieldSelect(fieldDefinition) ? (
     <SelectFieldDisplay />
   ) : isFieldMultiSelect(fieldDefinition) ? (
-    <MultiSelectFieldDisplay isHovered={isHovered} />
+    <MultiSelectFieldDisplay isHovered={isHovered} reference={reference} />
   ) : isFieldAddress(fieldDefinition) ? (
     <AddressFieldDisplay />
   ) : isFieldRawJson(fieldDefinition) ? (

@@ -53,6 +53,9 @@ export type RecordTableCellContainerProps = {
   maxContentWidth?: number;
   onSubmit?: () => void;
   onCancel?: () => void;
+  setReference?: React.Dispatch<
+    React.SetStateAction<HTMLDivElement | undefined>
+  >;
 };
 
 const DEFAULT_CELL_SCOPE: HotkeyScope = {
@@ -62,6 +65,7 @@ const DEFAULT_CELL_SCOPE: HotkeyScope = {
 export const RecordTableCellContainer = ({
   isHovered,
   setIsHovered,
+  setReference,
   editModeContent,
   nonEditModeContent,
   editHotkeyScope,
@@ -139,6 +143,10 @@ export const RecordTableCellContainer = ({
 
   return (
     <StyledTd
+      ref={(el) => {
+        if (!el || !setReference) return;
+        setReference(el);
+      }}
       isSelected={isSelected}
       onContextMenu={handleContextMenu}
       isInEditMode={isCurrentTableCellInEditMode}
