@@ -1,10 +1,11 @@
-import { ReactElement, useMemo, useState } from 'react';
+import { ReactElement, useState } from 'react';
 import styled from '@emotion/styled';
+import { useFloating } from '@floating-ui/react';
+import { motion } from 'framer-motion';
 import { Chip, ChipVariant, IconPencil } from 'twenty-ui';
-import { v4 } from 'uuid';
 
 import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconButton';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown.tsx';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu.tsx';
 const StyledContainer = styled.div`
   display: flex;
   align-items: center;
@@ -20,7 +21,7 @@ const StyledChildrenContainer = styled.div`
   overflow: hidden;
 `;
 
-const StyledChipContainer = styled.div`
+const StyledChipContainer = styled(motion.div)`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing(1)};
@@ -59,6 +60,7 @@ export const ExpandableCell = ({
   reference?: HTMLDivElement;
 }) => {
   const [containerWidth, setContainerWidth] = useState(0);
+  const [isDropdownMenuOpen, setIsDropdownMenuOpen] = useState(false);
   const [childrenContainerWidth, setChildrenContainerWidth] = useState<
     Record<number, number>
   >({});
@@ -99,7 +101,17 @@ export const ExpandableCell = ({
 
   const hiddenChildrenCount = computeHiddenChildrenNumber();
 
-  const dropdownId = useMemo(() => `expanded-cell-dropdown-${v4()}`, []);
+  const { refs, floatingStyles } = useFloating({
+    // @ts-expect-error placement accepts 'start' as value even if the typing does not permit it
+    placement: 'start',
+    elements: { reference },
+    //middleware: [offset({ crossAxis: -1, mainAxis: -1 })],
+  });
+
+  const openDropdownMenu = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    setIsDropdownMenuOpen(true);
+  };
 
   return (
     <StyledContainer
@@ -133,32 +145,29 @@ export const ExpandableCell = ({
       {isHovered && (
         <StyledChipContainer>
           {hiddenChildrenCount > 0 && (
-            <>
-              <Dropdown
-                dropdownId={dropdownId}
-                dropdownHotkeyScope={{
-                  scope: dropdownId,
-                }}
-                clickableComponent={
-                  <Chip
-                    label={`+${hiddenChildrenCount}`}
-                    variant={ChipVariant.Highlighted}
-                  />
-                }
-                reference={reference}
-                dropdownPlacement="start"
-                dropdownComponents={
-                  <StyledRelationsListContainer>
-                    {children}
-                  </StyledRelationsListContainer>
-                }
-              />
-            </>
+            <Chip
+              label={`+${hiddenChildrenCount}`}
+              variant={ChipVariant.Highlighted}
+              onClick={openDropdownMenu}
+            />
           )}
+
           <FloatingIconButton Icon={IconPencil} />
         </StyledChipContainer>
       )}
-      {hiddenChildrenCount > 0 && <div></div>}
+      {isDropdownMenuOpen && (
+        <DropdownMenu
+          ref={refs.setFloating}
+          style={floatingStyles}
+          width={
+            reference ? reference.getBoundingClientRect().width : undefined
+          }
+        >
+          <StyledRelationsListContainer>
+            {children}
+          </StyledRelationsListContainer>
+        </DropdownMenu>
+      )}
     </StyledContainer>
   );
 };
