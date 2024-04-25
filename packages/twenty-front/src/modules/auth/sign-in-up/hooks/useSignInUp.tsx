@@ -2,14 +2,12 @@ import { useCallback, useState } from 'react';
 import { SubmitHandler, UseFormReturn } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 
-import { useGenerateCaptchaToken } from '@/auth/hooks/useGenerateCaptchaToken';
 import { useNavigateAfterSignInUp } from '@/auth/sign-in-up/hooks/useNavigateAfterSignInUp';
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { useCaptchaToken } from '@/captcha/hooks/useCaptchaToken';
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useInsertCaptchaScript } from '~/hooks/useInsertCaptchaScript';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { useAuth } from '../../hooks/useAuth';
 
@@ -51,52 +49,28 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     checkUserExists: { checkUserExistsQuery },
   } = useAuth();
 
-  const isCaptchaScriptLoaded = useInsertCaptchaScript();
-  const { generateCaptchaToken } = useGenerateCaptchaToken();
-
-  const [isGeneratingCaptchaToken, setIsGeneratingCaptchaToken] =
-    useState(false);
-
-  const getCaptchaToken = useCallback(async () => {
-    setIsGeneratingCaptchaToken(true);
-    try {
-      const captchaToken = await generateCaptchaToken(isCaptchaScriptLoaded);
-      if (!isUndefinedOrNull(captchaToken)) {
-        form.setValue('captchaToken', captchaToken);
-      }
-      return captchaToken;
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error('Failed to generate captcha token:', error);
-      enqueueSnackBar(
-        'You were identified as a bot by Cloudflare. Please try another device.',
-        {
-          variant: 'error',
-        },
-      );
-      return null;
-    } finally {
-      setIsGeneratingCaptchaToken(false);
-    }
-  }, [form, generateCaptchaToken, isCaptchaScriptLoaded, enqueueSnackBar]);
+  const { preloadFreshCaptchaToken, getPreloadedOrFreshCaptchaToken } =
+    useCaptchaToken();
 
   const continueWithEmail = useCallback(() => {
+    preloadFreshCaptchaToken();
     setSignInUpStep(SignInUpStep.Email);
     setSignInUpMode(
       isMatchingLocation(AppPath.SignInUp)
         ? SignInUpMode.SignIn
         : SignInUpMode.SignUp,
     );
-  }, [setSignInUpStep, setSignInUpMode, isMatchingLocation]);
+  }, [isMatchingLocation, preloadFreshCaptchaToken]);
 
-  const continueWithCredentials = useCallback(() => {
+  const continueWithCredentials = useCallback(async () => {
+    const token = await getPreloadedOrFreshCaptchaToken();
     if (!form.getValues('email')) {
       return;
     }
     checkUserExistsQuery({
       variables: {
         email: form.getValues('email').toLowerCase().trim(),
-        captchaToken: form.getValues('captchaToken'),
+        captchaToken: token,
       },
       onError: (error) => {
         enqueueSnackBar(`${error.message}`, {
@@ -104,6 +78,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         });
       },
       onCompleted: (data) => {
+        preloadFreshCaptchaToken();
         if (data?.checkUserExists.exists) {
           setSignInUpMode(SignInUpMode.SignIn);
         } else {
@@ -112,10 +87,17 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         setSignInUpStep(SignInUpStep.Password);
       },
     });
-  }, [form, checkUserExistsQuery, enqueueSnackBar]);
+  }, [
+    getPreloadedOrFreshCaptchaToken,
+    form,
+    checkUserExistsQuery,
+    enqueueSnackBar,
+    preloadFreshCaptchaToken,
+  ]);
 
   const submitCredentials: SubmitHandler<Form> = useCallback(
     async (data) => {
+      const token = await getPreloadedOrFreshCaptchaToken();
       try {
         if (!data.email || !data.password) {
           throw new Error('Email and password are required');
@@ -129,13 +111,13 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
             ? await signInWithCredentials(
                 data.email.toLowerCase().trim(),
                 data.password,
-                data.captchaToken,
+                token,
               )
             : await signUpWithCredentials(
                 data.email.toLowerCase().trim(),
                 data.password,
                 workspaceInviteHash,
-                data.captchaToken,
+                token,
               );
 
         navigateAfterSignInUp(currentWorkspace, currentWorkspaceMember);
@@ -146,6 +128,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       }
     },
     [
+      getPreloadedOrFreshCaptchaToken,
       signInUpMode,
       isInviteMode,
       signInWithCredentials,
@@ -163,7 +146,5 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     continueWithCredentials,
     continueWithEmail,
     submitCredentials,
-    getCaptchaToken,
-    isGeneratingCaptchaToken,
   };
 };

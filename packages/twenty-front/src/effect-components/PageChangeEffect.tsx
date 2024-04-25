@@ -7,6 +7,8 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { useEventTracker } from '@/analytics/hooks/useEventTracker';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
+import { useCaptchaToken } from '@/captcha/hooks/useCaptchaToken';
+import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { isSignUpDisabledState } from '@/client-config/states/isSignUpDisabledState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandType } from '@/command-menu/types/Command';
@@ -247,6 +249,18 @@ export const PageChangeEffect = () => {
       });
     }, 500);
   }, [eventTracker, location.pathname]);
+
+  const { preloadFreshCaptchaToken } = useCaptchaToken();
+  const isCaptchaScriptLoaded = useRecoilValue(isCaptchaScriptLoadedState);
+
+  useEffect(() => {
+    if (
+      isCaptchaScriptLoaded &&
+      isMatchingLocation(AppPath.SignInUp || AppPath.Invite)
+    ) {
+      preloadFreshCaptchaToken();
+    }
+  }, [isCaptchaScriptLoaded, isMatchingLocation, preloadFreshCaptchaToken]);
 
   return <></>;
 };
