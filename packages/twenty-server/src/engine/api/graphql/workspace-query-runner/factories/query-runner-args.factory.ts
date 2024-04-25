@@ -34,7 +34,6 @@ export class QueryRunnerArgsFactory {
       ]),
     );
 
-    // switch on ResolverArgs union type
     switch (resolverArgsType) {
       case ResolverArgsType.CreateMany:
         return {
