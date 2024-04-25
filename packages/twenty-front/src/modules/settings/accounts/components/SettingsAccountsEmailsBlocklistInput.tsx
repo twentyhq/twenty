@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -44,14 +45,16 @@ type FormInput = z.infer<typeof validationSchema>;
 export const SettingsAccountsEmailsBlocklistInput = ({
   updateBlockedEmailList,
 }: SettingsAccountsEmailsBlocklistInputProps) => {
-  const { reset, handleSubmit, control } = useForm<FormInput>({
+  const { reset, handleSubmit, control, formState } = useForm<FormInput>({
     mode: 'onSubmit',
     resolver: zodResolver(validationSchema),
+    defaultValues: {
+      emailOrDomain: '',
+    },
   });
 
   const submit = handleSubmit((data) => {
     updateBlockedEmailList(data.emailOrDomain);
-    reset({ emailOrDomain: '' });
   });
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -59,6 +62,14 @@ export const SettingsAccountsEmailsBlocklistInput = ({
       submit();
     }
   };
+
+  const { isSubmitSuccessful } = formState;
+
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+    }
+  }, [isSubmitSuccessful, reset]);
 
   return (
     <form onSubmit={submit}>
