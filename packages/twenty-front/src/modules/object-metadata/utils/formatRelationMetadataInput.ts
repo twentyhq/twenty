@@ -2,7 +2,6 @@ import { RelationType } from '@/settings/data-model/types/RelationType';
 import {
   CreateRelationInput,
   Field,
-  FieldMetadataType,
   RelationMetadataType,
 } from '~/generated-metadata/graphql';
 
@@ -38,19 +37,13 @@ export const formatRelationMetadataInput = (
     icon: fromIcon,
     label: fromLabel,
     name: fromName,
-  } = formatFieldMetadataItemInput({
-    type: FieldMetadataType.Relation,
-    ...fromField,
-  });
+  } = formatFieldMetadataItemInput(fromField);
   const {
     description: toDescription,
     icon: toIcon,
     label: toLabel,
     name: toName,
-  } = formatFieldMetadataItemInput({
-    type: FieldMetadataType.Relation,
-    ...toField,
-  });
+  } = formatFieldMetadataItemInput(toField);
 
   return {
     fromDescription,

@@ -17,10 +17,13 @@ export const fieldMetadataItemSchema = z.object({
   description: z.string().trim().nullable().optional(),
   fromRelationMetadata: z
     .object({
+      __typename: z.literal('relation').optional(),
       id: z.string().uuid(),
       relationType: z.nativeEnum(RelationMetadataType),
       toFieldMetadataId: z.string().uuid(),
       toObjectMetadata: z.object({
+        __typename: z.literal('object').optional(),
+        dataSourceId: z.string().uuid(),
         id: z.string().uuid(),
         isSystem: z.boolean(),
         namePlural: z.string().trim().min(1),
@@ -29,8 +32,12 @@ export const fieldMetadataItemSchema = z.object({
     })
     .nullable()
     .optional(),
-  icon: z.string().startsWith('Icon').trim(),
+  icon: z.string().startsWith('Icon').trim().nullable(),
   id: z.string().uuid(),
+  isActive: z.boolean(),
+  isCustom: z.boolean(),
+  isNullable: z.boolean(),
+  isSystem: z.boolean(),
   label: metadataLabelSchema,
   name: camelCaseStringSchema,
   options: z
@@ -46,21 +53,26 @@ export const fieldMetadataItemSchema = z.object({
     .optional(),
   relationDefinition: z
     .object({
+      __typename: z.literal('RelationDefinition').optional(),
       direction: z.nativeEnum(RelationDefinitionType),
       sourceFieldMetadata: z.object({
+        __typename: z.literal('field').optional(),
         id: z.string().uuid(),
         name: z.string().trim().min(1),
       }),
       sourceObjectMetadata: z.object({
+        __typename: z.literal('object').optional(),
         id: z.string().uuid(),
         namePlural: z.string().trim().min(1),
         nameSingular: z.string().trim().min(1),
       }),
       targetFieldMetadata: z.object({
+        __typename: z.literal('field').optional(),
         id: z.string().uuid(),
         name: z.string().trim().min(1),
       }),
       targetObjectMetadata: z.object({
+        __typename: z.literal('object').optional(),
         id: z.string().uuid(),
         namePlural: z.string().trim().min(1),
         nameSingular: z.string().trim().min(1),
@@ -70,11 +82,14 @@ export const fieldMetadataItemSchema = z.object({
     .optional(),
   toRelationMetadata: z
     .object({
+      __typename: z.literal('relation').optional(),
       id: z.string().uuid(),
       relationType: z.nativeEnum(RelationMetadataType),
       fromFieldMetadataId: z.string().uuid(),
       fromObjectMetadata: z.object({
+        __typename: z.literal('object').optional(),
         id: z.string().uuid(),
+        dataSourceId: z.string().uuid(),
         isSystem: z.boolean(),
         namePlural: z.string().trim().min(1),
         nameSingular: z.string().trim().min(1),
