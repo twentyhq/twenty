@@ -7,10 +7,19 @@ import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolve
 
 import { isDomain } from 'src/engine/utils/is-domain';
 import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
+import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
+import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
 @Injectable()
 export class BlocklistCreateManyPreQueryHook implements WorkspacePreQueryHook {
-  constructor() {}
+  constructor(
+    @InjectObjectMetadataRepository(BlocklistObjectMetadata)
+    private readonly blocklistRepository: BlocklistRepository,
+    @InjectObjectMetadataRepository(WorkspaceMemberObjectMetadata)
+    private readonly workspaceMemberRepository: WorkspaceMemberRepository,
+  ) {}
 
   async execute(
     userId: string,
@@ -35,12 +44,26 @@ export class BlocklistCreateManyPreQueryHook implements WorkspacePreQueryHook {
           ),
       );
 
+    const currentWorkspaceMember =
+      await this.workspaceMemberRepository.getByIdOrFail(userId, workspaceId);
+
     for (const { handle } of payload.data) {
       if (!handle) {
         throw new Error('Handle is required');
       }
 
       emailOrDomainSchema.parse(handle);
+
+      const blocklist =
+        await this.blocklistRepository.getByWorkspaceMemberIdAndHandle(
+          currentWorkspaceMember.id,
+          handle,
+          workspaceId,
+        );
+
+      if (blocklist.length > 0) {
+        throw new Error('Email or domain is already in blocklist');
+      }
     }
   }
 }
