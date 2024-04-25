@@ -4,7 +4,8 @@ import { useParams } from 'react-router-dom';
 
 import { useNavigateAfterSignInUp } from '@/auth/sign-in-up/hooks/useNavigateAfterSignInUp';
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
-import { useCaptchaToken } from '@/captcha/hooks/useCaptchaToken';
+import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
+import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
@@ -49,21 +50,21 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     checkUserExists: { checkUserExistsQuery },
   } = useAuth();
 
-  const { preloadFreshCaptchaToken, getPreloadedOrFreshCaptchaToken } =
-    useCaptchaToken();
+  const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
+  const { readCaptchaToken } = useReadCaptchaToken();
 
   const continueWithEmail = useCallback(() => {
-    preloadFreshCaptchaToken();
+    requestFreshCaptchaToken();
     setSignInUpStep(SignInUpStep.Email);
     setSignInUpMode(
       isMatchingLocation(AppPath.SignInUp)
         ? SignInUpMode.SignIn
         : SignInUpMode.SignUp,
     );
-  }, [isMatchingLocation, preloadFreshCaptchaToken]);
+  }, [isMatchingLocation, requestFreshCaptchaToken]);
 
   const continueWithCredentials = useCallback(async () => {
-    const token = await getPreloadedOrFreshCaptchaToken();
+    const token = await readCaptchaToken();
     if (!form.getValues('email')) {
       return;
     }
@@ -78,7 +79,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         });
       },
       onCompleted: (data) => {
-        preloadFreshCaptchaToken();
+        requestFreshCaptchaToken();
         if (data?.checkUserExists.exists) {
           setSignInUpMode(SignInUpMode.SignIn);
         } else {
@@ -88,16 +89,16 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       },
     });
   }, [
-    getPreloadedOrFreshCaptchaToken,
+    readCaptchaToken,
     form,
     checkUserExistsQuery,
     enqueueSnackBar,
-    preloadFreshCaptchaToken,
+    requestFreshCaptchaToken,
   ]);
 
   const submitCredentials: SubmitHandler<Form> = useCallback(
     async (data) => {
-      const token = await getPreloadedOrFreshCaptchaToken();
+      const token = await readCaptchaToken();
       try {
         if (!data.email || !data.password) {
           throw new Error('Email and password are required');
@@ -128,7 +129,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       }
     },
     [
-      getPreloadedOrFreshCaptchaToken,
+      readCaptchaToken,
       signInUpMode,
       isInviteMode,
       signInWithCredentials,

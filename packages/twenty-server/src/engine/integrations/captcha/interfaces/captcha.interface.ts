@@ -3,7 +3,6 @@ import { registerEnumType } from '@nestjs/graphql';
 
 export enum CaptchaDriverType {
   GoogleRecatpcha = 'google-recaptcha',
-  HCaptcha = 'hcaptcha',
   Turnstile = 'turnstile',
 }
 
@@ -21,11 +20,6 @@ export interface GoogleRecatpchaDriverFactoryOptions {
   options: CaptchaDriverOptions;
 }
 
-export interface HCaptchaDriverFactoryOptions {
-  type: CaptchaDriverType.HCaptcha;
-  options: CaptchaDriverOptions;
-}
-
 export interface TurnstileDriverFactoryOptions {
   type: CaptchaDriverType.Turnstile;
   options: CaptchaDriverOptions;
@@ -33,7 +27,6 @@ export interface TurnstileDriverFactoryOptions {
 
 export type CaptchaModuleOptions =
   | GoogleRecatpchaDriverFactoryOptions
-  | HCaptchaDriverFactoryOptions
   | TurnstileDriverFactoryOptions;
 
 export type CaptchaModuleAsyncOptions = {
