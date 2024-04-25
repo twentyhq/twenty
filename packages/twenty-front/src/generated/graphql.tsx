@@ -117,10 +117,22 @@ export type BooleanFieldComparison = {
   isNot?: InputMaybe<Scalars['Boolean']>;
 };
 
+export type Captcha = {
+  __typename?: 'Captcha';
+  provider?: Maybe<CaptchaDriverType>;
+  siteKey?: Maybe<Scalars['String']>;
+};
+
+export enum CaptchaDriverType {
+  GoogleRecatpcha = 'GoogleRecatpcha',
+  Turnstile = 'Turnstile'
+}
+
 export type ClientConfig = {
   __typename?: 'ClientConfig';
   authProviders: AuthProviders;
   billing: Billing;
+  captcha: Captcha;
   debugMode: Scalars['Boolean'];
   sentry: Sentry;
   signInPrefilled: Scalars['Boolean'];
@@ -289,6 +301,7 @@ export type MutationAuthorizeAppArgs = {
 
 
 export type MutationChallengeArgs = {
+  captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
   password: Scalars['String'];
 };
@@ -339,6 +352,7 @@ export type MutationRenewTokenArgs = {
 
 
 export type MutationSignUpArgs = {
+  captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
   password: Scalars['String'];
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
@@ -456,6 +470,7 @@ export type QueryBillingPortalSessionArgs = {
 
 
 export type QueryCheckUserExistsArgs = {
+  captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
 };
 
@@ -999,6 +1014,7 @@ export type AuthorizeAppMutation = { __typename?: 'Mutation', authorizeApp: { __
 export type ChallengeMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
+  captchaToken?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -1049,6 +1065,7 @@ export type SignUpMutationVariables = Exact<{
   email: Scalars['String'];
   password: Scalars['String'];
   workspaceInviteHash?: InputMaybe<Scalars['String']>;
+  captchaToken?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -1071,6 +1088,7 @@ export type VerifyMutation = { __typename?: 'Mutation', verify: { __typename?: '
 
 export type CheckUserExistsQueryVariables = Exact<{
   email: Scalars['String'];
+  captchaToken?: InputMaybe<Scalars['String']>;
 }>;
 
 
@@ -1113,7 +1131,7 @@ export type UpdateBillingSubscriptionMutation = { __typename?: 'Mutation', updat
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, billingFreeTrialDurationInDays?: number | null }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, billingFreeTrialDurationInDays?: number | null }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null } } };
 
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -1559,8 +1577,8 @@ export type AuthorizeAppMutationHookResult = ReturnType<typeof useAuthorizeAppMu
 export type AuthorizeAppMutationResult = Apollo.MutationResult<AuthorizeAppMutation>;
 export type AuthorizeAppMutationOptions = Apollo.BaseMutationOptions<AuthorizeAppMutation, AuthorizeAppMutationVariables>;
 export const ChallengeDocument = gql`
-    mutation Challenge($email: String!, $password: String!) {
-  challenge(email: $email, password: $password) {
+    mutation Challenge($email: String!, $password: String!, $captchaToken: String) {
+  challenge(email: $email, password: $password, captchaToken: $captchaToken) {
     loginToken {
       ...AuthTokenFragment
     }
@@ -1584,6 +1602,7 @@ export type ChallengeMutationFn = Apollo.MutationFunction<ChallengeMutation, Cha
  *   variables: {
  *      email: // value for 'email'
  *      password: // value for 'password'
+ *      captchaToken: // value for 'captchaToken'
  *   },
  * });
  */
@@ -1805,11 +1824,12 @@ export type RenewTokenMutationHookResult = ReturnType<typeof useRenewTokenMutati
 export type RenewTokenMutationResult = Apollo.MutationResult<RenewTokenMutation>;
 export type RenewTokenMutationOptions = Apollo.BaseMutationOptions<RenewTokenMutation, RenewTokenMutationVariables>;
 export const SignUpDocument = gql`
-    mutation SignUp($email: String!, $password: String!, $workspaceInviteHash: String) {
+    mutation SignUp($email: String!, $password: String!, $workspaceInviteHash: String, $captchaToken: String) {
   signUp(
     email: $email
     password: $password
     workspaceInviteHash: $workspaceInviteHash
+    captchaToken: $captchaToken
   ) {
     loginToken {
       ...AuthTokenFragment
@@ -1835,6 +1855,7 @@ export type SignUpMutationFn = Apollo.MutationFunction<SignUpMutation, SignUpMut
  *      email: // value for 'email'
  *      password: // value for 'password'
  *      workspaceInviteHash: // value for 'workspaceInviteHash'
+ *      captchaToken: // value for 'captchaToken'
  *   },
  * });
  */
@@ -1922,8 +1943,8 @@ export type VerifyMutationHookResult = ReturnType<typeof useVerifyMutation>;
 export type VerifyMutationResult = Apollo.MutationResult<VerifyMutation>;
 export type VerifyMutationOptions = Apollo.BaseMutationOptions<VerifyMutation, VerifyMutationVariables>;
 export const CheckUserExistsDocument = gql`
-    query CheckUserExists($email: String!) {
-  checkUserExists(email: $email) {
+    query CheckUserExists($email: String!, $captchaToken: String) {
+  checkUserExists(email: $email, captchaToken: $captchaToken) {
     exists
   }
 }
@@ -1942,6 +1963,7 @@ export const CheckUserExistsDocument = gql`
  * const { data, loading, error } = useCheckUserExistsQuery({
  *   variables: {
  *      email: // value for 'email'
+ *      captchaToken: // value for 'captchaToken'
  *   },
  * });
  */
@@ -2164,6 +2186,10 @@ export const GetClientConfigDocument = gql`
       dsn
       environment
       release
+    }
+    captcha {
+      provider
+      siteKey
     }
   }
 }

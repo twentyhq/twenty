@@ -122,10 +122,22 @@ export type BooleanFieldComparison = {
   isNot?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
+export type Captcha = {
+  __typename?: 'Captcha';
+  provider?: Maybe<CaptchaDriverType>;
+  siteKey?: Maybe<Scalars['String']['output']>;
+};
+
+export enum CaptchaDriverType {
+  GoogleRecatpcha = 'GoogleRecatpcha',
+  Turnstile = 'Turnstile'
+}
+
 export type ClientConfig = {
   __typename?: 'ClientConfig';
   authProviders: AuthProviders;
   billing: Billing;
+  captcha: Captcha;
   debugMode: Scalars['Boolean']['output'];
   sentry: Sentry;
   signInPrefilled: Scalars['Boolean']['output'];
@@ -386,6 +398,7 @@ export type MutationAuthorizeAppArgs = {
 
 
 export type MutationChallengeArgs = {
+  captchaToken?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
 };
@@ -469,6 +482,7 @@ export type MutationRenewTokenArgs = {
 
 
 export type MutationSignUpArgs = {
+  captchaToken?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
   workspaceInviteHash?: InputMaybe<Scalars['String']['input']>;
@@ -614,6 +628,7 @@ export type QueryBillingPortalSessionArgs = {
 
 
 export type QueryCheckUserExistsArgs = {
+  captchaToken?: InputMaybe<Scalars['String']['input']>;
   email: Scalars['String']['input'];
 };
 
