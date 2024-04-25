@@ -14,7 +14,7 @@
     "database:migrate:prod": "npx -y typeorm migration:run -d dist/src/database/typeorm/metadata/metadata.datasource && npx -y typeorm migration:run -d dist/src/database/typeorm/core/core.datasource"
   },
   "dependencies": {
-    "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga+nestjs+2.1.0.patch",
+    "@graphql-yoga/nestjs": "patch:@graphql-yoga/nestjs@2.1.0#./patches/@graphql-yoga-nestjs-npm-2.1.0-cb509e6047.patch",
     "@nestjs/cache-manager": "^2.2.1",
     "@nestjs/devtools-integration": "^0.1.6",
     "@nestjs/graphql": "patch:@nestjs/graphql@12.1.1#./patches/@nestjs+graphql+12.1.1.patch",
