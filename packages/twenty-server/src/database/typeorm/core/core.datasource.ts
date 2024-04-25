@@ -15,7 +15,7 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
   migrationsTableName: '_typeorm_migrations',
   migrations: ['dist/src/database/typeorm/core/migrations/*{.ts,.js}'],
   ssl:
-    process.env.PG_DATABASE_SSL === 'true'
+    process.env.PG_SSL_ALLOW_SELF_SIGNED === 'true'
       ? {
           rejectUnauthorized: false,
         }

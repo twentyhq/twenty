@@ -33,7 +33,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         BillingSubscription,
         BillingSubscriptionItem,
       ],
-      ssl: environmentService.get('PG_DATABASE_SSL')
+      ssl: environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')
         ? {
             rejectUnauthorized: false,
           }

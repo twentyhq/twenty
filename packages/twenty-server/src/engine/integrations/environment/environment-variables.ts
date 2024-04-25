@@ -111,7 +111,7 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsBoolean()
   @IsOptional()
-  PG_DATABASE_SSL = false;
+  PG_SSL_ALLOW_SELF_SIGNED = false;
 
   // Frontend URL
   @IsUrl({ require_tld: false })
