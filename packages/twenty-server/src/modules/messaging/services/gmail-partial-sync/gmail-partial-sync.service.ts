@@ -28,8 +28,8 @@ import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/mess
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
 
 @Injectable()
-export class GmailPartialSyncV2Service {
-  private readonly logger = new Logger(GmailPartialSyncV2Service.name);
+export class GmailPartialSyncService {
+  private readonly logger = new Logger(GmailPartialSyncService.name);
 
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
