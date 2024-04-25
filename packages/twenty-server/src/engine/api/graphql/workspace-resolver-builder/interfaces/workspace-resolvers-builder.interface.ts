@@ -49,7 +49,7 @@ export interface UpdateManyResolverArgs<
   Filter = any,
 > {
   filter: Filter;
-  data: Data;
+  data: Data[];
 }
 
 export interface DeleteOneResolverArgs {

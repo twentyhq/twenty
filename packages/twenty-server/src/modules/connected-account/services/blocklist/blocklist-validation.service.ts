@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { z } from 'zod';
 
@@ -19,11 +19,9 @@ export class BlocklistValidationService {
   ) {}
 
   public async validateBlocklist(
+    blocklist: string[],
     userId: string,
     workspaceId: string,
-    payload: {
-      data: Array<{ handle: string }>;
-    },
   ) {
     const emailOrDomainSchema = z
       .string()
@@ -41,9 +39,9 @@ export class BlocklistValidationService {
     const currentWorkspaceMember =
       await this.workspaceMemberRepository.getByIdOrFail(userId, workspaceId);
 
-    for (const { handle } of payload.data) {
+    for (const handle of blocklist) {
       if (!handle) {
-        throw new Error('Handle is required');
+        throw new BadRequestException('Blocklist handle is required');
       }
 
       emailOrDomainSchema.parse(handle);
@@ -56,7 +54,7 @@ export class BlocklistValidationService {
         );
 
       if (blocklist.length > 0) {
-        throw new Error('Email or domain is already in blocklist');
+        throw new BadRequestException('Blocklist handle already exists');
       }
     }
   }
