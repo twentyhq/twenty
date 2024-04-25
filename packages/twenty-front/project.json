@@ -46,23 +46,16 @@
         "reportUnusedDisableDirectives": "error"
       },
       "configurations": {
-        "ci": {
-          "eslintConfig": "{projectRoot}/.eslintrc-ci.cjs",
-          "cacheStrategy": "content"
-        },
-        "fix": { "fix": true }
+        "ci": { "eslintConfig": "{projectRoot}/.eslintrc-ci.cjs" },
+        "fix": {}
       }
     },
     "fmt": {
-      "executor": "nx:run-commands",
-      "inputs": ["{projectRoot}/src/**/*"],
-      "cache": true,
       "options": {
-        "cwd": "{projectRoot}",
-        "command": "prettier src --check"
+        "files": "src"
       },
       "configurations": {
-        "fix": { "args": ["--write"] }
+        "fix": {}
       }
     },
     "test": {},
@@ -81,13 +74,9 @@
         "url": "http://localhost:6006"
       },
       "configurations": {
-        "docs": {
-          "commands": ["STORYBOOK_SCOPE=ui-docs nx storybook:test"]
-        },
-        "modules": {
-          "commands": ["STORYBOOK_SCOPE=modules nx storybook:test"]
-        },
-        "pages": { "commands": ["STORYBOOK_SCOPE=pages nx storybook:test"] }
+        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
+        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
+        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } }
       }
     },
     "graphql:generate": {
@@ -106,17 +95,6 @@
         }
       }
     },
-    "chromatic": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "cross-var chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name=storybook:build"
-      },
-      "configurations": {
-        "ci": {
-          "args": ["--exit-zero-on-changes"]
-        }
-      }
-    }
+    "chromatic": {}
   }
 }

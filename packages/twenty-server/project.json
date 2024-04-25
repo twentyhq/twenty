@@ -96,11 +96,8 @@
         "lintFilePatterns": ["{projectRoot}/src/**/*.{ts,json}"]
       },
       "configurations": {
-        "ci": {
-          "lintFilePatterns": ["{projectRoot}/**/*.{ts,json}"],
-          "cacheStrategy": "content"
-        },
-        "fix": { "fix": true }
+        "ci": { "lintFilePatterns": ["{projectRoot}/**/*.{ts,json}"] },
+        "fix": {}
       }
     },
     "test": {},

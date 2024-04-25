@@ -29,7 +29,15 @@
         ]
       },
       "configurations": {
-        "fix": { "fix": true }
+        "fix": {}
+      }
+    },
+    "fmt": {
+      "options": {
+        "files": "src"
+      },
+      "configurations": {
+        "fix": {}
       }
     },
     "test": {},

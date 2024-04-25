@@ -20,19 +20,15 @@
         "reportUnusedDisableDirectives": "error"
       },
       "configurations": {
-        "fix": { "fix": true }
+        "fix": {}
       }
     },
     "fmt": {
-      "executor": "nx:run-commands",
-      "inputs": ["{projectRoot}/src/**/*"],
-      "cache": true,
       "options": {
-        "cwd": "{projectRoot}",
-        "command": "prettier src --check"
+        "files": "src"
       },
       "configurations": {
-        "fix": { "args": ["--write"] }
+        "fix": {}
       }
     }
   }

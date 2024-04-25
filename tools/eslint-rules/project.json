@@ -10,7 +10,7 @@
         "lintFilePatterns": ["{projectRoot}/**/*.ts"]
       },
       "configurations": {
-        "fix": { "fix": true }
+        "fix": {}
       }
     },
     "typecheck": {},
