@@ -53,6 +53,8 @@ export class BlocklistValidationService {
           workspaceId,
         );
 
+      console.log('blocklist', blocklist);
+
       if (blocklist.length > 0) {
         throw new BadRequestException('Blocklist handle already exists');
       }
