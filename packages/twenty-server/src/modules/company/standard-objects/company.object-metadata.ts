@@ -22,6 +22,7 @@ import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-obje
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 import { TimelineActivityObjectMetadata } from 'src/modules/timeline/standard-objects/timeline-activity.object-metadata';
+import { industryOptions } from 'src/modules/company/data/industryOptions';
 
 @ObjectMetadata({
   standardId: STANDARD_OBJECT_IDS.company,
@@ -111,6 +112,17 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     defaultValue: false,
   })
   idealCustomerProfile: boolean;
+
+  @FieldMetadata({
+    standardId: COMPANY_STANDARD_FIELD_IDS.industry,
+    type: FieldMetadataType.SELECT,
+    label: 'Industry',
+    description: 'The companies industry',
+    icon: 'IconBuildingFactory2',
+    options: industryOptions,
+  })
+  @IsNullable()
+  industry?: string;
 
   @FieldMetadata({
     standardId: COMPANY_STANDARD_FIELD_IDS.position,

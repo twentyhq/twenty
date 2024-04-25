@@ -115,6 +115,7 @@ export const COMPANY_STANDARD_FIELD_IDS = {
   xLink: '20202020-6f64-4fd9-9580-9c1991c7d8c3',
   annualRecurringRevenue: '20202020-602a-495c-9776-f5d5b11d227b',
   idealCustomerProfile: '20202020-ba6b-438a-8213-2c5ba28d76a2',
+  industry: '20202020-ef5b-438a-8358-1c3ba2dd76e2',
   position: '20202020-9b4e-462b-991d-a0ee33326454',
   people: '20202020-3213-4ddf-9494-6422bcff8d7c',
   accountOwner: '20202020-95b8-4e10-9881-edb5d4765f9d',
