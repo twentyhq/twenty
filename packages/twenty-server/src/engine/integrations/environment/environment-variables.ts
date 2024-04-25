@@ -25,6 +25,7 @@ import { StorageDriverType } from 'src/engine/integrations/file-storage/interfac
 import { LoggerDriverType } from 'src/engine/integrations/logger/interfaces';
 import { IsStrictlyLowerThan } from 'src/engine/integrations/environment/decorators/is-strictly-lower-than.decorator';
 import { MessageQueueDriverType } from 'src/engine/integrations/message-queue/interfaces';
+import { CacheStorageType } from 'src/engine/integrations/cache-storage/types/cache-storage-type.enum';
 
 import { IsDuration } from './decorators/is-duration.decorator';
 import { AwsRegion } from './interfaces/aws-region.interface';
@@ -351,7 +352,7 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   API_RATE_LIMITING_LIMIT = 500;
 
-  CACHE_STORAGE_TYPE = 'memory';
+  CACHE_STORAGE_TYPE: CacheStorageType = CacheStorageType.Memory;
 
   @CastToPositiveNumber()
   CACHE_STORAGE_TTL: number = 3600 * 24 * 7;
