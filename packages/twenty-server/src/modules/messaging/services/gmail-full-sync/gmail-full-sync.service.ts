@@ -26,7 +26,7 @@ import {
   MessageChannelSyncStatus,
 } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { gmailSearchFilterEmailAdresses } from 'src/modules/messaging/utils/gmail-search-filter.util';
+import { gmailSearchFilter } from 'src/modules/messaging/utils/gmail-search-filter.util';
 
 @Injectable()
 export class GmailFullSyncService {
@@ -167,7 +167,7 @@ export class GmailFullSyncService {
         userId: 'me',
         maxResults: GMAIL_USERS_MESSAGES_LIST_MAX_RESULT,
         pageToken,
-        q: gmailSearchFilterEmailAdresses(includedEmails, blocklistedEmails),
+        q: gmailSearchFilter,
       });
 
       if (response.data?.messages) {
