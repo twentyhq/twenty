@@ -3,6 +3,7 @@ import { MessageFindOnePreQueryHook } from 'src/modules/messaging/query-hooks/me
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/types/workspace-query-hook.type';
 import { CalendarEventFindManyPreQueryHook } from 'src/modules/calendar/query-hooks/calendar-event/calendar-event-find-many.pre-query.hook';
 import { CalendarEventFindOnePreQueryHook } from 'src/modules/calendar/query-hooks/calendar-event/calendar-event-find-one.pre-query-hook';
+import { BlocklistCreateManyPreQueryHook } from 'src/modules/connected-account/query-hooks/blocklist/blocklist-create-many.pre-query.hook';
 
 // TODO: move to a decorator
 export const workspacePreQueryHooks: WorkspaceQueryHook = {
@@ -13,5 +14,8 @@ export const workspacePreQueryHooks: WorkspaceQueryHook = {
   calendarEvent: {
     findOne: [CalendarEventFindOnePreQueryHook.name],
     findMany: [CalendarEventFindManyPreQueryHook.name],
+  },
+  blocklist: {
+    createMany: [BlocklistCreateManyPreQueryHook.name],
   },
 };
