@@ -11,7 +11,6 @@ import { iconsState } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isCaptchaLoadedState } from '@/auth/states/isCaptchaLoadedState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
 import { workspacesState } from '@/auth/states/workspaces';
@@ -183,9 +182,6 @@ export const useAuth = () => {
         const isCurrentUserLoaded = snapshot
           .getLoadable(isCurrentUserLoadedState)
           .getValue();
-        const isCaptchaLoaded = snapshot
-          .getLoadable(isCaptchaLoadedState)
-          .getValue();
 
         const initialSnapshot = emptySnapshot.map(({ set }) => {
           set(iconsState, iconsValue);
@@ -198,7 +194,6 @@ export const useAuth = () => {
           set(captchaProviderState, captchaProvider);
           set(isClientConfigLoadedState, isClientConfigLoaded);
           set(isCurrentUserLoadedState, isCurrentUserLoaded);
-          set(isCaptchaLoadedState, isCaptchaLoaded);
           return undefined;
         });
 
