@@ -21,33 +21,40 @@ const StyledLinkContainer = styled.div`
 
 type SettingsAccountsEmailsBlocklistInputProps = {
   updateBlockedEmailList: (email: string) => void;
+  blockedEmailOrDomainList: string[];
 };
 
-const validationSchema = z
-  .object({
-    emailOrDomain: z
-      .string()
-      .trim()
-      .email('Invalid email or domain')
-      .or(
-        z
-          .string()
-          .refine(
-            (value) => value.startsWith('@') && isDomain(value.slice(1)),
-            'Invalid email or domain',
-          ),
-      ),
-  })
-  .required();
-
-type FormInput = z.infer<typeof validationSchema>;
+const validationSchema = (blockedEmailOrDomainList: string[]) =>
+  z
+    .object({
+      emailOrDomain: z
+        .string()
+        .trim()
+        .email('Invalid email or domain')
+        .or(
+          z
+            .string()
+            .refine(
+              (value) => value.startsWith('@') && isDomain(value.slice(1)),
+              'Invalid email or domain',
+            ),
+        )
+        .refine(
+          (value) => !blockedEmailOrDomainList.includes(value),
+          'Email or domain is already in blocklist',
+        ),
+    })
+    .required();
 
 export const SettingsAccountsEmailsBlocklistInput = ({
   updateBlockedEmailList,
+  blockedEmailOrDomainList,
 }: SettingsAccountsEmailsBlocklistInputProps) => {
-  const { reset, handleSubmit, control, formState } = useForm<FormInput>({
+  const { reset, handleSubmit, control, formState } = useForm<{
+    emailOrDomain: string;
+  }>({
     mode: 'onSubmit',
-    resolver: zodResolver(validationSchema),
+    resolver: zodResolver(validationSchema(blockedEmailOrDomainList)),
     defaultValues: {
       emailOrDomain: '',
     },
