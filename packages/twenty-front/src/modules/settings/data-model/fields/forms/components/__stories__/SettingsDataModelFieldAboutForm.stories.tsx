@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { ComponentDecorator } from 'twenty-ui';
 
-import { mockedPersonObjectMetadataItem } from '@/object-record/record-field/__mocks__/fieldDefinitions';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { mockedPersonObjectMetadataItem } from '~/testing/mock-data/metadata';
 
 import { SettingsDataModelFieldAboutForm } from '../SettingsDataModelFieldAboutForm';
 
