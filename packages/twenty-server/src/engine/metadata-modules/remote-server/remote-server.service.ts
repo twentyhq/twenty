@@ -16,8 +16,8 @@ import {
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { encryptText } from 'src/engine/core-modules/auth/auth.util';
 import {
-  validateObject,
-  validateString,
+  validateObjectRemoteServerInput,
+  validateStringRemoteServerInput,
 } from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-input';
 import { ForeignDataWrapperQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/foreign-data-wrapper-query.factory';
 import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
@@ -44,10 +44,12 @@ export class RemoteServerService<T extends RemoteServerType> {
     remoteServerInput: CreateRemoteServerInput<T>,
     workspaceId: string,
   ): Promise<RemoteServerEntity<RemoteServerType>> {
-    validateObject(remoteServerInput.foreignDataWrapperOptions);
+    validateObjectRemoteServerInput(
+      remoteServerInput.foreignDataWrapperOptions,
+    );
 
     if (remoteServerInput.userMappingOptions) {
-      validateObject(remoteServerInput.userMappingOptions);
+      validateObjectRemoteServerInput(remoteServerInput.userMappingOptions);
     }
 
     const foreignDataWrapperId = v4();
@@ -108,11 +110,13 @@ export class RemoteServerService<T extends RemoteServerType> {
     workspaceId: string,
   ): Promise<RemoteServerEntity<RemoteServerType>> {
     if (remoteServerInput.foreignDataWrapperOptions) {
-      validateObject(remoteServerInput.foreignDataWrapperOptions);
+      validateObjectRemoteServerInput(
+        remoteServerInput.foreignDataWrapperOptions,
+      );
     }
 
     if (remoteServerInput.userMappingOptions) {
-      validateObject(remoteServerInput.userMappingOptions);
+      validateObjectRemoteServerInput(remoteServerInput.userMappingOptions);
     }
 
     const remoteServer = await this.findOneByIdWithinWorkspace(
@@ -193,7 +197,7 @@ export class RemoteServerService<T extends RemoteServerType> {
     id: string,
     workspaceId: string,
   ): Promise<RemoteServerEntity<RemoteServerType>> {
-    validateString(id);
+    validateStringRemoteServerInput(id);
 
     const remoteServer = await this.remoteServerRepository.findOne({
       where: {
