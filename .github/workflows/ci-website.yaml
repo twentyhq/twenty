@@ -17,6 +17,14 @@ concurrency:
 jobs:
   website-build:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: twentycrm/twenty-postgres
+        env:
+          POSTGRES_PASSWORD: twenty
+          POSTGRES_USER: twenty
+        ports:
+          - 5432:5432
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
@@ -25,5 +33,11 @@ jobs:
           node-version: "18"
       - name: Website / Install Dependencies
         run: yarn
+      - name: Website / Run migrations
+        run: npx nx database:migrate twenty-website 
+        env:
+          DATABASE_PG_URL: postgres://twenty:twenty@localhost:5432/default
       - name: Website / Build Website
         run: npx nx build twenty-website
+        env:
+          DATABASE_PG_URL: postgres://twenty:twenty@localhost:5432/default

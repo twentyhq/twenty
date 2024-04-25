@@ -4,11 +4,12 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRecoilState } from 'recoil';
-import { IconGoogle } from 'twenty-ui';
+import { IconGoogle, IconMicrosoft } from 'twenty-ui';
 
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
+import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
@@ -27,7 +28,6 @@ import { HorizontalSeparator } from './HorizontalSeparator';
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
   margin-top: ${({ theme }) => theme.spacing(4)};
-  width: 200px;
 `;
 
 const StyledForm = styled.form`
@@ -51,6 +51,7 @@ export const SignInUpForm = () => {
   const { handleResetPassword } = useHandleResetPassword();
   const workspace = useWorkspaceFromInviteHash();
   const { signInWithGoogle } = useSignInWithGoogle();
+  const { signInWithMicrosoft } = useSignInWithMicrosoft();
   const { form } = useSignInUpForm();
 
   const {
@@ -125,119 +126,133 @@ export const SignInUpForm = () => {
               onClick={signInWithGoogle}
               fullWidth
             />
-            <HorizontalSeparator />
+            <HorizontalSeparator visible={!authProviders.microsoft} />
           </>
         )}
 
-        <StyledForm
-          onSubmit={(event) => {
-            event.preventDefault();
-          }}
-        >
-          {signInUpStep !== SignInUpStep.Init && (
-            <StyledFullWidthMotionDiv
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              transition={{
-                type: 'spring',
-                stiffness: 800,
-                damping: 35,
-              }}
-            >
-              <Controller
-                name="email"
-                control={form.control}
-                render={({
-                  field: { onChange, onBlur, value },
-                  fieldState: { error },
-                }) => (
-                  <StyledInputContainer>
-                    <TextInput
-                      autoFocus
-                      value={value}
-                      placeholder="Email"
-                      onBlur={onBlur}
-                      onChange={(value: string) => {
-                        onChange(value);
-                        if (signInUpStep === SignInUpStep.Password) {
-                          continueWithEmail();
-                        }
-                      }}
-                      error={showErrors ? error?.message : undefined}
-                      fullWidth
-                      disableHotkeys
-                      onKeyDown={handleKeyDown}
-                    />
-                  </StyledInputContainer>
-                )}
-              />
-            </StyledFullWidthMotionDiv>
-          )}
-          {signInUpStep === SignInUpStep.Password && (
-            <StyledFullWidthMotionDiv
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              transition={{
-                type: 'spring',
-                stiffness: 800,
-                damping: 35,
-              }}
-            >
-              <Controller
-                name="password"
-                control={form.control}
-                render={({
-                  field: { onChange, onBlur, value },
-                  fieldState: { error },
-                }) => (
-                  <StyledInputContainer>
-                    <TextInput
-                      autoFocus
-                      value={value}
-                      type="password"
-                      placeholder="Password"
-                      onBlur={onBlur}
-                      onChange={onChange}
-                      error={showErrors ? error?.message : undefined}
-                      fullWidth
-                      disableHotkeys
-                      onKeyDown={handleKeyDown}
-                    />
-                  </StyledInputContainer>
-                )}
-              />
-            </StyledFullWidthMotionDiv>
-          )}
+        {authProviders.microsoft && (
+          <>
+            <MainButton
+              Icon={() => <IconMicrosoft size={theme.icon.size.lg} />}
+              title="Continue with Microsoft"
+              onClick={signInWithMicrosoft}
+              fullWidth
+            />
+            <HorizontalSeparator visible={authProviders.password} />
+          </>
+        )}
 
-          <MainButton
-            variant="secondary"
-            title={buttonTitle}
-            type="submit"
-            onClick={() => {
-              if (signInUpStep === SignInUpStep.Init) {
-                continueWithEmail();
-                return;
-              }
-              if (signInUpStep === SignInUpStep.Email) {
-                continueWithCredentials();
-                return;
-              }
-              setShowErrors(true);
-              form.handleSubmit(submitCredentials)();
+        {authProviders.password && (
+          <StyledForm
+            onSubmit={(event) => {
+              event.preventDefault();
             }}
-            Icon={() => form.formState.isSubmitting && <Loader />}
-            disabled={
-              signInUpStep === SignInUpStep.Init
-                ? false
-                : signInUpStep === SignInUpStep.Email
-                  ? !form.watch('email')
-                  : !form.watch('email') ||
-                    !form.watch('password') ||
-                    form.formState.isSubmitting
-            }
-            fullWidth
-          />
-        </StyledForm>
+          >
+            {signInUpStep !== SignInUpStep.Init && (
+              <StyledFullWidthMotionDiv
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 800,
+                  damping: 35,
+                }}
+              >
+                <Controller
+                  name="email"
+                  control={form.control}
+                  render={({
+                    field: { onChange, onBlur, value },
+                    fieldState: { error },
+                  }) => (
+                    <StyledInputContainer>
+                      <TextInput
+                        autoFocus
+                        value={value}
+                        placeholder="Email"
+                        onBlur={onBlur}
+                        onChange={(value: string) => {
+                          onChange(value);
+                          if (signInUpStep === SignInUpStep.Password) {
+                            continueWithEmail();
+                          }
+                        }}
+                        error={showErrors ? error?.message : undefined}
+                        fullWidth
+                        disableHotkeys
+                        onKeyDown={handleKeyDown}
+                      />
+                    </StyledInputContainer>
+                  )}
+                />
+              </StyledFullWidthMotionDiv>
+            )}
+            {signInUpStep === SignInUpStep.Password && (
+              <StyledFullWidthMotionDiv
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 800,
+                  damping: 35,
+                }}
+              >
+                <Controller
+                  name="password"
+                  control={form.control}
+                  render={({
+                    field: { onChange, onBlur, value },
+                    fieldState: { error },
+                  }) => (
+                    <StyledInputContainer>
+                      <TextInput
+                        autoFocus
+                        value={value}
+                        type="password"
+                        placeholder="Password"
+                        onBlur={onBlur}
+                        onChange={onChange}
+                        error={showErrors ? error?.message : undefined}
+                        fullWidth
+                        disableHotkeys
+                        onKeyDown={handleKeyDown}
+                      />
+                    </StyledInputContainer>
+                  )}
+                />
+              </StyledFullWidthMotionDiv>
+            )}
+
+            <MainButton
+              variant="secondary"
+              title={buttonTitle}
+              type="submit"
+              onClick={() => {
+                if (signInUpStep === SignInUpStep.Init) {
+                  continueWithEmail();
+                  return;
+                }
+                if (signInUpStep === SignInUpStep.Email) {
+                  continueWithCredentials();
+                  return;
+                }
+                setShowErrors(true);
+                form.handleSubmit(submitCredentials)();
+              }}
+              Icon={() => form.formState.isSubmitting && <Loader />}
+              disabled={
+                signInUpStep === SignInUpStep.Init
+                  ? false
+                  : signInUpStep === SignInUpStep.Email
+                    ? !form.watch('email')
+                    : !form.watch('email') ||
+                      !form.watch('password') ||
+                      form.formState.isSubmitting
+              }
+              fullWidth
+            />
+          </StyledForm>
+        )}
       </StyledContentContainer>
       {signInUpStep === SignInUpStep.Password && (
         <ActionLink onClick={handleResetPassword(form.getValues('email'))}>

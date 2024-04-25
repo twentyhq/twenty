@@ -16,6 +16,7 @@ import {
 } from 'class-validator';
 
 import { EmailDriver } from 'src/engine/integrations/email/interfaces/email.interface';
+import { NodeEnvironment } from 'src/engine/integrations/environment/interfaces/node-environment.interface';
 
 import { assert } from 'src/utils/assert';
 import { CastToStringArray } from 'src/engine/integrations/environment/decorators/cast-to-string-array.decorator';
@@ -40,17 +41,16 @@ export class EnvironmentVariables {
   @IsBoolean()
   DEBUG_MODE = false;
 
+  @IsEnum(NodeEnvironment)
+  @IsString()
+  NODE_ENV: NodeEnvironment = NodeEnvironment.development;
+
   @CastToPositiveNumber()
   @IsOptional()
   @IsNumber()
   @Min(0)
   @Max(65535)
   DEBUG_PORT = 9000;
-
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
-  SIGN_IN_PREFILLED = false;
 
   @CastToBoolean()
   @IsOptional()
@@ -154,18 +154,50 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
+  AUTH_PASSWORD_ENABLED = true;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  @ValidateIf((env) => env.AUTH_PASSWORD_ENABLED)
+  SIGN_IN_PREFILLED = false;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  AUTH_MICROSOFT_ENABLED = false;
+
+  @IsString()
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
+  AUTH_MICROSOFT_CLIENT_ID: string;
+
+  @IsString()
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
+  AUTH_MICROSOFT_TENANT_ID: string;
+
+  @IsString()
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
+  AUTH_MICROSOFT_CLIENT_SECRET: string;
+
+  @IsUrl({ require_tld: false })
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
+  AUTH_MICROSOFT_CALLBACK_URL: string;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
   AUTH_GOOGLE_ENABLED = false;
 
   @IsString()
-  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED === true)
+  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CLIENT_ID: string;
 
   @IsString()
-  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED === true)
+  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CLIENT_SECRET: string;
 
   @IsUrl({ require_tld: false })
-  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED === true)
+  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CALLBACK_URL: string;
 
   // Storage
