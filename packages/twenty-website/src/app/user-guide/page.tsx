@@ -7,6 +7,8 @@ export const metadata = {
   icons: '/images/core/logo.svg',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function UserGuideHome() {
   return <UserGuideMain />;
 }
