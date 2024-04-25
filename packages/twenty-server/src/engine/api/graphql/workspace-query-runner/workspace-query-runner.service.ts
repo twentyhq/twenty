@@ -22,6 +22,7 @@ import {
   FindDuplicatesResolverArgs,
   FindManyResolverArgs,
   FindOneResolverArgs,
+  ResolverArgsType,
   UpdateManyResolverArgs,
   UpdateOneResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -87,8 +88,14 @@ export class WorkspaceQueryRunnerService {
     const { workspaceId, userId, objectMetadataItem } = options;
     const start = performance.now();
 
-    const query = await this.workspaceQueryBuilderFactory.findMany(
+    const computedArgs = (await this.queryRunnerArgsFactory.create(
       args,
+      options,
+      ResolverArgsType.FindMany,
+    )) as FindManyResolverArgs<Filter, OrderBy>;
+
+    const query = await this.workspaceQueryBuilderFactory.findMany(
+      computedArgs,
       options,
     );
 
@@ -127,8 +134,15 @@ export class WorkspaceQueryRunnerService {
       throw new BadRequestException('Missing filter argument');
     }
     const { workspaceId, userId, objectMetadataItem } = options;
-    const query = await this.workspaceQueryBuilderFactory.findOne(
+
+    const computedArgs = (await this.queryRunnerArgsFactory.create(
       args,
+      options,
+      ResolverArgsType.FindOne,
+    )) as FindOneResolverArgs<Filter>;
+
+    const query = await this.workspaceQueryBuilderFactory.findOne(
+      computedArgs,
       options,
     );
 
@@ -168,12 +182,18 @@ export class WorkspaceQueryRunnerService {
 
     const { workspaceId, userId, objectMetadataItem } = options;
 
+    const computedArgs = (await this.queryRunnerArgsFactory.create(
+      args,
+      options,
+      ResolverArgsType.FindDuplicates,
+    )) as FindDuplicatesResolverArgs<TRecord>;
+
     let existingRecord: Record<string, unknown> | undefined;
 
-    if (args.id) {
+    if (computedArgs.id) {
       const existingRecordQuery =
         this.workspaceQueryBuilderFactory.findDuplicatesExistingRecord(
-          args.id,
+          computedArgs.id,
           options,
         );
 
@@ -196,7 +216,7 @@ export class WorkspaceQueryRunnerService {
     }
 
     const query = await this.workspaceQueryBuilderFactory.findDuplicates(
-      args,
+      computedArgs,
       options,
       existingRecord,
     );
@@ -206,7 +226,7 @@ export class WorkspaceQueryRunnerService {
       workspaceId,
       objectMetadataItem.nameSingular,
       'findDuplicates',
-      args,
+      computedArgs,
     );
 
     const result = await this.execute(query, workspaceId);
@@ -232,10 +252,11 @@ export class WorkspaceQueryRunnerService {
       }
     });
 
-    const computedArgs = await this.queryRunnerArgsFactory.create(
+    const computedArgs = (await this.queryRunnerArgsFactory.create(
       args,
       options,
-    );
+      ResolverArgsType.CreateMany,
+    )) as CreateManyResolverArgs<Record>;
 
     await this.workspacePreQueryHookService.executePreHooks(
       userId,
