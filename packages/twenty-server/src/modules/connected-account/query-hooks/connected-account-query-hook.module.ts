@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 
-import { BlocklistCreateOnePreQueryHook } from 'src/modules/connected-account/query-hooks/blocklist/blocklist-create-one.pre-query.hook';
+import { BlocklistCreateManyPreQueryHook } from 'src/modules/connected-account/query-hooks/blocklist/blocklist-create-many.pre-query.hook';
 
 @Module({
   imports: [],
   providers: [
     {
-      provide: BlocklistCreateOnePreQueryHook.name,
-      useClass: BlocklistCreateOnePreQueryHook,
+      provide: BlocklistCreateManyPreQueryHook.name,
+      useClass: BlocklistCreateManyPreQueryHook,
     },
   ],
 })

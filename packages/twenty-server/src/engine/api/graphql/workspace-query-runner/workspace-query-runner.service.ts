@@ -226,6 +226,14 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
+    await this.workspacePreQueryHookService.executePreHooks(
+      userId,
+      workspaceId,
+      objectMetadataItem.nameSingular,
+      'createMany',
+      args,
+    );
+
     const query = await this.workspaceQueryBuilderFactory.createMany(
       computedArgs,
       options,
