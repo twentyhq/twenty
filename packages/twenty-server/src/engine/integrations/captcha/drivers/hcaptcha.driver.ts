@@ -1,18 +1,12 @@
 import axios, { AxiosInstance } from 'axios';
 
 import { CaptchaDriver } from 'src/engine/integrations/captcha/drivers/interfaces/captcha-driver.interface';
+import { CaptchaServerResponse } from 'src/engine/integrations/captcha/drivers/interfaces/captcha-server-response';
 
 import {
   CaptchaDriverOptions,
   CaptchaValidateResult,
 } from 'src/engine/integrations/captcha/interfaces';
-
-export type HCaptchaRecatpchaServerResponse = {
-  success: boolean;
-  challenge_ts: string;
-  hostname: string;
-  'error-codes': string[];
-};
 
 export class HCaptchaDriver implements CaptchaDriver {
   private readonly siteKey: string;
@@ -35,7 +29,7 @@ export class HCaptchaDriver implements CaptchaDriver {
 
     const response = await this.httpService.post('', formData);
 
-    const responseData = response.data as HCaptchaRecatpchaServerResponse;
+    const responseData = response.data as CaptchaServerResponse;
 
     return {
       success: responseData.success,

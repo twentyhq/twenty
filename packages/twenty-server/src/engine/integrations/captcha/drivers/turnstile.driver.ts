@@ -1,18 +1,12 @@
 import axios, { AxiosInstance } from 'axios';
 
 import { CaptchaDriver } from 'src/engine/integrations/captcha/drivers/interfaces/captcha-driver.interface';
+import { CaptchaServerResponse } from 'src/engine/integrations/captcha/drivers/interfaces/captcha-server-response';
 
 import {
   CaptchaDriverOptions,
   CaptchaValidateResult,
 } from 'src/engine/integrations/captcha/interfaces';
-
-export type TurnstileServerResponse = {
-  success: boolean;
-  challenge_ts: string;
-  hostname: string;
-  'error-codes': string[];
-};
 
 export class TurnstileDriver implements CaptchaDriver {
   private readonly siteKey: string;
@@ -33,7 +27,7 @@ export class TurnstileDriver implements CaptchaDriver {
     });
     const response = await this.httpService.post('', formData);
 
-    const responseData = response.data as TurnstileServerResponse;
+    const responseData = response.data as CaptchaServerResponse;
 
     return {
       success: responseData.success,
