@@ -24,6 +24,8 @@ import {
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
+import { InvalidStringException } from 'src/engine/metadata-modules/errors/InvalidStringException';
+import { validateMetadataName } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 
 import {
   RelationMetadataEntity,
@@ -50,6 +52,20 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     const objectMetadataMap = await this.getObjectMetadataMap(
       relationMetadataInput,
     );
+
+    try {
+      validateMetadataName(relationMetadataInput.fromName);
+      validateMetadataName(relationMetadataInput.toName);
+    } catch (error) {
+      if (error instanceof InvalidStringException) {
+        console.error(error.message);
+        throw new BadRequestException(
+          `Characters used in name "${relationMetadataInput.fromName}" or "${relationMetadataInput.toName}" are not supported`,
+        );
+      } else {
+        throw error;
+      }
+    }
 
     await this.validateCreateRelationMetadataInput(
       relationMetadataInput,

@@ -34,6 +34,7 @@ export class GoogleAuthController {
       lastName,
       picture,
       workspaceInviteHash,
+      fromSSO: true,
     });
 
     const loginToken = await this.tokenService.generateLoginToken(user.email);

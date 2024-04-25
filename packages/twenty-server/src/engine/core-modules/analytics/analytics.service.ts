@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 
 import { Request } from 'express';
@@ -12,6 +12,8 @@ import { CreateAnalyticsInput } from './dto/create-analytics.input';
 
 @Injectable()
 export class AnalyticsService {
+  private readonly logger = new Logger(AnalyticsService.name);
+
   constructor(
     private readonly environmentService: EnvironmentService,
     private readonly httpService: HttpService,
@@ -53,7 +55,11 @@ export class AnalyticsService {
 
     try {
       await this.httpService.axiosRef.post('/v1', data);
-    } catch {}
+    } catch {
+      this.logger.error('Failed to send analytics event');
+
+      return { success: false };
+    }
 
     return { success: true };
   }

@@ -41,6 +41,7 @@ export const ClientConfigProviderEffect = () => {
       setIsClientConfigLoaded(true);
       setAuthProviders({
         google: data?.clientConfig.authProviders.google,
+        microsoft: data?.clientConfig.authProviders.microsoft,
         password: data?.clientConfig.authProviders.password,
         magicLink: false,
       });

@@ -19,7 +19,11 @@ export function generateMetadata({
   params: { slug: string };
 }): Metadata {
   return {
-    title: params.slug + ' | Contributors',
+    title: 'Twenty - ' + params.slug,
+    description:
+      'Explore the impactful contributions of ' +
+      params.slug +
+      ' on the Twenty Github Repo. Discover their merged pull requests, ongoing work, and top ranking. Join and contribute to the #1 Open-Source CRM thriving community!',
   };
 }
 

@@ -11,7 +11,7 @@ import { iconsState } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState.ts';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
 import { workspacesState } from '@/auth/states/workspaces';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
@@ -245,6 +245,14 @@ export const useAuth = () => {
       }` || '';
   }, []);
 
+  const handleMicrosoftLogin = useCallback((workspaceInviteHash?: string) => {
+    const authServerUrl = REACT_APP_SERVER_BASE_URL;
+    window.location.href =
+      `${authServerUrl}/auth/microsoft/${
+        workspaceInviteHash ? '?inviteHash=' + workspaceInviteHash : ''
+      }` || '';
+  }, []);
+
   return {
     challenge: handleChallenge,
     verify: handleVerify,
@@ -255,5 +263,6 @@ export const useAuth = () => {
     signUpWithCredentials: handleCredentialsSignUp,
     signInWithCredentials: handleCrendentialsSignIn,
     signInWithGoogle: handleGoogleLogin,
+    signInWithMicrosoft: handleMicrosoftLogin,
   };
 };

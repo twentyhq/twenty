@@ -101,11 +101,25 @@ export class AuthResolver {
   @UseGuards(CaptchaGuard)
   @Mutation(() => LoginToken)
   async signUp(@Args() signUpInput: SignUpInput): Promise<LoginToken> {
-    const user = await this.authService.signInUp(signUpInput);
+    const user = await this.authService.signInUp({
+      ...signUpInput,
+      fromSSO: false,
+    });
 
     const loginToken = await this.tokenService.generateLoginToken(user.email);
 
     return { loginToken };
+  }
+
+  @Mutation(() => ExchangeAuthCode)
+  async exchangeAuthorizationCode(
+    @Args() exchangeAuthCodeInput: ExchangeAuthCodeInput,
+  ) {
+    const tokens = await this.tokenService.verifyAuthorizationCode(
+      exchangeAuthCodeInput,
+    );
+
+    return tokens;
   }
 
   @Mutation(() => TransientToken)
@@ -151,17 +165,6 @@ export class AuthResolver {
     );
 
     return authorizedApp;
-  }
-
-  @Query(() => ExchangeAuthCode)
-  async exchangeAuthorizationCode(
-    @Args() exchangeAuthCodeInput: ExchangeAuthCodeInput,
-  ) {
-    const tokens = await this.tokenService.verifyAuthorizationCode(
-      exchangeAuthCodeInput,
-    );
-
-    return tokens;
   }
 
   @Mutation(() => AuthTokens)

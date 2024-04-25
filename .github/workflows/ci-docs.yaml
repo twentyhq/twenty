@@ -28,7 +28,7 @@ jobs:
       - name: Docs / Install Dependencies
         run: yarn
       - name: Docs / Build Documentation
-        run: yarn nx build twenty-docs
+        run: npx nx build twenty-docs
   vale:
     name: runner / vale
     runs-on: ubuntu-latest

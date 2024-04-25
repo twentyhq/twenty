@@ -56,6 +56,7 @@ export type AuthProviders = {
   __typename?: 'AuthProviders';
   google: Scalars['Boolean'];
   magicLink: Scalars['Boolean'];
+  microsoft: Scalars['Boolean'];
   password: Scalars['Boolean'];
 };
 
@@ -268,6 +269,7 @@ export type Mutation = {
   deleteOneObject: Object;
   deleteUser: User;
   emailPasswordResetLink: EmailPasswordResetLink;
+  exchangeAuthorizationCode: ExchangeAuthCode;
   generateApiKeyToken: ApiKeyToken;
   generateJWT: AuthTokens;
   generateTransientToken: TransientToken;
@@ -295,7 +297,7 @@ export type MutationActivateWorkspaceArgs = {
 export type MutationAuthorizeAppArgs = {
   clientId: Scalars['String'];
   codeChallenge?: InputMaybe<Scalars['String']>;
-  redirectUrl?: InputMaybe<Scalars['String']>;
+  redirectUrl: Scalars['String'];
 };
 
 
@@ -319,6 +321,13 @@ export type MutationDeleteOneObjectArgs = {
 
 export type MutationEmailPasswordResetLinkArgs = {
   email: Scalars['String'];
+};
+
+
+export type MutationExchangeAuthorizationCodeArgs = {
+  authorizationCode: Scalars['String'];
+  clientSecret?: InputMaybe<Scalars['String']>;
+  codeVerifier?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -444,7 +453,6 @@ export type Query = {
   clientConfig: ClientConfig;
   currentUser: User;
   currentWorkspace: Workspace;
-  exchangeAuthorizationCode: ExchangeAuthCode;
   findWorkspaceFromInviteHash: Workspace;
   getProductPrices: ProductPricesEntity;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
@@ -470,13 +478,6 @@ export type QueryCheckUserExistsArgs = {
 
 export type QueryCheckWorkspaceInviteHashIsValidArgs = {
   inviteHash: Scalars['String'];
-};
-
-
-export type QueryExchangeAuthorizationCodeArgs = {
-  authorizationCode: Scalars['String'];
-  clientSecret?: InputMaybe<Scalars['String']>;
-  codeVerifier?: InputMaybe<Scalars['String']>;
 };
 
 
@@ -578,6 +579,7 @@ export type RemoteServer = {
 
 export type RemoteTable = {
   __typename?: 'RemoteTable';
+  id?: Maybe<Scalars['UUID']>;
   name: Scalars['String'];
   schema: Scalars['String'];
   status: RemoteTableStatus;
@@ -1004,6 +1006,7 @@ export type AuthTokensFragmentFragment = { __typename?: 'AuthTokenPair', accessT
 export type AuthorizeAppMutationVariables = Exact<{
   clientId: Scalars['String'];
   codeChallenge: Scalars['String'];
+  redirectUrl: Scalars['String'];
 }>;
 
 
@@ -1129,7 +1132,7 @@ export type UpdateBillingSubscriptionMutation = { __typename?: 'Mutation', updat
 export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, billingFreeTrialDurationInDays?: number | null }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null } } };
+export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, billingFreeTrialDurationInDays?: number | null }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null } } };
 
 export type UploadFileMutationVariables = Exact<{
   file: Scalars['Upload'];
@@ -1536,8 +1539,12 @@ export type TrackMutationHookResult = ReturnType<typeof useTrackMutation>;
 export type TrackMutationResult = Apollo.MutationResult<TrackMutation>;
 export type TrackMutationOptions = Apollo.BaseMutationOptions<TrackMutation, TrackMutationVariables>;
 export const AuthorizeAppDocument = gql`
-    mutation authorizeApp($clientId: String!, $codeChallenge: String!) {
-  authorizeApp(clientId: $clientId, codeChallenge: $codeChallenge) {
+    mutation authorizeApp($clientId: String!, $codeChallenge: String!, $redirectUrl: String!) {
+  authorizeApp(
+    clientId: $clientId
+    codeChallenge: $codeChallenge
+    redirectUrl: $redirectUrl
+  ) {
     redirectUrl
   }
 }
@@ -1559,6 +1566,7 @@ export type AuthorizeAppMutationFn = Apollo.MutationFunction<AuthorizeAppMutatio
  *   variables: {
  *      clientId: // value for 'clientId'
  *      codeChallenge: // value for 'codeChallenge'
+ *      redirectUrl: // value for 'redirectUrl'
  *   },
  * });
  */
@@ -2157,6 +2165,7 @@ export const GetClientConfigDocument = gql`
     authProviders {
       google
       password
+      microsoft
     }
     billing {
       isBillingEnabled

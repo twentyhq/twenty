@@ -6,6 +6,7 @@ export const GET_CLIENT_CONFIG = gql`
       authProviders {
         google
         password
+        microsoft
       }
       billing {
         isBillingEnabled

@@ -14,8 +14,7 @@ export class AuthorizeAppInput {
   @IsOptional()
   codeChallenge?: string;
 
-  @Field(() => String, { nullable: true })
+  @Field(() => String)
   @IsString()
-  @IsOptional()
-  redirectUrl?: string;
+  redirectUrl: string;
 }

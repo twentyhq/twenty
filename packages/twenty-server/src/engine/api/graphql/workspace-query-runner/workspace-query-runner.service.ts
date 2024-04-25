@@ -47,6 +47,7 @@ import { NotFoundError } from 'src/engine/utils/graphql-errors.util';
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters.factory';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
@@ -249,11 +250,12 @@ export class WorkspaceQueryRunnerService {
 
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.created`, {
+        name: `${objectMetadataItem.nameSingular}.created`,
         workspaceId,
         userId,
         recordId: record.id,
         objectMetadata: objectMetadataItem,
-        details: {
+        properties: {
           after: record,
         },
       } satisfies ObjectRecordCreateEvent<any>);
@@ -306,11 +308,12 @@ export class WorkspaceQueryRunnerService {
     );
 
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.updated`, {
+      name: `${objectMetadataItem.nameSingular}.updated`,
       workspaceId,
       userId,
       recordId: (existingRecord as Record).id,
       objectMetadata: objectMetadataItem,
-      details: {
+      properties: {
         before: this.removeNestedProperties(existingRecord as Record),
         after: this.removeNestedProperties(parsedResults?.[0]),
       },
@@ -397,11 +400,12 @@ export class WorkspaceQueryRunnerService {
 
     parsedResults.forEach((record) => {
       this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
+        name: `${objectMetadataItem.nameSingular}.deleted`,
         workspaceId,
         userId,
         recordId: record.id,
         objectMetadata: objectMetadataItem,
-        details: {
+        properties: {
           before: [this.removeNestedProperties(record)],
         },
       } satisfies ObjectRecordDeleteEvent<any>);
@@ -429,6 +433,12 @@ export class WorkspaceQueryRunnerService {
       workspaceId,
       objectMetadataItem,
     );
+
+    const deletedBlocklistItem = await this.handleDeleteBlocklistItem(
+      args.id,
+      workspaceId,
+      objectMetadataItem,
+    );
     // TODO END
 
     const result = await this.execute(query, workspaceId);
@@ -448,13 +458,15 @@ export class WorkspaceQueryRunnerService {
     );
 
     this.eventEmitter.emit(`${objectMetadataItem.nameSingular}.deleted`, {
+      name: `${objectMetadataItem.nameSingular}.deleted`,
       workspaceId,
       userId,
       recordId: args.id,
       objectMetadata: objectMetadataItem,
-      details: {
+      properties: {
         before: {
           ...(deletedWorkspaceMember ?? {}),
+          ...(deletedBlocklistItem ?? {}),
           ...this.removeNestedProperties(parsedResults?.[0]),
         },
       },
@@ -610,5 +622,37 @@ export class WorkspaceQueryRunnerService {
     );
 
     return workspaceMemberResult.edges?.[0]?.node;
+  }
+
+  async handleDeleteBlocklistItem(
+    id: string,
+    workspaceId: string,
+    objectMetadataItem: ObjectMetadataInterface,
+  ) {
+    if (objectMetadataItem.standardId !== STANDARD_OBJECT_IDS.blocklist) {
+      return;
+    }
+
+    const blocklistItemResult = await this.executeAndParse<IRecord>(
+      `
+      query {
+        blocklistCollection(filter: {id: {eq: "${id}"}}) {
+          edges {
+            node {
+              handle
+              workspaceMember {
+                id
+              }
+            }
+          }
+        }
+      }
+      `,
+      objectMetadataItem,
+      '',
+      workspaceId,
+    );
+
+    return blocklistItemResult.edges?.[0]?.node;
   }
 }
