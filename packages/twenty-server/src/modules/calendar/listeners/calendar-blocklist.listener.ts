@@ -3,6 +3,7 @@ import { OnEvent } from '@nestjs/event-emitter';
 
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
 import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
+import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import {
@@ -23,10 +24,10 @@ export class CalendarBlocklistListener {
   ) {}
 
   @OnEvent('blocklist.created')
-  handleCreatedEvent(
+  async handleCreatedEvent(
     payload: ObjectRecordCreateEvent<BlocklistObjectMetadata>,
   ) {
-    this.messageQueueService.add<BlocklistItemDeleteCalendarEventsJobData>(
+    await this.messageQueueService.add<BlocklistItemDeleteCalendarEventsJobData>(
       BlocklistItemDeleteCalendarEventsJob.name,
       {
         workspaceId: payload.workspaceId,
@@ -44,6 +45,28 @@ export class CalendarBlocklistListener {
       {
         workspaceId: payload.workspaceId,
         workspaceMemberId: payload.properties.before.workspaceMember.id,
+        handle: payload.properties.before.handle,
+      },
+    );
+  }
+
+  @OnEvent('blocklist.updated')
+  async handleUpdatedEvent(
+    payload: ObjectRecordUpdateEvent<BlocklistObjectMetadata>,
+  ) {
+    await this.messageQueueService.add<BlocklistItemDeleteCalendarEventsJobData>(
+      BlocklistItemDeleteCalendarEventsJob.name,
+      {
+        workspaceId: payload.workspaceId,
+        blocklistItemId: payload.recordId,
+      },
+    );
+
+    await this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
+      BlocklistReimportCalendarEventsJob.name,
+      {
+        workspaceId: payload.workspaceId,
+        workspaceMemberId: payload.properties.after.workspaceMember.id,
         handle: payload.properties.before.handle,
       },
     );
