@@ -1,7 +1,6 @@
-import { useState } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 import { IconChevronDown, useIcons } from 'twenty-ui';
-import { useDebouncedCallback } from 'use-debounce';
 
 import { OBJECT_SORT_DROPDOWN_ID } from '@/object-record/object-sort-dropdown/constants/ObjectSortDropdownId';
 import { useObjectSortDropdown } from '@/object-record/object-sort-dropdown/hooks/useObjectSortDropdown';
@@ -39,9 +38,6 @@ export const StyledInput = styled.input`
   }
 `;
 
-//width: ${({ theme }) => `calc(100% - ${theme.spacing(10)})`};
-//font-size: ${({ theme }) => theme.font.size.sm};
-
 export type ObjectSortDropdownButtonProps = {
   sortDropdownId: string;
   hotkeyScope: HotkeyScope;
@@ -51,8 +47,6 @@ export const ObjectSortDropdownButton = ({
   sortDropdownId,
   hotkeyScope,
 }: ObjectSortDropdownButtonProps) => {
-  const [searchText, setSearchText] = useState('');
-
   const {
     isSortDirectionMenuUnfolded,
     setIsSortDirectionMenuUnfolded,
@@ -63,6 +57,9 @@ export const ObjectSortDropdownButton = ({
     isSortSelected,
     availableSortDefinitions,
     handleAddSort,
+    objectSortDropdownSearchInputState,
+    setObjectSortDropdownSearchInput,
+    resetSearchInput,
   } = useObjectSortDropdown();
 
   const handleButtonClick = () => {
@@ -70,17 +67,15 @@ export const ObjectSortDropdownButton = ({
   };
 
   const handleDropdownButtonClose = () => {
+    resetSearchInput();
     resetState();
   };
 
-  const { getIcon } = useIcons();
+  const objectSortDropdownSearchInput = useRecoilValue(
+    objectSortDropdownSearchInputState,
+  );
 
-  const debouncedSetSearchFilter = useDebouncedCallback(setSearchText, 100, {
-    leading: true,
-  });
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    debouncedSetSearchFilter(event.target.value);
-  };
+  const { getIcon } = useIcons();
 
   return (
     <ObjectSortDropdownScope sortScopeId={sortDropdownId}>
@@ -119,9 +114,12 @@ export const ObjectSortDropdownButton = ({
                   {selectedSortDirection === 'asc' ? 'Ascending' : 'Descending'}
                 </DropdownMenuHeader>
                 <StyledInput
-                  value={searchText}
+                  autoFocus
+                  value={objectSortDropdownSearchInput}
                   placeholder="Search fields"
-                  onChange={handleSearchChange}
+                  onChange={(event) =>
+                    setObjectSortDropdownSearchInput(event.target.value)
+                  }
                 />
                 <DropdownMenuItemsContainer>
                   {[...availableSortDefinitions]
@@ -129,14 +127,16 @@ export const ObjectSortDropdownButton = ({
                     .filter((item) =>
                       item.label
                         .toLocaleLowerCase()
-                        .includes(searchText.toLocaleLowerCase()),
+                        .includes(
+                          objectSortDropdownSearchInput.toLocaleLowerCase(),
+                        ),
                     )
                     .map((availableSortDefinition, index) => (
                       <MenuItem
                         testId={`select-sort-${index}`}
                         key={index}
                         onClick={() => {
-                          setSearchText('');
+                          setObjectSortDropdownSearchInput('');
                           handleAddSort(availableSortDefinition);
                         }}
                         LeftIcon={getIcon(availableSortDefinition.iconName)}
