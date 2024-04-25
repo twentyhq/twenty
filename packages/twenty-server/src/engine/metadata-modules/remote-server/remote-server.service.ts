@@ -7,7 +7,6 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { v4 } from 'uuid';
 import { DataSource, EntityManager, Repository } from 'typeorm';
-import { isUndefined } from '@sniptt/guards';
 
 import { CreateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/create-remote-server.input';
 import {
@@ -24,6 +23,7 @@ import { ForeignDataWrapperQueryFactory } from 'src/engine/api/graphql/workspace
 import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
 import { UpdateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/update-remote-server.input';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { updateRemoteServerRawQuery } from 'src/engine/metadata-modules/remote-server/utils/build-update-remote-server-raw-query';
 
 @Injectable()
 export class RemoteServerService<T extends RemoteServerType> {
@@ -72,7 +72,7 @@ export class RemoteServerService<T extends RemoteServerType> {
 
     return this.metadataDataSource.transaction(
       async (entityManager: EntityManager) => {
-        const createdRemoteServer = await entityManager.create(
+        const createdRemoteServer = entityManager.create(
           RemoteServerEntity,
           remoteServerToCreate,
         );
@@ -158,7 +158,9 @@ export class RemoteServerService<T extends RemoteServerType> {
 
     return this.metadataDataSource.transaction(
       async (entityManager: EntityManager) => {
-        this.updateRemoteServer(partialRemoteServerWithUpdates);
+        const updatedRemoteServer = await this.updateRemoteServer(
+          partialRemoteServerWithUpdates,
+        );
 
         if (partialRemoteServerWithUpdates.foreignDataWrapperOptions) {
           const foreignDataWrapperQuery =
@@ -182,12 +184,7 @@ export class RemoteServerService<T extends RemoteServerType> {
           await entityManager.query(userMappingQuery);
         }
 
-        const savedRemoteServer = await entityManager.save(
-          RemoteServerEntity,
-          partialRemoteServerWithUpdates,
-        );
-
-        return savedRemoteServer;
+        return updatedRemoteServer;
       },
     );
   }
@@ -256,97 +253,16 @@ export class RemoteServerService<T extends RemoteServerType> {
         RemoteServerEntity<RemoteServerType>,
         'workspaceId' | 'id' | 'foreignDataWrapperId'
       >,
-  ) {
-    const parameters = [
-      remoteServerToUpdate.id,
-      remoteServerToUpdate.userMappingOptions?.username ?? 'null',
-      remoteServerToUpdate.userMappingOptions?.password ?? 'null',
-      remoteServerToUpdate.foreignDataWrapperOptions?.dbname ?? 'null',
-      remoteServerToUpdate.foreignDataWrapperOptions?.host ?? 'null',
-      remoteServerToUpdate.foreignDataWrapperOptions?.port ?? 'null',
-    ];
+  ): Promise<RemoteServerEntity<RemoteServerType>> {
+    const [parameters, rawQuery] =
+      updateRemoteServerRawQuery(remoteServerToUpdate);
 
-    const options: string[] = [];
-
-    const shouldUpdateUserMappingOptionsPassword = !isUndefined(
-      remoteServerToUpdate.userMappingOptions?.password,
-    );
-
-    const shouldUpdateUserMappingOptionsUsername = !isUndefined(
-      remoteServerToUpdate.userMappingOptions?.username,
-    );
-
-    const userMappingOptionsQuery = `"userMappingOptions" = jsonb_set(${
-      true && true
-        ? `jsonb_set(
-              "userMappingOptions", 
-              '{username}', 
-              $2::text
-          ), 
-          '{password}', 
-          $3
-      `
-        : shouldUpdateUserMappingOptionsPassword
-          ? `"userMappingOptions",
-                '{password}', 
-                $3
-            `
-          : `"userMappingOptions", 
-                '{username}', 
-                $2::text
-            `
-    })`;
-
-    if (
-      shouldUpdateUserMappingOptionsPassword ||
-      shouldUpdateUserMappingOptionsUsername
-    ) {
-      options.push(userMappingOptionsQuery);
-    }
-
-    const shouldUpdateFdwDbname = !isUndefined(
-      remoteServerToUpdate.foreignDataWrapperOptions?.dbname,
-    );
-
-    const shouldUpdateFdwHost = !isUndefined(
-      remoteServerToUpdate.foreignDataWrapperOptions?.host,
-    );
-    const shouldUpdateFdwPort = !isUndefined(
-      remoteServerToUpdate.foreignDataWrapperOptions?.port,
-    );
-
-    const fwdOptionsQuery = `"foreignDataWrapperOptions" = jsonb_set(${
-      shouldUpdateFdwDbname && shouldUpdateFdwHost && shouldUpdateFdwPort
-        ? `jsonb_set(jsonb_set("foreignDataWrapperOptions", '{dbname}', $4), '{host}', $5), '{port}', $6`
-        : shouldUpdateFdwDbname && shouldUpdateFdwHost
-          ? `jsonb_set("foreignDataWrapperOptions", '{dbname}', $4), '{host}', $5`
-          : shouldUpdateFdwDbname && shouldUpdateFdwPort
-            ? `jsonb_set("foreignDataWrapperOptions", '{dbname}', $4), '{port}', $6`
-            : shouldUpdateFdwHost && shouldUpdateFdwPort
-              ? `jsonb_set("foreignDataWrapperOptions", '{host}', $5), '{port}', $6`
-              : shouldUpdateFdwDbname
-                ? `"foreignDataWrapperOptions", '{dbname}', $4`
-                : shouldUpdateFdwHost
-                  ? `"foreignDataWrapperOptions", '{host}', $5`
-                  : `"foreignDataWrapperOptions", '{port}', $6`
-    })`;
-
-    if (shouldUpdateFdwDbname || shouldUpdateFdwHost || shouldUpdateFdwPort) {
-      options.push(fwdOptionsQuery);
-    }
-
-    const rawQuery = `UPDATE metadata."remoteServer" SET ${options.join(
-      ', ',
-    )} WHERE "id"= $1`;
-
-    await this.workspaceDataSourceService.executeRawQuery(
+    const updateResult = await this.workspaceDataSourceService.executeRawQuery(
       rawQuery,
-      [...parameters],
+      parameters,
       remoteServerToUpdate.workspaceId,
     );
+
+    return updateResult[0][0];
   }
 }
-
-type DeepPartial<T> = {
-  [P in keyof T]?: DeepPartial<T[P]>;
-};
