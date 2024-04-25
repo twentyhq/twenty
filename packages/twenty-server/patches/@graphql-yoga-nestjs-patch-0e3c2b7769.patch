@@ -1,0 +1,89 @@
+diff --git a/dist/cjs/index.js b/dist/cjs/index.js
+index 8a92c3c2b9088ae0687b22e1c74a090543d0253b..99c1fb35b634fb7e6586cf12cf627ff554ce0e98 100644
+--- a/dist/cjs/index.js
++++ b/dist/cjs/index.js
+@@ -8,6 +8,8 @@ const common_1 = require("@nestjs/common");
+ const schema_1 = require("@graphql-tools/schema");
+ const graphql_2 = require("@nestjs/graphql");
+ class AbstractYogaDriver extends graphql_2.AbstractGraphQLDriver {
++    schemaCache = new Map();
++
+     async start(options) {
+         const platformName = this.httpAdapterHost.httpAdapter.getType();
+         options = {
+@@ -44,19 +46,36 @@ class AbstractYogaDriver extends graphql_2.AbstractGraphQLDriver {
+         const yoga = (0, graphql_yoga_1.createYoga)({
+             ...options,
+             schema: async (request) => {
++                const workspaceId = request.req.workspace.id
++                const workspaceCacheVersion = request.req.cacheVersion
++                const url = request.req.baseUrl
++
++                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${url}`
++
++                if(this.schemaCache.has(cacheKey)) {
++                    return this.schemaCache.get(cacheKey)
++                }
++                
+                 const schemas = [];
++
+                 if (options.schema) {
+                     schemas.push(options.schema);
+                 }
++
+                 if (conditionalSchema) {
+                     const conditionalSchemaResult = typeof conditionalSchema === 'function' ? await conditionalSchema(request) : await conditionalSchema;
+                     if (conditionalSchemaResult) {
+                         schemas.push(conditionalSchemaResult);
+                     }
+                 }
+-                return (0, schema_1.mergeSchemas)({
++
++                const mergedSchemmas = (0, schema_1.mergeSchemas)({
+                     schemas,
+                 });
++
++                this.schemaCache.set(cacheKey, mergedSchemmas)
++                
++                return mergedSchemmas;
+             },
+             graphqlEndpoint: options.path,
+             // disable logging by default
+@@ -76,19 +95,36 @@ class AbstractYogaDriver extends graphql_2.AbstractGraphQLDriver {
+         const yoga = (0, graphql_yoga_1.createYoga)({
+             ...options,
+             schema: async (request) => {
++                const workspaceId = request.req.workspace.id
++                const workspaceCacheVersion = request.req.cacheVersion
++                const url = request.req.baseUrl
++
++                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${url}`
++
++                if(this.schemaCache.has(cacheKey)) {
++                    return this.schemaCache.get(cacheKey)
++                }
++                
+                 const schemas = [];
++
+                 if (options.schema) {
+                     schemas.push(options.schema);
+                 }
++
+                 if (conditionalSchema) {
+                     const conditionalSchemaResult = typeof conditionalSchema === 'function' ? await conditionalSchema(request) : await conditionalSchema;
+                     if (conditionalSchemaResult) {
+                         schemas.push(conditionalSchemaResult);
+                     }
+                 }
+-                return (0, schema_1.mergeSchemas)({
++
++                const mergedSchemmas = (0, schema_1.mergeSchemas)({
+                     schemas,
+                 });
++
++                this.schemaCache.set(cacheKey, mergedSchemmas)
++                
++                return mergedSchemmas;
+             },
+             graphqlEndpoint: options.path,
+             // disable logging by default
