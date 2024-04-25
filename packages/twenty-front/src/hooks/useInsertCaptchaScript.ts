@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useEffect } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
+import { isCaptchaLoadedState } from '@/auth/states/isCaptchaLoadedState';
 import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { getCaptchaUrlByProvider } from '~/utils/captcha';
 
 export const useInsertCaptchaScript = () => {
   const captchaProvider = useRecoilValue(captchaProviderState);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isCaptchaLoaded, setIsCaptchaLoaded] =
+    useRecoilState(isCaptchaLoadedState);
 
   useEffect(() => {
     if (!captchaProvider?.provider || !captchaProvider.siteKey) {
@@ -28,11 +30,11 @@ export const useInsertCaptchaScript = () => {
       scriptElement = document.createElement('script');
       scriptElement.src = scriptUrl;
       scriptElement.onload = () => {
-        setIsLoaded(true);
+        setIsCaptchaLoaded(true);
       };
       document.body.appendChild(scriptElement);
     }
-  }, [captchaProvider?.provider, captchaProvider?.siteKey]);
+  }, [captchaProvider?.provider, captchaProvider?.siteKey, setIsCaptchaLoaded]);
 
-  return isLoaded;
+  return isCaptchaLoaded;
 };

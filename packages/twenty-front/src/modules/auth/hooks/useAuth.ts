@@ -11,11 +11,13 @@ import { iconsState } from 'twenty-ui';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isCaptchaLoadedState } from '@/auth/states/isCaptchaLoadedState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
 import { workspacesState } from '@/auth/states/workspaces';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
+import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { isClientConfigLoadedState } from '@/client-config/states/isClientConfigLoadedState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
@@ -172,16 +174,20 @@ export const useAuth = () => {
         const supportChat = snapshot.getLoadable(supportChatState).getValue();
         const telemetry = snapshot.getLoadable(telemetryState).getValue();
         const isDebugMode = snapshot.getLoadable(isDebugModeState).getValue();
+        const captchaProvider = snapshot
+          .getLoadable(captchaProviderState)
+          .getValue();
         const isClientConfigLoaded = snapshot
           .getLoadable(isClientConfigLoadedState)
           .getValue();
         const isCurrentUserLoaded = snapshot
           .getLoadable(isCurrentUserLoadedState)
           .getValue();
+        const isCaptchaLoaded = snapshot
+          .getLoadable(isCaptchaLoadedState)
+          .getValue();
 
         const initialSnapshot = emptySnapshot.map(({ set }) => {
-          set(isClientConfigLoadedState, isClientConfigLoaded);
-          set(isCurrentUserLoadedState, isCurrentUserLoaded);
           set(iconsState, iconsValue);
           set(authProvidersState, authProvidersValue);
           set(billingState, billing);
@@ -189,6 +195,10 @@ export const useAuth = () => {
           set(supportChatState, supportChat);
           set(telemetryState, telemetry);
           set(isDebugModeState, isDebugMode);
+          set(captchaProviderState, captchaProvider);
+          set(isClientConfigLoadedState, isClientConfigLoaded);
+          set(isCurrentUserLoadedState, isCurrentUserLoaded);
+          set(isCaptchaLoadedState, isCaptchaLoaded);
           return undefined;
         });
 

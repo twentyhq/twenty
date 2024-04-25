@@ -60,7 +60,9 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const getCaptchaToken = useCallback(async () => {
     setIsGeneratingCaptchaToken(true);
     try {
+      console.log(isCaptchaScriptLoaded);
       const captchaToken = await generateCaptchaToken(isCaptchaScriptLoaded);
+      console.log(captchaToken);
       if (!isUndefinedOrNull(captchaToken)) {
         form.setValue('captchaToken', captchaToken);
       }

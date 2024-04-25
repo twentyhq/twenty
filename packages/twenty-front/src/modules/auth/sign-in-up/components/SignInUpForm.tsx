@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Controller } from 'react-hook-form';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -72,12 +72,15 @@ export const SignInUpForm = () => {
       event.preventDefault();
 
       if (signInUpStep === SignInUpStep.Init) {
+        getCaptchaToken();
         continueWithEmail();
       } else if (signInUpStep === SignInUpStep.Email) {
+        getCaptchaToken();
         continueWithCredentials();
       } else if (signInUpStep === SignInUpStep.Password) {
         if (!form.formState.isSubmitting) {
           setShowErrors(true);
+          getCaptchaToken();
           form.handleSubmit(submitCredentials)();
         }
       }
@@ -114,10 +117,6 @@ export const SignInUpForm = () => {
   }, [signInUpMode, workspace?.displayName, isInviteMode, signInUpStep]);
 
   const theme = useTheme();
-
-  useEffect(() => {
-    getCaptchaToken();
-  }, [getCaptchaToken]);
 
   return (
     <>
@@ -235,27 +234,32 @@ export const SignInUpForm = () => {
               variant="secondary"
               title={buttonTitle}
               type="submit"
-              onClick={() => {
+              onClick={async () => {
                 if (signInUpStep === SignInUpStep.Init) {
+                  getCaptchaToken();
                   continueWithEmail();
                   return;
                 }
                 if (signInUpStep === SignInUpStep.Email) {
+                  getCaptchaToken();
                   continueWithCredentials();
                   return;
                 }
                 setShowErrors(true);
+                getCaptchaToken();
                 form.handleSubmit(submitCredentials)();
               }}
               Icon={() => form.formState.isSubmitting && <Loader />}
               disabled={
-                signInUpStep === SignInUpStep.Init
-                  ? false
-                  : signInUpStep === SignInUpStep.Email
-                    ? !form.watch('email')
-                    : !form.watch('email') ||
-                      !form.watch('password') ||
-                      form.formState.isSubmitting
+                isGeneratingCaptchaToken
+                  ? true
+                  : signInUpStep === SignInUpStep.Init
+                    ? false
+                    : signInUpStep === SignInUpStep.Email
+                      ? !form.watch('email')
+                      : !form.watch('email') ||
+                        !form.watch('password') ||
+                        form.formState.isSubmitting
               }
               fullWidth
             />
