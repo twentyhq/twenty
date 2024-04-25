@@ -1,14 +1,30 @@
+import styled from '@emotion/styled';
 import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
+import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorator';
+import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { mockedPersonObjectMetadataItem } from '~/testing/mock-data/metadata';
 
 import { SettingsDataModelFieldAboutForm } from '../SettingsDataModelFieldAboutForm';
 
+const StyledContainer = styled.div`
+  flex: 1;
+`;
+
 const meta: Meta<typeof SettingsDataModelFieldAboutForm> = {
   title: 'Modules/Settings/DataModel/SettingsDataModelFieldAboutForm',
   component: SettingsDataModelFieldAboutForm,
-  decorators: [ComponentDecorator],
+  decorators: [
+    (Story) => (
+      <StyledContainer>
+        <Story />
+      </StyledContainer>
+    ),
+    FormProviderDecorator,
+    IconsProviderDecorator,
+    ComponentDecorator,
+  ],
 };
 
 export default meta;
