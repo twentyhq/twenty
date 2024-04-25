@@ -14,14 +14,20 @@ export class UpdateRemoteServerInput<T extends RemoteServerType> {
   @Field(() => String)
   id: T;
 
-  @Field(() => String)
-  foreignDataWrapperType?: T;
-
   @IsOptional()
   @Field(() => GraphQLJSON)
   foreignDataWrapperOptions?: Partial<ForeignDataWrapperOptions<T>>;
 
   @IsOptional()
-  @Field(() => GraphQLJSON, { nullable: true })
+  @Field(() => UserMappingOptionsInput, { nullable: true })
   userMappingOptions?: Partial<UserMappingOptions>;
+}
+
+@InputType()
+class UserMappingOptionsInput {
+  @Field(() => String, { nullable: true })
+  username?: string;
+
+  @Field(() => String, { nullable: true })
+  password?: string;
 }

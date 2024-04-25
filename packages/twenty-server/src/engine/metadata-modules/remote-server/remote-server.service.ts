@@ -7,6 +7,7 @@ import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
 import { v4 } from 'uuid';
 import { DataSource, EntityManager, Repository } from 'typeorm';
+import { isUndefined } from '@sniptt/guards';
 
 import { CreateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/create-remote-server.input';
 import {
@@ -22,6 +23,7 @@ import {
 import { ForeignDataWrapperQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/foreign-data-wrapper-query.factory';
 import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
 import { UpdateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/update-remote-server.input';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 @Injectable()
 export class RemoteServerService<T extends RemoteServerType> {
@@ -35,6 +37,7 @@ export class RemoteServerService<T extends RemoteServerType> {
     private readonly environmentService: EnvironmentService,
     private readonly foreignDataWrapperQueryFactory: ForeignDataWrapperQueryFactory,
     private readonly remoteTableService: RemoteTableService,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
   async createOneRemoteServer(
@@ -56,17 +59,13 @@ export class RemoteServerService<T extends RemoteServerType> {
     };
 
     if (remoteServerInput.userMappingOptions) {
-      const key = this.environmentService.get('LOGIN_TOKEN_SECRET');
-      const encryptedPassword = await encryptText(
-        remoteServerInput.userMappingOptions.password,
-        key,
-      );
-
       remoteServerToCreate = {
         ...remoteServerToCreate,
         userMappingOptions: {
           ...remoteServerInput.userMappingOptions,
-          password: encryptedPassword,
+          password: this.encryptPassword(
+            remoteServerInput.userMappingOptions.password,
+          ),
         },
       };
     }
@@ -145,49 +144,27 @@ export class RemoteServerService<T extends RemoteServerType> {
       foreignDataWrapperId,
     };
 
-    if (remoteServerInput?.userMappingOptions?.password) {
-      const key = this.environmentService.get('LOGIN_TOKEN_SECRET');
-      const encryptedPassword = encryptText(
-        remoteServerInput.userMappingOptions.password,
-        key,
-      );
-
+    if (partialRemoteServerWithUpdates?.userMappingOptions?.password) {
       partialRemoteServerWithUpdates = {
         ...partialRemoteServerWithUpdates,
         userMappingOptions: {
           ...partialRemoteServerWithUpdates.userMappingOptions,
-          password: encryptedPassword,
+          password: this.encryptPassword(
+            partialRemoteServerWithUpdates.userMappingOptions.password,
+          ),
         },
       };
     }
 
     return this.metadataDataSource.transaction(
       async (entityManager: EntityManager) => {
-        const completeRemoteServerWithUpdates = {
-          ...remoteServer,
-          ...partialRemoteServerWithUpdates,
-          userMappingOptions: {
-            ...remoteServer.userMappingOptions,
-            ...partialRemoteServerWithUpdates.userMappingOptions,
-          },
-          foreignDataWrapperOptions: {
-            ...remoteServer.foreignDataWrapperOptions,
-            ...partialRemoteServerWithUpdates.foreignDataWrapperOptions,
-          },
-        };
-
-        await entityManager.update(
-          RemoteServerEntity,
-          completeRemoteServerWithUpdates.id,
-          completeRemoteServerWithUpdates,
-        );
+        this.updateRemoteServer(partialRemoteServerWithUpdates);
 
         if (partialRemoteServerWithUpdates.foreignDataWrapperOptions) {
           const foreignDataWrapperQuery =
             this.foreignDataWrapperQueryFactory.updateForeignDataWrapper({
               foreignDataWrapperId,
-              foreignDataWrapperType:
-                partialRemoteServerWithUpdates.foreignDataWrapperType,
+              foreignDataWrapperType: RemoteServerType.POSTGRES_FDW,
               foreignDataWrapperOptions:
                 partialRemoteServerWithUpdates.foreignDataWrapperOptions,
             });
@@ -207,7 +184,7 @@ export class RemoteServerService<T extends RemoteServerType> {
 
         const savedRemoteServer = await entityManager.save(
           RemoteServerEntity,
-          completeRemoteServerWithUpdates,
+          partialRemoteServerWithUpdates,
         );
 
         return savedRemoteServer;
@@ -266,4 +243,110 @@ export class RemoteServerService<T extends RemoteServerType> {
       },
     });
   }
+
+  private encryptPassword(password: string) {
+    const key = this.environmentService.get('LOGIN_TOKEN_SECRET');
+
+    return encryptText(password, key);
+  }
+
+  private async updateRemoteServer(
+    remoteServerToUpdate: DeepPartial<RemoteServerEntity<RemoteServerType>> &
+      Pick<
+        RemoteServerEntity<RemoteServerType>,
+        'workspaceId' | 'id' | 'foreignDataWrapperId'
+      >,
+  ) {
+    const parameters = [
+      remoteServerToUpdate.id,
+      remoteServerToUpdate.userMappingOptions?.username ?? 'null',
+      remoteServerToUpdate.userMappingOptions?.password ?? 'null',
+      remoteServerToUpdate.foreignDataWrapperOptions?.dbname ?? 'null',
+      remoteServerToUpdate.foreignDataWrapperOptions?.host ?? 'null',
+      remoteServerToUpdate.foreignDataWrapperOptions?.port ?? 'null',
+    ];
+
+    const options: string[] = [];
+
+    const shouldUpdateUserMappingOptionsPassword = !isUndefined(
+      remoteServerToUpdate.userMappingOptions?.password,
+    );
+
+    const shouldUpdateUserMappingOptionsUsername = !isUndefined(
+      remoteServerToUpdate.userMappingOptions?.username,
+    );
+
+    const userMappingOptionsQuery = `"userMappingOptions" = jsonb_set(${
+      true && true
+        ? `jsonb_set(
+              "userMappingOptions", 
+              '{username}', 
+              $2::text
+          ), 
+          '{password}', 
+          $3
+      `
+        : shouldUpdateUserMappingOptionsPassword
+          ? `"userMappingOptions",
+                '{password}', 
+                $3
+            `
+          : `"userMappingOptions", 
+                '{username}', 
+                $2::text
+            `
+    })`;
+
+    if (
+      shouldUpdateUserMappingOptionsPassword ||
+      shouldUpdateUserMappingOptionsUsername
+    ) {
+      options.push(userMappingOptionsQuery);
+    }
+
+    const shouldUpdateFdwDbname = !isUndefined(
+      remoteServerToUpdate.foreignDataWrapperOptions?.dbname,
+    );
+
+    const shouldUpdateFdwHost = !isUndefined(
+      remoteServerToUpdate.foreignDataWrapperOptions?.host,
+    );
+    const shouldUpdateFdwPort = !isUndefined(
+      remoteServerToUpdate.foreignDataWrapperOptions?.port,
+    );
+
+    const fwdOptionsQuery = `"foreignDataWrapperOptions" = jsonb_set(${
+      shouldUpdateFdwDbname && shouldUpdateFdwHost && shouldUpdateFdwPort
+        ? `jsonb_set(jsonb_set("foreignDataWrapperOptions", '{dbname}', $4), '{host}', $5), '{port}', $6`
+        : shouldUpdateFdwDbname && shouldUpdateFdwHost
+          ? `jsonb_set("foreignDataWrapperOptions", '{dbname}', $4), '{host}', $5`
+          : shouldUpdateFdwDbname && shouldUpdateFdwPort
+            ? `jsonb_set("foreignDataWrapperOptions", '{dbname}', $4), '{port}', $6`
+            : shouldUpdateFdwHost && shouldUpdateFdwPort
+              ? `jsonb_set("foreignDataWrapperOptions", '{host}', $5), '{port}', $6`
+              : shouldUpdateFdwDbname
+                ? `"foreignDataWrapperOptions", '{dbname}', $4`
+                : shouldUpdateFdwHost
+                  ? `"foreignDataWrapperOptions", '{host}', $5`
+                  : `"foreignDataWrapperOptions", '{port}', $6`
+    })`;
+
+    if (shouldUpdateFdwDbname || shouldUpdateFdwHost || shouldUpdateFdwPort) {
+      options.push(fwdOptionsQuery);
+    }
+
+    const rawQuery = `UPDATE metadata."remoteServer" SET ${options.join(
+      ', ',
+    )} WHERE "id"= $1`;
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      rawQuery,
+      [...parameters],
+      remoteServerToUpdate.workspaceId,
+    );
+  }
 }
+
+type DeepPartial<T> = {
+  [P in keyof T]?: DeepPartial<T[P]>;
+};
