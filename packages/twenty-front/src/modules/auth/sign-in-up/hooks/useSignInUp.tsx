@@ -7,7 +7,7 @@ import { useNavigateAfterSignInUp } from '@/auth/sign-in-up/hooks/useNavigateAft
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useInsertCaptchaScript } from '~/hooks/useInsertCaptchaScript';
+import { useCaptchaScript } from '~/hooks/useCaptchaScript';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -51,7 +51,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     checkUserExists: { checkUserExistsQuery },
   } = useAuth();
 
-  const isCaptchaScriptLoaded = useInsertCaptchaScript();
+  const { loadCaptchaScript, unloadCaptchaScript } = useCaptchaScript();
   const { generateCaptchaToken } = useGenerateCaptchaToken();
 
   const [isGeneratingCaptchaToken, setIsGeneratingCaptchaToken] =
@@ -60,9 +60,8 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const getCaptchaToken = useCallback(async () => {
     setIsGeneratingCaptchaToken(true);
     try {
-      console.log(isCaptchaScriptLoaded);
+      const isCaptchaScriptLoaded = loadCaptchaScript();
       const captchaToken = await generateCaptchaToken(isCaptchaScriptLoaded);
-      console.log(captchaToken);
       if (!isUndefinedOrNull(captchaToken)) {
         form.setValue('captchaToken', captchaToken);
       }
@@ -80,7 +79,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     } finally {
       setIsGeneratingCaptchaToken(false);
     }
-  }, [form, generateCaptchaToken, isCaptchaScriptLoaded, enqueueSnackBar]);
+  }, [form, generateCaptchaToken, loadCaptchaScript, enqueueSnackBar]);
 
   const continueWithEmail = useCallback(() => {
     setSignInUpStep(SignInUpStep.Email);
@@ -140,6 +139,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
                 data.captchaToken,
               );
 
+        unloadCaptchaScript();
         navigateAfterSignInUp(currentWorkspace, currentWorkspaceMember);
       } catch (err: any) {
         enqueueSnackBar(err?.message, {
@@ -155,6 +155,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       workspaceInviteHash,
       navigateAfterSignInUp,
       enqueueSnackBar,
+      unloadCaptchaScript,
     ],
   );
 

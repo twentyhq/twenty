@@ -1,10 +1,9 @@
 import { CaptchaDriverType } from '~/generated-metadata/graphql';
 
-export const getCaptchaUrlByProvider = (name: string, siteKey: string) => {
-  if (!name) {
-    return '';
-  }
-
+export const getCaptchaUrlByProvider = (
+  name: CaptchaDriverType,
+  siteKey: string,
+) => {
   switch (name) {
     case CaptchaDriverType.GoogleRecatpcha:
       return `https://www.google.com/recaptcha/api.js?render=${siteKey}`;
