@@ -66,9 +66,10 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       }
       return captchaToken;
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error('Failed to generate captcha token:', error);
       enqueueSnackBar(
-        'You were identified as a bot by Cloudflare. Please try again.',
+        'You were identified as a bot by Cloudflare. Please try another device.',
         {
           variant: 'error',
         },
@@ -97,6 +98,11 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         email: form.getValues('email').toLowerCase().trim(),
         captchaToken: form.getValues('captchaToken'),
       },
+      onError: (error) => {
+        enqueueSnackBar(`${error.message}`, {
+          variant: 'error',
+        });
+      },
       onCompleted: (data) => {
         if (data?.checkUserExists.exists) {
           setSignInUpMode(SignInUpMode.SignIn);
@@ -106,7 +112,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         setSignInUpStep(SignInUpStep.Password);
       },
     });
-  }, [form, checkUserExistsQuery]);
+  }, [form, checkUserExistsQuery, enqueueSnackBar]);
 
   const submitCredentials: SubmitHandler<Form> = useCallback(
     async (data) => {

@@ -1,8 +1,7 @@
 import {
+  BadRequestException,
   CanActivate,
   ExecutionContext,
-  HttpException,
-  HttpStatus,
   Injectable,
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
@@ -22,9 +21,8 @@ export class CaptchaGuard implements CanActivate {
 
     if (result.success) return true;
     else
-      throw new HttpException(
-        result?.error ?? 'Invalid Captcha, please try again',
-        HttpStatus.BAD_REQUEST,
+      throw new BadRequestException(
+        'Invalid Captcha, please try another device',
       );
   }
 }
