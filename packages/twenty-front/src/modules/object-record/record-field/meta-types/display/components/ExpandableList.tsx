@@ -100,6 +100,7 @@ export const ExpandableList = ({
   };
 
   const hiddenChildrenCount = computeHiddenChildrenNumber();
+
   const { refs, floatingStyles } = useFloating({
     // @ts-expect-error placement accepts 'start' as value even if the typing does not permit it
     placement: 'start',
@@ -164,7 +165,9 @@ export const ExpandableList = ({
           ref={refs.setFloating}
           style={floatingStyles}
           width={
-            reference ? reference.getBoundingClientRect().width : undefined
+            reference
+              ? Math.max(220, reference.getBoundingClientRect().width)
+              : undefined
           }
         >
           <StyledRelationsListContainer>
