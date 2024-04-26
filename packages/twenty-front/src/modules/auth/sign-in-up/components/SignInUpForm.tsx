@@ -129,6 +129,8 @@ export const SignInUpForm = () => {
     signInUpStep === SignInUpStep.Email &&
     (form.watch('email').length === 0 || shouldWaitForCaptchaToken);
 
+  // TODO: isValid is actually a proxy function. If it is not rendered the first time, react might not trigger re-renders
+  // We make the isValid check synchronous and update a reactState to make sure this does not happen
   const isPasswordStepSubmitButtonDisabledCondition =
     signInUpStep === SignInUpStep.Password &&
     (!form.formState.isValid ||
