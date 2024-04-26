@@ -1,6 +1,7 @@
 import { useRecoilValue } from 'recoil';
 
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { PREFETCH_CONFIG } from '@/prefetch/constants/PrefetchConfig';
 import { prefetchIsLoadedFamilyState } from '@/prefetch/states/prefetchIsLoadedFamilyState';
@@ -8,6 +9,7 @@ import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 
 export const usePrefetchedData = <T extends ObjectRecord>(
   prefetchKey: PrefetchKey,
+  filter?: ObjectRecordQueryFilter,
 ) => {
   const isDataPrefetched = useRecoilValue(
     prefetchIsLoadedFamilyState(prefetchKey),
@@ -17,6 +19,7 @@ export const usePrefetchedData = <T extends ObjectRecord>(
   const { records } = useFindManyRecords<T>({
     skip: !isDataPrefetched,
     ...prefetchQueryKey,
+    filter,
   });
 
   return {
