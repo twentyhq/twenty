@@ -112,7 +112,7 @@ export class BlocklistValidationService {
       );
 
     const currentBlocklistHandles = currentBlocklist
-      .filter((blocklist) => blocklist.id !== payload.data.id)
+      .filter((blocklist) => blocklist.id !== payload.id)
       .map((blocklist) => blocklist.handle);
 
     if (currentBlocklistHandles.includes(payload.data.handle)) {
