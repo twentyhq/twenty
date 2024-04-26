@@ -13,6 +13,7 @@ import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMic
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
+import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -47,6 +48,7 @@ const StyledInputContainer = styled.div`
 `;
 
 export const SignInUpForm = () => {
+  const captchaProvider = useRecoilValue(captchaProviderState);
   const isRequestingCaptchaToken = useRecoilValue(
     isRequestingCaptchaTokenState,
   );
@@ -116,6 +118,14 @@ export const SignInUpForm = () => {
   }, [signInUpMode, workspace?.displayName, isInviteMode, signInUpStep]);
 
   const theme = useTheme();
+
+  const canContinue =
+    signInUpStep === SignInUpStep.Init ||
+    (captchaProvider && !isRequestingCaptchaToken) ||
+    (signInUpStep === SignInUpStep.Email && !!form.watch('email')) ||
+    (signInUpStep === SignInUpStep.Password &&
+      form.formState.isValid &&
+      !form.formState.isSubmitting);
 
   return (
     <>
@@ -245,17 +255,7 @@ export const SignInUpForm = () => {
                 form.handleSubmit(submitCredentials)();
               }}
               Icon={() => form.formState.isSubmitting && <Loader />}
-              disabled={
-                signInUpStep === SignInUpStep.Init
-                  ? false
-                  : isRequestingCaptchaToken
-                    ? true
-                    : signInUpStep === SignInUpStep.Email
-                      ? !form.watch('email')
-                      : !form.watch('email') ||
-                        !form.watch('password') ||
-                        form.formState.isSubmitting
-              }
+              disabled={!canContinue}
               fullWidth
             />
           </StyledForm>
