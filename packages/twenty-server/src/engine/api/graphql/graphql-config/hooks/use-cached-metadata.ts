@@ -1,10 +1,12 @@
 import { Plugin } from 'graphql-yoga';
 
-export function useCachedMetadata(
-  cacheGetter: (key: string) => any,
-  cacheSetter: (key: string, value: any) => void,
-  operationsToCache: string[],
-): Plugin {
+export type CacheMetadataPluginConfig = {
+  cacheGetter: (key: string) => any;
+  cacheSetter: (key: string, value: any) => void;
+  operationsToCache: string[];
+};
+
+export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
   const computeCacheKey = (serverContext: any) => {
     const workspaceId = serverContext.req.workspace?.id ?? 'anonymous';
     const cacheVersion = serverContext.req.cacheVersion ?? '0';
@@ -17,12 +19,12 @@ export function useCachedMetadata(
 
   return {
     onRequest: async ({ endResponse, serverContext }) => {
-      if (!operationsToCache.includes(operationName(serverContext))) {
+      if (!config.operationsToCache.includes(operationName(serverContext))) {
         return;
       }
 
       const cacheKey = computeCacheKey(serverContext);
-      const cachedResponse = await cacheGetter(cacheKey);
+      const cachedResponse = await config.cacheGetter(cacheKey);
 
       if (cachedResponse) {
         const earlyResponse = Response.json(cachedResponse);
@@ -33,12 +35,12 @@ export function useCachedMetadata(
     onResponse: async ({ response, serverContext }) => {
       const cacheKey = computeCacheKey(serverContext);
 
-      const cachedResponse = await cacheGetter(cacheKey);
+      const cachedResponse = await config.cacheGetter(cacheKey);
 
       if (!cachedResponse) {
         const responseBody = await response.json();
 
-        cacheSetter(cacheKey, responseBody);
+        config.cacheSetter(cacheKey, responseBody);
       }
     },
   };

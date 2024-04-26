@@ -35,11 +35,15 @@ export const metadataModuleFactory = async (
       useExceptionHandler({
         exceptionHandlerService,
       }),
-      useCachedMetadata(
-        workspaceSchemaCacheStorage.get.bind(workspaceSchemaCacheStorage),
-        workspaceSchemaCacheStorage.set.bind(workspaceSchemaCacheStorage),
-        ['ObjectMetadataItems'],
-      ),
+      useCachedMetadata({
+        cacheGetter: workspaceSchemaCacheStorage.get.bind(
+          workspaceSchemaCacheStorage,
+        ),
+        cacheSetter: workspaceSchemaCacheStorage.set.bind(
+          workspaceSchemaCacheStorage,
+        ),
+        operationsToCache: ['ObjectMetadataItems'],
+      }),
     ],
     path: '/metadata',
     context: () => ({
