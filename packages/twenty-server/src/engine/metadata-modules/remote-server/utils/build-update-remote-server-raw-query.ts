@@ -1,4 +1,4 @@
-import { isUndefined } from '@sniptt/guards';
+import { isDefined } from 'class-validator';
 
 import {
   RemoteServerEntity,
@@ -18,7 +18,7 @@ export const updateRemoteServerRawQuery = (
 
   const options: string[] = [];
 
-  const shouldUpdateUserMappingOptionsPassword = !isUndefined(
+  const shouldUpdateUserMappingOptionsPassword = isDefined(
     remoteServerToUpdate.userMappingOptions?.password,
   );
 
@@ -27,7 +27,7 @@ export const updateRemoteServerRawQuery = (
     parametersPositions['password'] = parameters.length;
   }
 
-  const shouldUpdateUserMappingOptionsUsername = !isUndefined(
+  const shouldUpdateUserMappingOptionsUsername = isDefined(
     remoteServerToUpdate.userMappingOptions?.username,
   );
 
@@ -36,10 +36,14 @@ export const updateRemoteServerRawQuery = (
     parametersPositions['username'] = parameters.length;
   }
 
-  const userMappingOptionsQuery = `"userMappingOptions" = jsonb_set(${
-    shouldUpdateUserMappingOptionsPassword &&
+  if (
+    shouldUpdateUserMappingOptionsPassword ||
     shouldUpdateUserMappingOptionsUsername
-      ? `jsonb_set(
+  ) {
+    const userMappingOptionsQuery = `"userMappingOptions" = jsonb_set(${
+      shouldUpdateUserMappingOptionsPassword &&
+      shouldUpdateUserMappingOptionsUsername
+        ? `jsonb_set(
               "userMappingOptions", 
               '{username}', 
               to_jsonb($${parametersPositions['username']}::text)
@@ -47,25 +51,21 @@ export const updateRemoteServerRawQuery = (
           '{password}', 
           to_jsonb($${parametersPositions['password']}::text)
       `
-      : shouldUpdateUserMappingOptionsPassword
-        ? `"userMappingOptions",
+        : shouldUpdateUserMappingOptionsPassword
+          ? `"userMappingOptions",
                 '{password}', 
                 to_jsonb($${parametersPositions['password']}::text)
             `
-        : `"userMappingOptions", 
+          : `"userMappingOptions", 
                 '{username}', 
                 to_jsonb($${parametersPositions['username']}::text)
             `
-  })`;
+    })`;
 
-  if (
-    shouldUpdateUserMappingOptionsPassword ||
-    shouldUpdateUserMappingOptionsUsername
-  ) {
     options.push(userMappingOptionsQuery);
   }
 
-  const shouldUpdateFdwDbname = !isUndefined(
+  const shouldUpdateFdwDbname = isDefined(
     remoteServerToUpdate.foreignDataWrapperOptions?.dbname,
   );
 
@@ -74,7 +74,7 @@ export const updateRemoteServerRawQuery = (
     parametersPositions['dbname'] = parameters.length;
   }
 
-  const shouldUpdateFdwHost = !isUndefined(
+  const shouldUpdateFdwHost = isDefined(
     remoteServerToUpdate.foreignDataWrapperOptions?.host,
   );
 
@@ -83,7 +83,7 @@ export const updateRemoteServerRawQuery = (
     parametersPositions['host'] = parameters.length;
   }
 
-  const shouldUpdateFdwPort = !isUndefined(
+  const shouldUpdateFdwPort = isDefined(
     remoteServerToUpdate.foreignDataWrapperOptions?.port,
   );
 
@@ -92,23 +92,23 @@ export const updateRemoteServerRawQuery = (
     parametersPositions['port'] = parameters.length;
   }
 
-  const fwdOptionsQuery = `"foreignDataWrapperOptions" = jsonb_set(${
-    shouldUpdateFdwDbname && shouldUpdateFdwHost && shouldUpdateFdwPort
-      ? `jsonb_set(jsonb_set("foreignDataWrapperOptions", '{dbname}', to_jsonb($${parametersPositions['dbname']}::text)), '{host}', to_jsonb($${parametersPositions['host']}::text)), '{port}', to_jsonb($${parametersPositions['port']}::text)`
-      : shouldUpdateFdwDbname && shouldUpdateFdwHost
-        ? `jsonb_set("foreignDataWrapperOptions", '{dbname}', to_jsonb($${parametersPositions['dbname']}::text)), '{host}', to_jsonb($${parametersPositions['host']}::text)`
-        : shouldUpdateFdwDbname && shouldUpdateFdwPort
-          ? `jsonb_set("foreignDataWrapperOptions", '{dbname}', to_jsonb($${parametersPositions['dbname']}::text)), '{port}', to_jsonb($${parametersPositions['port']}::text)`
-          : shouldUpdateFdwHost && shouldUpdateFdwPort
-            ? `jsonb_set("foreignDataWrapperOptions", '{host}', to_jsonb($${parametersPositions['host']}::text)), '{port}', to_jsonb($${parametersPositions['port']}::text)`
-            : shouldUpdateFdwDbname
-              ? `"foreignDataWrapperOptions", '{dbname}', to_jsonb($${parametersPositions['dbname']}::text)`
-              : shouldUpdateFdwHost
-                ? `"foreignDataWrapperOptions", '{host}', to_jsonb($${parametersPositions['host']}::text)`
-                : `"foreignDataWrapperOptions", '{port}', to_jsonb($${parametersPositions['port']}::text)`
-  })`;
-
   if (shouldUpdateFdwDbname || shouldUpdateFdwHost || shouldUpdateFdwPort) {
+    const fwdOptionsQuery = `"foreignDataWrapperOptions" = jsonb_set(${
+      shouldUpdateFdwDbname && shouldUpdateFdwHost && shouldUpdateFdwPort
+        ? `jsonb_set(jsonb_set("foreignDataWrapperOptions", '{dbname}', to_jsonb($${parametersPositions['dbname']}::text)), '{host}', to_jsonb($${parametersPositions['host']}::text)), '{port}', to_jsonb($${parametersPositions['port']}::text)`
+        : shouldUpdateFdwDbname && shouldUpdateFdwHost
+          ? `jsonb_set("foreignDataWrapperOptions", '{dbname}', to_jsonb($${parametersPositions['dbname']}::text)), '{host}', to_jsonb($${parametersPositions['host']}::text)`
+          : shouldUpdateFdwDbname && shouldUpdateFdwPort
+            ? `jsonb_set("foreignDataWrapperOptions", '{dbname}', to_jsonb($${parametersPositions['dbname']}::text)), '{port}', to_jsonb($${parametersPositions['port']}::text)`
+            : shouldUpdateFdwHost && shouldUpdateFdwPort
+              ? `jsonb_set("foreignDataWrapperOptions", '{host}', to_jsonb($${parametersPositions['host']}::text)), '{port}', to_jsonb($${parametersPositions['port']}::text)`
+              : shouldUpdateFdwDbname
+                ? `"foreignDataWrapperOptions", '{dbname}', to_jsonb($${parametersPositions['dbname']}::text)`
+                : shouldUpdateFdwHost
+                  ? `"foreignDataWrapperOptions", '{host}', to_jsonb($${parametersPositions['host']}::text)`
+                  : `"foreignDataWrapperOptions", '{port}', to_jsonb($${parametersPositions['port']}::text)`
+    })`;
+
     options.push(fwdOptionsQuery);
   }
 

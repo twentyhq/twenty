@@ -9,7 +9,7 @@ export const validateObjectRemoteServerInput = (input: object) => {
       continue;
     }
 
-    if (!INPUT_REGEX.test(value.toString())) {
+    if (!value || !INPUT_REGEX.test(value.toString())) {
       throw new BadRequestException('Invalid remote server input');
     }
   }
