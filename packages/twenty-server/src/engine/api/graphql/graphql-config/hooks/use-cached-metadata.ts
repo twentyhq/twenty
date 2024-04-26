@@ -3,6 +3,7 @@ import { Plugin } from 'graphql-yoga';
 export function useCachedMetadata(
   cacheGetter: (key: string) => any,
   cacheSetter: (key: string, value: any) => void,
+  operationsToCache: string[],
 ): Plugin {
   const computeCacheKey = (serverContext: any) => {
     const workspaceId = serverContext.req.workspace?.id ?? 'anonymous';
@@ -16,7 +17,7 @@ export function useCachedMetadata(
 
   return {
     onRequest: async ({ endResponse, serverContext }) => {
-      if (operationName(serverContext) !== 'ObjectMetadataItems') {
+      if (!operationsToCache.includes(operationName(serverContext))) {
         return;
       }
 

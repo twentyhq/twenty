@@ -38,6 +38,7 @@ export const metadataModuleFactory = async (
       useCachedMetadata(
         workspaceSchemaCacheStorage.get.bind(workspaceSchemaCacheStorage),
         workspaceSchemaCacheStorage.set.bind(workspaceSchemaCacheStorage),
+        ['ObjectMetadataItems'],
       ),
     ],
     path: '/metadata',
