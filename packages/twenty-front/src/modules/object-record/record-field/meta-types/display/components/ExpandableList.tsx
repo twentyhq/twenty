@@ -47,7 +47,7 @@ const StyledRelationsListContainer = styled.div`
 
 const StyledAnimatedChipContainer = styled(motion.div)``;
 
-export const ExpandableCell = ({
+export const ExpandableList = ({
   children,
   isHovered,
   reference,

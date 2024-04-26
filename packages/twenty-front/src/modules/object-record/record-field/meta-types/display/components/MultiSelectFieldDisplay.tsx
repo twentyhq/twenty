@@ -1,4 +1,4 @@
-import { ExpandableCell } from '@/object-record/record-field/meta-types/display/components/ExpandableCell.tsx';
+import { ExpandableList } from '@/object-record/record-field/meta-types/display/components/ExpandableList.tsx';
 import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField';
 import { Tag } from '@/ui/display/tag/components/Tag';
 
@@ -18,7 +18,7 @@ export const MultiSelectFieldDisplay = ({
     : [];
 
   return selectedOptions ? (
-    <ExpandableCell isHovered={isHovered} reference={reference}>
+    <ExpandableList isHovered={isHovered} reference={reference}>
       {selectedOptions.map((selectedOption, index) => (
         <Tag
           key={index}
@@ -26,7 +26,7 @@ export const MultiSelectFieldDisplay = ({
           text={selectedOption.label}
         />
       ))}
-    </ExpandableCell>
+    </ExpandableList>
   ) : (
     <></>
   );
