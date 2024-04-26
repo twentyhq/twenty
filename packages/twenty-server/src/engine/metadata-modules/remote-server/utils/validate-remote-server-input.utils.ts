@@ -2,7 +2,7 @@ import { BadRequestException } from '@nestjs/common';
 
 const INPUT_REGEX = /^([A-Za-z0-9\-_.@]+)$/;
 
-export const validateObjectRemoteServerInput = (input: object) => {
+export const validateObjectAgainstInjections = (input: object) => {
   for (const [key, value] of Object.entries(input)) {
     // Password are encrypted so we don't need to validate them
     if (key === 'password') {
@@ -15,8 +15,8 @@ export const validateObjectRemoteServerInput = (input: object) => {
   }
 };
 
-export const validateStringRemoteServerInput = (input: string) => {
+export const validateStringAgainstInjections = (input: string) => {
   if (!INPUT_REGEX.test(input)) {
-    throw new Error('Invalid remote server input');
+    throw new BadRequestException('Invalid remote server input');
   }
 };

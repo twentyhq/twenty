@@ -16,14 +16,14 @@ import {
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { encryptText } from 'src/engine/core-modules/auth/auth.util';
 import {
-  validateObjectRemoteServerInput,
-  validateStringRemoteServerInput,
-} from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-input';
+  validateObjectAgainstInjections,
+  validateStringAgainstInjections,
+} from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-input.utils';
 import { ForeignDataWrapperQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/foreign-data-wrapper-query.factory';
 import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
 import { UpdateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/update-remote-server.input';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { updateRemoteServerRawQuery } from 'src/engine/metadata-modules/remote-server/utils/build-update-remote-server-raw-query';
+import { updateRemoteServerRawQuery } from 'src/engine/metadata-modules/remote-server/utils/build-update-remote-server-raw-query.utils';
 
 @Injectable()
 export class RemoteServerService<T extends RemoteServerType> {
@@ -44,13 +44,7 @@ export class RemoteServerService<T extends RemoteServerType> {
     remoteServerInput: CreateRemoteServerInput<T>,
     workspaceId: string,
   ): Promise<RemoteServerEntity<RemoteServerType>> {
-    validateObjectRemoteServerInput(
-      remoteServerInput.foreignDataWrapperOptions,
-    );
-
-    if (remoteServerInput.userMappingOptions) {
-      validateObjectRemoteServerInput(remoteServerInput.userMappingOptions);
-    }
+    this.validateRemoteServerInputAgainstInjections(remoteServerInput);
 
     const foreignDataWrapperId = v4();
 
@@ -109,15 +103,7 @@ export class RemoteServerService<T extends RemoteServerType> {
     remoteServerInput: UpdateRemoteServerInput<T>,
     workspaceId: string,
   ): Promise<RemoteServerEntity<RemoteServerType>> {
-    if (remoteServerInput.foreignDataWrapperOptions) {
-      validateObjectRemoteServerInput(
-        remoteServerInput.foreignDataWrapperOptions,
-      );
-    }
-
-    if (remoteServerInput.userMappingOptions) {
-      validateObjectRemoteServerInput(remoteServerInput.userMappingOptions);
-    }
+    this.validateRemoteServerInputAgainstInjections(remoteServerInput);
 
     const remoteServer = await this.findOneByIdWithinWorkspace(
       remoteServerInput.id,
@@ -192,11 +178,25 @@ export class RemoteServerService<T extends RemoteServerType> {
     );
   }
 
+  private validateRemoteServerInputAgainstInjections(
+    remoteServerInput: CreateRemoteServerInput<T> | UpdateRemoteServerInput<T>,
+  ) {
+    if (remoteServerInput.foreignDataWrapperOptions) {
+      validateObjectAgainstInjections(
+        remoteServerInput.foreignDataWrapperOptions,
+      );
+    }
+
+    if (remoteServerInput.userMappingOptions) {
+      validateObjectAgainstInjections(remoteServerInput.userMappingOptions);
+    }
+  }
+
   async deleteOneRemoteServer(
     id: string,
     workspaceId: string,
   ): Promise<RemoteServerEntity<RemoteServerType>> {
-    validateStringRemoteServerInput(id);
+    validateStringAgainstInjections(id);
 
     const remoteServer = await this.remoteServerRepository.findOne({
       where: {

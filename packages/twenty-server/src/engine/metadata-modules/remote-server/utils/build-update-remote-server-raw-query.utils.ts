@@ -3,36 +3,33 @@ import { isDefined } from 'class-validator';
 import {
   RemoteServerEntity,
   RemoteServerType,
+  UserMappingOptions,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 
 export type DeepPartial<T> = {
   [P in keyof T]?: DeepPartial<T[P]>;
 };
 
-export const updateRemoteServerRawQuery = (
-  remoteServerToUpdate: DeepPartial<RemoteServerEntity<RemoteServerType>> &
-    Pick<RemoteServerEntity<RemoteServerType>, 'workspaceId' | 'id'>,
-): [any[], string] => {
-  const parameters: any[] = [remoteServerToUpdate.id];
-  const parametersPositions = {};
-
-  const options: string[] = [];
-
+const buildUserMappingOptionsQuery = (
+  parameters: any[],
+  parametersPositions: object,
+  userMappingOptions: DeepPartial<UserMappingOptions>,
+): string | null => {
   const shouldUpdateUserMappingOptionsPassword = isDefined(
-    remoteServerToUpdate.userMappingOptions?.password,
+    userMappingOptions?.password,
   );
 
   if (shouldUpdateUserMappingOptionsPassword) {
-    parameters.push(remoteServerToUpdate?.userMappingOptions?.password);
+    parameters.push(userMappingOptions?.password);
     parametersPositions['password'] = parameters.length;
   }
 
   const shouldUpdateUserMappingOptionsUsername = isDefined(
-    remoteServerToUpdate.userMappingOptions?.username,
+    userMappingOptions?.username,
   );
 
   if (shouldUpdateUserMappingOptionsUsername) {
-    parameters.push(remoteServerToUpdate?.userMappingOptions?.username);
+    parameters.push(userMappingOptions?.username);
     parametersPositions['username'] = parameters.length;
   }
 
@@ -40,7 +37,7 @@ export const updateRemoteServerRawQuery = (
     shouldUpdateUserMappingOptionsPassword ||
     shouldUpdateUserMappingOptionsUsername
   ) {
-    const userMappingOptionsQuery = `"userMappingOptions" = jsonb_set(${
+    return `"userMappingOptions" = jsonb_set(${
       shouldUpdateUserMappingOptionsPassword &&
       shouldUpdateUserMappingOptionsUsername
         ? `jsonb_set(
@@ -61,8 +58,29 @@ export const updateRemoteServerRawQuery = (
                 to_jsonb($${parametersPositions['username']}::text)
             `
     })`;
+  }
 
-    options.push(userMappingOptionsQuery);
+  return null;
+};
+
+// TO DO This only works for postgres_fdw type for now, lets make it more generic when we have a different type
+export const updateRemoteServerRawQuery = (
+  remoteServerToUpdate: DeepPartial<RemoteServerEntity<RemoteServerType>> &
+    Pick<RemoteServerEntity<RemoteServerType>, 'workspaceId' | 'id'>,
+): [any[], string] => {
+  const parameters: any[] = [remoteServerToUpdate.id];
+  const parametersPositions = {};
+
+  const options: string[] = [];
+
+  if (remoteServerToUpdate.userMappingOptions) {
+    const userMappingOptionsQuery = buildUserMappingOptionsQuery(
+      parameters,
+      parametersPositions,
+      remoteServerToUpdate.userMappingOptions,
+    );
+
+    if (userMappingOptionsQuery) options.push(userMappingOptionsQuery);
   }
 
   const shouldUpdateFdwDbname = isDefined(

@@ -32,9 +32,7 @@ export class ForeignDataWrapperQueryFactory {
       ForeignDataWrapperOptions<RemoteServerType>
     >;
   }) {
-    const options = this.buildUpdateOptions(
-      foreignDataWrapperOptions,
-    );
+    const options = this.buildUpdateOptions(foreignDataWrapperOptions);
 
     return `ALTER SERVER "${foreignDataWrapperId}" OPTIONS (${options})`;
   }
@@ -80,8 +78,7 @@ export class ForeignDataWrapperQueryFactory {
       }
     });
 
-        return rawQuerySetStatements.join(', ');
-    }
+    return rawQuerySetStatements.join(', ');
   }
 
   private buildUpdateUserMappingOptions(

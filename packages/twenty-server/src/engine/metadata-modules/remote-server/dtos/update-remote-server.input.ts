@@ -8,6 +8,7 @@ import {
   RemoteServerType,
   UserMappingOptions,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
+import { UserMappingOptionsInput } from 'src/engine/metadata-modules/remote-server/utils/user-mapping-options-input.utils';
 
 @InputType()
 export class UpdateRemoteServerInput<T extends RemoteServerType> {
@@ -15,19 +16,10 @@ export class UpdateRemoteServerInput<T extends RemoteServerType> {
   id: T;
 
   @IsOptional()
-  @Field(() => GraphQLJSON)
+  @Field(() => GraphQLJSON, { nullable: true })
   foreignDataWrapperOptions?: Partial<ForeignDataWrapperOptions<T>>;
 
   @IsOptional()
   @Field(() => UserMappingOptionsInput, { nullable: true })
   userMappingOptions?: Partial<UserMappingOptions>;
-}
-
-@InputType()
-class UserMappingOptionsInput {
-  @Field(() => String, { nullable: true })
-  username?: string;
-
-  @Field(() => String, { nullable: true })
-  password?: string;
 }
