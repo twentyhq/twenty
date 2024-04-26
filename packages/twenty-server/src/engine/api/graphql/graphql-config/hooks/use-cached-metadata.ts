@@ -14,12 +14,12 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
     return `${workspaceId}:${cacheVersion}`;
   };
 
-  const operationName = (serverContext: any) =>
+  const getOperationName = (serverContext: any) =>
     serverContext?.req?.body?.operationName;
 
   return {
     onRequest: async ({ endResponse, serverContext }) => {
-      if (!config.operationsToCache.includes(operationName(serverContext))) {
+      if (!config.operationsToCache.includes(getOperationName(serverContext))) {
         return;
       }
 
@@ -33,6 +33,10 @@ export function useCachedMetadata(config: CacheMetadataPluginConfig): Plugin {
       }
     },
     onResponse: async ({ response, serverContext }) => {
+      if (!config.operationsToCache.includes(getOperationName(serverContext))) {
+        return;
+      }
+
       const cacheKey = computeCacheKey(serverContext);
 
       const cachedResponse = await config.cacheGetter(cacheKey);
