@@ -220,9 +220,16 @@ export class GoogleCalendarSyncService {
       (association) => association.calendarEventId,
     );
 
+    const iCalUIDs = filteredEvents.map(
+      (calendarEvent) => calendarEvent.iCalUID as string,
+    );
+
+    const existingCalendarEvents =
+      await this.calendarEventRepository.getByICalUIDs(iCalUIDs, workspaceId);
+
     const iCalUIDCalendarEventIdMap =
       await this.calendarEventRepository.getICalUIDCalendarEventIdMap(
-        existingEventsIds,
+        existingCalendarEvents.map((event) => event.id),
         workspaceId,
       );
 
