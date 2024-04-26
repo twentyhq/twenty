@@ -168,7 +168,6 @@ export class RemoteServerService<T extends RemoteServerType> {
           const foreignDataWrapperQuery =
             this.foreignDataWrapperQueryFactory.updateForeignDataWrapper({
               foreignDataWrapperId,
-              foreignDataWrapperType: RemoteServerType.POSTGRES_FDW,
               foreignDataWrapperOptions:
                 partialRemoteServerWithUpdates.foreignDataWrapperOptions,
             });

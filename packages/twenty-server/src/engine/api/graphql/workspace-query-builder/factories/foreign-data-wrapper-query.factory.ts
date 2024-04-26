@@ -25,17 +25,14 @@ export class ForeignDataWrapperQueryFactory {
 
   updateForeignDataWrapper({
     foreignDataWrapperId,
-    foreignDataWrapperType,
     foreignDataWrapperOptions,
   }: {
     foreignDataWrapperId: string;
-    foreignDataWrapperType: RemoteServerType;
     foreignDataWrapperOptions: Partial<
       ForeignDataWrapperOptions<RemoteServerType>
     >;
   }) {
-    const options = this.buildUpdateOptionsFromType(
-      foreignDataWrapperType,
+    const options = this.buildUpdateOptions(
       foreignDataWrapperOptions,
     );
 
@@ -72,30 +69,19 @@ export class ForeignDataWrapperQueryFactory {
     }
   }
 
-  private buildUpdateOptionsFromType(
-    foreignDataWrapperType: RemoteServerType,
-    foreignDataWrapperOptions: Partial<
-      ForeignDataWrapperOptions<RemoteServerType>
-    >,
+  private buildUpdateOptions(
+    options: Partial<ForeignDataWrapperOptions<RemoteServerType>>,
   ) {
-    if (foreignDataWrapperType !== RemoteServerType.POSTGRES_FDW) {
-      throw new Error('Foreign data wrapper type not supported');
-    }
-    const setStatements: string[] = [];
+    const rawQuerySetStatements: string[] = [];
 
-    if (isDefined(foreignDataWrapperOptions?.dbname)) {
-      setStatements.push(`SET dbname '${foreignDataWrapperOptions.dbname}'`);
-    }
+    Object.entries(options).forEach(([key, value]) => {
+      if (isDefined(value)) {
+        rawQuerySetStatements.push(`SET ${key} '${value}'`);
+      }
+    });
 
-    if (isDefined(foreignDataWrapperOptions?.host)) {
-      setStatements.push(`SET host '${foreignDataWrapperOptions?.host}'`);
+        return rawQuerySetStatements.join(', ');
     }
-
-    if (isDefined(foreignDataWrapperOptions?.port)) {
-      setStatements.push(`SET port '${foreignDataWrapperOptions?.port}'`);
-    }
-
-    return setStatements.join(', ');
   }
 
   private buildUpdateUserMappingOptions(
@@ -108,7 +94,7 @@ export class ForeignDataWrapperQueryFactory {
     }
 
     if (isDefined(userMappingOptions?.password)) {
-      setStatements.push(`SET user '${userMappingOptions?.password}'`);
+      setStatements.push(`SET password '${userMappingOptions?.password}'`);
     }
 
     return setStatements.join(', ');
