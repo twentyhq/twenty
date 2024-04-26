@@ -6,6 +6,7 @@ import { Chip, ChipVariant } from 'twenty-ui';
 
 import { AnimationDivProps } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButton.tsx';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu.tsx';
+
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
@@ -57,17 +58,17 @@ export const ExpandableCell = ({
 }) => {
   const [containerWidth, setContainerWidth] = useState(0);
   const [isDropdownMenuOpen, setIsDropdownMenuOpen] = useState(false);
-  const [childrenContainerWidth, setChildrenContainerWidth] = useState<
-    Record<number, number>
-  >({});
+  const [childrenWidths, setChildrenWidths] = useState<Record<number, number>>(
+    {},
+  );
 
   const chipContainerWidth = 52;
 
   const computeChildProperties = (index: number) => {
     const availableWidth = containerWidth - chipContainerWidth;
-    const childWidth = childrenContainerWidth[index];
+    const childWidth = childrenWidths[index];
     const cumulatedChildrenWidth = Array.from(Array(index).keys()).reduce(
-      (acc, currentIndex) => acc + childrenContainerWidth[currentIndex],
+      (acc, currentIndex) => acc + childrenWidths[currentIndex],
       0,
     );
     if (!isHovered) {
@@ -83,7 +84,7 @@ export const ExpandableCell = ({
   };
 
   const computeHiddenChildrenNumber = () => {
-    const childrenContainerWidthValues = Object.values(childrenContainerWidth);
+    const childrenContainerWidthValues = Object.values(childrenWidths);
     let result = 0;
     let cumulatedWidth = 0;
     childrenContainerWidthValues.forEach((childrenContainerWidthValue) => {
@@ -125,8 +126,8 @@ export const ExpandableCell = ({
           return (
             <StyledChildContainer
               ref={(el) => {
-                if (!el || childrenContainerWidth[index] > 0) return;
-                setChildrenContainerWidth((prevState) => {
+                if (!el || childrenWidths[index] > 0) return;
+                setChildrenWidths((prevState) => {
                   prevState[index] = el.getBoundingClientRect().width;
                   return prevState;
                 });
