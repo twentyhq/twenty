@@ -26,8 +26,6 @@ import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
-import { TwentyORMService } from 'src/engine/twenty-orm/twenty-orm.service';
-import { WorkspaceMemberObjectMetadata } from 'src/engine/twenty-orm/workspace-object-tests/workspace-member.object-metadata';
 
 import { UserService } from './services/user.service';
 
@@ -48,7 +46,6 @@ export class UserResolver {
     private readonly userService: UserService,
     private readonly environmentService: EnvironmentService,
     private readonly fileUploadService: FileUploadService,
-    private readonly twentyORMService: TwentyORMService,
   ) {}
 
   @Query(() => User)
@@ -61,16 +58,6 @@ export class UserResolver {
     });
 
     assert(user, 'User not found');
-
-    const repository = this.twentyORMService.getRepository(
-      WorkspaceMemberObjectMetadata,
-    );
-
-    const workspaceMembers = await repository.find({
-      relations: ['authoredAttachments'],
-    });
-
-    console.log('TEST: ', workspaceMembers);
 
     return user;
   }

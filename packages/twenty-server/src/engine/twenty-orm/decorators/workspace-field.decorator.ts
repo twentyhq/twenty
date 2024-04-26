@@ -22,28 +22,40 @@ export interface WorkspaceFieldOptions<
 export function WorkspaceField<T extends FieldMetadataType>(
   options: WorkspaceFieldOptions<T>,
 ): PropertyDecorator {
-  return (object: object, fieldKey: string) => {
+  return (object, propertyKey) => {
+    const isPrimary = TypedReflect.getMetadata(
+      'workspace:is-primary-field-metadata-args',
+      object,
+      propertyKey.toString(),
+    );
+    const isNullable = TypedReflect.getMetadata(
+      'workspace:is-nullable-metadata-args',
+      object,
+      propertyKey.toString(),
+    );
     const isSystem = TypedReflect.getMetadata(
       'workspace:is-system-metadata-args',
       object,
-      fieldKey,
+      propertyKey.toString(),
     );
     const gate = TypedReflect.getMetadata(
       'workspace:gate-metadata-args',
       object,
-      fieldKey,
+      propertyKey.toString(),
     );
 
     metadataArgsStorage.fields.push({
       target: object.constructor,
       standardId: options.standardId,
-      name: fieldKey,
+      name: propertyKey.toString(),
       label: options.label,
       type: options.type,
       description: options.description,
       icon: options.icon,
       defaultValue: options.defaultValue,
       options: options.options,
+      isPrimary,
+      isNullable,
       isSystem,
       gate,
     });

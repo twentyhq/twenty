@@ -26,13 +26,6 @@ export class EntitySchemaColumnFactory {
     for (const fieldMetadataArgs of fieldMetadataArgsCollection) {
       const key = fieldMetadataArgs.name;
 
-      console.log('KEY: ', key, fieldMetadataArgs);
-
-      // Skip relation fields
-      if (fieldMetadataArgs.type === FieldMetadataType.RELATION) {
-        continue;
-      }
-
       if (isCompositeFieldMetadataType(fieldMetadataArgs.type)) {
         const compositeColumns = this.createCompositeColumns(fieldMetadataArgs);
 
@@ -52,11 +45,11 @@ export class EntitySchemaColumnFactory {
       entitySchemaColumnMap[key] = {
         name: key,
         type: columnType as ColumnType,
-        // TODO: Implement nullable
-        // nullable: fieldMetadataArgs.isNullable,
-        primary: key === 'id',
+        primary: fieldMetadataArgs.isPrimary,
+        nullable: fieldMetadataArgs.isNullable,
         createDate: key === 'createdAt',
         updateDate: key === 'updatedAt',
+        array: fieldMetadataArgs.type === FieldMetadataType.MULTI_SELECT,
         default: defaultValue,
       };
 
@@ -90,13 +83,15 @@ export class EntitySchemaColumnFactory {
         compositeProperty,
       );
       const columnType = fieldMetadataTypeToColumnType(compositeProperty.type);
-      // TODO: Implement defaultValue for composite properties
-      // const defaultValue = serializeDefaultValue(fieldMetadata.defaultValue);
+      const defaultValue = serializeDefaultValue(
+        fieldMetadataArgs.defaultValue?.[compositeProperty.name],
+      );
 
       entitySchemaColumnMap[columnName] = {
         name: columnName,
         type: columnType as ColumnType,
         nullable: compositeProperty.isRequired,
+        default: defaultValue,
       };
 
       if (isEnumFieldMetadataType(compositeProperty.type)) {

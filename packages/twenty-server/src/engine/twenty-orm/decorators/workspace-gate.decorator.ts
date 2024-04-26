@@ -5,13 +5,13 @@ export interface WorkspaceGateOptions {
 }
 
 export function WorkspaceGate(options: WorkspaceGateOptions) {
-  return function (target: object, fieldKey?: string) {
-    if (fieldKey) {
+  return (target: any, propertyKey?: string | symbol) => {
+    if (propertyKey !== undefined) {
       TypedReflect.defineMetadata(
         'workspace:gate-metadata-args',
         options,
         target,
-        fieldKey,
+        propertyKey.toString(),
       );
     } else {
       TypedReflect.defineMetadata(

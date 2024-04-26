@@ -10,19 +10,13 @@ import { TimelineMessagingModule } from 'src/engine/core-modules/messaging/timel
 import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/timeline-calendar-event.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
-import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
-import { WorkspaceMemberObjectMetadata } from 'src/engine/twenty-orm/workspace-object-tests/workspace-member.object-metadata';
-import { AttachmentObjectMetadata } from 'src/engine/twenty-orm/workspace-object-tests/attachment.object-metadata';
 
-import { AnalyticsModule } from './analytics/analytics.module';
-import { FileModule } from './file/file.module';
 import { ClientConfigModule } from './client-config/client-config.module';
+import { FileModule } from './file/file.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
-    TwentyORMModule.register({
-      objects: [WorkspaceMemberObjectMetadata, AttachmentObjectMetadata],
-    }),
     HealthModule,
     AnalyticsModule,
     AuthModule,

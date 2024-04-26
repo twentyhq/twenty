@@ -1,5 +1,7 @@
 import { ObjectType } from 'typeorm';
 
+import { Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
+
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import {
   RelationMetadataType,
@@ -64,4 +66,24 @@ export interface WorkspaceRelationMetadataArgs {
    * Relation join column.
    */
   readonly joinColumn?: string;
+
+  /**
+   * Is primary field.
+   */
+  readonly isPrimary?: boolean;
+
+  /**
+   * Is system field.
+   */
+  readonly isSystem?: boolean;
+
+  /**
+   * Is nullable field.
+   */
+  readonly isNullable?: boolean;
+
+  /**
+   * Field gate.
+   */
+  readonly gate?: Gate;
 }

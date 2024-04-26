@@ -5,6 +5,7 @@ import {
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
+import { TypedReflect } from 'src/utils/typed-reflect';
 
 interface WorkspaceBaseRelationOptions<TType, TClass> {
   standardId: string;
@@ -36,17 +37,40 @@ export function WorkspaceRelation<TClass extends object>(
     | WorkspaceManyToOneRelationOptions<TClass>
     | WorkspaceOtherRelationOptions<TClass>,
 ): PropertyDecorator {
-  return (object: object, fieldKey: string) => {
+  return (object, propertyKey) => {
+    const isPrimary = TypedReflect.getMetadata(
+      'workspace:is-primary-field-metadata-args',
+      object,
+      propertyKey.toString(),
+    );
+    const isNullable = TypedReflect.getMetadata(
+      'workspace:is-nullable-metadata-args',
+      object,
+      propertyKey.toString(),
+    );
+    const isSystem = TypedReflect.getMetadata(
+      'workspace:is-system-metadata-args',
+      object,
+      propertyKey.toString(),
+    );
+    const gate = TypedReflect.getMetadata(
+      'workspace:gate-metadata-args',
+      object,
+      propertyKey.toString(),
+    );
+
     let joinColumn: string | undefined;
 
     if ('joinColumn' in options) {
-      joinColumn = options.joinColumn ? options.joinColumn : `${fieldKey}Id`;
+      joinColumn = options.joinColumn
+        ? options.joinColumn
+        : `${propertyKey.toString()}Id`;
     }
 
     metadataArgsStorage.relations.push({
       target: object.constructor,
       standardId: options.standardId,
-      name: fieldKey,
+      name: propertyKey.toString(),
       label: options.label,
       type: options.type,
       description: options.description,
@@ -55,6 +79,10 @@ export function WorkspaceRelation<TClass extends object>(
       inverseSideFieldKey: options.inverseSideFieldKey as string | undefined,
       onDelete: options.onDelete,
       joinColumn,
+      isPrimary,
+      isNullable,
+      isSystem,
+      gate,
     });
   };
 }

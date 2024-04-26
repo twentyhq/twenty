@@ -15,6 +15,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { BaseObjectMetadata } from 'src/engine/twenty-orm/workspace-object-tests/base.object-metadata';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
+import { CompanyObjectMetadata } from 'src/engine/twenty-orm/workspace-object-tests/company.object-metadata';
 
 @WorkspaceObject({
   standardId: STANDARD_OBJECT_IDS.workspaceMember,
@@ -94,4 +95,16 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   authoredAttachments: Relation<AttachmentObjectMetadata[]>;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.accountOwnerForCompanies,
+    label: 'Account Owner For Companies',
+    description: 'Account owner for companies',
+    icon: 'IconBriefcase',
+    type: RelationMetadataType.ONE_TO_MANY,
+    inverseSideTarget: () => CompanyObjectMetadata,
+    inverseSideFieldKey: 'accountOwner',
+    onDelete: RelationOnDeleteAction.SET_NULL,
+  })
+  accountOwnerForCompanies: Relation<CompanyObjectMetadata[]>;
 }

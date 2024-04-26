@@ -1,19 +1,19 @@
 import { TypedReflect } from 'src/utils/typed-reflect';
 
 export function WorkspaceIsSystem() {
-  return function (object: object, fieldKey?: string) {
-    if (fieldKey) {
+  return function (target: any, propertyKey?: string | symbol): void {
+    if (propertyKey !== undefined) {
       TypedReflect.defineMetadata(
         'workspace:is-system-metadata-args',
         true,
-        object,
-        fieldKey,
+        target,
+        propertyKey.toString(),
       );
     } else {
       TypedReflect.defineMetadata(
         'workspace:is-system-metadata-args',
         true,
-        object,
+        target,
       );
     }
   };

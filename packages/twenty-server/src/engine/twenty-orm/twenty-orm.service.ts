@@ -20,8 +20,6 @@ export class TwentyORMService {
   ): Repository<FlattenCompositeTypes<T>> {
     const entitySchema = this.entitySchemaFactory.create(entityClass);
 
-    console.log('entitySchema', entitySchema);
-
     return this.workspaceDataSource.getRepository<FlattenCompositeTypes<T>>(
       entitySchema,
     );

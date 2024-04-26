@@ -55,9 +55,19 @@ export interface WorkspaceFieldMetadataArgs {
   readonly options?: FieldMetadataOptions;
 
   /**
+   * Is primary field.
+   */
+  readonly isPrimary?: boolean;
+
+  /**
    * Is system field.
    */
   readonly isSystem?: boolean;
+
+  /**
+   * Is nullable field.
+   */
+  readonly isNullable?: boolean;
 
   /**
    * Field gate.
