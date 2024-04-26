@@ -846,6 +846,7 @@ export type Field = {
   name: Scalars['String'];
   options?: Maybe<Scalars['JSON']>;
   relationDefinition?: Maybe<RelationDefinition>;
+  settings?: Maybe<Scalars['JSON']>;
   toRelationMetadata?: Maybe<Relation>;
   type: FieldMetadataType;
   updatedAt: Scalars['DateTime'];

@@ -21,6 +21,7 @@ export type FieldMetadataItem = Omit<
   | 'toRelationMetadata'
   | 'defaultValue'
   | 'options'
+  | 'settings'
   | 'relationDefinition'
 > & {
   __typename?: string;
