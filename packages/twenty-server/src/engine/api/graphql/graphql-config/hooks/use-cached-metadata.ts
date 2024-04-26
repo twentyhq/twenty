@@ -1,8 +1,9 @@
 import { Plugin } from 'graphql-yoga';
 
-export function useCachedMetadata(): Plugin {
-  const cache = new Map<string, any>();
-
+export function useCachedMetadata(
+  cacheGetter: (key: string) => any,
+  cacheSetter: (key: string, value: any) => void,
+): Plugin {
   const computeCacheKey = (serverContext: any) => {
     const workspaceId = serverContext.req.workspace?.id ?? 'anonymous';
     const cacheVersion = serverContext.req.cacheVersion ?? '0';
@@ -11,13 +12,11 @@ export function useCachedMetadata(): Plugin {
   };
 
   return {
-    onRequest: ({ endResponse, serverContext }) => {
+    onRequest: async ({ endResponse, serverContext }) => {
       const cacheKey = computeCacheKey(serverContext);
-      const foundInCache = cache.has(cacheKey);
+      const cachedResponse = await cacheGetter(cacheKey);
 
-      if (foundInCache) {
-        const cachedResponse = cache.get(cacheKey);
-
+      if (cachedResponse) {
         const earlyResponse = Response.json(cachedResponse);
 
         return endResponse(earlyResponse);
@@ -26,12 +25,12 @@ export function useCachedMetadata(): Plugin {
     onResponse: async ({ response, serverContext }) => {
       const cacheKey = computeCacheKey(serverContext);
 
-      const foundInCache = cache.has(cacheKey);
+      const cachedResponse = await cacheGetter(cacheKey);
 
-      if (!foundInCache) {
+      if (!cachedResponse) {
         const responseBody = await response.json();
 
-        cache.set(cacheKey, responseBody);
+        cacheSetter(cacheKey, responseBody);
       }
     },
   };
