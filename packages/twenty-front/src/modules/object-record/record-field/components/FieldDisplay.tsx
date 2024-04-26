@@ -37,7 +37,7 @@ export const FieldDisplay = ({
   isHovered,
   reference,
 }: {
-  isHovered: boolean;
+  isHovered?: boolean;
   reference?: HTMLDivElement;
 }) => {
   const { fieldDefinition, isLabelIdentifier } = useContext(FieldContext);

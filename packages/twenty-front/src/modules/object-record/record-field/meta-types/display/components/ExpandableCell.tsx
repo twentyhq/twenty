@@ -96,7 +96,6 @@ export const ExpandableCell = ({
   };
 
   const hiddenChildrenCount = computeHiddenChildrenNumber();
-
   const { refs, floatingStyles } = useFloating({
     // @ts-expect-error placement accepts 'start' as value even if the typing does not permit it
     placement: 'start',
@@ -107,7 +106,6 @@ export const ExpandableCell = ({
     event.stopPropagation();
     setIsDropdownMenuOpen(true);
   };
-
   useEffect(() => {
     if (!isHovered) {
       setIsDropdownMenuOpen(false);

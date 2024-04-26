@@ -1,4 +1,4 @@
-import { ReactElement, useContext, useState } from 'react';
+import React, { ReactElement, useContext, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { IconArrowUpRight } from 'twenty-ui';
@@ -57,9 +57,6 @@ export type RecordTableCellContainerProps = {
   maxContentWidth?: number;
   onSubmit?: () => void;
   onCancel?: () => void;
-  setReference?: React.Dispatch<
-    React.SetStateAction<HTMLDivElement | undefined>
-  >;
 };
 
 const DEFAULT_CELL_SCOPE: HotkeyScope = {
@@ -67,12 +64,12 @@ const DEFAULT_CELL_SCOPE: HotkeyScope = {
 };
 
 export const RecordTableCellContainer = ({
-  setReference,
   editModeContent,
   nonEditModeContent,
   editHotkeyScope,
 }: RecordTableCellContainerProps) => {
   const { columnIndex } = useContext(RecordTableCellContext);
+  const [reference, setReference] = useState<HTMLDivElement | undefined>();
   const [isHovered, setIsHovered] = useState(false);
   const { isReadOnly, isSelected, recordId } = useContext(
     RecordTableRowContext,
@@ -144,6 +141,16 @@ export const RecordTableCellContainer = ({
     (!isFirstColumn || !isEmpty) &&
     !isReadOnly;
 
+  const newNonEditModeContent = React.isValidElement<{
+    isHovered: boolean;
+    reference: HTMLDivElement;
+  }>(nonEditModeContent)
+    ? React.cloneElement(nonEditModeContent, {
+        isHovered,
+        reference,
+      })
+    : nonEditModeContent;
+
   return (
     <StyledTd
       ref={(el) => {
@@ -167,7 +174,7 @@ export const RecordTableCellContainer = ({
           ) : hasSoftFocus ? (
             <>
               <RecordTableCellSoftFocusMode>
-                {editModeContentOnly ? editModeContent : nonEditModeContent}
+                {editModeContentOnly ? editModeContent : newNonEditModeContent}
               </RecordTableCellSoftFocusMode>
               {showButton && (
                 <RecordTableCellButton
@@ -180,7 +187,9 @@ export const RecordTableCellContainer = ({
             <>
               {!isEmpty && (
                 <RecordTableCellDisplayMode>
-                  {editModeContentOnly ? editModeContent : nonEditModeContent}
+                  {editModeContentOnly
+                    ? editModeContent
+                    : newNonEditModeContent}
                 </RecordTableCellDisplayMode>
               )}
               {showButton && (

@@ -1,5 +1,4 @@
-import { useContext, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useContext } from 'react';
 
 import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
@@ -8,13 +7,7 @@ import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEv
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableCellContainer } from '@/object-record/record-table/record-table-cell/components/RecordTableCellContainer';
-import { useCurrentTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useCurrentCellPosition.ts';
-import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext.ts';
-import { isSoftFocusOnTableCellComponentFamilyState } from '@/object-record/record-table/states/isSoftFocusOnTableCellComponentFamilyState.ts';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId.ts';
-import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId.ts';
-import { extractComponentFamilyState } from '@/ui/utilities/state/component-state/utils/extractComponentFamilyState.ts';
 
 export const RecordTableCell = ({
   customHotkeyScope,
@@ -25,7 +18,6 @@ export const RecordTableCell = ({
     useContext(RecordTableContext);
   const { entityId, fieldDefinition } = useContext(FieldContext);
   const { isReadOnly } = useContext(RecordTableRowContext);
-  const [reference, setReference] = useState<HTMLDivElement | undefined>();
 
   const handleEnter: FieldInputEvent = (persistField) => {
     onUpsertRecord({
@@ -94,25 +86,8 @@ export const RecordTableCell = ({
     onMoveFocus('left');
   };
 
-  const cellPosition = useCurrentTableCellPosition();
-
-  const tableScopeId = useAvailableScopeIdOrThrow(
-    RecordTableScopeInternalContext,
-    getScopeIdOrUndefinedFromComponentId(),
-  );
-
-  const isSoftFocusOnTableCellFamilyState = extractComponentFamilyState(
-    isSoftFocusOnTableCellComponentFamilyState,
-    tableScopeId,
-  );
-
-  const hasSoftFocus = useRecoilValue(
-    isSoftFocusOnTableCellFamilyState(cellPosition),
-  );
-
   return (
     <RecordTableCellContainer
-      setReference={setReference}
       editHotkeyScope={customHotkeyScope}
       editModeContent={
         <FieldInput
@@ -127,9 +102,7 @@ export const RecordTableCell = ({
           isReadOnly={isReadOnly}
         />
       }
-      nonEditModeContent={
-        <FieldDisplay isHovered={hasSoftFocus} reference={reference} />
-      }
+      nonEditModeContent={<FieldDisplay />}
     />
   );
 };

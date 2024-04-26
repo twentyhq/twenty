@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -9,7 +9,6 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { AnimationDivProps } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButton.tsx';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
-import { isDefined } from '~/utils/isDefined.ts';
 
 import { useInlineCell } from '../hooks/useInlineCell';
 
@@ -103,11 +102,6 @@ type RecordInlineCellContainerProps = {
   isDisplayModeContentEmpty?: boolean;
   isDisplayModeFixHeight?: boolean;
   disableHoverEffect?: boolean;
-  isHovered?: boolean;
-  setIsHovered?: React.Dispatch<React.SetStateAction<boolean>>;
-  setReference?: React.Dispatch<
-    React.SetStateAction<HTMLDivElement | undefined>
-  >;
 };
 
 export const RecordInlineCellContainer = ({
@@ -124,28 +118,20 @@ export const RecordInlineCellContainer = ({
   editModeContentOnly,
   isDisplayModeFixHeight,
   disableHoverEffect,
-  isHovered,
-  setIsHovered,
-  setReference,
 }: RecordInlineCellContainerProps) => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
-  //TODO fix this defaultState
-  // It is used to prevent rendering when isHovered changes which cause the multiselect form to be reseted
-  const [defaultIsHovered, defaultSetIsHovered] = useState(false);
-  if (!isDefined(isHovered) || !isDefined(setIsHovered)) {
-    isHovered = defaultIsHovered;
-    setIsHovered = defaultSetIsHovered;
-  }
+  const [reference, setReference] = useState<HTMLDivElement | undefined>();
+  const [isHovered, setIsHovered] = useState(false);
 
   const handleContainerMouseEnter = () => {
     if (!readonly) {
-      setIsHovered && setIsHovered(true);
+      setIsHovered(true);
     }
   };
 
   const handleContainerMouseLeave = () => {
     if (!readonly) {
-      setIsHovered && setIsHovered(false);
+      setIsHovered(false);
     }
   };
 
@@ -166,6 +152,16 @@ export const RecordInlineCellContainer = ({
 
   const theme = useTheme();
   const labelId = `label-${entityId}-${fieldDefinition?.metadata?.fieldName}`;
+
+  const newDisplayModeContent = React.isValidElement<{
+    isHovered: boolean;
+    reference: HTMLDivElement;
+  }>(displayModeContent)
+    ? React.cloneElement(displayModeContent, {
+        isHovered,
+        reference,
+      })
+    : displayModeContent;
 
   return (
     <StyledInlineCellBaseContainer
@@ -229,7 +225,7 @@ export const RecordInlineCellContainer = ({
               isHovered={isHovered}
               emptyPlaceholder={showLabel ? 'Empty' : label}
             >
-              {displayModeContent}
+              {newDisplayModeContent}
             </RecordInlineCellDisplayMode>
             {showEditButton && (
               <StyledEditButtonContainer

@@ -6,7 +6,7 @@ export const MultiSelectFieldDisplay = ({
   isHovered,
   reference,
 }: {
-  isHovered: boolean;
+  isHovered?: boolean;
   reference?: HTMLDivElement;
 }) => {
   const { fieldValues, fieldDefinition } = useMultiSelectField();
