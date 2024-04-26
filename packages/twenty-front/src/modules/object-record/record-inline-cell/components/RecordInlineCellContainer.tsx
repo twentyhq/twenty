@@ -104,6 +104,9 @@ type RecordInlineCellContainerProps = {
   disableHoverEffect?: boolean;
   isHovered: boolean;
   setIsHovered: React.Dispatch<React.SetStateAction<boolean>>;
+  setReference?: React.Dispatch<
+    React.SetStateAction<HTMLDivElement | undefined>
+  >;
 };
 
 export const RecordInlineCellContainer = ({
@@ -122,6 +125,7 @@ export const RecordInlineCellContainer = ({
   disableHoverEffect,
   isHovered,
   setIsHovered,
+  setReference,
 }: RecordInlineCellContainerProps) => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
 
@@ -185,7 +189,12 @@ export const RecordInlineCellContainer = ({
           )}
         </StyledLabelAndIconContainer>
       )}
-      <StyledValueContainer>
+      <StyledValueContainer
+        ref={(el) => {
+          if (!el || !setReference) return;
+          setReference(el);
+        }}
+      >
         {!readonly && isInlineCellInEditMode ? (
           <RecordInlineCellEditMode>{editModeContent}</RecordInlineCellEditMode>
         ) : editModeContentOnly ? (

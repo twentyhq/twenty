@@ -1,4 +1,4 @@
-import { ReactElement, useState } from 'react';
+import { ReactElement, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { useFloating } from '@floating-ui/react';
 import { motion } from 'framer-motion';
@@ -112,13 +112,18 @@ export const ExpandableCell = ({
     // @ts-expect-error placement accepts 'start' as value even if the typing does not permit it
     placement: 'start',
     elements: { reference },
-    //middleware: [offset({ crossAxis: -1, mainAxis: -1 })],
   });
 
   const openDropdownMenu = (event: React.MouseEvent) => {
     event.stopPropagation();
     setIsDropdownMenuOpen(true);
   };
+
+  useEffect(() => {
+    if (!isHovered) {
+      setIsDropdownMenuOpen(false);
+    }
+  }, [isHovered]);
 
   return (
     <StyledContainer
