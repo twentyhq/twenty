@@ -7,10 +7,13 @@ import { Chip, ChipVariant } from 'twenty-ui';
 import { AnimationDivProps } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButton.tsx';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu.tsx';
 
+const SPACING = 1;
+const GAP_WIDTH = 4 * SPACING;
+
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(SPACING)};
   justify-content: space-between;
   width: 100%;
 `;
@@ -18,7 +21,7 @@ const StyledContainer = styled.div`
 const StyledChildrenContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(SPACING)};
   overflow: hidden;
 `;
 
@@ -52,8 +55,6 @@ export type ExpandableListProps = {
   reference?: HTMLDivElement;
 };
 
-const CHIP_CONTAINER_WIDTH = 42;
-
 export const ExpandableList = ({
   children,
   isHovered,
@@ -67,11 +68,31 @@ export const ExpandableList = ({
     {},
   );
 
+  // Because Chip width depends on the number of hidden children which depends on the Chip width, we have a circular dependency
+  // To avoid it, we fix the Chip width and make sure it can display its content (a number greater than 1)
+  const getChipContentWidth = () => {
+    if (children.length <= 1) {
+      return 0;
+    }
+    if (children.length <= 10) {
+      return 17;
+    }
+    if (children.length <= 100) {
+      return 17 + 8;
+    }
+    if (children.length <= 1000) {
+      return 17 + 8 * 2;
+    }
+    return 17 + 8 * (Math.trunc(Math.log10(children.length)) - 1);
+  };
+
+  const chipContainerWidth = getChipContentWidth() + 2 * 4; // Because Chip component has a 4px padding
+  const availableWidth = containerWidth - (chipContainerWidth + GAP_WIDTH); // Because there is a 4px gap between children and chipContainer
+
   const computeChildProperties = (index: number) => {
-    const availableWidth = containerWidth - CHIP_CONTAINER_WIDTH;
     const childWidth = childrenWidths[index];
     const cumulatedChildrenWidth = Array.from(Array(index).keys()).reduce(
-      (acc, currentIndex) => acc + childrenWidths[currentIndex],
+      (acc, currentIndex) => acc + childrenWidths[currentIndex] + GAP_WIDTH, // Because there is a 4px gap between children
       0,
     );
     if (!isHovered) {
@@ -80,7 +101,8 @@ export const ExpandableList = ({
     if (cumulatedChildrenWidth > availableWidth) {
       return { shrink: 1, isVisible: false };
     }
-    if (cumulatedChildrenWidth + childWidth <= availableWidth) {
+    if (cumulatedChildrenWidth + childWidth + GAP_WIDTH <= availableWidth) {
+      // Because there is a 4px gap between children
       return { shrink: 0, isVisible: true };
     }
     return { shrink: 1, isVisible: true };
@@ -91,8 +113,8 @@ export const ExpandableList = ({
     let result = 0;
     let cumulatedWidth = 0;
     childrenContainerWidthValues.forEach((childrenContainerWidthValue) => {
-      cumulatedWidth += childrenContainerWidthValue;
-      if (cumulatedWidth > containerWidth - CHIP_CONTAINER_WIDTH) {
+      cumulatedWidth += childrenContainerWidthValue + GAP_WIDTH; // Because there is a 4px gap between children
+      if (cumulatedWidth > availableWidth) {
         result += 1;
       }
     });
@@ -157,6 +179,7 @@ export const ExpandableList = ({
             label={`+${hiddenChildrenCount}`}
             variant={ChipVariant.Highlighted}
             onClick={openDropdownMenu}
+            width={getChipContentWidth()}
           />
         </StyledAnimatedChipContainer>
       )}
