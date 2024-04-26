@@ -69,8 +69,9 @@ export class QueryRunnerArgsFactory {
             (args as FindDuplicatesResolverArgs).id,
             fieldMetadataMap,
           ),
-          data: await this.overrideFilterByFieldMetadata(
+          data: await this.overrideDataByFieldMetadata(
             (args as FindDuplicatesResolverArgs).data,
+            options,
             fieldMetadataMap,
           ),
         };
