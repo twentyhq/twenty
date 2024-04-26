@@ -45,7 +45,14 @@ export class BlocklistValidationService {
     userId: string,
     workspaceId: string,
   ) {
-    await this.validateSchema([payload.data]);
+    //TODO: Pass the "before" inside the payload to compare the before and after
+    if (payload.data.workspaceMember) {
+      throw new BadRequestException('Workspace member cannot be updated');
+    }
+
+    if (payload.data.handle) {
+      await this.validateSchema([payload.data]);
+    }
     await this.validateUniquenessForUpdateOne(payload, userId, workspaceId);
   }
 
