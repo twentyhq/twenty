@@ -1,3 +1,5 @@
+import { BadRequestException } from '@nestjs/common';
+
 import { INPUT_REGEX } from 'src/engine/metadata-modules/utils/validate-string-input.utils';
 
 export const validateObjectRemoteServerInput = (input: object) => {
@@ -8,7 +10,7 @@ export const validateObjectRemoteServerInput = (input: object) => {
     }
 
     if (!INPUT_REGEX.test(value.toString())) {
-      throw new Error('Invalid remote server input');
+      throw new BadRequestException('Invalid remote server input');
     }
   }
 };
