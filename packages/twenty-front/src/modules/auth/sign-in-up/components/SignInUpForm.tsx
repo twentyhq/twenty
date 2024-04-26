@@ -119,13 +119,13 @@ export const SignInUpForm = () => {
 
   const theme = useTheme();
 
-  const canContinue =
-    signInUpStep === SignInUpStep.Init ||
-    (captchaProvider && !isRequestingCaptchaToken) ||
-    (signInUpStep === SignInUpStep.Email && !!form.watch('email')) ||
+  const cannotContinue =
+    (signInUpStep !== SignInUpStep.Init &&
+      captchaProvider &&
+      isRequestingCaptchaToken) ||
+    (signInUpStep === SignInUpStep.Email && !form.watch('email')) ||
     (signInUpStep === SignInUpStep.Password &&
-      form.formState.isValid &&
-      !form.formState.isSubmitting);
+      (!form.formState.isValid || form.formState.isSubmitting));
 
   return (
     <>
@@ -255,7 +255,7 @@ export const SignInUpForm = () => {
                 form.handleSubmit(submitCredentials)();
               }}
               Icon={() => form.formState.isSubmitting && <Loader />}
-              disabled={!canContinue}
+              disabled={cannotContinue}
               fullWidth
             />
           </StyledForm>
