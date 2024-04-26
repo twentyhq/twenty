@@ -84,9 +84,13 @@ export const NameFields = ({
       return;
     }
 
+    const { firstName: newFirstName, lastName: newLastName } =
+      currentWorkspaceMember.name;
+
     if (
-      currentWorkspaceMember.name?.firstName !== firstName ||
-      currentWorkspaceMember.name?.lastName !== lastName
+      (newFirstName !== firstName || newLastName !== lastName) &&
+      firstName !== '' &&
+      lastName !== ''
     ) {
       debouncedUpdate();
     }
