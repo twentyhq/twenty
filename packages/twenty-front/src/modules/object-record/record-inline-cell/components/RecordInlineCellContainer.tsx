@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { IconComponent } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { AnimationDivProps } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButton.tsx';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
@@ -215,10 +216,10 @@ export const RecordInlineCellContainer = ({
             </RecordInlineCellDisplayMode>
             {showEditButton && (
               <StyledEditButtonContainer
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.1 }}
-                whileHover={{ scale: 1.04 }}
+                initial={AnimationDivProps.initial}
+                animate={AnimationDivProps.animate}
+                transition={AnimationDivProps.transition}
+                whileHover={AnimationDivProps.whileHover}
               >
                 <RecordInlineCellButton Icon={buttonIcon} />
               </StyledEditButtonContainer>

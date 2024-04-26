@@ -4,11 +4,12 @@ import { useFloating } from '@floating-ui/react';
 import { motion } from 'framer-motion';
 import { Chip, ChipVariant, IconPencil } from 'twenty-ui';
 
+import { AnimationDivProps } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButton.tsx';
 import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconButton';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu.tsx';
 const StyledContainer = styled.div`
-  display: flex;
   align-items: center;
+  display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: space-between;
   width: 100%;
@@ -22,8 +23,8 @@ const StyledChildrenContainer = styled.div`
 `;
 
 const StyledChipContainer = styled(motion.div)`
-  display: flex;
   align-items: center;
+  display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
@@ -49,6 +50,12 @@ const StyledRelationsListContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(2)};
 `;
+
+const StyledEditButtonContainer = styled(motion.div)`
+  margin-right: 1px;
+`;
+
+const StyledAnimatedChipContainer = styled(motion.div)``;
 
 export const ExpandableCell = ({
   children,
@@ -145,14 +152,28 @@ export const ExpandableCell = ({
       {isHovered && (
         <StyledChipContainer>
           {hiddenChildrenCount > 0 && (
-            <Chip
-              label={`+${hiddenChildrenCount}`}
-              variant={ChipVariant.Highlighted}
-              onClick={openDropdownMenu}
-            />
+            <StyledAnimatedChipContainer
+              initial={AnimationDivProps.initial}
+              animate={AnimationDivProps.animate}
+              transition={AnimationDivProps.transition}
+              whileHover={AnimationDivProps.whileHover}
+            >
+              <Chip
+                label={`+${hiddenChildrenCount}`}
+                variant={ChipVariant.Highlighted}
+                onClick={openDropdownMenu}
+              />
+            </StyledAnimatedChipContainer>
           )}
 
-          <FloatingIconButton Icon={IconPencil} />
+          <StyledEditButtonContainer
+            initial={AnimationDivProps.initial}
+            animate={AnimationDivProps.animate}
+            transition={AnimationDivProps.transition}
+            whileHover={AnimationDivProps.whileHover}
+          >
+            <FloatingIconButton Icon={IconPencil} />
+          </StyledEditButtonContainer>
         </StyledChipContainer>
       )}
       {isDropdownMenuOpen && (
