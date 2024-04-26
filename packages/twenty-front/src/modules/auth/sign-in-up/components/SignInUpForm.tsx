@@ -19,6 +19,7 @@ import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ActionLink } from '@/ui/navigation/link/components/ActionLink.tsx';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
+import { isDefined } from '~/utils/isDefined';
 
 import { Logo } from '../../components/Logo';
 import { Title } from '../../components/Title';
@@ -119,14 +120,24 @@ export const SignInUpForm = () => {
 
   const theme = useTheme();
 
-  const cannotContinue =
+  const shouldWaitForCaptchaToken =
     signInUpStep !== SignInUpStep.Init &&
-    ((captchaProvider?.provider && isRequestingCaptchaToken) ||
-      (signInUpStep === SignInUpStep.Email && !form.watch('email')) ||
-      (signInUpStep === SignInUpStep.Password &&
-        (!form.formState.isValid || form.formState.isSubmitting)));
+    isDefined(captchaProvider?.provider) &&
+    isRequestingCaptchaToken;
 
-  console.log(form.formState.isValid);
+  const isEmailStepSubmitButtonDisabledCondition =
+    signInUpStep === SignInUpStep.Email &&
+    (form.watch('email').length === 0 || shouldWaitForCaptchaToken);
+
+  const isPasswordStepSubmitButtonDisabledCondition =
+    signInUpStep === SignInUpStep.Password &&
+    (!form.formState.isValid ||
+      form.formState.isSubmitting ||
+      shouldWaitForCaptchaToken);
+
+  const isSubmitButtonDisabled =
+    isEmailStepSubmitButtonDisabledCondition ||
+    isPasswordStepSubmitButtonDisabledCondition;
 
   return (
     <>
@@ -256,7 +267,7 @@ export const SignInUpForm = () => {
                 form.handleSubmit(submitCredentials)();
               }}
               Icon={() => form.formState.isSubmitting && <Loader />}
-              disabled={cannotContinue}
+              disabled={isSubmitButtonDisabled}
               fullWidth
             />
           </StyledForm>
