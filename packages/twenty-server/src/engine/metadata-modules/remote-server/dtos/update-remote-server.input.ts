@@ -13,7 +13,7 @@ import { UserMappingOptionsInput } from 'src/engine/metadata-modules/remote-serv
 @InputType()
 export class UpdateRemoteServerInput<T extends RemoteServerType> {
   @Field(() => String)
-  id: T;
+  id: string;
 
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })

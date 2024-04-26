@@ -1,5 +1,7 @@
 import { BadRequestException } from '@nestjs/common';
 
+import { isDefined } from 'class-validator';
+
 const INPUT_REGEX = /^([A-Za-z0-9\-_.@]+)$/;
 
 export const validateObjectAgainstInjections = (input: object) => {
@@ -9,9 +11,11 @@ export const validateObjectAgainstInjections = (input: object) => {
       continue;
     }
 
-    if (!value || !INPUT_REGEX.test(value.toString())) {
-      throw new BadRequestException('Invalid remote server input');
+    if (!isDefined(value)) {
+      continue;
     }
+
+    validateStringAgainstInjections(value.toString());
   }
 };
 
