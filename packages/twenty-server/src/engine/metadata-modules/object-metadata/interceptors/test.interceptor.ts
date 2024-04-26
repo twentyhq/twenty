@@ -44,7 +44,7 @@ export class TestInterceptor implements NestInterceptor {
         );
 
       console.log({
-        objectMetadataCollection,
+        objectMetadataCollection: objectMetadataCollection?.length,
       });
 
       // do something that is only important in the context of GraphQL requests
