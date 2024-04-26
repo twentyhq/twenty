@@ -3,6 +3,7 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
+import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { isClientConfigLoadedState } from '@/client-config/states/isClientConfigLoadedState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
@@ -28,6 +29,8 @@ export const ClientConfigProviderEffect = () => {
   const [isClientConfigLoaded, setIsClientConfigLoaded] = useRecoilState(
     isClientConfigLoadedState,
   );
+
+  const setCaptchaProvider = useSetRecoilState(captchaProviderState);
 
   const { data, loading } = useGetClientConfigQuery({
     skip: isClientConfigLoaded,
@@ -55,6 +58,11 @@ export const ClientConfigProviderEffect = () => {
         release: data?.clientConfig?.sentry?.release,
         environment: data?.clientConfig?.sentry?.environment,
       });
+
+      setCaptchaProvider({
+        provider: data?.clientConfig?.captcha?.provider,
+        siteKey: data?.clientConfig?.captcha?.siteKey,
+      });
     }
   }, [
     data,
@@ -68,6 +76,7 @@ export const ClientConfigProviderEffect = () => {
     setSentryConfig,
     loading,
     setIsClientConfigLoaded,
+    setCaptchaProvider,
   ]);
 
   return <></>;

@@ -16,6 +16,8 @@ export const metadata: Metadata = {
     'Discover the newest features and improvements in Twenty, the #1 open-source CRM.',
 };
 
+export const dynamic = 'force-dynamic';
+
 const Home = async () => {
   const releases = await getReleases();
   const mdxReleasesContent = await getMdxReleasesContent(releases);
