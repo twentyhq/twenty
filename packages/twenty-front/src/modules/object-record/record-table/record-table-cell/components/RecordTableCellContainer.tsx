@@ -1,4 +1,4 @@
-import React, { ReactElement, useContext, useState } from 'react';
+import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { IconArrowUpRight } from 'twenty-ui';
@@ -72,6 +72,8 @@ export const RecordTableCellContainer = ({
   const { columnIndex } = useContext(RecordTableCellContext);
   const [reference, setReference] = useState<HTMLDivElement | undefined>();
   const [isHovered, setIsHovered] = useState(false);
+  const [newNonEditModeContent, setNewNonEditModeContent] =
+    useState<ReactElement>(nonEditModeContent);
   const { isReadOnly, isSelected, recordId } = useContext(
     RecordTableRowContext,
   );
@@ -142,14 +144,25 @@ export const RecordTableCellContainer = ({
     (!isFirstColumn || !isEmpty) &&
     !isReadOnly;
 
-  const newNonEditModeContent = React.isValidElement<ExpandableListProps>(
+  /*const newNonEditModeContent = React.isValidElement<ExpandableListProps>(
     nonEditModeContent,
   )
     ? React.cloneElement(nonEditModeContent, {
         isHovered,
         reference,
       })
-    : nonEditModeContent;
+    : nonEditModeContent;*/
+
+  useEffect(() => {
+    if (React.isValidElement<ExpandableListProps>(nonEditModeContent)) {
+      setNewNonEditModeContent(
+        React.cloneElement(nonEditModeContent, {
+          isHovered: showButton,
+          reference,
+        }),
+      );
+    }
+  }, [nonEditModeContent, showButton, reference]);
 
   return (
     <StyledTd

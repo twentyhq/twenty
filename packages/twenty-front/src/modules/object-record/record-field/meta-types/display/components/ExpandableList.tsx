@@ -52,7 +52,7 @@ export type ExpandableListProps = {
   reference?: HTMLDivElement;
 };
 
-const CHIP_CONTAINER_WIDTH = 50;
+const CHIP_CONTAINER_WIDTH = 42;
 
 export const ExpandableList = ({
   children,
