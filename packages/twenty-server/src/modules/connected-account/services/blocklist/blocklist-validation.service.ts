@@ -19,10 +19,19 @@ export class BlocklistValidationService {
   ) {}
 
   public async validateBlocklist(
-    blocklist: string[],
+    blocklistHandles: string[],
     userId: string,
     workspaceId: string,
   ) {
+    await this.validateBlocklistSchema(blocklistHandles);
+    await this.validateBlocklistUniqueness(
+      blocklistHandles,
+      userId,
+      workspaceId,
+    );
+  }
+
+  public async validateBlocklistSchema(blocklistHandles: string[]) {
     const emailOrDomainSchema = z
       .string()
       .trim()
@@ -36,28 +45,39 @@ export class BlocklistValidationService {
           ),
       );
 
-    const currentWorkspaceMember =
-      await this.workspaceMemberRepository.getByIdOrFail(userId, workspaceId);
-
-    for (const handle of blocklist) {
+    for (const handle of blocklistHandles) {
       if (!handle) {
         throw new BadRequestException('Blocklist handle is required');
       }
 
       emailOrDomainSchema.parse(handle);
+    }
+  }
 
-      const blocklist =
-        await this.blocklistRepository.getByWorkspaceMemberIdAndHandle(
-          currentWorkspaceMember.id,
-          handle,
-          workspaceId,
-        );
+  public async validateBlocklistUniqueness(
+    blocklistHandles: string[],
+    userId: string,
+    workspaceId: string,
+  ) {
+    const currentWorkspaceMember =
+      await this.workspaceMemberRepository.getByIdOrFail(userId, workspaceId);
 
-      console.log('blocklist', blocklist);
+    const currentBlocklist =
+      await this.blocklistRepository.getByWorkspaceMemberId(
+        currentWorkspaceMember.id,
+        workspaceId,
+      );
 
-      if (blocklist.length > 0) {
-        throw new BadRequestException('Blocklist handle already exists');
-      }
+    const currentBlocklistHandles = currentBlocklist.map(
+      (blocklist) => blocklist.handle,
+    );
+
+    if (
+      blocklistHandles.some((handle) =>
+        currentBlocklistHandles.includes(handle),
+      )
+    ) {
+      throw new BadRequestException('Blocklist handle already exists');
     }
   }
 }
