@@ -13,11 +13,13 @@ import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMic
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
+import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ActionLink } from '@/ui/navigation/link/components/ActionLink.tsx';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
+import { isDefined } from '~/utils/isDefined';
 
 import { Logo } from '../../components/Logo';
 import { Title } from '../../components/Title';
@@ -47,6 +49,7 @@ const StyledInputContainer = styled.div`
 `;
 
 export const SignInUpForm = () => {
+  const captchaProvider = useRecoilValue(captchaProviderState);
   const isRequestingCaptchaToken = useRecoilValue(
     isRequestingCaptchaTokenState,
   );
@@ -116,6 +119,27 @@ export const SignInUpForm = () => {
   }, [signInUpMode, workspace?.displayName, isInviteMode, signInUpStep]);
 
   const theme = useTheme();
+
+  const shouldWaitForCaptchaToken =
+    signInUpStep !== SignInUpStep.Init &&
+    isDefined(captchaProvider?.provider) &&
+    isRequestingCaptchaToken;
+
+  const isEmailStepSubmitButtonDisabledCondition =
+    signInUpStep === SignInUpStep.Email &&
+    (form.watch('email').length === 0 || shouldWaitForCaptchaToken);
+
+  // TODO: isValid is actually a proxy function. If it is not rendered the first time, react might not trigger re-renders
+  // We make the isValid check synchronous and update a reactState to make sure this does not happen
+  const isPasswordStepSubmitButtonDisabledCondition =
+    signInUpStep === SignInUpStep.Password &&
+    (!form.formState.isValid ||
+      form.formState.isSubmitting ||
+      shouldWaitForCaptchaToken);
+
+  const isSubmitButtonDisabled =
+    isEmailStepSubmitButtonDisabledCondition ||
+    isPasswordStepSubmitButtonDisabledCondition;
 
   return (
     <>
@@ -245,17 +269,7 @@ export const SignInUpForm = () => {
                 form.handleSubmit(submitCredentials)();
               }}
               Icon={() => form.formState.isSubmitting && <Loader />}
-              disabled={
-                signInUpStep === SignInUpStep.Init
-                  ? false
-                  : isRequestingCaptchaToken
-                    ? true
-                    : signInUpStep === SignInUpStep.Email
-                      ? !form.watch('email')
-                      : !form.watch('email') ||
-                        !form.watch('password') ||
-                        form.formState.isSubmitting
-              }
+              disabled={isSubmitButtonDisabled}
               fullWidth
             />
           </StyledForm>
