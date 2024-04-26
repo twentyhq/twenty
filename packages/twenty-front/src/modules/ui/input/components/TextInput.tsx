@@ -1,9 +1,4 @@
-import {
-  FocusEventHandler,
-  forwardRef,
-  ForwardRefRenderFunction,
-  MutableRefObject,
-} from 'react';
+import { FocusEventHandler, forwardRef, ForwardRefRenderFunction } from 'react';
 import { Key } from 'ts-key-enum';
 
 import {
@@ -13,6 +8,7 @@ import {
 import { InputHotkeyScope } from '@/ui/input/types/InputHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
+import { isDefined } from '~/utils/isDefined';
 
 export type TextInputComponentProps = TextInputV2ComponentProps & {
   disableHotkeys?: boolean;
@@ -46,7 +42,9 @@ const TextInputComponent: ForwardRefRenderFunction<
   useScopedHotkeys(
     [Key.Escape, Key.Enter],
     () => {
-      (ref as MutableRefObject<HTMLInputElement>)?.current?.blur();
+      if (isDefined(ref) && 'current' in ref) {
+        ref.current?.blur();
+      }
     },
     InputHotkeyScope.TextInput,
     { enabled: !disableHotkeys },
