@@ -39,8 +39,8 @@ import {
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { validateString } from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-input';
 import { InvalidStringException } from 'src/engine/metadata-modules/errors/InvalidStringException';
+import { validateMetadataName } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 
 import {
   FieldMetadataEntity,
@@ -543,7 +543,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   >(fieldMetadataInput: T): T {
     if (fieldMetadataInput.name) {
       try {
-        validateString(fieldMetadataInput.name);
+        validateMetadataName(fieldMetadataInput.name);
       } catch (error) {
         if (error instanceof InvalidStringException) {
           throw new BadRequestException(

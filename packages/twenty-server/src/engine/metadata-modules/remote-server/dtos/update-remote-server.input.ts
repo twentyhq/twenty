@@ -11,14 +11,15 @@ import {
 import { UserMappingOptionsInput } from 'src/engine/metadata-modules/remote-server/utils/user-mapping-options-input.utils';
 
 @InputType()
-export class CreateRemoteServerInput<T extends RemoteServerType> {
+export class UpdateRemoteServerInput<T extends RemoteServerType> {
   @Field(() => String)
-  foreignDataWrapperType: T;
+  id: string;
 
-  @Field(() => GraphQLJSON)
-  foreignDataWrapperOptions: ForeignDataWrapperOptions<T>;
+  @IsOptional()
+  @Field(() => GraphQLJSON, { nullable: true })
+  foreignDataWrapperOptions?: Partial<ForeignDataWrapperOptions<T>>;
 
   @IsOptional()
   @Field(() => UserMappingOptionsInput, { nullable: true })
-  userMappingOptions?: UserMappingOptions;
+  userMappingOptions?: Partial<UserMappingOptions>;
 }
