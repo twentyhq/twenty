@@ -120,12 +120,13 @@ export const SignInUpForm = () => {
   const theme = useTheme();
 
   const cannotContinue =
-    (signInUpStep !== SignInUpStep.Init &&
-      captchaProvider &&
-      isRequestingCaptchaToken) ||
-    (signInUpStep === SignInUpStep.Email && !form.watch('email')) ||
-    (signInUpStep === SignInUpStep.Password &&
-      (!form.formState.isValid || form.formState.isSubmitting));
+    signInUpStep !== SignInUpStep.Init &&
+    ((captchaProvider?.provider && isRequestingCaptchaToken) ||
+      (signInUpStep === SignInUpStep.Email && !form.watch('email')) ||
+      (signInUpStep === SignInUpStep.Password &&
+        (!form.formState.isValid || form.formState.isSubmitting)));
+
+  console.log(form.formState.isSubmitting);
 
   return (
     <>
