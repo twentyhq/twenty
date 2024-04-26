@@ -6,9 +6,8 @@ export function useCachedMetadata(): Plugin {
   const computeCacheKey = (serverContext: any) => {
     const workspaceId = serverContext.req.workspace?.id ?? 'anonymous';
     const cacheVersion = serverContext.req.cacheVersion ?? '0';
-    const url = serverContext.req.baseUrl;
 
-    return `${workspaceId}:${cacheVersion}:${url}`;
+    return `${workspaceId}:${cacheVersion}`;
   };
 
   return {
