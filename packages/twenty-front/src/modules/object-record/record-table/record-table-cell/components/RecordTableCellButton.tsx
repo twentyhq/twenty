@@ -5,8 +5,7 @@ import { IconComponent } from 'twenty-ui';
 import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconButton';
 
 const StyledEditButtonContainer = styled(motion.div)`
-  position: absolute;
-  right: 5px;
+  margin: ${({ theme }) => theme.spacing(1)};
 `;
 
 type RecordTableCellButtonProps = {

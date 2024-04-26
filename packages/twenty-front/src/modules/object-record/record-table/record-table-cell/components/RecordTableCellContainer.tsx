@@ -1,4 +1,4 @@
-import { ReactElement, useContext } from 'react';
+import { ReactElement, useContext, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { IconArrowUpRight } from 'twenty-ui';
@@ -33,7 +33,7 @@ const StyledTd = styled.td<{ isSelected: boolean; isInEditMode: boolean }>`
   z-index: ${({ isInEditMode }) => (isInEditMode ? '4 !important' : '3')};
 `;
 
-const StyledCellBaseContainer = styled.div`
+const StyledCellBaseContainer = styled.div<{ softFocus: boolean }>`
   align-items: center;
   box-sizing: border-box;
   cursor: pointer;
@@ -41,11 +41,15 @@ const StyledCellBaseContainer = styled.div`
   height: 32px;
   position: relative;
   user-select: none;
+  ${(props) =>
+    props.softFocus
+      ? `background: ${props.theme.background.transparent.secondary};
+      border-radius: ${props.theme.border.radius.sm};
+      outline: 1px solid ${props.theme.font.color.extraLight};`
+      : ''}
 `;
 
 export type RecordTableCellContainerProps = {
-  isHovered: boolean;
-  setIsHovered: React.Dispatch<React.SetStateAction<boolean>>;
   editModeContent: ReactElement;
   nonEditModeContent: ReactElement;
   editHotkeyScope?: HotkeyScope;
@@ -63,14 +67,13 @@ const DEFAULT_CELL_SCOPE: HotkeyScope = {
 };
 
 export const RecordTableCellContainer = ({
-  isHovered,
-  setIsHovered,
   setReference,
   editModeContent,
   nonEditModeContent,
   editHotkeyScope,
 }: RecordTableCellContainerProps) => {
   const { columnIndex } = useContext(RecordTableCellContext);
+  const [isHovered, setIsHovered] = useState(false);
   const { isReadOnly, isSelected, recordId } = useContext(
     RecordTableRowContext,
   );
@@ -157,33 +160,34 @@ export const RecordTableCellContainer = ({
         <StyledCellBaseContainer
           onMouseEnter={handleContainerMouseEnter}
           onMouseLeave={handleContainerMouseLeave}
+          softFocus={hasSoftFocus}
         >
           {isCurrentTableCellInEditMode ? (
             <RecordTableCellEditMode>{editModeContent}</RecordTableCellEditMode>
           ) : hasSoftFocus ? (
             <>
-              {showButton && (
-                <RecordTableCellButton
-                  onClick={handleButtonClick}
-                  Icon={buttonIcon}
-                />
-              )}
               <RecordTableCellSoftFocusMode>
                 {editModeContentOnly ? editModeContent : nonEditModeContent}
               </RecordTableCellSoftFocusMode>
-            </>
-          ) : (
-            <>
               {showButton && (
                 <RecordTableCellButton
                   onClick={handleButtonClick}
                   Icon={buttonIcon}
                 />
               )}
+            </>
+          ) : (
+            <>
               {!isEmpty && (
                 <RecordTableCellDisplayMode>
                   {editModeContentOnly ? editModeContent : nonEditModeContent}
                 </RecordTableCellDisplayMode>
+              )}
+              {showButton && (
+                <RecordTableCellButton
+                  onClick={handleButtonClick}
+                  Icon={buttonIcon}
+                />
               )}
             </>
           )}
