@@ -22,8 +22,8 @@ export class BlocklistUpdateOnePreQueryHook implements WorkspacePreQueryHook {
       }
     >,
   ): Promise<void> {
-    await this.blocklistValidationService.validateBlocklist(
-      [payload.data.handle],
+    await this.blocklistValidationService.validateBlocklistForUpdateOne(
+      payload,
       userId,
       workspaceId,
     );

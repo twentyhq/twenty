@@ -22,8 +22,8 @@ export class BlocklistCreateManyPreQueryHook implements WorkspacePreQueryHook {
       }
     >,
   ): Promise<void> {
-    await this.blocklistValidationService.validateBlocklist(
-      payload.data.map((blocklist) => blocklist.handle),
+    await this.blocklistValidationService.validateBlocklistForCreateMany(
+      payload,
       userId,
       workspaceId,
     );
