@@ -126,7 +126,7 @@ export const SignInUpForm = () => {
       (signInUpStep === SignInUpStep.Password &&
         (!form.formState.isValid || form.formState.isSubmitting)));
 
-  console.log(form.formState.isSubmitting);
+  console.log(form.formState.isValid);
 
   return (
     <>
