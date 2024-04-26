@@ -13,35 +13,29 @@ import { callMutation, callQuery } from '../utils/requestDb';
 export const fetchCompany = async (
   companyfilerInput: CompanyFilterInput,
 ): Promise<Company | null> => {
-  try {
-    const data = await callQuery<FindCompanyResponse>(FIND_COMPANY, {
-      filter: {
-        ...companyfilerInput,
-      },
-    });
-    if (isDefined(data?.companies.edges)) {
-      return data?.companies.edges.length > 0
-        ? data?.companies.edges[0].node
-        : null;
-    }
-    return null;
-  } catch (error) {
-    return null;
+  const data = await callQuery<FindCompanyResponse>(FIND_COMPANY, {
+    filter: {
+      ...companyfilerInput,
+    },
+  });
+  if (isDefined(data?.companies.edges)) {
+    return data.companies.edges.length > 0
+      ? isDefined(data.companies.edges[0].node)
+        ? data.companies.edges[0].node
+        : null
+      : null;
   }
+  return null;
 };
 
 export const createCompany = async (
   company: CompanyInput,
 ): Promise<string | null> => {
-  try {
-    const data = await callMutation<CreateCompanyResponse>(CREATE_COMPANY, {
-      input: company,
-    });
-    if (isDefined(data)) {
-      return data.createCompany.id;
-    }
-    return null;
-  } catch (error) {
-    return null;
+  const data = await callMutation<CreateCompanyResponse>(CREATE_COMPANY, {
+    input: company,
+  });
+  if (isDefined(data)) {
+    return data.createCompany.id;
   }
+  return null;
 };

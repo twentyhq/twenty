@@ -7,6 +7,7 @@ import { FieldMetadataInterface } from './field-metadata.interface';
 export class ObjectMetadataInterface {
   @Field(() => String)
   id: string;
+  standardId?: string | null;
 
   @Field(() => String)
   nameSingular: string;

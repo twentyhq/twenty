@@ -63,6 +63,8 @@ export const SettingsAccountsCalendars = () => {
           : '',
         avatarUrl: currentWorkspaceMember?.avatarUrl || '',
         handle: '',
+        personId: '',
+        workspaceMemberId: currentWorkspaceMember?.id || '',
       },
     ],
     endsAt: exampleEndDate.toISOString(),

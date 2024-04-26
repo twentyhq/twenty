@@ -96,6 +96,14 @@ export class BillingService {
     return notCanceledSubscriptions?.[0];
   }
 
+  async getStripeCustomerId(workspaceId: string) {
+    const subscriptions = await this.billingSubscriptionRepository.find({
+      where: { workspaceId },
+    });
+
+    return subscriptions?.[0]?.stripeCustomerId;
+  }
+
   async getBillingSubscriptionItem(
     workspaceId: string,
     stripeProductId = this.environmentService.get(
@@ -131,11 +139,9 @@ export class BillingService {
     workspaceId: string,
     returnUrlPath?: string,
   ) {
-    const billingSubscription = await this.getCurrentBillingSubscription({
-      workspaceId,
-    });
+    const stripeCustomerId = await this.getStripeCustomerId(workspaceId);
 
-    if (!billingSubscription) {
+    if (!stripeCustomerId) {
       return;
     }
 
@@ -145,7 +151,7 @@ export class BillingService {
       : frontBaseUrl;
 
     const session = await this.stripeService.createBillingPortalSession(
-      billingSubscription.stripeCustomerId,
+      stripeCustomerId,
       returnUrl,
     );
 

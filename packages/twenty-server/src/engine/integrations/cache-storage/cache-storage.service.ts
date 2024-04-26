@@ -55,9 +55,11 @@ export class CacheStorageService {
     return this.get(key).then((res: string[]) => {
       if (res) {
         this.set(key, res.slice(0, -size));
+
+        return res.slice(-size);
       }
 
-      return res;
+      return [];
     });
   }
 

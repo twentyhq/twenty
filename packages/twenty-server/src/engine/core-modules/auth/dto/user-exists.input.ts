@@ -1,6 +1,6 @@
 import { ArgsType, Field } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 @ArgsType()
 export class CheckUserExistsInput {
@@ -8,4 +8,9 @@ export class CheckUserExistsInput {
   @IsString()
   @IsNotEmpty()
   email: string;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  captchaToken?: string;
 }
