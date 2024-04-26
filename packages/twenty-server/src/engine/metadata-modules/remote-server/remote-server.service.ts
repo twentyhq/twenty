@@ -251,10 +251,7 @@ export class RemoteServerService<T extends RemoteServerType> {
 
   private async updateRemoteServer(
     remoteServerToUpdate: DeepPartial<RemoteServerEntity<RemoteServerType>> &
-      Pick<
-        RemoteServerEntity<RemoteServerType>,
-        'workspaceId' | 'id' | 'foreignDataWrapperId'
-      >,
+      Pick<RemoteServerEntity<RemoteServerType>, 'workspaceId' | 'id'>,
   ): Promise<RemoteServerEntity<RemoteServerType>> {
     const [parameters, rawQuery] =
       updateRemoteServerRawQuery(remoteServerToUpdate);

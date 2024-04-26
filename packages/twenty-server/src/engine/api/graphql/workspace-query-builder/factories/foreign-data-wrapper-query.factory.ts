@@ -30,13 +30,13 @@ export class ForeignDataWrapperQueryFactory {
   }: {
     foreignDataWrapperId: string;
     foreignDataWrapperType: RemoteServerType;
-    foreignDataWrapperOptions?: Partial<
+    foreignDataWrapperOptions: Partial<
       ForeignDataWrapperOptions<RemoteServerType>
     >;
   }) {
     const options = this.buildUpdateOptionsFromType(
-      foreignDataWrapperOptions,
       foreignDataWrapperType,
+      foreignDataWrapperOptions,
     );
 
     return `ALTER SERVER "${foreignDataWrapperId}" OPTIONS (${options})`;
@@ -73,21 +73,18 @@ export class ForeignDataWrapperQueryFactory {
   }
 
   private buildUpdateOptionsFromType(
-    foreignDataWrapperOptions?: Partial<
+    foreignDataWrapperType: RemoteServerType,
+    foreignDataWrapperOptions: Partial<
       ForeignDataWrapperOptions<RemoteServerType>
     >,
-    foreignDataWrapperType?: RemoteServerType,
   ) {
-    if (
-      isDefined(foreignDataWrapperType) &&
-      foreignDataWrapperType !== RemoteServerType.POSTGRES_FDW
-    ) {
+    if (foreignDataWrapperType !== RemoteServerType.POSTGRES_FDW) {
       throw new Error('Foreign data wrapper type not supported');
     }
     const setStatements: string[] = [];
 
     if (isDefined(foreignDataWrapperOptions?.dbname)) {
-      setStatements.push(`SET dbname '${foreignDataWrapperOptions?.dbname}'`);
+      setStatements.push(`SET dbname '${foreignDataWrapperOptions.dbname}'`);
     }
 
     if (isDefined(foreignDataWrapperOptions?.host)) {

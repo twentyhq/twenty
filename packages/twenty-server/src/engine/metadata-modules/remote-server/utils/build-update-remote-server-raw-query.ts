@@ -11,10 +11,7 @@ export type DeepPartial<T> = {
 
 export const updateRemoteServerRawQuery = (
   remoteServerToUpdate: DeepPartial<RemoteServerEntity<RemoteServerType>> &
-    Pick<
-      RemoteServerEntity<RemoteServerType>,
-      'workspaceId' | 'id' | 'foreignDataWrapperId'
-    >,
+    Pick<RemoteServerEntity<RemoteServerType>, 'workspaceId' | 'id'>,
 ): [any[], string] => {
   const parameters: any[] = [remoteServerToUpdate.id];
   const parametersPositions = {};
