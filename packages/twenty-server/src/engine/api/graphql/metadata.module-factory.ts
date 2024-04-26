@@ -8,6 +8,7 @@ import { useThrottler } from 'src/engine/api/graphql/graphql-config/hooks/use-th
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
 import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
+import { useCachedMetadata } from 'src/engine/api/graphql/graphql-config/hooks/use-cached-metadata';
 
 export const metadataModuleFactory = async (
   environmentService: EnvironmentService,
@@ -32,6 +33,7 @@ export const metadataModuleFactory = async (
       useExceptionHandler({
         exceptionHandlerService,
       }),
+      useCachedMetadata(),
     ],
     path: '/metadata',
     context: () => ({
