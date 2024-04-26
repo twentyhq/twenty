@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -9,6 +9,7 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { AnimationDivProps } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButton.tsx';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
+import { isDefined } from '~/utils/isDefined.ts';
 
 import { useInlineCell } from '../hooks/useInlineCell';
 
@@ -102,8 +103,8 @@ type RecordInlineCellContainerProps = {
   isDisplayModeContentEmpty?: boolean;
   isDisplayModeFixHeight?: boolean;
   disableHoverEffect?: boolean;
-  isHovered: boolean;
-  setIsHovered: React.Dispatch<React.SetStateAction<boolean>>;
+  isHovered?: boolean;
+  setIsHovered?: React.Dispatch<React.SetStateAction<boolean>>;
   setReference?: React.Dispatch<
     React.SetStateAction<HTMLDivElement | undefined>
   >;
@@ -128,16 +129,23 @@ export const RecordInlineCellContainer = ({
   setReference,
 }: RecordInlineCellContainerProps) => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
+  //TODO fix this defaultState
+  // It is used to prevent rendering when isHovered changes which cause the multiselect form to be reseted
+  const [defaultIsHovered, defaultSetIsHovered] = useState(false);
+  if (!isDefined(isHovered) || !isDefined(setIsHovered)) {
+    isHovered = defaultIsHovered;
+    setIsHovered = defaultSetIsHovered;
+  }
 
   const handleContainerMouseEnter = () => {
     if (!readonly) {
-      setIsHovered(true);
+      setIsHovered && setIsHovered(true);
     }
   };
 
   const handleContainerMouseLeave = () => {
     if (!readonly) {
-      setIsHovered(false);
+      setIsHovered && setIsHovered(false);
     }
   };
 
