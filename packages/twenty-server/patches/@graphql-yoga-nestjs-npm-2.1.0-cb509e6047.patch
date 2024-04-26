@@ -31,8 +31,8 @@ index 16843949d8589a299d8195b0a349ac4dac0bacbf..21e7fe2bbcba36b04a274be9d2219fd3
          const yoga = (0, graphql_yoga_1.createYoga)({
              ...options,
 +            schema: async (request) => {
-+                const workspaceId = request.req.workspace.id
-+                const workspaceCacheVersion = request.req.cacheVersion
++                const workspaceId = request.req.workspace?.id ?? 'anonymous'
++                const workspaceCacheVersion = request.req.cacheVersion ?? '0'
 +                const url = request.req.baseUrl
 +
 +                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${url}`
@@ -77,8 +77,8 @@ index 16843949d8589a299d8195b0a349ac4dac0bacbf..21e7fe2bbcba36b04a274be9d2219fd3
          const yoga = (0, graphql_yoga_1.createYoga)({
              ...options,
 +            schema: async (request) => {
-+                const workspaceId = request.req.workspace.id
-+                const workspaceCacheVersion = request.req.cacheVersion
++                const workspaceId = request.req.workspace?.id ?? 'anonymous'
++                const workspaceCacheVersion = request.req.cacheVersion ?? '0'
 +                const url = request.req.baseUrl
 +
 +                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${url}`
@@ -143,8 +143,8 @@ index 7068c519320b379917c46763cd280b1cdd3e48f0..418e1030373fc1e0fb85a932ac8da9b3
          const yoga = createYoga({
              ...options,
 +            schema: async (request) => {
-+                const workspaceId = request.req.workspace.id
-+                const workspaceCacheVersion = request.req.cacheVersion
++                const workspaceId = request.req.workspace?.id ?? 'anonymous'
++                const workspaceCacheVersion = request.req.cacheVersion ?? '0'
 +                const url = request.req.baseUrl
 +
 +                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${url}`
@@ -189,8 +189,8 @@ index 7068c519320b379917c46763cd280b1cdd3e48f0..418e1030373fc1e0fb85a932ac8da9b3
          const yoga = createYoga({
              ...options,
 +            schema: async (request) => {
-+                const workspaceId = request.req.workspace.id
-+                const workspaceCacheVersion = request.req.cacheVersion
++                const workspaceId = request.req.workspace?.id ?? 'anonymous'
++                const workspaceCacheVersion = request.req.cacheVersion ?? '0'
 +                const url = request.req.baseUrl
 +
 +                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${url}`

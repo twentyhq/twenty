@@ -48,7 +48,7 @@ export const useThrottler = (
               {
                 max: options?.limit,
                 window: `${options?.ttl}s`,
-                message: interpolate('Too much request.', {
+                message: interpolate('Too many request.', {
                   id,
                 }),
               },
