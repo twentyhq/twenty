@@ -24,7 +24,7 @@ export function useCachedMetadata(): Plugin {
         return endResponse(earlyResponse);
       }
     },
-    async onResponse({ response, serverContext }) {
+    onResponse: async ({ response, serverContext }) => {
       const cacheKey = computeCacheKey(serverContext);
 
       const foundInCache = cache.has(cacheKey);
