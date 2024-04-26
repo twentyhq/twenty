@@ -52,6 +52,8 @@ export type ExpandableListProps = {
   reference?: HTMLDivElement;
 };
 
+const CHIP_CONTAINER_WIDTH = 50;
+
 export const ExpandableList = ({
   children,
   isHovered,
@@ -65,10 +67,8 @@ export const ExpandableList = ({
     {},
   );
 
-  const chipContainerWidth = 52;
-
   const computeChildProperties = (index: number) => {
-    const availableWidth = containerWidth - chipContainerWidth;
+    const availableWidth = containerWidth - CHIP_CONTAINER_WIDTH;
     const childWidth = childrenWidths[index];
     const cumulatedChildrenWidth = Array.from(Array(index).keys()).reduce(
       (acc, currentIndex) => acc + childrenWidths[currentIndex],
@@ -92,7 +92,7 @@ export const ExpandableList = ({
     let cumulatedWidth = 0;
     childrenContainerWidthValues.forEach((childrenContainerWidthValue) => {
       cumulatedWidth += childrenContainerWidthValue;
-      if (cumulatedWidth > containerWidth - chipContainerWidth) {
+      if (cumulatedWidth > containerWidth - CHIP_CONTAINER_WIDTH) {
         result += 1;
       }
     });
