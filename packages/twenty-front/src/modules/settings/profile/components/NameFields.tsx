@@ -84,11 +84,11 @@ export const NameFields = ({
       return;
     }
 
-    const { firstName: newFirstName, lastName: newLastName } =
+    const { firstName: currentFirstName, lastName: currentLastName } =
       currentWorkspaceMember.name;
 
     if (
-      (newFirstName !== firstName || newLastName !== lastName) &&
+      (currentFirstName !== firstName || currentLastName !== lastName) &&
       firstName !== '' &&
       lastName !== ''
     ) {
