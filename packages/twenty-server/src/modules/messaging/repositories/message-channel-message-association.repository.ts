@@ -79,16 +79,22 @@ export class MessageChannelMessageAssociationRepository {
 
     const isHandleDomain = messageParticipantHandle.startsWith('@');
 
-    const handleComparison = isHandleDomain ? 'ILIKE %$1' : '= $1';
-
     const messageChannelMessageAssociationIdsToDelete =
       await this.workspaceDataSourceService.executeRawQuery(
         `SELECT "messageChannelMessageAssociation".id
       FROM ${dataSourceSchema}."messageChannelMessageAssociation" "messageChannelMessageAssociation"
       JOIN ${dataSourceSchema}."message" ON "messageChannelMessageAssociation"."messageId" = ${dataSourceSchema}."message"."id"
       JOIN ${dataSourceSchema}."messageParticipant" "messageParticipant" ON ${dataSourceSchema}."message"."id" = "messageParticipant"."messageId"
-      WHERE "messageParticipant"."handle" ${handleComparison} AND "messageParticipant"."role"= ANY($2) AND "messageChannelMessageAssociation"."messageChannelId" = ANY($3)`,
-        [messageParticipantHandle, rolesToDelete, messageChannelIds],
+      WHERE "messageParticipant"."handle" ${
+        isHandleDomain ? 'ILIKE' : '='
+      } $1 AND "messageParticipant"."role" = ANY($2) AND "messageChannelMessageAssociation"."messageChannelId" = ANY($3)`,
+        [
+          isHandleDomain
+            ? `%${messageParticipantHandle}`
+            : messageParticipantHandle,
+          rolesToDelete,
+          messageChannelIds,
+        ],
         workspaceId,
         transactionManager,
       );
