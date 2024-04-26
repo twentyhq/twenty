@@ -66,7 +66,6 @@ import { ObjectMetadataDTO } from './dtos/object-metadata.dto';
     }),
   ],
   providers: [ObjectMetadataService, ObjectMetadataResolver],
-
   exports: [ObjectMetadataService],
 })
 export class ObjectMetadataModule {}
