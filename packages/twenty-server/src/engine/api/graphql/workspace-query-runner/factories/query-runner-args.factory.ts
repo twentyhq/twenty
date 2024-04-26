@@ -86,7 +86,7 @@ export class QueryRunnerArgsFactory {
     fieldMetadataMap: Map<string, FieldMetadataInterface>,
   ) {
     if (!data) {
-      return data;
+      return;
     }
 
     const createArgPromiseByArgKey = Object.entries(data).map(
@@ -128,7 +128,7 @@ export class QueryRunnerArgsFactory {
     fieldMetadataMap: Map<string, FieldMetadataInterface>,
   ) {
     if (!filter) {
-      return filter;
+      return;
     }
 
     const createArgPromiseByArgKey = Object.entries(filter).map(
