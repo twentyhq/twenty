@@ -142,7 +142,7 @@ export const ExpandableList = ({
   return (
     <StyledContainer
       ref={(el) => {
-        if (!el || containerWidth > 0) return;
+        if (!el) return;
         setContainerWidth(el.getBoundingClientRect().width);
       }}
     >
@@ -152,7 +152,7 @@ export const ExpandableList = ({
           return (
             <StyledChildContainer
               ref={(el) => {
-                if (!el || childrenWidths[index] > 0) return;
+                if (!el) return;
                 setChildrenWidths((prevState) => {
                   prevState[index] = el.getBoundingClientRect().width;
                   return prevState;
