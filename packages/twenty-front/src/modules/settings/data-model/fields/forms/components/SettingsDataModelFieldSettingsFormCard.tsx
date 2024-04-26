@@ -67,13 +67,13 @@ const previewableTypes = [
   FieldMetadataType.Select,
   FieldMetadataType.MultiSelect,
   FieldMetadataType.Link,
+  FieldMetadataType.Links,
   FieldMetadataType.Number,
   FieldMetadataType.Rating,
   FieldMetadataType.Relation,
   FieldMetadataType.Text,
   FieldMetadataType.Address,
   FieldMetadataType.RawJson,
-  FieldMetadataType.Domain,
 ];
 
 export const SettingsDataModelFieldSettingsFormCard = ({

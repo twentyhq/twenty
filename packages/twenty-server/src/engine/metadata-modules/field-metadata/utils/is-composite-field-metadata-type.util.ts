@@ -7,12 +7,12 @@ export const isCompositeFieldMetadataType = (
   | FieldMetadataType.CURRENCY
   | FieldMetadataType.FULL_NAME
   | FieldMetadataType.ADDRESS
-  | FieldMetadataType.DOMAIN => {
+  | FieldMetadataType.LINKS => {
   return [
     FieldMetadataType.LINK,
     FieldMetadataType.CURRENCY,
     FieldMetadataType.FULL_NAME,
     FieldMetadataType.ADDRESS,
-    FieldMetadataType.DOMAIN,
+    FieldMetadataType.LINKS,
   ].includes(type);
 };

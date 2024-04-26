@@ -7,12 +7,12 @@ import { isFieldCurrency } from '@/object-record/record-field/types/guards/isFie
 import { isFieldCurrencyValue } from '@/object-record/record-field/types/guards/isFieldCurrencyValue';
 import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
 import { isFieldDateTime } from '@/object-record/record-field/types/guards/isFieldDateTime';
-import { isFieldDomain } from '@/object-record/record-field/types/guards/isFieldDomain';
-import { isFieldDomainValue } from '@/object-record/record-field/types/guards/isFieldDomainValue';
 import { isFieldEmail } from '@/object-record/record-field/types/guards/isFieldEmail';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
 import { isFieldLink } from '@/object-record/record-field/types/guards/isFieldLink';
+import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
+import { isFieldLinksValue } from '@/object-record/record-field/types/guards/isFieldLinksValue';
 import { isFieldLinkValue } from '@/object-record/record-field/types/guards/isFieldLinkValue';
 import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
 import { isFieldMultiSelectValue } from '@/object-record/record-field/types/guards/isFieldMultiSelectValue';
@@ -97,9 +97,9 @@ export const isFieldValueEmpty = ({
     );
   }
 
-  if (isFieldDomain(fieldDefinition)) {
+  if (isFieldLinks(fieldDefinition)) {
     return (
-      !isFieldDomainValue(fieldValue) || isValueEmpty(fieldValue.primaryLink)
+      !isFieldLinksValue(fieldValue) || isValueEmpty(fieldValue.primaryLinkUrl)
     );
   }
 

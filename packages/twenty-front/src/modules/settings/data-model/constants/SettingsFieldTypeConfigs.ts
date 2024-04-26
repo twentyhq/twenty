@@ -17,7 +17,6 @@ import {
   IconTextSize,
   IconTwentyStar,
   IconUser,
-  IconWorldWww,
 } from 'twenty-ui';
 
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
@@ -62,6 +61,11 @@ export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
     label: 'Link',
     Icon: IconLink,
     defaultValue: { url: 'www.twenty.com', label: '' },
+  },
+  [FieldMetadataType.Links]: {
+    label: 'Links',
+    Icon: IconLink,
+    defaultValue: { primaryLinkUrl: 'twenty.com', primaryLinkLabel: '' },
   },
   [FieldMetadataType.Boolean]: {
     label: 'True/False',
@@ -130,10 +134,5 @@ export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
     label: 'JSON',
     Icon: IconJson,
     defaultValue: `{ "key": "value" }`,
-  },
-  [FieldMetadataType.Domain]: {
-    label: 'Domain',
-    Icon: IconWorldWww,
-    defaultValue: { primaryLink: 'twenty.com' },
   },
 };

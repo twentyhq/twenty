@@ -142,6 +142,5 @@ export {
   IconVideo,
   IconWand,
   IconWorld,
-  IconWorldWww,
   IconX,
 } from '@tabler/icons-react';

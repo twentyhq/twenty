@@ -10,7 +10,7 @@ import {
   FieldMetadataDefaultValueString,
   FieldMetadataDefaultValueUuidFunction,
   FieldMetadataDefaultValueNowFunction,
-  FieldMetadataDefaultValueDomain,
+  FieldMetadataDefaultValueLinks,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
@@ -37,6 +37,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.NUMERIC]: FieldMetadataDefaultValueString;
   [FieldMetadataType.PROBABILITY]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.LINK]: FieldMetadataDefaultValueLink;
+  [FieldMetadataType.LINKS]: FieldMetadataDefaultValueLinks;
   [FieldMetadataType.CURRENCY]: FieldMetadataDefaultValueCurrency;
   [FieldMetadataType.FULL_NAME]: FieldMetadataDefaultValueFullName;
   [FieldMetadataType.ADDRESS]: FieldMetadataDefaultValueAddress;
@@ -44,7 +45,6 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.SELECT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.MULTI_SELECT]: FieldMetadataDefaultValueString;
   [FieldMetadataType.RAW_JSON]: FieldMetadataDefaultValueRawJson;
-  [FieldMetadataType.DOMAIN]: FieldMetadataDefaultValueDomain;
 };
 
 export type FieldMetadataClassValidation =

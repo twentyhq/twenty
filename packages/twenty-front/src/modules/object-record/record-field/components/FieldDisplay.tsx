@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
-import { DomainFieldDisplay } from '@/object-record/record-field/meta-types/display/components/DomainFieldDisplay.tsx';
-import { isFieldDomain } from '@/object-record/record-field/types/guards/isFieldDomain.ts';
+import { LinksFieldDisplay } from '@/object-record/record-field/meta-types/display/components/LinksFieldDisplay';
+import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 
 import { FieldContext } from '../contexts/FieldContext';
 import { AddressFieldDisplay } from '../meta-types/display/components/AddressFieldDisplay';
@@ -65,6 +65,8 @@ export const FieldDisplay = () => {
     <NumberFieldDisplay />
   ) : isFieldLink(fieldDefinition) ? (
     <LinkFieldDisplay />
+  ) : isFieldLinks(fieldDefinition) ? (
+    <LinksFieldDisplay />
   ) : isFieldCurrency(fieldDefinition) ? (
     <CurrencyFieldDisplay />
   ) : isFieldFullName(fieldDefinition) ? (
@@ -77,7 +79,5 @@ export const FieldDisplay = () => {
     <AddressFieldDisplay />
   ) : isFieldRawJson(fieldDefinition) ? (
     <JsonFieldDisplay />
-  ) : isFieldDomain(fieldDefinition) ? (
-    <DomainFieldDisplay />
   ) : null;
 };

@@ -2,15 +2,15 @@ import { useContext } from 'react';
 
 import { AddressFieldInput } from '@/object-record/record-field/meta-types/input/components/AddressFieldInput';
 import { DateFieldInput } from '@/object-record/record-field/meta-types/input/components/DateFieldInput';
-import { DomainFieldInput } from '@/object-record/record-field/meta-types/input/components/DomainFieldInput';
 import { FullNameFieldInput } from '@/object-record/record-field/meta-types/input/components/FullNameFieldInput';
+import { LinksFieldInput } from '@/object-record/record-field/meta-types/input/components/LinksFieldInput';
 import { MultiSelectFieldInput } from '@/object-record/record-field/meta-types/input/components/MultiSelectFieldInput.tsx';
 import { RawJsonFieldInput } from '@/object-record/record-field/meta-types/input/components/RawJsonFieldInput';
 import { SelectFieldInput } from '@/object-record/record-field/meta-types/input/components/SelectFieldInput';
 import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
 import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
-import { isFieldDomain } from '@/object-record/record-field/types/guards/isFieldDomain';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
+import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
@@ -133,6 +133,14 @@ export const FieldInput = ({
           onTab={onTab}
           onShiftTab={onShiftTab}
         />
+      ) : isFieldLinks(fieldDefinition) ? (
+        <LinksFieldInput
+          onEnter={onEnter}
+          onEscape={onEscape}
+          onClickOutside={onClickOutside}
+          onTab={onTab}
+          onShiftTab={onShiftTab}
+        />
       ) : isFieldCurrency(fieldDefinition) ? (
         <CurrencyFieldInput
           onEnter={onEnter}
@@ -159,14 +167,6 @@ export const FieldInput = ({
         />
       ) : isFieldRawJson(fieldDefinition) ? (
         <RawJsonFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
-      ) : isFieldDomain(fieldDefinition) ? (
-        <DomainFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
           onClickOutside={onClickOutside}

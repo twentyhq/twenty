@@ -45,6 +45,11 @@ export type FieldLinkMetadata = {
   fieldName: string;
 };
 
+export type FieldLinksMetadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
+};
+
 export type FieldCurrencyMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
@@ -85,11 +90,6 @@ export type FieldRawJsonMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
   placeHolder: string;
-};
-
-export type FieldDomainMetadata = {
-  objectMetadataNameSingular?: string;
-  fieldName: string;
 };
 
 export type FieldDefinitionRelationType =
@@ -148,9 +148,10 @@ export type FieldBooleanValue = boolean;
 export type FieldPhoneValue = string;
 export type FieldEmailValue = string;
 export type FieldLinkValue = { url: string; label: string };
-export type FieldDomainValue = {
-  primaryLink: string;
-  secondaryLinks?: string[] | null;
+export type FieldLinksValue = {
+  primaryLinkLabel: string;
+  primaryLinkUrl: string;
+  secondaryLinks?: string | null;
 };
 export type FieldCurrencyValue = {
   currencyCode: CurrencyCode;
