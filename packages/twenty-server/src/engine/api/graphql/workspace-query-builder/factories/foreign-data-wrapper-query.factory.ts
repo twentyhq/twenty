@@ -29,7 +29,7 @@ export class ForeignDataWrapperQueryFactory {
     foreignDataWrapperOptions,
   }: {
     foreignDataWrapperId: string;
-    foreignDataWrapperType?: RemoteServerType;
+    foreignDataWrapperType: RemoteServerType;
     foreignDataWrapperOptions?: Partial<
       ForeignDataWrapperOptions<RemoteServerType>
     >;
