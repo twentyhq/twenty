@@ -18,8 +18,6 @@ import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-met
 import { ObjectMetadataResolver } from 'src/engine/metadata-modules/object-metadata/object-metadata.resolver';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { TestInterceptor } from 'src/engine/metadata-modules/object-metadata/interceptors/test.interceptor';
-import { WorkspaceSchemaStorageModule } from 'src/engine/api/graphql/workspace-schema-storage/workspace-schema-storage.module';
 
 import { ObjectMetadataService } from './object-metadata.service';
 import { ObjectMetadataEntity } from './object-metadata.entity';
@@ -42,7 +40,6 @@ import { ObjectMetadataDTO } from './dtos/object-metadata.dto';
         WorkspaceMigrationModule,
         WorkspaceMigrationRunnerModule,
         FeatureFlagModule,
-        WorkspaceSchemaStorageModule,
       ],
       services: [ObjectMetadataService],
       resolvers: [
@@ -53,14 +50,7 @@ import { ObjectMetadataDTO } from './dtos/object-metadata.dto';
           UpdateDTOClass: UpdateObjectInput,
           ServiceClass: ObjectMetadataService,
           pagingStrategy: PagingStrategies.CURSOR,
-
-          interceptors: [TestInterceptor],
           read: {
-            interceptors: [TestInterceptor],
-            many: {
-              interceptors: [TestInterceptor],
-            },
-            // disabled: true,
             defaultSort: [{ field: 'id', direction: SortDirection.DESC }],
           },
           create: {
