@@ -1,7 +1,8 @@
+import { GraphQLString, GraphQLInt, GraphQLID } from 'graphql';
+
 import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 import { ArgMetadata } from 'src/engine/api/graphql/workspace-schema-builder/interfaces/param-metadata.interface';
 
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { InputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/factories/input-type-definition.factory';
 
 export const getResolverArgs = (
@@ -11,19 +12,23 @@ export const getResolverArgs = (
     case 'findMany':
       return {
         first: {
-          type: FieldMetadataType.NUMBER,
+          type: GraphQLInt,
           isNullable: true,
         },
         last: {
-          type: FieldMetadataType.NUMBER,
+          type: GraphQLInt,
           isNullable: true,
         },
         before: {
-          type: FieldMetadataType.TEXT,
+          type: GraphQLString,
           isNullable: true,
         },
         after: {
-          type: FieldMetadataType.TEXT,
+          type: GraphQLString,
+          isNullable: true,
+        },
+        limit: {
+          type: GraphQLInt,
           isNullable: true,
         },
         filter: {
@@ -61,7 +66,7 @@ export const getResolverArgs = (
     case 'updateOne':
       return {
         id: {
-          type: FieldMetadataType.UUID,
+          type: GraphQLID,
           isNullable: false,
         },
         data: {
@@ -72,7 +77,7 @@ export const getResolverArgs = (
     case 'findDuplicates':
       return {
         id: {
-          type: FieldMetadataType.UUID,
+          type: GraphQLID,
           isNullable: true,
         },
         data: {
@@ -83,14 +88,14 @@ export const getResolverArgs = (
     case 'deleteOne':
       return {
         id: {
-          type: FieldMetadataType.UUID,
+          type: GraphQLID,
           isNullable: false,
         },
       };
     case 'executeQuickActionOnOne':
       return {
         id: {
-          type: FieldMetadataType.UUID,
+          type: GraphQLID,
           isNullable: false,
         },
       };

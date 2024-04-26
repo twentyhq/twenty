@@ -35,7 +35,7 @@ export const useUpdateOneRecordMutation = ({
   );
 
   const updateOneRecordMutation = gql`
-    mutation UpdateOne${capitalizedObjectName}($idToUpdate: UUID!, $input: ${capitalizedObjectName}UpdateInput!)  {
+    mutation UpdateOne${capitalizedObjectName}($idToUpdate: ID!, $input: ${capitalizedObjectName}UpdateInput!)  {
        ${mutationResponseField}(id: $idToUpdate, data: $input) ${mapObjectMetadataToGraphQLQuery(
          {
            objectMetadataItems,

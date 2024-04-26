@@ -9,6 +9,7 @@ export const mockedClientConfig: ClientConfig = {
     google: true,
     password: true,
     magicLink: false,
+    microsoft: false,
     __typename: 'AuthProviders',
   },
   telemetry: {

@@ -22,6 +22,7 @@ import {
   FindDuplicatesResolverArgs,
   FindManyResolverArgs,
   FindOneResolverArgs,
+  ResolverArgsType,
   UpdateManyResolverArgs,
   UpdateOneResolverArgs,
 } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -48,6 +49,7 @@ import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-r
 import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters.factory';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assertIsValidUuid.util';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
@@ -83,8 +85,14 @@ export class WorkspaceQueryRunnerService {
     const { workspaceId, userId, objectMetadataItem } = options;
     const start = performance.now();
 
-    const query = await this.workspaceQueryBuilderFactory.findMany(
+    const computedArgs = (await this.queryRunnerArgsFactory.create(
       args,
+      options,
+      ResolverArgsType.FindMany,
+    )) as FindManyResolverArgs<Filter, OrderBy>;
+
+    const query = await this.workspaceQueryBuilderFactory.findMany(
+      computedArgs,
       options,
     );
 
@@ -123,8 +131,15 @@ export class WorkspaceQueryRunnerService {
       throw new BadRequestException('Missing filter argument');
     }
     const { workspaceId, userId, objectMetadataItem } = options;
-    const query = await this.workspaceQueryBuilderFactory.findOne(
+
+    const computedArgs = (await this.queryRunnerArgsFactory.create(
       args,
+      options,
+      ResolverArgsType.FindOne,
+    )) as FindOneResolverArgs<Filter>;
+
+    const query = await this.workspaceQueryBuilderFactory.findOne(
+      computedArgs,
       options,
     );
 
@@ -164,12 +179,18 @@ export class WorkspaceQueryRunnerService {
 
     const { workspaceId, userId, objectMetadataItem } = options;
 
+    const computedArgs = (await this.queryRunnerArgsFactory.create(
+      args,
+      options,
+      ResolverArgsType.FindDuplicates,
+    )) as FindDuplicatesResolverArgs<TRecord>;
+
     let existingRecord: Record<string, unknown> | undefined;
 
-    if (args.id) {
+    if (computedArgs.id) {
       const existingRecordQuery =
         this.workspaceQueryBuilderFactory.findDuplicatesExistingRecord(
-          args.id,
+          computedArgs.id,
           options,
         );
 
@@ -192,7 +213,7 @@ export class WorkspaceQueryRunnerService {
     }
 
     const query = await this.workspaceQueryBuilderFactory.findDuplicates(
-      args,
+      computedArgs,
       options,
       existingRecord,
     );
@@ -202,7 +223,7 @@ export class WorkspaceQueryRunnerService {
       workspaceId,
       objectMetadataItem.nameSingular,
       'findDuplicates',
-      args,
+      computedArgs,
     );
 
     const result = await this.execute(query, workspaceId);
@@ -222,10 +243,17 @@ export class WorkspaceQueryRunnerService {
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
 
-    const computedArgs = await this.queryRunnerArgsFactory.create(
+    args.data.forEach((record) => {
+      if (record.id) {
+        assertIsValidUuid(record.id);
+      }
+    });
+
+    const computedArgs = (await this.queryRunnerArgsFactory.create(
       args,
       options,
-    );
+      ResolverArgsType.CreateMany,
+    )) as CreateManyResolverArgs<Record>;
 
     await this.workspacePreQueryHookService.executePreHooks(
       userId,
@@ -288,6 +316,7 @@ export class WorkspaceQueryRunnerService {
     const { workspaceId, userId, objectMetadataItem } = options;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
+    assertIsValidUuid(args.id);
 
     const existingRecord = await this.findOne(
       { filter: { id: { eq: args.id } } } as FindOneResolverArgs,
@@ -337,6 +366,7 @@ export class WorkspaceQueryRunnerService {
     const { workspaceId, objectMetadataItem } = options;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
+    assertIsValidUuid(args.data.id);
 
     const maximumRecordAffected = this.environmentService.get(
       'MUTATION_MAXIMUM_RECORD_AFFECTED',
