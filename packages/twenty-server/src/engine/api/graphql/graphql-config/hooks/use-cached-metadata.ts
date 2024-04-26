@@ -11,8 +11,15 @@ export function useCachedMetadata(
     return `${workspaceId}:${cacheVersion}`;
   };
 
+  const operationName = (serverContext: any) =>
+    serverContext?.req?.body?.operationName;
+
   return {
     onRequest: async ({ endResponse, serverContext }) => {
+      if (operationName(serverContext) !== 'ObjectMetadataItems') {
+        return;
+      }
+
       const cacheKey = computeCacheKey(serverContext);
       const cachedResponse = await cacheGetter(cacheKey);
 
