@@ -40,9 +40,6 @@ export const useThrottler = (
       addPlugin(
         useOnResolve(async ({ args, root, context, info }) => {
           if (options.limit && options.ttl) {
-            if (root !== undefined) {
-              return;
-            }
 
             const id = options.identifyFn(context);
 
@@ -51,7 +48,7 @@ export const useThrottler = (
               {
                 max: options?.limit,
                 window: `${options?.ttl}s`,
-                message: interpolate('Too many requests.', {
+                message: interpolate('Too much request.', {
                   id,
                 }),
               },
