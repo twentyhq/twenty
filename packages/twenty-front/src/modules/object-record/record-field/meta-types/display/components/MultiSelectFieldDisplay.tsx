@@ -1,14 +1,15 @@
-import { ExpandableList } from '@/object-record/record-field/meta-types/display/components/ExpandableList.tsx';
+import {
+  ExpandableList,
+  ExpandableListProps,
+} from '@/object-record/record-field/meta-types/display/components/ExpandableList.tsx';
 import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField';
 import { Tag } from '@/ui/display/tag/components/Tag';
 
+type MultiSelectFieldDisplayProps = ExpandableListProps;
 export const MultiSelectFieldDisplay = ({
   isHovered,
   reference,
-}: {
-  isHovered?: boolean;
-  reference?: HTMLDivElement;
-}) => {
+}: MultiSelectFieldDisplayProps) => {
   const { fieldValues, fieldDefinition } = useMultiSelectField();
 
   const selectedOptions = fieldValues

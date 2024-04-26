@@ -1,5 +1,7 @@
 import { useContext } from 'react';
 
+import { ExpandableListProps } from '@/object-record/record-field/meta-types/display/components/ExpandableList.tsx';
+
 import { FieldContext } from '../contexts/FieldContext';
 import { AddressFieldDisplay } from '../meta-types/display/components/AddressFieldDisplay';
 import { ChipFieldDisplay } from '../meta-types/display/components/ChipFieldDisplay';
@@ -33,13 +35,9 @@ import { isFieldSelect } from '../types/guards/isFieldSelect';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldUuid } from '../types/guards/isFieldUuid';
 
-export const FieldDisplay = ({
-  isHovered,
-  reference,
-}: {
-  isHovered?: boolean;
-  reference?: HTMLDivElement;
-}) => {
+type FieldDisplayProps = ExpandableListProps;
+
+export const FieldDisplay = ({ isHovered, reference }: FieldDisplayProps) => {
   const { fieldDefinition, isLabelIdentifier } = useContext(FieldContext);
 
   const isChipDisplay =

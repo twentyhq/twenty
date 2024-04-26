@@ -47,15 +47,18 @@ const StyledRelationsListContainer = styled.div`
 
 const StyledAnimatedChipContainer = styled(motion.div)``;
 
+export type ExpandableListProps = {
+  isHovered?: boolean;
+  reference?: HTMLDivElement;
+};
+
 export const ExpandableList = ({
   children,
   isHovered,
   reference,
 }: {
   children: ReactElement[];
-  isHovered?: boolean;
-  reference?: HTMLDivElement;
-}) => {
+} & ExpandableListProps) => {
   const [containerWidth, setContainerWidth] = useState(0);
   const [isDropdownMenuOpen, setIsDropdownMenuOpen] = useState(false);
   const [childrenWidths, setChildrenWidths] = useState<Record<number, number>>(

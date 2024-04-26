@@ -6,6 +6,7 @@ import { IconArrowUpRight } from 'twenty-ui';
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
 import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
+import { ExpandableListProps } from '@/object-record/record-field/meta-types/display/components/ExpandableList.tsx';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
@@ -141,10 +142,9 @@ export const RecordTableCellContainer = ({
     (!isFirstColumn || !isEmpty) &&
     !isReadOnly;
 
-  const newNonEditModeContent = React.isValidElement<{
-    isHovered: boolean;
-    reference: HTMLDivElement;
-  }>(nonEditModeContent)
+  const newNonEditModeContent = React.isValidElement<ExpandableListProps>(
+    nonEditModeContent,
+  )
     ? React.cloneElement(nonEditModeContent, {
         isHovered,
         reference,

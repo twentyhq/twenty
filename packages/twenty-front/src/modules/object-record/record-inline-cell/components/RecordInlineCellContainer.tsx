@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { IconComponent } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { ExpandableListProps } from '@/object-record/record-field/meta-types/display/components/ExpandableList.tsx';
 import { AnimationDivProps } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButton.tsx';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -153,15 +154,13 @@ export const RecordInlineCellContainer = ({
   const theme = useTheme();
   const labelId = `label-${entityId}-${fieldDefinition?.metadata?.fieldName}`;
 
-  const newDisplayModeContent = React.isValidElement<{
-    isHovered: boolean;
-    reference: HTMLDivElement;
-  }>(displayModeContent)
-    ? React.cloneElement(displayModeContent, {
-        isHovered,
-        reference,
-      })
-    : displayModeContent;
+  const newDisplayModeContent =
+    React.isValidElement<ExpandableListProps>(displayModeContent) && reference
+      ? React.cloneElement(displayModeContent, {
+          isHovered,
+          reference,
+        })
+      : displayModeContent;
 
   return (
     <StyledInlineCellBaseContainer
