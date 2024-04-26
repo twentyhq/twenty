@@ -15,13 +15,15 @@ import {
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { encryptText } from 'src/engine/core-modules/auth/auth.util';
-import { validateObjectRemoteServerInput } from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-input';
+import {
+  validateObjectRemoteServerInput,
+  validateStringRemoteServerInput,
+} from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-input';
 import { ForeignDataWrapperQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/foreign-data-wrapper-query.factory';
 import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
 import { UpdateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/update-remote-server.input';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { updateRemoteServerRawQuery } from 'src/engine/metadata-modules/remote-server/utils/build-update-remote-server-raw-query';
-import { validateStringInput } from 'src/engine/metadata-modules/utils/validate-string-input.utils';
 
 @Injectable()
 export class RemoteServerService<T extends RemoteServerType> {
@@ -194,7 +196,7 @@ export class RemoteServerService<T extends RemoteServerType> {
     id: string,
     workspaceId: string,
   ): Promise<RemoteServerEntity<RemoteServerType>> {
-    validateStringInput(id);
+    validateStringRemoteServerInput(id);
 
     const remoteServer = await this.remoteServerRepository.findOne({
       where: {
