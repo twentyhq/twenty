@@ -5,6 +5,7 @@ export const FIND_PERSON = gql`
     people(filter: $filter) {
       edges {
         node {
+          id
           name {
             firstName
             lastName
