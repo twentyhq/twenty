@@ -1,4 +1,5 @@
 import { createDefaultButton } from '~/contentScript/createButton';
+import changeSidePanelUrl from '~/contentScript/utils/changeSidepanelUrl';
 import extractFirstAndLastName from '~/contentScript/utils/extractFirstAndLastName';
 import { createPerson, fetchPerson } from '~/db/person.db';
 import { PersonInput } from '~/db/types/person.types';
@@ -82,28 +83,23 @@ export const addPerson = async () => {
   }
 
   personData.linkedinLink = { url: activeTabUrl, label: activeTabUrl };
-  const person = await createPerson(personData);
-  return person;
+  const personId = await createPerson(personData);
+
+  if (isDefined(personId)) {
+    await changeSidePanelUrl(
+      `${import.meta.env.VITE_FRONT_BASE_URL}/object/person/${personId}`,
+    );
+  }
+
+  return personId;
 };
 
 export const insertButtonForPerson = async () => {
-  const personButtonDiv = createDefaultButton('twenty-person-btn', async () => {
-    if (isDefined(personButtonDiv)) {
-      const personBtnSpan = personButtonDiv.getElementsByTagName('span')[0];
-      personBtnSpan.textContent = 'Saving...';
-      const person = await addPerson();
-      if (isDefined(person)) {
-        personBtnSpan.textContent = 'Saved';
-        Object.assign(personButtonDiv.style, { pointerEvents: 'none' });
-      } else {
-        personBtnSpan.textContent = 'Try again';
-      }
-    }
-  });
+  const personButtonDiv = createDefaultButton('twenty-person-btn');
 
   if (isDefined(personButtonDiv)) {
     const parentDiv: HTMLDivElement | null = document.querySelector(
-      '.pv-top-card-v2-ctas',
+      '.pv-top-card-v2-ctas__custom',
     );
 
     if (isDefined(parentDiv)) {
@@ -113,13 +109,29 @@ export const insertButtonForPerson = async () => {
       parentDiv.prepend(personButtonDiv);
     }
 
-    const personBtnSpan = personButtonDiv.getElementsByTagName('span')[0];
+    const personButtonSpan = personButtonDiv.getElementsByTagName('span')[0];
     const person = await checkIfPersonExists();
+
+    const openPersonOnSidePanel = async (personId: string) => {
+      await changeSidePanelUrl(
+        `${import.meta.env.VITE_FRONT_BASE_URL}/object/person/${personId}`,
+      );
+      personButtonSpan.textContent = 'Saved';
+      personButtonDiv.onClickHandler(() => {
+        chrome.runtime.sendMessage({ action: 'openSidepanel' });
+      });
+    };
+
     if (isDefined(person)) {
-      personBtnSpan.textContent = 'Saved';
-      Object.assign(personButtonDiv.style, { pointerEvents: 'none' });
+      if (isDefined(person.id)) await openPersonOnSidePanel(person.id);
     } else {
-      personBtnSpan.textContent = 'Add to Twenty';
+      personButtonSpan.textContent = 'Add to Twenty';
+      personButtonDiv.onClickHandler(async () => {
+        personButtonSpan.textContent = 'Saving...';
+        const personId = await addPerson();
+        if (isDefined(personId)) await openPersonOnSidePanel(personId);
+        else personButtonSpan.textContent = 'Try again';
+      });
     }
   }
 };

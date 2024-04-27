@@ -1,13 +1,16 @@
 import { isDefined } from '~/utils/isDefined';
 
+interface CustomDiv extends HTMLDivElement {
+  onClickHandler: (newHandler: () => void) => void;
+}
+
 export const createDefaultButton = (
   buttonId: string,
-  onClickHandler?: () => void,
   buttonText = '',
-) => {
-  const btn = document.getElementById(buttonId);
+): CustomDiv => {
+  const btn = document.getElementById(buttonId) as CustomDiv;
   if (isDefined(btn)) return btn;
-  const div = document.createElement('div');
+  const div = document.createElement('div') as CustomDiv;
   const img = document.createElement('img');
   const span = document.createElement('span');
 
@@ -52,19 +55,18 @@ export const createDefaultButton = (
     Object.assign(div.style, divStyles);
   });
 
-  // Handle the click event.
-  div.addEventListener('click', async (e) => {
-    e.preventDefault();
-    const store = await chrome.storage.local.get();
+  div.onClickHandler = (newHandler) => {
+    div.onclick = async () => {
+      const store = await chrome.storage.local.get();
 
-    // If an api key is not set, the options page opens up to allow the user to configure an api key.
-    if (!store.accessToken) {
-      chrome.runtime.sendMessage({ action: 'openOptionsPage' });
-      return;
-    }
-
-    onClickHandler?.();
-  });
+      // If an api key is not set, the options page opens up to allow the user to configure an api key.
+      if (!store.accessToken) {
+        chrome.runtime.sendMessage({ action: 'openSidepanel' });
+        return;
+      }
+      newHandler();
+    };
+  };
 
   div.id = buttonId;
 
