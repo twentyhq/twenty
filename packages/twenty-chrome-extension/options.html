@@ -4,6 +4,22 @@
     <link rel="icon" href="/icons/android/android-launchericon-48-48.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Twenty</title>
+    <style>
+      /* Reset margin and padding */
+      html, body {
+        margin: 0;
+        padding: 0;
+        height: 100%; /* Ensure body takes full viewport height */
+        overflow: hidden; /* Prevents scrollbars from appearing */
+      }
+      iframe {
+        display: block; /* Removes any space below the iframe */
+        width: 100%;
+        height: 100vh;
+        border: none; /* Removes the iframe border */
+      }
+    </style>
+
   </head>
   <body>
     <div id="app"></div>

@@ -48,7 +48,7 @@ export default defineManifest({
     },
   ],
 
-  permissions: ['activeTab', 'storage', 'identity'],
+  permissions: ['activeTab', 'storage', 'identity', 'sidePanel'],
 
   host_permissions: host_permissions,
 
