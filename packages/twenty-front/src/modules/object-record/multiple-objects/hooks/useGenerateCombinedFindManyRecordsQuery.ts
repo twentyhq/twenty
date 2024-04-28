@@ -1,64 +1,81 @@
 import { gql } from '@apollo/client';
+import { isUndefined } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
+import { QueryKey } from '@/object-record/query-keys/types/QueryKey';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 import { capitalize } from '~/utils/string/capitalize';
 
-export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
-  targetObjectMetadataItems,
+export const useGenerateCombinedFindManyRecordsQuery = ({
+  queryKeys,
 }: {
-  targetObjectMetadataItems: ObjectMetadataItem[];
+  queryKeys: QueryKey[];
 }) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-  const capitalizedObjectNameSingulars = targetObjectMetadataItems.map(
-    ({ nameSingular }) => capitalize(nameSingular),
-  );
 
-  if (!isNonEmptyArray(capitalizedObjectNameSingulars)) {
+  if (!isNonEmptyArray(queryKeys)) {
     return null;
   }
 
-  const filterPerMetadataItemArray = capitalizedObjectNameSingulars
+  const filterPerMetadataItemArray = queryKeys
     .map(
-      (capitalizedObjectNameSingular) =>
-        `$filter${capitalizedObjectNameSingular}: ${capitalizedObjectNameSingular}FilterInput`,
+      ({ objectNameSingular }) =>
+        `$filter${capitalize(objectNameSingular)}: ${capitalize(
+          objectNameSingular,
+        )}FilterInput`,
     )
     .join(', ');
 
-  const orderByPerMetadataItemArray = capitalizedObjectNameSingulars
+  const orderByPerMetadataItemArray = queryKeys
     .map(
-      (capitalizedObjectNameSingular) =>
-        `$orderBy${capitalizedObjectNameSingular}: ${capitalizedObjectNameSingular}OrderByInput`,
+      ({ objectNameSingular }) =>
+        `$orderBy${capitalize(objectNameSingular)}: ${capitalize(
+          objectNameSingular,
+        )}OrderByInput`,
     )
     .join(', ');
 
-  const lastCursorPerMetadataItemArray = capitalizedObjectNameSingulars
+  const lastCursorPerMetadataItemArray = queryKeys
     .map(
-      (capitalizedObjectNameSingular) =>
-        `$lastCursor${capitalizedObjectNameSingular}: String`,
+      ({ objectNameSingular }) =>
+        `$lastCursor${capitalize(objectNameSingular)}: String`,
     )
     .join(', ');
 
-  const limitPerMetadataItemArray = capitalizedObjectNameSingulars
+  const limitPerMetadataItemArray = queryKeys
     .map(
-      (capitalizedObjectNameSingular) =>
-        `$limit${capitalizedObjectNameSingular}: Int`,
+      ({ objectNameSingular }) =>
+        `$limit${capitalize(objectNameSingular)}: Int`,
     )
     .join(', ');
+
+  const queryKeyWithObjectMetadataItemArray = queryKeys.map((queryKey) => {
+    const objectMetadataItem = objectMetadataItems.find(
+      (objectMetadataItem) =>
+        objectMetadataItem.nameSingular === queryKey.objectNameSingular,
+    );
+
+    if (isUndefined(objectMetadataItem)) {
+      throw new Error(
+        `Object metadata item not found for object name singular: ${queryKey.objectNameSingular}`,
+      );
+    }
+
+    return { ...queryKey, objectMetadataItem };
+  });
 
   return gql`
-    query FindManyRecordsMultipleMetadataItems(
+    query CombinedFindManyRecords(
       ${filterPerMetadataItemArray}, 
       ${orderByPerMetadataItemArray}, 
       ${lastCursorPerMetadataItemArray}, 
       ${limitPerMetadataItemArray}
     ) {
-      ${targetObjectMetadataItems
+      ${queryKeyWithObjectMetadataItemArray
         .map(
-          (objectMetadataItem) =>
+          ({ objectMetadataItem, fields }) =>
             `${objectMetadataItem.namePlural}(filter: $filter${capitalize(
               objectMetadataItem.nameSingular,
             )}, orderBy: $orderBy${capitalize(
@@ -72,6 +89,7 @@ export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
             node ${mapObjectMetadataToGraphQLQuery({
               objectMetadataItems: objectMetadataItems,
               objectMetadataItem,
+              queryFields: fields,
             })}
             cursor
           }
