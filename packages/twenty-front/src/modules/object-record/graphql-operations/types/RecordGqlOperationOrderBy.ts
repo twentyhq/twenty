@@ -1,5 +1,5 @@
 import { OrderBy } from '@/object-metadata/types/OrderBy';
 
-export type OrderByField = {
+export type RecordGqlOperationOrderBy = {
   [fieldName: string]: OrderBy | { [subFieldName: string]: OrderBy };
 };

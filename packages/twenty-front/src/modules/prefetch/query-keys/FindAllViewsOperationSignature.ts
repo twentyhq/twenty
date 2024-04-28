@@ -1,7 +1,7 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { QueryKey } from '@/object-record/query-keys/types/QueryKey';
+import { RecordGqlOperationSignature } from '@/object-record/graphql-operations/types/RecordGqlOperationSignature';
 
-export const ALL_VIEWS_QUERY_KEY: QueryKey = {
+export const FIND_ALL_VIEWS_OPERATION_SIGNATURE: RecordGqlOperationSignature = {
   objectNameSingular: CoreObjectNameSingular.View,
   variables: {},
   fields: {

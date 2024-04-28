@@ -1,14 +1,14 @@
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 
+import { findActivitiesOperationSignatureFactory } from '@/activities/graphql-operations/factories/FindActivitiesOperationSignatureFactory';
 import { useActivityTargetsForTargetableObjects } from '@/activities/hooks/useActivityTargetsForTargetableObjects';
-import { FIND_MANY_ACTIVITIES_QUERY_KEY } from '@/activities/query-keys/FindManyActivitiesQueryKey';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { OrderByField } from '@/object-metadata/types/OrderByField';
+import { RecordGqlOperationFilter } from '@/object-record/graphql-operations/types/RecordGqlOperationFilter';
+import { RecordGqlOperationOrderBy } from '@/object-record/graphql-operations/types/RecordGqlOperationOrderBy';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 
@@ -19,8 +19,8 @@ export const useActivities = ({
   skip,
 }: {
   targetableObjects: ActivityTargetableObject[];
-  activitiesFilters: ObjectRecordQueryFilter;
-  activitiesOrderByVariables: OrderByField;
+  activitiesFilters: RecordGqlOperationFilter;
+  activitiesOrderByVariables: RecordGqlOperationOrderBy;
   skip?: boolean;
 }) => {
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -43,7 +43,7 @@ export const useActivities = ({
     ),
   ];
 
-  const filter: ObjectRecordQueryFilter = {
+  const filter: RecordGqlOperationFilter = {
     id:
       targetableObjects.length > 0
         ? {
@@ -53,12 +53,15 @@ export const useActivities = ({
     ...activitiesFilters,
   };
 
+  const FIND_ACTIVITIES_OPERATION_SIGNATURE =
+    findActivitiesOperationSignatureFactory({ objectMetadataItems });
+
   const { records: activities, loading: loadingActivities } =
     useFindManyRecords<Activity>({
       skip: skip,
-      objectNameSingular: FIND_MANY_ACTIVITIES_QUERY_KEY.objectNameSingular,
-      queryFields:
-        FIND_MANY_ACTIVITIES_QUERY_KEY.fieldsFactory?.(objectMetadataItems),
+      objectNameSingular:
+        FIND_ACTIVITIES_OPERATION_SIGNATURE.objectNameSingular,
+      operationFields: FIND_ACTIVITIES_OPERATION_SIGNATURE.fields,
       filter,
       orderBy: activitiesOrderByVariables,
       onCompleted: useRecoilCallback(

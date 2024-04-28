@@ -15,11 +15,11 @@ if (!personObjectMetadataItem) {
 }
 
 describe('mapObjectMetadataToGraphQLQuery', () => {
-  it('should query only specified queryFields', async () => {
+  it('should query only specified operationFields', async () => {
     const res = mapObjectMetadataToGraphQLQuery({
       objectMetadataItems: mockObjectMetadataItems,
       objectMetadataItem: personObjectMetadataItem,
-      queryFields: {
+      operationFields: {
         company: true,
         xLink: true,
         id: true,
@@ -92,11 +92,11 @@ companyId
 }`);
   });
 
-  it('should load only specified query fields nested', async () => {
+  it('should load only specified operation fields nested', async () => {
     const res = mapObjectMetadataToGraphQLQuery({
       objectMetadataItems: mockObjectMetadataItems,
       objectMetadataItem: personObjectMetadataItem,
-      queryFields: { company: { id: true }, id: true, name: true },
+      operationFields: { company: { id: true }, id: true, name: true },
     });
     expect(formatGQLString(res)).toEqual(`{
 __typename

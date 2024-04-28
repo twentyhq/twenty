@@ -85,7 +85,7 @@ export const useMultiObjectSearchMatchesSearchFilterAndSelectedItemsQuery = ({
 
   const multiSelectQueryForSelectedIds =
     useGenerateCombinedFindManyRecordsQuery({
-      queryKeys: objectMetadataItemsUsedInSelectedIdsQuery.map(
+      operationSignatures: objectMetadataItemsUsedInSelectedIdsQuery.map(
         (objectMetadataItem) => ({
           objectNameSingular: objectMetadataItem.nameSingular,
           variables: {},

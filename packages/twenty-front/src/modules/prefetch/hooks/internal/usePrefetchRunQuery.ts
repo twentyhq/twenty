@@ -29,7 +29,7 @@ export const usePrefetchRunQuery = <T extends ObjectRecord>({
   const upsertRecordsInCache = (records: T[]) => {
     upsertFindManyRecordsQueryInCache({
       queryVariables: PREFETCH_CONFIG[prefetchKey].variables,
-      queryFields: PREFETCH_CONFIG[prefetchKey].fields,
+      operationFields: PREFETCH_CONFIG[prefetchKey].fields,
       objectRecordsToOverwrite: records,
       computeReferences: false,
     });

@@ -93,22 +93,22 @@ export type LeafFilter =
   | undefined;
 
 export type AndObjectRecordFilter = {
-  and?: ObjectRecordQueryFilter[];
+  and?: RecordGqlOperationFilter[];
 };
 
 export type OrObjectRecordFilter = {
-  or?: ObjectRecordQueryFilter[] | ObjectRecordQueryFilter;
+  or?: RecordGqlOperationFilter[] | RecordGqlOperationFilter;
 };
 
 export type NotObjectRecordFilter = {
-  not?: ObjectRecordQueryFilter;
+  not?: RecordGqlOperationFilter;
 };
 
 export type LeafObjectRecordFilter = {
   [fieldName: string]: LeafFilter;
 };
 
-export type ObjectRecordQueryFilter =
+export type RecordGqlOperationFilter =
   | LeafObjectRecordFilter
   | AndObjectRecordFilter
   | OrObjectRecordFilter

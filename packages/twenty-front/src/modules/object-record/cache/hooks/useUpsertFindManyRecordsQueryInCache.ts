@@ -4,8 +4,8 @@ import { useRecoilValue } from 'recoil';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
+import { RecordGqlOperationVariables } from '@/object-record/graphql-operations/types/RecordGqlOperationVariables';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 
 export const useUpsertFindManyRecordsQueryInCache = ({
@@ -22,18 +22,18 @@ export const useUpsertFindManyRecordsQueryInCache = ({
   >({
     queryVariables,
     objectRecordsToOverwrite,
-    queryFields,
+    operationFields,
     computeReferences = false,
   }: {
-    queryVariables: ObjectRecordQueryVariables;
+    queryVariables: RecordGqlOperationVariables;
     objectRecordsToOverwrite: T[];
-    queryFields?: Record<string, any>;
+    operationFields?: Record<string, any>;
     computeReferences?: boolean;
   }) => {
     const findManyRecordsQueryForCacheOverwrite = generateFindManyRecordsQuery({
       objectMetadataItem,
       objectMetadataItems,
-      queryFields,
+      operationFields,
       computeReferences,
     });
 
@@ -41,7 +41,7 @@ export const useUpsertFindManyRecordsQueryInCache = ({
       objectMetadataItems: objectMetadataItems,
       objectMetadataItem: objectMetadataItem,
       records: objectRecordsToOverwrite,
-      queryFields,
+      operationFields,
       computeReferences,
     });
 

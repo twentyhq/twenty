@@ -2,14 +2,15 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getConnectionTypename } from '@/object-record/cache/utils/getConnectionTypename';
 import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
 import { getRecordEdgeFromRecord } from '@/object-record/cache/utils/getRecordEdgeFromRecord';
+import { RecordGqlConnection } from '@/object-record/graphql-operations/types/RecordGqlConnection';
+import { RecordGqlOperationFields } from '@/object-record/graphql-operations/types/RecordGqlOperationFields';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 
 export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
   objectMetadataItems,
   objectMetadataItem,
   records,
-  queryFields,
+  operationFields,
   withPageInfo = true,
   computeReferences = false,
   isRootLevel = true,
@@ -20,7 +21,7 @@ export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
     'fields' | 'namePlural' | 'nameSingular'
   >;
   records: T[];
-  queryFields?: Record<string, any>;
+  operationFields?: RecordGqlOperationFields;
   withPageInfo?: boolean;
   isRootLevel?: boolean;
   computeReferences?: boolean;
@@ -31,7 +32,7 @@ export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
       return getRecordEdgeFromRecord({
         objectMetadataItems,
         objectMetadataItem,
-        queryFields,
+        operationFields,
         record,
         isRootLevel,
         computeReferences,
@@ -39,5 +40,5 @@ export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
     }),
     ...(withPageInfo && { pageInfo: getEmptyPageInfo() }),
     ...(withPageInfo && { totalCount: records.length }),
-  } as ObjectRecordConnection<T>;
+  } as RecordGqlConnection;
 };

@@ -4,22 +4,22 @@ import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
-import { QueryKey } from '@/object-record/query-keys/types/QueryKey';
+import { RecordGqlOperationSignature } from '@/object-record/graphql-operations/types/RecordGqlOperationSignature';
 import { isNonEmptyArray } from '~/utils/isNonEmptyArray';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useGenerateCombinedFindManyRecordsQuery = ({
-  queryKeys,
+  operationSignatures,
 }: {
-  queryKeys: QueryKey[];
+  operationSignatures: RecordGqlOperationSignature[];
 }) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  if (!isNonEmptyArray(queryKeys)) {
+  if (!isNonEmptyArray(operationSignatures)) {
     return null;
   }
 
-  const filterPerMetadataItemArray = queryKeys
+  const filterPerMetadataItemArray = operationSignatures
     .map(
       ({ objectNameSingular }) =>
         `$filter${capitalize(objectNameSingular)}: ${capitalize(
@@ -28,7 +28,7 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
     )
     .join(', ');
 
-  const orderByPerMetadataItemArray = queryKeys
+  const orderByPerMetadataItemArray = operationSignatures
     .map(
       ({ objectNameSingular }) =>
         `$orderBy${capitalize(objectNameSingular)}: ${capitalize(
@@ -37,34 +37,36 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
     )
     .join(', ');
 
-  const lastCursorPerMetadataItemArray = queryKeys
+  const lastCursorPerMetadataItemArray = operationSignatures
     .map(
       ({ objectNameSingular }) =>
         `$lastCursor${capitalize(objectNameSingular)}: String`,
     )
     .join(', ');
 
-  const limitPerMetadataItemArray = queryKeys
+  const limitPerMetadataItemArray = operationSignatures
     .map(
       ({ objectNameSingular }) =>
         `$limit${capitalize(objectNameSingular)}: Int`,
     )
     .join(', ');
 
-  const queryKeyWithObjectMetadataItemArray = queryKeys.map((queryKey) => {
-    const objectMetadataItem = objectMetadataItems.find(
-      (objectMetadataItem) =>
-        objectMetadataItem.nameSingular === queryKey.objectNameSingular,
-    );
-
-    if (isUndefined(objectMetadataItem)) {
-      throw new Error(
-        `Object metadata item not found for object name singular: ${queryKey.objectNameSingular}`,
+  const queryKeyWithObjectMetadataItemArray = operationSignatures.map(
+    (queryKey) => {
+      const objectMetadataItem = objectMetadataItems.find(
+        (objectMetadataItem) =>
+          objectMetadataItem.nameSingular === queryKey.objectNameSingular,
       );
-    }
 
-    return { ...queryKey, objectMetadataItem };
-  });
+      if (isUndefined(objectMetadataItem)) {
+        throw new Error(
+          `Object metadata item not found for object name singular: ${queryKey.objectNameSingular}`,
+        );
+      }
+
+      return { ...queryKey, objectMetadataItem };
+    },
+  );
 
   return gql`
     query CombinedFindManyRecords(
@@ -89,7 +91,7 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
             node ${mapObjectMetadataToGraphQLQuery({
               objectMetadataItems: objectMetadataItems,
               objectMetadataItem,
-              queryFields: fields,
+              operationFields: fields,
             })}
             cursor
           }

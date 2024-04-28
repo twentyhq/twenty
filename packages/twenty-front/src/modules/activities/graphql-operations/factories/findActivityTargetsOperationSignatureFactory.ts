@@ -1,13 +1,13 @@
 import { generateActivityTargetMorphFieldKeys } from '@/activities/utils/generateActivityTargetMorphFieldKeys';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { QueryKey } from '@/object-record/query-keys/types/QueryKey';
+import { RecordGqlOperationSignatureFactory } from '@/object-record/graphql-operations/types/RecordGqlOperationSignatureFactory';
 
-export const FIND_MANY_ACTIVITY_TARGETS_QUERY_KEY: QueryKey = {
-  objectNameSingular: CoreObjectNameSingular.ActivityTarget,
-  variables: {},
-  fieldsFactory: (objectMetadataItems: ObjectMetadataItem[]) => {
-    return {
+export const findActivityTargetsOperationSignatureFactory: RecordGqlOperationSignatureFactory =
+  ({ objectMetadataItems }: { objectMetadataItems: ObjectMetadataItem[] }) => ({
+    objectNameSingular: CoreObjectNameSingular.ActivityTarget,
+    variables: {},
+    fields: {
       id: true,
       __typename: true,
       createdAt: true,
@@ -15,6 +15,5 @@ export const FIND_MANY_ACTIVITY_TARGETS_QUERY_KEY: QueryKey = {
       activity: true,
       activityId: true,
       ...generateActivityTargetMorphFieldKeys(objectMetadataItems),
-    };
-  },
-};
+    },
+  });

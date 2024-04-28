@@ -1,7 +1,7 @@
 import { Reference } from '@apollo/client';
 
-import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
+import { RecordGqlEdge } from '@/object-record/graphql-operations/types/RecordGqlEdge';
 
-export type CachedObjectRecordEdge = Omit<ObjectRecordEdge, 'node'> & {
+export type CachedObjectRecordEdge = Omit<RecordGqlEdge, 'node'> & {
   node: Reference;
 };

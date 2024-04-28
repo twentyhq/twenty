@@ -4,6 +4,7 @@ import { useQuery } from '@apollo/client';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
+import { RecordGqlNode } from '@/object-record/graphql-operations/types/RecordGqlNode';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
@@ -26,14 +27,13 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
     objectNameSingular,
   });
 
-  const { data, loading, error } = useQuery<
-    { [nameSingular: string]: T },
-    { objectRecordId: string }
-  >(findOneRecordQuery, {
+  const { data, loading, error } = useQuery<{
+    [nameSingular: string]: RecordGqlNode;
+  }>(findOneRecordQuery, {
     skip: !objectMetadataItem || !objectRecordId || skip,
     variables: { objectRecordId },
     onCompleted: (data) => {
-      const recordWithoutConnection = getRecordFromRecordNode({
+      const recordWithoutConnection = getRecordFromRecordNode<T>({
         recordNode: { ...data[objectNameSingular] },
       });
 
@@ -47,7 +47,7 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
   const recordWithoutConnection = useMemo(
     () =>
       data?.[objectNameSingular]
-        ? getRecordFromRecordNode({
+        ? getRecordFromRecordNode<T>({
             recordNode: data?.[objectNameSingular],
           })
         : undefined,

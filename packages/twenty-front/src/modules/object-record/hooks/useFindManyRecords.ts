@@ -8,11 +8,13 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
+import { RecordGqlConnection } from '@/object-record/graphql-operations/types/RecordGqlConnection';
+import { RecordGqlEdge } from '@/object-record/graphql-operations/types/RecordGqlEdge';
+import { RecordGqlFindManyResult } from '@/object-record/graphql-operations/types/RecordGqlFindManyResult';
+import { RecordGqlOperationFields } from '@/object-record/graphql-operations/types/RecordGqlOperationFields';
+import { RecordGqlOperationVariables } from '@/object-record/graphql-operations/types/RecordGqlOperationVariables';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
-import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
-import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from '~/utils/isDefined';
@@ -22,7 +24,6 @@ import { capitalize } from '~/utils/string/capitalize';
 import { cursorFamilyState } from '../states/cursorFamilyState';
 import { hasNextPageFamilyState } from '../states/hasNextPageFamilyState';
 import { isFetchingMoreRecordsFamilyState } from '../states/isFetchingMoreRecordsFamilyState';
-import { ObjectRecordQueryResult } from '../types/ObjectRecordQueryResult';
 
 export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   objectNameSingular,
@@ -31,19 +32,19 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   limit,
   onCompleted,
   skip,
-  queryFields,
+  operationFields,
   fetchPolicy,
 }: ObjectMetadataItemIdentifier &
-  ObjectRecordQueryVariables & {
+  RecordGqlOperationVariables & {
     onCompleted?: (
       records: T[],
       options?: {
-        pageInfo?: ObjectRecordConnection['pageInfo'];
+        pageInfo?: RecordGqlConnection['pageInfo'];
         totalCount?: number;
       },
     ) => void;
     skip?: boolean;
-    queryFields?: Record<string, any>;
+    operationFields?: RecordGqlOperationFields;
     fetchPolicy?: WatchQueryFetchPolicy;
   }) => {
   const findManyQueryStateIdentifier =
@@ -70,56 +71,57 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const { findManyRecordsQuery } = useFindManyRecordsQuery({
     objectNameSingular,
-    queryFields,
+    operationFields,
   });
 
   const { enqueueSnackBar } = useSnackBar();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
-  const { data, loading, error, fetchMore } = useQuery<
-    ObjectRecordQueryResult<T>
-  >(findManyRecordsQuery, {
-    skip: skip || !objectMetadataItem || !currentWorkspaceMember,
-    variables: {
-      filter,
-      limit,
-      orderBy,
+  const { data, loading, error, fetchMore } = useQuery<RecordGqlFindManyResult>(
+    findManyRecordsQuery,
+    {
+      skip: skip || !objectMetadataItem || !currentWorkspaceMember,
+      variables: {
+        filter,
+        limit,
+        orderBy,
+      },
+      fetchPolicy: fetchPolicy,
+      onCompleted: (data) => {
+        if (!isDefined(data)) {
+          onCompleted?.([]);
+        }
+
+        const pageInfo = data?.[objectMetadataItem.namePlural]?.pageInfo;
+
+        const records = getRecordsFromRecordConnection({
+          recordConnection: data?.[objectMetadataItem.namePlural],
+        }) as T[];
+
+        onCompleted?.(records, {
+          pageInfo,
+          totalCount: data?.[objectMetadataItem.namePlural]?.totalCount,
+        });
+
+        if (isDefined(data?.[objectMetadataItem.namePlural])) {
+          setLastCursor(pageInfo.endCursor ?? '');
+          setHasNextPage(pageInfo.hasNextPage ?? false);
+        }
+      },
+      onError: (error) => {
+        logError(
+          `useFindManyRecords for "${objectMetadataItem.namePlural}" error : ` +
+            error,
+        );
+        enqueueSnackBar(
+          `Error during useFindManyRecords for "${objectMetadataItem.namePlural}", ${error.message}`,
+          {
+            variant: 'error',
+          },
+        );
+      },
     },
-    fetchPolicy: fetchPolicy,
-    onCompleted: (data) => {
-      if (!isDefined(data)) {
-        onCompleted?.([]);
-      }
-
-      const pageInfo = data?.[objectMetadataItem.namePlural]?.pageInfo;
-
-      const records = getRecordsFromRecordConnection({
-        recordConnection: data?.[objectMetadataItem.namePlural],
-      }) as T[];
-
-      onCompleted?.(records, {
-        pageInfo,
-        totalCount: data?.[objectMetadataItem.namePlural]?.totalCount,
-      });
-
-      if (isDefined(data?.[objectMetadataItem.namePlural])) {
-        setLastCursor(pageInfo.endCursor ?? '');
-        setHasNextPage(pageInfo.hasNextPage ?? false);
-      }
-    },
-    onError: (error) => {
-      logError(
-        `useFindManyRecords for "${objectMetadataItem.namePlural}" error : ` +
-          error,
-      );
-      enqueueSnackBar(
-        `Error during useFindManyRecords for "${objectMetadataItem.namePlural}", ${error.message}`,
-        {
-          variant: 'error',
-        },
-      );
-    },
-  });
+  );
 
   const fetchMoreRecords = useCallback(async () => {
     if (hasNextPage) {
@@ -137,7 +139,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
             const nextEdges =
               fetchMoreResult?.[objectMetadataItem.namePlural]?.edges;
 
-            let newEdges: ObjectRecordEdge<T>[] = [];
+            let newEdges: RecordGqlEdge[] = [];
 
             if (isNonEmptyArray(previousEdges) && isNonEmptyArray(nextEdges)) {
               newEdges = filterUniqueRecordEdgesByCursor([
@@ -179,7 +181,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
                 totalCount:
                   fetchMoreResult?.[objectMetadataItem.namePlural].totalCount,
               },
-            } as ObjectRecordQueryResult<T>);
+            } as RecordGqlFindManyResult);
           },
         });
       } catch (error) {
@@ -218,7 +220,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   const records = useMemo(
     () =>
       data?.[objectMetadataItem.namePlural]
-        ? getRecordsFromRecordConnection({
+        ? getRecordsFromRecordConnection<T>({
             recordConnection: data?.[objectMetadataItem.namePlural],
           })
         : ([] as T[]),

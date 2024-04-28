@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { FIND_MANY_ACTIVITY_TARGETS_QUERY_KEY } from '@/activities/query-keys/FindManyActivityTargetsQueryKey';
+import { findActivityTargetsOperationSignatureFactory } from '@/activities/graphql-operations/factories/findActivityTargetsOperationSignatureFactory';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
@@ -23,6 +23,9 @@ export const useActivityTargetsForTargetableObjects = ({
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
+  const FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE =
+    findActivityTargetsOperationSignatureFactory({ objectMetadataItems });
+
   // TODO: We want to optimistically remove from this request
   //   If we are on a show page and we remove the current show page object corresponding activity target
   //   See also if we need to update useTimelineActivities
@@ -30,12 +33,9 @@ export const useActivityTargetsForTargetableObjects = ({
     useFindManyRecords<ActivityTarget>({
       skip,
       objectNameSingular:
-        FIND_MANY_ACTIVITY_TARGETS_QUERY_KEY.objectNameSingular,
+        FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.objectNameSingular,
       filter: activityTargetsFilter,
-      queryFields:
-        FIND_MANY_ACTIVITY_TARGETS_QUERY_KEY.fieldsFactory?.(
-          objectMetadataItems,
-        ),
+      operationFields: FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.fields,
     });
 
   return {

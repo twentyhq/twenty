@@ -5,13 +5,13 @@ import { shouldFieldBeQueried } from '@/object-metadata/utils/shouldFieldBeQueri
 export const mapObjectMetadataToGraphQLQuery = ({
   objectMetadataItems,
   objectMetadataItem,
-  queryFields,
+  operationFields,
   computeReferences = false,
   isRootLevel = true,
 }: {
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: Pick<ObjectMetadataItem, 'nameSingular' | 'fields'>;
-  queryFields?: Record<string, any>;
+  operationFields?: Record<string, any>;
   computeReferences?: boolean;
   isRootLevel?: boolean;
 }): any => {
@@ -21,7 +21,7 @@ export const mapObjectMetadataToGraphQLQuery = ({
       .filter((field) =>
         shouldFieldBeQueried({
           field,
-          queryFields,
+          operationFields,
         }),
       ) ?? [];
 
@@ -38,10 +38,10 @@ ${fieldsThatShouldBeQueried
     return mapFieldMetadataToGraphQLQuery({
       objectMetadataItems,
       field,
-      relationQueryFields:
-        typeof queryFields?.[field.name] === 'boolean'
+      relationOperationFields:
+        typeof operationFields?.[field.name] === 'boolean'
           ? undefined
-          : queryFields?.[field.name],
+          : operationFields?.[field.name],
       computeReferences,
     });
   })

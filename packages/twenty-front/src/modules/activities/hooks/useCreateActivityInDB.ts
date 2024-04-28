@@ -1,6 +1,6 @@
 import { isNonEmptyArray } from '@sniptt/guards';
 
-import { CREATE_ONE_ACTIVITY_QUERY_KEY } from '@/activities/query-keys/CreateOneActivityQueryKey';
+import { CREATE_ONE_ACTIVITY_OPERATION_SIGNATURE } from '@/activities/graphql-operations/CreateOneActivityQueryKey';
 import { ActivityForEditor } from '@/activities/types/ActivityForEditor';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -9,8 +9,9 @@ import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 
 export const useCreateActivityInDB = () => {
   const { createOneRecord: createOneActivity } = useCreateOneRecord({
-    objectNameSingular: CREATE_ONE_ACTIVITY_QUERY_KEY.objectNameSingular,
-    queryFields: CREATE_ONE_ACTIVITY_QUERY_KEY.fields,
+    objectNameSingular:
+      CREATE_ONE_ACTIVITY_OPERATION_SIGNATURE.objectNameSingular,
+    operationFields: CREATE_ONE_ACTIVITY_OPERATION_SIGNATURE.fields,
   });
 
   const { createManyRecords: createManyActivityTargets } =

@@ -6,6 +6,7 @@ import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
+import { RecordGqlOperationFields } from '@/object-record/graphql-operations/types/RecordGqlOperationFields';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
@@ -14,7 +15,7 @@ import { isDefined } from '~/utils/isDefined';
 
 type useCreateOneRecordProps = {
   objectNameSingular: string;
-  queryFields?: Record<string, any>;
+  operationFields?: RecordGqlOperationFields;
   skipPostOptmisticEffect?: boolean;
 };
 
@@ -22,7 +23,7 @@ export const useCreateOneRecord = <
   CreatedObjectRecord extends ObjectRecord = ObjectRecord,
 >({
   objectNameSingular,
-  queryFields,
+  operationFields,
   skipPostOptmisticEffect = false,
 }: useCreateOneRecordProps) => {
   const apolloClient = useApolloClient();
@@ -33,7 +34,7 @@ export const useCreateOneRecord = <
 
   const { createOneRecordMutation } = useCreateOneRecordMutation({
     objectNameSingular,
-    queryFields,
+    operationFields,
   });
 
   const createOneRecordInCache = useCreateOneRecordInCache<CachedObjectRecord>({

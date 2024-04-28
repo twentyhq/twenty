@@ -7,23 +7,23 @@ import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
 export const shouldFieldBeQueried = ({
   field,
-  queryFields,
+  operationFields,
 }: {
   field: Pick<FieldMetadataItem, 'name' | 'type'>;
   objectRecord?: ObjectRecord;
-  queryFields?: Record<string, any>;
+  operationFields?: Record<string, any>;
 }): any => {
   if (
-    isUndefinedOrNull(queryFields) &&
+    isUndefinedOrNull(operationFields) &&
     field.type !== FieldMetadataType.Relation
   ) {
     return true;
   }
 
   if (
-    isDefined(queryFields) &&
-    isDefined(queryFields[field.name]) &&
-    isDefined(queryFields[field.name]) !== false
+    isDefined(operationFields) &&
+    isDefined(operationFields[field.name]) &&
+    isDefined(operationFields[field.name]) !== false
   ) {
     return true;
   }

@@ -16,7 +16,7 @@ import { lowerAndCapitalize } from '~/utils/string/lowerAndCapitalize';
 export const getRecordNodeFromRecord = <T extends ObjectRecord>({
   objectMetadataItems,
   objectMetadataItem,
-  queryFields,
+  operationFields,
   record,
   computeReferences = true,
   isRootLevel = true,
@@ -26,7 +26,7 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
     ObjectMetadataItem,
     'fields' | 'namePlural' | 'nameSingular'
   >;
-  queryFields?: Record<string, any>;
+  operationFields?: Record<string, any>;
   computeReferences?: boolean;
   isRootLevel?: boolean;
   record: T | null;
@@ -46,7 +46,7 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
   const nestedRecord = Object.fromEntries(
     Object.entries(record)
       .map(([fieldName, value]) => {
-        if (isDefined(queryFields) && !queryFields[fieldName]) {
+        if (isDefined(operationFields) && !operationFields[fieldName]) {
           return undefined;
         }
 
@@ -77,11 +77,11 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
               objectMetadataItems,
               objectMetadataItem: oneToManyObjectMetadataItem,
               records: value as ObjectRecord[],
-              queryFields:
-                queryFields?.[fieldName] === true ||
-                isUndefined(queryFields?.[fieldName])
+              operationFields:
+                operationFields?.[fieldName] === true ||
+                isUndefined(operationFields?.[fieldName])
                   ? undefined
-                  : queryFields?.[fieldName],
+                  : operationFields?.[fieldName],
               withPageInfo: false,
               isRootLevel: false,
               computeReferences,

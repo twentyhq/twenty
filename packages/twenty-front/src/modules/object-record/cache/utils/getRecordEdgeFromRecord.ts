@@ -1,13 +1,13 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
+import { RecordGqlEdge } from '@/object-record/graphql-operations/types/RecordGqlEdge';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { ObjectRecordEdge } from '@/object-record/types/ObjectRecordEdge';
 
 export const getRecordEdgeFromRecord = <T extends ObjectRecord>({
   objectMetadataItems,
   objectMetadataItem,
-  queryFields,
+  operationFields,
   record,
   computeReferences = false,
   isRootLevel = false,
@@ -17,7 +17,7 @@ export const getRecordEdgeFromRecord = <T extends ObjectRecord>({
     ObjectMetadataItem,
     'fields' | 'namePlural' | 'nameSingular'
   >;
-  queryFields?: Record<string, any>;
+  operationFields?: Record<string, any>;
   computeReferences?: boolean;
   isRootLevel?: boolean;
   record: T;
@@ -28,12 +28,12 @@ export const getRecordEdgeFromRecord = <T extends ObjectRecord>({
       ...getRecordNodeFromRecord({
         objectMetadataItems,
         objectMetadataItem,
-        queryFields,
+        operationFields,
         record,
         computeReferences,
         isRootLevel,
       }),
     },
     cursor: '',
-  } as ObjectRecordEdge<T>;
+  } as RecordGqlEdge;
 };

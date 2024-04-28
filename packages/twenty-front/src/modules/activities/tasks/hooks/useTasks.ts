@@ -8,8 +8,8 @@ import { currentIncompleteTaskQueryVariablesState } from '@/activities/tasks/sta
 import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline/constants/FindManyTimelineActivitiesOrderBy';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { RecordGqlOperationVariables } from '@/object-record/graphql-operations/types/RecordGqlOperationVariables';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
 import { parseDate } from '~/utils/date-utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -49,7 +49,7 @@ export const useTasks = ({
           ...assigneeIdFilter,
         },
         orderBy: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
-      }) as ObjectRecordQueryVariables,
+      }) as RecordGqlOperationVariables,
     [assigneeIdFilter],
   );
 
@@ -62,7 +62,7 @@ export const useTasks = ({
           ...assigneeIdFilter,
         },
         orderBy: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
-      }) as ObjectRecordQueryVariables,
+      }) as RecordGqlOperationVariables,
     [assigneeIdFilter],
   );
 

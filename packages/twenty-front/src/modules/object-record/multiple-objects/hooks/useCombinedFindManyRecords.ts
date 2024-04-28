@@ -2,19 +2,19 @@ import { useQuery } from '@apollo/client';
 
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { EMPTY_QUERY } from '@/object-record/constants/EmptyQuery';
+import { RecordGqlOperationSignature } from '@/object-record/graphql-operations/types/RecordGqlOperationSignature';
 import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
-import { QueryKey } from '@/object-record/query-keys/types/QueryKey';
 import { MultiObjectRecordQueryResult } from '@/object-record/relation-picker/hooks/useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray';
 
 export const useCombinedFindManyRecords = ({
-  queryKeys,
+  operationSignatures,
   skip = false,
 }: {
-  queryKeys: QueryKey[];
+  operationSignatures: RecordGqlOperationSignature[];
   skip: boolean;
 }) => {
   const findManyQuery = useGenerateCombinedFindManyRecordsQuery({
-    queryKeys,
+    operationSignatures,
   });
 
   const { data } = useQuery<MultiObjectRecordQueryResult>(

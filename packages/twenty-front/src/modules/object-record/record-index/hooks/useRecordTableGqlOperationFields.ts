@@ -2,7 +2,7 @@ import { useRecoilValue } from 'recoil';
 
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 
-export const useRecordTableQueryFields = () => {
+export const useRecordTableGqlOperationFields = () => {
   const { visibleTableColumnsSelector } = useRecordTableStates();
 
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());

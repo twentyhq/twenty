@@ -1,8 +1,8 @@
 import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
-import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
+import { RecordGqlConnection } from '@/object-record/graphql-operations/types/RecordGqlConnection';
 
 export type CachedObjectRecordConnection = Omit<
-  ObjectRecordConnection,
+  RecordGqlConnection,
   'edges'
 > & {
   edges: CachedObjectRecordEdge[];

@@ -83,10 +83,12 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
   });
 
   const multiSelectQuery = useGenerateCombinedFindManyRecordsQuery({
-    queryKeys: nonSystemObjectMetadataItems.map((objectMetadataItem) => ({
-      objectNameSingular: objectMetadataItem.nameSingular,
-      variables: {},
-    })),
+    operationSignatures: nonSystemObjectMetadataItems.map(
+      (objectMetadataItem) => ({
+        objectNameSingular: objectMetadataItem.nameSingular,
+        variables: {},
+      }),
+    ),
   });
 
   const {

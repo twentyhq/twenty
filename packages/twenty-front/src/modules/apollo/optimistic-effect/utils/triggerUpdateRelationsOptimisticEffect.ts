@@ -9,7 +9,7 @@ import { CORE_OBJECT_NAMES_TO_DELETE_ON_TRIGGER_RELATION_DETACH } from '@/apollo
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isObjectRecordConnection } from '@/object-record/cache/utils/isObjectRecordConnection';
-import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
+import { RecordGqlConnection } from '@/object-record/graphql-operations/types/RecordGqlConnection';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isDefined } from '~/utils/isDefined';
@@ -56,12 +56,12 @@ export const triggerUpdateRelationsOptimisticEffect = ({
         relationDefinition;
 
       const currentFieldValueOnSourceRecord:
-        | ObjectRecordConnection
+        | RecordGqlConnection
         | CachedObjectRecord
         | null = currentSourceRecord?.[fieldMetadataItemOnSourceRecord.name];
 
       const updatedFieldValueOnSourceRecord:
-        | ObjectRecordConnection
+        | RecordGqlConnection
         | CachedObjectRecord
         | null = updatedSourceRecord?.[fieldMetadataItemOnSourceRecord.name];
 

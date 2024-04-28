@@ -5,7 +5,7 @@ import { getObjectMetadataIdentifierFields } from '@/object-metadata/utils/getOb
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { isDefined } from '~/utils/isDefined';
 
-export const useRecordBoardQueryFields = ({
+export const useRecordBoardGqlOperationFields = ({
   objectMetadataItem,
   recordBoardId,
 }: {
