@@ -12,11 +12,9 @@ import { capitalize } from '~/utils/string/capitalize';
 export const useUpdateOneRecordMutation = ({
   objectNameSingular,
   computeReferences = false,
-  depth,
 }: {
   objectNameSingular: string;
   computeReferences?: boolean;
-  depth?: number;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -40,7 +38,6 @@ export const useUpdateOneRecordMutation = ({
          {
            objectMetadataItems,
            objectMetadataItem,
-           depth,
            computeReferences,
          },
        )}

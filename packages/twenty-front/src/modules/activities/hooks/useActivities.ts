@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 
@@ -18,26 +17,19 @@ export const useActivities = ({
   activitiesFilters,
   activitiesOrderByVariables,
   skip,
-  skipActivityTargets,
 }: {
   targetableObjects: ActivityTargetableObject[];
   activitiesFilters: ObjectRecordQueryFilter;
   activitiesOrderByVariables: OrderByField;
   skip?: boolean;
-  skipActivityTargets?: boolean;
 }) => {
-  const [initialized, setInitialized] = useState(false);
-
   const { objectMetadataItems } = useObjectMetadataItems();
 
-  const {
-    activityTargets,
-    loadingActivityTargets,
-    initialized: initializedActivityTargets,
-  } = useActivityTargetsForTargetableObjects({
-    targetableObjects,
-    skip: skipActivityTargets || skip,
-  });
+  const { activityTargets, loadingActivityTargets } =
+    useActivityTargetsForTargetableObjects({
+      targetableObjects,
+      skip: skip,
+    });
 
   const activityIds = [
     ...new Set(
@@ -51,28 +43,20 @@ export const useActivities = ({
     ),
   ];
 
-  const activityTargetsFound =
-    initializedActivityTargets && isNonEmptyArray(activityTargets);
-
   const filter: ObjectRecordQueryFilter = {
-    id: activityTargetsFound
-      ? {
-          in: activityIds,
-        }
-      : undefined,
+    id:
+      targetableObjects.length > 0
+        ? {
+            in: activityIds,
+          }
+        : undefined,
     ...activitiesFilters,
   };
 
-  const skipActivities =
-    skip ||
-    (!skipActivityTargets &&
-      (!initializedActivityTargets || !activityTargetsFound));
-
   const { records: activities, loading: loadingActivities } =
     useFindManyRecords<Activity>({
-      skip: skipActivities,
+      skip: skip,
       objectNameSingular: FIND_MANY_ACTIVITIES_QUERY_KEY.objectNameSingular,
-      depth: FIND_MANY_ACTIVITIES_QUERY_KEY.depth,
       queryFields:
         FIND_MANY_ACTIVITIES_QUERY_KEY.fieldsFactory?.(objectMetadataItems),
       filter,
@@ -80,41 +64,21 @@ export const useActivities = ({
       onCompleted: useRecoilCallback(
         ({ set }) =>
           (activities) => {
-            if (!initialized) {
-              setInitialized(true);
-            }
-
             for (const activity of activities) {
               set(recordStoreFamilyState(activity.id), activity);
             }
           },
-        [initialized],
+        [],
       ),
     });
 
   const loading = loadingActivities || loadingActivityTargets;
 
-  const noActivities =
-    (!activityTargetsFound && !skipActivityTargets && initialized) ||
-    (initialized && !loading && !isNonEmptyArray(activities));
-
-  useEffect(() => {
-    if (skipActivities || noActivities) {
-      setInitialized(true);
-    }
-  }, [
-    activities,
-    initialized,
-    loading,
-    noActivities,
-    skipActivities,
-    skipActivityTargets,
-  ]);
+  const noActivities = !loading && !isNonEmptyArray(activities);
 
   return {
     activities,
     loading,
-    initialized,
     noActivities,
   };
 };

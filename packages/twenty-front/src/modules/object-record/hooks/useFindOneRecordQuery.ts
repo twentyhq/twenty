@@ -8,10 +8,8 @@ import { capitalize } from '~/utils/string/capitalize';
 
 export const useFindOneRecordQuery = ({
   objectNameSingular,
-  depth,
 }: {
   objectNameSingular: string;
-  depth?: number;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -30,7 +28,6 @@ export const useFindOneRecordQuery = ({
         })${mapObjectMetadataToGraphQLQuery({
           objectMetadataItems,
           objectMetadataItem,
-          depth,
         })}
       },
   `;

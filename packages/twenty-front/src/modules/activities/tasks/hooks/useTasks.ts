@@ -1,5 +1,4 @@
 import { useEffect, useMemo } from 'react';
-import { isNonEmptyArray } from '@sniptt/guards';
 import { DateTime } from 'luxon';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
@@ -40,8 +39,6 @@ export const useTasks = ({
         : undefined,
     [selectedFilter],
   );
-
-  const skipActivityTargets = !isNonEmptyArray(targetableObjects);
 
   const completedQueryVariables = useMemo(
     () =>
@@ -110,24 +107,16 @@ export const useTasks = ({
     setCurrentIncompleteTaskQueryVariables,
   ]);
 
-  const {
-    activities: completeTasksData,
-    initialized: initializedCompleteTasks,
-  } = useActivities({
+  const { activities: completeTasksData } = useActivities({
     targetableObjects,
     activitiesFilters: completedQueryVariables.filter ?? {},
     activitiesOrderByVariables: completedQueryVariables.orderBy ?? {},
-    skipActivityTargets,
   });
 
-  const {
-    activities: incompleteTaskData,
-    initialized: initializedIncompleteTasks,
-  } = useActivities({
+  const { activities: incompleteTaskData } = useActivities({
     targetableObjects,
     activitiesFilters: incompleteQueryVariables.filter ?? {},
     activitiesOrderByVariables: incompleteQueryVariables.orderBy ?? {},
-    skipActivityTargets,
   });
 
   const todayOrPreviousTasks = incompleteTaskData?.filter((task) => {
@@ -159,6 +148,5 @@ export const useTasks = ({
     upcomingTasks: (upcomingTasks ?? []) as Activity[],
     unscheduledTasks: (unscheduledTasks ?? []) as Activity[],
     completedTasks: (completedTasks ?? []) as Activity[],
-    initialized: initializedCompleteTasks && initializedIncompleteTasks,
   };
 };

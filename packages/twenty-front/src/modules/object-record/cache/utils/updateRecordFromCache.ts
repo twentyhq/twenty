@@ -44,7 +44,6 @@ export const updateRecordFromCache = <T extends ObjectRecord>({
     objectMetadataItems,
     objectMetadataItem,
     record,
-    depth: 1,
   });
 
   if (isUndefinedOrNull(recordWithConnection)) {

@@ -23,17 +23,14 @@ export const useReadFindManyRecordsQueryInCache = ({
   >({
     queryVariables,
     queryFields,
-    depth,
   }: {
     queryVariables: ObjectRecordQueryVariables;
     queryFields?: Record<string, any>;
-    depth?: number;
   }) => {
     const findManyRecordsQueryForCacheRead = generateFindManyRecordsQuery({
       objectMetadataItem,
       objectMetadataItems,
       queryFields,
-      depth,
     });
 
     const existingRecordsQueryResult = apolloClient.readQuery<

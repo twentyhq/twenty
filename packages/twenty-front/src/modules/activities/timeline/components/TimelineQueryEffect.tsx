@@ -27,7 +27,7 @@ export const TimelineQueryEffect = ({
     setTimelineTargetableObject(targetableObject);
   }, [targetableObject, setTimelineTargetableObject]);
 
-  const { activities, initialized, noActivities } = useActivities({
+  const { activities, noActivities } = useActivities({
     targetableObjects: [targetableObject],
     activitiesFilters: {},
     activitiesOrderByVariables: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
@@ -61,17 +61,16 @@ export const TimelineQueryEffect = ({
     }
 
     if (
-      !isDeeplyEqual(timelineActivitiesNetworking.initialized, initialized) ||
+      !isDeeplyEqual(timelineActivitiesNetworking.initialized, true) ||
       !isDeeplyEqual(timelineActivitiesNetworking.noActivities, noActivities)
     ) {
       setTimelineActivitiesNetworking({
-        initialized,
+        initialized: true,
         noActivities,
       });
     }
   }, [
     activities,
-    initialized,
     noActivities,
     setTimelineActivitiesNetworking,
     targetableObject,

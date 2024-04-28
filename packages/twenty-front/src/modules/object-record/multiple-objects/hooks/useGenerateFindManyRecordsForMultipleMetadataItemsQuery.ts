@@ -9,10 +9,8 @@ import { capitalize } from '~/utils/string/capitalize';
 
 export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
   targetObjectMetadataItems,
-  depth,
 }: {
   targetObjectMetadataItems: ObjectMetadataItem[];
-  depth?: number;
 }) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const capitalizedObjectNameSingulars = targetObjectMetadataItems.map(
@@ -74,7 +72,6 @@ export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
             node ${mapObjectMetadataToGraphQLQuery({
               objectMetadataItems: objectMetadataItems,
               objectMetadataItem,
-              depth,
             })}
             cursor
           }

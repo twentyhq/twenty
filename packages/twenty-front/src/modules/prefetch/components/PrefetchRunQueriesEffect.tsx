@@ -29,7 +29,6 @@ export const PrefetchRunQueriesEffect = () => {
   const { result } = useFindManyRecordsForMultipleMetadataItems({
     objectMetadataItems: [objectMetadataItemView, objectMetadataItemFavorite],
     skip: !currentUser,
-    depth: 1,
   });
 
   useEffect(() => {

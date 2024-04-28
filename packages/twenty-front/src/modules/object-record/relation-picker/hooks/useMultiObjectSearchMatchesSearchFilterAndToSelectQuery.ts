@@ -85,7 +85,6 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
   const multiSelectQuery =
     useGenerateFindManyRecordsForMultipleMetadataItemsQuery({
       targetObjectMetadataItems: nonSystemObjectMetadataItems,
-      depth: 0,
     });
 
   const {

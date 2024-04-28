@@ -12,11 +12,9 @@ import { capitalize } from '~/utils/string/capitalize';
 export const useCreateOneRecordMutation = ({
   objectNameSingular,
   queryFields,
-  depth,
 }: {
   objectNameSingular: string;
   queryFields?: Record<string, any>;
-  depth?: number;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -40,7 +38,6 @@ export const useCreateOneRecordMutation = ({
         objectMetadataItems,
         objectMetadataItem,
         queryFields,
-        depth,
       })}
     }
   `;

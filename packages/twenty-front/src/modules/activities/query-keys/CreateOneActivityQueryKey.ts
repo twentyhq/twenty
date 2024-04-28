@@ -30,5 +30,4 @@ export const CREATE_ONE_ACTIVITY_QUERY_KEY: QueryKey = {
     reminderAt: true,
     type: true,
   },
-  depth: 1,
 };

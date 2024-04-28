@@ -9,16 +9,13 @@ import { MultiObjectRecordQueryResult } from '@/object-record/relation-picker/ho
 export const useFindManyRecordsForMultipleMetadataItems = ({
   objectMetadataItems,
   skip = false,
-  depth = 2,
 }: {
   objectMetadataItems: ObjectMetadataItem[];
   skip: boolean;
-  depth?: number;
 }) => {
   const findManyQuery = useGenerateFindManyRecordsForMultipleMetadataItemsQuery(
     {
       targetObjectMetadataItems: objectMetadataItems,
-      depth,
     },
   );
 

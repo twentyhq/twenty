@@ -5,9 +5,7 @@ import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFr
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-type UseLazyFindOneRecordParams = ObjectMetadataItemIdentifier & {
-  depth?: number;
-};
+type UseLazyFindOneRecordParams = ObjectMetadataItemIdentifier;
 
 type FindOneRecordParams<T extends ObjectRecord> = {
   objectRecordId: string | undefined;
@@ -16,11 +14,9 @@ type FindOneRecordParams<T extends ObjectRecord> = {
 
 export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
   objectNameSingular,
-  depth,
 }: UseLazyFindOneRecordParams) => {
   const { findOneRecordQuery } = useFindOneRecordQuery({
     objectNameSingular,
-    depth,
   });
 
   const [findOneRecord, { loading, error, data, called }] =

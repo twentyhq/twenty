@@ -43,7 +43,6 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       },
     ) => void;
     skip?: boolean;
-    depth?: number;
     queryFields?: Record<string, any>;
     fetchPolicy?: WatchQueryFetchPolicy;
   }) => {

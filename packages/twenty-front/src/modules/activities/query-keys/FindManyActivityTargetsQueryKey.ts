@@ -17,5 +17,4 @@ export const FIND_MANY_ACTIVITY_TARGETS_QUERY_KEY: QueryKey = {
       ...generateActivityTargetMorphFieldKeys(objectMetadataItems),
     };
   },
-  depth: 1,
 };

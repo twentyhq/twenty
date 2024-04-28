@@ -20,7 +20,6 @@ export const getRecordEdgeFromRecord = <T extends ObjectRecord>({
   queryFields?: Record<string, any>;
   computeReferences?: boolean;
   isRootLevel?: boolean;
-  depth?: number;
   record: T;
 }) => {
   return {
@@ -33,7 +32,6 @@ export const getRecordEdgeFromRecord = <T extends ObjectRecord>({
         record,
         computeReferences,
         isRootLevel,
-        depth: 1,
       }),
     },
     cursor: '',

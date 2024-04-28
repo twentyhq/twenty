@@ -17,12 +17,10 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
   objectRecordId = '',
   objectNameSingular,
   onCompleted,
-  depth,
 }: ObjectMetadataItemIdentifier & {
   objectRecordId: string | undefined;
   onCompleted?: (data: ObjectRecordConnection<T>) => void;
   skip?: boolean;
-  depth?: number;
 }) => {
   const findDuplicateQueryStateIdentifier = objectNameSingular;
 
@@ -32,7 +30,6 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const { findDuplicateRecordsQuery } = useFindDuplicateRecordsQuery({
     objectNameSingular,
-    depth,
   });
 
   const { enqueueSnackBar } = useSnackBar();

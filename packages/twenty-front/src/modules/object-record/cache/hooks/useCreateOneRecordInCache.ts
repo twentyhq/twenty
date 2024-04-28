@@ -38,7 +38,6 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
     const prefilledRecord = prefillRecord({
       objectMetadataItem,
       input: record,
-      depth: 1,
     });
 
     const recordToCreateWithNestedConnections = getRecordNodeFromRecord({

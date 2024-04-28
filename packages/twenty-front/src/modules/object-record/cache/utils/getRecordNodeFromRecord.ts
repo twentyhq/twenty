@@ -20,7 +20,6 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
   record,
   computeReferences = true,
   isRootLevel = true,
-  depth = 1,
 }: {
   objectMetadataItems: ObjectMetadataItem[];
   objectMetadataItem: Pick<
@@ -31,7 +30,6 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
   computeReferences?: boolean;
   isRootLevel?: boolean;
   record: T | null;
-  depth?: number;
 }) => {
   if (isNull(record)) {
     return null;
@@ -57,14 +55,6 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
         );
 
         if (isUndefined(field)) {
-          return undefined;
-        }
-
-        if (
-          !isUndefined(depth) &&
-          depth < 1 &&
-          field.type === FieldMetadataType.Relation
-        ) {
           return undefined;
         }
 
@@ -95,7 +85,6 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
               withPageInfo: false,
               isRootLevel: false,
               computeReferences,
-              depth: depth - 1,
             }),
           ];
         }

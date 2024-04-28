@@ -15,7 +15,6 @@ import { isDefined } from '~/utils/isDefined';
 type useCreateManyRecordsProps = {
   objectNameSingular: string;
   queryFields?: Record<string, any>;
-  depth?: number;
   skipPostOptmisticEffect?: boolean;
 };
 
@@ -24,7 +23,6 @@ export const useCreateManyRecords = <
 >({
   objectNameSingular,
   queryFields,
-  depth = 1,
   skipPostOptmisticEffect = false,
 }: useCreateManyRecordsProps) => {
   const apolloClient = useApolloClient();
@@ -36,7 +34,6 @@ export const useCreateManyRecords = <
   const { createManyRecordsMutation } = useCreateManyRecordsMutation({
     objectNameSingular,
     queryFields,
-    depth,
   });
 
   const createOneRecordInCache = useCreateOneRecordInCache<CachedObjectRecord>({

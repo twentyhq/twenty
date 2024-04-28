@@ -14,7 +14,6 @@ import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 type useUpdateOneRecordProps = {
   objectNameSingular: string;
   queryFields?: Record<string, any>;
-  depth?: number;
 };
 
 export const useUpdateOneRecord = <
@@ -22,7 +21,6 @@ export const useUpdateOneRecord = <
 >({
   objectNameSingular,
   queryFields,
-  depth = 1,
 }: useUpdateOneRecordProps) => {
   const apolloClient = useApolloClient();
 
@@ -60,7 +58,6 @@ export const useUpdateOneRecord = <
       record: cachedRecord,
       objectMetadataItem,
       objectMetadataItems,
-      depth,
       queryFields,
       computeReferences: true,
     });
@@ -76,7 +73,6 @@ export const useUpdateOneRecord = <
         record: optimisticRecord,
         objectMetadataItem,
         objectMetadataItems,
-        depth,
         queryFields,
         computeReferences: true,
       });

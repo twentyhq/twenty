@@ -8,14 +8,12 @@ import { capitalize } from '~/utils/string/capitalize';
 export const generateFindManyRecordsQuery = ({
   objectMetadataItem,
   objectMetadataItems,
-  depth,
   queryFields,
   computeReferences,
 }: {
   objectMetadataItem: ObjectMetadataItem;
   objectMetadataItems: ObjectMetadataItem[];
   queryFields?: QueryFields;
-  depth?: number;
   computeReferences?: boolean;
 }) => gql`
 query FindMany${capitalize(
@@ -32,7 +30,6 @@ query FindMany${capitalize(
       node ${mapObjectMetadataToGraphQLQuery({
         objectMetadataItems,
         objectMetadataItem,
-        depth,
         queryFields,
         computeReferences,
       })}

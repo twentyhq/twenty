@@ -75,7 +75,6 @@ export const useTimelineActivities = ({
           },
         [initialized],
       ),
-      depth: 3,
     });
 
   const noActivityTargets =

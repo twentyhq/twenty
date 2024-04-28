@@ -15,7 +15,6 @@ import { isDefined } from '~/utils/isDefined';
 type useCreateOneRecordProps = {
   objectNameSingular: string;
   queryFields?: Record<string, any>;
-  depth?: number;
   skipPostOptmisticEffect?: boolean;
 };
 

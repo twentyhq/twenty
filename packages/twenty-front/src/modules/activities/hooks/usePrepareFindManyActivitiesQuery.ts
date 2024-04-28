@@ -110,7 +110,6 @@ export const usePrepareFindManyActivitiesQuery = () => {
         ...nextFindManyActivitiesQueryFilter,
         orderBy: { createdAt: 'DescNullsFirst' },
       },
-      depth: FIND_MANY_ACTIVITIES_QUERY_KEY.depth,
       queryFields:
         FIND_MANY_ACTIVITIES_QUERY_KEY.fieldsFactory?.(objectMetadataItems),
       computeReferences: true,

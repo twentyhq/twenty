@@ -8,12 +8,10 @@ import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFind
 export const useFindManyRecordsQuery = ({
   objectNameSingular,
   queryFields,
-  depth,
   computeReferences,
 }: {
   objectNameSingular: string;
   queryFields?: QueryFields;
-  depth?: number;
   computeReferences?: boolean;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -26,7 +24,6 @@ export const useFindManyRecordsQuery = ({
     objectMetadataItem,
     objectMetadataItems,
     queryFields,
-    depth,
     computeReferences,
   });
 

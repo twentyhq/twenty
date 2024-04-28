@@ -34,7 +34,6 @@ export const useCreateActivityInCache = () => {
   const { record: currentWorkspaceMemberRecord } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
     objectRecordId: currentWorkspaceMember?.id,
-    depth: 0,
   });
 
   const { objectMetadataItem: objectMetadataItemActivity } =

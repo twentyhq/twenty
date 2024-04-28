@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { FIND_MANY_ACTIVITY_TARGETS_QUERY_KEY } from '@/activities/query-keys/FindManyActivityTargetsQueryKey';
@@ -24,8 +23,6 @@ export const useActivityTargetsForTargetableObjects = ({
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const [initialized, setInitialized] = useState(false);
-
   // TODO: We want to optimistically remove from this request
   //   If we are on a show page and we remove the current show page object corresponding activity target
   //   See also if we need to update useTimelineActivities
@@ -39,16 +36,10 @@ export const useActivityTargetsForTargetableObjects = ({
         FIND_MANY_ACTIVITY_TARGETS_QUERY_KEY.fieldsFactory?.(
           objectMetadataItems,
         ),
-      onCompleted: () => {
-        if (!initialized) {
-          setInitialized(true);
-        }
-      },
     });
 
   return {
     activityTargets,
     loadingActivityTargets,
-    initialized,
   };
 };

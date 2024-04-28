@@ -13,12 +13,10 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
   objectRecordId = '',
   onCompleted,
   skip,
-  depth,
 }: ObjectMetadataItemIdentifier & {
   objectRecordId: string | undefined;
   onCompleted?: (data: T) => void;
   skip?: boolean;
-  depth?: number;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -26,7 +24,6 @@ export const useFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
 
   const { findOneRecordQuery } = useFindOneRecordQuery({
     objectNameSingular,
-    depth,
   });
 
   const { data, loading, error } = useQuery<

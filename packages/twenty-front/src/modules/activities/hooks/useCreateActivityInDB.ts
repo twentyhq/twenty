@@ -11,7 +11,6 @@ export const useCreateActivityInDB = () => {
   const { createOneRecord: createOneActivity } = useCreateOneRecord({
     objectNameSingular: CREATE_ONE_ACTIVITY_QUERY_KEY.objectNameSingular,
     queryFields: CREATE_ONE_ACTIVITY_QUERY_KEY.fields,
-    depth: CREATE_ONE_ACTIVITY_QUERY_KEY.depth,
   });
 
   const { createManyRecords: createManyActivityTargets } =

@@ -1,36 +1,32 @@
-import { isUndefined } from '@sniptt/guards';
-
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
 export const shouldFieldBeQueried = ({
   field,
-  depth,
   queryFields,
 }: {
   field: Pick<FieldMetadataItem, 'name' | 'type'>;
-  depth?: number;
   objectRecord?: ObjectRecord;
   queryFields?: Record<string, any>;
 }): any => {
-  if (!isUndefined(depth) && depth < 0) {
-    return false;
+  if (
+    isUndefinedOrNull(queryFields) &&
+    field.type !== FieldMetadataType.Relation
+  ) {
+    return true;
   }
 
   if (
-    !isUndefined(depth) &&
-    depth < 1 &&
-    field.type === FieldMetadataType.Relation
+    isDefined(queryFields) &&
+    isDefined(queryFields[field.name]) &&
+    isDefined(queryFields[field.name]) !== false
   ) {
-    return false;
+    return true;
   }
 
-  if (isDefined(queryFields) && !queryFields[field.name]) {
-    return false;
-  }
-
-  return true;
+  return false;
 };
