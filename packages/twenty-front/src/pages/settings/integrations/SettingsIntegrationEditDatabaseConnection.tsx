@@ -90,9 +90,9 @@ export const SettingsIntegrationEditDatabaseConnection = () => {
   const connectionName = getConnectionDbName({ integration, connection });
 
   const canSave =
-    !hasSyncedTables &&
+    formConfig.formState.isValid &&
     formConfig.formState.isDirty &&
-    formConfig.formState.isValid;
+    !hasSyncedTables;
 
   const handleSave = async () => {
     const formValues = formConfig.getValues();
