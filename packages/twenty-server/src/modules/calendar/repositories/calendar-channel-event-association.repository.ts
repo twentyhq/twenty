@@ -179,6 +179,8 @@ export class CalendarChannelEventAssociationRepository {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
+    const isHandleDomain = calendarEventParticipantHandle.startsWith('@');
+
     await this.workspaceDataSourceService.executeRawQuery(
       `DELETE FROM ${dataSourceSchema}."calendarChannelEventAssociation"
       WHERE "id" IN (
@@ -186,9 +188,16 @@ export class CalendarChannelEventAssociationRepository {
       FROM ${dataSourceSchema}."calendarChannelEventAssociation" "calendarChannelEventAssociation"
       JOIN ${dataSourceSchema}."calendarEvent" "calendarEvent" ON "calendarChannelEventAssociation"."calendarEventId" = "calendarEvent"."id"
       JOIN ${dataSourceSchema}."calendarEventParticipant" "calendarEventParticipant" ON "calendarEvent"."id" = "calendarEventParticipant"."calendarEventId"
-      WHERE "calendarEventParticipant"."handle" = $1 AND "calendarChannelEventAssociation"."calendarChannelId" = ANY($2)
+      WHERE "calendarEventParticipant"."handle" ${
+        isHandleDomain ? 'ILIKE' : '='
+      } $1 AND "calendarChannelEventAssociation"."calendarChannelId" = ANY($2)
       )`,
-      [calendarEventParticipantHandle, calendarChannelIds],
+      [
+        isHandleDomain
+          ? `%${calendarEventParticipantHandle}`
+          : calendarEventParticipantHandle,
+        calendarChannelIds,
+      ],
       workspaceId,
       transactionManager,
     );

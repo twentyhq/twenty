@@ -4,6 +4,8 @@ import UserGuideContent from '@/app/_components/user-guide/UserGuideContent';
 import { fetchArticleFromSlug } from '@/shared-utils/fetchArticleFromSlug';
 import { formatSlug } from '@/shared-utils/formatSlug';
 
+export const dynamic = 'force-dynamic';
+
 export async function generateMetadata({
   params,
 }: {

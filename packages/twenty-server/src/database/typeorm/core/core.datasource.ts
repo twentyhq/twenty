@@ -21,6 +21,7 @@ export const typeORMCoreModuleOptions: TypeOrmModuleOptions = {
         }
       : undefined,
 };
+
 export const connectionSource = new DataSource(
   typeORMCoreModuleOptions as DataSourceOptions,
 );

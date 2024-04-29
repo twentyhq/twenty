@@ -89,6 +89,11 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         ? ['query', 'error']
         : ['error'],
       schema,
+      ssl: this.environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')
+        ? {
+            rejectUnauthorized: false,
+          }
+        : undefined,
     });
 
     await workspaceDataSource.initialize();

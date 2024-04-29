@@ -23,7 +23,7 @@ export const useFindDuplicateRecordsQuery = ({
   const findDuplicateRecordsQuery = gql`
     query FindDuplicate${capitalize(
       objectMetadataItem.nameSingular,
-    )}($id: UUID) {
+    )}($id: ID!) {
       ${getFindDuplicateRecordsQueryResponseField(
         objectMetadataItem.nameSingular,
       )}(id: $id) {

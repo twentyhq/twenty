@@ -1,10 +1,12 @@
 import console from 'console';
 
-import { connectionSource, performQuery } from './utils';
+import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
+
+import { performQuery } from './utils';
 
 async function dropSchemasSequentially() {
   try {
-    await connectionSource.initialize();
+    await rawDataSource.initialize();
 
     // Fetch all schemas
     const schemas = await performQuery(
