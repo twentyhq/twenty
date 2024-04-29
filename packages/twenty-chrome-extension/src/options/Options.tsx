@@ -131,7 +131,7 @@ const Options = () => {
             <MainButton
               title="Sign up"
               variant="secondary"
-              onClick={() => window.open(`${serverBaseUrl}`, '_blank')}
+              onClick={() => window.open(`${import.meta.env.VITE_FRONT_BASE_URL}`, '_blank')}
               fullWidth
             />
           </StyledActionContainer>
