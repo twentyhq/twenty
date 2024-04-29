@@ -10,7 +10,7 @@ import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-sche
 /**
  * Create providers for the given entities.
  */
-export function createTwemtyORMProviders(
+export function createTwentyORMProviders(
   objects?: EntityClassOrSchema[],
 ): Provider[] {
   return (objects || []).map((object) => ({

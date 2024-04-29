@@ -7,7 +7,7 @@ import {
   TwentyORMOptions,
 } from 'src/engine/twenty-orm/interfaces/twenty-orm-options.interface';
 
-import { createTwemtyORMProviders } from 'src/engine/twenty-orm/twenty-orm.providers';
+import { createTwentyORMProviders } from 'src/engine/twenty-orm/twenty-orm.providers';
 import { TwentyORMCoreModule } from 'src/engine/twenty-orm/twenty-orm-core.module';
 
 @Global()
@@ -21,7 +21,7 @@ export class TwentyORMModule extends ConfigurableModuleClass {
   }
 
   static forFeature(objects: EntityClassOrSchema[] = []): DynamicModule {
-    const providers = createTwemtyORMProviders(objects);
+    const providers = createTwentyORMProviders(objects);
 
     return {
       module: TwentyORMModule,
