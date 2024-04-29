@@ -88,12 +88,12 @@ export const useCreateOneRecord = <
 
         if (!record || skipPostOptmisticEffect) return;
 
-        // triggerCreateRecordsOptimisticEffect({
-        //   cache,
-        //   objectMetadataItem,
-        //   recordsToCreate: [record],
-        //   objectMetadataItems,
-        // });
+        triggerCreateRecordsOptimisticEffect({
+          cache,
+          objectMetadataItem,
+          recordsToCreate: [record],
+          objectMetadataItems,
+        });
       },
     });
 
