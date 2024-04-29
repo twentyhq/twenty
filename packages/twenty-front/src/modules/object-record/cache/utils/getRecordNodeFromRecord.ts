@@ -148,5 +148,5 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
       .filter(isDefined),
   ) as T; // Todo fix typing once we have investigated apollo edges / nodes removal
 
-  return nestedRecord;
+  return { ...nestedRecord, __typename: nodeTypeName };
 };

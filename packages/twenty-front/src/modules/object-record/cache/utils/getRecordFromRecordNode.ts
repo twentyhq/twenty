@@ -33,5 +33,6 @@ export const getRecordFromRecordNode = <T extends ObjectRecord>({
       }),
     ),
     id: recordNode.id,
+    __typename: recordNode.__typename,
   } as T;
 };
