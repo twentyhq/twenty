@@ -78,14 +78,16 @@ export class FindDuplicatesQueryFactory {
   }
 
   buildQueryForExistingRecord(
-    id: string,
+    id: string | number,
     options: WorkspaceQueryBuilderOptions,
   ) {
+    const idQueryField = typeof id === 'string' ? `"${id}"` : id;
+
     return `
       query {
         ${computeObjectTargetTable(
           options.objectMetadataItem,
-        )}Collection(filter: { id: { eq: "${id}" }}){
+        )}Collection(filter: { id: { eq: ${idQueryField} }}){
           edges {
             node {
               __typename

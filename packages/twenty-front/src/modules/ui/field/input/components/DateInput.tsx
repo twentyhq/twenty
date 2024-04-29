@@ -2,12 +2,12 @@ import { useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { Nullable } from 'twenty-ui';
 
-import { InternalDatePicker } from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import {
+  InternalDatePicker,
   MONTH_AND_YEAR_DROPDOWN_ID,
   MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
   MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
-} from '@/ui/input/components/internal/date/components/MonthAndYearDropdown';
+} from '@/ui/input/components/internal/date/components/InternalDatePicker';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { useListenClickOutsideV2 } from '@/ui/utilities/pointer-event/hooks/useListenClickOutsideV2';
 

@@ -12,6 +12,8 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
 import { DataloaderModule } from 'src/engine/dataloaders/dataloader.module';
 import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
+import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
+import { CacheStorageModule } from 'src/engine/integrations/cache-storage/cache-storage.module';
 
 @Module({
   imports: [
@@ -19,11 +21,17 @@ import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
       driver: YogaDriver,
       useFactory: metadataModuleFactory,
       imports: [GraphQLConfigModule, DataloaderModule],
-      inject: [EnvironmentService, ExceptionHandlerService, DataloaderService],
+      inject: [
+        EnvironmentService,
+        ExceptionHandlerService,
+        DataloaderService,
+        CacheStorageNamespace.WorkspaceSchema,
+      ],
     }),
     MetadataEngineModule,
     WorkspaceMigrationRunnerModule,
     WorkspaceMigrationModule,
+    CacheStorageModule,
   ],
 })
 export class MetadataGraphQLApiModule {}

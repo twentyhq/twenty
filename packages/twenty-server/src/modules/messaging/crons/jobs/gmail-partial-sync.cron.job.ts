@@ -36,7 +36,7 @@ export class GmailPartialSyncCronJob implements MessageQueueJob<undefined> {
     const workspaceIds = (
       await this.workspaceRepository.find({
         where: {
-          subscriptionStatus: 'active',
+          subscriptionStatus: In(['active', 'trialing', 'past_due']),
         },
         select: ['id'],
       })

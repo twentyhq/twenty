@@ -1,6 +1,6 @@
 {
   "name": "twenty-front",
-  "version": "0.4.0",
+  "version": "0.10.3",
   "private": true,
   "type": "module",
   "scripts": {
@@ -28,5 +28,8 @@
   },
   "msw": {
     "workerDirectory": "public"
+  },
+  "dependencies": {
+    "transliteration": "^2.3.5"
   }
 }

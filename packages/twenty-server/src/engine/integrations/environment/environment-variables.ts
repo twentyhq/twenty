@@ -16,6 +16,7 @@ import {
 } from 'class-validator';
 
 import { EmailDriver } from 'src/engine/integrations/email/interfaces/email.interface';
+import { NodeEnvironment } from 'src/engine/integrations/environment/interfaces/node-environment.interface';
 
 import { assert } from 'src/utils/assert';
 import { CastToStringArray } from 'src/engine/integrations/environment/decorators/cast-to-string-array.decorator';
@@ -23,7 +24,9 @@ import { ExceptionHandlerDriver } from 'src/engine/integrations/exception-handle
 import { StorageDriverType } from 'src/engine/integrations/file-storage/interfaces';
 import { LoggerDriverType } from 'src/engine/integrations/logger/interfaces';
 import { IsStrictlyLowerThan } from 'src/engine/integrations/environment/decorators/is-strictly-lower-than.decorator';
+import { CaptchaDriverType } from 'src/engine/integrations/captcha/interfaces';
 import { MessageQueueDriverType } from 'src/engine/integrations/message-queue/interfaces';
+import { CacheStorageType } from 'src/engine/integrations/cache-storage/types/cache-storage-type.enum';
 
 import { IsDuration } from './decorators/is-duration.decorator';
 import { AwsRegion } from './interfaces/aws-region.interface';
@@ -40,17 +43,16 @@ export class EnvironmentVariables {
   @IsBoolean()
   DEBUG_MODE = false;
 
+  @IsEnum(NodeEnvironment)
+  @IsString()
+  NODE_ENV: NodeEnvironment = NodeEnvironment.development;
+
   @CastToPositiveNumber()
   @IsOptional()
   @IsNumber()
   @Min(0)
   @Max(65535)
   DEBUG_PORT = 9000;
-
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
-  SIGN_IN_PREFILLED = false;
 
   @CastToBoolean()
   @IsOptional()
@@ -103,6 +105,11 @@ export class EnvironmentVariables {
   })
   PG_DATABASE_URL: string;
 
+  @CastToBoolean()
+  @IsBoolean()
+  @IsOptional()
+  PG_SSL_ALLOW_SELF_SIGNED = false;
+
   // Frontend URL
   @IsUrl({ require_tld: false })
   FRONT_BASE_URL: string;
@@ -154,18 +161,50 @@ export class EnvironmentVariables {
   @CastToBoolean()
   @IsOptional()
   @IsBoolean()
+  AUTH_PASSWORD_ENABLED = true;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  @ValidateIf((env) => env.AUTH_PASSWORD_ENABLED)
+  SIGN_IN_PREFILLED = false;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
+  AUTH_MICROSOFT_ENABLED = false;
+
+  @IsString()
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
+  AUTH_MICROSOFT_CLIENT_ID: string;
+
+  @IsString()
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
+  AUTH_MICROSOFT_TENANT_ID: string;
+
+  @IsString()
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
+  AUTH_MICROSOFT_CLIENT_SECRET: string;
+
+  @IsUrl({ require_tld: false })
+  @ValidateIf((env) => env.AUTH_MICROSOFT_ENABLED)
+  AUTH_MICROSOFT_CALLBACK_URL: string;
+
+  @CastToBoolean()
+  @IsOptional()
+  @IsBoolean()
   AUTH_GOOGLE_ENABLED = false;
 
   @IsString()
-  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED === true)
+  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CLIENT_ID: string;
 
   @IsString()
-  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED === true)
+  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CLIENT_SECRET: string;
 
   @IsUrl({ require_tld: false })
-  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED === true)
+  @ValidateIf((env) => env.AUTH_GOOGLE_ENABLED)
   AUTH_GOOGLE_CALLBACK_URL: string;
 
   // Storage
@@ -275,6 +314,18 @@ export class EnvironmentVariables {
   @IsBoolean()
   IS_SIGN_UP_DISABLED = false;
 
+  @IsEnum(CaptchaDriverType)
+  @IsOptional()
+  CAPTCHA_DRIVER?: CaptchaDriverType;
+
+  @IsString()
+  @IsOptional()
+  CAPTCHA_SITE_KEY?: string;
+
+  @IsString()
+  @IsOptional()
+  CAPTCHA_SECRET_KEY?: string;
+
   @CastToPositiveNumber()
   @IsOptional()
   @IsNumber()
@@ -319,7 +370,7 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   API_RATE_LIMITING_LIMIT = 500;
 
-  CACHE_STORAGE_TYPE = 'memory';
+  CACHE_STORAGE_TYPE: CacheStorageType = CacheStorageType.Memory;
 
   @CastToPositiveNumber()
   CACHE_STORAGE_TTL: number = 3600 * 24 * 7;

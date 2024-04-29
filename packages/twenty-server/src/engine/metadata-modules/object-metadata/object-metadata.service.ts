@@ -16,6 +16,8 @@ import {
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Query, QueryOptions } from '@ptc-org/nestjs-query-core';
 
+import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import {
@@ -54,11 +56,10 @@ import {
 import { createWorkspaceMigrationsForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/create-workspace-migrations-for-custom-object.util';
 import { createWorkspaceMigrationsForRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/create-workspace-migrations-for-remote-object.util';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { validateObjectMetadataInput } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
+import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/remote-postgres-table/utils/remote-postgres-table.util';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -236,6 +237,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         objectMetadataInput.workspaceId,
       );
+
+    validateObjectMetadataInput(objectMetadataInput);
 
     if (
       objectMetadataInput.nameSingular.toLowerCase() ===
@@ -466,35 +469,38 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     workspaceDataSource: DataSource | undefined,
     isRemoteObject = false,
   ) {
-    const isRelationEnabledForRemoteObjects =
-      await this.isRelationEnabledForRemoteObjects(
-        objectMetadataInput.workspaceId,
-      );
-
-    if (isRemoteObject && !isRelationEnabledForRemoteObjects) {
-      return;
-    }
-
     const { timelineActivityObjectMetadata } =
       await this.createTimelineActivityRelation(
         objectMetadataInput.workspaceId,
         createdObjectMetadata,
+        mapUdtNameToFieldType(
+          objectMetadataInput.primaryKeyColumnType ?? 'uuid',
+        ),
+        objectMetadataInput.primaryKeyFieldMetadataSettings,
       );
 
     const { activityTargetObjectMetadata } =
       await this.createActivityTargetRelation(
         objectMetadataInput.workspaceId,
         createdObjectMetadata,
+        mapUdtNameToFieldType(
+          objectMetadataInput.primaryKeyColumnType ?? 'uuid',
+        ),
+        objectMetadataInput.primaryKeyFieldMetadataSettings,
       );
 
     const { favoriteObjectMetadata } = await this.createFavoriteRelation(
       objectMetadataInput.workspaceId,
       createdObjectMetadata,
+      mapUdtNameToFieldType(objectMetadataInput.primaryKeyColumnType ?? 'uuid'),
+      objectMetadataInput.primaryKeyFieldMetadataSettings,
     );
 
     const { attachmentObjectMetadata } = await this.createAttachmentRelation(
       objectMetadataInput.workspaceId,
       createdObjectMetadata,
+      mapUdtNameToFieldType(objectMetadataInput.primaryKeyColumnType ?? 'uuid'),
+      objectMetadataInput.primaryKeyFieldMetadataSettings,
     );
 
     return this.workspaceMigrationService.createCustomMigration(
@@ -508,7 +514,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             timelineActivityObjectMetadata,
             favoriteObjectMetadata,
             lastDataSourceMetadata.schema,
-            objectMetadataInput.remoteTablePrimaryKeyColumnType ?? 'uuid',
+            objectMetadataInput.primaryKeyColumnType ?? 'uuid',
             workspaceDataSource,
           )
         : createWorkspaceMigrationsForCustomObject(
@@ -524,6 +530,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   private async createActivityTargetRelation(
     workspaceId: string,
     createdObjectMetadata: ObjectMetadataEntity,
+    objectPrimaryKeyType: FieldMetadataType,
+    objectPrimaryKeyFieldSettings:
+      | FieldMetadataSettings<FieldMetadataType | 'default'>
+      | undefined,
   ) {
     const activityTargetObjectMetadata =
       await this.objectMetadataRepository.findOneByOrFail({
@@ -574,7 +584,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           workspaceId: workspaceId,
           isCustom: false,
           isActive: true,
-          type: FieldMetadataType.UUID,
+          type: objectPrimaryKeyType,
           name: `${createdObjectMetadata.nameSingular}Id`,
           label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
           description: `ActivityTarget ${createdObjectMetadata.labelSingular} id foreign key`,
@@ -582,6 +592,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           isNullable: true,
           isSystem: true,
           defaultValue: undefined,
+          settings: { ...objectPrimaryKeyFieldSettings, isForeignKey: true },
         },
       ]);
 
@@ -619,6 +630,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   private async createAttachmentRelation(
     workspaceId: string,
     createdObjectMetadata: ObjectMetadataEntity,
+    objectPrimaryKeyType: FieldMetadataType,
+    objectPrimaryKeyFieldSettings:
+      | FieldMetadataSettings<FieldMetadataType | 'default'>
+      | undefined,
   ) {
     const attachmentObjectMetadata =
       await this.objectMetadataRepository.findOneByOrFail({
@@ -669,7 +684,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           workspaceId: workspaceId,
           isCustom: false,
           isActive: true,
-          type: FieldMetadataType.UUID,
+          type: objectPrimaryKeyType,
           name: `${createdObjectMetadata.nameSingular}Id`,
           label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
           description: `Attachment ${createdObjectMetadata.labelSingular} id foreign key`,
@@ -677,6 +692,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           isNullable: true,
           isSystem: true,
           defaultValue: undefined,
+          settings: { ...objectPrimaryKeyFieldSettings, isForeignKey: true },
         },
       ]);
 
@@ -712,6 +728,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   private async createTimelineActivityRelation(
     workspaceId: string,
     createdObjectMetadata: ObjectMetadataEntity,
+    objectPrimaryKeyType: FieldMetadataType,
+    objectPrimaryKeyFieldSettings:
+      | FieldMetadataSettings<FieldMetadataType | 'default'>
+      | undefined,
   ) {
     const timelineActivityObjectMetadata =
       await this.objectMetadataRepository.findOneByOrFail({
@@ -762,7 +782,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           workspaceId: workspaceId,
           isCustom: false,
           isActive: true,
-          type: FieldMetadataType.UUID,
+          type: objectPrimaryKeyType,
           name: `${createdObjectMetadata.nameSingular}Id`,
           label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
           description: `Timeline Activity ${createdObjectMetadata.labelSingular} id foreign key`,
@@ -770,6 +790,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           isNullable: true,
           isSystem: true,
           defaultValue: undefined,
+          settings: { ...objectPrimaryKeyFieldSettings, isForeignKey: true },
         },
       ]);
 
@@ -807,6 +828,10 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
   private async createFavoriteRelation(
     workspaceId: string,
     createdObjectMetadata: ObjectMetadataEntity,
+    objectPrimaryKeyType: FieldMetadataType,
+    objectPrimaryKeyFieldSettings:
+      | FieldMetadataSettings<FieldMetadataType | 'default'>
+      | undefined,
   ) {
     const favoriteObjectMetadata =
       await this.objectMetadataRepository.findOneByOrFail({
@@ -858,7 +883,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           workspaceId: workspaceId,
           isCustom: false,
           isActive: true,
-          type: FieldMetadataType.UUID,
+          type: objectPrimaryKeyType,
           name: `${createdObjectMetadata.nameSingular}Id`,
           label: `${createdObjectMetadata.labelSingular} ID (foreign key)`,
           description: `Favorite ${createdObjectMetadata.labelSingular} id foreign key`,
@@ -866,6 +891,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           isNullable: true,
           isSystem: true,
           defaultValue: undefined,
+          settings: { ...objectPrimaryKeyFieldSettings, isForeignKey: true },
         },
       ]);
 
@@ -896,15 +922,5 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     ]);
 
     return { favoriteObjectMetadata };
-  }
-
-  private async isRelationEnabledForRemoteObjects(workspaceId: string) {
-    const featureFlag = await this.featureFlagRepository.findOneBy({
-      workspaceId,
-      key: FeatureFlagKeys.IsRelationForRemoteObjectsEnabled,
-      value: true,
-    });
-
-    return featureFlag && featureFlag.value;
   }
 }

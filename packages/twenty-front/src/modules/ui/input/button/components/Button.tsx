@@ -22,7 +22,7 @@ export type ButtonProps = {
   disabled?: boolean;
   focus?: boolean;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-};
+} & React.ComponentProps<'button'>;
 
 const StyledButton = styled.button<
   Pick<
