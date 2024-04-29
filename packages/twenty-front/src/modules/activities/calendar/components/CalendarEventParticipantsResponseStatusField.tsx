@@ -106,7 +106,7 @@ export const CalendarEventParticipantsResponseStatusField = ({
           <ExpandableList
             isHovered={isHovered}
             reference={participantsContainerRef.current || undefined}
-            forceDisplayHiddenCount={true}
+            forceDisplayHiddenCount
           >
             {styledChips}
           </ExpandableList>

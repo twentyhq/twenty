@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -124,6 +124,8 @@ export const RecordInlineCellContainer = ({
   const [reference, setReference] = useState<HTMLDivElement | undefined>();
   const [isHovered, setIsHovered] = useState(false);
   const [isHoveredForDisplayMode, setIsHoveredForDisplayMode] = useState(false);
+  const [newDisplayModeContent, setNewDisplayModeContent] =
+    useState<React.ReactNode>(displayModeContent);
 
   const handleContainerMouseEnter = () => {
     if (!readonly) {
@@ -157,13 +159,16 @@ export const RecordInlineCellContainer = ({
   const theme = useTheme();
   const labelId = `label-${entityId}-${fieldDefinition?.metadata?.fieldName}`;
 
-  const newDisplayModeContent =
-    React.isValidElement<ExpandableListProps>(displayModeContent) && reference
-      ? React.cloneElement(displayModeContent, {
+  useEffect(() => {
+    if (React.isValidElement<ExpandableListProps>(displayModeContent)) {
+      setNewDisplayModeContent(
+        React.cloneElement(displayModeContent, {
           isHovered: isHoveredForDisplayMode,
           reference,
-        })
-      : displayModeContent;
+        }),
+      );
+    }
+  }, [isHoveredForDisplayMode, displayModeContent, reference]);
 
   return (
     <StyledInlineCellBaseContainer

@@ -19,13 +19,19 @@ export const ActivityTargetChips = ({
   isHovered,
   reference,
   maxWidth,
+  forceDisplayHiddenCount,
 }: {
   activityTargetObjectRecords: ActivityTargetWithTargetRecord[];
   maxWidth?: number;
+  forceDisplayHiddenCount?: boolean;
 } & ExpandableListProps) => {
   return (
     <StyledContainer maxWidth={maxWidth}>
-      <ExpandableList isHovered={isHovered} reference={reference}>
+      <ExpandableList
+        isHovered={isHovered}
+        reference={reference}
+        forceDisplayHiddenCount={forceDisplayHiddenCount}
+      >
         {activityTargetObjectRecords.map((activityTargetObjectRecord) => (
           <RecordChip
             key={activityTargetObjectRecord.targetObject.id}

@@ -57,6 +57,7 @@ export const ActivityTargetsInlineCell = ({
           <ActivityTargetChips
             activityTargetObjectRecords={activityTargetObjectRecords}
             maxWidth={maxWidth}
+            forceDisplayHiddenCount
           />
         }
         isDisplayModeContentEmpty={activityTargetObjectRecords.length === 0}

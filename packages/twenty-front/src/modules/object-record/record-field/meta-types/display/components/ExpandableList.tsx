@@ -70,7 +70,6 @@ export const ExpandableList = ({
   const [childrenWidths, setChildrenWidths] = useState<Record<number, number>>(
     {},
   );
-  const displayHiddenCount = isHovered || forceDisplayHiddenCount;
 
   // Because Chip width depends on the number of hidden children which depends on the Chip width, we have a circular dependency
   // To avoid it, we fix the Chip width and make sure it can display its content (a number greater than 1)
@@ -89,9 +88,6 @@ export const ExpandableList = ({
     }
     return 17 + 8 * (Math.trunc(Math.log10(children.length)) - 1);
   };
-
-  const chipContainerWidth = getChipContentWidth() + 2 * 4; // Because Chip component has a 4px padding
-  const availableWidth = containerWidth - (chipContainerWidth + GAP_WIDTH); // Because there is a 4px gap between children and chipContainer
 
   const computeChildProperties = (index: number) => {
     const childWidth = childrenWidths[index];
@@ -125,8 +121,6 @@ export const ExpandableList = ({
     return Math.max(result - 1, 0);
   };
 
-  const hiddenChildrenCount = computeHiddenChildrenNumber();
-
   const { refs, floatingStyles } = useFloating({
     // @ts-expect-error placement accepts 'start' as value even if the typing does not permit it
     placement: 'start',
@@ -137,11 +131,17 @@ export const ExpandableList = ({
     event.stopPropagation();
     setIsDropdownMenuOpen(true);
   };
+
   useEffect(() => {
     if (!isHovered) {
       setIsDropdownMenuOpen(false);
     }
   }, [isHovered]);
+
+  const displayHiddenCount = isHovered || forceDisplayHiddenCount;
+  const chipContainerWidth = getChipContentWidth() + 2 * 4; // Because Chip component has a 4px padding
+  const availableWidth = containerWidth - (chipContainerWidth + GAP_WIDTH); // Because there is a 4px gap between children and chipContainer
+  const hiddenChildrenCount = computeHiddenChildrenNumber();
 
   return (
     <StyledContainer

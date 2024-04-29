@@ -144,15 +144,6 @@ export const RecordTableCellContainer = ({
     (!isFirstColumn || !isEmpty) &&
     !isReadOnly;
 
-  /*const newNonEditModeContent = React.isValidElement<ExpandableListProps>(
-    nonEditModeContent,
-  )
-    ? React.cloneElement(nonEditModeContent, {
-        isHovered,
-        reference,
-      })
-    : nonEditModeContent;*/
-
   useEffect(() => {
     if (React.isValidElement<ExpandableListProps>(nonEditModeContent)) {
       setNewNonEditModeContent(
