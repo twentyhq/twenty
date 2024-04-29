@@ -88,10 +88,10 @@
       },
       "configurations": {
         "data": {
-          "args": ["--config=codegen.cjs"]
+          "config": "codegen.cjs"
         },
         "metadata": {
-          "args": ["--config=codegen-metadata.cjs"]
+          "config": "codegen-metadata.cjs"
         }
       }
     },
