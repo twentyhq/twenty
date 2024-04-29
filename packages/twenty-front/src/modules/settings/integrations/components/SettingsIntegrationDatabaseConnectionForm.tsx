@@ -30,7 +30,15 @@ const StyledInputsContainer = styled.div`
   }
 `;
 
-export const SettingsIntegrationPostgreSQLConnectionForm = () => {
+type SettingsIntegrationPostgreSQLConnectionFormProps = {
+  disabled?: boolean;
+  passwordPlaceholder?: string;
+};
+
+export const SettingsIntegrationPostgreSQLConnectionForm = ({
+  disabled,
+  passwordPlaceholder,
+}: SettingsIntegrationPostgreSQLConnectionFormProps) => {
   const { control } =
     useFormContext<SettingsIntegrationPostgreSQLConnectionFormValues>();
 
@@ -49,11 +57,18 @@ export const SettingsIntegrationPostgreSQLConnectionForm = () => {
           control={control}
           render={({ field: { onChange, value } }) => (
             <TextInput
+              autoComplete="new-password"
               label={label}
               value={value}
               onChange={onChange}
               fullWidth
               type={type}
+              disabled={disabled}
+              placeholder={
+                passwordPlaceholder && name === 'password'
+                  ? passwordPlaceholder
+                  : ''
+              }
             />
           )}
         />

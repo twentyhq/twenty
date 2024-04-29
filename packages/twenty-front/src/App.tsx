@@ -42,6 +42,7 @@ import { SettingsDevelopersWebhooksDetail } from '~/pages/settings/developers/we
 import { SettingsDevelopersWebhooksNew } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhooksNew';
 import { SettingsIntegrationDatabase } from '~/pages/settings/integrations/SettingsIntegrationDatabase';
 import { SettingsIntegrationDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationDatabaseConnection';
+import { SettingsIntegrationEditDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationEditDatabaseConnection';
 import { SettingsIntegrationNewDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationNewDatabaseConnection';
 import { SettingsIntegrations } from '~/pages/settings/integrations/SettingsIntegrations';
 import { SettingsAppearance } from '~/pages/settings/SettingsAppearance';
@@ -185,6 +186,10 @@ export const App = () => {
                 <Route
                   path={SettingsPath.IntegrationNewDatabaseConnection}
                   element={<SettingsIntegrationNewDatabaseConnection />}
+                />
+                <Route
+                  path={SettingsPath.IntegrationEditDatabaseConnection}
+                  element={<SettingsIntegrationEditDatabaseConnection />}
                 />
                 <Route
                   path={SettingsPath.IntegrationDatabaseConnection}
