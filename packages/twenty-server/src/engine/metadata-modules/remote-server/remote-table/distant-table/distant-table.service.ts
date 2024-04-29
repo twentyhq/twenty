@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { EntityManager, Repository } from 'typeorm';
@@ -37,10 +37,6 @@ export class DistantTableService {
     remoteServer: RemoteServerEntity<RemoteServerType>,
     workspaceId: string,
   ): Promise<string[]> {
-    if (!remoteServer.schema) {
-      throw new Error('Remote server schema is not defined');
-    }
-
     const availableTables =
       remoteServer.availableTables ??
       (await this.createAvailableTables(remoteServer, workspaceId));
@@ -52,6 +48,10 @@ export class DistantTableService {
     remoteServer: RemoteServerEntity<RemoteServerType>,
     workspaceId: string,
   ): Promise<DistantTables> {
+    if (!remoteServer.schema) {
+      throw new BadRequestException('Remote server schema is not defined');
+    }
+
     const tmpSchemaId = v4();
     const tmpSchemaName = `${workspaceId}_${remoteServer.id}_${tmpSchemaId}`;
 

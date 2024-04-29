@@ -24,7 +24,7 @@ export const validateRemoteServerType = async (
   const featureFlagEnabled = featureFlag && featureFlag.value;
 
   if (!featureFlagEnabled) {
-    throw new BadRequestException('PostgreSQL integration is not enabled');
+    throw new BadRequestException(`Type ${remoteServerType} is not supported.`);
   }
 };
 
@@ -33,6 +33,8 @@ const getFeatureFlagKey = (remoteServerType: RemoteServerType) => {
     case RemoteServerType.POSTGRES_FDW:
       return FeatureFlagKeys.IsPostgreSQLIntegrationEnabled;
     default:
-      throw new BadRequestException('PostgreSQL integration is not enabled');
+      throw new BadRequestException(
+        `Type ${remoteServerType} is not supported.`,
+      );
   }
 };
