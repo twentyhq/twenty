@@ -64,6 +64,7 @@ export const HeaderMobile = ({ numberOfStars }: Props) => {
         <MobileLinkList>
           <ListItem href="/story">Story</ListItem>
           <ListItem href="/pricing">Pricing</ListItem>
+          <ListItem href="/releases">Releases</ListItem>
           <ListItem href="https://docs.twenty.com">
             Docs <ExternalArrow />
           </ListItem>

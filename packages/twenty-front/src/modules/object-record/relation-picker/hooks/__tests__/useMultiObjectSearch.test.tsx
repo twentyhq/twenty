@@ -13,7 +13,7 @@ const query = gql`
     $filterNameSingular: NameSingularFilterInput
     $orderByNameSingular: NameSingularOrderByInput
     $lastCursorNameSingular: String
-    $limitNameSingular: Float
+    $limitNameSingular: Int
   ) {
     namePlural(
       filter: $filterNameSingular

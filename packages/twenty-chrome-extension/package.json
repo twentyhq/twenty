@@ -6,13 +6,13 @@
   "type": "module",
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-chrome-extension node ../../node_modules/nx/bin/nx.js",
-    "clean": "npx rimraf ./dist",
-    "start": "yarn clean && npx vite",
-    "build": "yarn clean && npx tsc && npx vite build",
-    "lint": "npx eslint . --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs",
-    "graphql:generate": "npx graphql-codegen",
-    "fmt": "npx prettier --check \"src/**/*.ts\" \"src/**/*.tsx\"",
-    "fmt:fix": "npx prettier --cache --write \"src/**/*.ts\" \"src/**/*.tsx\""
+    "clean": "rimraf ./dist",
+    "start": "yarn clean && VITE_MODE=development vite",
+    "build": "yarn clean && tsc && vite build",
+    "lint": "eslint . --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs",
+    "graphql:generate": "graphql-codegen",
+    "fmt": "prettier --check \"src/**/*.ts\" \"src/**/*.tsx\"",
+    "fmt:fix": "prettier --cache --write \"src/**/*.ts\" \"src/**/*.tsx\""
   },
   "dependencies": {
     "@types/chrome": "^0.0.256"

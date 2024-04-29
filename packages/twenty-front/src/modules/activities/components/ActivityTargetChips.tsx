@@ -6,7 +6,6 @@ import { v4 } from 'uuid';
 import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { RGBA } from '@/ui/theme/constants/Rgba';
 
 const MAX_RECORD_CHIPS_DISPLAY = 2;
 
@@ -19,7 +18,7 @@ const StyledContainer = styled.div`
 const StyledRelationsListContainer = styled(StyledContainer)`
   padding: ${({ theme }) => theme.spacing(2)};
   border-radius: ${({ theme }) => theme.spacing(1)};
-  background-color: ${({ theme }) => RGBA(theme.color.gray10, 0.8)};
+  background-color: ${({ theme }) => theme.background.secondary};
   box-shadow: '0px 2px 4px ${({ theme }) =>
     theme.boxShadow.light}, 2px 4px 16px ${({ theme }) =>
     theme.boxShadow.strong}';

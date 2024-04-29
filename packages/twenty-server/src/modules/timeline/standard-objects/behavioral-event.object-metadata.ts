@@ -1,7 +1,7 @@
 import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { behavioralEventStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { BEHAVIORAL_EVENT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
@@ -10,7 +10,7 @@ import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-meta
 import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 
 @ObjectMetadata({
-  standardId: standardObjectIds.behavioralEvent,
+  standardId: STANDARD_OBJECT_IDS.behavioralEvent,
   namePlural: 'behavioralEvents',
   labelSingular: 'Behavioral Event',
   labelPlural: 'Behavioral Events',
@@ -40,7 +40,7 @@ export class BehavioralEventObjectMetadata extends BaseObjectMetadata {
   */
 
   @FieldMetadata({
-    standardId: behavioralEventStandardFieldIds.name,
+    standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: 'Event name',
     description: 'Event name',
@@ -49,7 +49,7 @@ export class BehavioralEventObjectMetadata extends BaseObjectMetadata {
   name: string;
 
   @FieldMetadata({
-    standardId: behavioralEventStandardFieldIds.properties,
+    standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.properties,
     type: FieldMetadataType.RAW_JSON,
     label: 'Event details',
     description: 'Json value for event details',
@@ -59,7 +59,7 @@ export class BehavioralEventObjectMetadata extends BaseObjectMetadata {
   properties: JSON;
 
   @FieldMetadata({
-    standardId: behavioralEventStandardFieldIds.context,
+    standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.context,
     type: FieldMetadataType.RAW_JSON,
     label: 'Event context',
     description:
@@ -70,7 +70,7 @@ export class BehavioralEventObjectMetadata extends BaseObjectMetadata {
   context: JSON;
 
   @FieldMetadata({
-    standardId: behavioralEventStandardFieldIds.objectName,
+    standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.objectName,
     type: FieldMetadataType.TEXT,
     label: 'Object name',
     description: 'If the event is related to a particular object',
@@ -79,7 +79,7 @@ export class BehavioralEventObjectMetadata extends BaseObjectMetadata {
   objectName: string;
 
   @FieldMetadata({
-    standardId: behavioralEventStandardFieldIds.recordId,
+    standardId: BEHAVIORAL_EVENT_STANDARD_FIELD_IDS.recordId,
     type: FieldMetadataType.UUID,
     label: 'Object id',
     description: 'Event name/type',

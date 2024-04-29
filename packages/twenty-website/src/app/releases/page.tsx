@@ -18,8 +18,11 @@ import { pgGithubReleasesModel } from '@/database/postgres/schema-postgres';
 
 export const metadata: Metadata = {
   title: 'Twenty - Releases',
-  description: 'Latest releases of Twenty',
+  description:
+    'Discover the newest features and improvements in Twenty, the #1 open-source CRM.',
 };
+
+export const dynamic = 'force-dynamic';
 
 const Home = async () => {
   const githubReleases = (await findAll(

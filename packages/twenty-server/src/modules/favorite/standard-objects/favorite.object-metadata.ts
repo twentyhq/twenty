@@ -1,8 +1,8 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { favoriteStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { FAVORITE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CustomObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/custom-objects/custom.object-metadata';
 import { DynamicRelationFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/dynamic-field-metadata.interface';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
@@ -17,7 +17,7 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
 import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
-  standardId: standardObjectIds.favorite,
+  standardId: STANDARD_OBJECT_IDS.favorite,
   namePlural: 'favorites',
   labelSingular: 'Favorite',
   labelPlural: 'Favorites',
@@ -28,7 +28,7 @@ import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-me
 @IsSystem()
 export class FavoriteObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    standardId: favoriteStandardFieldIds.position,
+    standardId: FAVORITE_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.NUMBER,
     label: 'Position',
     description: 'Favorite position',
@@ -39,7 +39,7 @@ export class FavoriteObjectMetadata extends BaseObjectMetadata {
 
   // Relations
   @FieldMetadata({
-    standardId: favoriteStandardFieldIds.workspaceMember,
+    standardId: FAVORITE_STANDARD_FIELD_IDS.workspaceMember,
     type: FieldMetadataType.RELATION,
     label: 'Workspace Member',
     description: 'Favorite workspace member',
@@ -49,7 +49,7 @@ export class FavoriteObjectMetadata extends BaseObjectMetadata {
   workspaceMember: Relation<WorkspaceMemberObjectMetadata>;
 
   @FieldMetadata({
-    standardId: favoriteStandardFieldIds.person,
+    standardId: FAVORITE_STANDARD_FIELD_IDS.person,
     type: FieldMetadataType.RELATION,
     label: 'Person',
     description: 'Favorite person',
@@ -60,7 +60,7 @@ export class FavoriteObjectMetadata extends BaseObjectMetadata {
   person: Relation<PersonObjectMetadata>;
 
   @FieldMetadata({
-    standardId: favoriteStandardFieldIds.company,
+    standardId: FAVORITE_STANDARD_FIELD_IDS.company,
     type: FieldMetadataType.RELATION,
     label: 'Company',
     description: 'Favorite company',
@@ -71,7 +71,7 @@ export class FavoriteObjectMetadata extends BaseObjectMetadata {
   company: Relation<CompanyObjectMetadata>;
 
   @FieldMetadata({
-    standardId: favoriteStandardFieldIds.opportunity,
+    standardId: FAVORITE_STANDARD_FIELD_IDS.opportunity,
     type: FieldMetadataType.RELATION,
     label: 'Opportunity',
     description: 'Favorite opportunity',
@@ -82,7 +82,7 @@ export class FavoriteObjectMetadata extends BaseObjectMetadata {
   opportunity: Relation<OpportunityObjectMetadata>;
 
   @DynamicRelationFieldMetadata((oppositeObjectMetadata) => ({
-    standardId: favoriteStandardFieldIds.custom,
+    standardId: FAVORITE_STANDARD_FIELD_IDS.custom,
     name: oppositeObjectMetadata.nameSingular,
     label: oppositeObjectMetadata.labelSingular,
     description: `Favorite ${oppositeObjectMetadata.labelSingular}`,

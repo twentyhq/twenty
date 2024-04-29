@@ -47,7 +47,7 @@ export const useGenerateFindManyRecordsForMultipleMetadataItemsQuery = ({
   const limitPerMetadataItemArray = capitalizedObjectNameSingulars
     .map(
       (capitalizedObjectNameSingular) =>
-        `$limit${capitalizedObjectNameSingular}: Float`,
+        `$limit${capitalizedObjectNameSingular}: Int`,
     )
     .join(', ');
 

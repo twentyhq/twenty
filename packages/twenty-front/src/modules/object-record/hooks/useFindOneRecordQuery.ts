@@ -22,7 +22,7 @@ export const useFindOneRecordQuery = ({
   const findOneRecordQuery = gql`
       query FindOne${capitalize(
         objectMetadataItem.nameSingular,
-      )}($objectRecordId: UUID!) {
+      )}($objectRecordId: ID!) {
         ${objectMetadataItem.nameSingular}(filter: {
           id: {
             eq: $objectRecordId
@@ -32,7 +32,7 @@ export const useFindOneRecordQuery = ({
           objectMetadataItem,
           depth,
         })}
-      }
+      },
   `;
 
   return {
