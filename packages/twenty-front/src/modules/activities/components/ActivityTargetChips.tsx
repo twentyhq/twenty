@@ -7,21 +7,24 @@ import {
   ExpandableListProps,
 } from '@/object-record/record-field/meta-types/display/components/ExpandableList.tsx';
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ maxWidth?: number }>`
   display: flex;
   flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing(1)};
+  max-width: ${({ maxWidth }) => `${maxWidth}px` || 'none'};
 `;
 
 export const ActivityTargetChips = ({
   activityTargetObjectRecords,
   isHovered,
   reference,
+  maxWidth,
 }: {
   activityTargetObjectRecords: ActivityTargetWithTargetRecord[];
+  maxWidth?: number;
 } & ExpandableListProps) => {
   return (
-    <StyledContainer>
+    <StyledContainer maxWidth={maxWidth}>
       <ExpandableList isHovered={isHovered} reference={reference}>
         {activityTargetObjectRecords.map((activityTargetObjectRecord) => (
           <RecordChip

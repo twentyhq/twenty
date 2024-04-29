@@ -123,17 +123,20 @@ export const RecordInlineCellContainer = ({
   const { entityId, fieldDefinition } = useContext(FieldContext);
   const [reference, setReference] = useState<HTMLDivElement | undefined>();
   const [isHovered, setIsHovered] = useState(false);
+  const [isHoveredForDisplayMode, setIsHoveredForDisplayMode] = useState(false);
 
   const handleContainerMouseEnter = () => {
     if (!readonly) {
       setIsHovered(true);
     }
+    setIsHoveredForDisplayMode(true);
   };
 
   const handleContainerMouseLeave = () => {
     if (!readonly) {
       setIsHovered(false);
     }
+    setIsHoveredForDisplayMode(false);
   };
 
   const { isInlineCellInEditMode, openInlineCell } = useInlineCell();
@@ -157,7 +160,7 @@ export const RecordInlineCellContainer = ({
   const newDisplayModeContent =
     React.isValidElement<ExpandableListProps>(displayModeContent) && reference
       ? React.cloneElement(displayModeContent, {
-          isHovered,
+          isHovered: isHoveredForDisplayMode,
           reference,
         })
       : displayModeContent;

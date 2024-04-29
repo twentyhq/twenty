@@ -95,7 +95,10 @@ export const ActivityEditorFields = ({
         )}
       {ActivityTargetsContextProvider && isDefined(activityFromCache) && (
         <ActivityTargetsContextProvider>
-          <ActivityTargetsInlineCell activity={activityFromCache} />
+          <ActivityTargetsInlineCell
+            activity={activityFromCache}
+            maxWidth={340}
+          />
         </ActivityTargetsContextProvider>
       )}
     </StyledPropertyBox>
