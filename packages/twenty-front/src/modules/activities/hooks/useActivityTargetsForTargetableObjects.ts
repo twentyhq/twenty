@@ -10,12 +10,14 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 export const useActivityTargetsForTargetableObjects = ({
   targetableObjects,
   skip,
+  onCompleted,
 }: {
   targetableObjects: Pick<
     ActivityTargetableObject,
     'id' | 'targetObjectNameSingular'
   >[];
   skip?: boolean;
+  onCompleted?: (activityTargets: ActivityTarget[]) => void;
 }) => {
   const activityTargetsFilter = getActivityTargetsFilter({
     targetableObjects: targetableObjects,
@@ -36,6 +38,7 @@ export const useActivityTargetsForTargetableObjects = ({
         FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.objectNameSingular,
       filter: activityTargetsFilter,
       recordGqlFields: FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.fields,
+      onCompleted,
     });
 
   return {

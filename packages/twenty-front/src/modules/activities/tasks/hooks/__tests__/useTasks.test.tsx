@@ -49,7 +49,6 @@ const useActivitiesMock = jest.fn(
       activities: isCompletedFilter
         ? completedTasks
         : [...todayOrPreviousTasks, ...unscheduledTasks],
-      initialized: true,
     };
   },
 );

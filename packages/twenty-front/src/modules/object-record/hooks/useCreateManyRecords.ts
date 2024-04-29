@@ -100,12 +100,12 @@ export const useCreateManyRecords = <
 
         if (!records?.length || skipPostOptmisticEffect) return;
 
-        triggerCreateRecordsOptimisticEffect({
-          cache,
-          objectMetadataItem,
-          recordsToCreate: records,
-          objectMetadataItems,
-        });
+        // triggerCreateRecordsOptimisticEffect({
+        //   cache,
+        //   objectMetadataItem,
+        //   recordsToCreate: records,
+        //   objectMetadataItems,
+        // });
       },
     });
 

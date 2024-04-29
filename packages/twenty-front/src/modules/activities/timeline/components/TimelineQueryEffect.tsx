@@ -6,7 +6,6 @@ import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline/co
 import { objectShowPageTargetableObjectState } from '@/activities/timeline/states/objectShowPageTargetableObjectIdState';
 import { timelineActivitiesFammilyState } from '@/activities/timeline/states/timelineActivitiesFamilyState';
 import { timelineActivitiesForGroupState } from '@/activities/timeline/states/timelineActivitiesForGroupState';
-import { timelineActivitiesNetworkingState } from '@/activities/timeline/states/timelineActivitiesNetworkingState';
 import { timelineActivityWithoutTargetsFamilyState } from '@/activities/timeline/states/timelineActivityWithoutTargetsFamilyState';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -34,9 +33,6 @@ export const TimelineQueryEffect = ({
     skip: !isDefined(targetableObject),
   });
 
-  const [timelineActivitiesNetworking, setTimelineActivitiesNetworking] =
-    useRecoilState(timelineActivitiesNetworkingState);
-
   const [timelineActivitiesForGroup, setTimelineActivitiesForGroup] =
     useRecoilState(timelineActivitiesForGroupState);
 
@@ -60,22 +56,10 @@ export const TimelineQueryEffect = ({
     if (!isDeeplyEqual(activitiesForGroup, timelineActivitiesForGroupSorted)) {
       setTimelineActivitiesForGroup(activitiesForGroup);
     }
-
-    if (
-      !isDeeplyEqual(timelineActivitiesNetworking.initialized, true) ||
-      !isDeeplyEqual(timelineActivitiesNetworking.noActivities, noActivities)
-    ) {
-      setTimelineActivitiesNetworking({
-        initialized: true,
-        noActivities,
-      });
-    }
   }, [
     activities,
     noActivities,
-    setTimelineActivitiesNetworking,
     targetableObject,
-    timelineActivitiesNetworking,
     timelineActivitiesForGroup,
     setTimelineActivitiesForGroup,
   ]);

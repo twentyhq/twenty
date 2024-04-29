@@ -188,7 +188,6 @@ describe('useActivities', () => {
     expect(result.current).toEqual({
       activities: [],
       loading: false,
-      initialized: true,
       noActivities: true,
     });
   });

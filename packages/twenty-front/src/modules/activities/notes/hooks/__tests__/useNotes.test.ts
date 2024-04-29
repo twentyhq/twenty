@@ -6,7 +6,6 @@ import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableE
 jest.mock('@/activities/hooks/useActivities', () => ({
   useActivities: jest.fn(() => ({
     activities: [{ id: '1', content: 'Example Note' }],
-    initialized: true,
     loading: false,
   })),
 }));
@@ -29,7 +28,7 @@ jest.mock('recoil', () => {
 });
 
 describe('useNotes', () => {
-  it('should return notes, initialized, and loading as expected', () => {
+  it('should return notes, and loading as expected', () => {
     const mockTargetableObject: ActivityTargetableObject = {
       id: '1',
       targetObjectNameSingular: 'Example Target',
