@@ -2,7 +2,7 @@
 
 📮 **Apply:** Send LinkedIn or resume + a few words, by email to founders(at)twenty.com  
 📍 **Location:** Paris, France (on-site or hybrid, no full remote)  
-💰 **Salary:** 1.5k€
+💰 **Salary:** 1.5k€/month + meal/transporation
 
 
 ## Product 
@@ -11,7 +11,7 @@ Creating a good CRM is hard because it's a balancing act. For each business, the
 
 At first, Twenty looks like most CRMs you already know: you can track deals, organize contacts, manage tasks and notes. But what sets it apart is our approach to extensibility. We are building an open platform that provides the building blocks for you to solve your unique business problems.
 
-We value universal principles and common patterns over feature lists. And Open-source is the bedrock of our approach, ensuring that Twenty evolves with its community, for its community.
+We value universal principles and common patterns over feature lists. And Open Source is the bedrock of our approach, ensuring that Twenty evolves with its community, for its community.
 
 ## Company
 
