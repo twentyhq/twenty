@@ -6,6 +6,7 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
+import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from '~/utils/string/capitalize';
@@ -29,6 +30,12 @@ export const useUpdateOneRecordMutation = ({
     return { updateOneRecordMutation: EMPTY_MUTATION };
   }
 
+  const appliedRecordGqlFields =
+    recordGqlFields ??
+    generateDepthOneRecordGqlFields({
+      objectMetadataItem,
+    });
+
   const capitalizedObjectName = capitalize(objectMetadataItem.nameSingular);
 
   const mutationResponseField = getUpdateOneRecordMutationResponseField(
@@ -42,7 +49,7 @@ export const useUpdateOneRecordMutation = ({
            objectMetadataItems,
            objectMetadataItem,
            computeReferences,
-           recordGqlFields,
+           recordGqlFields: appliedRecordGqlFields,
          },
        )}
     }

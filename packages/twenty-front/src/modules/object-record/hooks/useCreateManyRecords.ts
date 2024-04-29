@@ -7,6 +7,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
+import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useCreateManyRecordsMutation } from '@/object-record/hooks/useCreateManyRecordsMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/utils/getCreateManyRecordsMutationResponseField';
@@ -32,9 +33,12 @@ export const useCreateManyRecords = <
     objectNameSingular,
   });
 
+  const computedRecordGqlFields =
+    recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
+
   const { createManyRecordsMutation } = useCreateManyRecordsMutation({
     objectNameSingular,
-    recordGqlFields,
+    recordGqlFields: computedRecordGqlFields,
   });
 
   const createOneRecordInCache = useCreateOneRecordInCache<ObjectRecord>({
@@ -56,7 +60,6 @@ export const useCreateManyRecords = <
             recordInput: recordToCreate,
           }),
           id: idForCreation,
-          __typename: getObjectTypename(objectMetadataItem.nameSingular),
         };
       },
     );
@@ -64,7 +67,10 @@ export const useCreateManyRecords = <
     const recordsCreatedInCache = [];
 
     for (const recordToCreate of sanitizedCreateManyRecordsInput) {
-      const recordCreatedInCache = createOneRecordInCache(recordToCreate);
+      const recordCreatedInCache = createOneRecordInCache({
+        ...recordToCreate,
+        __typename: getObjectTypename(objectMetadataItem.nameSingular),
+      });
 
       if (isDefined(recordCreatedInCache)) {
         recordsCreatedInCache.push(recordCreatedInCache);

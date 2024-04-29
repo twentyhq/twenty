@@ -21,6 +21,7 @@ const mockedActivity = {
     'type',
     'completedAt',
     'dueAt',
+    '__typename',
   ]),
   updatedAt: mockedDate,
 };

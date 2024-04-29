@@ -7,6 +7,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
 import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
+import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
@@ -32,14 +33,19 @@ export const useCreateOneRecord = <
     objectNameSingular,
   });
 
+  const computedRecordGqlFields =
+    recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
+
   const { createOneRecordMutation } = useCreateOneRecordMutation({
     objectNameSingular,
-    recordGqlFields,
+    recordGqlFields: computedRecordGqlFields,
   });
 
-  const createOneRecordInCache = useCreateOneRecordInCache<ObjectRecord>({
-    objectMetadataItem,
-  });
+  const createOneRecordInCache = useCreateOneRecordInCache<CreatedObjectRecord>(
+    {
+      objectMetadataItem,
+    },
+  );
 
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -82,12 +88,12 @@ export const useCreateOneRecord = <
 
         if (!record || skipPostOptmisticEffect) return;
 
-        triggerCreateRecordsOptimisticEffect({
-          cache,
-          objectMetadataItem,
-          recordsToCreate: [record],
-          objectMetadataItems,
-        });
+        // triggerCreateRecordsOptimisticEffect({
+        //   cache,
+        //   objectMetadataItem,
+        //   recordsToCreate: [record],
+        //   objectMetadataItems,
+        // });
       },
     });
 

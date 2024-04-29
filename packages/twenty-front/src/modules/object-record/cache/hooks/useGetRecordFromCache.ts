@@ -20,6 +20,9 @@ export const useGetRecordFromCache = ({
     objectNameSingular,
   });
 
+  const appliedRecordGqlFields =
+    recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
+
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const apolloClient = useApolloClient();
@@ -34,16 +37,14 @@ export const useGetRecordFromCache = ({
         recordId,
         objectMetadataItems,
         objectMetadataItem,
-        recordGqlFields:
-          recordGqlFields ??
-          generateDepthOneRecordGqlFields({ objectMetadataItem }),
+        recordGqlFields: appliedRecordGqlFields,
       });
     },
     [
       apolloClient.cache,
       objectMetadataItems,
       objectMetadataItem,
-      recordGqlFields,
+      appliedRecordGqlFields,
     ],
   );
 };
