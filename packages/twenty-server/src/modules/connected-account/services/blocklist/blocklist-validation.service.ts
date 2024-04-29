@@ -14,12 +14,13 @@ import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 
-type BlocklistItem = Omit<
+export type BlocklistItem = Omit<
   BlocklistObjectMetadata,
-  'createdAt' | 'updatedAt'
+  'createdAt' | 'updatedAt' | 'workspaceMember'
 > & {
   createdAt: string;
   updatedAt: string;
+  workspaceMemberId: string;
 };
 
 @Injectable()
@@ -45,11 +46,6 @@ export class BlocklistValidationService {
     userId: string,
     workspaceId: string,
   ) {
-    //TODO: Pass the "before" inside the payload to compare the before and after
-    if (payload.data.workspaceMember) {
-      throw new BadRequestException('Workspace member cannot be updated');
-    }
-
     if (payload.data.handle) {
       await this.validateSchema([payload.data]);
     }
@@ -109,6 +105,23 @@ export class BlocklistValidationService {
     userId: string,
     workspaceId: string,
   ) {
+    const existingRecord = await this.blocklistRepository.getById(
+      payload.id,
+      workspaceId,
+    );
+
+    if (!existingRecord) {
+      throw new BadRequestException('Blocklist item not found');
+    }
+
+    if (existingRecord.workspaceMemberId !== payload.data.workspaceMemberId) {
+      throw new BadRequestException('Workspace member cannot be updated');
+    }
+
+    if (existingRecord.handle === payload.data.handle) {
+      return;
+    }
+
     const currentWorkspaceMember =
       await this.workspaceMemberRepository.getByIdOrFail(userId, workspaceId);
 
