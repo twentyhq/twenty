@@ -1,5 +1,4 @@
-import { useEffect, useState } from 'react';
-import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 
 import { findActivitiesOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/findActivitiesOperationSignatureFactory';
@@ -12,7 +11,6 @@ import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordG
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { sortByAscString } from '~/utils/array/sortByAscString';
-import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useActivities = ({
   targetableObjects,
@@ -26,9 +24,6 @@ export const useActivities = ({
   skip?: boolean;
 }) => {
   const { objectMetadataItems } = useObjectMetadataItems();
-  const [persistentActivities, setPersistentActivities] = useState<Activity[]>(
-    [],
-  );
 
   const { activityTargets, loadingActivityTargets } =
     useActivityTargetsForTargetableObjects({
@@ -63,7 +58,7 @@ export const useActivities = ({
 
   const { records: activities, loading: loadingActivities } =
     useFindManyRecords<Activity>({
-      skip: skip,
+      skip: skip || loadingActivityTargets,
       objectNameSingular:
         FIND_ACTIVITIES_OPERATION_SIGNATURE.objectNameSingular,
       recordGqlFields: FIND_ACTIVITIES_OPERATION_SIGNATURE.fields,
@@ -80,28 +75,8 @@ export const useActivities = ({
       ),
     });
 
-  useEffect(() => {
-    if (
-      !isDeeplyEqual(activities, persistentActivities) &&
-      !loadingActivities &&
-      !loadingActivityTargets
-    ) {
-      setPersistentActivities(activities);
-    }
-  }, [
-    activities,
-    loadingActivities,
-    loadingActivityTargets,
-    persistentActivities,
-  ]);
-
-  const loading = loadingActivities || loadingActivityTargets;
-
-  const noActivities = !loading && !isNonEmptyArray(activities);
-
   return {
-    activities: persistentActivities,
+    activities,
     loading: loadingActivities || loadingActivityTargets,
-    noActivities,
   };
 };

@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode } from 'react';
 import { gql, InMemoryCache } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
@@ -10,8 +10,8 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
-
 const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
 const cache = new InMemoryCache();
@@ -113,25 +113,14 @@ cache.writeFragment({
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
     <MockedProvider cache={cache}>
-      <ObjectMetadataItemSetter>
+      <JestObjectMetadataItemSetter>
         <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
           {children}
         </SnackBarProviderScope>
-      </ObjectMetadataItemSetter>
+      </JestObjectMetadataItemSetter>
     </MockedProvider>
   </RecoilRoot>
 );
-
-const ObjectMetadataItemSetter = ({ children }: { children: ReactNode }) => {
-  const setObjectMetadataItems = useSetRecoilState(objectMetadataItemsState);
-  const [isLoaded, setIsLoaded] = useState(false);
-  useEffect(() => {
-    setObjectMetadataItems(getObjectMetadataItemsMock());
-    setIsLoaded(true);
-  }, [setObjectMetadataItems]);
-
-  return isLoaded ? <>{children}</> : null;
-};
 
 describe('useActivityTargetObjectRecords', () => {
   it('return targetObjects', async () => {

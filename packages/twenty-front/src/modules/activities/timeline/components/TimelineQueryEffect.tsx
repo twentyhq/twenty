@@ -26,7 +26,7 @@ export const TimelineQueryEffect = ({
     setTimelineTargetableObject(targetableObject);
   }, [targetableObject, setTimelineTargetableObject]);
 
-  const { activities, noActivities } = useActivities({
+  const { activities } = useActivities({
     targetableObjects: [targetableObject],
     activitiesFilters: {},
     activitiesOrderByVariables: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
@@ -58,7 +58,6 @@ export const TimelineQueryEffect = ({
     }
   }, [
     activities,
-    noActivities,
     targetableObject,
     timelineActivitiesForGroup,
     setTimelineActivitiesForGroup,

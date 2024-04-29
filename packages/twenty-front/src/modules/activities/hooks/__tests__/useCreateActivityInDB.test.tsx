@@ -21,7 +21,6 @@ const mockedActivity = {
     'type',
     'completedAt',
     'dueAt',
-    '__typename',
   ]),
   updatedAt: mockedDate,
 };
@@ -83,7 +82,10 @@ describe('useCreateActivityInDB', () => {
     });
 
     await act(async () => {
-      await result.current.createActivityInDB(mockedActivity);
+      await result.current.createActivityInDB({
+        ...mockedActivity,
+        __typename: 'Activity',
+      });
     });
 
     expect(mocks[0].result).toHaveBeenCalled();
