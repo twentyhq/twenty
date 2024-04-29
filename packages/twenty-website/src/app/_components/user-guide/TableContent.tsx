@@ -134,7 +134,6 @@ const UserGuideTableContents = () => {
                 }}
                 style={{
                   fontWeight: activeText === heading.text ? 'bold' : 'normal',
-                  color: 'black',
                 }}
               >
                 {heading.text}
