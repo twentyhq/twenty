@@ -49,6 +49,7 @@ export const TimelineQueryEffect = ({
       ...activities.map((activity) => ({
         id: activity.id,
         createdAt: activity.createdAt,
+        __typename: activity.__typename,
       })),
     ].sort(sortObjectRecordByDateField('createdAt', 'DescNullsLast'));
 

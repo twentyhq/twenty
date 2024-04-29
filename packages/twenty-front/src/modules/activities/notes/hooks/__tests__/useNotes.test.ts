@@ -39,7 +39,6 @@ describe('useNotes', () => {
     expect(result.current.notes).toEqual([
       { id: '1', content: 'Example Note' },
     ]);
-    expect(result.current.initialized).toBe(true);
     expect(result.current.loading).toBe(false);
   });
 });

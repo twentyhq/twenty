@@ -15,11 +15,11 @@ if (!personObjectMetadataItem) {
 }
 
 describe('mapObjectMetadataToGraphQLQuery', () => {
-  it('should query only specified operationFields', async () => {
+  it('should query only specified recordGqlFields', async () => {
     const res = mapObjectMetadataToGraphQLQuery({
       objectMetadataItems: mockObjectMetadataItems,
       objectMetadataItem: personObjectMetadataItem,
-      operationFields: {
+      recordGqlFields: {
         company: true,
         xLink: true,
         id: true,
@@ -96,7 +96,7 @@ companyId
     const res = mapObjectMetadataToGraphQLQuery({
       objectMetadataItems: mockObjectMetadataItems,
       objectMetadataItem: personObjectMetadataItem,
-      operationFields: { company: { id: true }, id: true, name: true },
+      recordGqlFields: { company: { id: true }, id: true, name: true },
     });
     expect(formatGQLString(res)).toEqual(`{
 __typename

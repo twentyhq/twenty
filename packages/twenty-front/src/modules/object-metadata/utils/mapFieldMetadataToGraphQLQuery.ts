@@ -10,7 +10,7 @@ import { FieldMetadataItem } from '../types/FieldMetadataItem';
 export const mapFieldMetadataToGraphQLQuery = ({
   objectMetadataItems,
   field,
-  relationOperationFields,
+  relationrecordFields,
   computeReferences = false,
 }: {
   objectMetadataItems: ObjectMetadataItem[];
@@ -18,7 +18,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
     FieldMetadataItem,
     'name' | 'type' | 'toRelationMetadata' | 'fromRelationMetadata'
   >;
-  relationOperationFields?: Record<string, any>;
+  relationrecordFields?: Record<string, any>;
   computeReferences?: boolean;
 }): any => {
   const fieldType = field.type;
@@ -61,7 +61,7 @@ export const mapFieldMetadataToGraphQLQuery = ({
 ${mapObjectMetadataToGraphQLQuery({
   objectMetadataItems,
   objectMetadataItem: relationMetadataItem,
-  operationFields: relationOperationFields,
+  recordGqlFields: relationrecordFields,
   computeReferences: computeReferences,
   isRootLevel: false,
 })}`;
@@ -85,7 +85,7 @@ ${mapObjectMetadataToGraphQLQuery({
     node ${mapObjectMetadataToGraphQLQuery({
       objectMetadataItems,
       objectMetadataItem: relationMetadataItem,
-      operationFields: relationOperationFields,
+      recordGqlFields: relationrecordFields,
       computeReferences,
       isRootLevel: false,
     })}

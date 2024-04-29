@@ -2,18 +2,18 @@ import gql from 'graphql-tag';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
-import { RecordGqlOperationFields } from '@/object-record/graphql-operations/types/RecordGqlOperationFields';
+import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql-operations/types/RecordGqlOperationGqlRecordFields';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const generateFindManyRecordsQuery = ({
   objectMetadataItem,
   objectMetadataItems,
-  operationFields,
+  recordGqlFields,
   computeReferences,
 }: {
   objectMetadataItem: ObjectMetadataItem;
   objectMetadataItems: ObjectMetadataItem[];
-  operationFields?: RecordGqlOperationFields;
+  recordGqlFields?: RecordGqlOperationGqlRecordFields;
   computeReferences?: boolean;
 }) => gql`
 query FindMany${capitalize(
@@ -30,7 +30,7 @@ query FindMany${capitalize(
       node ${mapObjectMetadataToGraphQLQuery({
         objectMetadataItems,
         objectMetadataItem,
-        operationFields,
+        recordGqlFields,
         computeReferences,
       })}
       cursor

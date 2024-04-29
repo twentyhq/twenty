@@ -21,11 +21,11 @@ export const useGetRecordFromCache = ({
   const apolloClient = useApolloClient();
 
   return useCallback(
-    <CachedObjectRecord extends ObjectRecord = ObjectRecord>(
+    <T extends ObjectRecord = ObjectRecord>(
       recordId: string,
       cache = apolloClient.cache,
     ) => {
-      return getRecordFromCache<CachedObjectRecord>({
+      return getRecordFromCache<T>({
         cache,
         recordId,
         objectMetadataItems,

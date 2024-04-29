@@ -3,7 +3,7 @@ import { useApolloClient } from '@apollo/client';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
-import { RecordGqlFindManyResult } from '@/object-record/graphql-operations/types/RecordGqlFindManyResult';
+import { RecordGqlOperationFindManyResult } from '@/object-record/graphql-operations/types/RecordGqlOperationFindManyResult';
 import { RecordGqlOperationVariables } from '@/object-record/graphql-operations/types/RecordGqlOperationVariables';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
@@ -22,19 +22,19 @@ export const useReadFindManyRecordsQueryInCache = ({
     T extends ObjectRecord = ObjectRecord,
   >({
     queryVariables,
-    operationFields,
+    recordGqlFields,
   }: {
     queryVariables: RecordGqlOperationVariables;
-    operationFields?: Record<string, any>;
+    recordGqlFields?: Record<string, any>;
   }) => {
     const findManyRecordsQueryForCacheRead = generateFindManyRecordsQuery({
       objectMetadataItem,
       objectMetadataItems,
-      operationFields,
+      recordGqlFields,
     });
 
     const existingRecordsQueryResult =
-      apolloClient.readQuery<RecordGqlFindManyResult>({
+      apolloClient.readQuery<RecordGqlOperationFindManyResult>({
         query: findManyRecordsQueryForCacheRead,
         variables: queryVariables,
       });

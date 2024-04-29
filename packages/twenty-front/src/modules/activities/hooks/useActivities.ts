@@ -1,7 +1,7 @@
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback } from 'recoil';
 
-import { findActivitiesOperationSignatureFactory } from '@/activities/graphql-operations/factories/FindActivitiesOperationSignatureFactory';
+import { findActivitiesOperationSignatureFactory } from '@/activities/graphql-operations/factories/findActivitiesOperationSignatureFactory';
 import { useActivityTargetsForTargetableObjects } from '@/activities/hooks/useActivityTargetsForTargetableObjects';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -61,7 +61,7 @@ export const useActivities = ({
       skip: skip,
       objectNameSingular:
         FIND_ACTIVITIES_OPERATION_SIGNATURE.objectNameSingular,
-      operationFields: FIND_ACTIVITIES_OPERATION_SIGNATURE.fields,
+      recordGqlFields: FIND_ACTIVITIES_OPERATION_SIGNATURE.fields,
       filter,
       orderBy: activitiesOrderByVariables,
       onCompleted: useRecoilCallback(

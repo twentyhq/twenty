@@ -2,16 +2,16 @@ import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
-import { RecordGqlOperationFields } from '@/object-record/graphql-operations/types/RecordGqlOperationFields';
+import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql-operations/types/RecordGqlOperationGqlRecordFields';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 
 export const useFindManyRecordsQuery = ({
   objectNameSingular,
-  operationFields,
+  recordGqlFields,
   computeReferences,
 }: {
   objectNameSingular: string;
-  operationFields?: RecordGqlOperationFields;
+  recordGqlFields?: RecordGqlOperationGqlRecordFields;
   computeReferences?: boolean;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -23,7 +23,7 @@ export const useFindManyRecordsQuery = ({
   const findManyRecordsQuery = generateFindManyRecordsQuery({
     objectMetadataItem,
     objectMetadataItems,
-    operationFields,
+    recordGqlFields,
     computeReferences,
   });
 

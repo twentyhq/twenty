@@ -79,7 +79,6 @@ describe('useTasks', () => {
       upcomingTasks: [],
       unscheduledTasks,
       completedTasks,
-      initialized: true,
     });
   });
 });

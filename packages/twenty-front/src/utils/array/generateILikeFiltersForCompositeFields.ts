@@ -1,4 +1,4 @@
-import { RecordGqlOperationFilter } from '@/object-record/graphql-operation/types/RecordGqlOperationFilter';
+import { RecordGqlOperationFilter } from '@/object-record/graphql-operations/types/RecordGqlOperationFilter';
 
 export const generateILikeFiltersForCompositeFields = (
   filterString: string,

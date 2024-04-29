@@ -5,7 +5,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RecordGqlConnection } from '@/object-record/graphql-operations/types/RecordGqlConnection';
-import { RecordGqlFindManyResult } from '@/object-record/graphql-operations/types/RecordGqlFindManyResult';
+import { RecordGqlOperationFindManyResult } from '@/object-record/graphql-operations/types/RecordGqlOperationFindManyResult';
 import { useFindDuplicateRecordsQuery } from '@/object-record/hooks/useFindDuplicatesRecordsQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getFindDuplicateRecordsQueryResponseField } from '@/object-record/utils/getFindDuplicateRecordsQueryResponseField';
@@ -37,7 +37,7 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
     objectMetadataItem.nameSingular,
   );
 
-  const { data, loading, error } = useQuery<RecordGqlFindManyResult>(
+  const { data, loading, error } = useQuery<RecordGqlOperationFindManyResult>(
     findDuplicateRecordsQuery,
     {
       variables: {

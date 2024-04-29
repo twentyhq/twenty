@@ -10,8 +10,8 @@ import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMeta
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RecordGqlConnection } from '@/object-record/graphql-operations/types/RecordGqlConnection';
 import { RecordGqlEdge } from '@/object-record/graphql-operations/types/RecordGqlEdge';
-import { RecordGqlFindManyResult } from '@/object-record/graphql-operations/types/RecordGqlFindManyResult';
-import { RecordGqlOperationFields } from '@/object-record/graphql-operations/types/RecordGqlOperationFields';
+import { RecordGqlOperationFindManyResult } from '@/object-record/graphql-operations/types/RecordGqlOperationFindManyResult';
+import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql-operations/types/RecordGqlOperationGqlRecordFields';
 import { RecordGqlOperationVariables } from '@/object-record/graphql-operations/types/RecordGqlOperationVariables';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -32,7 +32,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   limit,
   onCompleted,
   skip,
-  operationFields,
+  recordGqlFields,
   fetchPolicy,
 }: ObjectMetadataItemIdentifier &
   RecordGqlOperationVariables & {
@@ -44,7 +44,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
       },
     ) => void;
     skip?: boolean;
-    operationFields?: RecordGqlOperationFields;
+    recordGqlFields?: RecordGqlOperationGqlRecordFields;
     fetchPolicy?: WatchQueryFetchPolicy;
   }) => {
   const findManyQueryStateIdentifier =
@@ -71,15 +71,14 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const { findManyRecordsQuery } = useFindManyRecordsQuery({
     objectNameSingular,
-    operationFields,
+    recordGqlFields,
   });
 
   const { enqueueSnackBar } = useSnackBar();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
-  const { data, loading, error, fetchMore } = useQuery<RecordGqlFindManyResult>(
-    findManyRecordsQuery,
-    {
+  const { data, loading, error, fetchMore } =
+    useQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
       skip: skip || !objectMetadataItem || !currentWorkspaceMember,
       variables: {
         filter,
@@ -120,8 +119,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
           },
         );
       },
-    },
-  );
+    });
 
   const fetchMoreRecords = useCallback(async () => {
     if (hasNextPage) {
@@ -181,7 +179,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
                 totalCount:
                   fetchMoreResult?.[objectMetadataItem.namePlural].totalCount,
               },
-            } as RecordGqlFindManyResult);
+            } as RecordGqlOperationFindManyResult);
           },
         });
       } catch (error) {

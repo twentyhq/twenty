@@ -35,7 +35,7 @@ export const useActivityTargetsForTargetableObjects = ({
       objectNameSingular:
         FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.objectNameSingular,
       filter: activityTargetsFilter,
-      operationFields: FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.fields,
+      recordGqlFields: FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE.fields,
     });
 
   return {

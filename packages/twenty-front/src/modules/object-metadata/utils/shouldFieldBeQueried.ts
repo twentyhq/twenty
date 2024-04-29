@@ -1,3 +1,4 @@
+import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql-operations/types/RecordGqlOperationGqlRecordFields';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
@@ -7,23 +8,22 @@ import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
 export const shouldFieldBeQueried = ({
   field,
-  operationFields,
+  recordGqlFields,
 }: {
   field: Pick<FieldMetadataItem, 'name' | 'type'>;
   objectRecord?: ObjectRecord;
-  operationFields?: Record<string, any>;
+  recordGqlFields?: RecordGqlOperationGqlRecordFields;
 }): any => {
   if (
-    isUndefinedOrNull(operationFields) &&
+    isUndefinedOrNull(recordGqlFields) &&
     field.type !== FieldMetadataType.Relation
   ) {
     return true;
   }
-
   if (
-    isDefined(operationFields) &&
-    isDefined(operationFields[field.name]) &&
-    isDefined(operationFields[field.name]) !== false
+    isDefined(recordGqlFields) &&
+    isDefined(recordGqlFields[field.name]) &&
+    recordGqlFields[field.name] !== false
   ) {
     return true;
   }

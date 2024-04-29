@@ -1,6 +1,6 @@
 import { useApolloClient } from '@apollo/client';
 
-import { findActivitiesOperationSignatureFactory } from '@/activities/graphql-operations/factories/FindActivitiesOperationSignatureFactory';
+import { findActivitiesOperationSignatureFactory } from '@/activities/graphql-operations/factories/findActivitiesOperationSignatureFactory';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -113,7 +113,7 @@ export const usePrepareFindManyActivitiesQuery = () => {
         ...nextFindManyActivitiesQueryFilter,
         orderBy: { createdAt: 'DescNullsFirst' },
       },
-      operationFields: FIND_ACTIVITIES_OPERATION_SIGNATURE.fields,
+      recordGqlFields: FIND_ACTIVITIES_OPERATION_SIGNATURE.fields,
       computeReferences: true,
     });
   };

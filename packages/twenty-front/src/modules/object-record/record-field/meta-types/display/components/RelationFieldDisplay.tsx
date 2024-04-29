@@ -12,7 +12,7 @@ export const RelationFieldDisplay = () => {
       objectNameSingular={
         fieldDefinition.metadata.relationObjectMetadataNameSingular
       }
-      record={fieldValue}
+      record={fieldValue.record}
       maxWidth={maxWidth}
     />
   );

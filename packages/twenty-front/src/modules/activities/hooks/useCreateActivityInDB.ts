@@ -11,7 +11,7 @@ export const useCreateActivityInDB = () => {
   const { createOneRecord: createOneActivity } = useCreateOneRecord({
     objectNameSingular:
       CREATE_ONE_ACTIVITY_OPERATION_SIGNATURE.objectNameSingular,
-    operationFields: CREATE_ONE_ACTIVITY_OPERATION_SIGNATURE.fields,
+    recordGqlFields: CREATE_ONE_ACTIVITY_OPERATION_SIGNATURE.fields,
   });
 
   const { createManyRecords: createManyActivityTargets } =

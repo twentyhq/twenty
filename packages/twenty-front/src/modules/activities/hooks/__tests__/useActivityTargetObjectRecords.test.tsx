@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { gql, InMemoryCache } from '@apollo/client';
 import { MockedProvider } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
@@ -85,7 +85,6 @@ cache.writeFragment({
             id
             createdAt
             updatedAt
-            targetObjectNameSingular
             personId
             companyId
             company {
@@ -114,12 +113,25 @@ cache.writeFragment({
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
     <MockedProvider cache={cache}>
-      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-        {children}
-      </SnackBarProviderScope>
+      <ObjectMetadataItemSetter>
+        <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+          {children}
+        </SnackBarProviderScope>
+      </ObjectMetadataItemSetter>
     </MockedProvider>
   </RecoilRoot>
 );
+
+const ObjectMetadataItemSetter = ({ children }: { children: ReactNode }) => {
+  const setObjectMetadataItems = useSetRecoilState(objectMetadataItemsState);
+  const [isLoaded, setIsLoaded] = useState(false);
+  useEffect(() => {
+    setObjectMetadataItems(getObjectMetadataItemsMock());
+    setIsLoaded(true);
+  }, [setObjectMetadataItems]);
+
+  return isLoaded ? <>{children}</> : null;
+};
 
 describe('useActivityTargetObjectRecords', () => {
   it('return targetObjects', async () => {

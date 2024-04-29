@@ -2,7 +2,7 @@ import { shouldFieldBeQueried } from '@/object-metadata/utils/shouldFieldBeQueri
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 describe('shouldFieldBeQueried', () => {
-  describe('if queryFields is absent, we query all except relations', () => {
+  describe('if recordGqlFields is absent, we query all except relations', () => {
     it('should be queried if the field is not a relation', () => {
       const res = shouldFieldBeQueried({
         field: { name: 'fieldName', type: FieldMetadataType.Boolean },
@@ -18,10 +18,10 @@ describe('shouldFieldBeQueried', () => {
     });
   });
 
-  describe('if queryFields is present, we respect it', () => {
+  describe('if recordGqlFields is present, we respect it', () => {
     it('should be queried if true', () => {
       const res = shouldFieldBeQueried({
-        queryFields: { fieldName: true },
+        recordGqlFields: { fieldName: true },
         field: { name: 'fieldName', type: FieldMetadataType.Relation },
       });
       expect(res).toBe(true);
@@ -29,7 +29,7 @@ describe('shouldFieldBeQueried', () => {
 
     it('should be queried if object', () => {
       const res = shouldFieldBeQueried({
-        queryFields: { fieldName: { subFieldName: false } },
+        recordGqlFields: { fieldName: { subFieldName: false } },
         field: { name: 'fieldName', type: FieldMetadataType.Relation },
       });
       expect(res).toBe(true);
@@ -37,7 +37,7 @@ describe('shouldFieldBeQueried', () => {
 
     it('should not be queried if false', () => {
       const res = shouldFieldBeQueried({
-        queryFields: { fieldName: false },
+        recordGqlFields: { fieldName: false },
         field: { name: 'fieldName', type: FieldMetadataType.Relation },
       });
       expect(res).toBe(false);
@@ -45,7 +45,7 @@ describe('shouldFieldBeQueried', () => {
 
     it('should not be queried if absent', () => {
       const res = shouldFieldBeQueried({
-        queryFields: { otherFieldName: false },
+        recordGqlFields: { otherFieldName: false },
         field: { name: 'fieldName', type: FieldMetadataType.Relation },
       });
       expect(res).toBe(false);

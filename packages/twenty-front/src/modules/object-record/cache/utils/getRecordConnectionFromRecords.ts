@@ -3,14 +3,14 @@ import { getConnectionTypename } from '@/object-record/cache/utils/getConnection
 import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
 import { getRecordEdgeFromRecord } from '@/object-record/cache/utils/getRecordEdgeFromRecord';
 import { RecordGqlConnection } from '@/object-record/graphql-operations/types/RecordGqlConnection';
-import { RecordGqlOperationFields } from '@/object-record/graphql-operations/types/RecordGqlOperationFields';
+import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql-operations/types/RecordGqlOperationGqlRecordFields';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
   objectMetadataItems,
   objectMetadataItem,
   records,
-  operationFields,
+  recordGqlFields,
   withPageInfo = true,
   computeReferences = false,
   isRootLevel = true,
@@ -21,7 +21,7 @@ export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
     'fields' | 'namePlural' | 'nameSingular'
   >;
   records: T[];
-  operationFields?: RecordGqlOperationFields;
+  recordGqlFields?: RecordGqlOperationGqlRecordFields;
   withPageInfo?: boolean;
   isRootLevel?: boolean;
   computeReferences?: boolean;
@@ -32,7 +32,7 @@ export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
       return getRecordEdgeFromRecord({
         objectMetadataItems,
         objectMetadataItem,
-        operationFields,
+        recordGqlFields,
         record,
         isRootLevel,
         computeReferences,

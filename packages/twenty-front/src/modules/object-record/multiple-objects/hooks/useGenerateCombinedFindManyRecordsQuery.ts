@@ -91,7 +91,7 @@ export const useGenerateCombinedFindManyRecordsQuery = ({
             node ${mapObjectMetadataToGraphQLQuery({
               objectMetadataItems: objectMetadataItems,
               objectMetadataItem,
-              operationFields: fields,
+              recordGqlFields: fields,
             })}
             cursor
           }

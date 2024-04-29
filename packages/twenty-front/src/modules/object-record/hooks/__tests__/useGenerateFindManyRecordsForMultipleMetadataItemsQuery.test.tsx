@@ -1,22 +1,40 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
+import { expect } from '@storybook/test';
 import { renderHook } from '@testing-library/react';
-import { RecoilRoot } from 'recoil';
+import { RecoilRoot, useSetRecoilState } from 'recoil';
 
+import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
-import { useGenerateFindManyRecordsForMultipleMetadataItemsQuery } from '@/object-record/multiple-objects/hooks/useGenerateFindManyRecordsForMultipleMetadataItemsQuery';
+import { useGenerateCombinedFindManyRecordsQuery } from '@/object-record/multiple-objects/hooks/useGenerateCombinedFindManyRecordsQuery';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <RecoilRoot>{children}</RecoilRoot>
+  <RecoilRoot>
+    <ObjectMetadataItemSetter>{children}</ObjectMetadataItemSetter>
+  </RecoilRoot>
 );
+
+const ObjectMetadataItemSetter = ({ children }: { children: ReactNode }) => {
+  const setObjectMetadataItems = useSetRecoilState(objectMetadataItemsState);
+  const [isLoaded, setIsLoaded] = useState(false);
+  useEffect(() => {
+    setObjectMetadataItems(getObjectMetadataItemsMock());
+    setIsLoaded(true);
+  }, [setObjectMetadataItems]);
+
+  return isLoaded ? <>{children}</> : null;
+};
 
 describe('useGenerateFindManyRecordsForMultipleMetadataItemsQuery', () => {
   it('should work as expected', async () => {
     const { result } = renderHook(
       () => {
-        const mockObjectMetadataItems = getObjectMetadataItemsMock();
-
-        return useGenerateFindManyRecordsForMultipleMetadataItemsQuery({
-          targetObjectMetadataItems: mockObjectMetadataItems.slice(0, 2),
+        return useGenerateCombinedFindManyRecordsQuery({
+          operationSignatures: getObjectMetadataItemsMock()
+            .slice(0, 2)
+            .map((item) => ({
+              objectNameSingular: item.nameSingular,
+              variables: {},
+            })),
         });
       },
       {

@@ -7,7 +7,7 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 export const getRecordEdgeFromRecord = <T extends ObjectRecord>({
   objectMetadataItems,
   objectMetadataItem,
-  operationFields,
+  recordGqlFields,
   record,
   computeReferences = false,
   isRootLevel = false,
@@ -17,7 +17,7 @@ export const getRecordEdgeFromRecord = <T extends ObjectRecord>({
     ObjectMetadataItem,
     'fields' | 'namePlural' | 'nameSingular'
   >;
-  operationFields?: Record<string, any>;
+  recordGqlFields?: Record<string, any>;
   computeReferences?: boolean;
   isRootLevel?: boolean;
   record: T;
@@ -28,7 +28,7 @@ export const getRecordEdgeFromRecord = <T extends ObjectRecord>({
       ...getRecordNodeFromRecord({
         objectMetadataItems,
         objectMetadataItem,
-        operationFields,
+        recordGqlFields,
         record,
         computeReferences,
         isRootLevel,

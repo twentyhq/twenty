@@ -2,11 +2,11 @@ import { useApolloClient } from '@apollo/client';
 import { v4 } from 'uuid';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
-import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
-import { RecordGqlOperationFields } from '@/object-record/graphql-operations/types/RecordGqlOperationFields';
+import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
+import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql-operations/types/RecordGqlOperationGqlRecordFields';
 import { useCreateOneRecordMutation } from '@/object-record/hooks/useCreateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
@@ -15,7 +15,7 @@ import { isDefined } from '~/utils/isDefined';
 
 type useCreateOneRecordProps = {
   objectNameSingular: string;
-  operationFields?: RecordGqlOperationFields;
+  recordGqlFields?: RecordGqlOperationGqlRecordFields;
   skipPostOptmisticEffect?: boolean;
 };
 
@@ -23,7 +23,7 @@ export const useCreateOneRecord = <
   CreatedObjectRecord extends ObjectRecord = ObjectRecord,
 >({
   objectNameSingular,
-  operationFields,
+  recordGqlFields,
   skipPostOptmisticEffect = false,
 }: useCreateOneRecordProps) => {
   const apolloClient = useApolloClient();
@@ -34,10 +34,10 @@ export const useCreateOneRecord = <
 
   const { createOneRecordMutation } = useCreateOneRecordMutation({
     objectNameSingular,
-    operationFields,
+    recordGqlFields,
   });
 
-  const createOneRecordInCache = useCreateOneRecordInCache<CachedObjectRecord>({
+  const createOneRecordInCache = useCreateOneRecordInCache<ObjectRecord>({
     objectMetadataItem,
   });
 
@@ -57,6 +57,7 @@ export const useCreateOneRecord = <
     const recordCreatedInCache = createOneRecordInCache({
       ...input,
       id: idForCreation,
+      __typename: getObjectTypename(objectMetadataItem.nameSingular),
     });
 
     if (isDefined(recordCreatedInCache)) {

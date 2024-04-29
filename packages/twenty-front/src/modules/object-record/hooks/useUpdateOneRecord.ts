@@ -10,17 +10,18 @@ import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRe
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
+import { capitalize } from '~/utils/string/capitalize';
 
 type useUpdateOneRecordProps = {
   objectNameSingular: string;
-  operationFields?: Record<string, any>;
+  recordGqlFields?: Record<string, any>;
 };
 
 export const useUpdateOneRecord = <
   UpdatedObjectRecord extends ObjectRecord = ObjectRecord,
 >({
   objectNameSingular,
-  operationFields,
+  recordGqlFields,
 }: useUpdateOneRecordProps) => {
   const apolloClient = useApolloClient();
 
@@ -52,13 +53,13 @@ export const useUpdateOneRecord = <
       }),
     };
 
-    const cachedRecord = getRecordFromCache<UpdatedObjectRecord>(idToUpdate);
+    const cachedRecord = getRecordFromCache<ObjectRecord>(idToUpdate);
 
     const cachedRecordWithConnection = getRecordNodeFromRecord<ObjectRecord>({
       record: cachedRecord,
       objectMetadataItem,
       objectMetadataItems,
-      operationFields,
+      recordGqlFields,
       computeReferences: true,
     });
 
@@ -66,6 +67,7 @@ export const useUpdateOneRecord = <
       ...cachedRecord,
       ...sanitizedInput,
       ...{ id: idToUpdate },
+      ...{ __typename: capitalize(objectMetadataItem.nameSingular) },
     };
 
     const optimisticRecordWithConnection =
@@ -73,7 +75,7 @@ export const useUpdateOneRecord = <
         record: optimisticRecord,
         objectMetadataItem,
         objectMetadataItems,
-        operationFields,
+        recordGqlFields,
         computeReferences: true,
       });
 

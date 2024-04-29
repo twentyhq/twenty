@@ -22,18 +22,18 @@ export const useUpsertFindManyRecordsQueryInCache = ({
   >({
     queryVariables,
     objectRecordsToOverwrite,
-    operationFields,
+    recordGqlFields,
     computeReferences = false,
   }: {
     queryVariables: RecordGqlOperationVariables;
     objectRecordsToOverwrite: T[];
-    operationFields?: Record<string, any>;
+    recordGqlFields?: Record<string, any>;
     computeReferences?: boolean;
   }) => {
     const findManyRecordsQueryForCacheOverwrite = generateFindManyRecordsQuery({
       objectMetadataItem,
       objectMetadataItems,
-      operationFields,
+      recordGqlFields,
       computeReferences,
     });
 
@@ -41,7 +41,7 @@ export const useUpsertFindManyRecordsQueryInCache = ({
       objectMetadataItems: objectMetadataItems,
       objectMetadataItem: objectMetadataItem,
       records: objectRecordsToOverwrite,
-      operationFields,
+      recordGqlFields,
       computeReferences,
     });
 

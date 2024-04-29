@@ -5,7 +5,7 @@ import { getObjectMetadataIdentifierFields } from '@/object-metadata/utils/getOb
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { isDefined } from '~/utils/isDefined';
 
-export const useRecordBoardGqlOperationFields = ({
+export const useRecordBoardRecordGqlFields = ({
   objectMetadataItem,
   recordBoardId,
 }: {
@@ -33,7 +33,7 @@ export const useRecordBoardGqlOperationFields = ({
     identifierQueryFields[imageIdentifierFieldMetadataItem.name] = true;
   }
 
-  const queryFields: Record<string, any> = {
+  const recordGqlFields: Record<string, any> = {
     id: true,
     ...Object.fromEntries(
       visibleFieldDefinitions.map((visibleFieldDefinition) => [
@@ -45,8 +45,8 @@ export const useRecordBoardGqlOperationFields = ({
   };
 
   if (isDefined(kanbanFieldMetadataName)) {
-    queryFields[kanbanFieldMetadataName] = true;
+    recordGqlFields[kanbanFieldMetadataName] = true;
   }
 
-  return queryFields;
+  return recordGqlFields;
 };

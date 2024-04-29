@@ -75,10 +75,10 @@ idealCustomerProfile
 }`);
   });
 
-  it('should return only return relation subFields that are in operationFields', async () => {
+  it('should return only return relation subFields that are in recordGqlFields', async () => {
     const res = mapFieldMetadataToGraphQLQuery({
       objectMetadataItems: mockObjectMetadataItems,
-      relationOperationFields: {
+      relationrecordFields: {
         accountOwner: { id: true, name: true },
         people: true,
         xLink: true,
