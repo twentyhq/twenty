@@ -1,9 +1,7 @@
 import { ReactElement } from 'react';
-import { toc } from '@jsdevtools/rehype-toc';
 import fs from 'fs';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import path from 'path';
-import rehypeSlug from 'rehype-slug';
 import gfm from 'remark-gfm';
 
 import ArticleEditContent from '@/app/_components/ui/layout/articles/ArticleEditContent';
@@ -123,7 +121,6 @@ export async function compileMDXFile(filePath: string, addToc = true) {
       mdxOptions: {
         development: process.env.NODE_ENV === 'development',
         remarkPlugins: [gfm],
-        rehypePlugins: [rehypeSlug, ...(addToc ? [toc] : [])],
       },
     },
   });
