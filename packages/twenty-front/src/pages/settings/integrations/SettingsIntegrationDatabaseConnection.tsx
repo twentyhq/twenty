@@ -1,11 +1,9 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { IconSettings } from 'twenty-ui';
 
 import { useDeleteOneDatabaseConnection } from '@/databases/hooks/useDeleteOneDatabaseConnection';
 import { useGetDatabaseConnection } from '@/databases/hooks/useGetDatabaseConnection';
 import { useGetDatabaseConnectionTables } from '@/databases/hooks/useGetDatabaseConnectionTables';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsIntegrationDatabaseTablesListCard } from '@/settings/integrations/components/SettingsIntegrationDatabaseTablesListCard';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { getConnectionDbName } from '@/settings/integrations/utils/getConnectionDbName';
@@ -13,11 +11,11 @@ import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SettingsIntegrationDatabaseConnectionSummaryCard } from '~/pages/settings/integrations/SettingsIntegrationDatabaseConnectionSummaryCard';
+import { SettingsIntegrationDatabaseConnectionWrapper } from '~/pages/settings/integrations/SettingsIntegrationDatabaseConnectionWrapper';
 
 export const SettingsIntegrationDatabaseConnection = () => {
   const { databaseKey = '', connectionId = '' } = useParams();
@@ -55,6 +53,10 @@ export const SettingsIntegrationDatabaseConnection = () => {
     navigate(`${settingsIntegrationsPagePath}/${databaseKey}`);
   };
 
+  const onEdit = () => {
+    navigate('./edit');
+  };
+
   useEffect(() => {
     if (!isIntegrationAvailable || (!loading && !connection)) {
       navigate(AppPath.NotFound);
@@ -82,43 +84,42 @@ export const SettingsIntegrationDatabaseConnection = () => {
   const connectionName = getConnectionDbName({ integration, connection });
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <SettingsPageContainer>
-        <Breadcrumb
-          links={[
-            {
-              children: 'Integrations',
-              href: settingsIntegrationsPagePath,
-            },
-            {
-              children: integration.text,
-              href: `${settingsIntegrationsPagePath}/${databaseKey}`,
-            },
-            { children: connectionName },
-          ]}
+    <SettingsIntegrationDatabaseConnectionWrapper>
+      <Breadcrumb
+        links={[
+          {
+            children: 'Integrations',
+            href: settingsIntegrationsPagePath,
+          },
+          {
+            children: integration.text,
+            href: `${settingsIntegrationsPagePath}/${databaseKey}`,
+          },
+          { children: connectionName },
+        ]}
+      />
+      <Section>
+        <H2Title title="About" description="About this remote object" />
+        <SettingsIntegrationDatabaseConnectionSummaryCard
+          databaseLogoUrl={integration.from.image}
+          connectionId={connectionId}
+          connectionName={connectionName}
+          onRemove={deleteConnection}
+          onEdit={onEdit}
         />
-        <Section>
-          <H2Title title="About" description="About this remote object" />
-          <SettingsIntegrationDatabaseConnectionSummaryCard
-            databaseLogoUrl={integration.from.image}
+      </Section>
+      <Section>
+        <H2Title
+          title="Tables"
+          description="Select the tables that should be tracked"
+        />
+        {!!tables.length && (
+          <SettingsIntegrationDatabaseTablesListCard
             connectionId={connectionId}
-            connectionName={connectionName}
-            onRemove={deleteConnection}
+            tables={tables}
           />
-        </Section>
-        <Section>
-          <H2Title
-            title="Tables"
-            description="Select the tables that should be tracked"
-          />
-          {!!tables.length && (
-            <SettingsIntegrationDatabaseTablesListCard
-              connectionId={connectionId}
-              tables={tables}
-            />
-          )}
-        </Section>
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+        )}
+      </Section>
+    </SettingsIntegrationDatabaseConnectionWrapper>
   );
 };

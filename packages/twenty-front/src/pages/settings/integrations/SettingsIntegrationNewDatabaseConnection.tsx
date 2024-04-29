@@ -115,10 +115,12 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
   };
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    <FormProvider {...formConfig}>
-      <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-        <SettingsPageContainer>
+    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+      <SettingsPageContainer>
+        <FormProvider
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...formConfig}
+        >
           <SettingsHeaderContainer>
             <Breadcrumb
               links={[
@@ -150,8 +152,8 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
               <SettingsIntegrationPostgreSQLConnectionForm />
             </Section>
           ) : null}
-        </SettingsPageContainer>
-      </SubMenuTopBarContainer>
-    </FormProvider>
+        </FormProvider>
+      </SettingsPageContainer>
+    </SubMenuTopBarContainer>
   );
 };
