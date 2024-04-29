@@ -503,7 +503,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       relationMetadata.fromFieldMetadata.id === fieldMetadataDTO.id;
 
     // TODO: implement MANY_TO_MANY
-    if (relationMetadata.relationType === RelationMetadataType.MANY_TO_MANY) {
+    if (
+      relationMetadata.relationType === RelationMetadataType.MANY_TO_MANY ||
+      relationMetadata.relationType === RelationMetadataType.MANY_TO_ONE
+    ) {
       throw new Error(`
         Relation type ${relationMetadata.relationType} not supported
       `);
