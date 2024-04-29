@@ -3,7 +3,7 @@ import { ReadFieldFunction } from '@apollo/client/cache/core/types/common';
 
 import { OrderBy } from '@/object-metadata/types/OrderBy';
 import { RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
-import { RecordGqlOperationOrderBy } from '@/object-record/graphql-operations/types/RecordGqlOperationOrderBy';
+import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
 import { isDefined } from '~/utils/isDefined';
 import { sortAsc, sortDesc, sortNullsFirst, sortNullsLast } from '~/utils/sort';
 

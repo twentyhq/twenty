@@ -1,7 +1,7 @@
 import {
   UUIDFilter,
   UUIDFilterValue,
-} from '@/object-record/graphql-operations/types/RecordGqlOperationFilter';
+} from '@/object-record/graphql/types/RecordGqlOperationFilter';
 
 export const isMatchingUUIDFilter = ({
   uuidFilter,

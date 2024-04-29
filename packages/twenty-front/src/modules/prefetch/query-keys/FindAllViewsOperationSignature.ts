@@ -1,5 +1,5 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { RecordGqlOperationSignature } from '@/object-record/graphql-operations/types/RecordGqlOperationSignature';
+import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
 
 export const FIND_ALL_VIEWS_OPERATION_SIGNATURE: RecordGqlOperationSignature = {
   objectNameSingular: CoreObjectNameSingular.View,

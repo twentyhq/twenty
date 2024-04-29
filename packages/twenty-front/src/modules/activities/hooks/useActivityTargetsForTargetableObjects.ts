@@ -1,6 +1,6 @@
 import { useRecoilValue } from 'recoil';
 
-import { findActivityTargetsOperationSignatureFactory } from '@/activities/graphql-operations/factories/findActivityTargetsOperationSignatureFactory';
+import { findActivityTargetsOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/findActivityTargetsOperationSignatureFactory';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';

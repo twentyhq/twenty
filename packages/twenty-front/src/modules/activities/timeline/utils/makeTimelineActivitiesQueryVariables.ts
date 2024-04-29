@@ -1,4 +1,4 @@
-import { RecordGqlOperationVariables } from '@/object-record/graphql-operations/types/RecordGqlOperationVariables';
+import { RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 
 // Todo: this should be replace by the operationSignatureFactory pattern

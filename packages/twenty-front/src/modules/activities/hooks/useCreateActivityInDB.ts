@@ -1,6 +1,6 @@
 import { isNonEmptyArray } from '@sniptt/guards';
 
-import { CREATE_ONE_ACTIVITY_OPERATION_SIGNATURE } from '@/activities/graphql-operations/CreateOneActivityQueryKey';
+import { CREATE_ONE_ACTIVITY_OPERATION_SIGNATURE } from '@/activities/graphql/operation-signatures/CreateOneActivityOperationSignature';
 import { ActivityForEditor } from '@/activities/types/ActivityForEditor';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';

@@ -1,4 +1,4 @@
-import { RecordGqlEdge } from '@/object-record/graphql-operations/types/RecordGqlEdge';
+import { RecordGqlEdge } from '@/object-record/graphql/types/RecordGqlEdge';
 
 export const filterUniqueRecordEdgesByCursor = (
   arrayToFilter: RecordGqlEdge[],

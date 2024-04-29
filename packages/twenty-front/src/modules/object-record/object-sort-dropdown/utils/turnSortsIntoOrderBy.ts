@@ -1,5 +1,5 @@
 import { OrderBy } from '@/object-metadata/types/OrderBy';
-import { RecordGqlOperationOrderBy } from '@/object-record/graphql-operations/types/RecordGqlOperationOrderBy';
+import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
 import { Field } from '~/generated/graphql';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { isDefined } from '~/utils/isDefined';

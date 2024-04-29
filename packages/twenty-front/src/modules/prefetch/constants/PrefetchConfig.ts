@@ -1,4 +1,4 @@
-import { RecordGqlOperationSignature } from '@/object-record/graphql-operations/types/RecordGqlOperationSignature';
+import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
 import { FIND_ALL_FAVORITES_OPERATION_SIGNATURE } from '@/prefetch/query-keys/FindAllFavoritesOperationSignature';
 import { FIND_ALL_VIEWS_OPERATION_SIGNATURE } from '@/prefetch/query-keys/FindAllViewsOperationSignature';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';

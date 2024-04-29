@@ -6,6 +6,7 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
+import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
@@ -29,12 +30,16 @@ export const useUpdateOneRecord = <
     objectNameSingular,
   });
 
+  const computedRecordGqlFields =
+    recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
+
   const getRecordFromCache = useGetRecordFromCache({
     objectNameSingular,
   });
 
   const { updateOneRecordMutation } = useUpdateOneRecordMutation({
     objectNameSingular,
+    recordGqlFields: computedRecordGqlFields,
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -59,7 +64,7 @@ export const useUpdateOneRecord = <
       record: cachedRecord,
       objectMetadataItem,
       objectMetadataItems,
-      recordGqlFields,
+      recordGqlFields: computedRecordGqlFields,
       computeReferences: true,
     });
 
@@ -75,7 +80,7 @@ export const useUpdateOneRecord = <
         record: optimisticRecord,
         objectMetadataItem,
         objectMetadataItems,
-        recordGqlFields,
+        recordGqlFields: computedRecordGqlFields,
         computeReferences: true,
       });
 

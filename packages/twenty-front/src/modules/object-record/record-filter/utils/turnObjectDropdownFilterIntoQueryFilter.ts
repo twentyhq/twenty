@@ -9,7 +9,7 @@ import {
   StringFilter,
   URLFilter,
   UUIDFilter,
-} from '@/object-record/graphql-operations/types/RecordGqlOperationFilter';
+} from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';

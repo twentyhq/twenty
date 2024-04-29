@@ -1,5 +1,5 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { RecordGqlOperationSignature } from '@/object-record/graphql-operations/types/RecordGqlOperationSignature';
+import { RecordGqlOperationSignature } from '@/object-record/graphql/types/RecordGqlOperationSignature';
 
 export const CREATE_ONE_ACTIVITY_OPERATION_SIGNATURE: RecordGqlOperationSignature =
   {

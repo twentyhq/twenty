@@ -5,12 +5,16 @@ import { useRecoilValue } from 'recoil';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCache';
+import { RecordGqlFields } from '@/object-record/graphql/types/RecordGqlFields';
+import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export const useGetRecordFromCache = ({
   objectNameSingular,
+  recordGqlFields,
 }: {
   objectNameSingular: string;
+  recordGqlFields?: RecordGqlFields;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -30,8 +34,16 @@ export const useGetRecordFromCache = ({
         recordId,
         objectMetadataItems,
         objectMetadataItem,
+        recordGqlFields:
+          recordGqlFields ??
+          generateDepthOneRecordGqlFields({ objectMetadataItem }),
       });
     },
-    [objectMetadataItem, objectMetadataItems, apolloClient],
+    [
+      apolloClient.cache,
+      objectMetadataItems,
+      objectMetadataItem,
+      recordGqlFields,
+    ],
   );
 };

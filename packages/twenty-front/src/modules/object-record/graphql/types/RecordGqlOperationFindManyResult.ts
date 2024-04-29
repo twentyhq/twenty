@@ -1,4 +1,4 @@
-import { RecordGqlConnection } from '@/object-record/graphql-operations/types/RecordGqlConnection';
+import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 
 export type RecordGqlOperationFindManyResult = {
   [objectNamePlural: string]: RecordGqlConnection;

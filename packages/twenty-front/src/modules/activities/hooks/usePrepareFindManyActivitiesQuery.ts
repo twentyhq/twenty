@@ -1,6 +1,6 @@
 import { useApolloClient } from '@apollo/client';
 
-import { findActivitiesOperationSignatureFactory } from '@/activities/graphql-operations/factories/findActivitiesOperationSignatureFactory';
+import { findActivitiesOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/findActivitiesOperationSignatureFactory';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';

@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsByNamePluralMapSelector } from '@/object-metadata/states/objectMetadataItemsByNamePluralMapSelector';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
-import { RecordGqlConnection } from '@/object-record/graphql-operations/types/RecordGqlConnection';
+import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { isDefined } from '~/utils/isDefined';
 

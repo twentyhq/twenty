@@ -1,7 +1,7 @@
 import { generateActivityTargetMorphFieldKeys } from '@/activities/utils/generateActivityTargetMorphFieldKeys';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { RecordGqlOperationSignatureFactory } from '@/object-record/graphql-operations/types/RecordGqlOperationSignatureFactory';
+import { RecordGqlOperationSignatureFactory } from '@/object-record/graphql/types/RecordGqlOperationSignatureFactory';
 
 export const findActivityTargetsOperationSignatureFactory: RecordGqlOperationSignatureFactory =
   ({ objectMetadataItems }: { objectMetadataItems: ObjectMetadataItem[] }) => ({

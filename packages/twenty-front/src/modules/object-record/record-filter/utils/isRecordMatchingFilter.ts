@@ -15,7 +15,7 @@ import {
   StringFilter,
   URLFilter,
   UUIDFilter,
-} from '@/object-record/graphql-operations/types/RecordGqlOperationFilter';
+} from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { isMatchingBooleanFilter } from '@/object-record/record-filter/utils/isMatchingBooleanFilter';
 import { isMatchingCurrencyFilter } from '@/object-record/record-filter/utils/isMatchingCurrencyFilter';
 import { isMatchingDateFilter } from '@/object-record/record-filter/utils/isMatchingDateFilter';
