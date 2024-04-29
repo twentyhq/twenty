@@ -14,7 +14,7 @@ import {
 import { getVisibleReleases } from '@/app/releases/utils/get-visible-releases';
 import { findAll } from '@/database/database';
 import { GithubReleases, githubReleasesModel } from '@/database/model';
-import { pgGithubReleasesModel } from '@/database/postgres/schema-postgres';
+import { pgGithubReleasesModel } from '@/database/schema-postgres';
 
 export const metadata: Metadata = {
   title: 'Twenty - Releases',
