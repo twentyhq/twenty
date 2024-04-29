@@ -71,7 +71,11 @@ export class BlocklistValidationService {
         throw new BadRequestException('Blocklist handle is required');
       }
 
-      emailOrDomainSchema.parse(handle);
+      const result = emailOrDomainSchema.safeParse(handle);
+
+      if (!result.success) {
+        throw new BadRequestException(result.error.errors[0].message);
+      }
     }
   }
 
