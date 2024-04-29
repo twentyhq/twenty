@@ -28,11 +28,12 @@ const StyledChildrenContainer = styled.div`
 const StyledChildContainer = styled.div<{
   shrink: number;
   isVisible?: boolean;
-  isHovered?: boolean;
+  displayHiddenCount?: boolean;
 }>`
   flex-shrink: ${({ shrink }) => shrink};
   display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
-  overflow: ${({ isHovered }) => (isHovered ? 'hidden' : 'none')};
+  overflow: ${({ displayHiddenCount }) =>
+    displayHiddenCount ? 'hidden' : 'none'};
 `;
 
 const StyledRelationsListContainer = styled.div`
@@ -53,11 +54,13 @@ const StyledAnimatedChipContainer = styled(motion.div)``;
 export type ExpandableListProps = {
   isHovered?: boolean;
   reference?: HTMLDivElement;
+  forceDisplayHiddenCount?: boolean;
 };
 
 export const ExpandableList = ({
   children,
   isHovered,
+  forceDisplayHiddenCount = false,
   reference,
 }: {
   children: ReactElement[];
@@ -67,6 +70,7 @@ export const ExpandableList = ({
   const [childrenWidths, setChildrenWidths] = useState<Record<number, number>>(
     {},
   );
+  const displayHiddenCount = isHovered || forceDisplayHiddenCount;
 
   // Because Chip width depends on the number of hidden children which depends on the Chip width, we have a circular dependency
   // To avoid it, we fix the Chip width and make sure it can display its content (a number greater than 1)
@@ -95,7 +99,7 @@ export const ExpandableList = ({
       (acc, currentIndex) => acc + childrenWidths[currentIndex] + GAP_WIDTH, // Because there is a 4px gap between children
       0,
     );
-    if (!isHovered) {
+    if (!displayHiddenCount) {
       return { shrink: 1, isVisible: true };
     }
     if (cumulatedChildrenWidth > availableWidth) {
@@ -159,7 +163,7 @@ export const ExpandableList = ({
                 });
               }}
               key={index}
-              isHovered={isHovered}
+              displayHiddenCount={displayHiddenCount}
               isVisible={childProperties.isVisible}
               shrink={childProperties.shrink}
             >
@@ -168,7 +172,7 @@ export const ExpandableList = ({
           );
         })}
       </StyledChildrenContainer>
-      {isHovered && hiddenChildrenCount > 0 && (
+      {displayHiddenCount && hiddenChildrenCount > 0 && (
         <StyledAnimatedChipContainer
           initial={AnimationDivProps.initial}
           animate={AnimationDivProps.animate}
