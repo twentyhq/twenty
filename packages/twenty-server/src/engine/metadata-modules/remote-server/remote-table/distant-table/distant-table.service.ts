@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import {
@@ -60,34 +60,38 @@ export class DistantTableService {
         workspaceId,
       );
 
-    await workspaceDataSource.query(`CREATE SCHEMA "${tmpSchemaName}"`);
+    const availableTables = await workspaceDataSource.transaction(
+      async (entityManager: EntityManager) => {
+        await entityManager.query(`CREATE SCHEMA "${tmpSchemaName}"`);
 
-    await workspaceDataSource.query(
-      `IMPORT FOREIGN SCHEMA "${remoteServer.schema}" FROM SERVER "${remoteServer.foreignDataWrapperId}" INTO "${tmpSchemaName}"`,
-    );
+        await entityManager.query(
+          `IMPORT FOREIGN SCHEMA "${remoteServer.schema}" FROM SERVER "${remoteServer.foreignDataWrapperId}" INTO "${tmpSchemaName}"`,
+        );
 
-    const createdForeignTableNames = await workspaceDataSource.query(
-      `SELECT table_name, column_name, data_type, udt_name FROM information_schema.columns WHERE table_schema = '${tmpSchemaName}'`,
-    );
+        const createdForeignTableNames = await entityManager.query(
+          `SELECT table_name, column_name, data_type, udt_name FROM information_schema.columns WHERE table_schema = '${tmpSchemaName}'`,
+        );
 
-    const availableTables: DistantTables = createdForeignTableNames.reduce(
-      (acc, { table_name, column_name, data_type, udt_name }) => {
-        if (!acc[table_name]) {
-          acc[table_name] = [];
-        }
+        await entityManager.query(`DROP SCHEMA "${tmpSchemaName}" CASCADE`);
 
-        acc[table_name].push({
-          columnName: column_name,
-          dataType: data_type,
-          udtName: udt_name,
-        });
+        return createdForeignTableNames.reduce(
+          (acc, { table_name, column_name, data_type, udt_name }) => {
+            if (!acc[table_name]) {
+              acc[table_name] = [];
+            }
 
-        return acc;
+            acc[table_name].push({
+              columnName: column_name,
+              dataType: data_type,
+              udtName: udt_name,
+            });
+
+            return acc;
+          },
+          {},
+        );
       },
-      {},
     );
-
-    await workspaceDataSource.query(`DROP SCHEMA "${tmpSchemaName}" CASCADE`);
 
     await this.remoteServerRepository.update(remoteServer.id, {
       availableTables,

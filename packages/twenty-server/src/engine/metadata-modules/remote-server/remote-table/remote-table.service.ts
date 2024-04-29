@@ -1,4 +1,4 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
@@ -37,6 +37,8 @@ import { DistantTableService } from 'src/engine/metadata-modules/remote-server/r
 import { DistantTableColumn } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/types/distant-table-column';
 
 export class RemoteTableService {
+  private readonly logger = new Logger(RemoteTableService.name);
+
   constructor(
     @InjectRepository(RemoteTableEntity, 'metadata')
     private readonly remoteTableRepository: Repository<RemoteTableEntity>,
@@ -392,32 +394,36 @@ export class RemoteTableService {
       icon: 'IconPlug',
       isRemote: true,
       primaryKeyColumnType: distantTableIdColumn.udtName,
-      // TODO: function should work for other types than Postgres
       primaryKeyFieldMetadataSettings: mapUdtNameToFieldSettings(
         distantTableIdColumn.udtName,
       ),
     } satisfies CreateObjectInput);
 
     for (const column of distantTableColumns) {
-      const field = await this.fieldMetadataService.createOne({
-        name: column.columnName,
-        label: camelToTitleCase(camelCase(column.columnName)),
-        description: 'Field of remote',
-        // TODO: function should work for other types than Postgres
-        type: mapUdtNameToFieldType(column.udtName),
-        workspaceId: workspaceId,
-        objectMetadataId: objectMetadata.id,
-        isRemoteCreation: true,
-        isNullable: true,
-        icon: 'IconPlug',
-        // TODO: function should work for other types than Postgres
-        settings: mapUdtNameToFieldSettings(column.udtName),
-      } satisfies CreateFieldInput);
+      // TODO: return error to the user when a column cannot be managed
+      try {
+        const field = await this.fieldMetadataService.createOne({
+          name: column.columnName,
+          label: camelToTitleCase(camelCase(column.columnName)),
+          description: 'Field of remote',
+          type: mapUdtNameToFieldType(column.udtName),
+          workspaceId: workspaceId,
+          objectMetadataId: objectMetadata.id,
+          isRemoteCreation: true,
+          isNullable: true,
+          icon: 'IconPlug',
+          settings: mapUdtNameToFieldSettings(column.udtName),
+        } satisfies CreateFieldInput);
 
-      if (column.columnName === 'id') {
-        await this.objectMetadataService.updateOne(objectMetadata.id, {
-          labelIdentifierFieldMetadataId: field.id,
-        });
+        if (column.columnName === 'id') {
+          await this.objectMetadataService.updateOne(objectMetadata.id, {
+            labelIdentifierFieldMetadataId: field.id,
+          });
+        }
+      } catch (error) {
+        this.logger.error(
+          `Could not create field ${column.columnName} for remote table ${localTableName}: ${error}`,
+        );
       }
     }
   }
