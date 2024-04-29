@@ -1,6 +1,12 @@
 import { useRef } from 'react';
 import { Keys } from 'react-hotkeys-hook';
-import { autoUpdate, offset, Placement, useFloating } from '@floating-ui/react';
+import {
+  autoUpdate,
+  flip,
+  offset,
+  Placement,
+  useFloating,
+} from '@floating-ui/react';
 import { Alignment } from '@floating-ui/utils';
 import { Key } from 'ts-key-enum';
 
@@ -77,7 +83,7 @@ export const Dropdown = ({
   const { refs, floatingStyles } = useFloating({
     // @ts-expect-error placement accepts 'start' as value even if the typing does not permit it
     placement: dropdownPlacement,
-    middleware: [...offsetMiddlewares],
+    middleware: [flip(), ...offsetMiddlewares],
     whileElementsMounted: autoUpdate,
     elements: {
       reference: reference,
