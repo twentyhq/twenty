@@ -6,23 +6,23 @@ import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadat
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
+import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getUpdateOneRecordMutationResponseField } from '@/object-record/utils/getUpdateOneRecordMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
+import { capitalize } from '~/utils/string/capitalize';
 
 type useUpdateOneRecordProps = {
   objectNameSingular: string;
-  queryFields?: Record<string, any>;
-  depth?: number;
+  recordGqlFields?: Record<string, any>;
 };
 
 export const useUpdateOneRecord = <
   UpdatedObjectRecord extends ObjectRecord = ObjectRecord,
 >({
   objectNameSingular,
-  queryFields,
-  depth = 1,
+  recordGqlFields,
 }: useUpdateOneRecordProps) => {
   const apolloClient = useApolloClient();
 
@@ -30,12 +30,16 @@ export const useUpdateOneRecord = <
     objectNameSingular,
   });
 
+  const computedRecordGqlFields =
+    recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
+
   const getRecordFromCache = useGetRecordFromCache({
     objectNameSingular,
   });
 
   const { updateOneRecordMutation } = useUpdateOneRecordMutation({
     objectNameSingular,
+    recordGqlFields: computedRecordGqlFields,
   });
 
   const { objectMetadataItems } = useObjectMetadataItems();
@@ -54,14 +58,13 @@ export const useUpdateOneRecord = <
       }),
     };
 
-    const cachedRecord = getRecordFromCache<UpdatedObjectRecord>(idToUpdate);
+    const cachedRecord = getRecordFromCache<ObjectRecord>(idToUpdate);
 
     const cachedRecordWithConnection = getRecordNodeFromRecord<ObjectRecord>({
       record: cachedRecord,
       objectMetadataItem,
       objectMetadataItems,
-      depth,
-      queryFields,
+      recordGqlFields: computedRecordGqlFields,
       computeReferences: true,
     });
 
@@ -69,6 +72,7 @@ export const useUpdateOneRecord = <
       ...cachedRecord,
       ...sanitizedInput,
       ...{ id: idToUpdate },
+      ...{ __typename: capitalize(objectMetadataItem.nameSingular) },
     };
 
     const optimisticRecordWithConnection =
@@ -76,8 +80,7 @@ export const useUpdateOneRecord = <
         record: optimisticRecord,
         objectMetadataItem,
         objectMetadataItems,
-        depth,
-        queryFields,
+        recordGqlFields: computedRecordGqlFields,
         computeReferences: true,
       });
 

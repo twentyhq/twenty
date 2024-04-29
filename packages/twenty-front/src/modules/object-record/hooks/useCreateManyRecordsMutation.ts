@@ -5,18 +5,17 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
+import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { getCreateManyRecordsMutationResponseField } from '@/object-record/utils/getCreateManyRecordsMutationResponseField';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useCreateManyRecordsMutation = ({
   objectNameSingular,
-  queryFields,
-  depth,
+  recordGqlFields,
 }: {
   objectNameSingular: string;
-  queryFields?: Record<string, any>;
-  depth?: number;
+  recordGqlFields?: RecordGqlOperationGqlRecordFields;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -39,8 +38,7 @@ export const useCreateManyRecordsMutation = ({
       ${mutationResponseField}(data: $data) ${mapObjectMetadataToGraphQLQuery({
         objectMetadataItems,
         objectMetadataItem,
-        queryFields,
-        depth,
+        recordGqlFields,
       })}
   }`;
 

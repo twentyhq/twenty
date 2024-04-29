@@ -14,6 +14,7 @@ import { useGetViewFromCache } from '@/views/hooks/useGetViewFromCache';
 import { useResetCurrentView } from '@/views/hooks/useResetCurrentView';
 import { useSaveCurrentViewFiltersAndSorts } from '@/views/hooks/useSaveCurrentViewFiltersAndSorts';
 import { GraphQLView } from '@/views/types/GraphQLView';
+import { View } from '@/views/types/View';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -29,7 +30,7 @@ export const useHandleViews = (viewBarComponentId?: string) => {
     objectNameSingular: CoreObjectNameSingular.View,
   });
 
-  const { createOneRecord } = useCreateOneRecord<GraphQLView>({
+  const { createOneRecord } = useCreateOneRecord<View>({
     objectNameSingular: CoreObjectNameSingular.View,
   });
 
