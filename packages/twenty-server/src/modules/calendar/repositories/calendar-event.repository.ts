@@ -100,11 +100,11 @@ export class CalendarEventRepository {
   }
 
   public async getICalUIDCalendarEventIdMap(
-    calendarEventIds: string[],
+    iCalUIDs: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<Map<string, string>> {
-    if (calendarEventIds.length === 0) {
+    if (iCalUIDs.length === 0) {
       return new Map();
     }
 
@@ -117,8 +117,8 @@ export class CalendarEventRepository {
           iCalUID: string;
         }[]
       | undefined = await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT id, "iCalUID" FROM ${dataSourceSchema}."calendarEvent" WHERE "id" = ANY($1)`,
-      [calendarEventIds],
+      `SELECT id, "iCalUID" FROM ${dataSourceSchema}."calendarEvent" WHERE "iCalUID" = ANY($1)`,
+      [iCalUIDs],
       workspaceId,
       transactionManager,
     );
