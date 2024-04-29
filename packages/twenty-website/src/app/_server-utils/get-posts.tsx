@@ -101,7 +101,7 @@ async function parseFrontMatterAndCategory(
   return parsedDirectory;
 }
 
-export async function compileMDXFile(filePath: string, addToc = true) {
+export async function compileMDXFile(filePath: string) {
   const fileContent = fs.readFileSync(filePath, 'utf8');
   const compiled = await compileMDX<{ title: string; position?: number }>({
     source: fileContent,
@@ -144,7 +144,7 @@ export async function getPost(
   if (!fs.existsSync(filePath)) {
     return null;
   }
-  const { content, frontmatter } = await compileMDXFile(filePath, true);
+  const { content, frontmatter } = await compileMDXFile(filePath);
 
   return {
     content,
