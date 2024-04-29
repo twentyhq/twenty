@@ -27,7 +27,7 @@ export const Title = () => {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.01 }}
+      transition={{ duration: 0.2 }}
     >
       <StyledTitle>
         <StyledHeader>Latest</StyledHeader>
