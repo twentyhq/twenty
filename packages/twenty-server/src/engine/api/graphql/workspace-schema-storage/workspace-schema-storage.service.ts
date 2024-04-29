@@ -86,6 +86,7 @@ export class WorkspaceSchemaStorageService {
   }
 
   async invalidateCache(workspaceId: string): Promise<void> {
+    await this.workspaceSchemaCache.del(`*`);
     await this.workspaceSchemaCache.del(
       `objectMetadataCollection:${workspaceId}`,
     );
