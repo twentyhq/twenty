@@ -24,7 +24,7 @@ query FindMany${capitalize(
   objectMetadataItem.nameSingular,
 )}FilterInput, $orderBy: ${capitalize(
   objectMetadataItem.nameSingular,
-)}OrderByInput, $lastCursor: String, $limit: Float) {
+)}OrderByInput, $lastCursor: String, $limit: Int) {
   ${
     objectMetadataItem.namePlural
   }(filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor){

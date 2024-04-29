@@ -22,7 +22,6 @@
     "@hello-pangea/dnd": "^16.2.0",
     "@hookform/resolvers": "^3.1.1",
     "@jsdevtools/rehype-toc": "^3.0.2",
-    "@libsql/client": "^0.4.3",
     "@mdx-js/react": "^3.0.0",
     "@nestjs/apollo": "^11.0.5",
     "@nestjs/axios": "^3.0.1",

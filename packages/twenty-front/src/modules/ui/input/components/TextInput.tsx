@@ -1,27 +1,23 @@
-import { FocusEventHandler, forwardRef, useRef } from 'react';
+import { FocusEventHandler, forwardRef, ForwardRefRenderFunction } from 'react';
 import { Key } from 'ts-key-enum';
 
 import {
   TextInputV2,
   TextInputV2ComponentProps,
 } from '@/ui/input/components/TextInputV2';
+import { InputHotkeyScope } from '@/ui/input/types/InputHotkeyScope';
 import { usePreviousHotkeyScope } from '@/ui/utilities/hotkey/hooks/usePreviousHotkeyScope';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
-
-import { InputHotkeyScope } from '../types/InputHotkeyScope';
+import { isDefined } from '~/utils/isDefined';
 
 export type TextInputComponentProps = TextInputV2ComponentProps & {
   disableHotkeys?: boolean;
 };
 
-const TextInputComponent = ({
-  onFocus,
-  onBlur,
-  disableHotkeys = false,
-  ...props
-}: TextInputComponentProps): JSX.Element => {
-  const inputRef = useRef<HTMLInputElement>(null);
-
+const TextInputComponent: ForwardRefRenderFunction<
+  HTMLInputElement,
+  TextInputComponentProps
+> = ({ onFocus, onBlur, disableHotkeys = false, ...props }, ref) => {
   const {
     goBackToPreviousHotkeyScope,
     setHotkeyScopeAndMemorizePreviousScope,
@@ -46,14 +42,23 @@ const TextInputComponent = ({
   useScopedHotkeys(
     [Key.Escape, Key.Enter],
     () => {
-      inputRef.current?.blur();
+      if (isDefined(ref) && 'current' in ref) {
+        ref.current?.blur();
+      }
     },
     InputHotkeyScope.TextInput,
     { enabled: !disableHotkeys },
   );
 
-  // eslint-disable-next-line react/jsx-props-no-spreading
-  return <TextInputV2 {...props} onFocus={handleFocus} onBlur={handleBlur} />;
+  return (
+    <TextInputV2
+      ref={ref}
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...props}
+      onFocus={handleFocus}
+      onBlur={handleBlur}
+    />
+  );
 };
 
 export const TextInput = forwardRef(TextInputComponent);

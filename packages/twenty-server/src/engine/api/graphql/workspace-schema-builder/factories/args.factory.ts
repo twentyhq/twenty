@@ -32,27 +32,7 @@ export class ArgsFactory {
 
       // Argument is a scalar type
       if (arg.type) {
-        const fieldType = this.typeMapperService.mapToScalarType(
-          arg.type,
-          options.dateScalarMode,
-          options.numberScalarMode,
-        );
-
-        if (!fieldType) {
-          this.logger.error(
-            `Could not find a GraphQL type for ${arg.type.toString()}`,
-            {
-              arg,
-              options,
-            },
-          );
-
-          throw new Error(
-            `Could not find a GraphQL type for ${arg.type.toString()}`,
-          );
-        }
-
-        const gqlType = this.typeMapperService.mapToGqlType(fieldType, {
+        const gqlType = this.typeMapperService.mapToGqlType(arg.type, {
           defaultValue: arg.defaultValue,
           nullable: arg.isNullable,
           isArray: arg.isArray,
