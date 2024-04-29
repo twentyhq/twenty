@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { useRouter } from 'next/navigation';
 
 import { Theme } from '@/app/_components/ui/theme/theme';
+import { UserGuideArticlesProps } from '@/content/user-guide/constants/getUserGuideArticles';
 
 const StyledContainer = styled.div`
   color: ${Theme.border.color.plain};
@@ -47,7 +48,11 @@ const StyledImage = styled.img`
   height: 160px;
 `;
 
-export default function UserGuideCard({ card }: { card: any }) {
+export default function UserGuideCard({
+  card,
+}: {
+  card: UserGuideArticlesProps;
+}) {
   const router = useRouter();
   return (
     <StyledContainer
