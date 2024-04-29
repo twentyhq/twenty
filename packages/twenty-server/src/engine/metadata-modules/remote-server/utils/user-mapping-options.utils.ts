@@ -1,4 +1,4 @@
-import { InputType, Field } from '@nestjs/graphql';
+import { InputType, Field, ObjectType } from '@nestjs/graphql';
 
 import { IsOptional } from 'class-validator';
 
@@ -11,4 +11,11 @@ export class UserMappingOptionsInput {
   @IsOptional()
   @Field(() => String, { nullable: true })
   password: string;
+}
+
+@ObjectType()
+export class GetUserMappingOptions {
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  username: string;
 }

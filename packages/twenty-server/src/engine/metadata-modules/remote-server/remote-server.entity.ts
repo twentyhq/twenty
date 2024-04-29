@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 
 import { RemoteTableEntity } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.entity';
+import { UserMappingOptionsInput as UserMappingOptions } from 'src/engine/metadata-modules/remote-server/utils/user-mapping-options.utils';
 
 export enum RemoteServerType {
   POSTGRES_FDW = 'postgres_fdw',
@@ -25,12 +26,6 @@ export type ForeignDataWrapperOptions<T extends RemoteServerType> =
   T extends RemoteServerType.POSTGRES_FDW
     ? PostgresForeignDataWrapperOptions
     : never;
-
-export type UserMappingOptions = {
-  username: string;
-  password: string;
-};
-
 @Entity('remoteServer')
 export class RemoteServerEntity<T extends RemoteServerType> {
   @PrimaryGeneratedColumn('uuid')

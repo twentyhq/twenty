@@ -1,10 +1,12 @@
+import { BadRequestException } from '@nestjs/common';
+
 import { isDefined } from 'class-validator';
 
 import {
   RemoteServerEntity,
   RemoteServerType,
-  UserMappingOptions,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
+import { UserMappingOptionsInput } from 'src/engine/metadata-modules/remote-server/utils/user-mapping-options.utils';
 
 export type DeepPartial<T> = {
   [P in keyof T]?: DeepPartial<T[P]>;
@@ -13,7 +15,7 @@ export type DeepPartial<T> = {
 const buildUserMappingOptionsQuery = (
   parameters: any[],
   parametersPositions: object,
-  userMappingOptions: DeepPartial<UserMappingOptions>,
+  userMappingOptions: DeepPartial<UserMappingOptionsInput>,
 ): string | null => {
   const shouldUpdateUserMappingOptionsPassword = isDefined(
     userMappingOptions?.password,
@@ -128,6 +130,10 @@ export const updateRemoteServerRawQuery = (
     })`;
 
     options.push(fwdOptionsQuery);
+  }
+
+  if (options.length < 1) {
+    throw new BadRequestException('No fields to update');
   }
 
   const rawQuery = `UPDATE metadata."remoteServer" SET ${options.join(

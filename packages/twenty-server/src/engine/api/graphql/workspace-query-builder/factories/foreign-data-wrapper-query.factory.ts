@@ -5,8 +5,8 @@ import { isDefined } from 'class-validator';
 import {
   ForeignDataWrapperOptions,
   RemoteServerType,
-  UserMappingOptions,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
+import { UserMappingOptionsInput } from 'src/engine/metadata-modules/remote-server/utils/user-mapping-options.utils';
 
 @Injectable()
 export class ForeignDataWrapperQueryFactory {
@@ -39,7 +39,7 @@ export class ForeignDataWrapperQueryFactory {
 
   createUserMapping(
     foreignDataWrapperId: string,
-    userMappingOptions: UserMappingOptions,
+    userMappingOptions: UserMappingOptionsInput,
   ) {
     // CURRENT_USER works for now since we are using only one user. But if we switch to a user per workspace, we need to change this.
     return `CREATE USER MAPPING IF NOT EXISTS FOR CURRENT_USER SERVER "${foreignDataWrapperId}" OPTIONS (user '${userMappingOptions.username}', password '${userMappingOptions.password}')`;
@@ -47,7 +47,7 @@ export class ForeignDataWrapperQueryFactory {
 
   updateUserMapping(
     foreignDataWrapperId: string,
-    userMappingOptions: Partial<UserMappingOptions>,
+    userMappingOptions: Partial<UserMappingOptionsInput>,
   ) {
     const options = this.buildUpdateUserMappingOptions(userMappingOptions);
 
@@ -82,7 +82,7 @@ export class ForeignDataWrapperQueryFactory {
   }
 
   private buildUpdateUserMappingOptions(
-    userMappingOptions?: Partial<UserMappingOptions>,
+    userMappingOptions?: Partial<UserMappingOptionsInput>,
   ) {
     const setStatements: string[] = [];
 
