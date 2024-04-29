@@ -26,7 +26,7 @@ import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
-  WorkspaceMigrationColumnDefinition,
+  WorkspaceMigrationForeignColumnDefinition,
   WorkspaceMigrationForeignTable,
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
@@ -350,9 +350,10 @@ export class RemoteTableService {
               columns: distantTableColumns.map(
                 (column) =>
                   ({
-                    columnName: column.columnName,
+                    columnName: camelCase(column.columnName),
                     columnType: column.dataType,
-                  }) satisfies WorkspaceMigrationColumnDefinition,
+                    distantColumnName: column.columnName,
+                  }) satisfies WorkspaceMigrationForeignColumnDefinition,
               ),
               referencedTableName: remoteTableInput.name,
               referencedTableSchema: remoteServer.schema,
@@ -400,11 +401,13 @@ export class RemoteTableService {
     } satisfies CreateObjectInput);
 
     for (const column of distantTableColumns) {
+      const columnName = camelCase(column.columnName);
+
       // TODO: return error to the user when a column cannot be managed
       try {
         const field = await this.fieldMetadataService.createOne({
-          name: column.columnName,
-          label: camelToTitleCase(camelCase(column.columnName)),
+          name: columnName,
+          label: camelToTitleCase(columnName),
           description: 'Field of remote',
           type: mapUdtNameToFieldType(column.udtName),
           workspaceId: workspaceId,
@@ -415,14 +418,14 @@ export class RemoteTableService {
           settings: mapUdtNameToFieldSettings(column.udtName),
         } satisfies CreateFieldInput);
 
-        if (column.columnName === 'id') {
+        if (columnName === 'id') {
           await this.objectMetadataService.updateOne(objectMetadata.id, {
             labelIdentifierFieldMetadataId: field.id,
           });
         }
       } catch (error) {
         this.logger.error(
-          `Could not create field ${column.columnName} for remote table ${localTableName}: ${error}`,
+          `Could not create field ${columnName} for remote table ${localTableName}: ${error}`,
         );
       }
     }
