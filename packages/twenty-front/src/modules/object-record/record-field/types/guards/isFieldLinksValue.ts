@@ -7,7 +7,9 @@ import { FieldLinksValue } from '../FieldMetadata';
 export const linksSchema = z.object({
   primaryLinkLabel: z.string(),
   primaryLinkUrl: absoluteUrlSchema,
-  secondaryLinks: z.string().optional().nullable(),
+  secondaryLinks: z
+    .array(z.object({ label: z.string(), url: absoluteUrlSchema }))
+    .nullable(),
 }) satisfies z.ZodType<FieldLinksValue>;
 
 export const isFieldLinksValue = (
