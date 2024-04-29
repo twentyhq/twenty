@@ -1,6 +1,6 @@
 ARG POSTGRES_VERSION=15
 ARG SPILO_VERSION=3.2-p1
-ARG PG_GRAPHQL_VERSION=1.4.2
+ARG PG_GRAPHQL_VERSION=1.5.1
 ARG WRAPPERS_VERSION=0.2.0
 
 # Build the mysql_fdw extension
@@ -62,7 +62,6 @@ RUN curl -L "https://github.com/supabase/wrappers/releases/download/v${WRAPPERS_
 
 COPY --from=build-libssl /usr/local/lib/libssl* /usr/local/lib/libcrypto*  /usr/lib/
 COPY --from=build-libssl /usr/local/lib/engines-1.1 /usr/lib/engines-1.1
-#RUN curl http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.0g-2ubuntu4_amd64.deb -o libssl.deb && dpkg -i libssl.deb && rm libssl.deb
 
 # Copy pg_graphql
 COPY ./packages/twenty-postgres/linux/${TARGETARCH}/${POSTGRES_VERSION}/pg_graphql/${PG_GRAPHQL_VERSION}/pg_graphql--${PG_GRAPHQL_VERSION}.sql \
