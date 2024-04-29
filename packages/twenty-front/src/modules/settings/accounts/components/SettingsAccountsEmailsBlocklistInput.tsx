@@ -46,7 +46,7 @@ const validationSchema = (blockedEmailOrDomainList: string[]) =>
     })
     .required();
 
-type FormValues = {
+type FormInput = {
   emailOrDomain: string;
 };
 
@@ -54,7 +54,7 @@ export const SettingsAccountsEmailsBlocklistInput = ({
   updateBlockedEmailList,
   blockedEmailOrDomainList,
 }: SettingsAccountsEmailsBlocklistInputProps) => {
-  const { reset, handleSubmit, control, formState } = useForm<FormValues>({
+  const { reset, handleSubmit, control, formState } = useForm<FormInput>({
     mode: 'onSubmit',
     resolver: zodResolver(validationSchema(blockedEmailOrDomainList)),
     defaultValues: {
