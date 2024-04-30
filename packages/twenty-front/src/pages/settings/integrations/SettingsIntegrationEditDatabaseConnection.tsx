@@ -1,72 +1,58 @@
-import { useEffect, useMemo } from 'react';
+import { useContext, useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Section } from '@react-email/components';
-import { identity, isEmpty, pick, pickBy } from 'lodash';
+import { pick } from 'lodash';
 import { z } from 'zod';
 
-import { useGetDatabaseConnection } from '@/databases/hooks/useGetDatabaseConnection';
-import { useGetDatabaseConnectionTables } from '@/databases/hooks/useGetDatabaseConnectionTables';
 import { useUpdateOneDatabaseConnection } from '@/databases/hooks/useUpdateOneDatabaseConnection';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsIntegrationPostgreSQLConnectionForm } from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectionForm';
-import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
+import { SettingsIntegrationDatabaseConnectionWrapper } from '@/settings/integrations/components/wrappers/SettingsIntegrationDatabaseConnectionWrapper';
+import { DatabaseConnectionContext } from '@/settings/integrations/contexts/DatabaseConnectionContext';
+import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
+import {
+  formatValuesForUpdate,
+  getEditionSchemaForForm,
+  getFormDefaultValuesFromConnection,
+} from '@/settings/integrations/utils/editDatabaseConnection';
 import { getConnectionDbName } from '@/settings/integrations/utils/getConnectionDbName';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
-import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Info } from '@/ui/display/info/components/Info';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { RemoteTableStatus } from '~/generated-metadata/graphql';
-import { SettingsIntegrationDatabaseConnectionWrapper } from '~/pages/settings/integrations/SettingsIntegrationDatabaseConnectionWrapper';
+import {
+  RemoteServer,
+  RemoteTable,
+  RemoteTableStatus,
+} from '~/generated-metadata/graphql';
 
 export const SettingsIntegrationEditDatabaseConnection = () => {
   const { enqueueSnackBar } = useSnackBar();
   const navigate = useNavigate();
-  const { databaseKey = '', connectionId = '' } = useParams();
-  const [integrationCategoryAll] = useSettingsIntegrationCategories();
-  const integration = integrationCategoryAll.integrations.find(
-    ({ from: { key } }) => key === databaseKey,
-  );
 
-  const isPostgresqlIntegrationEnabled = useIsFeatureEnabled(
-    'IS_POSTGRESQL_INTEGRATION_ENABLED',
-  );
-  const isIntegrationUpdateAvailable =
-    !!integration &&
-    databaseKey === 'postgresql' &&
-    isPostgresqlIntegrationEnabled;
+  const { integration, connection, databaseKey, tables } = useContext(
+    DatabaseConnectionContext,
+  ) as {
+    integration: SettingsIntegration;
+    connection: RemoteServer;
+    databaseKey: string;
+    tables: RemoteTable[] | undefined;
+  };
 
   const settingsIntegrationsPagePath = getSettingsPagePath(
     SettingsPath.Integrations,
   );
 
-  const { connection, loading } = useGetDatabaseConnection({
-    databaseKey,
-    connectionId,
-  });
-
-  useEffect(() => {
-    if (!isIntegrationUpdateAvailable || (!loading && !connection)) {
-      navigate(AppPath.NotFound);
-    }
-  }, [navigate, connection, loading, isIntegrationUpdateAvailable]);
-
-  const { tables } = useGetDatabaseConnectionTables({
-    connectionId,
-    skip: !connection,
-  });
-
-  const hasSyncedTables = tables.some(
+  const hasSyncedTables = tables?.some(
     (table) => table?.status === RemoteTableStatus.Synced,
   );
 
-  const editConnectionSchema = getEditionSchema(databaseKey);
+  const editConnectionSchema = getEditionSchemaForForm(databaseKey);
   type SettingsIntegrationEditConnectionFormValues = z.infer<
     typeof editConnectionSchema
   >;
@@ -75,23 +61,17 @@ export const SettingsIntegrationEditDatabaseConnection = () => {
     mode: 'onTouched',
     resolver: zodResolver(editConnectionSchema),
     defaultValues: useMemo(() => {
-      return getFormDefaultValues({ databaseKey, connection });
+      return getFormDefaultValuesFromConnection({ databaseKey, connection });
     }, [databaseKey, connection]),
   });
 
-  useEffect(() => {
-    formConfig.reset(getFormDefaultValues({ databaseKey, connection }));
-  }, [formConfig, databaseKey, connection]);
-
   const { updateOneDatabaseConnection } = useUpdateOneDatabaseConnection();
-
-  if (!isIntegrationUpdateAvailable || !connection) return null;
 
   const connectionName = getConnectionDbName({ integration, connection });
 
   const canSave =
-    formConfig.formState.isValid &&
     formConfig.formState.isDirty &&
+    formConfig.formState.isValid &&
     !hasSyncedTables;
 
   const handleSave = async () => {
@@ -102,15 +82,15 @@ export const SettingsIntegrationEditDatabaseConnection = () => {
 
     try {
       await updateOneDatabaseConnection({
-        ...formatValues({
+        ...formatValuesForUpdate({
           databaseKey,
           formValues: pick(formValues, dirtyFieldKeys),
         }),
-        id: connectionId,
+        id: connection.id,
       });
 
       navigate(
-        `${settingsIntegrationsPagePath}/${databaseKey}/${connectionId}`,
+        `${settingsIntegrationsPagePath}/${databaseKey}/${connection.id}`,
       );
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
@@ -170,78 +150,4 @@ export const SettingsIntegrationEditDatabaseConnection = () => {
       </FormProvider>
     </SettingsIntegrationDatabaseConnectionWrapper>
   );
-};
-
-const getEditionSchema = (databaseKey: string) => {
-  switch (databaseKey) {
-    case 'postgresql':
-      return z.object({
-        dbname: z.string().optional(),
-        host: z.string().optional(),
-        port: z
-          .preprocess((val) => parseInt(val as string), z.number().positive())
-          .optional(),
-        username: z.string().optional(),
-        password: z.string().optional(),
-      });
-    default:
-      throw new Error(`No schema found for database key: ${databaseKey}`);
-  }
-};
-
-const getFormDefaultValues = ({
-  databaseKey,
-  connection,
-}: {
-  databaseKey: string;
-  connection: any;
-}) => {
-  switch (databaseKey) {
-    case 'postgresql':
-      return {
-        dbname: connection?.foreignDataWrapperOptions.dbname,
-        host: connection?.foreignDataWrapperOptions.host,
-        port: connection?.foreignDataWrapperOptions.port,
-        username: connection?.userMappingOptions?.username,
-        password: '',
-      };
-    default:
-      throw new Error(
-        `No default form values for database key: ${databaseKey}`,
-      );
-  }
-};
-
-const formatValues = ({
-  databaseKey,
-  formValues,
-}: {
-  databaseKey: string;
-  formValues: any;
-}) => {
-  switch (databaseKey) {
-    case 'postgresql': {
-      const formattedValues = {
-        userMappingOptions: pickBy(
-          {
-            username: formValues.username,
-            password: formValues.password,
-          },
-          identity,
-        ),
-        foreignDataWrapperOptions: pickBy(
-          {
-            dbname: formValues.dbname,
-            host: formValues.host,
-            port: formValues.port,
-          },
-          identity,
-        ),
-      };
-
-      return pickBy(formattedValues, (obj) => !isEmpty(obj));
-    }
-    default:
-      throw new Error(`Cannot format values for database key: ${databaseKey}`);
-  }
 };

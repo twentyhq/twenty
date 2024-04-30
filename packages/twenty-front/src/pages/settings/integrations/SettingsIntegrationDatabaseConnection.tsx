@@ -1,47 +1,30 @@
-import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useDeleteOneDatabaseConnection } from '@/databases/hooks/useDeleteOneDatabaseConnection';
-import { useGetDatabaseConnection } from '@/databases/hooks/useGetDatabaseConnection';
-import { useGetDatabaseConnectionTables } from '@/databases/hooks/useGetDatabaseConnectionTables';
 import { SettingsIntegrationDatabaseTablesListCard } from '@/settings/integrations/components/SettingsIntegrationDatabaseTablesListCard';
-import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
+import { SettingsIntegrationDatabaseConnectionWrapper } from '@/settings/integrations/components/wrappers/SettingsIntegrationDatabaseConnectionWrapper';
+import { DatabaseConnectionContext } from '@/settings/integrations/contexts/DatabaseConnectionContext';
+import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { getConnectionDbName } from '@/settings/integrations/utils/getConnectionDbName';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
-import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { RemoteServer, RemoteTable } from '~/generated-metadata/graphql';
 import { SettingsIntegrationDatabaseConnectionSummaryCard } from '~/pages/settings/integrations/SettingsIntegrationDatabaseConnectionSummaryCard';
-import { SettingsIntegrationDatabaseConnectionWrapper } from '~/pages/settings/integrations/SettingsIntegrationDatabaseConnectionWrapper';
 
 export const SettingsIntegrationDatabaseConnection = () => {
-  const { databaseKey = '', connectionId = '' } = useParams();
   const navigate = useNavigate();
-
-  const [integrationCategoryAll] = useSettingsIntegrationCategories();
-  const integration = integrationCategoryAll.integrations.find(
-    ({ from: { key } }) => key === databaseKey,
-  );
-
-  const isAirtableIntegrationEnabled = useIsFeatureEnabled(
-    'IS_AIRTABLE_INTEGRATION_ENABLED',
-  );
-  const isPostgresqlIntegrationEnabled = useIsFeatureEnabled(
-    'IS_POSTGRESQL_INTEGRATION_ENABLED',
-  );
-  const isIntegrationAvailable =
-    !!integration &&
-    ((databaseKey === 'airtable' && isAirtableIntegrationEnabled) ||
-      (databaseKey === 'postgresql' && isPostgresqlIntegrationEnabled));
-
-  const { connection, loading } = useGetDatabaseConnection({
-    databaseKey,
-    connectionId,
-    skip: !isIntegrationAvailable,
-  });
+  const { integration, connection, databaseKey, tables } = useContext(
+    DatabaseConnectionContext,
+  ) as {
+    integration: SettingsIntegration;
+    connection: RemoteServer;
+    databaseKey: string;
+    tables: RemoteTable[] | undefined;
+  };
 
   const { deleteOneDatabaseConnection } = useDeleteOneDatabaseConnection();
 
@@ -56,26 +39,6 @@ export const SettingsIntegrationDatabaseConnection = () => {
   const onEdit = () => {
     navigate('./edit');
   };
-
-  useEffect(() => {
-    if (!isIntegrationAvailable || (!loading && !connection)) {
-      navigate(AppPath.NotFound);
-    }
-  }, [
-    integration,
-    databaseKey,
-    navigate,
-    isIntegrationAvailable,
-    connection,
-    loading,
-  ]);
-
-  const { tables } = useGetDatabaseConnectionTables({
-    connectionId,
-    skip: !isIntegrationAvailable || !connection,
-  });
-
-  if (!isIntegrationAvailable || !connection) return null;
 
   const settingsIntegrationsPagePath = getSettingsPagePath(
     SettingsPath.Integrations,
@@ -102,7 +65,7 @@ export const SettingsIntegrationDatabaseConnection = () => {
         <H2Title title="About" description="About this remote object" />
         <SettingsIntegrationDatabaseConnectionSummaryCard
           databaseLogoUrl={integration.from.image}
-          connectionId={connectionId}
+          connectionId={connection.id}
           connectionName={connectionName}
           onRemove={deleteConnection}
           onEdit={onEdit}
@@ -113,9 +76,9 @@ export const SettingsIntegrationDatabaseConnection = () => {
           title="Tables"
           description="Select the tables that should be tracked"
         />
-        {!!tables.length && (
+        {!!tables?.length && (
           <SettingsIntegrationDatabaseTablesListCard
-            connectionId={connectionId}
+            connectionId={connection.id}
             tables={tables}
           />
         )}
