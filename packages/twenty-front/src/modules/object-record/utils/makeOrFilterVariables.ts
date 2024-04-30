@@ -1,9 +1,9 @@
-import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
+import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { isDefined } from '~/utils/isDefined';
 
 export const makeOrFilterVariables = (
-  filters: (ObjectRecordQueryFilter | undefined)[],
-): ObjectRecordQueryFilter | undefined => {
+  filters: (RecordGqlOperationFilter | undefined)[],
+): RecordGqlOperationFilter | undefined => {
   const definedFilters = filters.filter(isDefined);
 
   if (!definedFilters.length) return undefined;

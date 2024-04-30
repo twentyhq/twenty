@@ -2,9 +2,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
-import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
+import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { FieldMetadataType } from '~/generated/graphql';
+import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 import { isDefined } from '~/utils/isDefined';
 
 export const useSearchFilterPerMetadataItem = ({
@@ -15,7 +16,7 @@ export const useSearchFilterPerMetadataItem = ({
   searchFilterValue: string;
 }) => {
   const searchFilterPerMetadataItemNameSingular =
-    Object.fromEntries<ObjectRecordQueryFilter>(
+    Object.fromEntries<RecordGqlOperationFilter>(
       objectMetadataItems
         .map((objectMetadataItem) => {
           if (searchFilterValue === '') return null;
@@ -23,31 +24,22 @@ export const useSearchFilterPerMetadataItem = ({
           const labelIdentifierFieldMetadataItem =
             getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
-          let searchFilter: ObjectRecordQueryFilter = {};
+          let searchFilter: RecordGqlOperationFilter = {};
 
           if (isDefined(labelIdentifierFieldMetadataItem)) {
             switch (labelIdentifierFieldMetadataItem.type) {
               case FieldMetadataType.FullName: {
                 if (isNonEmptyString(searchFilterValue)) {
-                  const fullNameFilter = makeOrFilterVariables([
-                    {
-                      [labelIdentifierFieldMetadataItem.name]: {
-                        firstName: {
-                          ilike: `%${searchFilterValue}%`,
-                        },
-                      },
-                    },
-                    {
-                      [labelIdentifierFieldMetadataItem.name]: {
-                        lastName: {
-                          ilike: `%${searchFilterValue}%`,
-                        },
-                      },
-                    },
-                  ]);
+                  const compositeFilter = makeOrFilterVariables(
+                    generateILikeFiltersForCompositeFields(
+                      searchFilterValue,
+                      labelIdentifierFieldMetadataItem.name,
+                      ['firstName', 'lastName'],
+                    ),
+                  );
 
-                  if (isDefined(fullNameFilter)) {
-                    searchFilter = fullNameFilter;
+                  if (isDefined(compositeFilter)) {
+                    searchFilter = compositeFilter;
                   }
                 }
                 break;

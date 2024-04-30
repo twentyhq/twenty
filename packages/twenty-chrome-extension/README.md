@@ -22,7 +22,7 @@ VITE_FRONT_BASE_URL=http://localhost:3001
 - STEP 4: Now, execute the following command in the root directory to start up the development server on Port 3002. This will create a `dist` folder in `twenty-chrome-extension`.
 
 ```
-yarn nx start twenty-chrome-extension
+npx nx start twenty-chrome-extension
 ```
 
 - STEP 5: Open Google Chrome and head to the extensions page by typing `chrome://extensions` in the address bar.
@@ -57,4 +57,4 @@ yarn nx start twenty-chrome-extension
    <img src="../twenty-chrome-extension/public/readme-images/05-img-five.png" width="600" />
 </p>
 
-To install the extension in production mode without hmr (hot module reload), replace the command in STEP FOUR with `yarn nx build twenty-chrome-extension`. You may or may not want to execute STEP THREE based on your requirements.
+To install the extension in production mode without hmr (hot module reload), replace the command in STEP FOUR with `npx nx build twenty-chrome-extension`. You may or may not want to execute STEP THREE based on your requirements.

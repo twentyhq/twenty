@@ -9,13 +9,13 @@ import {
   IconCurrencyDollar,
 } from 'twenty-ui';
 
-import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus.ts';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState.ts';
-import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus.ts';
+import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { SettingsBillingCoverImage } from '@/billing/components/SettingsBillingCoverImage';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SupportChat } from '@/support/components/SupportChat';
-import { AppPath } from '@/types/AppPath.ts';
+import { AppPath } from '@/types/AppPath';
 import { Info } from '@/ui/display/info/components/Info';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -85,6 +85,13 @@ export const SettingsBilling = () => {
 
   const billingPortalButtonDisabled =
     loading || !isDefined(data) || !isDefined(data.billingPortalSession.url);
+
+  const switchIntervalButtonDisabled =
+    onboardingStatus !== OnboardingStatus.Completed;
+
+  const cancelPlanButtonDisabled =
+    billingPortalButtonDisabled ||
+    onboardingStatus !== OnboardingStatus.Completed;
 
   const displayPaymentFailInfo =
     onboardingStatus === OnboardingStatus.PastDue ||
@@ -176,6 +183,7 @@ export const SettingsBilling = () => {
                 title="View billing details"
                 variant="secondary"
                 onClick={openBillingPortal}
+                disabled={billingPortalButtonDisabled}
               />
             </Section>
             <Section>
@@ -188,7 +196,7 @@ export const SettingsBilling = () => {
                 title={`Switch ${switchingInfo.to}`}
                 variant="secondary"
                 onClick={openSwitchingIntervalModal}
-                disabled={billingPortalButtonDisabled}
+                disabled={switchIntervalButtonDisabled}
               />
             </Section>
             <Section>
@@ -202,7 +210,7 @@ export const SettingsBilling = () => {
                 variant="secondary"
                 accent="danger"
                 onClick={openBillingPortal}
-                disabled={billingPortalButtonDisabled}
+                disabled={cancelPlanButtonDisabled}
               />
             </Section>
           </>

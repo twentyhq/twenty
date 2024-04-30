@@ -1,9 +1,9 @@
 import { useRecoilValue } from 'recoil';
 
+import { Attachment } from '@/activities/files/types/Attachment';
 import { getFileType } from '@/activities/files/utils/getFileType';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { getActivityTargetObjectFieldIdName } from '@/activities/utils/getActivityTargetObjectFieldIdName';
-import { Attachment } from '@/attachments/types/Attachment';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';

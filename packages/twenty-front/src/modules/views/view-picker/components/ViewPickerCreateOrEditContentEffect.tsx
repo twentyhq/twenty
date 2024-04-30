@@ -64,10 +64,14 @@ export const ViewPickerCreateOrEditContentEffect = () => {
   ]);
 
   useEffect(() => {
-    if (availableFieldsForKanban.length > 0) {
+    if (availableFieldsForKanban.length > 0 && !viewPickerIsDirty) {
       setViewPickerKanbanFieldMetadataId(availableFieldsForKanban[0].id);
     }
-  }, [availableFieldsForKanban, setViewPickerKanbanFieldMetadataId]);
+  }, [
+    availableFieldsForKanban,
+    setViewPickerKanbanFieldMetadataId,
+    viewPickerIsDirty,
+  ]);
 
   return <></>;
 };

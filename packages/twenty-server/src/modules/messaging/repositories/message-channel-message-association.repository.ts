@@ -67,6 +67,51 @@ export class MessageChannelMessageAssociationRepository {
     );
   }
 
+  public async deleteByMessageParticipantHandleAndMessageChannelIdsAndRoles(
+    messageParticipantHandle: string,
+    messageChannelIds: string[],
+    rolesToDelete: ('from' | 'to' | 'cc' | 'bcc')[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const isHandleDomain = messageParticipantHandle.startsWith('@');
+
+    const messageChannelMessageAssociationIdsToDelete =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT "messageChannelMessageAssociation".id
+      FROM ${dataSourceSchema}."messageChannelMessageAssociation" "messageChannelMessageAssociation"
+      JOIN ${dataSourceSchema}."message" ON "messageChannelMessageAssociation"."messageId" = ${dataSourceSchema}."message"."id"
+      JOIN ${dataSourceSchema}."messageParticipant" "messageParticipant" ON ${dataSourceSchema}."message"."id" = "messageParticipant"."messageId"
+      WHERE "messageParticipant"."handle" ${
+        isHandleDomain ? 'ILIKE' : '='
+      } $1 AND "messageParticipant"."role" = ANY($2) AND "messageChannelMessageAssociation"."messageChannelId" = ANY($3)`,
+        [
+          isHandleDomain
+            ? `%${messageParticipantHandle}`
+            : messageParticipantHandle,
+          rolesToDelete,
+          messageChannelIds,
+        ],
+        workspaceId,
+        transactionManager,
+      );
+
+    const messageChannelMessageAssociationIdsToDeleteArray =
+      messageChannelMessageAssociationIdsToDelete.map(
+        (messageChannelMessageAssociation: { id: string }) =>
+          messageChannelMessageAssociation.id,
+      );
+
+    await this.deleteByIds(
+      messageChannelMessageAssociationIdsToDeleteArray,
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async getByMessageChannelIds(
     messageChannelIds: string[],
     workspaceId: string,

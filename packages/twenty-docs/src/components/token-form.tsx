@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from 'react';
+import { TbApi, TbChevronLeft, TbLink } from 'react-icons/tb';
 import { useHistory, useLocation } from '@docusaurus/router';
-import { TbApi, TbChevronLeft, TbLink } from '@theme/icons';
 import { parseJson } from 'nx/src/utils/json';
 
 import tokenForm from '!css-loader!./token-form.css';
 
+export type SubDoc = 'core' | 'metadata';
 export type TokenFormProps = {
   setOpenApiJson?: (json: object) => void;
   setToken?: (token: string) => void;
   setBaseUrl?: (baseUrl: string) => void;
-  isTokenValid: boolean;
-  setIsTokenValid: (boolean) => void;
-  setLoadingState: (boolean) => void;
-  subDoc?: string;
+  isTokenValid?: boolean;
+  setIsTokenValid?: (boolean) => void;
+  setLoadingState?: (boolean) => void;
+  subDoc?: SubDoc;
 };
 
 const TokenForm = ({
@@ -27,6 +28,10 @@ const TokenForm = ({
   const history = useHistory();
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
+  const [locationSetting, setLocationSetting] = useState(
+    parseJson(localStorage.getItem('baseUrl'))?.locationSetting ??
+      'production',
+  );
   const [baseUrl, setBaseUrl] = useState(
     parseJson(localStorage.getItem('baseUrl'))?.baseUrl ??
       'https://api.twenty.com',
@@ -48,13 +53,24 @@ const TokenForm = ({
     await submitToken(event.target.value);
   };
 
-  const updateBaseUrl = (baseUrl: string) => {
-    const url = baseUrl?.endsWith('/')
+  const updateBaseUrl = (baseUrl: string, locationSetting: string) => {
+    let url: string;
+    if (locationSetting === 'production') {
+      url = 'https://api.twenty.com';
+    } else if (locationSetting === 'demo') {
+      url = 'https://api-demo.twenty.com';
+    } else if (locationSetting === 'localhost') {
+      url = 'http://localhost:3000';
+    } else {
+      url = baseUrl?.endsWith('/')
       ? baseUrl.substring(0, baseUrl.length - 1)
-      : baseUrl;
+      : baseUrl
+    }
+    
     setBaseUrl(url);
+    setLocationSetting(locationSetting);
     submitBaseUrl?.(url);
-    localStorage.setItem('baseUrl', JSON.stringify({ baseUrl: url }));
+    localStorage.setItem('baseUrl', JSON.stringify({ baseUrl: url, locationSetting }));
   };
 
   const validateToken = (openApiJson) => {
@@ -92,7 +108,7 @@ const TokenForm = ({
 
   useEffect(() => {
     (async () => {
-      updateBaseUrl(baseUrl);
+      updateBaseUrl(baseUrl, locationSetting);
       await submitToken(token);
     })();
   }, []);
@@ -113,7 +129,35 @@ const TokenForm = ({
           <TbChevronLeft size={18} />
           <span>Back</span>
         </div>
-
+        <div className="inputWrapper">
+          <select
+            className="select"
+            onChange={(event) => {
+              updateBaseUrl(baseUrl, event.target.value)
+            }}
+            value={locationSetting}
+          >
+            <option value="production">Production API</option>
+            <option value="demo">Demo API</option>
+            <option value="localhost">Localhost</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div className="inputWrapper">
+          <div className="inputIcon" title="Base URL">
+            <TbLink size={20} />
+          </div>
+          <input
+            className={'input'}
+            type="text"
+            readOnly={isLoading}
+            disabled={locationSetting !== 'other'}
+            placeholder="Base URL"
+            value={baseUrl}
+            onChange={(event) => updateBaseUrl(event.target.value, locationSetting)}
+            onBlur={() => submitToken(token)}
+          />
+        </div>
         <div className="inputWrapper">
           <div className="inputIcon" title="Api Key">
             <TbApi size={20} />
@@ -127,39 +171,23 @@ const TokenForm = ({
             onChange={updateToken}
           />
         </div>
-        <div className="inputWrapper">
-          <div className="inputIcon" title="Base URL">
-            <TbLink size={20} />
-          </div>
-          <input
-            className={'input'}
-            type="text"
-            readOnly={isLoading}
-            placeholder="Base URL"
-            defaultValue={baseUrl}
-            onChange={(event) => updateBaseUrl(event.target.value)}
-            onBlur={() => submitToken(token)}
-          />
-        </div>
-        {!location.pathname.includes('rest-api') && (
-          <div className="inputWrapper" style={{ maxWidth: '100px' }}>
-            <select
-              className="select"
-              onChange={(event) =>
-                history.replace(
+        <div className="inputWrapper" style={{ maxWidth: '100px' }}>
+          <select
+            className="select"
+            onChange={(event) =>
+              history.replace(
+                '/' +
+                  location.pathname.split('/').at(-2) +
                   '/' +
-                    location.pathname.split('/').at(-2) +
-                    '/' +
-                    event.target.value,
-                )
-              }
-              value={location.pathname.split('/').at(-1)}
-            >
-              <option value="core">Core</option>
-              <option value="metadata">Metadata</option>
-            </select>
-          </div>
-        )}
+                  event.target.value,
+              )
+            }
+            value={location.pathname.split('/').at(-1)}
+          >
+            <option value="core">Core</option>
+            <option value="metadata">Metadata</option>
+          </select>
+        </div>
       </form>
     </div>
   );

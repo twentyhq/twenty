@@ -6,7 +6,7 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { PersonRepository } from 'src/modules/person/repositories/person.repository';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/getFlattenedValuesAndValuesStringForBatchRawQuery.util';
+import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/get-flattened-values-and-values-string-for-batch-raw-query.util';
 import { CalendarEventParticipant } from 'src/modules/calendar/types/calendar-event';
 import { CalendarEventParticipantRepository } from 'src/modules/calendar/repositories/calendar-event-participant.repository';
 import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';

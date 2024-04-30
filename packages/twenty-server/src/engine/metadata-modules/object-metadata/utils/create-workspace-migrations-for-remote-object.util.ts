@@ -54,7 +54,7 @@ export const createWorkspaceMigrationsForRemoteObject = async (
   eventObjectMetadata: ObjectMetadataEntity,
   favoriteObjectMetadata: ObjectMetadataEntity,
   schema: string,
-  remoteTablePrimaryKeyColumnType: string,
+  primaryKeyColumnType: string,
   workspaceDataSource: DataSource | undefined,
 ): Promise<WorkspaceMigrationTableAction[]> => {
   const createdObjectName = createdObjectMetadata.nameSingular;
@@ -69,7 +69,7 @@ export const createWorkspaceMigrationsForRemoteObject = async (
           columnName: computeColumnName(createdObjectMetadata.nameSingular, {
             isForeignKey: true,
           }),
-          columnType: remoteTablePrimaryKeyColumnType,
+          columnType: primaryKeyColumnType,
           isNullable: true,
         } satisfies WorkspaceMigrationColumnCreate,
       ],
@@ -99,7 +99,7 @@ export const createWorkspaceMigrationsForRemoteObject = async (
           columnName: computeColumnName(createdObjectMetadata.nameSingular, {
             isForeignKey: true,
           }),
-          columnType: remoteTablePrimaryKeyColumnType,
+          columnType: primaryKeyColumnType,
           isNullable: true,
         } satisfies WorkspaceMigrationColumnCreate,
       ],
@@ -129,7 +129,7 @@ export const createWorkspaceMigrationsForRemoteObject = async (
           columnName: computeColumnName(createdObjectMetadata.nameSingular, {
             isForeignKey: true,
           }),
-          columnType: remoteTablePrimaryKeyColumnType,
+          columnType: primaryKeyColumnType,
           isNullable: true,
         } satisfies WorkspaceMigrationColumnCreate,
       ],
@@ -159,7 +159,7 @@ export const createWorkspaceMigrationsForRemoteObject = async (
           columnName: computeColumnName(createdObjectMetadata.nameSingular, {
             isForeignKey: true,
           }),
-          columnType: remoteTablePrimaryKeyColumnType,
+          columnType: primaryKeyColumnType,
           isNullable: true,
         } satisfies WorkspaceMigrationColumnCreate,
       ],
