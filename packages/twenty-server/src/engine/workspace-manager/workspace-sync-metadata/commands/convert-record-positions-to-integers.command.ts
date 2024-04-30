@@ -50,6 +50,8 @@ export class ConvertRecordPositionsToIntegers extends CommandRunner {
         workspaceId,
         manager,
       );
+
+      await queryRunner.commitTransaction();
     } catch (error) {
       await queryRunner.rollbackTransaction();
       this.logger.error('Error converting record positions to integers', error);
