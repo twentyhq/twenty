@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { WorkspacePreQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/interfaces/workspace-pre-query-hook.interface';
-import { CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
+import { UpdateOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import {
   BlocklistItem,
@@ -9,7 +9,7 @@ import {
 } from 'src/modules/connected-account/services/blocklist/blocklist-validation.service';
 
 @Injectable()
-export class BlocklistCreateManyPreQueryHook implements WorkspacePreQueryHook {
+export class BlocklistUpdateOnePreQueryHook implements WorkspacePreQueryHook {
   constructor(
     private readonly blocklistValidationService: BlocklistValidationService,
   ) {}
@@ -17,9 +17,9 @@ export class BlocklistCreateManyPreQueryHook implements WorkspacePreQueryHook {
   async execute(
     userId: string,
     workspaceId: string,
-    payload: CreateManyResolverArgs<BlocklistItem>,
+    payload: UpdateOneResolverArgs<BlocklistItem>,
   ): Promise<void> {
-    await this.blocklistValidationService.validateBlocklistForCreateMany(
+    await this.blocklistValidationService.validateBlocklistForUpdateOne(
       payload,
       userId,
       workspaceId,
