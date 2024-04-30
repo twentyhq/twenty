@@ -1,0 +1,22 @@
+{
+  "name": "twenty-chrome-extension",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "packages/twenty-chrome-extension",
+        "commands": ["rimraf ./dist", "tsc", "vite build"]
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/twenty-chrome-extension",
+        "command": "VITE_MODE=development vite"
+      }
+    }
+  }
+}
