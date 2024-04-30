@@ -2,7 +2,6 @@ import { useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { useIcons } from 'twenty-ui';
-import { useDebouncedCallback } from 'use-debounce';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
@@ -55,19 +54,15 @@ export const ObjectFilterDropdownFilterSelect = () => {
 
   const setHotkeyScope = useSetHotkeyScope();
 
-  const debouncedSetSearchFilter = useDebouncedCallback(setSearchText, 100, {
-    leading: true,
-  });
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    debouncedSetSearchFilter(event.target.value);
-  };
-
   return (
     <>
       <StyledInput
         value={searchText}
+        autoFocus
         placeholder="Search fields"
-        onChange={handleSearchChange}
+        onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+          setSearchText(event.target.value)
+        }
       />
       <DropdownMenuItemsContainer>
         {[...availableFilterDefinitions]
