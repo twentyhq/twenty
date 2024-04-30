@@ -36,7 +36,7 @@ const mocks: MockedResponse[] = [
           $filter: ActivityTargetFilterInput
           $orderBy: ActivityTargetOrderByInput
           $lastCursor: String
-          $limit: Float
+          $limit: Int
         ) {
           activityTargets(
             filter: $filter

@@ -39,8 +39,8 @@ import {
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { validateString } from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-input';
 import { InvalidStringException } from 'src/engine/metadata-modules/errors/InvalidStringException';
+import { validateMetadataName } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 
 import {
   FieldMetadataEntity,
@@ -58,8 +58,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly metadataDataSource: DataSource,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectRepository(RelationMetadataEntity, 'metadata')
-    private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
@@ -505,7 +503,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       relationMetadata.fromFieldMetadata.id === fieldMetadataDTO.id;
 
     // TODO: implement MANY_TO_MANY
-    if (relationMetadata.relationType === RelationMetadataType.MANY_TO_MANY) {
+    if (
+      relationMetadata.relationType === RelationMetadataType.MANY_TO_MANY ||
+      relationMetadata.relationType === RelationMetadataType.MANY_TO_ONE
+    ) {
       throw new Error(`
         Relation type ${relationMetadata.relationType} not supported
       `);
@@ -545,7 +546,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   >(fieldMetadataInput: T): T {
     if (fieldMetadataInput.name) {
       try {
-        validateString(fieldMetadataInput.name);
+        validateMetadataName(fieldMetadataInput.name);
       } catch (error) {
         if (error instanceof InvalidStringException) {
           throw new BadRequestException(

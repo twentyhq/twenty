@@ -8,7 +8,9 @@ export type Attachment = {
   activityId: string;
   authorId: string;
   createdAt: string;
+  __typename: string;
 };
+
 export type AttachmentType =
   | 'Archive'
   | 'Audio'

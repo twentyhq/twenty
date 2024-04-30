@@ -9,10 +9,8 @@ import { capitalize } from '~/utils/string/capitalize';
 
 export const useFindDuplicateRecordsQuery = ({
   objectNameSingular,
-  depth,
 }: {
   objectNameSingular: string;
-  depth?: number;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -23,7 +21,7 @@ export const useFindDuplicateRecordsQuery = ({
   const findDuplicateRecordsQuery = gql`
     query FindDuplicate${capitalize(
       objectMetadataItem.nameSingular,
-    )}($id: UUID) {
+    )}($id: ID!) {
       ${getFindDuplicateRecordsQueryResponseField(
         objectMetadataItem.nameSingular,
       )}(id: $id) {
@@ -31,7 +29,6 @@ export const useFindDuplicateRecordsQuery = ({
           node ${mapObjectMetadataToGraphQLQuery({
             objectMetadataItems,
             objectMetadataItem,
-            depth,
           })}
           cursor
         }

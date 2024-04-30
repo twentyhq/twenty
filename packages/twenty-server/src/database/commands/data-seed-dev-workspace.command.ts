@@ -1,5 +1,5 @@
 import { Command, CommandRunner } from 'nest-commander';
-import { DataSource, EntityManager } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { seedCompanies } from 'src/database/typeorm-seeds/workspace/companies';
@@ -27,6 +27,7 @@ import { seedCalendarEvents } from 'src/database/typeorm-seeds/workspace/calenda
 import { seedCalendarChannels } from 'src/database/typeorm-seeds/workspace/calendar-channel';
 import { seedCalendarChannelEventAssociations } from 'src/database/typeorm-seeds/workspace/calendar-channel-event-association';
 import { seedCalendarEventParticipants } from 'src/database/typeorm-seeds/workspace/calendar-event-participants';
+import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 
 // TODO: implement dry-run
 @Command({
@@ -50,19 +51,12 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
 
   async run(): Promise<void> {
     try {
-      const dataSource = new DataSource({
-        url: this.environmentService.get('PG_DATABASE_URL'),
-        type: 'postgres',
-        logging: true,
-        schema: 'core',
-      });
-
       for (const workspaceId of this.workspaceIds) {
-        await dataSource.initialize();
+        await rawDataSource.initialize();
 
-        await seedCoreSchema(dataSource, workspaceId);
+        await seedCoreSchema(rawDataSource, workspaceId);
 
-        await dataSource.destroy();
+        await rawDataSource.destroy();
 
         const schemaName =
           await this.workspaceDataSourceService.createWorkspaceDBSchema(

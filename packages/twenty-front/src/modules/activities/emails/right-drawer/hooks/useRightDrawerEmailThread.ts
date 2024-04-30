@@ -28,7 +28,6 @@ export const useRightDrawerEmailThread = () => {
     loading,
     fetchMoreRecords,
   } = useFindManyRecords<EmailThreadMessageType>({
-    depth: 3,
     limit: 10,
     filter: {
       messageThreadId: {

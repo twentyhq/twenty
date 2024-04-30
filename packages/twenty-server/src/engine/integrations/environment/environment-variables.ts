@@ -24,7 +24,9 @@ import { ExceptionHandlerDriver } from 'src/engine/integrations/exception-handle
 import { StorageDriverType } from 'src/engine/integrations/file-storage/interfaces';
 import { LoggerDriverType } from 'src/engine/integrations/logger/interfaces';
 import { IsStrictlyLowerThan } from 'src/engine/integrations/environment/decorators/is-strictly-lower-than.decorator';
+import { CaptchaDriverType } from 'src/engine/integrations/captcha/interfaces';
 import { MessageQueueDriverType } from 'src/engine/integrations/message-queue/interfaces';
+import { CacheStorageType } from 'src/engine/integrations/cache-storage/types/cache-storage-type.enum';
 
 import { IsDuration } from './decorators/is-duration.decorator';
 import { AwsRegion } from './interfaces/aws-region.interface';
@@ -102,6 +104,11 @@ export class EnvironmentVariables {
     allow_underscores: true,
   })
   PG_DATABASE_URL: string;
+
+  @CastToBoolean()
+  @IsBoolean()
+  @IsOptional()
+  PG_SSL_ALLOW_SELF_SIGNED = false;
 
   // Frontend URL
   @IsUrl({ require_tld: false })
@@ -307,6 +314,18 @@ export class EnvironmentVariables {
   @IsBoolean()
   IS_SIGN_UP_DISABLED = false;
 
+  @IsEnum(CaptchaDriverType)
+  @IsOptional()
+  CAPTCHA_DRIVER?: CaptchaDriverType;
+
+  @IsString()
+  @IsOptional()
+  CAPTCHA_SITE_KEY?: string;
+
+  @IsString()
+  @IsOptional()
+  CAPTCHA_SECRET_KEY?: string;
+
   @CastToPositiveNumber()
   @IsOptional()
   @IsNumber()
@@ -351,7 +370,7 @@ export class EnvironmentVariables {
   @CastToPositiveNumber()
   API_RATE_LIMITING_LIMIT = 500;
 
-  CACHE_STORAGE_TYPE = 'memory';
+  CACHE_STORAGE_TYPE: CacheStorageType = CacheStorageType.Memory;
 
   @CastToPositiveNumber()
   CACHE_STORAGE_TTL: number = 3600 * 24 * 7;

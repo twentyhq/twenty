@@ -17,7 +17,7 @@ const mocks: MockedResponse[] = [
     request: {
       query: gql`
         mutation UpdateOneActivity(
-          $idToUpdate: UUID!
+          $idToUpdate: ID!
           $input: ActivityUpdateInput!
         ) {
           updateActivity(id: $idToUpdate, data: $input) {
