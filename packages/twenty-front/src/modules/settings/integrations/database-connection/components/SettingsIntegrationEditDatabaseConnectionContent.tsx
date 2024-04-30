@@ -69,7 +69,7 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
   const connectionName = getConnectionDbName({ integration, connection });
 
   const { isDirty, isValid } = formConfig.formState;
-  const canSave = !hasSyncedTables && isDirty && isValid;
+  const canSave = isDirty && isValid && !hasSyncedTables; // order matters here
 
   const handleSave = async () => {
     const formValues = formConfig.getValues();
