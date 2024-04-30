@@ -95,6 +95,27 @@ export class CalendarChannelRepository {
     );
   }
 
+  public async getIdsByWorkspaceMemberId(
+    workspaceMemberId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<CalendarChannelObjectMetadata>[]> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const calendarChannelIds =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT "calendarChannel".id FROM ${dataSourceSchema}."calendarChannel" "calendarChannel"
+        JOIN ${dataSourceSchema}."connectedAccount" ON "calendarChannel"."connectedAccountId" = ${dataSourceSchema}."connectedAccount"."id"
+        WHERE ${dataSourceSchema}."connectedAccount"."accountOwnerId" = $1`,
+        [workspaceMemberId],
+        workspaceId,
+        transactionManager,
+      );
+
+    return calendarChannelIds;
+  }
+
   public async updateSyncCursor(
     syncCursor: string,
     calendarChannelId: string,

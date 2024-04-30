@@ -39,6 +39,7 @@ const StyledLabelAndIconContainer = styled.div`
 
 const StyledValueContainer = styled.div`
   display: flex;
+  min-width: 0;
 `;
 
 const StyledLabelContainer = styled.div<{ width?: number }>`
@@ -141,7 +142,11 @@ export const RecordInlineCellContainer = ({
   };
 
   const showEditButton =
-    buttonIcon && !isInlineCellInEditMode && isHovered && !editModeContentOnly;
+    buttonIcon &&
+    !isInlineCellInEditMode &&
+    isHovered &&
+    !editModeContentOnly &&
+    !isDisplayModeContentEmpty;
 
   const theme = useTheme();
   const labelId = `label-${entityId}-${fieldDefinition?.metadata?.fieldName}`;

@@ -2,7 +2,7 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 import { VerifyEffect } from '@/auth/components/VerifyEffect';
-import { billingState } from '@/client-config/states/billingState.ts';
+import { billingState } from '@/client-config/states/billingState';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { BlankLayout } from '@/ui/layout/page/BlankLayout';
@@ -10,7 +10,7 @@ import { DefaultLayout } from '@/ui/layout/page/DefaultLayout';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
-import Authorize from '~/pages/auth/Authorize';
+import { Authorize } from '~/pages/auth/Authorize';
 import { ChooseYourPlan } from '~/pages/auth/ChooseYourPlan.tsx';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';

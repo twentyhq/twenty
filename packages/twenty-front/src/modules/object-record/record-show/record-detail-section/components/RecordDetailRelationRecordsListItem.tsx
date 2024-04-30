@@ -14,7 +14,7 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord.ts';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useLazyFindOneRecord } from '@/object-record/hooks/useLazyFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {

@@ -4,6 +4,7 @@ import { JSXElementConstructor, ReactElement } from 'react';
 import styled from '@emotion/styled';
 import { Gabarito } from 'next/font/google';
 
+import { ArticleContent } from '@/app/_components/ui/layout/articles/ArticleContent';
 import MotionContainer from '@/app/_components/ui/layout/LoaderAnimation';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import { ReleaseNote } from '@/app/releases/api/route';
@@ -28,13 +29,15 @@ const StyledVersion = styled.div`
   flex-flow: column;
   align-items: start;
   font-weight: 500;
+  margin-top: 64px;
 
   @media (max-width: 810px) {
     width: 100%;
     font-size: 20px;
     flex-flow: row;
     justify-content: space-between;
-    margin-bottom: 24px;
+    margin-bottom: -48px;
+    margin-top: 0px;
   }
 `;
 
@@ -47,39 +50,6 @@ const StyledDate = styled.span`
   color: ${Theme.text.color.secondary};
   font-weight: 400;
   font-size: ${Theme.font.size.sm};
-`;
-
-const StlyedContent = styled.div`
-  flex: 1;
-
-  gap: 64px;
-
-  h3 {
-    color: ${Theme.text.color.primary};
-    font-weight: 700;
-    font-size: 40px;
-    margin: 0;
-  }
-
-  p {
-    color: ${Theme.text.color.secondary};
-    font-family: ${Theme.font.family};
-    font-size: 16px;
-    line-height: 28.8px;
-    font-weight: 400;
-    margin: 40px 0px;
-    text-align: justify;
-  }
-
-  img {
-    max-width: 100%;
-  }
-
-  @media (max-width: 810px) {
-    h3 {
-      font-size: 24px;
-    }
-  }
 `;
 
 const gabarito = Gabarito({
@@ -108,7 +78,7 @@ export const Release = ({
               : release.date}
           </StyledDate>
         </StyledVersion>
-        <StlyedContent>{mdxReleaseContent}</StlyedContent>
+        <ArticleContent>{mdxReleaseContent}</ArticleContent>
       </StyledContainer>
     </MotionContainer>
   );

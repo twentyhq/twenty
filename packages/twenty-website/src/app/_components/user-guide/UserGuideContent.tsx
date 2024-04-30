@@ -2,6 +2,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
+import { ArticleContent } from '@/app/_components/ui/layout/articles/ArticleContent';
 import { Breadcrumbs } from '@/app/_components/ui/layout/Breadcrumbs';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
@@ -16,9 +17,6 @@ const StyledContainer = styled('div')`
     borderBottom: `1px solid ${Theme.background.transparent.medium}`,
     fontFamily: `${Theme.font.family}`,
   })};
-  @media (max-width: 810px) {
-    margin-top: 64px;
-  }
 `;
 
 const StyledWrapper = styled.div`
@@ -35,12 +33,16 @@ const StyledHeader = styled.div`
 const StyledHeading = styled.div`
   font-size: 40px;
   font-weight: 700;
+  font-family: var(--font-gabarito);
+  @media (max-width: 800px) {
+    font-size: 28px;
+  }
 `;
 
 const StyledHeaderInfoSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${Theme.spacing(4)};
+  gap: ${Theme.spacing(1)};
 `;
 
 const StyledHeaderInfoSectionTitle = styled.div`
@@ -48,6 +50,7 @@ const StyledHeaderInfoSectionTitle = styled.div`
   padding: ${Theme.spacing(2)} 0px;
   color: ${Theme.text.color.secondary};
   font-weight: ${Theme.font.weight.medium};
+  font-family: var(--font-gabarito);
 `;
 
 const StyledHeaderInfoSectionSub = styled.div`
@@ -55,13 +58,51 @@ const StyledHeaderInfoSectionSub = styled.div`
   flex-direction: column;
   gap: ${Theme.spacing(4)};
   color: ${Theme.text.color.tertiary};
-  font-family: ${Theme.font.family};
+  line-height: 1.8;
 `;
 
 const StyledRectangle = styled.div`
   width: 100%;
   height: 1px;
   background: ${Theme.background.transparent.medium};
+`;
+
+const StyledImageContainer = styled.div`
+  border: 2px solid ${Theme.text.color.primary};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 16px;
+  height: 340px;
+  max-width: fit-content;
+
+  @media (max-width: 414px) {
+    height: 160px;
+  }
+
+  @media (min-width: 415px) and (max-width: 800px) {
+    height: 240px;
+  }
+  @media (min-width: 1500px) {
+    height: 450px;
+  }
+
+  img {
+    height: 340px;
+
+    @media (max-width: 414px) {
+      height: 160px;
+    }
+
+    @media (min-width: 415px) and (max-width: 800px) {
+      height: 240px;
+    }
+
+    @media (min-width: 1500px) {
+      height: 450px;
+    }
+  }
 `;
 
 export default function UserGuideContent({ item }: { item: FileContent }) {
@@ -71,6 +112,7 @@ export default function UserGuideContent({ item }: { item: FileContent }) {
       label: 'User Guide',
     },
   ];
+
   return (
     <StyledContainer>
       <StyledWrapper>
@@ -81,13 +123,15 @@ export default function UserGuideContent({ item }: { item: FileContent }) {
             separator="/"
           />
           <StyledHeading>{item.itemInfo.title}</StyledHeading>
-          {item.itemInfo.image && (
-            <img
-              id={`img-${item.itemInfo.title}`}
-              src={item.itemInfo.image}
-              alt={item.itemInfo.title}
-            />
-          )}
+          <StyledImageContainer>
+            {item.itemInfo.image && (
+              <img
+                id={`img-${item.itemInfo.title}`}
+                src={item.itemInfo.image}
+                alt={item.itemInfo.title}
+              />
+            )}
+          </StyledImageContainer>
           <StyledHeaderInfoSection>
             <StyledHeaderInfoSectionTitle>
               In this article
@@ -98,7 +142,7 @@ export default function UserGuideContent({ item }: { item: FileContent }) {
           </StyledHeaderInfoSection>
           <StyledRectangle />
         </StyledHeader>
-        <div>{item.content}</div>
+        <ArticleContent>{item.content}</ArticleContent>
       </StyledWrapper>
     </StyledContainer>
   );

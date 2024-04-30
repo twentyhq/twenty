@@ -62,6 +62,7 @@ const StyledButton = styled.button<
   white-space: nowrap;
 
   width: ${({ size }) => (size === 'small' ? '24px' : '32px')};
+  min-width: ${({ size }) => (size === 'small' ? '24px' : '32px')};
 
   &:hover {
     background: ${({ theme, disabled }) =>

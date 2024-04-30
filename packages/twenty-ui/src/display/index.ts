@@ -8,6 +8,7 @@ export * from './icon/components/IconAddressBook';
 export * from './icon/components/IconGmail';
 export * from './icon/components/IconGoogle';
 export * from './icon/components/IconGoogleCalendar';
+export * from './icon/components/IconMicrosoft';
 export * from './icon/components/IconTwentyStar';
 export * from './icon/components/IconTwentyStarFilled';
 export * from './icon/components/TablerIcons';

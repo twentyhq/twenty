@@ -6,6 +6,7 @@ import { RecoilRoot } from 'recoil';
 import { IconsProvider } from 'twenty-ui';
 
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
+import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
 import { ApolloDevLogEffect } from '@/debug/components/ApolloDevLogEffect';
@@ -21,7 +22,6 @@ import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogMa
 import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
-import { ThemeType } from '@/ui/theme/constants/ThemeLight';
 import { UserProvider } from '@/users/components/UserProvider';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
 import { PageChangeEffect } from '~/effect-components/PageChangeEffect';
@@ -40,49 +40,47 @@ const root = ReactDOM.createRoot(
 root.render(
   <RecoilRoot>
     <AppErrorBoundary>
-      <RecoilDebugObserverEffect />
-      <ApolloDevLogEffect />
-      <BrowserRouter>
-        <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-          <IconsProvider>
-            <ExceptionHandlerProvider>
-              <ApolloProvider>
-                <HelmetProvider>
-                  <ClientConfigProviderEffect />
-                  <ClientConfigProvider>
-                    <UserProviderEffect />
-                    <UserProvider>
-                      <ApolloMetadataClientProvider>
-                        <ObjectMetadataItemsProvider>
-                          <PrefetchDataProvider>
-                            <AppThemeProvider>
-                              <SnackBarProvider>
-                                <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                                  <DialogManager>
-                                    <StrictMode>
-                                      <PromiseRejectionEffect />
-                                      <App />
-                                    </StrictMode>
-                                  </DialogManager>
-                                </DialogManagerScope>
-                              </SnackBarProvider>
-                            </AppThemeProvider>
-                          </PrefetchDataProvider>
-                          <PageChangeEffect />
-                        </ObjectMetadataItemsProvider>
-                      </ApolloMetadataClientProvider>
-                    </UserProvider>
-                  </ClientConfigProvider>
-                </HelmetProvider>
-              </ApolloProvider>
-            </ExceptionHandlerProvider>
-          </IconsProvider>
-        </SnackBarProviderScope>
-      </BrowserRouter>
+      <CaptchaProvider>
+        <RecoilDebugObserverEffect />
+        <ApolloDevLogEffect />
+        <BrowserRouter>
+          <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+            <IconsProvider>
+              <ExceptionHandlerProvider>
+                <ApolloProvider>
+                  <HelmetProvider>
+                    <ClientConfigProviderEffect />
+                    <ClientConfigProvider>
+                      <UserProviderEffect />
+                      <UserProvider>
+                        <ApolloMetadataClientProvider>
+                          <ObjectMetadataItemsProvider>
+                            <PrefetchDataProvider>
+                              <AppThemeProvider>
+                                <SnackBarProvider>
+                                  <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                                    <DialogManager>
+                                      <StrictMode>
+                                        <PromiseRejectionEffect />
+                                        <App />
+                                      </StrictMode>
+                                    </DialogManager>
+                                  </DialogManagerScope>
+                                </SnackBarProvider>
+                              </AppThemeProvider>
+                            </PrefetchDataProvider>
+                            <PageChangeEffect />
+                          </ObjectMetadataItemsProvider>
+                        </ApolloMetadataClientProvider>
+                      </UserProvider>
+                    </ClientConfigProvider>
+                  </HelmetProvider>
+                </ApolloProvider>
+              </ExceptionHandlerProvider>
+            </IconsProvider>
+          </SnackBarProviderScope>
+        </BrowserRouter>
+      </CaptchaProvider>
     </AppErrorBoundary>
   </RecoilRoot>,
 );
-
-declare module '@emotion/react' {
-  export interface Theme extends ThemeType {}
-}

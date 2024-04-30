@@ -21,12 +21,17 @@ const StyledClickable = styled.div`
   }
 `;
 
+const StyledChip = styled(Chip)`
+  box-sizing: border-box;
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
 export const RoundedLink = ({ children, href, onClick }: RoundedLinkProps) => (
   <div>
     {children !== '' ? (
       <StyledClickable>
         <ReactLink target="_blank" to={href} onClick={onClick}>
-          <Chip
+          <StyledChip
             label={`${children}`}
             variant={ChipVariant.Rounded}
             size={ChipSize.Small}

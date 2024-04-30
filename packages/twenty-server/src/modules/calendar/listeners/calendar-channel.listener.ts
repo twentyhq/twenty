@@ -14,7 +14,7 @@ import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-obj
 @Injectable()
 export class CalendarChannelListener {
   constructor(
-    @Inject(MessageQueue.messagingQueue)
+    @Inject(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
@@ -24,10 +24,10 @@ export class CalendarChannelListener {
   ) {
     if (
       objectRecordChangedProperties(
-        payload.details.before,
-        payload.details.after,
+        payload.properties.before,
+        payload.properties.after,
       ).includes('isContactAutoCreationEnabled') &&
-      payload.details.after.isContactAutoCreationEnabled
+      payload.properties.after.isContactAutoCreationEnabled
     ) {
       await this.messageQueueService.add<CalendarCreateCompanyAndContactAfterSyncJobData>(
         CalendarCreateCompanyAndContactAfterSyncJob.name,
