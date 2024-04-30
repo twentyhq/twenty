@@ -37,7 +37,11 @@ import { isFieldUuid } from '../types/guards/isFieldUuid';
 
 type FieldDisplayProps = ExpandableListProps;
 
-export const FieldDisplay = ({ isHovered, reference }: FieldDisplayProps) => {
+export const FieldDisplay = ({
+  isHovered,
+  reference,
+  fromTableCell,
+}: FieldDisplayProps & { fromTableCell?: boolean }) => {
   const { fieldDefinition, isLabelIdentifier } = useContext(FieldContext);
 
   const isChipDisplay =
@@ -73,7 +77,11 @@ export const FieldDisplay = ({ isHovered, reference }: FieldDisplayProps) => {
   ) : isFieldSelect(fieldDefinition) ? (
     <SelectFieldDisplay />
   ) : isFieldMultiSelect(fieldDefinition) ? (
-    <MultiSelectFieldDisplay isHovered={isHovered} reference={reference} />
+    <MultiSelectFieldDisplay
+      isHovered={isHovered}
+      reference={reference}
+      withOutline={fromTableCell}
+    />
   ) : isFieldAddress(fieldDefinition) ? (
     <AddressFieldDisplay />
   ) : isFieldRawJson(fieldDefinition) ? (

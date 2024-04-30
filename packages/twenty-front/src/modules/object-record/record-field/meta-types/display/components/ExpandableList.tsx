@@ -1,6 +1,6 @@
 import { ReactElement, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
-import { useFloating } from '@floating-ui/react';
+import { offset, useFloating } from '@floating-ui/react';
 import { motion } from 'framer-motion';
 import { Chip, ChipVariant } from 'twenty-ui';
 
@@ -36,10 +36,10 @@ const StyledChildContainer = styled.div<{
     displayHiddenCount ? 'hidden' : 'none'};
 `;
 
-const StyledRelationsListContainer = styled.div`
+const StyledRelationsListContainer = styled.div<{ withOutline?: boolean }>`
   backdrop-filter: ${({ theme }) => theme.blur.strong};
   background-color: ${({ theme }) => theme.background.secondary};
-  border-radius: ${({ theme }) => theme.spacing(1)};
+  border-radius: ${({ theme }) => theme.border.radius.sm};
   box-shadow: '0px 2px 4px ${({ theme }) =>
     theme.boxShadow.light}, 2px 4px 16px ${({ theme }) =>
     theme.boxShadow.strong}';
@@ -47,14 +47,37 @@ const StyledRelationsListContainer = styled.div`
   flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(2)};
+  outline: ${(props) =>
+    props.withOutline
+      ? `1px solid ${props.theme.font.color.extraLight}`
+      : 'none'};
 `;
 
 const StyledAnimatedChipContainer = styled(motion.div)``;
+
+// Because Chip width depends on the number of hidden children which depends on the Chip width, we have a circular dependency
+// To avoid it, we fix the Chip width and make sure it can display its content (a number greater than 1)
+const getChipContentWidth = (numberOfChildren: number) => {
+  if (numberOfChildren <= 1) {
+    return 0;
+  }
+  if (numberOfChildren <= 10) {
+    return 17;
+  }
+  if (numberOfChildren <= 100) {
+    return 17 + 8;
+  }
+  if (numberOfChildren <= 1000) {
+    return 17 + 8 * 2;
+  }
+  return 17 + 8 * (Math.trunc(Math.log10(numberOfChildren)) - 1);
+};
 
 export type ExpandableListProps = {
   isHovered?: boolean;
   reference?: HTMLDivElement;
   forceDisplayHiddenCount?: boolean;
+  withOutline?: boolean;
 };
 
 export const ExpandableList = ({
@@ -62,6 +85,7 @@ export const ExpandableList = ({
   isHovered,
   forceDisplayHiddenCount = false,
   reference,
+  withOutline = false,
 }: {
   children: ReactElement[];
 } & ExpandableListProps) => {
@@ -70,24 +94,6 @@ export const ExpandableList = ({
   const [childrenWidths, setChildrenWidths] = useState<Record<number, number>>(
     {},
   );
-
-  // Because Chip width depends on the number of hidden children which depends on the Chip width, we have a circular dependency
-  // To avoid it, we fix the Chip width and make sure it can display its content (a number greater than 1)
-  const getChipContentWidth = () => {
-    if (children.length <= 1) {
-      return 0;
-    }
-    if (children.length <= 10) {
-      return 17;
-    }
-    if (children.length <= 100) {
-      return 17 + 8;
-    }
-    if (children.length <= 1000) {
-      return 17 + 8 * 2;
-    }
-    return 17 + 8 * (Math.trunc(Math.log10(children.length)) - 1);
-  };
 
   const computeChildProperties = (index: number) => {
     const childWidth = childrenWidths[index];
@@ -124,6 +130,7 @@ export const ExpandableList = ({
   const { refs, floatingStyles } = useFloating({
     // @ts-expect-error placement accepts 'start' as value even if the typing does not permit it
     placement: 'start',
+    middleware: [offset({ mainAxis: -1, crossAxis: -1 })],
     elements: { reference },
   });
 
@@ -139,7 +146,8 @@ export const ExpandableList = ({
   }, [isHovered]);
 
   const displayHiddenCount = isHovered || forceDisplayHiddenCount;
-  const chipContainerWidth = getChipContentWidth() + 2 * 4; // Because Chip component has a 4px padding
+  const chipContentWidth = getChipContentWidth(children.length);
+  const chipContainerWidth = chipContentWidth + 2 * 4; // Because Chip component has a 4px padding
   const availableWidth = containerWidth - (chipContainerWidth + GAP_WIDTH); // Because there is a 4px gap between children and chipContainer
   const hiddenChildrenCount = computeHiddenChildrenNumber();
 
@@ -183,7 +191,7 @@ export const ExpandableList = ({
             label={`+${hiddenChildrenCount}`}
             variant={ChipVariant.Highlighted}
             onClick={openDropdownMenu}
-            width={getChipContentWidth()}
+            width={chipContentWidth}
           />
         </StyledAnimatedChipContainer>
       )}
@@ -197,7 +205,7 @@ export const ExpandableList = ({
               : undefined
           }
         >
-          <StyledRelationsListContainer>
+          <StyledRelationsListContainer withOutline={withOutline}>
             {children}
           </StyledRelationsListContainer>
         </DropdownMenu>

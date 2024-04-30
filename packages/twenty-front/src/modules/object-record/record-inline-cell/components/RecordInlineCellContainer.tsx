@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -121,7 +121,7 @@ export const RecordInlineCellContainer = ({
   disableHoverEffect,
 }: RecordInlineCellContainerProps) => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
-  const [reference, setReference] = useState<HTMLDivElement | undefined>();
+  const reference = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [isHoveredForDisplayMode, setIsHoveredForDisplayMode] = useState(false);
   const [newDisplayModeContent, setNewDisplayModeContent] =
@@ -164,7 +164,7 @@ export const RecordInlineCellContainer = ({
       setNewDisplayModeContent(
         React.cloneElement(displayModeContent, {
           isHovered: isHoveredForDisplayMode,
-          reference,
+          reference: reference.current || undefined,
         }),
       );
     }
@@ -200,12 +200,7 @@ export const RecordInlineCellContainer = ({
           )}
         </StyledLabelAndIconContainer>
       )}
-      <StyledValueContainer
-        ref={(el) => {
-          if (!el || !setReference) return;
-          setReference(el);
-        }}
-      >
+      <StyledValueContainer ref={reference}>
         {!readonly && isInlineCellInEditMode ? (
           <RecordInlineCellEditMode>{editModeContent}</RecordInlineCellEditMode>
         ) : editModeContentOnly ? (

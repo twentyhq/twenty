@@ -1,4 +1,10 @@
-import React, { ReactElement, useContext, useEffect, useState } from 'react';
+import React, {
+  ReactElement,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { IconArrowUpRight } from 'twenty-ui';
@@ -70,7 +76,7 @@ export const RecordTableCellContainer = ({
   editHotkeyScope,
 }: RecordTableCellContainerProps) => {
   const { columnIndex } = useContext(RecordTableCellContext);
-  const [reference, setReference] = useState<HTMLDivElement | undefined>();
+  const reference = useRef<HTMLTableCellElement>(null);
   const [isHovered, setIsHovered] = useState(false);
   const [newNonEditModeContent, setNewNonEditModeContent] =
     useState<ReactElement>(nonEditModeContent);
@@ -149,7 +155,7 @@ export const RecordTableCellContainer = ({
       setNewNonEditModeContent(
         React.cloneElement(nonEditModeContent, {
           isHovered: showButton,
-          reference,
+          reference: reference.current || undefined,
         }),
       );
     }
@@ -157,10 +163,7 @@ export const RecordTableCellContainer = ({
 
   return (
     <StyledTd
-      ref={(el) => {
-        if (!el || !setReference) return;
-        setReference(el);
-      }}
+      ref={reference}
       isSelected={isSelected}
       onContextMenu={handleContextMenu}
       isInEditMode={isCurrentTableCellInEditMode}
