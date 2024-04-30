@@ -56,7 +56,7 @@ const StyledRelationsListContainer = styled.div<{ withOutline?: boolean }>`
 const StyledAnimatedChipContainer = styled(motion.div)``;
 
 // Because Chip width depends on the number of hidden children which depends on the Chip width, we have a circular dependency
-// To avoid it, we fix the Chip width and make sure it can display its content (a number greater than 1)
+// To avoid it, we set the Chip width and make sure it can display its content (a number greater than 1)
 const getChipContentWidth = (numberOfChildren: number) => {
   if (numberOfChildren <= 1) {
     return 0;
@@ -71,6 +71,46 @@ const getChipContentWidth = (numberOfChildren: number) => {
     return 17 + 8 * 2;
   }
   return 17 + 8 * (Math.trunc(Math.log10(numberOfChildren)) - 1);
+};
+
+const computeChildProperties = (
+  index: number,
+  elementWidths: Record<number, number>,
+  totalAvailableWidth: number,
+  forceDefaultProperties: boolean,
+) => {
+  const childWidth = elementWidths[index];
+  if (!forceDefaultProperties) {
+    return { shrink: 1, isVisible: true };
+  }
+  const cumulatedChildrenWidth = Array.from(Array(index).keys()).reduce(
+    (acc, currentIndex) => acc + elementWidths[currentIndex] + GAP_WIDTH, // Because there is a 4px gap between children
+    0,
+  );
+  if (cumulatedChildrenWidth > totalAvailableWidth) {
+    return { shrink: 1, isVisible: false };
+  }
+  if (cumulatedChildrenWidth + childWidth + GAP_WIDTH <= totalAvailableWidth) {
+    // Because there is a 4px gap between children
+    return { shrink: 0, isVisible: true };
+  }
+  return { shrink: 1, isVisible: true };
+};
+
+const computeHiddenChildrenNumber = (
+  elementWidths: Record<number, number>,
+  totalAvailableWidth: number,
+) => {
+  const childrenContainerWidthValues = Object.values(elementWidths);
+  let result = 0;
+  let cumulatedWidth = 0;
+  childrenContainerWidthValues.forEach((childrenContainerWidthValue) => {
+    cumulatedWidth += childrenContainerWidthValue + GAP_WIDTH; // Because there is a 4px gap between children
+    if (cumulatedWidth > totalAvailableWidth) {
+      result += 1;
+    }
+  });
+  return Math.max(result - 1, 0);
 };
 
 export type ExpandableListProps = {
@@ -95,37 +135,14 @@ export const ExpandableList = ({
     {},
   );
 
-  const computeChildProperties = (index: number) => {
-    const childWidth = childrenWidths[index];
-    const cumulatedChildrenWidth = Array.from(Array(index).keys()).reduce(
-      (acc, currentIndex) => acc + childrenWidths[currentIndex] + GAP_WIDTH, // Because there is a 4px gap between children
-      0,
-    );
-    if (!displayHiddenCount) {
-      return { shrink: 1, isVisible: true };
-    }
-    if (cumulatedChildrenWidth > availableWidth) {
-      return { shrink: 1, isVisible: false };
-    }
-    if (cumulatedChildrenWidth + childWidth + GAP_WIDTH <= availableWidth) {
-      // Because there is a 4px gap between children
-      return { shrink: 0, isVisible: true };
-    }
-    return { shrink: 1, isVisible: true };
-  };
-
-  const computeHiddenChildrenNumber = () => {
-    const childrenContainerWidthValues = Object.values(childrenWidths);
-    let result = 0;
-    let cumulatedWidth = 0;
-    childrenContainerWidthValues.forEach((childrenContainerWidthValue) => {
-      cumulatedWidth += childrenContainerWidthValue + GAP_WIDTH; // Because there is a 4px gap between children
-      if (cumulatedWidth > availableWidth) {
-        result += 1;
-      }
-    });
-    return Math.max(result - 1, 0);
-  };
+  const displayHiddenCount = isHovered || forceDisplayHiddenCount;
+  const chipContentWidth = getChipContentWidth(children.length);
+  const chipContainerWidth = chipContentWidth + 2 * 4; // Because Chip component has a 4px padding
+  const availableWidth = containerWidth - (chipContainerWidth + GAP_WIDTH); // Because there is a 4px gap between children and chipContainer
+  const hiddenChildrenCount = computeHiddenChildrenNumber(
+    childrenWidths,
+    availableWidth,
+  );
 
   const { refs, floatingStyles } = useFloating({
     // @ts-expect-error placement accepts 'start' as value even if the typing does not permit it
@@ -145,12 +162,6 @@ export const ExpandableList = ({
     }
   }, [isHovered]);
 
-  const displayHiddenCount = isHovered || forceDisplayHiddenCount;
-  const chipContentWidth = getChipContentWidth(children.length);
-  const chipContainerWidth = chipContentWidth + 2 * 4; // Because Chip component has a 4px padding
-  const availableWidth = containerWidth - (chipContainerWidth + GAP_WIDTH); // Because there is a 4px gap between children and chipContainer
-  const hiddenChildrenCount = computeHiddenChildrenNumber();
-
   return (
     <StyledContainer
       ref={(el) => {
@@ -160,7 +171,12 @@ export const ExpandableList = ({
     >
       <StyledChildrenContainer>
         {children.map((child, index) => {
-          const childProperties = computeChildProperties(index);
+          const childProperties = computeChildProperties(
+            index,
+            childrenWidths,
+            availableWidth,
+            displayHiddenCount,
+          );
           return (
             <StyledChildContainer
               ref={(el) => {
