@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -56,7 +57,6 @@ import {
 import { createWorkspaceMigrationsForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/create-workspace-migrations-for-custom-object.util';
 import { createWorkspaceMigrationsForRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/create-workspace-migrations-for-remote-object.util';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { validateObjectMetadataInput } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
@@ -81,8 +81,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly typeORMService: TypeORMService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {
     super(objectMetadataRepository);
   }
@@ -247,6 +245,23 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       throw new BadRequestException(
         'The singular and plural name cannot be the same for an object',
       );
+    }
+
+    const objectAlreadyExists = await this.objectMetadataRepository.findOne({
+      where: [
+        {
+          nameSingular: objectMetadataInput.nameSingular,
+          workspaceId: objectMetadataInput.workspaceId,
+        },
+        {
+          namePlural: objectMetadataInput.namePlural,
+          workspaceId: objectMetadataInput.workspaceId,
+        },
+      ],
+    });
+
+    if (objectAlreadyExists) {
+      throw new ConflictException('Object already exists');
     }
 
     const isCustom = !objectMetadataInput.isRemote;
