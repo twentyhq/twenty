@@ -9,7 +9,7 @@ import { useMultiObjectSearch } from '@/object-record/relation-picker/hooks/useM
 import { FieldMetadataType } from '~/generated/graphql';
 
 const query = gql`
-  query FindManyRecordsMultipleMetadataItems(
+  query CombinedFindManyRecords(
     $filterNameSingular: NameSingularFilterInput
     $orderByNameSingular: NameSingularOrderByInput
     $lastCursorNameSingular: String
