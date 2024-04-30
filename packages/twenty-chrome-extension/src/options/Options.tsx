@@ -6,23 +6,29 @@ import { MainButton } from '@/ui/input/button/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { isDefined } from '~/utils/isDefined';
 
+const StyledIframe = styled.iframe`
+  display: block;
+  width: 100%;
+  height: 100vh;
+  border: none;
+`;
+
 const StyledWrapper = styled.div`
   align-items: center;
-  background: ${({ theme }) => theme.background.noisy};
+  background: ${({ theme }) => theme.background.primary};
   display: flex;
   height: 100vh;
   justify-content: center;
 `;
 
 const StyledContainer = styled.div`
-  background: ${({ theme }) => theme.background.primary};
   width: 400px;
   height: 350px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: ${({ theme }) => theme.spacing(2)};
+  gap: ${({ theme }) => theme.spacing(8)};
 `;
 
 const StyledActionContainer = styled.div`
@@ -106,11 +112,11 @@ const Options = () => {
   };
 
   return isAuthenticated ? (
-    <iframe title="twenty-website" src={iframeSrc}></iframe>
+    <StyledIframe title="twenty-website" src={iframeSrc}></StyledIframe>
   ) : (
     <StyledWrapper>
       <StyledContainer>
-        <img src="/logo/32-32.svg" alt="twenty-logo" height={64} width={64} />
+        <img src="/logo/32-32.svg" alt="twenty-logo" height={40} width={40} />
         {isAuthenticating ? (
           <Loader />
         ) : (
@@ -131,7 +137,9 @@ const Options = () => {
             <MainButton
               title="Sign up"
               variant="secondary"
-              onClick={() => window.open(`${import.meta.env.VITE_FRONT_BASE_URL}`, '_blank')}
+              onClick={() =>
+                window.open(`${import.meta.env.VITE_FRONT_BASE_URL}`, '_blank')
+              }
               fullWidth
             />
           </StyledActionContainer>
