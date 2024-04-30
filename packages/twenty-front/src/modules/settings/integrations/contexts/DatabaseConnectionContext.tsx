@@ -7,7 +7,7 @@ type DatabaseConnectionContextValue = {
   connection: RemoteServer | undefined;
   integration: SettingsIntegration | undefined;
   databaseKey: string;
-  tables: RemoteTable[] | undefined;
+  tables: RemoteTable[];
 };
 
 export const DatabaseConnectionContext =
@@ -15,5 +15,5 @@ export const DatabaseConnectionContext =
     connection: undefined,
     integration: undefined,
     databaseKey: '',
-    tables: undefined,
+    tables: [],
   });
