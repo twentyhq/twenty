@@ -811,7 +811,6 @@ export type RemoteTable = {
 export type RemoteTableInput = {
   name: Scalars['String']['input'];
   remoteServerId: Scalars['ID']['input'];
-  schema: Scalars['String']['input'];
 };
 
 /** Status of the table */
