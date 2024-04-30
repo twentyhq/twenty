@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
+import isEmpty from 'lodash.isempty';
 import { v4 } from 'uuid';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 
@@ -162,7 +163,9 @@ export class RemoteServerService<T extends RemoteServerType> {
           partialRemoteServerWithUpdates,
         );
 
-        if (partialRemoteServerWithUpdates.foreignDataWrapperOptions) {
+        if (
+          !isEmpty(partialRemoteServerWithUpdates.foreignDataWrapperOptions)
+        ) {
           const foreignDataWrapperQuery =
             this.foreignDataWrapperQueryFactory.updateForeignDataWrapper({
               foreignDataWrapperId,
@@ -173,7 +176,7 @@ export class RemoteServerService<T extends RemoteServerType> {
           await entityManager.query(foreignDataWrapperQuery);
         }
 
-        if (partialRemoteServerWithUpdates.userMappingOptions) {
+        if (!isEmpty(partialRemoteServerWithUpdates.userMappingOptions)) {
           const userMappingQuery =
             this.foreignDataWrapperQueryFactory.updateUserMapping(
               foreignDataWrapperId,

@@ -7,6 +7,10 @@ export const DATABASE_CONNECTION_FRAGMENT = gql`
     foreignDataWrapperId
     foreignDataWrapperOptions
     foreignDataWrapperType
+    userMappingOptions {
+      username
+    }
     updatedAt
+    schema
   }
 `;

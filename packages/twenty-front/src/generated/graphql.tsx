@@ -239,6 +239,11 @@ export type FullName = {
   lastName: Scalars['String'];
 };
 
+export type GetUserMappingOptions = {
+  __typename?: 'GetUserMappingOptions';
+  username?: Maybe<Scalars['String']>;
+};
+
 export type InvalidatePassword = {
   __typename?: 'InvalidatePassword';
   /** Boolean that confirms query was dispatched */
@@ -574,6 +579,7 @@ export type RemoteServer = {
   foreignDataWrapperType: Scalars['String'];
   id: Scalars['ID'];
   updatedAt: Scalars['DateTime'];
+  userMappingOptions?: Maybe<GetUserMappingOptions>;
 };
 
 export type RemoteTable = {
