@@ -20,6 +20,9 @@ export const fetchAllThreadMessagesOperationSignatureFactory: RecordGqlOperation
       __typename: true,
       createdAt: true,
       headerMessageId: true,
+      subject: true,
+      text: true,
+      receivedAt: true,
       messageParticipants: true,
     },
   });
