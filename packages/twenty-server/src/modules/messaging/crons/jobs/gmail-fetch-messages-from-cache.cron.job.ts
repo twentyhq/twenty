@@ -11,6 +11,7 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { GmailFetchMessageContentFromCacheService } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.service';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 @Injectable()
 export class GmailFetchMessagesFromCacheCronJob
@@ -24,17 +25,20 @@ export class GmailFetchMessagesFromCacheCronJob
     @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
     private readonly messageChannelRepository: MessageChannelRepository,
     private readonly gmailFetchMessageContentFromCacheService: GmailFetchMessageContentFromCacheService,
+    private readonly environmentService: EnvironmentService,
   ) {}
 
   async handle(): Promise<void> {
-    const workspaceIds = (
-      await this.workspaceRepository.find({
-        where: {
-          subscriptionStatus: In(['active', 'trialing', 'past_due']),
-        },
+    const workspaceIds = await this.workspaceRepository
+      .find({
+        where: this.environmentService.get('IS_BILLING_ENABLED')
+          ? {
+              subscriptionStatus: In(['active', 'trialing', 'past_due']),
+            }
+          : {},
         select: ['id'],
       })
-    ).map((workspace) => workspace.id);
+      .then((workspaces) => workspaces.map((workspace) => workspace.id));
 
     const dataSources = await this.dataSourceRepository.find({
       where: {
