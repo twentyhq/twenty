@@ -33,23 +33,6 @@
       "internalConsoleOptions": "openOnSessionStart",
       "console": "internalConsole",
       "cwd": "${workspaceFolder}/packages/twenty-server/"
-    },
-    {
-      "name": "twenty-server - gmail fetch debug",
-      "type": "node",
-      "request": "launch",
-      "runtimeExecutable": "yarn",
-      "runtimeVersion": "18",
-      "runtimeArgs": [
-        "nx",
-        "run",
-        "twenty-server:command",
-        "cron:messaging:gmail-fetch-messages-from-cache",
-      ],
-      "outputCapture": "std",
-      "internalConsoleOptions": "openOnSessionStart",
-      "console": "internalConsole",
-      "cwd": "${workspaceFolder}/packages/twenty-server/"
     }
   ]
 }
