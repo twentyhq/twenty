@@ -9,6 +9,8 @@ import { savePRsToDB } from '@/github-sync/contributors/save-prs-to-db';
 import { searchIssuesPRs } from '@/github-sync/contributors/search-issues-prs';
 import { IssueNode, PullRequestNode } from '@/github-sync/contributors/types';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   if (!global.process.env.GITHUB_TOKEN) {
     return new Response('No GitHub token provided', { status: 500 });

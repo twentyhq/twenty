@@ -1,9 +1,9 @@
 import { Reference, StoreObject } from '@apollo/client';
 import { ReadFieldFunction } from '@apollo/client/cache/core/types/common';
 
-import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { OrderBy } from '@/object-metadata/types/OrderBy';
-import { OrderByField } from '@/object-metadata/types/OrderByField';
+import { RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
+import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
 import { isDefined } from '~/utils/isDefined';
 import { sortAsc, sortDesc, sortNullsFirst, sortNullsLast } from '~/utils/sort';
 
@@ -12,8 +12,8 @@ export const sortCachedObjectEdges = ({
   orderBy,
   readCacheField,
 }: {
-  edges: CachedObjectRecordEdge[];
-  orderBy: OrderByField;
+  edges: RecordGqlRefEdge[];
+  orderBy: RecordGqlOperationOrderBy;
   readCacheField: ReadFieldFunction;
 }) => {
   const [orderByFieldName, orderByFieldValue] = Object.entries(orderBy)[0];
@@ -23,7 +23,7 @@ export const sortCachedObjectEdges = ({
       : Object.entries(orderByFieldValue)[0];
 
   const readFieldValueToSort = (
-    edge: CachedObjectRecordEdge,
+    edge: RecordGqlRefEdge,
   ): string | number | null => {
     const recordFromCache = edge.node;
     const fieldValue =

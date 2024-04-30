@@ -241,7 +241,9 @@ export class WorkspaceMetadataUpdaterService {
     manager: EntityManager,
     entityClass: EntityTarget<Entity>,
     updateCollection: Array<
-      DeepPartial<Omit<Entity, 'fields' | 'options'>> & { id: string }
+      DeepPartial<Omit<Entity, 'fields' | 'options' | 'settings'>> & {
+        id: string;
+      }
     >,
     keysToOmit: (keyof Entity)[] = [],
   ): Promise<{ current: Entity; altered: Entity }[]> {

@@ -14,7 +14,6 @@ export const RightDrawerCalendarEvent = () => {
     objectNameSingular: CoreObjectNameSingular.CalendarEvent,
     objectRecordId: viewableCalendarEventId ?? '',
     onCompleted: (record) => setRecords([record]),
-    depth: 2,
   });
 
   if (!calendarEvent) return null;

@@ -8,6 +8,7 @@ import { CreateRemoteServerInput } from 'src/engine/metadata-modules/remote-serv
 import { RemoteServerIdInput } from 'src/engine/metadata-modules/remote-server/dtos/remote-server-id.input';
 import { RemoteServerTypeInput } from 'src/engine/metadata-modules/remote-server/dtos/remote-server-type.input';
 import { RemoteServerDTO } from 'src/engine/metadata-modules/remote-server/dtos/remote-server.dto';
+import { UpdateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/update-remote-server.input';
 import { RemoteServerType } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import { RemoteServerService } from 'src/engine/metadata-modules/remote-server/remote-server.service';
 
@@ -24,6 +25,14 @@ export class RemoteServerResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     return this.remoteServerService.createOneRemoteServer(input, workspaceId);
+  }
+
+  @Mutation(() => RemoteServerDTO)
+  async updateOneRemoteServer(
+    @Args('input') input: UpdateRemoteServerInput<RemoteServerType>,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    return this.remoteServerService.updateOneRemoteServer(input, workspaceId);
   }
 
   @Mutation(() => RemoteServerDTO)

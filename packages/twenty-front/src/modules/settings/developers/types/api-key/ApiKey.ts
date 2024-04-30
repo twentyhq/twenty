@@ -6,4 +6,5 @@ export type ApiKey = {
   name: string;
   expiresAt: string;
   revokedAt: string | null;
+  __typename: 'ApiKey';
 };
