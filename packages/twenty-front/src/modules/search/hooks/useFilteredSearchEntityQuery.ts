@@ -3,8 +3,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
 import { OrderBy } from '@/object-metadata/types/OrderBy';
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
+import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
 import { EntitiesForMultipleEntitySelect } from '@/object-record/relation-picker/types/EntitiesForMultipleEntitySelect';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -59,7 +59,7 @@ export const useFilteredSearchEntityQuery = ({
     }
 
     const formattedFilters = fieldNames.reduce(
-      (previousValue: ObjectRecordQueryFilter[], fieldName) => {
+      (previousValue: RecordGqlOperationFilter[], fieldName) => {
         const [parentFieldName, subFieldName] = fieldName.split('.');
 
         if (isNonEmptyString(subFieldName)) {

@@ -20,4 +20,8 @@ export class CreateRemoteServerInput<T extends RemoteServerType> {
   @IsOptional()
   @Field(() => UserMappingOptionsInput, { nullable: true })
   userMappingOptions?: UserMappingOptionsInput;
+
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  schema?: string;
 }

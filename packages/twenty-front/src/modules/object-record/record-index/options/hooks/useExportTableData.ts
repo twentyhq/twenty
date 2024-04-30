@@ -139,7 +139,6 @@ export const useExportTableData = ({
   // Todo: this needs to be done on click on the Export not button, not to be reactive. Use Lazy query for example
   const { totalCount, records, fetchMoreRecords } = useFindManyRecords({
     ...usedFindManyParams,
-    depth: 0,
     limit: pageSize,
     onCompleted: (_data, options) => {
       setHasNextPage(options?.pageInfo?.hasNextPage ?? false);

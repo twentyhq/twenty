@@ -43,6 +43,7 @@ const createRemoteServerInputSchema = newConnectionSchema
       password: values.password,
       username: values.username,
     },
+    schema: values.schema,
   }));
 
 type SettingsIntegrationNewConnectionFormValues = z.infer<

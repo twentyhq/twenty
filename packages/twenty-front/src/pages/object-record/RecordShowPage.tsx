@@ -8,6 +8,7 @@ import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/use
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
+import { findOneRecordForShowPageOperationSignatureFactory } from '@/object-record/record-show/graphql/operations/factories/findOneRecordForShowPageOperationSignatureFactory';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
@@ -53,9 +54,13 @@ export const RecordShowPage = () => {
 
   const headerIcon = getIcon(objectMetadataItem?.icon);
 
+  const FIND_ONE_RECORD_FOR_SHOW_PAGE_OPERATION_SIGNATURE =
+    findOneRecordForShowPageOperationSignatureFactory({ objectMetadataItem });
+
   const { record, loading } = useFindOneRecord({
     objectRecordId,
     objectNameSingular,
+    recordGqlFields: FIND_ONE_RECORD_FOR_SHOW_PAGE_OPERATION_SIGNATURE.fields,
   });
 
   useEffect(() => {

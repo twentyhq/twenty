@@ -2,12 +2,12 @@ import { ApolloCache, StoreObject } from '@apollo/client';
 
 import { sortCachedObjectEdges } from '@/apollo/optimistic-effect/utils/sortCachedObjectEdges';
 import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsOptimisticEffect';
-import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
-import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
+import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isRecordMatchingFilter } from '@/object-record/record-filter/utils/isRecordMatchingFilter';
 import { isDefined } from '~/utils/isDefined';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
@@ -23,8 +23,8 @@ export const triggerUpdateRecordOptimisticEffect = ({
 }: {
   cache: ApolloCache<unknown>;
   objectMetadataItem: ObjectMetadataItem;
-  currentRecord: CachedObjectRecord;
-  updatedRecord: CachedObjectRecord;
+  currentRecord: RecordGqlNode;
+  updatedRecord: RecordGqlNode;
   objectMetadataItems: ObjectMetadataItem[];
 }) => {
   triggerUpdateRelationsOptimisticEffect({
@@ -58,8 +58,7 @@ export const triggerUpdateRecordOptimisticEffect = ({
           );
 
         const rootQueryCurrentEdges =
-          readField<CachedObjectRecordEdge[]>('edges', rootQueryConnection) ??
-          [];
+          readField<RecordGqlRefEdge[]>('edges', rootQueryConnection) ?? [];
 
         let rootQueryNextEdges = [...rootQueryCurrentEdges];
 
