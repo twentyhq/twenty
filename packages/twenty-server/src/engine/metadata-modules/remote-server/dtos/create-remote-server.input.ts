@@ -7,7 +7,7 @@ import {
   ForeignDataWrapperOptions,
   RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
-import { UserMappingOptionsInput } from 'src/engine/metadata-modules/remote-server/utils/user-mapping-options.utils';
+import { UserMappingOptions } from 'src/engine/metadata-modules/remote-server/utils/user-mapping-options.utils';
 
 @InputType()
 export class CreateRemoteServerInput<T extends RemoteServerType> {
@@ -18,8 +18,8 @@ export class CreateRemoteServerInput<T extends RemoteServerType> {
   foreignDataWrapperOptions: ForeignDataWrapperOptions<T>;
 
   @IsOptional()
-  @Field(() => UserMappingOptionsInput, { nullable: true })
-  userMappingOptions?: UserMappingOptionsInput;
+  @Field(() => UserMappingOptions, { nullable: true })
+  userMappingOptions?: UserMappingOptions;
 
   @IsOptional()
   @Field(() => String, { nullable: true })

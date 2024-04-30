@@ -332,11 +332,6 @@ export type FullName = {
   lastName: Scalars['String']['output'];
 };
 
-export type GetUserMappingOptions = {
-  __typename?: 'GetUserMappingOptions';
-  username?: Maybe<Scalars['String']['output']>;
-};
-
 export type InvalidatePassword = {
   __typename?: 'InvalidatePassword';
   /** Boolean that confirms query was dispatched */
@@ -802,7 +797,7 @@ export type RemoteServer = {
   id: Scalars['ID']['output'];
   schema?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
-  userMappingOptions?: Maybe<GetUserMappingOptions>;
+  userMappingOptions?: Maybe<UserMappingDto>;
 };
 
 export type RemoteServerIdInput = {
@@ -1058,6 +1053,11 @@ export type UserExists = {
   exists: Scalars['Boolean']['output'];
 };
 
+export type UserMappingDto = {
+  __typename?: 'UserMappingDTO';
+  username?: Maybe<Scalars['String']['output']>;
+};
+
 export type UserMappingOptionsInput = {
   password?: InputMaybe<Scalars['String']['input']>;
   username?: InputMaybe<Scalars['String']['input']>;
@@ -1246,7 +1246,7 @@ export type RelationEdge = {
   node: Relation;
 };
 
-export type RemoteServerFieldsFragment = { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, userMappingOptions?: { __typename?: 'GetUserMappingOptions', username?: string | null } | null };
+export type RemoteServerFieldsFragment = { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, userMappingOptions?: { __typename?: 'UserMappingDTO', username?: string | null } | null };
 
 export type RemoteTableFieldsFragment = { __typename?: 'RemoteTable', id?: any | null, name: string, schema: string, status: RemoteTableStatus };
 
@@ -1255,7 +1255,7 @@ export type CreateServerMutationVariables = Exact<{
 }>;
 
 
-export type CreateServerMutation = { __typename?: 'Mutation', createOneRemoteServer: { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, userMappingOptions?: { __typename?: 'GetUserMappingOptions', username?: string | null } | null } };
+export type CreateServerMutation = { __typename?: 'Mutation', createOneRemoteServer: { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, userMappingOptions?: { __typename?: 'UserMappingDTO', username?: string | null } | null } };
 
 export type DeleteServerMutationVariables = Exact<{
   input: RemoteServerIdInput;
@@ -1283,14 +1283,14 @@ export type UpdateServerMutationVariables = Exact<{
 }>;
 
 
-export type UpdateServerMutation = { __typename?: 'Mutation', updateOneRemoteServer: { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, userMappingOptions?: { __typename?: 'GetUserMappingOptions', username?: string | null } | null } };
+export type UpdateServerMutation = { __typename?: 'Mutation', updateOneRemoteServer: { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, userMappingOptions?: { __typename?: 'UserMappingDTO', username?: string | null } | null } };
 
 export type GetManyDatabaseConnectionsQueryVariables = Exact<{
   input: RemoteServerTypeInput;
 }>;
 
 
-export type GetManyDatabaseConnectionsQuery = { __typename?: 'Query', findManyRemoteServersByType: Array<{ __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, userMappingOptions?: { __typename?: 'GetUserMappingOptions', username?: string | null } | null }> };
+export type GetManyDatabaseConnectionsQuery = { __typename?: 'Query', findManyRemoteServersByType: Array<{ __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, userMappingOptions?: { __typename?: 'UserMappingDTO', username?: string | null } | null }> };
 
 export type GetManyRemoteTablesQueryVariables = Exact<{
   input: RemoteServerIdInput;
@@ -1304,7 +1304,7 @@ export type GetOneDatabaseConnectionQueryVariables = Exact<{
 }>;
 
 
-export type GetOneDatabaseConnectionQuery = { __typename?: 'Query', findOneRemoteServerById: { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, userMappingOptions?: { __typename?: 'GetUserMappingOptions', username?: string | null } | null } };
+export type GetOneDatabaseConnectionQuery = { __typename?: 'Query', findOneRemoteServerById: { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, userMappingOptions?: { __typename?: 'UserMappingDTO', username?: string | null } | null } };
 
 export type CreateOneObjectMetadataItemMutationVariables = Exact<{
   input: CreateOneObjectInput;

@@ -6,7 +6,7 @@ import {
   RemoteServerEntity,
   RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
-import { UserMappingOptionsInput } from 'src/engine/metadata-modules/remote-server/utils/user-mapping-options.utils';
+import { UserMappingOptions } from 'src/engine/metadata-modules/remote-server/utils/user-mapping-options.utils';
 
 export type DeepPartial<T> = {
   [P in keyof T]?: DeepPartial<T[P]>;
@@ -15,7 +15,7 @@ export type DeepPartial<T> = {
 const buildUserMappingOptionsQuery = (
   parameters: any[],
   parametersPositions: object,
-  userMappingOptions: DeepPartial<UserMappingOptionsInput>,
+  userMappingOptions: DeepPartial<UserMappingOptions>,
 ): string | null => {
   const shouldUpdateUserMappingOptionsPassword = isDefined(
     userMappingOptions?.password,
