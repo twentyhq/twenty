@@ -116,7 +116,7 @@ export const insertButtonForPerson = async () => {
       await changeSidePanelUrl(
         `${import.meta.env.VITE_FRONT_BASE_URL}/object/person/${personId}`,
       );
-      personButtonSpan.textContent = 'Saved';
+      personButtonSpan.textContent = 'View in Twenty';
       personButtonDiv.onClickHandler(() => {
         chrome.runtime.sendMessage({ action: 'openSidepanel' });
       });

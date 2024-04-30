@@ -105,7 +105,7 @@ export const insertButtonForCompany = async () => {
     await changeSidePanelUrl(
       `${import.meta.env.VITE_FRONT_BASE_URL}/object/company/${companyId}`,
     );
-    companyButtonSpan.textContent = 'Saved';
+    companyButtonSpan.textContent = 'View in Twenty';
     companyButtonDiv.onClickHandler(() => {
       chrome.runtime.sendMessage({ action: 'openSidepanel' });
     });
