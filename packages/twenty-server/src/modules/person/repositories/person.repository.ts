@@ -87,4 +87,24 @@ export class PersonRepository {
       transactionManager,
     );
   }
+
+  async convertPositionsToIntegers(
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<void> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}.person SET position = subquery.position
+      FROM (
+        SELECT id, ROW_NUMBER() OVER (ORDER BY position) as position
+        FROM ${dataSourceSchema}.person
+      ) as subquery
+      WHERE ${dataSourceSchema}.person.id = subquery.id`,
+      [],
+      workspaceId,
+      transactionManager,
+    );
+  }
 }
