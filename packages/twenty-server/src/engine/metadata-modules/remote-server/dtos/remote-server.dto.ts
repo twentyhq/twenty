@@ -29,7 +29,7 @@ export class RemoteServerDTO<T extends RemoteServerType> {
   userMappingOptions?: GetUserMappingOptions;
 
   @IsOptional()
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   schema?: string;
 
   @HideField()
