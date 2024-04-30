@@ -8,6 +8,8 @@ import {
   SocialLink,
 } from '@/ui/navigation/link/components/SocialLink';
 import { checkUrlType } from '~/utils/checkUrlType';
+import { getAbsoluteUrl } from '~/utils/url/getAbsoluteUrl';
+import { getUrlHostName } from '~/utils/url/getUrlHostName';
 
 import { EllipsisDisplay } from './EllipsisDisplay';
 
@@ -30,14 +32,8 @@ export const LinkDisplay = ({ value }: LinkDisplayProps) => {
     event.stopPropagation();
   };
 
-  const absoluteUrl = value?.url
-    ? value.url.startsWith('http')
-      ? value.url
-      : 'https://' + value.url
-    : '';
-
-  const displayedValue = value?.label || value?.url || '';
-
+  const absoluteUrl = getAbsoluteUrl(value?.url || '');
+  const displayedValue = value?.label || getUrlHostName(absoluteUrl);
   const type = checkUrlType(absoluteUrl);
 
   if (type === LinkType.LinkedIn || type === LinkType.Twitter) {

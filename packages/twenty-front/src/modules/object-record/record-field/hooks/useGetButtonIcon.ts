@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { IconComponent, IconPencil } from 'twenty-ui';
 
+import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -19,17 +20,12 @@ export const useGetButtonIcon = (): IconComponent | undefined => {
     isFieldLink(fieldDefinition) ||
     isFieldEmail(fieldDefinition) ||
     isFieldPhone(fieldDefinition) ||
-    isFieldMultiSelect(fieldDefinition)
+    isFieldMultiSelect(fieldDefinition) ||
+    (isFieldRelation(fieldDefinition) &&
+      fieldDefinition.metadata.relationObjectMetadataNameSingular !==
+        'workspaceMember') ||
+    isFieldLinks(fieldDefinition)
   ) {
     return IconPencil;
-  }
-
-  if (isFieldRelation(fieldDefinition)) {
-    if (
-      fieldDefinition.metadata.relationObjectMetadataNameSingular !==
-      'workspaceMember'
-    ) {
-      return IconPencil;
-    }
   }
 };

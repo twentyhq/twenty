@@ -22,6 +22,7 @@ const StyledClickable = styled.div`
 `;
 
 const StyledChip = styled(Chip)`
+  border-color: ${({ theme }) => theme.border.color.strong};
   box-sizing: border-box;
   padding: ${({ theme }) => theme.spacing(2)};
 `;

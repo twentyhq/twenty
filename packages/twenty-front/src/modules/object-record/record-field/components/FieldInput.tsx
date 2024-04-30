@@ -134,13 +134,7 @@ export const FieldInput = ({
           onShiftTab={onShiftTab}
         />
       ) : isFieldLinks(fieldDefinition) ? (
-        <LinksFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
+        <LinksFieldInput onCancel={onCancel} />
       ) : isFieldCurrency(fieldDefinition) ? (
         <CurrencyFieldInput
           onEnter={onEnter}
