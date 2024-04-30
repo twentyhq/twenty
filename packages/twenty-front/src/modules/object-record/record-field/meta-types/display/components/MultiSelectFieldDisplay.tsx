@@ -1,8 +1,8 @@
+import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField';
 import {
   ExpandableList,
   ExpandableListProps,
-} from '@/object-record/record-field/meta-types/display/components/ExpandableList.tsx';
-import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField';
+} from '@/ui/display/expandable-list/ExpandableList';
 import { Tag } from '@/ui/display/tag/components/Tag';
 
 type MultiSelectFieldDisplayProps = ExpandableListProps;

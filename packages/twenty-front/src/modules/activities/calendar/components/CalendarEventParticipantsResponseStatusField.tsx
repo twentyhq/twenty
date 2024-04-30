@@ -5,8 +5,8 @@ import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui';
 
 import { CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
-import { ExpandableList } from '@/object-record/record-field/meta-types/display/components/ExpandableList.tsx';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
+import { ExpandableList } from '@/ui/display/expandable-list/ExpandableList';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 
 const StyledInlineCellBaseContainer = styled.div`

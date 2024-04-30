@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { ExpandableListProps } from '@/object-record/record-field/meta-types/display/components/ExpandableList.tsx';
+import { ExpandableListProps } from '@/ui/display/expandable-list/ExpandableList';
 
 import { FieldContext } from '../contexts/FieldContext';
 import { AddressFieldDisplay } from '../meta-types/display/components/AddressFieldDisplay';

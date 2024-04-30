@@ -6,8 +6,8 @@ import { motion } from 'framer-motion';
 import { IconComponent } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { ExpandableListProps } from '@/object-record/record-field/meta-types/display/components/ExpandableList.tsx';
 import { AnimationDivProps } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButton.tsx';
+import { ExpandableListProps } from '@/ui/display/expandable-list/ExpandableList';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
