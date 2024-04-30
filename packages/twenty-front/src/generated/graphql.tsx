@@ -562,6 +562,7 @@ export type RelationDeleteResponse = {
 /** Type of the relation */
 export enum RelationMetadataType {
   ManyToMany = 'MANY_TO_MANY',
+  ManyToOne = 'MANY_TO_ONE',
   OneToMany = 'ONE_TO_MANY',
   OneToOne = 'ONE_TO_ONE'
 }
@@ -575,7 +576,7 @@ export type RemoteServer = {
   id: Scalars['ID'];
   schema?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
-  userMappingOptions?: Maybe<UserMappingOptionsDto>;
+  userMappingOptions?: Maybe<UserMappingOptionsUsername>;
 };
 
 export type RemoteTable = {
@@ -770,8 +771,8 @@ export type UserExists = {
   exists: Scalars['Boolean'];
 };
 
-export type UserMappingOptionsDto = {
-  __typename?: 'UserMappingOptionsDTO';
+export type UserMappingOptionsUsername = {
+  __typename?: 'UserMappingOptionsUsername';
   username?: Maybe<Scalars['String']>;
 };
 
