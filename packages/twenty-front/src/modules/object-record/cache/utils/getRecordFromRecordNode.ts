@@ -1,4 +1,5 @@
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
+import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
@@ -6,7 +7,7 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 export const getRecordFromRecordNode = <T extends ObjectRecord>({
   recordNode,
 }: {
-  recordNode: T;
+  recordNode: RecordGqlNode;
 }): T => {
   return {
     ...Object.fromEntries(
@@ -32,5 +33,6 @@ export const getRecordFromRecordNode = <T extends ObjectRecord>({
       }),
     ),
     id: recordNode.id,
+    __typename: recordNode.__typename,
   } as T;
 };

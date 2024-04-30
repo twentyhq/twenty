@@ -1,5 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { CaptchaDriverType } from 'src/engine/integrations/captcha/interfaces';
+
 @ObjectType()
 class AuthProviders {
   @Field(() => Boolean)
@@ -58,6 +60,15 @@ class Sentry {
 }
 
 @ObjectType()
+class Captcha {
+  @Field(() => CaptchaDriverType, { nullable: true })
+  provider: CaptchaDriverType | undefined;
+
+  @Field(() => String, { nullable: true })
+  siteKey: string | undefined;
+}
+
+@ObjectType()
 export class ClientConfig {
   @Field(() => AuthProviders, { nullable: false })
   authProviders: AuthProviders;
@@ -82,4 +93,7 @@ export class ClientConfig {
 
   @Field(() => Sentry)
   sentry: Sentry;
+
+  @Field(() => Captcha)
+  captcha: Captcha;
 }

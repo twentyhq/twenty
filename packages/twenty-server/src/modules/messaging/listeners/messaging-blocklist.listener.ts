@@ -14,6 +14,7 @@ import {
   BlocklistItemDeleteMessagesJobData,
   BlocklistItemDeleteMessagesJob,
 } from 'src/modules/messaging/jobs/blocklist-item-delete-messages.job';
+import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
 
 @Injectable()
 export class MessagingBlocklistListener {
@@ -44,6 +45,28 @@ export class MessagingBlocklistListener {
       {
         workspaceId: payload.workspaceId,
         workspaceMemberId: payload.properties.before.workspaceMember.id,
+        handle: payload.properties.before.handle,
+      },
+    );
+  }
+
+  @OnEvent('blocklist.updated')
+  async handleUpdatedEvent(
+    payload: ObjectRecordUpdateEvent<BlocklistObjectMetadata>,
+  ) {
+    await this.messageQueueService.add<BlocklistItemDeleteMessagesJobData>(
+      BlocklistItemDeleteMessagesJob.name,
+      {
+        workspaceId: payload.workspaceId,
+        blocklistItemId: payload.recordId,
+      },
+    );
+
+    await this.messageQueueService.add<BlocklistReimportMessagesJobData>(
+      BlocklistReimportMessagesJob.name,
+      {
+        workspaceId: payload.workspaceId,
+        workspaceMemberId: payload.properties.after.workspaceMember.id,
         handle: payload.properties.before.handle,
       },
     );

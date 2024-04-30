@@ -1,6 +1,6 @@
-import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
+import { RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
 
 export type CachedObjectRecordQueryVariables = Omit<
-  ObjectRecordQueryVariables,
+  RecordGqlOperationVariables,
   'limit'
-> & { first?: ObjectRecordQueryVariables['limit'] };
+> & { first?: RecordGqlOperationVariables['limit'] };

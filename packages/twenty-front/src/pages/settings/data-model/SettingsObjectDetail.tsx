@@ -88,6 +88,8 @@ export const SettingsObjectDetail = () => {
       },
     });
 
+  const shouldDisplayAddFieldButton = !activeObjectMetadataItem.isRemote;
+
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
@@ -207,21 +209,23 @@ export const SettingsObjectDetail = () => {
               </TableSection>
             )}
           </Table>
-          <StyledDiv>
-            <Button
-              Icon={IconPlus}
-              title="Add Field"
-              size="small"
-              variant="secondary"
-              onClick={() =>
-                navigate(
-                  disabledMetadataFields.length
-                    ? './new-field/step-1'
-                    : './new-field/step-2',
-                )
-              }
-            />
-          </StyledDiv>
+          {shouldDisplayAddFieldButton && (
+            <StyledDiv>
+              <Button
+                Icon={IconPlus}
+                title="Add Field"
+                size="small"
+                variant="secondary"
+                onClick={() =>
+                  navigate(
+                    disabledMetadataFields.length
+                      ? './new-field/step-1'
+                      : './new-field/step-2',
+                  )
+                }
+              />
+            </StyledDiv>
+          )}
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

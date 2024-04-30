@@ -53,13 +53,11 @@ export const SettingsIntegrationDatabaseTablesListCard = ({
         await syncRemoteTable({
           remoteServerId: connectionId,
           name: tableName,
-          schema: table.schema,
         });
       } else {
         await unsyncRemoteTable({
           remoteServerId: connectionId,
           name: tableName,
-          schema: table.schema,
         });
       }
     },
