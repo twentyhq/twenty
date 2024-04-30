@@ -32,15 +32,17 @@ export const ActivityTargetChips = ({
         reference={reference}
         forceDisplayHiddenCount={forceDisplayHiddenCount}
       >
-        {activityTargetObjectRecords.map((activityTargetObjectRecord) => (
-          <RecordChip
-            key={activityTargetObjectRecord.targetObject.id}
-            record={activityTargetObjectRecord.targetObject}
-            objectNameSingular={
-              activityTargetObjectRecord.targetObjectMetadataItem.nameSingular
-            }
-          />
-        ))}
+        {activityTargetObjectRecords.map(
+          (activityTargetObjectRecord, index) => (
+            <RecordChip
+              key={index}
+              record={activityTargetObjectRecord.targetObject}
+              objectNameSingular={
+                activityTargetObjectRecord.targetObjectMetadataItem.nameSingular
+              }
+            />
+          ),
+        )}
       </ExpandableList>
     </StyledContainer>
   );

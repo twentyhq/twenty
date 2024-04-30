@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui';
 
 import { CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
@@ -8,6 +9,7 @@ import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { ExpandableList } from '@/ui/display/expandable-list/ExpandableList';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
+import { isRightDrawerAnimationCompletedState } from '@/ui/layout/right-drawer/states/isRightDrawerAnimationCompleted.ts';
 
 const StyledInlineCellBaseContainer = styled.div`
   align-items: center;
@@ -66,6 +68,9 @@ export const CalendarEventParticipantsResponseStatusField = ({
   participants: CalendarEventParticipant[];
 }) => {
   const theme = useTheme();
+  const isRightDrawerAnimationCompleted = useRecoilValue(
+    isRightDrawerAnimationCompletedState,
+  );
 
   const Icon = {
     Yes: <IconCheck stroke={theme.icon.stroke.sm} />,
@@ -84,8 +89,8 @@ export const CalendarEventParticipantsResponseStatusField = ({
 
   const participantsContainerRef = useRef<HTMLDivElement>(null);
   const [isHovered, setIsHovered] = useState(false);
-  const styledChips = orderedParticipants.map((participant) => (
-    <ParticipantChip participant={participant} />
+  const styledChips = orderedParticipants.map((participant, index) => (
+    <ParticipantChip key={index} participant={participant} />
   ));
 
   return (
@@ -103,13 +108,15 @@ export const CalendarEventParticipantsResponseStatusField = ({
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
-          <ExpandableList
-            isHovered={isHovered}
-            reference={participantsContainerRef.current || undefined}
-            forceDisplayHiddenCount
-          >
-            {styledChips}
-          </ExpandableList>
+          {isRightDrawerAnimationCompleted && (
+            <ExpandableList
+              isHovered={isHovered}
+              reference={participantsContainerRef.current || undefined}
+              forceDisplayHiddenCount
+            >
+              {styledChips}
+            </ExpandableList>
+          )}
         </StyledDiv>
       </StyledInlineCellBaseContainer>
     </StyledPropertyBox>

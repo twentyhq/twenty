@@ -5,35 +5,18 @@ import { motion } from 'framer-motion';
 import { Chip, ChipVariant } from 'twenty-ui';
 
 import { AnimationDivProps } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButton.tsx';
+import { ChildrenContainer } from '@/ui/display/expandable-list/ChildrenContainer.tsx';
+import { getChipContentWidth } from '@/ui/display/expandable-list/getChipContentWidth.ts';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu.tsx';
 
-const SPACING = 1;
-const GAP_WIDTH = 4 * SPACING;
+const GAP_WIDTH = 4;
 
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(SPACING)};
+  gap: ${({ theme }) => theme.spacing(1)};
   justify-content: space-between;
   width: 100%;
-`;
-
-const StyledChildrenContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(SPACING)};
-  overflow: hidden;
-`;
-
-const StyledChildContainer = styled.div<{
-  shrink: number;
-  isVisible?: boolean;
-  displayHiddenCount?: boolean;
-}>`
-  flex-shrink: ${({ shrink }) => shrink};
-  display: ${({ isVisible }) => (isVisible ? 'flex' : 'none')};
-  overflow: ${({ displayHiddenCount }) =>
-    displayHiddenCount ? 'hidden' : 'none'};
 `;
 
 const StyledRelationsListContainer = styled.div<{ withOutline?: boolean }>`
@@ -55,69 +38,17 @@ const StyledRelationsListContainer = styled.div<{ withOutline?: boolean }>`
 
 const StyledAnimatedChipContainer = styled(motion.div)``;
 
-// Because Chip width depends on the number of hidden children which depends on the Chip width, we have a circular dependency
-// To avoid it, we set the Chip width and make sure it can display its content (a number greater than 1)
-const getChipContentWidth = (numberOfChildren: number) => {
-  if (numberOfChildren <= 1) {
-    return 0;
-  }
-  if (numberOfChildren <= 10) {
-    return 17;
-  }
-  if (numberOfChildren <= 100) {
-    return 17 + 8;
-  }
-  if (numberOfChildren <= 1000) {
-    return 17 + 8 * 2;
-  }
-  return 17 + 8 * (Math.trunc(Math.log10(numberOfChildren)) - 1);
-};
-
-const computeChildProperties = (
-  index: number,
-  elementWidths: Record<number, number>,
-  totalAvailableWidth: number,
-  forceDefaultProperties: boolean,
-) => {
-  const childWidth = elementWidths[index];
-  if (!forceDefaultProperties) {
-    return { shrink: 1, isVisible: true };
-  }
-  const cumulatedChildrenWidth = Array.from(Array(index).keys()).reduce(
-    (acc, currentIndex) => acc + elementWidths[currentIndex] + GAP_WIDTH, // Because there is a 4px gap between children
-    0,
-  );
-  if (cumulatedChildrenWidth > totalAvailableWidth) {
-    return { shrink: 1, isVisible: false };
-  }
-  if (cumulatedChildrenWidth + childWidth + GAP_WIDTH <= totalAvailableWidth) {
-    // Because there is a 4px gap between children
-    return { shrink: 0, isVisible: true };
-  }
-  return { shrink: 1, isVisible: true };
-};
-
-const computeHiddenChildrenNumber = (
-  elementWidths: Record<number, number>,
-  totalAvailableWidth: number,
-) => {
-  const childrenContainerWidthValues = Object.values(elementWidths);
-  let result = 0;
-  let cumulatedWidth = 0;
-  childrenContainerWidthValues.forEach((childrenContainerWidthValue) => {
-    cumulatedWidth += childrenContainerWidthValue + GAP_WIDTH; // Because there is a 4px gap between children
-    if (cumulatedWidth > totalAvailableWidth) {
-      result += 1;
-    }
-  });
-  return Math.max(result - 1, 0);
-};
-
 export type ExpandableListProps = {
   isHovered?: boolean;
   reference?: HTMLDivElement;
   forceDisplayHiddenCount?: boolean;
   withOutline?: boolean;
+};
+
+export type ChildrenProperty = {
+  width: number;
+  shrink: number;
+  isVisible: boolean;
 };
 
 export const ExpandableList = ({
@@ -131,18 +62,25 @@ export const ExpandableList = ({
 } & ExpandableListProps) => {
   const [containerWidth, setContainerWidth] = useState(0);
   const [isDropdownMenuOpen, setIsDropdownMenuOpen] = useState(false);
-  const [childrenWidths, setChildrenWidths] = useState<Record<number, number>>(
-    {},
-  );
+  const [childrenProperties, setChildrenProperties] = useState<
+    Record<number, ChildrenProperty>
+  >({});
 
-  const displayHiddenCount = isHovered || forceDisplayHiddenCount;
+  // Because Chip width depends on the number of hidden children which depends on the Chip width, we have a circular dependency
+  // To avoid it, we set the Chip width and make sure it can display its content (a number greater than 1)
   const chipContentWidth = getChipContentWidth(children.length);
-  const chipContainerWidth = chipContentWidth + 2 * 4; // Because Chip component has a 4px padding
-  const availableWidth = containerWidth - (chipContainerWidth + GAP_WIDTH); // Because there is a 4px gap between children and chipContainer
-  const hiddenChildrenCount = computeHiddenChildrenNumber(
-    childrenWidths,
-    availableWidth,
-  );
+  const chipContainerWidth = chipContentWidth + 2 * GAP_WIDTH; // Because Chip component has 4px padding-left and right
+  const availableWidth = containerWidth - (chipContainerWidth + GAP_WIDTH); // Because there is a 4px gap between ChildrenContainer and ChipContainer
+
+  const hiddenChildrenCount = Object.values(childrenProperties).filter(
+    (childProperties) => !childProperties.isVisible,
+  ).length;
+
+  const isFocusedMode =
+    (isHovered || forceDisplayHiddenCount) &&
+    Object.values(childrenProperties).length > 0;
+
+  const displayHiddenCountChip = isFocusedMode && hiddenChildrenCount > 0;
 
   const { refs, floatingStyles } = useFloating({
     // @ts-expect-error placement accepts 'start' as value even if the typing does not permit it
@@ -162,6 +100,31 @@ export const ExpandableList = ({
     }
   }, [isHovered]);
 
+  useEffect(() => {
+    if (isFocusedMode) {
+      let cumulatedChildrenWidth = 0;
+      Object.values(childrenProperties).forEach((childProperties, index) => {
+        // Because there is a 4px gap between children
+        const childWidth = childProperties.width + GAP_WIDTH;
+        let shrink = 1;
+        let isVisible = true;
+
+        if (cumulatedChildrenWidth > availableWidth) {
+          isVisible = false;
+        } else if (cumulatedChildrenWidth + childWidth <= availableWidth) {
+          shrink = 0;
+        }
+        setChildrenProperties((prevState) => {
+          return {
+            ...prevState,
+            [index]: { width: prevState[index].width, shrink, isVisible },
+          };
+        });
+        cumulatedChildrenWidth += childWidth;
+      });
+    }
+  }, [isFocusedMode, childrenProperties, availableWidth]);
+
   return (
     <StyledContainer
       ref={(el) => {
@@ -169,34 +132,14 @@ export const ExpandableList = ({
         setContainerWidth(el.getBoundingClientRect().width);
       }}
     >
-      <StyledChildrenContainer>
-        {children.map((child, index) => {
-          const childProperties = computeChildProperties(
-            index,
-            childrenWidths,
-            availableWidth,
-            displayHiddenCount,
-          );
-          return (
-            <StyledChildContainer
-              ref={(el) => {
-                if (!el) return;
-                setChildrenWidths((prevState) => {
-                  prevState[index] = el.getBoundingClientRect().width;
-                  return prevState;
-                });
-              }}
-              key={index}
-              displayHiddenCount={displayHiddenCount}
-              isVisible={childProperties.isVisible}
-              shrink={childProperties.shrink}
-            >
-              {child}
-            </StyledChildContainer>
-          );
-        })}
-      </StyledChildrenContainer>
-      {displayHiddenCount && hiddenChildrenCount > 0 && (
+      <ChildrenContainer
+        childrenProperties={childrenProperties}
+        setChildrenProperties={setChildrenProperties}
+        isFocusedMode={isFocusedMode}
+      >
+        {children}
+      </ChildrenContainer>
+      {displayHiddenCountChip && (
         <StyledAnimatedChipContainer
           initial={AnimationDivProps.initial}
           animate={AnimationDivProps.animate}
