@@ -489,7 +489,10 @@ export class WorkspaceMigrationRunnerService {
     }
 
     const foreignTableColumns = foreignTable.columns
-      .map((column) => `"${column.columnName}" ${column.columnType}`)
+      .map(
+        (column) =>
+          `"${column.columnName}" ${column.columnType} OPTIONS (column_name '${column.distantColumnName}')`,
+      )
       .join(', ');
 
     await queryRunner.query(

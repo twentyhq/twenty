@@ -16,6 +16,7 @@ import { MessageQueueService } from 'src/engine/integrations/message-queue/servi
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 @Injectable()
 export class GmailPartialSyncCronJob implements MessageQueueJob<undefined> {
@@ -30,14 +31,17 @@ export class GmailPartialSyncCronJob implements MessageQueueJob<undefined> {
     private readonly messageQueueService: MessageQueueService,
     @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
     private readonly messageChannelRepository: MessageChannelRepository,
+    private readonly environmentService: EnvironmentService,
   ) {}
 
   async handle(): Promise<void> {
     const workspaceIds = (
       await this.workspaceRepository.find({
-        where: {
-          subscriptionStatus: In(['active', 'trialing', 'past_due']),
-        },
+        where: this.environmentService.get('IS_BILLING_ENABLED')
+          ? {
+              subscriptionStatus: In(['active', 'trialing', 'past_due']),
+            }
+          : {},
         select: ['id'],
       })
     ).map((workspace) => workspace.id);

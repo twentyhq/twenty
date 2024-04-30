@@ -10,8 +10,8 @@ import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadat
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
-
 const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
 const cache = new InMemoryCache();
@@ -85,7 +85,6 @@ cache.writeFragment({
             id
             createdAt
             updatedAt
-            targetObjectNameSingular
             personId
             companyId
             company {
@@ -114,9 +113,11 @@ cache.writeFragment({
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
     <MockedProvider cache={cache}>
-      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-        {children}
-      </SnackBarProviderScope>
+      <JestObjectMetadataItemSetter>
+        <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+          {children}
+        </SnackBarProviderScope>
+      </JestObjectMetadataItemSetter>
     </MockedProvider>
   </RecoilRoot>
 );

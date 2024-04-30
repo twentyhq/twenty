@@ -1,4 +1,4 @@
-import { FloatFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
+import { FloatFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 
 export const isMatchingFloatFilter = ({
   floatFilter,

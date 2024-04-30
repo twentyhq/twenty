@@ -25,4 +25,6 @@ export const BACKGROUND_LIGHT = {
   overlay: RGBA(GRAY_SCALE.gray80, 0.8),
   radialGradient: `radial-gradient(50% 62.62% at 50% 0%, #505050 0%, ${GRAY_SCALE.gray60} 100%)`,
   radialGradientHover: `radial-gradient(76.32% 95.59% at 50% 0%, #505050 0%, ${GRAY_SCALE.gray60} 100%)`,
+  primaryInverted: GRAY_SCALE.gray60,
+  primaryInvertedHover: GRAY_SCALE.gray55,
 };

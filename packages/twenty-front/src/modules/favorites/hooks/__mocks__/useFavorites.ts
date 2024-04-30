@@ -177,7 +177,7 @@ export const mocks = [
   {
     request: {
       query: gql`
-        mutation DeleteOneFavorite($idToDelete: UUID!) {
+        mutation DeleteOneFavorite($idToDelete: ID!) {
           deleteFavorite(id: $idToDelete) {
             id
           }
@@ -197,7 +197,7 @@ export const mocks = [
     request: {
       query: gql`
         mutation UpdateOneFavorite(
-          $idToUpdate: UUID!
+          $idToUpdate: ID!
           $input: FavoriteUpdateInput!
         ) {
           updateFavorite(id: $idToUpdate, data: $input) {

@@ -10,6 +10,7 @@ export const settingsIntegrationPostgreSQLConnectionFormSchema = z.object({
   port: z.preprocess((val) => parseInt(val as string), z.number().positive()),
   username: z.string().min(1),
   password: z.string().min(1),
+  schema: z.string().min(1),
 });
 
 type SettingsIntegrationPostgreSQLConnectionFormValues = z.infer<
@@ -42,6 +43,7 @@ export const SettingsIntegrationPostgreSQLConnectionForm = () => {
         { name: 'port' as const, label: 'Port' },
         { name: 'username' as const, label: 'Username' },
         { name: 'password' as const, label: 'Password', type: 'password' },
+        { name: 'schema' as const, label: 'Schema' },
       ].map(({ name, label, type }) => (
         <Controller
           key={name}

@@ -14,6 +14,7 @@ import {
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
+import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
@@ -86,6 +87,9 @@ export class FieldMetadataEntity<
 
   @Column('jsonb', { nullable: true })
   options: FieldMetadataOptions<T>;
+
+  @Column('jsonb', { nullable: true })
+  settings?: FieldMetadataSettings<T>;
 
   @Column({ default: false })
   isCustom: boolean;

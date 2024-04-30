@@ -11,6 +11,7 @@ export {
   IconArrowDown,
   IconArrowLeft,
   IconArrowRight,
+  IconArrowsVertical,
   IconArrowUp,
   IconArrowUpRight,
   IconAt,

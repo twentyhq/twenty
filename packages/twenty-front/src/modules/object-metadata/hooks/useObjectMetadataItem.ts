@@ -14,6 +14,7 @@ export const useObjectMetadataItem = ({
 }: ObjectMetadataItemIdentifier) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
 
+  // Todo: deprecate this logic as mocked objectMetadataItems are laod in ObjectMetadataItemsLoadEffect anyway
   const mockObjectMetadataItems = getObjectMetadataItemsMock();
 
   let objectMetadataItem = useRecoilValue(
