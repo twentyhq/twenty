@@ -374,9 +374,7 @@ export class WorkspaceQueryRunnerService {
     const { userId, workspaceId, objectMetadataItem } = options;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
-    for (const record of args.data) {
-      assertIsValidUuid(record.id);
-    }
+    assertIsValidUuid(args.data.id);
 
     const maximumRecordAffected = this.environmentService.get(
       'MUTATION_MAXIMUM_RECORD_AFFECTED',
