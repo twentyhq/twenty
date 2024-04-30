@@ -29,8 +29,8 @@ export class GmailFetchMessagesFromCacheCronJob
   ) {}
 
   async handle(): Promise<void> {
-    const workspaceIds = await this.workspaceRepository
-      .find({
+    const workspaceIds = (
+      await this.workspaceRepository.find({
         where: this.environmentService.get('IS_BILLING_ENABLED')
           ? {
               subscriptionStatus: In(['active', 'trialing', 'past_due']),
@@ -38,7 +38,7 @@ export class GmailFetchMessagesFromCacheCronJob
           : {},
         select: ['id'],
       })
-      .then((workspaces) => workspaces.map((workspace) => workspace.id));
+    ).map((workspace) => workspace.id);
 
     const dataSources = await this.dataSourceRepository.find({
       where: {
