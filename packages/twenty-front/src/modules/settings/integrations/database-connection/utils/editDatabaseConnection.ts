@@ -25,15 +25,15 @@ export const getFormDefaultValuesFromConnection = ({
   connection,
 }: {
   databaseKey: string;
-  connection?: RemoteServer | null;
+  connection: RemoteServer;
 }) => {
   switch (databaseKey) {
     case 'postgresql':
       return {
-        dbname: connection?.foreignDataWrapperOptions.dbname,
-        host: connection?.foreignDataWrapperOptions.host,
-        port: connection?.foreignDataWrapperOptions.port,
-        username: connection?.userMappingOptions?.username || undefined,
+        dbname: connection.foreignDataWrapperOptions.dbname,
+        host: connection.foreignDataWrapperOptions.host,
+        port: connection.foreignDataWrapperOptions.port,
+        username: connection.userMappingOptions?.username || undefined,
         password: '',
       };
     default:

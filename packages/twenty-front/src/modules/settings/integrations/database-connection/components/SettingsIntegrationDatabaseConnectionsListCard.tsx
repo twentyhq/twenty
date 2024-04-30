@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { IconChevronRight } from 'twenty-ui';
 
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { SettingsIntegrationDatabaseConnectionSyncStatus } from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectionSyncStatus';
+import { SettingsIntegrationDatabaseConnectionSyncStatus } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionSyncStatus';
 import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
 import { getConnectionDbName } from '@/settings/integrations/utils/getConnectionDbName';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';

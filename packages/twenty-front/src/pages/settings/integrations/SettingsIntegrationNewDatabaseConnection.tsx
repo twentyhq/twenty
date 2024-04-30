@@ -13,7 +13,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import {
   SettingsIntegrationPostgreSQLConnectionForm,
   settingsIntegrationPostgreSQLConnectionFormSchema,
-} from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectionForm';
+} from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionForm';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';

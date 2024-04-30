@@ -8,32 +8,39 @@ import { z } from 'zod';
 import { useUpdateOneDatabaseConnection } from '@/databases/hooks/useUpdateOneDatabaseConnection';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
-import { SettingsIntegrationPostgreSQLConnectionForm } from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectionForm';
-import { SettingsIntegrationPostgreSQLConnectionFormEffect } from '@/settings/integrations/components/SettingsIntegrationPostgreSQLConnectionFormEffect';
-import { useDatabaseConnection } from '@/settings/integrations/hooks/useDatabaseConnection';
+import { SettingsIntegrationPostgreSQLConnectionForm } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionForm';
 import {
   formatValuesForUpdate,
   getEditionSchemaForForm,
-} from '@/settings/integrations/utils/editDatabaseConnection';
+  getFormDefaultValuesFromConnection,
+} from '@/settings/integrations/database-connection/utils/editDatabaseConnection';
+import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
+import { getConnectionDbName } from '@/settings/integrations/utils/getConnectionDbName';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Info } from '@/ui/display/info/components/Info';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { RemoteTableStatus } from '~/generated-metadata/graphql';
+import {
+  RemoteServer,
+  RemoteTable,
+  RemoteTableStatus,
+} from '~/generated-metadata/graphql';
 
-export const SettingsIntegrationEditDatabaseConnectionContainer = ({
+export const SettingsIntegrationEditDatabaseConnectionContent = ({
   connection,
   integration,
   databaseKey,
   tables,
+}: {
+  connection: RemoteServer;
+  integration: SettingsIntegration;
+  databaseKey: string;
+  tables: RemoteTable[];
 }) => {
   const { enqueueSnackBar } = useSnackBar();
   const navigate = useNavigate();
-
-  const { connection, integration, databaseKey, tables } =
-    useDatabaseConnection();
 
   const editConnectionSchema = getEditionSchemaForForm(databaseKey);
   type SettingsIntegrationEditConnectionFormValues = z.infer<
@@ -43,6 +50,10 @@ export const SettingsIntegrationEditDatabaseConnectionContainer = ({
   const formConfig = useForm<SettingsIntegrationEditConnectionFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(editConnectionSchema),
+    defaultValues: getFormDefaultValuesFromConnection({
+      databaseKey,
+      connection,
+    }),
   });
 
   const { updateOneDatabaseConnection } = useUpdateOneDatabaseConnection();
@@ -55,7 +66,7 @@ export const SettingsIntegrationEditDatabaseConnectionContainer = ({
     (table) => table?.status === RemoteTableStatus.Synced,
   );
 
-  const connectionName = 'toto';
+  const connectionName = getConnectionDbName({ integration, connection });
 
   const canSave =
     formConfig.formState.isDirty &&
@@ -89,11 +100,6 @@ export const SettingsIntegrationEditDatabaseConnectionContainer = ({
 
   return (
     <>
-      <SettingsIntegrationPostgreSQLConnectionFormEffect
-        formConfig={formConfig}
-        databaseKey={databaseKey}
-        connection={connection}
-      />
       <FormProvider
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...formConfig}

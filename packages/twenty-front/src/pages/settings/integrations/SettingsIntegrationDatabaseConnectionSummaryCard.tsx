@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { IconDotsVertical, IconPencil, IconTrash } from 'twenty-ui';
 
 import { SettingsSummaryCard } from '@/settings/components/SettingsSummaryCard';
-import { SettingsIntegrationDatabaseConnectionSyncStatus } from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectionSyncStatus';
+import { SettingsIntegrationDatabaseConnectionSyncStatus } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionSyncStatus';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
