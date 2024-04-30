@@ -3,6 +3,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { RecoilRoot } from 'recoil';
 import { IconsProvider } from 'twenty-ui';
 
+import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
 import { ApolloDevLogEffect } from '@/debug/components/ApolloDevLogEffect';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
@@ -23,17 +24,19 @@ const root = ReactDOM.createRoot(
 root.render(
   <RecoilRoot>
     <AppErrorBoundary>
-      <RecoilDebugObserverEffect />
-      <ApolloDevLogEffect />
-      <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-        <IconsProvider>
-          <ExceptionHandlerProvider>
-            <HelmetProvider>
-              <App />
-            </HelmetProvider>
-          </ExceptionHandlerProvider>
-        </IconsProvider>
-      </SnackBarProviderScope>
+      <CaptchaProvider>
+        <RecoilDebugObserverEffect />
+        <ApolloDevLogEffect />
+        <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+          <IconsProvider>
+            <ExceptionHandlerProvider>
+              <HelmetProvider>
+                <App />
+              </HelmetProvider>
+            </ExceptionHandlerProvider>
+          </IconsProvider>
+        </SnackBarProviderScope>
+      </CaptchaProvider>
     </AppErrorBoundary>
   </RecoilRoot>,
 );
