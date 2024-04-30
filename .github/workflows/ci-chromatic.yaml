@@ -27,17 +27,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18"
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/yarn-install
       - name: Front / Write .env
         run: |
           cd packages/twenty-front
           touch .env
           echo "REACT_APP_SERVER_BASE_URL: $REACT_APP_SERVER_BASE_URL" >> .env
-      - name: Front / Install Dependencies
-        run: yarn
       - name: Publish to Chromatic
         run: |
           cd packages/twenty-front

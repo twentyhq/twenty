@@ -1,4 +1,8 @@
 {
+  "namedInputs": {
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "sharedGlobals": ["{workspaceRoot}/.github/workflows/**/*"]
+  },
   "targetDefaults": {
     "build": {
       "cache": true,
@@ -9,17 +13,73 @@
       "dependsOn": ["^build"]
     },
     "lint": {
-      "cache": true
+      "executor": "@nx/eslint:lint",
+      "cache": true,
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "eslintConfig": "{projectRoot}/.eslintrc.cjs",
+        "cache": true,
+        "cacheLocation": "{workspaceRoot}/.cache/eslint",
+        "ignorePath": "{workspaceRoot}/.gitignore"
+      },
+      "configurations": {
+        "ci": { "cacheStrategy": "content" },
+        "fix": { "fix": true }
+      }
+    },
+    "fmt": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "prettier {args.files} --check --cache {args.cache} --cache-location {args.cacheLocation} --write {args.write} --cache-strategy {args.cacheStrategy}",
+        "cache": true,
+        "cacheLocation": "../../.cache/prettier/{projectRoot}",
+        "cacheStrategy": "metadata",
+        "write": false
+      },
+      "configurations": {
+        "ci": { "cacheStrategy": "content" },
+        "fix": { "write": true }
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsc -b tsconfig.json --incremental"
+      },
+      "configurations": {
+        "watch": { "watch": true }
+      }
     },
     "test": {
+      "executor": "@nx/jest:jest",
       "cache": true,
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "outputs": ["{projectRoot}/coverage"],
+      "options": {
+        "jestConfig": "{projectRoot}/jest.config.ts",
+        "coverage": true,
+        "coverageReporters": ["text-summary"],
+        "cacheDirectory": "../../.cache/jest/{projectRoot}"
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "maxWorkers": 3
+        },
+        "coverage": { "coverageReporters": ["lcov", "text"] },
+        "watch": { "watch": true }
+      }
     },
     "test:e2e": {
       "cache": true,
       "dependsOn": ["^build"]
     },
     "storybook:build": {
+      "executor": "@nx/storybook:build",
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": [
@@ -27,11 +87,51 @@
         "^default",
         "{projectRoot}/.storybook/**/*",
         "{projectRoot}/tsconfig.storybook.json"
-      ]
+      ],
+      "outputs": ["{options.outputDir}"],
+      "options": {
+        "outputDir": "{projectRoot}/storybook-static",
+        "configDir": "{projectRoot}/.storybook"
+      }
     },
     "storybook:dev": {
+      "executor": "@nx/storybook:storybook",
       "cache": true,
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "options": {
+        "configDir": "{projectRoot}/.storybook"
+      }
+    },
+    "storybook:static": {
+      "executor": "@nx/web:file-server",
+      "options": {
+        "staticFilePath": "{projectRoot}/storybook-static",
+        "watch": false
+      }
+    },
+    "storybook:test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "test-storybook --url {options.url} --maxWorkers=3 --coverage",
+          "nyc report --reporter=lcov --reporter=text-summary -t coverage/storybook --report-dir coverage/storybook --check-coverage"
+        ],
+        "parallel": false
+      }
+    },
+    "chromatic": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "cross-var chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name=storybook:build --exit-zero-on-changes={args.ci}",
+        "ci": false
+      },
+      "configurations": {
+        "ci": {
+          "ci": true
+        }
+      }
     },
     "@nx/jest:jest": {
       "cache": true,

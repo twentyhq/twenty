@@ -19,7 +19,7 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "../../dist/out-tsc",
+    "outDir": "../../.cache/tsc",
     "paths": {
       "@/*": ["packages/twenty-front/src/modules/*"],
       "~/*": ["packages/twenty-front/src/*"],

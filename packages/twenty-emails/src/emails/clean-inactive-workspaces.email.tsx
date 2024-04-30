@@ -4,7 +4,7 @@ import { HighlightedText } from 'src/components/HighlightedText';
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
 
-type CleanInactiveWorkspaceEmailData = {
+type CleanInactiveWorkspaceEmailProps = {
   daysLeft: number;
   userName: string;
   workspaceDisplayName: string;
@@ -14,7 +14,7 @@ export const CleanInactiveWorkspaceEmail = ({
   daysLeft,
   userName,
   workspaceDisplayName,
-}: CleanInactiveWorkspaceEmailData) => {
+}: CleanInactiveWorkspaceEmailProps) => {
   const dayOrDays = daysLeft > 1 ? 'days' : 'day';
   const remainingDays = daysLeft > 1 ? `${daysLeft} ` : '';
 
