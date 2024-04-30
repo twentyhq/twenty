@@ -1,9 +1,9 @@
 import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField';
+import { Tag } from '@/ui/display/tag/components/Tag';
 import {
   ExpandableList,
   ExpandableListProps,
-} from '@/ui/display/expandable-list/ExpandableList';
-import { Tag } from '@/ui/display/tag/components/Tag';
+} from '@/ui/layout/expandable-list/ExpandableList';
 
 type MultiSelectFieldDisplayProps = ExpandableListProps;
 export const MultiSelectFieldDisplay = ({

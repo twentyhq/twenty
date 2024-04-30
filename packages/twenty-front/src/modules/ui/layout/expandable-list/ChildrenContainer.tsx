@@ -1,7 +1,7 @@
 import { Dispatch, ReactElement, SetStateAction } from 'react';
 import styled from '@emotion/styled';
 
-import { ChildrenProperty } from '@/ui/display/expandable-list/ExpandableList';
+import { ChildrenProperty } from '@/ui/layout/expandable-list/ExpandableList';
 
 const StyledChildContainer = styled.div<{
   shrink?: number;
@@ -23,14 +23,12 @@ const StyledChildrenContainer = styled.div`
 export const ChildrenContainer = ({
   children,
   childrenProperties,
-  setChildrenProperties,
+  setChildrenWidths,
   isFocusedMode,
 }: {
   children: ReactElement[];
   childrenProperties: Record<number, ChildrenProperty>;
-  setChildrenProperties: Dispatch<
-    SetStateAction<Record<number, ChildrenProperty>>
-  >;
+  setChildrenWidths: Dispatch<SetStateAction<Record<number, number>>>;
   isFocusedMode: boolean;
 }) => {
   return (
@@ -40,13 +38,8 @@ export const ChildrenContainer = ({
           <StyledChildContainer
             ref={(el) => {
               if (!el || isFocusedMode) return;
-              setChildrenProperties((prevState) => {
-                prevState[index] = {
-                  ...prevState[index],
-                  width: el.getBoundingClientRect().width,
-                  shrink: 0,
-                  isVisible: true,
-                };
+              setChildrenWidths((prevState) => {
+                prevState[index] = el.getBoundingClientRect().width;
                 return prevState;
               });
             }}

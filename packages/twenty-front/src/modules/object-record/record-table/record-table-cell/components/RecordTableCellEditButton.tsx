@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { IconComponent } from 'twenty-ui';
 
-import { AnimationDivProps } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButton.tsx';
+import { AnimationDivProps } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButton';
 import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconButton';
 
 const StyledEditButtonContainer = styled(motion.div)`

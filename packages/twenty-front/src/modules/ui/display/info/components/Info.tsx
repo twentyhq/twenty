@@ -3,7 +3,7 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconInfoCircle } from 'twenty-ui';
 
-import { Button } from '@/ui/input/button/components/Button.tsx';
+import { Button } from '@/ui/input/button/components/Button';
 
 export type InfoAccent = 'blue' | 'danger';
 export type InfoProps = {

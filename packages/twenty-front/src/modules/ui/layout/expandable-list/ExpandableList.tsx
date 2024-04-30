@@ -4,10 +4,10 @@ import { offset, useFloating } from '@floating-ui/react';
 import { motion } from 'framer-motion';
 import { Chip, ChipVariant } from 'twenty-ui';
 
-import { AnimationDivProps } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButton.tsx';
-import { ChildrenContainer } from '@/ui/display/expandable-list/ChildrenContainer.tsx';
-import { getChipContentWidth } from '@/ui/display/expandable-list/getChipContentWidth.ts';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu.tsx';
+import { AnimationDivProps } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButton';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { ChildrenContainer } from '@/ui/layout/expandable-list/ChildrenContainer';
+import { getChipContentWidth } from '@/ui/layout/expandable-list/getChipContentWidth';
 
 const GAP_WIDTH = 4;
 
@@ -46,7 +46,6 @@ export type ExpandableListProps = {
 };
 
 export type ChildrenProperty = {
-  width: number;
   shrink: number;
   isVisible: boolean;
 };
@@ -54,17 +53,36 @@ export type ChildrenProperty = {
 export const ExpandableList = ({
   children,
   isHovered,
-  forceDisplayHiddenCount = false,
   reference,
+  forceDisplayHiddenCount = false,
   withOutline = false,
 }: {
   children: ReactElement[];
 } & ExpandableListProps) => {
   const [containerWidth, setContainerWidth] = useState(0);
   const [isDropdownMenuOpen, setIsDropdownMenuOpen] = useState(false);
-  const [childrenProperties, setChildrenProperties] = useState<
-    Record<number, ChildrenProperty>
-  >({});
+  const [childrenWidths, setChildrenWidths] = useState<Record<number, number>>(
+    {},
+  );
+  const getChildrenProperties = () => {
+    let cumulatedChildrenWidth = 0;
+    const result: Record<number, ChildrenProperty> = {};
+    Object.values(childrenWidths).forEach((width, index) => {
+      // Because there is a 4px gap between children
+      const childWidth = width + GAP_WIDTH;
+      let shrink = 1;
+      let isVisible = true;
+
+      if (cumulatedChildrenWidth > availableWidth) {
+        isVisible = false;
+      } else if (cumulatedChildrenWidth + childWidth <= availableWidth) {
+        shrink = 0;
+      }
+      result[index] = { shrink, isVisible };
+      cumulatedChildrenWidth += childWidth;
+    });
+    return result;
+  };
 
   // Because Chip width depends on the number of hidden children which depends on the Chip width, we have a circular dependency
   // To avoid it, we set the Chip width and make sure it can display its content (a number greater than 1)
@@ -72,14 +90,14 @@ export const ExpandableList = ({
   const chipContainerWidth = chipContentWidth + 2 * GAP_WIDTH; // Because Chip component has 4px padding-left and right
   const availableWidth = containerWidth - (chipContainerWidth + GAP_WIDTH); // Because there is a 4px gap between ChildrenContainer and ChipContainer
 
+  const isFocusedMode =
+    (isHovered || forceDisplayHiddenCount) &&
+    Object.values(childrenWidths).length > 0;
+
+  const childrenProperties = getChildrenProperties();
   const hiddenChildrenCount = Object.values(childrenProperties).filter(
     (childProperties) => !childProperties.isVisible,
   ).length;
-
-  const isFocusedMode =
-    (isHovered || forceDisplayHiddenCount) &&
-    Object.values(childrenProperties).length > 0;
-
   const displayHiddenCountChip = isFocusedMode && hiddenChildrenCount > 0;
 
   const { refs, floatingStyles } = useFloating({
@@ -100,31 +118,6 @@ export const ExpandableList = ({
     }
   }, [isHovered]);
 
-  useEffect(() => {
-    if (isFocusedMode) {
-      let cumulatedChildrenWidth = 0;
-      Object.values(childrenProperties).forEach((childProperties, index) => {
-        // Because there is a 4px gap between children
-        const childWidth = childProperties.width + GAP_WIDTH;
-        let shrink = 1;
-        let isVisible = true;
-
-        if (cumulatedChildrenWidth > availableWidth) {
-          isVisible = false;
-        } else if (cumulatedChildrenWidth + childWidth <= availableWidth) {
-          shrink = 0;
-        }
-        setChildrenProperties((prevState) => {
-          return {
-            ...prevState,
-            [index]: { width: prevState[index].width, shrink, isVisible },
-          };
-        });
-        cumulatedChildrenWidth += childWidth;
-      });
-    }
-  }, [isFocusedMode, childrenProperties, availableWidth]);
-
   return (
     <StyledContainer
       ref={(el) => {
@@ -134,7 +127,7 @@ export const ExpandableList = ({
     >
       <ChildrenContainer
         childrenProperties={childrenProperties}
-        setChildrenProperties={setChildrenProperties}
+        setChildrenWidths={setChildrenWidths}
         isFocusedMode={isFocusedMode}
       >
         {children}
