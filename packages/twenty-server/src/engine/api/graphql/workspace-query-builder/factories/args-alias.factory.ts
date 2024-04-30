@@ -5,7 +5,6 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 @Injectable()
 export class ArgsAliasFactory {
@@ -46,11 +45,6 @@ export class ArgsAliasFactory {
     for (const [key, value] of Object.entries(args)) {
       const fieldMetadata = fieldMetadataMap.get(key);
 
-      if (fieldMetadata?.type === FieldMetadataType.RAW_JSON) {
-        newArgs[key] = JSON.stringify(value);
-        continue;
-      }
-
       // If it's a composite type, we need to transform args to properly map column name
       if (
         fieldMetadata &&
@@ -82,11 +76,7 @@ export class ArgsAliasFactory {
               compositeProperty,
             );
 
-            if (compositeType.type === FieldMetadataType.RAW_JSON) {
-              newArgs[columnName] = JSON.stringify(subValue);
-            } else {
-              newArgs[columnName] = subValue;
-            }
+            newArgs[columnName] = subValue;
           }
         }
       } else if (fieldMetadata) {
