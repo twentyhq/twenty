@@ -1,5 +1,5 @@
 import { Command, CommandRunner } from 'nest-commander';
-import { DataSource, EntityManager } from 'typeorm';
+import { EntityManager } from 'typeorm';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { seedCompanies } from 'src/database/typeorm-seeds/workspace/companies';
@@ -11,7 +11,6 @@ import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_TWENTY_WORKSPACE_ID,
@@ -27,6 +26,10 @@ import { seedCalendarEvents } from 'src/database/typeorm-seeds/workspace/calenda
 import { seedCalendarChannels } from 'src/database/typeorm-seeds/workspace/calendar-channel';
 import { seedCalendarChannelEventAssociations } from 'src/database/typeorm-seeds/workspace/calendar-channel-event-association';
 import { seedCalendarEventParticipants } from 'src/database/typeorm-seeds/workspace/calendar-event-participants';
+import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
+import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
+import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 
 // TODO: implement dry-run
 @Command({
@@ -38,31 +41,27 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
   workspaceIds = [SEED_APPLE_WORKSPACE_ID, SEED_TWENTY_WORKSPACE_ID];
 
   constructor(
-    private readonly environmentService: EnvironmentService,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly objectMetadataService: ObjectMetadataService,
+    @InjectCacheStorage(CacheStorageNamespace.WorkspaceSchema)
+    private readonly workspaceSchemaCache: CacheStorageService,
   ) {
     super();
   }
 
   async run(): Promise<void> {
     try {
-      const dataSource = new DataSource({
-        url: this.environmentService.get('PG_DATABASE_URL'),
-        type: 'postgres',
-        logging: true,
-        schema: 'core',
-      });
-
       for (const workspaceId of this.workspaceIds) {
-        await dataSource.initialize();
+        await this.workspaceSchemaCache.flush();
 
-        await seedCoreSchema(dataSource, workspaceId);
+        await rawDataSource.initialize();
 
-        await dataSource.destroy();
+        await seedCoreSchema(rawDataSource, workspaceId);
+
+        await rawDataSource.destroy();
 
         const schemaName =
           await this.workspaceDataSourceService.createWorkspaceDBSchema(
@@ -171,11 +170,6 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
             );
           },
         );
-      } catch (error) {
-        console.error(error);
-      }
-
-      try {
       } catch (error) {
         console.error(error);
       }

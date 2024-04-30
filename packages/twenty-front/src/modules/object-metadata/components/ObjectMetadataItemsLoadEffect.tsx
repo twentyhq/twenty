@@ -4,6 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -19,10 +20,18 @@ export const ObjectMetadataItemsLoadEffect = () => {
   );
 
   useEffect(() => {
-    if (!isDeeplyEqual(objectMetadataItems, newObjectMetadataItems)) {
-      setObjectMetadataItems(newObjectMetadataItems);
+    const toSetObjectMetadataItems = isUndefinedOrNull(currentUser)
+      ? getObjectMetadataItemsMock()
+      : newObjectMetadataItems;
+    if (!isDeeplyEqual(objectMetadataItems, toSetObjectMetadataItems)) {
+      setObjectMetadataItems(toSetObjectMetadataItems);
     }
-  }, [newObjectMetadataItems, objectMetadataItems, setObjectMetadataItems]);
+  }, [
+    currentUser,
+    newObjectMetadataItems,
+    objectMetadataItems,
+    setObjectMetadataItems,
+  ]);
 
   return <></>;
 };

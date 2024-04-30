@@ -1,8 +1,6 @@
-import { useContext } from 'react';
 import { EntityChip, EntityChipVariant } from 'twenty-ui';
 
 import { useMapToObjectRecordIdentifier } from '@/object-metadata/hooks/useMapToObjectRecordIdentifier';
-import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
@@ -25,15 +23,7 @@ export const RecordChip = ({
     objectNameSingular,
   });
 
-  // Will only exists if the chip is inside a record table.
-  // This is temporary until we have the show page for remote objects.
-  const { isReadOnly } = useContext(RecordTableRowContext);
-
   const objectRecordIdentifier = mapToObjectRecordIdentifier(record);
-
-  const linkToEntity = isReadOnly
-    ? undefined
-    : objectRecordIdentifier.linkToShowPage;
 
   return (
     <EntityChip
@@ -43,7 +33,7 @@ export const RecordChip = ({
       avatarUrl={
         getImageAbsoluteURIOrBase64(objectRecordIdentifier.avatarUrl) || ''
       }
-      linkToEntity={linkToEntity}
+      linkToEntity={objectRecordIdentifier.linkToShowPage}
       maxWidth={maxWidth}
       className={className}
       variant={variant}

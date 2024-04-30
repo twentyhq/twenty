@@ -1,13 +1,12 @@
 {
   "name": "twenty-front",
-  "version": "0.4.0",
+  "version": "0.10.4",
   "private": true,
   "type": "module",
   "scripts": {
     "build": "npx vite build && sh ./scripts/inject-runtime-env.sh",
     "build:sourcemaps": "VITE_BUILD_SOURCEMAP=true NODE_OPTIONS=--max-old-space-size=3000 npx nx build",
     "start:prod": "NODE_ENV=production npx vite --host",
-    "storybook:build": "npx storybook build",
     "tsup": "npx tsup"
   },
   "engines": {
@@ -29,5 +28,8 @@
   },
   "msw": {
     "workerDirectory": "public"
+  },
+  "dependencies": {
+    "transliteration": "^2.3.5"
   }
 }

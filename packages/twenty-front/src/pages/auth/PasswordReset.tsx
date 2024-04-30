@@ -18,7 +18,7 @@ import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 import {
   useUpdatePasswordViaResetTokenMutation,
@@ -191,12 +191,11 @@ export const PasswordReset = () => {
               }}
             >
               <StyledInputContainer>
-                <TextInput
+                <TextInputV2
                   autoFocus
                   value={email}
                   placeholder="Email"
                   fullWidth
-                  disableHotkeys
                   disabled
                 />
               </StyledInputContainer>
@@ -218,7 +217,7 @@ export const PasswordReset = () => {
                   fieldState: { error },
                 }) => (
                   <StyledInputContainer>
-                    <TextInput
+                    <TextInputV2
                       autoFocus
                       value={value}
                       type="password"
@@ -227,7 +226,6 @@ export const PasswordReset = () => {
                       onChange={onChange}
                       error={error?.message}
                       fullWidth
-                      disableHotkeys
                     />
                   </StyledInputContainer>
                 )}

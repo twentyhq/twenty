@@ -17,6 +17,7 @@ export const SettingsAccountsSynchronizationStatus = ({
   return (
     <Status
       color={syncStatusOption?.color ?? 'gray'}
+      isLoaderVisible={syncStatus === 'ONGOING' || syncStatus === 'PENDING'}
       text={syncStatusOption?.label ?? 'Not synced'}
       weight="medium"
     />

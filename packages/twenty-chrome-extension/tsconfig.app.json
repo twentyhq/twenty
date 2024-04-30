@@ -1,14 +1,14 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc"
+    "outDir": "../../.cache/tsc"
   },
   "exclude": [
     "**/*.spec.ts",
     "**/*.test.ts",
     "**/*.spec.tsx",
     "**/*.test.tsx",
-    "jest.config.ts",
+    "jest.config.ts"
   ],
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
 }

@@ -6,6 +6,10 @@ import path from 'path';
 import rehypeSlug from 'rehype-slug';
 import gfm from 'remark-gfm';
 
+import ArticleEditContent from '@/app/_components/ui/layout/articles/ArticleEditContent';
+import ArticleLink from '@/app/_components/ui/layout/articles/ArticleLink';
+import ArticleWarning from '@/app/_components/ui/layout/articles/ArticleWarning';
+
 interface ItemInfo {
   title: string;
   position?: number;
@@ -103,6 +107,17 @@ export async function compileMDXFile(filePath: string, addToc = true) {
   const fileContent = fs.readFileSync(filePath, 'utf8');
   const compiled = await compileMDX<{ title: string; position?: number }>({
     source: fileContent,
+    components: {
+      ArticleWarning(properties) {
+        return <ArticleWarning {...properties} />;
+      },
+      ArticleEditContent(properties) {
+        return <ArticleEditContent {...properties} />;
+      },
+      ArticleLink(properties) {
+        return <ArticleLink {...properties} />;
+      },
+    },
     options: {
       parseFrontmatter: true,
       mdxOptions: {

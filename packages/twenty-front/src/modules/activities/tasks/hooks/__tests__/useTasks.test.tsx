@@ -49,7 +49,6 @@ const useActivitiesMock = jest.fn(
       activities: isCompletedFilter
         ? completedTasks
         : [...todayOrPreviousTasks, ...unscheduledTasks],
-      initialized: true,
     };
   },
 );
@@ -79,7 +78,6 @@ describe('useTasks', () => {
       upcomingTasks: [],
       unscheduledTasks,
       completedTasks,
-      initialized: true,
     });
   });
 });

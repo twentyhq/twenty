@@ -14,6 +14,7 @@ import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/consta
 import { MULTI_WORKSPACE_DROPDOWN_ID } from '@/ui/navigation/navigation-drawer/constants/MulitWorkspaceDropdownId';
 import { useWorkspaceSwitching } from '@/ui/navigation/navigation-drawer/hooks/useWorkspaceSwitching';
 import { NavigationDrawerHotKeyScope } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerHotKeyScope';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 const StyledLogo = styled.div<{ logo: string }>`
   background: url(${({ logo }) => logo});
@@ -86,9 +87,11 @@ export const MultiWorkspaceDropdownButton = ({
         <StyledContainer>
           <StyledLogo
             logo={
-              currentWorkspace?.logo === null
-                ? DEFAULT_WORKSPACE_LOGO
-                : currentWorkspace?.logo ?? ''
+              getImageAbsoluteURIOrBase64(
+                currentWorkspace?.logo === null
+                  ? DEFAULT_WORKSPACE_LOGO
+                  : currentWorkspace?.logo,
+              ) ?? ''
             }
           />
           <StyledLabel>{currentWorkspace?.displayName ?? ''}</StyledLabel>
@@ -107,9 +110,11 @@ export const MultiWorkspaceDropdownButton = ({
               avatar={
                 <StyledLogo
                   logo={
-                    workspace.logo === null
-                      ? DEFAULT_WORKSPACE_LOGO
-                      : workspace.logo ?? ''
+                    getImageAbsoluteURIOrBase64(
+                      workspace.logo === null
+                        ? DEFAULT_WORKSPACE_LOGO
+                        : workspace.logo,
+                    ) ?? ''
                   }
                 />
               }

@@ -10,7 +10,7 @@ import { DefaultLayout } from '@/ui/layout/page/DefaultLayout';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
-import Authorize from '~/pages/auth/Authorize';
+import { Authorize } from '~/pages/auth/Authorize';
 import { ChooseYourPlan } from '~/pages/auth/ChooseYourPlan.tsx';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';

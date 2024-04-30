@@ -1,13 +1,13 @@
 import { StoreValue } from '@apollo/client';
 import { z } from 'zod';
 
-import { CachedObjectRecordConnection } from '@/apollo/types/CachedObjectRecordConnection';
+import { RecordGqlRefConnection } from '@/object-record/cache/types/RecordGqlRefConnection';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const isObjectRecordConnectionWithRefs = (
   objectNameSingular: string,
   storeValue: StoreValue,
-): storeValue is CachedObjectRecordConnection => {
+): storeValue is RecordGqlRefConnection => {
   const objectConnectionTypeName = `${capitalize(
     objectNameSingular,
   )}Connection`;

@@ -6,9 +6,9 @@
   "type": "module",
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-chrome-extension node ../../node_modules/nx/bin/nx.js",
-    "clean": "rimraf ./dist",
-    "start": "yarn clean && vite",
-    "build": "yarn clean && tsc && vite build",
+    "clean": "npx rimraf ./dist",
+    "start": "yarn clean && VITE_MODE=development vite",
+    "build": "yarn clean && npx tsc && npx vite build",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs",
     "graphql:generate": "graphql-codegen",
     "fmt": "prettier --check \"src/**/*.ts\" \"src/**/*.tsx\"",

@@ -83,7 +83,7 @@ export class StandardRelationFactory {
 
     if (!objectMetadata) {
       throw new Error(
-        `Object metadata decorator not found, can\'t parse ${standardObjectMetadata.name}`,
+        `Object metadata decorator not found, can't parse ${standardObjectMetadata.name}`,
       );
     }
 
