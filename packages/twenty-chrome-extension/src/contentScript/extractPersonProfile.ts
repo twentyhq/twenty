@@ -98,15 +98,20 @@ export const insertButtonForPerson = async () => {
   const personButtonDiv = createDefaultButton('twenty-person-btn');
 
   if (isDefined(personButtonDiv)) {
-    const parentDiv: HTMLDivElement | null = document.querySelector(
-      '.pv-top-card-v2-ctas__custom',
+    const newProfileDiv: HTMLDivElement | null = document.querySelector(
+      '.uYcujyCsaDYxUNAaBqobOEpVeyuRkA',
     );
 
-    if (isDefined(parentDiv)) {
+    const addedProfileDiv: HTMLDivElement | null = document.querySelector(
+      '.bfrGGRhnbmPDHYJNAbYhQNzjVKlRysllNnuY',
+    );
+
+    if (isDefined(newProfileDiv) || isDefined(addedProfileDiv)) {
       Object.assign(personButtonDiv.style, {
         marginRight: '.8rem',
       });
-      parentDiv.prepend(personButtonDiv);
+      if (isDefined(newProfileDiv)) newProfileDiv.prepend(personButtonDiv);
+      else if (isDefined(addedProfileDiv)) addedProfileDiv.prepend(personButtonDiv);
     }
 
     const personButtonSpan = personButtonDiv.getElementsByTagName('span')[0];

@@ -43,7 +43,7 @@ export default defineManifest({
 
   web_accessible_resources: [
     {
-      resources: ['options.html'],
+      resources: ['options.html', 'page-inaccessible.html'],
       matches: ['https://www.linkedin.com/*'],
     },
   ],

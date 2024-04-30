@@ -148,7 +148,7 @@ chrome.tabs.onUpdated.addListener(async (tabId, _, tab) => {
 
   await chrome.sidePanel.setOptions({
     tabId,
-    path: isDefined(isDesiredRoute) ? 'options.html' : 'page-inaccessible.html',
+    path: tab.url?.match(/^https?:\/\/(?:www\.)?linkedin\.com/) ? 'options.html' : 'page-inaccessible.html',
     enabled: true,
   });
 });

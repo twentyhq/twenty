@@ -35,6 +35,8 @@ export default defineConfig(() => {
       hmr: { port: 3002 },
     },
 
+    cacheDir: './node_modules/.vite',
+
     plugins: [viteManifestHack, crx({ manifest }), react(), tsconfigPaths()],
   };
 });
