@@ -33,7 +33,6 @@ const StyledInputsContainer = styled.div`
 type SettingsIntegrationPostgreSQLConnectionFormProps = {
   disabled?: boolean;
   passwordPlaceholder?: string;
-  defaultValues?: any;
 };
 
 export const SettingsIntegrationPostgreSQLConnectionForm = ({

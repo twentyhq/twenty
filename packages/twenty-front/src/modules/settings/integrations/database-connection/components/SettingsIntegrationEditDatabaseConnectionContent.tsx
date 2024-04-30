@@ -105,21 +105,20 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
         {...formConfig}
       >
         <SettingsHeaderContainer>
-          {integration && (
-            <Breadcrumb
-              links={[
-                {
-                  children: 'Integrations',
-                  href: settingsIntegrationsPagePath,
-                },
-                {
-                  children: integration.text,
-                  href: `${settingsIntegrationsPagePath}/${databaseKey}`,
-                },
-                { children: connectionName },
-              ]}
-            />
-          )}
+          <Breadcrumb
+            links={[
+              {
+                children: 'Integrations',
+                href: settingsIntegrationsPagePath,
+              },
+              {
+                children: integration.text,
+                href: `${settingsIntegrationsPagePath}/${databaseKey}`,
+              },
+              { children: connectionName },
+            ]}
+          />
+          )
           <SaveAndCancelButtons
             isSaveDisabled={!canSave}
             onCancel={() =>
