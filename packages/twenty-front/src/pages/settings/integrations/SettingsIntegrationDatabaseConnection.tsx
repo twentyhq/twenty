@@ -15,7 +15,7 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { RemoteServer, RemoteTable } from '~/generated-metadata/graphql';
 import { SettingsIntegrationDatabaseConnectionSummaryCard } from '~/pages/settings/integrations/SettingsIntegrationDatabaseConnectionSummaryCard';
 
-export const SettingsIntegrationDatabaseConnection = () => {
+const SettingsIntegrationDatabaseConnectionWithoutWrapper = () => {
   const navigate = useNavigate();
   const { integration, connection, databaseKey, tables } = useContext(
     DatabaseConnectionContext,
@@ -47,7 +47,7 @@ export const SettingsIntegrationDatabaseConnection = () => {
   const connectionName = getConnectionDbName({ integration, connection });
 
   return (
-    <SettingsIntegrationDatabaseConnectionWrapper>
+    <>
       <Breadcrumb
         links={[
           {
@@ -83,6 +83,12 @@ export const SettingsIntegrationDatabaseConnection = () => {
           />
         )}
       </Section>
-    </SettingsIntegrationDatabaseConnectionWrapper>
+    </>
   );
 };
+
+export const SettingsIntegrationDatabaseConnection = () => (
+  <SettingsIntegrationDatabaseConnectionWrapper>
+    <SettingsIntegrationDatabaseConnectionWithoutWrapper />
+  </SettingsIntegrationDatabaseConnectionWrapper>
+);

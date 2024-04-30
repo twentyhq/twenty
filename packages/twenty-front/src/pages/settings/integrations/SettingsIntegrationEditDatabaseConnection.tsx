@@ -31,7 +31,7 @@ import {
   RemoteTableStatus,
 } from '~/generated-metadata/graphql';
 
-export const SettingsIntegrationEditDatabaseConnection = () => {
+const SettingsIntegrationEditDatabaseConnectionWithoutWrapper = () => {
   const { enqueueSnackBar } = useSnackBar();
   const navigate = useNavigate();
 
@@ -100,7 +100,7 @@ export const SettingsIntegrationEditDatabaseConnection = () => {
   };
 
   return (
-    <SettingsIntegrationDatabaseConnectionWrapper>
+    <>
       <FormProvider
         // eslint-disable-next-line react/jsx-props-no-spreading
         {...formConfig}
@@ -148,6 +148,12 @@ export const SettingsIntegrationEditDatabaseConnection = () => {
           </Section>
         ) : null}
       </FormProvider>
-    </SettingsIntegrationDatabaseConnectionWrapper>
+    </>
   );
 };
+
+export const SettingsIntegrationEditDatabaseConnection = () => (
+  <SettingsIntegrationDatabaseConnectionWrapper>
+    <SettingsIntegrationEditDatabaseConnectionWithoutWrapper />
+  </SettingsIntegrationDatabaseConnectionWrapper>
+);
