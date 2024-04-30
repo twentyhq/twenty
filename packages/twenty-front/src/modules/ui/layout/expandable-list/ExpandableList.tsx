@@ -143,7 +143,6 @@ export const ExpandableList = ({
             label={`+${hiddenChildrenCount}`}
             variant={ChipVariant.Highlighted}
             onClick={openDropdownMenu}
-            width={chipContentWidth}
           />
         </StyledAnimatedChipContainer>
       )}

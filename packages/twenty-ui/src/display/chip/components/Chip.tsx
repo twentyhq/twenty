@@ -27,7 +27,6 @@ type ChipProps = {
   clickable?: boolean;
   label: string;
   maxWidth?: number;
-  width?: number;
   variant?: ChipVariant;
   accent?: ChipAccent;
   leftComponent?: ReactNode;
@@ -39,13 +38,7 @@ type ChipProps = {
 const StyledContainer = styled.div<
   Pick<
     ChipProps,
-    | 'accent'
-    | 'clickable'
-    | 'disabled'
-    | 'width'
-    | 'maxWidth'
-    | 'size'
-    | 'variant'
+    'accent' | 'clickable' | 'disabled' | 'maxWidth' | 'size' | 'variant'
   >
 >`
   --chip-horizontal-padding: ${({ theme }) => theme.spacing(1)};
@@ -59,9 +52,9 @@ const StyledContainer = styled.div<
     clickable ? 'pointer' : disabled ? 'not-allowed' : 'inherit'};
   display: inline-flex;
   flex-direction: row-reverse;
+  justify-content: center;
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ theme }) => theme.spacing(3)};
-  width: ${({ width }) => `${width}px` || 'auto'};
   max-width: ${({ maxWidth }) =>
     maxWidth
       ? `calc(${maxWidth}px - 2 * var(--chip-horizontal-padding))`
@@ -163,7 +156,6 @@ export const Chip = ({
   leftComponent,
   rightComponent,
   accent = ChipAccent.TextPrimary,
-  width,
   maxWidth,
   className,
   onClick,
@@ -176,7 +168,6 @@ export const Chip = ({
     size={size}
     disabled={disabled}
     className={className}
-    width={width}
     maxWidth={maxWidth}
     onClick={onClick}
   >
