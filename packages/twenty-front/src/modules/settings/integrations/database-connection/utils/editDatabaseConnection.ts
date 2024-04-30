@@ -1,18 +1,13 @@
 import { identity, isEmpty, pickBy } from 'lodash';
 import { z } from 'zod';
 
+import { settingsIntegrationPostgreSQLConnectionFormSchema } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionForm';
 import { RemoteServer } from '~/generated-metadata/graphql';
 
 export const getEditionSchemaForForm = (databaseKey: string) => {
   switch (databaseKey) {
     case 'postgresql':
-      return z.object({
-        dbname: z.string().optional(),
-        host: z.string().optional(),
-        port: z
-          .preprocess((val) => parseInt(val as string), z.number().positive())
-          .optional(),
-        username: z.string().optional(),
+      return settingsIntegrationPostgreSQLConnectionFormSchema.extend({
         password: z.string().optional(),
       });
     default:
@@ -34,6 +29,7 @@ export const getFormDefaultValuesFromConnection = ({
         host: connection.foreignDataWrapperOptions.host,
         port: connection.foreignDataWrapperOptions.port,
         username: connection.userMappingOptions?.username || undefined,
+        schema: connection.schema || undefined,
         password: '',
       };
     default:
@@ -68,6 +64,7 @@ export const formatValuesForUpdate = ({
           },
           identity,
         ),
+        schema: formValues.schema,
       };
 
       return pickBy(formattedValues, (obj) => !isEmpty(obj));

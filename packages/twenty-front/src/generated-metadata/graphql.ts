@@ -220,6 +220,7 @@ export type CreateRelationInput = {
 export type CreateRemoteServerInput = {
   foreignDataWrapperOptions: Scalars['JSON']['input'];
   foreignDataWrapperType: Scalars['String']['input'];
+  schema?: InputMaybe<Scalars['String']['input']>;
   userMappingOptions?: InputMaybe<UserMappingOptionsInput>;
 };
 
@@ -788,6 +789,7 @@ export type RelationDeleteResponse = {
 /** Type of the relation */
 export enum RelationMetadataType {
   ManyToMany = 'MANY_TO_MANY',
+  ManyToOne = 'MANY_TO_ONE',
   OneToMany = 'ONE_TO_MANY',
   OneToOne = 'ONE_TO_ONE'
 }
@@ -799,6 +801,7 @@ export type RemoteServer = {
   foreignDataWrapperOptions?: Maybe<Scalars['JSON']['output']>;
   foreignDataWrapperType: Scalars['String']['output'];
   id: Scalars['ID']['output'];
+  schema: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
   userMappingOptions?: Maybe<GetUserMappingOptions>;
 };
@@ -1008,6 +1011,7 @@ export type UpdateOneObjectInput = {
 export type UpdateRemoteServerInput = {
   foreignDataWrapperOptions?: InputMaybe<Scalars['JSON']['input']>;
   id: Scalars['String']['input'];
+  schema?: InputMaybe<Scalars['String']['input']>;
   userMappingOptions?: InputMaybe<UserMappingOptionsInput>;
 };
 

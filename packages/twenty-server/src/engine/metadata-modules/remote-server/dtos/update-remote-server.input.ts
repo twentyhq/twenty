@@ -21,4 +21,8 @@ export class UpdateRemoteServerInput<T extends RemoteServerType> {
   @IsOptional()
   @Field(() => UserMappingOptionsInput, { nullable: true })
   userMappingOptions?: Partial<UserMappingOptionsInput>;
+
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  schema?: string;
 }

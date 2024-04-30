@@ -68,10 +68,8 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
 
   const connectionName = getConnectionDbName({ integration, connection });
 
-  const canSave =
-    formConfig.formState.isDirty &&
-    formConfig.formState.isValid &&
-    !hasSyncedTables;
+  const { isDirty, isValid } = formConfig.formState;
+  const canSave = !hasSyncedTables && isDirty && isValid;
 
   const handleSave = async () => {
     const formValues = formConfig.getValues();
@@ -118,7 +116,6 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
               { children: connectionName },
             ]}
           />
-          )
           <SaveAndCancelButtons
             isSaveDisabled={!canSave}
             onCancel={() =>

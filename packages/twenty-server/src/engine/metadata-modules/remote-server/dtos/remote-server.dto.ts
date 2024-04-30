@@ -28,6 +28,10 @@ export class RemoteServerDTO<T extends RemoteServerType> {
   @Field(() => GetUserMappingOptions, { nullable: true })
   userMappingOptions?: GetUserMappingOptions;
 
+  @IsOptional()
+  @Field(() => String)
+  schema?: string;
+
   @HideField()
   workspaceId: string;
 
