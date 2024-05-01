@@ -114,7 +114,7 @@
       "options": {
         "cwd": "{projectRoot}",
         "commands": [
-          "test-storybook --url {options.url} --maxWorkers=3 --coverage",
+          "test-storybook --url {args.url} --maxWorkers=3 --coverage",
           "nyc report --reporter=lcov --reporter=text-summary -t coverage/storybook --report-dir coverage/storybook --check-coverage"
         ],
         "parallel": false
