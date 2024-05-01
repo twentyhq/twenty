@@ -284,7 +284,6 @@ export const SettingsObjectNewFieldStep2 = () => {
     FieldMetadataType.Link,
     FieldMetadataType.Links,
     FieldMetadataType.Numeric,
-    FieldMetadataType.Phone,
     FieldMetadataType.Probability,
     FieldMetadataType.Uuid,
   ];
