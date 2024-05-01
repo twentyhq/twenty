@@ -212,6 +212,7 @@ export enum FieldMetadataType {
   Email = 'EMAIL',
   FullName = 'FULL_NAME',
   Link = 'LINK',
+  Links = 'LINKS',
   MultiSelect = 'MULTI_SELECT',
   Number = 'NUMBER',
   Numeric = 'NUMERIC',

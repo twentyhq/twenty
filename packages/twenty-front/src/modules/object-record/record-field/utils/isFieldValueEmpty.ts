@@ -11,6 +11,8 @@ import { isFieldEmail } from '@/object-record/record-field/types/guards/isFieldE
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
 import { isFieldLink } from '@/object-record/record-field/types/guards/isFieldLink';
+import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
+import { isFieldLinksValue } from '@/object-record/record-field/types/guards/isFieldLinksValue';
 import { isFieldLinkValue } from '@/object-record/record-field/types/guards/isFieldLinkValue';
 import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
 import { isFieldMultiSelectValue } from '@/object-record/record-field/types/guards/isFieldMultiSelectValue';
@@ -92,6 +94,12 @@ export const isFieldValueEmpty = ({
         isValueEmpty(fieldValue?.addressState) &&
         isValueEmpty(fieldValue?.addressPostcode) &&
         isValueEmpty(fieldValue?.addressCountry))
+    );
+  }
+
+  if (isFieldLinks(fieldDefinition)) {
+    return (
+      !isFieldLinksValue(fieldValue) || isValueEmpty(fieldValue.primaryLinkUrl)
     );
   }
 
