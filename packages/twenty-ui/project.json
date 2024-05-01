@@ -34,22 +34,14 @@
     },
     "fmt": {
       "options": {
-        "jestConfig": "{projectRoot}/jest.config.ts"
+        "files": "src"
       },
       "configurations": {
-        "ci": { "args": [] },
-        "watch": { "watch": true }
-      }
-    },
-    "typecheck": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "tsc -b tsconfig.json",
-        "args": ["--incremental"]
+        "fix": {}
       }
     },
     "test": {},
+    "typecheck": {},
     "storybook:build": {},
     "storybook:dev": {
       "options": { "port": 6007 }
