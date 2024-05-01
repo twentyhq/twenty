@@ -42,8 +42,8 @@ export const generateCsv: GenerateExport = ({
 
   const keys = columnsToExport.flatMap((col) => {
     const column = {
-      field: col.metadata.fieldName,
-      title: col.label,
+      field: `${col.metadata.fieldName}${col.type === 'RELATION' ? 'Id' : ''}`,
+      title: `${col.label} ${col.type === 'RELATION' ? 'Id' : ''}`,
     };
 
     const fieldsWithSubFields = rows.find((row) => {
@@ -59,9 +59,7 @@ export const generateCsv: GenerateExport = ({
       const nestedFieldsWithoutTypename = Object.keys(
         (fieldsWithSubFields as any)[column.field],
       )
-        .filter((key) =>
-          col.type === 'RELATION' ? key === 'id' : key !== '__typename',
-        )
+        .filter((key) => key !== '__typename')
         .map((key) => ({
           field: `${column.field}.${key}`,
           title: `${column.title} ${key[0].toUpperCase() + key.slice(1)}`,
