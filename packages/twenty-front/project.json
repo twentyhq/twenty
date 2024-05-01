@@ -60,13 +60,46 @@
     },
     "test": {},
     "storybook:build": {},
+    "storybook:build:scope": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nx storybook:build twenty-front"
+      },
+      "configurations": {
+        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
+        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
+        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } }
+      }
+    },
     "storybook:dev": {
       "options": { "port": 6006 }
+    },
+    "storybook:dev:scope": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nx storybook:dev twenty-front"
+      },
+      "configurations": {
+        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
+        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
+        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } }
+      }
     },
     "storybook:static": {
       "options": {
         "buildTarget": "twenty-front:storybook:build",
         "port": 6006
+      }
+    },
+    "storybook:static:scope": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nx storybook:static twenty-front"
+      },
+      "configurations": {
+        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
+        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
+        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } }
       }
     },
     "storybook:test": {
