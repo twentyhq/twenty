@@ -85,7 +85,7 @@ export class CreateCompanyService {
 
     const { name, city } = await this.getCompanyInfoFromDomainName(domainName);
 
-    this.companyRepository.createCompany(
+    await this.companyRepository.createCompany(
       workspaceId,
       {
         id: companyId,

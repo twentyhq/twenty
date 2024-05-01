@@ -335,7 +335,7 @@
   "version": "0.2.1",
   "nx": {},
   "scripts": {
-    "start": "nx run-many -t start -p twenty-server twenty-front"
+    "start": "npx nx run-many -t start -p twenty-server twenty-front"
   },
   "workspaces": {
     "packages": [

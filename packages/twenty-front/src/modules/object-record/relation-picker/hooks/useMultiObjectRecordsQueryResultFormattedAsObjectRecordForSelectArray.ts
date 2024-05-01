@@ -3,12 +3,12 @@ import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsByNamePluralMapSelector } from '@/object-metadata/states/objectMetadataItemsByNamePluralMapSelector';
 import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
+import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
-import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
 import { isDefined } from '~/utils/isDefined';
 
 export type MultiObjectRecordQueryResult = {
-  [namePlural: string]: ObjectRecordConnection;
+  [namePlural: string]: RecordGqlConnection;
 };
 
 export const useMultiObjectRecordsQueryResultFormattedAsObjectRecordForSelectArray =

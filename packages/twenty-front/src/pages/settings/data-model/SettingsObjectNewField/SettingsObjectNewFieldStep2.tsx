@@ -4,12 +4,12 @@ import { Reference, useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { IconSettings } from 'twenty-ui';
 
-import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -252,7 +252,7 @@ export const SettingsObjectNewFieldStep2 = () => {
             cache: cache,
             fieldModifiers: {
               viewFields: (cachedViewFieldsConnection, { readField }) => {
-                const edges = readField<CachedObjectRecordEdge[]>(
+                const edges = readField<RecordGqlRefEdge[]>(
                   'edges',
                   cachedViewFieldsConnection,
                 );

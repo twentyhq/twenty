@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
@@ -16,8 +15,6 @@ export const useActivityTargetsForTargetableObject = ({
     nameSingular: targetableObject.targetObjectNameSingular,
   });
 
-  const [initialized, setInitialized] = useState(false);
-
   const targetableObjectId = targetableObject.id;
 
   const skipRequest = !isNonEmptyString(targetableObjectId);
@@ -34,16 +31,10 @@ export const useActivityTargetsForTargetableObject = ({
           eq: targetableObject.id,
         },
       },
-      onCompleted: () => {
-        if (!initialized) {
-          setInitialized(true);
-        }
-      },
     });
 
   return {
     activityTargets,
     loadingActivityTargets,
-    initialized,
   };
 };

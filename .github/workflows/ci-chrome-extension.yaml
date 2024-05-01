@@ -15,33 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  chrome-extension-yarn-install:
-    runs-on: ci-8-cores
-    env:
-      VITE_SERVER_BASE_URL: http://localhost:3000
-      VITE_FRONT_BASE_URL: http://localhost:3001
-    steps:
-      - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18"
-      - name: Cache chrome extension node modules
-        uses: actions/cache@v3
-        with:
-          path: packages/twenty-chrome-extension/node_modules
-          key: chrome-extension-node_modules-${{hashFiles('yarn.lock')}}
-          restore-keys: chrome-extension-node_modules-
-      - name: Cache root node modules
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: root-node_modules-${{hashFiles('yarn.lock')}}
-          restore-keys: root-node_modules-
-      - name: Chrome Extension / Install Dependencies
-        run: yarn
   chrome-extension-build:
-    needs: chrome-extension-yarn-install
     runs-on: ubuntu-latest
     env:
       VITE_SERVER_BASE_URL: http://localhost:3000
@@ -52,21 +26,7 @@ jobs:
         with:
             access_token: ${{ github.token }}
       - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18"
-      - name: Cache chrome extension node modules
-        uses: actions/cache@v3
-        with:
-          path: packages/twenty-chrome-extension/node_modules
-          key: chrome-extension-node_modules-${{hashFiles('yarn.lock')}}
-          restore-keys: chrome-extension-node_modules-
-      - name: Cache root node modules
-        uses: actions/cache@v3
-        with:
-          path: node_modules
-          key: root-node_modules-${{hashFiles('yarn.lock')}}
-          restore-keys: root-node_modules-
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/yarn-install
       - name: Chrome Extension / Run build
         run: npx nx build twenty-chrome-extension

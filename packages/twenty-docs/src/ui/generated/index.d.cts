@@ -37,6 +37,8 @@ declare const lightTheme: {
         overlay: string;
         radialGradient: string;
         radialGradientHover: string;
+        primaryInverted: string;
+        primaryInvertedHover: string;
     };
     border: {
         radius: {

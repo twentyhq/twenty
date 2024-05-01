@@ -1,9 +1,9 @@
 import { atom } from 'recoil';
 
-import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
+import { RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
 
 export const currentIncompleteTaskQueryVariablesState =
-  atom<ObjectRecordQueryVariables | null>({
+  atom<RecordGqlOperationVariables | null>({
     default: null,
     key: 'currentIncompleteTaskQueryVariablesState',
   });

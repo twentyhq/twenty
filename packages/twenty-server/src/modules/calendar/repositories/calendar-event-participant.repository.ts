@@ -162,7 +162,6 @@ export class CalendarEventParticipantRepository {
 
   public async updateCalendarEventParticipantsAndReturnNewOnes(
     calendarEventParticipants: CalendarEventParticipant[],
-    iCalUIDCalendarEventIdMap: Map<string, string>,
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<CalendarEventParticipant[]> {
@@ -173,10 +172,10 @@ export class CalendarEventParticipantRepository {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const calendarEventIds = Array.from(iCalUIDCalendarEventIdMap.values());
-
     const existingCalendarEventParticipants = await this.getByCalendarEventIds(
-      calendarEventIds,
+      calendarEventParticipants.map(
+        (calendarEventParticipant) => calendarEventParticipant.calendarEventId,
+      ),
       workspaceId,
       transactionManager,
     );
@@ -205,23 +204,17 @@ export class CalendarEventParticipantRepository {
       transactionManager,
     );
 
-    const values = calendarEventParticipants.map(
-      (calendarEventParticipant) => ({
-        ...calendarEventParticipant,
-        calendarEventId: iCalUIDCalendarEventIdMap.get(
-          calendarEventParticipant.iCalUID,
-        ),
-      }),
-    );
-
     const { flattenedValues, valuesString } =
-      getFlattenedValuesAndValuesStringForBatchRawQuery(values, {
-        calendarEventId: 'uuid',
-        handle: 'text',
-        displayName: 'text',
-        isOrganizer: 'boolean',
-        responseStatus: `${dataSourceSchema}."calendarEventParticipant_responsestatus_enum"`,
-      });
+      getFlattenedValuesAndValuesStringForBatchRawQuery(
+        calendarEventParticipants,
+        {
+          calendarEventId: 'uuid',
+          handle: 'text',
+          displayName: 'text',
+          isOrganizer: 'boolean',
+          responseStatus: `${dataSourceSchema}."calendarEventParticipant_responsestatus_enum"`,
+        },
+      );
 
     await this.workspaceDataSourceService.executeRawQuery(
       `UPDATE ${dataSourceSchema}."calendarEventParticipant" AS "calendarEventParticipant"

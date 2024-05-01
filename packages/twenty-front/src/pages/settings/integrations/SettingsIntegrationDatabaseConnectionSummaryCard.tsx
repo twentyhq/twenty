@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
-import { IconDotsVertical, IconTrash } from 'twenty-ui';
+import { IconDotsVertical, IconPencil, IconTrash } from 'twenty-ui';
 
 import { SettingsSummaryCard } from '@/settings/components/SettingsSummaryCard';
-import { SettingsIntegrationDatabaseConnectionSyncStatus } from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectionSyncStatus';
+import { SettingsIntegrationDatabaseConnectionSyncStatus } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionSyncStatus';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -14,6 +14,7 @@ type SettingsIntegrationDatabaseConnectionSummaryCardProps = {
   connectionId: string;
   connectionName: string;
   onRemove: () => void;
+  onEdit: () => void;
 };
 
 const StyledDatabaseLogoContainer = styled.div`
@@ -33,6 +34,7 @@ export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
   connectionId,
   connectionName,
   onRemove,
+  onEdit,
 }: SettingsIntegrationDatabaseConnectionSummaryCardProps) => {
   const dropdownId =
     'settings-integration-database-connection-summary-card-dropdown';
@@ -65,6 +67,11 @@ export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
                     LeftIcon={IconTrash}
                     text="Remove"
                     onClick={onRemove}
+                  />
+                  <MenuItem
+                    LeftIcon={IconPencil}
+                    text="Edit"
+                    onClick={onEdit}
                   />
                 </DropdownMenuItemsContainer>
               </DropdownMenu>

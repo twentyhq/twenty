@@ -3,10 +3,9 @@ import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { MAX_QUERY_DEPTH_FOR_CACHE_INJECTION } from '@/object-record/cache/constants/MaxQueryDepthForCacheInjection';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
+import { RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
 import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 
 export const useUpsertFindManyRecordsQueryInCache = ({
@@ -22,22 +21,19 @@ export const useUpsertFindManyRecordsQueryInCache = ({
     T extends ObjectRecord = ObjectRecord,
   >({
     queryVariables,
-    depth = MAX_QUERY_DEPTH_FOR_CACHE_INJECTION,
     objectRecordsToOverwrite,
-    queryFields,
+    recordGqlFields,
     computeReferences = false,
   }: {
-    queryVariables: ObjectRecordQueryVariables;
-    depth?: number;
+    queryVariables: RecordGqlOperationVariables;
     objectRecordsToOverwrite: T[];
-    queryFields?: Record<string, any>;
+    recordGqlFields?: Record<string, any>;
     computeReferences?: boolean;
   }) => {
     const findManyRecordsQueryForCacheOverwrite = generateFindManyRecordsQuery({
       objectMetadataItem,
       objectMetadataItems,
-      depth,
-      queryFields,
+      recordGqlFields,
       computeReferences,
     });
 
@@ -45,7 +41,7 @@ export const useUpsertFindManyRecordsQueryInCache = ({
       objectMetadataItems: objectMetadataItems,
       objectMetadataItem: objectMetadataItem,
       records: objectRecordsToOverwrite,
-      queryFields,
+      recordGqlFields,
       computeReferences,
     });
 
