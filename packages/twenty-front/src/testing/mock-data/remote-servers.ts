@@ -11,7 +11,7 @@ export const mockedRemoteServers = [
     },
     foreignDataWrapperType: 'postgres_fdw',
     userMappingOptions: {
-      __typename: 'GetUserMappingOptions',
+      __typename: 'UserMappingOptionsDTO',
       username: 'twenty',
     },
     updatedAt: '2024-04-30T13:41:25.858Z',

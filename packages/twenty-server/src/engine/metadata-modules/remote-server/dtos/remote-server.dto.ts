@@ -3,11 +3,11 @@ import { ObjectType, Field, HideField, ID } from '@nestjs/graphql';
 import { IsOptional } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
 
+import { UserMappingOptionsDTO } from 'src/engine/metadata-modules/remote-server/dtos/user-mapping-dto';
 import {
   ForeignDataWrapperOptions,
   RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
-import { GetUserMappingOptions } from 'src/engine/metadata-modules/remote-server/utils/user-mapping-options.utils';
 
 @ObjectType('RemoteServer')
 export class RemoteServerDTO<T extends RemoteServerType> {
@@ -25,8 +25,8 @@ export class RemoteServerDTO<T extends RemoteServerType> {
   foreignDataWrapperOptions?: ForeignDataWrapperOptions<T>;
 
   @IsOptional()
-  @Field(() => GetUserMappingOptions, { nullable: true })
-  userMappingOptions?: GetUserMappingOptions;
+  @Field(() => UserMappingOptionsDTO, { nullable: true })
+  userMappingOptions?: UserMappingOptionsDTO;
 
   @IsOptional()
   @Field(() => String, { nullable: true })

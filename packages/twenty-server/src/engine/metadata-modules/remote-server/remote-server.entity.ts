@@ -10,7 +10,7 @@ import {
 } from 'typeorm';
 
 import { RemoteTableEntity } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.entity';
-import { UserMappingOptionsInput as UserMappingOptions } from 'src/engine/metadata-modules/remote-server/utils/user-mapping-options.utils';
+import { UserMappingOptions } from 'src/engine/metadata-modules/remote-server/utils/user-mapping-options.utils';
 import { DistantTables } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/types/distant-table';
 
 export enum RemoteServerType {
