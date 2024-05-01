@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import UserGuideCard from '@/app/_components/user-guide/UserGuideCard';
-import { USER_GUIDE_HOME_CARDS } from '@/content/user-guide/constants/UserGuideHomeCards';
+import { UserGuideArticlesProps } from '@/content/user-guide/constants/getUserGuideArticles';
 
 const StyledContainer = styled.div`
   ${mq({
@@ -21,11 +21,13 @@ const StyledWrapper = styled.div`
   flex-direction: column;
   width: 100%;
 
-  @media (max-width: 800px) {
-    padding: ${Theme.spacing(10)} 24px ${Theme.spacing(20)};
+  @media (max-width: 450px) {
+    padding: ${Theme.spacing(10)} 30px ${Theme.spacing(20)};
+    align-items: center;
   }
 
-  @media (max-width: 800px) {
+  @media (min-width: 450px) and (max-width: 800px) {
+    padding: ${Theme.spacing(10)} 50px ${Theme.spacing(20)};
     align-items: center;
   }
 `;
@@ -35,12 +37,11 @@ const StyledTitle = styled.div`
   color: ${Theme.text.color.quarternary};
   font-weight: ${Theme.font.weight.medium};
   margin-bottom: 32px;
-  @media (min-width: 380px) and (max-width: 800px) {
+  width: 100%;
+
+  @media (min-width: 450px) and (max-width: 800px) {
     width: 340px;
     margin-bottom: 24px;
-  }
-  @media (max-width: 380px) {
-    width: 280px;
   }
 `;
 
@@ -48,11 +49,10 @@ const StyledHeader = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0px;
-  @media (min-width: 380px) and (max-width: 800px) {
+  width: 100%;
+  @media (min-width: 450px) and (max-width: 1200px) {
     width: 340px;
-  }
-  @media (max-width: 380px) {
-    width: 280px;
+    margin-bottom: 24px;
   }
 `;
 
@@ -87,15 +87,19 @@ const StyledContent = styled.div`
     gridTemplateColumns: 'auto auto',
     gap: `${Theme.spacing(6)}`,
   })};
-  @media (max-width: 810px) {
-    align-items: center;
-  }
-  @media (min-width: 1200px) {
-    justify-content: left;
+  @media (min-width: 450px) {
+    justify-content: flex-start;
+    width: 340px;
   }
 `;
 
-export default function UserGuideMain() {
+interface UserGuideProps {
+  userGuideArticleCards: UserGuideArticlesProps[];
+}
+
+export default function UserGuideMain({
+  userGuideArticleCards,
+}: UserGuideProps) {
   return (
     <StyledContainer>
       <StyledWrapper>
@@ -107,7 +111,7 @@ export default function UserGuideMain() {
           </StyledSubHeading>
         </StyledHeader>
         <StyledContent>
-          {USER_GUIDE_HOME_CARDS.map((card) => {
+          {userGuideArticleCards.map((card) => {
             return <UserGuideCard key={card.title} card={card} />;
           })}
         </StyledContent>
