@@ -4,6 +4,7 @@ import { Key } from 'ts-key-enum';
 import { IconPlus } from 'twenty-ui';
 
 import { useLinksField } from '@/object-record/record-field/meta-types/hooks/useLinksField';
+import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { LinkDisplay } from '@/ui/field/display/components/LinkDisplay';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
@@ -23,9 +24,13 @@ const StyledDropdownMenu = styled(DropdownMenu)`
 
 export type LinksFieldInputProps = {
   onCancel?: () => void;
+  onSubmit?: FieldInputEvent;
 };
 
-export const LinksFieldInput = ({ onCancel }: LinksFieldInputProps) => {
+export const LinksFieldInput = ({
+  onCancel,
+  onSubmit,
+}: LinksFieldInputProps) => {
   const { persistLinksField, hotkeyScope, fieldValue } = useLinksField();
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -75,22 +80,26 @@ export const LinksFieldInput = ({ onCancel }: LinksFieldInputProps) => {
     setInputValue('');
 
     if (!links.length) {
-      persistLinksField({
-        primaryLinkUrl: inputValue,
-        primaryLinkLabel: '',
-        secondaryLinks: [],
-      });
+      onSubmit?.(() =>
+        persistLinksField({
+          primaryLinkUrl: inputValue,
+          primaryLinkLabel: '',
+          secondaryLinks: [],
+        }),
+      );
 
       return;
     }
 
-    persistLinksField({
-      ...fieldValue,
-      secondaryLinks: [
-        ...(fieldValue.secondaryLinks ?? []),
-        { label: '', url: inputValue },
-      ],
-    });
+    onSubmit?.(() =>
+      persistLinksField({
+        ...fieldValue,
+        secondaryLinks: [
+          ...(fieldValue.secondaryLinks ?? []),
+          { label: '', url: inputValue },
+        ],
+      }),
+    );
   };
 
   return (

@@ -14,11 +14,8 @@ import { getUrlHostName } from '~/utils/url/getUrlHostName';
 import { EllipsisDisplay } from './EllipsisDisplay';
 
 const StyledRawLink = styled(RoundedLink)`
-  overflow: hidden;
-
   a {
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: ${({ theme }) => theme.font.size.md};
     white-space: nowrap;
   }
 `;

@@ -6,6 +6,7 @@ import { Chip, ChipSize, ChipVariant } from 'twenty-ui';
 type RoundedLinkProps = {
   href: string;
   children?: React.ReactNode;
+  className?: string;
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
 };
 
@@ -27,10 +28,15 @@ const StyledChip = styled(Chip)`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const RoundedLink = ({ children, href, onClick }: RoundedLinkProps) => (
+export const RoundedLink = ({
+  children,
+  className,
+  href,
+  onClick,
+}: RoundedLinkProps) => (
   <div>
     {children !== '' ? (
-      <StyledClickable>
+      <StyledClickable className={className}>
         <ReactLink target="_blank" to={href} onClick={onClick}>
           <StyledChip
             label={`${children}`}
