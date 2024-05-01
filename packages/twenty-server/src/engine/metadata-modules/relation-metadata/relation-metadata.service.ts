@@ -58,7 +58,6 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       validateMetadataName(relationMetadataInput.toName);
     } catch (error) {
       if (error instanceof InvalidStringException) {
-        console.error(error.message);
         throw new BadRequestException(
           `Characters used in name "${relationMetadataInput.fromName}" or "${relationMetadataInput.toName}" are not supported`,
         );

@@ -2,8 +2,8 @@ import { ObjectType, Field, HideField, ID } from '@nestjs/graphql';
 
 import { IsOptional } from 'class-validator';
 import GraphQLJSON from 'graphql-type-json';
-import { UserMappingOptionsDTO } from 'src/engine/metadata-modules/remote-server/dtos/user-mapping-dto';
 
+import { UserMappingOptionsDTO } from 'src/engine/metadata-modules/remote-server/dtos/user-mapping-dto';
 import {
   ForeignDataWrapperOptions,
   RemoteServerType,
