@@ -151,7 +151,7 @@ export type FieldLinkValue = { url: string; label: string };
 export type FieldLinksValue = {
   primaryLinkLabel: string;
   primaryLinkUrl: string;
-  secondaryLinks?: string | null;
+  secondaryLinks?: { label: string; url: string }[] | null;
 };
 export type FieldCurrencyValue = {
   currencyCode: CurrencyCode;

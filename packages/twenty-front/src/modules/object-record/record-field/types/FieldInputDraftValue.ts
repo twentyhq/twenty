@@ -30,7 +30,7 @@ export type FieldLinkDraftValue = { url: string; label: string };
 export type FieldLinksDraftValue = {
   primaryLinkLabel: string;
   primaryLinkUrl: string;
-  secondaryLinks?: string | null;
+  secondaryLinks?: { label: string; url: string }[] | null;
 };
 export type FieldCurrencyDraftValue = {
   currencyCode: CurrencyCode;

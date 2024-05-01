@@ -27,6 +27,7 @@ export const LinksFieldInput = ({
       persistLinksField({
         primaryLinkUrl: url,
         primaryLinkLabel: '',
+        secondaryLinks: [],
       }),
     );
   };
@@ -36,6 +37,7 @@ export const LinksFieldInput = ({
       persistLinksField({
         primaryLinkUrl: url,
         primaryLinkLabel: '',
+        secondaryLinks: [],
       }),
     );
   };
@@ -45,6 +47,7 @@ export const LinksFieldInput = ({
       persistLinksField({
         primaryLinkUrl: url,
         primaryLinkLabel: '',
+        secondaryLinks: [],
       }),
     );
   };
@@ -54,6 +57,7 @@ export const LinksFieldInput = ({
       persistLinksField({
         primaryLinkUrl: url,
         primaryLinkLabel: '',
+        secondaryLinks: [],
       }),
     );
   };
@@ -63,6 +67,7 @@ export const LinksFieldInput = ({
       persistLinksField({
         primaryLinkUrl: url,
         primaryLinkLabel: '',
+        secondaryLinks: [],
       }),
     );
   };
@@ -71,6 +76,7 @@ export const LinksFieldInput = ({
     setDraftValue({
       primaryLinkUrl: url,
       primaryLinkLabel: '',
+      secondaryLinks: [],
     });
   };
 

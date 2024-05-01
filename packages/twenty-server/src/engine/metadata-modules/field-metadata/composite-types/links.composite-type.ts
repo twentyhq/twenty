@@ -29,5 +29,5 @@ export const linksCompositeType: CompositeType = {
 export type LinksMetadata = {
   primaryLinkLabel: string;
   primaryLinkUrl: string;
-  secondaryLinks: JSON | null;
+  secondaryLinks: object | null;
 };
