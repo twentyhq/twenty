@@ -41,9 +41,10 @@ import { SettingsDevelopers } from '~/pages/settings/developers/SettingsDevelope
 import { SettingsDevelopersWebhooksDetail } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhookDetail';
 import { SettingsDevelopersWebhooksNew } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhooksNew';
 import { SettingsIntegrationDatabase } from '~/pages/settings/integrations/SettingsIntegrationDatabase';
-import { SettingsIntegrationDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationDatabaseConnection';
+import { SettingsIntegrationEditDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationEditDatabaseConnection';
 import { SettingsIntegrationNewDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationNewDatabaseConnection';
 import { SettingsIntegrations } from '~/pages/settings/integrations/SettingsIntegrations';
+import { SettingsIntegrationShowDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationShowDatabaseConnection';
 import { SettingsAppearance } from '~/pages/settings/SettingsAppearance';
 import { SettingsBilling } from '~/pages/settings/SettingsBilling.tsx';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
@@ -187,8 +188,12 @@ export const App = () => {
                   element={<SettingsIntegrationNewDatabaseConnection />}
                 />
                 <Route
+                  path={SettingsPath.IntegrationEditDatabaseConnection}
+                  element={<SettingsIntegrationEditDatabaseConnection />}
+                />
+                <Route
                   path={SettingsPath.IntegrationDatabaseConnection}
-                  element={<SettingsIntegrationDatabaseConnection />}
+                  element={<SettingsIntegrationShowDatabaseConnection />}
                 />
                 <Route
                   path={SettingsPath.ObjectNewFieldStep1}

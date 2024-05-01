@@ -14,6 +14,7 @@ describe('useMapToObjectRecordIdentifier', () => {
         return mapToObjectRecordIdentifier({
           id: 'id',
           name: { firstName: 'Sheldon', lastName: 'Cooper' },
+          __typename: 'Person',
         });
       },
       {

@@ -3,7 +3,7 @@ import { within } from '@storybook/test';
 
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { SettingsIntegrationDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationDatabaseConnection';
+import { SettingsIntegrationShowDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationShowDatabaseConnection';
 import {
   PageDecorator,
   PageDecoratorArgs,
@@ -12,8 +12,9 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/testing/sleep';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/Integrations/SettingsIntegrationDatabaseConnection',
-  component: SettingsIntegrationDatabaseConnection,
+  title:
+    'Pages/Settings/Integrations/SettingsIntegrationShowDatabaseConnection',
+  component: SettingsIntegrationShowDatabaseConnection,
   decorators: [PageDecorator],
   args: {
     routePath: getSettingsPagePath(SettingsPath.IntegrationDatabaseConnection),
@@ -29,7 +30,7 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsIntegrationDatabaseConnection>;
+export type Story = StoryObj<typeof SettingsIntegrationShowDatabaseConnection>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
