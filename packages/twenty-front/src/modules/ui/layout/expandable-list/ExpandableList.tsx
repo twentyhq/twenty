@@ -7,9 +7,10 @@ import { Chip, ChipVariant } from 'twenty-ui';
 import { AnimationDivProps } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButton';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { ChildrenContainer } from '@/ui/layout/expandable-list/ChildrenContainer';
+import { getChildrenProperties } from '@/ui/layout/expandable-list/getChildProperties.ts';
 import { getChipContentWidth } from '@/ui/layout/expandable-list/getChipContentWidth';
 
-const GAP_WIDTH = 4;
+export const GAP_WIDTH = 4;
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -64,40 +65,26 @@ export const ExpandableList = ({
   const [childrenWidths, setChildrenWidths] = useState<Record<number, number>>(
     {},
   );
-  const getChildrenProperties = () => {
-    let cumulatedChildrenWidth = 0;
-    const result: Record<number, ChildrenProperty> = {};
-    Object.values(childrenWidths).forEach((width, index) => {
-      // Because there is a 4px gap between children
-      const childWidth = width + GAP_WIDTH;
-      let shrink = 1;
-      let isVisible = true;
-
-      if (cumulatedChildrenWidth > availableWidth) {
-        isVisible = false;
-      } else if (cumulatedChildrenWidth + childWidth <= availableWidth) {
-        shrink = 0;
-      }
-      result[index] = { shrink, isVisible };
-      cumulatedChildrenWidth += childWidth;
-    });
-    return result;
-  };
 
   // Because Chip width depends on the number of hidden children which depends on the Chip width, we have a circular dependency
   // To avoid it, we set the Chip width and make sure it can display its content (a number greater than 1)
   const chipContentWidth = getChipContentWidth(children.length);
   const chipContainerWidth = chipContentWidth + 2 * GAP_WIDTH; // Because Chip component has 4px padding-left and right
   const availableWidth = containerWidth - (chipContainerWidth + GAP_WIDTH); // Because there is a 4px gap between ChildrenContainer and ChipContainer
-
   const isFocusedMode =
     (isHovered || forceDisplayHiddenCount) &&
     Object.values(childrenWidths).length > 0;
 
-  const childrenProperties = getChildrenProperties();
+  const childrenProperties = getChildrenProperties(
+    isFocusedMode,
+    availableWidth,
+    childrenWidths,
+  );
+
   const hiddenChildrenCount = Object.values(childrenProperties).filter(
     (childProperties) => !childProperties.isVisible,
   ).length;
+
   const displayHiddenCountChip = isFocusedMode && hiddenChildrenCount > 0;
 
   const { refs, floatingStyles } = useFloating({
