@@ -19,4 +19,12 @@ export class ObjectLiteralStorage {
   public static getAllObjects(): Type<any>[] {
     return Array.from(this.objects.values());
   }
+
+  public static getAllEntitySchemas(): EntitySchema[] {
+    return Array.from(this.objects.keys());
+  }
+
+  public static clear(): void {
+    this.objects.clear();
+  }
 }
