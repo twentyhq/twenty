@@ -2,11 +2,11 @@ import { ApolloCache, StoreObject } from '@apollo/client';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsOptimisticEffect';
-import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
-import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
+import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 
 /*
   TODO: for now new records are added to all cached record lists, no matter what the variables (filters, orderBy, etc.) are.
@@ -21,7 +21,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
 }: {
   cache: ApolloCache<unknown>;
   objectMetadataItem: ObjectMetadataItem;
-  recordsToCreate: CachedObjectRecord[];
+  recordsToCreate: RecordGqlNode[];
   objectMetadataItems: ObjectMetadataItem[];
 }) => {
   recordsToCreate.forEach((record) =>
@@ -56,7 +56,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
 
         const rootQueryCachedObjectRecordConnection = rootQueryCachedResponse;
 
-        const rootQueryCachedRecordEdges = readField<CachedObjectRecordEdge[]>(
+        const rootQueryCachedRecordEdges = readField<RecordGqlRefEdge[]>(
           'edges',
           rootQueryCachedObjectRecordConnection,
         );

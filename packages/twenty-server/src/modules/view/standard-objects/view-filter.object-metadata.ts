@@ -1,8 +1,8 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { viewFilterStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { VIEW_FILTER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
@@ -12,7 +12,7 @@ import { ViewObjectMetadata } from 'src/modules/view/standard-objects/view.objec
 import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
-  standardId: standardObjectIds.viewFilter,
+  standardId: STANDARD_OBJECT_IDS.viewFilter,
   namePlural: 'viewFilters',
   labelSingular: 'View Filter',
   labelPlural: 'View Filters',
@@ -23,7 +23,7 @@ import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-me
 @IsSystem()
 export class ViewFilterObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    standardId: viewFilterStandardFieldIds.fieldMetadataId,
+    standardId: VIEW_FILTER_STANDARD_FIELD_IDS.fieldMetadataId,
     type: FieldMetadataType.UUID,
     label: 'Field Metadata Id',
     description: 'View Filter target field',
@@ -31,7 +31,7 @@ export class ViewFilterObjectMetadata extends BaseObjectMetadata {
   fieldMetadataId: string;
 
   @FieldMetadata({
-    standardId: viewFilterStandardFieldIds.operand,
+    standardId: VIEW_FILTER_STANDARD_FIELD_IDS.operand,
     type: FieldMetadataType.TEXT,
     label: 'Operand',
     description: 'View Filter operand',
@@ -40,7 +40,7 @@ export class ViewFilterObjectMetadata extends BaseObjectMetadata {
   operand: string;
 
   @FieldMetadata({
-    standardId: viewFilterStandardFieldIds.value,
+    standardId: VIEW_FILTER_STANDARD_FIELD_IDS.value,
     type: FieldMetadataType.TEXT,
     label: 'Value',
     description: 'View Filter value',
@@ -48,7 +48,7 @@ export class ViewFilterObjectMetadata extends BaseObjectMetadata {
   value: string;
 
   @FieldMetadata({
-    standardId: viewFilterStandardFieldIds.displayValue,
+    standardId: VIEW_FILTER_STANDARD_FIELD_IDS.displayValue,
     type: FieldMetadataType.TEXT,
     label: 'Display Value',
     description: 'View Filter Display Value',
@@ -56,7 +56,7 @@ export class ViewFilterObjectMetadata extends BaseObjectMetadata {
   displayValue: string;
 
   @FieldMetadata({
-    standardId: viewFilterStandardFieldIds.view,
+    standardId: VIEW_FILTER_STANDARD_FIELD_IDS.view,
     type: FieldMetadataType.RELATION,
     label: 'View',
     description: 'View Filter related view',

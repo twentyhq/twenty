@@ -3,6 +3,7 @@ import { FieldMetadataInterface } from './field-metadata.interface';
 
 export interface ObjectMetadataInterface {
   id: string;
+  standardId?: string | null;
   nameSingular: string;
   namePlural: string;
   labelSingular: string;

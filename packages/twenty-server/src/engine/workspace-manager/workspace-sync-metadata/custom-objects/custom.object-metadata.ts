@@ -12,13 +12,13 @@ import { ActivityTargetObjectMetadata } from 'src/modules/activity/standard-obje
 import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/relation-metadata.decorator';
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { AttachmentObjectMetadata } from 'src/modules/attachment/standard-objects/attachment.object-metadata';
-import { customObjectStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { EventObjectMetadata } from 'src/modules/event/standard-objects/event.object-metadata';
+import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { TimelineActivityObjectMetadata } from 'src/modules/timeline/standard-objects/timeline-activity.object-metadata';
 
 @BaseCustomObjectMetadata()
 export class CustomObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    standardId: customObjectStandardFieldIds.name,
+    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.name,
     label: 'Name',
     description: 'Name',
     type: FieldMetadataType.TEXT,
@@ -28,7 +28,7 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
   name: string;
 
   @FieldMetadata({
-    standardId: customObjectStandardFieldIds.position,
+    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.position,
     label: 'Position',
     description: 'Position',
     type: FieldMetadataType.POSITION,
@@ -39,7 +39,7 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
   position: number;
 
   @FieldMetadata({
-    standardId: customObjectStandardFieldIds.activityTargets,
+    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.activityTargets,
     type: FieldMetadataType.RELATION,
     label: 'Activities',
     description: (objectMetadata) =>
@@ -55,7 +55,7 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
   activityTargets: ActivityTargetObjectMetadata[];
 
   @FieldMetadata({
-    standardId: customObjectStandardFieldIds.favorites,
+    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.favorites,
     type: FieldMetadataType.RELATION,
     label: 'Favorites',
     description: (objectMetadata) =>
@@ -72,7 +72,7 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
   favorites: FavoriteObjectMetadata[];
 
   @FieldMetadata({
-    standardId: customObjectStandardFieldIds.attachments,
+    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.attachments,
     type: FieldMetadataType.RELATION,
     label: 'Attachments',
     description: (objectMetadata) =>
@@ -88,18 +88,20 @@ export class CustomObjectMetadata extends BaseObjectMetadata {
   attachments: AttachmentObjectMetadata[];
 
   @FieldMetadata({
-    standardId: customObjectStandardFieldIds.events,
+    standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.timelineActivities,
     type: FieldMetadataType.RELATION,
-    label: 'Events',
+    label: 'Timeline Activities',
     description: (objectMetadata) =>
-      `Events tied to the ${objectMetadata.labelSingular}`,
-    icon: 'IconJson',
+      `Timeline Activities tied to the ${objectMetadata.labelSingular}`,
+
+    icon: 'IconIconTimelineEvent',
   })
   @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => EventObjectMetadata,
+    inverseSideTarget: () => TimelineActivityObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @IsNullable()
-  events: EventObjectMetadata[];
+  @IsSystem()
+  timelineActivities: TimelineActivityObjectMetadata[];
 }

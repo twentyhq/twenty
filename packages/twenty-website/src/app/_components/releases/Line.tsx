@@ -17,7 +17,6 @@ const StyledLineContainer = styled.div`
 const StyledLine = styled.div`
   height: 1px;
   background-color: #d9d9d9;
-  margin-bottom: 80px;
   margin-left: 148px;
   margin-top: 40px;
   width: 100%;

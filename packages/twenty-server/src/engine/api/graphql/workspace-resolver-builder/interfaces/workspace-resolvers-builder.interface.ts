@@ -10,6 +10,19 @@ import { workspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/work
 
 export type Resolver<Args = any> = GraphQLFieldResolver<any, any, Args>;
 
+export enum ResolverArgsType {
+  FindMany = 'FindMany',
+  FindOne = 'FindOne',
+  FindDuplicates = 'FindDuplicates',
+  CreateOne = 'CreateOne',
+  CreateMany = 'CreateMany',
+  UpdateOne = 'UpdateOne',
+  UpdateMany = 'UpdateMany',
+  DeleteOne = 'DeleteOne',
+  DeleteMany = 'DeleteMany',
+  ExecuteQuickActionOnOne = 'ExecuteQuickActionOnOne',
+}
+
 export interface FindManyResolverArgs<
   Filter extends RecordFilter = RecordFilter,
   OrderBy extends RecordOrderBy = RecordOrderBy,

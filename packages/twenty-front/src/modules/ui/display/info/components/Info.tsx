@@ -9,8 +9,8 @@ export type InfoAccent = 'blue' | 'danger';
 export type InfoProps = {
   accent?: InfoAccent;
   text: string;
-  buttonTitle: string;
-  onClick: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  buttonTitle?: string;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
 };
 
 const StyledTextContainer = styled.div`
@@ -54,12 +54,14 @@ export const Info = ({
         <IconInfoCircle size={theme.icon.size.md} />
         {text}
       </StyledTextContainer>
-      <Button
-        title={buttonTitle}
-        onClick={onClick}
-        size={'small'}
-        variant={'secondary'}
-      />
+      {buttonTitle && onClick && (
+        <Button
+          title={buttonTitle}
+          onClick={onClick}
+          size={'small'}
+          variant={'secondary'}
+        />
+      )}
     </StyledInfo>
   );
 };

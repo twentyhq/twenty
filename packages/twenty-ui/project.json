@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "packages/twenty-ui/src",
   "projectType": "library",
+  "tags": ["scope:frontend"],
   "targets": {
     "build": {
       "dependsOn": ["^build", "generateBarrels"]
@@ -21,68 +22,40 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
       "options": {
-        "eslintConfig": "{projectRoot}/.eslintrc.cjs",
-        "ignorePath": "{workspaceRoot}/.gitignore",
         "lintFilePatterns": [
           "{projectRoot}/src/**/*.{ts,tsx,json}",
           "{projectRoot}/package.json"
-        ],
-        "cache": true
+        ]
       },
       "configurations": {
-        "fix": { "fix": true }
+        "fix": {}
       }
     },
-    "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{projectRoot}/coverage"],
+    "fmt": {
       "options": {
-        "jestConfig": "{projectRoot}/jest.config.ts"
-      }
-    },
-    "typecheck": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "tsc -b tsconfig.json",
-        "incremental": true
+        "files": "src"
       },
       "configurations": {
-        "ci": { "incremental": false },
-        "watch": { "watch": true }
+        "fix": {}
       }
     },
+    "test": {},
+    "typecheck": {},
+    "storybook:build": {},
     "storybook:dev": {
-      "executor": "@nx/storybook:storybook",
-      "options": {
-        "port": 6007,
-        "configDir": "{projectRoot}/.storybook"
-      },
-      "configurations": {
-        "ci": { "quiet": true }
-      }
+      "options": { "port": 6007 }
     },
-    "storybook:build": {
-      "executor": "@nx/storybook:build",
-      "outputs": ["{options.outputDir}"],
+    "storybook:static": {
       "options": {
-        "outputDir": "{projectRoot}/storybook-static",
-        "configDir": "{projectRoot}/.storybook"
-      },
-      "configurations": {
-        "ci": {
-          "quiet": true
-        }
+        "buildTarget": "twenty-ui:storybook:build",
+        "port": 6007
       }
     },
     "storybook:test": {
-      "executor": "nx:run-commands",
       "options": {
-        "command": "test-storybook -c {projectRoot}/.storybook --url=http://localhost:6007"
+        "url": "http://localhost:6007"
       }
     }
-  },
-  "tags": []
+  }
 }

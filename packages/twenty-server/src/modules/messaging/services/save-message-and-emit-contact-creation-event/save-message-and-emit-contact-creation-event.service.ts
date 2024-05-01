@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { EntityManager } from 'typeorm';
 
@@ -15,6 +14,13 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { MessageService } from 'src/modules/messaging/services/message/message.service';
 import { MessageParticipantService } from 'src/modules/messaging/services/message-participant/message-participant.service';
+import {
+  CreateCompanyAndContactJobData,
+  CreateCompanyAndContactJob,
+} from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
+import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 
 @Injectable()
 export class SaveMessageAndEmitContactCreationEventService {
@@ -26,9 +32,10 @@ export class SaveMessageAndEmitContactCreationEventService {
     private readonly messageService: MessageService,
     @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
     private readonly messageChannelRepository: MessageChannelRepository,
-    private readonly eventEmitter: EventEmitter2,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly messageParticipantService: MessageParticipantService,
+    @InjectMessageQueue(MessageQueue.emailQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
 
   public async saveMessagesAndEmitContactCreationEventWithinTransaction(
@@ -75,11 +82,14 @@ export class SaveMessageAndEmitContactCreationEventService {
         (participant) => participant.shouldCreateContact,
       );
 
-      this.eventEmitter.emit(`createContacts`, {
-        workspaceId,
-        connectedAccountHandle: connectedAccount.handle,
-        contactsToCreate,
-      });
+      await this.messageQueueService.add<CreateCompanyAndContactJobData>(
+        CreateCompanyAndContactJob.name,
+        {
+          workspaceId,
+          connectedAccountHandle: connectedAccount.handle,
+          contactsToCreate,
+        },
+      );
     }
   }
 
@@ -180,11 +190,14 @@ export class SaveMessageAndEmitContactCreationEventService {
           (participant) => participant.shouldCreateContact,
         );
 
-        this.eventEmitter.emit(`createContacts`, {
-          workspaceId,
-          connectedAccountHandle: connectedAccount.handle,
-          contactsToCreate,
-        });
+        await this.messageQueueService.add<CreateCompanyAndContactJobData>(
+          CreateCompanyAndContactJob.name,
+          {
+            workspaceId,
+            connectedAccountHandle: connectedAccount.handle,
+            contactsToCreate,
+          },
+        );
       }
     } catch (error) {
       this.logger.error(

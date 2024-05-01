@@ -10,18 +10,13 @@ export class GoogleOauthGuard extends AuthGuard('google') {
   }
 
   async canActivate(context: ExecutionContext) {
-    try {
-      const request = context.switchToHttp().getRequest();
-      const workspaceInviteHash = request.query.inviteHash;
+    const request = context.switchToHttp().getRequest();
+    const workspaceInviteHash = request.query.inviteHash;
 
-      if (workspaceInviteHash && typeof workspaceInviteHash === 'string') {
-        request.params.workspaceInviteHash = workspaceInviteHash;
-      }
-      const activate = (await super.canActivate(context)) as boolean;
-
-      return activate;
-    } catch (ex) {
-      throw ex;
+    if (workspaceInviteHash && typeof workspaceInviteHash === 'string') {
+      request.params.workspaceInviteHash = workspaceInviteHash;
     }
+
+    return (await super.canActivate(context)) as boolean;
   }
 }

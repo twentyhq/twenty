@@ -3,10 +3,18 @@ import { OrderBy } from '@/object-metadata/types/OrderBy';
 import { sortObjectRecordByDateField } from './sortObjectRecordByDateField';
 
 describe('sortByObjectRecordByCreatedAt', () => {
-  const recordOldest = { id: '', createdAt: '2022-01-01T00:00:00.000Z' };
-  const recordNewest = { id: '', createdAt: '2022-01-02T00:00:00.000Z' };
-  const recordNull1 = { id: '', createdAt: null };
-  const recordNull2 = { id: '', createdAt: null };
+  const recordOldest = {
+    id: '',
+    createdAt: '2022-01-01T00:00:00.000Z',
+    __typename: 'RecordType',
+  };
+  const recordNewest = {
+    id: '',
+    createdAt: '2022-01-02T00:00:00.000Z',
+    __typename: 'RecordType',
+  };
+  const recordNull1 = { id: '', createdAt: null, __typename: 'RecordType' };
+  const recordNull2 = { id: '', createdAt: null, __typename: 'RecordType' };
 
   it('should sort in ascending order with null values first', () => {
     const sortDirection = 'AscNullsFirst' satisfies OrderBy;

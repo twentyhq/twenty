@@ -19,7 +19,6 @@ import { useDeleteRecordFromCache } from '@/object-record/cache/hooks/useDeleteR
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { getChildRelationArray } from '@/object-record/utils/getChildRelationArray';
 import { mapToRecordId } from '@/object-record/utils/mapToObjectId';
 import { IconButton } from '@/ui/input/button/components/IconButton';
 import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
@@ -85,10 +84,6 @@ export const ActivityActionBar = () => {
           .getLoadable(recordStoreFamilyState(activityIdInDrawer))
           .getValue() as Activity;
 
-        const activityTargets = getChildRelationArray({
-          childRelation: activity.activityTargets,
-        });
-
         setIsRightDrawerOpen(false);
 
         if (!isNonEmptyString(viewableActivityId)) {
@@ -103,10 +98,10 @@ export const ActivityActionBar = () => {
 
         if (isNonEmptyString(activityIdInDrawer)) {
           const activityTargetIdsToDelete: string[] =
-            activityTargets.map(mapToRecordId) ?? [];
+            activity.activityTargets.map(mapToRecordId) ?? [];
 
           deleteActivityFromCache(activity);
-          activityTargets.forEach((activityTarget: ActivityTarget) => {
+          activity.activityTargets.forEach((activityTarget: ActivityTarget) => {
             deleteActivityTargetFromCache(activityTarget);
           });
 

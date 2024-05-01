@@ -62,6 +62,11 @@ export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
     Icon: IconLink,
     defaultValue: { url: 'www.twenty.com', label: '' },
   },
+  [FieldMetadataType.Links]: {
+    label: 'Links',
+    Icon: IconLink,
+    defaultValue: { primaryLinkUrl: 'twenty.com', primaryLinkLabel: '' },
+  },
   [FieldMetadataType.Boolean]: {
     label: 'True/False',
     Icon: IconCheck,
