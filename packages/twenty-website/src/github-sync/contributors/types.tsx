@@ -68,12 +68,24 @@ export interface Stargazers {
   totalCount: number;
 }
 
+export interface Releases {
+  nodes: ReleaseNode[];
+}
+
+export interface ReleaseNode {
+  tagName: string;
+  name: string;
+  description: string;
+  publishedAt: string;
+}
+
 export interface Repository {
   repository: {
     pullRequests: PullRequests;
     issues: Issues;
     assignableUsers: AssignableUsers;
     stargazers: Stargazers;
+    releases: Releases;
   };
 }
 
