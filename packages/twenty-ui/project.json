@@ -35,6 +35,10 @@
     "fmt": {
       "options": {
         "jestConfig": "{projectRoot}/jest.config.ts"
+      },
+      "configurations": {
+        "ci": { "args": [] },
+        "watch": { "watch": true }
       }
     },
     "typecheck": {
@@ -43,10 +47,6 @@
         "cwd": "{projectRoot}",
         "command": "tsc -b tsconfig.json",
         "args": ["--incremental"]
-      },
-      "configurations": {
-        "ci": { "args": [] },
-        "watch": { "watch": true }
       }
     },
     "test": {},
