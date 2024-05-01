@@ -1,6 +1,6 @@
 import { useApolloClient } from '@apollo/client';
 
-import { FIND_MANY_ACTIVITIES_QUERY_KEY } from '@/activities/query-keys/FindManyActivitiesQueryKey';
+import { findActivitiesOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/findActivitiesOperationSignatureFactory';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -104,15 +104,16 @@ export const usePrepareFindManyActivitiesQuery = () => {
       return a.createdAt > b.createdAt ? -1 : 1;
     });
 
+    const FIND_ACTIVITIES_OPERATION_SIGNATURE =
+      findActivitiesOperationSignatureFactory({ objectMetadataItems });
+
     upsertFindManyActivitiesInCache({
       objectRecordsToOverwrite: filteredActivities,
       queryVariables: {
         ...nextFindManyActivitiesQueryFilter,
         orderBy: { createdAt: 'DescNullsFirst' },
       },
-      depth: FIND_MANY_ACTIVITIES_QUERY_KEY.depth,
-      queryFields:
-        FIND_MANY_ACTIVITIES_QUERY_KEY.fieldsFactory?.(objectMetadataItems),
+      recordGqlFields: FIND_ACTIVITIES_OPERATION_SIGNATURE.fields,
       computeReferences: true,
     });
   };

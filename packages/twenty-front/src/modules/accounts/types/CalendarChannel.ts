@@ -9,4 +9,5 @@ export type CalendarChannel = {
   isContactAutoCreationEnabled?: boolean;
   isSyncEnabled?: boolean;
   visibility: CalendarChannelVisibility;
+  __typename: 'CalendarChannel';
 };

@@ -20,7 +20,6 @@ export const validateObjectMetadataInput = <
     }
   } catch (error) {
     if (error instanceof InvalidStringException) {
-      console.error(error.message);
       throw new BadRequestException(
         `Characters used in name "${objectMetadataInput.nameSingular}" or "${objectMetadataInput.namePlural}" are not supported`,
       );

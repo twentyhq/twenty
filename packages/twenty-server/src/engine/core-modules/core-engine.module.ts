@@ -12,9 +12,9 @@ import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 
-import { AnalyticsModule } from './analytics/analytics.module';
-import { FileModule } from './file/file.module';
 import { ClientConfigModule } from './client-config/client-config.module';
+import { FileModule } from './file/file.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [

@@ -138,3 +138,17 @@ export class FieldMetadataDefaultValueAddress {
   @IsNumber()
   addressLng: number | null;
 }
+
+export class FieldMetadataDefaultValueLinks {
+  @ValidateIf((_object, value) => value !== null)
+  @IsQuotedString()
+  primaryLinkLabel: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsQuotedString()
+  primaryLinkUrl: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsJSON()
+  secondaryLinks: JSON | null;
+}

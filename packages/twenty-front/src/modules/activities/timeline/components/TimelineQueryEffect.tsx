@@ -6,7 +6,6 @@ import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline/co
 import { objectShowPageTargetableObjectState } from '@/activities/timeline/states/objectShowPageTargetableObjectIdState';
 import { timelineActivitiesFammilyState } from '@/activities/timeline/states/timelineActivitiesFamilyState';
 import { timelineActivitiesForGroupState } from '@/activities/timeline/states/timelineActivitiesForGroupState';
-import { timelineActivitiesNetworkingState } from '@/activities/timeline/states/timelineActivitiesNetworkingState';
 import { timelineActivityWithoutTargetsFamilyState } from '@/activities/timeline/states/timelineActivityWithoutTargetsFamilyState';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -27,15 +26,12 @@ export const TimelineQueryEffect = ({
     setTimelineTargetableObject(targetableObject);
   }, [targetableObject, setTimelineTargetableObject]);
 
-  const { activities, initialized, noActivities } = useActivities({
+  const { activities } = useActivities({
     targetableObjects: [targetableObject],
     activitiesFilters: {},
     activitiesOrderByVariables: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
     skip: !isDefined(targetableObject),
   });
-
-  const [timelineActivitiesNetworking, setTimelineActivitiesNetworking] =
-    useRecoilState(timelineActivitiesNetworkingState);
 
   const [timelineActivitiesForGroup, setTimelineActivitiesForGroup] =
     useRecoilState(timelineActivitiesForGroupState);
@@ -49,6 +45,7 @@ export const TimelineQueryEffect = ({
       ...activities.map((activity) => ({
         id: activity.id,
         createdAt: activity.createdAt,
+        __typename: activity.__typename,
       })),
     ].sort(sortObjectRecordByDateField('createdAt', 'DescNullsLast'));
 
@@ -59,23 +56,9 @@ export const TimelineQueryEffect = ({
     if (!isDeeplyEqual(activitiesForGroup, timelineActivitiesForGroupSorted)) {
       setTimelineActivitiesForGroup(activitiesForGroup);
     }
-
-    if (
-      !isDeeplyEqual(timelineActivitiesNetworking.initialized, initialized) ||
-      !isDeeplyEqual(timelineActivitiesNetworking.noActivities, noActivities)
-    ) {
-      setTimelineActivitiesNetworking({
-        initialized,
-        noActivities,
-      });
-    }
   }, [
     activities,
-    initialized,
-    noActivities,
-    setTimelineActivitiesNetworking,
     targetableObject,
-    timelineActivitiesNetworking,
     timelineActivitiesForGroup,
     setTimelineActivitiesForGroup,
   ]);

@@ -6,6 +6,7 @@ import {
   FieldDateTimeValue,
   FieldEmailValue,
   FieldFullNameValue,
+  FieldLinksValue,
   FieldLinkValue,
   FieldMultiSelectValue,
   FieldNumberValue,
@@ -26,6 +27,11 @@ export type FieldSelectDraftValue = string;
 export type FieldMultiSelectDraftValue = string[];
 export type FieldRelationDraftValue = string;
 export type FieldLinkDraftValue = { url: string; label: string };
+export type FieldLinksDraftValue = {
+  primaryLinkLabel: string;
+  primaryLinkUrl: string;
+  secondaryLinks?: string | null;
+};
 export type FieldCurrencyDraftValue = {
   currencyCode: CurrencyCode;
   amount: string;
@@ -58,18 +64,20 @@ export type FieldInputDraftValue<FieldValue> = FieldValue extends FieldTextValue
               ? FieldEmailDraftValue
               : FieldValue extends FieldLinkValue
                 ? FieldLinkDraftValue
-                : FieldValue extends FieldCurrencyValue
-                  ? FieldCurrencyDraftValue
-                  : FieldValue extends FieldFullNameValue
-                    ? FieldFullNameDraftValue
-                    : FieldValue extends FieldRatingValue
-                      ? FieldRatingValue
-                      : FieldValue extends FieldSelectValue
-                        ? FieldSelectDraftValue
-                        : FieldValue extends FieldMultiSelectValue
-                          ? FieldMultiSelectDraftValue
-                          : FieldValue extends FieldRelationValue
-                            ? FieldRelationDraftValue
-                            : FieldValue extends FieldAddressValue
-                              ? FieldAddressDraftValue
-                              : never;
+                : FieldValue extends FieldLinksValue
+                  ? FieldLinksDraftValue
+                  : FieldValue extends FieldCurrencyValue
+                    ? FieldCurrencyDraftValue
+                    : FieldValue extends FieldFullNameValue
+                      ? FieldFullNameDraftValue
+                      : FieldValue extends FieldRatingValue
+                        ? FieldRatingValue
+                        : FieldValue extends FieldSelectValue
+                          ? FieldSelectDraftValue
+                          : FieldValue extends FieldMultiSelectValue
+                            ? FieldMultiSelectDraftValue
+                            : FieldValue extends FieldRelationValue
+                              ? FieldRelationDraftValue
+                              : FieldValue extends FieldAddressValue
+                                ? FieldAddressDraftValue
+                                : never;

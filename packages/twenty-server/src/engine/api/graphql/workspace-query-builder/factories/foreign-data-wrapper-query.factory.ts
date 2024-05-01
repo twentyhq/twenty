@@ -5,8 +5,8 @@ import { isDefined } from 'class-validator';
 import {
   ForeignDataWrapperOptions,
   RemoteServerType,
-  UserMappingOptions,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
+import { UserMappingOptions } from 'src/engine/metadata-modules/remote-server/utils/user-mapping-options.utils';
 
 @Injectable()
 export class ForeignDataWrapperQueryFactory {
