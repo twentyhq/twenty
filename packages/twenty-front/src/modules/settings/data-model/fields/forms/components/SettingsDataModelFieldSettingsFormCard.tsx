@@ -74,6 +74,7 @@ const previewableTypes = [
   FieldMetadataType.Text,
   FieldMetadataType.Address,
   FieldMetadataType.RawJson,
+  FieldMetadataType.Phone,
 ];
 
 export const SettingsDataModelFieldSettingsFormCard = ({
