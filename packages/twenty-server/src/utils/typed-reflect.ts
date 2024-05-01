@@ -8,6 +8,8 @@ import { ReflectObjectMetadata } from 'src/engine/workspace-manager/workspace-sy
 import { ReflectRelationMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/reflect-relation-metadata.interface';
 import { Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
+import { ExtensionResolverType } from 'src/engine/api/graphql/workspace-schema-extension/types/extension-resolver';
+
 export interface ReflectMetadataTypeMap {
   objectMetadata: ReflectObjectMetadata;
   extendObjectMetadata: ReflectBaseCustomObjectMetadata;
@@ -18,6 +20,7 @@ export interface ReflectMetadataTypeMap {
   isNullable: true;
   isSystem: true;
   isAuditLogged: false;
+  extensionResolverType: ExtensionResolverType;
 
   ['workspace:is-nullable-metadata-args']: true;
   ['workspace:gate-metadata-args']: Gate;

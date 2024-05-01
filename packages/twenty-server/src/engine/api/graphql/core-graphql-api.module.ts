@@ -5,6 +5,7 @@ import { ScalarsExplorerService } from 'src/engine/api/graphql/services/scalars-
 import { WorkspaceSchemaBuilderModule } from 'src/engine/api/graphql/workspace-schema-builder/workspace-schema-builder.module';
 import { WorkspaceResolverBuilderModule } from 'src/engine/api/graphql/workspace-resolver-builder/workspace-resolver-builder.module';
 import { MetadataEngineModule } from 'src/engine/metadata-modules/metadata-engine.module';
+import { WorkspaceSchemaExtensionModule } from 'src/engine/api/graphql/workspace-schema-extension/workspace-schema-extension.module';
 
 import { WorkspaceSchemaFactory } from './workspace-schema.factory';
 
@@ -21,6 +22,7 @@ import { WorkspaceSchemaFactory } from './workspace-schema.factory';
     WorkspaceSchemaBuilderModule,
     WorkspaceResolverBuilderModule,
     WorkspaceSchemaStorageModule,
+    WorkspaceSchemaExtensionModule,
   ],
   providers: [WorkspaceSchemaFactory, ScalarsExplorerService],
   exports: [WorkspaceSchemaFactory],

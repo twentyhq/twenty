@@ -18,6 +18,7 @@
     "@floating-ui/react": "^0.24.3",
     "@google-cloud/local-auth": "2.1.0",
     "@graphiql/plugin-explorer": "^1.0.2",
+    "@graphql-tools/load-files": "^7.0.0",
     "@graphql-tools/schema": "^10.0.0",
     "@hello-pangea/dnd": "^16.2.0",
     "@hookform/resolvers": "^3.1.1",

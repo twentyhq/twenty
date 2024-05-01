@@ -6502,6 +6502,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@graphql-tools/load-files@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "@graphql-tools/load-files@npm:7.0.0"
+  dependencies:
+    globby: "npm:11.1.0"
+    tslib: "npm:^2.4.0"
+    unixify: "npm:1.0.0"
+  peerDependencies:
+    graphql: ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0
+  checksum: 422e3890d8e70e0811c4de78bd6e2c623564b67eddb0938e0115a50c2c6d0400b790bbf6bf4c2010b8bd73898bb65cc02874194ccff9c4d82198903bd2ecb5dd
+  languageName: node
+  linkType: hard
+
 "@graphql-tools/load@npm:^7.5.5, @graphql-tools/load@npm:^7.8.0":
   version: 7.8.14
   resolution: "@graphql-tools/load@npm:7.8.14"
@@ -28599,7 +28612,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"globby@npm:^11.0.1, globby@npm:^11.0.2, globby@npm:^11.0.3, globby@npm:^11.0.4, globby@npm:^11.1.0":
+"globby@npm:11.1.0, globby@npm:^11.0.1, globby@npm:^11.0.2, globby@npm:^11.0.3, globby@npm:^11.0.4, globby@npm:^11.1.0":
   version: 11.1.0
   resolution: "globby@npm:11.1.0"
   dependencies:
@@ -46368,6 +46381,7 @@ __metadata:
     "@graphql-codegen/typescript": "npm:^3.0.4"
     "@graphql-codegen/typescript-operations": "npm:^3.0.4"
     "@graphql-codegen/typescript-react-apollo": "npm:^3.3.7"
+    "@graphql-tools/load-files": "npm:^7.0.0"
     "@graphql-tools/schema": "npm:^10.0.0"
     "@hello-pangea/dnd": "npm:^16.2.0"
     "@hookform/resolvers": "npm:^3.1.1"
@@ -47435,7 +47449,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"unixify@npm:^1.0.0":
+"unixify@npm:1.0.0, unixify@npm:^1.0.0":
   version: 1.0.0
   resolution: "unixify@npm:1.0.0"
   dependencies:
