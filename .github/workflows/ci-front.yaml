@@ -24,7 +24,6 @@ jobs:
         storybook_scope: [pages, modules]
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
-      STORYBOOK_SCOPE: ${{ matrix.storybook_scope }}
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -41,14 +40,13 @@ jobs:
         with:
           tag: scope:frontend
           tasks: storybook:build
-          suffix: _${{ matrix.storybook_scope }}
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
         run: |
           npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
-            "npx nx storybook:static twenty-front" \
-            "npx wait-on tcp:6006 && npx nx storybook:test twenty-front"
+            "npx nx storybook:static twenty-front --configuration=${{ matrix.storybook_scope }}" \
+            "npx wait-on tcp:6006 && npx nx storybook:test twenty-front --configuration=${{ matrix.storybook_scope }}"
   front-task:
     runs-on: ubuntu-latest
     strategy:
