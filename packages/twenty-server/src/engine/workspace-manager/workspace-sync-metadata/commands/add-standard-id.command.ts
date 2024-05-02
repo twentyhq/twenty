@@ -60,6 +60,7 @@ export class AddStandardIdCommand extends CommandRunner {
             IS_POSTGRESQL_INTEGRATION_ENABLED: true,
             IS_MULTI_SELECT_ENABLED: false,
             IS_REAL_TIME_SYNC_ENABLED: true,
+            IS_STRIPE_INTEGRATION_ENABLED: false,
           },
         );
       const standardFieldMetadataCollection = this.standardFieldFactory.create(
@@ -76,6 +77,7 @@ export class AddStandardIdCommand extends CommandRunner {
           IS_POSTGRESQL_INTEGRATION_ENABLED: true,
           IS_MULTI_SELECT_ENABLED: false,
           IS_REAL_TIME_SYNC_ENABLED: true,
+          IS_STRIPE_INTEGRATION_ENABLED: false,
         },
       );
 

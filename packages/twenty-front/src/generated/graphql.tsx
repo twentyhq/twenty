@@ -577,14 +577,14 @@ export type RemoteServer = {
   id: Scalars['ID'];
   schema?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
-  userMappingOptions?: Maybe<UserMappingOptionsUsername>;
+  userMappingOptions?: Maybe<UserMappingOptionsUser>;
 };
 
 export type RemoteTable = {
   __typename?: 'RemoteTable';
   id?: Maybe<Scalars['UUID']>;
   name: Scalars['String'];
-  schema: Scalars['String'];
+  schema?: Maybe<Scalars['String']>;
   status: RemoteTableStatus;
 };
 
@@ -772,9 +772,9 @@ export type UserExists = {
   exists: Scalars['Boolean'];
 };
 
-export type UserMappingOptionsUsername = {
-  __typename?: 'UserMappingOptionsUsername';
-  username?: Maybe<Scalars['String']>;
+export type UserMappingOptionsUser = {
+  __typename?: 'UserMappingOptionsUser';
+  user?: Maybe<Scalars['String']>;
 };
 
 export type UserWorkspace = {

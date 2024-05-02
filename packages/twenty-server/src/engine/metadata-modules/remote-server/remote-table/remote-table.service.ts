@@ -26,6 +26,7 @@ import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
+  ReferencedTable,
   WorkspaceMigrationForeignColumnDefinition,
   WorkspaceMigrationForeignTable,
   WorkspaceMigrationTableActionType,
@@ -338,6 +339,11 @@ export class RemoteTableService {
     remoteServer: RemoteServerEntity<RemoteServerType>,
     distantTableColumns: DistantTableColumn[],
   ) {
+    const referencedTable: ReferencedTable = this.buildReferencedTable(
+      remoteServer,
+      remoteTableInput,
+    );
+
     const workspaceMigration =
       await this.workspaceMigrationService.createCustomMigration(
         generateMigrationName(`create-foreign-table-${localTableName}`),
@@ -355,8 +361,7 @@ export class RemoteTableService {
                     distantColumnName: column.columnName,
                   }) satisfies WorkspaceMigrationForeignColumnDefinition,
               ),
-              referencedTableName: remoteTableInput.name,
-              referencedTableSchema: remoteServer.schema,
+              referencedTable,
               foreignDataWrapperId: remoteServer.foreignDataWrapperId,
             } satisfies WorkspaceMigrationForeignTable,
           },
@@ -428,6 +433,23 @@ export class RemoteTableService {
           `Could not create field ${columnName} for remote table ${localTableName}: ${error}`,
         );
       }
+    }
+  }
+
+  private buildReferencedTable(
+    remoteServer: RemoteServerEntity<RemoteServerType>,
+    remoteTableInput: RemoteTableInput,
+  ): ReferencedTable {
+    switch (remoteServer.foreignDataWrapperType) {
+      case RemoteServerType.POSTGRES_FDW:
+        return {
+          table_name: remoteTableInput.name,
+          schema_name: remoteServer.schema,
+        };
+      case RemoteServerType.STRIPE_FDW:
+        return { object: remoteTableInput.name };
+      default:
+        throw new BadRequestException('Foreign data wrapper not supported');
     }
   }
 }

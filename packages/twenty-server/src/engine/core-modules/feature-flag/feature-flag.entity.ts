@@ -21,6 +21,7 @@ export enum FeatureFlagKeys {
   IsEventObjectEnabled = 'IS_EVENT_OBJECT_ENABLED',
   IsAirtableIntegrationEnabled = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IsPostgreSQLIntegrationEnabled = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
+  IsStripeIntegrationEnabled = 'IS_STRIPE_INTEGRATION_ENABLED',
   IsMultiSelectEnabled = 'IS_MULTI_SELECT_ENABLED',
   IsRealTimeSyncEnabled = 'IS_REAL_TIME_SYNC_ENABLED',
 }

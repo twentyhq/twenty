@@ -7,6 +7,9 @@ export const mapUdtNameToFieldType = (udtName: string): FieldMetadataType => {
     case 'uuid':
       return FieldMetadataType.UUID;
     case 'varchar':
+    case 'text':
+    case 'bigint':
+    case 'int8':
       return FieldMetadataType.TEXT;
     case 'bool':
       return FieldMetadataType.BOOLEAN;
