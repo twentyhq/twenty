@@ -5,7 +5,7 @@ import { IconComponent } from 'twenty-ui';
 import { ANIMATION_DIV_PROPS } from '@/object-record/record-table/constants/AnimationDivProps';
 import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconButton';
 
-const StyledEditButtonContainer = styled(motion.div)`
+const StyledButtonContainer = styled(motion.div)`
   margin: ${({ theme }) => theme.spacing(1)};
 `;
 
@@ -18,12 +18,12 @@ export const RecordTableCellButton = ({
   onClick,
   Icon,
 }: RecordTableCellButtonProps) => (
-  <StyledEditButtonContainer
+  <StyledButtonContainer
     initial={ANIMATION_DIV_PROPS.initial}
     animate={ANIMATION_DIV_PROPS.animate}
     transition={ANIMATION_DIV_PROPS.transition}
     whileHover={ANIMATION_DIV_PROPS.whileHover}
   >
     <FloatingIconButton size="small" onClick={onClick} Icon={Icon} />
-  </StyledEditButtonContainer>
+  </StyledButtonContainer>
 );
