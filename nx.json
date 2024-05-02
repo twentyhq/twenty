@@ -131,7 +131,6 @@
               "forwardAllArgs": false
             },
             {
-              "prefix": "[TEST]",
               "command": "npx wait-on tcp:{args.port} && nx storybook:test {projectName}",
               "forwardAllArgs": false
             }

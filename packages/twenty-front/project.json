@@ -119,7 +119,6 @@
               "forwardAllArgs": false
             },
             {
-              "prefix": "[TEST]",
               "command": "STORYBOOK_SCOPE={args.scope} npx wait-on tcp:{args.port} && nx storybook:test {projectName}",
               "forwardAllArgs": false
             }
