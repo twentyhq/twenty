@@ -23,6 +23,7 @@ export class UserWorkspaceMiddleware implements NestMiddleware {
       'Challenge',
       'Verify',
       'SignUp',
+      'RenewToken',
     ];
 
     if (
