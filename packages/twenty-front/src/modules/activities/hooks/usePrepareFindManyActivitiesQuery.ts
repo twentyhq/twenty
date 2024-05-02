@@ -97,7 +97,9 @@ export const usePrepareFindManyActivitiesQuery = () => {
     };
 
     const filteredActivities = [
-      ...activities.filter((activity) => !shouldActivityBeExcluded?.(activity)),
+      ...activities.filter(
+        (activity) => !shouldActivityBeExcluded?.(activity) ?? true,
+      ),
     ].sort((a, b) => {
       return a.createdAt > b.createdAt ? -1 : 1;
     });
