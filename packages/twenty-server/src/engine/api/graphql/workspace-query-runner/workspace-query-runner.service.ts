@@ -436,6 +436,14 @@ export class WorkspaceQueryRunnerService {
       atMost: maximumRecordAffected,
     });
 
+    await this.workspacePreQueryHookService.executePreHooks(
+      userId,
+      workspaceId,
+      objectMetadataItem.nameSingular,
+      'deleteMany',
+      args,
+    );
+
     const result = await this.execute(query, workspaceId);
 
     const parsedResults = (
@@ -494,6 +502,14 @@ export class WorkspaceQueryRunnerService {
       objectMetadataItem,
     );
     // TODO END
+
+    await this.workspacePreQueryHookService.executePreHooks(
+      userId,
+      workspaceId,
+      objectMetadataItem.nameSingular,
+      'deleteOne',
+      args,
+    );
 
     const result = await this.execute(query, workspaceId);
 
