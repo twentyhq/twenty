@@ -60,8 +60,32 @@
     },
     "test": {},
     "storybook:build": {},
+    "storybook:build:scope": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "STORYBOOK_SCOPE={args.scope} nx storybook:build twenty-front",
+        "scope": "all"
+      },
+      "configurations": {
+        "docs": { "scope": "ui-docs" },
+        "modules": { "scope": "modules" },
+        "pages": { "scope": "pages" }
+      }
+    },
     "storybook:dev": {
       "options": { "port": 6006 }
+    },
+    "storybook:dev:scope": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "STORYBOOK_SCOPE={args.scope} nx storybook:dev twenty-front",
+        "scope": "all"
+      },
+      "configurations": {
+        "docs": { "scope": "ui-docs" },
+        "modules": { "scope": "modules" },
+        "pages": { "scope": "pages" }
+      }
     },
     "storybook:static": {
       "options": {
@@ -69,14 +93,41 @@
         "port": 6006
       }
     },
-    "storybook:test": {
+    "storybook:static:scope": {
+      "executor": "nx:run-commands",
       "options": {
-        "url": "http://localhost:6006"
+        "command": "STORYBOOK_SCOPE={args.scope} nx storybook:static twenty-front",
+        "scope": "all"
       },
       "configurations": {
-        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
-        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
-        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } }
+        "docs": { "scope": "ui-docs" },
+        "modules": { "scope": "modules" },
+        "pages": { "scope": "pages" }
+      }
+    },
+    "storybook:test": {
+      "options": {
+        "url": "http://localhost:6006",
+        "port": 6006
+      },
+      "configurations": {
+        "ci": {
+          "commands": [
+            {
+              "prefix": "[SB]",
+              "command": "nx storybook:static {projectName} --port={args.port}",
+              "forwardAllArgs": false
+            },
+            {
+              "command": "STORYBOOK_SCOPE={args.scope} npx wait-on tcp:{args.port} && nx storybook:test {projectName}",
+              "forwardAllArgs": false
+            }
+          ],
+          "parallel": true
+        },
+        "docs": { "scope": "ui-docs" },
+        "modules": { "scope": "modules" },
+        "pages": { "scope": "pages" }
       }
     },
     "graphql:generate": {
@@ -96,15 +147,8 @@
       }
     },
     "chromatic": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "cross-var chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name=storybook:build"
-      },
       "configurations": {
-        "ci": {
-          "args": ["--exit-zero-on-changes"]
-        }
+        "ci": {}
       }
     }
   }
