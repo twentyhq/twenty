@@ -339,14 +339,10 @@ export class RemoteTableService {
     remoteServer: RemoteServerEntity<RemoteServerType>,
     distantTableColumns: DistantTableColumn[],
   ) {
-    const referencedTable: ReferencedTable = remoteServer.schema
-      ? {
-          table_name: remoteTableInput.name,
-          schema_name: remoteServer.schema,
-        }
-      : {
-          object: remoteTableInput.name,
-        };
+    const referencedTable: ReferencedTable = this.buildReferencedTable(
+      remoteServer,
+      remoteTableInput,
+    );
 
     const workspaceMigration =
       await this.workspaceMigrationService.createCustomMigration(
@@ -437,6 +433,23 @@ export class RemoteTableService {
           `Could not create field ${columnName} for remote table ${localTableName}: ${error}`,
         );
       }
+    }
+  }
+
+  private buildReferencedTable(
+    remoteServer: RemoteServerEntity<RemoteServerType>,
+    remoteTableInput: RemoteTableInput,
+  ): ReferencedTable {
+    switch (remoteServer.foreignDataWrapperType) {
+      case RemoteServerType.POSTGRES_FDW:
+        return {
+          table_name: remoteTableInput.name,
+          schema_name: remoteServer.schema,
+        };
+      case RemoteServerType.STRIPE_FDW:
+        return { object: remoteTableInput.name };
+      default:
+        throw new BadRequestException('Foreign data wrapper not supported');
     }
   }
 }
