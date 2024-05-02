@@ -3,21 +3,21 @@ import styled from '@emotion/styled';
 import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import { useRecoilValue } from 'recoil';
 
-import { SubTitle } from '@/auth/components/SubTitle.tsx';
-import { Title } from '@/auth/components/Title.tsx';
-import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit.tsx';
-import { SubscriptionCard } from '@/billing/components/SubscriptionCard.tsx';
+import { SubTitle } from '@/auth/components/SubTitle';
+import { Title } from '@/auth/components/Title';
+import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit';
+import { SubscriptionCard } from '@/billing/components/SubscriptionCard';
 import { billingState } from '@/client-config/states/billingState';
 import { AppPath } from '@/types/AppPath';
-import { Loader } from '@/ui/feedback/loader/components/Loader.tsx';
+import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { MainButton } from '@/ui/input/button/components/MainButton.tsx';
-import { CardPicker } from '@/ui/input/components/CardPicker.tsx';
+import { MainButton } from '@/ui/input/button/components/MainButton';
+import { CardPicker } from '@/ui/input/components/CardPicker';
 import {
   ProductPriceEntity,
   useCheckoutSessionMutation,
   useGetProductPricesQuery,
-} from '~/generated/graphql.tsx';
+} from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledChoosePlanContainer = styled.div`
