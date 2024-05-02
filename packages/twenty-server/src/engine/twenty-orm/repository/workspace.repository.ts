@@ -17,7 +17,7 @@ import { UpsertOptions } from 'typeorm/repository/UpsertOptions';
 import { PickKeysByType } from 'typeorm/common/PickKeysByType';
 
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
-import { ObjectLiteralStorage } from 'src/engine/twenty-orm/storage/entity-schema.storage';
+import { ObjectLiteralStorage } from 'src/engine/twenty-orm/storage/object-literal.storage';
 import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';

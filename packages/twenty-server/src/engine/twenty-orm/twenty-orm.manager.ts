@@ -7,7 +7,7 @@ import { InjectWorkspaceDatasource } from 'src/engine/twenty-orm/decorators/inje
 import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
-import { ObjectLiteralStorage } from 'src/engine/twenty-orm/storage/entity-schema.storage';
+import { ObjectLiteralStorage } from 'src/engine/twenty-orm/storage/object-literal.storage';
 
 @Injectable()
 export class TwentyORMManager {

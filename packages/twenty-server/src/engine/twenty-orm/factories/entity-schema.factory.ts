@@ -5,7 +5,7 @@ import { EntitySchema } from 'typeorm';
 import { EntitySchemaColumnFactory } from 'src/engine/twenty-orm/factories/entity-schema-column.factory';
 import { EntitySchemaRelationFactory } from 'src/engine/twenty-orm/factories/entity-schema-relation.factory';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
-import { ObjectLiteralStorage } from 'src/engine/twenty-orm/storage/entity-schema.storage';
+import { ObjectLiteralStorage } from 'src/engine/twenty-orm/storage/object-literal.storage';
 
 @Injectable()
 export class EntitySchemaFactory {
