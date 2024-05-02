@@ -1,5 +1,5 @@
 import React from 'react';
-import { css } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconInfoCircle } from 'twenty-ui';
 
@@ -21,7 +21,6 @@ const StyledTextContainer = styled.div`
 
 const StyledIconInfoCircle = styled(IconInfoCircle)`
   flex-shrink: 0;
-  size: ${({ theme }) => theme.icon.size.md};
 `;
 
 const StyledInfo = styled.div<Pick<InfoProps, 'accent'>>`
@@ -53,10 +52,11 @@ export const Info = ({
   buttonTitle,
   onClick,
 }: InfoProps) => {
+  const theme = useTheme();
   return (
     <StyledInfo accent={accent}>
       <StyledTextContainer>
-        <StyledIconInfoCircle />
+        <StyledIconInfoCircle size={theme.icon.size.md} />
         {text}
       </StyledTextContainer>
       {buttonTitle && onClick && (
