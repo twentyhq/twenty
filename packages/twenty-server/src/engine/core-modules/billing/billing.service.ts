@@ -260,20 +260,6 @@ export class BillingService {
       | Stripe.CustomerSubscriptionCreatedEvent.Data
       | Stripe.CustomerSubscriptionDeletedEvent.Data,
   ) {
-    await this.billingSubscriptionRepository.upsert(
-      {
-        workspaceId: workspaceId,
-        stripeCustomerId: data.object.customer as string,
-        stripeSubscriptionId: data.object.id,
-        status: data.object.status,
-        interval: data.object.items.data[0].plan.interval,
-      },
-      {
-        conflictPaths: ['stripeSubscriptionId'],
-        skipUpdateIfNoValuesChanged: true,
-      },
-    );
-
     const workspace = this.workspaceRepository.find({
       where: { id: workspaceId },
     });
@@ -293,6 +279,20 @@ export class BillingService {
     if (!billingSubscription) {
       return;
     }
+
+    await this.billingSubscriptionRepository.upsert(
+      {
+        workspaceId: workspaceId,
+        stripeCustomerId: data.object.customer as string,
+        stripeSubscriptionId: data.object.id,
+        status: data.object.status,
+        interval: data.object.items.data[0].plan.interval,
+      },
+      {
+        conflictPaths: ['stripeSubscriptionId'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
 
     await this.billingSubscriptionItemRepository.upsert(
       data.object.items.data.map((item) => {

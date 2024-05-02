@@ -72,6 +72,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     for (const userWorkspace of userWorkspaces) {
       await this.handleRemoveWorkspaceMember(id, userWorkspace.userId);
     }
+
     await this.workspaceRepository.delete(id);
 
     return workspace;
