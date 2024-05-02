@@ -39,6 +39,8 @@ import {
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
+import { InvalidStringException } from 'src/engine/metadata-modules/errors/InvalidStringException';
+import { validateMetadataName } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
 
 import {
   FieldMetadataEntity,
@@ -56,8 +58,6 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly metadataDataSource: DataSource,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectRepository(RelationMetadataEntity, 'metadata')
-    private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
@@ -113,6 +113,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       if (fieldMetadataInput.type === FieldMetadataType.RATING) {
         fieldMetadataInput.options = generateRatingOptions();
       }
+
+      this.validateFieldMetadataInput<CreateFieldInput>(fieldMetadataInput);
 
       const fieldAlreadyExists = await fieldMetadataRepository.findOne({
         where: {
@@ -292,6 +294,8 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           }
         }
       }
+
+      this.validateFieldMetadataInput<UpdateFieldInput>(fieldMetadataInput);
 
       const updatableFieldInput =
         existingFieldMetadata.isCustom === false
@@ -499,7 +503,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       relationMetadata.fromFieldMetadata.id === fieldMetadataDTO.id;
 
     // TODO: implement MANY_TO_MANY
-    if (relationMetadata.relationType === RelationMetadataType.MANY_TO_MANY) {
+    if (
+      relationMetadata.relationType === RelationMetadataType.MANY_TO_MANY ||
+      relationMetadata.relationType === RelationMetadataType.MANY_TO_ONE
+    ) {
       throw new Error(`
         Relation type ${relationMetadata.relationType} not supported
       `);
@@ -532,5 +539,25 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
         direction,
       };
     }
+  }
+
+  private validateFieldMetadataInput<
+    T extends UpdateFieldInput | CreateFieldInput,
+  >(fieldMetadataInput: T): T {
+    if (fieldMetadataInput.name) {
+      try {
+        validateMetadataName(fieldMetadataInput.name);
+      } catch (error) {
+        if (error instanceof InvalidStringException) {
+          throw new BadRequestException(
+            `Characters used in name "${fieldMetadataInput.name}" are not supported`,
+          );
+        } else {
+          throw error;
+        }
+      }
+    }
+
+    return fieldMetadataInput;
   }
 }

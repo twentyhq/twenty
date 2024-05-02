@@ -25,6 +25,10 @@ const BackgroundImage = styled.div`
     top: 100px;
     height: 100%;
   }
+
+  @media (max-width: 800px) {
+    display: none;
+  }
 `;
 
 const Container = styled.div`
@@ -38,10 +42,6 @@ const Container = styled.div`
   min-width: 100vw;
   max-width: 100vw;
   z-index: 0;
-
-  @media (max-width: 810px) {
-    margin-top: 64px;
-  }
 
   &::before {
     content: '';

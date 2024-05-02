@@ -86,6 +86,13 @@ export const SettingsBilling = () => {
   const billingPortalButtonDisabled =
     loading || !isDefined(data) || !isDefined(data.billingPortalSession.url);
 
+  const switchIntervalButtonDisabled =
+    onboardingStatus !== OnboardingStatus.Completed;
+
+  const cancelPlanButtonDisabled =
+    billingPortalButtonDisabled ||
+    onboardingStatus !== OnboardingStatus.Completed;
+
   const displayPaymentFailInfo =
     onboardingStatus === OnboardingStatus.PastDue ||
     onboardingStatus === OnboardingStatus.Unpaid;
@@ -176,6 +183,7 @@ export const SettingsBilling = () => {
                 title="View billing details"
                 variant="secondary"
                 onClick={openBillingPortal}
+                disabled={billingPortalButtonDisabled}
               />
             </Section>
             <Section>
@@ -188,7 +196,7 @@ export const SettingsBilling = () => {
                 title={`Switch ${switchingInfo.to}`}
                 variant="secondary"
                 onClick={openSwitchingIntervalModal}
-                disabled={billingPortalButtonDisabled}
+                disabled={switchIntervalButtonDisabled}
               />
             </Section>
             <Section>
@@ -202,7 +210,7 @@ export const SettingsBilling = () => {
                 variant="secondary"
                 accent="danger"
                 onClick={openBillingPortal}
-                disabled={billingPortalButtonDisabled}
+                disabled={cancelPlanButtonDisabled}
               />
             </Section>
           </>

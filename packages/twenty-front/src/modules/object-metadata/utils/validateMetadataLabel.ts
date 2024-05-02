@@ -1,4 +1,4 @@
-const metadataLabelValidationPattern = /^[a-zA-Z][a-zA-Z0-9 ]*$/;
+const metadataLabelValidationPattern = /^[^0-9].*$/;
 
 export const validateMetadataLabel = (value: string) =>
   !!value.match(metadataLabelValidationPattern);

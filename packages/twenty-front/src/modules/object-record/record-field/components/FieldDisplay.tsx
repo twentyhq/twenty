@@ -1,5 +1,8 @@
 import { useContext } from 'react';
 
+import { LinksFieldDisplay } from '@/object-record/record-field/meta-types/display/components/LinksFieldDisplay';
+import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
+
 import { FieldContext } from '../contexts/FieldContext';
 import { AddressFieldDisplay } from '../meta-types/display/components/AddressFieldDisplay';
 import { ChipFieldDisplay } from '../meta-types/display/components/ChipFieldDisplay';
@@ -62,6 +65,8 @@ export const FieldDisplay = () => {
     <NumberFieldDisplay />
   ) : isFieldLink(fieldDefinition) ? (
     <LinkFieldDisplay />
+  ) : isFieldLinks(fieldDefinition) ? (
+    <LinksFieldDisplay />
   ) : isFieldCurrency(fieldDefinition) ? (
     <CurrencyFieldDisplay />
   ) : isFieldFullName(fieldDefinition) ? (

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { getReleases } from '@/app/releases/get-releases';
+import { getReleases } from '@/app/releases/utils/get-releases';
 
 export interface ReleaseNote {
   slug: string;
@@ -8,6 +8,8 @@ export interface ReleaseNote {
   release: string;
   content: string;
 }
+
+export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
   const host = request.nextUrl.hostname;

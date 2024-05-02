@@ -1,10 +1,12 @@
 import { ReactElement } from 'react';
-import { toc } from '@jsdevtools/rehype-toc';
 import fs from 'fs';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import path from 'path';
-import rehypeSlug from 'rehype-slug';
 import gfm from 'remark-gfm';
+
+import ArticleEditContent from '@/app/_components/ui/layout/articles/ArticleEditContent';
+import ArticleLink from '@/app/_components/ui/layout/articles/ArticleLink';
+import ArticleWarning from '@/app/_components/ui/layout/articles/ArticleWarning';
 
 interface ItemInfo {
   title: string;
@@ -99,16 +101,26 @@ async function parseFrontMatterAndCategory(
   return parsedDirectory;
 }
 
-export async function compileMDXFile(filePath: string, addToc = true) {
+export async function compileMDXFile(filePath: string) {
   const fileContent = fs.readFileSync(filePath, 'utf8');
   const compiled = await compileMDX<{ title: string; position?: number }>({
     source: fileContent,
+    components: {
+      ArticleWarning(properties) {
+        return <ArticleWarning {...properties} />;
+      },
+      ArticleEditContent(properties) {
+        return <ArticleEditContent {...properties} />;
+      },
+      ArticleLink(properties) {
+        return <ArticleLink {...properties} />;
+      },
+    },
     options: {
       parseFrontmatter: true,
       mdxOptions: {
         development: process.env.NODE_ENV === 'development',
         remarkPlugins: [gfm],
-        rehypePlugins: [rehypeSlug, ...(addToc ? [toc] : [])],
       },
     },
   });
@@ -132,7 +144,7 @@ export async function getPost(
   if (!fs.existsSync(filePath)) {
     return null;
   }
-  const { content, frontmatter } = await compileMDXFile(filePath, true);
+  const { content, frontmatter } = await compileMDXFile(filePath);
 
   return {
     content,

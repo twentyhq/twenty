@@ -4,8 +4,8 @@ import { IconSettings } from 'twenty-ui';
 
 import { useGetDatabaseConnections } from '@/databases/hooks/useGetDatabaseConnections';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsIntegrationDatabaseConnectionsListCard } from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectionsListCard';
 import { SettingsIntegrationPreview } from '@/settings/integrations/components/SettingsIntegrationPreview';
+import { SettingsIntegrationDatabaseConnectionsListCard } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionsListCard';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
