@@ -1,4 +1,4 @@
-import { getChipContentWidth } from '@/ui/layout/expandable-list/getChipContentWidth.ts';
+import { getChipContentWidth } from '@/ui/layout/expandable-list/utils/getChipContentWidth';
 
 describe('getChipContentWidth', () => {
   it('should return proper value', () => {

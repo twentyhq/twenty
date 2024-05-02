@@ -1,7 +1,7 @@
 import {
   ChildrenProperty,
   GAP_WIDTH,
-} from '@/ui/layout/expandable-list/ExpandableList.tsx';
+} from '@/ui/layout/expandable-list/components/ExpandableList';
 
 export const getChildrenProperties = (
   isFocusedMode: boolean,

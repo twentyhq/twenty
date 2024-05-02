@@ -6,9 +6,9 @@ import { motion } from 'framer-motion';
 import { IconComponent } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { AnimationDivProps } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButton';
+import { ANIMATION_DIV_PROPS } from '@/object-record/record-table/constants/AnimationDivProps';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
-import { ExpandableListProps } from '@/ui/layout/expandable-list/ExpandableList';
+import { ExpandableListProps } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useInlineCell } from '../hooks/useInlineCell';
@@ -231,10 +231,10 @@ export const RecordInlineCellContainer = ({
             </RecordInlineCellDisplayMode>
             {showEditButton && (
               <StyledEditButtonContainer
-                initial={AnimationDivProps.initial}
-                animate={AnimationDivProps.animate}
-                transition={AnimationDivProps.transition}
-                whileHover={AnimationDivProps.whileHover}
+                initial={ANIMATION_DIV_PROPS.initial}
+                animate={ANIMATION_DIV_PROPS.animate}
+                transition={ANIMATION_DIV_PROPS.transition}
+                whileHover={ANIMATION_DIV_PROPS.whileHover}
               >
                 <RecordInlineCellButton Icon={buttonIcon} />
               </StyledEditButtonContainer>

@@ -1,4 +1,4 @@
-import { getChildrenProperties } from '@/ui/layout/expandable-list/getChildProperties.ts';
+import { getChildrenProperties } from '@/ui/layout/expandable-list/utils/getChildProperties';
 
 describe('getChildrenProperties', () => {
   it('should return default value when isFocused is False', () => {

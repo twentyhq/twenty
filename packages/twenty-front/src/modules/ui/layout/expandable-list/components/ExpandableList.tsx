@@ -4,11 +4,11 @@ import { offset, useFloating } from '@floating-ui/react';
 import { motion } from 'framer-motion';
 import { Chip, ChipVariant } from 'twenty-ui';
 
-import { AnimationDivProps } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButton';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { ChildrenContainer } from '@/ui/layout/expandable-list/ChildrenContainer';
-import { getChildrenProperties } from '@/ui/layout/expandable-list/getChildProperties.ts';
-import { getChipContentWidth } from '@/ui/layout/expandable-list/getChipContentWidth';
+import { ANIMATION_DIV_PROPS } from '@/object-record/record-table/constants/AnimationDivProps.ts';
+import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu.tsx';
+import { ChildrenContainer } from '@/ui/layout/expandable-list/components/ChildrenContainer';
+import { getChildrenProperties } from '@/ui/layout/expandable-list/utils/getChildProperties.ts';
+import { getChipContentWidth } from '@/ui/layout/expandable-list/utils/getChipContentWidth.ts';
 
 export const GAP_WIDTH = 4;
 
@@ -121,10 +121,10 @@ export const ExpandableList = ({
       </ChildrenContainer>
       {displayHiddenCountChip && (
         <StyledAnimatedChipContainer
-          initial={AnimationDivProps.initial}
-          animate={AnimationDivProps.animate}
-          transition={AnimationDivProps.transition}
-          whileHover={AnimationDivProps.whileHover}
+          initial={ANIMATION_DIV_PROPS.initial}
+          animate={ANIMATION_DIV_PROPS.animate}
+          transition={ANIMATION_DIV_PROPS.transition}
+          whileHover={ANIMATION_DIV_PROPS.whileHover}
         >
           <Chip
             label={`+${hiddenChildrenCount}`}

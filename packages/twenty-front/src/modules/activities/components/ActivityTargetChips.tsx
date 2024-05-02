@@ -5,7 +5,7 @@ import { RecordChip } from '@/object-record/components/RecordChip';
 import {
   ExpandableList,
   ExpandableListProps,
-} from '@/ui/layout/expandable-list/ExpandableList';
+} from '@/ui/layout/expandable-list/components/ExpandableList';
 
 const StyledContainer = styled.div<{ maxWidth?: number }>`
   display: flex;

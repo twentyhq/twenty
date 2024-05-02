@@ -20,7 +20,7 @@ import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/rec
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
 import { isSoftFocusOnTableCellComponentFamilyState } from '@/object-record/record-table/states/isSoftFocusOnTableCellComponentFamilyState';
 import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
-import { ExpandableListProps } from '@/ui/layout/expandable-list/ExpandableList';
+import { ExpandableListProps } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';

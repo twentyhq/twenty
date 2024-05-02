@@ -3,7 +3,7 @@ import { Tag } from '@/ui/display/tag/components/Tag';
 import {
   ExpandableList,
   ExpandableListProps,
-} from '@/ui/layout/expandable-list/ExpandableList';
+} from '@/ui/layout/expandable-list/components/ExpandableList';
 
 type MultiSelectFieldDisplayProps = ExpandableListProps;
 export const MultiSelectFieldDisplay = ({

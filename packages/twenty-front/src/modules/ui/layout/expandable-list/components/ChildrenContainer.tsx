@@ -1,7 +1,7 @@
 import { Dispatch, ReactElement, SetStateAction } from 'react';
 import styled from '@emotion/styled';
 
-import { ChildrenProperty } from '@/ui/layout/expandable-list/ExpandableList';
+import { ChildrenProperty } from '@/ui/layout/expandable-list/components/ExpandableList';
 
 const StyledChildContainer = styled.div<{
   shrink?: number;

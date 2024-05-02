@@ -8,7 +8,7 @@ import { CalendarEventParticipant } from '@/activities/calendar/types/CalendarEv
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
-import { ExpandableList } from '@/ui/layout/expandable-list/ExpandableList';
+import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { isRightDrawerAnimationCompletedState } from '@/ui/layout/right-drawer/states/isRightDrawerAnimationCompleted.ts';
 
 const StyledInlineCellBaseContainer = styled.div`
