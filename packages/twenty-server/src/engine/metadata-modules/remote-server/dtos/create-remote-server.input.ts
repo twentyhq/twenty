@@ -7,7 +7,7 @@ import {
   ForeignDataWrapperOptions,
   RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
-import { UserMappingOptions } from 'src/engine/metadata-modules/remote-server/utils/user-mapping-options.utils';
+import { UserMappingOptions } from 'src/engine/metadata-modules/remote-server/types/user-mapping-options';
 
 @InputType()
 export class CreateRemoteServerInput<T extends RemoteServerType> {

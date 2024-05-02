@@ -8,7 +8,7 @@ export const settingsIntegrationPostgreSQLConnectionFormSchema = z.object({
   dbname: z.string().min(1),
   host: z.string().min(1),
   port: z.preprocess((val) => parseInt(val as string), z.number().positive()),
-  username: z.string().min(1),
+  user: z.string().min(1),
   password: z.string().min(1),
   schema: z.string().min(1),
 });
@@ -52,9 +52,9 @@ export const SettingsIntegrationPostgreSQLConnectionForm = ({
         { name: 'host' as const, label: 'Host', placeholder: 'host' },
         { name: 'port' as const, label: 'Port', placeholder: '5432' },
         {
-          name: 'username' as const,
-          label: 'Username',
-          placeholder: 'username',
+          name: 'user' as const,
+          label: 'User',
+          placeholder: 'user',
         },
         {
           name: 'password' as const,
