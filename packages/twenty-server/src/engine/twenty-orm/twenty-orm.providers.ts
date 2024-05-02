@@ -15,10 +15,14 @@ export function createTwentyORMProviders(
   return (objects || []).map((object) => ({
     provide: getWorkspaceRepositoryToken(object),
     useFactory: (
-      dataSource: WorkspaceDataSource,
+      dataSource: WorkspaceDataSource | null,
       entitySchemaFactory: EntitySchemaFactory,
     ) => {
       const entity = entitySchemaFactory.create(object as Type);
+
+      if (!dataSource) {
+        return null;
+      }
 
       return dataSource.getRepository(entity);
     },
