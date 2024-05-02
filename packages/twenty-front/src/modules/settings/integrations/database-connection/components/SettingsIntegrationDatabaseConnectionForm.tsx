@@ -33,12 +33,10 @@ const StyledInputsContainer = styled.div`
 
 type SettingsIntegrationPostgreSQLConnectionFormProps = {
   disabled?: boolean;
-  passwordPlaceholder?: string;
 };
 
 export const SettingsIntegrationPostgreSQLConnectionForm = ({
   disabled,
-  passwordPlaceholder,
 }: SettingsIntegrationPostgreSQLConnectionFormProps) => {
   const { control } =
     useFormContext<SettingsIntegrationPostgreSQLConnectionFormValues>();
@@ -46,13 +44,26 @@ export const SettingsIntegrationPostgreSQLConnectionForm = ({
   return (
     <StyledInputsContainer>
       {[
-        { name: 'dbname' as const, label: 'Database Name' },
-        { name: 'host' as const, label: 'Host' },
-        { name: 'port' as const, label: 'Port' },
-        { name: 'username' as const, label: 'Username' },
-        { name: 'password' as const, label: 'Password', type: 'password' },
-        { name: 'schema' as const, label: 'Schema' },
-      ].map(({ name, label, type }) => (
+        {
+          name: 'dbname' as const,
+          label: 'Database Name',
+          placeholder: 'default',
+        },
+        { name: 'host' as const, label: 'Host', placeholder: 'host' },
+        { name: 'port' as const, label: 'Port', placeholder: '5432' },
+        {
+          name: 'username' as const,
+          label: 'Username',
+          placeholder: 'username',
+        },
+        {
+          name: 'password' as const,
+          label: 'Password',
+          type: 'password',
+          placeholder: '••••••',
+        },
+        { name: 'schema' as const, label: 'Schema', placeholder: 'public' },
+      ].map(({ name, label, type, placeholder }) => (
         <Controller
           key={name}
           name={name}
@@ -67,11 +78,7 @@ export const SettingsIntegrationPostgreSQLConnectionForm = ({
                 fullWidth
                 type={type}
                 disabled={disabled}
-                placeholder={
-                  passwordPlaceholder && name === 'password'
-                    ? passwordPlaceholder
-                    : ''
-                }
+                placeholder={placeholder}
               />
             );
           }}

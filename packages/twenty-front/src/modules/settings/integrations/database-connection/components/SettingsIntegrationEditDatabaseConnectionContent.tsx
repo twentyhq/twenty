@@ -141,7 +141,6 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
 
             <SettingsIntegrationPostgreSQLConnectionForm
               disabled={hasSyncedTables}
-              passwordPlaceholder="••••••"
             />
           </Section>
         ) : null}
