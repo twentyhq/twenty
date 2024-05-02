@@ -190,6 +190,7 @@
   "devDependencies": {
     "@babel/core": "^7.14.5",
     "@babel/preset-react": "^7.14.5",
+    "@crxjs/vite-plugin": "^1.0.14",
     "@docusaurus/module-type-aliases": "^3.1.0",
     "@docusaurus/tsconfig": "3.1.0",
     "@graphql-codegen/cli": "^3.3.1",
@@ -235,6 +236,7 @@
     "@types/bcrypt": "^5.0.0",
     "@types/better-sqlite3": "^7.6.8",
     "@types/bytes": "^3.1.1",
+    "@types/chrome": "^0.0.267",
     "@types/crypto-js": "^4.2.2",
     "@types/deep-equal": "^1.0.1",
     "@types/express": "^4.17.13",
