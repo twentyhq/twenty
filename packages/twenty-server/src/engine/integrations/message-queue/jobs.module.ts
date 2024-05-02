@@ -61,6 +61,7 @@ import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/mess
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { BlocklistItemDeleteCalendarEventsJob } from 'src/modules/calendar/jobs/blocklist-item-delete-calendar-events.job';
 import { BlocklistReimportCalendarEventsJob } from 'src/modules/calendar/jobs/blocklist-reimport-calendar-events.job';
+import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 
 @Module({
   imports: [
@@ -81,6 +82,7 @@ import { BlocklistReimportCalendarEventsJob } from 'src/modules/calendar/jobs/bl
     TypeOrmModule.forFeature([DataSourceEntity], 'metadata'),
     UserModule,
     UserWorkspaceModule,
+    WorkspaceModule,
     WorkspaceDataSourceModule,
     RecordPositionBackfillModule,
     GoogleAPIRefreshAccessTokenModule,

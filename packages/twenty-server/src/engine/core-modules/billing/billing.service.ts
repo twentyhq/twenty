@@ -274,6 +274,14 @@ export class BillingService {
       },
     );
 
+    const workspace = this.workspaceRepository.find({
+      where: { id: workspaceId },
+    });
+
+    if (!workspace) {
+      return;
+    }
+
     await this.workspaceRepository.update(workspaceId, {
       subscriptionStatus: data.object.status,
     });
