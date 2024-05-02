@@ -88,6 +88,8 @@ export const RecordTableCellContainer = ({
     setIsHovered(false);
   };
 
+  // This doesn't have to be computed each time, either useMemo or
+  //   compute it when setting the context because it's tied to metadata and won't change over time
   const editModeContentOnly = useIsFieldInputOnly();
 
   const isFirstColumn = columnIndex === 0;
