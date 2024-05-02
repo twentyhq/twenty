@@ -112,19 +112,38 @@
     "storybook:test": {
       "executor": "nx:run-commands",
       "options": {
-        "cwd": "{projectRoot}",
         "commands": [
-          "test-storybook --url {options.url} --maxWorkers=3 --coverage",
-          "nyc report --reporter=lcov --reporter=text-summary -t coverage/storybook --report-dir coverage/storybook --check-coverage"
+          "test-storybook -c {args.configDir} --url {args.url} --maxWorkers=3 --coverage",
+          "nyc report --reporter=lcov --reporter=text-summary -t {args.coverageDir} --report-dir {args.coverageDir} --check-coverage"
         ],
-        "parallel": false
+        "parallel": false,
+        "configDir": "{projectRoot}/.storybook",
+        "coverageDir": "{projectRoot}/coverage/storybook",
+        "url": "http://localhost:6006",
+        "port": 6006
+      },
+      "configurations": {
+        "ci": {
+          "commands": [
+            {
+              "prefix": "[SB]",
+              "command": "nx storybook:static {projectName} --port={args.port}",
+              "forwardAllArgs": false
+            },
+            {
+              "command": "npx wait-on tcp:{args.port} && nx storybook:test {projectName}",
+              "forwardAllArgs": false
+            }
+          ],
+          "parallel": true
+        }
       }
     },
     "chromatic": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "cross-var chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name=storybook:build --exit-zero-on-changes={args.ci}",
+        "command": "cross-var chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name=build-storybook --exit-zero-on-changes={args.ci}",
         "ci": false
       },
       "configurations": {

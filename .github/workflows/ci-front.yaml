@@ -17,19 +17,37 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  front-sb-test:
-    runs-on: ci-8-cores
-    strategy:
-      matrix:
-        storybook_scope: [pages, modules]
+  front-sb-build:
+    runs-on: ubuntu-latest
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
-      STORYBOOK_SCOPE: ${{ matrix.storybook_scope }}
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
         with:
           access_token: ${{ github.token }}
+      - name: Fetch local actions
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/yarn-install
+      - name: Front / Restore Storybook Task Cache
+        uses: ./.github/workflows/actions/task-cache
+        with:
+          tag: scope:frontend
+          tasks: storybook:build
+      - name: Front / Write .env
+        run: npx nx reset:env twenty-front
+      - name: Front / Build storybook
+        run: npx nx storybook:build twenty-front
+  front-sb-test:
+    runs-on: ci-8-cores
+    needs: front-sb-build
+    strategy:
+      matrix:
+        storybook_scope: [pages, modules]
+    env:
+      REACT_APP_SERVER_BASE_URL: http://localhost:3000
+    steps:
       - name: Fetch local actions
         uses: actions/checkout@v4
       - name: Install dependencies
@@ -41,14 +59,36 @@ jobs:
         with:
           tag: scope:frontend
           tasks: storybook:build
-          suffix: _${{ matrix.storybook_scope }}
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
+        run: npx nx storybook:test twenty-front --configuration=ci --scope=${{ matrix.storybook_scope }}
+  front-chromatic-deployment:
+    if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
+    needs: front-sb-build
+    runs-on: ubuntu-latest
+    env:
+      REACT_APP_SERVER_BASE_URL: http://127.0.0.1:3000
+      CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/yarn-install
+      - name: Front / Restore Storybook Task Cache
+        uses: ./.github/workflows/actions/task-cache
+        with:
+          tag: scope:frontend
+          tasks: storybook:build
+      - name: Front / Write .env
         run: |
-          npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
-            "npx nx storybook:static twenty-front" \
-            "npx wait-on tcp:6006 && npx nx storybook:test twenty-front"
+          cd packages/twenty-front
+          touch .env
+          echo "REACT_APP_SERVER_BASE_URL: $REACT_APP_SERVER_BASE_URL" >> .env
+      - name: Publish to Chromatic
+        run: |
+          npx nx run twenty-front:chromatic:ci
   front-task:
     runs-on: ubuntu-latest
     strategy:
