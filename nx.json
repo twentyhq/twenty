@@ -106,37 +106,30 @@
       "executor": "@nx/web:file-server",
       "options": {
         "staticFilePath": "{projectRoot}/storybook-static",
+        "parallel": false,
         "watch": false
       }
     },
     "storybook:test": {
       "executor": "nx:run-commands",
       "options": {
+        "cwd": "{projectRoot}",
         "commands": [
-          "test-storybook -c {args.configDir} --url {args.url} --maxWorkers=3 --coverage",
+          "test-storybook --url http://localhost:{args.port} --maxWorkers=3 --coverage --coverageDirectory={args.coverageDir}",
           "nyc report --reporter=lcov --reporter=text-summary -t {args.coverageDir} --report-dir {args.coverageDir} --check-coverage"
         ],
         "parallel": false,
-        "configDir": "{projectRoot}/.storybook",
-        "coverageDir": "{projectRoot}/coverage/storybook",
-        "url": "http://localhost:6006",
+        "coverageDir": "coverage/storybook",
         "port": 6006
-      },
-      "configurations": {
-        "ci": {
-          "commands": [
-            {
-              "prefix": "[SB]",
-              "command": "nx storybook:static {projectName} --port={args.port}",
-              "forwardAllArgs": false
-            },
-            {
-              "command": "npx wait-on tcp:{args.port} && nx storybook:test {projectName}",
-              "forwardAllArgs": false
-            }
-          ],
-          "parallel": true
-        }
+      }
+    },
+    "storybook:static:test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx concurrently --kill-others --success=last -n SB,TEST 'nx storybook:static {projectName} --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port}'"
+        ],
+        "port": 6006
       }
     },
     "chromatic": {

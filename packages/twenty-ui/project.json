@@ -54,7 +54,7 @@
     },
     "storybook:test": {
       "options": {
-        "url": "http://localhost:6007"
+        "port": 6007
       }
     }
   }
