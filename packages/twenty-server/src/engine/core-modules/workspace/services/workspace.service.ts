@@ -49,7 +49,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     return await this.workspaceManagerService.doesDataSourceExist(id);
   }
 
-  async solfDeleteWorkspace(id: string) {
+  async softDeleteWorkspace(id: string) {
     const workspace = await this.workspaceRepository.findOneBy({ id });
 
     assert(workspace, 'Workspace not found');
@@ -67,7 +67,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       workspaceId: id,
     });
 
-    const workspace = await this.solfDeleteWorkspace(id);
+    const workspace = await this.softDeleteWorkspace(id);
 
     for (const userWorkspace of userWorkspaces) {
       await this.userService.handleRemoveWorkspaceMember(
