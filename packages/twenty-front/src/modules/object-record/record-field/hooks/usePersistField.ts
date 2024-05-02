@@ -7,6 +7,8 @@ import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDa
 import { isFieldDateValue } from '@/object-record/record-field/types/guards/isFieldDateValue';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
+import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
+import { isFieldLinksValue } from '@/object-record/record-field/types/guards/isFieldLinksValue';
 import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
 import { isFieldMultiSelectValue } from '@/object-record/record-field/types/guards/isFieldMultiSelectValue.ts';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
@@ -69,6 +71,9 @@ export const usePersistField = () => {
         const fieldIsLink =
           isFieldLink(fieldDefinition) && isFieldLinkValue(valueToPersist);
 
+        const fieldIsLinks =
+          isFieldLinks(fieldDefinition) && isFieldLinksValue(valueToPersist);
+
         const fieldIsBoolean =
           isFieldBoolean(fieldDefinition) &&
           isFieldBooleanValue(valueToPersist);
@@ -116,6 +121,7 @@ export const usePersistField = () => {
           fieldIsDate ||
           fieldIsPhone ||
           fieldIsLink ||
+          fieldIsLinks ||
           fieldIsCurrency ||
           fieldIsFullName ||
           fieldIsSelect ||
@@ -123,7 +129,7 @@ export const usePersistField = () => {
           fieldIsAddress ||
           fieldIsRawJson;
 
-        if (isValuePersistable === true) {
+        if (isValuePersistable) {
           const fieldName = fieldDefinition.metadata.fieldName;
           set(
             recordStoreFamilySelector({ recordId: entityId, fieldName }),

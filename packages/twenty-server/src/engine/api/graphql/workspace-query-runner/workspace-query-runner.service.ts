@@ -328,6 +328,14 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
+    await this.workspacePreQueryHookService.executePreHooks(
+      userId,
+      workspaceId,
+      objectMetadataItem.nameSingular,
+      'updateOne',
+      args,
+    );
+
     const result = await this.execute(query, workspaceId);
 
     const parsedResults = (
@@ -363,7 +371,7 @@ export class WorkspaceQueryRunnerService {
     args: UpdateManyResolverArgs<Record>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
-    const { workspaceId, objectMetadataItem } = options;
+    const { userId, workspaceId, objectMetadataItem } = options;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
     assertIsValidUuid(args.data.id);
@@ -375,6 +383,14 @@ export class WorkspaceQueryRunnerService {
       ...options,
       atMost: maximumRecordAffected,
     });
+
+    await this.workspacePreQueryHookService.executePreHooks(
+      userId,
+      workspaceId,
+      objectMetadataItem.nameSingular,
+      'updateMany',
+      args,
+    );
 
     const result = await this.execute(query, workspaceId);
 
@@ -419,6 +435,14 @@ export class WorkspaceQueryRunnerService {
       ...options,
       atMost: maximumRecordAffected,
     });
+
+    await this.workspacePreQueryHookService.executePreHooks(
+      userId,
+      workspaceId,
+      objectMetadataItem.nameSingular,
+      'deleteMany',
+      args,
+    );
 
     const result = await this.execute(query, workspaceId);
 
@@ -478,6 +502,14 @@ export class WorkspaceQueryRunnerService {
       objectMetadataItem,
     );
     // TODO END
+
+    await this.workspacePreQueryHookService.executePreHooks(
+      userId,
+      workspaceId,
+      objectMetadataItem.nameSingular,
+      'deleteOne',
+      args,
+    );
 
     const result = await this.execute(query, workspaceId);
 

@@ -1,4 +1,4 @@
-import { Injectable, Logger, NestMiddleware } from '@nestjs/common';
+import { Injectable, NestMiddleware } from '@nestjs/common';
 
 import { Request, Response, NextFunction } from 'express';
 
@@ -7,28 +7,42 @@ import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/worksp
 
 @Injectable()
 export class UserWorkspaceMiddleware implements NestMiddleware {
-  private readonly logger = new Logger(UserWorkspaceMiddleware.name);
-
   constructor(
     private readonly tokenService: TokenService,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
   ) {}
 
   async use(req: Request, res: Response, next: NextFunction) {
-    if (this.tokenService.isTokenPresent(req)) {
-      try {
-        const data = await this.tokenService.validateToken(req);
-        const cacheVersion = await this.workspaceCacheVersionService.getVersion(
-          data.workspace.id,
-        );
+    const body = req.body;
+    const excludedOperations = [
+      'GetClientConfig',
+      'GetCurrentUser',
+      'GetWorkspaceFromInviteHash',
+      'Track',
+      'CheckUserExists',
+      'Challenge',
+      'Verify',
+      'SignUp',
+      'RenewToken',
+    ];
 
-        req.user = data.user;
-        req.workspace = data.workspace;
-        req.cacheVersion = cacheVersion;
-      } catch (error) {
-        this.logger.error('Error while validating token in middleware.', error);
-      }
+    if (
+      body &&
+      body.operationName &&
+      excludedOperations.includes(body.operationName)
+    ) {
+      return next();
     }
+
+    const data = await this.tokenService.validateToken(req);
+    const cacheVersion = await this.workspaceCacheVersionService.getVersion(
+      data.workspace.id,
+    );
+
+    req.user = data.user;
+    req.workspace = data.workspace;
+    req.cacheVersion = cacheVersion;
+
     next();
   }
 }

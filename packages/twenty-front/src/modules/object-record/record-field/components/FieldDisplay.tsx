@@ -1,5 +1,7 @@
 import { useContext } from 'react';
 
+import { LinksFieldDisplay } from '@/object-record/record-field/meta-types/display/components/LinksFieldDisplay';
+import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { ExpandableListProps } from '@/ui/layout/expandable-list/ExpandableList';
 
 import { FieldContext } from '../contexts/FieldContext';
@@ -70,6 +72,8 @@ export const FieldDisplay = ({
     <NumberFieldDisplay />
   ) : isFieldLink(fieldDefinition) ? (
     <LinkFieldDisplay />
+  ) : isFieldLinks(fieldDefinition) ? (
+    <LinksFieldDisplay />
   ) : isFieldCurrency(fieldDefinition) ? (
     <CurrencyFieldDisplay />
   ) : isFieldFullName(fieldDefinition) ? (

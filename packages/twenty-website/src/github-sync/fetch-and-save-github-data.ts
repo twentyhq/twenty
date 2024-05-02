@@ -6,6 +6,7 @@ import { fetchIssuesPRs } from '@/github-sync/contributors/fetch-issues-prs';
 import { saveIssuesToDB } from '@/github-sync/contributors/save-issues-to-db';
 import { savePRsToDB } from '@/github-sync/contributors/save-prs-to-db';
 import { IssueNode, PullRequestNode } from '@/github-sync/contributors/types';
+import { fetchAndSaveGithubReleases } from '@/github-sync/github-releases/fetch-and-save-github-releases';
 import { fetchAndSaveGithubStars } from '@/github-sync/github-stars/fetch-and-save-github-stars';
 
 export const fetchAndSaveGithubData = async () => {
@@ -22,6 +23,7 @@ export const fetchAndSaveGithubData = async () => {
   });
 
   await fetchAndSaveGithubStars(query);
+  await fetchAndSaveGithubReleases(query);
 
   const assignableUsers = await fetchAssignableUsers(query);
   const fetchedPRs = (await fetchIssuesPRs(

@@ -34,14 +34,16 @@ export const generateCsv: GenerateExport = ({
   columns,
   rows,
 }: GenerateExportOptions): string => {
-  const columnsWithoutRelations = columns.filter(
-    (col) => !('relationType' in col.metadata && col.metadata.relationType),
+  const columnsToExport = columns.filter(
+    (col) =>
+      !('relationType' in col.metadata && col.metadata.relationType) ||
+      col.metadata.relationType === 'TO_ONE_OBJECT',
   );
 
-  const keys = columnsWithoutRelations.flatMap((col) => {
+  const keys = columnsToExport.flatMap((col) => {
     const column = {
-      field: col.metadata.fieldName,
-      title: col.label,
+      field: `${col.metadata.fieldName}${col.type === 'RELATION' ? 'Id' : ''}`,
+      title: `${col.label} ${col.type === 'RELATION' ? 'Id' : ''}`,
     };
 
     const fieldsWithSubFields = rows.find((row) => {
