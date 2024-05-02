@@ -62,10 +62,7 @@ jobs:
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
-        run: |
-          npx concurrently -k -s first -n "SB,TEST" -c "magenta,blue" \
-            "npx nx storybook:static twenty-front" \
-            "npx wait-on tcp:6006 && npx nx storybook:test twenty-front --configuration=${{ matrix.storybook_scope }}"
+        run: npx nx storybook:test twenty-front --configuration=ci --scope=${{ matrix.storybook_scope }}
   front-chromatic-deployment:
     if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
     needs: front-sb-build

@@ -63,12 +63,13 @@
     "storybook:build:scope": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "nx storybook:build twenty-front"
+        "command": "STORYBOOK_SCOPE={args.scope} nx storybook:build twenty-front",
+        "scope": "all"
       },
       "configurations": {
-        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
-        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
-        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } }
+        "docs": { "scope": "ui-docs" },
+        "modules": { "scope": "modules" },
+        "pages": { "scope": "pages" }
       }
     },
     "storybook:dev": {
@@ -77,12 +78,13 @@
     "storybook:dev:scope": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "nx storybook:dev twenty-front"
+        "command": "STORYBOOK_SCOPE={args.scope} nx storybook:dev twenty-front",
+        "scope": "all"
       },
       "configurations": {
-        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
-        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
-        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } }
+        "docs": { "scope": "ui-docs" },
+        "modules": { "scope": "modules" },
+        "pages": { "scope": "pages" }
       }
     },
     "storybook:static": {
@@ -94,22 +96,39 @@
     "storybook:static:scope": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "nx storybook:static twenty-front"
+        "command": "STORYBOOK_SCOPE={args.scope} nx storybook:static twenty-front",
+        "scope": "all"
       },
       "configurations": {
-        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
-        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
-        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } }
+        "docs": { "scope": "ui-docs" },
+        "modules": { "scope": "modules" },
+        "pages": { "scope": "pages" }
       }
     },
     "storybook:test": {
       "options": {
-        "url": "http://localhost:6006"
+        "url": "http://localhost:6006",
+        "port": 6006
       },
       "configurations": {
-        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
-        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
-        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } }
+        "ci": {
+          "commands": [
+            {
+              "prefix": "[SB]",
+              "command": "nx storybook:static {projectName} --port={args.port}",
+              "forwardAllArgs": false
+            },
+            {
+              "prefix": "[TEST]",
+              "command": "STORYBOOK_SCOPE={args.scope} npx wait-on tcp:{args.port} && nx storybook:test {projectName}",
+              "forwardAllArgs": false
+            }
+          ],
+          "parallel": true
+        },
+        "docs": { "scope": "ui-docs" },
+        "modules": { "scope": "modules" },
+        "pages": { "scope": "pages" }
       }
     },
     "graphql:generate": {
