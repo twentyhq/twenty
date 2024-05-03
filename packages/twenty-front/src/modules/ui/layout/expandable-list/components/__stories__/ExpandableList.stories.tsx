@@ -10,26 +10,6 @@ import {
 } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { MAIN_COLOR_NAMES } from '@/ui/theme/constants/MainColorNames';
 
-const meta: Meta<typeof ExpandableList> = {
-  title: 'UI/Layout/ExpandableList/ExpandableList',
-  component: ExpandableList,
-  decorators: [ComponentDecorator, (Story) => <Story />],
-  args: {
-    children: [],
-    isHovered: undefined,
-    reference: undefined,
-    forceDisplayHiddenCount: false,
-    withDropDownBorder: false,
-  },
-  argTypes: {
-    children: { control: false },
-    isHovered: { control: false },
-    reference: { control: false },
-  },
-};
-export default meta;
-type Story = StoryObj<typeof ExpandableList>;
-
 const StyledContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};
   width: 300px;
@@ -38,6 +18,7 @@ const StyledContainer = styled.div`
 type RenderProps = ExpandableListProps & {
   children: ReactElement[];
 };
+
 const Render = (args: RenderProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const reference = useRef<HTMLDivElement>(null);
@@ -60,7 +41,10 @@ const Render = (args: RenderProps) => {
   );
 };
 
-export const Default: Story = {
+const meta: Meta<typeof ExpandableList> = {
+  title: 'UI/Layout/ExpandableList/ExpandableList',
+  component: ExpandableList,
+  decorators: [ComponentDecorator],
   args: {
     children: [
       <Tag key={1} text={'Option 1'} color={MAIN_COLOR_NAMES[0]} />,
@@ -71,7 +55,20 @@ export const Default: Story = {
       <Tag key={6} text={'Option 6'} color={MAIN_COLOR_NAMES[5]} />,
       <Tag key={7} text={'Option 7'} color={MAIN_COLOR_NAMES[6]} />,
     ],
+    isHovered: undefined,
+    reference: undefined,
+    forceDisplayHiddenCount: false,
+    withDropDownBorder: false,
   },
-  decorators: [ComponentDecorator],
+  argTypes: {
+    children: { control: false },
+    isHovered: { control: false },
+    reference: { control: false },
+  },
   render: Render,
 };
+
+export default meta;
+type Story = StoryObj<typeof ExpandableList>;
+
+export const Default: Story = {};
