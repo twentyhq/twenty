@@ -17,7 +17,7 @@ import { captchaProviderState } from '@/client-config/states/captchaProviderStat
 import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { ActionLink } from '@/ui/navigation/link/components/ActionLink.tsx';
+import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 import { isDefined } from '~/utils/isDefined';
 

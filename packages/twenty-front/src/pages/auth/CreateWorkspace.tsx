@@ -17,7 +17,7 @@ import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetada
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { AppPath } from '@/types/AppPath';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
-import { Loader } from '@/ui/feedback/loader/components/Loader.tsx';
+import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
