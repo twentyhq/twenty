@@ -33,9 +33,10 @@ index 16843949d8589a299d8195b0a349ac4dac0bacbf..21e7fe2bbcba36b04a274be9d2219fd3
 +            schema: async (request) => {
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.cacheVersion ?? '0'
++                const workspaceUserId = request.req.workspace?.userId ?? 'anonymous'
 +                const url = request.req.baseUrl
 +
-+                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${url}`
++                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
 +
 +                if(this.schemaCache.has(cacheKey)) {
 +                    return this.schemaCache.get(cacheKey)
@@ -79,9 +80,10 @@ index 16843949d8589a299d8195b0a349ac4dac0bacbf..21e7fe2bbcba36b04a274be9d2219fd3
 +            schema: async (request) => {
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.cacheVersion ?? '0'
++                const workspaceUserId = request.req.workspace?.userId ?? 'anonymous'
 +                const url = request.req.baseUrl
 +
-+                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${url}`
++                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
 +
 +                if(this.schemaCache.has(cacheKey)) {
 +                    return this.schemaCache.get(cacheKey)
@@ -145,9 +147,10 @@ index 7068c519320b379917c46763cd280b1cdd3e48f0..418e1030373fc1e0fb85a932ac8da9b3
 +            schema: async (request) => {
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.cacheVersion ?? '0'
++                const workspaceUserId = request.req.workspace?.userId ?? 'anonymous'
 +                const url = request.req.baseUrl
 +
-+                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${url}`
++                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
 +
 +                if (this.schemaCache.has(cacheKey)) {
 +                return this.schemaCache.get(cacheKey)
@@ -191,9 +194,10 @@ index 7068c519320b379917c46763cd280b1cdd3e48f0..418e1030373fc1e0fb85a932ac8da9b3
 +            schema: async (request) => {
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.cacheVersion ?? '0'
++                const workspaceUserId = request.req.workspace?.userId ?? 'anonymous'
 +                const url = request.req.baseUrl
 +
-+                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${url}`
++                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
 +
 +                if (this.schemaCache.has(cacheKey)) {
 +                return this.schemaCache.get(cacheKey)
@@ -384,9 +388,10 @@ index ce142f61ede52499485b19d8af057f4cb828d0f7..5888d31cae1b7aca57ed0819209812ac
 +      schema: async request => {
 +        const workspaceId = request.req.workspace.id
 +        const workspaceCacheVersion = request.req.cacheVersion
++        const workspaceUserId = request.req.workspace?.userId ?? 'anonymous'
 +        const url = request.req.baseUrl
 +
-+        const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${url}`
++        const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
 +
 +        if (this.schemaCache.has(cacheKey)) {
 +          return this.schemaCache.get(cacheKey)
@@ -444,9 +449,10 @@ index ce142f61ede52499485b19d8af057f4cb828d0f7..5888d31cae1b7aca57ed0819209812ac
 +      schema: async request => {
 +        const workspaceId = request.req.workspace.id
 +        const workspaceCacheVersion = request.req.cacheVersion
++        const workspaceUserId = request.req.workspace?.userId ?? 'anonymous'
 +        const url = request.req.baseUrl
 +
-+        const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${url}`
++        const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
 +
 +        if (this.schemaCache.has(cacheKey)) {
 +          return this.schemaCache.get(cacheKey)
