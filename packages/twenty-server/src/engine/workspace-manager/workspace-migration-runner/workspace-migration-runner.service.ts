@@ -495,14 +495,17 @@ export class WorkspaceMigrationRunnerService {
       )
       .join(', ');
 
-    let serverOptions = '';
+    // eslint-disable-next-line
+    let serverOptions: string[] = [];
 
     Object.entries(foreignTable.referencedTable).forEach(([key, value]) => {
-      serverOptions += ` ${key} '${value}'`;
+      serverOptions.push(`${key} '${value}'`);
     });
 
     await queryRunner.query(
-      `CREATE FOREIGN TABLE ${schemaName}."${name}" (${foreignTableColumns}) SERVER "${foreignTable.foreignDataWrapperId}" OPTIONS (${serverOptions})`,
+      `CREATE FOREIGN TABLE ${schemaName}."${name}" (${foreignTableColumns}) SERVER "${
+        foreignTable.foreignDataWrapperId
+      }" OPTIONS (${serverOptions.join(', ')})`,
     );
 
     await queryRunner.query(`
