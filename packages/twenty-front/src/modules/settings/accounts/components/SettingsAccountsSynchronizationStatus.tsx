@@ -3,7 +3,7 @@ import { Status } from '@/ui/display/status/components/Status';
 
 export type SettingsAccountsSynchronizationStatusProps = {
   syncStatus: string;
-  isSyncEnabled?: boolean | undefined;
+  isSyncEnabled?: boolean;
 };
 
 export const SettingsAccountsSynchronizationStatus = ({

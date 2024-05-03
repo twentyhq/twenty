@@ -6,7 +6,9 @@ import { IconChevronRight, IconGoogleCalendar } from 'twenty-ui';
 import { CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
 import {
@@ -25,6 +27,9 @@ const StyledRowRightContainer = styled.div`
 export const SettingsAccountsCalendarChannelsListCard = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const navigate = useNavigate();
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.CalendarChannel,
+  });
 
   const { records: accounts, loading: accountsLoading } =
     useFindManyRecords<ConnectedAccount>({
@@ -49,6 +54,7 @@ export const SettingsAccountsCalendarChannelsListCard = () => {
           in: accounts.map((account) => account.id),
         },
       },
+      recordGqlFields: generateDepthOneRecordGqlFields({ objectMetadataItem }),
     });
 
   if (!calendarChannels.length) {
