@@ -24,6 +24,8 @@ runs:
         path: |
           .cache
           .nx/cache
+          node_modules/.cache
+          packages/*/node_modules/.cache
         key: tasks-cache-${{ github.ref_name }}-${{ inputs.tag }}-${{ steps.tasks-key.outputs.key }}${{ inputs.suffix }}-${{ github.sha }}
         restore-keys: |
           tasks-cache-${{ github.ref_name }}-${{ inputs.tag }}-${{ steps.tasks-key.outputs.key }}${{ inputs.suffix }}-

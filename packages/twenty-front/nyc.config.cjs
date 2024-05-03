@@ -1,4 +1,5 @@
 const globalCoverage = {
+  branches: 45,
   statements: 60,
   lines: 60,
   functions: 60,
@@ -6,6 +7,7 @@ const globalCoverage = {
 };
 
 const modulesCoverage = {
+  branches: 45,
   statements: 70,
   lines: 70,
   functions: 65,
@@ -14,6 +16,7 @@ const modulesCoverage = {
 };
 
 const pagesCoverage = {
+  branches: 45,
   statements: 60,
   lines: 60,
   functions: 45,
