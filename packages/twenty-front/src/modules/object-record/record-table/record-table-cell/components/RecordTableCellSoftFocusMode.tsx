@@ -1,11 +1,19 @@
-import { PropsWithChildren, useEffect, useRef } from 'react';
+import { PropsWithChildren, useContext, useEffect, useRef } from 'react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
+import { IconArrowUpRight } from 'twenty-ui';
 
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useClearField } from '@/object-record/record-field/hooks/useClearField';
+import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
 import { useIsFieldClearable } from '@/object-record/record-field/hooks/useIsFieldClearable';
-import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
+import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
 import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
+import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
+import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
+import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { RecordTableCellButton } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButton';
+import { useCurrentTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useCurrentCellPosition';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -20,9 +28,9 @@ type RecordTableCellSoftFocusModeProps = PropsWithChildren<unknown>;
 export const RecordTableCellSoftFocusMode = ({
   children,
 }: RecordTableCellSoftFocusModeProps) => {
+  const { columnIndex } = useContext(RecordTableCellContext);
   const { openTableCell } = useOpenRecordTableCellFromCell();
-
-  const isFieldInputOnly = useIsFieldInputOnly();
+  const { isFieldInputOnly } = useContext(FieldContext);
 
   const isFieldClearable = useIsFieldClearable();
 
@@ -98,13 +106,39 @@ export const RecordTableCellSoftFocusMode = ({
     }
   };
 
+  const cellPosition = useCurrentTableCellPosition();
+
+  const isEmpty = useIsFieldEmpty();
+
+  const isFirstColumn = columnIndex === 0;
+  const customButtonIcon = useGetButtonIcon();
+  const buttonIcon = isFirstColumn ? IconArrowUpRight : customButtonIcon;
+  const { onMoveSoftFocusToCell } = useContext(RecordTableContext);
+  const { isReadOnly } = useContext(RecordTableRowContext);
+
+  const handleButtonClick = () => {
+    onMoveSoftFocusToCell(cellPosition);
+    openTableCell();
+  };
+
   return (
-    <RecordTableCellDisplayContainer
-      onClick={handleClick}
-      softFocus
-      scrollRef={scrollRef}
-    >
-      {children}
-    </RecordTableCellDisplayContainer>
+    <>
+      {!!buttonIcon &&
+        !isFieldInputOnly &&
+        (!isFirstColumn || !isEmpty) &&
+        !isReadOnly && (
+          <RecordTableCellButton
+            onClick={handleButtonClick}
+            Icon={buttonIcon}
+          />
+        )}
+      <RecordTableCellDisplayContainer
+        onClick={handleClick}
+        softFocus
+        scrollRef={scrollRef}
+      >
+        {children}
+      </RecordTableCellDisplayContainer>
+    </>
   );
 };

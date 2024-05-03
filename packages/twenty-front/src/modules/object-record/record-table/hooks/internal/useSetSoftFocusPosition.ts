@@ -27,27 +27,41 @@ export const useSetSoftFocusPosition = (recordTableId?: string) => {
 
         set(isSoftFocusOnTableCellFamilyState(currentPosition), false);
 
-        setTableCellStatus(
-          currentPosition.row,
-          currentPosition.column,
-          (currentTableCellStatus) => ({
-            ...currentTableCellStatus,
-            hasSoftFocus: false,
-          }),
+        document.dispatchEvent(
+          new CustomEvent(
+            `soft-focus-move-${currentPosition.row}:${currentPosition.column}`,
+            { detail: false },
+          ),
         );
+
+        // setTableCellStatus(
+        //   currentPosition.row,
+        //   currentPosition.column,
+        //   (currentTableCellStatus) => ({
+        //     ...currentTableCellStatus,
+        //     hasSoftFocus: false,
+        //   }),
+        // );
 
         set(softFocusPositionState, newPosition);
 
         set(isSoftFocusOnTableCellFamilyState(newPosition), true);
 
-        setTableCellStatus(
-          newPosition.row,
-          newPosition.column,
-          (currentTableCellStatus) => ({
-            ...currentTableCellStatus,
-            hasSoftFocus: true,
-          }),
+        document.dispatchEvent(
+          new CustomEvent(
+            `soft-focus-move-${newPosition.row}:${newPosition.column}`,
+            { detail: true },
+          ),
         );
+
+        // setTableCellStatus(
+        //   newPosition.row,
+        //   newPosition.column,
+        //   (currentTableCellStatus) => ({
+        //     ...currentTableCellStatus,
+        //     hasSoftFocus: true,
+        //   }),
+        // );
       };
     },
     [

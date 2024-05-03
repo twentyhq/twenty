@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
+import { isFieldInputOnly } from '@/object-record/record-field/utils/isFieldInputOnly';
 import { RecordUpdateContext } from '@/object-record/record-table/contexts/EntityUpdateMutationHookContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -43,6 +44,7 @@ export const RecordTableCellFieldContextWrapper = () => {
           },
           objectMetadataItem,
         }),
+        isFieldInputOnly: isFieldInputOnly(columnDefinition),
       }}
     >
       <RecordTableCell customHotkeyScope={{ scope: customHotkeyScope }} />
