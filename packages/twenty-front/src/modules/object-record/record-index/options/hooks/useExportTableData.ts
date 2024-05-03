@@ -43,7 +43,7 @@ export const generateCsv: GenerateExport = ({
   const keys = columnsToExport.flatMap((col) => {
     const column = {
       field: `${col.metadata.fieldName}${col.type === 'RELATION' ? 'Id' : ''}`,
-      title: `${col.label} ${col.type === 'RELATION' ? 'Id' : ''}`,
+      title: `${col.label}${col.type === 'RELATION' ? ' Id' : ''}`,
     };
 
     const fieldsWithSubFields = rows.find((row) => {
