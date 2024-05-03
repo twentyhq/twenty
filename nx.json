@@ -140,14 +140,19 @@
     "storybook:coverage": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": ["{projectRoot}/coverage/storybook/coverage-storybook.json"],
+      "inputs": [
+        "^default",
+        "storybookFiles",
+        "{projectRoot}/coverage/storybook/coverage-storybook.json"
+      ],
       "outputs": [
         "{projectRoot}/coverage/storybook",
         "!{projectRoot}/coverage/storybook/coverage-storybook.json"
       ],
       "options": {
-        "command": "npx nyc report --reporter=lcov --reporter=text-summary -t {args.coverageDir} --report-dir {args.coverageDir} --check-coverage --cwd={projectRoot}",
-        "coverageDir": "coverage/storybook"
+        "command": "npx nyc report --reporter={args.reporter} --reporter=text-summary -t {args.coverageDir} --report-dir {args.coverageDir} --check-coverage --cwd={projectRoot}",
+        "coverageDir": "coverage/storybook",
+        "reporter": "lcov"
       }
     },
     "storybook:test": {
