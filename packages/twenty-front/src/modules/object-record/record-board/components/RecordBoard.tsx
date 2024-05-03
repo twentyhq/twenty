@@ -26,6 +26,7 @@ const StyledContainer = styled.div`
   display: flex;
   flex: 1;
   flex-direction: row;
+  height: 100%;
 `;
 
 const StyledWrapper = styled.div`
