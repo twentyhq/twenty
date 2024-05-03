@@ -51,6 +51,8 @@ const StyledContainer = styled.div<
   cursor: ${({ clickable, disabled }) =>
     clickable ? 'pointer' : disabled ? 'not-allowed' : 'inherit'};
   display: inline-flex;
+  flex-direction: row-reverse;
+  justify-content: center;
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ theme }) => theme.spacing(3)};
   max-width: ${({ maxWidth }) =>
