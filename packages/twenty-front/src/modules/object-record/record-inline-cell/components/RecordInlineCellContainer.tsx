@@ -2,11 +2,9 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Tooltip } from 'react-tooltip';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { motion } from 'framer-motion';
 import { IconComponent } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { ANIMATION_DIV_PROPS } from '@/object-record/record-table/constants/AnimationDivProps';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
 import { ExpandableListProps } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -48,11 +46,6 @@ const StyledLabelContainer = styled.div<{ width?: number }>`
   color: ${({ theme }) => theme.font.color.tertiary};
   font-size: ${({ theme }) => theme.font.size.sm};
   width: ${({ width }) => width}px;
-`;
-
-const StyledEditButtonContainer = styled(motion.div)`
-  align-items: center;
-  display: flex;
 `;
 
 const StyledClickableContainer = styled.div<{ readonly?: boolean }>`
@@ -229,16 +222,7 @@ export const RecordInlineCellContainer = ({
             >
               {newDisplayModeContent}
             </RecordInlineCellDisplayMode>
-            {showEditButton && (
-              <StyledEditButtonContainer
-                initial={ANIMATION_DIV_PROPS.initial}
-                animate={ANIMATION_DIV_PROPS.animate}
-                transition={ANIMATION_DIV_PROPS.transition}
-                whileHover={ANIMATION_DIV_PROPS.whileHover}
-              >
-                <RecordInlineCellButton Icon={buttonIcon} />
-              </StyledEditButtonContainer>
-            )}
+            {showEditButton && <RecordInlineCellButton Icon={buttonIcon} />}
           </StyledClickableContainer>
         )}
       </StyledValueContainer>

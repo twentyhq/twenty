@@ -1,10 +1,9 @@
 import { ReactElement, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { offset, useFloating } from '@floating-ui/react';
-import { motion } from 'framer-motion';
 import { Chip, ChipVariant } from 'twenty-ui';
 
-import { ANIMATION_DIV_PROPS } from '@/object-record/record-table/constants/AnimationDivProps';
+import { AnimatedContainer } from '@/object-record/record-table/components/AnimatedContainer';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { ChildrenContainer } from '@/ui/layout/expandable-list/components/ChildrenContainer';
 import { getChildrenProperties } from '@/ui/layout/expandable-list/utils/getChildProperties';
@@ -36,8 +35,6 @@ const StyledRelationsListContainer = styled.div<{ withOutline?: boolean }>`
       ? `1px solid ${props.theme.font.color.extraLight}`
       : 'none'};
 `;
-
-const StyledAnimatedChipContainer = styled(motion.div)``;
 
 export type ExpandableListProps = {
   isHovered?: boolean;
@@ -120,18 +117,13 @@ export const ExpandableList = ({
         {children}
       </ChildrenContainer>
       {displayHiddenCountChip && (
-        <StyledAnimatedChipContainer
-          initial={ANIMATION_DIV_PROPS.initial}
-          animate={ANIMATION_DIV_PROPS.animate}
-          transition={ANIMATION_DIV_PROPS.transition}
-          whileHover={ANIMATION_DIV_PROPS.whileHover}
-        >
+        <AnimatedContainer>
           <Chip
             label={`+${hiddenChildrenCount}`}
             variant={ChipVariant.Highlighted}
             onClick={openDropdownMenu}
           />
-        </StyledAnimatedChipContainer>
+        </AnimatedContainer>
       )}
       {isDropdownMenuOpen && (
         <DropdownMenu
