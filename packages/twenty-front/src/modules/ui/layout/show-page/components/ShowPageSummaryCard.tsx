@@ -112,7 +112,11 @@ export const ShowPageSummaryCard = ({
       </StyledAvatarWrapper>
       <StyledInfoContainer>
         <StyledTitle>{title}</StyledTitle>
-        <StyledDate id={dateElementId}>Added {beautifiedCreatedAt}</StyledDate>
+        {beautifiedCreatedAt && (
+          <StyledDate id={dateElementId}>
+            Added {beautifiedCreatedAt}
+          </StyledDate>
+        )}
         <StyledTooltip
           anchorSelect={`#${dateElementId}`}
           content={exactCreatedAt}

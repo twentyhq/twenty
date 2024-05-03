@@ -495,11 +495,9 @@ export class WorkspaceMigrationRunnerService {
       )
       .join(', ');
 
-    let serverOptions = '';
-
-    Object.entries(foreignTable.referencedTable).forEach(([key, value]) => {
-      serverOptions += ` ${key} '${value}'`;
-    });
+    const serverOptions = Object.entries(foreignTable.referencedTable)
+      .map(([key, value]) => `${key} '${value}'`)
+      .join(', ');
 
     await queryRunner.query(
       `CREATE FOREIGN TABLE ${schemaName}."${name}" (${foreignTableColumns}) SERVER "${foreignTable.foreignDataWrapperId}" OPTIONS (${serverOptions})`,
