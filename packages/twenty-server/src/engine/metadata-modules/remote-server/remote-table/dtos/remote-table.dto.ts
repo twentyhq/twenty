@@ -10,6 +10,13 @@ export enum RemoteTableStatus {
   NOT_SYNCED = 'NOT_SYNCED',
 }
 
+export enum DistantTableUpdate {
+  TABLE_DELETED = 'TABLE_DELETED',
+  COLUMN_DELETED = 'COLUMN_DELETED',
+  COLUMN_ADDED = 'COLUMN_ADDED',
+  COLUMN_TYPE_CHANGED = 'COLUMN_TYPE_CHANGED',
+}
+
 registerEnumType(RemoteTableStatus, {
   name: 'RemoteTableStatus',
   description: 'Status of the table',
