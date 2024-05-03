@@ -60,18 +60,16 @@ export const SettingsAccountsRowDropdownMenu = ({
                 closeDropdown();
               }}
             />
-            {
-              <MenuItem
-                LeftIcon={IconCalendarEvent}
-                text="Calendar settings"
-                onClick={() => {
-                  navigate(
-                    `/settings/accounts/calendars/${account.calendarChannels[0].id}`,
-                  );
-                  closeDropdown();
-                }}
-              />
-            }
+            <MenuItem
+              LeftIcon={IconCalendarEvent}
+              text="Calendar settings"
+              onClick={() => {
+                navigate(
+                  `/settings/accounts/calendars/${account.calendarChannels[0].id}`,
+                );
+                closeDropdown();
+              }}
+            />
             {account.authFailedAt && (
               <MenuItem
                 LeftIcon={IconRefresh}
