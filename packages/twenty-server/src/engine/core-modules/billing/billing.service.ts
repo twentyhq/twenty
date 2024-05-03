@@ -196,23 +196,16 @@ export class BillingService {
       ? frontBaseUrl + successUrlPath
       : frontBaseUrl;
 
-    let quantity = 1;
+    const quantity =
+      (await this.userWorkspaceService.getWorkspaceMemberCount(
+        user.defaultWorkspaceId,
+      )) || 1;
 
     const stripeCustomerId = (
       await this.billingSubscriptionRepository.findOneBy({
         workspaceId: user.defaultWorkspaceId,
       })
     )?.stripeCustomerId;
-
-    try {
-      quantity = await this.userWorkspaceService.getWorkspaceMemberCount(
-        user.defaultWorkspaceId,
-      );
-    } catch (e) {
-      this.logger.error(
-        `Failed to get workspace member count for workspace ${user.defaultWorkspaceId}`,
-      );
-    }
 
     const session = await this.stripeService.createCheckoutSession(
       user,
