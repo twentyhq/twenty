@@ -61,10 +61,8 @@ export const SettingsAccountsCalendarChannelsListCard = () => {
     (calendarChannel) => ({
       ...calendarChannel,
       syncStatus: calendarChannel.connectedAccount?.authFailedAt
-        ? 'failed'
-        : calendarChannel.isSyncEnabled
-          ? 'synced'
-          : 'notSynced',
+        ? 'FAILED'
+        : 'SUCCEEDED',
     }),
   );
 
@@ -81,6 +79,7 @@ export const SettingsAccountsCalendarChannelsListCard = () => {
         <StyledRowRightContainer>
           <SettingsAccountsSynchronizationStatus
             syncStatus={calendarChannel.syncStatus}
+            isSyncEnabled={calendarChannel.isSyncEnabled}
           />
           <LightIconButton Icon={IconChevronRight} accent="tertiary" />
         </StyledRowRightContainer>
