@@ -17,7 +17,6 @@ import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 type SettingsAccountsRowDropdownMenuProps = {
   account: ConnectedAccount;
@@ -38,8 +37,6 @@ export const SettingsAccountsRowDropdownMenu = ({
   });
 
   const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
-
-  const isCalendarEnabled = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
 
   return (
     <Dropdown
@@ -63,7 +60,7 @@ export const SettingsAccountsRowDropdownMenu = ({
                 closeDropdown();
               }}
             />
-            {isCalendarEnabled && (
+            {
               <MenuItem
                 LeftIcon={IconCalendarEvent}
                 text="Calendar settings"
@@ -74,7 +71,7 @@ export const SettingsAccountsRowDropdownMenu = ({
                   closeDropdown();
                 }}
               />
-            )}
+            }
             {account.authFailedAt && (
               <MenuItem
                 LeftIcon={IconRefresh}

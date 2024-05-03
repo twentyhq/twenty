@@ -21,11 +21,6 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKeys.IsCalendarEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKeys.IsAirtableIntegrationEnabled,
         workspaceId: workspaceId,
         value: true,

@@ -19,10 +19,7 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { MessageParticipantService } from 'src/modules/messaging/services/message-participant/message-participant.service';
 import { CalendarEventParticipantService } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.service';
 import { filterOutContactsFromCompanyOrWorkspace } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/filter-out-contacts-from-company-or-workspace.util';
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @Injectable()
 export class CreateCompanyAndContactService {
@@ -153,16 +150,6 @@ export class CreateCompanyAndContactService {
           workspaceId,
           transactionManager,
         );
-
-        const isCalendarEnabled = await this.featureFlagRepository.findOneBy({
-          workspaceId,
-          key: FeatureFlagKeys.IsCalendarEnabled,
-          value: true,
-        });
-
-        if (!isCalendarEnabled || !isCalendarEnabled.value) {
-          return;
-        }
 
         await this.calendarEventParticipantService.updateCalendarEventParticipantsAfterPeopleCreation(
           workspaceId,

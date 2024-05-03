@@ -25,7 +25,6 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const SettingsNavigationDrawerItems = () => {
   const navigate = useNavigate();
@@ -36,7 +35,6 @@ export const SettingsNavigationDrawerItems = () => {
     navigate(AppPath.SignInUp);
   }, [signOut, navigate]);
 
-  const isCalendarEnabled = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
   const billing = useRecoilValue(billingState);
 
   return (
@@ -73,7 +71,6 @@ export const SettingsNavigationDrawerItems = () => {
             path={SettingsPath.AccountsCalendars}
             Icon={IconCalendarEvent}
             matchSubPages
-            soon={!isCalendarEnabled}
           />
         </NavigationDrawerItemGroup>
       </NavigationDrawerSection>
