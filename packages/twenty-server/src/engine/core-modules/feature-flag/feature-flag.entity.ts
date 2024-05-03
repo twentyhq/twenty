@@ -17,7 +17,6 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 
 export enum FeatureFlagKeys {
   IsBlocklistEnabled = 'IS_BLOCKLIST_ENABLED',
-  IsCalendarEnabled = 'IS_CALENDAR_ENABLED',
   IsEventObjectEnabled = 'IS_EVENT_OBJECT_ENABLED',
   IsAirtableIntegrationEnabled = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IsPostgreSQLIntegrationEnabled = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
