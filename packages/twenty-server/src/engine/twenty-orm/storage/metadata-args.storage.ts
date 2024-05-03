@@ -1,24 +1,45 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
+import { WorkspaceDynamicRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-dynamic-relation-metadata-args.interface';
 import { WorkspaceFieldMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-field-metadata-args.interface';
-import { WorkspaceObjectMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-object-metadata-args.interface';
+import { WorkspaceEntityMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-object-metadata-args.interface';
 import { WorkspaceRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-relation-metadata-args.interface';
 
 export class MetadataArgsStorage {
-  readonly objects: WorkspaceObjectMetadataArgs[] = [];
-  readonly fields: WorkspaceFieldMetadataArgs[] = [];
-  readonly relations: WorkspaceRelationMetadataArgs[] = [];
+  private readonly entities: WorkspaceEntityMetadataArgs[] = [];
+  private readonly fields: WorkspaceFieldMetadataArgs[] = [];
+  private readonly relations: WorkspaceRelationMetadataArgs[] = [];
+  private readonly dynamicRelations: WorkspaceDynamicRelationMetadataArgs[] =
+    [];
 
-  filterObjects(
+  addEntities(...entities: WorkspaceEntityMetadataArgs[]): void {
+    this.entities.push(...entities);
+  }
+
+  addFields(...fields: WorkspaceFieldMetadataArgs[]): void {
+    this.fields.push(...fields);
+  }
+
+  addRelations(...relations: WorkspaceRelationMetadataArgs[]): void {
+    this.relations.push(...relations);
+  }
+
+  addDynamicRelations(
+    ...dynamicRelations: WorkspaceDynamicRelationMetadataArgs[]
+  ): void {
+    this.dynamicRelations.push(...dynamicRelations);
+  }
+
+  filterEntities(
     target: Function | string,
-  ): WorkspaceObjectMetadataArgs | undefined;
+  ): WorkspaceEntityMetadataArgs | undefined;
 
-  filterObjects(target: (Function | string)[]): WorkspaceObjectMetadataArgs[];
+  filterEntities(target: (Function | string)[]): WorkspaceEntityMetadataArgs[];
 
-  filterObjects(
+  filterEntities(
     target: (Function | string) | (Function | string)[],
-  ): WorkspaceObjectMetadataArgs | undefined | WorkspaceObjectMetadataArgs[] {
-    const objects = this.filterByTarget(this.objects, target);
+  ): WorkspaceEntityMetadataArgs | undefined | WorkspaceEntityMetadataArgs[] {
+    const objects = this.filterByTarget(this.entities, target);
 
     return Array.isArray(objects) ? objects[0] : objects;
   }

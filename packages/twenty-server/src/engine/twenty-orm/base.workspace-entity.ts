@@ -4,7 +4,7 @@ import { WorkspaceIsPimaryField } from 'src/engine/twenty-orm/decorators/workspa
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { BASE_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 
-export abstract class BaseObjectMetadata {
+export abstract class BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BASE_OBJECT_STANDARD_FIELD_IDS.id,
     type: FieldMetadataType.UUID,

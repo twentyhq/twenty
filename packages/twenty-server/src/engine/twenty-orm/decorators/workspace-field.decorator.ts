@@ -44,7 +44,7 @@ export function WorkspaceField<T extends FieldMetadataType>(
       propertyKey.toString(),
     );
 
-    metadataArgsStorage.fields.push({
+    metadataArgsStorage.addFields({
       target: object.constructor,
       standardId: options.standardId,
       name: propertyKey.toString(),

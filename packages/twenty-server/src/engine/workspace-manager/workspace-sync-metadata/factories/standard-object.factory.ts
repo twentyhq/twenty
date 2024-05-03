@@ -5,8 +5,9 @@ import { PartialObjectMetadata } from 'src/engine/workspace-manager/workspace-sy
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
-import { TypedReflect } from 'src/utils/typed-reflect';
 import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 
 import { StandardFieldFactory } from './standard-field.factory';
 
@@ -15,7 +16,7 @@ export class StandardObjectFactory {
   constructor(private readonly standardFieldFactory: StandardFieldFactory) {}
 
   create(
-    standardObjectMetadataDefinitions: (typeof BaseObjectMetadata)[],
+    standardObjectMetadataDefinitions: (typeof BaseWorkspaceEntity)[],
     context: WorkspaceSyncContext,
     workspaceFeatureFlagsMap: FeatureFlagMap,
   ): PartialObjectMetadata[] {
@@ -27,30 +28,36 @@ export class StandardObjectFactory {
   }
 
   private createObjectMetadata(
-    metadata: typeof BaseObjectMetadata,
+    target: typeof BaseObjectMetadata,
     context: WorkspaceSyncContext,
     workspaceFeatureFlagsMap: FeatureFlagMap,
   ): PartialObjectMetadata | undefined {
-    const objectMetadata = TypedReflect.getMetadata('objectMetadata', metadata);
+    const workspaceEntityMetadataArgs =
+      metadataArgsStorage.filterEntities(target);
 
-    if (!objectMetadata) {
+    if (!workspaceEntityMetadataArgs) {
       throw new Error(
-        `Object metadata decorator not found, can't parse ${metadata.name}`,
+        `Object metadata decorator not found, can't parse ${target.name}`,
       );
     }
 
-    if (isGatedAndNotEnabled(objectMetadata.gate, workspaceFeatureFlagsMap)) {
+    if (
+      isGatedAndNotEnabled(
+        workspaceEntityMetadataArgs.gate,
+        workspaceFeatureFlagsMap,
+      )
+    ) {
       return undefined;
     }
 
     const fields = this.standardFieldFactory.create(
-      metadata,
+      target,
       context,
       workspaceFeatureFlagsMap,
     );
 
     return {
-      ...objectMetadata,
+      ...workspaceEntityMetadataArgs,
       workspaceId: context.workspaceId,
       dataSourceId: context.dataSourceId,
       fields,

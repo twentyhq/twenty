@@ -67,7 +67,7 @@ export function WorkspaceRelation<TClass extends object>(
         : `${propertyKey.toString()}Id`;
     }
 
-    metadataArgsStorage.relations.push({
+    metadataArgsStorage.addRelations({
       target: object.constructor,
       standardId: options.standardId,
       name: propertyKey.toString(),

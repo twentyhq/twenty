@@ -1,9 +1,9 @@
 import { FactoryProvider, ModuleMetadata, Type } from '@nestjs/common';
 
-import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 
 export interface TwentyORMOptions {
-  objects: Type<BaseObjectMetadata>[];
+  workspaceEntities: Type<BaseWorkspaceEntity>[];
 }
 
 export type TwentyORMModuleAsyncOptions = {

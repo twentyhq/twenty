@@ -2,7 +2,7 @@ import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 import { TypedReflect } from 'src/utils/typed-reflect';
 
-interface WorkspaceObjectOptions {
+interface WorkspaceEntityOptions {
   standardId: string;
   namePlural: string;
   labelSingular: string;
@@ -11,8 +11,8 @@ interface WorkspaceObjectOptions {
   icon?: string;
 }
 
-export function WorkspaceObject(
-  options: WorkspaceObjectOptions,
+export function WorkspaceEntity(
+  options: WorkspaceEntityOptions,
 ): ClassDecorator {
   return (target) => {
     const isAuditLogged =
@@ -30,7 +30,7 @@ export function WorkspaceObject(
     );
     const objectName = convertClassNameToObjectMetadataName(target.name);
 
-    metadataArgsStorage.objects.push({
+    metadataArgsStorage.addEntities({
       target,
       standardId: options.standardId,
       nameSingular: objectName,
