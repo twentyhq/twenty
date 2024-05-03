@@ -1,4 +1,4 @@
-import uniqBy from 'lodash/uniqBy';
+import uniqBy from 'lodash.uniqby';
 
 import {
   MatchColumnsStepProps,
