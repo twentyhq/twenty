@@ -9,7 +9,7 @@ type MultiSelectFieldDisplayProps = ExpandableListProps;
 export const MultiSelectFieldDisplay = ({
   isHovered,
   reference,
-  withOutline,
+  withDropDownBorder,
 }: MultiSelectFieldDisplayProps) => {
   const { fieldValues, fieldDefinition } = useMultiSelectField();
 
@@ -23,7 +23,7 @@ export const MultiSelectFieldDisplay = ({
     <ExpandableList
       isHovered={isHovered}
       reference={reference}
-      withOutline={withOutline}
+      withDropDownBorder={withDropDownBorder}
     >
       {selectedOptions.map((selectedOption, index) => (
         <Tag

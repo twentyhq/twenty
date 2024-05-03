@@ -19,7 +19,9 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledRelationsListContainer = styled.div<{ withOutline?: boolean }>`
+const StyledRelationsListContainer = styled.div<{
+  withDropDownBorder?: boolean;
+}>`
   backdrop-filter: ${({ theme }) => theme.blur.strong};
   background-color: ${({ theme }) => theme.background.secondary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -31,7 +33,7 @@ const StyledRelationsListContainer = styled.div<{ withOutline?: boolean }>`
   gap: ${({ theme }) => theme.spacing(1)};
   padding: ${({ theme }) => theme.spacing(2)};
   outline: ${(props) =>
-    props.withOutline
+    props.withDropDownBorder
       ? `1px solid ${props.theme.font.color.extraLight}`
       : 'none'};
 `;
@@ -40,7 +42,7 @@ export type ExpandableListProps = {
   isHovered?: boolean;
   reference?: HTMLDivElement;
   forceDisplayHiddenCount?: boolean;
-  withOutline?: boolean;
+  withDropDownBorder?: boolean;
 };
 
 export type ChildrenProperty = {
@@ -53,7 +55,7 @@ export const ExpandableList = ({
   isHovered,
   reference,
   forceDisplayHiddenCount = false,
-  withOutline = false,
+  withDropDownBorder = false,
 }: {
   children: ReactElement[];
 } & ExpandableListProps) => {
@@ -135,7 +137,7 @@ export const ExpandableList = ({
               : undefined
           }
         >
-          <StyledRelationsListContainer withOutline={withOutline}>
+          <StyledRelationsListContainer withDropDownBorder={withDropDownBorder}>
             {children}
           </StyledRelationsListContainer>
         </DropdownMenu>

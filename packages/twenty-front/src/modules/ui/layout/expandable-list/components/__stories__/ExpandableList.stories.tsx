@@ -19,7 +19,7 @@ const meta: Meta<typeof ExpandableList> = {
     isHovered: undefined,
     reference: undefined,
     forceDisplayHiddenCount: false,
-    withOutline: false,
+    withDropDownBorder: false,
   },
   argTypes: {
     children: { control: false },
@@ -52,7 +52,7 @@ const Render = (args: RenderProps) => {
       <ExpandableList
         reference={reference.current || undefined}
         forceDisplayHiddenCount={args.forceDisplayHiddenCount}
-        withOutline={args.withOutline}
+        withDropDownBorder={args.withDropDownBorder}
         isHovered={isHovered}
       >
         {args.children}

@@ -84,7 +84,7 @@ export const FieldDisplay = ({
     <MultiSelectFieldDisplay
       isHovered={isHovered}
       reference={reference}
-      withOutline={fromTableCell}
+      withDropDownBorder={fromTableCell}
     />
   ) : isFieldAddress(fieldDefinition) ? (
     <AddressFieldDisplay />
