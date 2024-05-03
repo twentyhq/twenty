@@ -41,7 +41,7 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKeys.IsMultiSelectEnabled,
+        key: FeatureFlagKeys.IsStripeIntegrationEnabled,
         workspaceId: workspaceId,
         value: true,
       },

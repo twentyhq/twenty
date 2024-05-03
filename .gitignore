@@ -26,3 +26,4 @@ storybook-static
 *.tsbuildinfo
 .eslintcache
 .cache
+.nyc_output

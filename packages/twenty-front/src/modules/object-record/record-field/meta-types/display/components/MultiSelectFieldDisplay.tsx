@@ -1,13 +1,16 @@
-import styled from '@emotion/styled';
-
 import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField';
 import { Tag } from '@/ui/display/tag/components/Tag';
+import {
+  ExpandableList,
+  ExpandableListProps,
+} from '@/ui/layout/expandable-list/components/ExpandableList';
 
-const StyledTagContainer = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
-export const MultiSelectFieldDisplay = () => {
+type MultiSelectFieldDisplayProps = ExpandableListProps;
+export const MultiSelectFieldDisplay = ({
+  isHovered,
+  reference,
+  withDropDownBorder,
+}: MultiSelectFieldDisplayProps) => {
   const { fieldValues, fieldDefinition } = useMultiSelectField();
 
   const selectedOptions = fieldValues
@@ -17,7 +20,11 @@ export const MultiSelectFieldDisplay = () => {
     : [];
 
   return selectedOptions ? (
-    <StyledTagContainer>
+    <ExpandableList
+      isHovered={isHovered}
+      reference={reference}
+      withDropDownBorder={withDropDownBorder}
+    >
       {selectedOptions.map((selectedOption, index) => (
         <Tag
           key={index}
@@ -25,7 +32,7 @@ export const MultiSelectFieldDisplay = () => {
           text={selectedOption.label}
         />
       ))}
-    </StyledTagContainer>
+    </ExpandableList>
   ) : (
     <></>
   );

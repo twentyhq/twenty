@@ -11,11 +11,7 @@
     "generateBarrels": {
       "executor": "nx:run-commands",
       "cache": true,
-      "inputs": [
-        "{projectRoot}/src/**/*.{ts,tsx}",
-        "!{projectRoot}/src/**/*.(spec|test).{ts,tsx}",
-        "!{projectRoot}/src/**/*.stories.{ts,tsx}"
-      ],
+      "inputs": ["production", "{projectRoot}/scripts/generateBarrels.js"],
       "outputs": ["{projectRoot}/src/index.ts", "{projectRoot}/src/*/index.ts"],
       "options": {
         "command": "node {projectRoot}/scripts/generateBarrels.js"
@@ -52,10 +48,12 @@
         "port": 6007
       }
     },
+    "storybook:coverage": {},
     "storybook:test": {
-      "options": {
-        "url": "http://localhost:6007"
-      }
+      "options": { "port": 6007 }
+    },
+    "storybook:static:test": {
+      "options": { "port": 6007 }
     }
   }
 }

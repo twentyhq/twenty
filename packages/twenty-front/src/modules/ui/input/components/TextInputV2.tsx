@@ -123,6 +123,7 @@ const TextInputV2Component = (
     disabled,
     tabIndex,
     RightIcon,
+    autoComplete,
   }: TextInputV2ComponentProps,
   // eslint-disable-next-line @nx/workspace-component-props-naming
   ref: ForwardedRef<HTMLInputElement>,
@@ -143,7 +144,7 @@ const TextInputV2Component = (
       {label && <StyledLabel>{label + (required ? '*' : '')}</StyledLabel>}
       <StyledInputContainer>
         <StyledInput
-          autoComplete="off"
+          autoComplete={autoComplete || 'off'}
           ref={combinedRef}
           tabIndex={tabIndex ?? 0}
           onFocus={onFocus}

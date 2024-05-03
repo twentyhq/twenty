@@ -9,7 +9,7 @@ import { assertFieldMetadata } from '@/object-record/record-field/types/guards/a
 import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
 import { isFieldMultiSelectValue } from '@/object-record/record-field/types/guards/isFieldMultiSelectValue';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
-import { FieldMetadataType } from '~/generated/graphql.tsx';
+import { FieldMetadataType } from '~/generated/graphql';
 
 export const useMultiSelectField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);

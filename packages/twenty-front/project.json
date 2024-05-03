@@ -60,8 +60,30 @@
     },
     "test": {},
     "storybook:build": {},
+    "storybook:build:scope": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nx storybook:build twenty-front"
+      },
+      "configurations": {
+        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
+        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
+        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } }
+      }
+    },
     "storybook:dev": {
       "options": { "port": 6006 }
+    },
+    "storybook:dev:scope": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "nx storybook:dev twenty-front"
+      },
+      "configurations": {
+        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
+        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
+        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } }
+      }
     },
     "storybook:static": {
       "options": {
@@ -69,14 +91,45 @@
         "port": 6006
       }
     },
-    "storybook:test": {
+    "storybook:static:scope": {
+      "executor": "nx:run-commands",
       "options": {
-        "url": "http://localhost:6006"
+        "command": "nx storybook:static twenty-front"
       },
       "configurations": {
         "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
         "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
         "pages": { "env": { "STORYBOOK_SCOPE": "pages" } }
+      }
+    },
+    "storybook:coverage": {
+      "configurations": {
+        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
+        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
+        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } }
+      }
+    },
+    "storybook:test": {
+      "options": {
+        "port": 6006
+      },
+      "configurations": {
+        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
+        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
+        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } }
+      }
+    },
+    "storybook:static:test": {
+      "options": {
+        "commands": [
+          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:static {projectName} --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port} --configuration={args.scope}'"
+        ],
+        "port": 6006
+      },
+      "configurations": {
+        "docs": { "scope": "ui-docs" },
+        "modules": { "scope": "modules" },
+        "pages": { "scope": "pages" }
       }
     },
     "graphql:generate": {
@@ -95,6 +148,10 @@
         }
       }
     },
-    "chromatic": {}
+    "chromatic": {
+      "configurations": {
+        "ci": {}
+      }
+    }
   }
 }

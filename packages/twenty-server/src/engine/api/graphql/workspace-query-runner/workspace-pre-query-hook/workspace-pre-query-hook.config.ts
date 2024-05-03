@@ -6,6 +6,8 @@ import { CalendarEventFindOnePreQueryHook } from 'src/modules/calendar/query-hoo
 import { BlocklistCreateManyPreQueryHook } from 'src/modules/connected-account/query-hooks/blocklist/blocklist-create-many.pre-query.hook';
 import { BlocklistUpdateManyPreQueryHook } from 'src/modules/connected-account/query-hooks/blocklist/blocklist-update-many.pre-query.hook';
 import { BlocklistUpdateOnePreQueryHook } from 'src/modules/connected-account/query-hooks/blocklist/blocklist-update-one.pre-query.hook';
+import { WorkspaceMemberDeleteOnePreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-delete-one.pre-query.hook';
+import { WorkspaceMemberDeleteManyPreQueryHook } from 'src/modules/workspace-member/query-hooks/workspace-member-delete-many.pre-query.hook';
 
 // TODO: move to a decorator
 export const workspacePreQueryHooks: WorkspaceQueryHook = {
@@ -21,5 +23,9 @@ export const workspacePreQueryHooks: WorkspaceQueryHook = {
     createMany: [BlocklistCreateManyPreQueryHook.name],
     updateMany: [BlocklistUpdateManyPreQueryHook.name],
     updateOne: [BlocklistUpdateOnePreQueryHook.name],
+  },
+  workspaceMember: {
+    deleteOne: [WorkspaceMemberDeleteOnePreQueryHook.name],
+    deleteMany: [WorkspaceMemberDeleteManyPreQueryHook.name],
   },
 };
