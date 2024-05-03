@@ -42,7 +42,6 @@ const Render = (args: RenderProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const reference = useRef<HTMLDivElement>(null);
 
-  // eslint-disable-next-line react/jsx-props-no-spreading
   return (
     <StyledContainer
       ref={reference}
