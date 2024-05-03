@@ -14,6 +14,7 @@ export class UserWorkspaceMiddleware implements NestMiddleware {
 
   async use(req: Request, res: Response, next: NextFunction) {
     const body = req.body;
+
     const excludedOperations = [
       'GetClientConfig',
       'GetCurrentUser',
@@ -24,12 +25,12 @@ export class UserWorkspaceMiddleware implements NestMiddleware {
       'Verify',
       'SignUp',
       'RenewToken',
+      'IntrospectionQuery',
     ];
 
     if (
-      body &&
-      body.operationName &&
-      excludedOperations.includes(body.operationName)
+      !this.tokenService.isTokenPresent(req) &&
+      (!body?.operationName || excludedOperations.includes(body.operationName))
     ) {
       return next();
     }
