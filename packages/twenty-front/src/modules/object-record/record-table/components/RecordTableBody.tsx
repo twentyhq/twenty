@@ -16,6 +16,8 @@ export const RecordTableBody = ({
 
   const tableRowIds = useRecoilValue(tableRowIdsState);
 
+  // TODO: don't show table row if still loading ?
+
   return (
     <>
       <tbody>

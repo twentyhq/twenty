@@ -1,7 +1,10 @@
+import { useAtomCallback } from 'jotai/utils';
 import { useRecoilCallback } from 'recoil';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { useSetTableCellValue } from '@/object-record/record-table/scopes/TableStatusSelectorContext';
+import { testJotaiFamily } from '@/object-record/record-table/states/testAtom';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
@@ -22,6 +25,13 @@ export const useSetRecordTableData = ({
     hasUserSelectedAllRowState,
   } = useRecordTableStates(recordTableId);
 
+  const setEntityJotai = useAtomCallback((_, set, object: ObjectRecord) => {
+    set(testJotaiFamily(object.id), object);
+    console.log(testJotaiFamily);
+  });
+
+  const setTableCellValue = useSetTableCellValue();
+
   return useRecoilCallback(
     ({ set, snapshot }) =>
       <T extends ObjectRecord>(newEntityArray: T[], totalCount: number) => {
@@ -33,6 +43,10 @@ export const useSetRecordTableData = ({
 
           if (JSON.stringify(currentEntity) !== JSON.stringify(entity)) {
             set(recordStoreFamilyState(entity.id), entity);
+
+            for (const key in entity) {
+              setTableCellValue(entity.id, key, entity[key]);
+            }
           }
         }
         const currentRowIds = getSnapshotValue(snapshot, tableRowIdsState);
@@ -63,6 +77,7 @@ export const useSetRecordTableData = ({
       onEntityCountChange,
       isRowSelectedFamilyState,
       hasUserSelectedAllRowState,
+      setEntityJotai,
     ],
   );
 };

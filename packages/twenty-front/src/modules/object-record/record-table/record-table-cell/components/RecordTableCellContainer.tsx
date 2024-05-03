@@ -3,12 +3,15 @@ import styled from '@emotion/styled';
 import { IconArrowUpRight } from 'twenty-ui';
 
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
-import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useCurrentTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useCurrentCellPosition';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
+import {
+  useTableCellStatusByCellPosition,
+  useTableCellValueByRecordFieldName,
+} from '@/object-record/record-table/scopes/TableStatusSelectorContext';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
@@ -54,8 +57,8 @@ export const RecordTableCellContainer = ({
   nonEditModeContent,
   editHotkeyScope,
 }: RecordTableCellContainerProps) => {
-  const { columnIndex, fieldCellValue } = useContext(RecordTableCellContext);
-  const { isReadOnly, isSelected, recordId } = useContext(
+  const { columnIndex, columnDefinition } = useContext(RecordTableCellContext);
+  const { isReadOnly, isSelected, recordId, rowIndex } = useContext(
     RecordTableRowContext,
   );
   const { onMoveSoftFocusToCell, onContextMenu, onCellMouseEnter } =
@@ -90,25 +93,69 @@ export const RecordTableCellContainer = ({
 
   // This doesn't have to be computed each time, either useMemo or
   //   compute it when setting the context because it's tied to metadata and won't change over time
-  const editModeContentOnly = useIsFieldInputOnly();
+  const editModeContentOnly = false; // useIsFieldInputOnly();
 
   const isFirstColumn = columnIndex === 0;
   const customButtonIcon = useGetButtonIcon();
   const buttonIcon = isFirstColumn ? IconArrowUpRight : customButtonIcon;
 
-  const {
-    hasSoftFocus,
-    isEmpty,
-    isInEditMode: isCurrentTableCellInEditMode,
-  } = fieldCellValue;
+  // const tableScopeId = useAvailableScopeIdOrThrow(
+  //   RecordTableScopeInternalContext,
+  //   getScopeIdOrUndefinedFromComponentId(),
+  // );
 
-  const showButton =
-    !!buttonIcon &&
-    hasSoftFocus &&
-    !isCurrentTableCellInEditMode &&
-    !editModeContentOnly &&
-    (!isFirstColumn || !isEmpty) &&
-    !isReadOnly;
+  // const isTableCellInEditModeFamilyState = extractComponentFamilyState(
+  //   isTableCellInEditModeComponentFamilyState,
+  //   tableScopeId,
+  // );
+
+  // const isSoftFocusOnTableCellFamilyState = extractComponentFamilyState(
+  //   isSoftFocusOnTableCellComponentFamilyState,
+  //   tableScopeId,
+  // );
+
+  const { tableCellStatus } = useTableCellStatusByCellPosition({
+    column: columnIndex,
+    row: rowIndex,
+  });
+
+  const isCurrentTableCellInEditMode = tableCellStatus?.isInEditMode ?? false;
+  //   const isCurrentTableCellInEditMode = useRecoilValue(
+  //   isTableCellInEditModeFamilyState(cellPosition),
+  // );
+
+  const hasSoftFocus = tableCellStatus?.hasSoftFocus ?? false;
+  // const hasSoftFocus = useRecoilValue(
+  //   isSoftFocusOnTableCellFamilyState(cellPosition),
+  // );
+
+  const { tableCellValue } = useTableCellValueByRecordFieldName({
+    recordId,
+    fieldName: columnDefinition.metadata.fieldName,
+  });
+
+  const isEmpty = tableCellValue?.isEmpty ?? false; // useIsFieldEmpty();
+
+  // ~ 0.2ms & < 0.1ms
+  // const jotaiValue = useAtomValue(testJotaiFamily(recordId));
+
+  // ~ 0.2ms
+  // const recoilValue = useRecoilValue(recordStoreFamilyState(recordId));
+
+  // 0.1ms ~ < 0.1ms
+
+  // < 0.1ms
+  // useEffect(() => {
+  //   const customEventListener = (data: any) => {
+  //     console.log({ data });
+  //   };
+
+  //   document.addEventListener('test', customEventListener);
+
+  //   return () => {
+  //     document.removeEventListener('test', customEventListener);
+  //   };
+  // }, []);
 
   return (
     <StyledTd
@@ -127,24 +174,21 @@ export const RecordTableCellContainer = ({
             <RecordTableCellEditMode>{editModeContent}</RecordTableCellEditMode>
           ) : hasSoftFocus ? (
             <>
-              {showButton && (
-                <RecordTableCellButton
-                  onClick={handleButtonClick}
-                  Icon={buttonIcon}
-                />
-              )}
+              {!!buttonIcon &&
+                !editModeContentOnly &&
+                (!isFirstColumn || !isEmpty) &&
+                !isReadOnly && (
+                  <RecordTableCellButton
+                    onClick={handleButtonClick}
+                    Icon={buttonIcon}
+                  />
+                )}
               <RecordTableCellSoftFocusMode>
                 {editModeContentOnly ? editModeContent : nonEditModeContent}
               </RecordTableCellSoftFocusMode>
             </>
           ) : (
             <>
-              {showButton && (
-                <RecordTableCellButton
-                  onClick={handleButtonClick}
-                  Icon={buttonIcon}
-                />
-              )}
               {!isEmpty && (
                 <RecordTableCellDisplayMode>
                   {editModeContentOnly ? editModeContent : nonEditModeContent}

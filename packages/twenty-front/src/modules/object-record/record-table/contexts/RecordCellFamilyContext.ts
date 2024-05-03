@@ -8,6 +8,5 @@ type RecordTableRowContextProps = {
   columnIndex: number;
 };
 
-export const RecordTableCellContext = createContext<RecordTableRowContextProps>(
-  {} as RecordTableRowContextProps,
-);
+export const RecordCellFamilyContext =
+  createContext<RecordTableRowContextProps>({} as RecordTableRowContextProps);
