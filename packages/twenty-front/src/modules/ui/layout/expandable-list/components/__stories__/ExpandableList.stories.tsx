@@ -60,7 +60,7 @@ const Render = (args: RenderProps) => {
   );
 };
 
-export const Defaut: Story = {
+export const Default: Story = {
   args: {
     children: [
       <Tag key={1} text={'Option 1'} color={MAIN_COLOR_NAMES[0]} />,
@@ -68,8 +68,8 @@ export const Defaut: Story = {
       <Tag key={3} text={'Option 3'} color={MAIN_COLOR_NAMES[2]} />,
       <Tag key={4} text={'Option 4'} color={MAIN_COLOR_NAMES[3]} />,
       <Tag key={5} text={'Option 5'} color={MAIN_COLOR_NAMES[4]} />,
-      <Tag key={5} text={'Option 6'} color={MAIN_COLOR_NAMES[5]} />,
-      <Tag key={5} text={'Option 7'} color={MAIN_COLOR_NAMES[6]} />,
+      <Tag key={6} text={'Option 6'} color={MAIN_COLOR_NAMES[5]} />,
+      <Tag key={7} text={'Option 7'} color={MAIN_COLOR_NAMES[6]} />,
     ],
   },
   decorators: [ComponentDecorator],
