@@ -489,11 +489,20 @@ export class WorkspaceMigrationRunnerService {
     }
 
     const foreignTableColumns = foreignTable.columns
-      .map((column) => `"${column.columnName}" ${column.columnType}`)
+      .map(
+        (column) =>
+          `"${column.columnName}" ${column.columnType} OPTIONS (column_name '${column.distantColumnName}')`,
+      )
       .join(', ');
 
+    let serverOptions = '';
+
+    Object.entries(foreignTable.referencedTable).forEach(([key, value]) => {
+      serverOptions += ` ${key} '${value}'`;
+    });
+
     await queryRunner.query(
-      `CREATE FOREIGN TABLE ${schemaName}."${name}" (${foreignTableColumns}) SERVER "${foreignTable.foreignDataWrapperId}" OPTIONS (schema_name '${foreignTable.referencedTableSchema}', table_name '${foreignTable.referencedTableName}')`,
+      `CREATE FOREIGN TABLE ${schemaName}."${name}" (${foreignTableColumns}) SERVER "${foreignTable.foreignDataWrapperId}" OPTIONS (${serverOptions})`,
     );
 
     await queryRunner.query(`

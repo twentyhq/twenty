@@ -5,22 +5,28 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { EMPTY_MUTATION } from '@/object-record/constants/EmptyMutation';
+import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
+import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { getCreateOneRecordMutationResponseField } from '@/object-record/utils/getCreateOneRecordMutationResponseField';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { capitalize } from '~/utils/string/capitalize';
 
 export const useCreateOneRecordMutation = ({
   objectNameSingular,
-  queryFields,
-  depth,
+  recordGqlFields,
 }: {
   objectNameSingular: string;
-  queryFields?: Record<string, any>;
-  depth?: number;
+  recordGqlFields?: RecordGqlOperationGqlRecordFields;
 }) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+
+  const appliedRecordGqlFields =
+    recordGqlFields ??
+    generateDepthOneRecordGqlFields({
+      objectMetadataItem,
+    });
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
@@ -39,8 +45,7 @@ export const useCreateOneRecordMutation = ({
       ${mutationResponseField}(data: $input) ${mapObjectMetadataToGraphQLQuery({
         objectMetadataItems,
         objectMetadataItem,
-        queryFields,
-        depth,
+        recordGqlFields: appliedRecordGqlFields,
       })}
     }
   `;

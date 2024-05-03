@@ -17,7 +17,6 @@ export const RecordShowContainer = ({
   const { record: activity, loading } = useFindOneRecord<Activity>({
     objectRecordId,
     objectNameSingular,
-    depth: 3,
   });
 
   const setRecordStore = useSetRecoilState(

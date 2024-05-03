@@ -1,4 +1,4 @@
-import { StringFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
+import { StringFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 
 export const isMatchingStringFilter = ({
   stringFilter,

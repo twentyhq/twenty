@@ -2,6 +2,7 @@
   "name": "twenty-front",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
+  "tags": ["scope:frontend"],
   "targets": {
     "build": {
       "outputs": ["{options.outputPath}"],
@@ -24,115 +25,109 @@
         "open": true
       }
     },
-    "typecheck": {
+    "reset:env": {
       "executor": "nx:run-commands",
+      "inputs": ["{projectRoot}/.env.example"],
+      "outputs": ["{projectRoot}/.env"],
+      "cache": true,
       "options": {
         "cwd": "{projectRoot}",
-        "command": "tsc -b tsconfig.json",
-        "args": ["--incremental"]
-      },
-      "configurations": {
-        "ci": { "args": [] },
-        "watch": { "watch": true }
+        "command": "cp .env.example .env"
       }
     },
+    "typecheck": {},
     "lint": {
-      "executor": "@nx/eslint:lint",
-      "outputs": ["{options.outputFile}"],
       "options": {
-        "eslintConfig": "{projectRoot}/.eslintrc.cjs",
-        "ignorePath": "{workspaceRoot}/.gitignore",
         "lintFilePatterns": [
           "{projectRoot}/src/**/*.{ts,tsx,json}",
           "{projectRoot}/package.json"
         ],
         "maxWarnings": 0,
-        "reportUnusedDisableDirectives": "error",
-        "cache": true
+        "reportUnusedDisableDirectives": "error"
       },
       "configurations": {
-        "ci": {
-          "eslintConfig": "{projectRoot}/.eslintrc-ci.cjs",
-          "cache": false
-        },
-        "fix": {
-          "fix": true
-        }
+        "ci": { "eslintConfig": "{projectRoot}/.eslintrc-ci.cjs" },
+        "fix": {}
       }
     },
     "fmt": {
+      "options": {
+        "files": "src"
+      },
+      "configurations": {
+        "fix": {}
+      }
+    },
+    "test": {},
+    "storybook:build": {},
+    "storybook:build:scope": {
       "executor": "nx:run-commands",
-      "inputs": ["{projectRoot}/src/**/*"],
-      "cache": true,
       "options": {
-        "cwd": "{projectRoot}",
-        "command": "prettier src --check"
+        "command": "STORYBOOK_SCOPE={args.scope} nx storybook:build twenty-front",
+        "scope": "all"
       },
       "configurations": {
-        "fix": { "args": ["--write"] }
-      }
-    },
-    "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{projectRoot}/coverage"],
-      "options": {
-        "jestConfig": "{projectRoot}/jest.config.ts",
-        "coverage": true,
-        "coverageReporters": ["text-summary"]
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "maxWorkers": 3
-        },
-        "coverage": {
-          "coverageReporters": ["lcov", "text"]
-        },
-        "watch": { "watch": true }
-      }
-    },
-    "storybook:build": {
-      "executor": "@nx/storybook:build",
-      "outputs": ["{options.outputDir}"],
-      "options": {
-        "outputDir": "{projectRoot}/storybook-static",
-        "configDir": "{projectRoot}/.storybook"
+        "docs": { "scope": "ui-docs" },
+        "modules": { "scope": "modules" },
+        "pages": { "scope": "pages" }
       }
     },
     "storybook:dev": {
-      "executor": "@nx/storybook:storybook",
+      "options": { "port": 6006 }
+    },
+    "storybook:dev:scope": {
+      "executor": "nx:run-commands",
       "options": {
-        "port": 6006,
-        "configDir": "{projectRoot}/.storybook"
+        "command": "STORYBOOK_SCOPE={args.scope} nx storybook:dev twenty-front",
+        "scope": "all"
+      },
+      "configurations": {
+        "docs": { "scope": "ui-docs" },
+        "modules": { "scope": "modules" },
+        "pages": { "scope": "pages" }
       }
     },
     "storybook:static": {
-      "executor": "@nx/web:file-server",
       "options": {
         "buildTarget": "twenty-front:storybook:build",
-        "port": 6006,
-        "staticFilePath": "{projectRoot}/storybook-static",
-        "watch": false
+        "port": 6006
+      }
+    },
+    "storybook:static:scope": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "STORYBOOK_SCOPE={args.scope} nx storybook:static twenty-front",
+        "scope": "all"
+      },
+      "configurations": {
+        "docs": { "scope": "ui-docs" },
+        "modules": { "scope": "modules" },
+        "pages": { "scope": "pages" }
       }
     },
     "storybook:test": {
-      "executor": "nx:run-commands",
       "options": {
-        "cwd": "{projectRoot}",
-        "commands": [
-          "test-storybook --url http://localhost:6006 --maxWorkers=3 --coverage",
-          "nyc report --reporter=lcov --reporter=text-summary -t coverage/storybook --report-dir coverage/storybook --check-coverage"
-        ],
-        "parallel": false
+        "url": "http://localhost:6006",
+        "port": 6006
       },
       "configurations": {
-        "docs": {
-          "commands": ["STORYBOOK_SCOPE=ui-docs nx storybook:test"]
+        "ci": {
+          "commands": [
+            {
+              "prefix": "[SB]",
+              "command": "nx storybook:static {projectName} --port={args.port}",
+              "forwardAllArgs": false
+            },
+            {
+              "command": "STORYBOOK_SCOPE={args.scope} npx wait-on tcp:{args.port} && nx storybook:test {projectName}",
+              "forwardAllArgs": false
+            }
+          ],
+          "parallel": true
         },
-        "modules": {
-          "commands": ["STORYBOOK_SCOPE=modules nx storybook:test"]
-        },
-        "pages": { "commands": ["STORYBOOK_SCOPE=pages nx storybook:test"] }
+        "docs": { "scope": "ui-docs" },
+        "modules": { "scope": "modules" },
+        "pages": { "scope": "pages" }
       }
     },
     "graphql:generate": {
@@ -144,23 +139,16 @@
       },
       "configurations": {
         "data": {
-          "args": ["--config=codegen.cjs"]
+          "config": "codegen.cjs"
         },
         "metadata": {
-          "args": ["--config=codegen-metadata.cjs"]
+          "config": "codegen-metadata.cjs"
         }
       }
     },
     "chromatic": {
-      "executor": "nx:run-commands",
-      "options": {
-        "cwd": "{projectRoot}",
-        "command": "cross-var chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name=storybook:build"
-      },
       "configurations": {
-        "ci": {
-          "args": ["--exit-zero-on-changes"]
-        }
+        "ci": {}
       }
     }
   }

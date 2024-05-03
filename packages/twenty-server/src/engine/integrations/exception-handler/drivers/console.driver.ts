@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { ExceptionHandlerUser } from 'src/engine/integrations/exception-handler/interfaces/exception-handler-user.interface';
 import { ExceptionHandlerOptions } from 'src/engine/integrations/exception-handler/interfaces/exception-handler-options.interface';
 

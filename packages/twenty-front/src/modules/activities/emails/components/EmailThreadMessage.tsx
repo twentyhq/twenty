@@ -31,14 +31,16 @@ type EmailThreadMessageProps = {
   body: string;
   sentAt: string;
   participants: EmailThreadMessageParticipant[];
+  isExpanded?: boolean;
 };
 
 export const EmailThreadMessage = ({
   body,
   sentAt,
   participants,
+  isExpanded = false,
 }: EmailThreadMessageProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(isExpanded);
 
   const from = participants.find((participant) => participant.role === 'from');
   const receivers = participants.filter(

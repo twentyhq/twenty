@@ -6,6 +6,7 @@ export interface CompositeProperty {
   type: FieldMetadataType;
   hidden: 'input' | 'output' | true | false;
   isRequired: boolean;
+  isArray?: boolean;
 }
 
 export interface CompositeType {
