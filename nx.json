@@ -1,11 +1,33 @@
 {
   "namedInputs": {
-    "default": ["{projectRoot}/**/*", "sharedGlobals"],
-    "sharedGlobals": ["{workspaceRoot}/.github/workflows/**/*"]
+    "default": ["{projectRoot}/**/*"],
+    "excludeStories": [
+      "default",
+      "!{projectRoot}/.storybook/*",
+      "!{projectRoot}/**/tsconfig.storybook.json",
+      "!{projectRoot}/**/*.stories.(ts|tsx)",
+      "!{projectRoot}/**/__stories__/*"
+    ],
+    "excludeTests": [
+      "default",
+      "!{projectRoot}/**/jest.config.(js|ts)",
+      "!{projectRoot}/**/tsconfig.spec.json",
+      "!{projectRoot}/**/*.test.(ts|tsx)",
+      "!{projectRoot}/**/*.spec.(ts|tsx)",
+      "!{projectRoot}/**/__tests__/*"
+    ],
+    "production": [
+      "default",
+      "excludeStories",
+      "excludeTests",
+      "!{projectRoot}/**/__mocks__/*",
+      "!{projectRoot}/**/testing/*"
+    ]
   },
   "targetDefaults": {
     "build": {
       "cache": true,
+      "inputs": ["^production", "production"],
       "dependsOn": ["^build"]
     },
     "start": {
@@ -58,6 +80,11 @@
       "executor": "@nx/jest:jest",
       "cache": true,
       "dependsOn": ["^build"],
+      "inputs": [
+        "^default",
+        "excludeStories",
+        "{workspaceRoot}/jest.preset.js"
+      ],
       "outputs": ["{projectRoot}/coverage"],
       "options": {
         "jestConfig": "{projectRoot}/jest.config.ts",
@@ -82,12 +109,7 @@
       "executor": "@nx/storybook:build",
       "cache": true,
       "dependsOn": ["^build"],
-      "inputs": [
-        "default",
-        "^default",
-        "{projectRoot}/.storybook/**/*",
-        "{projectRoot}/tsconfig.storybook.json"
-      ],
+      "inputs": ["^default", "excludeTests"],
       "outputs": ["{options.outputDir}"],
       "options": {
         "outputDir": "{projectRoot}/storybook-static",
@@ -106,37 +128,51 @@
       "executor": "@nx/web:file-server",
       "options": {
         "staticFilePath": "{projectRoot}/storybook-static",
+        "parallel": false,
         "watch": false
+      }
+    },
+    "storybook:coverage": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "^default",
+        "excludeTests",
+        "{projectRoot}/coverage/storybook/coverage-storybook.json"
+      ],
+      "outputs": [
+        "{projectRoot}/coverage/storybook",
+        "!{projectRoot}/coverage/storybook/coverage-storybook.json"
+      ],
+      "options": {
+        "command": "npx nyc report --reporter={args.reporter} --reporter=text-summary -t {args.coverageDir} --report-dir {args.coverageDir} --check-coverage --cwd={projectRoot}",
+        "coverageDir": "coverage/storybook",
+        "reporter": "lcov"
       }
     },
     "storybook:test": {
       "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["^default", "excludeTests"],
+      "outputs": ["{projectRoot}/coverage/storybook"],
       "options": {
+        "cwd": "{projectRoot}",
         "commands": [
-          "test-storybook -c {args.configDir} --url {args.url} --maxWorkers=3 --coverage",
-          "nyc report --reporter=lcov --reporter=text-summary -t {args.coverageDir} --report-dir {args.coverageDir} --check-coverage"
+          "test-storybook --url http://localhost:{args.port} --maxWorkers=3 --coverage --coverageDirectory={args.coverageDir}",
+          "nx storybook:coverage {projectName} --coverageDir={args.coverageDir}"
         ],
         "parallel": false,
-        "configDir": "{projectRoot}/.storybook",
-        "coverageDir": "{projectRoot}/coverage/storybook",
-        "url": "http://localhost:6006",
+        "coverageDir": "coverage/storybook",
         "port": 6006
-      },
-      "configurations": {
-        "ci": {
-          "commands": [
-            {
-              "prefix": "[SB]",
-              "command": "nx storybook:static {projectName} --port={args.port}",
-              "forwardAllArgs": false
-            },
-            {
-              "command": "npx wait-on tcp:{args.port} && nx storybook:test {projectName}",
-              "forwardAllArgs": false
-            }
-          ],
-          "parallel": true
-        }
+      }
+    },
+    "storybook:static:test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:static {projectName} --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port}'"
+        ],
+        "port": 6006
       }
     },
     "chromatic": {
@@ -154,7 +190,11 @@
     },
     "@nx/jest:jest": {
       "cache": true,
-      "inputs": ["default", "^default", "{workspaceRoot}/jest.preset.js"],
+      "inputs": [
+        "^default",
+        "excludeStories",
+        "{workspaceRoot}/jest.preset.js"
+      ],
       "options": {
         "passWithNoTests": true
       },

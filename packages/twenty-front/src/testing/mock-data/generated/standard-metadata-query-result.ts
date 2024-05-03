@@ -1,4 +1,5 @@
 import {
+  FieldMetadataType,
   ObjectEdge,
   ObjectMetadataItemsQuery,
 } from '~/generated-metadata/graphql';
@@ -3201,7 +3202,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   node: {
                     __typename: 'field',
                     id: '7ada51cb-58be-42cd-86df-16c3f2bb8b58',
-                    type: 'TEXT',
+                    type: FieldMetadataType.Phone,
                     name: 'phone',
                     label: 'Phone',
                     description: 'Contact’s phone number',

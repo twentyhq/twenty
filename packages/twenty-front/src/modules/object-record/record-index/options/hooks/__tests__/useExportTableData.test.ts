@@ -62,8 +62,8 @@ describe('generateCsv', () => {
       },
     ];
     const csv = generateCsv({ columns, rows });
-    expect(csv).toEqual(`Foo,Empty,Nested Foo,Nested Nested
-some field,,foo,nested`);
+    expect(csv).toEqual(`Foo,Empty,Nested Foo,Nested Nested,Relation
+some field,,foo,nested,a relation`);
   });
 });
 
