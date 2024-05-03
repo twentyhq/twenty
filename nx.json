@@ -175,7 +175,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "npx concurrently --kill-others --success=last -n SB,TEST 'nx storybook:static {projectName} --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port}'"
+          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:static {projectName} --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port}'"
         ],
         "port": 6006
       }

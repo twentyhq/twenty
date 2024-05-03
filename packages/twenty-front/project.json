@@ -94,7 +94,7 @@
     "storybook:static:scope": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "STORYBOOK_SCOPE={args.scope} nx storybook:static twenty-front"
+        "command": "nx storybook:static twenty-front"
       },
       "configurations": {
         "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
@@ -122,7 +122,7 @@
     "storybook:static:test": {
       "options": {
         "commands": [
-          "npx concurrently --kill-others --success=last -n SB,TEST 'nx storybook:static {projectName} --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port} --configuration={args.scope}'"
+          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:static {projectName} --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port} --configuration={args.scope}'"
         ],
         "port": 6006
       },
