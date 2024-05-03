@@ -105,6 +105,7 @@
         "pages": { "scope": "pages" }
       }
     },
+    "storybook:coverage": {},
     "storybook:test": {
       "options": {
         "port": 6006

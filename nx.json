@@ -1,11 +1,42 @@
 {
   "namedInputs": {
-    "default": ["{projectRoot}/**/*", "sharedGlobals"],
-    "sharedGlobals": ["{workspaceRoot}/.github/workflows/**/*"]
+    "default": ["{projectRoot}/**/*"],
+    "production": [
+      "default",
+      "!{projectRoot}/.storybook/*",
+      "!{projectRoot}/**/jest.config.(js|ts)",
+      "!{projectRoot}/**/tsconfig.spec.json",
+      "!{projectRoot}/**/tsconfig.storybook.json",
+      "!{projectRoot}/**/*.(test|spec).(ts|tsx)",
+      "!{projectRoot}/**/*.stories.(ts|tsx)",
+      "!{projectRoot}/**/__tests__/*",
+      "!{projectRoot}/**/__mocks__/*",
+      "!{projectRoot}/**/__stories__/*",
+      "!{projectRoot}/**/testing/*"
+    ],
+    "testFiles": [
+      "production",
+      "{projectRoot}/**/jest.config.(js|ts)",
+      "{projectRoot}/**/tsconfig.spec.json",
+      "{projectRoot}/**/*.(test|spec).(ts|tsx)",
+      "{projectRoot}/**/__tests__/*",
+      "{projectRoot}/**/__mocks__/*",
+      "{projectRoot}/**/testing/*"
+    ],
+    "storybookFiles": [
+      "production",
+      "!{projectRoot}/.storybook/*",
+      "{projectRoot}/**/tsconfig.storybook.json",
+      "{projectRoot}/**/*.stories.(ts|tsx)",
+      "{projectRoot}/**/__mocks__/*",
+      "{projectRoot}/**/__stories__/*",
+      "{projectRoot}/**/testing/*"
+    ]
   },
   "targetDefaults": {
     "build": {
       "cache": true,
+      "inputs": ["^production", "production"],
       "dependsOn": ["^build"]
     },
     "start": {
@@ -58,6 +89,7 @@
       "executor": "@nx/jest:jest",
       "cache": true,
       "dependsOn": ["^build"],
+      "inputs": ["^default", "testFiles"],
       "outputs": ["{projectRoot}/coverage"],
       "options": {
         "jestConfig": "{projectRoot}/jest.config.ts",
@@ -82,12 +114,7 @@
       "executor": "@nx/storybook:build",
       "cache": true,
       "dependsOn": ["^build"],
-      "inputs": [
-        "default",
-        "^default",
-        "{projectRoot}/.storybook/**/*",
-        "{projectRoot}/tsconfig.storybook.json"
-      ],
+      "inputs": ["^default", "storybookFiles"],
       "outputs": ["{options.outputDir}"],
       "options": {
         "outputDir": "{projectRoot}/storybook-static",
@@ -110,13 +137,29 @@
         "watch": false
       }
     },
+    "storybook:coverage": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["{projectRoot}/coverage/storybook/coverage-storybook.json"],
+      "outputs": [
+        "{projectRoot}/coverage/storybook",
+        "!{projectRoot}/coverage/storybook/coverage-storybook.json"
+      ],
+      "options": {
+        "command": "npx nyc report --reporter=lcov --reporter=text-summary -t {args.coverageDir} --report-dir {args.coverageDir} --check-coverage --cwd={projectRoot}",
+        "coverageDir": "coverage/storybook"
+      }
+    },
     "storybook:test": {
       "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["^default", "storybookFiles"],
+      "outputs": ["{projectRoot}/coverage/storybook"],
       "options": {
         "cwd": "{projectRoot}",
         "commands": [
           "test-storybook --url http://localhost:{args.port} --maxWorkers=3 --coverage --coverageDirectory={args.coverageDir}",
-          "nyc report --reporter=lcov --reporter=text-summary -t {args.coverageDir} --report-dir {args.coverageDir} --check-coverage"
+          "nx storybook:coverage {projectName} --coverageDir={args.coverageDir}"
         ],
         "parallel": false,
         "coverageDir": "coverage/storybook",
