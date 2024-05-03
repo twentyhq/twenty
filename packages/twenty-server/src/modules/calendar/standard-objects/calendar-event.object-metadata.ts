@@ -1,14 +1,12 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/relation-metadata.decorator';
-import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
@@ -30,9 +28,6 @@ import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-me
 })
 @IsSystem()
 @IsNotAuditLogged()
-@Gate({
-  featureFlag: FeatureFlagKeys.IsCalendarEnabled,
-})
 export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.title,
@@ -169,9 +164,6 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
     inverseSideTarget: () => CalendarChannelEventAssociationObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
     inverseSideFieldKey: 'calendarEvent',
-  })
-  @Gate({
-    featureFlag: 'IS_CALENDAR_ENABLED',
   })
   calendarChannelEventAssociations: Relation<
     CalendarChannelEventAssociationObjectMetadata[]
