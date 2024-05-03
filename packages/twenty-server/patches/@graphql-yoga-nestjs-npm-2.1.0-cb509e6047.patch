@@ -26,16 +26,17 @@ index 16843949d8589a299d8195b0a349ac4dac0bacbf..21e7fe2bbcba36b04a274be9d2219fd3
          const app = this.httpAdapterHost.httpAdapter.getInstance();
          preStartHook?.(app);
          // nest's logger doesnt have the info method
-@@ -42,6 +46,39 @@ class AbstractYogaDriver extends graphql_2.AbstractGraphQLDriver {
+@@ -42,6 +46,40 @@ class AbstractYogaDriver extends graphql_2.AbstractGraphQLDriver {
          }
          const yoga = (0, graphql_yoga_1.createYoga)({
              ...options,
 +            schema: async (request) => {
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.cacheVersion ?? '0'
++                const workspaceUserId = request.req.user?.id ?? 'anonymous'
 +                const url = request.req.baseUrl
 +
-+                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${url}`
++                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
 +
 +                if(this.schemaCache.has(cacheKey)) {
 +                    return this.schemaCache.get(cacheKey)
@@ -66,7 +67,7 @@ index 16843949d8589a299d8195b0a349ac4dac0bacbf..21e7fe2bbcba36b04a274be9d2219fd3
              graphqlEndpoint: options.path,
              // disable logging by default
              // however, if `true` use nest logger
-@@ -54,11 +91,44 @@ class AbstractYogaDriver extends graphql_2.AbstractGraphQLDriver {
+@@ -54,11 +91,45 @@ class AbstractYogaDriver extends graphql_2.AbstractGraphQLDriver {
          this.yoga = yoga;
          app.use(yoga.graphqlEndpoint, (req, res) => yoga(req, res, { req, res }));
      }
@@ -79,9 +80,10 @@ index 16843949d8589a299d8195b0a349ac4dac0bacbf..21e7fe2bbcba36b04a274be9d2219fd3
 +            schema: async (request) => {
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.cacheVersion ?? '0'
++                const workspaceUserId = request.req.user?.id ?? 'anonymous'
 +                const url = request.req.baseUrl
 +
-+                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${url}`
++                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
 +
 +                if(this.schemaCache.has(cacheKey)) {
 +                    return this.schemaCache.get(cacheKey)
@@ -138,16 +140,17 @@ index 7068c519320b379917c46763cd280b1cdd3e48f0..418e1030373fc1e0fb85a932ac8da9b3
          const app = this.httpAdapterHost.httpAdapter.getInstance();
          preStartHook?.(app);
          // nest's logger doesnt have the info method
-@@ -39,6 +43,39 @@ export class AbstractYogaDriver extends AbstractGraphQLDriver {
+@@ -39,6 +43,40 @@ export class AbstractYogaDriver extends AbstractGraphQLDriver {
          }
          const yoga = createYoga({
              ...options,
 +            schema: async (request) => {
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.cacheVersion ?? '0'
++                const workspaceUserId = request.req.user?.id ?? 'anonymous'
 +                const url = request.req.baseUrl
 +
-+                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${url}`
++                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
 +
 +                if (this.schemaCache.has(cacheKey)) {
 +                return this.schemaCache.get(cacheKey)
@@ -178,7 +181,7 @@ index 7068c519320b379917c46763cd280b1cdd3e48f0..418e1030373fc1e0fb85a932ac8da9b3
              graphqlEndpoint: options.path,
              // disable logging by default
              // however, if `true` use nest logger
-@@ -51,11 +88,44 @@ export class AbstractYogaDriver extends AbstractGraphQLDriver {
+@@ -51,11 +88,45 @@ export class AbstractYogaDriver extends AbstractGraphQLDriver {
          this.yoga = yoga;
          app.use(yoga.graphqlEndpoint, (req, res) => yoga(req, res, { req, res }));
      }
@@ -191,9 +194,10 @@ index 7068c519320b379917c46763cd280b1cdd3e48f0..418e1030373fc1e0fb85a932ac8da9b3
 +            schema: async (request) => {
 +                const workspaceId = request.req.workspace?.id ?? 'anonymous'
 +                const workspaceCacheVersion = request.req.cacheVersion ?? '0'
++                const workspaceUserId = request.req.user?.id ?? 'anonymous'
 +                const url = request.req.baseUrl
 +
-+                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${url}`
++                const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
 +
 +                if (this.schemaCache.has(cacheKey)) {
 +                return this.schemaCache.get(cacheKey)
@@ -377,16 +381,17 @@ index ce142f61ede52499485b19d8af057f4cb828d0f7..5888d31cae1b7aca57ed0819209812ac
      { preStartHook }: { preStartHook?: (app: Express) => void } = {},
    ) {
      const app: Express = this.httpAdapterHost.httpAdapter.getInstance();
-@@ -98,6 +109,39 @@ export abstract class AbstractYogaDriver<
+@@ -98,6 +109,40 @@ export abstract class AbstractYogaDriver<
  
      const yoga = createYoga<YogaDriverServerContext<'express'>>({
        ...options,
 +      schema: async request => {
 +        const workspaceId = request.req.workspace.id
 +        const workspaceCacheVersion = request.req.cacheVersion
++        const workspaceUserId = request.req.user?.id ?? 'anonymous'
 +        const url = request.req.baseUrl
 +
-+        const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${url}`
++        const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
 +
 +        if (this.schemaCache.has(cacheKey)) {
 +          return this.schemaCache.get(cacheKey)
@@ -437,16 +442,17 @@ index ce142f61ede52499485b19d8af057f4cb828d0f7..5888d31cae1b7aca57ed0819209812ac
      { preStartHook }: { preStartHook?: (app: FastifyInstance) => void } = {},
    ) {
      const app: FastifyInstance = this.httpAdapterHost.httpAdapter.getInstance();
-@@ -124,6 +168,39 @@ export abstract class AbstractYogaDriver<
+@@ -124,6 +168,40 @@ export abstract class AbstractYogaDriver<
  
      const yoga = createYoga<YogaDriverServerContext<'fastify'>>({
        ...options,
 +      schema: async request => {
 +        const workspaceId = request.req.workspace.id
 +        const workspaceCacheVersion = request.req.cacheVersion
++        const workspaceUserId = request.req.user?.id ?? 'anonymous'
 +        const url = request.req.baseUrl
 +
-+        const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${url}`
++        const cacheKey = `${workspaceId}-${workspaceCacheVersion}-${workspaceUserId}-${url}`
 +
 +        if (this.schemaCache.has(cacheKey)) {
 +          return this.schemaCache.get(cacheKey)
