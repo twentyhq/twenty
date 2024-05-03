@@ -4,9 +4,8 @@ import { InjectDataSource } from '@nestjs/typeorm';
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { DataSource } from 'typeorm';
 
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { PersonRepository } from 'src/modules/person/repositories/person.repository';
-import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 interface RunCommandOptions {
   workspaceId?: string;
@@ -22,8 +21,7 @@ export class ConvertRecordPositionsToIntegers extends CommandRunner {
   constructor(
     @InjectDataSource('metadata')
     private readonly metadataDataSource: DataSource,
-    @InjectObjectMetadataRepository(PersonObjectMetadata)
-    private readonly personRepository: PersonRepository,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {
     super();
   }
@@ -32,23 +30,35 @@ export class ConvertRecordPositionsToIntegers extends CommandRunner {
     const queryRunner = this.metadataDataSource.createQueryRunner();
     const workspaceId = options.workspaceId;
 
-    if (!workspaceId) {
+    if (!workspaceId || typeof workspaceId !== 'string') {
       this.logger.error('Workspace id is required');
 
       return;
     }
 
+    const customObjectMetadataCollection = await this.metadataDataSource
+      .getRepository(ObjectMetadataEntity)
+      .findBy({
+        workspaceId,
+        isCustom: true,
+      });
+
+    const customObjectTableNames = customObjectMetadataCollection.map(
+      (metadata) => metadata.nameSingular,
+    );
+
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
-    const manager = queryRunner.manager;
+    const transactionManager = queryRunner.manager;
 
     this.logger.log('Converting record positions to integers');
 
     try {
-      await this.personRepository.convertPositionsToIntegers(
+      await this.convertRecordPositionsToIntegers(
+        customObjectTableNames,
         workspaceId,
-        manager,
+        transactionManager,
       );
 
       await queryRunner.commitTransaction();
@@ -61,10 +71,56 @@ export class ConvertRecordPositionsToIntegers extends CommandRunner {
     }
   }
 
+  private async convertRecordPositionsToIntegers(
+    customObjectTableNames: string[],
+    workspaceId: string,
+    transactionManager: any,
+  ): Promise<void> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    for (const tableName of ['company', 'person', 'opportunity']) {
+      await this.convertRecordPositionsToIntegersForTable(
+        tableName,
+        dataSourceSchema,
+        workspaceId,
+        transactionManager,
+      );
+    }
+
+    for (const tableName of customObjectTableNames) {
+      await this.convertRecordPositionsToIntegersForTable(
+        `_${tableName}`,
+        dataSourceSchema,
+        workspaceId,
+        transactionManager,
+      );
+    }
+  }
+
+  private async convertRecordPositionsToIntegersForTable(
+    tableName: string,
+    dataSourceSchema: string,
+    workspaceId: string,
+    transactionManager: any,
+  ): Promise<void> {
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}.${tableName} SET position = subquery.position
+      FROM (
+        SELECT id, ROW_NUMBER() OVER (ORDER BY position) as position
+        FROM ${dataSourceSchema}.${tableName}
+      ) as subquery
+      WHERE ${dataSourceSchema}.${tableName}.id = subquery.id`,
+      [],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   @Option({
     flags: '-w, --workspace-id [workspace_id]',
     description: 'workspace id',
-    required: false,
+    required: true,
   })
   parseWorkspaceId(value: string): string {
     return value;
