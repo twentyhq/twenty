@@ -14,11 +14,19 @@ export const useSettingsIntegrationCategories =
     const isAirtableIntegrationActive = !!MOCK_REMOTE_DATABASES.find(
       ({ name }) => name === 'airtable',
     )?.isActive;
+
     const isPostgresqlIntegrationEnabled = useIsFeatureEnabled(
       'IS_POSTGRESQL_INTEGRATION_ENABLED',
     );
     const isPostgresqlIntegrationActive = !!MOCK_REMOTE_DATABASES.find(
       ({ name }) => name === 'postgresql',
+    )?.isActive;
+
+    const isStripeIntegrationEnabled = useIsFeatureEnabled(
+      'IS_STRIPE_INTEGRATION_ENABLED',
+    );
+    const isStripeIntegrationActive = !!MOCK_REMOTE_DATABASES.find(
+      ({ name }) => name === 'stripe',
     )?.isActive;
 
     return [
@@ -27,6 +35,8 @@ export const useSettingsIntegrationCategories =
         isAirtableIntegrationActive,
         isPostgresqlIntegrationEnabled,
         isPostgresqlIntegrationActive,
+        isStripeIntegrationEnabled,
+        isStripeIntegrationActive,
       }),
       SETTINGS_INTEGRATION_ZAPIER_CATEGORY,
       SETTINGS_INTEGRATION_WINDMILL_CATEGORY,
