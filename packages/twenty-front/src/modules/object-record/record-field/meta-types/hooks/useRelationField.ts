@@ -1,10 +1,10 @@
 import { useContext } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
-import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
-import { FieldRelationValue } from '@/object-record/record-field/types/FieldMetadata';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import {
+  useSetTableValueRecordField,
+  useTableValueRecordField,
+} from '@/object-record/record-table/scopes/TableStatusSelectorContext';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '../../contexts/FieldContext';
@@ -24,14 +24,24 @@ export const useRelationField = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useRecoilState<FieldRelationValue>(
-    recordStoreFamilySelector({ recordId: entityId, fieldName }),
-  );
+  // const [fieldValue, setFieldValue] = useRecoilState<FieldRelationValue>(
+  //   recordStoreFamilySelector({ recordId: entityId, fieldName }),
+  // );
 
-  const { getDraftValueSelector } = useRecordFieldInput<FieldRelationValue>(
-    `${entityId}-${fieldName}`,
-  );
-  const draftValue = useRecoilValue(getDraftValueSelector());
+  const fieldValue = useTableValueRecordField(entityId, fieldName);
+  const setTableValueRecordField = useSetTableValueRecordField();
+
+  const setFieldValue = (newValue: string) => {
+    setTableValueRecordField(entityId, fieldName, newValue);
+  };
+
+  // const { getDraftValueSelector } = useRecordFieldInput<FieldRelationValue>(
+  //   `${entityId}-${fieldName}`,
+  // );
+  // const draftValue = useRecoilValue(getDraftValueSelector());
+
+  const setDraftValue = (...args: any[]) => {};
+  const draftValue: any = null;
 
   const initialSearchValue = draftValue;
 
@@ -41,5 +51,6 @@ export const useRelationField = () => {
     initialSearchValue,
     setFieldValue,
     maxWidth: button && maxWidth ? maxWidth - 28 : maxWidth,
+    entityId,
   };
 };

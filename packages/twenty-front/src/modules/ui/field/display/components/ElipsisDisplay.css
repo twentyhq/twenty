@@ -1,0 +1,7 @@
+.elipsis-display {
+  max-width: 100;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}

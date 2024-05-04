@@ -9,6 +9,7 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { RecordTable } from '@/object-record/record-table/components/RecordTable';
 import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { SelectedRowsSelectorContextProvider } from '@/object-record/record-table/scopes/SelectedRowSelectorContext';
 import { TableCellSelectorContextProvider } from '@/object-record/record-table/scopes/TableStatusSelectorContext';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { Button } from '@/ui/input/button/components/Button';
@@ -87,55 +88,57 @@ export const RecordTableWithWrappers = ({
       <ScrollWrapper>
         <RecordUpdateContext.Provider value={updateRecordMutation}>
           <TableCellSelectorContextProvider>
-            <StyledTableWithHeader>
-              <StyledTableContainer>
-                <div ref={tableBodyRef}>
-                  <RecordTable
-                    recordTableId={recordTableId}
-                    objectNameSingular={objectNameSingular}
-                    onColumnsChange={useRecoilCallback(
-                      () => (columns) => {
-                        saveViewFields(
-                          mapColumnDefinitionsToViewFields(
-                            columns as ColumnDefinition<FieldMetadata>[],
-                          ),
-                        );
-                      },
-                      [saveViewFields],
-                    )}
-                    createRecord={createRecord}
-                  />
-                  <DragSelect
-                    dragSelectable={tableBodyRef}
-                    onDragSelectionStart={resetTableRowSelection}
-                    onDragSelectionChange={setRowSelected}
-                  />
-                </div>
-                <RecordTableInternalEffect
-                  recordTableId={recordTableId}
-                  tableBodyRef={tableBodyRef}
-                />
-                {!isRecordTableInitialLoading && numberOfTableRows === 0 && (
-                  <AnimatedPlaceholderEmptyContainer>
-                    <AnimatedPlaceholder type="noRecord" />
-                    <AnimatedPlaceholderEmptyTextContainer>
-                      <AnimatedPlaceholderEmptyTitle>
-                        Add your first {objectLabel}
-                      </AnimatedPlaceholderEmptyTitle>
-                      <AnimatedPlaceholderEmptySubTitle>
-                        Use our API or add your first {objectLabel} manually
-                      </AnimatedPlaceholderEmptySubTitle>
-                    </AnimatedPlaceholderEmptyTextContainer>
-                    <Button
-                      Icon={IconPlus}
-                      title={`Add a ${objectLabel}`}
-                      variant={'secondary'}
-                      onClick={createRecord}
+            <SelectedRowsSelectorContextProvider>
+              <StyledTableWithHeader>
+                <StyledTableContainer>
+                  <div ref={tableBodyRef}>
+                    <RecordTable
+                      recordTableId={recordTableId}
+                      objectNameSingular={objectNameSingular}
+                      onColumnsChange={useRecoilCallback(
+                        () => (columns) => {
+                          saveViewFields(
+                            mapColumnDefinitionsToViewFields(
+                              columns as ColumnDefinition<FieldMetadata>[],
+                            ),
+                          );
+                        },
+                        [saveViewFields],
+                      )}
+                      createRecord={createRecord}
                     />
-                  </AnimatedPlaceholderEmptyContainer>
-                )}
-              </StyledTableContainer>
-            </StyledTableWithHeader>
+                    <DragSelect
+                      dragSelectable={tableBodyRef}
+                      onDragSelectionStart={resetTableRowSelection}
+                      onDragSelectionChange={setRowSelected}
+                    />
+                  </div>
+                  <RecordTableInternalEffect
+                    recordTableId={recordTableId}
+                    tableBodyRef={tableBodyRef}
+                  />
+                  {!isRecordTableInitialLoading && numberOfTableRows === 0 && (
+                    <AnimatedPlaceholderEmptyContainer>
+                      <AnimatedPlaceholder type="noRecord" />
+                      <AnimatedPlaceholderEmptyTextContainer>
+                        <AnimatedPlaceholderEmptyTitle>
+                          Add your first {objectLabel}
+                        </AnimatedPlaceholderEmptyTitle>
+                        <AnimatedPlaceholderEmptySubTitle>
+                          Use our API or add your first {objectLabel} manually
+                        </AnimatedPlaceholderEmptySubTitle>
+                      </AnimatedPlaceholderEmptyTextContainer>
+                      <Button
+                        Icon={IconPlus}
+                        title={`Add a ${objectLabel}`}
+                        variant={'secondary'}
+                        onClick={createRecord}
+                      />
+                    </AnimatedPlaceholderEmptyContainer>
+                  )}
+                </StyledTableContainer>
+              </StyledTableWithHeader>
+            </SelectedRowsSelectorContextProvider>
           </TableCellSelectorContextProvider>
         </RecordUpdateContext.Provider>
       </ScrollWrapper>

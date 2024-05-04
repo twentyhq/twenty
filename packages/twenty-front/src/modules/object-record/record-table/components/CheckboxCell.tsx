@@ -1,39 +1,53 @@
 import { useCallback, useContext } from 'react';
-import styled from '@emotion/styled';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { useSetCurrentRowSelected } from '@/object-record/record-table/record-table-row/hooks/useSetCurrentRowSelected';
+import {
+  useSelectedRow,
+  useSetSelectedRow,
+} from '@/object-record/record-table/scopes/SelectedRowSelectorContext';
 import { Checkbox } from '@/ui/input/components/Checkbox';
 import { actionBarOpenState } from '@/ui/navigation/action-bar/states/actionBarIsOpenState';
 
-const StyledContainer = styled.div`
-  align-items: center;
-  cursor: pointer;
+// const StyledContainer = styled.div`
+//   align-items: center;
+//   cursor: pointer;
 
-  display: flex;
-  height: 32px;
+//   display: flex;
+//   height: 32px;
 
-  justify-content: center;
-  background-color: ${({ theme }) => theme.background.primary};
-`;
+//   justify-content: center;
+//   background-color: ${({ theme }) => theme.background.primary};
+// `;
 
 export const CheckboxCell = () => {
   const { recordId } = useContext(RecordTableRowContext);
-  const { isRowSelectedFamilyState } = useRecordTableStates();
+  // const { isRowSelectedFamilyState } = useRecordTableStates();
   const setActionBarOpenState = useSetRecoilState(actionBarOpenState);
-  const { setCurrentRowSelected } = useSetCurrentRowSelected();
-  const currentRowSelected = useRecoilValue(isRowSelectedFamilyState(recordId));
+  // const { setCurrentRowSelected } = useSetCurrentRowSelected();
+  // const currentRowSelected = useRecoilValue(isRowSelectedFamilyState(recordId));
+
+  const isSelected = useSelectedRow(recordId);
+
+  const setSelectedRow = useSetSelectedRow();
 
   const handleClick = useCallback(() => {
-    setCurrentRowSelected(!currentRowSelected);
+    setSelectedRow(recordId, !isSelected);
     setActionBarOpenState(true);
-  }, [currentRowSelected, setActionBarOpenState, setCurrentRowSelected]);
+  }, [setActionBarOpenState, setSelectedRow, recordId, isSelected]);
 
   return (
-    <StyledContainer onClick={handleClick}>
-      <Checkbox checked={currentRowSelected} />
-    </StyledContainer>
+    <div
+      onClick={handleClick}
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '32px',
+        cursor: 'pointer',
+      }}
+    >
+      <Checkbox checked={isSelected} />
+    </div>
   );
 };

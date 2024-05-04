@@ -1,9 +1,9 @@
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
 
-import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
-import { FieldDateTimeValue } from '@/object-record/record-field/types/FieldMetadata';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import {
+  useSetTableValueRecordField,
+  useTableValueRecordField,
+} from '@/object-record/record-table/scopes/TableStatusSelectorContext';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '../../contexts/FieldContext';
@@ -22,16 +22,26 @@ export const useDateTimeField = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useRecoilState<string>(
-    recordStoreFamilySelector({
-      recordId: entityId,
-      fieldName: fieldName,
-    }),
-  );
+  const fieldValue = useTableValueRecordField(entityId, fieldName);
+  const setTableValueRecordField = useSetTableValueRecordField();
 
-  const { setDraftValue } = useRecordFieldInput<FieldDateTimeValue>(
-    `${entityId}-${fieldName}`,
-  );
+  const setFieldValue = (newValue: string) => {
+    setTableValueRecordField(entityId, fieldName, newValue);
+  };
+
+  // const [fieldValue, setFieldValue] = useRecoilState<string>(
+  //   recordStoreFamilySelector({
+  //     recordId: entityId,
+  //     fieldName: fieldName,
+  //   }),
+  // );
+
+  const setDraftValue = (...args: any[]) => {};
+  const draftValue = null;
+
+  // const { setDraftValue } = useRecordFieldInput<FieldDateTimeValue>(
+  //   `${entityId}-${fieldName}`,
+  // );
 
   return {
     fieldDefinition,

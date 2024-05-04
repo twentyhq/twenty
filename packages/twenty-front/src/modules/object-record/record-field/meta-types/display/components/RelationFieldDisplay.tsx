@@ -1,19 +1,20 @@
-import { RecordChip } from '@/object-record/components/RecordChip';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { EntityChip } from 'twenty-ui';
 
 import { useRelationField } from '../../hooks/useRelationField';
 
 export const RelationFieldDisplay = () => {
-  const { fieldValue, fieldDefinition, maxWidth } = useRelationField();
+  const { fieldValue, fieldDefinition, maxWidth, entityId } =
+    useRelationField();
 
   if (!fieldValue || !fieldDefinition) return null;
 
   return (
-    <RecordChip
-      objectNameSingular={
-        fieldDefinition.metadata.relationObjectMetadataNameSingular
-      }
-      record={fieldValue as unknown as ObjectRecord} // Todo: Fix this type
+    <EntityChip
+      entityId={entityId}
+      name={fieldValue.name}
+      avatarType={fieldValue.avatarType}
+      avatarUrl={fieldValue.avatarUrl}
+      linkToEntity={fieldValue.linkToShowPage}
       maxWidth={maxWidth}
     />
   );

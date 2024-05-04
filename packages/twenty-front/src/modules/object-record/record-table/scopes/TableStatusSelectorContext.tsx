@@ -21,6 +21,16 @@ export type TableCellStatusByPosition = {
   [positionRowColumnKey: `${number}-${number}`]: TableCellStatus | undefined;
 };
 
+export type TableValue = {
+  [recordId: string]: {
+    [fieldName: string]: any;
+  };
+};
+
+export const TableValueSelectorContext = createContext<
+  [TableValue, Dispatch<SetStateAction<TableValue>>]
+>([{}, () => {}]);
+
 export const TableCellValueByRecordFieldNameSelectorContext = createContext<
   [
     TableCellValueByRecordFieldName,
@@ -130,6 +140,64 @@ export const useSetTableCellValue = () => {
   };
 };
 
+export const useSetTableValue = () => {
+  const setTableValue = useContextSelector(
+    TableValueSelectorContext,
+    (value) => value[1],
+  );
+
+  return (
+    recordId: string,
+    newRecord: Dispatch<SetStateAction<TableValue['recordId']>>,
+  ) => {
+    console.log({
+      recordId,
+      newRecord,
+    });
+    setTableValue((currentTable) => ({
+      ...currentTable,
+      [recordId]: newRecord,
+    }));
+  };
+};
+
+export const useTableValueRecord = (recordId: string) => {
+  const tableValue = useContextSelector(
+    TableValueSelectorContext,
+    (value) => value[0],
+  );
+
+  return tableValue[recordId];
+};
+
+export const useTableValueRecordField = (
+  recordId: string,
+  fieldName: string,
+) => {
+  const tableValue = useContextSelector(
+    TableValueSelectorContext,
+    (value) => value[0],
+  );
+
+  return tableValue[recordId][fieldName];
+};
+export const useSetTableValueRecordField = () => {
+  const setTableValue = useContextSelector(
+    TableValueSelectorContext,
+    (value) => value[1],
+  );
+
+  return (recordId: string, fieldName: string, newValue: any) => {
+    setTableValue((currentTable) => ({
+      ...currentTable,
+      [recordId]: {
+        ...currentTable[recordId],
+        [fieldName]: newValue,
+      },
+    }));
+  };
+};
+
 export const TableCellSelectorContextProvider = ({
   children,
 }: {
@@ -141,7 +209,9 @@ export const TableCellSelectorContextProvider = ({
     <TableCellStatusByPositionSelectorContext.Provider
       value={useState<TableCellStatusByPosition>({})}
     >
-      {children}
+      <TableValueSelectorContext.Provider value={useState<TableValue>({})}>
+        {children}
+      </TableValueSelectorContext.Provider>
     </TableCellStatusByPositionSelectorContext.Provider>
   </TableCellValueByRecordFieldNameSelectorContext.Provider>
 );

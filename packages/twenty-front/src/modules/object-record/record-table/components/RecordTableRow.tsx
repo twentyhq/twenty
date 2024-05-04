@@ -1,14 +1,13 @@
 import { useContext } from 'react';
 import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
 
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/components/RecordTableCellFieldContextWrapper';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { useSelectedRow } from '@/object-record/record-table/scopes/SelectedRowSelectorContext';
 import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { CheckboxCell } from './CheckboxCell';
@@ -23,12 +22,15 @@ const StyledTd = styled.td`
 `;
 
 export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
-  const { visibleTableColumnsSelector, isRowSelectedFamilyState } =
-    useRecordTableStates();
-  const currentRowSelected = useRecoilValue(isRowSelectedFamilyState(recordId));
+  // const { visibleTableColumnsSelector, isRowSelectedFamilyState } =
+  //   useRecordTableStates();
+  // const currentRowSelected = useRecoilValue(isRowSelectedFamilyState(recordId));
+
+  const isRowSelected = useSelectedRow(recordId);
+
   const { objectMetadataItem } = useContext(RecordTableContext);
 
-  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
+  const { visibleTableColumns } = useContext(RecordTableContext);
 
   const scrollWrapperRef = useContext(ScrollWrapperContext);
 
@@ -48,7 +50,7 @@ export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
           getBasePathToShowPage({
             objectNameSingular: objectMetadataItem.nameSingular,
           }) + recordId,
-        isSelected: currentRowSelected,
+        isSelected: isRowSelected,
         isReadOnly: objectMetadataItem.isRemote ?? false,
       }}
     >

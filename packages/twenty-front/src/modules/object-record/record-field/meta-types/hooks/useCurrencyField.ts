@@ -1,7 +1,6 @@
 import { useContext } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
-import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { convertCurrencyToCurrencyMicros } from '~/utils/convert-currency-amount';
@@ -55,10 +54,13 @@ export const useCurrencyField = () => {
     persistField(newCurrencyValue);
   };
 
-  const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldCurrencyValue>(`${entityId}-${fieldName}`);
+  // const { setDraftValue, getDraftValueSelector } =
+  //   useRecordFieldInput<FieldCurrencyValue>(`${entityId}-${fieldName}`);
 
-  const draftValue = useRecoilValue(getDraftValueSelector());
+  // const draftValue = useRecoilValue(getDraftValueSelector());
+
+  const setDraftValue = (...args: any[]) => {};
+  const draftValue: any = {};
 
   const defaultValue = fieldDefinition.defaultValue;
 

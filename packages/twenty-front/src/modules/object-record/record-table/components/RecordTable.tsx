@@ -1,7 +1,18 @@
+import { useMemo } from 'react';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
+import {
+  getAvatarType,
+  getAvatarUrl,
+  getLabelIdentifierFieldValue,
+  getLinkToShowPage,
+} from '@/object-metadata/utils/getObjectRecordIdentifier';
+import { RecordChipData } from '@/object-record/record-field/types/RecordChipData';
 import { RecordTableBody } from '@/object-record/record-table/components/RecordTableBody';
 import { RecordTableBodyEffect } from '@/object-record/record-table/components/RecordTableBodyEffect';
 import { RecordTableHeader } from '@/object-record/record-table/components/RecordTableHeader';
@@ -20,8 +31,11 @@ import { useUpsertRecordV2 } from '@/object-record/record-table/record-table-cel
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { RGBA } from '@/ui/theme/constants/Rgba';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledTable = styled.table<{
   freezeFirstColumns?: boolean;
@@ -145,7 +159,8 @@ export const RecordTable = ({
   onColumnsChange,
   createRecord,
 }: RecordTableProps) => {
-  const { scopeId } = useRecordTableStates(recordTableId);
+  const { scopeId, visibleTableColumnsSelector } =
+    useRecordTableStates(recordTableId);
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -204,6 +219,68 @@ export const RecordTable = ({
     recordTableId,
   });
 
+  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
+
+  const { objectMetadataItems } = useObjectMetadataItems();
+
+  const recordChipDataGeneratorPerFieldName = useMemo(() => {
+    return Object.fromEntries<(record: ObjectRecord) => RecordChipData>(
+      visibleTableColumns
+        .filter(
+          (tableColumn) =>
+            tableColumn.isLabelIdentifier ||
+            tableColumn.type === FieldMetadataType.Relation,
+        )
+        .map((tableColumn) => {
+          const objectNameSingularToFind = tableColumn.isLabelIdentifier
+            ? objectNameSingular
+            : tableColumn.metadata.objectMetadataNameSingular;
+
+          const objectMetadataItem = objectMetadataItems.find(
+            (objectMetadataItem) =>
+              objectMetadataItem.nameSingular === objectNameSingularToFind,
+          );
+
+          if (
+            !isDefined(objectMetadataItem) ||
+            !isDefined(objectNameSingularToFind)
+          ) {
+            throw new Error(
+              `Could not find object metadata item for object name singular: ${objectNameSingularToFind}`,
+            );
+          }
+
+          const labelIdentifierFieldMetadataItem =
+            getLabelIdentifierFieldMetadataItem(objectMetadataItem);
+
+          const imageIdentifierFieldMetadata = objectMetadataItem.fields.find(
+            (field) =>
+              field.id === objectMetadataItem.imageIdentifierFieldMetadataId,
+          );
+
+          const avatarType = getAvatarType(objectNameSingularToFind);
+
+          return [
+            tableColumn.metadata.fieldName,
+            (record: ObjectRecord) => ({
+              name: getLabelIdentifierFieldValue(
+                record,
+                labelIdentifierFieldMetadataItem,
+                objectNameSingular,
+              ),
+              avatarUrl: getAvatarUrl(
+                objectNameSingular,
+                record,
+                imageIdentifierFieldMetadata,
+              ),
+              avatarType,
+              linkToShowPage: getLinkToShowPage(objectNameSingular, record),
+            }),
+          ];
+        }),
+    );
+  }, [objectNameSingular, visibleTableColumns, objectMetadataItems]);
+
   return (
     <RecordTableScope
       recordTableScopeId={scopeId}
@@ -220,6 +297,8 @@ export const RecordTable = ({
             onMoveSoftFocusToCell: handleMoveSoftFocusToCell,
             onContextMenu: handleContextMenu,
             onCellMouseEnter: handleContainerMouseEnter,
+            recordChipDataGeneratorPerFieldName,
+            visibleTableColumns,
           }}
         >
           <StyledTable className="entity-table-cell">

@@ -1,9 +1,12 @@
 import { useContext } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { isFieldAddressValue } from '@/object-record/record-field/types/guards/isFieldAddressValue';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import {
+  useSetTableValueRecordField,
+  useTableValueRecordField,
+} from '@/object-record/record-table/scopes/TableStatusSelectorContext';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldContext } from '../../contexts/FieldContext';
@@ -23,12 +26,23 @@ export const useAddressField = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useRecoilState<FieldAddressValue>(
-    recordStoreFamilySelector({
-      recordId: entityId,
-      fieldName: fieldName,
-    }),
-  );
+  const fieldValue = useTableValueRecordField(entityId, fieldName);
+  const setTableValueRecordField = useSetTableValueRecordField();
+
+  const setFieldValue = (newValue: FieldAddressValue) => {
+    if (!isFieldAddressValue(newValue)) {
+      return;
+    }
+
+    setTableValueRecordField(entityId, fieldName, newValue);
+  };
+
+  // const [fieldValue, setFieldValue] = useRecoilState<FieldAddressValue>(
+  //   recordStoreFamilySelector({
+  //     recordId: entityId,
+  //     fieldName: fieldName,
+  //   }),
+  // );
 
   const persistField = usePersistField();
 

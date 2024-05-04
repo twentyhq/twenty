@@ -1,9 +1,9 @@
 import { useContext } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
-import { FieldNumberValue } from '@/object-record/record-field/types/FieldMetadata';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import {
+  useSetTableValueRecordField,
+  useTableValueRecordField,
+} from '@/object-record/record-table/scopes/TableStatusSelectorContext';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import {
   canBeCastAsIntegerOrNull,
@@ -22,12 +22,19 @@ export const useNumberField = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useRecoilState<number | null>(
-    recordStoreFamilySelector({
-      recordId: entityId,
-      fieldName: fieldName,
-    }),
-  );
+  // const [fieldValue, setFieldValue] = useRecoilState<number | null>(
+  //   recordStoreFamilySelector({
+  //     recordId: entityId,
+  //     fieldName: fieldName,
+  //   }),
+  // );
+
+  const fieldValue = useTableValueRecordField(entityId, fieldName);
+  const setTableValueRecordField = useSetTableValueRecordField();
+
+  const setFieldValue = (newValue: string) => {
+    setTableValueRecordField(entityId, fieldName, newValue);
+  };
 
   const persistField = usePersistField();
 
@@ -41,10 +48,13 @@ export const useNumberField = () => {
     persistField(castedValue);
   };
 
-  const { setDraftValue, getDraftValueSelector } =
-    useRecordFieldInput<FieldNumberValue>(`${entityId}-${fieldName}`);
+  // const { setDraftValue, getDraftValueSelector } =
+  //   useRecordFieldInput<FieldNumberValue>(`${entityId}-${fieldName}`);
 
-  const draftValue = useRecoilValue(getDraftValueSelector());
+  // const draftValue = useRecoilValue(getDraftValueSelector());
+
+  const setDraftValue = (...args: any[]) => {};
+  const draftValue: any = null;
 
   return {
     fieldDefinition,

@@ -1,11 +1,10 @@
+import { EllipsisDisplayV2 } from '@/ui/field/display/components/EllipsisDisplayV2';
 import { formatNumber } from '~/utils/format/number';
-
-import { EllipsisDisplay } from './EllipsisDisplay';
 
 type NumberDisplayProps = {
   value: string | number | null;
 };
 
 export const NumberDisplay = ({ value }: NumberDisplayProps) => (
-  <EllipsisDisplay>{value && formatNumber(Number(value))}</EllipsisDisplay>
+  <EllipsisDisplayV2>{value && formatNumber(Number(value))}</EllipsisDisplayV2>
 );

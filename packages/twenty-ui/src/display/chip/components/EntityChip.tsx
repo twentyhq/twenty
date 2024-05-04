@@ -50,7 +50,7 @@ export const EntityChip = ({
 
   return (
     <Chip
-      label={name}
+      label={`${name}`}
       variant={
         linkToEntity
           ? variant === EntityChipVariant.Regular
@@ -65,7 +65,7 @@ export const EntityChip = ({
           <Avatar
             avatarUrl={avatarUrl}
             entityId={entityId}
-            placeholder={name}
+            placeholder={`${name}`}
             size="sm"
             type={avatarType}
           />

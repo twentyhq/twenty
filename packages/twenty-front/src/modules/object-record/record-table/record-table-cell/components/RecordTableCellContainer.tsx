@@ -82,11 +82,6 @@ export const RecordTableCellContainer = ({
   // < 0.1ms
   useEffect(() => {
     const customEventListener = (event: any) => {
-      console.log(
-        `soft-focus-move-${cellPosition.row}:${cellPosition.column}`,
-        { data: event.detail },
-      );
-
       const newHasSoftFocus = event.detail;
 
       setHasSoftFocus(newHasSoftFocus);
@@ -107,13 +102,6 @@ export const RecordTableCellContainer = ({
 
   useEffect(() => {
     const customEventListener = (event: any) => {
-      console.log(
-        `edit-mode-change-${cellPosition.row}:${cellPosition.column}`,
-        {
-          data: event.detail,
-        },
-      );
-
       const newIsInEditMode = event.detail;
 
       setIsInEditMode(newIsInEditMode);
