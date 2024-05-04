@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { useLogout } from '@/auth/hooks/useLogout';
+import { useSignOutAndRedirect } from '@/auth/hooks/useSignOutAndRedirect';
 import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit';
 import { SubscriptionCard } from '@/billing/components/SubscriptionCard';
 import { billingState } from '@/client-config/states/billingState';
@@ -45,7 +45,7 @@ const StyledBenefitsContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
 `;
 
-const StyledSecondaryButtonGroup = styled.div`
+const StyledLinkGroup = styled.div`
   align-items: center;
   display: flex;
   flex-direction: row;
@@ -94,7 +94,7 @@ export const ChooseYourPlan = () => {
     };
   };
 
-  const handleLogout = useLogout();
+  const handleLogout = useSignOutAndRedirect();
 
   const computeInfo = (
     price: ProductPriceEntity,
@@ -173,13 +173,13 @@ export const ChooseYourPlan = () => {
           Icon={() => isSubmitting && <Loader />}
           disabled={isSubmitting}
         />
-        <StyledSecondaryButtonGroup>
+        <StyledLinkGroup>
           <ActionLink onClick={handleLogout}>Log out</ActionLink>
           <span />
           <ActionLink href={CAL_LINK} target="_blank" rel="noreferrer">
             Book a Call
           </ActionLink>
-        </StyledSecondaryButtonGroup>
+        </StyledLinkGroup>
       </>
     )
   );

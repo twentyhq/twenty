@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { AppPath } from '@/types/AppPath';
 
-export const useLogout = () => {
+export const useSignOutAndRedirect = () => {
   const { signOut } = useAuth();
   const navigate = useNavigate();
 

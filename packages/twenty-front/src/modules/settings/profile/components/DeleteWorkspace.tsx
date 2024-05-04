@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
-import { useLogout } from '@/auth/hooks/useLogout';
+import { useSignOutAndRedirect } from '@/auth/hooks/useSignOutAndRedirect';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import {
@@ -18,7 +18,7 @@ export const DeleteWorkspace = () => {
   const currentUser = useRecoilValue(currentUserState);
   const userEmail = currentUser?.email;
 
-  const handleLogout = useLogout();
+  const handleLogout = useSignOutAndRedirect();
 
   const deleteWorkspace = async () => {
     await deleteCurrentWorkspace();

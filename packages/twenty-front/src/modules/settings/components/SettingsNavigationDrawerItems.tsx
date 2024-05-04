@@ -14,7 +14,7 @@ import {
   IconUsers,
 } from 'twenty-ui';
 
-import { useLogout } from '@/auth/hooks/useLogout';
+import { useSignOutAndRedirect } from '@/auth/hooks/useSignOutAndRedirect';
 import { billingState } from '@/client-config/states/billingState';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -24,7 +24,7 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 
 export const SettingsNavigationDrawerItems = () => {
-  const handleLogout = useLogout();
+  const handleLogout = useSignOutAndRedirect();
 
   const billing = useRecoilValue(billingState);
 
