@@ -13,16 +13,16 @@ export class EventsListener {
 
   @OnEvent('*.created')
   async handleCreatedEvent(payload: ObjectRecordCreateEvent<any>) {
-    this.pubSub.publish('created', { created: payload });
+    this.pubSub.publish('recordCreated', { recordCreated: payload });
   }
 
   @OnEvent('*.updated')
   async handleUpdatedEvent(payload: ObjectRecordUpdateEvent<any>) {
-    this.pubSub.publish('updated', { updated: payload });
+    this.pubSub.publish('recordUpdated', { recordUpdated: payload });
   }
 
   @OnEvent('*.deleted')
   async handleDeletedEvent(payload: ObjectRecordDeleteEvent<any>) {
-    this.pubSub.publish('deleted', { deleted: payload });
+    this.pubSub.publish('recordDeleted', { recordDeleted: payload });
   }
 }

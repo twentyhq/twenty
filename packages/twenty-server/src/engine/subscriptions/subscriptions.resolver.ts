@@ -1,5 +1,4 @@
 import { Inject } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 import { Resolver, Subscription } from '@nestjs/graphql';
 
 import { PubSub } from 'graphql-subscriptions';
@@ -10,23 +9,20 @@ import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/t
 
 @Resolver()
 export class SubscriptionsResolver {
-  constructor(
-    @Inject('PUB_SUB') private readonly pubSub: PubSub,
-    private readonly eventEmitter: EventEmitter2,
-  ) {}
+  constructor(@Inject('PUB_SUB') private readonly pubSub: PubSub) {}
 
   @Subscription(() => ObjectRecordCreateEvent<any>)
-  created() {
-    return this.pubSub.asyncIterator('created');
+  recordCreated() {
+    return this.pubSub.asyncIterator('recordCreated');
   }
 
   @Subscription(() => ObjectRecordUpdateEvent<any>)
-  updated() {
-    return this.pubSub.asyncIterator('updated');
+  recordUpdated() {
+    return this.pubSub.asyncIterator('recordUpdated');
   }
 
   @Subscription(() => ObjectRecordDeleteEvent<any>)
-  deleted() {
-    return this.pubSub.asyncIterator('deleted');
+  recordDeleted() {
+    return this.pubSub.asyncIterator('recordDeleted');
   }
 }
