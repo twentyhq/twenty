@@ -1,5 +1,3 @@
-import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import {
   IconApps,
@@ -16,25 +14,18 @@ import {
   IconUsers,
 } from 'twenty-ui';
 
-import { useAuth } from '@/auth/hooks/useAuth';
 import { billingState } from '@/client-config/states/billingState';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
-import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSection';
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
+import { useLogout } from '@/auth/hooks/useLogout';
 
 export const SettingsNavigationDrawerItems = () => {
-  const navigate = useNavigate();
-  const { signOut } = useAuth();
-
-  const handleLogout = useCallback(() => {
-    signOut();
-    navigate(AppPath.SignInUp);
-  }, [signOut, navigate]);
-
+  const handleLogout = useLogout();
+  
   const billing = useRecoilValue(billingState);
 
   return (
