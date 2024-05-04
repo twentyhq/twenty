@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 
+import { useLogout } from '@/auth/hooks/useLogout';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import {
@@ -8,7 +9,6 @@ import {
   StyledConfirmationButton,
 } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useDeleteCurrentWorkspaceMutation } from '~/generated/graphql';
-import { useLogout } from '@/auth/hooks/useLogout';
 
 export const DeleteWorkspace = () => {
   const [isDeleteWorkSpaceModalOpen, setIsDeleteWorkSpaceModalOpen] =
