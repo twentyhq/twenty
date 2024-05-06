@@ -3,8 +3,10 @@ import { Key } from 'ts-key-enum';
 import {
   IconBaselineDensitySmall,
   IconChevronLeft,
+  IconEyeOff,
   IconFileExport,
   IconFileImport,
+  IconSettings,
   IconTag,
 } from 'twenty-ui';
 
@@ -25,7 +27,7 @@ import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFiel
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';
 
-type RecordIndexOptionsMenu = 'fields';
+type RecordIndexOptionsMenu = 'fields' | 'hiddenFields';
 
 type RecordIndexOptionsDropdownContentProps = {
   recordIndexId: string;
@@ -139,20 +141,45 @@ export const RecordIndexOptionsDropdownContent = ({
             isDraggable
             onDragEnd={handleReorderFields}
             onVisibilityChange={handleChangeFieldVisibility}
+            showSubheader={false}
           />
+          <DropdownMenuSeparator />
+          <MenuItem
+            onClick={() => handleSelectMenu('hiddenFields')}
+            LeftIcon={IconEyeOff}
+            text="Hidden Fields"
+          />
+        </>
+      )}
+      {currentMenu === 'hiddenFields' && (
+        <>
+          <DropdownMenuHeader
+            StartIcon={IconChevronLeft}
+            onClick={() => setCurrentMenu('fields')}
+          >
+            Hidden Fields
+          </DropdownMenuHeader>
+          <DropdownMenuSeparator />
           {hiddenRecordFields.length > 0 && (
             <>
-              <DropdownMenuSeparator />
               <ViewFieldsVisibilityDropdownSection
                 title="Hidden"
                 fields={hiddenRecordFields}
                 isDraggable={false}
                 onVisibilityChange={handleChangeFieldVisibility}
+                showSubheader={false}
               />
             </>
           )}
+          <DropdownMenuSeparator />
+          <MenuItem
+            onClick={resetMenu}
+            LeftIcon={IconSettings}
+            text="Edit Fields"
+          />
         </>
       )}
+
       {viewType === ViewType.Kanban && (
         <>
           <DropdownMenuSeparator />
