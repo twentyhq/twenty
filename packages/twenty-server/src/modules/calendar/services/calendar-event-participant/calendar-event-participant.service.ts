@@ -11,6 +11,7 @@ import { CalendarEventParticipant } from 'src/modules/calendar/types/calendar-ev
 import { CalendarEventParticipantRepository } from 'src/modules/calendar/repositories/calendar-event-participant.repository';
 import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
 import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/calendar-messaging-participant/services/add-person-id-and-workspace-member-id/add-person-id-and-workspace-member-id.service';
+import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 @Injectable()
 export class CalendarEventParticipantService {
@@ -24,11 +25,13 @@ export class CalendarEventParticipantService {
   ) {}
 
   public async updateCalendarEventParticipantsAfterPeopleCreation(
+    createdPeople: ObjectRecord<PersonObjectMetadata>[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
     const participants =
-      await this.calendarEventParticipantRepository.getWithoutPersonIdAndWorkspaceMemberId(
+      await this.calendarEventParticipantRepository.getByHandles(
+        createdPeople.map((person) => person.email),
         workspaceId,
       );
 
@@ -102,7 +105,7 @@ export class CalendarEventParticipantService {
           handle: 'text',
           displayName: 'text',
           isOrganizer: 'boolean',
-          responseStatus: `${dataSourceSchema}."calendarEventParticipant_responsestatus_enum"`,
+          responseStatus: `${dataSourceSchema}."calendarEventParticipant_responseStatus_enum"`,
           personId: 'uuid',
           workspaceMemberId: 'uuid',
         },
