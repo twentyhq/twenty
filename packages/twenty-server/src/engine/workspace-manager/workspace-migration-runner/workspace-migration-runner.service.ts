@@ -307,6 +307,8 @@ export class WorkspaceMigrationRunnerService {
       return;
     }
 
+    const enumName = `${tableName}_${migrationColumn.columnName}_enum`;
+
     await queryRunner.addColumn(
       `${schemaName}.${tableName}`,
       new TableColumn({
@@ -316,6 +318,7 @@ export class WorkspaceMigrationRunnerService {
         enum: migrationColumn.enum?.filter(
           (value): value is string => typeof value === 'string',
         ),
+        enumName: enumName,
         isArray: migrationColumn.isArray,
         isNullable: migrationColumn.isNullable,
       }),
