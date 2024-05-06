@@ -26,6 +26,7 @@ export const useFieldMetadataItem = () => {
   ) => {
     const formattedInput = formatFieldMetadataItemInput(input);
 
+    debugger;
     const defaultValue = getDefaultValueForBackend(
       input.defaultValue ?? formattedInput.defaultValue,
       input.type,
@@ -51,24 +52,24 @@ export const useFieldMetadataItem = () => {
       | 'options'
     >,
   ) => {
-    const formattedInput = formatFieldMetadataItemInput(input);
-    const defaultValue = input.defaultValue
-      ? typeof input.defaultValue == 'string'
-        ? `'${input.defaultValue}'`
-        : input.defaultValue
-      : formattedInput.defaultValue ?? undefined;
+    // In Edit mode, all options need an id,
+    // so we generate an id for newly created options.
+    const inputOptions = input.options?.map((option: FieldMetadataOption) =>
+      option.id ? option : { ...option, id: v4() },
+    );
+    const formattedInput = formatFieldMetadataItemInput({
+      ...input,
+      options: inputOptions,
+    });
+
+    const defaultValue = input.defaultValue ?? formattedInput.defaultValue;
 
     return updateOneFieldMetadataItem({
       fieldMetadataIdToUpdate: input.id,
-      updatePayload: formatFieldMetadataItemInput({
-        ...input,
+      updatePayload: {
+        ...formattedInput,
         defaultValue,
-        // In Edit mode, all options need an id,
-        // so we generate an id for newly created options.
-        options: input.options?.map((option: FieldMetadataOption) =>
-          option.id ? option : { ...option, id: v4() },
-        ),
-      }),
+      },
     });
   };
 
