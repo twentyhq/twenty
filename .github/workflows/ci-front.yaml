@@ -87,8 +87,7 @@ jobs:
           touch .env
           echo "REACT_APP_SERVER_BASE_URL: $REACT_APP_SERVER_BASE_URL" >> .env
       - name: Publish to Chromatic
-        run: |
-          npx nx run twenty-front:chromatic:ci
+        run: NODE_OPTIONS=--max-old-space-size=5000 npx nx run twenty-front:chromatic:ci
   front-task:
     runs-on: ubuntu-latest
     strategy:
