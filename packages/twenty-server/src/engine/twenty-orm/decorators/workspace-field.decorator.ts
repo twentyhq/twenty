@@ -5,6 +5,7 @@ import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/fi
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { TypedReflect } from 'src/utils/typed-reflect';
+import { generateDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/generate-default-value';
 
 export interface WorkspaceFieldOptions<
   T extends FieldMetadataType | 'default',
@@ -43,6 +44,10 @@ export function WorkspaceField<T extends FieldMetadataType>(
       object,
       propertyKey.toString(),
     );
+    const defaultValue = (options.defaultValue ??
+      generateDefaultValue(
+        options.type,
+      )) as FieldMetadataDefaultValue<'default'> | null;
 
     metadataArgsStorage.addFields({
       target: object.constructor,
@@ -52,7 +57,7 @@ export function WorkspaceField<T extends FieldMetadataType>(
       type: options.type,
       description: options.description,
       icon: options.icon,
-      defaultValue: options.defaultValue,
+      defaultValue,
       options: options.options,
       isPrimary,
       isNullable,

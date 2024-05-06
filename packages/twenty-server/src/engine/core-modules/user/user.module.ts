@@ -18,7 +18,6 @@ import { UserService } from './services/user.service';
 
 @Module({
   imports: [
-    TwentyORMModule.forFeature([CompanyObjectMetadata]),
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature([User], 'core'),

@@ -26,9 +26,6 @@ import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
-import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { CompanyObjectMetadata } from 'src/engine/twenty-orm/workspace-object-tests/company.object-metadata';
 
 import { UserService } from './services/user.service';
 
@@ -46,8 +43,6 @@ export class UserResolver {
   constructor(
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    @InjectWorkspaceRepository(CompanyObjectMetadata)
-    private readonly workspaceMemberRepository: WorkspaceRepository<CompanyObjectMetadata>,
     private readonly userService: UserService,
     private readonly environmentService: EnvironmentService,
     private readonly fileUploadService: FileUploadService,
@@ -63,8 +58,6 @@ export class UserResolver {
     });
 
     assert(user, 'User not found');
-
-    const companies = await this.workspaceMemberRepository.find();
 
     return user;
   }

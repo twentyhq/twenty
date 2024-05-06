@@ -6,11 +6,12 @@ import {
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { TypedReflect } from 'src/utils/typed-reflect';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 interface WorkspaceBaseRelationOptions<TType, TClass> {
   standardId: string;
-  label: string;
-  description?: string;
+  label: string | ((objectMetadata: ObjectMetadataEntity) => string);
+  description?: string | ((objectMetadata: ObjectMetadataEntity) => string);
   icon?: string;
   type: TType;
   inverseSideTarget: () => ObjectType<TClass>;

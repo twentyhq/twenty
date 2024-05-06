@@ -3,17 +3,17 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
-import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
-import { TypedReflect } from 'src/utils/typed-reflect';
 import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
 import { assert } from 'src/utils/assert';
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 
 interface CustomRelationFactory {
   object: ObjectMetadataEntity;
-  metadata: typeof BaseObjectMetadata;
+  metadata: typeof BaseWorkspaceEntity;
 }
 
 @Injectable()
@@ -26,7 +26,7 @@ export class StandardRelationFactory {
   ): Partial<RelationMetadataEntity>[];
 
   create(
-    standardObjectMetadataDefinitions: (typeof BaseObjectMetadata)[],
+    standardObjectMetadataDefinitions: (typeof BaseWorkspaceEntity)[],
     context: WorkspaceSyncContext,
     originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
     workspaceFeatureFlagsMap: FeatureFlagMap,
@@ -34,10 +34,10 @@ export class StandardRelationFactory {
 
   create(
     standardObjectMetadataDefinitionsOrCustomObjectFactories:
-      | (typeof BaseObjectMetadata)[]
+      | (typeof BaseWorkspaceEntity)[]
       | {
           object: ObjectMetadataEntity;
-          metadata: typeof BaseObjectMetadata;
+          metadata: typeof BaseWorkspaceEntity;
         }[],
     context: WorkspaceSyncContext,
     originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
@@ -46,7 +46,7 @@ export class StandardRelationFactory {
     return standardObjectMetadataDefinitionsOrCustomObjectFactories.flatMap(
       (
         standardObjectMetadata:
-          | typeof BaseObjectMetadata
+          | typeof BaseWorkspaceEntity
           | CustomRelationFactory,
       ) =>
         this.createRelationMetadata(
@@ -59,64 +59,61 @@ export class StandardRelationFactory {
   }
 
   private createRelationMetadata(
-    standardObjectMetadataOrCustomRelationFactory:
-      | typeof BaseObjectMetadata
+    workspaceEntityOrCustomRelationFactory:
+      | typeof BaseWorkspaceEntity
       | CustomRelationFactory,
     context: WorkspaceSyncContext,
     originalObjectMetadataMap: Record<string, ObjectMetadataEntity>,
     workspaceFeatureFlagsMap: FeatureFlagMap,
   ): Partial<RelationMetadataEntity>[] {
-    const standardObjectMetadata =
-      'metadata' in standardObjectMetadataOrCustomRelationFactory
-        ? standardObjectMetadataOrCustomRelationFactory.metadata
-        : standardObjectMetadataOrCustomRelationFactory;
-    const objectMetadata = TypedReflect.getMetadata(
-      'metadata' in standardObjectMetadataOrCustomRelationFactory
-        ? 'extendObjectMetadata'
-        : 'objectMetadata',
-      standardObjectMetadata,
-    );
-    const reflectRelationMetadataCollection = TypedReflect.getMetadata(
-      'reflectRelationMetadataCollection',
-      standardObjectMetadata,
-    );
+    const target =
+      'metadata' in workspaceEntityOrCustomRelationFactory
+        ? workspaceEntityOrCustomRelationFactory.metadata
+        : workspaceEntityOrCustomRelationFactory;
+    const workspaceEntity =
+      'metadata' in workspaceEntityOrCustomRelationFactory
+        ? metadataArgsStorage.filterExtendedEntities(target)
+        : metadataArgsStorage.filterEntities(target);
+    const workspaceRelationMetadataArgsCollection =
+      metadataArgsStorage.filterRelations(target);
 
-    if (!objectMetadata) {
+    if (!workspaceEntity) {
       throw new Error(
-        `Object metadata decorator not found, can't parse ${standardObjectMetadata.name}`,
+        `Object metadata decorator not found, can't parse ${target.name}`,
       );
     }
 
     if (
-      !reflectRelationMetadataCollection ||
-      isGatedAndNotEnabled(objectMetadata?.gate, workspaceFeatureFlagsMap)
+      !workspaceRelationMetadataArgsCollection ||
+      isGatedAndNotEnabled(workspaceEntity?.gate, workspaceFeatureFlagsMap)
     ) {
       return [];
     }
 
-    return reflectRelationMetadataCollection
+    return workspaceRelationMetadataArgsCollection
       .filter(
-        (reflectRelationMetadata) =>
+        (workspaceRelationMetadataArgs) =>
           !isGatedAndNotEnabled(
-            reflectRelationMetadata.gate,
+            workspaceRelationMetadataArgs.gate,
             workspaceFeatureFlagsMap,
           ),
       )
-      .map((reflectRelationMetadata) => {
+      .map((workspaceRelationMetadataArgs) => {
         // Compute reflect relation metadata
         const fromObjectNameSingular =
-          'object' in standardObjectMetadataOrCustomRelationFactory
-            ? standardObjectMetadataOrCustomRelationFactory.object.nameSingular
+          'object' in workspaceEntityOrCustomRelationFactory
+            ? workspaceEntityOrCustomRelationFactory.object.nameSingular
             : convertClassNameToObjectMetadataName(
-                reflectRelationMetadata.target.constructor.name,
+                workspaceRelationMetadataArgs.target.constructor.name,
               );
         const toObjectNameSingular = convertClassNameToObjectMetadataName(
-          reflectRelationMetadata.inverseSideTarget().name,
+          workspaceRelationMetadataArgs.inverseSideTarget().name,
         );
-        const fromFieldMetadataName = reflectRelationMetadata.fieldKey;
+        const fromFieldMetadataName = workspaceRelationMetadataArgs.name;
         const toFieldMetadataName =
-          (reflectRelationMetadata.inverseSideFieldKey as string | undefined) ??
-          fromObjectNameSingular;
+          (workspaceRelationMetadataArgs.inverseSideFieldKey as
+            | string
+            | undefined) ?? fromObjectNameSingular;
         const fromObjectMetadata =
           originalObjectMetadataMap[fromObjectNameSingular];
 
@@ -156,13 +153,13 @@ export class StandardRelationFactory {
         );
 
         return {
-          relationType: reflectRelationMetadata.type,
+          relationType: workspaceRelationMetadataArgs.type,
           fromObjectMetadataId: fromObjectMetadata?.id,
           toObjectMetadataId: toObjectMetadata?.id,
           fromFieldMetadataId: fromFieldMetadata?.id,
           toFieldMetadataId: toFieldMetadata?.id,
           workspaceId: context.workspaceId,
-          onDeleteAction: reflectRelationMetadata.onDelete,
+          onDeleteAction: workspaceRelationMetadataArgs.onDelete,
         };
       });
   }

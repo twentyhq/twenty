@@ -58,8 +58,13 @@ export class StandardObjectFactory {
 
     return {
       ...workspaceEntityMetadataArgs,
+      // TODO: Remove targetTableName when we remove the old metadata
+      targetTableName: 'DEPRECATED',
       workspaceId: context.workspaceId,
       dataSourceId: context.dataSourceId,
+      isCustom: false,
+      isRemote: false,
+      isSystem: workspaceEntityMetadataArgs.isSystem ?? false,
       fields,
     };
   }
