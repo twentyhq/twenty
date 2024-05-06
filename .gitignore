@@ -26,3 +26,7 @@ storybook-static
 *.tsbuildinfo
 .eslintcache
 .cache
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/

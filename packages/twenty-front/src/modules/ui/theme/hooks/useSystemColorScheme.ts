@@ -5,7 +5,7 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const useSystemColorScheme = (): ColorScheme => {
   const mediaQuery = useMemo(
-    () => window.matchMedia('(prefers-color-scheme: dark)'),
+    () => window.matchMedia?.('(prefers-color-scheme: dark)'),
     [],
   );
 

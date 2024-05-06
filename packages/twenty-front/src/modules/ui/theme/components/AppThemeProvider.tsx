@@ -1,7 +1,8 @@
 import { ThemeProvider } from '@emotion/react';
 import { THEME_DARK, THEME_LIGHT } from 'twenty-ui';
 
-import { useColorScheme } from '../hooks/useColorScheme';
+import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
+
 import { useSystemColorScheme } from '../hooks/useSystemColorScheme';
 
 type AppThemeProviderProps = {

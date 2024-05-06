@@ -6,7 +6,7 @@ import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOr
 export const ChipFieldDisplay = () => {
   const { record, generateRecordChipData } = useChipField();
 
-  if (!record) return null;
+  if (!record || !generateRecordChipData) return null;
 
   const chipData = generateRecordChipData(record);
 

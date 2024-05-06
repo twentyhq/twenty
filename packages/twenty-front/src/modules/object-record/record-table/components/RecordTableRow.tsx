@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 
+import { ProfilerWrapper } from '@/debug/profiling/components/ProfilerWrapper';
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/components/RecordTableCellFieldContextWrapper';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
@@ -42,43 +43,50 @@ export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
   });
 
   return (
-    <RecordTableRowContext.Provider
-      value={{
-        recordId,
-        rowIndex,
-        pathToShowPage:
-          getBasePathToShowPage({
-            objectNameSingular: objectMetadataItem.nameSingular,
-          }) + recordId,
-        isSelected: isRowSelected,
-        isReadOnly: objectMetadataItem.isRemote ?? false,
-      }}
-    >
-      <tr
-        ref={elementRef}
-        data-testid={`row-id-${recordId}`}
-        data-selectable-id={recordId}
+    <ProfilerWrapper id={`row-${rowIndex}`} componentName="RecordTableRow">
+      <RecordTableRowContext.Provider
+        value={{
+          recordId,
+          rowIndex,
+          pathToShowPage:
+            getBasePathToShowPage({
+              objectNameSingular: objectMetadataItem.nameSingular,
+            }) + recordId,
+          isSelected: isRowSelected,
+          isReadOnly: objectMetadataItem.isRemote ?? false,
+        }}
       >
-        <StyledTd>
-          <CheckboxCell />
-        </StyledTd>
-        {inView
-          ? visibleTableColumns.map((column, columnIndex) => (
-              <RecordTableCellContext.Provider
-                value={{
-                  columnDefinition: column,
-                  columnIndex,
-                }}
-                key={column.fieldMetadataId}
-              >
-                <RecordTableCellFieldContextWrapper />
-              </RecordTableCellContext.Provider>
-            ))
-          : visibleTableColumns.map((column) => (
-              <td key={column.fieldMetadataId}></td>
-            ))}
-        <td></td>
-      </tr>
-    </RecordTableRowContext.Provider>
+        <tr
+          ref={elementRef}
+          data-testid={`row-id-${recordId}`}
+          data-selectable-id={recordId}
+        >
+          <StyledTd>
+            <CheckboxCell />
+          </StyledTd>
+          {inView
+            ? visibleTableColumns.map((column, columnIndex) => (
+                <ProfilerWrapper
+                  id={`cell-${recordId}-${column.fieldMetadataId}`}
+                  componentName="RecordTableCell"
+                >
+                  <RecordTableCellContext.Provider
+                    value={{
+                      columnDefinition: column,
+                      columnIndex,
+                    }}
+                    key={column.fieldMetadataId}
+                  >
+                    <RecordTableCellFieldContextWrapper />
+                  </RecordTableCellContext.Provider>
+                </ProfilerWrapper>
+              ))
+            : visibleTableColumns.map((column) => (
+                <td key={column.fieldMetadataId}></td>
+              ))}
+          <td></td>
+        </tr>
+      </RecordTableRowContext.Provider>
+    </ProfilerWrapper>
   );
 };

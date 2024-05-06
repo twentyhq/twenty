@@ -11,6 +11,7 @@ import { ClientConfigProvider } from '@/client-config/components/ClientConfigPro
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
 import { ApolloDevLogEffect } from '@/debug/components/ApolloDevLogEffect';
 import { RecoilDebugObserverEffect } from '@/debug/components/RecoilDebugObserver';
+import { ProfilerReporter } from '@/debug/profiling/components/ProfilerReporter';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { ExceptionHandlerProvider } from '@/error-handler/components/ExceptionHandlerProvider';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
@@ -43,6 +44,7 @@ root.render(
       <CaptchaProvider>
         <RecoilDebugObserverEffect />
         <ApolloDevLogEffect />
+        <ProfilerReporter />
         <BrowserRouter>
           <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
             <IconsProvider>
