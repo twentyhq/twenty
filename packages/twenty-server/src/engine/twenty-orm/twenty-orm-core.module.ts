@@ -18,17 +18,17 @@ import {
 
 import { entitySchemaFactories } from 'src/engine/twenty-orm/factories';
 import { TWENTY_ORM_WORKSPACE_DATASOURCE } from 'src/engine/twenty-orm/twenty-orm.constants';
-import { TwentyORMService } from 'src/engine/twenty-orm/twenty-orm.service';
-import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { DataSourceStorage } from 'src/engine/twenty-orm/storage/data-source.storage';
+import { ScopedWorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-datasource.factory';
 
 @Global()
 @Module({
   imports: [DataSourceModule],
-  providers: [...entitySchemaFactories, TwentyORMService],
-  exports: [EntitySchemaFactory, TwentyORMService],
+  providers: [...entitySchemaFactories, TwentyORMManager],
+  exports: [EntitySchemaFactory, TwentyORMManager],
 })
 export class TwentyORMCoreModule
   extends ConfigurableModuleClass
@@ -43,20 +43,18 @@ export class TwentyORMCoreModule
         provide: TWENTY_ORM_WORKSPACE_DATASOURCE,
         useFactory: async (
           entitySchemaFactory: EntitySchemaFactory,
-          workspaceDatasourceFactory: WorkspaceDatasourceFactory,
+          scopedWorkspaceDatasourceFactory: ScopedWorkspaceDatasourceFactory,
         ) => {
           const entities = options.objects.map((entityClass) =>
             entitySchemaFactory.create(entityClass),
           );
 
-          const dataSource =
-            await workspaceDatasourceFactory.createWorkspaceDatasource(
-              entities,
-            );
+          const scopedWorkspaceDataSource =
+            await scopedWorkspaceDatasourceFactory.create(entities);
 
-          return dataSource;
+          return scopedWorkspaceDataSource;
         },
-        inject: [EntitySchemaFactory, WorkspaceDatasourceFactory],
+        inject: [EntitySchemaFactory, ScopedWorkspaceDatasourceFactory],
       },
     ];
 
@@ -79,23 +77,21 @@ export class TwentyORMCoreModule
         provide: TWENTY_ORM_WORKSPACE_DATASOURCE,
         useFactory: async (
           entitySchemaFactory: EntitySchemaFactory,
-          workspaceDatasourceFactory: WorkspaceDatasourceFactory,
+          scopedWorkspaceDatasourceFactory: ScopedWorkspaceDatasourceFactory,
           options: TwentyORMOptions,
         ) => {
           const entities = options.objects.map((entityClass) =>
             entitySchemaFactory.create(entityClass),
           );
 
-          const dataSource =
-            await workspaceDatasourceFactory.createWorkspaceDatasource(
-              entities,
-            );
+          const scopedWorkspaceDataSource =
+            await scopedWorkspaceDatasourceFactory.create(entities);
 
-          return dataSource;
+          return scopedWorkspaceDataSource;
         },
         inject: [
           EntitySchemaFactory,
-          WorkspaceDatasourceFactory,
+          ScopedWorkspaceDatasourceFactory,
           MODULE_OPTIONS_TOKEN,
         ],
       },
