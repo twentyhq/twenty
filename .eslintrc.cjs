@@ -24,8 +24,16 @@ module.exports = {
         allow: [],
         depConstraints: [
           {
-            sourceTag: '*',
-            onlyDependOnLibsWithTags: ['*'],
+            sourceTag: 'scope:shared',
+            onlyDependOnLibsWithTags: ['scope:shared'],
+          },
+          {
+            sourceTag: 'scope:backend',
+            onlyDependOnLibsWithTags: ['scope:shared', 'scope:backend'],
+          },
+          {
+            sourceTag: 'scope:frontend',
+            onlyDependOnLibsWithTags: ['scope:shared', 'scope:frontend'],
           },
         ],
       },

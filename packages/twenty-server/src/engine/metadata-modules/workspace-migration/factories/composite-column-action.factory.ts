@@ -18,7 +18,8 @@ export type CompositeFieldMetadataType =
   | FieldMetadataType.ADDRESS
   | FieldMetadataType.CURRENCY
   | FieldMetadataType.FULL_NAME
-  | FieldMetadataType.LINK;
+  | FieldMetadataType.LINK
+  | FieldMetadataType.LINKS;
 
 @Injectable()
 export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<CompositeFieldMetadataType> {
@@ -51,6 +52,7 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
         columnType: fieldMetadataTypeToColumnType(property.type),
         isNullable: fieldMetadata.isNullable || !property.isRequired,
         defaultValue: serializedDefaultValue,
+        isArray: property.isArray,
       });
     }
 
@@ -116,6 +118,7 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
           defaultValue: serializeDefaultValue(
             currentFieldMetadata.defaultValue?.[currentProperty.name],
           ),
+          isArray: currentProperty.isArray,
         },
         alteredColumnDefinition: {
           columnName: alteredColumnName,
@@ -123,6 +126,7 @@ export class CompositeColumnActionFactory extends ColumnActionAbstractFactory<Co
           isNullable:
             alteredFieldMetadata.isNullable || !alteredProperty.isRequired,
           defaultValue: serializedDefaultValue,
+          isArray: alteredProperty.isArray,
         },
       });
     }

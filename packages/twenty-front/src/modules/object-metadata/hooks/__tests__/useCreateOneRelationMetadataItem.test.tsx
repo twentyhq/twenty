@@ -4,7 +4,8 @@ import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
-import { FieldMetadataType, RelationMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated/graphql';
+import { RelationMetadataType } from '~/generated-metadata/graphql';
 
 import {
   query,

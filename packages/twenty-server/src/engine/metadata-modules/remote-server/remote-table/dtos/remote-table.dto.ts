@@ -1,7 +1,7 @@
 import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
-import { IsEnum } from 'class-validator';
+import { IsEnum, IsOptional } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -27,6 +27,7 @@ export class RemoteTableDTO {
   @Field(() => RemoteTableStatus)
   status: RemoteTableStatus;
 
-  @Field(() => String)
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   schema?: string;
 }

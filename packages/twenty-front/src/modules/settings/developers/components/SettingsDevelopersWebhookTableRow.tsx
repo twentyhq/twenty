@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconChevronRight } from 'twenty-ui';
 
-import { WebhookFieldItem } from '@/settings/developers/types/webhook/WebhookFieldItem';
+import { Webhook } from '@/settings/developers/types/webhook/Webhook';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
@@ -30,7 +30,7 @@ export const SettingsDevelopersWebhookTableRow = ({
   fieldItem,
   onClick,
 }: {
-  fieldItem: WebhookFieldItem;
+  fieldItem: Webhook;
   onClick: () => void;
 }) => {
   const theme = useTheme();

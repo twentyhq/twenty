@@ -19,7 +19,7 @@ const entities = mockedPeopleData.map<EntityForSelect>((person) => ({
   name: person.name.firstName + ' ' + person.name.lastName,
   avatarUrl: person.avatarUrl,
   avatarType: 'rounded',
-  record: person,
+  record: { ...person, __typename: 'Person' },
 }));
 
 const meta: Meta<typeof SingleEntitySelect> = {

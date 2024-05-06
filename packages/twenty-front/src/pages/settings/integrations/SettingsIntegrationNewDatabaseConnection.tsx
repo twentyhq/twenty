@@ -13,7 +13,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import {
   SettingsIntegrationPostgreSQLConnectionForm,
   settingsIntegrationPostgreSQLConnectionFormSchema,
-} from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectionForm';
+} from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionForm';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
@@ -41,8 +41,9 @@ const createRemoteServerInputSchema = newConnectionSchema
     },
     userMappingOptions: {
       password: values.password,
-      username: values.username,
+      user: values.user,
     },
+    schema: values.schema,
   }));
 
 type SettingsIntegrationNewConnectionFormValues = z.infer<
@@ -115,10 +116,12 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
   };
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    <FormProvider {...formConfig}>
-      <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-        <SettingsPageContainer>
+    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+      <SettingsPageContainer>
+        <FormProvider
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...formConfig}
+        >
           <SettingsHeaderContainer>
             <Breadcrumb
               links={[
@@ -150,8 +153,8 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
               <SettingsIntegrationPostgreSQLConnectionForm />
             </Section>
           ) : null}
-        </SettingsPageContainer>
-      </SubMenuTopBarContainer>
-    </FormProvider>
+        </FormProvider>
+      </SettingsPageContainer>
+    </SubMenuTopBarContainer>
   );
 };

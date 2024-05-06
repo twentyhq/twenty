@@ -1,6 +1,7 @@
 'use client';
 
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 
 import { Theme } from '@/app/_components/ui/theme/theme';
 
@@ -32,15 +33,20 @@ const Description = styled.h2`
 
 export const Header = () => {
   return (
-    <div>
-      <Title>
-        Open-source <br /> <span style={{ color: 'black' }}>friends</span>
-      </Title>
-
+    <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.2 }}
+      >
+        <Title>
+          Open-source <br /> <span style={{ color: 'black' }}>friends</span>
+        </Title>
+      </motion.div>
       <Description>
         We are proud to collaborate with a diverse group of partners to promote
         open-source software.
       </Description>
-    </div>
+    </>
   );
 };

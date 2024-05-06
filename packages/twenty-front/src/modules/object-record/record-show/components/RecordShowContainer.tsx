@@ -124,6 +124,8 @@ export const RecordShowContainer = ({
         : 'inlineFieldMetadataItems',
   );
 
+  const isReadOnly = objectMetadataItem.isRemote;
+
   return (
     <RecoilScope CustomRecoilScopeContext={ShowPageRecoilScopeContext}>
       <ShowPageContainer>
@@ -162,7 +164,7 @@ export const RecordShowContainer = ({
                       hotkeyScope: InlineCellHotkeyScope.InlineCell,
                     }}
                   >
-                    <RecordInlineCell />
+                    <RecordInlineCell readonly={isReadOnly} />
                   </FieldContext.Provider>
                 }
                 avatarType={recordIdentifier?.avatarType ?? 'rounded'}
@@ -191,7 +193,7 @@ export const RecordShowContainer = ({
                       hotkeyScope: InlineCellHotkeyScope.InlineCell,
                     }}
                   >
-                    <RecordInlineCell />
+                    <RecordInlineCell readonly={isReadOnly} />
                   </FieldContext.Provider>
                 ))}
               </PropertyBox>

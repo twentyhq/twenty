@@ -5,10 +5,7 @@ import { Repository, EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
@@ -76,15 +73,9 @@ export class GoogleAPIsService {
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
-    const isCalendarEnabledFlag = await this.featureFlagRepository.findOneBy({
-      workspaceId,
-      key: FeatureFlagKeys.IsCalendarEnabled,
-      value: true,
-    });
-
-    const isCalendarEnabled =
-      this.environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED') &&
-      !!isCalendarEnabledFlag?.value;
+    const isCalendarEnabled = this.environmentService.get(
+      'CALENDAR_PROVIDER_GOOGLE_ENABLED',
+    );
 
     const connectedAccounts =
       await this.connectedAccountRepository.getAllByHandleAndWorkspaceMemberId(

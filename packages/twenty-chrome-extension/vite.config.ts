@@ -19,6 +19,9 @@ const viteManifestHack: Plugin & {
 
 export default defineConfig(() => {
   return {
+    root: __dirname,
+    cacheDir: '../../node_modules/.vite/packages/twenty-chrome-extension',
+
     build: {
       emptyOutDir: true,
       outDir: 'dist',

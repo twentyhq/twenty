@@ -4,12 +4,12 @@ import { Reference, useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { IconSettings } from 'twenty-ui';
 
-import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -28,7 +28,6 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -42,7 +41,6 @@ export const SettingsObjectNewFieldStep2 = () => {
   const navigate = useNavigate();
   const { objectSlug = '' } = useParams();
   const { enqueueSnackBar } = useSnackBar();
-  const isMultiSelectEnabled = useIsFeatureEnabled('IS_MULTI_SELECT_ENABLED');
 
   const {
     findActiveObjectMetadataItemBySlug,
@@ -252,7 +250,7 @@ export const SettingsObjectNewFieldStep2 = () => {
             cache: cache,
             fieldModifiers: {
               viewFields: (cachedViewFieldsConnection, { readField }) => {
-                const edges = readField<CachedObjectRecordEdge[]>(
+                const edges = readField<RecordGqlRefEdge[]>(
                   'edges',
                   cachedViewFieldsConnection,
                 );
@@ -282,15 +280,11 @@ export const SettingsObjectNewFieldStep2 = () => {
     FieldMetadataType.Email,
     FieldMetadataType.FullName,
     FieldMetadataType.Link,
+    FieldMetadataType.Links,
     FieldMetadataType.Numeric,
-    FieldMetadataType.Phone,
     FieldMetadataType.Probability,
     FieldMetadataType.Uuid,
   ];
-
-  if (!isMultiSelectEnabled) {
-    excludedFieldTypes.push(FieldMetadataType.MultiSelect);
-  }
 
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">

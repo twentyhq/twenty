@@ -31,7 +31,7 @@ const meta: Meta = {
           fieldDefinition: {
             fieldMetadataId: 'phone',
             label: 'Phone',
-            type: FieldMetadataType.Text,
+            type: FieldMetadataType.Phone,
             iconName: 'IconPhone',
             metadata: {
               fieldName: 'phone',

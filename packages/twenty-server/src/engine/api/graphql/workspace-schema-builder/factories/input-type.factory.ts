@@ -41,8 +41,8 @@ export class InputTypeFactory {
       case InputTypeDefinitionKind.Update:
         inputType = this.typeMapperService.mapToScalarType(
           type,
-          buildOptions.dateScalarMode,
-          buildOptions.numberScalarMode,
+          typeOptions.settings,
+          typeOptions.isIdField,
         );
         break;
       /**
@@ -54,8 +54,8 @@ export class InputTypeFactory {
         } else {
           inputType = this.typeMapperService.mapToFilterType(
             type,
-            buildOptions.dateScalarMode,
-            buildOptions.numberScalarMode,
+            typeOptions.settings,
+            typeOptions.isIdField,
           );
         }
 
