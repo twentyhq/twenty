@@ -15,7 +15,7 @@ import crypto from 'crypto';
 import { addMilliseconds, differenceInMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
-import { MoreThan, Repository } from 'typeorm';
+import { IsNull, MoreThan, Repository } from 'typeorm';
 import { Request } from 'express';
 import { ExtractJwt } from 'passport-jwt';
 import { render } from '@react-email/render';
@@ -525,6 +525,7 @@ export class TokenService {
         userId: user.id,
         type: AppTokenType.PasswordResetToken,
         expiresAt: MoreThan(new Date()),
+        revokedAt: IsNull(),
       },
     });
 
@@ -623,6 +624,7 @@ export class TokenService {
         value: hashedResetToken,
         type: AppTokenType.PasswordResetToken,
         expiresAt: MoreThan(new Date()),
+        revokedAt: IsNull(),
       },
     });
 
@@ -649,10 +651,15 @@ export class TokenService {
 
     assert(user, 'User not found', NotFoundException);
 
-    await this.userRepository.update(user.id, {
-      passwordResetToken: '',
-      passwordResetTokenExpiresAt: undefined,
-    });
+    await this.appTokenRepository.update(
+      {
+        userId,
+        type: AppTokenType.PasswordResetToken,
+      },
+      {
+        revokedAt: new Date(),
+      },
+    );
 
     return { success: true };
   }
