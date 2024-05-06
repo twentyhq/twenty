@@ -58,10 +58,7 @@ export default async function ({ params }: { params: { slug: string } }) {
               rank={rank}
               activeDays={activeDays}
             />
-            <ProfileSharing
-              userUrl={contributor.url}
-              username={contributor.id}
-            />
+            <ProfileSharing username={contributor.id} />
             <ActivityLog data={pullRequestActivityArray} />
             <PullRequests
               list={
