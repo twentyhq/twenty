@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
 import {
   IconBaselineDensitySmall,
@@ -16,6 +17,8 @@ import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/opti
 import { useRecordIndexOptionsForTable } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForTable';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { useSpreadsheetRecordImport } from '@/object-record/spreadsheet-import/useSpreadsheetRecordImport';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -42,6 +45,8 @@ export const RecordIndexOptionsDropdownContent = ({
 }: RecordIndexOptionsDropdownContentProps) => {
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
+  const navigate = useNavigate();
+
   const { closeDropdown } = useDropdown(RECORD_INDEX_OPTIONS_DROPDOWN_ID);
 
   const [currentMenu, setCurrentMenu] = useState<
@@ -52,6 +57,10 @@ export const RecordIndexOptionsDropdownContent = ({
 
   const handleSelectMenu = (option: RecordIndexOptionsMenu) => {
     setCurrentMenu(option);
+  };
+
+  const handleEditClick = () => {
+    navigate(getSettingsPagePath(SettingsPath.Objects));
   };
 
   useScopedHotkeys(
@@ -173,7 +182,7 @@ export const RecordIndexOptionsDropdownContent = ({
           )}
           <DropdownMenuSeparator />
           <MenuItem
-            onClick={resetMenu}
+            onClick={handleEditClick}
             LeftIcon={IconSettings}
             text="Edit Fields"
           />
