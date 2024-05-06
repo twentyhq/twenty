@@ -9,7 +9,7 @@ import {
 
 import crypto from 'crypto';
 
-import { MoreThan, Repository } from 'typeorm';
+import { IsNull, MoreThan, Repository } from 'typeorm';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import {
@@ -174,6 +174,7 @@ describe('TokenService', () => {
           value: hashedToken,
           type: AppTokenType.PasswordResetToken,
           expiresAt: MoreThan(new Date()),
+          revokedAt: IsNull(),
         },
       });
       expect(userRepository.findOneBy).toHaveBeenCalledWith({
@@ -203,6 +204,7 @@ describe('TokenService', () => {
         value: hashedToken,
         type: AppTokenType.PasswordResetToken,
         expiresAt: new Date(Date.now() + 10000), // Valid future date
+        revokedAt: null,
       };
 
       jest
@@ -210,6 +212,28 @@ describe('TokenService', () => {
         .mockResolvedValue(mockToken as AppToken);
       jest.spyOn(userRepository, 'findOneBy').mockResolvedValue(null);
 
+      await expect(
+        service.validatePasswordResetToken(resetToken),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw NotFoundException if token is revoked', async () => {
+      const resetToken = 'revoked-token';
+      const hashedToken = crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex');
+      const mockToken = {
+        userId: '1',
+        value: hashedToken,
+        type: AppTokenType.PasswordResetToken,
+        expiresAt: new Date(Date.now() + 10000),
+        revokedAt: new Date(),
+      };
+
+      jest
+        .spyOn(appTokenRepository, 'findOne')
+        .mockResolvedValue(mockToken as AppToken);
       await expect(
         service.validatePasswordResetToken(resetToken),
       ).rejects.toThrow(NotFoundException);
