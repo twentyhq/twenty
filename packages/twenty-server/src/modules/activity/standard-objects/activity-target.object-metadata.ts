@@ -2,7 +2,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 
 import { ACTIVITY_TARGET_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { CustomObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/custom-objects/custom.object-metadata';
+import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { ActivityObjectMetadata } from 'src/modules/activity/standard-objects/activity.object-metadata';
 import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
 import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
@@ -89,8 +89,8 @@ export class ActivityTargetObjectMetadata extends BaseWorkspaceEntity {
       joinColumn: `${oppositeObjectMetadata.nameSingular}Id`,
       icon: 'IconBuildingSkyscraper',
     }),
-    inverseSideTarget: () => CustomObjectMetadata,
+    inverseSideTarget: () => CustomWorkspaceEntity,
     inverseSideFieldKey: 'activityTargets',
   })
-  custom: Relation<CustomObjectMetadata>;
+  custom: Relation<CustomWorkspaceEntity>;
 }

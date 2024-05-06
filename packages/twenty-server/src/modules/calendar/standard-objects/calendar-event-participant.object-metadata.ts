@@ -3,7 +3,6 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { CalendarEventObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
@@ -133,6 +132,6 @@ export class CalendarEventParticipantObjectMetadata extends BaseWorkspaceEntity 
     inverseSideTarget: () => WorkspaceMemberObjectMetadata,
     inverseSideFieldKey: 'calendarEventParticipants',
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   workspaceMember: Relation<WorkspaceMemberObjectMetadata>;
 }

@@ -7,7 +7,7 @@ import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/comp
 import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
-import { CustomObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/custom-objects/custom.object-metadata';
+import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -151,8 +151,8 @@ export class TimelineActivityObjectMetadata extends BaseWorkspaceEntity {
       joinColumn: `${oppositeObjectMetadata.nameSingular}Id`,
       icon: 'IconTimeline',
     }),
-    inverseSideTarget: () => CustomObjectMetadata,
+    inverseSideTarget: () => CustomWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
   })
-  custom: Relation<CustomObjectMetadata>;
+  custom: Relation<CustomWorkspaceEntity>;
 }

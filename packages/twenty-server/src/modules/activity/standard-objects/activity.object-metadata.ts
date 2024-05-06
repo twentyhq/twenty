@@ -7,7 +7,6 @@ import {
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { ACTIVITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { ActivityTargetObjectMetadata } from 'src/modules/activity/standard-objects/activity-target.object-metadata';
 import { AttachmentObjectMetadata } from 'src/modules/attachment/standard-objects/attachment.object-metadata';
 import { CommentObjectMetadata } from 'src/modules/activity/standard-objects/comment.object-metadata';
@@ -66,7 +65,7 @@ export class ActivityObjectMetadata extends BaseWorkspaceEntity {
     description: 'Activity reminder date',
     icon: 'IconCalendarEvent',
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   reminderAt: Date;
 
   @WorkspaceField({
@@ -76,7 +75,7 @@ export class ActivityObjectMetadata extends BaseWorkspaceEntity {
     description: 'Activity due date',
     icon: 'IconCalendarEvent',
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   dueAt: Date;
 
   @WorkspaceField({
@@ -86,7 +85,7 @@ export class ActivityObjectMetadata extends BaseWorkspaceEntity {
     description: 'Activity completion date',
     icon: 'IconCheck',
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   completedAt: Date;
 
   @WorkspaceRelation({

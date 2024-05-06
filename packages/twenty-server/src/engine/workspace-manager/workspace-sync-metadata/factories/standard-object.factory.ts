@@ -4,7 +4,6 @@ import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-syn
 import { PartialObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
-import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
@@ -28,7 +27,7 @@ export class StandardObjectFactory {
   }
 
   private createObjectMetadata(
-    target: typeof BaseObjectMetadata,
+    target: typeof BaseWorkspaceEntity,
     context: WorkspaceSyncContext,
     workspaceFeatureFlagsMap: FeatureFlagMap,
   ): PartialObjectMetadata | undefined {

@@ -3,7 +3,7 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { FAVORITE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { CustomObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/custom-objects/custom.object-metadata';
+import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
 import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
@@ -101,8 +101,8 @@ export class FavoriteObjectMetadata extends BaseWorkspaceEntity {
       joinColumn: `${oppositeObjectMetadata.nameSingular}Id`,
       icon: 'IconBuildingSkyscraper',
     }),
-    inverseSideTarget: () => CustomObjectMetadata,
+    inverseSideTarget: () => CustomWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
   })
-  custom: Relation<CustomObjectMetadata>;
+  custom: Relation<CustomWorkspaceEntity>;
 }
