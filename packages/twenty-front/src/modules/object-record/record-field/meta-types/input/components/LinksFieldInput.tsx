@@ -4,8 +4,8 @@ import { Key } from 'ts-key-enum';
 import { IconPlus } from 'twenty-ui';
 
 import { useLinksField } from '@/object-record/record-field/meta-types/hooks/useLinksField';
+import { LinksFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/LinksFieldMenuItem';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { LinkDisplay } from '@/ui/field/display/components/LinkDisplay';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
@@ -35,13 +35,14 @@ export const LinksFieldInput = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const links = useMemo(
+  const links = useMemo<{ url: string; label: string; isPrimary?: boolean }[]>(
     () =>
       [
         fieldValue.primaryLinkUrl
           ? {
               url: fieldValue.primaryLinkUrl,
               label: fieldValue.primaryLinkLabel,
+              isPrimary: true,
             }
           : null,
         ...(fieldValue.secondaryLinks ?? []),
@@ -53,27 +54,21 @@ export const LinksFieldInput = ({
     ],
   );
 
+  const handleDropdownClose = () => {
+    onCancel?.();
+  };
+
   useListenClickOutside({
     refs: [containerRef],
-    callback: (event) => {
-      event.stopImmediatePropagation();
-
-      const isTargetInput =
-        event.target instanceof HTMLInputElement &&
-        event.target.tagName === 'INPUT';
-
-      if (!isTargetInput) {
-        onCancel?.();
-      }
-    },
+    callback: handleDropdownClose,
   });
+
+  useScopedHotkeys(Key.Escape, handleDropdownClose, hotkeyScope);
 
   const [isInputDisplayed, setIsInputDisplayed] = useState(false);
   const [inputValue, setInputValue] = useState('');
 
-  useScopedHotkeys(Key.Escape, onCancel ?? (() => {}), hotkeyScope);
-
-  const handleSubmit = () => {
+  const handleAddLink = () => {
     if (!inputValue) return;
 
     setIsInputDisplayed(false);
@@ -102,15 +97,31 @@ export const LinksFieldInput = ({
     );
   };
 
+  const handleDeleteLink = (index: number) => {
+    const nextSecondaryLinks = [...(fieldValue.secondaryLinks ?? [])];
+    nextSecondaryLinks.splice(index - 1, 1);
+
+    onSubmit?.(() =>
+      persistLinksField({
+        ...fieldValue,
+        secondaryLinks: nextSecondaryLinks,
+      }),
+    );
+  };
+
   return (
     <StyledDropdownMenu ref={containerRef} width={200}>
       {!!links.length && (
         <>
           <DropdownMenuItemsContainer>
-            {links.map(({ label, url }, index) => (
-              <MenuItem
+            {links.map(({ isPrimary, label, url }, index) => (
+              <LinksFieldMenuItem
                 key={index}
-                text={<LinkDisplay value={{ label, url }} />}
+                dropdownId={`${hotkeyScope}-links-${index}`}
+                isPrimary={isPrimary}
+                label={label}
+                onDelete={() => handleDeleteLink(index)}
+                url={url}
               />
             ))}
           </DropdownMenuItemsContainer>
@@ -124,9 +135,9 @@ export const LinksFieldInput = ({
           value={inputValue}
           hotkeyScope={hotkeyScope}
           onChange={(event) => setInputValue(event.target.value)}
-          onEnter={handleSubmit}
+          onEnter={handleAddLink}
           rightComponent={
-            <LightIconButton Icon={IconPlus} onClick={handleSubmit} />
+            <LightIconButton Icon={IconPlus} onClick={handleAddLink} />
           }
         />
       ) : (

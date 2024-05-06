@@ -1,6 +1,7 @@
-import { MouseEvent, ReactNode } from 'react';
+import { FunctionComponent, MouseEvent, ReactElement, ReactNode } from 'react';
 import { IconComponent } from 'twenty-ui';
 
+import { LightIconButtonProps } from '@/ui/input/button/components/LightIconButton';
 import { LightIconButtonGroup } from '@/ui/input/button/components/LightIconButtonGroup';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';
@@ -11,7 +12,9 @@ import {
 import { MenuItemAccent } from '../types/MenuItemAccent';
 
 export type MenuItemIconButton = {
+  Wrapper?: FunctionComponent<{ iconButton: ReactElement }>;
   Icon: IconComponent;
+  accent?: LightIconButtonProps['accent'];
   onClick?: (event: MouseEvent<any>) => void;
 };
 
@@ -24,7 +27,7 @@ export type MenuItemProps = {
   isTooltipOpen?: boolean;
   className?: string;
   testId?: string;
-  onClick?: (event: MouseEvent<HTMLLIElement>) => void;
+  onClick?: (event: MouseEvent<HTMLDivElement>) => void;
 };
 
 export const MenuItem = ({
@@ -32,7 +35,6 @@ export const MenuItem = ({
   accent = 'default',
   text,
   iconButtons,
-  isTooltipOpen,
   isIconDisplayedOnHoverOnly = true,
   className,
   testId,
@@ -40,7 +42,7 @@ export const MenuItem = ({
 }: MenuItemProps) => {
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
 
-  const handleMenuItemClick = (event: MouseEvent<HTMLLIElement>) => {
+  const handleMenuItemClick = (event: MouseEvent<HTMLDivElement>) => {
     if (!onClick) return;
     event.preventDefault();
     event.stopPropagation();
@@ -54,7 +56,6 @@ export const MenuItem = ({
       onClick={handleMenuItemClick}
       className={className}
       accent={accent}
-      isMenuOpen={!!isTooltipOpen}
       isIconDisplayedOnHoverOnly={isIconDisplayedOnHoverOnly}
     >
       <StyledMenuItemLeftContent>
