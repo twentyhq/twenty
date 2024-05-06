@@ -1,8 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
@@ -16,7 +13,6 @@ import {
   DeleteConnectedAccountAssociatedMessagingDataJob,
 } from 'src/modules/messaging/jobs/delete-connected-account-associated-messaging-data.job';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @Injectable()
 export class MessagingConnectedAccountListener {
@@ -25,8 +21,6 @@ export class MessagingConnectedAccountListener {
     private readonly messageQueueService: MessageQueueService,
     @Inject(MessageQueue.calendarQueue)
     private readonly calendarQueueService: MessageQueueService,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   @OnEvent('connectedAccount.deleted')

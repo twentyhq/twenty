@@ -6,6 +6,10 @@ import { objectRecordChangedProperties } from 'src/engine/integrations/event-emi
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import {
+  DeleteMessageChannelAssociatedDataJobData,
+  DeleteMessageChannelAssociatedDataJob,
+} from 'src/modules/messaging/jobs/delete-message-channel-associated-data.job';
+import {
   MessagingCreateCompanyAndContactAfterSyncJobData,
   MessagingCreateCompanyAndContactAfterSyncJob,
 } from 'src/modules/messaging/jobs/messaging-create-company-and-contact-after-sync.job';
@@ -37,5 +41,18 @@ export class MessagingMessageChannelListener {
         },
       );
     }
+  }
+
+  @OnEvent('messageChannel.deleted')
+  async handleDeletedEvent(
+    payload: ObjectRecordUpdateEvent<MessageChannelObjectMetadata>,
+  ) {
+    await this.messageQueueService.add<DeleteMessageChannelAssociatedDataJobData>(
+      DeleteMessageChannelAssociatedDataJob.name,
+      {
+        workspaceId: payload.workspaceId,
+        messageChannelId: payload.recordId,
+      },
+    );
   }
 }

@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
-import { GmailPartialSyncV2Service } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync.service';
+import { GmailPartialSyncService } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync.service';
 
 export type GmailPartialSyncJobData = {
   workspaceId: string;
@@ -18,7 +18,7 @@ export class GmailPartialSyncJob
 
   constructor(
     private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
-    private readonly gmailPartialSyncV2Service: GmailPartialSyncV2Service,
+    private readonly gmailPartialSyncService: GmailPartialSyncService,
   ) {}
 
   async handle(data: GmailPartialSyncJobData): Promise<void> {
@@ -40,7 +40,7 @@ export class GmailPartialSyncJob
       return;
     }
 
-    await this.gmailPartialSyncV2Service.fetchConnectedAccountThreads(
+    await this.gmailPartialSyncService.fetchConnectedAccountThreads(
       data.workspaceId,
       data.connectedAccountId,
     );

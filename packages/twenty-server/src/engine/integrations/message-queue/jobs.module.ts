@@ -61,6 +61,7 @@ import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/mess
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { BlocklistItemDeleteCalendarEventsJob } from 'src/modules/calendar/jobs/blocklist-item-delete-calendar-events.job';
 import { BlocklistReimportCalendarEventsJob } from 'src/modules/calendar/jobs/blocklist-reimport-calendar-events.job';
+import { DeleteMessageChannelAssociatedDataJob } from 'src/modules/messaging/jobs/delete-message-channel-associated-data.job';
 
 @Module({
   imports: [
@@ -200,6 +201,10 @@ import { BlocklistReimportCalendarEventsJob } from 'src/modules/calendar/jobs/bl
     {
       provide: BlocklistReimportCalendarEventsJob.name,
       useClass: BlocklistReimportCalendarEventsJob,
+    },
+    {
+      provide: DeleteMessageChannelAssociatedDataJob.name,
+      useClass: DeleteMessageChannelAssociatedDataJob,
     },
   ],
 })
