@@ -25,7 +25,7 @@ export const useFieldMetadataItem = () => {
     },
   ) => {
     const formattedInput = formatFieldMetadataItemInput(input);
-    
+
     const defaultValue = getDefaultValueForBackend(
       input.defaultValue ?? formattedInput.defaultValue,
       input.type,
