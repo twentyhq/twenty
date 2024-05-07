@@ -5,7 +5,7 @@ import { RecoilRoot } from 'recoil';
 import { useUpdateOneRecordMutation } from '@/object-record/hooks/useUpdateOneRecordMutation';
 
 const expectedQueryTemplate = `
-mutation UpdateOnePerson($idToUpdate: UUID!, $input: PersonUpdateInput!) {
+mutation UpdateOnePerson($idToUpdate: ID!, $input: PersonUpdateInput!) {
   updatePerson(id: $idToUpdate, data: $input) {
     __typename
     xLink {
@@ -36,13 +36,11 @@ mutation UpdateOnePerson($idToUpdate: UUID!, $input: PersonUpdateInput!) {
 describe('useUpdateOneRecordMutation', () => {
   it('should return a valid createManyRecordsMutation', () => {
     const objectNameSingular = 'person';
-    const depth = 2;
 
     const { result } = renderHook(
       () =>
         useUpdateOneRecordMutation({
           objectNameSingular,
-          depth,
         }),
       {
         wrapper: RecoilRoot,
