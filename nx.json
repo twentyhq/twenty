@@ -133,7 +133,7 @@
       "dependsOn": ["storybook:build"],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "pwd && ls -al . && npx http-server {args.staticDir} -a={args.host} --port={args.port} --silent={args.silent}",
+        "command": "npx http-server {args.staticDir} -a={args.host} --port={args.port} --silent={args.silent}",
         "staticDir": "storybook-static",
         "host": "localhost",
         "port": 6006,
