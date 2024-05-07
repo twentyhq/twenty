@@ -5,7 +5,7 @@ import { RecoilRoot } from 'recoil';
 import { useExecuteQuickActionOnOneRecordMutation } from '@/object-record/hooks/useExecuteQuickActionOnOneRecordMutation';
 
 const expectedQueryTemplate = `
-  mutation ExecuteQuickActionOnOnePerson($idToExecuteQuickActionOn: UUID!) {
+  mutation ExecuteQuickActionOnOnePerson($idToExecuteQuickActionOn: ID!) {
     executeQuickActionOnPerson(id: $idToExecuteQuickActionOn) {
       __typename
       xLink {
