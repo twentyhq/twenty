@@ -23,14 +23,24 @@ export async function GET() {
       latestGithubRelease.tagName,
     );
 
-    const formattedReleasesNotes = visibleReleasesNotes.map((releaseNote) => ({
-      ...releaseNote,
-      publishedAt: getGithubReleaseDateFromReleaseNote(
-        githubReleases,
-        releaseNote.release,
-        releaseNote.date,
-      ),
-    }));
+    const formattedReleasesNotes = visibleReleasesNotes.map((releaseNote) => {
+      const updatedContent = releaseNote.content.replace(
+        /!\[(.*?)\]\((\/images\/.*?)\)/g,
+        (match, altText, imagePath) => {
+          return `![${altText}](https://twenty.com${imagePath})`;
+        },
+      );
+
+      return {
+        ...releaseNote,
+        content: updatedContent,
+        publishedAt: getGithubReleaseDateFromReleaseNote(
+          githubReleases,
+          releaseNote.release,
+          releaseNote.date,
+        ),
+      };
+    });
 
     return Response.json(formattedReleasesNotes);
   } catch (error: any) {
