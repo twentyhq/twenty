@@ -27,11 +27,11 @@ import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspa
         ObjectMetadataEntity,
         RelationMetadataEntity,
         WorkspaceMigrationEntity,
-        WorkspaceCacheVersionModule,
       ],
       'metadata',
     ),
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
+    WorkspaceCacheVersionModule,
   ],
   providers: [
     ...workspaceSyncMetadataFactories,
