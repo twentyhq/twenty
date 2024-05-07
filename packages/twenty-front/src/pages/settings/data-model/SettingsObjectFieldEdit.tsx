@@ -307,10 +307,13 @@ export const SettingsObjectFieldEdit = () => {
           </Section>
           {!isLabelIdentifier && (
             <Section>
-              <H2Title title="Danger zone" description="Disable this field" />
+              <H2Title
+                title="Danger zone"
+                description="Deactivate this field"
+              />
               <Button
                 Icon={IconArchive}
-                title="Disable"
+                title="Deactivate"
                 size="small"
                 onClick={handleDisable}
               />
