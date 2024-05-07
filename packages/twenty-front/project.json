@@ -119,7 +119,7 @@
     "storybook:static:test": {
       "options": {
         "commands": [
-          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:static {projectName} --port={args.port}' 'npx wait-on tcp:{args.port} && ls -al packages/twenty-front/storybook-static'"
+          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:static {projectName} --port={args.port}' 'npx wait-on tcp:{args.port} && ls -al packages/twenty-front'"
         ],
         "port": 6006
       },
