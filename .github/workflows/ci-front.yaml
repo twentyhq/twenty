@@ -18,7 +18,7 @@ concurrency:
 
 jobs:
   front-sb-build:
-    runs-on: ubuntu-latest
+    runs-on: ci-8-cores
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
     steps:
