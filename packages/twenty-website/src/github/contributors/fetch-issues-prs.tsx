@@ -6,18 +6,23 @@ import {
   Repository,
 } from '@/github/contributors/types';
 
+// TODO: We should implement a true partial sync instead of using pageLimit.
+// Check search-issues-prs.tsx and modify "updated:>2024-02-27" to make it dynamic
+
 export async function fetchIssuesPRs(
   query: typeof graphql,
   cursor: string | null = null,
   isIssues = false,
   accumulatedData: Array<PullRequestNode | IssueNode> = [],
-  isInit = true,
+  pageLimit: number,
 ): Promise<Array<PullRequestNode | IssueNode>> {
   const { repository } = await query<Repository>(
     `
       query ($cursor: String) {
         repository(owner: "twentyhq", name: "twenty") {
-          pullRequests(first: 100, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC}) @skip(if: ${isIssues}) {
+          pullRequests(first: ${
+            pageLimit || 100
+          }, after: $cursor, orderBy: {field: CREATED_AT, direction: DESC}) @skip(if: ${isIssues}) {
             nodes {
               id
               title
@@ -90,12 +95,13 @@ export async function fetchIssuesPRs(
     ? repository.issues.pageInfo
     : repository.pullRequests.pageInfo;
 
-  if (isInit && pageInfo.hasNextPage) {
+  if (!pageLimit && pageInfo.hasNextPage) {
     return fetchIssuesPRs(
       query,
       pageInfo.endCursor,
       isIssues,
       newAccumulatedData,
+      pageLimit,
     );
   } else {
     return newAccumulatedData;

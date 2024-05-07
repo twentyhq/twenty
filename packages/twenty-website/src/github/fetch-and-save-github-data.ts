@@ -10,9 +10,9 @@ import { fetchAndSaveGithubReleases } from '@/github/github-releases/fetch-and-s
 import { fetchAndSaveGithubStars } from '@/github/github-stars/fetch-and-save-github-stars';
 
 export const fetchAndSaveGithubData = async ({
-  isInit = true,
+  pageLimit,
 }: {
-  isInit: boolean;
+  pageLimit: number;
 }) => {
   if (!global.process.env.GITHUB_TOKEN) {
     return new Error('No GitHub token provided');
@@ -35,14 +35,14 @@ export const fetchAndSaveGithubData = async ({
     null,
     false,
     [],
-    isInit,
+    pageLimit,
   )) as Array<PullRequestNode>;
   const fetchedIssues = (await fetchIssuesPRs(
     query,
     null,
     true,
     [],
-    isInit,
+    pageLimit,
   )) as Array<IssueNode>;
 
   await savePRsToDB(fetchedPRs, assignableUsers);
