@@ -122,11 +122,10 @@ export const SettingsObjectFieldEdit = () => {
       const otherDirtyFields = omit(dirtyFields, 'relation');
 
       if (Object.keys(otherDirtyFields).length > 0) {
-        const input = pick(formValues, Object.keys(otherDirtyFields));
-        const formattedInput = formatFieldMetadataItemInput({
-          type: formValues.type,
-          ...input,
-        });
+        const formattedInput = pick(
+          formatFieldMetadataItemInput(formValues),
+          Object.keys(otherDirtyFields),
+        );
 
         const options = formattedInput.options?.map((option) => ({
           ...option,
