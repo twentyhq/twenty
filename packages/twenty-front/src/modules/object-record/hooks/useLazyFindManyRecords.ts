@@ -1,18 +1,15 @@
 import { useCallback, useMemo } from 'react';
-import { useQuery, WatchQueryFetchPolicy } from '@apollo/client';
+import { useLazyQuery } from '@apollo/client';
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
-import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { RecordGqlEdge } from '@/object-record/graphql/types/RecordGqlEdge';
 import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
-import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
-import { RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
+import { UseFindManyRecordsParams } from '@/object-record/hooks/useFindManyRecords';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
@@ -25,30 +22,20 @@ import { cursorFamilyState } from '../states/cursorFamilyState';
 import { hasNextPageFamilyState } from '../states/hasNextPageFamilyState';
 import { isFetchingMoreRecordsFamilyState } from '../states/isFetchingMoreRecordsFamilyState';
 
-export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
-  RecordGqlOperationVariables & {
-    onCompleted?: (
-      records: T[],
-      options?: {
-        pageInfo?: RecordGqlConnection['pageInfo'];
-        totalCount?: number;
-      },
-    ) => void;
-    skip?: boolean;
-    recordGqlFields?: RecordGqlOperationGqlRecordFields;
-    fetchPolicy?: WatchQueryFetchPolicy;
-  };
+type UseLazyFindManyRecordsParams<T> = Omit<
+  UseFindManyRecordsParams<T>,
+  'skip'
+>;
 
-export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
+export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   objectNameSingular,
   filter,
   orderBy,
   limit,
   onCompleted,
-  skip,
   recordGqlFields,
   fetchPolicy,
-}: UseFindManyRecordsParams<T>) => {
+}: UseLazyFindManyRecordsParams<T>) => {
   const findManyQueryStateIdentifier =
     objectNameSingular +
     JSON.stringify(filter) +
@@ -79,9 +66,8 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   const { enqueueSnackBar } = useSnackBar();
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
-  const { data, loading, error, fetchMore } =
-    useQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
-      skip: skip || !objectMetadataItem || !currentWorkspaceMember,
+  const [findManyRecords, { data, loading, error, fetchMore }] =
+    useLazyQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
       variables: {
         filter,
         limit,
@@ -236,5 +222,6 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     error,
     fetchMoreRecords,
     queryStateIdentifier: findManyQueryStateIdentifier,
+    findManyRecords: currentWorkspaceMember ? findManyRecords : () => {},
   };
 };

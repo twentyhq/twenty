@@ -9,6 +9,7 @@ import { ActionBarItem } from './ActionBarItem';
 
 type ActionBarProps = {
   selectedIds?: string[];
+  numSelected?: number;
 };
 
 const StyledContainerActionBar = styled.div`
@@ -39,7 +40,7 @@ const StyledLabel = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const ActionBar = ({ selectedIds }: ActionBarProps) => {
+export const ActionBar = ({ selectedIds, numSelected }: ActionBarProps) => {
   const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
   const actionBarEntries = useRecoilValue(actionBarEntriesState);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -55,8 +56,10 @@ export const ActionBar = ({ selectedIds }: ActionBarProps) => {
         className="action-bar"
         ref={wrapperRef}
       >
-        {selectedIds && (
-          <StyledLabel>{selectedIds.length} selected:</StyledLabel>
+        {(numSelected || selectedIds) && (
+          <StyledLabel>
+            {numSelected ?? selectedIds?.length} selected:
+          </StyledLabel>
         )}
         {actionBarEntries.map((item, index) => (
           <ActionBarItem key={index} item={item} />

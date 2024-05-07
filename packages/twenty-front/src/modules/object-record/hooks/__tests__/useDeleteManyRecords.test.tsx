@@ -49,7 +49,7 @@ describe('useDeleteManyRecords', () => {
     await act(async () => {
       const res = await result.current.deleteManyRecords(people);
       expect(res).toBeDefined();
-      expect(res).toHaveProperty('id');
+      expect(res[0]).toHaveProperty('id');
     });
 
     expect(mocks[0].result).toHaveBeenCalled();

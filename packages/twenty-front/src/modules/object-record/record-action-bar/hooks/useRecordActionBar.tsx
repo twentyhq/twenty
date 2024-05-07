@@ -13,8 +13,8 @@ import {
 
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
+import { useDeleteTableData } from '@/object-record/record-index/options/hooks/useDeleteTableData';
 import { useExportTableData } from '@/object-record/record-index/options/hooks/useExportTableData';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -28,12 +28,14 @@ type useRecordActionBarProps = {
   objectMetadataItem: ObjectMetadataItem;
   selectedRecordIds: string[];
   callback?: () => void;
+  numSelected?: number;
 };
 
 export const useRecordActionBar = ({
   objectMetadataItem,
   selectedRecordIds,
   callback,
+  numSelected,
 }: useRecordActionBarProps) => {
   const setContextMenuEntries = useSetRecoilState(contextMenuEntriesState);
   const setActionBarEntriesState = useSetRecoilState(actionBarEntriesState);
@@ -41,10 +43,6 @@ export const useRecordActionBar = ({
     useState(false);
 
   const { createFavorite, favorites, deleteFavorite } = useFavorites();
-
-  const { deleteManyRecords } = useDeleteManyRecords({
-    objectNameSingular: objectMetadataItem.nameSingular,
-  });
 
   const { executeQuickActionOnOneRecord } = useExecuteQuickActionOnOneRecord({
     objectNameSingular: objectMetadataItem.nameSingular,
@@ -85,10 +83,20 @@ export const useRecordActionBar = ({
     ],
   );
 
+  const baseTableDataParams = {
+    delayMs: 100,
+    objectNameSingular: objectMetadataItem.nameSingular,
+    recordIndexId: objectMetadataItem.namePlural,
+  };
+
+  const { deleteTableData } = useDeleteTableData({
+    ...baseTableDataParams,
+    callback,
+  });
+
   const handleDeleteClick = useCallback(async () => {
-    callback?.();
-    await deleteManyRecords(selectedRecordIds);
-  }, [callback, deleteManyRecords, selectedRecordIds]);
+    deleteTableData();
+  }, [deleteTableData]);
 
   const handleExecuteQuickActionOnClick = useCallback(async () => {
     callback?.();
@@ -100,10 +108,8 @@ export const useRecordActionBar = ({
   }, [callback, executeQuickActionOnOneRecord, selectedRecordIds]);
 
   const { progress, download } = useExportTableData({
-    delayMs: 100,
+    ...baseTableDataParams,
     filename: `${objectMetadataItem.nameSingular}.csv`,
-    objectNameSingular: objectMetadataItem.nameSingular,
-    recordIndexId: objectMetadataItem.namePlural,
   });
 
   const isRemoteObject = objectMetadataItem.isRemote;
@@ -120,6 +126,7 @@ export const useRecordActionBar = ({
     [download, progress],
   );
 
+  const recordsNum = numSelected ?? selectedRecordIds.length;
   const deletionActions: ContextMenuEntry[] = useMemo(
     () => [
       {
@@ -131,26 +138,19 @@ export const useRecordActionBar = ({
           <ConfirmationModal
             isOpen={isDeleteRecordsModalOpen}
             setIsOpen={setIsDeleteRecordsModalOpen}
-            title={`Delete ${selectedRecordIds.length} ${
-              selectedRecordIds.length === 1 ? `record` : 'records'
+            title={`Delete ${recordsNum} ${
+              recordsNum === 1 ? `record` : 'records'
             }`}
             subtitle={`This action cannot be undone. This will permanently delete ${
-              selectedRecordIds.length === 1 ? 'this record' : 'these records'
+              recordsNum === 1 ? 'this record' : 'these records'
             }`}
             onConfirmClick={() => handleDeleteClick()}
-            deleteButtonText={`Delete ${
-              selectedRecordIds.length > 1 ? 'Records' : 'Record'
-            }`}
+            deleteButtonText={`Delete ${recordsNum > 1 ? 'Records' : 'Record'}`}
           />
         ),
       },
     ],
-    [
-      handleDeleteClick,
-      selectedRecordIds,
-      isDeleteRecordsModalOpen,
-      setIsDeleteRecordsModalOpen,
-    ],
+    [isDeleteRecordsModalOpen, recordsNum, handleDeleteClick],
   );
 
   const dataExecuteQuickActionOnmentEnabled = useIsFeatureEnabled(
