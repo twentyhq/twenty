@@ -34,7 +34,7 @@ import {
   UUIDScalarType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { PositionScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/position.scalar';
-import { JsonScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/json.scalar';
+import { RawJSONScalar } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/raw-json.scalar';
 import { IDFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/id-filter.input-type';
 
 export interface TypeOptions<T = any> {
@@ -76,7 +76,7 @@ export class TypeMapperService {
       [FieldMetadataType.NUMERIC, BigFloatScalarType],
       [FieldMetadataType.PROBABILITY, GraphQLFloat],
       [FieldMetadataType.POSITION, PositionScalarType],
-      [FieldMetadataType.RAW_JSON, JsonScalarType],
+      [FieldMetadataType.RAW_JSON, RawJSONScalar],
     ]);
 
     return typeScalarMapping.get(fieldMetadataType);

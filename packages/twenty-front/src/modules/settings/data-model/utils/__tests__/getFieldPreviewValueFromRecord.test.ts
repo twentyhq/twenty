@@ -12,7 +12,11 @@ describe('getFieldPreviewValueFromRecord', () => {
   describe('SELECT field', () => {
     it('returns the select option corresponding to the record field value', () => {
       // Given
-      const record: ObjectRecord = { id: '', stage: 'MEETING' };
+      const record: ObjectRecord = {
+        id: '',
+        stage: 'MEETING',
+        __typename: 'Opportunity',
+      };
       const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
         ({ name }) => name === 'stage',
       )!;
@@ -32,7 +36,11 @@ describe('getFieldPreviewValueFromRecord', () => {
 
     it('returns undefined if the select option was not found', () => {
       // Given
-      const record: ObjectRecord = { id: '', industry: 'DOES_NOT_EXIST' };
+      const record: ObjectRecord = {
+        id: '',
+        industry: 'DOES_NOT_EXIST',
+        __typename: 'Opportunity',
+      };
       const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
         ({ name }) => name === 'stage',
       )!;
@@ -63,6 +71,7 @@ describe('getFieldPreviewValueFromRecord', () => {
         people: {
           edges: [{ node: firstRelationRecord }, { node: { id: '2' } }],
         },
+        __typename: 'Opportunity',
       };
       const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
         ({ name }) => name === 'people',
@@ -81,7 +90,11 @@ describe('getFieldPreviewValueFromRecord', () => {
     it('returns the record field value ("to one" relation)', () => {
       // Given
       const relationRecord = { id: '20', name: 'Twenty' };
-      const record = { id: '', company: relationRecord };
+      const record = {
+        id: '',
+        company: relationRecord,
+        __typename: 'Opportunity',
+      };
       const fieldMetadataItem = mockedPersonObjectMetadataItem.fields.find(
         ({ name }) => name === 'company',
       )!;
@@ -100,7 +113,7 @@ describe('getFieldPreviewValueFromRecord', () => {
   describe('Other fields', () => {
     it('returns the record field value', () => {
       // Given
-      const record = { id: '', name: 'Twenty' };
+      const record = { id: '', name: 'Twenty', __typename: 'Opportunity' };
       const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
         ({ name }) => name === 'name',
       )!;

@@ -67,10 +67,20 @@ export type WorkspaceMigrationForeignColumnDefinition =
     distantColumnName: string;
   };
 
+type ReferencedObject = {
+  object: string;
+};
+
+type ReferencedTableWithSchema = {
+  table_name: string;
+  schema_name: string;
+};
+
+export type ReferencedTable = ReferencedObject | ReferencedTableWithSchema;
+
 export type WorkspaceMigrationForeignTable = {
   columns: WorkspaceMigrationForeignColumnDefinition[];
-  referencedTableName: string;
-  referencedTableSchema: string;
+  referencedTable: ReferencedObject | ReferencedTableWithSchema;
   foreignDataWrapperId: string;
 };
 

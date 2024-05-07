@@ -307,6 +307,8 @@ export class WorkspaceMigrationRunnerService {
       return;
     }
 
+    const enumName = `${tableName}_${migrationColumn.columnName}_enum`;
+
     await queryRunner.addColumn(
       `${schemaName}.${tableName}`,
       new TableColumn({
@@ -316,6 +318,7 @@ export class WorkspaceMigrationRunnerService {
         enum: migrationColumn.enum?.filter(
           (value): value is string => typeof value === 'string',
         ),
+        enumName: enumName,
         isArray: migrationColumn.isArray,
         isNullable: migrationColumn.isNullable,
       }),
@@ -495,8 +498,12 @@ export class WorkspaceMigrationRunnerService {
       )
       .join(', ');
 
+    const serverOptions = Object.entries(foreignTable.referencedTable)
+      .map(([key, value]) => `${key} '${value}'`)
+      .join(', ');
+
     await queryRunner.query(
-      `CREATE FOREIGN TABLE ${schemaName}."${name}" (${foreignTableColumns}) SERVER "${foreignTable.foreignDataWrapperId}" OPTIONS (schema_name '${foreignTable.referencedTableSchema}', table_name '${foreignTable.referencedTableName}')`,
+      `CREATE FOREIGN TABLE ${schemaName}."${name}" (${foreignTableColumns}) SERVER "${foreignTable.foreignDataWrapperId}" OPTIONS (${serverOptions})`,
     );
 
     await queryRunner.query(`

@@ -10,24 +10,43 @@ import { FileContent } from '@/app/_server-utils/get-posts';
 
 const StyledContainer = styled('div')`
   ${mq({
-    width: ['100%', '70%', '60%'],
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
     borderBottom: `1px solid ${Theme.background.transparent.medium}`,
     fontFamily: `${Theme.font.family}`,
   })};
+  width: 100%;
+  min-height: calc(100vh - 50px);
+
+  @media (min-width: 990px) {
+    justify-content: flex-start;
+  }
 `;
 
 const StyledWrapper = styled.div`
-  width: 79.3%;
-  padding: ${Theme.spacing(10)} 0px ${Theme.spacing(20)} 0px;
+  @media (max-width: 450px) {
+    padding: ${Theme.spacing(10)} 30px ${Theme.spacing(20)};
+  }
+
+  @media (min-width: 451px) and (max-width: 800px) {
+    padding: ${Theme.spacing(10)} 50px ${Theme.spacing(20)};
+    width: 440px;
+  }
+
+  @media (min-width: 801px) {
+    max-width: 720px;
+    margin: ${Theme.spacing(10)} 92px ${Theme.spacing(20)};
+  }
 `;
 
 const StyledHeader = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${Theme.spacing(8)};
+  @media (min-width: 450px) and (max-width: 800px) {
+    width: 340px;
+  }
 `;
 
 const StyledHeading = styled.div`
@@ -74,33 +93,14 @@ const StyledImageContainer = styled.div`
   align-items: center;
   overflow: hidden;
   border-radius: 16px;
-  height: 340px;
   max-width: fit-content;
 
-  @media (max-width: 414px) {
-    height: 160px;
-  }
-
-  @media (min-width: 415px) and (max-width: 800px) {
-    height: 240px;
-  }
-  @media (min-width: 1500px) {
-    height: 450px;
-  }
-
   img {
-    height: 340px;
-
-    @media (max-width: 414px) {
-      height: 160px;
-    }
-
-    @media (min-width: 415px) and (max-width: 800px) {
-      height: 240px;
-    }
-
-    @media (min-width: 1500px) {
-      height: 450px;
+    height: 100%;
+    max-width: 100%;
+    width: 100%;
+    @media (min-width: 1000px) {
+      width: 720px;
     }
   }
 `;

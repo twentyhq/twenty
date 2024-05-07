@@ -6,7 +6,7 @@ import { CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { previousUrlState } from '@/auth/states/previousUrlState';
 import { billingState } from '@/client-config/states/billingState';
 import { AppPath } from '@/types/AppPath';
-import { WorkspaceMember } from '~/generated/graphql.tsx';
+import { WorkspaceMember } from '~/generated/graphql';
 
 export const useNavigateAfterSignInUp = () => {
   const navigate = useNavigate();

@@ -32,14 +32,14 @@ export const formatFieldMetadataItemInput = (
     const defaultOptions = options?.filter((option) => option.isDefault);
     if (isDefined(defaultOptions)) {
       defaultValue = defaultOptions.map(
-        (defaultOption) => `'${getOptionValueFromLabel(defaultOption.label)}'`,
+        (defaultOption) => `${getOptionValueFromLabel(defaultOption.label)}`,
       );
     }
   }
   if (input.type === FieldMetadataType.Select) {
     const defaultOption = options?.find((option) => option.isDefault);
     defaultValue = isDefined(defaultOption)
-      ? `'${getOptionValueFromLabel(defaultOption.label)}'`
+      ? `${getOptionValueFromLabel(defaultOption.label)}`
       : undefined;
   }
 

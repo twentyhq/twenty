@@ -13,11 +13,11 @@ export async function GET() {
       desc(githubStarsModel.timestamp),
     );
 
-    const formattedGithubNumberOfStars = formatNumberOfStars(
+    const githubNumberOfStars = formatNumberOfStars(
       githubStars[0].numberOfStars,
     );
 
-    return Response.json(formattedGithubNumberOfStars);
+    return Response.json({ githubNumberOfStars });
   } catch (error: any) {
     return new Response(`Github stars error: ${error?.message}`, {
       status: 500,

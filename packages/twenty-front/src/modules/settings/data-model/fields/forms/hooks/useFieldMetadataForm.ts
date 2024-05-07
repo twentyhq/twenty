@@ -15,16 +15,11 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 import { SettingsDataModelFieldSettingsFormValues } from '../components/SettingsDataModelFieldSettingsFormCard';
 
 type FormValues = {
-  description?: string;
-  icon: string;
-  label: string;
   defaultValue: any;
   type: SettingsSupportedFieldType;
 } & SettingsDataModelFieldSettingsFormValues;
 
 export const fieldMetadataFormDefaultValues: FormValues = {
-  icon: 'IconUsers',
-  label: '',
   type: FieldMetadataType.Text,
   currency: { currencyCode: CurrencyCode.USD },
   relation: {
@@ -43,9 +38,6 @@ const relationTargetFieldSchema = z.object({
   defaultValue: z.any(),
 });
 const fieldSchema = z.object({
-  description: z.string().optional(),
-  icon: z.string().startsWith('Icon'),
-  label: z.string().min(1),
   defaultValue: z.any(),
   type: z.enum(
     Object.values(FieldMetadataType) as [

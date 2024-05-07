@@ -15,6 +15,13 @@
       "when": 1713792223113,
       "tag": "0001_marvelous_eddie_brock",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1714375499735,
+      "tag": "0002_demonic_matthew_murdock",
+      "breakpoints": true
     }
   ]
 }
