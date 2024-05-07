@@ -106,30 +106,38 @@
       "dependsOn": ["^build"]
     },
     "storybook:build": {
-      "executor": "@nx/storybook:build",
+      "executor": "nx:run-commands",
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["^default", "excludeTests"],
-      "outputs": ["{options.outputDir}"],
+      "outputs": ["{options.output-dir}"],
       "options": {
-        "outputDir": "{projectRoot}/storybook-static",
-        "configDir": "{projectRoot}/.storybook"
+        "cwd": "{projectRoot}",
+        "command": "storybook build",
+        "output-dir": "storybook-static",
+        "config-dir": ".storybook"
       }
     },
     "storybook:dev": {
-      "executor": "@nx/storybook:storybook",
+      "executor": "nx:run-commands",
       "cache": true,
       "dependsOn": ["^build"],
       "options": {
-        "configDir": "{projectRoot}/.storybook"
+        "cwd": "{projectRoot}",
+        "command": "storybook dev",
+        "config-dir": ".storybook"
       }
     },
     "storybook:static": {
-      "executor": "@nx/web:file-server",
+      "executor": "nx:run-commands",
+      "dependsOn": ["storybook:build"],
       "options": {
-        "staticFilePath": "{projectRoot}/storybook-static",
-        "parallel": false,
-        "watch": false
+        "cwd": "{projectRoot}",
+        "command": "npx http-server {args.staticDir} -a={args.host} --port={args.port} --silent={args.silent}",
+        "staticDir": "storybook-static",
+        "host": "localhost",
+        "port": 6006,
+        "silent": true
       }
     },
     "storybook:coverage": {
@@ -148,6 +156,9 @@
         "command": "npx nyc report --reporter={args.reporter} --reporter=text-summary -t {args.coverageDir} --report-dir {args.coverageDir} --check-coverage --cwd={projectRoot}",
         "coverageDir": "coverage/storybook",
         "reporter": "lcov"
+      },
+      "configurations": {
+        "text": { "reporter": "text" }
       }
     },
     "storybook:test": {
@@ -179,8 +190,9 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "cross-var chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name=build-storybook --exit-zero-on-changes={args.ci}",
-        "ci": false
+        "command": "cross-var chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name={args.targetPackageJsonScript} --exit-zero-on-changes={args.ci}",
+        "ci": false,
+        "targetPackageJsonScript": "storybook:build:chromatic"
       },
       "configurations": {
         "ci": {
