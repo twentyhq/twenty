@@ -599,13 +599,6 @@ export class WorkspaceQueryRunnerService {
     const result = graphqlResult?.[0]?.resolve?.data?.[entityKey];
     const errors = graphqlResult?.[0]?.resolve?.errors;
 
-    if (!result) {
-      this.logger.log(
-        `No result found for ${entityKey}, graphqlResult: ` +
-          JSON.stringify(graphqlResult, null, 3),
-      );
-    }
-
     if (
       result &&
       ['update', 'deleteFrom'].includes(command) &&
