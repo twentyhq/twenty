@@ -1,8 +1,12 @@
 import { useEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Reference, useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
+import { zodResolver } from '@hookform/resolvers/zod';
+import pick from 'lodash.pick';
 import { IconSettings } from 'twenty-ui';
+import { z } from 'zod';
 
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -15,10 +19,11 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsObjectFieldFormSection } from '@/settings/data-model/components/SettingsObjectFieldFormSection';
+import { SettingsDataModelFieldAboutForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldAboutForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
 import { useFieldMetadataForm } from '@/settings/data-model/fields/forms/hooks/useFieldMetadataForm';
+import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { AppPath } from '@/types/AppPath';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -30,6 +35,10 @@ import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+
+type SettingsDataModelNewFieldFormValues = z.infer<
+  typeof settingsFieldFormSchema
+>;
 
 const StyledSettingsObjectFieldTypeSelect = styled(
   SettingsDataModelFieldTypeSelect,
@@ -57,9 +66,14 @@ export const SettingsObjectNewFieldStep2 = () => {
     formValues,
     handleFormChange,
     initForm,
-    isValid: canSave,
+    isValid,
     validatedFormValues,
   } = useFieldMetadataForm();
+
+  const formConfig = useForm<SettingsDataModelNewFieldFormValues>({
+    mode: 'onTouched',
+    resolver: zodResolver(settingsFieldFormSchema),
+  });
 
   useEffect(() => {
     if (!activeObjectMetadataItem) {
@@ -121,19 +135,18 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   if (!activeObjectMetadataItem) return null;
 
+  const canSave = formConfig.formState.isValid && isValid;
+
   const handleSave = async () => {
     if (!validatedFormValues) return;
+
+    const formValues = formConfig.getValues();
 
     try {
       if (validatedFormValues.type === FieldMetadataType.Relation) {
         const createdRelation = await createOneRelationMetadata({
           relationType: validatedFormValues.relation.type,
-          field: {
-            description: validatedFormValues.description,
-            icon: validatedFormValues.icon,
-            label: validatedFormValues.label,
-            type: validatedFormValues.type,
-          },
+          field: pick(formValues, ['icon', 'label', 'description']),
           objectMetadataId: activeObjectMetadataItem.id,
           connect: {
             field: {
@@ -223,9 +236,7 @@ export const SettingsObjectNewFieldStep2 = () => {
                   currencyCode: validatedFormValues.currency.currencyCode,
                 }
               : validatedFormValues.defaultValue,
-          description: validatedFormValues.description,
-          icon: validatedFormValues.icon,
-          label: validatedFormValues.label ?? '',
+          ...formValues,
           objectMetadataId: activeObjectMetadataItem.id,
           type: validatedFormValues.type,
           options:
@@ -287,61 +298,65 @@ export const SettingsObjectNewFieldStep2 = () => {
   ];
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <SettingsPageContainer>
-        <SettingsHeaderContainer>
-          <Breadcrumb
-            links={[
-              { children: 'Objects', href: '/settings/objects' },
-              {
-                children: activeObjectMetadataItem.labelPlural,
-                href: `/settings/objects/${objectSlug}`,
-              },
-              { children: 'New Field' },
-            ]}
-          />
-          {!activeObjectMetadataItem.isRemote && (
-            <SaveAndCancelButtons
-              isSaveDisabled={!canSave}
-              onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-              onSave={handleSave}
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <FormProvider {...formConfig}>
+      <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+        <SettingsPageContainer>
+          <SettingsHeaderContainer>
+            <Breadcrumb
+              links={[
+                { children: 'Objects', href: '/settings/objects' },
+                {
+                  children: activeObjectMetadataItem.labelPlural,
+                  href: `/settings/objects/${objectSlug}`,
+                },
+                { children: 'New Field' },
+              ]}
             />
-          )}
-        </SettingsHeaderContainer>
-        <SettingsObjectFieldFormSection
-          iconKey={formValues.icon}
-          name={formValues.label}
-          description={formValues.description}
-          onChange={handleFormChange}
-        />
-        <Section>
-          <H2Title
-            title="Type and values"
-            description="The field's type and values."
-          />
-          <StyledSettingsObjectFieldTypeSelect
-            excludedFieldTypes={excludedFieldTypes}
-            onChange={handleFormChange}
-            value={formValues.type}
-          />
-          <SettingsDataModelFieldSettingsFormCard
-            fieldMetadataItem={{
-              icon: formValues.icon,
-              label: formValues.label || 'Employees',
-              type: formValues.type,
-            }}
-            objectMetadataItem={activeObjectMetadataItem}
-            onChange={handleFormChange}
-            values={{
-              currency: formValues.currency,
-              relation: formValues.relation,
-              select: formValues.select,
-              multiSelect: formValues.multiSelect,
-              defaultValue: formValues.defaultValue,
-            }}
-          />
-        </Section>
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+            {!activeObjectMetadataItem.isRemote && (
+              <SaveAndCancelButtons
+                isSaveDisabled={!canSave}
+                onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
+                onSave={handleSave}
+              />
+            )}
+          </SettingsHeaderContainer>
+          <Section>
+            <H2Title
+              title="Name and description"
+              description="The name and description of this field"
+            />
+            <SettingsDataModelFieldAboutForm />
+          </Section>
+          <Section>
+            <H2Title
+              title="Type and values"
+              description="The field's type and values."
+            />
+            <StyledSettingsObjectFieldTypeSelect
+              excludedFieldTypes={excludedFieldTypes}
+              onChange={handleFormChange}
+              value={formValues.type}
+            />
+            <SettingsDataModelFieldSettingsFormCard
+              fieldMetadataItem={{
+                icon: formConfig.watch('icon'),
+                label: formConfig.watch('label') || 'Employees',
+                type: formValues.type,
+              }}
+              objectMetadataItem={activeObjectMetadataItem}
+              onChange={handleFormChange}
+              values={{
+                currency: formValues.currency,
+                relation: formValues.relation,
+                select: formValues.select,
+                multiSelect: formValues.multiSelect,
+                defaultValue: formValues.defaultValue,
+              }}
+            />
+          </Section>
+        </SettingsPageContainer>
+      </SubMenuTopBarContainer>
+    </FormProvider>
   );
 };

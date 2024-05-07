@@ -1,8 +1,11 @@
 import { useEffect, useMemo } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { isNonEmptyString } from '@sniptt/guards';
 import { IconArchive, IconSettings } from 'twenty-ui';
+import { z } from 'zod';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -14,10 +17,11 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectFieldCurrencyFormValues } from '@/settings/data-model/components/SettingsObjectFieldCurrencyForm';
-import { SettingsObjectFieldFormSection } from '@/settings/data-model/components/SettingsObjectFieldFormSection';
+import { SettingsDataModelFieldAboutForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldAboutForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
 import { useFieldMetadataForm } from '@/settings/data-model/fields/forms/hooks/useFieldMetadataForm';
+import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
 import { AppPath } from '@/types/AppPath';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
@@ -30,6 +34,10 @@ import {
   FieldMetadataType,
   RelationMetadataType,
 } from '~/generated-metadata/graphql';
+
+type SettingsDataModelFieldEditFormValues = z.infer<
+  typeof settingsFieldFormSchema
+>;
 
 const StyledSettingsObjectFieldTypeSelect = styled(
   SettingsDataModelFieldTypeSelect,
@@ -79,6 +87,11 @@ export const SettingsObjectFieldEdit = () => {
           : null,
       [activeMetadataField, getRelationMetadata],
     ) ?? {};
+
+  const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
+    mode: 'onTouched',
+    resolver: zodResolver(settingsFieldFormSchema),
+  });
 
   const {
     formValues,
@@ -130,9 +143,6 @@ export const SettingsObjectFieldEdit = () => {
     if (!isFieldTypeSupported) return;
 
     initForm({
-      icon: activeMetadataField.icon ?? undefined,
-      label: activeMetadataField.label,
-      description: activeMetadataField.description ?? undefined,
       type: fieldType,
       ...(currencyDefaultValue ? { currency: currencyDefaultValue } : {}),
       relation: {
@@ -163,7 +173,10 @@ export const SettingsObjectFieldEdit = () => {
   if (!isInitialized || !activeObjectMetadataItem || !activeMetadataField)
     return null;
 
-  const canSave = isValid && hasFormChanged;
+  const canSave =
+    formConfig.formState.isValid &&
+    isValid &&
+    (formConfig.formState.isDirty || hasFormChanged);
 
   const isLabelIdentifier = isLabelIdentifierField({
     fieldMetadataItem: activeMetadataField,
@@ -172,6 +185,9 @@ export const SettingsObjectFieldEdit = () => {
 
   const handleSave = async () => {
     if (!validatedFormValues) return;
+
+    const formValues = formConfig.getValues();
+    const { dirtyFields } = formConfig.formState;
 
     try {
       if (
@@ -186,17 +202,17 @@ export const SettingsObjectFieldEdit = () => {
           type: validatedFormValues.type,
         });
       }
+
       if (
+        Object.keys(dirtyFields).length > 0 ||
         hasFieldFormChanged ||
         hasSelectFormChanged ||
         hasMultiSelectFormChanged ||
         hasDefaultValueChanged
       ) {
         await editMetadataField({
-          description: validatedFormValues.description,
-          icon: validatedFormValues.icon,
+          ...formValues,
           id: activeMetadataField.id,
-          label: validatedFormValues.label,
           defaultValue: validatedFormValues.defaultValue,
           type: validatedFormValues.type,
           options:
@@ -225,77 +241,83 @@ export const SettingsObjectFieldEdit = () => {
     canPersistFieldMetadataItemUpdate(activeMetadataField);
 
   return (
-    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-      <SettingsPageContainer>
-        <SettingsHeaderContainer>
-          <Breadcrumb
-            links={[
-              { children: 'Objects', href: '/settings/objects' },
-              {
-                children: activeObjectMetadataItem.labelPlural,
-                href: `/settings/objects/${objectSlug}`,
-              },
-              { children: activeMetadataField.label },
-            ]}
-          />
-          {shouldDisplaySaveAndCancel && (
-            <SaveAndCancelButtons
-              isSaveDisabled={!canSave}
-              onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-              onSave={handleSave}
+    // eslint-disable-next-line react/jsx-props-no-spreading
+    <FormProvider {...formConfig}>
+      <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+        <SettingsPageContainer>
+          <SettingsHeaderContainer>
+            <Breadcrumb
+              links={[
+                { children: 'Objects', href: '/settings/objects' },
+                {
+                  children: activeObjectMetadataItem.labelPlural,
+                  href: `/settings/objects/${objectSlug}`,
+                },
+                { children: activeMetadataField.label },
+              ]}
             />
-          )}
-        </SettingsHeaderContainer>
-        <SettingsObjectFieldFormSection
-          disabled={!activeMetadataField.isCustom}
-          name={formValues.label}
-          description={formValues.description}
-          iconKey={formValues.icon}
-          onChange={handleFormChange}
-        />
-        <Section>
-          <H2Title
-            title="Type and values"
-            description="The field's type and values."
-          />
-          <StyledSettingsObjectFieldTypeSelect
-            disabled
-            onChange={handleFormChange}
-            value={formValues.type}
-          />
-          <SettingsDataModelFieldSettingsFormCard
-            disableCurrencyForm
-            fieldMetadataItem={{
-              icon: formValues.icon,
-              id: activeMetadataField.id,
-              label: formValues.label,
-              name: activeMetadataField.name,
-              type: formValues.type,
-            }}
-            objectMetadataItem={activeObjectMetadataItem}
-            onChange={handleFormChange}
-            relationFieldMetadataItem={relationFieldMetadataItem}
-            values={{
-              currency: formValues.currency,
-              relation: formValues.relation,
-              select: formValues.select,
-              multiSelect: formValues.multiSelect,
-              defaultValue: formValues.defaultValue,
-            }}
-          />
-        </Section>
-        {!isLabelIdentifier && (
+            {shouldDisplaySaveAndCancel && (
+              <SaveAndCancelButtons
+                isSaveDisabled={!canSave}
+                onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
+                onSave={handleSave}
+              />
+            )}
+          </SettingsHeaderContainer>
           <Section>
-            <H2Title title="Danger zone" description="Disable this field" />
-            <Button
-              Icon={IconArchive}
-              title="Disable"
-              size="small"
-              onClick={handleDisable}
+            <H2Title
+              title="Name and description"
+              description="The name and description of this field"
+            />
+            <SettingsDataModelFieldAboutForm
+              disabled={!activeMetadataField.isCustom}
+              fieldMetadataItem={activeMetadataField}
             />
           </Section>
-        )}
-      </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+          <Section>
+            <H2Title
+              title="Type and values"
+              description="The field's type and values."
+            />
+            <StyledSettingsObjectFieldTypeSelect
+              disabled
+              onChange={handleFormChange}
+              value={formValues.type}
+            />
+            <SettingsDataModelFieldSettingsFormCard
+              disableCurrencyForm
+              fieldMetadataItem={{
+                icon: formConfig.watch('icon'),
+                id: activeMetadataField.id,
+                label: formConfig.watch('label'),
+                name: activeMetadataField.name,
+                type: formValues.type,
+              }}
+              objectMetadataItem={activeObjectMetadataItem}
+              onChange={handleFormChange}
+              relationFieldMetadataItem={relationFieldMetadataItem}
+              values={{
+                currency: formValues.currency,
+                relation: formValues.relation,
+                select: formValues.select,
+                multiSelect: formValues.multiSelect,
+                defaultValue: formValues.defaultValue,
+              }}
+            />
+          </Section>
+          {!isLabelIdentifier && (
+            <Section>
+              <H2Title title="Danger zone" description="Disable this field" />
+              <Button
+                Icon={IconArchive}
+                title="Disable"
+                size="small"
+                onClick={handleDisable}
+              />
+            </Section>
+          )}
+        </SettingsPageContainer>
+      </SubMenuTopBarContainer>
+    </FormProvider>
   );
 };
