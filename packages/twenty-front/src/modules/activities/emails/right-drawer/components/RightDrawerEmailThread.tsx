@@ -43,7 +43,7 @@ export const RightDrawerEmailThread = () => {
 
   useRegisterClickOutsideListenerCallback({
     callbackId:
-      'EmailThreadClickOutsideCallBack-' + thread.id ?? 'no-thread-id',
+      'EmailThreadClickOutsideCallBack-' + (thread.id ?? 'no-thread-id'),
     callbackFunction: useRecoilCallback(
       ({ set }) =>
         () => {

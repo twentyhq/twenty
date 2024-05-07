@@ -1,5 +1,5 @@
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
-import { UpdateObjectInput } from '~/generated-metadata/graphql';
+import { UpdateObjectPayload } from '~/generated-metadata/graphql';
 import { formatMetadataLabelToMetadataNameOrThrows } from '~/pages/settings/data-model/utils/format-metadata-label-to-name.util';
 
 export const settingsUpdateObjectInputSchema = objectMetadataItemSchema
@@ -13,7 +13,7 @@ export const settingsUpdateObjectInputSchema = objectMetadataItemSchema
     labelSingular: true,
   })
   .partial()
-  .transform<UpdateObjectInput>((value) => ({
+  .transform<UpdateObjectPayload>((value) => ({
     ...value,
     nameSingular: value.labelSingular
       ? formatMetadataLabelToMetadataNameOrThrows(value.labelSingular)

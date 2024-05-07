@@ -9,7 +9,6 @@ import {
 import { WORKSPACE_MEMBER_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/relation-metadata.decorator';
@@ -242,9 +241,6 @@ export class WorkspaceMemberObjectMetadata extends BaseObjectMetadata {
     inverseSideTarget: () => CalendarEventParticipantObjectMetadata,
     inverseSideFieldKey: 'workspaceMember',
     onDelete: RelationOnDeleteAction.SET_NULL,
-  })
-  @Gate({
-    featureFlag: 'IS_CALENDAR_ENABLED',
   })
   calendarEventParticipants: Relation<CalendarEventParticipantObjectMetadata[]>;
 

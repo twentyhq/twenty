@@ -4,7 +4,7 @@ import { AddressFieldInput } from '@/object-record/record-field/meta-types/input
 import { DateFieldInput } from '@/object-record/record-field/meta-types/input/components/DateFieldInput';
 import { FullNameFieldInput } from '@/object-record/record-field/meta-types/input/components/FullNameFieldInput';
 import { LinksFieldInput } from '@/object-record/record-field/meta-types/input/components/LinksFieldInput';
-import { MultiSelectFieldInput } from '@/object-record/record-field/meta-types/input/components/MultiSelectFieldInput.tsx';
+import { MultiSelectFieldInput } from '@/object-record/record-field/meta-types/input/components/MultiSelectFieldInput';
 import { RawJsonFieldInput } from '@/object-record/record-field/meta-types/input/components/RawJsonFieldInput';
 import { SelectFieldInput } from '@/object-record/record-field/meta-types/input/components/SelectFieldInput';
 import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
@@ -134,13 +134,7 @@ export const FieldInput = ({
           onShiftTab={onShiftTab}
         />
       ) : isFieldLinks(fieldDefinition) ? (
-        <LinksFieldInput
-          onEnter={onEnter}
-          onEscape={onEscape}
-          onClickOutside={onClickOutside}
-          onTab={onTab}
-          onShiftTab={onShiftTab}
-        />
+        <LinksFieldInput onCancel={onCancel} onSubmit={onSubmit} />
       ) : isFieldCurrency(fieldDefinition) ? (
         <CurrencyFieldInput
           onEnter={onEnter}

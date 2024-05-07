@@ -41,7 +41,7 @@ const createRemoteServerInputSchema = newConnectionSchema
     },
     userMappingOptions: {
       password: values.password,
-      username: values.username,
+      user: values.user,
     },
     schema: values.schema,
   }));

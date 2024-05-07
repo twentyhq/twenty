@@ -212,7 +212,7 @@ export class CalendarEventParticipantRepository {
           handle: 'text',
           displayName: 'text',
           isOrganizer: 'boolean',
-          responseStatus: `${dataSourceSchema}."calendarEventParticipant_responsestatus_enum"`,
+          responseStatus: `${dataSourceSchema}."calendarEventParticipant_responseStatus_enum"`,
         },
       );
 

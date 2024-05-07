@@ -56,7 +56,7 @@ export class PersonRepository {
     }[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<void> {
+  ): Promise<ObjectRecord<PersonObjectMetadata>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -81,7 +81,7 @@ export class PersonRepository {
       });
 
     return await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}.person (id, email, "nameFirstName", "nameLastName", "companyId", "position") VALUES ${valuesString}`,
+      `INSERT INTO ${dataSourceSchema}.person (id, email, "nameFirstName", "nameLastName", "companyId", "position") VALUES ${valuesString} RETURNING *`,
       flattenedValues,
       workspaceId,
       transactionManager,

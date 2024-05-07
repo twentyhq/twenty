@@ -3,7 +3,7 @@ import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconInfoCircle } from 'twenty-ui';
 
-import { Button } from '@/ui/input/button/components/Button.tsx';
+import { Button } from '@/ui/input/button/components/Button';
 
 export type InfoAccent = 'blue' | 'danger';
 export type InfoProps = {
@@ -14,8 +14,13 @@ export type InfoProps = {
 };
 
 const StyledTextContainer = styled.div`
+  align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledIconInfoCircle = styled(IconInfoCircle)`
+  flex-shrink: 0;
 `;
 
 const StyledInfo = styled.div<Pick<InfoProps, 'accent'>>`
@@ -51,7 +56,7 @@ export const Info = ({
   return (
     <StyledInfo accent={accent}>
       <StyledTextContainer>
-        <IconInfoCircle size={theme.icon.size.md} />
+        <StyledIconInfoCircle size={theme.icon.size.md} />
         {text}
       </StyledTextContainer>
       {buttonTitle && onClick && (

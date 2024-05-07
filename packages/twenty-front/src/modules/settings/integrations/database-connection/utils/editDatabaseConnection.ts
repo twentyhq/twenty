@@ -1,4 +1,6 @@
-import { identity, isEmpty, pickBy } from 'lodash';
+import identity from 'lodash.identity';
+import isEmpty from 'lodash.isempty';
+import pickBy from 'lodash.pickby';
 import { z } from 'zod';
 
 import { settingsIntegrationPostgreSQLConnectionFormSchema } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionForm';
@@ -28,7 +30,7 @@ export const getFormDefaultValuesFromConnection = ({
         dbname: connection.foreignDataWrapperOptions.dbname,
         host: connection.foreignDataWrapperOptions.host,
         port: connection.foreignDataWrapperOptions.port,
-        username: connection.userMappingOptions?.username || undefined,
+        user: connection.userMappingOptions?.user || undefined,
         schema: connection.schema || undefined,
         password: '',
       };
@@ -51,7 +53,7 @@ export const formatValuesForUpdate = ({
       const formattedValues = {
         userMappingOptions: pickBy(
           {
-            username: formValues.username,
+            user: formValues.user,
             password: formValues.password,
           },
           identity,

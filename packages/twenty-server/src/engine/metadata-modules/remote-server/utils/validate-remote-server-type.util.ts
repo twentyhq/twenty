@@ -32,6 +32,8 @@ const getFeatureFlagKey = (remoteServerType: RemoteServerType) => {
   switch (remoteServerType) {
     case RemoteServerType.POSTGRES_FDW:
       return FeatureFlagKeys.IsPostgreSQLIntegrationEnabled;
+    case RemoteServerType.STRIPE_FDW:
+      return FeatureFlagKeys.IsStripeIntegrationEnabled;
     default:
       throw new BadRequestException(
         `Type ${remoteServerType} is not supported.`,
