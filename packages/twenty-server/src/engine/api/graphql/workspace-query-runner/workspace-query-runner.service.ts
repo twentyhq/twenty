@@ -244,7 +244,7 @@ export class WorkspaceQueryRunnerService {
     assertMutationNotOnRemoteObject(objectMetadataItem);
 
     args.data.forEach((record) => {
-      if (record.id) {
+      if (record?.id) {
         assertIsValidUuid(record.id);
       }
     });
