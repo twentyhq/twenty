@@ -5,7 +5,7 @@ import { RecoilRoot } from 'recoil';
 import { useDeleteOneRecordMutation } from '@/object-record/hooks/useDeleteOneRecordMutation';
 
 const expectedQueryTemplate = `
-  mutation DeleteOnePerson($idToDelete: UUID!) {
+  mutation DeleteOnePerson($idToDelete: ID!) {
     deletePerson(id: $idToDelete) {
       id
     }

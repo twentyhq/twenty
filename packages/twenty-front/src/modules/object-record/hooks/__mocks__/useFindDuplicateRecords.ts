@@ -2,7 +2,7 @@ import { gql } from '@apollo/client';
 import { mockedPeopleData } from '~/testing/mock-data/people';
 
 export const query = gql`
-  query FindDuplicatePerson($id: UUID) {
+  query FindDuplicatePerson($id: ID!) {
     personDuplicates(id: $id) {
       edges {
         node {
