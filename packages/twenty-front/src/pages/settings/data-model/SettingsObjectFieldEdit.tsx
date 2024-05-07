@@ -123,7 +123,10 @@ export const SettingsObjectFieldEdit = () => {
 
       if (Object.keys(otherDirtyFields).length > 0) {
         const input = pick(formValues, Object.keys(otherDirtyFields));
-        const formattedInput = formatFieldMetadataItemInput(input);
+        const formattedInput = formatFieldMetadataItemInput({
+          type: formValues.type,
+          ...input,
+        });
 
         const options = formattedInput.options?.map((option) => ({
           ...option,
