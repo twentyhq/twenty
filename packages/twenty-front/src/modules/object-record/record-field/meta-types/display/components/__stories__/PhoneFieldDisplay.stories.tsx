@@ -1,10 +1,10 @@
 import { useEffect } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
+import { ComponentDecorator } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { usePhoneField } from '@/object-record/record-field/meta-types/hooks/usePhoneField';
 import { FieldMetadataType } from '~/generated/graphql';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 import { PhoneFieldDisplay } from '../PhoneFieldDisplay';
@@ -31,7 +31,7 @@ const meta: Meta = {
           fieldDefinition: {
             fieldMetadataId: 'phone',
             label: 'Phone',
-            type: FieldMetadataType.Text,
+            type: FieldMetadataType.Phone,
             iconName: 'IconPhone',
             metadata: {
               fieldName: 'phone',

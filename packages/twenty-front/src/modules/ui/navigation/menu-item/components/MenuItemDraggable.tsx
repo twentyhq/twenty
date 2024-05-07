@@ -1,4 +1,5 @@
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { IconComponent } from 'twenty-ui';
+
 import { LightIconButtonGroup } from '@/ui/input/button/components/LightIconButtonGroup';
 
 import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent';

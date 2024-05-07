@@ -7,7 +7,7 @@ import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { makeActivityTargetsToCreateFromTargetableObjects } from '@/activities/utils/getActivityTargetsToCreateFromTargetableObjects';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateManyRecordsInCache } from '@/object-record/cache/hooks/useCreateManyRecordsInCache';
@@ -34,16 +34,15 @@ export const useCreateActivityInCache = () => {
   const { record: currentWorkspaceMemberRecord } = useFindOneRecord({
     objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
     objectRecordId: currentWorkspaceMember?.id,
-    depth: 0,
   });
 
   const { objectMetadataItem: objectMetadataItemActivity } =
-    useObjectMetadataItemOnly({
+    useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.Activity,
     });
 
   const { objectMetadataItem: objectMetadataItemActivityTarget } =
-    useObjectMetadataItemOnly({
+    useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.ActivityTarget,
     });
 
@@ -66,6 +65,7 @@ export const useCreateActivityInCache = () => {
 
         const createdActivityInCache = createOneActivityInCache({
           id: activityId,
+          __typename: 'Activity',
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           author: currentWorkspaceMemberRecord,

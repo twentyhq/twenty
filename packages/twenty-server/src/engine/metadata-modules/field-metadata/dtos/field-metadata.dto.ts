@@ -1,7 +1,6 @@
 import {
   Field,
   HideField,
-  ID,
   ObjectType,
   registerEnumType,
 } from '@nestjs/graphql';
@@ -27,12 +26,14 @@ import {
 
 import { FieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-options.interface';
 import { FieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-default-value.interface';
+import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { RelationMetadataDTO } from 'src/engine/metadata-modules/relation-metadata/dtos/relation-metadata.dto';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IsFieldMetadataDefaultValue } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-default-value.validator';
 import { IsFieldMetadataOptions } from 'src/engine/metadata-modules/field-metadata/validators/is-field-metadata-options.validator';
 import { IsValidMetadataName } from 'src/engine/decorators/metadata/is-valid-metadata-name.decorator';
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 registerEnumType(FieldMetadataType, {
   name: 'FieldMetadataType',
@@ -61,7 +62,7 @@ export class FieldMetadataDTO<
 > {
   @IsUUID()
   @IsNotEmpty()
-  @IDField(() => ID)
+  @IDField(() => UUIDScalarType)
   id: string;
 
   @IsEnum(FieldMetadataType)
@@ -119,6 +120,10 @@ export class FieldMetadataDTO<
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   options?: FieldMetadataOptions<T>;
+
+  @IsOptional()
+  @Field(() => GraphQLJSON, { nullable: true })
+  settings?: FieldMetadataSettings<T>;
 
   @HideField()
   workspaceId: string;

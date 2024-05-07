@@ -1,46 +1,60 @@
-import { NotFoundException } from '@nestjs/common';
+import { BadRequestException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
+import { plural } from 'pluralize';
 
 import {
   RemoteServerType,
   RemoteServerEntity,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import { RemoteTableStatus } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import {
-  isPostgreSQLIntegrationEnabled,
   mapUdtNameToFieldType,
-} from 'src/engine/metadata-modules/remote-server/remote-table/remote-postgres-table/utils/remote-postgres-table.util';
+  mapUdtNameToFieldSettings,
+} from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
 import { RemoteTableInput } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table-input';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
-import { RemotePostgresTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-postgres-table/remote-postgres-table.service';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { camelCase } from 'src/utils/camel-case';
 import { camelToTitleCase } from 'src/utils/camel-to-title-case';
-import { getRemoteTableName } from 'src/engine/metadata-modules/remote-server/remote-table/utils/get-remote-table-name.util';
+import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
+import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
+import {
+  ReferencedTable,
+  WorkspaceMigrationForeignColumnDefinition,
+  WorkspaceMigrationForeignTable,
+  WorkspaceMigrationTableActionType,
+} from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { RemoteTableEntity } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.entity';
+import { getRemoteTableLocalName } from 'src/engine/metadata-modules/remote-server/remote-table/utils/get-remote-table-local-name.util';
+import { DistantTableService } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.service';
+import { DistantTableColumn } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/types/distant-table-column';
 
 export class RemoteTableService {
+  private readonly logger = new Logger(RemoteTableService.name);
+
   constructor(
+    @InjectRepository(RemoteTableEntity, 'metadata')
+    private readonly remoteTableRepository: Repository<RemoteTableEntity>,
     @InjectRepository(RemoteServerEntity, 'metadata')
     private readonly remoteServerRepository: Repository<
       RemoteServerEntity<RemoteServerType>
     >,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly dataSourceService: DataSourceService,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly fieldMetadataService: FieldMetadataService,
-    private readonly remotePostgresTableService: RemotePostgresTableService,
+    private readonly distantTableService: DistantTableService,
+    private readonly workspaceMigrationService: WorkspaceMigrationService,
+    private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
   public async findAvailableRemoteTablesByServerId(
@@ -58,26 +72,46 @@ export class RemoteTableService {
       throw new NotFoundException('Remote server does not exist');
     }
 
-    switch (remoteServer.foreignDataWrapperType) {
-      case RemoteServerType.POSTGRES_FDW:
-        await isPostgreSQLIntegrationEnabled(
-          this.featureFlagRepository,
-          workspaceId,
-        );
+    const currentRemoteTables = await this.findCurrentRemoteTablesByServerId({
+      remoteServerId: id,
+      workspaceId,
+    });
 
-        return this.remotePostgresTableService.findAvailableRemotePostgresTables(
-          workspaceId,
-          remoteServer,
-        );
-      default:
-        throw new Error('Unsupported foreign data wrapper type');
-    }
+    const currentRemoteTableDistantNames = currentRemoteTables.map(
+      (remoteTable) => remoteTable.distantTableName,
+    );
+
+    const distantTableNames =
+      await this.distantTableService.fetchDistantTableNames(
+        remoteServer,
+        workspaceId,
+      );
+
+    return distantTableNames.map((tableName) => ({
+      name: tableName,
+      schema: remoteServer.schema,
+      status: currentRemoteTableDistantNames.includes(tableName)
+        ? RemoteTableStatus.SYNCED
+        : RemoteTableStatus.NOT_SYNCED,
+    }));
   }
 
-  public async updateRemoteTableSyncStatus(
-    input: RemoteTableInput,
-    workspaceId: string,
-  ) {
+  public async findCurrentRemoteTablesByServerId({
+    remoteServerId,
+    workspaceId,
+  }: {
+    remoteServerId: string;
+    workspaceId: string;
+  }) {
+    return this.remoteTableRepository.find({
+      where: {
+        remoteServerId,
+        workspaceId,
+      },
+    });
+  }
+
+  public async syncRemoteTable(input: RemoteTableInput, workspaceId: string) {
     const remoteServer = await this.remoteServerRepository.findOne({
       where: {
         id: input.remoteServerId,
@@ -89,134 +123,149 @@ export class RemoteTableService {
       throw new NotFoundException('Remote server does not exist');
     }
 
-    const dataSourcesMetatada =
-      await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
+    const currentRemoteTableWithSameDistantName =
+      await this.remoteTableRepository.findOne({
+        where: {
+          distantTableName: input.name,
+          remoteServerId: remoteServer.id,
+          workspaceId,
+        },
+      });
+
+    if (currentRemoteTableWithSameDistantName) {
+      throw new BadRequestException('Remote table already exists');
+    }
+
+    const dataSourceMetatada =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
         workspaceId,
       );
 
-    if (!dataSourcesMetatada) {
-      throw new NotFoundException('Workspace data source does not exist');
-    }
+    const localTableName = getRemoteTableLocalName(input.name);
 
-    const workspaceDataSource =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
-        workspaceId,
+    await this.validateTableNameDoesNotExists(
+      localTableName,
+      workspaceId,
+      dataSourceMetatada.schema,
+    );
+
+    const remoteTableEntity = this.remoteTableRepository.create({
+      distantTableName: input.name,
+      localTableName,
+      workspaceId,
+      remoteServerId: remoteServer.id,
+    });
+
+    const distantTableColumns =
+      await this.distantTableService.fetchDistantTableColumns(
+        remoteServer,
+        input.name,
       );
 
-    switch (input.status) {
-      case RemoteTableStatus.SYNCED:
-        await this.buildForeignTableAndMetadata(
-          input,
-          remoteServer,
-          workspaceId,
-          workspaceDataSource,
-          dataSourcesMetatada[0],
-        );
-        break;
-      case RemoteTableStatus.NOT_SYNCED:
-        await this.removeForeignTableAndMetadata(
-          input,
-          workspaceId,
-          workspaceDataSource,
-          dataSourcesMetatada[0].schema,
-        );
-        break;
-      default:
-        throw new Error('Unsupported remote table status');
+    // We only support remote tables with an id column for now.
+    const distantTableIdColumn = distantTableColumns.find(
+      (column) => column.columnName === 'id',
+    );
+
+    if (!distantTableIdColumn) {
+      throw new BadRequestException('Remote table must have an id column');
     }
+
+    await this.createForeignTable(
+      workspaceId,
+      localTableName,
+      input,
+      remoteServer,
+      distantTableColumns,
+    );
+
+    await this.createRemoteTableMetadata(
+      workspaceId,
+      localTableName,
+      distantTableColumns,
+      distantTableIdColumn,
+      dataSourceMetatada.id,
+    );
+
+    await this.remoteTableRepository.save(remoteTableEntity);
 
     await this.workspaceCacheVersionService.incrementVersion(workspaceId);
 
-    return input;
+    return {
+      id: remoteTableEntity.id,
+      name: input.name,
+      schema: remoteServer.schema,
+      status: RemoteTableStatus.SYNCED,
+    };
   }
 
-  private async buildForeignTableAndMetadata(
-    input: RemoteTableInput,
+  public async unsyncRemoteTable(input: RemoteTableInput, workspaceId: string) {
+    const remoteServer = await this.remoteServerRepository.findOne({
+      where: {
+        id: input.remoteServerId,
+        workspaceId,
+      },
+    });
+
+    if (!remoteServer) {
+      throw new NotFoundException('Remote server does not exist');
+    }
+
+    const remoteTable = await this.remoteTableRepository.findOne({
+      where: {
+        distantTableName: input.name,
+        remoteServerId: remoteServer.id,
+        workspaceId,
+      },
+    });
+
+    if (!remoteTable) {
+      throw new NotFoundException('Remote table does not exist');
+    }
+
+    await this.unsyncOne(workspaceId, remoteTable, remoteServer);
+
+    return {
+      name: input.name,
+      schema: remoteServer.schema,
+      status: RemoteTableStatus.NOT_SYNCED,
+    };
+  }
+
+  public async unsyncAll(
+    workspaceId: string,
     remoteServer: RemoteServerEntity<RemoteServerType>,
-    workspaceId: string,
-    workspaceDataSource: DataSource,
-    dataSourceMetadata: DataSourceEntity,
   ) {
-    const localSchema = dataSourceMetadata.schema;
+    const remoteTables = await this.remoteTableRepository.find({
+      where: {
+        remoteServerId: remoteServer.id,
+        workspaceId,
+      },
+    });
 
-    // TODO: Add strong typing for remote table columns. Will be done when we have another use case than Postgres
-    const remoteTableColumns = await this.fetchTableColumnsSchema(
-      remoteServer,
-      input.name,
-      input.schema,
-    );
-
-    const foreignTableColumns = remoteTableColumns
-      .map((column) => `"${column.column_name}" ${column.data_type}`)
-      .join(', ');
-
-    const remoteTableName = getRemoteTableName(input.name);
-    const remoteTableLabel = camelToTitleCase(remoteTableName);
-
-    // We only support remote tables with an id column for now.
-    const remoteTableIdColumn = remoteTableColumns.filter(
-      (column) => column.column_name === 'id',
-    )?.[0];
-
-    if (!remoteTableIdColumn) {
-      throw new Error('Remote table must have an id column');
-    }
-
-    await workspaceDataSource.query(
-      `CREATE FOREIGN TABLE ${localSchema}."${remoteTableName}" (${foreignTableColumns}) SERVER "${remoteServer.foreignDataWrapperId}" OPTIONS (schema_name '${input.schema}', table_name '${input.name}')`,
-    );
-
-    await workspaceDataSource.query(
-      `COMMENT ON FOREIGN TABLE ${localSchema}."${remoteTableName}" IS e'@graphql({"primary_key_columns": ["id"], "totalCount": {"enabled": true}})'`,
-    );
-
-    // Should be done in a transaction. To be discussed
-    const objectMetadata = await this.objectMetadataService.createOne({
-      nameSingular: remoteTableName,
-      namePlural: `${remoteTableName}s`,
-      labelSingular: remoteTableLabel,
-      labelPlural: `${remoteTableLabel}s`,
-      description: 'Remote table',
-      dataSourceId: dataSourceMetadata.id,
-      workspaceId: workspaceId,
-      icon: 'IconUser',
-      isRemote: true,
-      remoteTablePrimaryKeyColumnType: remoteTableIdColumn.udt_name,
-    } as CreateObjectInput);
-
-    for (const column of remoteTableColumns) {
-      const field = await this.fieldMetadataService.createOne({
-        name: column.column_name,
-        label: camelToTitleCase(camelCase(column.column_name)),
-        description: 'Field of remote',
-        // TODO: function should work for other types than Postgres
-        type: mapUdtNameToFieldType(column.udt_name),
-        workspaceId: workspaceId,
-        objectMetadataId: objectMetadata.id,
-        isRemoteCreation: true,
-        isNullable: true,
-        icon: 'IconUser',
-      } as CreateFieldInput);
-
-      if (column.column_name === 'id') {
-        await this.objectMetadataService.updateOne(objectMetadata.id, {
-          labelIdentifierFieldMetadataId: field.id,
-        });
-      }
+    for (const remoteTable of remoteTables) {
+      await this.unsyncOne(workspaceId, remoteTable, remoteServer);
     }
   }
 
-  private async removeForeignTableAndMetadata(
-    input: RemoteTableInput,
+  private async unsyncOne(
     workspaceId: string,
-    workspaceDataSource: DataSource,
-    localSchema: string,
+    remoteTable: RemoteTableEntity,
+    remoteServer: RemoteServerEntity<RemoteServerType>,
   ) {
-    const remoteTableName = getRemoteTableName(input.name);
+    const currentForeignTableNames =
+      await this.fetchForeignTableNamesWithinWorkspace(
+        workspaceId,
+        remoteServer.foreignDataWrapperId,
+      );
+
+    if (!currentForeignTableNames.includes(remoteTable.localTableName)) {
+      throw new NotFoundException('Foreign table does not exist');
+    }
 
     const objectMetadata =
       await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
-        where: { nameSingular: remoteTableName },
+        where: { nameSingular: remoteTable.localTableName },
       });
 
     if (objectMetadata) {
@@ -226,30 +275,181 @@ export class RemoteTableService {
       );
     }
 
-    await workspaceDataSource.query(
-      `DROP FOREIGN TABLE ${localSchema}."${input.name}Remote"`,
+    await this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(`drop-foreign-table-${remoteTable.localTableName}`),
+      workspaceId,
+      [
+        {
+          name: remoteTable.localTableName,
+          action: WorkspaceMigrationTableActionType.DROP_FOREIGN_TABLE,
+        },
+      ],
     );
+
+    await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+      workspaceId,
+    );
+
+    await this.remoteTableRepository.delete(remoteTable.id);
+
+    await this.workspaceCacheVersionService.incrementVersion(workspaceId);
   }
 
-  private async fetchTableColumnsSchema(
-    remoteServer: RemoteServerEntity<RemoteServerType>,
+  private async validateTableNameDoesNotExists(
     tableName: string,
-    tableSchema: string,
+    workspaceId: string,
+    workspaceSchemaName: string,
   ) {
+    const workspaceDataSource =
+      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
+        workspaceId,
+      );
+
+    const numberOfTablesWithSameName = +(
+      await workspaceDataSource.query(
+        `SELECT count(table_name) FROM information_schema.tables WHERE table_name LIKE '${tableName}' AND table_schema IN ('core', 'metadata', '${workspaceSchemaName}')`,
+      )
+    )[0].count;
+
+    if (numberOfTablesWithSameName > 0) {
+      throw new BadRequestException('Table name is not available.');
+    }
+  }
+
+  private async fetchForeignTableNamesWithinWorkspace(
+    workspaceId: string,
+    foreignDataWrapperId: string,
+  ): Promise<string[]> {
+    const workspaceDataSource =
+      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
+        workspaceId,
+      );
+
+    return (
+      await workspaceDataSource.query(
+        `SELECT foreign_table_name, foreign_server_name FROM information_schema.foreign_tables WHERE foreign_server_name = '${foreignDataWrapperId}'`,
+      )
+    ).map((foreignTable) => foreignTable.foreign_table_name);
+  }
+
+  private async createForeignTable(
+    workspaceId: string,
+    localTableName: string,
+    remoteTableInput: RemoteTableInput,
+    remoteServer: RemoteServerEntity<RemoteServerType>,
+    distantTableColumns: DistantTableColumn[],
+  ) {
+    const referencedTable: ReferencedTable = this.buildReferencedTable(
+      remoteServer,
+      remoteTableInput,
+    );
+
+    const workspaceMigration =
+      await this.workspaceMigrationService.createCustomMigration(
+        generateMigrationName(`create-foreign-table-${localTableName}`),
+        workspaceId,
+        [
+          {
+            name: localTableName,
+            action: WorkspaceMigrationTableActionType.CREATE_FOREIGN_TABLE,
+            foreignTable: {
+              columns: distantTableColumns.map(
+                (column) =>
+                  ({
+                    columnName: camelCase(column.columnName),
+                    columnType: column.dataType,
+                    distantColumnName: column.columnName,
+                  }) satisfies WorkspaceMigrationForeignColumnDefinition,
+              ),
+              referencedTable,
+              foreignDataWrapperId: remoteServer.foreignDataWrapperId,
+            } satisfies WorkspaceMigrationForeignTable,
+          },
+        ],
+      );
+
+    // TODO: This should be done in a transaction. Waiting for a global refactoring of transaction management.
+    try {
+      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+        workspaceId,
+      );
+    } catch (exception) {
+      this.workspaceMigrationService.deleteById(workspaceMigration.id);
+
+      throw new BadRequestException(
+        'Could not create foreign table. The table may already exists or a column type may not be supported.',
+      );
+    }
+  }
+
+  private async createRemoteTableMetadata(
+    workspaceId: string,
+    localTableName: string,
+    distantTableColumns: DistantTableColumn[],
+    distantTableIdColumn: DistantTableColumn,
+    dataSourceMetadataId: string,
+  ) {
+    const objectMetadata = await this.objectMetadataService.createOne({
+      nameSingular: localTableName,
+      namePlural: plural(localTableName),
+      labelSingular: camelToTitleCase(camelCase(localTableName)),
+      labelPlural: camelToTitleCase(plural(camelCase(localTableName))),
+      description: 'Remote table',
+      dataSourceId: dataSourceMetadataId,
+      workspaceId: workspaceId,
+      icon: 'IconPlug',
+      isRemote: true,
+      primaryKeyColumnType: distantTableIdColumn.udtName,
+      primaryKeyFieldMetadataSettings: mapUdtNameToFieldSettings(
+        distantTableIdColumn.udtName,
+      ),
+    } satisfies CreateObjectInput);
+
+    for (const column of distantTableColumns) {
+      const columnName = camelCase(column.columnName);
+
+      // TODO: return error to the user when a column cannot be managed
+      try {
+        const field = await this.fieldMetadataService.createOne({
+          name: columnName,
+          label: camelToTitleCase(columnName),
+          description: 'Field of remote',
+          type: mapUdtNameToFieldType(column.udtName),
+          workspaceId: workspaceId,
+          objectMetadataId: objectMetadata.id,
+          isRemoteCreation: true,
+          isNullable: true,
+          icon: 'IconPlug',
+          settings: mapUdtNameToFieldSettings(column.udtName),
+        } satisfies CreateFieldInput);
+
+        if (columnName === 'id') {
+          await this.objectMetadataService.updateOne(objectMetadata.id, {
+            labelIdentifierFieldMetadataId: field.id,
+          });
+        }
+      } catch (error) {
+        this.logger.error(
+          `Could not create field ${columnName} for remote table ${localTableName}: ${error}`,
+        );
+      }
+    }
+  }
+
+  private buildReferencedTable(
+    remoteServer: RemoteServerEntity<RemoteServerType>,
+    remoteTableInput: RemoteTableInput,
+  ): ReferencedTable {
     switch (remoteServer.foreignDataWrapperType) {
       case RemoteServerType.POSTGRES_FDW:
-        await isPostgreSQLIntegrationEnabled(
-          this.featureFlagRepository,
-          remoteServer.workspaceId,
-        );
-
-        return this.remotePostgresTableService.fetchPostgresTableColumnsSchema(
-          remoteServer,
-          tableName,
-          tableSchema,
-        );
+        return {
+          table_name: remoteTableInput.name,
+          schema_name: remoteServer.schema,
+        };
+      case RemoteServerType.STRIPE_FDW:
+        return { object: remoteTableInput.name };
       default:
-        throw new Error('Unsupported foreign data wrapper type');
+        throw new BadRequestException('Foreign data wrapper not supported');
     }
   }
 }

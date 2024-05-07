@@ -1,9 +1,7 @@
 import React from 'react';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { Pill } from 'twenty-ui';
-
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
+import { IconComponent, Pill } from 'twenty-ui';
 
 export type ButtonSize = 'medium' | 'small';
 export type ButtonPosition = 'standalone' | 'left' | 'middle' | 'right';
@@ -24,7 +22,7 @@ export type ButtonProps = {
   disabled?: boolean;
   focus?: boolean;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-};
+} & React.ComponentProps<'button'>;
 
 const StyledButton = styled.button<
   Pick<

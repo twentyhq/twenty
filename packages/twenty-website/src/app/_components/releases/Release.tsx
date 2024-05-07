@@ -1,11 +1,11 @@
 'use client';
 
+import { JSXElementConstructor, ReactElement } from 'react';
 import styled from '@emotion/styled';
 import { Gabarito } from 'next/font/google';
-import { compileMDX } from 'next-mdx-remote/rsc';
-import remarkBehead from 'remark-behead';
-import gfm from 'remark-gfm';
 
+import { ArticleContent } from '@/app/_components/ui/layout/articles/ArticleContent';
+import MotionContainer from '@/app/_components/ui/layout/LoaderAnimation';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import { ReleaseNote } from '@/app/releases/api/route';
 
@@ -29,13 +29,15 @@ const StyledVersion = styled.div`
   flex-flow: column;
   align-items: start;
   font-weight: 500;
+  margin-top: 64px;
 
   @media (max-width: 810px) {
     width: 100%;
     font-size: 20px;
     flex-flow: row;
     justify-content: space-between;
-    margin-bottom: 24px;
+    margin-bottom: -48px;
+    margin-top: 0px;
   }
 `;
 
@@ -50,39 +52,6 @@ const StyledDate = styled.span`
   font-size: ${Theme.font.size.sm};
 `;
 
-const StlyedContent = styled.div`
-  flex: 1;
-
-  gap: 64px;
-
-  h3 {
-    color: ${Theme.text.color.primary};
-    font-weight: 700;
-    font-size: 40px;
-    margin: 0;
-  }
-
-  p {
-    color: ${Theme.text.color.secondary};
-    font-family: ${Theme.font.family};
-    font-size: 16px;
-    line-height: 28.8px;
-    font-weight: 400;
-    margin: 40px 0px;
-    text-align: justify;
-  }
-
-  img {
-    max-width: 100%;
-  }
-
-  @media (max-width: 810px) {
-    h3 {
-      font-size: 24px;
-    }
-  }
-`;
-
 const gabarito = Gabarito({
   weight: ['400', '500', '600', '700'],
   subsets: ['latin'],
@@ -91,36 +60,28 @@ const gabarito = Gabarito({
   variable: '--font-gabarito',
 });
 
-export const Release = async ({ release }: { release: ReleaseNote }) => {
-  let mdxSource;
-  try {
-    mdxSource = await compileMDX({
-      source: release.content,
-      options: {
-        mdxOptions: {
-          development: process.env.NODE_ENV === 'development',
-          remarkPlugins: [gfm, [remarkBehead, { depth: 2 }]],
-        },
-      },
-    });
-    mdxSource = mdxSource.content;
-  } catch (error) {
-    console.error('An error occurred during MDX rendering:', error);
-    mdxSource = `<p>Oops! Something went wrong.</p> ${error}`;
-  }
-
+export const Release = ({
+  release,
+  mdxReleaseContent,
+  githubPublishedAt,
+}: {
+  release: ReleaseNote;
+  githubPublishedAt: string;
+  mdxReleaseContent: ReactElement<any, string | JSXElementConstructor<any>>;
+}) => {
   return (
-    <StyledContainer className={gabarito.className}>
-      <StyledVersion>
-        <StyledRelease>{release.release}</StyledRelease>
-        <StyledDate>
-          {release.date.endsWith(new Date().getFullYear().toString())
-            ? release.date.slice(0, -5)
-            : release.date}
-        </StyledDate>
-      </StyledVersion>
-
-      <StlyedContent>{mdxSource}</StlyedContent>
-    </StyledContainer>
+    <MotionContainer>
+      <StyledContainer className={gabarito.className}>
+        <StyledVersion>
+          <StyledRelease>{release.release}</StyledRelease>
+          <StyledDate>
+            {githubPublishedAt.endsWith(new Date().getFullYear().toString())
+              ? githubPublishedAt.slice(0, -5)
+              : githubPublishedAt}
+          </StyledDate>
+        </StyledVersion>
+        <ArticleContent>{mdxReleaseContent}</ArticleContent>
+      </StyledContainer>
+    </MotionContainer>
   );
 };

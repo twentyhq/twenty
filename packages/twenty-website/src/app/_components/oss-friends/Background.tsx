@@ -1,44 +1,104 @@
 'use client';
-
+import React from 'react';
 import styled from '@emotion/styled';
 
-const BackgroundContainer = styled.div`
+const BACKGROUND_ROTATION = -5;
+
+const BACKGROUND_IMAGE_URL =
+  'https://framerusercontent.com/images/nqEmdwe7yDXNsOZovuxG5zvj2E.png';
+
+const BackgroundImage = styled.div`
   position: absolute;
-  top: 100%;
-  left: 0px;
-  width: 100%;
-  height: 100%;
-  max-height: 200%;
-  background-image: url(https://framerusercontent.com/images/nqEmdwe7yDXNsOZovuxG5zvj2E.png);
+  height: calc(100% - 350px);
+  width: 200%;
+  top: 250px;
+  overflow: visible;
+  z-index: -3;
+  background-image: url(${BACKGROUND_IMAGE_URL});
+  transform: rotate(${BACKGROUND_ROTATION}deg);
   background-size: auto 20px;
   background-repeat: repeat;
   transform-origin: center center;
-  z-index: -2;
+
+  @media (max-width: 1024px) {
+    transform: rotate(-1deg);
+    top: 100px;
+    height: 100%;
+  }
+
+  @media (max-width: 800px) {
+    display: none;
+  }
 `;
 
-const Gradient = styled.div`
-  position: absolute;
-  width: 100%;
+const Container = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   height: 100%;
-  max-height: 200%;
-  top: 100%;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    185deg,
-    #fff 8.33%,
-    rgba(255, 255, 255, 0.08) 48.95%,
-    #fff 92.18%
-  );
-  z-index: -1;
+  width: 100%;
+  overflow: hidden;
+  min-width: 100vw;
+  max-width: 100vw;
+  z-index: 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 150px;
+    left: 0;
+    height: 300px;
+    width: 200%;
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 1),
+      rgba(255, 255, 255, 0)
+    );
+    transform: rotate(${BACKGROUND_ROTATION}deg);
+    z-index: -2;
+    pointer-events: none;
+
+    @media (max-width: 1024px) {
+      height: 200px;
+      top: 50px;
+      transform: rotate(-1deg);
+    }
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 140px;
+    left: -20px;
+    height: 300px;
+    width: 220%;
+    background: linear-gradient(
+      to top,
+      rgba(255, 255, 255, 1),
+      rgba(255, 255, 255, 0)
+    );
+    transform: rotate(${BACKGROUND_ROTATION}deg);
+    z-index: -2;
+    pointer-events: none;
+
+    @media (max-width: 1024px) {
+      height: 200px;
+      transform: rotate(-1deg);
+      bottom: 0px;
+    }
+  }
 `;
 
-export const Background = () => {
+type BackgroundProps = {
+  children: React.ReactNode;
+};
+
+export const Background = ({ children }: BackgroundProps) => {
   return (
-    <>
-      <BackgroundContainer />
-      <Gradient />
-    </>
+    <Container>
+      {children}
+      <BackgroundImage />
+    </Container>
   );
 };

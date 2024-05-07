@@ -1,8 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { EntityManager, In } from 'typeorm';
+import {
+  EntityManager,
+  EntityTarget,
+  FindOptionsWhere,
+  In,
+  ObjectLiteral,
+} from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
-import omit from 'lodash.omit';
+import { DeepPartial } from 'typeorm/common/DeepPartial';
 
 import { PartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 
@@ -14,6 +20,8 @@ import {
 import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { FieldMetadataComplexOption } from 'src/engine/metadata-modules/field-metadata/dtos/options.input';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
+import { FieldMetadataUpdate } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';
+import { ObjectMetadataUpdate } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-object.factory';
 
 @Injectable()
 export class WorkspaceMetadataUpdaterService {
@@ -24,7 +32,7 @@ export class WorkspaceMetadataUpdaterService {
     storage: WorkspaceSyncStorage,
   ): Promise<{
     createdObjectMetadataCollection: ObjectMetadataEntity[];
-    updatedObjectMetadataCollection: ObjectMetadataEntity[];
+    updatedObjectMetadataCollection: ObjectMetadataUpdate[];
   }> {
     const objectMetadataRepository =
       manager.getRepository(ObjectMetadataEntity);
@@ -56,10 +64,17 @@ export class WorkspaceMetadataUpdaterService {
     /**
      * Update object metadata
      */
-    const updatedObjectMetadataCollection = await objectMetadataRepository.save(
-      storage.objectMetadataUpdateCollection.map((objectMetadata) =>
-        omit(objectMetadata, ['fields']),
-      ),
+    const updatedObjectMetadataCollection = await this.updateEntities(
+      manager,
+      ObjectMetadataEntity,
+      storage.objectMetadataUpdateCollection,
+      [
+        'fields',
+        'dataSourceId',
+        'workspaceId',
+        'labelIdentifierFieldMetadataId',
+        'imageIdentifierFieldMetadataId',
+      ],
     );
 
     /**
@@ -108,10 +123,7 @@ export class WorkspaceMetadataUpdaterService {
     storage: WorkspaceSyncStorage,
   ): Promise<{
     createdFieldMetadataCollection: FieldMetadataEntity[];
-    updatedFieldMetadataCollection: {
-      current: FieldMetadataEntity;
-      altered: FieldMetadataEntity;
-    }[];
+    updatedFieldMetadataCollection: FieldMetadataUpdate[];
   }> {
     const fieldMetadataRepository = manager.getRepository(FieldMetadataEntity);
 
@@ -127,41 +139,12 @@ export class WorkspaceMetadataUpdaterService {
     /**
      * Update field metadata
      */
-    const oldFieldMetadataCollection = await fieldMetadataRepository.findBy({
-      id: In(storage.fieldMetadataUpdateCollection.map((field) => field.id)),
-    });
-    // Pre-process old collection into a mapping for quick access
-    const oldFieldMetadataMap = new Map(
-      oldFieldMetadataCollection.map((field) => [field.id, field]),
-    );
-    // Combine old and new field metadata to get whole updated entities
-    const fieldMetadataUpdateCollection =
-      storage.fieldMetadataUpdateCollection.map((updateFieldMetadata) => {
-        const oldFieldMetadata = oldFieldMetadataMap.get(
-          updateFieldMetadata.id,
-        );
-
-        if (!oldFieldMetadata) {
-          throw new Error(`
-            Field ${updateFieldMetadata.id} not found in oldFieldMetadataCollection`);
-        }
-
-        // TypeORM 😢
-        // If we didn't provide the old value, it will be set to null fields that are not in the updateFieldMetadata
-        // and override the old value with null in the DB.
-        // Also save method doesn't return the whole entity if you give a partial one.
-        // https://github.com/typeorm/typeorm/issues/3490
-        // To avoid calling update in a for loop, we did this hack.
-        return {
-          ...omit(oldFieldMetadata, ['objectMetadataId', 'workspaceId']),
-          ...omit(updateFieldMetadata, ['objectMetadataId', 'workspaceId']),
-          options: updateFieldMetadata.options ?? oldFieldMetadata.options,
-        };
-      });
-
-    const updatedFieldMetadataCollection = await fieldMetadataRepository.save(
-      fieldMetadataUpdateCollection,
-    );
+    const updatedFieldMetadataCollection = await this.updateEntities<
+      FieldMetadataEntity<'default'>
+    >(manager, FieldMetadataEntity, storage.fieldMetadataUpdateCollection, [
+      'objectMetadataId',
+      'workspaceId',
+    ]);
 
     /**
      * Delete field metadata
@@ -183,28 +166,7 @@ export class WorkspaceMetadataUpdaterService {
     return {
       createdFieldMetadataCollection:
         createdFieldMetadataCollection as FieldMetadataEntity[],
-      updatedFieldMetadataCollection: updatedFieldMetadataCollection.map(
-        (alteredFieldMetadata) => {
-          const oldFieldMetadata = oldFieldMetadataMap.get(
-            alteredFieldMetadata.id,
-          );
-
-          if (!oldFieldMetadata) {
-            throw new Error(`
-              Field ${alteredFieldMetadata.id} not found in oldFieldMetadataCollection
-            `);
-          }
-
-          return {
-            current: oldFieldMetadata as FieldMetadataEntity,
-            altered: {
-              ...alteredFieldMetadata,
-              objectMetadataId: oldFieldMetadata.objectMetadataId,
-              workspaceId: oldFieldMetadata.workspaceId,
-            } as FieldMetadataEntity,
-          };
-        },
-      ),
+      updatedFieldMetadataCollection,
     };
   }
 
@@ -266,5 +228,86 @@ export class WorkspaceMetadataUpdaterService {
       createdRelationMetadataCollection,
       updatedRelationMetadataCollection,
     };
+  }
+
+  /**
+   * Update entities in the database
+   * @param manager EntityManager
+   * @param entityClass Entity class
+   * @param updateCollection Update collection
+   * @param keysToOmit keys to omit in the merge process
+   * @returns Promise<{ current: Entity; altered: Entity }[]>
+   */
+  private async updateEntities<Entity extends ObjectLiteral & { id: string }>(
+    manager: EntityManager,
+    entityClass: EntityTarget<Entity>,
+    updateCollection: Array<
+      DeepPartial<Omit<Entity, 'fields' | 'options' | 'settings'>> & {
+        id: string;
+      }
+    >,
+    keysToOmit: (keyof Entity)[] = [],
+  ): Promise<{ current: Entity; altered: Entity }[]> {
+    const repository = manager.getRepository(entityClass);
+
+    const oldEntities = await repository.findBy({
+      id: In(updateCollection.map((updateItem) => updateItem.id)),
+    } as FindOptionsWhere<Entity>);
+
+    // Pre-process old collection into a mapping for quick access
+    const oldEntitiesMap = new Map(
+      oldEntities.map((oldEntity) => [oldEntity.id, oldEntity]),
+    );
+
+    // Combine old and new field metadata to get whole updated entities
+    const entityUpdateCollection = updateCollection.map((updateItem) => {
+      const oldEntity = oldEntitiesMap.get(updateItem.id);
+
+      if (!oldEntity) {
+        throw new Error(`
+              Entity ${updateItem.id} not found in oldEntities`);
+      }
+
+      // TypeORM 😢
+      // If we didn't provide the old value, it will be set to null objects that are not in the updateObjectMetadata
+      // and override the old value with null in the DB.
+      // Also save method doesn't return the whole entity if you give a partial one.
+      // https://github.com/typeorm/typeorm/issues/3490
+      // To avoid calling update in a for loop, we did this hack.
+      const mergedUpdate = {
+        ...oldEntity,
+        ...updateItem,
+      };
+
+      // Omit keys that we don't want to override
+      keysToOmit.forEach((key) => {
+        delete mergedUpdate[key];
+      });
+
+      return mergedUpdate;
+    });
+
+    const updatedEntities = await repository.save(entityUpdateCollection);
+
+    return updatedEntities.map((updatedEntity) => {
+      const oldEntity = oldEntitiesMap.get(updatedEntity.id);
+
+      if (!oldEntity) {
+        throw new Error(`
+            Entity ${updatedEntity.id} not found in oldEntitiesMap
+          `);
+      }
+
+      return {
+        current: oldEntity,
+        altered: {
+          ...updatedEntity,
+          ...keysToOmit.reduce(
+            (acc, key) => ({ ...acc, [key]: oldEntity[key] }),
+            {},
+          ),
+        },
+      };
+    });
   }
 }

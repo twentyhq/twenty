@@ -1,44 +1,14 @@
 {
   "name": "twenty-front",
-  "version": "0.4.0",
+  "version": "0.11.1",
   "private": true,
   "type": "module",
   "scripts": {
-    "nx": "NX_DEFAULT_PROJECT=twenty-front node ../../node_modules/nx/bin/nx.js",
-    "start": "vite --host",
-    "start:clean": "yarn start --force",
-    "build": "tsc && vite build && yarn build:inject-runtime-env",
-    "build:inject-runtime-env": "sh ./scripts/inject-runtime-env.sh",
-    "tsc": "tsc --project tsconfig.app.json --watch",
-    "tsc:ci": "tsc",
-    "tsc:spec": "tsc --project tsconfig.spec.json",
-    "preview": "vite preview",
-    "lint": "eslint . --report-unused-disable-directives --max-warnings 0 --config .eslintrc.cjs",
-    "lint:ci": "yarn lint --config .eslintrc-ci.cjs",
-    "fmt:fix": "prettier --cache --write \"src/**/*.ts\" \"src/**/*.tsx\"",
-    "fmt": "prettier --check \"src/**/*.ts\" \"src/**/*.tsx\"",
-    "test": "jest",
-    "test-watch": "jest --watch",
-    "tsup": "tsup",
-    "coverage": "jest --coverage",
-    "storybook:modules:dev": "STORYBOOK_SCOPE=modules yarn storybook:dev",
-    "storybook:dev": "storybook dev -p 6006 --no-open",
-    "storybook:pages:dev": "STORYBOOK_SCOPE=pages yarn storybook:dev",
-    "storybook:docs:dev": "STORYBOOK_SCOPE=ui-docs yarn storybook:dev",
-    "storybook:build": "storybook build",
-    "storybook:modules:build": "STORYBOOK_SCOPE=modules yarn storybook:build",
-    "storybook:pages:build": "STORYBOOK_SCOPE=pages yarn storybook:build",
-    "storybook:docs:build": "STORYBOOK_SCOPE=ui-docs yarn storybook:build",
-    "storybook:test": "test-storybook",
-    "storybook:test-slow": "test-storybook --maxWorkers=3",
-    "storybook:test-single-worker": "test-storybook --maxWorkers=1",
-    "storybook:coverage": "yarn storybook:test-slow --coverage ; npx nyc report --reporter=lcov -t coverage/storybook --report-dir coverage/storybook --check-coverage",
-    "storybook:modules:coverage": "STORYBOOK_SCOPE=modules yarn storybook:coverage",
-    "storybook:pages:coverage": "STORYBOOK_SCOPE=pages yarn storybook:coverage",
-    "graphql:data:generate": "dotenv cross-var graphql-codegen -- --config codegen.cjs",
-    "graphql:metadata:generate": "dotenv cross-var graphql-codegen -- --config codegen-metadata.cjs",
-    "chromatic": "cross-var npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name=storybook:build",
-    "chromatic:ci": "cross-var npx chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name=storybook:build --exit-zero-on-changes"
+    "build": "npx vite build && sh ./scripts/inject-runtime-env.sh",
+    "build:sourcemaps": "VITE_BUILD_SOURCEMAP=true NODE_OPTIONS=--max-old-space-size=4096 npx nx build",
+    "build-storybook": "cd ../.. && npx nx storybook:build twenty-front",
+    "start:prod": "NODE_ENV=production npx vite --host",
+    "tsup": "npx tsup"
   },
   "engines": {
     "node": "^18.17.1",
@@ -59,5 +29,8 @@
   },
   "msw": {
     "workerDirectory": "public"
+  },
+  "dependencies": {
+    "transliteration": "^2.3.5"
   }
 }

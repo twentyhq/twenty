@@ -77,6 +77,7 @@ export const FooterDesktop = () => {
       <div
         style={{
           width: '100%',
+          margin: '0 auto',
           display: 'flex',
           flexDirection: 'row',
           justifyContent: 'space-between',
@@ -100,6 +101,9 @@ export const FooterDesktop = () => {
             <RightSideFooterLink href="/releases">
               Changelog
             </RightSideFooterLink>
+            <RightSideFooterLink href="/user-guide">
+              User Guide
+            </RightSideFooterLink>
           </RightSideFooterColumn>
           <RightSideFooterColumn>
             <RightSideFooterColumnTitle>Other</RightSideFooterColumnTitle>
@@ -121,6 +125,7 @@ export const FooterDesktop = () => {
       <div
         style={{
           width: '100%',
+          margin: '0 auto',
           display: 'flex',
           flexDirection: 'row',
           justifyContent: 'space-between',

@@ -1,4 +1,4 @@
-import { AvatarType } from '@/users/components/Avatar';
+import { AvatarType } from 'twenty-ui';
 
 export type Favorite = {
   id: string;
@@ -9,4 +9,5 @@ export type Favorite = {
   avatarType: AvatarType;
   link: string;
   recordId: string;
+  __typename: 'Favorite';
 };

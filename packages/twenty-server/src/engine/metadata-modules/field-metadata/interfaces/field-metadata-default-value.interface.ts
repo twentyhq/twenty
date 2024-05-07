@@ -10,6 +10,7 @@ import {
   FieldMetadataDefaultValueString,
   FieldMetadataDefaultValueUuidFunction,
   FieldMetadataDefaultValueNowFunction,
+  FieldMetadataDefaultValueLinks,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
@@ -27,12 +28,16 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.DATE_TIME]:
     | FieldMetadataDefaultValueDateTime
     | FieldMetadataDefaultValueNowFunction;
+  [FieldMetadataType.DATE]:
+    | FieldMetadataDefaultValueDateTime
+    | FieldMetadataDefaultValueNowFunction;
   [FieldMetadataType.BOOLEAN]: FieldMetadataDefaultValueBoolean;
   [FieldMetadataType.NUMBER]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.POSITION]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.NUMERIC]: FieldMetadataDefaultValueString;
   [FieldMetadataType.PROBABILITY]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.LINK]: FieldMetadataDefaultValueLink;
+  [FieldMetadataType.LINKS]: FieldMetadataDefaultValueLinks;
   [FieldMetadataType.CURRENCY]: FieldMetadataDefaultValueCurrency;
   [FieldMetadataType.FULL_NAME]: FieldMetadataDefaultValueFullName;
   [FieldMetadataType.ADDRESS]: FieldMetadataDefaultValueAddress;

@@ -3,8 +3,8 @@ import { MockedProvider } from '@apollo/client/testing';
 import { renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
-import { mockedCompanyObjectMetadataItem } from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
+import { mockedCompanyObjectMetadataItem } from '~/testing/mock-data/metadata';
 
 import { useFieldPreview } from '../useFieldPreview';
 

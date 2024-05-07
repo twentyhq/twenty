@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
+import { metadataLabelSchema } from '@/object-metadata/validation-schemas/metadataLabelSchema';
 import { camelCaseStringSchema } from '~/utils/validation-schemas/camelCaseStringSchema';
 
 export const objectMetadataItemSchema = z.object({
@@ -18,8 +19,8 @@ export const objectMetadataItemSchema = z.object({
   isRemote: z.boolean(),
   isSystem: z.boolean(),
   labelIdentifierFieldMetadataId: z.string().uuid().nullable(),
-  labelPlural: z.string().trim().min(1),
-  labelSingular: z.string().trim().min(1),
+  labelPlural: metadataLabelSchema,
+  labelSingular: metadataLabelSchema,
   namePlural: camelCaseStringSchema,
   nameSingular: camelCaseStringSchema,
   updatedAt: z.string().datetime(),

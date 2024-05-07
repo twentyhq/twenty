@@ -34,6 +34,7 @@ import TabItem from '@theme/TabItem';
 
 <OptionTable options={[
     ['PG_DATABASE_URL', 'postgres://user:pw@localhost:5432/default?connection_limit=1', 'Database connection'],
+    ['PG_SSL_ALLOW_SELF_SIGNED', 'false', 'Allow self signed certificates'],
     ['REDIS_HOST', '127.0.0.1', 'Redis connection host'],
     ['REDIS_PORT', '6379', 'Redis connection port'],
     ['FRONT_BASE_URL', 'http://localhost:3001', 'Url to the hosted frontend'],
@@ -70,10 +71,16 @@ import TabItem from '@theme/TabItem';
     ['MESSAGING_PROVIDER_GMAIL_ENABLED', 'false', 'Enable Gmail API connection'],
     ['CALENDAR_PROVIDER_GMAIL_ENABLED', 'false', 'Enable Google Calendar API connection'],
     ['AUTH_GOOGLE_APIS_CALLBACK_URL', '', 'Google APIs auth callback'],
-    ['AUTH_GOOGLE_ENABLED', 'false', 'Enable Goole SSO login'],
+    ['AUTH_PASSWORD_ENABLED', 'false', 'Enable Email/Password login'],
+    ['AUTH_GOOGLE_ENABLED', 'false', 'Enable Google SSO login'],
     ['AUTH_GOOGLE_CLIENT_ID', '', 'Google client ID'],
     ['AUTH_GOOGLE_CLIENT_SECRET', '', 'Google client secret'],
     ['AUTH_GOOGLE_CALLBACK_URL', '', 'Google auth callback'],
+    ['AUTH_MICROSOFT_ENABLED', 'false', 'Enable Microsoft SSO login'],
+    ['AUTH_MICROSOFT_CLIENT_ID', '', 'Microsoft client ID'],
+    ['AUTH_MICROSOFT_TENANT_ID', '', 'Microsoft tenant ID'],
+    ['AUTH_MICROSOFT_CLIENT_SECRET', '', 'Microsoft client secret'],
+    ['AUTH_MICROSOFT_CALLBACK_URL', '', 'Microsoft auth callback'],
     ['FRONT_AUTH_CALLBACK_URL', 'http://localhost:3001/verify ', 'Callback used for Login page'],
     ['IS_SIGN_UP_DISABLED', 'false', 'Disable sign-up'],
     ['PASSWORD_RESET_TOKEN_EXPIRES_IN', '5m', 'Password reset token expiration time'],
@@ -152,7 +159,10 @@ import TabItem from '@theme/TabItem';
     ['LOGGER_IS_BUFFER_ENABLED', 'true', 'Buffer the logs before sending them to the logging driver'],
     ['LOG_LEVELS', 'error,warn', "The loglevels which are logged to the logging driver. Can include: 'log', 'warn', 'error'"],
     ['EXCEPTION_HANDLER_DRIVER', 'sentry', "The exception handler driver can be: 'console' or 'sentry'"],
+    ['SENTRY_ENVIRONMENT', 'main', 'The sentry environment used if sentry logging driver is selected'],
+    ['SENTRY_RELEASE', 'latest', 'The sentry release used if sentry logging driver is selected'],
     ['SENTRY_DSN', 'https://xxx@xxx.ingest.sentry.io/xxx', 'The sentry logging endpoint used if sentry logging driver is selected'],
+    ['SENTRY_FRONT_DSN', 'https://xxx@xxx.ingest.sentry.io/xxx', 'The sentry logging endpoint used by the frontend if sentry logging driver is selected'],
     ]}></OptionTable>
 
 
@@ -191,3 +201,11 @@ import TabItem from '@theme/TabItem';
   ['WORKSPACE_INACTIVE_DAYS_BEFORE_NOTIFICATION', '', 'Number of inactive days before sending workspace deleting warning email'],
   ['WORKSPACE_INACTIVE_DAYS_BEFORE_DELETION', '', 'Number of inactive days before deleting workspace'],
   ]}></OptionTable>
+
+### Captcha
+
+<OptionTable options={[
+    ['CAPTCHA_DRIVER', '', "The captcha driver can be 'google-recaptcha' or 'turnstile'"],
+    ['CAPTCHA_SITE_KEY', '', 'The captcha site key'],
+    ['CAPTCHA_SECRET_KEY', '', 'The captcha secret key'],
+]}></OptionTable>

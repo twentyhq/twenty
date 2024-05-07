@@ -1,3 +1,4 @@
+import { RawJSONScalar } from './raw-json.scalar';
 import { PositionScalarType } from './position.scalar';
 import { CursorScalarType } from './cursor.scalar';
 import { BigFloatScalarType } from './big-float.scalar';
@@ -24,4 +25,5 @@ export const scalars = [
   UUIDScalarType,
   CursorScalarType,
   PositionScalarType,
+  RawJSONScalar,
 ];

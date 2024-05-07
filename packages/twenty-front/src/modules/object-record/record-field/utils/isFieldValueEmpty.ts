@@ -5,14 +5,21 @@ import { isFieldAddressValue } from '@/object-record/record-field/types/guards/i
 import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
 import { isFieldCurrency } from '@/object-record/record-field/types/guards/isFieldCurrency';
 import { isFieldCurrencyValue } from '@/object-record/record-field/types/guards/isFieldCurrencyValue';
+import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
 import { isFieldDateTime } from '@/object-record/record-field/types/guards/isFieldDateTime';
 import { isFieldEmail } from '@/object-record/record-field/types/guards/isFieldEmail';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldFullNameValue } from '@/object-record/record-field/types/guards/isFieldFullNameValue';
 import { isFieldLink } from '@/object-record/record-field/types/guards/isFieldLink';
+import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
+import { isFieldLinksValue } from '@/object-record/record-field/types/guards/isFieldLinksValue';
 import { isFieldLinkValue } from '@/object-record/record-field/types/guards/isFieldLinkValue';
+import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
+import { isFieldMultiSelectValue } from '@/object-record/record-field/types/guards/isFieldMultiSelectValue';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
+import { isFieldPhone } from '@/object-record/record-field/types/guards/isFieldPhone';
 import { isFieldRating } from '@/object-record/record-field/types/guards/isFieldRating';
+import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { isFieldSelectValue } from '@/object-record/record-field/types/guards/isFieldSelectValue';
@@ -35,12 +42,14 @@ export const isFieldValueEmpty = ({
     isFieldUuid(fieldDefinition) ||
     isFieldText(fieldDefinition) ||
     isFieldDateTime(fieldDefinition) ||
+    isFieldDate(fieldDefinition) ||
     isFieldNumber(fieldDefinition) ||
     isFieldRating(fieldDefinition) ||
     isFieldEmail(fieldDefinition) ||
     isFieldBoolean(fieldDefinition) ||
-    isFieldRelation(fieldDefinition)
-    //|| isFieldPhone(fieldDefinition)
+    isFieldRelation(fieldDefinition) ||
+    isFieldRawJson(fieldDefinition) ||
+    isFieldPhone(fieldDefinition)
   ) {
     return isValueEmpty(fieldValue);
   }
@@ -48,6 +57,13 @@ export const isFieldValueEmpty = ({
   if (isFieldSelect(fieldDefinition)) {
     return (
       !isFieldSelectValue(fieldValue, selectOptionValues) ||
+      !isDefined(fieldValue)
+    );
+  }
+
+  if (isFieldMultiSelect(fieldDefinition)) {
+    return (
+      !isFieldMultiSelectValue(fieldValue, selectOptionValues) ||
       !isDefined(fieldValue)
     );
   }
@@ -79,6 +95,12 @@ export const isFieldValueEmpty = ({
         isValueEmpty(fieldValue?.addressState) &&
         isValueEmpty(fieldValue?.addressPostcode) &&
         isValueEmpty(fieldValue?.addressCountry))
+    );
+  }
+
+  if (isFieldLinks(fieldDefinition)) {
+    return (
+      !isFieldLinksValue(fieldValue) || isValueEmpty(fieldValue.primaryLinkUrl)
     );
   }
 

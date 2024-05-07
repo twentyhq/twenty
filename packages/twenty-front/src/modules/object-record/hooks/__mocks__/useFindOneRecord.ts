@@ -3,30 +3,30 @@ import { gql } from '@apollo/client';
 import { responseData as person } from './useUpdateOneRecord';
 
 export const query = gql`
-  query FindOnePerson($objectRecordId: UUID!) {
+  query FindOnePerson($objectRecordId: ID!) {
     person(filter: { id: { eq: $objectRecordId } }) {
       __typename
-          xLink {
-            label
-            url
-          }
-          id
-          createdAt
-          city
-          email
-          jobTitle
-          name {
-            firstName
-            lastName
-          }
-          phone
-          linkedinLink {
-            label
-            url
-          }
-          updatedAt
-          avatarUrl
-          companyId
+      xLink {
+        label
+        url
+      }
+      id
+      createdAt
+      city
+      email
+      jobTitle
+      name {
+        firstName
+        lastName
+      }
+      phone
+      linkedinLink {
+        label
+        url
+      }
+      updatedAt
+      avatarUrl
+      companyId
     }
   }
 `;

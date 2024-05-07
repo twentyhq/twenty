@@ -1,10 +1,10 @@
 import { v4 } from 'uuid';
 
+import { FieldMetadataOption } from '@/object-metadata/types/FieldMetadataOption';
+import { getDefaultValueForBackend } from '@/object-metadata/utils/getDefaultValueForBackend';
 import { Field } from '~/generated/graphql';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
-import { FieldMetadataOption } from '../types/FieldMetadataOption';
 import { formatFieldMetadataItemInput } from '../utils/formatFieldMetadataItemInput';
 
 import { useCreateOneFieldMetadataItem } from './useCreateOneFieldMetadataItem';
@@ -17,22 +17,22 @@ export const useFieldMetadataItem = () => {
   const { deleteOneFieldMetadataItem } = useDeleteOneFieldMetadataItem();
 
   const createMetadataField = (
-    input: Pick<Field, 'label' | 'icon' | 'description' | 'defaultValue'> & {
-      defaultValue?: unknown;
+    input: Pick<
+      Field,
+      'label' | 'icon' | 'description' | 'defaultValue' | 'type' | 'options'
+    > & {
       objectMetadataId: string;
-      options?: Omit<FieldMetadataOption, 'id'>[];
-      type: FieldMetadataType;
     },
   ) => {
-    const formatedInput = formatFieldMetadataItemInput(input);
-    const defaultValue = input.defaultValue
-      ? typeof input.defaultValue == 'string'
-        ? `'${input.defaultValue}'`
-        : input.defaultValue
-      : formatedInput.defaultValue ?? undefined;
+    const formattedInput = formatFieldMetadataItemInput(input);
+
+    const defaultValue = getDefaultValueForBackend(
+      input.defaultValue ?? formattedInput.defaultValue,
+      input.type,
+    );
 
     return createOneFieldMetadataItem({
-      ...formatedInput,
+      ...formattedInput,
       defaultValue,
       objectMetadataId: input.objectMetadataId,
       type: input.type,
@@ -42,29 +42,33 @@ export const useFieldMetadataItem = () => {
   const editMetadataField = (
     input: Pick<
       Field,
-      'id' | 'label' | 'icon' | 'description' | 'defaultValue'
-    > & {
-      options?: FieldMetadataOption[];
-    },
+      | 'id'
+      | 'label'
+      | 'icon'
+      | 'description'
+      | 'defaultValue'
+      | 'type'
+      | 'options'
+    >,
   ) => {
-    const formatedInput = formatFieldMetadataItemInput(input);
-    const defaultValue = input.defaultValue
-      ? typeof input.defaultValue == 'string'
-        ? `'${input.defaultValue}'`
-        : input.defaultValue
-      : formatedInput.defaultValue ?? undefined;
+    // In Edit mode, all options need an id,
+    // so we generate an id for newly created options.
+    const inputOptions = input.options?.map((option: FieldMetadataOption) =>
+      option.id ? option : { ...option, id: v4() },
+    );
+    const formattedInput = formatFieldMetadataItemInput({
+      ...input,
+      options: inputOptions,
+    });
+
+    const defaultValue = input.defaultValue ?? formattedInput.defaultValue;
 
     return updateOneFieldMetadataItem({
       fieldMetadataIdToUpdate: input.id,
-      updatePayload: formatFieldMetadataItemInput({
-        ...input,
+      updatePayload: {
+        ...formattedInput,
         defaultValue,
-        // In Edit mode, all options need an id,
-        // so we generate an id for newly created options.
-        options: input.options?.map((option) =>
-          option.id ? option : { ...option, id: v4() },
-        ),
-      }),
+      },
     });
   };
 

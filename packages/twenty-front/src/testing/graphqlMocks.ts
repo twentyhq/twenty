@@ -12,13 +12,15 @@ import {
   mockedDuplicateCompanyData,
 } from '~/testing/mock-data/companies';
 import { mockedClientConfig } from '~/testing/mock-data/config';
+import { mockedObjectMetadataItemsQueryResult } from '~/testing/mock-data/metadata';
+import { mockedRemoteTables } from '~/testing/mock-data/remote-tables';
 import { mockedUsersData } from '~/testing/mock-data/users';
+import { mockedViewsData } from '~/testing/mock-data/views';
 import { mockWorkspaceMembers } from '~/testing/mock-data/workspace-members';
 
-import { mockedObjectMetadataItems } from './mock-data/metadata';
 import { mockedPeopleData } from './mock-data/people';
+import { mockedRemoteServers } from './mock-data/remote-servers';
 import { mockedViewFieldsData } from './mock-data/view-fields';
-import { mockedViewsData } from './mock-data/views';
 
 const metadataGraphql = graphql.link(`${REACT_APP_SERVER_BASE_URL}/metadata`);
 
@@ -49,7 +51,7 @@ export const graphqlMocks = {
       getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? '',
       () => {
         return HttpResponse.json({
-          data: { objects: mockedObjectMetadataItems },
+          data: mockedObjectMetadataItemsQueryResult,
         });
       },
     ),
@@ -312,6 +314,20 @@ export const graphqlMocks = {
               endCursor: null,
             },
           },
+        },
+      });
+    }),
+    graphql.query('GetOneDatabaseConnection', () => {
+      return HttpResponse.json({
+        data: {
+          findOneRemoteServerById: mockedRemoteServers[0],
+        },
+      });
+    }),
+    graphql.query('GetManyRemoteTables', () => {
+      return HttpResponse.json({
+        data: {
+          findAvailableRemoteTablesByServerId: mockedRemoteTables,
         },
       });
     }),

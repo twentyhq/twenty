@@ -1,8 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-
-import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
-import { CatalogStory } from '~/testing/types';
+import { CatalogDecorator, CatalogStory, ComponentDecorator } from 'twenty-ui';
 
 import { CircularProgressBar } from '../CircularProgressBar';
 

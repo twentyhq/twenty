@@ -23,4 +23,5 @@ export type FieldDefinition<T extends FieldMetadata> = {
   type: FieldMetadataType;
   metadata: T;
   infoTooltipContent?: string;
+  defaultValue?: any;
 };

@@ -17,14 +17,20 @@ import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/typ
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/constants/gmail-users-messages-get-batch-size.constant';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { SaveMessageAndEmitContactCreationEventService } from 'src/modules/messaging/services/save-message-and-emit-contact-creation-event/save-message-and-emit-contact-creation-event.service';
 import {
-  GmailFullSyncV2JobData,
-  GmailFullSyncV2Job,
-} from 'src/modules/messaging/jobs/gmail-full-sync-v2.job';
+  GmailFullSyncJobData,
+  GmailFullSyncJob,
+} from 'src/modules/messaging/jobs/gmail-full-sync.job';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { GMAIL_ONGOING_SYNC_TIMEOUT } from 'src/modules/messaging/constants/gmail-ongoing-sync-timeout.constant';
+import { MessageParticipantService } from 'src/modules/messaging/services/message-participant/message-participant.service';
+import { MessageService } from 'src/modules/messaging/services/message/message.service';
+import { ParticipantWithMessageId } from 'src/modules/messaging/types/gmail-message';
+import {
+  CreateCompanyAndContactJobData,
+  CreateCompanyAndContactJob,
+} from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
 
 @Injectable()
 export class GmailFetchMessageContentFromCacheService {
@@ -38,12 +44,13 @@ export class GmailFetchMessageContentFromCacheService {
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
     private readonly messageChannelRepository: MessageChannelRepository,
-    private readonly saveMessageAndEmitContactCreationEventService: SaveMessageAndEmitContactCreationEventService,
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
     private readonly cacheStorage: CacheStorageService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly messageService: MessageService,
+    private readonly messageParticipantService: MessageParticipantService,
   ) {}
 
   async fetchMessageContentFromCache(
@@ -63,8 +70,15 @@ export class GmailFetchMessageContentFromCacheService {
       return;
     }
 
-    const accessToken = connectedAccount.accessToken;
-    const refreshToken = connectedAccount.refreshToken;
+    const { accessToken, refreshToken, authFailedAt } = connectedAccount;
+
+    if (authFailedAt) {
+      this.logger.error(
+        `Connected account ${connectedAccountId} in workspace ${workspaceId} is in a failed state. Skipping...`,
+      );
+
+      return;
+    }
 
     if (!refreshToken) {
       throw new Error(
@@ -157,80 +171,130 @@ export class GmailFetchMessageContentFromCacheService {
         workspaceId,
       );
 
-    await workspaceDataSource
-      ?.transaction(async (transactionManager: EntityManager) => {
-        const messageQueries = createQueriesFromMessageIds(messageIdsToFetch);
+    const messageQueries = createQueriesFromMessageIds(messageIdsToFetch);
 
-        const { messages: messagesToSave, errors } =
-          await this.fetchMessagesByBatchesService.fetchAllMessages(
-            messageQueries,
-            accessToken,
-            workspaceId,
-            connectedAccountId,
-          );
-
-        if (!messagesToSave.length) {
-          await this.messageChannelRepository.updateSyncStatus(
-            gmailMessageChannelId,
-            MessageChannelSyncStatus.PENDING,
-            workspaceId,
-          );
-
-          return;
-        }
-
-        if (errors.length) {
-          const errorsCanBeIgnored = errors.every(
-            (error) => error.code === 404,
-          );
-
-          if (!errorsCanBeIgnored) {
-            throw new Error(
-              `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${JSON.stringify(
-                errors,
-                null,
-                2,
-              )}`,
-            );
-          }
-        }
-
-        await this.saveMessageAndEmitContactCreationEventService.saveMessagesAndEmitContactCreationEventWithinTransaction(
-          messagesToSave,
-          connectedAccount,
+    try {
+      const { messages: messagesToSave, errors } =
+        await this.fetchMessagesByBatchesService.fetchAllMessages(
+          messageQueries,
+          accessToken,
           workspaceId,
-          gmailMessageChannel,
-          transactionManager,
+          connectedAccountId,
         );
 
-        if (messageIdsToFetch.length < GMAIL_USERS_MESSAGES_GET_BATCH_SIZE) {
-          await this.messageChannelRepository.updateSyncStatus(
-            gmailMessageChannelId,
-            MessageChannelSyncStatus.SUCCEEDED,
+      const participantsWithMessageId = await workspaceDataSource?.transaction(
+        async (transactionManager: EntityManager) => {
+          if (!messagesToSave.length) {
+            await this.messageChannelRepository.updateSyncStatus(
+              gmailMessageChannelId,
+              MessageChannelSyncStatus.PENDING,
+              workspaceId,
+            );
+
+            return [];
+          }
+
+          if (errors.length) {
+            const errorsCanBeIgnored = errors.every(
+              (error) => error.code === 404,
+            );
+
+            if (!errorsCanBeIgnored) {
+              throw new Error(
+                `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${JSON.stringify(
+                  errors,
+                  null,
+                  2,
+                )}`,
+              );
+            }
+          }
+
+          const messageExternalIdsAndIdsMap =
+            await this.messageService.saveMessagesWithinTransaction(
+              messagesToSave,
+              connectedAccount,
+              gmailMessageChannel.id,
+              workspaceId,
+              transactionManager,
+            );
+
+          const participantsWithMessageId: (ParticipantWithMessageId & {
+            shouldCreateContact: boolean;
+          })[] = messagesToSave.flatMap((message) => {
+            const messageId = messageExternalIdsAndIdsMap.get(
+              message.externalId,
+            );
+
+            return messageId
+              ? message.participants.map((participant) => ({
+                  ...participant,
+                  messageId,
+                  shouldCreateContact:
+                    gmailMessageChannel.isContactAutoCreationEnabled &&
+                    message.participants.find((p) => p.role === 'from')
+                      ?.handle === connectedAccount.handle,
+                }))
+              : [];
+          });
+
+          await this.messageParticipantService.saveMessageParticipants(
+            participantsWithMessageId,
             workspaceId,
             transactionManager,
           );
 
-          this.logger.log(
-            `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} done with no more messages to import.`,
-          );
-        } else {
-          await this.messageChannelRepository.updateSyncStatus(
-            gmailMessageChannelId,
-            MessageChannelSyncStatus.PENDING,
-            workspaceId,
-            transactionManager,
-          );
+          if (messageIdsToFetch.length < GMAIL_USERS_MESSAGES_GET_BATCH_SIZE) {
+            await this.messageChannelRepository.updateSyncStatus(
+              gmailMessageChannelId,
+              MessageChannelSyncStatus.SUCCEEDED,
+              workspaceId,
+              transactionManager,
+            );
 
-          this.logger.log(
-            `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} done with more messages to import.`,
-          );
-        }
-      })
-      .catch(async (error) => {
-        await this.cacheStorage.setAdd(
-          `messages-to-import:${workspaceId}:gmail:${gmailMessageChannelId}`,
-          messageIdsToFetch,
+            this.logger.log(
+              `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} done with no more messages to import.`,
+            );
+          } else {
+            await this.messageChannelRepository.updateSyncStatus(
+              gmailMessageChannelId,
+              MessageChannelSyncStatus.PENDING,
+              workspaceId,
+              transactionManager,
+            );
+
+            this.logger.log(
+              `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} done with more messages to import.`,
+            );
+          }
+
+          return participantsWithMessageId;
+        },
+      );
+
+      if (gmailMessageChannel.isContactAutoCreationEnabled) {
+        const contactsToCreate = participantsWithMessageId.filter(
+          (participant) => participant.shouldCreateContact,
+        );
+
+        await this.messageQueueService.add<CreateCompanyAndContactJobData>(
+          CreateCompanyAndContactJob.name,
+          {
+            workspaceId,
+            connectedAccountHandle: connectedAccount.handle,
+            contactsToCreate,
+          },
+        );
+      }
+    } catch (error) {
+      await this.cacheStorage.setAdd(
+        `messages-to-import:${workspaceId}:gmail:${gmailMessageChannelId}`,
+        messageIdsToFetch,
+      );
+
+      if (error?.message?.code === 429) {
+        this.logger.error(
+          `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: Resource has been exhausted, locking for ${GMAIL_ONGOING_SYNC_TIMEOUT}ms...`,
         );
 
         await this.messageChannelRepository.updateSyncStatus(
@@ -242,15 +306,16 @@ export class GmailFetchMessageContentFromCacheService {
         throw new Error(
           `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
         );
-      });
+      }
+    }
   }
 
   private async fallbackToFullSync(
     workspaceId: string,
     connectedAccountId: string,
   ) {
-    await this.messageQueueService.add<GmailFullSyncV2JobData>(
-      GmailFullSyncV2Job.name,
+    await this.messageQueueService.add<GmailFullSyncJobData>(
+      GmailFullSyncJob.name,
       { workspaceId, connectedAccountId },
     );
   }

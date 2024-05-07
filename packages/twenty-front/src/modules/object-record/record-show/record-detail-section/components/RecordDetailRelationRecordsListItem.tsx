@@ -4,16 +4,17 @@ import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import {
   IconChevronDown,
+  IconComponent,
   IconDotsVertical,
   IconTrash,
   IconUnlink,
 } from 'twenty-ui';
 
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord.ts';
+import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useLazyFindOneRecord } from '@/object-record/hooks/useLazyFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import {
@@ -30,7 +31,6 @@ import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-
 import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
@@ -92,7 +92,7 @@ export const RecordDetailRelationRecordsListItem = ({
 
   const isToOneObject = relationType === 'TO_ONE_OBJECT';
   const { objectMetadataItem: relationObjectMetadataItem } =
-    useObjectMetadataItemOnly({
+    useObjectMetadataItem({
       objectNameSingular: relationObjectMetadataNameSingular,
     });
 

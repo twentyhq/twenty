@@ -2,22 +2,21 @@ import { useApolloClient } from '@apollo/client';
 import { v4 } from 'uuid';
 
 import { triggerCreateRecordsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerCreateRecordsOptimisticEffect';
-import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
-import {
-  getCreateManyRecordsMutationResponseField,
-  useGenerateCreateManyRecordMutation,
-} from '@/object-record/hooks/useGenerateCreateManyRecordMutation';
+import { getObjectTypename } from '@/object-record/cache/utils/getObjectTypename';
+import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
+import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { useCreateManyRecordsMutation } from '@/object-record/hooks/useCreateManyRecordsMutation';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { getCreateManyRecordsMutationResponseField } from '@/object-record/utils/getCreateManyRecordsMutationResponseField';
 import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { isDefined } from '~/utils/isDefined';
 
 type useCreateManyRecordsProps = {
   objectNameSingular: string;
-  queryFields?: Record<string, any>;
-  depth?: number;
+  recordGqlFields?: RecordGqlOperationGqlRecordFields;
   skipPostOptmisticEffect?: boolean;
 };
 
@@ -25,8 +24,7 @@ export const useCreateManyRecords = <
   CreatedObjectRecord extends ObjectRecord = ObjectRecord,
 >({
   objectNameSingular,
-  queryFields,
-  depth = 1,
+  recordGqlFields,
   skipPostOptmisticEffect = false,
 }: useCreateManyRecordsProps) => {
   const apolloClient = useApolloClient();
@@ -35,13 +33,15 @@ export const useCreateManyRecords = <
     objectNameSingular,
   });
 
-  const createManyRecordsMutation = useGenerateCreateManyRecordMutation({
-    objectMetadataItem,
-    queryFields,
-    depth,
+  const computedRecordGqlFields =
+    recordGqlFields ?? generateDepthOneRecordGqlFields({ objectMetadataItem });
+
+  const { createManyRecordsMutation } = useCreateManyRecordsMutation({
+    objectNameSingular,
+    recordGqlFields: computedRecordGqlFields,
   });
 
-  const createOneRecordInCache = useCreateOneRecordInCache<CachedObjectRecord>({
+  const createOneRecordInCache = useCreateOneRecordInCache<ObjectRecord>({
     objectMetadataItem,
   });
 
@@ -67,7 +67,10 @@ export const useCreateManyRecords = <
     const recordsCreatedInCache = [];
 
     for (const recordToCreate of sanitizedCreateManyRecordsInput) {
-      const recordCreatedInCache = createOneRecordInCache(recordToCreate);
+      const recordCreatedInCache = createOneRecordInCache({
+        ...recordToCreate,
+        __typename: getObjectTypename(objectMetadataItem.nameSingular),
+      });
 
       if (isDefined(recordCreatedInCache)) {
         recordsCreatedInCache.push(recordCreatedInCache);

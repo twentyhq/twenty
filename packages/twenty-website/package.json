@@ -1,15 +1,16 @@
 {
   "name": "twenty-website",
-  "version": "0.4.0",
+  "version": "0.11.1",
   "private": true,
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-website node ../../node_modules/nx/bin/nx.js",
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "database:generate:pg": "drizzle-kit generate:pg --config=src/database/postgres/drizzle-posgres.config.ts",
-    "database:generate:sqlite": "drizzle-kit generate:sqlite --config=src/database/sqlite/drizzle-sqlite.config.ts"
+    "dev": "npx next dev",
+    "build": "npx next build",
+    "start": "npx next start",
+    "lint": "npx next lint",
+    "github:sync": "npx tsx src/github-sync/github-sync.ts",
+    "database:migrate": "npx tsx src/database/migrate-database.ts",
+    "database:generate:pg": "npx drizzle-kit generate:pg --config=src/database/drizzle-posgres.config.ts"
   },
   "dependencies": {
     "postgres": "^3.4.3"

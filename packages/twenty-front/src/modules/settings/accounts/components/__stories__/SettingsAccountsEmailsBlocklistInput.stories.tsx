@@ -1,8 +1,8 @@
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
+import { ComponentDecorator } from 'twenty-ui';
 
 import { SettingsAccountsEmailsBlocklistInput } from '@/settings/accounts/components/SettingsAccountsEmailsBlocklistInput';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 const updateBlockedEmailListJestFn = fn();
 
@@ -20,6 +20,7 @@ const meta: Meta<typeof SettingsAccountsEmailsBlocklistInput> = {
   decorators: [ComponentDecorator, ClearMocksDecorator],
   args: {
     updateBlockedEmailList: updateBlockedEmailListJestFn,
+    blockedEmailOrDomainList: [],
   },
   argTypes: {
     updateBlockedEmailList: { control: false },

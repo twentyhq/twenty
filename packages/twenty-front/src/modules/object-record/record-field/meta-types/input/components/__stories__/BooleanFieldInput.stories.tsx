@@ -22,7 +22,7 @@ const BooleanFieldValueSetterEffect = ({
   const setField = useSetRecoilState(recordStoreFamilyState(entityId));
 
   useEffect(() => {
-    setField({ id: entityId, Boolean: value });
+    setField({ id: entityId, Boolean: value, __typename: 'Person' });
   }, [entityId, setField, value]);
 
   return <></>;
@@ -41,12 +41,14 @@ const BooleanFieldInputWithContext = ({
   return (
     <FieldContextProvider
       fieldDefinition={{
+        defaultValue: false,
         fieldMetadataId: 'boolean',
         label: 'Boolean',
         iconName: 'Icon123',
         type: FieldMetadataType.Boolean,
         metadata: {
           fieldName: 'Boolean',
+          objectMetadataNameSingular: 'person',
         },
       }}
       entityId={entityId}

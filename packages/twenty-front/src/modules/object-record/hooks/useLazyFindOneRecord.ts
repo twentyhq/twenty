@@ -1,13 +1,15 @@
 import { useLazyQuery } from '@apollo/client';
 
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
-import { useGenerateFindOneRecordQuery } from '@/object-record/hooks/useGenerateFindOneRecordQuery';
+import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
+import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
+import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 type UseLazyFindOneRecordParams = ObjectMetadataItemIdentifier & {
-  depth?: number;
+  recordGqlFields?: RecordGqlOperationGqlRecordFields;
 };
 
 type FindOneRecordParams<T extends ObjectRecord> = {
@@ -17,16 +19,21 @@ type FindOneRecordParams<T extends ObjectRecord> = {
 
 export const useLazyFindOneRecord = <T extends ObjectRecord = ObjectRecord>({
   objectNameSingular,
-  depth,
+  recordGqlFields,
 }: UseLazyFindOneRecordParams) => {
-  const { objectMetadataItem } = useObjectMetadataItemOnly({
+  const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
-  const findOneRecordQuery = useGenerateFindOneRecordQuery();
 
-  const [findOneRecord, { loading, error, data, called }] = useLazyQuery(
-    findOneRecordQuery({ objectMetadataItem, depth }),
-  );
+  const { findOneRecordQuery } = useFindOneRecordQuery({
+    objectNameSingular,
+    recordGqlFields:
+      recordGqlFields ??
+      generateDepthOneRecordGqlFields({ objectMetadataItem }),
+  });
+
+  const [findOneRecord, { loading, error, data, called }] =
+    useLazyQuery(findOneRecordQuery);
 
   return {
     findOneRecord: ({ objectRecordId, onCompleted }: FindOneRecordParams<T>) =>

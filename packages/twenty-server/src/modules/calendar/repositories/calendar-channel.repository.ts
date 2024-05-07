@@ -12,6 +12,45 @@ export class CalendarChannelRepository {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
+  public async getAll(
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<CalendarChannelObjectMetadata>[]> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT * FROM ${dataSourceSchema}."calendarChannel"`,
+      [],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async create(
+    calendarChannel: Pick<
+      ObjectRecord<CalendarChannelObjectMetadata>,
+      'id' | 'connectedAccountId' | 'handle' | 'visibility'
+    >,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<void> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `INSERT INTO ${dataSourceSchema}."calendarChannel" (id, "connectedAccountId", "handle", "visibility") VALUES ($1, $2, $3, $4)`,
+      [
+        calendarChannel.id,
+        calendarChannel.connectedAccountId,
+        calendarChannel.handle,
+        calendarChannel.visibility,
+      ],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async getByConnectedAccountId(
     connectedAccountId: string,
     workspaceId: string,
@@ -54,6 +93,27 @@ export class CalendarChannelRepository {
       workspaceId,
       transactionManager,
     );
+  }
+
+  public async getIdsByWorkspaceMemberId(
+    workspaceMemberId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<CalendarChannelObjectMetadata>[]> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const calendarChannelIds =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT "calendarChannel".id FROM ${dataSourceSchema}."calendarChannel" "calendarChannel"
+        JOIN ${dataSourceSchema}."connectedAccount" ON "calendarChannel"."connectedAccountId" = ${dataSourceSchema}."connectedAccount"."id"
+        WHERE ${dataSourceSchema}."connectedAccount"."accountOwnerId" = $1`,
+        [workspaceMemberId],
+        workspaceId,
+        transactionManager,
+      );
+
+    return calendarChannelIds;
   }
 
   public async updateSyncCursor(

@@ -3,6 +3,7 @@ import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metad
 
 const DEFAULT_DEPTH_VALUE = 2;
 
+// TODO: Should be properly type and based on composite type definitions
 export const mapFieldMetadataToGraphqlQuery = (
   objectMetadataItems,
   field,
@@ -19,8 +20,11 @@ export const mapFieldMetadataToGraphqlQuery = (
     FieldMetadataType.TEXT,
     FieldMetadataType.PHONE,
     FieldMetadataType.DATE_TIME,
+    FieldMetadataType.DATE,
     FieldMetadataType.EMAIL,
     FieldMetadataType.NUMBER,
+    FieldMetadataType.SELECT,
+    FieldMetadataType.RATING,
     FieldMetadataType.BOOLEAN,
     FieldMetadataType.POSITION,
   ].includes(fieldType);
@@ -86,6 +90,15 @@ export const mapFieldMetadataToGraphqlQuery = (
       {
         label
         url
+      }
+    `;
+  } else if (fieldType === FieldMetadataType.LINKS) {
+    return `
+      ${field.name}
+      {
+        primaryLinkLabel
+        primaryLinkUrl
+        secondaryLinks
       }
     `;
   } else if (fieldType === FieldMetadataType.CURRENCY) {

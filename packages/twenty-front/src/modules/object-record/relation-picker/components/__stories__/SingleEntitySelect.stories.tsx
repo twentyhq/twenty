@@ -1,9 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
-import { IconUserCircle } from 'twenty-ui';
+import { ComponentDecorator, IconUserCircle } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { RelationPickerDecorator } from '~/testing/decorators/RelationPickerDecorator';
@@ -20,7 +19,7 @@ const entities = mockedPeopleData.map<EntityForSelect>((person) => ({
   name: person.name.firstName + ' ' + person.name.lastName,
   avatarUrl: person.avatarUrl,
   avatarType: 'rounded',
-  record: person,
+  record: { ...person, __typename: 'Person' },
 }));
 
 const meta: Meta<typeof SingleEntitySelect> = {

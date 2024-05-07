@@ -11,6 +11,7 @@ import {
   AnimatedPlaceholderErrorSubTitle,
   AnimatedPlaceholderErrorTitle,
 } from '@/ui/layout/animated-placeholder/components/ErrorPlaceholderStyled';
+import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 
 const StyledBackDrop = styled.div`
   align-items: center;
@@ -36,6 +37,7 @@ export const NotFound = () => {
 
   return (
     <>
+      <PageTitle title="Page Not Found | Twenty" />
       <StyledBackDrop>
         <AnimatedPlaceholderErrorContainer>
           <AnimatedPlaceholder type="error404" />

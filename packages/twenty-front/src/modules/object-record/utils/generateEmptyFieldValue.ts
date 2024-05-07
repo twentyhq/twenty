@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const generateEmptyFieldValue = (
   fieldMetadataItem: FieldMetadataItem,
@@ -17,6 +17,9 @@ export const generateEmptyFieldValue = (
         label: '',
         url: '',
       };
+    }
+    case FieldMetadataType.Links: {
+      return { primaryLinkUrl: '', primaryLinkLabel: '' };
     }
     case FieldMetadataType.FullName: {
       return {
@@ -37,6 +40,9 @@ export const generateEmptyFieldValue = (
       };
     }
     case FieldMetadataType.DateTime: {
+      return null;
+    }
+    case FieldMetadataType.Date: {
       return null;
     }
     case FieldMetadataType.Number:
@@ -73,7 +79,10 @@ export const generateEmptyFieldValue = (
       return null;
     }
     case FieldMetadataType.MultiSelect: {
-      throw new Error('Not implemented yet');
+      return null;
+    }
+    case FieldMetadataType.RawJson: {
+      return null;
     }
     default: {
       throw new Error('Unhandled FieldMetadataType');

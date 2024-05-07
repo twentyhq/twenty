@@ -1,4 +1,4 @@
-import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
+import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { mockedCompaniesData } from '~/testing/mock-data/companies';
 import { mockObjectMetadataItem } from '~/testing/mock-data/objectMetadataItems';
 
@@ -161,7 +161,7 @@ describe('isRecordMatchingFilter', () => {
 
   describe('Complex And/Or/Not Nesting', () => {
     it('matches record with a combination of and + or filters', () => {
-      const filter: ObjectRecordQueryFilter = {
+      const filter: RecordGqlOperationFilter = {
         and: [
           { domainName: { eq: 'airbnb.com' } },
           {
@@ -191,7 +191,7 @@ describe('isRecordMatchingFilter', () => {
     });
 
     it('matches record with nested not filter', () => {
-      const filter: ObjectRecordQueryFilter = {
+      const filter: RecordGqlOperationFilter = {
         not: {
           and: [
             { name: { eq: 'Airbnb' } },
@@ -218,7 +218,7 @@ describe('isRecordMatchingFilter', () => {
     });
 
     it('matches record with deep nesting of and, or, and not filters', () => {
-      const filter: ObjectRecordQueryFilter = {
+      const filter: RecordGqlOperationFilter = {
         and: [
           { domainName: { eq: 'apple.com' } },
           {
@@ -245,7 +245,7 @@ describe('isRecordMatchingFilter', () => {
     });
 
     it('matches record with and filter at root level', () => {
-      const filter: ObjectRecordQueryFilter = {
+      const filter: RecordGqlOperationFilter = {
         and: [
           { name: { eq: 'Facebook' } },
           { idealCustomerProfile: { eq: true } },
@@ -270,7 +270,7 @@ describe('isRecordMatchingFilter', () => {
     });
 
     it('matches record with or filter at root level including a not condition', () => {
-      const filter: ObjectRecordQueryFilter = {
+      const filter: RecordGqlOperationFilter = {
         or: [{ name: { eq: 'Sequoia' } }, { not: { employees: { eq: 1 } } }],
       };
 

@@ -1,13 +1,45 @@
-import React from 'react';
 import ReactDatePicker from 'react-datepicker';
 import styled from '@emotion/styled';
-import { IconCalendarX } from 'twenty-ui';
+import { DateTime } from 'luxon';
+import { Key } from 'ts-key-enum';
+import { IconCalendarX, IconChevronLeft, IconChevronRight } from 'twenty-ui';
 
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
+import { Select } from '@/ui/input/components/Select';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
 import { StyledHoverableMenuItemBase } from '@/ui/navigation/menu-item/internals/components/StyledMenuItemBase';
 import { OVERLAY_BACKGROUND } from '@/ui/theme/constants/OverlayBackground';
+import { isDefined } from '~/utils/isDefined';
 
 import 'react-datepicker/dist/react-datepicker.css';
+
+export const months = [
+  { label: 'January', value: 0 },
+  { label: 'February', value: 1 },
+  { label: 'March', value: 2 },
+  { label: 'April', value: 3 },
+  { label: 'May', value: 4 },
+  { label: 'June', value: 5 },
+  { label: 'July', value: 6 },
+  { label: 'August', value: 7 },
+  { label: 'September', value: 8 },
+  { label: 'October', value: 9 },
+  { label: 'November', value: 10 },
+  { label: 'December', value: 11 },
+];
+
+export const years = Array.from(
+  { length: 200 },
+  (_, i) => new Date().getFullYear() + 5 - i,
+).map((year) => ({ label: year.toString(), value: year }));
+
+export const MONTH_AND_YEAR_DROPDOWN_ID = 'date-picker-month-and-year-dropdown';
+export const MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID =
+  'date-picker-month-and-year-dropdown-month-select';
+export const MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID =
+  'date-picker-month-and-year-dropdown-year-select';
 
 const StyledContainer = styled.div`
   & .react-datepicker {
@@ -27,6 +59,10 @@ const StyledContainer = styled.div`
     padding: 0 !important;
   }
 
+  & .react-datepicker__triangle {
+    display: none;
+  }
+
   & .react-datepicker__triangle::after {
     display: none;
   }
@@ -44,13 +80,21 @@ const StyledContainer = styled.div`
   & .react-datepicker__header {
     background: transparent;
     border: none;
+    padding: 0;
+  }
+
+  &
+    .react-datepicker__input-time-container
+    .react-datepicker-time__input-container
+    .react-datepicker-time__input {
+    outline: none;
   }
 
   & .react-datepicker__header__dropdown {
     display: flex;
     color: ${({ theme }) => theme.font.color.primary};
     margin-left: ${({ theme }) => theme.spacing(1)};
-    margin-bottom: ${({ theme }) => theme.spacing(1)};
+    margin-bottom: ${({ theme }) => theme.spacing(10)};
   }
 
   & .react-datepicker__month-dropdown-container,
@@ -176,7 +220,7 @@ const StyledContainer = styled.div`
   }
   & .react-datepicker__navigation--previous {
     right: 38px;
-    top: 8px;
+    top: 6px;
     left: auto;
 
     & > span {
@@ -186,7 +230,7 @@ const StyledContainer = styled.div`
 
   & .react-datepicker__navigation--next {
     right: 6px;
-    top: 8px;
+    top: 6px;
 
     & > span {
       margin-left: 6px;
@@ -211,7 +255,7 @@ const StyledContainer = styled.div`
 
   & .react-datepicker__day--selected {
     background-color: ${({ theme }) => theme.color.blue};
-    color: ${({ theme }) => theme.font.color.inverted};
+    color: ${({ theme }) => theme.grayScale.gray0};
   }
 
   & .react-datepicker__day--outside-month {
@@ -228,53 +272,192 @@ const StyledContainer = styled.div`
 `;
 
 const StyledButtonContainer = styled(StyledHoverableMenuItemBase)`
-  width: auto;
-  height: ${({ theme }) => theme.spacing(8)};
-  padding: 0 ${({ theme }) => theme.spacing(2)};
+  height: ${({ theme }) => theme.spacing(4)};
   margin: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(1)};
+  width: auto;
 `;
 
 const StyledButton = styled(MenuItemLeftContent)`
-  justify-content: center;
+  justify-content: start;
+`;
+
+const StyledCustomDatePickerHeader = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: flex-end;
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(2)};
+  padding-top: ${({ theme }) => theme.spacing(2)};
+
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
 
 export type InternalDatePickerProps = {
-  date: Date | null;
+  date: Date;
   onMouseSelect?: (date: Date | null) => void;
-  onChange?: (date: Date) => void;
+  onChange?: (date: Date | null) => void;
   clearable?: boolean;
+  isDateTimeInput?: boolean;
+  onEnter?: (date: Date | null) => void;
+  onEscape?: (date: Date | null) => void;
+  keyboardEventsDisabled?: boolean;
+  onClear?: () => void;
 };
 
 export const InternalDatePicker = ({
   date,
   onChange,
   onMouseSelect,
+  onEnter,
+  onEscape,
   clearable = true,
+  isDateTimeInput,
+  keyboardEventsDisabled,
+  onClear,
 }: InternalDatePickerProps) => {
+  const internalDate = date ?? new Date();
+
+  const { closeDropdown } = useDropdown(MONTH_AND_YEAR_DROPDOWN_ID);
+  const { closeDropdown: closeDropdownMonthSelect } = useDropdown(
+    MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID,
+  );
+  const { closeDropdown: closeDropdownYearSelect } = useDropdown(
+    MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID,
+  );
+
   const handleClear = () => {
-    onMouseSelect?.(null);
+    closeDropdowns();
+    onClear?.();
+  };
+
+  const closeDropdowns = () => {
+    closeDropdownYearSelect();
+    closeDropdownMonthSelect();
+    closeDropdown();
+  };
+
+  const handleMouseSelect = (newDate: Date) => {
+    closeDropdowns();
+    onMouseSelect?.(newDate);
+  };
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (isDefined(keyboardEventsDisabled) && keyboardEventsDisabled) {
+      return;
+    }
+
+    switch (event.key) {
+      case Key.Enter: {
+        event.stopPropagation();
+        event.preventDefault();
+
+        closeDropdowns();
+        onEnter?.(internalDate);
+        break;
+      }
+      case Key.Escape: {
+        event.stopPropagation();
+        event.preventDefault();
+
+        closeDropdowns();
+        onEscape?.(internalDate);
+        break;
+      }
+    }
+  };
+
+  const handleChangeMonth = (month: number) => {
+    const newDate = new Date(date);
+    newDate.setMonth(month);
+    onChange?.(newDate);
+  };
+
+  const handleChangeYear = (year: number) => {
+    const newDate = new Date(date);
+    newDate.setFullYear(year);
+    onChange?.(newDate);
   };
 
   return (
-    <StyledContainer>
+    <StyledContainer onKeyDown={handleKeyDown}>
       <div className={clearable ? 'clearable ' : ''}>
         <ReactDatePicker
           open={true}
-          selected={date}
-          showMonthDropdown
-          showYearDropdown
-          onChange={() => {
-            // We need to use onSelect here but onChange is almost redundant with onSelect but is require
+          selected={internalDate}
+          openToDate={internalDate}
+          onChange={(newDate) => {
+            onChange?.(newDate);
           }}
-          customInput={<></>}
+          customInput={
+            <DateTimeInput
+              date={internalDate}
+              isDateTimeInput={isDateTimeInput}
+              onChange={onChange}
+            />
+          }
+          onMonthChange={(newDate) => {
+            onChange?.(newDate);
+          }}
+          onYearChange={(newDate) => {
+            onChange?.(newDate);
+          }}
+          renderCustomHeader={({
+            decreaseMonth,
+            increaseMonth,
+            prevMonthButtonDisabled,
+            nextMonthButtonDisabled,
+          }) => (
+            <>
+              <DateTimeInput
+                date={internalDate}
+                isDateTimeInput={isDateTimeInput}
+                onChange={onChange}
+              />
+              <StyledCustomDatePickerHeader>
+                <Select
+                  dropdownId={MONTH_AND_YEAR_DROPDOWN_MONTH_SELECT_ID}
+                  options={months}
+                  disableBlur
+                  onChange={handleChangeMonth}
+                  value={date.getMonth()}
+                  fullWidth
+                />
+                <Select
+                  dropdownId={MONTH_AND_YEAR_DROPDOWN_YEAR_SELECT_ID}
+                  onChange={handleChangeYear}
+                  value={date.getFullYear()}
+                  options={years}
+                  disableBlur
+                  fullWidth
+                />
+                <LightIconButton
+                  Icon={IconChevronLeft}
+                  onClick={() => decreaseMonth()}
+                  size="medium"
+                  disabled={prevMonthButtonDisabled}
+                />
+                <LightIconButton
+                  Icon={IconChevronRight}
+                  onClick={() => increaseMonth()}
+                  size="medium"
+                  disabled={nextMonthButtonDisabled}
+                />
+              </StyledCustomDatePickerHeader>
+            </>
+          )}
           onSelect={(date: Date, event) => {
+            const dateUTC = DateTime.fromJSDate(date, {
+              zone: 'utc',
+            }).toJSDate();
+
             if (event?.type === 'click') {
-              onMouseSelect?.(date);
+              handleMouseSelect?.(dateUTC);
             } else {
-              onChange?.(date);
+              onChange?.(dateUTC);
             }
           }}
-        ></ReactDatePicker>
+        />
       </div>
       {clearable && (
         <StyledButtonContainer onClick={handleClear} isMenuOpen={false}>

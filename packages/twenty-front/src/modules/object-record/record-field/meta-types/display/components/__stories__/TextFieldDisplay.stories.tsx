@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { Meta, StoryObj } from '@storybook/react';
+import { ComponentDecorator } from 'twenty-ui';
 
 import { FieldMetadataType } from '~/generated/graphql';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 
 import { FieldContext } from '../../../../contexts/FieldContext';
 import { useTextField } from '../../../hooks/useTextField';
@@ -34,6 +34,7 @@ const meta: Meta = {
             metadata: {
               fieldName: 'Text',
               placeHolder: 'Text',
+              objectMetadataNameSingular: 'person',
             },
           },
           hotkeyScope: 'hotkey-scope',

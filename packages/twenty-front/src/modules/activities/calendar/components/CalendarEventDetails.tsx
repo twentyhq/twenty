@@ -1,20 +1,22 @@
+import React from 'react';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconCalendarEvent } from 'twenty-ui';
-
-import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
-import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import {
   Chip,
   ChipAccent,
   ChipSize,
   ChipVariant,
-} from '@/ui/display/chip/components/Chip';
+  IconCalendarEvent,
+} from 'twenty-ui';
+
+import { CalendarEventParticipantsResponseStatus } from '@/activities/calendar/components/CalendarEventParticipantsResponseStatus';
+import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { formatFieldMetadataItemAsFieldDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsFieldDefinition';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
+import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
+import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
@@ -30,6 +32,8 @@ const StyledContainer = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(6)};
   padding: ${({ theme }) => theme.spacing(6)};
+  width: 100%;
+  box-sizing: border-box;
 `;
 
 const StyledEventChip = styled(Chip)`
@@ -60,18 +64,20 @@ const StyledFields = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
+  width: 100%;
 `;
 
 const StyledPropertyBox = styled(PropertyBox)`
   height: ${({ theme }) => theme.spacing(6)};
   padding: 0;
+  width: 100%;
 `;
 
 export const CalendarEventDetails = ({
   calendarEvent,
 }: CalendarEventDetailsProps) => {
   const theme = useTheme();
-  const { objectMetadataItem } = useObjectMetadataItemOnly({
+  const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.CalendarEvent,
   });
 
@@ -87,6 +93,31 @@ export const CalendarEventDetails = ({
     objectMetadataItem.fields,
     ({ name }) => name,
   );
+
+  const { calendarEventParticipants } = calendarEvent;
+
+  const Fields = fieldsToDisplay.map((fieldName) => (
+    <StyledPropertyBox key={fieldName}>
+      <FieldContext.Provider
+        value={{
+          entityId: calendarEvent.id,
+          hotkeyScope: 'calendar-event-details',
+          recoilScopeId: `${calendarEvent.id}-${fieldName}`,
+          isLabelIdentifier: false,
+          fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
+            field: fieldsByName[fieldName],
+            objectMetadataItem,
+            showLabel: true,
+            labelWidth: 72,
+          }),
+          useUpdateRecord: () => [() => undefined, { loading: false }],
+          maxWidth: 300,
+        }}
+      >
+        <RecordInlineCell readonly />
+      </FieldContext.Provider>
+    </StyledPropertyBox>
+  ));
 
   return (
     <StyledContainer>
@@ -110,27 +141,13 @@ export const CalendarEventDetails = ({
         </StyledCreatedAt>
       </StyledHeader>
       <StyledFields>
-        {fieldsToDisplay.map((fieldName) => (
-          <StyledPropertyBox key={fieldName}>
-            <FieldContext.Provider
-              value={{
-                entityId: calendarEvent.id,
-                hotkeyScope: 'calendar-event-details',
-                recoilScopeId: `${calendarEvent.id}-${fieldName}`,
-                isLabelIdentifier: false,
-                fieldDefinition: formatFieldMetadataItemAsFieldDefinition({
-                  field: fieldsByName[fieldName],
-                  objectMetadataItem,
-                  showLabel: true,
-                  labelWidth: 72,
-                }),
-                useUpdateRecord: () => [() => undefined, { loading: false }],
-              }}
-            >
-              <RecordInlineCell readonly />
-            </FieldContext.Provider>
-          </StyledPropertyBox>
-        ))}
+        {Fields.slice(0, 2)}
+        {calendarEventParticipants && (
+          <CalendarEventParticipantsResponseStatus
+            participants={calendarEventParticipants}
+          />
+        )}
+        {Fields.slice(2)}
       </StyledFields>
     </StyledContainer>
   );

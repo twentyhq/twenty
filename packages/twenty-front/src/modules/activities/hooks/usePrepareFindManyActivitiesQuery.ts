@@ -1,10 +1,10 @@
 import { useApolloClient } from '@apollo/client';
 
-import { FIND_MANY_ACTIVITIES_QUERY_KEY } from '@/activities/query-keys/FindManyActivitiesQueryKey';
+import { findActivitiesOperationSignatureFactory } from '@/activities/graphql/operation-signatures/factories/findActivitiesOperationSignatureFactory';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
@@ -16,12 +16,12 @@ import { isDefined } from '~/utils/isDefined';
 
 export const usePrepareFindManyActivitiesQuery = () => {
   const { objectMetadataItem: objectMetadataItemActivity } =
-    useObjectMetadataItemOnly({
+    useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.Activity,
     });
 
   const getActivityFromCache = useGetRecordFromCache({
-    objectMetadataItem: objectMetadataItemActivity,
+    objectNameSingular: CoreObjectNameSingular.Activity,
   });
 
   const cache = useApolloClient().cache;
@@ -97,12 +97,13 @@ export const usePrepareFindManyActivitiesQuery = () => {
     };
 
     const filteredActivities = [
-      ...activities.filter(
-        (activity) => !shouldActivityBeExcluded?.(activity) ?? true,
-      ),
+      ...activities.filter((activity) => !shouldActivityBeExcluded?.(activity)),
     ].sort((a, b) => {
       return a.createdAt > b.createdAt ? -1 : 1;
     });
+
+    const FIND_ACTIVITIES_OPERATION_SIGNATURE =
+      findActivitiesOperationSignatureFactory({ objectMetadataItems });
 
     upsertFindManyActivitiesInCache({
       objectRecordsToOverwrite: filteredActivities,
@@ -110,9 +111,7 @@ export const usePrepareFindManyActivitiesQuery = () => {
         ...nextFindManyActivitiesQueryFilter,
         orderBy: { createdAt: 'DescNullsFirst' },
       },
-      depth: FIND_MANY_ACTIVITIES_QUERY_KEY.depth,
-      queryFields:
-        FIND_MANY_ACTIVITIES_QUERY_KEY.fieldsFactory?.(objectMetadataItems),
+      recordGqlFields: FIND_ACTIVITIES_OPERATION_SIGNATURE.fields,
       computeReferences: true,
     });
   };

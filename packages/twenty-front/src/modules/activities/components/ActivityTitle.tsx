@@ -12,7 +12,7 @@ import { activityTitleHasBeenSetFamilyState } from '@/activities/states/activity
 import { canCreateActivityState } from '@/activities/states/canCreateActivityState';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -111,7 +111,7 @@ export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
   );
 
   const { objectMetadataItem: objectMetadataItemActivity } =
-    useObjectMetadataItemOnly({
+    useObjectMetadataItem({
       objectNameSingular: CoreObjectNameSingular.Activity,
     });
 
@@ -134,6 +134,7 @@ export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
         ...currentActivity,
         id: activity.id,
         title: newTitle,
+        __typename: activity.__typename,
       };
     });
 

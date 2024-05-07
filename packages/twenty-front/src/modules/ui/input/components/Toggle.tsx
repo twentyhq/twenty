@@ -10,6 +10,7 @@ type ContainerProps = {
   isOn: boolean;
   color?: string;
   toggleSize: ToggleSize;
+  disabled?: boolean;
 };
 
 const StyledContainer = styled.div<ContainerProps>`
@@ -22,6 +23,8 @@ const StyledContainer = styled.div<ContainerProps>`
   height: ${({ toggleSize }) => (toggleSize === 'small' ? 16 : 20)}px;
   transition: background-color 0.3s ease;
   width: ${({ toggleSize }) => (toggleSize === 'small' ? 24 : 32)}px;
+  opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
+  pointer-events: ${({ disabled }) => (disabled ? 'none' : 'auto')};
 `;
 
 const StyledCircle = styled(motion.div)<{
@@ -39,6 +42,7 @@ export type ToggleProps = {
   color?: string;
   toggleSize?: ToggleSize;
   className?: string;
+  disabled?: boolean;
 };
 
 export const Toggle = ({
@@ -47,6 +51,7 @@ export const Toggle = ({
   color,
   toggleSize = 'medium',
   className,
+  disabled,
 }: ToggleProps) => {
   const [isOn, setIsOn] = useState(value ?? false);
 
@@ -77,6 +82,7 @@ export const Toggle = ({
       color={color}
       toggleSize={toggleSize}
       className={className}
+      disabled={disabled}
     >
       <StyledCircle
         animate={isOn ? 'on' : 'off'}

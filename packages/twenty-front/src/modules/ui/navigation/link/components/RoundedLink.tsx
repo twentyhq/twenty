@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Link as ReactLink } from 'react-router-dom';
 import styled from '@emotion/styled';
-
-import { Chip, ChipSize, ChipVariant } from '@/ui/display/chip/components/Chip';
+import { Chip, ChipSize, ChipVariant } from 'twenty-ui';
 
 type RoundedLinkProps = {
   href: string;
@@ -22,12 +21,17 @@ const StyledClickable = styled.div`
   }
 `;
 
+const StyledChip = styled(Chip)`
+  box-sizing: border-box;
+  padding: ${({ theme }) => theme.spacing(2)};
+`;
+
 export const RoundedLink = ({ children, href, onClick }: RoundedLinkProps) => (
   <div>
     {children !== '' ? (
       <StyledClickable>
         <ReactLink target="_blank" to={href} onClick={onClick}>
-          <Chip
+          <StyledChip
             label={`${children}`}
             variant={ChipVariant.Rounded}
             size={ChipSize.Small}

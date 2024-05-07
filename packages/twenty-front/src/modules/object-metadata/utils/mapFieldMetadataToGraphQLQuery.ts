@@ -2,7 +2,10 @@ import { isUndefined } from '@sniptt/guards';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
+import {
+  FieldMetadataType,
+  RelationMetadataType,
+} from '~/generated-metadata/graphql';
 
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 
@@ -10,8 +13,7 @@ import { FieldMetadataItem } from '../types/FieldMetadataItem';
 export const mapFieldMetadataToGraphQLQuery = ({
   objectMetadataItems,
   field,
-  depth = 0,
-  queryFields,
+  relationrecordFields,
   computeReferences = false,
 }: {
   objectMetadataItems: ObjectMetadataItem[];
@@ -19,34 +21,34 @@ export const mapFieldMetadataToGraphQLQuery = ({
     FieldMetadataItem,
     'name' | 'type' | 'toRelationMetadata' | 'fromRelationMetadata'
   >;
-  depth?: number;
-  queryFields?: Record<string, any>;
+  relationrecordFields?: Record<string, any>;
   computeReferences?: boolean;
 }): any => {
   const fieldType = field.type;
 
-  const fieldIsSimpleValue = (
-    [
-      'UUID',
-      'TEXT',
-      'PHONE',
-      'DATE_TIME',
-      'EMAIL',
-      'NUMBER',
-      'BOOLEAN',
-      'RATING',
-      'SELECT',
-      'POSITION',
-      'RAW_JSON',
-    ] as FieldMetadataType[]
-  ).includes(fieldType);
+  const fieldIsSimpleValue = [
+    FieldMetadataType.Uuid,
+    FieldMetadataType.Text,
+    FieldMetadataType.Phone,
+    FieldMetadataType.DateTime,
+    FieldMetadataType.Date,
+    FieldMetadataType.Email,
+    FieldMetadataType.Number,
+    FieldMetadataType.Boolean,
+    FieldMetadataType.Rating,
+    FieldMetadataType.Select,
+    FieldMetadataType.MultiSelect,
+    FieldMetadataType.Position,
+    FieldMetadataType.RawJson,
+  ].includes(fieldType);
 
   if (fieldIsSimpleValue) {
     return field.name;
-  } else if (
-    fieldType === 'RELATION' &&
-    field.toRelationMetadata?.relationType === 'ONE_TO_MANY' &&
-    depth > 0
+  }
+
+  if (
+    fieldType === FieldMetadataType.Relation &&
+    field.toRelationMetadata?.relationType === RelationMetadataType.OneToMany
   ) {
     const relationMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
@@ -62,15 +64,15 @@ export const mapFieldMetadataToGraphQLQuery = ({
 ${mapObjectMetadataToGraphQLQuery({
   objectMetadataItems,
   objectMetadataItem: relationMetadataItem,
-  depth: depth - 1,
-  queryFields,
+  recordGqlFields: relationrecordFields,
   computeReferences: computeReferences,
   isRootLevel: false,
 })}`;
-  } else if (
-    fieldType === 'RELATION' &&
-    field.fromRelationMetadata?.relationType === 'ONE_TO_MANY' &&
-    depth > 0
+  }
+
+  if (
+    fieldType === FieldMetadataType.Relation &&
+    field.fromRelationMetadata?.relationType === RelationMetadataType.OneToMany
   ) {
     const relationMetadataItem = objectMetadataItems.find(
       (objectMetadataItem) =>
@@ -88,33 +90,49 @@ ${mapObjectMetadataToGraphQLQuery({
     node ${mapObjectMetadataToGraphQLQuery({
       objectMetadataItems,
       objectMetadataItem: relationMetadataItem,
-      depth: depth - 1,
-      queryFields,
+      recordGqlFields: relationrecordFields,
       computeReferences,
       isRootLevel: false,
     })}
   }
 }`;
-  } else if (fieldType === 'LINK') {
+  }
+
+  if (fieldType === FieldMetadataType.Link) {
     return `${field.name}
 {
   label
   url
 }`;
-  } else if (fieldType === 'CURRENCY') {
+  }
+
+  if (fieldType === FieldMetadataType.Links) {
+    return `${field.name}
+{
+  primaryLinkUrl
+  primaryLinkLabel
+  secondaryLinks
+}`;
+  }
+
+  if (fieldType === FieldMetadataType.Currency) {
     return `${field.name}
 {
   amountMicros
   currencyCode
 }
     `;
-  } else if (fieldType === 'FULL_NAME') {
+  }
+
+  if (fieldType === FieldMetadataType.FullName) {
     return `${field.name}
 {
   firstName
   lastName
 }`;
-  } else if (fieldType === 'ADDRESS') {
+  }
+
+  if (fieldType === FieldMetadataType.Address) {
     return `${field.name}
 {
   addressStreet1

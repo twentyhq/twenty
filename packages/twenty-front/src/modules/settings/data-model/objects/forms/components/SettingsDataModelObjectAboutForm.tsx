@@ -3,6 +3,7 @@ import styled from '@emotion/styled';
 import { z } from 'zod';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { validateMetadataLabel } from '@/object-metadata/utils/validateMetadataLabel';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -92,7 +93,11 @@ export const SettingsDataModelObjectAboutForm = ({
                 label={label}
                 placeholder={placeholder}
                 value={value}
-                onChange={onChange}
+                onChange={(value) => {
+                  if (!value || validateMetadataLabel(value)) {
+                    onChange?.(value);
+                  }
+                }}
                 disabled={disabled}
                 fullWidth
               />

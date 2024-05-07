@@ -1,7 +1,7 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { ComponentDecorator } from 'twenty-ui';
 
 import { Calendar } from '@/activities/calendar/components/Calendar';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 

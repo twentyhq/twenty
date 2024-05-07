@@ -16,10 +16,7 @@ import {
   DeleteConnectedAccountAssociatedMessagingDataJob,
 } from 'src/modules/messaging/jobs/delete-connected-account-associated-messaging-data.job';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @Injectable()
 export class MessagingConnectedAccountListener {
@@ -36,13 +33,7 @@ export class MessagingConnectedAccountListener {
   async handleDeletedEvent(
     payload: ObjectRecordDeleteEvent<ConnectedAccountObjectMetadata>,
   ) {
-    const isCalendarEnabled = await this.featureFlagRepository.findOneBy({
-      workspaceId: payload.workspaceId,
-      key: FeatureFlagKeys.IsCalendarEnabled,
-      value: true,
-    });
-
-    this.messageQueueService.add<DeleteConnectedAccountAssociatedMessagingDataJobData>(
+    await this.messageQueueService.add<DeleteConnectedAccountAssociatedMessagingDataJobData>(
       DeleteConnectedAccountAssociatedMessagingDataJob.name,
       {
         workspaceId: payload.workspaceId,
@@ -50,14 +41,12 @@ export class MessagingConnectedAccountListener {
       },
     );
 
-    if (isCalendarEnabled) {
-      this.calendarQueueService.add<DeleteConnectedAccountAssociatedCalendarDataJobData>(
-        DeleteConnectedAccountAssociatedCalendarDataJob.name,
-        {
-          workspaceId: payload.workspaceId,
-          connectedAccountId: payload.recordId,
-        },
-      );
-    }
+    await this.calendarQueueService.add<DeleteConnectedAccountAssociatedCalendarDataJobData>(
+      DeleteConnectedAccountAssociatedCalendarDataJob.name,
+      {
+        workspaceId: payload.workspaceId,
+        connectedAccountId: payload.recordId,
+      },
+    );
   }
 }

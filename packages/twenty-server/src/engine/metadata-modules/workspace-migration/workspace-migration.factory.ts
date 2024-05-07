@@ -5,14 +5,13 @@ import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metada
 import { WorkspaceColumnActionOptions } from 'src/engine/metadata-modules/workspace-migration/interfaces/workspace-column-action-options.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { BasicColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/basic-column-action.factory';
-import { EnumColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/enum-column-action.factory';
 import {
   WorkspaceMigrationColumnAction,
   WorkspaceMigrationColumnActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
-import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
-import { compositeDefinitions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { BasicColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/basic-column-action.factory';
+import { EnumColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/enum-column-action.factory';
+import { CompositeColumnActionFactory } from 'src/engine/metadata-modules/workspace-migration/factories/composite-column-action.factory';
 
 @Injectable()
 export class WorkspaceMigrationFactory {
@@ -28,6 +27,7 @@ export class WorkspaceMigrationFactory {
   constructor(
     private readonly basicColumnActionFactory: BasicColumnActionFactory,
     private readonly enumColumnActionFactory: EnumColumnActionFactory,
+    private readonly compositeColumnActionFactory: CompositeColumnActionFactory,
   ) {
     this.factoriesMap = new Map<
       FieldMetadataType,
@@ -74,12 +74,27 @@ export class WorkspaceMigrationFactory {
       ],
       [FieldMetadataType.BOOLEAN, { factory: this.basicColumnActionFactory }],
       [FieldMetadataType.DATE_TIME, { factory: this.basicColumnActionFactory }],
+      [FieldMetadataType.DATE, { factory: this.basicColumnActionFactory }],
       [FieldMetadataType.RATING, { factory: this.enumColumnActionFactory }],
       [FieldMetadataType.SELECT, { factory: this.enumColumnActionFactory }],
       [
         FieldMetadataType.MULTI_SELECT,
         { factory: this.enumColumnActionFactory },
       ],
+      [FieldMetadataType.LINK, { factory: this.compositeColumnActionFactory }],
+      [
+        FieldMetadataType.CURRENCY,
+        { factory: this.compositeColumnActionFactory },
+      ],
+      [
+        FieldMetadataType.ADDRESS,
+        { factory: this.compositeColumnActionFactory },
+      ],
+      [
+        FieldMetadataType.FULL_NAME,
+        { factory: this.compositeColumnActionFactory },
+      ],
+      [FieldMetadataType.LINKS, { factory: this.compositeColumnActionFactory }],
     ]);
   }
 
@@ -119,41 +134,13 @@ export class WorkspaceMigrationFactory {
       throw new Error(`No field metadata provided for action ${action}`);
     }
 
-    // If it's a composite field type, we need to create a column action for each of the fields
-    if (isCompositeFieldMetadataType(alteredFieldMetadata.type)) {
-      const fieldMetadataSplitterFunction = compositeDefinitions.get(
-        alteredFieldMetadata.type,
-      );
-
-      if (!fieldMetadataSplitterFunction) {
-        this.logger.error(
-          `No composite definition found for type ${alteredFieldMetadata.type}`,
-          {
-            alteredFieldMetadata,
-          },
-        );
-
-        throw new Error(
-          `No composite definition found for type ${alteredFieldMetadata.type}`,
-        );
-      }
-
-      const fieldMetadataCollection =
-        fieldMetadataSplitterFunction(alteredFieldMetadata);
-
-      return fieldMetadataCollection.map((fieldMetadata) =>
-        this.createColumnAction(action, fieldMetadata, fieldMetadata),
-      );
-    }
-
-    // Otherwise, we create a single column action
-    const columnAction = this.createColumnAction(
+    const columnActions = this.createColumnAction(
       action,
       currentFieldMetadata,
       alteredFieldMetadata,
     );
 
-    return [columnAction];
+    return columnActions;
   }
 
   private createColumnAction(
@@ -162,7 +149,7 @@ export class WorkspaceMigrationFactory {
       | WorkspaceMigrationColumnActionType.ALTER,
     currentFieldMetadata: FieldMetadataInterface | undefined,
     alteredFieldMetadata: FieldMetadataInterface,
-  ): WorkspaceMigrationColumnAction {
+  ): WorkspaceMigrationColumnAction[] {
     const { factory, options } =
       this.factoriesMap.get(alteredFieldMetadata.type) ?? {};
 

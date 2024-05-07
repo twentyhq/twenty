@@ -1,15 +1,16 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "outDir": "../../.cache/tsc",
     "target": "ES2022",
     "useDefineForClassFields": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/options/modules/*"],
-      "~/*": ["src/*"]
+      "@/*": ["packages/twenty-chrome-extension/src/options/modules/*"],
+      "~/*": ["packages/twenty-chrome-extension/src/*"]
     },
 
     /* Bundler mode */

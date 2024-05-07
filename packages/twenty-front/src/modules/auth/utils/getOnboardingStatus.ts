@@ -22,7 +22,7 @@ export const getOnboardingStatus = ({
   isLoggedIn: boolean;
   currentWorkspaceMember: Omit<
     WorkspaceMember,
-    'createdAt' | 'updatedAt' | 'userId' | 'userEmail'
+    'createdAt' | 'updatedAt' | 'userId' | 'userEmail' | '__typename'
   > | null;
   currentWorkspace: CurrentWorkspace | null;
   isBillingEnabled?: boolean;

@@ -4,6 +4,7 @@ import { MockedProvider } from '@apollo/client/testing';
 import { expect } from '@storybook/test';
 import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilValue } from 'recoil';
+import { iconsState } from 'twenty-ui';
 
 import { useAuth } from '@/auth/hooks/useAuth';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
@@ -12,7 +13,6 @@ import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { telemetryState } from '@/client-config/states/telemetryState';
-import { iconsState } from '@/ui/display/icon/states/iconsState';
 
 import { email, mocks, password, results, token } from '../__mocks__/useAuth';
 
@@ -116,8 +116,9 @@ describe('useAuth', () => {
     expect(state.icons).toEqual({});
     expect(state.authProviders).toEqual({
       google: false,
+      microsoft: false,
       magicLink: false,
-      password: true,
+      password: false,
     });
     expect(state.billing).toBeNull();
     expect(state.isSignInPrefilled).toBe(false);

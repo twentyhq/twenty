@@ -23,9 +23,12 @@ const commonFieldPropertiesToIgnore = [
   'objectMetadataId',
   'isActive',
   'options',
+  'settings',
+  'joinColumn',
+  'gate',
 ];
 
-const fieldPropertiesToStringify = ['targetColumnMap', 'defaultValue'] as const;
+const fieldPropertiesToStringify = ['defaultValue'] as const;
 
 @Injectable()
 export class WorkspaceFieldComparator {
@@ -73,7 +76,7 @@ export class WorkspaceFieldComparator {
       standardObjectMetadata.fields,
       {
         shouldIgnoreProperty: (property, originalMetadata) => {
-          if (['options', 'gate'].includes(property)) {
+          if (commonFieldPropertiesToIgnore.includes(property)) {
             return true;
           }
 

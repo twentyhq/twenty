@@ -4,7 +4,7 @@ import qs from 'qs';
 import { useRecoilValue } from 'recoil';
 import { IconForbid, IconPencil, IconPlus } from 'twenty-ui';
 
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
@@ -42,7 +42,7 @@ export const RecordDetailRelationSection = () => {
   const record = useRecoilValue(recordStoreFamilyState(entityId));
 
   const { objectMetadataItem: relationObjectMetadataItem } =
-    useObjectMetadataItemOnly({
+    useObjectMetadataItem({
       objectNameSingular: relationObjectMetadataNameSingular,
     });
 
@@ -62,6 +62,7 @@ export const RecordDetailRelationSection = () => {
     fieldValue && isToOneObject
       ? [fieldValue as ObjectRecord]
       : (fieldValue as ObjectRecord[]) ?? [];
+
   const relationRecordIds = relationRecords.map(({ id }) => id);
 
   const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}`;

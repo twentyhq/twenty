@@ -21,7 +21,9 @@ const InternalLinkItem = styled(Link)`
   color: #b3b3b3;
   &:hover {
     color: ${Theme.text.color.quarternary};
+    text-decoration: underline;
   }
+  font-family: var(--font-gabarito);
 `;
 
 const ExternalLinkItem = styled.a`
@@ -32,6 +34,7 @@ const ExternalLinkItem = styled.a`
 const ActivePage = styled.span`
   color: ${Theme.text.color.primary};
   font-weight: ${Theme.font.weight.medium};
+  font-family: var(--font-gabarito);
 `;
 
 const StyledSection = styled.div`

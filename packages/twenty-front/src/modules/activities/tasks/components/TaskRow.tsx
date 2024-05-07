@@ -1,13 +1,15 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconCalendar, IconComment } from 'twenty-ui';
+import {
+  IconCalendar,
+  IconComment,
+  OverflowingTextWithTooltip,
+} from 'twenty-ui';
 
-import { ActivityTargetChips } from '@/activities/components/ActivityTargetChips';
-import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
+import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { Activity } from '@/activities/types/Activity';
 import { getActivitySummary } from '@/activities/utils/getActivitySummary';
-import { OverflowingTextWithTooltip } from '@/ui/display/tooltip/OverflowingTextWithTooltip';
 import { Checkbox, CheckboxShape } from '@/ui/input/components/Checkbox';
 import { beautifyExactDate, hasDatePassed } from '~/utils/date-utils';
 
@@ -15,7 +17,7 @@ import { useCompleteTask } from '../hooks/useCompleteTask';
 
 const StyledContainer = styled.div`
   align-items: center;
-  align-self: stretch;
+  justify-content: space-between;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   cursor: pointer;
   display: inline-flex;
@@ -31,9 +33,6 @@ const StyledContainer = styled.div`
 const StyledTaskBody = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
-  flex-direction: row;
-  flex-grow: 1;
-  width: 1px;
 `;
 
 const StyledTaskTitle = styled.div<{
@@ -61,14 +60,23 @@ const StyledDueDate = styled.div<{
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(2)};
+  white-space: nowrap;
 `;
 
-const StyledFieldsContainer = styled.div`
+const StyledRightSideContainer = styled.div`
   display: flex;
 `;
 
 const StyledPlaceholder = styled.div`
   color: ${({ theme }) => theme.font.color.light};
+`;
+
+const StyledLeftSideContainer = styled.div`
+  display: flex;
+`;
+
+const StyledCheckboxContainer = styled.div`
+  display: flex;
 `;
 
 export const TaskRow = ({ task }: { task: Activity }) => {
@@ -78,39 +86,42 @@ export const TaskRow = ({ task }: { task: Activity }) => {
   const body = getActivitySummary(task.body);
   const { completeTask } = useCompleteTask(task);
 
-  const { activityTargetObjectRecords } = useActivityTargetObjectRecords(task);
-
   return (
     <StyledContainer
       onClick={() => {
         openActivityRightDrawer(task.id);
       }}
     >
-      <div
-        onClick={(e) => {
-          e.stopPropagation();
-        }}
-      >
-        <Checkbox
-          checked={!!task.completedAt}
-          shape={CheckboxShape.Rounded}
-          onCheckedChange={completeTask}
-        />
-      </div>
-      <StyledTaskTitle completed={task.completedAt !== null}>
-        {task.title || <StyledPlaceholder>Task title</StyledPlaceholder>}
-      </StyledTaskTitle>
-      <StyledTaskBody>
-        <OverflowingTextWithTooltip text={body} />
-        {task.comments && task.comments.length > 0 && (
-          <StyledCommentIcon>
-            <IconComment size={theme.icon.size.md} />
-          </StyledCommentIcon>
-        )}
-      </StyledTaskBody>
-      <StyledFieldsContainer>
-        <ActivityTargetChips
-          activityTargetObjectRecords={activityTargetObjectRecords}
+      <StyledLeftSideContainer>
+        <StyledCheckboxContainer
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          <Checkbox
+            checked={!!task.completedAt}
+            shape={CheckboxShape.Rounded}
+            onCheckedChange={completeTask}
+          />
+        </StyledCheckboxContainer>
+        <StyledTaskTitle completed={task.completedAt !== null}>
+          {task.title || <StyledPlaceholder>Task title</StyledPlaceholder>}
+        </StyledTaskTitle>
+        <StyledTaskBody>
+          <OverflowingTextWithTooltip text={body} />
+          {task.comments && task.comments.length > 0 && (
+            <StyledCommentIcon>
+              <IconComment size={theme.icon.size.md} />
+            </StyledCommentIcon>
+          )}
+        </StyledTaskBody>
+      </StyledLeftSideContainer>
+      <StyledRightSideContainer>
+        <ActivityTargetsInlineCell
+          activity={task}
+          showLabel={false}
+          maxWidth={200}
+          readonly
         />
         <StyledDueDate
           isPast={
@@ -120,7 +131,7 @@ export const TaskRow = ({ task }: { task: Activity }) => {
           <IconCalendar size={theme.icon.size.md} />
           {task.dueAt && beautifyExactDate(task.dueAt)}
         </StyledDueDate>
-      </StyledFieldsContainer>
+      </StyledRightSideContainer>
     </StyledContainer>
   );
 };

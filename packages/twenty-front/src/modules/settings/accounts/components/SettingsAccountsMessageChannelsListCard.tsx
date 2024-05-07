@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { IconChevronRight } from 'twenty-ui';
+import { IconChevronRight, IconGmail } from 'twenty-ui';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { MessageChannel } from '@/accounts/types/MessageChannel';
@@ -14,7 +14,6 @@ import {
   SettingsAccountsSynchronizationStatusProps,
 } from '@/settings/accounts/components/SettingsAccountsSynchronizationStatus';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { IconGmail } from '@/ui/display/icon/components/IconGmail';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 
 const StyledRowRightContainer = styled.div`
@@ -56,9 +55,7 @@ export const SettingsAccountsMessageChannelsListCard = () => {
   } & SettingsAccountsSynchronizationStatusProps)[] = messageChannels.map(
     (messageChannel) => ({
       ...messageChannel,
-      syncStatus: messageChannel.connectedAccount?.authFailedAt
-        ? 'failed'
-        : 'synced',
+      syncStatus: messageChannel.syncStatus,
     }),
   );
 
@@ -79,6 +76,7 @@ export const SettingsAccountsMessageChannelsListCard = () => {
         <StyledRowRightContainer>
           <SettingsAccountsSynchronizationStatus
             syncStatus={messageChannel.syncStatus}
+            isSyncEnabled={messageChannel.isSyncEnabled}
           />
           <LightIconButton Icon={IconChevronRight} accent="tertiary" />
         </StyledRowRightContainer>

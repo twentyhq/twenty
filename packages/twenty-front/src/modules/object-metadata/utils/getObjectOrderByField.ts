@@ -1,14 +1,14 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { OrderBy } from '@/object-metadata/types/OrderBy';
-import { OrderByField } from '@/object-metadata/types/OrderByField';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
+import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
-export const getObjectOrderByField = (
+export const getOrderByFieldForObjectMetadataItem = (
   objectMetadataItem: ObjectMetadataItem,
   orderBy?: OrderBy | null,
-): OrderByField => {
+): RecordGqlOperationOrderBy => {
   const labelIdentifierFieldMetadata =
     getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 

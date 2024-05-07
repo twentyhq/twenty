@@ -6,7 +6,7 @@ import differenceWith from 'lodash.differencewith';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
-import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/getFlattenedValuesAndValuesStringForBatchRawQuery.util';
+import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/get-flattened-values-and-values-string-for-batch-raw-query.util';
 import {
   CalendarEventParticipant,
   CalendarEventParticipantWithId,
@@ -17,6 +17,88 @@ export class CalendarEventParticipantRepository {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
+
+  public async getByHandles(
+    handles: string[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<CalendarEventParticipantObjectMetadata>[]> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT * FROM ${dataSourceSchema}."calendarEventParticipant" WHERE "handle" = ANY($1)`,
+      [handles],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async updateParticipantsPersonId(
+    participantIds: string[],
+    personId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."calendarEventParticipant" SET "personId" = $1 WHERE "id" = ANY($2)`,
+      [personId, participantIds],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async updateParticipantsWorkspaceMemberId(
+    participantIds: string[],
+    workspaceMemberId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."calendarEventParticipant" SET "workspaceMemberId" = $1 WHERE "id" = ANY($2)`,
+      [workspaceMemberId, participantIds],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async removePersonIdByHandle(
+    handle: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."calendarEventParticipant" SET "personId" = NULL WHERE "handle" = $1`,
+      [handle],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async removeWorkspaceMemberIdByHandle(
+    handle: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."calendarEventParticipant" SET "workspaceMemberId" = NULL WHERE "handle" = $1`,
+      [handle],
+      workspaceId,
+      transactionManager,
+    );
+  }
 
   public async getByIds(
     calendarEventParticipantIds: string[],
@@ -78,23 +160,22 @@ export class CalendarEventParticipantRepository {
     );
   }
 
-  public async updateCalendarEventParticipants(
+  public async updateCalendarEventParticipantsAndReturnNewOnes(
     calendarEventParticipants: CalendarEventParticipant[],
-    iCalUIDCalendarEventIdMap: Map<string, string>,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<void> {
+  ): Promise<CalendarEventParticipant[]> {
     if (calendarEventParticipants.length === 0) {
-      return;
+      return [];
     }
 
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const calendarEventIds = Array.from(iCalUIDCalendarEventIdMap.values());
-
     const existingCalendarEventParticipants = await this.getByCalendarEventIds(
-      calendarEventIds,
+      calendarEventParticipants.map(
+        (calendarEventParticipant) => calendarEventParticipant.calendarEventId,
+      ),
       workspaceId,
       transactionManager,
     );
@@ -107,6 +188,14 @@ export class CalendarEventParticipantRepository {
         calendarEventParticipant.handle,
     );
 
+    const newCalendarEventParticipants = differenceWith(
+      calendarEventParticipants,
+      existingCalendarEventParticipants,
+      (calendarEventParticipant, existingCalendarEventParticipant) =>
+        calendarEventParticipant.handle ===
+        existingCalendarEventParticipant.handle,
+    );
+
     await this.deleteByIds(
       calendarEventParticipantsToDelete.map(
         (calendarEventParticipant) => calendarEventParticipant.id,
@@ -115,23 +204,17 @@ export class CalendarEventParticipantRepository {
       transactionManager,
     );
 
-    const values = calendarEventParticipants.map(
-      (calendarEventParticipant) => ({
-        ...calendarEventParticipant,
-        calendarEventId: iCalUIDCalendarEventIdMap.get(
-          calendarEventParticipant.iCalUID,
-        ),
-      }),
-    );
-
     const { flattenedValues, valuesString } =
-      getFlattenedValuesAndValuesStringForBatchRawQuery(values, {
-        calendarEventId: 'uuid',
-        handle: 'text',
-        displayName: 'text',
-        isOrganizer: 'boolean',
-        responseStatus: `${dataSourceSchema}."calendarEventParticipant_responsestatus_enum"`,
-      });
+      getFlattenedValuesAndValuesStringForBatchRawQuery(
+        calendarEventParticipants,
+        {
+          calendarEventId: 'uuid',
+          handle: 'text',
+          displayName: 'text',
+          isOrganizer: 'boolean',
+          responseStatus: `${dataSourceSchema}."calendarEventParticipant_responseStatus_enum"`,
+        },
+      );
 
     await this.workspaceDataSourceService.executeRawQuery(
       `UPDATE ${dataSourceSchema}."calendarEventParticipant" AS "calendarEventParticipant"
@@ -145,6 +228,8 @@ export class CalendarEventParticipantRepository {
       workspaceId,
       transactionManager,
     );
+
+    return newCalendarEventParticipants;
   }
 
   public async getWithoutPersonIdAndWorkspaceMemberId(
@@ -165,6 +250,35 @@ export class CalendarEventParticipantRepository {
         WHERE "calendarEventParticipant"."personId" IS NULL
         AND "calendarEventParticipant"."workspaceMemberId" IS NULL`,
         [],
+        workspaceId,
+        transactionManager,
+      );
+
+    return calendarEventParticipants;
+  }
+
+  public async getByCalendarChannelIdWithoutPersonIdAndWorkspaceMemberId(
+    calendarChannelId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<CalendarEventParticipantWithId[]> {
+    if (!workspaceId) {
+      throw new Error('WorkspaceId is required');
+    }
+
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const calendarEventParticipants: CalendarEventParticipantWithId[] =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT "calendarEventParticipant".*
+        FROM ${dataSourceSchema}."calendarEventParticipant" AS "calendarEventParticipant"
+        LEFT JOIN ${dataSourceSchema}."calendarEvent" AS "calendarEvent" ON "calendarEventParticipant"."calendarEventId" = "calendarEvent"."id"
+        LEFT JOIN ${dataSourceSchema}."calendarChannelEventAssociation" AS "calendarChannelEventAssociation" ON "calendarEvent"."id" = "calendarChannelEventAssociation"."calendarEventId"
+        WHERE "calendarChannelEventAssociation"."calendarChannelId" = $1
+        AND "calendarEventParticipant"."personId" IS NULL
+        AND "calendarEventParticipant"."workspaceMemberId" IS NULL`,
+        [calendarChannelId],
         workspaceId,
         transactionManager,
       );

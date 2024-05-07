@@ -15,8 +15,7 @@ export enum WorkspaceHealthIssueType {
   MISSING_FOREIGN_KEY = 'MISSING_FOREIGN_KEY',
   MISSING_COMPOSITE_TYPE = 'MISSING_COMPOSITE_TYPE',
   COLUMN_NAME_SHOULD_NOT_BE_PREFIXED = 'COLUMN_NAME_SHOULD_NOT_BE_PREFIXED',
-  COLUMN_TARGET_COLUMN_MAP_NOT_VALID = 'COLUMN_TARGET_COLUMN_MAP_NOT_VALID',
-  COLUMN_NAME_SHOULD_BE_CUSTOM = 'COLUMN_NAME_SHOULD_BE_CUSTOM',
+  COLUMN_NAME_SHOULD_NOT_BE_CUSTOM = 'COLUMN_NAME_SHOULD_NOT_BE_CUSTOM',
   COLUMN_OBJECT_REFERENCE_INVALID = 'COLUMN_OBJECT_REFERENCE_INVALID',
   COLUMN_NAME_NOT_VALID = 'COLUMN_NAME_NOT_VALID',
   COLUMN_TYPE_NOT_VALID = 'COLUMN_TYPE_NOT_VALID',
@@ -58,8 +57,7 @@ export type WorkspaceColumnIssueTypes =
   | WorkspaceHealthIssueType.MISSING_FOREIGN_KEY
   | WorkspaceHealthIssueType.MISSING_COMPOSITE_TYPE
   | WorkspaceHealthIssueType.COLUMN_NAME_SHOULD_NOT_BE_PREFIXED
-  | WorkspaceHealthIssueType.COLUMN_TARGET_COLUMN_MAP_NOT_VALID
-  | WorkspaceHealthIssueType.COLUMN_NAME_SHOULD_BE_CUSTOM
+  | WorkspaceHealthIssueType.COLUMN_NAME_SHOULD_NOT_BE_CUSTOM
   | WorkspaceHealthIssueType.COLUMN_OBJECT_REFERENCE_INVALID
   | WorkspaceHealthIssueType.COLUMN_NAME_NOT_VALID
   | WorkspaceHealthIssueType.COLUMN_TYPE_NOT_VALID
@@ -75,6 +73,7 @@ export interface WorkspaceHealthColumnIssue<
   type: T;
   fieldMetadata: FieldMetadataEntity;
   columnStructure?: WorkspaceTableStructure;
+  columnStructures?: WorkspaceTableStructure[];
   message: string;
 }
 

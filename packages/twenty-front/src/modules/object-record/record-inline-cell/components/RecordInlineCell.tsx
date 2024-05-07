@@ -1,4 +1,5 @@
 import { useContext } from 'react';
+import { useIcons } from 'twenty-ui';
 
 import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
 import { FieldInput } from '@/object-record/record-field/components/FieldInput';
@@ -9,7 +10,6 @@ import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFie
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
 
 import { useInlineCell } from '../hooks/useInlineCell';
 
@@ -92,6 +92,7 @@ export const RecordInlineCell = ({ readonly }: RecordInlineCellProps) => {
           onTab={handleTab}
           onShiftTab={handleShiftTab}
           onClickOutside={handleClickOutside}
+          isReadOnly={readonly}
         />
       }
       displayModeContent={<FieldDisplay />}

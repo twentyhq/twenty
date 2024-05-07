@@ -1,3 +1,5 @@
+var path = require('path');
+
 module.exports = {
   extends: [
     'plugin:@nx/react',
@@ -26,6 +28,11 @@ module.exports = {
                 importNames: ['useHotkeys'],
                 message:
                   'Please use the custom wrapper: `useScopedHotkeys` from `twenty-ui`',
+              },
+              {
+                group: ['lodash'],
+                message:
+                  "Please use the standalone lodash package (for instance: `import groupBy from 'lodash.groupby'` instead of `import { groupBy } from 'lodash'`)",
               },
             ],
           },
@@ -72,7 +79,9 @@ module.exports = {
       rules: {
         'storybook/no-uninstalled-addons': [
           'error',
-          { packageJsonLocation: '../../package.json' },
+          {
+            packageJsonLocation: path.resolve(__dirname, './package.json'),
+          },
         ],
       },
     },

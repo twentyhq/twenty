@@ -1,6 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
+import isEmpty from 'lodash.isempty';
 import { v4 } from 'uuid';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 
@@ -12,10 +17,16 @@ import {
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { encryptText } from 'src/engine/core-modules/auth/auth.util';
 import {
-  validateObject,
-  validateString,
-} from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-input';
-import { ForeignDataWrapperQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/foreign-data-wrapper-query.factory';
+  validateObjectAgainstInjections,
+  validateStringAgainstInjections,
+} from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-input.utils';
+import { ForeignDataWrapperServerQueryFactory } from 'src/engine/api/graphql/workspace-query-builder/factories/foreign-data-wrapper-server-query.factory';
+import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
+import { UpdateRemoteServerInput } from 'src/engine/metadata-modules/remote-server/dtos/update-remote-server.input';
+import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { buildUpdateRemoteServerRawQuery } from 'src/engine/metadata-modules/remote-server/utils/build-update-remote-server-raw-query.utils';
+import { validateRemoteServerType } from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-type.util';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @Injectable()
 export class RemoteServerService<T extends RemoteServerType> {
@@ -27,18 +38,24 @@ export class RemoteServerService<T extends RemoteServerType> {
     @InjectDataSource('metadata')
     private readonly metadataDataSource: DataSource,
     private readonly environmentService: EnvironmentService,
-    private readonly foreignDataWrapperQueryFactory: ForeignDataWrapperQueryFactory,
+    private readonly foreignDataWrapperServerQueryFactory: ForeignDataWrapperServerQueryFactory,
+    private readonly remoteTableService: RemoteTableService,
+    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
-  async createOneRemoteServer(
+  public async createOneRemoteServer(
     remoteServerInput: CreateRemoteServerInput<T>,
     workspaceId: string,
   ): Promise<RemoteServerEntity<RemoteServerType>> {
-    validateObject(remoteServerInput.foreignDataWrapperOptions);
+    this.validateRemoteServerInputAgainstInjections(remoteServerInput);
 
-    if (remoteServerInput.userMappingOptions) {
-      validateObject(remoteServerInput.userMappingOptions);
-    }
+    validateRemoteServerType(
+      remoteServerInput.foreignDataWrapperType,
+      this.featureFlagRepository,
+      workspaceId,
+    );
 
     const foreignDataWrapperId = v4();
 
@@ -49,30 +66,26 @@ export class RemoteServerService<T extends RemoteServerType> {
     };
 
     if (remoteServerInput.userMappingOptions) {
-      const key = this.environmentService.get('LOGIN_TOKEN_SECRET');
-      const encryptedPassword = await encryptText(
-        remoteServerInput.userMappingOptions.password,
-        key,
-      );
-
       remoteServerToCreate = {
         ...remoteServerToCreate,
         userMappingOptions: {
           ...remoteServerInput.userMappingOptions,
-          password: encryptedPassword,
+          password: this.encryptPassword(
+            remoteServerInput.userMappingOptions.password,
+          ),
         },
       };
     }
 
     return this.metadataDataSource.transaction(
       async (entityManager: EntityManager) => {
-        const createdRemoteServer = await entityManager.create(
+        const createdRemoteServer = entityManager.create(
           RemoteServerEntity,
           remoteServerToCreate,
         );
 
         const foreignDataWrapperQuery =
-          this.foreignDataWrapperQueryFactory.createForeignDataWrapper(
+          this.foreignDataWrapperServerQueryFactory.createForeignDataWrapperServer(
             createdRemoteServer.foreignDataWrapperId,
             remoteServerInput.foreignDataWrapperType,
             remoteServerInput.foreignDataWrapperOptions,
@@ -82,7 +95,7 @@ export class RemoteServerService<T extends RemoteServerType> {
 
         if (remoteServerInput.userMappingOptions) {
           const userMappingQuery =
-            this.foreignDataWrapperQueryFactory.createUserMapping(
+            this.foreignDataWrapperServerQueryFactory.createUserMapping(
               createdRemoteServer.foreignDataWrapperId,
               remoteServerInput.userMappingOptions,
             );
@@ -97,11 +110,94 @@ export class RemoteServerService<T extends RemoteServerType> {
     );
   }
 
-  async deleteOneRemoteServer(
+  public async updateOneRemoteServer(
+    remoteServerInput: UpdateRemoteServerInput<T>,
+    workspaceId: string,
+  ): Promise<RemoteServerEntity<RemoteServerType>> {
+    this.validateRemoteServerInputAgainstInjections(remoteServerInput);
+
+    const remoteServer = await this.findOneByIdWithinWorkspace(
+      remoteServerInput.id,
+      workspaceId,
+    );
+
+    if (!remoteServer) {
+      throw new NotFoundException('Remote server does not exist');
+    }
+
+    const currentRemoteTablesForServer =
+      await this.remoteTableService.findCurrentRemoteTablesByServerId({
+        remoteServerId: remoteServer.id,
+        workspaceId,
+      });
+
+    if (currentRemoteTablesForServer.length > 0) {
+      throw new ForbiddenException(
+        'Cannot update remote server with synchronized tables',
+      );
+    }
+
+    const foreignDataWrapperId = remoteServer.foreignDataWrapperId;
+
+    let partialRemoteServerWithUpdates = {
+      ...remoteServerInput,
+      workspaceId,
+      foreignDataWrapperId,
+    };
+
+    if (partialRemoteServerWithUpdates?.userMappingOptions?.password) {
+      partialRemoteServerWithUpdates = {
+        ...partialRemoteServerWithUpdates,
+        userMappingOptions: {
+          ...partialRemoteServerWithUpdates.userMappingOptions,
+          password: this.encryptPassword(
+            partialRemoteServerWithUpdates.userMappingOptions.password,
+          ),
+        },
+      };
+    }
+
+    return this.metadataDataSource.transaction(
+      async (entityManager: EntityManager) => {
+        const updatedRemoteServer = await this.updateRemoteServer(
+          partialRemoteServerWithUpdates,
+        );
+
+        if (
+          !isEmpty(partialRemoteServerWithUpdates.foreignDataWrapperOptions)
+        ) {
+          const foreignDataWrapperQuery =
+            this.foreignDataWrapperServerQueryFactory.updateForeignDataWrapperServer(
+              {
+                foreignDataWrapperId,
+                foreignDataWrapperOptions:
+                  partialRemoteServerWithUpdates.foreignDataWrapperOptions,
+              },
+            );
+
+          await entityManager.query(foreignDataWrapperQuery);
+        }
+
+        if (!isEmpty(partialRemoteServerWithUpdates.userMappingOptions)) {
+          const userMappingQuery =
+            this.foreignDataWrapperServerQueryFactory.updateUserMapping(
+              foreignDataWrapperId,
+              partialRemoteServerWithUpdates.userMappingOptions,
+            );
+
+          await entityManager.query(userMappingQuery);
+        }
+
+        return updatedRemoteServer;
+      },
+    );
+  }
+
+  public async deleteOneRemoteServer(
     id: string,
     workspaceId: string,
   ): Promise<RemoteServerEntity<RemoteServerType>> {
-    validateString(id);
+    validateStringAgainstInjections(id);
 
     const remoteServer = await this.remoteServerRepository.findOne({
       where: {
@@ -111,8 +207,10 @@ export class RemoteServerService<T extends RemoteServerType> {
     });
 
     if (!remoteServer) {
-      throw new NotFoundException('Object does not exist');
+      throw new NotFoundException('Remote server does not exist');
     }
+
+    await this.remoteTableService.unsyncAll(workspaceId, remoteServer);
 
     return this.metadataDataSource.transaction(
       async (entityManager: EntityManager) => {
@@ -145,5 +243,41 @@ export class RemoteServerService<T extends RemoteServerType> {
         workspaceId,
       },
     });
+  }
+
+  private encryptPassword(password: string) {
+    const key = this.environmentService.get('LOGIN_TOKEN_SECRET');
+
+    return encryptText(password, key);
+  }
+
+  private async updateRemoteServer(
+    remoteServerToUpdate: DeepPartial<RemoteServerEntity<RemoteServerType>> &
+      Pick<RemoteServerEntity<RemoteServerType>, 'workspaceId' | 'id'>,
+  ): Promise<RemoteServerEntity<RemoteServerType>> {
+    const [parameters, rawQuery] =
+      buildUpdateRemoteServerRawQuery(remoteServerToUpdate);
+
+    const updateResult = await this.workspaceDataSourceService.executeRawQuery(
+      rawQuery,
+      parameters,
+      remoteServerToUpdate.workspaceId,
+    );
+
+    return updateResult[0][0];
+  }
+
+  private validateRemoteServerInputAgainstInjections(
+    remoteServerInput: CreateRemoteServerInput<T> | UpdateRemoteServerInput<T>,
+  ) {
+    if (remoteServerInput.foreignDataWrapperOptions) {
+      validateObjectAgainstInjections(
+        remoteServerInput.foreignDataWrapperOptions,
+      );
+    }
+
+    if (remoteServerInput.userMappingOptions) {
+      validateObjectAgainstInjections(remoteServerInput.userMappingOptions);
+    }
   }
 }

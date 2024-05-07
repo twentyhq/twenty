@@ -32,6 +32,7 @@ import { AuthorizeApp } from 'src/engine/core-modules/auth/dto/authorize-app.ent
 import { AuthorizeAppInput } from 'src/engine/core-modules/auth/dto/authorize-app.input';
 import { ExchangeAuthCodeInput } from 'src/engine/core-modules/auth/dto/exchange-auth-code.input';
 import { ExchangeAuthCode } from 'src/engine/core-modules/auth/dto/exchange-auth-code.entity';
+import { CaptchaGuard } from 'src/engine/integrations/captcha/captcha.guard';
 
 import { ApiKeyToken, AuthTokens } from './dto/token.entity';
 import { TokenService } from './services/token.service';
@@ -58,6 +59,7 @@ export class AuthResolver {
     private userWorkspaceService: UserWorkspaceService,
   ) {}
 
+  @UseGuards(CaptchaGuard)
   @Query(() => UserExists)
   async checkUserExists(
     @Args() checkUserExistsInput: CheckUserExistsInput,
@@ -87,6 +89,7 @@ export class AuthResolver {
     });
   }
 
+  @UseGuards(CaptchaGuard)
   @Mutation(() => LoginToken)
   async challenge(@Args() challengeInput: ChallengeInput): Promise<LoginToken> {
     const user = await this.authService.challenge(challengeInput);
@@ -95,13 +98,28 @@ export class AuthResolver {
     return { loginToken };
   }
 
+  @UseGuards(CaptchaGuard)
   @Mutation(() => LoginToken)
   async signUp(@Args() signUpInput: SignUpInput): Promise<LoginToken> {
-    const user = await this.authService.signUp(signUpInput);
+    const user = await this.authService.signInUp({
+      ...signUpInput,
+      fromSSO: false,
+    });
 
     const loginToken = await this.tokenService.generateLoginToken(user.email);
 
     return { loginToken };
+  }
+
+  @Mutation(() => ExchangeAuthCode)
+  async exchangeAuthorizationCode(
+    @Args() exchangeAuthCodeInput: ExchangeAuthCodeInput,
+  ) {
+    const tokens = await this.tokenService.verifyAuthorizationCode(
+      exchangeAuthCodeInput,
+    );
+
+    return tokens;
   }
 
   @Mutation(() => TransientToken)
@@ -147,17 +165,6 @@ export class AuthResolver {
     );
 
     return authorizedApp;
-  }
-
-  @Query(() => ExchangeAuthCode)
-  async exchangeAuthorizationCode(
-    @Args() exchangeAuthCodeInput: ExchangeAuthCodeInput,
-  ) {
-    const tokens = await this.tokenService.verifyAuthorizationCode(
-      exchangeAuthCodeInput,
-    );
-
-    return tokens;
   }
 
   @Mutation(() => AuthTokens)

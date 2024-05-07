@@ -12,7 +12,10 @@ export const DesktopNav = styled.nav`
   align-items: center;
   overflow: visible;
   padding: 12px 16px 12px 16px;
-  position: relative;
+  position: fixed;
+  width: 100%;
+  background-color: white;
+  z-index: 4;
   transform-origin: 50% 50% 0px;
   border-bottom: 1px solid rgba(20, 20, 20, 0.08);
 
@@ -28,7 +31,10 @@ export const MobileNav = styled.nav`
   align-items: center;
   overflow: visible;
   padding: 0 12px;
-  position: relative;
+  position: fixed;
+  width: 100%;
+  background-color: white;
+  z-index: 4;
   transform-origin: 50% 50% 0px;
   border-bottom: 1px solid rgba(20, 20, 20, 0.08);
   height: 64px;
@@ -95,6 +101,8 @@ export const StyledButton = styled.div`
   border: none;
   outline: inherit;
   cursor: pointer;
+  max-width: fit-content;
+  font-family: var(--font-gabarito);
 `;
 
 export const CallToActionContainer = styled.div`

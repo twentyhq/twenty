@@ -7,6 +7,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
+import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { prefillRecord } from '@/object-record/utils/prefillRecord';
 import { capitalize } from '~/utils/string/capitalize';
@@ -17,7 +18,7 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
   objectMetadataItem: ObjectMetadataItem;
 }) => {
   const getRecordFromCache = useGetRecordFromCache({
-    objectMetadataItem,
+    objectNameSingular: objectMetadataItem.nameSingular,
   });
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const apolloClient = useApolloClient();
@@ -32,13 +33,15 @@ export const useCreateOneRecordInCache = <T extends ObjectRecord>({
             objectMetadataItems,
             objectMetadataItem,
             computeReferences: true,
+            recordGqlFields: generateDepthOneRecordGqlFields({
+              objectMetadataItem,
+            }),
           })}
         `;
 
     const prefilledRecord = prefillRecord({
       objectMetadataItem,
       input: record,
-      depth: 1,
     });
 
     const recordToCreateWithNestedConnections = getRecordNodeFromRecord({

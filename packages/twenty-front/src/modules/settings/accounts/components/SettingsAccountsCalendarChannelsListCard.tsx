@@ -1,12 +1,14 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { IconChevronRight } from 'twenty-ui';
+import { IconChevronRight, IconGoogleCalendar } from 'twenty-ui';
 
 import { CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { generateDepthOneRecordGqlFields } from '@/object-record/graphql/utils/generateDepthOneRecordGqlFields';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsAccountsListEmptyStateCard } from '@/settings/accounts/components/SettingsAccountsListEmptyStateCard';
 import {
@@ -14,7 +16,6 @@ import {
   SettingsAccountsSynchronizationStatusProps,
 } from '@/settings/accounts/components/SettingsAccountsSynchronizationStatus';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
-import { IconGoogleCalendar } from '@/ui/display/icon/components/IconGoogleCalendar';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 
 const StyledRowRightContainer = styled.div`
@@ -26,6 +27,9 @@ const StyledRowRightContainer = styled.div`
 export const SettingsAccountsCalendarChannelsListCard = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const navigate = useNavigate();
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: CoreObjectNameSingular.CalendarChannel,
+  });
 
   const { records: accounts, loading: accountsLoading } =
     useFindManyRecords<ConnectedAccount>({
@@ -50,6 +54,7 @@ export const SettingsAccountsCalendarChannelsListCard = () => {
           in: accounts.map((account) => account.id),
         },
       },
+      recordGqlFields: generateDepthOneRecordGqlFields({ objectMetadataItem }),
     });
 
   if (!calendarChannels.length) {
@@ -62,10 +67,8 @@ export const SettingsAccountsCalendarChannelsListCard = () => {
     (calendarChannel) => ({
       ...calendarChannel,
       syncStatus: calendarChannel.connectedAccount?.authFailedAt
-        ? 'failed'
-        : calendarChannel.isSyncEnabled
-          ? 'synced'
-          : 'notSynced',
+        ? 'FAILED'
+        : 'SUCCEEDED',
     }),
   );
 
@@ -82,6 +85,7 @@ export const SettingsAccountsCalendarChannelsListCard = () => {
         <StyledRowRightContainer>
           <SettingsAccountsSynchronizationStatus
             syncStatus={calendarChannel.syncStatus}
+            isSyncEnabled={calendarChannel.isSyncEnabled}
           />
           <LightIconButton Icon={IconChevronRight} accent="tertiary" />
         </StyledRowRightContainer>

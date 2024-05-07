@@ -4,29 +4,32 @@ import { useQuery } from '@apollo/client';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
-import { getFindDuplicateRecordsQueryResponseField } from '@/object-record/hooks/useGenerateFindDuplicateRecordsQuery';
+import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
+import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/RecordGqlOperationFindManyResult';
+import { useFindDuplicateRecordsQuery } from '@/object-record/hooks/useFindDuplicatesRecordsQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { ObjectRecordConnection } from '@/object-record/types/ObjectRecordConnection';
+import { getFindDuplicateRecordsQueryResponseField } from '@/object-record/utils/getFindDuplicateRecordsQueryResponseField';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { logError } from '~/utils/logError';
-
-import { ObjectRecordQueryResult } from '../types/ObjectRecordQueryResult';
 
 export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
   objectRecordId = '',
   objectNameSingular,
   onCompleted,
-  depth,
 }: ObjectMetadataItemIdentifier & {
   objectRecordId: string | undefined;
-  onCompleted?: (data: ObjectRecordConnection<T>) => void;
+  onCompleted?: (data: RecordGqlConnection) => void;
   skip?: boolean;
-  depth?: number;
 }) => {
   const findDuplicateQueryStateIdentifier = objectNameSingular;
 
-  const { objectMetadataItem, findDuplicateRecordsQuery } =
-    useObjectMetadataItem({ objectNameSingular }, depth);
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
+  const { findDuplicateRecordsQuery } = useFindDuplicateRecordsQuery({
+    objectNameSingular,
+  });
 
   const { enqueueSnackBar } = useSnackBar();
 
@@ -34,7 +37,7 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
     objectMetadataItem.nameSingular,
   );
 
-  const { data, loading, error } = useQuery<ObjectRecordQueryResult<T>>(
+  const { data, loading, error } = useQuery<RecordGqlOperationFindManyResult>(
     findDuplicateRecordsQuery,
     {
       variables: {

@@ -3,44 +3,37 @@ import { useRecoilValue } from 'recoil';
 
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { MAX_QUERY_DEPTH_FOR_CACHE_INJECTION } from '@/object-record/cache/constants/MaxQueryDepthForCacheInjection';
 import { getRecordConnectionFromRecords } from '@/object-record/cache/utils/getRecordConnectionFromRecords';
-import { useGenerateFindManyRecordsQuery } from '@/object-record/hooks/useGenerateFindManyRecordsQuery';
+import { RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
+import { generateFindManyRecordsQuery } from '@/object-record/utils/generateFindManyRecordsQuery';
 
 export const useUpsertFindManyRecordsQueryInCache = ({
   objectMetadataItem,
 }: {
-  objectMetadataItem: Pick<
-    ObjectMetadataItem,
-    'fields' | 'namePlural' | 'nameSingular'
-  >;
+  objectMetadataItem: ObjectMetadataItem;
 }) => {
   const apolloClient = useApolloClient();
 
-  const generateFindManyRecordsQuery = useGenerateFindManyRecordsQuery();
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
   const upsertFindManyRecordsQueryInCache = <
     T extends ObjectRecord = ObjectRecord,
   >({
     queryVariables,
-    depth = MAX_QUERY_DEPTH_FOR_CACHE_INJECTION,
     objectRecordsToOverwrite,
-    queryFields,
+    recordGqlFields,
     computeReferences = false,
   }: {
-    queryVariables: ObjectRecordQueryVariables;
-    depth?: number;
+    queryVariables: RecordGqlOperationVariables;
     objectRecordsToOverwrite: T[];
-    queryFields?: Record<string, any>;
+    recordGqlFields?: Record<string, any>;
     computeReferences?: boolean;
   }) => {
     const findManyRecordsQueryForCacheOverwrite = generateFindManyRecordsQuery({
       objectMetadataItem,
-      depth,
-      queryFields,
+      objectMetadataItems,
+      recordGqlFields,
       computeReferences,
     });
 
@@ -48,7 +41,7 @@ export const useUpsertFindManyRecordsQueryInCache = ({
       objectMetadataItems: objectMetadataItems,
       objectMetadataItem: objectMetadataItem,
       records: objectRecordsToOverwrite,
-      queryFields,
+      recordGqlFields,
       computeReferences,
     });
 

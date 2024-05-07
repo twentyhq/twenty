@@ -1,5 +1,5 @@
 import { plainToInstance } from 'class-transformer';
-import { validateSync } from 'class-validator';
+import { ValidationError, validateSync } from 'class-validator';
 
 import {
   FieldMetadataClassValidation,
@@ -20,6 +20,8 @@ import {
   FieldMetadataDefaultValueStringArray,
   FieldMetadataDefaultValueNowFunction,
   FieldMetadataDefaultValueUuidFunction,
+  FieldMetadataDefaultValueDate,
+  FieldMetadataDefaultValueLinks,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 
@@ -35,6 +37,7 @@ export const defaultValueValidatorsMap = {
     FieldMetadataDefaultValueDateTime,
     FieldMetadataDefaultValueNowFunction,
   ],
+  [FieldMetadataType.DATE]: [FieldMetadataDefaultValueDate],
   [FieldMetadataType.BOOLEAN]: [FieldMetadataDefaultValueBoolean],
   [FieldMetadataType.NUMBER]: [FieldMetadataDefaultValueNumber],
   [FieldMetadataType.NUMERIC]: [FieldMetadataDefaultValueString],
@@ -47,19 +50,35 @@ export const defaultValueValidatorsMap = {
   [FieldMetadataType.MULTI_SELECT]: [FieldMetadataDefaultValueStringArray],
   [FieldMetadataType.ADDRESS]: [FieldMetadataDefaultValueAddress],
   [FieldMetadataType.RAW_JSON]: [FieldMetadataDefaultValueRawJson],
+  [FieldMetadataType.LINKS]: [FieldMetadataDefaultValueLinks],
+};
+
+type ValidationResult = {
+  isValid: boolean;
+  errors: ValidationError[];
 };
 
 export const validateDefaultValueForType = (
   type: FieldMetadataType,
   defaultValue: FieldMetadataDefaultValue,
-): boolean => {
-  if (defaultValue === null) return true;
+): ValidationResult => {
+  if (defaultValue === null) {
+    return {
+      isValid: true,
+      errors: [],
+    };
+  }
 
-  const validators = defaultValueValidatorsMap[type];
+  const validators = defaultValueValidatorsMap[type] as any[];
 
-  if (!validators) return false;
+  if (!validators) {
+    return {
+      isValid: false,
+      errors: [],
+    };
+  }
 
-  const isValid = validators.some((validator) => {
+  const validationResults = validators.map((validator) => {
     const conputedDefaultValue = isCompositeFieldMetadataType(type)
       ? defaultValue
       : { value: defaultValue };
@@ -69,14 +88,24 @@ export const validateDefaultValueForType = (
       FieldMetadataClassValidation
     >(validator, conputedDefaultValue as FieldMetadataClassValidation);
 
-    return (
-      validateSync(defaultValueInstance, {
-        whitelist: true,
-        forbidNonWhitelisted: true,
-        forbidUnknownValues: true,
-      }).length === 0
-    );
+    const errors = validateSync(defaultValueInstance, {
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      forbidUnknownValues: true,
+    });
+
+    const isValid = errors.length === 0;
+
+    return {
+      isValid,
+      errors,
+    };
   });
 
-  return isValid;
+  const isValid = validationResults.some((result) => result.isValid);
+
+  return {
+    isValid,
+    errors: validationResults.flatMap((result) => result.errors),
+  };
 };

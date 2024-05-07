@@ -1,8 +1,8 @@
 import { useContext } from 'react';
-import { IconPencil } from 'twenty-ui';
+import { IconComponent, IconPencil } from 'twenty-ui';
 
+import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { FieldContext } from '../contexts/FieldContext';
@@ -18,7 +18,8 @@ export const useGetButtonIcon = (): IconComponent | undefined => {
   if (
     isFieldLink(fieldDefinition) ||
     isFieldEmail(fieldDefinition) ||
-    isFieldPhone(fieldDefinition)
+    isFieldPhone(fieldDefinition) ||
+    isFieldMultiSelect(fieldDefinition)
   ) {
     return IconPencil;
   }

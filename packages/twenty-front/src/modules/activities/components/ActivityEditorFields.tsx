@@ -4,7 +4,6 @@ import { useRecoilValue } from 'recoil';
 import { useUpsertActivity } from '@/activities/hooks/useUpsertActivity';
 import { ActivityTargetsInlineCell } from '@/activities/inline-cell/components/ActivityTargetsInlineCell';
 import { Activity } from '@/activities/types/Activity';
-import { useObjectMetadataItemOnly } from '@/object-metadata/hooks/useObjectMetadataItemOnly';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useGetRecordFromCache } from '@/object-record/cache/hooks/useGetRecordFromCache';
 import { useFieldContext } from '@/object-record/hooks/useFieldContext';
@@ -15,6 +14,7 @@ import {
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { isRightDrawerAnimationCompletedState } from '@/ui/layout/right-drawer/states/isRightDrawerAnimationCompleted';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledPropertyBox = styled(PropertyBox)`
@@ -28,12 +28,12 @@ export const ActivityEditorFields = ({
 }) => {
   const { upsertActivity } = useUpsertActivity();
 
-  const { objectMetadataItem } = useObjectMetadataItemOnly({
-    objectNameSingular: CoreObjectNameSingular.Activity,
-  });
+  const isRightDrawerAnimationCompleted = useRecoilValue(
+    isRightDrawerAnimationCompletedState,
+  );
 
   const getRecordFromCache = useGetRecordFromCache({
-    objectMetadataItem,
+    objectNameSingular: CoreObjectNameSingular.Activity,
   });
 
   const activityFromCache = getRecordFromCache<Activity>(activityId);
@@ -98,11 +98,16 @@ export const ActivityEditorFields = ({
             </AssigneeFieldContextProvider>
           </>
         )}
-      {ActivityTargetsContextProvider && isDefined(activityFromCache) && (
-        <ActivityTargetsContextProvider>
-          <ActivityTargetsInlineCell activity={activityFromCache} />
-        </ActivityTargetsContextProvider>
-      )}
+      {ActivityTargetsContextProvider &&
+        isDefined(activityFromCache) &&
+        isRightDrawerAnimationCompleted && (
+          <ActivityTargetsContextProvider>
+            <ActivityTargetsInlineCell
+              activity={activityFromCache}
+              maxWidth={340}
+            />
+          </ActivityTargetsContextProvider>
+        )}
     </StyledPropertyBox>
   );
 };

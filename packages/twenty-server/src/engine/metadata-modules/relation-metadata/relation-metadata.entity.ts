@@ -6,6 +6,7 @@ import {
   ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
+  Relation,
   UpdateDateColumn,
 } from 'typeorm';
 
@@ -17,6 +18,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 export enum RelationMetadataType {
   ONE_TO_ONE = 'ONE_TO_ONE',
   ONE_TO_MANY = 'ONE_TO_MANY',
+  MANY_TO_ONE = 'MANY_TO_ONE',
   MANY_TO_MANY = 'MANY_TO_MANY',
 }
 
@@ -65,7 +67,7 @@ export class RelationMetadataEntity implements RelationMetadataInterface {
       onDelete: 'CASCADE',
     },
   )
-  fromObjectMetadata: ObjectMetadataEntity;
+  fromObjectMetadata: Relation<ObjectMetadataEntity>;
 
   @ManyToOne(
     () => ObjectMetadataEntity,
@@ -74,21 +76,21 @@ export class RelationMetadataEntity implements RelationMetadataInterface {
       onDelete: 'CASCADE',
     },
   )
-  toObjectMetadata: ObjectMetadataEntity;
+  toObjectMetadata: Relation<ObjectMetadataEntity>;
 
   @OneToOne(
     () => FieldMetadataEntity,
     (field: FieldMetadataEntity) => field.fromRelationMetadata,
   )
   @JoinColumn()
-  fromFieldMetadata: FieldMetadataEntity;
+  fromFieldMetadata: Relation<FieldMetadataEntity>;
 
   @OneToOne(
     () => FieldMetadataEntity,
     (field: FieldMetadataEntity) => field.toRelationMetadata,
   )
   @JoinColumn()
-  toFieldMetadata: FieldMetadataEntity;
+  toFieldMetadata: Relation<FieldMetadataEntity>;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

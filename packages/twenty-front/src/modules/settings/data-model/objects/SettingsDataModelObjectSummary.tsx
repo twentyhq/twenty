@@ -1,16 +1,14 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useIcons } from 'twenty-ui';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { SettingsDataModelIsCustomTag } from '@/settings/data-model/objects/SettingsDataModelIsCustomTag';
-import { useIcons } from '@/ui/display/icon/hooks/useIcons';
+import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/SettingsDataModelObjectTypeTag';
+import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
 
 export type SettingsDataModelObjectSummaryProps = {
   className?: string;
-  objectMetadataItem: Pick<
-    ObjectMetadataItem,
-    'icon' | 'isCustom' | 'labelPlural'
-  >;
+  objectMetadataItem: ObjectMetadataItem;
 };
 
 const StyledObjectSummary = styled.div`
@@ -35,6 +33,7 @@ export const SettingsDataModelObjectSummary = ({
 
   const { getIcon } = useIcons();
   const ObjectIcon = getIcon(objectMetadataItem.icon);
+  const objectTypeLabel = getObjectTypeLabel(objectMetadataItem);
 
   return (
     <StyledObjectSummary className={className}>
@@ -42,7 +41,7 @@ export const SettingsDataModelObjectSummary = ({
         <ObjectIcon size={theme.icon.size.sm} stroke={theme.icon.stroke.md} />
         {objectMetadataItem.labelPlural}
       </StyledObjectName>
-      <SettingsDataModelIsCustomTag isCustom={objectMetadataItem.isCustom} />
+      <SettingsDataModelObjectTypeTag objectTypeLabel={objectTypeLabel} />
     </StyledObjectSummary>
   );
 };

@@ -1,16 +1,14 @@
 import { useMemo, useRef, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconChevronDown } from 'twenty-ui';
+import { IconChevronDown, IconComponent } from 'twenty-ui';
 
-import { IconComponent } from '@/ui/display/icon/types/IconComponent';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
-import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 
 import { SelectHotkeyScope } from '../types/SelectHotkeyScope';
 
@@ -112,15 +110,6 @@ export const Select = <Value extends string | number | null>({
   const isDisabled = disabledFromProps || options.length <= 1;
 
   const { closeDropdown } = useDropdown(dropdownId);
-
-  const { useListenClickOutside } = useClickOutsideListener(dropdownId);
-
-  useListenClickOutside({
-    refs: [selectContainerRef],
-    callback: () => {
-      closeDropdown();
-    },
-  });
 
   const selectControl = (
     <StyledControlContainer disabled={isDisabled}>

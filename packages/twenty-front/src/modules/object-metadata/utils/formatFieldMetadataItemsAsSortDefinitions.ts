@@ -12,10 +12,12 @@ export const formatFieldMetadataItemsAsSortDefinitions = ({
     if (
       ![
         FieldMetadataType.DateTime,
+        FieldMetadataType.Date,
         FieldMetadataType.Number,
         FieldMetadataType.Text,
         FieldMetadataType.Boolean,
         FieldMetadataType.Select,
+        FieldMetadataType.Phone,
       ].includes(field.type)
     ) {
       return acc;

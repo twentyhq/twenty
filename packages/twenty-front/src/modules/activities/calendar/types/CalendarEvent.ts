@@ -1,3 +1,5 @@
+import { CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
+
 // TODO: use backend CalendarEvent type when ready
 export type CalendarEvent = {
   conferenceLink?: {
@@ -14,8 +16,6 @@ export type CalendarEvent = {
   startsAt: string;
   title?: string;
   visibility: 'METADATA' | 'SHARE_EVERYTHING';
-  participants?: {
-    displayName: string;
-    workspaceMemberId?: string;
-  }[];
+  calendarEventParticipants?: CalendarEventParticipant[];
+  __typename: 'CalendarEvent';
 };
