@@ -1,5 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 
+import { FieldMetadataType } from '~/generated/graphql';
+
 import { useFieldMetadataForm } from '../useFieldMetadataForm';
 
 describe('useFieldMetadataForm', () => {
@@ -14,8 +16,6 @@ describe('useFieldMetadataForm', () => {
 
     expect(result.current.isInitialized).toBe(true);
     expect(result.current.formValues).toEqual({
-      icon: 'IconUsers',
-      label: '',
       type: 'TEXT',
       currency: { currencyCode: 'USD' },
       relation: {
@@ -45,7 +45,7 @@ describe('useFieldMetadataForm', () => {
     expect(result.current.hasSelectFormChanged).toBe(false);
 
     act(() => {
-      result.current.handleFormChange({ label: 'New Label' });
+      result.current.handleFormChange({ type: FieldMetadataType.Number });
     });
 
     expect(result.current.hasFieldFormChanged).toBe(true);
