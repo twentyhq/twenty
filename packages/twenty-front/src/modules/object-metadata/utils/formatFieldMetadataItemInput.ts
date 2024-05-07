@@ -64,7 +64,7 @@ export const formatFieldMetadataItemInput = (
 
   return {
     defaultValue:
-      defaultValue && input.type
+      isDefined(defaultValue) && input.type
         ? getDefaultValueForBackend(defaultValue, input.type)
         : undefined,
     description: input.description?.trim() ?? null,
