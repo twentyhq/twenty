@@ -26,8 +26,8 @@ const fieldMetadataItem: FieldMetadataItem = {
 const mocks = [
   {
     request: {
-      query: queries.eraseMetadataField,
-      variables: variables.eraseMetadataField,
+      query: queries.deleteMetadataField,
+      variables: variables.deleteMetadataField,
     },
     result: jest.fn(() => ({
       data: {
@@ -136,13 +136,13 @@ describe('useFieldMetadataItem', () => {
     });
   });
 
-  it('should eraseMetadataField', async () => {
+  it('should deleteMetadataField', async () => {
     const { result } = renderHook(() => useFieldMetadataItem(), {
       wrapper: Wrapper,
     });
 
     await act(async () => {
-      const res = await result.current.eraseMetadataField(fieldMetadataItem);
+      const res = await result.current.deleteMetadataField(fieldMetadataItem);
 
       expect(res.data).toEqual({
         deleteOneField: responseData.default,

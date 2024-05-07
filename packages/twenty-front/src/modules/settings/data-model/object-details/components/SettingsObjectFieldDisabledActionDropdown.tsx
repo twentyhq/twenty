@@ -12,14 +12,14 @@ type SettingsObjectFieldInactiveActionDropdownProps = {
   isCustomField?: boolean;
   fieldType?: FieldMetadataType;
   onActivate: () => void;
-  onErase: () => void;
+  onDelete: () => void;
   scopeKey: string;
 };
 
 export const SettingsObjectFieldInactiveActionDropdown = ({
   onActivate,
   scopeKey,
-  onErase,
+  onDelete,
   isCustomField,
   fieldType,
 }: SettingsObjectFieldInactiveActionDropdownProps) => {
@@ -32,12 +32,12 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
     closeDropdown();
   };
 
-  const handleErase = () => {
-    onErase();
+  const handleDelete = () => {
+    onDelete();
     closeDropdown();
   };
 
-  const isErasable =
+  const isDeletable =
     isCustomField &&
     fieldType !== FieldMetadataType.Relation &&
     fieldType !== FieldMetadataType.Address;
@@ -56,12 +56,12 @@ export const SettingsObjectFieldInactiveActionDropdown = ({
               LeftIcon={IconArchiveOff}
               onClick={handleActivate}
             />
-            {isErasable && (
+            {isDeletable && (
               <MenuItem
-                text="Erase"
+                text="Delete"
                 accent="danger"
                 LeftIcon={IconTrash}
-                onClick={handleErase}
+                onClick={handleDelete}
               />
             )}
           </DropdownMenuItemsContainer>

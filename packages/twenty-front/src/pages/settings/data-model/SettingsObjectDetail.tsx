@@ -54,7 +54,7 @@ export const SettingsObjectDetail = () => {
     if (!activeObjectMetadataItem) navigate(AppPath.NotFound);
   }, [activeObjectMetadataItem, navigate]);
 
-  const { activateMetadataField, disableMetadataField, eraseMetadataField } =
+  const { activateMetadataField, disableMetadataField, deleteMetadataField } =
     useFieldMetadataItem();
 
   if (!activeObjectMetadataItem) return null;
@@ -199,8 +199,8 @@ export const SettingsObjectDetail = () => {
                         onActivate={() =>
                           activateMetadataField(disabledMetadataField)
                         }
-                        onErase={() =>
-                          eraseMetadataField(disabledMetadataField)
+                        onDelete={() =>
+                          deleteMetadataField(disabledMetadataField)
                         }
                       />
                     }

@@ -84,14 +84,14 @@ export const useFieldMetadataItem = () => {
       updatePayload: { isActive: false },
     });
 
-  const eraseMetadataField = (metadataField: FieldMetadataItem) =>
+  const deleteMetadataField = (metadataField: FieldMetadataItem) =>
     deleteOneFieldMetadataItem(metadataField.id);
 
   return {
     activateMetadataField,
     createMetadataField,
     disableMetadataField,
-    eraseMetadataField,
+    deleteMetadataField,
     editMetadataField,
   };
 };
