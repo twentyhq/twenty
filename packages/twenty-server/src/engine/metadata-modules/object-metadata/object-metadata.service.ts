@@ -415,11 +415,11 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     input: UpdateOneObjectInput,
     workspaceId: string,
   ): Promise<ObjectMetadataEntity> {
-    const updated = await super.updateOne(input.id, input.update);
+    const updatedObject = await super.updateOne(input.id, input.update);
 
     await this.workspaceCacheVersionService.incrementVersion(workspaceId);
 
-    return updated;
+    return updatedObject;
   }
 
   public async findOneWithinWorkspace(
