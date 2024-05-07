@@ -135,6 +135,7 @@ export const RecordShowPage = () => {
         <RecordShowContainer
           objectNameSingular={objectNameSingular}
           objectRecordId={objectRecordId}
+          loading={loading}
         />
       </PageBody>
     </PageContainer>
