@@ -20,7 +20,7 @@ describe('getFieldPreviewValueFromRecord', () => {
       const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
         ({ name }) => name === 'stage',
       )!;
-      const selectOptions: SettingsDataModelFieldSelectFormValues = [
+      const selectOptions: SettingsDataModelFieldSelectFormValues['options'] = [
         {
           color: 'purple',
           label: '🏭 Industry',
@@ -60,7 +60,7 @@ describe('getFieldPreviewValueFromRecord', () => {
       const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
         ({ name }) => name === 'stage',
       )!;
-      const selectOptions: SettingsDataModelFieldSelectFormValues = [
+      const selectOptions: SettingsDataModelFieldSelectFormValues['options'] = [
         {
           color: 'purple',
           label: '🏭 Industry',

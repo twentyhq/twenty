@@ -43,6 +43,8 @@ export const SettingsDataModelFieldCurrencyForm = ({
     (fieldMetadataItem?.defaultValue?.currencyCode as CurrencyCode) ??
     CurrencyCode.USD;
 
+  console.log(initialValue, initialValue === CurrencyCode.EUR);
+
   return (
     <CardContent>
       <Controller

@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { expect, fn, userEvent, within } from '@storybook/test';
+import { expect, userEvent, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
 
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -12,10 +12,6 @@ const meta: Meta<typeof SettingsDataModelFieldTypeSelect> = {
     'Modules/Settings/DataModel/Fields/Forms/SettingsDataModelFieldTypeSelect',
   component: SettingsDataModelFieldTypeSelect,
   decorators: [ComponentDecorator],
-  args: {
-    onChange: fn(),
-    value: FieldMetadataType.Text,
-  },
   parameters: {
     container: { width: 512 },
     msw: graphqlMocks,
