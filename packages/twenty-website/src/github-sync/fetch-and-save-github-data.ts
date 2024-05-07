@@ -39,8 +39,8 @@ export const fetchAndSaveGithubData = async () => {
     [],
   )) as Array<IssueNode>;
 
-  savePRsToDB(fetchedPRs, assignableUsers);
-  saveIssuesToDB(fetchedIssues, assignableUsers);
+  await savePRsToDB(fetchedPRs, assignableUsers);
+  await saveIssuesToDB(fetchedIssues, assignableUsers);
 
   console.log('data synched!');
 };
