@@ -6,7 +6,11 @@ import { useRelationField } from '../../hooks/useRelationField';
 export const RelationFieldDisplay = () => {
   const { fieldValue, fieldDefinition, maxWidth } = useRelationField();
 
-  if (!fieldValue || !fieldDefinition) return null;
+  if (
+    !fieldValue ||
+    !fieldDefinition?.metadata.relationObjectMetadataNameSingular
+  )
+    return null;
 
   return (
     <RecordChip

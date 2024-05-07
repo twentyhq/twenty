@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
@@ -26,6 +27,7 @@ const meta: Meta<typeof SettingsDataModelFieldSettingsFormCard> = {
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
+    FormProviderDecorator,
   ],
   args: {
     fieldMetadataItem,
@@ -42,16 +44,14 @@ type Story = StoryObj<typeof SettingsDataModelFieldSettingsFormCard>;
 
 export const Default: Story = {};
 
-const relationFieldMetadataItem = mockedPersonObjectMetadataItem.fields.find(
-  ({ name }) => name === 'company',
-)!;
-
 export const WithRelationForm: Story = {
   args: {
     fieldMetadataItem: mockedCompanyObjectMetadataItem.fields.find(
       ({ name }) => name === 'people',
     ),
-    relationFieldMetadataItem,
+    relationFieldMetadataItem: mockedPersonObjectMetadataItem.fields.find(
+      ({ name }) => name === 'company',
+    )!,
   },
 };
 
