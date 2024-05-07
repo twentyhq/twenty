@@ -1,6 +1,3 @@
-import { v4 } from 'uuid';
-
-import { FieldMetadataOption } from '@/object-metadata/types/FieldMetadataOption';
 import { getDefaultValueForBackend } from '@/object-metadata/utils/getDefaultValueForBackend';
 import { Field } from '~/generated/graphql';
 
@@ -36,39 +33,8 @@ export const useFieldMetadataItem = () => {
       defaultValue,
       objectMetadataId: input.objectMetadataId,
       type: input.type,
-    });
-  };
-
-  const editMetadataField = (
-    input: Pick<
-      Field,
-      | 'id'
-      | 'label'
-      | 'icon'
-      | 'description'
-      | 'defaultValue'
-      | 'type'
-      | 'options'
-    >,
-  ) => {
-    // In Edit mode, all options need an id,
-    // so we generate an id for newly created options.
-    const inputOptions = input.options?.map((option: FieldMetadataOption) =>
-      option.id ? option : { ...option, id: v4() },
-    );
-    const formattedInput = formatFieldMetadataItemInput({
-      ...input,
-      options: inputOptions,
-    });
-
-    const defaultValue = input.defaultValue ?? formattedInput.defaultValue;
-
-    return updateOneFieldMetadataItem({
-      fieldMetadataIdToUpdate: input.id,
-      updatePayload: {
-        ...formattedInput,
-        defaultValue,
-      },
+      label: formattedInput.label ?? '',
+      name: formattedInput.name ?? '',
     });
   };
 
@@ -92,6 +58,5 @@ export const useFieldMetadataItem = () => {
     createMetadataField,
     disableMetadataField,
     eraseMetadataField,
-    editMetadataField,
   };
 };

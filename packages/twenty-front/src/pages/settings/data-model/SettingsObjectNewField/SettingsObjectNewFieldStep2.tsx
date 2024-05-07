@@ -22,7 +22,6 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsDataModelFieldAboutForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldAboutForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
-import { useFieldMetadataForm } from '@/settings/data-model/fields/forms/hooks/useFieldMetadataForm';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { AppPath } from '@/types/AppPath';
@@ -51,24 +50,13 @@ export const SettingsObjectNewFieldStep2 = () => {
   const { objectSlug = '' } = useParams();
   const { enqueueSnackBar } = useSnackBar();
 
-  const {
-    findActiveObjectMetadataItemBySlug,
-    findObjectMetadataItemById,
-    findObjectMetadataItemByNamePlural,
-  } = useFilteredObjectMetadataItems();
+  const { findActiveObjectMetadataItemBySlug, findObjectMetadataItemById } =
+    useFilteredObjectMetadataItems();
 
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
   const { createMetadataField } = useFieldMetadataItem();
   const cache = useApolloClient().cache;
-
-  const {
-    formValues,
-    handleFormChange,
-    initForm,
-    isValid,
-    validatedFormValues,
-  } = useFieldMetadataForm();
 
   const formConfig = useForm<SettingsDataModelNewFieldFormValues>({
     mode: 'onTouched',
@@ -78,23 +66,8 @@ export const SettingsObjectNewFieldStep2 = () => {
   useEffect(() => {
     if (!activeObjectMetadataItem) {
       navigate(AppPath.NotFound);
-      return;
     }
-
-    initForm({
-      relation: {
-        field: { icon: activeObjectMetadataItem.icon },
-        objectMetadataId:
-          findObjectMetadataItemByNamePlural('people')?.id || '',
-      },
-    });
-  }, [
-    activeObjectMetadataItem,
-    findObjectMetadataItemByNamePlural,
-    initForm,
-
-    navigate,
-  ]);
+  }, [activeObjectMetadataItem, navigate]);
 
   const [objectViews, setObjectViews] = useState<View[]>([]);
   const [relationObjectViews, setRelationObjectViews] = useState<View[]>([]);
@@ -116,12 +89,16 @@ export const SettingsObjectNewFieldStep2 = () => {
     },
   });
 
+  const relationObjectMetadataId = formConfig.watch(
+    'relation.objectMetadataId',
+  );
+
   useFindManyRecords<View>({
     objectNameSingular: CoreObjectNameSingular.View,
-    skip: !formValues.relation?.objectMetadataId,
+    skip: !relationObjectMetadataId,
     filter: {
       type: { eq: ViewType.Table },
-      objectMetadataId: { eq: formValues.relation?.objectMetadataId },
+      objectMetadataId: { eq: relationObjectMetadataId },
     },
     onCompleted: async (views) => {
       if (isUndefinedOrNull(views)) return;
@@ -135,37 +112,40 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   if (!activeObjectMetadataItem) return null;
 
-  const canSave = formConfig.formState.isValid && isValid;
+  const canSave = formConfig.formState.isValid;
 
   const handleSave = async () => {
-    if (!validatedFormValues) return;
-
     const formValues = formConfig.getValues();
 
     try {
-      if (validatedFormValues.type === FieldMetadataType.Relation) {
+      if (
+        formValues.type === FieldMetadataType.Relation &&
+        'relation' in formValues
+      ) {
+        const { relation: relationFormValues, ...fieldFormValues } = formValues;
+
         const createdRelation = await createOneRelationMetadata({
-          relationType: validatedFormValues.relation.type,
-          field: pick(formValues, ['icon', 'label', 'description']),
+          relationType: relationFormValues.type,
+          field: pick(fieldFormValues, ['icon', 'label', 'description']),
           objectMetadataId: activeObjectMetadataItem.id,
           connect: {
             field: {
-              icon: validatedFormValues.relation.field.icon,
-              label: validatedFormValues.relation.field.label,
+              icon: relationFormValues.field.icon,
+              label: relationFormValues.field.label,
             },
-            objectMetadataId: validatedFormValues.relation.objectMetadataId,
+            objectMetadataId: relationFormValues.objectMetadataId,
           },
         });
 
         const relationObjectMetadataItem = findObjectMetadataItemById(
-          validatedFormValues.relation.objectMetadataId,
+          relationFormValues.objectMetadataId,
         );
 
         objectViews.map(async (view) => {
           const viewFieldToCreate = {
             viewId: view.id,
             fieldMetadataId:
-              validatedFormValues.relation.type === 'MANY_TO_ONE'
+              relationFormValues.type === 'MANY_TO_ONE'
                 ? createdRelation.data?.createOneRelation.toFieldMetadataId
                 : createdRelation.data?.createOneRelation.fromFieldMetadataId,
             position: activeObjectMetadataItem.fields.length,
@@ -198,7 +178,7 @@ export const SettingsObjectNewFieldStep2 = () => {
             const viewFieldToCreate = {
               viewId: view.id,
               fieldMetadataId:
-                validatedFormValues.relation.type === 'MANY_TO_ONE'
+                relationFormValues.type === 'MANY_TO_ONE'
                   ? createdRelation.data?.createOneRelation.fromFieldMetadataId
                   : createdRelation.data?.createOneRelation.toFieldMetadataId,
               position: relationObjectMetadataItem?.fields.length,
@@ -229,22 +209,17 @@ export const SettingsObjectNewFieldStep2 = () => {
         });
       } else {
         const createdMetadataField = await createMetadataField({
-          defaultValue:
-            validatedFormValues.type === FieldMetadataType.Currency
-              ? {
-                  amountMicros: null,
-                  currencyCode: validatedFormValues.currency.currencyCode,
-                }
-              : validatedFormValues.defaultValue,
           ...formValues,
-          objectMetadataId: activeObjectMetadataItem.id,
-          type: validatedFormValues.type,
-          options:
-            validatedFormValues.type === FieldMetadataType.Select
-              ? validatedFormValues.select
-              : validatedFormValues.type === FieldMetadataType.MultiSelect
-                ? validatedFormValues.multiSelect
+          defaultValue:
+            formValues.type === FieldMetadataType.Currency
+              ? {
+                  ...formValues.defaultValue,
+                  amountMicros: null,
+                }
+              : 'defaultValue' in formValues
+                ? formValues.defaultValue
                 : undefined,
+          objectMetadataId: activeObjectMetadataItem.id,
         });
 
         objectViews.map(async (view) => {
@@ -335,24 +310,14 @@ export const SettingsObjectNewFieldStep2 = () => {
             />
             <StyledSettingsObjectFieldTypeSelect
               excludedFieldTypes={excludedFieldTypes}
-              onChange={handleFormChange}
-              value={formValues.type}
             />
             <SettingsDataModelFieldSettingsFormCard
               fieldMetadataItem={{
                 icon: formConfig.watch('icon'),
                 label: formConfig.watch('label') || 'Employees',
-                type: formValues.type,
+                type: formConfig.watch('type'),
               }}
               objectMetadataItem={activeObjectMetadataItem}
-              onChange={handleFormChange}
-              values={{
-                currency: formValues.currency,
-                relation: formValues.relation,
-                select: formValues.select,
-                multiSelect: formValues.multiSelect,
-                defaultValue: formValues.defaultValue,
-              }}
             />
           </Section>
         </SettingsPageContainer>

@@ -1,5 +1,5 @@
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { SettingsObjectFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
+import { SettingsDataModelFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
 import {
   mockedCompanyObjectMetadataItem,
   mockedOpportunityObjectMetadataItem,
@@ -20,8 +20,24 @@ describe('getFieldPreviewValueFromRecord', () => {
       const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
         ({ name }) => name === 'stage',
       )!;
-      const selectOptions: SettingsObjectFieldSelectFormValues =
-        fieldMetadataItem.options ?? [];
+      const selectOptions: SettingsDataModelFieldSelectFormValues = [
+        {
+          color: 'purple',
+          label: '🏭 Industry',
+          value: 'INDUSTRY',
+        },
+        {
+          color: 'pink',
+          isDefault: true,
+          label: '💊 Health',
+          value: 'HEALTH',
+        },
+        {
+          color: 'turquoise',
+          label: '🌿 Green tech',
+          value: 'GREEN_TECH',
+        },
+      ];
 
       // When
       const result = getFieldPreviewValueFromRecord({
@@ -44,8 +60,24 @@ describe('getFieldPreviewValueFromRecord', () => {
       const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
         ({ name }) => name === 'stage',
       )!;
-      const selectOptions: SettingsObjectFieldSelectFormValues =
-        fieldMetadataItem.options ?? [];
+      const selectOptions: SettingsDataModelFieldSelectFormValues = [
+        {
+          color: 'purple',
+          label: '🏭 Industry',
+          value: 'INDUSTRY',
+        },
+        {
+          color: 'pink',
+          isDefault: true,
+          label: '💊 Health',
+          value: 'HEALTH',
+        },
+        {
+          color: 'turquoise',
+          label: '🌿 Green tech',
+          value: 'GREEN_TECH',
+        },
+      ];
 
       // When
       const result = getFieldPreviewValueFromRecord({
