@@ -22,20 +22,30 @@ describe('getFieldPreviewValueFromRecord', () => {
       )!;
       const selectOptions: SettingsDataModelFieldSelectFormValues['options'] = [
         {
-          color: 'purple',
-          label: '🏭 Industry',
-          value: 'INDUSTRY',
+          color: 'red',
+          label: 'New',
+          value: 'NEW',
         },
         {
-          color: 'pink',
+          color: 'purple',
+          label: 'Screening',
+          value: 'SCREENING',
+        },
+        {
+          color: 'sky',
+          label: 'Meeting',
+          value: 'MEETING',
           isDefault: true,
-          label: '💊 Health',
-          value: 'HEALTH',
         },
         {
           color: 'turquoise',
-          label: '🌿 Green tech',
-          value: 'GREEN_TECH',
+          label: 'Proposal',
+          value: 'PROPOSAL',
+        },
+        {
+          color: 'yellow',
+          label: 'Customer',
+          value: 'CUSTOMER',
         },
       ];
 

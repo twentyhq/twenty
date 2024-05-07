@@ -38,7 +38,7 @@ describe('getFieldDefaultPreviewValue', () => {
       });
 
       // Then
-      expect(result).toEqual(selectOptions[0].value);
+      expect(result).toEqual(selectOptions[1].value);
     });
 
     it('returns the first select option if no default option was found', () => {
