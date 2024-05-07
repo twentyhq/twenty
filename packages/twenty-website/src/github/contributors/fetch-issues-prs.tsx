@@ -4,13 +4,14 @@ import {
   IssueNode,
   PullRequestNode,
   Repository,
-} from '@/github-sync/contributors/types';
+} from '@/github/contributors/types';
 
 export async function fetchIssuesPRs(
   query: typeof graphql,
   cursor: string | null = null,
   isIssues = false,
   accumulatedData: Array<PullRequestNode | IssueNode> = [],
+  isInit = true,
 ): Promise<Array<PullRequestNode | IssueNode>> {
   const { repository } = await query<Repository>(
     `
@@ -89,7 +90,7 @@ export async function fetchIssuesPRs(
     ? repository.issues.pageInfo
     : repository.pullRequests.pageInfo;
 
-  if (pageInfo.hasNextPage) {
+  if (isInit && pageInfo.hasNextPage) {
     return fetchIssuesPRs(
       query,
       pageInfo.endCursor,

@@ -2,7 +2,7 @@ import { graphql } from '@octokit/graphql';
 
 import { insertMany } from '@/database/database';
 import { githubReleasesModel } from '@/database/model';
-import { Repository } from '@/github-sync/contributors/types';
+import { Repository } from '@/github/contributors/types';
 
 export const fetchAndSaveGithubReleases = async (
   query: typeof graphql,
