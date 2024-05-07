@@ -7,7 +7,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 @InputType()
 export class DeleteOneRelationInput {
   @IDField(() => UUIDScalarType, {
-    description: 'The id of the record to delete.',
+    description: 'The id of the relation to delete.',
   })
   id!: string;
 }
