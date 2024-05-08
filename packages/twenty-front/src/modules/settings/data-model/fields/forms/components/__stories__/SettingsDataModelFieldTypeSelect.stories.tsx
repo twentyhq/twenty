@@ -3,6 +3,7 @@ import { expect, userEvent, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
 
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { SettingsDataModelFieldTypeSelect } from '../SettingsDataModelFieldTypeSelect';
@@ -11,7 +12,7 @@ const meta: Meta<typeof SettingsDataModelFieldTypeSelect> = {
   title:
     'Modules/Settings/DataModel/Fields/Forms/SettingsDataModelFieldTypeSelect',
   component: SettingsDataModelFieldTypeSelect,
-  decorators: [ComponentDecorator],
+  decorators: [FormProviderDecorator, ComponentDecorator],
   parameters: {
     container: { width: 512 },
     msw: graphqlMocks,
@@ -33,11 +34,11 @@ export const WithOpenSelect: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const inputField = await canvas.findByText('Text');
+    const inputField = await canvas.findByText('Unique ID');
 
     await userEvent.click(inputField);
 
-    const input = await canvas.findByText('Unique ID');
+    const input = await canvas.findByText('Text');
     await userEvent.click(input);
 
     await userEvent.click(inputField);
