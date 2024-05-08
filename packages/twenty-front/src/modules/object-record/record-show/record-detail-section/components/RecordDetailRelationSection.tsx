@@ -37,15 +37,21 @@ const StyledAddDropdown = styled(Dropdown)`
   margin-left: auto;
 `;
 
+const StyledSkeletonDiv = styled.div`
+  height: 40px;
+`;
+
 const StyledRecordDetailRelationSectionSkeletonLoader = () => {
   const theme = useTheme();
   return (
     <SkeletonTheme
-      baseColor={theme.background.quaternary}
-      highlightColor={theme.background.transparent.light}
+      baseColor={theme.background.tertiary}
+      highlightColor={theme.background.transparent.lighter}
       borderRadius={4}
     >
-      <Skeleton width={129} height={16} />
+      <StyledSkeletonDiv>
+        <Skeleton width={129} height={16} />
+      </StyledSkeletonDiv>
     </SkeletonTheme>
   );
 };

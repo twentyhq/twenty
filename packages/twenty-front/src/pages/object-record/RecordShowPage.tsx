@@ -110,26 +110,24 @@ export const RecordShowPage = () => {
         Icon={headerIcon}
         loading={loading}
       >
-        {record && (
-          <>
-            <PageFavoriteButton
-              isFavorite={isFavorite}
-              onClick={handleFavoriteButtonClick}
-            />
-            <ShowPageAddButton
-              key="add"
-              activityTargetObject={{
-                id: record.id,
-                targetObjectNameSingular: objectMetadataItem?.nameSingular,
-              }}
-            />
-            <ShowPageMoreButton
-              key="more"
-              recordId={record.id}
-              objectNameSingular={objectNameSingular}
-            />
-          </>
-        )}
+        <>
+          <PageFavoriteButton
+            isFavorite={isFavorite}
+            onClick={handleFavoriteButtonClick}
+          />
+          <ShowPageAddButton
+            key="add"
+            activityTargetObject={{
+              id: record?.id ?? '0',
+              targetObjectNameSingular: objectMetadataItem?.nameSingular,
+            }}
+          />
+          <ShowPageMoreButton
+            key="more"
+            recordId={record?.id ?? '0'}
+            objectNameSingular={objectNameSingular}
+          />
+        </>
       </PageHeader>
       <PageBody>
         <RecordShowContainer

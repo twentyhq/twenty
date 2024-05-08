@@ -56,8 +56,8 @@ const StyledSkeletonLoader = () => {
   const theme = useTheme();
   return (
     <SkeletonTheme
-      baseColor={theme.background.quaternary}
-      highlightColor={theme.background.transparent.light}
+      baseColor={theme.background.tertiary}
+      highlightColor={theme.background.transparent.lighter}
       borderRadius={80}
     >
       <Skeleton width={24} height={84} />
@@ -72,8 +72,8 @@ const StyledTimelineSkeletonLoader = () => {
   }));
   return (
     <SkeletonTheme
-      baseColor={theme.background.quaternary}
-      highlightColor={theme.background.transparent.light}
+      baseColor={theme.background.tertiary}
+      highlightColor={theme.background.transparent.lighter}
       borderRadius={4}
     >
       <StyledSkeletonContainer>

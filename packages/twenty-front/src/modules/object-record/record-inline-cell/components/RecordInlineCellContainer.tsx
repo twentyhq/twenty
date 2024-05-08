@@ -83,15 +83,21 @@ const StyledTooltip = styled(Tooltip)`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledSkeletonDiv = styled.div`
+  height: 24px;
+`;
+
 const StyledInlineCellSkeletonLoader = () => {
   const theme = useTheme();
   return (
     <SkeletonTheme
-      baseColor={theme.background.quaternary}
-      highlightColor={theme.background.transparent.light}
+      baseColor={theme.background.tertiary}
+      highlightColor={theme.background.transparent.lighter}
       borderRadius={4}
     >
-      <Skeleton width={154} height={16} />
+      <StyledSkeletonDiv>
+        <Skeleton width={154} height={16} />
+      </StyledSkeletonDiv>
     </SkeletonTheme>
   );
 };

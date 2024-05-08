@@ -20,7 +20,7 @@ type ShowPageSummaryCardProps = {
   logoOrAvatar?: string;
   onUploadPicture?: (file: File) => void;
   title: ReactNode;
-  loading?: boolean;
+  loading: boolean;
 };
 
 export const StyledShowPageSummaryCard = styled.div`
@@ -31,6 +31,7 @@ export const StyledShowPageSummaryCard = styled.div`
   justify-content: center;
   padding: ${({ theme }) => theme.spacing(4)};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
+  height: 127px;
 `;
 
 const StyledInfoContainer = styled.div`
@@ -73,16 +74,26 @@ const StyledFileInput = styled.input`
   display: none;
 `;
 
+const StyledSubSkeleton = styled.div`
+  align-items: center;
+  display: flex;
+  height: 37px;
+  justify-content: center;
+  width: 108px;
+`;
+
 const StyledShowPageSummaryCardSkeletonLoader = () => {
   const theme = useTheme();
   return (
     <SkeletonTheme
-      baseColor={theme.background.quaternary}
-      highlightColor={theme.background.transparent.light}
+      baseColor={theme.background.tertiary}
+      highlightColor={theme.background.transparent.lighter}
       borderRadius={4}
     >
       <Skeleton width={40} height={40} />
-      <Skeleton width={96} height={16} />
+      <StyledSubSkeleton>
+        <Skeleton width={96} height={16} />
+      </StyledSubSkeleton>
     </SkeletonTheme>
   );
 };
@@ -111,7 +122,7 @@ export const ShowPageSummaryCard = ({
     inputFileRef?.current?.click?.();
   };
 
-  if (loading === true)
+  if (loading)
     return (
       <StyledShowPageSummaryCard>
         <StyledShowPageSummaryCardSkeletonLoader />
