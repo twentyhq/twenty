@@ -271,6 +271,7 @@ export const SettingsObjectNewFieldStep2 = () => {
     FieldMetadataType.Numeric,
     FieldMetadataType.Probability,
     FieldMetadataType.Uuid,
+    FieldMetadataType.Phone,
   ];
 
   return (

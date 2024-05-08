@@ -9,6 +9,7 @@ import { RawJsonFieldInput } from '@/object-record/record-field/meta-types/input
 import { SelectFieldInput } from '@/object-record/record-field/meta-types/input/components/SelectFieldInput';
 import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
 import { isFieldDate } from '@/object-record/record-field/types/guards/isFieldDate';
+import { isFieldDisplayedAsPhone } from '@/object-record/record-field/types/guards/isFieldDisplayedAsPhone';
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
@@ -71,7 +72,8 @@ export const FieldInput = ({
     >
       {isFieldRelation(fieldDefinition) ? (
         <RelationFieldInput onSubmit={onSubmit} onCancel={onCancel} />
-      ) : isFieldPhone(fieldDefinition) ? (
+      ) : isFieldPhone(fieldDefinition) ||
+        isFieldDisplayedAsPhone(fieldDefinition) ? (
         <PhoneFieldInput
           onEnter={onEnter}
           onEscape={onEscape}
