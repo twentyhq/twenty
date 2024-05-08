@@ -4,25 +4,27 @@ import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isNonEmptyString } from '@sniptt/guards';
+import omit from 'lodash.omit';
+import pick from 'lodash.pick';
 import { IconArchive, IconSettings } from 'twenty-ui';
+import { v4 } from 'uuid';
 import { z } from 'zod';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useGetRelationMetadata } from '@/object-metadata/hooks/useGetRelationMetadata';
+import { useUpdateOneFieldMetadataItem } from '@/object-metadata/hooks/useUpdateOneFieldMetadataItem';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFieldMetadataItemInput';
 import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsObjectFieldCurrencyFormValues } from '@/settings/data-model/components/SettingsObjectFieldCurrencyForm';
 import { SettingsDataModelFieldAboutForm } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldAboutForm';
 import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSettingsFormCard';
 import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
-import { useFieldMetadataForm } from '@/settings/data-model/fields/forms/hooks/useFieldMetadataForm';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
-import { isFieldTypeSupportedInSettings } from '@/settings/data-model/utils/isFieldTypeSupportedInSettings';
 import { AppPath } from '@/types/AppPath';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -30,10 +32,7 @@ import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import {
-  FieldMetadataType,
-  RelationMetadataType,
-} from '~/generated-metadata/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsDataModelFieldEditFormValues = z.infer<
   typeof settingsFieldFormSchema
@@ -66,117 +65,38 @@ export const SettingsObjectFieldEdit = () => {
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
 
-  const { disableMetadataField, editMetadataField } = useFieldMetadataItem();
+  const { disableMetadataField } = useFieldMetadataItem();
   const activeMetadataField = activeObjectMetadataItem?.fields.find(
     (metadataField) =>
       metadataField.isActive && getFieldSlug(metadataField) === fieldSlug,
   );
 
   const getRelationMetadata = useGetRelationMetadata();
-  const {
-    relationFieldMetadataItem,
-    relationObjectMetadataItem,
-    relationType,
-  } =
+  const { relationFieldMetadataItem } =
     useMemo(
       () =>
         activeMetadataField
-          ? getRelationMetadata({
-              fieldMetadataItem: activeMetadataField,
-            })
+          ? getRelationMetadata({ fieldMetadataItem: activeMetadataField })
           : null,
       [activeMetadataField, getRelationMetadata],
     ) ?? {};
+
+  const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
 
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
     mode: 'onTouched',
     resolver: zodResolver(settingsFieldFormSchema),
   });
 
-  const {
-    formValues,
-    handleFormChange,
-    hasFieldFormChanged,
-    hasDefaultValueChanged,
-    hasFormChanged,
-    hasRelationFormChanged,
-    hasSelectFormChanged,
-    hasMultiSelectFormChanged,
-    initForm,
-    isInitialized,
-    isValid,
-    validatedFormValues,
-  } = useFieldMetadataForm();
-
   useEffect(() => {
     if (!activeObjectMetadataItem || !activeMetadataField) {
       navigate(AppPath.NotFound);
-      return;
     }
+  }, [activeMetadataField, activeObjectMetadataItem, navigate]);
 
-    const { defaultValue } = activeMetadataField;
+  if (!activeObjectMetadataItem || !activeMetadataField) return null;
 
-    const currencyDefaultValue =
-      activeMetadataField.type === FieldMetadataType.Currency
-        ? (defaultValue as SettingsObjectFieldCurrencyFormValues | undefined)
-        : undefined;
-
-    const selectOptions = activeMetadataField.options?.map((option) => ({
-      ...option,
-      isDefault: defaultValue === `'${option.value}'`,
-    }));
-    selectOptions?.sort(
-      (optionA, optionB) => optionA.position - optionB.position,
-    );
-
-    const multiSelectOptions = activeMetadataField.options?.map((option) => ({
-      ...option,
-      isDefault: defaultValue?.includes(`'${option.value}'`) || false,
-    }));
-    multiSelectOptions?.sort(
-      (optionA, optionB) => optionA.position - optionB.position,
-    );
-
-    const fieldType = activeMetadataField.type;
-    const isFieldTypeSupported = isFieldTypeSupportedInSettings(fieldType);
-
-    if (!isFieldTypeSupported) return;
-
-    initForm({
-      type: fieldType,
-      ...(currencyDefaultValue ? { currency: currencyDefaultValue } : {}),
-      relation: {
-        field: {
-          icon: relationFieldMetadataItem?.icon,
-          label: relationFieldMetadataItem?.label || '',
-        },
-        objectMetadataId: relationObjectMetadataItem?.id || '',
-        type: relationType || RelationMetadataType.OneToMany,
-      },
-      defaultValue: activeMetadataField.defaultValue,
-      ...(selectOptions?.length ? { select: selectOptions } : {}),
-      ...(multiSelectOptions?.length
-        ? { multiSelect: multiSelectOptions }
-        : {}),
-    });
-  }, [
-    activeMetadataField,
-    activeObjectMetadataItem,
-    initForm,
-    navigate,
-    relationFieldMetadataItem?.icon,
-    relationFieldMetadataItem?.label,
-    relationObjectMetadataItem?.id,
-    relationType,
-  ]);
-
-  if (!isInitialized || !activeObjectMetadataItem || !activeMetadataField)
-    return null;
-
-  const canSave =
-    formConfig.formState.isValid &&
-    isValid &&
-    (formConfig.formState.isDirty || hasFormChanged);
+  const canSave = formConfig.formState.isValid && formConfig.formState.isDirty;
 
   const isLabelIdentifier = isLabelIdentifierField({
     fieldMetadataItem: activeMetadataField,
@@ -184,43 +104,37 @@ export const SettingsObjectFieldEdit = () => {
   });
 
   const handleSave = async () => {
-    if (!validatedFormValues) return;
-
     const formValues = formConfig.getValues();
     const { dirtyFields } = formConfig.formState;
 
     try {
       if (
-        validatedFormValues.type === FieldMetadataType.Relation &&
+        formValues.type === FieldMetadataType.Relation &&
         isNonEmptyString(relationFieldMetadataItem?.id) &&
-        hasRelationFormChanged
+        'relation' in dirtyFields
       ) {
-        await editMetadataField({
-          icon: validatedFormValues.relation.field.icon,
-          id: relationFieldMetadataItem?.id,
-          label: validatedFormValues.relation.field.label,
-          type: validatedFormValues.type,
+        await updateOneFieldMetadataItem({
+          fieldMetadataIdToUpdate: relationFieldMetadataItem.id,
+          updatePayload: formValues.relation.field,
         });
       }
 
-      if (
-        Object.keys(dirtyFields).length > 0 ||
-        hasFieldFormChanged ||
-        hasSelectFormChanged ||
-        hasMultiSelectFormChanged ||
-        hasDefaultValueChanged
-      ) {
-        await editMetadataField({
-          ...formValues,
-          id: activeMetadataField.id,
-          defaultValue: validatedFormValues.defaultValue,
-          type: validatedFormValues.type,
-          options:
-            validatedFormValues.type === FieldMetadataType.Select
-              ? validatedFormValues.select
-              : validatedFormValues.type === FieldMetadataType.MultiSelect
-                ? validatedFormValues.multiSelect
-                : undefined,
+      const otherDirtyFields = omit(dirtyFields, 'relation');
+
+      if (Object.keys(otherDirtyFields).length > 0) {
+        const formattedInput = pick(
+          formatFieldMetadataItemInput(formValues),
+          Object.keys(otherDirtyFields),
+        );
+
+        const options = formattedInput.options?.map((option) => ({
+          ...option,
+          id: option.id ?? v4(),
+        }));
+
+        await updateOneFieldMetadataItem({
+          fieldMetadataIdToUpdate: activeMetadataField.id,
+          updatePayload: { ...formattedInput, options },
         });
       }
 
@@ -281,28 +195,13 @@ export const SettingsObjectFieldEdit = () => {
             />
             <StyledSettingsObjectFieldTypeSelect
               disabled
-              onChange={handleFormChange}
-              value={formValues.type}
+              fieldMetadataItem={activeMetadataField}
             />
             <SettingsDataModelFieldSettingsFormCard
               disableCurrencyForm
-              fieldMetadataItem={{
-                icon: formConfig.watch('icon'),
-                id: activeMetadataField.id,
-                label: formConfig.watch('label'),
-                name: activeMetadataField.name,
-                type: formValues.type,
-              }}
+              fieldMetadataItem={activeMetadataField}
               objectMetadataItem={activeObjectMetadataItem}
-              onChange={handleFormChange}
               relationFieldMetadataItem={relationFieldMetadataItem}
-              values={{
-                currency: formValues.currency,
-                relation: formValues.relation,
-                select: formValues.select,
-                multiSelect: formValues.multiSelect,
-                defaultValue: formValues.defaultValue,
-              }}
             />
           </Section>
           {!isLabelIdentifier && (

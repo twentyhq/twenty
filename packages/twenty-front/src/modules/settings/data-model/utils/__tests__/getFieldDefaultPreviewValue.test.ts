@@ -1,5 +1,5 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { SettingsObjectFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
+import { SettingsDataModelFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
 import {
   mockedCompanyObjectMetadataItem,
   mockedOpportunityObjectMetadataItem,
@@ -16,8 +16,19 @@ describe('getFieldDefaultPreviewValue', () => {
       const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
         ({ name }) => name === 'stage',
       )!;
-      const selectOptions: SettingsObjectFieldSelectFormValues =
-        fieldMetadataItem.options ?? [];
+      const selectOptions: SettingsDataModelFieldSelectFormValues['options'] = [
+        {
+          color: 'purple',
+          label: '🏭 Industry',
+          value: 'INDUSTRY',
+        },
+        {
+          color: 'pink',
+          isDefault: true,
+          label: '💊 Health',
+          value: 'HEALTH',
+        },
+      ];
 
       // When
       const result = getFieldDefaultPreviewValue({
@@ -27,7 +38,7 @@ describe('getFieldDefaultPreviewValue', () => {
       });
 
       // Then
-      expect(result).toEqual(selectOptions[0].value);
+      expect(result).toEqual(selectOptions[1].value);
     });
 
     it('returns the first select option if no default option was found', () => {
@@ -36,8 +47,18 @@ describe('getFieldDefaultPreviewValue', () => {
       const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
         ({ name }) => name === 'stage',
       )!;
-      const selectOptions: SettingsObjectFieldSelectFormValues =
-        fieldMetadataItem.options ?? [];
+      const selectOptions: SettingsDataModelFieldSelectFormValues['options'] = [
+        {
+          color: 'purple' as const,
+          label: '🏭 Industry',
+          value: 'INDUSTRY',
+        },
+        {
+          color: 'pink' as const,
+          label: '💊 Health',
+          value: 'HEALTH',
+        },
+      ];
 
       // When
       const result = getFieldDefaultPreviewValue({
