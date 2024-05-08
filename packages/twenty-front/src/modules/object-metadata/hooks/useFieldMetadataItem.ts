@@ -1,8 +1,10 @@
 import { v4 } from 'uuid';
 
+import { useDeleteOneRelationMetadataItem } from '@/object-metadata/hooks/useDeleteOneRelationMetadataItem';
 import { FieldMetadataOption } from '@/object-metadata/types/FieldMetadataOption';
 import { getDefaultValueForBackend } from '@/object-metadata/utils/getDefaultValueForBackend';
 import { Field } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 import { FieldMetadataItem } from '../types/FieldMetadataItem';
 import { formatFieldMetadataItemInput } from '../utils/formatFieldMetadataItemInput';
@@ -15,6 +17,7 @@ export const useFieldMetadataItem = () => {
   const { createOneFieldMetadataItem } = useCreateOneFieldMetadataItem();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
   const { deleteOneFieldMetadataItem } = useDeleteOneFieldMetadataItem();
+  const { deleteOneRelationMetadataItem } = useDeleteOneRelationMetadataItem();
 
   const createMetadataField = (
     input: Pick<
@@ -78,19 +81,22 @@ export const useFieldMetadataItem = () => {
       updatePayload: { isActive: true },
     });
 
-  const disableMetadataField = (metadataField: FieldMetadataItem) =>
+  const deactivateMetadataField = (metadataField: FieldMetadataItem) =>
     updateOneFieldMetadataItem({
       fieldMetadataIdToUpdate: metadataField.id,
       updatePayload: { isActive: false },
     });
 
-  const deleteMetadataField = (metadataField: FieldMetadataItem) =>
-    deleteOneFieldMetadataItem(metadataField.id);
+  const deleteMetadataField = (metadataField: FieldMetadataItem) => {
+    metadataField.type === FieldMetadataType.Relation
+      ? deleteOneRelationMetadataItem(metadataField.toRelationMetadata?.id)
+      : deleteOneFieldMetadataItem(metadataField.id);
+  };
 
   return {
     activateMetadataField,
     createMetadataField,
-    disableMetadataField,
+    deactivateMetadataField,
     deleteMetadataField,
     editMetadataField,
   };
