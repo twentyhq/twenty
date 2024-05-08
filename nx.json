@@ -110,7 +110,7 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["^default", "excludeTests"],
-      "outputs": ["{options.output-dir}"],
+      "outputs": ["{projectRoot}/{options.output-dir}"],
       "options": {
         "cwd": "{projectRoot}",
         "command": "storybook build",
@@ -190,7 +190,7 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "cross-var chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name={args.targetPackageJsonScript} --exit-zero-on-changes={args.ci}",
+        "command": "cross-var chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name={args.targetPackageJsonScript} --exit-zero-on-changes {args.ci}",
         "ci": false,
         "targetPackageJsonScript": "storybook:build:chromatic"
       },
