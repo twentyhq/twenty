@@ -71,7 +71,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
       field.isLabelIdentifier
         ? null
         : {
-            Icon: field.isVisible ? IconEye : IconEyeOff,
+            Icon: field.isVisible ? IconEyeOff : IconEye,
             onClick: () => onVisibilityChange(field),
           },
     ].filter(isDefined);
