@@ -34,11 +34,11 @@ export const WithOpenSelect: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const inputField = await canvas.findByText('Unique ID');
+    const inputField = await canvas.findByText('Text');
 
     await userEvent.click(inputField);
 
-    const input = await canvas.findByText('Text');
+    const input = await canvas.findByText('Unique ID');
     await userEvent.click(input);
 
     await userEvent.click(inputField);
