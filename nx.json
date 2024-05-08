@@ -110,7 +110,7 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["^default", "excludeTests"],
-      "outputs": ["{options.output-dir}"],
+      "outputs": ["{projectRoot}/{options.output-dir}"],
       "options": {
         "cwd": "{projectRoot}",
         "command": "storybook build",
