@@ -1,5 +1,6 @@
 import { useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
+import omit from 'lodash.omit';
 import { z } from 'zod';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -22,6 +23,7 @@ import {
   settingsDataModelFieldSelectFormSchema,
 } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
+import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
 import {
   SettingsDataModelFieldPreviewCard,
   SettingsDataModelFieldPreviewCardProps,
@@ -46,6 +48,20 @@ const selectFieldFormSchema = z
   })
   .merge(settingsDataModelFieldSelectFormSchema);
 
+const otherFieldsFormSchema = z.object({
+  type: z.enum(
+    Object.keys(
+      omit(SETTINGS_FIELD_TYPE_CONFIGS, [
+        FieldMetadataType.Boolean,
+        FieldMetadataType.Currency,
+        FieldMetadataType.Relation,
+        FieldMetadataType.Select,
+        FieldMetadataType.MultiSelect,
+      ]),
+    ) as [FieldMetadataType, ...FieldMetadataType[]],
+  ),
+});
+
 export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
   'type',
   [
@@ -53,6 +69,7 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     currencyFieldFormSchema,
     relationFieldFormSchema,
     selectFieldFormSchema,
+    otherFieldsFormSchema,
   ],
 );
 

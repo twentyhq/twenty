@@ -9,6 +9,7 @@ import {
 } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { Select, SelectOption } from '@/ui/input/components/Select';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const settingsDataModelFieldTypeFormSchema = z.object({
   type: z.enum(
@@ -57,7 +58,7 @@ export const SettingsDataModelFieldTypeSelect = ({
       defaultValue={
         fieldMetadataItem && fieldMetadataItem.type in fieldTypeConfigs
           ? (fieldMetadataItem.type as SettingsSupportedFieldType)
-          : undefined
+          : FieldMetadataType.Text
       }
       render={({ field: { onChange, value } }) => (
         <Select
