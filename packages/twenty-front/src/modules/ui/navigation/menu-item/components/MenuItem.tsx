@@ -7,6 +7,7 @@ import { MenuItemLeftContent } from '../internals/components/MenuItemLeftContent
 import {
   StyledHoverableMenuItemBase,
   StyledMenuItemLeftContent,
+  StyledMenuItemRightContent,
 } from '../internals/components/StyledMenuItemBase';
 import { MenuItemAccent } from '../types/MenuItemAccent';
 
@@ -17,6 +18,7 @@ export type MenuItemIconButton = {
 
 export type MenuItemProps = {
   LeftIcon?: IconComponent | null;
+  RightIcon?: IconComponent | null;
   accent?: MenuItemAccent;
   text: string;
   iconButtons?: MenuItemIconButton[];
@@ -29,6 +31,7 @@ export type MenuItemProps = {
 
 export const MenuItem = ({
   LeftIcon,
+  RightIcon,
   accent = 'default',
   text,
   iconButtons,
@@ -65,6 +68,9 @@ export const MenuItem = ({
           <LightIconButtonGroup iconButtons={iconButtons} size="small" />
         )}
       </div>
+      <StyledMenuItemRightContent>
+        <MenuItemLeftContent LeftIcon={RightIcon ?? undefined} text={''} />
+      </StyledMenuItemRightContent>
     </StyledHoverableMenuItemBase>
   );
 };
