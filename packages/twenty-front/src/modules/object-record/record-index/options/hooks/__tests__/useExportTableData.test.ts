@@ -1,13 +1,8 @@
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 
-import {
-  csvDownloader,
-  download,
-  generateCsv,
-  percentage,
-  sleep,
-} from '../useExportTableData';
+import { csvDownloader, download, generateCsv } from '../useExportTableData';
+import { percentage, sleep } from '../useTableData';
 
 jest.useFakeTimers();
 
