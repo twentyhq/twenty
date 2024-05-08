@@ -68,12 +68,6 @@ export class FetchMessagesByBatchesService {
 
     const formattedResponse = Promise.all(
       parsedResponses.map(async (message: GmailMessageParsedResponse) => {
-        if (message.error) {
-          errors.push(message.error);
-
-          return;
-        }
-
         try {
           const {
             historyId,
@@ -204,7 +198,7 @@ export class FetchMessagesByBatchesService {
     property: string,
   ) {
     const value = message.payload?.headers?.find(
-      (header) => header.name === property,
+      (header) => header.name?.toLowerCase() === property.toLowerCase(),
     )?.value;
 
     if (value === undefined || value === null) {
