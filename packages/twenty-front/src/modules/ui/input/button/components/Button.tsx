@@ -160,7 +160,7 @@ const StyledButton = styled.button<
               border-color: ${variant === 'secondary'
                 ? focus
                   ? theme.color.blue
-                  : theme.color.blue20
+                  : theme.accent.primary
                 : focus
                   ? theme.color.blue
                   : 'transparent'};

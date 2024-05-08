@@ -1,6 +1,8 @@
 import toSnakeCase from 'lodash.snakecase';
 
-import { Field, FieldMetadataType } from '~/generated-metadata/graphql';
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { getDefaultValueForBackend } from '@/object-metadata/utils/getDefaultValueForBackend';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { formatMetadataLabelToMetadataNameOrThrows } from '~/pages/settings/data-model/utils/format-metadata-label-to-name.util';
 import { isDefined } from '~/utils/isDefined';
 
@@ -21,25 +23,24 @@ export const getOptionValueFromLabel = (label: string) => {
 };
 
 export const formatFieldMetadataItemInput = (
-  input: Pick<
-    Field,
-    'label' | 'icon' | 'description' | 'defaultValue' | 'options'
-  > & { type?: FieldMetadataType },
+  input: Partial<
+    Pick<
+      FieldMetadataItem,
+      'type' | 'label' | 'defaultValue' | 'icon' | 'description'
+    >
+  > & { options?: FieldMetadataOption[] },
 ) => {
-  const options = input.options as FieldMetadataOption[];
+  const options = input.options as FieldMetadataOption[] | undefined;
   let defaultValue = input.defaultValue;
   if (input.type === FieldMetadataType.MultiSelect) {
-    const defaultOptions = options?.filter((option) => option.isDefault);
-    if (isDefined(defaultOptions)) {
-      defaultValue = defaultOptions.map(
-        (defaultOption) => `${getOptionValueFromLabel(defaultOption.label)}`,
-      );
-    }
+    defaultValue = options
+      ?.filter((option) => option.isDefault)
+      ?.map((defaultOption) => getOptionValueFromLabel(defaultOption.label));
   }
   if (input.type === FieldMetadataType.Select) {
     const defaultOption = options?.find((option) => option.isDefault);
     defaultValue = isDefined(defaultOption)
-      ? `${getOptionValueFromLabel(defaultOption.label)}`
+      ? getOptionValueFromLabel(defaultOption.label)
       : undefined;
   }
 
@@ -59,12 +60,17 @@ export const formatFieldMetadataItemInput = (
     }
   }
 
+  const label = input.label?.trim();
+
   return {
-    defaultValue,
+    defaultValue:
+      isDefined(defaultValue) && input.type
+        ? getDefaultValueForBackend(defaultValue, input.type)
+        : undefined,
     description: input.description?.trim() ?? null,
     icon: input.icon,
-    label: input.label.trim(),
-    name: formatMetadataLabelToMetadataNameOrThrows(input.label.trim()),
+    label,
+    name: label ? formatMetadataLabelToMetadataNameOrThrows(label) : undefined,
     options: options?.map((option, index) => ({
       color: option.color,
       id: option.id,

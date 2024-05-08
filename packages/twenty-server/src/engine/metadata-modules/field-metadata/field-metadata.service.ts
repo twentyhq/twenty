@@ -41,6 +41,7 @@ import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/ut
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { InvalidStringException } from 'src/engine/metadata-modules/errors/InvalidStringException';
 import { validateMetadataName } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 
 import {
   FieldMetadataEntity,
@@ -64,6 +65,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
+    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
   ) {
     super(fieldMetadataRepository);
   }
@@ -232,6 +234,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       throw error;
     } finally {
       await queryRunner.release();
+      await this.workspaceCacheVersionService.incrementVersion(
+        fieldMetadataInput.workspaceId,
+      );
     }
   }
 
@@ -358,6 +363,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       throw error;
     } finally {
       await queryRunner.release();
+      await this.workspaceCacheVersionService.incrementVersion(
+        fieldMetadataInput.workspaceId,
+      );
     }
   }
 
@@ -429,6 +437,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       throw error;
     } finally {
       await queryRunner.release();
+      await this.workspaceCacheVersionService.incrementVersion(workspaceId);
     }
   }
 
@@ -466,6 +475,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
   public async deleteFieldsMetadata(workspaceId: string) {
     await this.fieldMetadataRepository.delete({ workspaceId });
+    await this.workspaceCacheVersionService.incrementVersion(workspaceId);
   }
 
   private buildUpdatableStandardFieldInput(
