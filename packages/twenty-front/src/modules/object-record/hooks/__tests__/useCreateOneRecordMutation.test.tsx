@@ -36,13 +36,11 @@ const expectedQueryTemplate = `
 describe('useCreateOneRecordMutation', () => {
   it('should return a valid createOneRecordMutation', () => {
     const objectNameSingular = 'person';
-    const depth = 2;
 
     const { result } = renderHook(
       () =>
         useCreateOneRecordMutation({
           objectNameSingular,
-          depth,
         }),
       {
         wrapper: RecoilRoot,

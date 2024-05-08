@@ -5,7 +5,7 @@ import { RecoilRoot } from 'recoil';
 import { useFindDuplicateRecordsQuery } from '@/object-record/hooks/useFindDuplicatesRecordsQuery';
 
 const expectedQueryTemplate = `
-  query FindDuplicatePerson($id: UUID) {
+  query FindDuplicatePerson($id: ID!) {
     personDuplicates(id: $id) {
       edges {
         node {
@@ -47,13 +47,11 @@ const expectedQueryTemplate = `
 describe('useFindDuplicateRecordsQuery', () => {
   it('should return a valid findDuplicateRecordsQuery', () => {
     const objectNameSingular = 'person';
-    const depth = 2;
 
     const { result } = renderHook(
       () =>
         useFindDuplicateRecordsQuery({
           objectNameSingular,
-          depth,
         }),
       {
         wrapper: RecoilRoot,

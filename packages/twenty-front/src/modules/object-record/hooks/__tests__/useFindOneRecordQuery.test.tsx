@@ -5,7 +5,7 @@ import { RecoilRoot } from 'recoil';
 import { useFindOneRecordQuery } from '@/object-record/hooks/useFindOneRecordQuery';
 
 const expectedQueryTemplate = `
-query FindOnePerson($objectRecordId: UUID!) {
+query FindOnePerson($objectRecordId: ID!) {
   person(filter: { id: { eq: $objectRecordId } }) {
     __typename
     xLink {
@@ -36,13 +36,11 @@ query FindOnePerson($objectRecordId: UUID!) {
 describe('useFindOneRecordQuery', () => {
   it('should return a valid findOneRecordQuery', () => {
     const objectNameSingular = 'person';
-    const depth = 2;
 
     const { result } = renderHook(
       () =>
         useFindOneRecordQuery({
           objectNameSingular,
-          depth,
         }),
       {
         wrapper: RecoilRoot,
