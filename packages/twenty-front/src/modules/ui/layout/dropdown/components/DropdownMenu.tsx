@@ -10,10 +10,12 @@ const StyledDropdownMenu = styled.div<{
       ? 'none'
       : 'blur(12px) saturate(200%) contrast(50%) brightness(130%)'};
 
+  color: ${({ theme }) => theme.font.color.secondary};
+
   background: ${({ theme, disableBlur }) =>
     disableBlur
       ? theme.background.primary
-      : theme.background.transparent.secondary};
+      : theme.background.transparent.primary};
 
   border: ${({ disableBorder, theme }) =>
     disableBorder ? 'none' : `1px solid ${theme.border.color.medium}`};
