@@ -110,8 +110,9 @@ export const SettingsObjectFieldEdit = () => {
     try {
       if (
         formValues.type === FieldMetadataType.Relation &&
-        isNonEmptyString(relationFieldMetadataItem?.id) &&
-        'relation' in dirtyFields
+        'relation' in formValues &&
+        'relation' in dirtyFields &&
+        isNonEmptyString(relationFieldMetadataItem?.id)
       ) {
         await updateOneFieldMetadataItem({
           fieldMetadataIdToUpdate: relationFieldMetadataItem.id,
