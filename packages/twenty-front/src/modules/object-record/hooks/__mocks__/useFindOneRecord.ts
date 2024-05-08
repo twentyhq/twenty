@@ -3,7 +3,7 @@ import { gql } from '@apollo/client';
 import { responseData as person } from './useUpdateOneRecord';
 
 export const query = gql`
-  query FindOnePerson($objectRecordId: UUID!) {
+  query FindOnePerson($objectRecordId: ID!) {
     person(filter: { id: { eq: $objectRecordId } }) {
       __typename
       xLink {

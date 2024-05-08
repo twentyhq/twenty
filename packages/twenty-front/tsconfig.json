@@ -9,7 +9,7 @@
     "esModuleInterop": true,
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
-    "allowImportingTsExtensions": true,
+    "allowImportingTsExtensions": false,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
@@ -19,7 +19,7 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "forceConsistentCasingInFileNames": true,
-    "outDir": "../../dist/out-tsc",
+    "outDir": "../../.cache/tsc",
     "paths": {
       "@/*": ["packages/twenty-front/src/modules/*"],
       "~/*": ["packages/twenty-front/src/*"],

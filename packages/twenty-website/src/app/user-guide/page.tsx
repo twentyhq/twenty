@@ -1,4 +1,5 @@
 import UserGuideMain from '@/app/_components/user-guide/UserGuideMain';
+import { getUserGuideArticles } from '@/content/user-guide/constants/getUserGuideArticles';
 
 export const metadata = {
   title: 'Twenty - User Guide',
@@ -7,6 +8,10 @@ export const metadata = {
   icons: '/images/core/logo.svg',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function UserGuideHome() {
-  return <UserGuideMain />;
+  const userGuideArticleCards = getUserGuideArticles();
+
+  return <UserGuideMain userGuideArticleCards={userGuideArticleCards} />;
 }

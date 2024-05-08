@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { SubscriptionCardPrice } from '@/billing/components/SubscriptionCardPrice.tsx';
+import { SubscriptionCardPrice } from '@/billing/components/SubscriptionCardPrice';
 import { capitalize } from '~/utils/string/capitalize';
 
 type SubscriptionCardProps = {

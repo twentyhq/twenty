@@ -39,8 +39,9 @@ import {
 import { DeleteOneFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/delete-field.input';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { validateString } from 'src/engine/metadata-modules/remote-server/utils/validate-remote-server-input';
 import { InvalidStringException } from 'src/engine/metadata-modules/errors/InvalidStringException';
+import { validateMetadataName } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 
 import {
   FieldMetadataEntity,
@@ -58,14 +59,13 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
     private readonly metadataDataSource: DataSource,
     @InjectRepository(FieldMetadataEntity, 'metadata')
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectRepository(RelationMetadataEntity, 'metadata')
-    private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly workspaceMigrationFactory: WorkspaceMigrationFactory,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
+    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
   ) {
     super(fieldMetadataRepository);
   }
@@ -234,6 +234,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       throw error;
     } finally {
       await queryRunner.release();
+      await this.workspaceCacheVersionService.incrementVersion(
+        fieldMetadataInput.workspaceId,
+      );
     }
   }
 
@@ -360,6 +363,9 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       throw error;
     } finally {
       await queryRunner.release();
+      await this.workspaceCacheVersionService.incrementVersion(
+        fieldMetadataInput.workspaceId,
+      );
     }
   }
 
@@ -431,6 +437,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       throw error;
     } finally {
       await queryRunner.release();
+      await this.workspaceCacheVersionService.incrementVersion(workspaceId);
     }
   }
 
@@ -468,6 +475,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
 
   public async deleteFieldsMetadata(workspaceId: string) {
     await this.fieldMetadataRepository.delete({ workspaceId });
+    await this.workspaceCacheVersionService.incrementVersion(workspaceId);
   }
 
   private buildUpdatableStandardFieldInput(
@@ -505,7 +513,10 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
       relationMetadata.fromFieldMetadata.id === fieldMetadataDTO.id;
 
     // TODO: implement MANY_TO_MANY
-    if (relationMetadata.relationType === RelationMetadataType.MANY_TO_MANY) {
+    if (
+      relationMetadata.relationType === RelationMetadataType.MANY_TO_MANY ||
+      relationMetadata.relationType === RelationMetadataType.MANY_TO_ONE
+    ) {
       throw new Error(`
         Relation type ${relationMetadata.relationType} not supported
       `);
@@ -545,7 +556,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
   >(fieldMetadataInput: T): T {
     if (fieldMetadataInput.name) {
       try {
-        validateString(fieldMetadataInput.name);
+        validateMetadataName(fieldMetadataInput.name);
       } catch (error) {
         if (error instanceof InvalidStringException) {
           throw new BadRequestException(

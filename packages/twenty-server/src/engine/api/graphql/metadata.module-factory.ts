@@ -8,11 +8,14 @@ import { useThrottler } from 'src/engine/api/graphql/graphql-config/hooks/use-th
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
 import { renderApolloPlayground } from 'src/engine/utils/render-apollo-playground.util';
 import { DataloaderService } from 'src/engine/dataloaders/dataloader.service';
+import { useCachedMetadata } from 'src/engine/api/graphql/graphql-config/hooks/use-cached-metadata';
+import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 
 export const metadataModuleFactory = async (
   environmentService: EnvironmentService,
   exceptionHandlerService: ExceptionHandlerService,
   dataloaderService: DataloaderService,
+  workspaceSchemaCacheStorage: CacheStorageService,
 ): Promise<YogaDriverConfig> => {
   const config: YogaDriverConfig = {
     autoSchemaFile: true,
@@ -31,6 +34,15 @@ export const metadataModuleFactory = async (
       }),
       useExceptionHandler({
         exceptionHandlerService,
+      }),
+      useCachedMetadata({
+        cacheGetter: workspaceSchemaCacheStorage.get.bind(
+          workspaceSchemaCacheStorage,
+        ),
+        cacheSetter: workspaceSchemaCacheStorage.set.bind(
+          workspaceSchemaCacheStorage,
+        ),
+        operationsToCache: ['ObjectMetadataItems'],
       }),
     ],
     path: '/metadata',

@@ -1,7 +1,10 @@
 import { Activity } from '@/activities/types/Activity';
 import { isDefined } from '~/utils/isDefined';
 
-export type ActivityForActivityGroup = Pick<Activity, 'id' | 'createdAt'>;
+export type ActivityForActivityGroup = Pick<
+  Activity,
+  'id' | 'createdAt' | '__typename'
+>;
 
 export type ActivityGroup = {
   month: number;

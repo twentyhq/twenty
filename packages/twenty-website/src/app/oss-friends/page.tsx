@@ -11,6 +11,8 @@ export const metadata = {
   icons: '/images/core/logo.svg',
 };
 
+export const dynamic = 'force-dynamic';
+
 export default async function OssFriends() {
   const ossList = await fetch('https://formbricks.com/api/oss-friends');
 

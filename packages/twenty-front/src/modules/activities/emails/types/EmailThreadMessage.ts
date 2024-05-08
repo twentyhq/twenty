@@ -5,4 +5,5 @@ export type EmailThreadMessage = {
   text: string;
   receivedAt: string;
   messageParticipants: EmailThreadMessageParticipant[];
+  __typename: 'EmailThreadMessage';
 };

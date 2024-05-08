@@ -1,39 +1,66 @@
+import { Controller, useFormContext } from 'react-hook-form';
+import { z } from 'zod';
+
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
+import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { Select } from '@/ui/input/components/Select';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 
-import { SETTINGS_FIELD_CURRENCY_CODES } from '../constants/SettingsFieldCurrencyCodes';
+// TODO: rename to SettingsDataModelFieldCurrencyForm and move to settings/data-model/fields/forms/components
 
-export type SettingsObjectFieldCurrencyFormValues = {
-  currencyCode: CurrencyCode;
-};
+export const settingsDataModelFieldCurrencyFormSchema = z.object({
+  defaultValue: z.object({
+    currencyCode: z.nativeEnum(CurrencyCode),
+  }),
+});
 
-type SettingsObjectFieldCurrencyFormProps = {
+type SettingsDataModelFieldCurrencyFormValues = z.infer<
+  typeof settingsDataModelFieldCurrencyFormSchema
+>;
+
+type SettingsDataModelFieldCurrencyFormProps = {
   disabled?: boolean;
-  onChange: (values: Partial<SettingsObjectFieldCurrencyFormValues>) => void;
-  values: SettingsObjectFieldCurrencyFormValues;
+  fieldMetadataItem?: Pick<FieldMetadataItem, 'defaultValue'>;
 };
 
-export const SettingsObjectFieldCurrencyForm = ({
-  disabled,
-  onChange,
-  values,
-}: SettingsObjectFieldCurrencyFormProps) => (
-  <CardContent>
-    <Select
-      fullWidth
-      disabled={disabled}
-      label="Default Unit"
-      dropdownId="currency-unit-select"
-      value={values.currencyCode}
-      options={Object.entries(SETTINGS_FIELD_CURRENCY_CODES).map(
-        ([value, { label, Icon }]) => ({
-          label,
-          value: value as CurrencyCode,
-          Icon,
-        }),
-      )}
-      onChange={(value) => onChange({ currencyCode: value })}
-    />
-  </CardContent>
+const OPTIONS = Object.entries(SETTINGS_FIELD_CURRENCY_CODES).map(
+  ([value, { label, Icon }]) => ({
+    label,
+    value: value as CurrencyCode,
+    Icon,
+  }),
 );
+
+export const SettingsDataModelFieldCurrencyForm = ({
+  disabled,
+  fieldMetadataItem,
+}: SettingsDataModelFieldCurrencyFormProps) => {
+  const { control } =
+    useFormContext<SettingsDataModelFieldCurrencyFormValues>();
+
+  const initialValue =
+    (fieldMetadataItem?.defaultValue?.currencyCode as CurrencyCode) ??
+    CurrencyCode.USD;
+
+  return (
+    <CardContent>
+      <Controller
+        name="defaultValue.currencyCode"
+        control={control}
+        defaultValue={initialValue}
+        render={({ field: { onChange, value } }) => (
+          <Select
+            fullWidth
+            disabled={disabled}
+            label="Default Unit"
+            dropdownId="currency-unit-select"
+            value={value}
+            options={OPTIONS}
+            onChange={onChange}
+          />
+        )}
+      />
+    </CardContent>
+  );
+};

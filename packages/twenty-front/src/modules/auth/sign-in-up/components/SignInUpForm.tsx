@@ -3,7 +3,7 @@ import { Controller } from 'react-hook-form';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { IconGoogle, IconMicrosoft } from 'twenty-ui';
 
 import { useHandleResetPassword } from '@/auth/sign-in-up/hooks/useHandleResetPassword';
@@ -11,12 +11,15 @@ import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useSignInWithGoogle } from '@/auth/sign-in-up/hooks/useSignInWithGoogle';
 import { useSignInWithMicrosoft } from '@/auth/sign-in-up/hooks/useSignInWithMicrosoft';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
+import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
+import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { ActionLink } from '@/ui/navigation/link/components/ActionLink.tsx';
+import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
+import { isDefined } from '~/utils/isDefined';
 
 import { Logo } from '../../components/Logo';
 import { Title } from '../../components/Title';
@@ -46,6 +49,10 @@ const StyledInputContainer = styled.div`
 `;
 
 export const SignInUpForm = () => {
+  const captchaProvider = useRecoilValue(captchaProviderState);
+  const isRequestingCaptchaToken = useRecoilValue(
+    isRequestingCaptchaTokenState,
+  );
   const [authProviders] = useRecoilState(authProvidersState);
   const [showErrors, setShowErrors] = useState(false);
   const { handleResetPassword } = useHandleResetPassword();
@@ -63,7 +70,9 @@ export const SignInUpForm = () => {
     submitCredentials,
   } = useSignInUp(form);
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = async (
+    event: React.KeyboardEvent<HTMLInputElement>,
+  ) => {
     if (event.key === 'Enter') {
       event.preventDefault();
 
@@ -110,6 +119,27 @@ export const SignInUpForm = () => {
   }, [signInUpMode, workspace?.displayName, isInviteMode, signInUpStep]);
 
   const theme = useTheme();
+
+  const shouldWaitForCaptchaToken =
+    signInUpStep !== SignInUpStep.Init &&
+    isDefined(captchaProvider?.provider) &&
+    isRequestingCaptchaToken;
+
+  const isEmailStepSubmitButtonDisabledCondition =
+    signInUpStep === SignInUpStep.Email &&
+    (form.watch('email')?.length === 0 || shouldWaitForCaptchaToken);
+
+  // TODO: isValid is actually a proxy function. If it is not rendered the first time, react might not trigger re-renders
+  // We make the isValid check synchronous and update a reactState to make sure this does not happen
+  const isPasswordStepSubmitButtonDisabledCondition =
+    signInUpStep === SignInUpStep.Password &&
+    (!form.formState.isValid ||
+      form.formState.isSubmitting ||
+      shouldWaitForCaptchaToken);
+
+  const isSubmitButtonDisabled =
+    isEmailStepSubmitButtonDisabledCondition ||
+    isPasswordStepSubmitButtonDisabledCondition;
 
   return (
     <>
@@ -222,12 +252,11 @@ export const SignInUpForm = () => {
                 />
               </StyledFullWidthMotionDiv>
             )}
-
             <MainButton
               variant="secondary"
               title={buttonTitle}
               type="submit"
-              onClick={() => {
+              onClick={async () => {
                 if (signInUpStep === SignInUpStep.Init) {
                   continueWithEmail();
                   return;
@@ -240,15 +269,7 @@ export const SignInUpForm = () => {
                 form.handleSubmit(submitCredentials)();
               }}
               Icon={() => form.formState.isSubmitting && <Loader />}
-              disabled={
-                signInUpStep === SignInUpStep.Init
-                  ? false
-                  : signInUpStep === SignInUpStep.Email
-                    ? !form.watch('email')
-                    : !form.watch('email') ||
-                      !form.watch('password') ||
-                      form.formState.isSubmitting
-              }
+              disabled={isSubmitButtonDisabled}
               fullWidth
             />
           </StyledForm>

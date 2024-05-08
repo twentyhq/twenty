@@ -7,4 +7,5 @@ export type Comment = {
   updatedAt: string;
   activityId: string;
   author: Pick<WorkspaceMember, 'id' | 'name' | 'avatarUrl'>;
+  __typename: 'Comment';
 };

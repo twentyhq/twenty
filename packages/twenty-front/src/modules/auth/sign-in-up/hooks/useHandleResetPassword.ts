@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useEmailPasswordResetLinkMutation } from '~/generated/graphql.tsx';
+import { useEmailPasswordResetLinkMutation } from '~/generated/graphql';
 
 export const useHandleResetPassword = () => {
   const { enqueueSnackBar } = useSnackBar();

@@ -8,7 +8,7 @@ import { FieldDisplay } from '@/object-record/record-field/components/FieldDispl
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { BooleanFieldInput } from '@/object-record/record-field/meta-types/input/components/BooleanFieldInput';
 import { RatingFieldInput } from '@/object-record/record-field/meta-types/input/components/RatingFieldInput';
-import { SettingsObjectFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
+import { SettingsDataModelFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
 import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetFieldValueEffect';
 import { SettingsDataModelSetRecordEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetRecordEffect';
 import { useFieldPreview } from '@/settings/data-model/fields/preview/hooks/useFieldPreview';
@@ -24,7 +24,7 @@ export type SettingsDataModelFieldPreviewProps = {
   };
   objectMetadataItem: ObjectMetadataItem;
   relationObjectMetadataItem?: ObjectMetadataItem;
-  selectOptions?: SettingsObjectFieldSelectFormValues;
+  selectOptions?: SettingsDataModelFieldSelectFormValues['options'];
   shrink?: boolean;
   withFieldLabel?: boolean;
 };

@@ -37,6 +37,11 @@ export const useFavorites = () => {
 
   const { records: favorites } = usePrefetchedData<Favorite>(
     PrefetchKey.AllFavorites,
+    {
+      workspaceMemberId: {
+        eq: currentWorkspaceMember?.id ?? '',
+      },
+    },
   );
 
   const favoriteRelationFieldMetadataItems = useMemo(
