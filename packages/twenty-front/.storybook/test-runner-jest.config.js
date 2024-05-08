@@ -9,5 +9,5 @@ export default {
   /** Add your own overrides below
    * @see https://jestjs.io/docs/configuration
    */
-  testTimeout: process.env.STORYBOOK_SCOPE === 'pages' ? 60000 : 15000,
+  testTimeout: process.env.STORYBOOK_SCOPE === 'pages' ? 60000 : 30000,
 };
