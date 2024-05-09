@@ -77,6 +77,8 @@ export class FetchMessagesByBatchesService {
               subject,
               from,
               to,
+              cc,
+              bcc,
               headerMessageId,
               text,
               attachments,
@@ -87,6 +89,8 @@ export class FetchMessagesByBatchesService {
             const participants = [
               ...formatAddressObjectAsParticipants(from, 'from'),
               ...formatAddressObjectAsParticipants(to, 'to'),
+              ...formatAddressObjectAsParticipants(cc, 'cc'),
+              ...formatAddressObjectAsParticipants(bcc, 'bcc'),
             ];
 
             let textWithoutReplyQuotations = text;
@@ -154,6 +158,8 @@ export class FetchMessagesByBatchesService {
     const subject = this.getPropertyFromHeaders(message, 'Subject');
     const rawFrom = this.getPropertyFromHeaders(message, 'From');
     const rawTo = this.getPropertyFromHeaders(message, 'To');
+    const rawCc = this.getPropertyFromHeaders(message, 'Cc');
+    const rawBcc = this.getPropertyFromHeaders(message, 'Bcc');
     const messageId = this.getPropertyFromHeaders(message, 'Message-ID');
     const id = message.id;
     const threadId = message.threadId;
@@ -177,6 +183,8 @@ export class FetchMessagesByBatchesService {
       subject,
       from: addressparser(rawFrom),
       to: addressparser(rawTo),
+      cc: addressparser(rawCc),
+      bcc: addressparser(rawBcc),
       text,
       attachments: [],
     };
