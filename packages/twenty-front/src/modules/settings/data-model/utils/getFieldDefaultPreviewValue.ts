@@ -13,7 +13,7 @@ export const getFieldDefaultPreviewValue = ({
   relationObjectMetadataItem,
   selectOptions,
 }: {
-  fieldMetadataItem: Pick<FieldMetadataItem, 'type'> & {
+  fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'defaultValue'> & {
     id?: string;
     name?: string;
   };
@@ -25,9 +25,10 @@ export const getFieldDefaultPreviewValue = ({
     fieldMetadataItem.type === FieldMetadataType.Select &&
     isDefined(selectOptions)
   ) {
-    const defaultSelectOption =
-      selectOptions.find(({ isDefault }) => isDefault) || selectOptions[0];
-    return defaultSelectOption.value;
+    const defaultSelectOption = selectOptions.find(
+      ({ value }) => value === fieldMetadataItem.defaultValue,
+    );
+    return defaultSelectOption?.value;
   }
 
   if (

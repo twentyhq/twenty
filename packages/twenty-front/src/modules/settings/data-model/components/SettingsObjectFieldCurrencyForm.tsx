@@ -2,6 +2,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { applyQuotesToString } from '@/object-metadata/utils/applyQuotesToString';
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { Select } from '@/ui/input/components/Select';
@@ -11,7 +12,7 @@ import { CardContent } from '@/ui/layout/card/components/CardContent';
 
 export const settingsDataModelFieldCurrencyFormSchema = z.object({
   defaultValue: z.object({
-    currencyCode: z.nativeEnum(CurrencyCode),
+    currencyCode: z.string(),
   }),
 });
 
@@ -27,7 +28,7 @@ type SettingsDataModelFieldCurrencyFormProps = {
 const OPTIONS = Object.entries(SETTINGS_FIELD_CURRENCY_CODES).map(
   ([value, { label, Icon }]) => ({
     label,
-    value: value as CurrencyCode,
+    value: applyQuotesToString(value),
     Icon,
   }),
 );
@@ -48,7 +49,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
       <Controller
         name="defaultValue.currencyCode"
         control={control}
-        defaultValue={initialValue}
+        defaultValue={applyQuotesToString(initialValue)}
         render={({ field: { onChange, value } }) => (
           <Select
             fullWidth

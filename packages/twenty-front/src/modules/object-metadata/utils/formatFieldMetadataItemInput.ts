@@ -1,7 +1,6 @@
 import toSnakeCase from 'lodash.snakecase';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { getDefaultValueForBackend } from '@/object-metadata/utils/getDefaultValueForBackend';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { formatMetadataLabelToMetadataNameOrThrows } from '~/pages/settings/data-model/utils/format-metadata-label-to-name.util';
 import { isDefined } from '~/utils/isDefined';
@@ -63,10 +62,7 @@ export const formatFieldMetadataItemInput = (
   const label = input.label?.trim();
 
   return {
-    defaultValue:
-      isDefined(defaultValue) && input.type
-        ? getDefaultValueForBackend(defaultValue, input.type)
-        : undefined,
+    defaultValue,
     description: input.description?.trim() ?? null,
     icon: input.icon,
     label,

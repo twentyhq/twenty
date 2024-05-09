@@ -7,6 +7,7 @@ import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsObjectFieldSelectFormOption } from '@/settings/data-model/types/SettingsObjectFieldSelectFormOption';
+import { isSelectOptionDefaultValue } from '@/settings/data-model/utils/isSelectOptionDefaultValue';
 import { LightButton } from '@/ui/input/button/components/LightButton';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { CardFooter } from '@/ui/layout/card/components/CardFooter';
@@ -29,7 +30,6 @@ export const settingsDataModelFieldSelectFormSchema = z.object({
       z.object({
         color: themeColorSchema,
         value: z.string(),
-        isDefault: z.boolean().optional(),
         label: z.string().min(1),
       }),
     )
@@ -41,7 +41,10 @@ export type SettingsDataModelFieldSelectFormValues = z.infer<
 >;
 
 type SettingsDataModelFieldSelectFormProps = {
-  fieldMetadataItem?: Pick<FieldMetadataItem, 'defaultValue' | 'options'>;
+  fieldMetadataItem?: Pick<
+    FieldMetadataItem,
+    'defaultValue' | 'options' | 'type'
+  >;
   isMultiSelect?: boolean;
 };
 
@@ -106,7 +109,6 @@ const DEFAULT_OPTION: SettingsObjectFieldSelectFormOption = {
 
 export const SettingsDataModelFieldSelectForm = ({
   fieldMetadataItem,
-  isMultiSelect = false,
 }: SettingsDataModelFieldSelectFormProps) => {
   const { control } = useFormContext<SettingsDataModelFieldSelectFormValues>();
 
@@ -147,6 +149,10 @@ export const SettingsDataModelFieldSelectForm = ({
     return `Option 100`;
   };
 
+  if (!fieldMetadataItem) {
+    return null;
+  }
+
   return (
     <Controller
       name="options"
@@ -169,18 +175,16 @@ export const SettingsDataModelFieldSelectForm = ({
                       itemComponent={
                         <SettingsObjectFieldSelectFormOptionRow
                           key={option.value}
-                          isDefault={option.isDefault}
                           onChange={(nextOption) => {
-                            const nextOptions =
-                              isMultiSelect || !nextOption.isDefault
-                                ? [...options]
-                                : // Reset simple Select default option before setting the new one
-                                  options.map<SettingsObjectFieldSelectFormOption>(
-                                    (value) => ({ ...value, isDefault: false }),
-                                  );
+                            const nextOptions = [...options];
+
                             nextOptions.splice(index, 1, nextOption);
                             onChange(nextOptions);
                           }}
+                          isDefault={isSelectOptionDefaultValue(
+                            option.value,
+                            fieldMetadataItem,
+                          )}
                           onRemove={
                             options.length > 1
                               ? () => {

@@ -124,7 +124,7 @@ export const SettingsObjectFieldSelectFormOptionRow = ({
                   LeftIcon={IconX}
                   text="Remove as default"
                   onClick={() => {
-                    onChange({ ...option, isDefault: false });
+                    // Todo: unset form default value
                     closeActionsDropdown();
                   }}
                 />
@@ -133,7 +133,7 @@ export const SettingsObjectFieldSelectFormOptionRow = ({
                   LeftIcon={IconCheck}
                   text="Set as default"
                   onClick={() => {
-                    onChange({ ...option, isDefault: true });
+                    // Todo: set form default value
                     closeActionsDropdown();
                   }}
                 />
