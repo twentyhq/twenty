@@ -3,13 +3,13 @@ import { Injectable, Logger } from '@nestjs/common';
 import { AxiosResponse } from 'axios';
 import planer from 'planer';
 import addressparser from 'addressparser';
+import { gmail_v1 } from 'googleapis';
 
 import { GmailMessage } from 'src/modules/messaging/types/gmail-message';
 import { MessageQuery } from 'src/modules/messaging/types/message-or-thread-query';
 import { FetchByBatchesService } from 'src/modules/messaging/services/fetch-by-batch/fetch-by-batch.service';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/services/utils/format-address-object-as-participants.util';
 import { assert, assertNotNull } from 'src/utils/assert';
-import { GmailMessageParsedResponse } from 'src/modules/messaging/types/gmail-message-parsed-response';
 
 @Injectable()
 export class FetchMessagesByBatchesService {
@@ -40,7 +40,7 @@ export class FetchMessagesByBatchesService {
     startTime = Date.now();
 
     const formattedResponse =
-      await this.formatBatchResponsesAsGmailMessages(batchResponses);
+      this.formatBatchResponsesAsGmailMessages(batchResponses);
 
     endTime = Date.now();
 
@@ -53,9 +53,9 @@ export class FetchMessagesByBatchesService {
     return formattedResponse;
   }
 
-  async formatBatchResponseAsGmailMessage(
+  private formatBatchResponseAsGmailMessage(
     responseCollection: AxiosResponse<any, any>,
-  ): Promise<GmailMessage[]> {
+  ): GmailMessage[] {
     const parsedResponses =
       this.fetchByBatchesService.parseBatch(responseCollection);
 
@@ -63,76 +63,77 @@ export class FetchMessagesByBatchesService {
       return str.replace(/\0/g, '');
     };
 
-    const formattedResponse = await Promise.all(
-      parsedResponses.map(
-        async (
-          message: GmailMessageParsedResponse,
-        ): Promise<GmailMessage | null> => {
-          try {
-            const {
-              historyId,
-              id,
-              threadId,
-              internalDate,
-              subject,
-              from,
-              to,
-              cc,
-              bcc,
-              headerMessageId,
-              text,
-              attachments,
-            } = this.parseGmailMessage(message);
+    const formattedResponse = parsedResponses.map(
+      (response): GmailMessage | null => {
+        if ('error' in response) {
+          if (response.error.code === 404) {
+            return null;
+          }
 
-            if (!from) throw new Error('From value is missing');
+          throw response.error;
+        }
 
-            const participants = [
-              ...formatAddressObjectAsParticipants(from, 'from'),
-              ...formatAddressObjectAsParticipants(to, 'to'),
-              ...formatAddressObjectAsParticipants(cc, 'cc'),
-              ...formatAddressObjectAsParticipants(bcc, 'bcc'),
-            ];
+        try {
+          const {
+            historyId,
+            id,
+            threadId,
+            internalDate,
+            subject,
+            from,
+            to,
+            cc,
+            bcc,
+            headerMessageId,
+            text,
+            attachments,
+          } = this.parseGmailMessage(response);
 
-            let textWithoutReplyQuotations = text;
+          if (!from) throw new Error('From value is missing');
 
-            if (text)
-              try {
-                textWithoutReplyQuotations = planer.extractFrom(
-                  text,
-                  'text/plain',
-                );
-              } catch (error) {
-                console.log(
-                  'Error while trying to remove reply quotations',
-                  error,
-                );
-              }
+          const participants = [
+            ...formatAddressObjectAsParticipants(from, 'from'),
+            ...formatAddressObjectAsParticipants(to, 'to'),
+            ...formatAddressObjectAsParticipants(cc, 'cc'),
+            ...formatAddressObjectAsParticipants(bcc, 'bcc'),
+          ];
 
-            const messageFromGmail: GmailMessage = {
-              historyId,
-              externalId: id,
-              headerMessageId,
-              subject: subject || '',
-              messageThreadExternalId: threadId,
-              internalDate,
-              fromHandle: from[0].address || '',
-              fromDisplayName: from[0].name || '',
-              participants,
-              text: sanitizeString(textWithoutReplyQuotations || ''),
-              attachments,
-            };
+          let textWithoutReplyQuotations = text;
 
-            return messageFromGmail;
-          } catch (error) {
-            // if message was not found, silenty ignore it
-            if (error?.code === 404) {
-              return null;
+          if (text)
+            try {
+              textWithoutReplyQuotations = planer.extractFrom(
+                text,
+                'text/plain',
+              );
+            } catch (error) {
+              console.log(
+                'Error while trying to remove reply quotations',
+                error,
+              );
             }
 
-            throw error;
-          }
-        },
-      ),
+          const messageFromGmail: GmailMessage = {
+            historyId,
+            externalId: id,
+            headerMessageId,
+            subject: subject || '',
+            messageThreadExternalId: threadId,
+            internalDate,
+            fromHandle: from[0].address || '',
+            fromDisplayName: from[0].name || '',
+            participants,
+            text: sanitizeString(textWithoutReplyQuotations || ''),
+            attachments,
+          };
+
+          return messageFromGmail;
+        } catch (error) {
+          console.log('Error while trying to parse a message', response, error);
+
+          return null;
+        }
+      },
     );
 
     const filteredMessages = formattedResponse.filter((message) =>
@@ -142,19 +143,17 @@ export class FetchMessagesByBatchesService {
     return filteredMessages;
   }
 
-  async formatBatchResponsesAsGmailMessages(
+  private formatBatchResponsesAsGmailMessages(
     batchResponses: AxiosResponse<any, any>[],
-  ): Promise<GmailMessage[]> {
-    const messageBatches = await Promise.all(
-      batchResponses.map(async (response) => {
-        return this.formatBatchResponseAsGmailMessage(response);
-      }),
-    );
+  ): GmailMessage[] {
+    const messageBatches = batchResponses.map((response) => {
+      return this.formatBatchResponseAsGmailMessage(response);
+    });
 
     return messageBatches.flat();
   }
 
-  private parseGmailMessage(message: GmailMessageParsedResponse) {
+  private parseGmailMessage(message: gmail_v1.Schema$Message) {
     const subject = this.getPropertyFromHeaders(message, 'Subject');
     const rawFrom = this.getPropertyFromHeaders(message, 'From');
     const rawTo = this.getPropertyFromHeaders(message, 'To');
@@ -167,6 +166,9 @@ export class FetchMessagesByBatchesService {
     const internalDate = message.internalDate;
 
     assert(id);
+    assert(messageId);
+    assert(rawFrom);
+    assert(rawTo);
     assert(threadId);
     assert(historyId);
     assert(internalDate);
@@ -183,14 +185,14 @@ export class FetchMessagesByBatchesService {
       subject,
       from: addressparser(rawFrom),
       to: addressparser(rawTo),
-      cc: addressparser(rawCc),
-      bcc: addressparser(rawBcc),
+      cc: rawCc ? addressparser(rawCc) : undefined,
+      bcc: rawBcc ? addressparser(rawBcc) : undefined,
       text,
       attachments: [],
     };
   }
 
-  private getBodyData(message: GmailMessageParsedResponse) {
+  private getBodyData(message: gmail_v1.Schema$Message) {
     const firstPart = message.payload?.parts?.[0];
 
     if (firstPart?.mimeType === 'text/plain') {
@@ -202,17 +204,13 @@ export class FetchMessagesByBatchesService {
   }
 
   private getPropertyFromHeaders(
-    message: GmailMessageParsedResponse,
+    message: gmail_v1.Schema$Message,
     property: string,
   ) {
-    const value = message.payload?.headers?.find(
+    const header = message.payload?.headers?.find(
       (header) => header.name === property,
-    )?.value;
+    );
 
-    if (value === undefined || value === null) {
-      throw new Error(`Cannot find property "${property}" in message headers`);
-    }
-
-    return value;
+    return header?.value;
   }
 }
