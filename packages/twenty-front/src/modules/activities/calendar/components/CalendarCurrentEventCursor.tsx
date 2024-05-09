@@ -22,7 +22,7 @@ type CalendarCurrentEventCursorProps = {
 
 const StyledCurrentEventCursor = styled(motion.div)`
   align-items: center;
-  background-color: ${({ theme }) => theme.font.color.danger};
+  background-color: ${({ theme }) => theme.color.red};
   display: inline-flex;
   height: 1.5px;
   left: 0;
@@ -32,7 +32,7 @@ const StyledCurrentEventCursor = styled(motion.div)`
   transform: translateY(-50%);
 
   &::before {
-    background-color: ${({ theme }) => theme.font.color.danger};
+    background-color: ${({ theme }) => theme.color.red};
     border-radius: 1px;
     content: '';
     display: block;

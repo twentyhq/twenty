@@ -56,7 +56,7 @@ const StyledDueDate = styled.div<{
 }>`
   align-items: center;
   color: ${({ theme, isPast }) =>
-    isPast ? theme.font.color.danger : theme.font.color.secondary};
+    isPast ? theme.color.red : theme.font.color.secondary};
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(2)};
