@@ -1,8 +1,8 @@
 import { useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
+import omit from 'lodash.omit';
 import { z } from 'zod';
 
-import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
   SettingsDataModelFieldBooleanForm,
@@ -13,15 +13,13 @@ import {
   SettingsDataModelFieldCurrencyForm,
   settingsDataModelFieldCurrencyFormSchema,
 } from '@/settings/data-model/components/SettingsObjectFieldCurrencyForm';
-import {
-  SettingsDataModelFieldRelationForm,
-  settingsDataModelFieldRelationFormSchema,
-} from '@/settings/data-model/components/SettingsObjectFieldRelationForm';
+import { settingsDataModelFieldRelationFormSchema } from '@/settings/data-model/components/SettingsObjectFieldRelationForm';
 import {
   SettingsDataModelFieldSelectForm,
   settingsDataModelFieldSelectFormSchema,
 } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
-import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
+import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
+import { SettingsDataModelFieldRelationSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldRelationSettingsFormCard';
 import {
   SettingsDataModelFieldPreviewCard,
   SettingsDataModelFieldPreviewCardProps,
@@ -46,6 +44,20 @@ const selectFieldFormSchema = z
   })
   .merge(settingsDataModelFieldSelectFormSchema);
 
+const otherFieldsFormSchema = z.object({
+  type: z.enum(
+    Object.keys(
+      omit(SETTINGS_FIELD_TYPE_CONFIGS, [
+        FieldMetadataType.Boolean,
+        FieldMetadataType.Currency,
+        FieldMetadataType.Relation,
+        FieldMetadataType.Select,
+        FieldMetadataType.MultiSelect,
+      ]),
+    ) as [FieldMetadataType, ...FieldMetadataType[]],
+  ),
+});
+
 export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
   'type',
   [
@@ -53,6 +65,7 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     currencyFieldFormSchema,
     relationFieldFormSchema,
     selectFieldFormSchema,
+    otherFieldsFormSchema,
   ],
 );
 
@@ -64,7 +77,6 @@ type SettingsDataModelFieldSettingsFormCardProps = {
   disableCurrencyForm?: boolean;
   fieldMetadataItem: Pick<FieldMetadataItem, 'icon' | 'label' | 'type'> &
     Partial<Omit<FieldMetadataItem, 'icon' | 'label' | 'type'>>;
-  relationFieldMetadataItem?: FieldMetadataItem;
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
@@ -75,11 +87,6 @@ const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
 const StyledPreviewContent = styled.div`
   display: flex;
   gap: 6px;
-`;
-
-const StyledRelationImage = styled.img<{ flip?: boolean }>`
-  transform: ${({ flip }) => (flip ? 'scaleX(-1)' : 'none')};
-  width: 54px;
 `;
 
 const previewableTypes = [
@@ -104,23 +111,20 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   disableCurrencyForm,
   fieldMetadataItem,
   objectMetadataItem,
-  relationFieldMetadataItem,
 }: SettingsDataModelFieldSettingsFormCardProps) => {
   const { watch: watchFormValue } =
     useFormContext<SettingsDataModelFieldSettingsFormValues>();
-  const { findObjectMetadataItemById } = useFilteredObjectMetadataItems();
 
   if (!previewableTypes.includes(fieldMetadataItem.type)) return null;
 
-  const relationObjectMetadataId = watchFormValue('relation.objectMetadataId');
-  const relationObjectMetadataItem = relationObjectMetadataId
-    ? findObjectMetadataItemById(relationObjectMetadataId)
-    : undefined;
-
-  const relationType = watchFormValue('relation.type');
-  const relationTypeConfig = relationType
-    ? RELATION_TYPES[relationType]
-    : undefined;
+  if (fieldMetadataItem.type === FieldMetadataType.Relation) {
+    return (
+      <SettingsDataModelFieldRelationSettingsFormCard
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+      />
+    );
+  }
 
   return (
     <SettingsDataModelPreviewFormCard
@@ -128,34 +132,9 @@ export const SettingsDataModelFieldSettingsFormCard = ({
         <StyledPreviewContent>
           <StyledFieldPreviewCard
             fieldMetadataItem={fieldMetadataItem}
-            shrink={fieldMetadataItem.type === FieldMetadataType.Relation}
             objectMetadataItem={objectMetadataItem}
-            relationObjectMetadataItem={relationObjectMetadataItem}
             selectOptions={watchFormValue('options')}
           />
-          {fieldMetadataItem.type === FieldMetadataType.Relation &&
-            !!relationObjectMetadataItem &&
-            !!relationTypeConfig && (
-              <>
-                <StyledRelationImage
-                  src={relationTypeConfig.imageSrc}
-                  flip={relationTypeConfig.isImageFlipped}
-                  alt={relationTypeConfig.label}
-                />
-                <StyledFieldPreviewCard
-                  fieldMetadataItem={{
-                    ...relationFieldMetadataItem,
-                    icon: watchFormValue('relation.field.icon'),
-                    label:
-                      watchFormValue('relation.field.label') || 'Field name',
-                    type: FieldMetadataType.Relation,
-                  }}
-                  shrink
-                  objectMetadataItem={relationObjectMetadataItem}
-                  relationObjectMetadataItem={objectMetadataItem}
-                />
-              </>
-            )}
         </StyledPreviewContent>
       }
       form={
@@ -166,10 +145,6 @@ export const SettingsDataModelFieldSettingsFormCard = ({
         ) : fieldMetadataItem.type === FieldMetadataType.Currency ? (
           <SettingsDataModelFieldCurrencyForm
             disabled={disableCurrencyForm}
-            fieldMetadataItem={fieldMetadataItem}
-          />
-        ) : fieldMetadataItem.type === FieldMetadataType.Relation ? (
-          <SettingsDataModelFieldRelationForm
             fieldMetadataItem={fieldMetadataItem}
           />
         ) : fieldMetadataItem.type === FieldMetadataType.Select ||

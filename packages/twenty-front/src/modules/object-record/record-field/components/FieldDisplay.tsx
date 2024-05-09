@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 
 import { LinksFieldDisplay } from '@/object-record/record-field/meta-types/display/components/LinksFieldDisplay';
+import { isFieldDisplayedAsPhone } from '@/object-record/record-field/types/guards/isFieldDisplayedAsPhone';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 import { ExpandableListProps } from '@/ui/layout/expandable-list/components/ExpandableList';
 
@@ -56,7 +57,8 @@ export const FieldDisplay = ({
     <ChipFieldDisplay />
   ) : isFieldRelation(fieldDefinition) ? (
     <RelationFieldDisplay />
-  ) : isFieldPhone(fieldDefinition) ? (
+  ) : isFieldPhone(fieldDefinition) ||
+    isFieldDisplayedAsPhone(fieldDefinition) ? (
     <PhoneFieldDisplay />
   ) : isFieldText(fieldDefinition) ? (
     <TextFieldDisplay />

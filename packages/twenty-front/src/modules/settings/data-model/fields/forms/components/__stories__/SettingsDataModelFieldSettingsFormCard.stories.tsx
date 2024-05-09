@@ -7,10 +7,7 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import {
-  mockedCompanyObjectMetadataItem,
-  mockedPersonObjectMetadataItem,
-} from '~/testing/mock-data/metadata';
+import { mockedCompanyObjectMetadataItem } from '~/testing/mock-data/metadata';
 
 import { SettingsDataModelFieldSettingsFormCard } from '../SettingsDataModelFieldSettingsFormCard';
 
@@ -49,9 +46,6 @@ export const WithRelationForm: Story = {
     fieldMetadataItem: mockedCompanyObjectMetadataItem.fields.find(
       ({ name }) => name === 'people',
     ),
-    relationFieldMetadataItem: mockedPersonObjectMetadataItem.fields.find(
-      ({ name }) => name === 'company',
-    )!,
   },
 };
 

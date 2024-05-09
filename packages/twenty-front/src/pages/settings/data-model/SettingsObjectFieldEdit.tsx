@@ -1,9 +1,8 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { isNonEmptyString } from '@sniptt/guards';
 import omit from 'lodash.omit';
 import pick from 'lodash.pick';
 import { IconArchive, IconSettings } from 'twenty-ui';
@@ -33,6 +32,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 type SettingsDataModelFieldEditFormValues = z.infer<
   typeof settingsFieldFormSchema
@@ -72,15 +72,6 @@ export const SettingsObjectFieldEdit = () => {
   );
 
   const getRelationMetadata = useGetRelationMetadata();
-  const { relationFieldMetadataItem } =
-    useMemo(
-      () =>
-        activeMetadataField
-          ? getRelationMetadata({ fieldMetadataItem: activeMetadataField })
-          : null,
-      [activeMetadataField, getRelationMetadata],
-    ) ?? {};
-
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
 
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
@@ -110,13 +101,20 @@ export const SettingsObjectFieldEdit = () => {
     try {
       if (
         formValues.type === FieldMetadataType.Relation &&
-        isNonEmptyString(relationFieldMetadataItem?.id) &&
+        'relation' in formValues &&
         'relation' in dirtyFields
       ) {
-        await updateOneFieldMetadataItem({
-          fieldMetadataIdToUpdate: relationFieldMetadataItem.id,
-          updatePayload: formValues.relation.field,
-        });
+        const { relationFieldMetadataItem } =
+          getRelationMetadata({
+            fieldMetadataItem: activeMetadataField,
+          }) ?? {};
+
+        if (isDefined(relationFieldMetadataItem)) {
+          await updateOneFieldMetadataItem({
+            fieldMetadataIdToUpdate: relationFieldMetadataItem.id,
+            updatePayload: formValues.relation.field,
+          });
+        }
       }
 
       const otherDirtyFields = omit(dirtyFields, 'relation');
@@ -201,7 +199,6 @@ export const SettingsObjectFieldEdit = () => {
               disableCurrencyForm
               fieldMetadataItem={activeMetadataField}
               objectMetadataItem={activeObjectMetadataItem}
-              relationFieldMetadataItem={relationFieldMetadataItem}
             />
           </Section>
           {!isLabelIdentifier && (
