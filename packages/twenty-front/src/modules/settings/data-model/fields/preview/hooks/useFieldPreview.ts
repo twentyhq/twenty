@@ -1,10 +1,12 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import {
+  FieldMetadataItem,
+  FieldMetadataItemOption,
+} from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
-import { SettingsDataModelFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
 import { getFieldDefaultPreviewValue } from '@/settings/data-model/utils/getFieldDefaultPreviewValue';
 import { getFieldPreviewValueFromRecord } from '@/settings/data-model/utils/getFieldPreviewValueFromRecord';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -16,7 +18,7 @@ type UseFieldPreviewParams = {
   };
   objectMetadataItem: ObjectMetadataItem;
   relationObjectMetadataItem?: ObjectMetadataItem;
-  selectOptions?: SettingsDataModelFieldSelectFormValues['options'];
+  selectOptions?: FieldMetadataItemOption[];
 };
 
 export const useFieldPreview = ({

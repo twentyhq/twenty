@@ -2,13 +2,15 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useIcons } from 'twenty-ui';
 
-import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import {
+  FieldMetadataItem,
+  FieldMetadataItemOption,
+} from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { BooleanFieldInput } from '@/object-record/record-field/meta-types/input/components/BooleanFieldInput';
 import { RatingFieldInput } from '@/object-record/record-field/meta-types/input/components/RatingFieldInput';
-import { SettingsDataModelFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
 import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetFieldValueEffect';
 import { SettingsDataModelSetRecordEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetRecordEffect';
 import { useFieldPreview } from '@/settings/data-model/fields/preview/hooks/useFieldPreview';
@@ -24,7 +26,7 @@ export type SettingsDataModelFieldPreviewProps = {
   };
   objectMetadataItem: ObjectMetadataItem;
   relationObjectMetadataItem?: ObjectMetadataItem;
-  selectOptions?: SettingsDataModelFieldSelectFormValues['options'];
+  selectOptions?: FieldMetadataItemOption[];
   shrink?: boolean;
   withFieldLabel?: boolean;
 };

@@ -2,17 +2,23 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { applyQuotesToString } from '@/object-metadata/utils/applyQuotesToString';
 import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
+import { currencyCodeSchema } from '@/object-record/record-field/validation-schemas/currencyCodeSchema';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { Select } from '@/ui/input/components/Select';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
-
-// TODO: rename to SettingsDataModelFieldCurrencyForm and move to settings/data-model/fields/forms/components
+import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
+import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
+import { simpleQuotesStringSchema } from '~/utils/validation-schemas/simpleQuotesStringSchema';
 
 export const settingsDataModelFieldCurrencyFormSchema = z.object({
   defaultValue: z.object({
-    currencyCode: z.string(),
+    currencyCode: simpleQuotesStringSchema.refine(
+      (value) =>
+        currencyCodeSchema.safeParse(stripSimpleQuotesFromString(value))
+          .success,
+      { message: 'String is not a valid currencyCode' },
+    ),
   }),
 });
 
@@ -28,7 +34,7 @@ type SettingsDataModelFieldCurrencyFormProps = {
 const OPTIONS = Object.entries(SETTINGS_FIELD_CURRENCY_CODES).map(
   ([value, { label, Icon }]) => ({
     label,
-    value: applyQuotesToString(value),
+    value: applySimpleQuotesToString(value),
     Icon,
   }),
 );
@@ -49,7 +55,7 @@ export const SettingsDataModelFieldCurrencyForm = ({
       <Controller
         name="defaultValue.currencyCode"
         control={control}
-        defaultValue={applyQuotesToString(initialValue)}
+        defaultValue={applySimpleQuotesToString(initialValue)}
         render={({ field: { onChange, value } }) => (
           <Select
             fullWidth
