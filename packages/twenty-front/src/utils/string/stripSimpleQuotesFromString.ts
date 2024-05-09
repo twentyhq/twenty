@@ -1,6 +1,8 @@
 import { simpleQuotesStringSchema } from '~/utils/validation-schemas/simpleQuotesStringSchema';
 
-export const stripSimpleQuotesFromString = (value: string) =>
-  simpleQuotesStringSchema.safeParse(value).success
+export const stripSimpleQuotesFromString = <Input extends string>(
+  value: Input,
+) =>
+  (simpleQuotesStringSchema.safeParse(value).success
     ? value.slice(1, -1)
-    : value;
+    : value) as Input extends `'${infer Output}'` ? Output : Input;

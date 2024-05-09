@@ -2,10 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useIcons } from 'twenty-ui';
 
-import {
-  FieldMetadataItem,
-  FieldMetadataItemOption,
-} from '@/object-metadata/types/FieldMetadataItem';
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -19,14 +16,13 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 export type SettingsDataModelFieldPreviewProps = {
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'defaultValue'
+    'icon' | 'label' | 'type' | 'defaultValue' | 'options'
   > & {
     id?: string;
     name?: string;
   };
   objectMetadataItem: ObjectMetadataItem;
   relationObjectMetadataItem?: ObjectMetadataItem;
-  selectOptions?: FieldMetadataItemOption[];
   shrink?: boolean;
   withFieldLabel?: boolean;
 };
@@ -57,7 +53,6 @@ export const SettingsDataModelFieldPreview = ({
   fieldMetadataItem,
   objectMetadataItem,
   relationObjectMetadataItem,
-  selectOptions,
   shrink,
   withFieldLabel = true,
 }: SettingsDataModelFieldPreviewProps) => {
@@ -71,7 +66,6 @@ export const SettingsDataModelFieldPreview = ({
       fieldMetadataItem,
       objectMetadataItem,
       relationObjectMetadataItem,
-      selectOptions,
     });
 
   return (
@@ -109,7 +103,7 @@ export const SettingsDataModelFieldPreview = ({
                 objectMetadataNameSingular: objectMetadataItem.nameSingular,
                 relationObjectMetadataNameSingular:
                   relationObjectMetadataItem?.nameSingular,
-                options: selectOptions,
+                options: fieldMetadataItem.options,
               },
               defaultValue: fieldMetadataItem.defaultValue,
             },

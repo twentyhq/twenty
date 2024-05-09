@@ -40,22 +40,24 @@ export const SettingsDataModelFieldSelectSettingsFormCard = ({
   fieldMetadataItem,
   objectMetadataItem,
 }: SettingsDataModelFieldSelectSettingsFormCardProps) => {
-  const { initialOptions } = useSelectSettingsFormInitialValues({
-    fieldMetadataItem,
-  });
+  const { initialOptions, initialDefaultValue } =
+    useSelectSettingsFormInitialValues({
+      fieldMetadataItem,
+    });
 
   const { watch: watchFormValue } =
     useFormContext<SettingsDataModelFieldSettingsFormValues>();
-
-  const selectOptions = watchFormValue('options', initialOptions);
 
   return (
     <SettingsDataModelPreviewFormCard
       preview={
         <StyledFieldPreviewCard
-          fieldMetadataItem={fieldMetadataItem}
+          fieldMetadataItem={{
+            ...fieldMetadataItem,
+            defaultValue: watchFormValue('defaultValue', initialDefaultValue),
+            options: watchFormValue('options', initialOptions),
+          }}
           objectMetadataItem={objectMetadataItem}
-          selectOptions={selectOptions}
         />
       }
       form={
