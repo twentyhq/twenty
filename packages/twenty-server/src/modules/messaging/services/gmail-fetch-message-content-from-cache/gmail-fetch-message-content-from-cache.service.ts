@@ -276,21 +276,19 @@ export class GmailFetchMessageContentFromCacheService {
         messageIdsToFetch,
       );
 
-      if (error?.message?.code === 429) {
-        this.logger.error(
-          `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: Resource has been exhausted, locking for ${GMAIL_ONGOING_SYNC_TIMEOUT}ms...`,
-        );
+      await this.messageChannelRepository.updateSyncStatus(
+        gmailMessageChannelId,
+        MessageChannelSyncStatus.FAILED,
+        workspaceId,
+      );
 
-        await this.messageChannelRepository.updateSyncStatus(
-          gmailMessageChannelId,
-          MessageChannelSyncStatus.FAILED,
-          workspaceId,
-        );
+      this.logger.error(
+        `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: locking for ${GMAIL_ONGOING_SYNC_TIMEOUT}ms...`,
+      );
 
-        throw new Error(
-          `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
-        );
-      }
+      throw new Error(
+        `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
+      );
     }
   }
 
