@@ -194,7 +194,7 @@ const StyledButton = styled.button<
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${theme.color.red10}`
                 : 'none'};
-              color: ${!disabled ? theme.font.color.danger : theme.color.red20};
+              color: ${!disabled ? theme.color.red : theme.font.color.danger};
               &:hover {
                 background: ${!disabled
                   ? theme.background.danger
