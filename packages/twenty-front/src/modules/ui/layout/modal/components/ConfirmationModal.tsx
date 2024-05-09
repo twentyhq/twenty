@@ -54,7 +54,7 @@ export const StyledConfirmationButton = styled(StyledCenteredButton)`
   font-size: ${({ theme }) => theme.font.size.md};
   line-height: ${({ theme }) => theme.text.lineHeight.lg};
   :hover {
-    background-color: ${({ theme }) => theme.color.red10};
+    background-color: ${({ theme }) => theme.background.danger};
   }
 `;
 
