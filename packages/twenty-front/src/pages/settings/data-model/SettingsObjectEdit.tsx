@@ -63,8 +63,8 @@ export const SettingsObjectEdit = () => {
 
   if (!activeObjectMetadataItem) return null;
 
-  const { isDirty, isValid } = formConfig.formState;
-  const canSave = isDirty && isValid;
+  const { isDirty, isValid, isSubmitting } = formConfig.formState;
+  const canSave = isDirty && isValid && !isSubmitting;
 
   const handleSave = async () => {
     const formValues = formConfig.getValues();
@@ -121,7 +121,7 @@ export const SettingsObjectEdit = () => {
                 onCancel={() =>
                   navigate(`${settingsObjectsPagePath}/${objectSlug}`)
                 }
-                onSave={handleSave}
+                onSave={formConfig.handleSubmit(handleSave)}
               />
             )}
           </SettingsHeaderContainer>

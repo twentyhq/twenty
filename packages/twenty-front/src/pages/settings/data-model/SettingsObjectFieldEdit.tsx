@@ -86,7 +86,10 @@ export const SettingsObjectFieldEdit = () => {
 
   if (!activeObjectMetadataItem || !activeMetadataField) return null;
 
-  const canSave = formConfig.formState.isValid && formConfig.formState.isDirty;
+  const canSave =
+    formConfig.formState.isValid &&
+    formConfig.formState.isDirty &&
+    !formConfig.formState.isSubmitting;
 
   const isLabelIdentifier = isLabelIdentifierField({
     fieldMetadataItem: activeMetadataField,
@@ -166,7 +169,7 @@ export const SettingsObjectFieldEdit = () => {
               <SaveAndCancelButtons
                 isSaveDisabled={!canSave}
                 onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-                onSave={handleSave}
+                onSave={formConfig.handleSubmit(handleSave)}
               />
             )}
           </SettingsHeaderContainer>

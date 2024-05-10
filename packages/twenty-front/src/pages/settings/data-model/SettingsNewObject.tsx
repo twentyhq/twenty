@@ -39,7 +39,8 @@ export const SettingsNewObject = () => {
     resolver: zodResolver(newObjectFormSchema),
   });
 
-  const canSave = formConfig.formState.isValid;
+  const canSave =
+    formConfig.formState.isValid && !formConfig.formState.isSubmitting;
 
   const handleSave = async () => {
     const formValues = formConfig.getValues();
@@ -81,7 +82,7 @@ export const SettingsNewObject = () => {
             <SaveAndCancelButtons
               isSaveDisabled={!canSave}
               onCancel={() => navigate(settingsObjectsPagePath)}
-              onSave={handleSave}
+              onSave={formConfig.handleSubmit(handleSave)}
             />
           </SettingsHeaderContainer>
           <Section>
