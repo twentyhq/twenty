@@ -59,26 +59,33 @@
       }
     },
     "test": {},
-    "storybook:build": {},
-    "storybook:build:scope": {
-      "executor": "nx:run-commands",
+    "storybook:build": {
       "options": {
-        "command": "nx storybook:build twenty-front"
+        "env": { "NODE_OPTIONS": "--max_old_space_size=5000" }
       },
       "configurations": {
-        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
-        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
-        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } }
+        "docs": {
+          "env": {
+            "NODE_OPTIONS": "--max_old_space_size=5000",
+            "STORYBOOK_SCOPE": "ui-docs"
+          }
+        },
+        "modules": {
+          "env": {
+            "NODE_OPTIONS": "--max_old_space_size=5000",
+            "STORYBOOK_SCOPE": "modules"
+          }
+        },
+        "pages": {
+          "env": {
+            "NODE_OPTIONS": "--max_old_space_size=5000",
+            "STORYBOOK_SCOPE": "pages"
+          }
+        }
       }
     },
     "storybook:dev": {
-      "options": { "port": 6006 }
-    },
-    "storybook:dev:scope": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "nx storybook:dev twenty-front"
-      },
+      "options": { "port": 6006 },
       "configurations": {
         "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
         "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
@@ -86,16 +93,7 @@
       }
     },
     "storybook:static": {
-      "options": {
-        "buildTarget": "twenty-front:storybook:build",
-        "port": 6006
-      }
-    },
-    "storybook:static:scope": {
-      "executor": "nx:run-commands",
-      "options": {
-        "command": "nx storybook:static twenty-front"
-      },
+      "options": { "port": 6006 },
       "configurations": {
         "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
         "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
@@ -104,15 +102,14 @@
     },
     "storybook:coverage": {
       "configurations": {
+        "text": {},
         "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
         "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
         "pages": { "env": { "STORYBOOK_SCOPE": "pages" } }
       }
     },
     "storybook:test": {
-      "options": {
-        "port": 6006
-      },
+      "options": { "port": 6006 },
       "configurations": {
         "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
         "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
@@ -124,8 +121,7 @@
         "commands": [
           "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:static {projectName} --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port} --configuration={args.scope}'"
         ],
-        "port": 6006,
-        "env": { "NODE_OPTIONS": "--max-old-space-size=5000" }
+        "port": 6006
       },
       "configurations": {
         "docs": { "scope": "ui-docs" },

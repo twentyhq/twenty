@@ -69,18 +69,7 @@ export const variables = {
   disableMetadataField: {
     idToUpdate: fieldId,
     updatePayload: { isActive: false, label: undefined },
-  },
-  editMetadataField: {
-    idToUpdate: '2c43466a-fe9e-4005-8d08-c5836067aa6c',
-    updatePayload: {
-      defaultValue: undefined,
-      description: null,
-      icon: undefined,
-      label: 'New label',
-      name: 'newLabel',
-      options: undefined,
-    },
-  },
+  }
 };
 
 const defaultResponseData = {

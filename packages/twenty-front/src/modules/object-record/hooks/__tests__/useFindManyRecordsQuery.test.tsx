@@ -5,7 +5,7 @@ import { RecoilRoot } from 'recoil';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 
 const expectedQueryTemplate = `
-  query FindManyPeople($filter: PersonFilterInput, $orderBy: PersonOrderByInput, $lastCursor: String, $limit: Float) {
+  query FindManyPeople($filter: PersonFilterInput, $orderBy: PersonOrderByInput, $lastCursor: String, $limit: Int) {
     people(filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor) {
       edges {
         node {
@@ -47,14 +47,12 @@ const expectedQueryTemplate = `
 describe('useFindManyRecordsQuery', () => {
   it('should return a valid findManyRecordsQuery', () => {
     const objectNameSingular = 'person';
-    const depth = 2;
     const computeReferences = true;
 
     const { result } = renderHook(
       () =>
         useFindManyRecordsQuery({
           objectNameSingular,
-          depth,
           computeReferences,
         }),
       {

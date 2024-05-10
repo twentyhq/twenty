@@ -13,7 +13,7 @@ export const getDefaultValueForBackend = (
       currencyCode: `'${currencyDefaultValue.currencyCode}'` as CurrencyCode,
     } satisfies FieldCurrencyValue;
   } else if (fieldMetadataType === FieldMetadataType.Select) {
-    return `'${defaultValue}'`;
+    return defaultValue ? `'${defaultValue}'` : null;
   } else if (fieldMetadataType === FieldMetadataType.MultiSelect) {
     return defaultValue.map((value: string) => `'${value}'`);
   }

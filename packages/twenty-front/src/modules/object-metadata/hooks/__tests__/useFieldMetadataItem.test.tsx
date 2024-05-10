@@ -68,17 +68,6 @@ const mocks = [
       },
     })),
   },
-  {
-    request: {
-      query: queries.activateMetadataField,
-      variables: variables.editMetadataField,
-    },
-    result: jest.fn(() => ({
-      data: {
-        updateOneField: responseData.default,
-      },
-    })),
-  },
 ];
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
@@ -146,24 +135,6 @@ describe('useFieldMetadataItem', () => {
 
       expect(res.data).toEqual({
         deleteOneField: responseData.default,
-      });
-    });
-  });
-
-  it('should editMetadataField', async () => {
-    const { result } = renderHook(() => useFieldMetadataItem(), {
-      wrapper: Wrapper,
-    });
-
-    await act(async () => {
-      const res = await result.current.editMetadataField({
-        id: fieldMetadataItem.id,
-        label: 'New label',
-        type: FieldMetadataType.Text,
-      });
-
-      expect(res.data).toEqual({
-        updateOneField: responseData.default,
       });
     });
   });

@@ -1,8 +1,11 @@
+<<<<<<< HEAD
 import { v4 } from 'uuid';
 
 import { useDeleteOneRelationMetadataItem } from '@/object-metadata/hooks/useDeleteOneRelationMetadataItem';
 import { FieldMetadataOption } from '@/object-metadata/types/FieldMetadataOption';
 import { getDefaultValueForBackend } from '@/object-metadata/utils/getDefaultValueForBackend';
+=======
+>>>>>>> 7728c09dbaf27eee76745b36fff2b33def307300
 import { Field } from '~/generated/graphql';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -29,49 +32,12 @@ export const useFieldMetadataItem = () => {
   ) => {
     const formattedInput = formatFieldMetadataItemInput(input);
 
-    const defaultValue = getDefaultValueForBackend(
-      input.defaultValue ?? formattedInput.defaultValue,
-      input.type,
-    );
-
     return createOneFieldMetadataItem({
       ...formattedInput,
-      defaultValue,
       objectMetadataId: input.objectMetadataId,
       type: input.type,
-    });
-  };
-
-  const editMetadataField = (
-    input: Pick<
-      Field,
-      | 'id'
-      | 'label'
-      | 'icon'
-      | 'description'
-      | 'defaultValue'
-      | 'type'
-      | 'options'
-    >,
-  ) => {
-    // In Edit mode, all options need an id,
-    // so we generate an id for newly created options.
-    const inputOptions = input.options?.map((option: FieldMetadataOption) =>
-      option.id ? option : { ...option, id: v4() },
-    );
-    const formattedInput = formatFieldMetadataItemInput({
-      ...input,
-      options: inputOptions,
-    });
-
-    const defaultValue = input.defaultValue ?? formattedInput.defaultValue;
-
-    return updateOneFieldMetadataItem({
-      fieldMetadataIdToUpdate: input.id,
-      updatePayload: {
-        ...formattedInput,
-        defaultValue,
-      },
+      label: formattedInput.label ?? '',
+      name: formattedInput.name ?? '',
     });
   };
 
@@ -98,6 +64,5 @@ export const useFieldMetadataItem = () => {
     createMetadataField,
     deactivateMetadataField,
     deleteMetadataField,
-    editMetadataField,
   };
 };
