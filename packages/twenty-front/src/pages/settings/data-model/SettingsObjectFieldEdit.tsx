@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import omit from 'lodash.omit';
 import pick from 'lodash.pick';
 import { IconArchive, IconSettings } from 'twenty-ui';
-import { v4 } from 'uuid';
 import { z } from 'zod';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -125,14 +124,9 @@ export const SettingsObjectFieldEdit = () => {
           Object.keys(otherDirtyFields),
         );
 
-        const options = formattedInput.options?.map((option) => ({
-          ...option,
-          id: option.id ?? v4(),
-        }));
-
         await updateOneFieldMetadataItem({
           fieldMetadataIdToUpdate: activeMetadataField.id,
-          updatePayload: { ...formattedInput, options },
+          updatePayload: formattedInput,
         });
       }
 

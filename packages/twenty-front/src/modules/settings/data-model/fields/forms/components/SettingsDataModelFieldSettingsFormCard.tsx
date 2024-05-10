@@ -1,4 +1,3 @@
-import { useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
 import omit from 'lodash.omit';
 import { z } from 'zod';
@@ -9,17 +8,18 @@ import {
   settingsDataModelFieldBooleanFormSchema,
 } from '@/settings/data-model/components/SettingsDataModelDefaultValue';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
-import {
-  SettingsDataModelFieldCurrencyForm,
-  settingsDataModelFieldCurrencyFormSchema,
-} from '@/settings/data-model/components/SettingsObjectFieldCurrencyForm';
 import { settingsDataModelFieldRelationFormSchema } from '@/settings/data-model/components/SettingsObjectFieldRelationForm';
 import {
-  SettingsDataModelFieldSelectForm,
+  settingsDataModelFieldMultiSelectFormSchema,
   settingsDataModelFieldSelectFormSchema,
 } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
 import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
+import {
+  SettingsDataModelFieldCurrencyForm,
+  settingsDataModelFieldCurrencyFormSchema,
+} from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldCurrencyForm';
 import { SettingsDataModelFieldRelationSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldRelationSettingsFormCard';
+import { SettingsDataModelFieldSelectSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSelectSettingsFormCard';
 import {
   SettingsDataModelFieldPreviewCard,
   SettingsDataModelFieldPreviewCardProps,
@@ -39,10 +39,12 @@ const relationFieldFormSchema = z
   .merge(settingsDataModelFieldRelationFormSchema);
 
 const selectFieldFormSchema = z
-  .object({
-    type: z.enum([FieldMetadataType.Select, FieldMetadataType.MultiSelect]),
-  })
+  .object({ type: z.literal(FieldMetadataType.Select) })
   .merge(settingsDataModelFieldSelectFormSchema);
+
+const multiSelectFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.MultiSelect) })
+  .merge(settingsDataModelFieldMultiSelectFormSchema);
 
 const otherFieldsFormSchema = z.object({
   type: z.enum(
@@ -65,13 +67,10 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     currencyFieldFormSchema,
     relationFieldFormSchema,
     selectFieldFormSchema,
+    multiSelectFieldFormSchema,
     otherFieldsFormSchema,
   ],
 );
-
-type SettingsDataModelFieldSettingsFormValues = z.infer<
-  typeof settingsDataModelFieldSettingsFormSchema
->;
 
 type SettingsDataModelFieldSettingsFormCardProps = {
   disableCurrencyForm?: boolean;
@@ -82,11 +81,6 @@ type SettingsDataModelFieldSettingsFormCardProps = {
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
   display: grid;
   flex: 1 1 100%;
-`;
-
-const StyledPreviewContent = styled.div`
-  display: flex;
-  gap: 6px;
 `;
 
 const previewableTypes = [
@@ -112,9 +106,6 @@ export const SettingsDataModelFieldSettingsFormCard = ({
   fieldMetadataItem,
   objectMetadataItem,
 }: SettingsDataModelFieldSettingsFormCardProps) => {
-  const { watch: watchFormValue } =
-    useFormContext<SettingsDataModelFieldSettingsFormValues>();
-
   if (!previewableTypes.includes(fieldMetadataItem.type)) return null;
 
   if (fieldMetadataItem.type === FieldMetadataType.Relation) {
@@ -126,16 +117,25 @@ export const SettingsDataModelFieldSettingsFormCard = ({
     );
   }
 
+  if (
+    fieldMetadataItem.type === FieldMetadataType.Select ||
+    fieldMetadataItem.type === FieldMetadataType.MultiSelect
+  ) {
+    return (
+      <SettingsDataModelFieldSelectSettingsFormCard
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+      />
+    );
+  }
+
   return (
     <SettingsDataModelPreviewFormCard
       preview={
-        <StyledPreviewContent>
-          <StyledFieldPreviewCard
-            fieldMetadataItem={fieldMetadataItem}
-            objectMetadataItem={objectMetadataItem}
-            selectOptions={watchFormValue('options')}
-          />
-        </StyledPreviewContent>
+        <StyledFieldPreviewCard
+          fieldMetadataItem={fieldMetadataItem}
+          objectMetadataItem={objectMetadataItem}
+        />
       }
       form={
         fieldMetadataItem.type === FieldMetadataType.Boolean ? (
@@ -146,14 +146,6 @@ export const SettingsDataModelFieldSettingsFormCard = ({
           <SettingsDataModelFieldCurrencyForm
             disabled={disableCurrencyForm}
             fieldMetadataItem={fieldMetadataItem}
-          />
-        ) : fieldMetadataItem.type === FieldMetadataType.Select ||
-          fieldMetadataItem.type === FieldMetadataType.MultiSelect ? (
-          <SettingsDataModelFieldSelectForm
-            fieldMetadataItem={fieldMetadataItem}
-            isMultiSelect={
-              fieldMetadataItem.type === FieldMetadataType.MultiSelect
-            }
           />
         ) : undefined
       }

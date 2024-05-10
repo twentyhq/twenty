@@ -1,5 +1,4 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { SettingsDataModelFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
 import {
   mockedCompanyObjectMetadataItem,
   mockedOpportunityObjectMetadataItem,
@@ -10,35 +9,21 @@ import { getFieldDefaultPreviewValue } from '../getFieldDefaultPreviewValue';
 
 describe('getFieldDefaultPreviewValue', () => {
   describe('SELECT field', () => {
-    it('returns the default select option', () => {
+    it('returns the default select option value', () => {
       // Given
       const objectMetadataItem = mockedOpportunityObjectMetadataItem;
       const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
         ({ name }) => name === 'stage',
       )!;
-      const selectOptions: SettingsDataModelFieldSelectFormValues['options'] = [
-        {
-          color: 'purple',
-          label: '🏭 Industry',
-          value: 'INDUSTRY',
-        },
-        {
-          color: 'pink',
-          isDefault: true,
-          label: '💊 Health',
-          value: 'HEALTH',
-        },
-      ];
 
       // When
       const result = getFieldDefaultPreviewValue({
         objectMetadataItem,
-        fieldMetadataItem,
-        selectOptions,
+        fieldMetadataItem: { ...fieldMetadataItem, defaultValue: "'MEETING'" },
       });
 
       // Then
-      expect(result).toEqual(selectOptions[1].value);
+      expect(result).toEqual('MEETING');
     });
 
     it('returns the first select option if no default option was found', () => {
@@ -47,28 +32,15 @@ describe('getFieldDefaultPreviewValue', () => {
       const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
         ({ name }) => name === 'stage',
       )!;
-      const selectOptions: SettingsDataModelFieldSelectFormValues['options'] = [
-        {
-          color: 'purple' as const,
-          label: '🏭 Industry',
-          value: 'INDUSTRY',
-        },
-        {
-          color: 'pink' as const,
-          label: '💊 Health',
-          value: 'HEALTH',
-        },
-      ];
 
       // When
       const result = getFieldDefaultPreviewValue({
         objectMetadataItem,
-        fieldMetadataItem,
-        selectOptions,
+        fieldMetadataItem: { ...fieldMetadataItem, defaultValue: null },
       });
 
       // Then
-      expect(result).toEqual(selectOptions[0].value);
+      expect(result).toEqual(fieldMetadataItem.options![0].value);
     });
   });
 

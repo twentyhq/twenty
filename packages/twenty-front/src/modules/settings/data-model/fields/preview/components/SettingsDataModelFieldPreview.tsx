@@ -8,7 +8,6 @@ import { FieldDisplay } from '@/object-record/record-field/components/FieldDispl
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { BooleanFieldInput } from '@/object-record/record-field/meta-types/input/components/BooleanFieldInput';
 import { RatingFieldInput } from '@/object-record/record-field/meta-types/input/components/RatingFieldInput';
-import { SettingsDataModelFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
 import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetFieldValueEffect';
 import { SettingsDataModelSetRecordEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetRecordEffect';
 import { useFieldPreview } from '@/settings/data-model/fields/preview/hooks/useFieldPreview';
@@ -17,14 +16,13 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 export type SettingsDataModelFieldPreviewProps = {
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'icon' | 'label' | 'type' | 'defaultValue'
+    'icon' | 'label' | 'type' | 'defaultValue' | 'options'
   > & {
     id?: string;
     name?: string;
   };
   objectMetadataItem: ObjectMetadataItem;
   relationObjectMetadataItem?: ObjectMetadataItem;
-  selectOptions?: SettingsDataModelFieldSelectFormValues['options'];
   shrink?: boolean;
   withFieldLabel?: boolean;
 };
@@ -55,7 +53,6 @@ export const SettingsDataModelFieldPreview = ({
   fieldMetadataItem,
   objectMetadataItem,
   relationObjectMetadataItem,
-  selectOptions,
   shrink,
   withFieldLabel = true,
 }: SettingsDataModelFieldPreviewProps) => {
@@ -69,7 +66,6 @@ export const SettingsDataModelFieldPreview = ({
       fieldMetadataItem,
       objectMetadataItem,
       relationObjectMetadataItem,
-      selectOptions,
     });
 
   return (
@@ -107,7 +103,7 @@ export const SettingsDataModelFieldPreview = ({
                 objectMetadataNameSingular: objectMetadataItem.nameSingular,
                 relationObjectMetadataNameSingular:
                   relationObjectMetadataItem?.nameSingular,
-                options: selectOptions,
+                options: fieldMetadataItem.options,
               },
               defaultValue: fieldMetadataItem.defaultValue,
             },
