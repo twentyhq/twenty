@@ -1,11 +1,4 @@
-<<<<<<< HEAD
-import { v4 } from 'uuid';
-
 import { useDeleteOneRelationMetadataItem } from '@/object-metadata/hooks/useDeleteOneRelationMetadataItem';
-import { FieldMetadataOption } from '@/object-metadata/types/FieldMetadataOption';
-import { getDefaultValueForBackend } from '@/object-metadata/utils/getDefaultValueForBackend';
-=======
->>>>>>> 7728c09dbaf27eee76745b36fff2b33def307300
 import { Field } from '~/generated/graphql';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -55,7 +48,9 @@ export const useFieldMetadataItem = () => {
 
   const deleteMetadataField = (metadataField: FieldMetadataItem) => {
     metadataField.type === FieldMetadataType.Relation
-      ? deleteOneRelationMetadataItem(metadataField.toRelationMetadata?.id)
+      ? deleteOneRelationMetadataItem(
+          metadataField.relationDefinition?.relationId,
+        )
       : deleteOneFieldMetadataItem(metadataField.id);
   };
 
