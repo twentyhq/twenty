@@ -1,5 +1,4 @@
 import { desc } from 'drizzle-orm';
-import { NextResponse } from 'next/server';
 
 import { getGithubReleaseDateFromReleaseNote } from '@/app/releases/utils/get-github-release-date-from-release-note';
 import { getReleases } from '@/app/releases/utils/get-releases';
@@ -43,10 +42,7 @@ export async function GET() {
       };
     });
 
-    const response = NextResponse.json(formattedReleasesNotes);
-    response.headers.append('Access-Control-Allow-Origin', '*');
-
-    return response;
+    return Response.json(formattedReleasesNotes);
   } catch (error: any) {
     return new Response(`Github releases error: ${error?.message}`, {
       status: 500,
