@@ -76,7 +76,7 @@ export const Releases = () => {
   const [releases, setReleases] = useState<ReleaseNote[]>([]);
 
   useEffect(() => {
-    fetch('http://localhost:3005/api/releases').then(async (res) => {
+    fetch('https://twenty.com/api/releases').then(async (res) => {
       const json = await res.json();
       for (const release of json) {
         release.html = String(
@@ -95,7 +95,6 @@ export const Releases = () => {
         );
       }
       setReleases(json);
-      console.log(json);
     });
   }, []);
 
