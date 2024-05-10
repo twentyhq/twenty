@@ -112,11 +112,12 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   if (!activeObjectMetadataItem) return null;
 
-  const canSave = formConfig.formState.isValid;
+  const canSave =
+    formConfig.formState.isValid && !formConfig.formState.isSubmitting;
 
-  const handleSave = async () => {
-    const formValues = formConfig.getValues();
-
+  const handleSave = async (
+    formValues: SettingsDataModelNewFieldFormValues,
+  ) => {
     try {
       if (
         formValues.type === FieldMetadataType.Relation &&
@@ -294,7 +295,7 @@ export const SettingsObjectNewFieldStep2 = () => {
               <SaveAndCancelButtons
                 isSaveDisabled={!canSave}
                 onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-                onSave={handleSave}
+                onSave={formConfig.handleSubmit(handleSave)}
               />
             )}
           </SettingsHeaderContainer>
