@@ -22,13 +22,6 @@
       "when": 1714375499735,
       "tag": "0002_demonic_matthew_murdock",
       "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "5",
-      "when": 1715235697210,
-      "tag": "0003_gifted_annihilus",
-      "breakpoints": true
     }
   ]
 }
