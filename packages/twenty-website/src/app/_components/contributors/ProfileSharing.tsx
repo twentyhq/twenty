@@ -52,7 +52,8 @@ interface ProfileProps {
 }
 
 export const ProfileSharing = ({ username }: ProfileProps) => {
-  const baseUrl = `${window.location.protocol}//${window.location.host}`;
+  const baseUrl = 'https://twenty.com';
+
   const contributorUrl = `${baseUrl}/contributors/${username}`;
 
   const handleDownload = async () => {
@@ -87,7 +88,7 @@ export const ProfileSharing = ({ username }: ProfileProps) => {
         <IconDownload /> Download Image
       </StyledButton>
       <StyledButton
-        href={`http://www.twitter.com/share?url=${contributorUrl}`}
+        href={`https://www.twitter.com/share?url=${contributorUrl}`}
         target="blank"
       >
         <XIcon color="black" size="24px" /> Share on X

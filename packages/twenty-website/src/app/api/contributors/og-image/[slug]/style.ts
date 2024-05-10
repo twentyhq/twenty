@@ -14,42 +14,36 @@ export const container: CSSProperties = {
   fontFamily: 'Gabarito',
 };
 
-export const topBackgroundImage: CSSProperties = {
-  backgroundImage: `url(${BACKGROUND_IMAGE_URL})`,
+export const backgroundImage: CSSProperties = {
   position: 'absolute',
-  zIndex: '-1',
-  width: '1300px',
-  height: '250px',
-  transform: 'rotate(-11deg)',
-  opacity: '0.2',
-  top: '-100',
-  left: '-25',
-};
-
-export const bottomBackgroundImage: CSSProperties = {
-  backgroundImage: `url(${BACKGROUND_IMAGE_URL})`,
-  position: 'absolute',
-  zIndex: '-1',
-  width: '1300px',
-  height: '250px',
-  transform: 'rotate(-11deg)',
-  opacity: '0.2',
-  bottom: '-120',
-  right: '-40',
+  width: '1250px',
+  height: '850px',
+  transform: 'rotate(-7deg)',
+  opacity: '0.8',
+  backgroundImage: `
+  linear-gradient(
+    158.4deg,
+    rgba(255, 255, 255, 0.8) 30.69%,
+    #FFFFFF 35.12%,
+    rgba(255, 255, 255, 0.8) 60.27%,
+    rgba(255, 255, 255, 0.64) 38.88%
+  ),
+  url(${BACKGROUND_IMAGE_URL})`,
 };
 
 export const profileContainer: CSSProperties = {
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-between',
-  width: '780px',
-  margin: '0px 0px 40px',
+  width: '970px',
+  height: '134px',
+  margin: '0px 0px 55px',
 };
 
 export const styledContributorAvatar = {
   display: 'flex',
-  width: '96px',
-  height: '96px',
+  width: '134px',
+  height: '134px',
   margin: '0px',
   border: '3px solid #141414',
   borderRadius: '16px',
@@ -65,7 +59,7 @@ export const profileInfoContainer: CSSProperties = {
 
 export const profileUsernameHeader: CSSProperties = {
   margin: '0px',
-  fontSize: '28px',
+  fontSize: '39px',
   fontWeight: '700',
   color: '#141414',
   fontFamily: 'Gabarito',
@@ -74,7 +68,7 @@ export const profileUsernameHeader: CSSProperties = {
 export const profileContributionHeader: CSSProperties = {
   margin: '0px',
   color: '#818181',
-  fontSize: '20px',
+  fontSize: '27px',
   fontWeight: '400',
 };
 
@@ -84,8 +78,8 @@ export const contributorInfoContainer: CSSProperties = {
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'space-around',
-  width: '780px',
-  height: '149px',
+  width: '970px',
+  height: '209px',
   backgroundColor: '#F1F1F1',
 };
 
@@ -110,14 +104,14 @@ export const contributorInfoTitle = {
   color: '#B3B3B3',
   margin: '0px',
   fontWeight: '500',
-  fontSize: '24px',
+  fontSize: '33px',
 };
 
 export const contributorInfoStats = {
   color: '#474747',
   margin: '0px',
   fontWeight: '700',
-  fontSize: '40px',
+  fontSize: '55px',
 };
 
 export const infoSeparator: CSSProperties = {
@@ -125,6 +119,6 @@ export const infoSeparator: CSSProperties = {
   right: 0,
   display: 'flex',
   width: '2px',
-  height: '85px',
+  height: '120px',
   backgroundColor: '#141414',
 };
