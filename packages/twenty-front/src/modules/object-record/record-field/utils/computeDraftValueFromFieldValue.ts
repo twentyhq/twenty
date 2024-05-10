@@ -8,6 +8,7 @@ import { isFieldRawJsonValue } from '@/object-record/record-field/types/guards/i
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { computeEmptyDraftValue } from '@/object-record/record-field/utils/computeEmptyDraftValue';
 import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
+import { isDefined } from '~/utils/isDefined';
 
 type computeDraftValueFromFieldValueParams<FieldValue> = {
   fieldDefinition: Pick<FieldDefinition<FieldMetadata>, 'type'>;
@@ -41,7 +42,7 @@ export const computeDraftValueFromFieldValue = <FieldValue>({
   }
 
   if (isFieldRawJson(fieldDefinition)) {
-    return isFieldRawJsonValue(fieldValue)
+    return isFieldRawJsonValue(fieldValue) && isDefined(fieldValue)
       ? (JSON.stringify(
           fieldValue,
           null,
