@@ -19,6 +19,7 @@ import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableIt
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
+import { toSpliced } from '~/utils/array/toSpliced';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 import { simpleQuotesStringSchema } from '~/utils/validation-schemas/simpleQuotesStringSchema';
 
@@ -198,8 +199,12 @@ export const SettingsDataModelFieldSelectForm = ({
                             key={option.id}
                             option={option}
                             onChange={(nextOption) => {
-                              const nextOptions = [...options];
-                              nextOptions.splice(index, 1, nextOption);
+                              const nextOptions = toSpliced(
+                                options,
+                                index,
+                                1,
+                                nextOption,
+                              );
                               onChange(nextOptions);
 
                               // Update option value in defaultValue if value has changed
@@ -211,15 +216,17 @@ export const SettingsDataModelFieldSelectForm = ({
                                 handleSetOptionAsDefault(nextOption.value);
                               }
                             }}
-                            onRemove={
-                              options.length > 1
-                                ? () => {
-                                    const nextOptions = [...options];
-                                    nextOptions.splice(index, 1);
-                                    onChange(nextOptions);
-                                  }
-                                : undefined
-                            }
+                            onRemove={() => {
+                              const nextOptions = toSpliced(
+                                options,
+                                index,
+                                1,
+                              ).map((option, nextOptionIndex) => ({
+                                ...option,
+                                position: nextOptionIndex,
+                              }));
+                              onChange(nextOptions);
+                            }}
                             isDefault={isOptionDefaultValue(option.value)}
                             onSetAsDefault={() =>
                               handleSetOptionAsDefault(option.value)
