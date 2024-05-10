@@ -42,9 +42,9 @@ export const SettingsNewObject = () => {
   const canSave =
     formConfig.formState.isValid && !formConfig.formState.isSubmitting;
 
-  const handleSave = async () => {
-    const formValues = formConfig.getValues();
-
+  const handleSave = async (
+    formValues: SettingsDataModelNewObjectFormValues,
+  ) => {
     try {
       const { data: response } = await createOneObjectMetadataItem(
         settingsCreateObjectInputSchema.parse(formValues),

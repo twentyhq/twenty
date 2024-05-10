@@ -96,8 +96,9 @@ export const SettingsObjectFieldEdit = () => {
     objectMetadataItem: activeObjectMetadataItem,
   });
 
-  const handleSave = async () => {
-    const formValues = formConfig.getValues();
+  const handleSave = async (
+    formValues: SettingsDataModelFieldEditFormValues,
+  ) => {
     const { dirtyFields } = formConfig.formState;
 
     try {
