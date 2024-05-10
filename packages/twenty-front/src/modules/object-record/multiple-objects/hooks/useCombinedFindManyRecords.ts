@@ -17,7 +17,7 @@ export const useCombinedFindManyRecords = ({
     operationSignatures,
   });
 
-  const { data } = useQuery<MultiObjectRecordQueryResult>(
+  const { data, loading } = useQuery<MultiObjectRecordQueryResult>(
     findManyQuery ?? EMPTY_QUERY,
     {
       skip,
@@ -35,5 +35,6 @@ export const useCombinedFindManyRecords = ({
 
   return {
     result: resultWithoutConnection,
+    loading,
   };
 };

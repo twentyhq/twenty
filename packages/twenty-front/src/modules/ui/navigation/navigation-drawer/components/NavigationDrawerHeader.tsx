@@ -1,3 +1,5 @@
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
@@ -42,19 +44,40 @@ const StyledNavigationDrawerCollapseButton = styled(
   transition: opacity ${({ theme }) => theme.animation.duration.normal}s;
 `;
 
+const StyledSkeletonLoader = () => {
+  const theme = useTheme();
+  return (
+    <StyledContainer>
+      <SkeletonTheme
+        baseColor={theme.background.tertiary}
+        highlightColor={theme.background.transparent.lighter}
+        borderRadius={4}
+      >
+        <Skeleton height={16} width={96} />
+      </SkeletonTheme>
+    </StyledContainer>
+  );
+};
+
 type NavigationDrawerHeaderProps = {
   name?: string;
   logo?: string;
   showCollapseButton: boolean;
+  loading?: boolean;
 };
 
 export const NavigationDrawerHeader = ({
   name = DEFAULT_WORKSPACE_NAME,
   logo = DEFAULT_WORKSPACE_LOGO,
   showCollapseButton,
+  loading = false,
 }: NavigationDrawerHeaderProps) => {
   const isMobile = useIsMobile();
   const workspaces = useRecoilValue(workspacesState);
+
+  if (loading) {
+    return <StyledSkeletonLoader />;
+  }
 
   return (
     <StyledContainer>

@@ -20,10 +20,12 @@ import { MainNavigationDrawerItems } from './MainNavigationDrawerItems';
 
 export type AppNavigationDrawerProps = {
   className?: string;
+  loading?: boolean;
 };
 
 export const AppNavigationDrawer = ({
   className,
+  loading,
 }: AppNavigationDrawerProps) => {
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
@@ -52,7 +54,7 @@ export const AppNavigationDrawer = ({
             getImageAbsoluteURIOrBase64(currentWorkspace.logo)) ??
           undefined,
         title: currentWorkspace?.displayName ?? undefined,
-        children: <MainNavigationDrawerItems />,
+        children: <MainNavigationDrawerItems loading={loading} />,
         footer: <SupportChat />,
       };
 
@@ -67,6 +69,7 @@ export const AppNavigationDrawer = ({
       logo={drawerProps.logo}
       title={drawerProps.title}
       footer={drawerProps.footer}
+      loading={loading}
     >
       {drawerProps.children}
     </NavigationDrawer>

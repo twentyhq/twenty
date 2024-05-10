@@ -20,6 +20,7 @@ export type NavigationDrawerProps = {
   isSubMenu?: boolean;
   logo?: string;
   title?: string;
+  loading?: boolean;
 };
 
 const StyledAnimatedContainer = styled(motion.div)`
@@ -64,6 +65,7 @@ export const NavigationDrawer = ({
   isSubMenu,
   logo,
   title,
+  loading,
 }: NavigationDrawerProps) => {
   const [isHovered, setIsHovered] = useState(false);
   const isMobile = useIsMobile();
@@ -108,6 +110,7 @@ export const NavigationDrawer = ({
             name={title}
             logo={logo}
             showCollapseButton={isHovered}
+            loading={loading}
           />
         )}
         <StyledItemsContainer>{children}</StyledItemsContainer>

@@ -63,7 +63,7 @@ const StyledMainContainer = styled.div`
   overflow: hidden;
 `;
 
-export const DefaultLayout = () => {
+export const DefaultLayout = ({ loading }: { loading?: boolean }) => {
   const onboardingStatus = useOnboardingStatus();
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
@@ -114,7 +114,7 @@ export const DefaultLayout = () => {
             duration: theme.animation.duration.normal,
           }}
         >
-          <StyledAppNavigationDrawer />
+          <StyledAppNavigationDrawer loading={loading} />
           <StyledMainContainer>
             {showAuthModal ? (
               <>

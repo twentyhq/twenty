@@ -1,8 +1,10 @@
+import { useContext } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
 import { VerifyEffect } from '@/auth/components/VerifyEffect';
 import { billingState } from '@/client-config/states/billingState';
+import { PrefetchContext } from '@/prefetch/components/PrefetchDataProvider';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { BlankLayout } from '@/ui/layout/page/BlankLayout';
@@ -58,13 +60,15 @@ export const App = () => {
   const { pathname } = useLocation();
   const pageTitle = getPageTitleFromPath(pathname);
 
+  const { loading: isPrefetchLoading } = useContext(PrefetchContext);
+
   return (
     <>
       <PageTitle title={pageTitle} />
       <GotoHotkeysEffect />
       <CommandMenuEffect />
       <Routes>
-        <Route element={<DefaultLayout />}>
+        <Route element={<DefaultLayout loading={isPrefetchLoading} />}>
           <Route path={AppPath.Verify} element={<VerifyEffect />} />
           <Route path={AppPath.SignInUp} element={<SignInUp />} />
           <Route path={AppPath.Invite} element={<SignInUp />} />
@@ -79,7 +83,10 @@ export const App = () => {
           <Route path={AppPath.Index} element={<DefaultHomePage />} />
           <Route path={AppPath.TasksPage} element={<Tasks />} />
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
-          <Route path={AppPath.RecordIndexPage} element={<RecordIndexPage />} />
+          <Route
+            path={AppPath.RecordIndexPage}
+            element={<RecordIndexPage loading={isPrefetchLoading} />}
+          />
           <Route path={AppPath.RecordShowPage} element={<RecordShowPage />} />
 
           <Route

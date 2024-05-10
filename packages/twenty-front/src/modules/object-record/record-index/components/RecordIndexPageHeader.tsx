@@ -12,10 +12,12 @@ import { capitalize } from '~/utils/string/capitalize';
 
 type RecordIndexPageHeaderProps = {
   createRecord: () => void;
+  loading?: boolean;
 };
 
 export const RecordIndexPageHeader = ({
   createRecord,
+  loading,
 }: RecordIndexPageHeaderProps) => {
   const objectNamePlural = useParams().objectNamePlural ?? '';
 
@@ -39,9 +41,11 @@ export const RecordIndexPageHeader = ({
     objectMetadataItem?.labelPlural ?? capitalize(objectNamePlural);
 
   return (
-    <PageHeader title={pageHeaderTitle} Icon={Icon}>
+    <PageHeader title={pageHeaderTitle} Icon={Icon} loading={loading}>
       <PageHotkeysEffect onAddButtonClick={createRecord} />
-      {canAddRecord && <PageAddButton onClick={createRecord} />}
+      {canAddRecord && (
+        <PageAddButton onClick={createRecord} loading={loading} />
+      )}
     </PageHeader>
   );
 };

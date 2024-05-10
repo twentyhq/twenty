@@ -1,4 +1,7 @@
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconCheckbox, IconInbox, IconSearch, IconSettings } from 'twenty-ui';
 
@@ -15,7 +18,42 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { useIsTasksPage } from '../hooks/useIsTasksPage';
 
-export const MainNavigationDrawerItems = () => {
+const StyledSkeletonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-left: 12px;
+`;
+
+const StyledSkeletonLoader = ({
+  title,
+  length,
+}: {
+  title?: boolean;
+  length: number;
+}) => {
+  const theme = useTheme();
+  return (
+    <StyledSkeletonContainer>
+      <SkeletonTheme
+        baseColor={theme.background.tertiary}
+        highlightColor={theme.background.transparent.lighter}
+        borderRadius={4}
+      >
+        {title && <Skeleton width={48} height={13} />}
+        {Array.from({ length }).map((_, index) => (
+          <Skeleton key={index} width={196} height={16} />
+        ))}
+      </SkeletonTheme>
+    </StyledSkeletonContainer>
+  );
+};
+
+export const MainNavigationDrawerItems = ({
+  loading = false,
+}: {
+  loading?: boolean;
+}) => {
   const isMobile = useIsMobile();
   const { toggleCommandMenu } = useCommandMenu();
   const isTasksPage = useIsTasksPage();
@@ -25,6 +63,16 @@ export const MainNavigationDrawerItems = () => {
   const setNavigationMemorizedUrl = useSetRecoilState(
     navigationMemorizedUrlState,
   );
+
+  if (loading) {
+    return (
+      <>
+        <StyledSkeletonLoader length={4} />
+        <StyledSkeletonLoader title length={2} />
+        <StyledSkeletonLoader title length={3} />
+      </>
+    );
+  }
 
   return (
     <>

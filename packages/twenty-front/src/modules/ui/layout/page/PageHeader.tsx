@@ -80,9 +80,9 @@ const StyledSkeletonLoader = () => {
     <SkeletonTheme
       baseColor={theme.background.quaternary}
       highlightColor={theme.background.transparent.light}
-      borderRadius={50}
+      borderRadius={4}
     >
-      <Skeleton height={24} width={108} />
+      <Skeleton height={16} width={104} />
     </SkeletonTheme>
   );
 };
