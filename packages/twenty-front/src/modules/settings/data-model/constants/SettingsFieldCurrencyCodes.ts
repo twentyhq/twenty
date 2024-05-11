@@ -1,9 +1,11 @@
 import {
   IconComponent,
+  IconCurrencyDirham,
   IconCurrencyDollar,
   IconCurrencyEuro,
   IconCurrencyFrank,
   IconCurrencyPound,
+  IconCurrencyRiyal,
   IconCurrencyYen,
   IconCurrencyYuan,
 } from 'twenty-ui';
@@ -45,5 +47,17 @@ export const SETTINGS_FIELD_CURRENCY_CODES: Record<
   HKD: {
     label: 'Hong Kong dollar',
     Icon: IconCurrencyDollar,
+  },
+  MAD: {
+    label: 'Morrocan Dirham',
+    Icon: IconCurrencyDirham,
+  },
+  QAR: {
+    label: 'Qatari Riyal',
+    Icon: IconCurrencyRiyal,
+  },
+  AED: {
+    label: 'United Arab Emirates Dirham',
+    Icon: IconCurrencyDirham,
   },
 };
