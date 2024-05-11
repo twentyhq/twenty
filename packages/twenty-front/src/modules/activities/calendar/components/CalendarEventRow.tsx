@@ -142,7 +142,9 @@ export const CalendarEventRow = ({
         </StyledTime>
         {showTitle ? (
           <StyledTitle active={!hasEnded} canceled={!!calendarEvent.isCanceled}>
-            {calendarEvent.title}
+            {calendarEvent.title.length > 30
+              ? `${calendarEvent.title.substring(0, 30)}...`
+              : calendarEvent.title}
           </StyledTitle>
         ) : (
           <StyledVisibilityCard active={!hasEnded}>
