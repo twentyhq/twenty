@@ -9,6 +9,7 @@ export enum SettingsPath {
   AccountsEmailsInboxSettings = 'accounts/emails/:accountUuid',
   Billing = 'billing',
   Objects = 'objects',
+  ObjectOverview = 'objects/overview',
   ObjectDetail = 'objects/:objectSlug',
   ObjectEdit = 'objects/:objectSlug/edit',
   ObjectNewFieldStep1 = 'objects/:objectSlug/new-field/step-1',
