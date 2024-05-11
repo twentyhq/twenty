@@ -142,8 +142,8 @@ export const CalendarEventRow = ({
         </StyledTime>
         {showTitle ? (
           <StyledTitle active={!hasEnded} canceled={!!calendarEvent.isCanceled}>
-            {calendarEvent.title.length > 30
-              ? `${calendarEvent.title.substring(0, 30)}...`
+            {calendarEvent.title.length > 50
+              ? `${calendarEvent.title.slice(0, 50).trim()} ...`
               : calendarEvent.title}
           </StyledTitle>
         ) : (
