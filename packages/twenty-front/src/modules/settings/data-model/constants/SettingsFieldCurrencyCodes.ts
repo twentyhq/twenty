@@ -3,6 +3,7 @@ import {
   IconCurrencyDollar,
   IconCurrencyEuro,
   IconCurrencyFrank,
+  IconCurrencyKroneSwedish,
   IconCurrencyPound,
   IconCurrencyYen,
   IconCurrencyYuan,
@@ -45,5 +46,13 @@ export const SETTINGS_FIELD_CURRENCY_CODES: Record<
   HKD: {
     label: 'Hong Kong dollar',
     Icon: IconCurrencyDollar,
+  },
+  NOK: {
+    label: 'Norwegian krone',
+    Icon: IconCurrencyKroneSwedish,
+  },
+  SEK: {
+    label: 'Swedish krona',
+    Icon: IconCurrencyKroneSwedish,
   },
 };
