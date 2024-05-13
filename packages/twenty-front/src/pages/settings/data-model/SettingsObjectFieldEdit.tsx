@@ -64,7 +64,7 @@ export const SettingsObjectFieldEdit = () => {
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
 
-  const { disableMetadataField } = useFieldMetadataItem();
+  const { deactivateMetadataField } = useFieldMetadataItem();
   const activeMetadataField = activeObjectMetadataItem?.fields.find(
     (metadataField) =>
       metadataField.isActive && getFieldSlug(metadataField) === fieldSlug,
@@ -142,8 +142,8 @@ export const SettingsObjectFieldEdit = () => {
     }
   };
 
-  const handleDisable = async () => {
-    await disableMetadataField(activeMetadataField);
+  const handleDeactivate = async () => {
+    await deactivateMetadataField(activeMetadataField);
     navigate(`/settings/objects/${objectSlug}`);
   };
 
@@ -201,12 +201,15 @@ export const SettingsObjectFieldEdit = () => {
           </Section>
           {!isLabelIdentifier && (
             <Section>
-              <H2Title title="Danger zone" description="Disable this field" />
+              <H2Title
+                title="Danger zone"
+                description="Deactivate this field"
+              />
               <Button
                 Icon={IconArchive}
-                title="Disable"
+                title="Deactivate"
                 size="small"
-                onClick={handleDisable}
+                onClick={handleDeactivate}
               />
             </Section>
           )}
