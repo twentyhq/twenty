@@ -5,6 +5,7 @@ import {
   HttpLink,
   InMemoryCache,
 } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 
 import { renewToken } from '~/db/token.db';
@@ -12,20 +13,18 @@ import { Tokens } from '~/db/types/auth.types';
 import { isDefined } from '~/utils/isDefined';
 
 const clearStore = () => {
-  chrome.storage.local.remove('loginToken');
-  chrome.storage.local.remove('accessToken');
-  chrome.storage.local.remove('refreshToken');
+  chrome.storage.local.remove(['loginToken', 'accessToken', 'refreshToken']);
   chrome.storage.local.set({ isAuthenticated: false });
 };
 
 const setStore = (tokens: Tokens) => {
-  chrome.storage.local.set({
-    loginToken: tokens.loginToken,
-  });
+  if (isDefined(tokens.loginToken)) {
+    chrome.storage.local.set({
+      loginToken: tokens.loginToken,
+    });
+  }
   chrome.storage.local.set({
     accessToken: tokens.accessToken,
-  });
-  chrome.storage.local.set({
     refreshToken: tokens.refreshToken,
   });
 };
@@ -48,6 +47,16 @@ const getAuthToken = async () => {
 
 const getApolloClient = async () => {
   const store = await chrome.storage.local.get();
+
+  const authLink = setContext(async (_, { headers }) => {
+    const token = await getAuthToken();
+    return {
+      headers: {
+        ...headers,
+        authorization: token,
+      },
+    };
+  });
   const errorLink = onError(
     ({ graphQLErrors, networkError, forward, operation }) => {
       if (isDefined(graphQLErrors)) {
@@ -55,9 +64,9 @@ const getApolloClient = async () => {
           if (graphQLError.message === 'Unauthorized') {
             return fromPromise(
               renewToken(store.refreshToken.token)
-                .then((tokens) => {
-                  if (isDefined(tokens)) {
-                    setStore(tokens);
+                .then((response) => {
+                  if (isDefined(response)) {
+                    setStore(response.renewToken.tokens);
                   }
                 })
                 .catch(() => {
@@ -69,9 +78,9 @@ const getApolloClient = async () => {
             case 'UNAUTHENTICATED': {
               return fromPromise(
                 renewToken(store.refreshToken.token)
-                  .then((tokens) => {
-                    if (isDefined(tokens)) {
-                      setStore(tokens);
+                  .then((response) => {
+                    if (isDefined(response)) {
+                      setStore(response.renewToken.tokens);
                     }
                   })
                   .catch(() => {
@@ -102,14 +111,11 @@ const getApolloClient = async () => {
 
   const httpLink = new HttpLink({
     uri: await getServerUrl(),
-    headers: {
-      Authorization: await getAuthToken(),
-    },
   });
 
   const client = new ApolloClient({
     cache: new InMemoryCache(),
-    link: from([errorLink, httpLink]),
+    link: from([errorLink, authLink, httpLink]),
   });
 
   return client;
