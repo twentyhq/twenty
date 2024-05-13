@@ -5,7 +5,7 @@ import {
   labelModel,
   userModel,
 } from '@/database/model';
-import { IssueNode } from '@/github-sync/contributors/types';
+import { IssueNode } from '@/github/contributors/types';
 
 export async function saveIssuesToDB(
   issues: Array<IssueNode>,

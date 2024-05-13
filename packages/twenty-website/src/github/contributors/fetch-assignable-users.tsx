@@ -1,6 +1,6 @@
 import { graphql } from '@octokit/graphql';
 
-import { Repository } from '@/github-sync/contributors/types';
+import { Repository } from '@/github/contributors/types';
 
 export async function fetchAssignableUsers(
   query: typeof graphql,

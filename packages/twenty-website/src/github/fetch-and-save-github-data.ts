@@ -1,15 +1,19 @@
 import { global } from '@apollo/client/utilities/globals';
 import { graphql } from '@octokit/graphql';
 
-import { fetchAssignableUsers } from '@/github-sync/contributors/fetch-assignable-users';
-import { fetchIssuesPRs } from '@/github-sync/contributors/fetch-issues-prs';
-import { saveIssuesToDB } from '@/github-sync/contributors/save-issues-to-db';
-import { savePRsToDB } from '@/github-sync/contributors/save-prs-to-db';
-import { IssueNode, PullRequestNode } from '@/github-sync/contributors/types';
-import { fetchAndSaveGithubReleases } from '@/github-sync/github-releases/fetch-and-save-github-releases';
-import { fetchAndSaveGithubStars } from '@/github-sync/github-stars/fetch-and-save-github-stars';
+import { fetchAssignableUsers } from '@/github/contributors/fetch-assignable-users';
+import { fetchIssuesPRs } from '@/github/contributors/fetch-issues-prs';
+import { saveIssuesToDB } from '@/github/contributors/save-issues-to-db';
+import { savePRsToDB } from '@/github/contributors/save-prs-to-db';
+import { IssueNode, PullRequestNode } from '@/github/contributors/types';
+import { fetchAndSaveGithubReleases } from '@/github/github-releases/fetch-and-save-github-releases';
+import { fetchAndSaveGithubStars } from '@/github/github-stars/fetch-and-save-github-stars';
 
-export const fetchAndSaveGithubData = async () => {
+export const fetchAndSaveGithubData = async ({
+  pageLimit,
+}: {
+  pageLimit: number;
+}) => {
   if (!global.process.env.GITHUB_TOKEN) {
     return new Error('No GitHub token provided');
   }
@@ -31,12 +35,14 @@ export const fetchAndSaveGithubData = async () => {
     null,
     false,
     [],
+    pageLimit,
   )) as Array<PullRequestNode>;
   const fetchedIssues = (await fetchIssuesPRs(
     query,
     null,
     true,
     [],
+    pageLimit,
   )) as Array<IssueNode>;
 
   await savePRsToDB(fetchedPRs, assignableUsers);

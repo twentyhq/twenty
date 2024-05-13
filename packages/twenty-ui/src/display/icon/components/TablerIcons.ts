@@ -54,6 +54,7 @@ export {
   IconCurrencyDollar,
   IconCurrencyEuro,
   IconCurrencyFrank,
+  IconCurrencyKroneSwedish,
   IconCurrencyPound,
   IconCurrencyRiyal,
   IconCurrencyYen,
