@@ -16,6 +16,12 @@ import { EmailModule } from 'src/engine/integrations/email/email.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { CleanInactiveWorkspaceJob } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-inactive-workspace.job';
+import { CalendarEventParticipantModule } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.module';
+import { GmailFetchMessageContentFromCacheModule } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.module';
+import { GmailFullSyncModule } from 'src/modules/messaging/services/gmail-full-sync/gmail-full-sync.module';
+import { GmailPartialSyncModule } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync.module';
+import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
+import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { CalendarMessagingParticipantJobModule } from 'src/modules/calendar-messaging-participant/jobs/calendar-messaging-participant-job.module';
 import { CalendarCronJobModule } from 'src/modules/calendar/crons/jobs/calendar-cron-job.module';
 import { CalendarJobModule } from 'src/modules/calendar/jobs/calendar-job.module';
@@ -34,6 +40,12 @@ import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module
     DataSeedDemoWorkspaceModule,
     BillingModule,
     UserWorkspaceModule,
+    WorkspaceModule,
+    GmailFullSyncModule,
+    GmailFetchMessageContentFromCacheModule,
+    GmailPartialSyncModule,
+    CalendarEventParticipantModule,
+    TimelineActivityModule,
     StripeModule,
     // JobsModules
     WorkspaceQueryRunnerJobModule,
