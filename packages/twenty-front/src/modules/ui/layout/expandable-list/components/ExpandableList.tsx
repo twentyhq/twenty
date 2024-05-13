@@ -1,4 +1,4 @@
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { offset, useFloating } from '@floating-ui/react';
@@ -6,12 +6,15 @@ import { Chip, ChipVariant } from 'twenty-ui';
 
 import { AnimatedContainer } from '@/object-record/record-table/components/AnimatedContainer';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: space-between;
+  min-width: 100%;
   width: 100%;
 `;
 
@@ -20,6 +23,7 @@ const StyledChildrenContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
   overflow: hidden;
   max-width: 100%;
+  flex: 0 1 fit-content;
 `;
 
 const StyledChildContainer = styled.div`
@@ -76,45 +80,82 @@ export const ExpandableList = ({
   children: ReactElement[];
 } & ExpandableListProps) => {
   const [isHovered, setIsHovered] = useState(false);
-  // floating-ui mentions that `useState` must be used instead of `useRef`,
-  // see https://floating-ui.com/docs/useFloating#elements
-  const [containerElement, setContainerElement] =
-    useState<HTMLDivElement | null>(null);
   const [isListExpanded, setIsListExpanded] = useState(false);
+
+  // Used with floating-ui if anchorElement is not provided.
+  // floating-ui mentions that `useState` must be used instead of `useRef`
+  // @see https://floating-ui.com/docs/useFloating#elements
+  const [childrenContainerElement, setChildrenContainerElement] =
+    useState<HTMLDivElement | null>(null);
+
+  // Used with useListenClickOutside.
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const [firstHiddenChildIndex, setFirstHiddenChildIndex] = useState(
+    children.length,
+  );
+
+  const hiddenChildrenCount = children.length - firstHiddenChildIndex;
+  const canDisplayChipCount =
+    (isDefined(forceChipCountDisplay) ? forceChipCountDisplay : isHovered) &&
+    hiddenChildrenCount > 0;
 
   const { refs, floatingStyles } = useFloating({
     // @ts-expect-error placement accepts 'start' as value even if the typing does not permit it
     placement: 'start',
     middleware: [offset({ mainAxis: -1, crossAxis: -1 })],
-    elements: { reference: anchorElement ?? containerElement },
+    elements: { reference: anchorElement ?? childrenContainerElement },
   });
 
-  const expandList = (event: React.MouseEvent) => {
+  const handleChipCountClick = (event: React.MouseEvent) => {
     event.stopPropagation();
     setIsListExpanded(true);
   };
 
-  const [firstHiddenChildIndex, setFirstHiddenChildIndex] = useState(
-    children.length + 1,
-  );
-
-  const hiddenChildrenCount = children.length - firstHiddenChildIndex;
-  const canDisplayChipCount =
-    (forceChipCountDisplay || isHovered) && hiddenChildrenCount > 0;
-
-  useEffect(() => {
+  const resetFirstHiddenChildIndex = useCallback(() => {
     // Recompute first hidden child
-    setFirstHiddenChildIndex(children.length + 1);
-  }, [isHovered, forceChipCountDisplay, children.length]);
+    setFirstHiddenChildIndex(children.length);
+  }, [children.length]);
 
   useEffect(() => {
-    if (!forceChipCountDisplay && !isHovered) {
-      setIsListExpanded(false);
+    resetFirstHiddenChildIndex();
+  }, [
+    isHovered,
+    forceChipCountDisplay,
+    children.length,
+    resetFirstHiddenChildIndex,
+  ]);
+
+  useListenClickOutside({
+    refs: [refs.floating],
+    callback: () => setIsListExpanded(false),
+  });
+
+  useListenClickOutside({
+    refs: [containerRef],
+    callback: () => resetFirstHiddenChildIndex(),
+  });
+
+  const findFirstHiddenChildIndex = (
+    childElement: HTMLElement | null,
+    index: number,
+  ) => {
+    if (!childrenContainerElement || !childElement) return;
+
+    if (
+      index > 0 &&
+      index < firstHiddenChildIndex &&
+      childrenContainerElement.scrollWidth >
+        childrenContainerElement.clientWidth &&
+      childElement.offsetLeft > childrenContainerElement.clientWidth
+    ) {
+      setFirstHiddenChildIndex(index);
     }
-  }, [forceChipCountDisplay, isHovered]);
+  };
 
   return (
     <StyledContainer
+      ref={containerRef}
       onMouseEnter={
         forceChipCountDisplay ? undefined : () => setIsHovered(true)
       }
@@ -122,20 +163,14 @@ export const ExpandableList = ({
         forceChipCountDisplay ? undefined : () => setIsHovered(false)
       }
     >
-      <StyledChildrenContainer ref={setContainerElement}>
+      <StyledChildrenContainer ref={setChildrenContainerElement}>
         {children.map((child, index) =>
           index < firstHiddenChildIndex ? (
             <StyledChildContainer
               key={index}
-              ref={(childElement) => {
-                if (!containerElement || !childElement) return;
-
-                if (childElement.offsetLeft > containerElement.clientWidth) {
-                  setFirstHiddenChildIndex((previousIndex) =>
-                    previousIndex > index ? index : previousIndex,
-                  );
-                }
-              }}
+              ref={(childElement) =>
+                findFirstHiddenChildIndex(childElement, index)
+              }
             >
               {child}
             </StyledChildContainer>
@@ -147,7 +182,7 @@ export const ExpandableList = ({
           <StyledChipCount
             label={`+${hiddenChildrenCount}`}
             variant={ChipVariant.Highlighted}
-            onClick={expandList}
+            onClick={handleChipCountClick}
           />
         </AnimatedContainer>
       )}

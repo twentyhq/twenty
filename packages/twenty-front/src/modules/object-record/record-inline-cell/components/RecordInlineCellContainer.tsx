@@ -141,7 +141,7 @@ export const RecordInlineCellContainer = ({
   loading = false,
 }: RecordInlineCellContainerProps) => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
-  // Used in ExpandableList for certain fields.
+  // Used by certain fields in ExpandableList as an anchor for the floating element.
   // floating-ui mentions that `useState` must be used instead of `useRef`,
   // see https://floating-ui.com/docs/useFloating#elements
   const [cellElement, setCellElement] = useState<HTMLDivElement | null>(null);
@@ -211,7 +211,7 @@ export const RecordInlineCellContainer = ({
           emptyPlaceholder={showLabel ? 'Empty' : label}
         >
           {displayModeContent({
-            isCellSoftFocused: isCellSoftFocused,
+            isCellSoftFocused,
             cellElement: cellElement ?? undefined,
           })}
         </RecordInlineCellDisplayMode>

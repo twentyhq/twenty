@@ -75,7 +75,7 @@ export const RecordTableCellContainer = ({
   editHotkeyScope,
 }: RecordTableCellContainerProps) => {
   const { columnIndex } = useContext(RecordTableCellContext);
-  // Used in ExpandableList for certain fields.
+  // Used by certain fields in ExpandableList as an anchor for the floating element.
   // floating-ui mentions that `useState` must be used instead of `useRef`,
   // see https://floating-ui.com/docs/useFloating#elements
   const [cellElement, setCellElement] = useState<HTMLTableCellElement | null>(
