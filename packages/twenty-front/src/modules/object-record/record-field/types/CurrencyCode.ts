@@ -9,4 +9,7 @@ export enum CurrencyCode {
   USD = 'USD',
   NOK = 'NOK',
   SEK = 'SEK',
+  MAD = 'MAD',
+  QAR = 'QAR',
+  AED = 'AED',
 }

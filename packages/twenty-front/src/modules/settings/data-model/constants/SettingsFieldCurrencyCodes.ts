@@ -1,10 +1,12 @@
 import {
   IconComponent,
+  IconCurrencyDirham,
   IconCurrencyDollar,
   IconCurrencyEuro,
   IconCurrencyFrank,
   IconCurrencyKroneSwedish,
   IconCurrencyPound,
+  IconCurrencyRiyal,
   IconCurrencyYen,
   IconCurrencyYuan,
 } from 'twenty-ui';
@@ -54,5 +56,16 @@ export const SETTINGS_FIELD_CURRENCY_CODES: Record<
   SEK: {
     label: 'Swedish krona',
     Icon: IconCurrencyKroneSwedish,
+  MAD: {
+    label: 'Moroccan dirham',
+    Icon: IconCurrencyDirham,
+  },
+  QAR: {
+    label: 'Qatari riyal',
+    Icon: IconCurrencyRiyal,
+  },
+  AED: {
+    label: 'UAE dirham',
+    Icon: IconCurrencyDirham,
   },
 };
