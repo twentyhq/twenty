@@ -28,7 +28,7 @@ jobs:
         ports:
           - 5432:5432
     steps:
-      - name: Fetch local actions and base branch history
+      - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@v4
         with:
           fetch-depth: 0

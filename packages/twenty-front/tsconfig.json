@@ -9,7 +9,7 @@
     "esModuleInterop": true,
     "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
-    "allowImportingTsExtensions": true,
+    "allowImportingTsExtensions": false,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,

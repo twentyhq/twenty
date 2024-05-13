@@ -1,3 +1,5 @@
+import { toSpliced } from '~/utils/array/toSpliced';
+
 /**
  * Moves an item in an array from one index to another.
  *
@@ -20,9 +22,14 @@ export const moveArrayItem = <ArrayItem>(
     return array;
   }
 
-  const arrayWithMovedItem = [...array];
-  const [itemToMove] = arrayWithMovedItem.splice(fromIndex, 1);
-  arrayWithMovedItem.splice(toIndex, 0, itemToMove);
+  const itemToMove = array[fromIndex];
+  const arrayWithoutItem = toSpliced(array, fromIndex, 1);
+  const arrayWithMovedItem = toSpliced(
+    arrayWithoutItem,
+    toIndex,
+    0,
+    itemToMove,
+  );
 
   return arrayWithMovedItem;
 };

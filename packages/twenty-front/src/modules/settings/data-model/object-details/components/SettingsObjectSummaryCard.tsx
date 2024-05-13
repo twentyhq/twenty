@@ -67,7 +67,11 @@ export const SettingsObjectSummaryCard = ({
           <Dropdown
             dropdownId={dropdownId}
             clickableComponent={
-              <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
+              <LightIconButton
+                aria-label="Object Options"
+                Icon={IconDotsVertical}
+                accent="tertiary"
+              />
             }
             dropdownComponents={
               <DropdownMenu width="160px">

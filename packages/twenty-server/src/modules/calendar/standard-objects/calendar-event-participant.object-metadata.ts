@@ -4,7 +4,6 @@ import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/fi
 import { CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
@@ -31,9 +30,6 @@ export enum CalendarEventParticipantResponseStatus {
 })
 @IsSystem()
 @IsNotAuditLogged()
-@Gate({
-  featureFlag: 'IS_CALENDAR_ENABLED',
-})
 export class CalendarEventParticipantObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.calendarEvent,

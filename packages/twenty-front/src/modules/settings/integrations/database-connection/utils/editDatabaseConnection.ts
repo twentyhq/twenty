@@ -1,4 +1,6 @@
-import { identity, isEmpty, pickBy } from 'lodash';
+import identity from 'lodash.identity';
+import isEmpty from 'lodash.isempty';
+import pickBy from 'lodash.pickby';
 import { z } from 'zod';
 
 import { settingsIntegrationPostgreSQLConnectionFormSchema } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionForm';

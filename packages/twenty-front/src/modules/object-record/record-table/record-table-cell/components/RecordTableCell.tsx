@@ -102,7 +102,7 @@ export const RecordTableCell = ({
           isReadOnly={isReadOnly}
         />
       }
-      nonEditModeContent={<FieldDisplay />}
+      nonEditModeContent={<FieldDisplay fromTableCell />}
     />
   );
 };

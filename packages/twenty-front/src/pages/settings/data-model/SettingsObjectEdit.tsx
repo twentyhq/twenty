@@ -63,11 +63,12 @@ export const SettingsObjectEdit = () => {
 
   if (!activeObjectMetadataItem) return null;
 
-  const { isDirty, isValid } = formConfig.formState;
-  const canSave = isDirty && isValid;
+  const { isDirty, isValid, isSubmitting } = formConfig.formState;
+  const canSave = isDirty && isValid && !isSubmitting;
 
-  const handleSave = async () => {
-    const formValues = formConfig.getValues();
+  const handleSave = async (
+    formValues: SettingsDataModelObjectEditFormValues,
+  ) => {
     const dirtyFieldKeys = Object.keys(
       formConfig.formState.dirtyFields,
     ) as (keyof SettingsDataModelObjectEditFormValues)[];
@@ -121,7 +122,7 @@ export const SettingsObjectEdit = () => {
                 onCancel={() =>
                   navigate(`${settingsObjectsPagePath}/${objectSlug}`)
                 }
-                onSave={handleSave}
+                onSave={formConfig.handleSubmit(handleSave)}
               />
             )}
           </SettingsHeaderContainer>

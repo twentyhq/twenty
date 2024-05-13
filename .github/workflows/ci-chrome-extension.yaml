@@ -24,7 +24,7 @@ jobs:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
         with:
-            access_token: ${{ github.token }}
+          access_token: ${{ github.token }}
       - uses: actions/checkout@v4
       - name: Install dependencies
         uses: ./.github/workflows/actions/yarn-install
