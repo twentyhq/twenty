@@ -33,6 +33,7 @@ export const getProfilingStory = (
 
     const p95result = profilingReport?.total.p95;
 
+    // eslint-disable-next-line no-console
     console.log({
       profilingReport,
     });
