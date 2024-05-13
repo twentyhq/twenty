@@ -161,9 +161,6 @@ export class CalendarEventObjectMetadata extends BaseWorkspaceEntity {
     inverseSideTarget: () => CalendarChannelEventAssociationObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  @Gate({
-    featureFlag: 'IS_CALENDAR_ENABLED',
-  })
   calendarChannelEventAssociations: Relation<
     CalendarChannelEventAssociationObjectMetadata[]
   >;
