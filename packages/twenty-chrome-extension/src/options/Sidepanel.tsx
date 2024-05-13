@@ -40,7 +40,7 @@ const StyledActionContainer = styled.div`
   width: 300px;
 `;
 
-const Options = () => {
+const Sidepanel = () => {
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [iframeSrc, setIframeSrc] = useState(
@@ -76,7 +76,6 @@ const Options = () => {
       }
 
       if (store.isAuthenticated === true) setIsAuthenticated(true);
-
       const { tab: activeTab } = await chrome.runtime.sendMessage({
         action: 'getActiveTab',
       });
@@ -90,20 +89,38 @@ const Options = () => {
       }
     };
     void getState();
+  }, []);
 
-    chrome.runtime.onMessage.addListener(({ action, message }) => {
+  useEffect(() => {
+    const handleBrowserEvents = ({ action }: { action: string }) => {
       if (action === 'changeSidepanelUrl') {
-        setIframeSrc(message.url);
+        setIframeSrc('');
       }
-    });
+    };
+    chrome.runtime.onMessage.addListener(handleBrowserEvents);
 
     return () => {
-      chrome.runtime.onMessage.removeListener(() =>
-        // eslint-disable-next-line no-console
-        console.log('removed listener...'),
-      );
+      chrome.runtime.onMessage.removeListener(handleBrowserEvents);
     };
   }, []);
+
+  useEffect(() => {
+    const getIframeState = async () => {
+      const store = await chrome.storage.local.get();
+      const { tab: activeTab } = await chrome.runtime.sendMessage({
+        action: 'getActiveTab',
+      });
+
+      if (
+        isDefined(activeTab) &&
+        isDefined(store[`sidepanelUrl_${activeTab.id}`])
+      ) {
+        const url = store[`sidepanelUrl_${activeTab.id}`];
+        setIframeSrc(url);
+      }
+    };
+    void getIframeState();
+  }, [iframeSrc]);
 
   const handleBaseUrlChange = (value: string) => {
     setServerBaseUrl(value);
@@ -149,4 +166,4 @@ const Options = () => {
   );
 };
 
-export default Options;
+export default Sidepanel;
