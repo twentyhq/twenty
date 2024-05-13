@@ -49,15 +49,15 @@ export const SETTINGS_FIELD_CURRENCY_CODES: Record<
     Icon: IconCurrencyDollar,
   },
   MAD: {
-    label: 'Morrocan Dirham',
+    label: 'Moroccan dirham',
     Icon: IconCurrencyDirham,
   },
   QAR: {
-    label: 'Qatari Riyal',
+    label: 'Qatari riyal',
     Icon: IconCurrencyRiyal,
   },
   AED: {
-    label: 'United Arab Emirates Dirham',
+    label: 'UAE dirham',
     Icon: IconCurrencyDirham,
   },
 };
