@@ -7,4 +7,7 @@ export enum CurrencyCode {
   HKD = 'HKD',
   JPY = 'JPY',
   USD = 'USD',
+  MAD = 'MAD',
+  QAR = 'QAR',
+  AED = 'AED',
 }
