@@ -5,7 +5,7 @@ import {
   pullRequestModel,
   userModel,
 } from '@/database/model';
-import { PullRequestNode } from '@/github-sync/contributors/types';
+import { PullRequestNode } from '@/github/contributors/types';
 
 export async function savePRsToDB(
   prs: Array<PullRequestNode>,
