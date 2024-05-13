@@ -56,6 +56,7 @@ export const SETTINGS_FIELD_CURRENCY_CODES: Record<
   SEK: {
     label: 'Swedish krona',
     Icon: IconCurrencyKroneSwedish,
+  },
   MAD: {
     label: 'Moroccan dirham',
     Icon: IconCurrencyDirham,
