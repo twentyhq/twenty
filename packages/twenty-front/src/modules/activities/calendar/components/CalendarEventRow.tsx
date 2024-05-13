@@ -62,6 +62,10 @@ const StyledTime = styled.div`
 
 const StyledTitle = styled.div<{ active: boolean; canceled: boolean }>`
   flex: 1 0 auto;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 60%;
 
   ${({ theme, active }) =>
     active &&
@@ -142,9 +146,7 @@ export const CalendarEventRow = ({
         </StyledTime>
         {showTitle ? (
           <StyledTitle active={!hasEnded} canceled={!!calendarEvent.isCanceled}>
-            {calendarEvent.title.length > 50
-              ? `${calendarEvent.title.slice(0, 50).trim()} ...`
-              : calendarEvent.title}
+            {calendarEvent.title}
           </StyledTitle>
         ) : (
           <StyledVisibilityCard active={!hasEnded}>
