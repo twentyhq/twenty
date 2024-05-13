@@ -1,10 +1,10 @@
 import { ApolloClient, InMemoryCache } from '@apollo/client';
 
 import { Tokens } from '~/db/types/auth.types';
-import { RENEW_TOKEN } from '~/graphql/auth/queries';
+import { RENEW_TOKEN } from '~/graphql/auth/mutations';
 import { isDefined } from '~/utils/isDefined';
 
-export const renewToken = async (appToken: string): Promise<Tokens | null> => {
+export const renewToken = async (appToken: string): Promise<{ renewToken: { tokens: Tokens }} | null> => {
   const store = await chrome.storage.local.get();
   const serverUrl = `${
     isDefined(store.serverBaseUrl)
@@ -18,8 +18,8 @@ export const renewToken = async (appToken: string): Promise<Tokens | null> => {
     cache: new InMemoryCache({}),
   });
 
-  const { data } = await client.query({
-    query: RENEW_TOKEN,
+  const { data } = await client.mutate({
+    mutation: RENEW_TOKEN,
     variables: {
       appToken,
     },
