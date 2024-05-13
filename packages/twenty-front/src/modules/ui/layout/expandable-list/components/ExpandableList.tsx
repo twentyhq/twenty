@@ -7,7 +7,6 @@ import { Chip, ChipVariant } from 'twenty-ui';
 import { AnimatedContainer } from '@/object-record/record-table/components/AnimatedContainer';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
-import { isDefined } from '~/utils/isDefined';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -82,6 +81,8 @@ export const ExpandableList = ({
   const [isHovered, setIsHovered] = useState(false);
   const [isListExpanded, setIsListExpanded] = useState(false);
 
+  console.log('isHovered', isHovered);
+
   // Used with floating-ui if anchorElement is not provided.
   // floating-ui mentions that `useState` must be used instead of `useRef`
   // @see https://floating-ui.com/docs/useFloating#elements
@@ -97,8 +98,7 @@ export const ExpandableList = ({
 
   const hiddenChildrenCount = children.length - firstHiddenChildIndex;
   const canDisplayChipCount =
-    (isDefined(forceChipCountDisplay) ? forceChipCountDisplay : isHovered) &&
-    hiddenChildrenCount > 0;
+    (forceChipCountDisplay || isHovered) && hiddenChildrenCount > 0;
 
   const { refs, floatingStyles } = useFloating({
     // @ts-expect-error placement accepts 'start' as value even if the typing does not permit it

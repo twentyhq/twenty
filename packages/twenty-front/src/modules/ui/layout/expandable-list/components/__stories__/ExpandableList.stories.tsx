@@ -1,5 +1,7 @@
 import styled from '@emotion/styled';
+import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
+import { userEvent, within } from '@storybook/test';
 import { ComponentDecorator } from 'packages/twenty-ui';
 
 import { Tag } from '@/ui/display/tag/components/Tag';
@@ -23,15 +25,14 @@ const meta: Meta<typeof ExpandableList> = {
     ComponentDecorator,
   ],
   args: {
-    children: [
-      <Tag key={1} text={'Option 1'} color={MAIN_COLOR_NAMES[0]} />,
-      <Tag key={2} text={'Option 2'} color={MAIN_COLOR_NAMES[1]} />,
-      <Tag key={3} text={'Option 3'} color={MAIN_COLOR_NAMES[2]} />,
-      <Tag key={4} text={'Option 4'} color={MAIN_COLOR_NAMES[3]} />,
-      <Tag key={5} text={'Option 5'} color={MAIN_COLOR_NAMES[4]} />,
-      <Tag key={6} text={'Option 6'} color={MAIN_COLOR_NAMES[5]} />,
-      <Tag key={7} text={'Option 7'} color={MAIN_COLOR_NAMES[6]} />,
-    ],
+    children: Array.from({ length: 7 }, (_, index) => (
+      <Tag
+        key={index}
+        text={`Option ${index + 1}`}
+        color={MAIN_COLOR_NAMES[index]}
+      />
+    )),
+    forceChipCountDisplay: false,
   },
   argTypes: {
     children: { control: false },
@@ -44,10 +45,23 @@ type Story = StoryObj<typeof ExpandableList>;
 
 export const Default: Story = {};
 
-export const WithExpandedListBorder: Story = {
-  args: { withExpandedListBorder: true },
+export const WithChipCount: Story = {
+  args: { forceChipCountDisplay: true },
 };
 
-export const WithChipCountDisplay: Story = {
-  args: { forceChipCountDisplay: true },
+export const WithExpandedList: Story = {
+  ...WithChipCount,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const chipCount = await canvas.findByText('+3');
+
+    await userEvent.click(chipCount);
+
+    expect(await canvas.findByText('Option 7')).toBeDefined();
+  },
+};
+
+export const WithExpandedListBorder: Story = {
+  ...WithExpandedList,
+  args: { ...WithExpandedList.args, withExpandedListBorder: true },
 };
