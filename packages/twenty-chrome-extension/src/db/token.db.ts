@@ -4,7 +4,9 @@ import { Tokens } from '~/db/types/auth.types';
 import { RENEW_TOKEN } from '~/graphql/auth/mutations';
 import { isDefined } from '~/utils/isDefined';
 
-export const renewToken = async (appToken: string): Promise<{ renewToken: { tokens: Tokens }} | null> => {
+export const renewToken = async (
+  appToken: string,
+): Promise<{ renewToken: { tokens: Tokens } } | null> => {
   const store = await chrome.storage.local.get();
   const serverUrl = `${
     isDefined(store.serverBaseUrl)
