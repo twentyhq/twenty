@@ -45,6 +45,7 @@ export const SettingsAccountsEmailsBlocklistSection = () => {
         description="Exclude the following people and domains from my email sync"
       />
       <SettingsAccountsEmailsBlocklistInput
+        blockedEmailOrDomainList={blocklist.map((item) => item.handle)}
         updateBlockedEmailList={updateBlockedEmailList}
       />
       <SettingsAccountsEmailsBlocklistTable

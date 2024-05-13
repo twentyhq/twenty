@@ -21,6 +21,7 @@ export type FieldMetadataItem = Omit<
   | 'toRelationMetadata'
   | 'defaultValue'
   | 'options'
+  | 'settings'
   | 'relationDefinition'
 > & {
   __typename?: string;
@@ -28,7 +29,7 @@ export type FieldMetadataItem = Omit<
     | (Pick<Relation, 'id' | 'toFieldMetadataId' | 'relationType'> & {
         toObjectMetadata: Pick<
           Relation['toObjectMetadata'],
-          'id' | 'nameSingular' | 'namePlural' | 'isSystem'
+          'id' | 'nameSingular' | 'namePlural' | 'isSystem' | 'isRemote'
         >;
       })
     | null;
@@ -36,7 +37,7 @@ export type FieldMetadataItem = Omit<
     | (Pick<Relation, 'id' | 'fromFieldMetadataId' | 'relationType'> & {
         fromObjectMetadata: Pick<
           Relation['fromObjectMetadata'],
-          'id' | 'nameSingular' | 'namePlural' | 'isSystem'
+          'id' | 'nameSingular' | 'namePlural' | 'isSystem' | 'isRemote'
         >;
       })
     | null;

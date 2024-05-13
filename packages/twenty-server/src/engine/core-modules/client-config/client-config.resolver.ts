@@ -44,6 +44,10 @@ export class ClientConfigResolver {
         release: this.environmentService.get('SENTRY_RELEASE'),
         dsn: this.environmentService.get('SENTRY_FRONT_DSN'),
       },
+      captcha: {
+        provider: this.environmentService.get('CAPTCHA_DRIVER'),
+        siteKey: this.environmentService.get('CAPTCHA_SITE_KEY'),
+      },
     };
 
     return Promise.resolve(clientConfig);

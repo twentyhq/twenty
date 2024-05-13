@@ -62,8 +62,13 @@ export type WorkspaceMigrationCreateComment = {
   comment: string;
 };
 
+export type WorkspaceMigrationForeignColumnDefinition =
+  WorkspaceMigrationColumnDefinition & {
+    distantColumnName: string;
+  };
+
 export type WorkspaceMigrationForeignTable = {
-  columns: WorkspaceMigrationColumnDefinition[];
+  columns: WorkspaceMigrationForeignColumnDefinition[];
   referencedTableName: string;
   referencedTableSchema: string;
   foreignDataWrapperId: string;

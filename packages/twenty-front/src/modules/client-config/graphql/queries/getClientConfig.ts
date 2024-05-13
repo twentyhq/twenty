@@ -29,6 +29,10 @@ export const GET_CLIENT_CONFIG = gql`
         environment
         release
       }
+      captcha {
+        provider
+        siteKey
+      }
     }
   }
 `;

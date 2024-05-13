@@ -3,7 +3,7 @@ import { gql } from '@apollo/client';
 export { responseData } from './useUpdateOneRecord';
 
 export const query = gql`
-  mutation ExecuteQuickActionOnOnePerson($idToExecuteQuickActionOn: UUID!) {
+  mutation ExecuteQuickActionOnOnePerson($idToExecuteQuickActionOn: ID!) {
     executeQuickActionOnPerson(id: $idToExecuteQuickActionOn) {
       __typename
       xLink {
