@@ -101,18 +101,18 @@ export const insertButtonForCompany = async () => {
   const companyButtonSpan = companyButtonDiv.getElementsByTagName('span')[0];
   const company = await checkIfCompanyExists();
 
-  const openCompanyOnSidePanel = async (companyId: string) => {
-    await changeSidePanelUrl(
-      `${import.meta.env.VITE_FRONT_BASE_URL}/object/company/${companyId}`,
-    );
+  const openCompanyOnSidePanel = (companyId: string) => {
     companyButtonSpan.textContent = 'View in Twenty';
-    companyButtonDiv.onClickHandler(() => {
+    companyButtonDiv.onClickHandler(async () => {
+      await changeSidePanelUrl(
+        `${import.meta.env.VITE_FRONT_BASE_URL}/object/company/${companyId}`,
+      );
       chrome.runtime.sendMessage({ action: 'openSidepanel' });
     });
   };
 
   if (isDefined(company)) {
-    if (isDefined(company.id)) await openCompanyOnSidePanel(company.id);
+    if (isDefined(company.id)) openCompanyOnSidePanel(company.id);
   } else {
     companyButtonSpan.textContent = 'Add to Twenty';
 
@@ -120,7 +120,7 @@ export const insertButtonForCompany = async () => {
       companyButtonSpan.textContent = 'Saving...';
       const companyId = await addCompany();
       if (isDefined(companyId)) {
-        await openCompanyOnSidePanel(companyId);
+        openCompanyOnSidePanel(companyId);
       } else {
         companyButtonSpan.textContent = 'Try again';
       }

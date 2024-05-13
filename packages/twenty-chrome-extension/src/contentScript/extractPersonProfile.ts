@@ -103,7 +103,7 @@ export const insertButtonForPerson = async () => {
     );
 
     const addedProfileDiv: HTMLDivElement | null = document.querySelector(
-      '.bfrGGRhnbmPDHYJNAbYhQNzjVKlRysllNnuY',
+      '.pv-top-card-v2-ctas__custom',
     );
 
     if (isDefined(newProfileDiv) || isDefined(addedProfileDiv)) {
@@ -111,30 +111,31 @@ export const insertButtonForPerson = async () => {
         marginRight: '.8rem',
       });
       if (isDefined(newProfileDiv)) newProfileDiv.prepend(personButtonDiv);
-      else if (isDefined(addedProfileDiv)) addedProfileDiv.prepend(personButtonDiv);
+      else if (isDefined(addedProfileDiv))
+        addedProfileDiv.prepend(personButtonDiv);
     }
 
     const personButtonSpan = personButtonDiv.getElementsByTagName('span')[0];
     const person = await checkIfPersonExists();
 
-    const openPersonOnSidePanel = async (personId: string) => {
-      await changeSidePanelUrl(
-        `${import.meta.env.VITE_FRONT_BASE_URL}/object/person/${personId}`,
-      );
+    const openPersonOnSidePanel = (personId: string) => {
       personButtonSpan.textContent = 'View in Twenty';
-      personButtonDiv.onClickHandler(() => {
+      personButtonDiv.onClickHandler(async () => {
+        await changeSidePanelUrl(
+          `${import.meta.env.VITE_FRONT_BASE_URL}/object/person/${personId}`,
+        );
         chrome.runtime.sendMessage({ action: 'openSidepanel' });
       });
     };
 
     if (isDefined(person)) {
-      if (isDefined(person.id)) await openPersonOnSidePanel(person.id);
+      if (isDefined(person.id)) openPersonOnSidePanel(person.id);
     } else {
       personButtonSpan.textContent = 'Add to Twenty';
       personButtonDiv.onClickHandler(async () => {
         personButtonSpan.textContent = 'Saving...';
         const personId = await addPerson();
-        if (isDefined(personId)) await openPersonOnSidePanel(personId);
+        if (isDefined(personId)) openPersonOnSidePanel(personId);
         else personButtonSpan.textContent = 'Try again';
       });
     }
