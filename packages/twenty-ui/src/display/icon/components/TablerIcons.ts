@@ -123,6 +123,7 @@ export {
   IconRelationOneToMany,
   IconRelationOneToOne,
   IconRepeat,
+  IconRocket,
   IconSearch,
   IconSend,
   IconSettings,
