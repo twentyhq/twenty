@@ -44,7 +44,12 @@ export const EntityChip = ({
     if (isNonEmptyString(linkToEntity)) {
       event.preventDefault();
       event.stopPropagation();
-      navigate(linkToEntity);
+
+      if (event.metaKey || event.ctrlKey) {
+        window.open(linkToEntity, '_blank');
+      } else {
+        navigate(linkToEntity);
+      }
     }
   };
 
