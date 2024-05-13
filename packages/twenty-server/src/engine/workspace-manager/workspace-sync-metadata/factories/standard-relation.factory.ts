@@ -5,7 +5,10 @@ import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/
 
 import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
 import { assert } from 'src/utils/assert';
-import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import {
+  RelationMetadataEntity,
+  RelationMetadataType,
+} from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/convert-class-to-object-metadata-name.util';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
@@ -91,20 +94,27 @@ export class StandardRelationFactory {
     }
 
     return workspaceRelationMetadataArgsCollection
-      .filter(
-        (workspaceRelationMetadataArgs) =>
-          !isGatedAndNotEnabled(
-            workspaceRelationMetadataArgs.gate,
-            workspaceFeatureFlagsMap,
-          ),
-      )
+      .filter((workspaceRelationMetadataArgs) => {
+        // We're not storing many-to-one relations in the DB for the moment
+        if (
+          workspaceRelationMetadataArgs.type ===
+          RelationMetadataType.MANY_TO_ONE
+        ) {
+          return false;
+        }
+
+        return !isGatedAndNotEnabled(
+          workspaceRelationMetadataArgs.gate,
+          workspaceFeatureFlagsMap,
+        );
+      })
       .map((workspaceRelationMetadataArgs) => {
         // Compute reflect relation metadata
         const fromObjectNameSingular =
           'object' in workspaceEntityOrCustomRelationFactory
             ? workspaceEntityOrCustomRelationFactory.object.nameSingular
             : convertClassNameToObjectMetadataName(
-                workspaceRelationMetadataArgs.target.constructor.name,
+                workspaceRelationMetadataArgs.target.name,
               );
         const toObjectNameSingular = convertClassNameToObjectMetadataName(
           workspaceRelationMetadataArgs.inverseSideTarget().name,

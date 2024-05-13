@@ -20,10 +20,9 @@ export function WorkspaceEntity(
         'workspace:is-audit-logged-metadata-args',
         target,
       ) ?? true;
-    const isSystem = TypedReflect.getMetadata(
-      'workspace:is-system-metadata-args',
-      target,
-    );
+    const isSystem =
+      TypedReflect.getMetadata('workspace:is-system-metadata-args', target) ??
+      false;
     const gate = TypedReflect.getMetadata(
       'workspace:gate-metadata-args',
       target,

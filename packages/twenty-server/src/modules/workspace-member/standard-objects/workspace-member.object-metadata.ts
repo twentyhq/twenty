@@ -26,7 +26,6 @@ import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/work
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workspaceMember,
@@ -99,7 +98,7 @@ export class WorkspaceMemberObjectMetadata extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredActivities,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Authored Activities',
+    label: 'Authored activities',
     description: 'Activities created by the workspace member',
     icon: 'IconCheckbox',
     inverseSideTarget: () => ActivityObjectMetadata,
@@ -111,7 +110,7 @@ export class WorkspaceMemberObjectMetadata extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.assignedActivities,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Assigned Activities',
+    label: 'Assigned activities',
     description: 'Activities assigned to the workspace member',
     icon: 'IconCheckbox',
     inverseSideTarget: () => ActivityObjectMetadata,
@@ -146,7 +145,7 @@ export class WorkspaceMemberObjectMetadata extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredAttachments,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Authored Attachments',
+    label: 'Authored attachments',
     description: 'Attachments created by the workspace member',
     icon: 'IconFileImport',
     inverseSideTarget: () => AttachmentObjectMetadata,
@@ -158,8 +157,8 @@ export class WorkspaceMemberObjectMetadata extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredComments,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Authored Comments',
-    description: 'Comments created by the workspace member',
+    label: 'Authored comments',
+    description: 'Authored comments',
     icon: 'IconComment',
     inverseSideTarget: () => CommentObjectMetadata,
     inverseSideFieldKey: 'author',

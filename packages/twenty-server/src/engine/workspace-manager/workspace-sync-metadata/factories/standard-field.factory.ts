@@ -15,6 +15,7 @@ import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-syn
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { createDeterministicUuid } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
 @Injectable()
 export class StandardFieldFactory {
@@ -73,10 +74,10 @@ export class StandardFieldFactory {
       args: T,
       context: WorkspaceSyncContext,
       featureFlagsMap: FeatureFlagMap,
-    ) => U | undefined,
+    ) => U[],
   ): U[] {
     return metadataArgs
-      .map((args) =>
+      .flatMap((args) =>
         createMetadata(
           workspaceEntityMetadataArgs,
           args,
@@ -95,23 +96,34 @@ export class StandardFieldFactory {
     workspaceFieldMetadataArgs: WorkspaceFieldMetadataArgs,
     context: WorkspaceSyncContext,
     workspaceFeatureFlagsMap: FeatureFlagMap,
-  ): PartialFieldMetadata | undefined {
+  ): PartialFieldMetadata[] {
     if (
       isGatedAndNotEnabled(
         workspaceFieldMetadataArgs.gate,
         workspaceFeatureFlagsMap,
       )
     ) {
-      return undefined;
+      return [];
     }
 
-    return {
-      ...workspaceFieldMetadataArgs,
-      workspaceId: context.workspaceId,
-      isSystem:
-        workspaceEntityMetadataArgs?.isSystem ||
-        workspaceFieldMetadataArgs.isSystem,
-    };
+    return [
+      {
+        type: workspaceFieldMetadataArgs.type,
+        standardId: workspaceFieldMetadataArgs.standardId,
+        name: workspaceFieldMetadataArgs.name,
+        icon: workspaceFieldMetadataArgs.icon,
+        label: workspaceFieldMetadataArgs.label,
+        description: workspaceFieldMetadataArgs.description,
+        defaultValue: workspaceFieldMetadataArgs.defaultValue,
+        options: workspaceFieldMetadataArgs.options,
+        workspaceId: context.workspaceId,
+        isNullable: workspaceFieldMetadataArgs.isNullable,
+        isCustom: false,
+        isSystem:
+          workspaceEntityMetadataArgs?.isSystem ||
+          workspaceFieldMetadataArgs.isSystem,
+      },
+    ];
   }
 
   /**
@@ -122,30 +134,56 @@ export class StandardFieldFactory {
     workspaceRelationMetadataArgs: WorkspaceRelationMetadataArgs,
     context: WorkspaceSyncContext,
     workspaceFeatureFlagsMap: FeatureFlagMap,
-  ): PartialFieldMetadata | undefined {
+  ): PartialFieldMetadata[] {
+    const fieldMetadataCollection: PartialFieldMetadata[] = [];
+    const foreignKeyStandardId = createDeterministicUuid(
+      workspaceRelationMetadataArgs.standardId,
+    );
+
     if (
       isGatedAndNotEnabled(
         workspaceRelationMetadataArgs.gate,
         workspaceFeatureFlagsMap,
       )
     ) {
-      return undefined;
+      return [];
     }
 
-    return {
+    if (workspaceRelationMetadataArgs.joinColumn) {
+      fieldMetadataCollection.push({
+        type: FieldMetadataType.UUID,
+        standardId: foreignKeyStandardId,
+        name: workspaceRelationMetadataArgs.joinColumn,
+        label: `${workspaceRelationMetadataArgs.label} id (foreign key)`,
+        description: `${workspaceRelationMetadataArgs.description} id foreign key`,
+        icon: workspaceRelationMetadataArgs.icon,
+        defaultValue: null,
+        options: undefined,
+        settings: undefined,
+        workspaceId: context.workspaceId,
+        isCustom: false,
+        isSystem: true,
+        isNullable: workspaceRelationMetadataArgs.isNullable,
+      });
+    }
+
+    fieldMetadataCollection.push({
       type: FieldMetadataType.RELATION,
       standardId: workspaceRelationMetadataArgs.standardId,
       name: workspaceRelationMetadataArgs.name,
       label: workspaceRelationMetadataArgs.label,
       description: workspaceRelationMetadataArgs.description,
       icon: workspaceRelationMetadataArgs.icon,
+      defaultValue: null,
+      workspaceId: context.workspaceId,
+      isCustom: false,
       isSystem:
         workspaceEntityMetadataArgs?.isSystem ||
         workspaceRelationMetadataArgs.isSystem,
-      isNullable: workspaceRelationMetadataArgs.isNullable,
-      workspaceId: context.workspaceId,
-      isCustom: false,
-    };
+      isNullable: true,
+    });
+
+    return fieldMetadataCollection;
   }
 
   /**
@@ -158,7 +196,7 @@ export class StandardFieldFactory {
       | undefined,
     context: WorkspaceSyncContext,
     workspaceFeatureFlagsMap: FeatureFlagMap,
-  ): PartialComputedFieldMetadata | undefined {
+  ): PartialComputedFieldMetadata[] {
     if (
       !workspaceDynamicRelationMetadataArgs ||
       isGatedAndNotEnabled(
@@ -166,17 +204,21 @@ export class StandardFieldFactory {
         workspaceFeatureFlagsMap,
       )
     ) {
-      return undefined;
+      return [];
     }
 
-    return {
-      type: FieldMetadataType.RELATION,
-      argsFactory: workspaceDynamicRelationMetadataArgs.argsFactory,
-      workspaceId: context.workspaceId,
-      isCustom: false,
-      isSystem:
-        workspaceEntityMetadataArgs?.isSystem ||
-        workspaceDynamicRelationMetadataArgs.isSystem,
-    };
+    return [
+      // Foreign key will be computed in compute-standard-object.util.ts, because we need to know the custom object
+      {
+        type: FieldMetadataType.RELATION,
+        argsFactory: workspaceDynamicRelationMetadataArgs.argsFactory,
+        workspaceId: context.workspaceId,
+        isCustom: false,
+        isSystem:
+          workspaceEntityMetadataArgs?.isSystem ||
+          workspaceDynamicRelationMetadataArgs.isSystem,
+        isNullable: workspaceDynamicRelationMetadataArgs.isNullable,
+      },
+    ];
   }
 }

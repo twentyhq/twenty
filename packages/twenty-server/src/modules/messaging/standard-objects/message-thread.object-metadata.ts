@@ -42,9 +42,9 @@ export class MessageThreadObjectMetadata extends BaseWorkspaceEntity {
     standardId:
       MESSAGE_THREAD_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Message Channel Message Associations',
-    description: 'Message Channel Message Associations',
-    icon: 'IconHash',
+    label: 'Message Channel Association',
+    description: 'Messages from the channel',
+    icon: 'IconMessage',
     inverseSideTarget: () => MessageChannelMessageAssociationObjectMetadata,
     onDelete: RelationOnDeleteAction.RESTRICT,
   })

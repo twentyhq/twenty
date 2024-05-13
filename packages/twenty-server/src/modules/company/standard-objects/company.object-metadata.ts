@@ -154,8 +154,8 @@ export class CompanyObjectMetadata extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: COMPANY_STANDARD_FIELD_IDS.activityTargets,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Activity Targets',
-    description: 'Activity Targets linked to the company',
+    label: 'Activities',
+    description: 'Activities tied to the company',
     icon: 'IconCheckbox',
     inverseSideTarget: () => ActivityTargetObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,

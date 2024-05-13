@@ -12,7 +12,7 @@ export interface WorkspaceEntityMetadataArgs {
    * String target is a table defined in a json schema.
    */
   // eslint-disable-next-line @typescript-eslint/ban-types
-  readonly target: Function | string;
+  readonly target: Function;
 
   /**
    * Entity name.
@@ -44,7 +44,7 @@ export interface WorkspaceEntityMetadataArgs {
   /**
    * Is system object.
    */
-  readonly isSystem?: boolean;
+  readonly isSystem: boolean;
 
   /**
    * Entity gate.

@@ -7,7 +7,7 @@ export interface WorkspaceExtendedEntityMetadataArgs {
    * String target is a table defined in a json schema.
    */
   // eslint-disable-next-line @typescript-eslint/ban-types
-  readonly target: Function | string;
+  readonly target: Function;
 
   /**
    * Entity gate.

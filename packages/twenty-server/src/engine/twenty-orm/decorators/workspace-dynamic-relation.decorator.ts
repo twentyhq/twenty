@@ -21,11 +21,12 @@ export function WorkspaceDynamicRelation<TClass extends object>(
   args: WorkspaceBaseDynamicRelationOptions<TClass>,
 ): PropertyDecorator {
   return (target, propertyKey) => {
-    const isSystem = TypedReflect.getMetadata(
-      'workspace:is-system-metadata-args',
-      target,
-      propertyKey.toString(),
-    );
+    const isSystem =
+      TypedReflect.getMetadata(
+        'workspace:is-system-metadata-args',
+        target,
+        propertyKey.toString(),
+      ) ?? false;
     const gate = TypedReflect.getMetadata(
       'workspace:gate-metadata-args',
       target,
@@ -39,8 +40,9 @@ export function WorkspaceDynamicRelation<TClass extends object>(
       inverseSideTarget: args.inverseSideTarget,
       inverseSideFieldKey: args.inverseSideFieldKey as string | undefined,
       onDelete: args.onDelete,
-      isSystem: isSystem,
+      isSystem,
       isNullable: true,
+      isPrimary: false,
       gate,
     });
   };

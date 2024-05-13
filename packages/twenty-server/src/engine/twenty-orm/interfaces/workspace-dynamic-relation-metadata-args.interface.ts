@@ -47,7 +47,7 @@ export interface WorkspaceDynamicRelationMetadataArgs {
    * Class to which relation is applied.
    */
   // eslint-disable-next-line @typescript-eslint/ban-types
-  readonly target: Function | string;
+  readonly target: Function;
 
   /**
    * Factory function
@@ -77,17 +77,17 @@ export interface WorkspaceDynamicRelationMetadataArgs {
   /**
    * Is primary field.
    */
-  readonly isPrimary?: boolean;
+  readonly isPrimary: boolean;
 
   /**
    * Is system field.
    */
-  readonly isSystem?: boolean;
+  readonly isSystem: boolean;
 
   /**
    * Is nullable field.
    */
-  readonly isNullable?: boolean;
+  readonly isNullable: boolean;
 
   /**
    * Field gate.

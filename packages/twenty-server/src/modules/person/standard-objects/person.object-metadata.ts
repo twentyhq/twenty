@@ -23,7 +23,6 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
-import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.person,
@@ -138,7 +137,7 @@ export class PersonObjectMetadata extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: PERSON_STANDARD_FIELD_IDS.pointOfContactForOpportunities,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Point of Contact for Opportunities',
+    label: 'POC for Opportunities',
     description: 'Point of Contact for Opportunities',
     icon: 'IconTargetArrow',
     inverseSideTarget: () => OpportunityObjectMetadata,

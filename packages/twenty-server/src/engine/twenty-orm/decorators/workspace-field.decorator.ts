@@ -16,7 +16,6 @@ export interface WorkspaceFieldOptions<
   description?: string | ((objectMetadata: ObjectMetadataEntity) => string);
   icon?: string;
   defaultValue?: FieldMetadataDefaultValue<T>;
-  joinColumn?: string;
   options?: FieldMetadataOptions<T>;
 }
 
@@ -24,21 +23,24 @@ export function WorkspaceField<T extends FieldMetadataType>(
   options: WorkspaceFieldOptions<T>,
 ): PropertyDecorator {
   return (object, propertyKey) => {
-    const isPrimary = TypedReflect.getMetadata(
-      'workspace:is-primary-field-metadata-args',
-      object,
-      propertyKey.toString(),
-    );
-    const isNullable = TypedReflect.getMetadata(
-      'workspace:is-nullable-metadata-args',
-      object,
-      propertyKey.toString(),
-    );
-    const isSystem = TypedReflect.getMetadata(
-      'workspace:is-system-metadata-args',
-      object,
-      propertyKey.toString(),
-    );
+    const isPrimary =
+      TypedReflect.getMetadata(
+        'workspace:is-primary-field-metadata-args',
+        object,
+        propertyKey.toString(),
+      ) ?? false;
+    const isNullable =
+      TypedReflect.getMetadata(
+        'workspace:is-nullable-metadata-args',
+        object,
+        propertyKey.toString(),
+      ) ?? false;
+    const isSystem =
+      TypedReflect.getMetadata(
+        'workspace:is-system-metadata-args',
+        object,
+        propertyKey.toString(),
+      ) ?? false;
     const gate = TypedReflect.getMetadata(
       'workspace:gate-metadata-args',
       object,

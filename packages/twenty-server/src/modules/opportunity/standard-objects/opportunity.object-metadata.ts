@@ -112,6 +112,7 @@ export class OpportunityObjectMetadata extends BaseWorkspaceEntity {
     icon: 'IconUser',
     joinColumn: 'pointOfContactId',
     inverseSideTarget: () => PersonObjectMetadata,
+    inverseSideFieldKey: 'pointOfContactForOpportunities',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
@@ -125,6 +126,7 @@ export class OpportunityObjectMetadata extends BaseWorkspaceEntity {
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'companyId',
     inverseSideTarget: () => CompanyObjectMetadata,
+    inverseSideFieldKey: 'opportunities',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
@@ -146,8 +148,8 @@ export class OpportunityObjectMetadata extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.activityTargets,
     type: RelationMetadataType.ONE_TO_MANY,
-    label: 'Activity Targets',
-    description: 'Activity Targets linked to the opportunity',
+    label: 'Activities',
+    description: 'Activities tied to the opportunity',
     icon: 'IconCheckbox',
     inverseSideTarget: () => ActivityTargetObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
