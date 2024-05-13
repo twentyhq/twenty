@@ -160,9 +160,6 @@ describe('TokenService', () => {
       };
       const mockUser = { id: '1', email: 'user@example.com' };
 
-      const mockedNewDate = new Date();
-
-      jest.spyOn(global, 'Date').mockImplementation(() => mockedNewDate);
       jest
         .spyOn(appTokenRepository, 'findOne')
         .mockResolvedValue(mockToken as AppToken);
@@ -176,7 +173,7 @@ describe('TokenService', () => {
         where: {
           value: hashedToken,
           type: AppTokenType.PasswordResetToken,
-          expiresAt: MoreThan(mockedNewDate),
+          expiresAt: MoreThan(new Date()),
           revokedAt: IsNull(),
         },
       });
