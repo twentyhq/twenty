@@ -3,7 +3,6 @@ import { useContext } from 'react';
 import { LinksFieldDisplay } from '@/object-record/record-field/meta-types/display/components/LinksFieldDisplay';
 import { isFieldDisplayedAsPhone } from '@/object-record/record-field/types/guards/isFieldDisplayedAsPhone';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
-import { ExpandableListProps } from '@/ui/layout/expandable-list/components/ExpandableList';
 
 import { FieldContext } from '../contexts/FieldContext';
 import { AddressFieldDisplay } from '../meta-types/display/components/AddressFieldDisplay';
@@ -38,13 +37,17 @@ import { isFieldSelect } from '../types/guards/isFieldSelect';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldUuid } from '../types/guards/isFieldUuid';
 
-type FieldDisplayProps = ExpandableListProps;
+type FieldDisplayProps = {
+  isCellSoftFocused?: boolean;
+  cellElement?: HTMLElement;
+  fromTableCell?: boolean;
+};
 
 export const FieldDisplay = ({
-  isHovered,
-  reference,
+  isCellSoftFocused,
+  cellElement,
   fromTableCell,
-}: FieldDisplayProps & { fromTableCell?: boolean }) => {
+}: FieldDisplayProps) => {
   const { fieldDefinition, isLabelIdentifier } = useContext(FieldContext);
 
   const isChipDisplay =
@@ -75,7 +78,11 @@ export const FieldDisplay = ({
   ) : isFieldLink(fieldDefinition) ? (
     <LinkFieldDisplay />
   ) : isFieldLinks(fieldDefinition) ? (
-    <LinksFieldDisplay />
+    <LinksFieldDisplay
+      isCellSoftFocused={isCellSoftFocused}
+      cellElement={cellElement}
+      fromTableCell={fromTableCell}
+    />
   ) : isFieldCurrency(fieldDefinition) ? (
     <CurrencyFieldDisplay />
   ) : isFieldFullName(fieldDefinition) ? (
@@ -84,9 +91,9 @@ export const FieldDisplay = ({
     <SelectFieldDisplay />
   ) : isFieldMultiSelect(fieldDefinition) ? (
     <MultiSelectFieldDisplay
-      isHovered={isHovered}
-      reference={reference}
-      withDropDownBorder={fromTableCell}
+      isCellSoftFocused={isCellSoftFocused}
+      cellElement={cellElement}
+      fromTableCell={fromTableCell}
     />
   ) : isFieldAddress(fieldDefinition) ? (
     <AddressFieldDisplay />

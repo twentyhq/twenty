@@ -2,10 +2,12 @@ import styled from '@emotion/styled';
 
 import { ActivityTargetWithTargetRecord } from '@/activities/types/ActivityTargetObject';
 import { RecordChip } from '@/object-record/components/RecordChip';
-import {
-  ExpandableList,
-  ExpandableListProps,
-} from '@/ui/layout/expandable-list/components/ExpandableList';
+import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
+
+type ActivityTargetChipsProps = {
+  activityTargetObjectRecords: ActivityTargetWithTargetRecord[];
+  maxWidth?: number;
+};
 
 const StyledContainer = styled.div<{ maxWidth?: number }>`
   display: flex;
@@ -16,20 +18,11 @@ const StyledContainer = styled.div<{ maxWidth?: number }>`
 
 export const ActivityTargetChips = ({
   activityTargetObjectRecords,
-  isHovered,
-  reference,
   maxWidth,
-}: {
-  activityTargetObjectRecords: ActivityTargetWithTargetRecord[];
-  maxWidth?: number;
-} & ExpandableListProps) => {
+}: ActivityTargetChipsProps) => {
   return (
     <StyledContainer maxWidth={maxWidth}>
-      <ExpandableList
-        isHovered={isHovered}
-        reference={reference}
-        forceDisplayHiddenCount
-      >
+      <ExpandableList forceChipCountDisplay>
         {activityTargetObjectRecords.map(
           (activityTargetObjectRecord, index) => (
             <RecordChip
