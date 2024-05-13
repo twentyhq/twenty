@@ -81,8 +81,6 @@ export const ExpandableList = ({
   const [isHovered, setIsHovered] = useState(false);
   const [isListExpanded, setIsListExpanded] = useState(false);
 
-  console.log('isHovered', isHovered);
-
   // Used with floating-ui if anchorElement is not provided.
   // floating-ui mentions that `useState` must be used instead of `useRef`
   // @see https://floating-ui.com/docs/useFloating#elements

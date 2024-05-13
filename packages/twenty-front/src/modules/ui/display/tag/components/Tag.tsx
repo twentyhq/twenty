@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconComponent } from 'twenty-ui';
+import { IconComponent, OverflowingTextWithTooltip } from 'twenty-ui';
 
 import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
 import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
@@ -69,7 +69,9 @@ export const Tag = ({
           <Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
         </StyledIconContainer>
       )}
-      <StyledContent>{text}</StyledContent>
+      <StyledContent>
+        <OverflowingTextWithTooltip text={text} />
+      </StyledContent>
     </StyledTag>
   );
 };

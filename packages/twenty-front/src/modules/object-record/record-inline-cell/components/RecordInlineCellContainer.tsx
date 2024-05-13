@@ -141,7 +141,7 @@ export const RecordInlineCellContainer = ({
   loading = false,
 }: RecordInlineCellContainerProps) => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
-  // Used by certain fields in ExpandableList as an anchor for the floating element.
+  // Used by some fields in ExpandableList as an anchor for the floating element.
   // floating-ui mentions that `useState` must be used instead of `useRef`,
   // see https://floating-ui.com/docs/useFloating#elements
   const [cellElement, setCellElement] = useState<HTMLDivElement | null>(null);

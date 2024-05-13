@@ -26,8 +26,10 @@ export const RoundedLink = ({
   className,
   href,
   onClick,
-}: RoundedLinkProps) =>
-  children ? (
+}: RoundedLinkProps) => {
+  if (!children) return null;
+
+  return (
     <StyledLink
       className={className}
       target="_blank"
@@ -40,4 +42,5 @@ export const RoundedLink = ({
         size={ChipSize.Small}
       />
     </StyledLink>
-  ) : null;
+  );
+};
