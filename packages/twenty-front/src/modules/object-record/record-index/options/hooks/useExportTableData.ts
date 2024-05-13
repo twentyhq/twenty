@@ -36,7 +36,7 @@ export const generateCsv: GenerateExport = ({
 }: GenerateExportOptions): string => {
   const columnsToExport = columns.filter(
     (col) =>
-      !('relationType' in col.metadata) ||
+      !('relationType' in col.metadata && col.metadata.relationType) ||
       col.metadata.relationType === 'TO_ONE_OBJECT',
   );
 

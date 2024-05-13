@@ -37,6 +37,7 @@ export const GET_CURRENT_USER = gql`
         }
         currentCacheVersion
         currentBillingSubscription {
+          id
           status
           interval
         }

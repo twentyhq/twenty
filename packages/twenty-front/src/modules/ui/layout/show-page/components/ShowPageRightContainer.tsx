@@ -66,11 +66,10 @@ export const ShowPageRightContainer = ({
   const activeTabId = useRecoilValue(activeTabIdState);
 
   const shouldDisplayCalendarTab =
-    useIsFeatureEnabled('IS_CALENDAR_ENABLED') &&
-    (targetableObject.targetObjectNameSingular ===
+    targetableObject.targetObjectNameSingular ===
       CoreObjectNameSingular.Company ||
-      targetableObject.targetObjectNameSingular ===
-        CoreObjectNameSingular.Person);
+    targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Person;
+
   const shouldDisplayLogTab = useIsFeatureEnabled('IS_EVENT_OBJECT_ENABLED');
 
   const shouldDisplayEmailsTab =

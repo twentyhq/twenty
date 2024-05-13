@@ -54,11 +54,9 @@ export class AddStandardIdCommand extends CommandRunner {
           },
           {
             IS_BLOCKLIST_ENABLED: true,
-            IS_CALENDAR_ENABLED: true,
             IS_EVENT_OBJECT_ENABLED: true,
             IS_AIRTABLE_INTEGRATION_ENABLED: true,
             IS_POSTGRESQL_INTEGRATION_ENABLED: true,
-            IS_MULTI_SELECT_ENABLED: false,
             IS_STRIPE_INTEGRATION_ENABLED: false,
           },
         );
@@ -70,11 +68,9 @@ export class AddStandardIdCommand extends CommandRunner {
         },
         {
           IS_BLOCKLIST_ENABLED: true,
-          IS_CALENDAR_ENABLED: true,
           IS_EVENT_OBJECT_ENABLED: true,
           IS_AIRTABLE_INTEGRATION_ENABLED: true,
           IS_POSTGRESQL_INTEGRATION_ENABLED: true,
-          IS_MULTI_SELECT_ENABLED: false,
           IS_STRIPE_INTEGRATION_ENABLED: false,
         },
       );

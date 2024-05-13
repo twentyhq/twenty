@@ -5,6 +5,7 @@ import { useRecoilValue } from 'recoil';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
+import { useSignOutAndRedirect } from '@/auth/hooks/useSignOutAndRedirect';
 import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit';
 import { SubscriptionCard } from '@/billing/components/SubscriptionCard';
 import { billingState } from '@/client-config/states/billingState';
@@ -13,6 +14,8 @@ import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { CardPicker } from '@/ui/input/components/CardPicker';
+import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
+import { CAL_LINK } from '@/ui/navigation/link/constants/Cal';
 import {
   ProductPriceEntity,
   useCheckoutSessionMutation,
@@ -42,6 +45,32 @@ const StyledBenefitsContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
 `;
 
+const StyledLinkGroup = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: ${({ theme }) => theme.spacing(1)};
+  justify-content: center;
+  margin-top: ${({ theme }) => theme.spacing(4)};
+
+  > span {
+    background-color: ${({ theme }) => theme.font.color.light};
+    border-radius: 50%;
+    height: 2px;
+    width: 2px;
+  }
+`;
+
+const benefits = [
+  'Full access',
+  'Unlimited contacts',
+  'Email integration',
+  'Custom objects',
+  'API & Webhooks',
+  'Frequent updates',
+  'And much more',
+];
+
 export const ChooseYourPlan = () => {
   const billing = useRecoilValue(billingState);
 
@@ -64,6 +93,8 @@ export const ChooseYourPlan = () => {
       }
     };
   };
+
+  const handleLogout = useSignOutAndRedirect();
 
   const computeInfo = (
     price: ProductPriceEntity,
@@ -131,13 +162,9 @@ export const ChooseYourPlan = () => {
           ))}
         </StyledChoosePlanContainer>
         <StyledBenefitsContainer>
-          <SubscriptionBenefit>Full access</SubscriptionBenefit>
-          <SubscriptionBenefit>Unlimited contacts</SubscriptionBenefit>
-          <SubscriptionBenefit>Email integration</SubscriptionBenefit>
-          <SubscriptionBenefit>Custom objects</SubscriptionBenefit>
-          <SubscriptionBenefit>API & Webhooks</SubscriptionBenefit>
-          <SubscriptionBenefit>Frequent updates</SubscriptionBenefit>
-          <SubscriptionBenefit>And much more</SubscriptionBenefit>
+          {benefits.map((benefit, index) => (
+            <SubscriptionBenefit key={index}>{benefit}</SubscriptionBenefit>
+          ))}
         </StyledBenefitsContainer>
         <MainButton
           title="Continue"
@@ -146,6 +173,13 @@ export const ChooseYourPlan = () => {
           Icon={() => isSubmitting && <Loader />}
           disabled={isSubmitting}
         />
+        <StyledLinkGroup>
+          <ActionLink onClick={handleLogout}>Log out</ActionLink>
+          <span />
+          <ActionLink href={CAL_LINK} target="_blank" rel="noreferrer">
+            Book a Call
+          </ActionLink>
+        </StyledLinkGroup>
       </>
     )
   );
