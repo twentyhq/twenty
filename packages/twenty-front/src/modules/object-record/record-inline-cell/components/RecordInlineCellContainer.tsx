@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { Tooltip } from 'react-tooltip';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
@@ -82,6 +83,25 @@ const StyledTooltip = styled(Tooltip)`
   padding: ${({ theme }) => theme.spacing(2)};
 `;
 
+const StyledSkeletonDiv = styled.div`
+  height: 24px;
+`;
+
+const StyledInlineCellSkeletonLoader = () => {
+  const theme = useTheme();
+  return (
+    <SkeletonTheme
+      baseColor={theme.background.tertiary}
+      highlightColor={theme.background.transparent.lighter}
+      borderRadius={4}
+    >
+      <StyledSkeletonDiv>
+        <Skeleton width={154} height={16} />
+      </StyledSkeletonDiv>
+    </SkeletonTheme>
+  );
+};
+
 type RecordInlineCellContainerProps = {
   readonly?: boolean;
   IconLabel?: IconComponent;
@@ -96,6 +116,7 @@ type RecordInlineCellContainerProps = {
   isDisplayModeContentEmpty?: boolean;
   isDisplayModeFixHeight?: boolean;
   disableHoverEffect?: boolean;
+  loading?: boolean;
 };
 
 export const RecordInlineCellContainer = ({
@@ -112,6 +133,7 @@ export const RecordInlineCellContainer = ({
   editModeContentOnly,
   isDisplayModeFixHeight,
   disableHoverEffect,
+  loading = false,
 }: RecordInlineCellContainerProps) => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
   const reference = useRef<HTMLDivElement>(null);
@@ -163,6 +185,43 @@ export const RecordInlineCellContainer = ({
     }
   }, [isHoveredForDisplayMode, displayModeContent, reference]);
 
+  const showContent = () => {
+    if (loading) {
+      return <StyledInlineCellSkeletonLoader />;
+    }
+    return !readonly && isInlineCellInEditMode ? (
+      <RecordInlineCellEditMode>{editModeContent}</RecordInlineCellEditMode>
+    ) : editModeContentOnly ? (
+      <StyledClickableContainer readonly={readonly}>
+        <RecordInlineCellDisplayMode
+          disableHoverEffect={disableHoverEffect}
+          isDisplayModeContentEmpty={isDisplayModeContentEmpty}
+          isDisplayModeFixHeight={isDisplayModeFixHeight}
+          isHovered={isHovered}
+          emptyPlaceholder={showLabel ? 'Empty' : label}
+        >
+          {editModeContent}
+        </RecordInlineCellDisplayMode>
+      </StyledClickableContainer>
+    ) : (
+      <StyledClickableContainer
+        readonly={readonly}
+        onClick={handleDisplayModeClick}
+      >
+        <RecordInlineCellDisplayMode
+          disableHoverEffect={disableHoverEffect}
+          isDisplayModeContentEmpty={isDisplayModeContentEmpty}
+          isDisplayModeFixHeight={isDisplayModeFixHeight}
+          isHovered={isHovered}
+          emptyPlaceholder={showLabel ? 'Empty' : label}
+        >
+          {newDisplayModeContent}
+        </RecordInlineCellDisplayMode>
+        {showEditButton && <RecordInlineCellButton Icon={buttonIcon} />}
+      </StyledClickableContainer>
+    );
+  };
+
   return (
     <StyledInlineCellBaseContainer
       onMouseEnter={handleContainerMouseEnter}
@@ -194,37 +253,7 @@ export const RecordInlineCellContainer = ({
         </StyledLabelAndIconContainer>
       )}
       <StyledValueContainer ref={reference}>
-        {!readonly && isInlineCellInEditMode ? (
-          <RecordInlineCellEditMode>{editModeContent}</RecordInlineCellEditMode>
-        ) : editModeContentOnly ? (
-          <StyledClickableContainer readonly={readonly}>
-            <RecordInlineCellDisplayMode
-              disableHoverEffect={disableHoverEffect}
-              isDisplayModeContentEmpty={isDisplayModeContentEmpty}
-              isDisplayModeFixHeight={isDisplayModeFixHeight}
-              isHovered={isHovered}
-              emptyPlaceholder={showLabel ? 'Empty' : label}
-            >
-              {editModeContent}
-            </RecordInlineCellDisplayMode>
-          </StyledClickableContainer>
-        ) : (
-          <StyledClickableContainer
-            readonly={readonly}
-            onClick={handleDisplayModeClick}
-          >
-            <RecordInlineCellDisplayMode
-              disableHoverEffect={disableHoverEffect}
-              isDisplayModeContentEmpty={isDisplayModeContentEmpty}
-              isDisplayModeFixHeight={isDisplayModeFixHeight}
-              isHovered={isHovered}
-              emptyPlaceholder={showLabel ? 'Empty' : label}
-            >
-              {newDisplayModeContent}
-            </RecordInlineCellDisplayMode>
-            {showEditButton && <RecordInlineCellButton Icon={buttonIcon} />}
-          </StyledClickableContainer>
-        )}
+        {showContent()}
       </StyledValueContainer>
     </StyledInlineCellBaseContainer>
   );
