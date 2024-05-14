@@ -58,8 +58,14 @@ export class ApiRestService {
     return await this.callGraphql(request, data);
   }
 
-  async create(request: Request) {
-    const data = await this.apiRestQueryBuilderFactory.create(request);
+  async createOne(request: Request) {
+    const data = await this.apiRestQueryBuilderFactory.createOne(request);
+
+    return await this.callGraphql(request, data);
+  }
+
+  async createMany(request: Request) {
+    const data = await this.apiRestQueryBuilderFactory.createMany(request);
 
     return await this.callGraphql(request, data);
   }

@@ -25,7 +25,7 @@ export class ApiRestController {
 
   @Post()
   async handleApiPost(@Req() request: Request, @Res() res: Response) {
-    const result = await this.apiRestService.create(request);
+    const result = await this.apiRestService.createOne(request);
 
     res.send(cleanGraphQLResponse(result.data));
   }

@@ -20,6 +20,10 @@ export const parsePath = (
   return { object: queryAction[0], id: queryAction[1] };
 };
 
+export const parseBatchPath = (request: Request): { object: string } => {
+  return { object: request.path.replace('/rest/batch/', '') };
+};
+
 export const parseMetadataPath = (
   request: Request,
 ): { objectNameSingular: string; objectNamePlural: string; id?: string } => {

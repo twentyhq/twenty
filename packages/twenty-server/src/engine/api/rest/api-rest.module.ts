@@ -7,10 +7,15 @@ import { ApiRestQueryBuilderModule } from 'src/engine/api/rest/api-rest-query-bu
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { ApiRestMetadataController } from 'src/engine/api/rest/metadata-rest.controller';
 import { ApiRestMetadataService } from 'src/engine/api/rest/metadata-rest.service';
+import { BatchApiRestController } from 'src/engine/api/rest/batch-api-rest.controller';
 
 @Module({
   imports: [ApiRestQueryBuilderModule, AuthModule, HttpModule],
-  controllers: [ApiRestMetadataController, ApiRestController],
+  controllers: [
+    ApiRestMetadataController,
+    BatchApiRestController,
+    ApiRestController,
+  ],
   providers: [ApiRestMetadataService, ApiRestService],
   exports: [ApiRestMetadataService],
 })

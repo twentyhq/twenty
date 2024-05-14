@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { ApiRestQueryBuilderFactory } from 'src/engine/api/rest/api-rest-query-builder/api-rest-query-builder.factory';
 import { DeleteQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/delete-query.factory';
-import { CreateQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/create-query.factory';
+import { CreateOneQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/create-one-query.factory';
 import { UpdateQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/update-query.factory';
 import { FindOneQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/find-one-query.factory';
 import { FindManyQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/find-many-query.factory';
@@ -22,7 +22,7 @@ describe('ApiRestQueryBuilderFactory', () => {
       providers: [
         ApiRestQueryBuilderFactory,
         { provide: DeleteQueryFactory, useValue: {} },
-        { provide: CreateQueryFactory, useValue: {} },
+        { provide: CreateOneQueryFactory, useValue: {} },
         { provide: UpdateQueryFactory, useValue: {} },
         { provide: FindOneQueryFactory, useValue: {} },
         { provide: FindManyQueryFactory, useValue: {} },

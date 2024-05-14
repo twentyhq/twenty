@@ -1,5 +1,5 @@
 import { DeleteQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/delete-query.factory';
-import { CreateQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/create-query.factory';
+import { CreateOneQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/create-one-query.factory';
 import { UpdateQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/update-query.factory';
 import { FindOneQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/find-one-query.factory';
 import { FindManyQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/find-many-query.factory';
@@ -11,10 +11,12 @@ import { LastCursorInputFactory } from 'src/engine/api/rest/api-rest-query-build
 import { LimitInputFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/input-factories/limit-input.factory';
 import { OrderByInputFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/input-factories/order-by-input.factory';
 import { FilterInputFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/input-factories/filter-input.factory';
+import { CreateManyQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/create-many-query.factory';
 
 export const apiRestQueryBuilderFactories = [
   DeleteQueryFactory,
-  CreateQueryFactory,
+  CreateOneQueryFactory,
+  CreateManyQueryFactory,
   UpdateQueryFactory,
   FindOneQueryFactory,
   FindManyQueryFactory,

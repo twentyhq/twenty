@@ -5,7 +5,7 @@ import { Request } from 'express';
 import { DeleteQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/delete-query.factory';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
-import { CreateQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/create-query.factory';
+import { CreateOneQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/create-one-query.factory';
 import { UpdateQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/update-query.factory';
 import { FindOneQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/find-one-query.factory';
 import { FindManyQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/find-many-query.factory';
@@ -13,17 +13,22 @@ import { DeleteVariablesFactory } from 'src/engine/api/rest/api-rest-query-build
 import { CreateVariablesFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/create-variables.factory';
 import { UpdateVariablesFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/update-variables.factory';
 import { GetVariablesFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/get-variables.factory';
-import { parsePath } from 'src/engine/api/rest/api-rest-query-builder/utils/parse-path.utils';
+import {
+  parseBatchPath,
+  parsePath,
+} from 'src/engine/api/rest/api-rest-query-builder/utils/parse-path.utils';
 import { computeDepth } from 'src/engine/api/rest/api-rest-query-builder/utils/compute-depth.utils';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ApiRestQuery } from 'src/engine/api/rest/types/api-rest-query.type';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { CreateManyQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/create-many-query.factory';
 
 @Injectable()
 export class ApiRestQueryBuilderFactory {
   constructor(
     private readonly deleteQueryFactory: DeleteQueryFactory,
-    private readonly createQueryFactory: CreateQueryFactory,
+    private readonly createOneQueryFactory: CreateOneQueryFactory,
+    private readonly createManyQueryFactory: CreateManyQueryFactory,
     private readonly updateQueryFactory: UpdateQueryFactory,
     private readonly findOneQueryFactory: FindOneQueryFactory,
     private readonly findManyQueryFactory: FindManyQueryFactory,
@@ -36,7 +41,10 @@ export class ApiRestQueryBuilderFactory {
     private readonly environmentService: EnvironmentService,
   ) {}
 
-  async getObjectMetadata(request: Request): Promise<{
+  async getObjectMetadata(
+    request: Request,
+    parsedObject: string,
+  ): Promise<{
     objectMetadataItems: ObjectMetadataEntity[];
     objectMetadataItem: ObjectMetadataEntity;
   }> {
@@ -52,8 +60,6 @@ export class ApiRestQueryBuilderFactory {
         )}/settings/developers`,
       );
     }
-
-    const { object: parsedObject } = parsePath(request);
 
     const [objectMetadata] = objectMetadataItems.filter(
       (object) => object.namePlural === parsedObject,
@@ -82,7 +88,8 @@ export class ApiRestQueryBuilderFactory {
   }
 
   async delete(request: Request): Promise<ApiRestQuery> {
-    const objectMetadata = await this.getObjectMetadata(request);
+    const { object: parsedObject } = parsePath(request);
+    const objectMetadata = await this.getObjectMetadata(request, parsedObject);
 
     const { id } = parsePath(request);
 
@@ -98,19 +105,32 @@ export class ApiRestQueryBuilderFactory {
     };
   }
 
-  async create(request: Request): Promise<ApiRestQuery> {
-    const objectMetadata = await this.getObjectMetadata(request);
+  async createOne(request: Request): Promise<ApiRestQuery> {
+    const { object: parsedObject } = parsePath(request);
+    const objectMetadata = await this.getObjectMetadata(request, parsedObject);
 
     const depth = computeDepth(request);
 
     return {
-      query: this.createQueryFactory.create(objectMetadata, depth),
+      query: this.createOneQueryFactory.create(objectMetadata, depth),
+      variables: this.createVariablesFactory.create(request),
+    };
+  }
+
+  async createMany(request: Request): Promise<ApiRestQuery> {
+    const { object: parsedObject } = parseBatchPath(request);
+    const objectMetadata = await this.getObjectMetadata(request, parsedObject);
+    const depth = computeDepth(request);
+
+    return {
+      query: this.createManyQueryFactory.create(objectMetadata, depth),
       variables: this.createVariablesFactory.create(request),
     };
   }
 
   async update(request: Request): Promise<ApiRestQuery> {
-    const objectMetadata = await this.getObjectMetadata(request);
+    const { object: parsedObject } = parsePath(request);
+    const objectMetadata = await this.getObjectMetadata(request, parsedObject);
 
     const depth = computeDepth(request);
 
@@ -129,7 +149,8 @@ export class ApiRestQueryBuilderFactory {
   }
 
   async get(request: Request): Promise<ApiRestQuery> {
-    const objectMetadata = await this.getObjectMetadata(request);
+    const { object: parsedObject } = parsePath(request);
+    const objectMetadata = await this.getObjectMetadata(request, parsedObject);
 
     const depth = computeDepth(request);
 
