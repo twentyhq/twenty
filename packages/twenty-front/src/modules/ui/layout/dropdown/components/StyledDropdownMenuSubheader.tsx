@@ -7,5 +7,4 @@ export const StyledDropdownMenuSubheader = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   padding: ${({ theme }) => `${theme.spacing(1)} ${theme.spacing(2)}`};
   text-transform: uppercase;
-  width: 100%;
 `;
