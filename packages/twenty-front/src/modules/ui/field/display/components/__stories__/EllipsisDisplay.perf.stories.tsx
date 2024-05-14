@@ -1,4 +1,4 @@
-import { Meta, StoryObj } from '@storybook/react';
+import { Meta } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
@@ -16,7 +16,5 @@ const meta: Meta = {
 };
 
 export default meta;
-
-type Story = StoryObj<typeof EllipsisDisplay>;
 
 export const Performance = getProfilingStory('EllipsisDisplay', 0.25, 2, 2);
