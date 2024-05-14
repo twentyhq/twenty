@@ -49,6 +49,16 @@ export const ProfilingQueueEffect = ({
   const [profilingQueue, setProfilingQueue] =
     useRecoilState(profilingQueueState);
 
+  console.log({
+    profilingQueue,
+    numberOfTestsPerRun,
+    profilingId,
+    currentProfilingRunIndex,
+    profilingSessionStatus,
+    profilingSessionRuns,
+    numberOfRuns,
+  });
+
   useEffect(() => {
     (async () => {
       if (profilingSessionStatus === 'not_started') {
