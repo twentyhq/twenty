@@ -17,9 +17,13 @@ import { RecordInlineCellContainer } from './RecordInlineCellContainer';
 
 type RecordInlineCellProps = {
   readonly?: boolean;
+  loading?: boolean;
 };
 
-export const RecordInlineCell = ({ readonly }: RecordInlineCellProps) => {
+export const RecordInlineCell = ({
+  readonly,
+  loading,
+}: RecordInlineCellProps) => {
   const { fieldDefinition, entityId } = useContext(FieldContext);
 
   const buttonIcon = useGetButtonIcon();
@@ -99,6 +103,7 @@ export const RecordInlineCell = ({ readonly }: RecordInlineCellProps) => {
       isDisplayModeContentEmpty={isFieldEmpty}
       isDisplayModeFixHeight
       editModeContentOnly={isFieldInputOnly}
+      loading={loading}
     />
   );
 };
