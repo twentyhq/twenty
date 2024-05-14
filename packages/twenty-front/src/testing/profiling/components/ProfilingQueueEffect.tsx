@@ -6,7 +6,7 @@ import { profilingQueueState } from '~/testing/profiling/states/profilingQueueSt
 import { profilingSessionRunsState } from '~/testing/profiling/states/profilingSessionRunsState';
 import { profilingSessionStatusState } from '~/testing/profiling/states/profilingSessionStatusState';
 
-const TIME_BETWEEN_TEST_RUNS_IN_MS = 500;
+const TIME_BETWEEN_TEST_RUNS_IN_MS = 5000;
 
 export const getQueueIdentifier = (
   profilingId: string,
