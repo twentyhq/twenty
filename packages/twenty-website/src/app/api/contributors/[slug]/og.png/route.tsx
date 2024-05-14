@@ -15,7 +15,7 @@ import {
   profileInfoContainer,
   profileUsernameHeader,
   styledContributorAvatar,
-} from '@/app/api/contributors/og-image/[slug]/style';
+} from '@/app/api/contributors/[slug]/og.png/style';
 import { getContributorActivity } from '@/app/contributors/utils/get-contributor-activity';
 
 const GABARITO_FONT_CDN_URL =
@@ -32,8 +32,10 @@ const getGabarito = async () => {
 export async function GET(request: Request) {
   try {
     const url = request.url;
-
-    const username = url.split('/')?.pop() || '';
+    const splitUrl = url.split('/');
+    const usernameIndex =
+      splitUrl.findIndex((part) => part === 'contributors') + 1;
+    const username = splitUrl[usernameIndex];
 
     const contributorActivity = await getContributorActivity(username);
     if (contributorActivity) {
