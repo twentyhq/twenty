@@ -9,8 +9,8 @@ import {
   RemoteServerEntity,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import {
-  DistantTableUpdate,
   RemoteTableStatus,
+  TableUpdate,
 } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
 import {
   mapUdtNameToFieldType,
@@ -40,6 +40,7 @@ import { getRemoteTableLocalName } from 'src/engine/metadata-modules/remote-serv
 import { DistantTableService } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.service';
 import { DistantTableColumn } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/types/distant-table-column';
 import { DistantTables } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/types/distant-table';
+import { RemoteTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/remote-table/types/remote-table-schema-column';
 
 export class RemoteTableService {
   private readonly logger = new Logger(RemoteTableService.name);
@@ -92,49 +93,104 @@ export class RemoteTableService {
       refreshData,
     );
 
-    const distantTablesWithStatus = Object.keys(distantTables).map(
+    if (!refreshData || currentRemoteTables.length === 0) {
+      const distantTablesWithStatus = Object.keys(distantTables).map(
+        (tableName) => ({
+          name: tableName,
+          schema: remoteServer.schema,
+          status: currentRemoteTableDistantNames.includes(tableName)
+            ? RemoteTableStatus.SYNCED
+            : RemoteTableStatus.NOT_SYNCED,
+        }),
+      );
+
+      return distantTablesWithStatus;
+    }
+
+    const schemaPendingUpdates =
+      await this.getSchemaUpdatesBetweenRemoteAndDistantTables({
+        workspaceId,
+        remoteTables: currentRemoteTables,
+        distantTables,
+      });
+
+    const distantTablesWithUpdates = Object.keys(distantTables).map(
       (tableName) => ({
         name: tableName,
         schema: remoteServer.schema,
         status: currentRemoteTableDistantNames.includes(tableName)
           ? RemoteTableStatus.SYNCED
           : RemoteTableStatus.NOT_SYNCED,
+        schemaPendingUpdates: schemaPendingUpdates[tableName],
       }),
     );
 
-    if (!refreshData) {
-      return distantTablesWithStatus;
-    }
+    const deletedTables = Object.entries(schemaPendingUpdates)
+      .filter(([_tableName, updates]) =>
+        updates.includes(TableUpdate.TABLE_DELETED),
+      )
+      .map(([tableName, updates]) => ({
+        name: tableName,
+        schema: remoteServer.schema,
+        status: RemoteTableStatus.SYNCED,
+        schemaPendingUpdates: updates,
+      }));
+
+    return distantTablesWithUpdates.concat(deletedTables);
   }
 
-  private async getChangesBetweenRemoteAndDistantTables({
+  private async getSchemaUpdatesBetweenRemoteAndDistantTables({
+    workspaceId,
     remoteTables,
     distantTables,
   }: {
+    workspaceId: string;
     remoteTables: RemoteTableEntity[];
     distantTables: DistantTables;
-  }) {
-    const changes = {};
+  }): Promise<{ [tablename: string]: TableUpdate[] }> {
+    const updates = {};
 
     for (const remoteTable of remoteTables) {
       const distantTable = distantTables[remoteTable.distantTableName];
+      const tableName = remoteTable.distantTableName;
 
       if (!distantTable) {
-        changes[remoteTable.localTableName] = [
-          DistantTableUpdate.TABLE_DELETED,
-        ];
+        updates[tableName] = [TableUpdate.TABLE_DELETED];
         continue;
       }
 
-      remoteTable.columns.forEach((column) => {
-        if (!distantTable.find((distantColumn) => distantColumn.columnName === column)) {
-          changes[remoteTable.localTableName] = [
-            ...(changes[remoteTable.localTableName] || []),
-            DistantTableUpdate.COLUMN_DELETED,
-          ];
-        }
+      const distantColumnNames = new Set(
+        distantTable.map((column) => column.columnName),
+      );
+      const localColumnNames = new Set(
+        (
+          await this.fetchTableColumns(workspaceId, remoteTable.localTableName)
+        ).map((column) => column.column_name),
+      );
+
+      const columnsAdded = [...distantColumnNames].filter(
+        (columnName) => !localColumnNames.has(columnName),
+      );
+
+      const columnsDeleted = [...localColumnNames].filter(
+        (columnName) => !distantColumnNames.has(columnName),
+      );
+
+      if (columnsAdded.length > 0) {
+        updates[tableName] = [
+          ...(updates[tableName] || []),
+          TableUpdate.COLUMNS_ADDED,
+        ];
+      }
+      if (columnsDeleted.length > 0) {
+        updates[tableName] = [
+          ...(updates[tableName] || []),
+          TableUpdate.COLUMNS_DELETED,
+        ];
       }
     }
+
+    return updates;
   }
 
   public async findRemoteTablesByServerId({
@@ -372,20 +428,23 @@ export class RemoteTableService {
     ).map((foreignTable) => foreignTable.foreign_table_name);
   }
 
-  private async fetchForeignTableColumnsWithinWorkspace(
+  private async fetchTableColumns(
     workspaceId: string,
-    foreignDataWrapperId: string,
-  ): Promise<string[]> {
+    tableName: string,
+  ): Promise<RemoteTableSchemaColumn[]> {
     const workspaceDataSource =
       await this.workspaceDataSourceService.connectToWorkspaceDataSource(
         workspaceId,
       );
 
-    return (
-      await workspaceDataSource.query(
-        `SELECT foreign_table_name, foreign_server_name FROM information_schema.foreign_tables WHERE foreign_server_name = '${foreignDataWrapperId}'`,
-      )
-    ).map((foreignTable) => foreignTable.foreign_table_name);
+    const schemaName =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return await workspaceDataSource.query(
+      `SELECT column_name, data_type
+        FROM information_schema.columns
+        WHERE table_schema = '${schemaName}' AND table_name = '${tableName}'`,
+    );
   }
 
   private async createForeignTable(
