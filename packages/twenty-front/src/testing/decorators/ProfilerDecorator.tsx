@@ -32,6 +32,7 @@ export const ProfilerDecorator: Decorator = (Story, { id, parameters }) => {
     numberOfRuns,
     currentProfilingRunIndex,
     currentRunName,
+    profilingSessionStatus,
   });
 
   return (
