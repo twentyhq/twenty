@@ -21,4 +21,4 @@ type Story = StoryObj<typeof EllipsisDisplay>;
 
 export const Default: Story = {};
 
-export const Performance = getProfilingStory('EllipsisDisplay', 0.25, 20, 100);
+export const Performance = getProfilingStory('EllipsisDisplay', 0.25, 2, 2);
