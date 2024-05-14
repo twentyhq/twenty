@@ -30,6 +30,7 @@ export const ProfilingReporter = () => {
   );
 
   console.log({
+    profilingSessionDataPoints,
     profilingReport,
   });
 
