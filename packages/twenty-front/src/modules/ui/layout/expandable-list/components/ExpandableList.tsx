@@ -75,6 +75,8 @@ export const ExpandableList = ({
   // @see https://floating-ui.com/docs/useFloating#elements
   const [childrenContainerElement, setChildrenContainerElement] =
     useState<HTMLDivElement | null>(null);
+  const [previousChildrenContainerWidth, setPreviousChildrenContainerWidth] =
+    useState(childrenContainerElement?.clientWidth ?? 0);
 
   // Used with useListenClickOutside.
   const containerRef = useRef<HTMLDivElement>(null);
@@ -105,7 +107,15 @@ export const ExpandableList = ({
   useListenClickOutside({
     refs: [containerRef],
     callback: () => {
-      resetFirstHiddenChildIndex();
+      // Handle container resize
+      if (
+        childrenContainerElement?.clientWidth !== previousChildrenContainerWidth
+      ) {
+        resetFirstHiddenChildIndex();
+        setPreviousChildrenContainerWidth(
+          childrenContainerElement?.clientWidth ?? 0,
+        );
+      }
     },
   });
 

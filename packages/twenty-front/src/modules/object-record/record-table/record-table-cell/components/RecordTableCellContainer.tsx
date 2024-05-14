@@ -55,7 +55,7 @@ export type RecordTableCellContainerProps = {
     isCellSoftFocused,
     cellElement,
   }: {
-    isCellSoftFocused?: boolean;
+    isCellSoftFocused: boolean;
     cellElement?: HTMLTableCellElement;
   }) => ReactElement;
   editHotkeyScope?: HotkeyScope;
@@ -194,6 +194,7 @@ export const RecordTableCellContainer = ({
                   {editModeContentOnly
                     ? editModeContent
                     : nonEditModeContent?.({
+                        isCellSoftFocused: false,
                         cellElement: cellElement ?? undefined,
                       })}
                 </RecordTableCellDisplayMode>

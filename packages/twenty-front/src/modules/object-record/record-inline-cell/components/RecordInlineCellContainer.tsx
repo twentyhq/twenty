@@ -114,7 +114,7 @@ type RecordInlineCellContainerProps = {
     isCellSoftFocused,
     cellElement,
   }: {
-    isCellSoftFocused?: boolean;
+    isCellSoftFocused: boolean;
     cellElement?: HTMLDivElement;
   }) => React.ReactNode;
   customEditHotkeyScope?: HotkeyScope;
