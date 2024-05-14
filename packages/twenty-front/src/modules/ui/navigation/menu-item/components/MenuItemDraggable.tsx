@@ -42,12 +42,7 @@ export const MenuItemDraggable = ({
         text={text}
         showGrip={!isDragDisabled}
       />
-      {showIconButtons && (
-        <LightIconButtonGroup
-          className="hoverable-buttons"
-          iconButtons={iconButtons}
-        />
-      )}
+      {showIconButtons && <LightIconButtonGroup iconButtons={iconButtons} />}
     </StyledHoverableMenuItemBase>
   );
 };
