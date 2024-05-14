@@ -26,7 +26,7 @@ export function generateMetadata({
       params.slug +
       ' on the Twenty Github Repo. Discover their merged pull requests, ongoing work, and top ranking. Join and contribute to the #1 Open-Source CRM thriving community!',
     openGraph: {
-      images: [`https://twenty.com/api/contributors/og-image/${params.slug}`],
+      images: [`https://twenty.com/api/contributors/${params.slug}/og.png`],
     },
   };
 }
