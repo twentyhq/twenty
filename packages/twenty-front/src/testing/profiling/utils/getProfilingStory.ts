@@ -18,8 +18,6 @@ export const getProfilingStory = (
     componentName,
   },
   play: async ({ canvasElement }) => {
-    await new Promise((resolve) => setTimeout(resolve, 30000));
-
     await findByTestId(
       canvasElement,
       'profiling-session-finished',
