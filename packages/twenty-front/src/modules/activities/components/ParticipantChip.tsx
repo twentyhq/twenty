@@ -5,26 +5,6 @@ import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisp
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
-import { gql, useQuery } from '@apollo/client';
-import React from 'react';
-import { UUID } from 'crypto';
-
-var queryPerson = gql`
-query FindOnePerson($objectRecordId: UUID!) {
-  person(filter: { id: { eq: $objectRecordId } }) {
-    __typename
-    avatarUrl
-  }
-}
-`;
-var queryWorkspaceMember = gql`
-query FindOneWorkspaceMember($objectRecordId: UUID!) {
-  workspaceMember(filter: { id: { eq: $objectRecordId } }) {
-    __typename
-    avatarUrl
-  }
-}
-`;
 
 const StyledAvatar = styled(Avatar)`
   margin-right: ${({ theme }) => theme.spacing(1)};
@@ -73,28 +53,6 @@ export const ParticipantChip = ({
   variant?: ParticipantChipVariant;
   className?: string;
 }) => {
-  const [personId, setPersonId] = React.useState<string>('');
-  const [workspaceMemberId, setWorkspaceMemberId] = React.useState<string>('');
-
-  // Trigger the queries when personId or workspaceMemberId changes
-  React.useEffect(() => {
-    setPersonId(participant.personId || '');
-    setWorkspaceMemberId(participant.workspaceMemberId || '');
-  }, [participant.personId, participant.workspaceMemberId]);
-
-  const personData = useQuery(queryPerson, {
-    variables: { objectRecordId: personId as UUID },
-    skip: !personId, 
-  });
-
-  const workspaceMemberData = useQuery(queryWorkspaceMember, {
-    variables: { objectRecordId: workspaceMemberId as UUID},
-    skip: !workspaceMemberId,
-  });
-
-  const dataPerson = personData.data;
-  const dataWorkspaceMember = workspaceMemberData.data;
-
   const { person, workspaceMember } = participant;
 
   const displayName = getDisplayNameFromParticipant({
@@ -102,8 +60,7 @@ export const ParticipantChip = ({
     shouldUseFullName: true,
   });
 
-  const avatarUrl =
-    dataPerson?.person?.avatarUrl ?? dataWorkspaceMember?.workspaceMember?.avatarUrl ?? '';
+  const avatarUrl = person?.avatarUrl ?? workspaceMember?.avatarUrl ?? '';
 
   return (
     <StyledContainer className={className}>
