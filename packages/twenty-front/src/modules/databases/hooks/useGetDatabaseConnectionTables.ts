@@ -18,7 +18,7 @@ export const useGetDatabaseConnectionTables = ({
 }: UseGetDatabaseConnectionTablesParams) => {
   const apolloMetadataClient = useApolloMetadataClient();
 
-  const { data } = useQuery<
+  const { data, error } = useQuery<
     GetManyRemoteTablesQuery,
     GetManyRemoteTablesQueryVariables
   >(GET_MANY_REMOTE_TABLES, {
@@ -33,5 +33,6 @@ export const useGetDatabaseConnectionTables = ({
 
   return {
     tables: data?.findAvailableRemoteTablesByServerId || [],
+    error,
   };
 };

@@ -1,17 +1,16 @@
 import { Decorator, Meta, StoryObj } from '@storybook/react';
 import { expect, fn, userEvent, within } from '@storybook/test';
-
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { ComponentDecorator } from 'twenty-ui';
 
 import { SettingsObjectInactiveMenuDropDown } from '../SettingsObjectInactiveMenuDropDown';
 
 const handleActivateMockFunction = fn();
-const handleEraseMockFunction = fn();
+const handleDeleteMockFunction = fn();
 
 const ClearMocksDecorator: Decorator = (Story, context) => {
   if (context.parameters.clearMocks === true) {
     handleActivateMockFunction.mockClear();
-    handleEraseMockFunction.mockClear();
+    handleDeleteMockFunction.mockClear();
   }
   return <Story />;
 };
@@ -22,7 +21,7 @@ const meta: Meta<typeof SettingsObjectInactiveMenuDropDown> = {
   args: {
     scopeKey: 'settings-object-inactive-menu-dropdown',
     onActivate: handleActivateMockFunction,
-    onErase: handleEraseMockFunction,
+    onDelete: handleDeleteMockFunction,
   },
   decorators: [ComponentDecorator, ClearMocksDecorator],
   parameters: {
@@ -65,7 +64,7 @@ export const WithActivate: Story = {
   },
 };
 
-export const WithErase: Story = {
+export const WithDelete: Story = {
   args: { isCustomObject: true },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -74,13 +73,13 @@ export const WithErase: Story = {
 
     await userEvent.click(dropdownButton);
 
-    await expect(handleEraseMockFunction).toHaveBeenCalledTimes(0);
+    await expect(handleDeleteMockFunction).toHaveBeenCalledTimes(0);
 
-    const eraseMenuItem = await canvas.getByText('Erase');
+    const deleteMenuItem = await canvas.getByText('Delete');
 
-    await userEvent.click(eraseMenuItem);
+    await userEvent.click(deleteMenuItem);
 
-    await expect(handleEraseMockFunction).toHaveBeenCalledTimes(1);
+    await expect(handleDeleteMockFunction).toHaveBeenCalledTimes(1);
 
     await userEvent.click(dropdownButton);
   },

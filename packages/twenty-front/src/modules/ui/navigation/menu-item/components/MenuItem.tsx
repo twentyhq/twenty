@@ -1,4 +1,4 @@
-import { MouseEvent } from 'react';
+import { MouseEvent, ReactNode } from 'react';
 import { IconComponent } from 'twenty-ui';
 
 import { LightIconButtonGroup } from '@/ui/input/button/components/LightIconButtonGroup';
@@ -18,7 +18,7 @@ export type MenuItemIconButton = {
 export type MenuItemProps = {
   LeftIcon?: IconComponent | null;
   accent?: MenuItemAccent;
-  text: string;
+  text: ReactNode;
   iconButtons?: MenuItemIconButton[];
   isIconDisplayedOnHoverOnly?: boolean;
   isTooltipOpen?: boolean;

@@ -1,4 +1,4 @@
-import { AnimatedCheckmark } from "@/ui/display/checkmark/components/AnimatedCheckmark";
+import { AnimatedCheckmark } from 'twenty-ui';
 
 export const MyComponent = () => {
   return (
@@ -9,6 +9,4 @@ export const MyComponent = () => {
       size={30}
     />
   );
-  
-  
 };

@@ -9,6 +9,7 @@ import { QueryParamsFiltersEffect } from '@/views/components/QueryParamsFiltersE
 import { QueryParamsViewIdEffect } from '@/views/components/QueryParamsViewIdEffect';
 import { ViewBarEffect } from '@/views/components/ViewBarEffect';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
+import { ViewBarPageTitle } from '@/views/components/ViewBarPageTitle';
 import { ViewBarSortEffect } from '@/views/components/ViewBarSortEffect';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { GraphQLView } from '@/views/types/GraphQLView';
@@ -52,6 +53,7 @@ export const ViewBar = ({
       <QueryParamsFiltersEffect />
       <QueryParamsViewIdEffect />
 
+      <ViewBarPageTitle viewBarId={viewBarId} />
       <TopBar
         className={className}
         leftComponent={

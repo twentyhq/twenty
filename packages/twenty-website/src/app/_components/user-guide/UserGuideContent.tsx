@@ -2,6 +2,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
+import { ArticleContent } from '@/app/_components/ui/layout/articles/ArticleContent';
 import { Breadcrumbs } from '@/app/_components/ui/layout/Breadcrumbs';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
@@ -9,35 +10,58 @@ import { FileContent } from '@/app/_server-utils/get-posts';
 
 const StyledContainer = styled('div')`
   ${mq({
-    width: ['100%', '70%', '60%'],
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
     borderBottom: `1px solid ${Theme.background.transparent.medium}`,
     fontFamily: `${Theme.font.family}`,
   })};
+  width: 100%;
+  min-height: calc(100vh - 50px);
+
+  @media (min-width: 990px) {
+    justify-content: flex-start;
+  }
 `;
 
 const StyledWrapper = styled.div`
-  width: 79.3%;
-  padding: ${Theme.spacing(10)} 0px ${Theme.spacing(20)} 0px;
+  @media (max-width: 450px) {
+    padding: ${Theme.spacing(10)} 30px ${Theme.spacing(20)};
+  }
+
+  @media (min-width: 451px) and (max-width: 800px) {
+    padding: ${Theme.spacing(10)} 50px ${Theme.spacing(20)};
+    width: 440px;
+  }
+
+  @media (min-width: 801px) {
+    max-width: 720px;
+    margin: ${Theme.spacing(10)} 92px ${Theme.spacing(20)};
+  }
 `;
 
 const StyledHeader = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${Theme.spacing(8)};
+  @media (min-width: 450px) and (max-width: 800px) {
+    width: 340px;
+  }
 `;
 
 const StyledHeading = styled.div`
   font-size: 40px;
   font-weight: 700;
+  font-family: var(--font-gabarito);
+  @media (max-width: 800px) {
+    font-size: 28px;
+  }
 `;
 
 const StyledHeaderInfoSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${Theme.spacing(4)};
+  gap: ${Theme.spacing(1)};
 `;
 
 const StyledHeaderInfoSectionTitle = styled.div`
@@ -45,6 +69,7 @@ const StyledHeaderInfoSectionTitle = styled.div`
   padding: ${Theme.spacing(2)} 0px;
   color: ${Theme.text.color.secondary};
   font-weight: ${Theme.font.weight.medium};
+  font-family: var(--font-gabarito);
 `;
 
 const StyledHeaderInfoSectionSub = styled.div`
@@ -52,13 +77,32 @@ const StyledHeaderInfoSectionSub = styled.div`
   flex-direction: column;
   gap: ${Theme.spacing(4)};
   color: ${Theme.text.color.tertiary};
-  font-family: ${Theme.font.family};
+  line-height: 1.8;
 `;
 
 const StyledRectangle = styled.div`
   width: 100%;
   height: 1px;
   background: ${Theme.background.transparent.medium};
+`;
+
+const StyledImageContainer = styled.div`
+  border: 2px solid ${Theme.text.color.primary};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 16px;
+  max-width: fit-content;
+
+  img {
+    height: 100%;
+    max-width: 100%;
+    width: 100%;
+    @media (min-width: 1000px) {
+      width: 720px;
+    }
+  }
 `;
 
 export default function UserGuideContent({ item }: { item: FileContent }) {
@@ -68,6 +112,7 @@ export default function UserGuideContent({ item }: { item: FileContent }) {
       label: 'User Guide',
     },
   ];
+
   return (
     <StyledContainer>
       <StyledWrapper>
@@ -78,13 +123,15 @@ export default function UserGuideContent({ item }: { item: FileContent }) {
             separator="/"
           />
           <StyledHeading>{item.itemInfo.title}</StyledHeading>
-          {item.itemInfo.image && (
-            <img
-              id={`img-${item.itemInfo.title}`}
-              src={item.itemInfo.image}
-              alt={item.itemInfo.title}
-            />
-          )}
+          <StyledImageContainer>
+            {item.itemInfo.image && (
+              <img
+                id={`img-${item.itemInfo.title}`}
+                src={item.itemInfo.image}
+                alt={item.itemInfo.title}
+              />
+            )}
+          </StyledImageContainer>
           <StyledHeaderInfoSection>
             <StyledHeaderInfoSectionTitle>
               In this article
@@ -95,7 +142,7 @@ export default function UserGuideContent({ item }: { item: FileContent }) {
           </StyledHeaderInfoSection>
           <StyledRectangle />
         </StyledHeader>
-        <div>{item.content}</div>
+        <ArticleContent>{item.content}</ArticleContent>
       </StyledWrapper>
     </StyledContainer>
   );

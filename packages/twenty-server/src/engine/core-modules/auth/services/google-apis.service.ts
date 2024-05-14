@@ -5,10 +5,7 @@ import { Repository, EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
@@ -76,31 +73,25 @@ export class GoogleAPIsService {
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
-    const isCalendarEnabledFlag = await this.featureFlagRepository.findOneBy({
-      workspaceId,
-      key: FeatureFlagKeys.IsCalendarEnabled,
-      value: true,
-    });
+    const isCalendarEnabled = this.environmentService.get(
+      'CALENDAR_PROVIDER_GOOGLE_ENABLED',
+    );
 
-    const isCalendarEnabled =
-      this.environmentService.get('CALENDAR_PROVIDER_GOOGLE_ENABLED') &&
-      !!isCalendarEnabledFlag;
+    const connectedAccounts =
+      await this.connectedAccountRepository.getAllByHandleAndWorkspaceMemberId(
+        handle,
+        workspaceMemberId,
+        workspaceId,
+      );
+
+    const existingAccountId = connectedAccounts?.[0]?.id;
+    const newOrExistingConnectedAccountId = existingAccountId ?? v4();
 
     await workspaceDataSource?.transaction(async (manager: EntityManager) => {
-      const connectedAccounts =
-        await this.connectedAccountRepository.getAllByHandleAndWorkspaceMemberId(
-          handle,
-          workspaceMemberId,
-          workspaceId,
-          manager,
-        );
-
-      if (!connectedAccounts || connectedAccounts?.length === 0) {
-        const newConnectedAccountId = v4();
-
+      if (!existingAccountId) {
         await this.connectedAccountRepository.create(
           {
-            id: newConnectedAccountId,
+            id: newOrExistingConnectedAccountId,
             handle,
             provider: ConnectedAccountProvider.GOOGLE,
             accessToken: input.accessToken,
@@ -114,7 +105,7 @@ export class GoogleAPIsService {
         await this.messageChannelRepository.create(
           {
             id: v4(),
-            connectedAccountId: newConnectedAccountId,
+            connectedAccountId: newOrExistingConnectedAccountId,
             type: MessageChannelType.EMAIL,
             handle,
             visibility: MessageChannelVisibility.SHARE_EVERYTHING,
@@ -127,7 +118,7 @@ export class GoogleAPIsService {
           await this.calendarChannelRepository.create(
             {
               id: v4(),
-              connectedAccountId: newConnectedAccountId,
+              connectedAccountId: newOrExistingConnectedAccountId,
               handle,
               visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
             },
@@ -135,34 +126,28 @@ export class GoogleAPIsService {
             manager,
           );
         }
-
-        await this.enqueueSyncJobs(
-          newConnectedAccountId,
-          workspaceId,
-          isCalendarEnabled,
-        );
       } else {
         await this.connectedAccountRepository.updateAccessTokenAndRefreshToken(
           input.accessToken,
           input.refreshToken,
-          connectedAccounts[0].id,
+          newOrExistingConnectedAccountId,
           workspaceId,
           manager,
         );
 
         await this.messageChannelRepository.resetSync(
-          connectedAccounts[0].id,
+          newOrExistingConnectedAccountId,
           workspaceId,
           manager,
         );
-
-        await this.enqueueSyncJobs(
-          connectedAccounts[0].id,
-          workspaceId,
-          isCalendarEnabled,
-        );
       }
     });
+
+    await this.enqueueSyncJobs(
+      newOrExistingConnectedAccountId,
+      workspaceId,
+      isCalendarEnabled,
+    );
   }
 
   private async enqueueSyncJobs(

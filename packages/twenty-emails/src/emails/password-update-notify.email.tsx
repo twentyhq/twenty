@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
 import { MainText } from 'src/components/MainText';

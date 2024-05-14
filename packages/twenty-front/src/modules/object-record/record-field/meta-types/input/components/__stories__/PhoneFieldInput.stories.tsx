@@ -4,6 +4,7 @@ import { expect, fn, userEvent, waitFor, within } from '@storybook/test';
 
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { FieldMetadataType } from '~/generated/graphql';
+import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import { usePhoneField } from '../../../hooks/usePhoneField';
@@ -45,7 +46,7 @@ const PhoneFieldInputWithContext = ({
         fieldDefinition={{
           fieldMetadataId: 'phone',
           label: 'Phone',
-          type: FieldMetadataType.Text,
+          type: FieldMetadataType.Phone,
           iconName: 'IconPhone',
           metadata: {
             fieldName: 'phone',
@@ -105,7 +106,7 @@ const meta: Meta = {
     onTab: { control: false },
     onShiftTab: { control: false },
   },
-  decorators: [clearMocksDecorator],
+  decorators: [clearMocksDecorator, SnackBarDecorator],
   parameters: {
     clearMocks: true,
   },

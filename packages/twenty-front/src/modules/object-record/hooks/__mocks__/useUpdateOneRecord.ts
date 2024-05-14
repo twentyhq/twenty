@@ -1,30 +1,30 @@
 import { gql } from '@apollo/client';
 
 export const query = gql`
-  mutation UpdateOnePerson($idToUpdate: UUID!, $input: PersonUpdateInput!) {
+  mutation UpdateOnePerson($idToUpdate: ID!, $input: PersonUpdateInput!) {
     updatePerson(id: $idToUpdate, data: $input) {
       __typename
-        xLink {
-          label
-          url
-        }
-        id
-        createdAt
-        city
-        email
-        jobTitle
-        name {
-          firstName
-          lastName
-        }
-        phone
-        linkedinLink {
-          label
-          url
-        }
-        updatedAt
-        avatarUrl
-        companyId
+      xLink {
+        label
+        url
+      }
+      id
+      createdAt
+      city
+      email
+      jobTitle
+      name {
+        firstName
+        lastName
+      }
+      phone
+      linkedinLink {
+        label
+        url
+      }
+      updatedAt
+      avatarUrl
+      companyId
     }
   }
 `;

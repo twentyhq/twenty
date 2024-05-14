@@ -1,12 +1,13 @@
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
+import { Avatar } from 'twenty-ui';
 
 import { Comment } from '@/activities/types/Comment';
-import { Avatar } from '@/users/components/Avatar';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -75,7 +76,7 @@ export const CommentHeader = ({ comment, actionBar }: CommentHeaderProps) => {
     <StyledContainer>
       <StyledLeftContainer>
         <Avatar
-          avatarUrl={avatarUrl}
+          avatarUrl={getImageAbsoluteURIOrBase64(avatarUrl)}
           size="md"
           entityId={author?.id}
           placeholder={authorName}

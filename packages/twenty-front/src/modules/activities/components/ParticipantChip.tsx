@@ -1,9 +1,10 @@
 import styled from '@emotion/styled';
+import { Avatar } from 'twenty-ui';
 
 import { getDisplayNameFromParticipant } from '@/activities/emails/utils/getDisplayNameFromParticipant';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordChip } from '@/object-record/components/RecordChip';
-import { Avatar } from '@/users/components/Avatar';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 const StyledAvatar = styled(Avatar)`
   margin-right: ${({ theme }) => theme.spacing(1)};
@@ -23,9 +24,13 @@ const StyledContainer = styled.div`
   display: flex;
 `;
 
-const StyledRecordChip = styled(RecordChip)<{ variant: 'default' | 'bold' }>`
-  font-weight: ${({ theme, variant }) =>
-    variant === 'bold' ? theme.font.weight.medium : theme.font.weight.regular};
+const StyledRecordChip = styled(RecordChip)<{
+  participantChipVariant: 'default' | 'bold';
+}>`
+  font-weight: ${({ theme, participantChipVariant }) =>
+    participantChipVariant === 'bold'
+      ? theme.font.weight.medium
+      : theme.font.weight.regular};
 `;
 
 const StyledChip = styled.div`
@@ -34,6 +39,7 @@ const StyledChip = styled.div`
   padding: ${({ theme }) => theme.spacing(1)};
   height: 20px;
   box-sizing: border-box;
+  white-space: nowrap;
 `;
 
 type ParticipantChipVariant = 'default' | 'bold';
@@ -62,12 +68,12 @@ export const ParticipantChip = ({
         <StyledRecordChip
           objectNameSingular={CoreObjectNameSingular.Person}
           record={person}
-          variant={variant}
+          participantChipVariant={variant}
         />
       ) : (
         <StyledChip>
           <StyledAvatar
-            avatarUrl={avatarUrl}
+            avatarUrl={getImageAbsoluteURIOrBase64(avatarUrl)}
             type="rounded"
             placeholder={displayName}
             size="sm"

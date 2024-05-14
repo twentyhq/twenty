@@ -1,4 +1,3 @@
-/* eslint-disable @nx/workspace-explicit-boolean-predicates-in-if */
 import { isNull, isNumber, isString } from '@sniptt/guards';
 
 import { logError } from './logError';

@@ -25,6 +25,10 @@ const BackgroundImage = styled.div`
     top: 100px;
     height: 100%;
   }
+
+  @media (max-width: 800px) {
+    display: none;
+  }
 `;
 
 const Container = styled.div`

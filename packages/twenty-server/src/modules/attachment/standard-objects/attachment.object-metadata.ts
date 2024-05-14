@@ -1,8 +1,8 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { attachmentStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { ATTACHMENT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CustomObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/custom-objects/custom.object-metadata';
 import { DynamicRelationFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/dynamic-field-metadata.interface';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
@@ -15,9 +15,10 @@ import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/comp
 import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
-  standardId: standardObjectIds.attachment,
+  standardId: STANDARD_OBJECT_IDS.attachment,
   namePlural: 'attachments',
   labelSingular: 'Attachment',
   labelPlural: 'Attachments',
@@ -25,9 +26,10 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
   icon: 'IconFileImport',
 })
 @IsSystem()
+@IsNotAuditLogged()
 export class AttachmentObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    standardId: attachmentStandardFieldIds.name,
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: 'Name',
     description: 'Attachment name',
@@ -36,7 +38,7 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
   name: string;
 
   @FieldMetadata({
-    standardId: attachmentStandardFieldIds.fullPath,
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.fullPath,
     type: FieldMetadataType.TEXT,
     label: 'Full path',
     description: 'Attachment full path',
@@ -45,7 +47,7 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
   fullPath: string;
 
   @FieldMetadata({
-    standardId: attachmentStandardFieldIds.type,
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.type,
     type: FieldMetadataType.TEXT,
     label: 'Type',
     description: 'Attachment type',
@@ -54,7 +56,7 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
   type: string;
 
   @FieldMetadata({
-    standardId: attachmentStandardFieldIds.author,
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.author,
     type: FieldMetadataType.RELATION,
     label: 'Author',
     description: 'Attachment author',
@@ -64,7 +66,7 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
   author: Relation<WorkspaceMemberObjectMetadata>;
 
   @FieldMetadata({
-    standardId: attachmentStandardFieldIds.activity,
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.activity,
     type: FieldMetadataType.RELATION,
     label: 'Activity',
     description: 'Attachment activity',
@@ -75,7 +77,7 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
   activity: Relation<ActivityObjectMetadata>;
 
   @FieldMetadata({
-    standardId: attachmentStandardFieldIds.person,
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.person,
     type: FieldMetadataType.RELATION,
     label: 'Person',
     description: 'Attachment person',
@@ -86,7 +88,7 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
   person: Relation<PersonObjectMetadata>;
 
   @FieldMetadata({
-    standardId: attachmentStandardFieldIds.company,
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.company,
     type: FieldMetadataType.RELATION,
     label: 'Company',
     description: 'Attachment company',
@@ -97,7 +99,7 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
   company: Relation<CompanyObjectMetadata>;
 
   @FieldMetadata({
-    standardId: attachmentStandardFieldIds.opportunity,
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.opportunity,
     type: FieldMetadataType.RELATION,
     label: 'Opportunity',
     description: 'Attachment opportunity',
@@ -108,7 +110,7 @@ export class AttachmentObjectMetadata extends BaseObjectMetadata {
   opportunity: Relation<OpportunityObjectMetadata>;
 
   @DynamicRelationFieldMetadata((oppositeObjectMetadata) => ({
-    standardId: attachmentStandardFieldIds.custom,
+    standardId: ATTACHMENT_STANDARD_FIELD_IDS.custom,
     name: oppositeObjectMetadata.nameSingular,
     label: oppositeObjectMetadata.labelSingular,
     description: `Attachment ${oppositeObjectMetadata.labelSingular}`,

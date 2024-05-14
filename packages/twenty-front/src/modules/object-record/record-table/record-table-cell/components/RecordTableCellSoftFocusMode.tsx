@@ -6,7 +6,7 @@ import { useClearField } from '@/object-record/record-field/hooks/useClearField'
 import { useIsFieldClearable } from '@/object-record/record-field/hooks/useIsFieldClearable';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
-import { useOpenRecordTableCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCell';
+import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
@@ -20,7 +20,7 @@ type RecordTableCellSoftFocusModeProps = PropsWithChildren<unknown>;
 export const RecordTableCellSoftFocusMode = ({
   children,
 }: RecordTableCellSoftFocusModeProps) => {
-  const { openTableCell } = useOpenRecordTableCell();
+  const { openTableCell } = useOpenRecordTableCellFromCell();
 
   const isFieldInputOnly = useIsFieldInputOnly();
 
@@ -82,9 +82,7 @@ export const RecordTableCellSoftFocusMode = ({
         keyboardEvent.stopPropagation();
         keyboardEvent.stopImmediatePropagation();
 
-        openTableCell({
-          initialValue: keyboardEvent.key,
-        });
+        openTableCell(keyboardEvent.key);
       }
     },
     TableHotkeyScope.TableSoftFocus,
@@ -103,7 +101,6 @@ export const RecordTableCellSoftFocusMode = ({
   return (
     <RecordTableCellDisplayContainer
       onClick={handleClick}
-      softFocus
       scrollRef={scrollRef}
     >
       {children}

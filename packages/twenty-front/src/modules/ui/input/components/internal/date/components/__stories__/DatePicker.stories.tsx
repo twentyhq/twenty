@@ -1,7 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
-
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
+import { ComponentDecorator } from 'twenty-ui';
 
 import { InternalDatePicker } from '../InternalDatePicker';
 
@@ -24,11 +23,10 @@ export const WithOpenMonthSelect: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const monthSelect = canvas.getByText('January');
+    const monthSelect = await canvas.findByText('January');
 
     await userEvent.click(monthSelect);
 
-    expect(canvas.getAllByText('January')).toHaveLength(2);
     [
       'February',
       'March',

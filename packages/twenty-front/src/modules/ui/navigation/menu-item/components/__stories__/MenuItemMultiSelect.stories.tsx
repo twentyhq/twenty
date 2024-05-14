@@ -1,13 +1,12 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { IconBell } from 'twenty-ui';
-
 import {
   CatalogDecorator,
   CatalogDimension,
   CatalogOptions,
-} from '~/testing/decorators/CatalogDecorator';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
-import { CatalogStory } from '~/testing/types';
+  CatalogStory,
+  ComponentDecorator,
+  IconBell,
+} from 'twenty-ui';
 
 import { MenuItemMultiSelect } from '../MenuItemMultiSelect';
 

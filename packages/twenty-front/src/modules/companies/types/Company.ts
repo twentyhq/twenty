@@ -1,4 +1,5 @@
 export type Company = {
+  __typename: 'Company';
   id: string;
   createdAt: string;
   updatedAt: string;

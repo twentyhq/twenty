@@ -1,8 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
+import { AnimatedCheckmark } from 'twenty-ui';
 
-import { AnimatedCheckmark } from '@/ui/display/checkmark/components/AnimatedCheckmark';
 import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 

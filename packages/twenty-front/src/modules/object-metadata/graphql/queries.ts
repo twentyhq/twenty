@@ -48,6 +48,7 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
                     nameSingular
                     namePlural
                     isSystem
+                    isRemote
                   }
                   toFieldMetadataId
                 }
@@ -60,12 +61,14 @@ export const FIND_MANY_OBJECT_METADATA_ITEMS = gql`
                     nameSingular
                     namePlural
                     isSystem
+                    isRemote
                   }
                   fromFieldMetadataId
                 }
                 defaultValue
                 options
                 relationDefinition {
+                  relationId
                   direction
                   sourceObjectMetadata {
                     id

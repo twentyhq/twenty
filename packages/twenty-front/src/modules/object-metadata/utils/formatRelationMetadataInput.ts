@@ -9,10 +9,10 @@ import { formatFieldMetadataItemInput } from './formatFieldMetadataItemInput';
 
 export type FormatRelationMetadataInputParams = {
   relationType: RelationType;
-  field: Pick<Field, 'label' | 'icon' | 'description' | 'type'>;
+  field: Pick<Field, 'label' | 'icon' | 'description'>;
   objectMetadataId: string;
   connect: {
-    field: Pick<Field, 'label' | 'icon' | 'type'>;
+    field: Pick<Field, 'label' | 'icon'>;
     objectMetadataId: string;
   };
 };
@@ -35,14 +35,14 @@ export const formatRelationMetadataInput = (
   const {
     description: fromDescription,
     icon: fromIcon,
-    label: fromLabel,
-    name: fromName,
+    label: fromLabel = '',
+    name: fromName = '',
   } = formatFieldMetadataItemInput(fromField);
   const {
     description: toDescription,
     icon: toIcon,
-    label: toLabel,
-    name: toName,
+    label: toLabel = '',
+    name: toName = '',
   } = formatFieldMetadataItemInput(toField);
 
   return {

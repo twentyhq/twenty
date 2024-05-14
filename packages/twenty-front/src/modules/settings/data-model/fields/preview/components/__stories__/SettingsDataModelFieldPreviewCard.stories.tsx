@@ -1,15 +1,15 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { ComponentDecorator } from 'twenty-ui';
 
-import {
-  mockedCompanyObjectMetadataItem,
-  mockedPersonObjectMetadataItem,
-} from '@/object-record/record-field/__mocks__/fieldDefinitions';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { ComponentDecorator } from '~/testing/decorators/ComponentDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
+import {
+  mockedCompanyObjectMetadataItem,
+  mockedPersonObjectMetadataItem,
+} from '~/testing/mock-data/metadata';
 
 import { SettingsDataModelFieldPreviewCard } from '../SettingsDataModelFieldPreviewCard';
 
@@ -18,6 +18,7 @@ const meta: Meta<typeof SettingsDataModelFieldPreviewCard> = {
     'Modules/Settings/DataModel/Fields/Preview/SettingsDataModelFieldPreviewCard',
   component: SettingsDataModelFieldPreviewCard,
   decorators: [
+    MemoryRouterDecorator,
     ComponentDecorator,
     ObjectMetadataItemsDecorator,
     SnackBarDecorator,
@@ -64,7 +65,6 @@ export const Date: Story = {
 };
 
 export const Link: Story = {
-  decorators: [MemoryRouterDecorator],
   args: {
     fieldMetadataItem: mockedCompanyObjectMetadataItem.fields.find(
       ({ type }) => type === FieldMetadataType.Link,
@@ -91,7 +91,6 @@ export const Rating: Story = {
 };
 
 export const Relation: Story = {
-  decorators: [MemoryRouterDecorator],
   args: {
     fieldMetadataItem: mockedPersonObjectMetadataItem.fields.find(
       ({ name }) => name === 'company',
@@ -100,14 +99,3 @@ export const Relation: Story = {
     relationObjectMetadataItem: mockedCompanyObjectMetadataItem,
   },
 };
-
-// Todo: re-enable this test once useObjectMetadataItem has been split and refactored into smaller functions.
-// Right now, as the workspace is not set, the hook things the user is not logged in and it is not possible to have a custom object
-// export const Custom: Story = {
-//   args: {
-//     fieldMetadataItem: mockedCustomObjectMetadataItem.fields.find(
-//       ({ type }) => type === FieldMetadataType.Text,
-//     ),
-//     objectMetadataItem: mockedCustomObjectMetadataItem,
-//   },
-// };

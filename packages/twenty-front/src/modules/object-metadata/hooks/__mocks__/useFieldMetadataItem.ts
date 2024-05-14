@@ -1,4 +1,9 @@
 import { gql } from '@apollo/client';
+import { FieldMetadataType } from '~/generated/graphql';
+
+export const FIELD_METADATA_ID = '2c43466a-fe9e-4005-8d08-c5836067aa6c';
+export const FIELD_RELATION_METADATA_ID = '4da0302d-358a-45cd-9973-9f92723ed3c1';
+export const RELATION_METADATA_ID = 'f81d4fae-7dec-11d0-a765-00a0c91e6bf6';
 
 const baseFields = `
   id
@@ -15,13 +20,20 @@ const baseFields = `
 `;
 
 export const queries = {
-  eraseMetadataField: gql`
+  deleteMetadataField: gql`
     mutation DeleteOneFieldMetadataItem($idToDelete: UUID!) {
       deleteOneField(input: { id: $idToDelete }) {
         ${baseFields}
       }
     }
   `,
+  deleteMetadataFieldRelation: gql`
+  mutation DeleteOneRelationMetadataItem($idToDelete: UUID!) {
+    deleteOneRelation(input: { id: $idToDelete }) {
+      id
+    }
+  }
+`,
   activateMetadataField: gql`
     mutation UpdateOneFieldMetadataItem(
       $idToUpdate: UUID!
@@ -43,13 +55,13 @@ export const queries = {
   `,
 };
 
-const fieldId = '2c43466a-fe9e-4005-8d08-c5836067aa6c';
 export const objectMetadataId = '25611fce-6637-4089-b0ca-91afeec95784';
 
 export const variables = {
-  eraseMetadataField: { idToDelete: fieldId },
+  deleteMetadataField: { idToDelete: FIELD_METADATA_ID },
+  deleteMetadataFieldRelation: { idToDelete: RELATION_METADATA_ID },
   activateMetadataField: {
-    idToUpdate: fieldId,
+    idToUpdate: FIELD_METADATA_ID,
     updatePayload: { isActive: true, label: undefined },
   },
   createMetadataField: {
@@ -66,25 +78,14 @@ export const variables = {
       },
     },
   },
-  disableMetadataField: {
-    idToUpdate: fieldId,
+  deactivateMetadataField: {
+    idToUpdate: FIELD_METADATA_ID,
     updatePayload: { isActive: false, label: undefined },
-  },
-  editMetadataField: {
-    idToUpdate: '2c43466a-fe9e-4005-8d08-c5836067aa6c',
-    updatePayload: {
-      defaultValue: undefined,
-      description: null,
-      icon: undefined,
-      label: 'New label',
-      name: 'newLabel',
-      options: undefined,
-    },
-  },
+  }
 };
 
 const defaultResponseData = {
-  id: '2c43466a-fe9e-4005-8d08-c5836067aa6c',
+  id: FIELD_METADATA_ID,
   type: 'type',
   name: 'name',
   label: 'label',
@@ -97,11 +98,19 @@ const defaultResponseData = {
   updatedAt: '1996-10-10T08:27:57.117Z',
 };
 
+const fieldRelationResponseData = {
+  ...defaultResponseData,
+  id: FIELD_RELATION_METADATA_ID,
+  type: FieldMetadataType.Relation,
+};
+
 export const responseData = {
   default: defaultResponseData,
+  fieldRelation: fieldRelationResponseData,
   createMetadataField: {
     ...defaultResponseData,
     defaultValue: '',
     options: [],
   },
 };
+

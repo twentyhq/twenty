@@ -7,11 +7,10 @@ const Container = styled.div`
   text-align: center;
   flex-direction: column;
   width: 100%;
-
-  gap: 26px;
+  gap: 64px;
   @media (max-width: 809px) {
     width: 100%;
-    padding: 0px 12px 40px 12px;
+    padding: 0px 20px 40px 20px;
   }
 `;
 

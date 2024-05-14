@@ -9,11 +9,11 @@ import { useMultiObjectSearch } from '@/object-record/relation-picker/hooks/useM
 import { FieldMetadataType } from '~/generated/graphql';
 
 const query = gql`
-  query FindManyRecordsMultipleMetadataItems(
+  query CombinedFindManyRecords(
     $filterNameSingular: NameSingularFilterInput
     $orderByNameSingular: NameSingularOrderByInput
     $lastCursorNameSingular: String
-    $limitNameSingular: Float
+    $limitNameSingular: Int
   ) {
     namePlural(
       filter: $filterNameSingular
@@ -118,6 +118,7 @@ describe('useMultiObjectSearch', () => {
         isActive: true,
         isCustom: true,
         isSystem: false,
+        isRemote: false,
         labelPlural: 'labelPlural',
         labelSingular: 'labelSingular',
         namePlural: 'namePlural',
@@ -152,6 +153,7 @@ describe('useMultiObjectSearch', () => {
           isActive: true,
           isCustom: true,
           isSystem: false,
+          isRemote: false,
           labelPlural: 'labelPlural',
           labelSingular: 'labelSingular',
           namePlural: 'namePlural',

@@ -1,7 +1,8 @@
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { viewFieldStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { VIEW_FIELD_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
+import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
@@ -9,17 +10,18 @@ import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-
 import { ViewObjectMetadata } from 'src/modules/view/standard-objects/view.object-metadata';
 
 @ObjectMetadata({
-  standardId: standardObjectIds.viewField,
+  standardId: STANDARD_OBJECT_IDS.viewField,
   namePlural: 'viewFields',
   labelSingular: 'View Field',
   labelPlural: 'View Fields',
   description: '(System) View Fields',
   icon: 'IconTag',
 })
+@IsNotAuditLogged()
 @IsSystem()
 export class ViewFieldObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    standardId: viewFieldStandardFieldIds.fieldMetadataId,
+    standardId: VIEW_FIELD_STANDARD_FIELD_IDS.fieldMetadataId,
     type: FieldMetadataType.UUID,
     label: 'Field Metadata Id',
     description: 'View Field target field',
@@ -28,7 +30,7 @@ export class ViewFieldObjectMetadata extends BaseObjectMetadata {
   fieldMetadataId: string;
 
   @FieldMetadata({
-    standardId: viewFieldStandardFieldIds.isVisible,
+    standardId: VIEW_FIELD_STANDARD_FIELD_IDS.isVisible,
     type: FieldMetadataType.BOOLEAN,
     label: 'Visible',
     description: 'View Field visibility',
@@ -38,7 +40,7 @@ export class ViewFieldObjectMetadata extends BaseObjectMetadata {
   isVisible: boolean;
 
   @FieldMetadata({
-    standardId: viewFieldStandardFieldIds.size,
+    standardId: VIEW_FIELD_STANDARD_FIELD_IDS.size,
     type: FieldMetadataType.NUMBER,
     label: 'Size',
     description: 'View Field size',
@@ -48,7 +50,7 @@ export class ViewFieldObjectMetadata extends BaseObjectMetadata {
   size: number;
 
   @FieldMetadata({
-    standardId: viewFieldStandardFieldIds.position,
+    standardId: VIEW_FIELD_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.NUMBER,
     label: 'Position',
     description: 'View Field position',
@@ -58,7 +60,7 @@ export class ViewFieldObjectMetadata extends BaseObjectMetadata {
   position: number;
 
   @FieldMetadata({
-    standardId: viewFieldStandardFieldIds.view,
+    standardId: VIEW_FIELD_STANDARD_FIELD_IDS.view,
     type: FieldMetadataType.RELATION,
     label: 'View',
     description: 'View Field related view',

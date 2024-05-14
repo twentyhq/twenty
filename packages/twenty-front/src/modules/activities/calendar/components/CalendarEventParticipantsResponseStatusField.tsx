@@ -1,14 +1,15 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 import { IconCheck, IconQuestionMark, IconX } from 'twenty-ui';
-import { v4 } from 'uuid';
 
 import { CalendarEventParticipant } from '@/activities/calendar/types/CalendarEventParticipant';
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
-import { ExpandableList } from '@/ui/display/expandable-list/ExpandableList';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
+import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
+import { isRightDrawerAnimationCompletedState } from '@/ui/layout/right-drawer/states/isRightDrawerAnimationCompleted';
 
 const StyledInlineCellBaseContainer = styled.div`
   align-items: center;
@@ -55,6 +56,9 @@ const StyledLabelContainer = styled.div<{ width?: number }>`
   font-size: ${({ theme }) => theme.font.size.sm};
   width: ${({ width }) => width}px;
 `;
+const StyledDiv = styled.div`
+  max-width: 70%;
+`;
 
 export const CalendarEventParticipantsResponseStatusField = ({
   responseStatus,
@@ -64,6 +68,9 @@ export const CalendarEventParticipantsResponseStatusField = ({
   participants: CalendarEventParticipant[];
 }) => {
   const theme = useTheme();
+  const isRightDrawerAnimationCompleted = useRecoilValue(
+    isRightDrawerAnimationCompletedState,
+  );
 
   const Icon = {
     Yes: <IconCheck stroke={theme.icon.stroke.sm} />,
@@ -81,9 +88,9 @@ export const CalendarEventParticipantsResponseStatusField = ({
   ];
 
   const participantsContainerRef = useRef<HTMLDivElement>(null);
-
-  const StyledChips = orderedParticipants.map((participant) => (
-    <ParticipantChip participant={participant} />
+  const [isHovered, setIsHovered] = useState(false);
+  const styledChips = orderedParticipants.map((participant, index) => (
+    <ParticipantChip key={index} participant={participant} />
   ));
 
   return (
@@ -96,12 +103,21 @@ export const CalendarEventParticipantsResponseStatusField = ({
             <EllipsisDisplay>{responseStatus}</EllipsisDisplay>
           </StyledLabelContainer>
         </StyledLabelAndIconContainer>
-
-        <ExpandableList
-          listItems={StyledChips}
-          id={v4()}
-          rootRef={participantsContainerRef}
-        />
+        <StyledDiv
+          ref={participantsContainerRef}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          {isRightDrawerAnimationCompleted && (
+            <ExpandableList
+              isHovered={isHovered}
+              reference={participantsContainerRef.current || undefined}
+              forceDisplayHiddenCount
+            >
+              {styledChips}
+            </ExpandableList>
+          )}
+        </StyledDiv>
       </StyledInlineCellBaseContainer>
     </StyledPropertyBox>
   );

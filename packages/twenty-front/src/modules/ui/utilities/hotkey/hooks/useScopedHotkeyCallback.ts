@@ -5,7 +5,7 @@ import { logDebug } from '~/utils/logDebug';
 
 import { internalHotkeysEnabledScopesState } from '../states/internal/internalHotkeysEnabledScopesState';
 
-export const DEBUG_HOTKEY_SCOPE = true;
+export const DEBUG_HOTKEY_SCOPE = false;
 
 export const useScopedHotkeyCallback = () =>
   useRecoilCallback(
@@ -28,7 +28,6 @@ export const useScopedHotkeyCallback = () =>
           .getValue();
 
         if (!currentHotkeyScopes.includes(scope)) {
-          // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
           if (DEBUG_HOTKEY_SCOPE) {
             logDebug(
               `DEBUG: %cI can't call hotkey (${
@@ -43,7 +42,6 @@ export const useScopedHotkeyCallback = () =>
           return;
         }
 
-        // eslint-disable-next-line @nx/workspace-explicit-boolean-predicates-in-if
         if (DEBUG_HOTKEY_SCOPE) {
           logDebug(
             `DEBUG: %cI can call hotkey (${

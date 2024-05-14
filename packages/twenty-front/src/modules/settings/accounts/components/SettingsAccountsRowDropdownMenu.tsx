@@ -1,5 +1,11 @@
 import { useNavigate } from 'react-router-dom';
-import { IconDotsVertical, IconMail, IconRefresh, IconTrash } from 'twenty-ui';
+import {
+  IconCalendarEvent,
+  IconDotsVertical,
+  IconMail,
+  IconRefresh,
+  IconTrash,
+} from 'twenty-ui';
 
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -49,7 +55,17 @@ export const SettingsAccountsRowDropdownMenu = ({
               text="Emails settings"
               onClick={() => {
                 navigate(
-                  `/settings/accounts/emails/${account.messageChannels.edges[0].node.id}`,
+                  `/settings/accounts/emails/${account.messageChannels[0].id}`,
+                );
+                closeDropdown();
+              }}
+            />
+            <MenuItem
+              LeftIcon={IconCalendarEvent}
+              text="Calendar settings"
+              onClick={() => {
+                navigate(
+                  `/settings/accounts/calendars/${account.calendarChannels[0].id}`,
                 );
                 closeDropdown();
               }}
