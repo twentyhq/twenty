@@ -12,8 +12,8 @@ import { profilingSessionRunsState } from '~/testing/profiling/states/profilingS
 import { profilingSessionStatusState } from '~/testing/profiling/states/profilingSessionStatusState';
 
 export const ProfilerDecorator: Decorator = (Story, { id, parameters }) => {
-  const numberOfTests = parameters.numberOfTests ?? 100;
-  const numberOfRuns = parameters.numberOfRuns ?? 10;
+  const numberOfTests = parameters.numberOfTests ?? 2;
+  const numberOfRuns = parameters.numberOfRuns ?? 2;
 
   const [currentProfilingRunIndex] = useRecoilState(
     currentProfilingRunIndexState,
@@ -31,10 +31,7 @@ export const ProfilerDecorator: Decorator = (Story, { id, parameters }) => {
     numberOfTests,
     numberOfRuns,
     currentProfilingRunIndex,
-    profilingSessionStatus,
-    profilingSessionRuns,
     currentRunName,
-    testArray,
   });
 
   return (
