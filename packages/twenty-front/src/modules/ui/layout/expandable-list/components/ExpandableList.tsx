@@ -1,11 +1,10 @@
 import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
-import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { offset, useFloating } from '@floating-ui/react';
 import { Chip, ChipVariant } from 'twenty-ui';
 
 import { AnimatedContainer } from '@/object-record/record-table/components/AnimatedContainer';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
+import { ExpandedListDropdown } from '@/ui/layout/expandable-list/components/ExpandedListDropdown';
+import { isFirstOverflowingChildElement } from '@/ui/layout/expandable-list/utils/isFirstOverflowingChildElement';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
@@ -24,6 +23,7 @@ const StyledChildrenContainer = styled.div`
   overflow: hidden;
   max-width: 100%;
   flex: 0 1 fit-content;
+  position: relative; // Needed so children elements compute their offsetLeft relatively to this element.
 `;
 
 const StyledChildContainer = styled.div`
@@ -38,26 +38,6 @@ const StyledChildContainer = styled.div`
 
 const StyledChipCount = styled(Chip)`
   flex-shrink: 0;
-`;
-
-const StyledExpandedListContainer = styled.div<{
-  withBorder?: boolean;
-}>`
-  backdrop-filter: ${({ theme }) => theme.blur.strong};
-  background-color: ${({ theme }) => theme.background.secondary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-shadow: ${({ theme }) =>
-    `0px 2px 4px ${theme.boxShadow.light}, 2px 4px 16px ${theme.boxShadow.strong}`};
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(2)};
-
-  ${({ theme, withBorder }) =>
-    withBorder &&
-    css`
-      outline: 1px solid ${theme.font.color.extraLight};
-    `};
 `;
 
 export type ExpandableListProps = {
@@ -106,13 +86,6 @@ export const ExpandableList = ({
   const hiddenChildrenCount = children.length - firstHiddenChildIndex;
   const canDisplayChipCount = isChipCountDisplayed && hiddenChildrenCount > 0;
 
-  const { refs, floatingStyles } = useFloating({
-    // @ts-expect-error placement accepts 'start' as value even if the typing does not permit it
-    placement: 'start',
-    middleware: [offset({ mainAxis: -1, crossAxis: -1 })],
-    elements: { reference: anchorElement ?? childrenContainerElement },
-  });
-
   const handleChipCountClick = useCallback((event: React.MouseEvent) => {
     event.stopPropagation();
     setIsListExpanded(true);
@@ -130,29 +103,11 @@ export const ExpandableList = ({
   }, [isChipCountDisplayed, children.length, resetFirstHiddenChildIndex]);
 
   useListenClickOutside({
-    refs: [isListExpanded ? refs.floating : containerRef],
+    refs: [containerRef],
     callback: () => {
       resetFirstHiddenChildIndex();
-      setIsListExpanded(false);
     },
   });
-
-  const findFirstHiddenChildIndex = useCallback(
-    (childElement: HTMLElement | null, index: number) => {
-      if (!childrenContainerElement || !childElement) return;
-
-      if (
-        index > 0 &&
-        index < firstHiddenChildIndex &&
-        childrenContainerElement.scrollWidth >
-          childrenContainerElement.clientWidth &&
-        childElement.offsetLeft > childrenContainerElement.clientWidth
-      ) {
-        setFirstHiddenChildIndex(index);
-      }
-    },
-    [childrenContainerElement, firstHiddenChildIndex],
-  );
 
   return (
     <StyledContainer
@@ -169,18 +124,25 @@ export const ExpandableList = ({
       }
     >
       <StyledChildrenContainer ref={setChildrenContainerElement}>
-        {children.map((child, index) =>
-          index < firstHiddenChildIndex ? (
-            <StyledChildContainer
-              key={index}
-              ref={(childElement) =>
-                findFirstHiddenChildIndex(childElement, index)
+        {children.slice(0, firstHiddenChildIndex).map((child, index) => (
+          <StyledChildContainer
+            key={index}
+            ref={(childElement) => {
+              if (
+                // First element is always displayed.
+                index > 0 &&
+                isFirstOverflowingChildElement({
+                  containerElement: childrenContainerElement,
+                  childElement,
+                })
+              ) {
+                setFirstHiddenChildIndex(index);
               }
-            >
-              {child}
-            </StyledChildContainer>
-          ) : null,
-        )}
+            }}
+          >
+            {child}
+          </StyledChildContainer>
+        ))}
       </StyledChildrenContainer>
       {canDisplayChipCount && (
         <AnimatedContainer>
@@ -192,19 +154,16 @@ export const ExpandableList = ({
         </AnimatedContainer>
       )}
       {isListExpanded && (
-        <DropdownMenu
-          ref={refs.setFloating}
-          style={floatingStyles}
-          width={
-            anchorElement
-              ? Math.max(220, anchorElement.getBoundingClientRect().width)
-              : undefined
-          }
+        <ExpandedListDropdown
+          anchorElement={anchorElement ?? childrenContainerElement ?? undefined}
+          onClickOutside={() => {
+            resetFirstHiddenChildIndex();
+            setIsListExpanded(false);
+          }}
+          withBorder={withExpandedListBorder}
         >
-          <StyledExpandedListContainer withBorder={withExpandedListBorder}>
-            {children}
-          </StyledExpandedListContainer>
-        </DropdownMenu>
+          {children}
+        </ExpandedListDropdown>
       )}
     </StyledContainer>
   );
