@@ -2,7 +2,6 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { ApiRestQueryBuilderFactory } from 'src/engine/api/rest/api-rest-query-builder/api-rest-query-builder.factory';
 import { ApiRestQuery } from 'src/engine/api/rest/types/api-rest-query.type';
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import { capitalize } from 'src/utils/capitalize';
@@ -14,7 +13,6 @@ export class ApiRestMetadataService {
   constructor(
     private readonly tokenService: TokenService,
     private readonly environmentService: EnvironmentService,
-    private readonly apiRestQueryBuilderFactory: ApiRestQueryBuilderFactory,
     private readonly httpService: HttpService,
   ) {}
 
