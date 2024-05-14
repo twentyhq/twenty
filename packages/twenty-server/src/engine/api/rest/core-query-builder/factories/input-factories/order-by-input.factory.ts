@@ -7,7 +7,7 @@ import {
   RecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 
-import { checkFields } from 'src/engine/api/rest/core-query-builder/utils/fields.utils';
+import { checkFields } from 'src/engine/api/rest/core-query-builder/utils/check-fields.utils';
 
 export const DEFAULT_ORDER_DIRECTION = OrderByDirection.AscNullsFirst;
 

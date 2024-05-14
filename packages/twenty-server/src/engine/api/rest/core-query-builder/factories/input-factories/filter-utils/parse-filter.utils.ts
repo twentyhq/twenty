@@ -4,13 +4,11 @@ import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metad
 
 import { parseFilterContent } from 'src/engine/api/rest/core-query-builder/factories/input-factories/filter-utils/parse-filter-content.utils';
 import { parseBaseFilter } from 'src/engine/api/rest/core-query-builder/factories/input-factories/filter-utils/parse-base-filter.utils';
-import {
-  checkFields,
-  getFieldType,
-} from 'src/engine/api/rest/core-query-builder/utils/fields.utils';
+import { checkFields } from 'src/engine/api/rest/core-query-builder/utils/check-fields.utils';
 import { formatFieldValue } from 'src/engine/api/rest/core-query-builder/factories/input-factories/filter-utils/format-field-values.utils';
 import { FieldValue } from 'src/engine/api/rest/types/field-value.type';
 import { checkFilterEnumValues } from 'src/engine/api/rest/core-query-builder/factories/input-factories/filter-utils/check-filter-enum-values';
+import { getFieldType } from 'src/engine/api/rest/core-query-builder/utils/get-field-type.utils';
 
 export enum Conjunctions {
   or = 'or',

@@ -3,20 +3,8 @@ import { BadRequestException } from '@nestjs/common';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
-
-export const getFieldType = (
-  objectMetadata: ObjectMetadataInterface,
-  fieldName: string,
-): FieldMetadataType | undefined => {
-  for (const fieldMetdata of objectMetadata.fields) {
-    if (fieldName === fieldMetdata.name) {
-      return fieldMetdata.type;
-    }
-  }
-};
 
 export const checkFields = (
   objectMetadata: ObjectMetadataInterface,
