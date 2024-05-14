@@ -167,7 +167,7 @@ export class OpenApiService {
             '401': { $ref: '#/components/responses/401' },
           },
         },
-        put: {
+        patch: {
           tags: [item.namePlural],
           summary: `Update One ${item.namePlural}`,
           operationId: `updateOne${capitalize(item.nameSingular)}`,

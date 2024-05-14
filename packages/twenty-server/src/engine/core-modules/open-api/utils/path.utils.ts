@@ -77,7 +77,7 @@ export const computeSingleResultPath = (
         '401': { $ref: '#/components/responses/401' },
       },
     },
-    put: {
+    patch: {
       tags: [item.namePlural],
       summary: `Update One ${item.namePlural}`,
       operationId: `UpdateOne${capitalize(item.nameSingular)}`,

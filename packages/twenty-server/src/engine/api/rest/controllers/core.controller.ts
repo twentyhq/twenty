@@ -1,4 +1,4 @@
-import { Controller, Delete, Get, Post, Put, Req, Res } from '@nestjs/common';
+import { Controller, Delete, Get, Patch, Post, Req, Res } from '@nestjs/common';
 
 import { Request, Response } from 'express';
 
@@ -30,8 +30,8 @@ export class CoreController {
     res.send(cleanGraphQLResponse(result.data));
   }
 
-  @Put()
-  async handleApiPut(@Req() request: Request, @Res() res: Response) {
+  @Patch()
+  async handleApiPatch(@Req() request: Request, @Res() res: Response) {
     const result = await this.apiRestService.update(request);
 
     res.send(cleanGraphQLResponse(result.data));
