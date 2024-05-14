@@ -17,14 +17,14 @@ import { getUrlHostName } from '~/utils/url/getUrlHostName';
 
 type LinksDisplayProps = Pick<
   ExpandableListProps,
-  'anchorElement' | 'forceChipCountDisplay' | 'withExpandedListBorder'
+  'anchorElement' | 'isChipCountDisplayed' | 'withExpandedListBorder'
 > & {
   value?: FieldLinksValue;
 };
 
 export const LinksDisplay = ({
   anchorElement,
-  forceChipCountDisplay,
+  isChipCountDisplayed,
   withExpandedListBorder,
   value,
 }: LinksDisplayProps) => {
@@ -56,7 +56,7 @@ export const LinksDisplay = ({
   return (
     <ExpandableList
       anchorElement={anchorElement}
-      forceChipCountDisplay={forceChipCountDisplay}
+      isChipCountDisplayed={isChipCountDisplayed}
       withExpandedListBorder={withExpandedListBorder}
     >
       {links.map(({ url, label, type }, index) =>

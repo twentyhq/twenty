@@ -7,6 +7,7 @@ import { Chip, ChipVariant } from 'twenty-ui';
 import { AnimatedContainer } from '@/object-record/record-table/components/AnimatedContainer';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -61,7 +62,7 @@ const StyledExpandedListContainer = styled.div<{
 
 export type ExpandableListProps = {
   anchorElement?: HTMLElement;
-  forceChipCountDisplay?: boolean;
+  isChipCountDisplayed?: boolean;
   withExpandedListBorder?: boolean;
 };
 
@@ -73,12 +74,20 @@ export type ChildrenProperty = {
 export const ExpandableList = ({
   children,
   anchorElement,
-  forceChipCountDisplay = false,
+  isChipCountDisplayed: isChipCountDisplayedFromProps,
   withExpandedListBorder = false,
 }: {
   children: ReactElement[];
 } & ExpandableListProps) => {
-  const [isHovered, setIsHovered] = useState(false);
+  // isChipCountDisplayedInternal => uncontrolled display of the chip count.
+  // isChipCountDisplayedFromProps => controlled display of the chip count.
+  // If isChipCountDisplayedFromProps is provided, isChipCountDisplayedInternal is not taken into account.
+  const [isChipCountDisplayedInternal, setIsChipCountDisplayedInternal] =
+    useState(false);
+  const isChipCountDisplayed = isDefined(isChipCountDisplayedFromProps)
+    ? isChipCountDisplayedFromProps
+    : isChipCountDisplayedInternal;
+
   const [isListExpanded, setIsListExpanded] = useState(false);
 
   // Used with floating-ui if anchorElement is not provided.
@@ -95,8 +104,7 @@ export const ExpandableList = ({
   );
 
   const hiddenChildrenCount = children.length - firstHiddenChildIndex;
-  const canDisplayChipCount =
-    (forceChipCountDisplay || isHovered) && hiddenChildrenCount > 0;
+  const canDisplayChipCount = isChipCountDisplayed && hiddenChildrenCount > 0;
 
   const { refs, floatingStyles } = useFloating({
     // @ts-expect-error placement accepts 'start' as value even if the typing does not permit it
@@ -105,60 +113,59 @@ export const ExpandableList = ({
     elements: { reference: anchorElement ?? childrenContainerElement },
   });
 
-  const handleChipCountClick = (event: React.MouseEvent) => {
+  const handleChipCountClick = useCallback((event: React.MouseEvent) => {
     event.stopPropagation();
     setIsListExpanded(true);
-  };
+  }, []);
 
   const resetFirstHiddenChildIndex = useCallback(() => {
-    // Recompute first hidden child
     setFirstHiddenChildIndex(children.length);
   }, [children.length]);
 
+  // Recompute first hidden child when:
+  // - isChipCountDisplayed changes
+  // - children length changes
   useEffect(() => {
     resetFirstHiddenChildIndex();
-  }, [
-    isHovered,
-    forceChipCountDisplay,
-    children.length,
-    resetFirstHiddenChildIndex,
-  ]);
+  }, [isChipCountDisplayed, children.length, resetFirstHiddenChildIndex]);
 
   useListenClickOutside({
-    refs: [refs.floating],
-    callback: () => setIsListExpanded(false),
+    refs: [isListExpanded ? refs.floating : containerRef],
+    callback: () => {
+      resetFirstHiddenChildIndex();
+      setIsListExpanded(false);
+    },
   });
 
-  useListenClickOutside({
-    refs: [containerRef],
-    callback: () => resetFirstHiddenChildIndex(),
-  });
+  const findFirstHiddenChildIndex = useCallback(
+    (childElement: HTMLElement | null, index: number) => {
+      if (!childrenContainerElement || !childElement) return;
 
-  const findFirstHiddenChildIndex = (
-    childElement: HTMLElement | null,
-    index: number,
-  ) => {
-    if (!childrenContainerElement || !childElement) return;
-
-    if (
-      index > 0 &&
-      index < firstHiddenChildIndex &&
-      childrenContainerElement.scrollWidth >
-        childrenContainerElement.clientWidth &&
-      childElement.offsetLeft > childrenContainerElement.clientWidth
-    ) {
-      setFirstHiddenChildIndex(index);
-    }
-  };
+      if (
+        index > 0 &&
+        index < firstHiddenChildIndex &&
+        childrenContainerElement.scrollWidth >
+          childrenContainerElement.clientWidth &&
+        childElement.offsetLeft > childrenContainerElement.clientWidth
+      ) {
+        setFirstHiddenChildIndex(index);
+      }
+    },
+    [childrenContainerElement, firstHiddenChildIndex],
+  );
 
   return (
     <StyledContainer
       ref={containerRef}
       onMouseEnter={
-        forceChipCountDisplay ? undefined : () => setIsHovered(true)
+        isChipCountDisplayedFromProps
+          ? undefined
+          : () => setIsChipCountDisplayedInternal(true)
       }
       onMouseLeave={
-        forceChipCountDisplay ? undefined : () => setIsHovered(false)
+        isChipCountDisplayedFromProps
+          ? undefined
+          : () => setIsChipCountDisplayedInternal(false)
       }
     >
       <StyledChildrenContainer ref={setChildrenContainerElement}>

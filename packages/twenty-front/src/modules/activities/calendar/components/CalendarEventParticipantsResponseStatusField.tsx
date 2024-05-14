@@ -106,7 +106,7 @@ export const CalendarEventParticipantsResponseStatusField = ({
           {isRightDrawerAnimationCompleted && (
             <ExpandableList
               anchorElement={participantsContainerRef.current || undefined}
-              forceChipCountDisplay
+              isChipCountDisplayed
             >
               {styledChips}
             </ExpandableList>

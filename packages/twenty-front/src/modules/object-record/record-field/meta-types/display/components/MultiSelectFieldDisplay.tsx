@@ -26,7 +26,7 @@ export const MultiSelectFieldDisplay = ({
   return (
     <ExpandableList
       anchorElement={cellElement}
-      forceChipCountDisplay={isCellSoftFocused}
+      isChipCountDisplayed={isCellSoftFocused}
       withExpandedListBorder={fromTableCell}
     >
       {selectedOptions.map((selectedOption, index) => (

@@ -32,7 +32,7 @@ const meta: Meta<typeof ExpandableList> = {
         color={MAIN_COLOR_NAMES[index]}
       />
     )),
-    forceChipCountDisplay: false,
+    isChipCountDisplayed: false,
   },
   argTypes: {
     children: { control: false },
@@ -46,7 +46,7 @@ type Story = StoryObj<typeof ExpandableList>;
 export const Default: Story = {};
 
 export const WithChipCount: Story = {
-  args: { forceChipCountDisplay: true },
+  args: { isChipCountDisplayed: true },
 };
 
 export const WithExpandedList: Story = {

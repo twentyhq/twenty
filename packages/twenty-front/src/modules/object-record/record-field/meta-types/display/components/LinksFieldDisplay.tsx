@@ -18,7 +18,7 @@ export const LinksFieldDisplay = ({
     <LinksDisplay
       value={fieldValue}
       anchorElement={cellElement}
-      forceChipCountDisplay={isCellSoftFocused}
+      isChipCountDisplayed={isCellSoftFocused}
       withExpandedListBorder={fromTableCell}
     />
   );
