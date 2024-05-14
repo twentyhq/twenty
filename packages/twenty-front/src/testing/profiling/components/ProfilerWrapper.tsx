@@ -34,6 +34,10 @@ export const ProfilerWrapper = ({
           durationInMs: actualDurationInMs,
         };
 
+        console.log({
+          newDataPoint,
+        });
+
         set(
           profilingSessionDataPointsState,
           (currentProfilingSessionDataPoints) => [
