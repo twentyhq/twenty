@@ -13,7 +13,7 @@ import { OrderByInputFactory } from 'src/engine/api/rest/core-query-builder/fact
 import { FilterInputFactory } from 'src/engine/api/rest/core-query-builder/factories/input-factories/filter-input.factory';
 import { CreateManyQueryFactory } from 'src/engine/api/rest/core-query-builder/factories/create-many-query.factory';
 
-export const apiRestQueryBuilderFactories = [
+export const coreQueryBuilderFactories = [
   DeleteQueryFactory,
   CreateOneQueryFactory,
   CreateManyQueryFactory,

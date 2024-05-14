@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { ApiRestQuery } from 'src/engine/api/rest/types/query.type';
+import { Query } from 'src/engine/api/rest/types/query.type';
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import { capitalize } from 'src/utils/capitalize';
 import { parseMetadataPath } from 'src/engine/api/rest/core-query-builder/utils/path-parsers/parse-metadata-path.utils';
@@ -10,7 +10,7 @@ import {
 } from 'src/engine/api/rest/services/rest-api.service';
 
 @Injectable()
-export class ApiRestMetadataService {
+export class MetadataService {
   constructor(
     private readonly tokenService: TokenService,
     private readonly restApiService: RestApiService,
@@ -24,7 +24,7 @@ export class ApiRestMetadataService {
                 }
             }
         `;
-    const data: ApiRestQuery = {
+    const data: Query = {
       query,
       variables: {},
     };
@@ -181,7 +181,7 @@ export class ApiRestMetadataService {
         ? this.generateFindOneQuery(objectNameSingular, objectNamePlural)
         : this.generateFindManyQuery(objectNameSingular, objectNamePlural);
 
-      const data: ApiRestQuery = {
+      const data: Query = {
         query,
         variables: id ? { id } : request.body,
       };
@@ -215,7 +215,7 @@ export class ApiRestMetadataService {
             }
           `;
 
-      const data: ApiRestQuery = {
+      const data: Query = {
         query,
         variables: {
           input: {
@@ -258,7 +258,7 @@ export class ApiRestMetadataService {
             }
           `;
 
-      const data: ApiRestQuery = {
+      const data: Query = {
         query,
         variables: {
           input: {
@@ -299,7 +299,7 @@ export class ApiRestMetadataService {
             }
           `;
 
-      const data: ApiRestQuery = {
+      const data: Query = {
         query,
         variables: {
           input: {

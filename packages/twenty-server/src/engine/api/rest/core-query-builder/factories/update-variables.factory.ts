@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { Request } from 'express';
 
-import { ApiRestQueryVariables } from 'src/engine/api/rest/types/query-variables.type';
+import { QueryVariables } from 'src/engine/api/rest/types/query-variables.type';
 
 @Injectable()
 export class UpdateVariablesFactory {
-  create(id: string, request: Request): ApiRestQueryVariables {
+  create(id: string, request: Request): QueryVariables {
     return {
       id,
       data: request.body,

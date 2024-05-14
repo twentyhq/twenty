@@ -4,7 +4,7 @@ import { HttpService } from '@nestjs/axios';
 import { Request } from 'express';
 import { AxiosResponse } from 'axios';
 
-import { ApiRestQuery } from 'src/engine/api/rest/types/query.type';
+import { Query } from 'src/engine/api/rest/types/query.type';
 import { getServerUrl } from 'src/utils/get-server-url';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
@@ -20,11 +20,7 @@ export class RestApiService {
     private readonly httpService: HttpService,
   ) {}
 
-  async call(
-    graphqlApiType: GraphqlApiType,
-    request: Request,
-    data: ApiRestQuery,
-  ) {
+  async call(graphqlApiType: GraphqlApiType, request: Request, data: Query) {
     const baseUrl = getServerUrl(
       request,
       this.environmentService.get('SERVER_URL'),

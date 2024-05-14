@@ -6,7 +6,7 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core-query-builder/core-query-builder.factory';
 
-describe('ApiRestService', () => {
+describe('CoreService', () => {
   let service: CoreService;
 
   beforeEach(async () => {

@@ -2,12 +2,12 @@ import { Controller, Get, Delete, Post, Put, Req, Res } from '@nestjs/common';
 
 import { Request, Response } from 'express';
 
-import { ApiRestMetadataService } from 'src/engine/api/rest/services/metadata.service';
+import { MetadataService } from 'src/engine/api/rest/services/metadata.service';
 import { cleanGraphQLResponse } from 'src/engine/api/rest/controllers/utils/api-rest.controller.utils';
 
 @Controller('rest/metadata/*')
 export class ApiRestMetadataController {
-  constructor(private readonly apiRestService: ApiRestMetadataService) {}
+  constructor(private readonly apiRestService: MetadataService) {}
 
   @Get()
   async handleApiGet(@Req() request: Request, @Res() res: Response) {

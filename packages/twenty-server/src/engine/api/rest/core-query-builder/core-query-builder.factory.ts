@@ -16,7 +16,7 @@ import { GetVariablesFactory } from 'src/engine/api/rest/core-query-builder/fact
 import { parsePath } from 'src/engine/api/rest/core-query-builder/utils/path-parsers/parse-path.utils';
 import { computeDepth } from 'src/engine/api/rest/core-query-builder/utils/compute-depth.utils';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { ApiRestQuery } from 'src/engine/api/rest/types/query.type';
+import { Query } from 'src/engine/api/rest/types/query.type';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { CreateManyQueryFactory } from 'src/engine/api/rest/core-query-builder/factories/create-many-query.factory';
 import { parseBatchPath } from 'src/engine/api/rest/core-query-builder/utils/path-parsers/parse-batch-path.utils';
@@ -85,7 +85,7 @@ export class CoreQueryBuilderFactory {
     };
   }
 
-  async delete(request: Request): Promise<ApiRestQuery> {
+  async delete(request: Request): Promise<Query> {
     const { object: parsedObject } = parsePath(request);
     const objectMetadata = await this.getObjectMetadata(request, parsedObject);
 
@@ -103,7 +103,7 @@ export class CoreQueryBuilderFactory {
     };
   }
 
-  async createOne(request: Request): Promise<ApiRestQuery> {
+  async createOne(request: Request): Promise<Query> {
     const { object: parsedObject } = parsePath(request);
     const objectMetadata = await this.getObjectMetadata(request, parsedObject);
 
@@ -115,7 +115,7 @@ export class CoreQueryBuilderFactory {
     };
   }
 
-  async createMany(request: Request): Promise<ApiRestQuery> {
+  async createMany(request: Request): Promise<Query> {
     const { object: parsedObject } = parseBatchPath(request);
     const objectMetadata = await this.getObjectMetadata(request, parsedObject);
     const depth = computeDepth(request);
@@ -126,7 +126,7 @@ export class CoreQueryBuilderFactory {
     };
   }
 
-  async update(request: Request): Promise<ApiRestQuery> {
+  async update(request: Request): Promise<Query> {
     const { object: parsedObject } = parsePath(request);
     const objectMetadata = await this.getObjectMetadata(request, parsedObject);
 
@@ -146,7 +146,7 @@ export class CoreQueryBuilderFactory {
     };
   }
 
-  async get(request: Request): Promise<ApiRestQuery> {
+  async get(request: Request): Promise<Query> {
     const { object: parsedObject } = parsePath(request);
     const objectMetadata = await this.getObjectMetadata(request, parsedObject);
 

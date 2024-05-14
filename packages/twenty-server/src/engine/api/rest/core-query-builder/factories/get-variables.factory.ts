@@ -6,7 +6,7 @@ import { LastCursorInputFactory } from 'src/engine/api/rest/core-query-builder/f
 import { LimitInputFactory } from 'src/engine/api/rest/core-query-builder/factories/input-factories/limit-input.factory';
 import { OrderByInputFactory } from 'src/engine/api/rest/core-query-builder/factories/input-factories/order-by-input.factory';
 import { FilterInputFactory } from 'src/engine/api/rest/core-query-builder/factories/input-factories/filter-input.factory';
-import { ApiRestQueryVariables } from 'src/engine/api/rest/types/query-variables.type';
+import { QueryVariables } from 'src/engine/api/rest/types/query-variables.type';
 
 @Injectable()
 export class GetVariablesFactory {
@@ -21,7 +21,7 @@ export class GetVariablesFactory {
     id: string | undefined,
     request: Request,
     objectMetadata,
-  ): ApiRestQueryVariables {
+  ): QueryVariables {
     if (id) {
       return { filter: { id: { eq: id } } };
     }

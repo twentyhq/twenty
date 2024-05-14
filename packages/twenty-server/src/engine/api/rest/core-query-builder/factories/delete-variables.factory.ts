@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
-import { ApiRestQueryVariables } from 'src/engine/api/rest/types/query-variables.type';
+import { QueryVariables } from 'src/engine/api/rest/types/query-variables.type';
 
 @Injectable()
 export class DeleteVariablesFactory {
-  create(id: string): ApiRestQueryVariables {
+  create(id: string): QueryVariables {
     return {
       id: id,
     };

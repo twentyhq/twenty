@@ -1,4 +1,6 @@
-export type ApiRestQuery = {
+import { QueryVariables } from 'src/engine/api/rest/types/query-variables.type';
+
+export type Query = {
   query: string;
-  variables: object;
+  variables: QueryVariables;
 };
