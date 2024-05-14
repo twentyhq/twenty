@@ -13,13 +13,13 @@ import { DeleteVariablesFactory } from 'src/engine/api/rest/core-query-builder/f
 import { CreateVariablesFactory } from 'src/engine/api/rest/core-query-builder/factories/create-variables.factory';
 import { UpdateVariablesFactory } from 'src/engine/api/rest/core-query-builder/factories/update-variables.factory';
 import { GetVariablesFactory } from 'src/engine/api/rest/core-query-builder/factories/get-variables.factory';
-import { parsePath } from 'src/engine/api/rest/core-query-builder/utils/path-parsers/parse-path.utils';
+import { parseCorePath } from 'src/engine/api/rest/core-query-builder/utils/path-parsers/parse-core-path.utils';
 import { computeDepth } from 'src/engine/api/rest/core-query-builder/utils/compute-depth.utils';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { Query } from 'src/engine/api/rest/types/query.type';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { CreateManyQueryFactory } from 'src/engine/api/rest/core-query-builder/factories/create-many-query.factory';
-import { parseBatchPath } from 'src/engine/api/rest/core-query-builder/utils/path-parsers/parse-batch-path.utils';
+import { parseCoreBatchPath } from 'src/engine/api/rest/core-query-builder/utils/path-parsers/parse-core-batch-path.utils';
 
 @Injectable()
 export class CoreQueryBuilderFactory {
@@ -86,10 +86,10 @@ export class CoreQueryBuilderFactory {
   }
 
   async delete(request: Request): Promise<Query> {
-    const { object: parsedObject } = parsePath(request);
+    const { object: parsedObject } = parseCorePath(request);
     const objectMetadata = await this.getObjectMetadata(request, parsedObject);
 
-    const { id } = parsePath(request);
+    const { id } = parseCorePath(request);
 
     if (!id) {
       throw new BadRequestException(
@@ -104,7 +104,7 @@ export class CoreQueryBuilderFactory {
   }
 
   async createOne(request: Request): Promise<Query> {
-    const { object: parsedObject } = parsePath(request);
+    const { object: parsedObject } = parseCorePath(request);
     const objectMetadata = await this.getObjectMetadata(request, parsedObject);
 
     const depth = computeDepth(request);
@@ -116,7 +116,7 @@ export class CoreQueryBuilderFactory {
   }
 
   async createMany(request: Request): Promise<Query> {
-    const { object: parsedObject } = parseBatchPath(request);
+    const { object: parsedObject } = parseCoreBatchPath(request);
     const objectMetadata = await this.getObjectMetadata(request, parsedObject);
     const depth = computeDepth(request);
 
@@ -127,12 +127,12 @@ export class CoreQueryBuilderFactory {
   }
 
   async update(request: Request): Promise<Query> {
-    const { object: parsedObject } = parsePath(request);
+    const { object: parsedObject } = parseCorePath(request);
     const objectMetadata = await this.getObjectMetadata(request, parsedObject);
 
     const depth = computeDepth(request);
 
-    const { id } = parsePath(request);
+    const { id } = parseCorePath(request);
 
     if (!id) {
       throw new BadRequestException(
@@ -147,12 +147,12 @@ export class CoreQueryBuilderFactory {
   }
 
   async get(request: Request): Promise<Query> {
-    const { object: parsedObject } = parsePath(request);
+    const { object: parsedObject } = parseCorePath(request);
     const objectMetadata = await this.getObjectMetadata(request, parsedObject);
 
     const depth = computeDepth(request);
 
-    const { id } = parsePath(request);
+    const { id } = parseCorePath(request);
 
     return {
       query: id

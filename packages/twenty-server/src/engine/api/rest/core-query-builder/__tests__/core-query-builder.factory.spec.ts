@@ -14,7 +14,7 @@ import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metada
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
-describe('ApiRestQueryBuilderFactory', () => {
+describe('CoreQueryBuilderFactory', () => {
   let service: CoreQueryBuilderFactory;
 
   beforeEach(async () => {
@@ -36,9 +36,7 @@ describe('ApiRestQueryBuilderFactory', () => {
       ],
     }).compile();
 
-    service = module.get<CoreQueryBuilderFactory>(
-      CoreQueryBuilderFactory,
-    );
+    service = module.get<CoreQueryBuilderFactory>(CoreQueryBuilderFactory);
   });
   it('should be defined', () => {
     expect(service).toBeDefined();

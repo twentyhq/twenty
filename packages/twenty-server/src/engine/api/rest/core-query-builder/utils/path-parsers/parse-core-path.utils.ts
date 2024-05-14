@@ -2,7 +2,7 @@ import { BadRequestException } from '@nestjs/common';
 
 import { Request } from 'express';
 
-export const parsePath = (
+export const parseCorePath = (
   request: Request,
 ): { object: string; id?: string } => {
   const queryAction = request.path.replace('/rest/', '').split('/');

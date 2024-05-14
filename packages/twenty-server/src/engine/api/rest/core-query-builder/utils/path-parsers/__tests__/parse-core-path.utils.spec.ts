@@ -1,10 +1,10 @@
-import { parsePath } from 'src/engine/api/rest/core-query-builder/utils/path-parsers/parse-path.utils';
+import { parseCorePath } from 'src/engine/api/rest/core-query-builder/utils/path-parsers/parse-core-path.utils';
 
-describe('parsePath', () => {
+describe('parseCorePath', () => {
   it('should parse object from request path', () => {
     const request: any = { path: '/rest/companies/uuid' };
 
-    expect(parsePath(request)).toEqual({
+    expect(parseCorePath(request)).toEqual({
       object: 'companies',
       id: 'uuid',
     });
@@ -13,7 +13,7 @@ describe('parsePath', () => {
   it('should parse object from request path', () => {
     const request: any = { path: '/rest/companies' };
 
-    expect(parsePath(request)).toEqual({
+    expect(parseCorePath(request)).toEqual({
       object: 'companies',
       id: undefined,
     });
@@ -22,7 +22,7 @@ describe('parsePath', () => {
   it('should throw for wrong request path', () => {
     const request: any = { path: '/rest/companies/uuid/toto' };
 
-    expect(() => parsePath(request)).toThrow(
+    expect(() => parseCorePath(request)).toThrow(
       "Query path '/rest/companies/uuid/toto' invalid. Valid examples: /rest/companies/id or /rest/companies",
     );
   });

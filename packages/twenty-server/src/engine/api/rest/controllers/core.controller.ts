@@ -3,7 +3,7 @@ import { Controller, Delete, Get, Post, Put, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 
 import { CoreService } from 'src/engine/api/rest/services/core.service';
-import { cleanGraphQLResponse } from 'src/engine/api/rest/controllers/utils/api-rest.controller.utils';
+import { cleanGraphQLResponse } from 'src/engine/api/rest/utils/clean-graphql-response.utils';
 
 @Controller('rest/*')
 export class CoreController {

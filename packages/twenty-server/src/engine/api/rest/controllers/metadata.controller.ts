@@ -3,7 +3,7 @@ import { Controller, Get, Delete, Post, Put, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 
 import { MetadataService } from 'src/engine/api/rest/services/metadata.service';
-import { cleanGraphQLResponse } from 'src/engine/api/rest/controllers/utils/api-rest.controller.utils';
+import { cleanGraphQLResponse } from 'src/engine/api/rest/utils/clean-graphql-response.utils';
 
 @Controller('rest/metadata/*')
 export class ApiRestMetadataController {
