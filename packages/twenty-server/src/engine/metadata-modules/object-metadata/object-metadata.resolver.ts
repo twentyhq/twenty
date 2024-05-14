@@ -7,6 +7,7 @@ import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { DeleteOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/delete-object.input';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => ObjectMetadataDTO)
@@ -19,5 +20,13 @@ export class ObjectMetadataResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     return this.objectMetadataService.deleteOneObject(input, workspaceId);
+  }
+
+  @Mutation(() => ObjectMetadataDTO)
+  updateOneObject(
+    @Args('input') input: UpdateOneObjectInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    return this.objectMetadataService.updateOneObject(input, workspaceId);
   }
 }

@@ -15896,13 +15896,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/chrome@npm:^0.0.256":
-  version: 0.0.256
-  resolution: "@types/chrome@npm:0.0.256"
+"@types/chrome@npm:^0.0.267":
+  version: 0.0.267
+  resolution: "@types/chrome@npm:0.0.267"
   dependencies:
     "@types/filesystem": "npm:*"
     "@types/har-format": "npm:*"
-  checksum: 35b3d2c92a3888cc14e5961421233003407a95078bf9b2f30c52a90470dae02588560bff1733ed3e7a8e9f12a1d0c5a6bae0ca30b6acdb3d723e1c2f29c8e861
+  checksum: baa2e526c86e0c092668eff8fdca35c3eea09f0cded9bab86d692ae3834955bfa49d3c064c51b003406099cce73060872c8c824ceef526c72a446c863a2b520c
   languageName: node
   linkType: hard
 
@@ -46290,9 +46290,6 @@ __metadata:
 "twenty-chrome-extension@workspace:packages/twenty-chrome-extension":
   version: 0.0.0-use.local
   resolution: "twenty-chrome-extension@workspace:packages/twenty-chrome-extension"
-  dependencies:
-    "@crxjs/vite-plugin": "npm:^1.0.14"
-    "@types/chrome": "npm:^0.0.256"
   languageName: unknown
   linkType: soft
 
@@ -46401,6 +46398,7 @@ __metadata:
     "@chakra-ui/accordion": "npm:^2.3.0"
     "@chakra-ui/system": "npm:^2.6.0"
     "@codesandbox/sandpack-react": "npm:^2.13.5"
+    "@crxjs/vite-plugin": "npm:^1.0.14"
     "@docusaurus/core": "npm:^3.1.0"
     "@docusaurus/module-type-aliases": "npm:^3.1.0"
     "@docusaurus/preset-classic": "npm:^3.1.0"
@@ -46487,6 +46485,7 @@ __metadata:
     "@types/bcrypt": "npm:^5.0.0"
     "@types/better-sqlite3": "npm:^7.6.8"
     "@types/bytes": "npm:^3.1.1"
+    "@types/chrome": "npm:^0.0.267"
     "@types/crypto-js": "npm:^4.2.2"
     "@types/deep-equal": "npm:^1.0.1"
     "@types/dompurify": "npm:^3.0.5"

@@ -1,10 +1,12 @@
 'use client';
 
+import { useState } from 'react';
 import styled from '@emotion/styled';
 import { IconDownload } from '@tabler/icons-react';
 
 import { CardContainer } from '@/app/_components/contributors/CardContainer';
-import { GithubIcon, XIcon } from '@/app/_components/ui/icons/SvgIcons';
+import Spinner from '@/app/_components/contributors/Spinner';
+import { LinkedInIcon, XIcon } from '@/app/_components/ui/icons/SvgIcons';
 import { Theme } from '@/app/_components/ui/theme/theme';
 
 const Container = styled(CardContainer)`
@@ -48,15 +50,17 @@ const StyledButton = styled.a`
 `;
 
 interface ProfileProps {
-  userUrl: string;
   username: string;
 }
 
-export const ProfileSharing = ({ userUrl, username }: ProfileProps) => {
-  const contributorUrl = `${process.env.NEXT_PUBLIC_HOST_URL}/contributors/${username}`;
+export const ProfileSharing = ({ username }: ProfileProps) => {
+  const [loading, setLoading] = useState(false);
+  const baseUrl = `${window.location.protocol}//${window.location.host}`;
+  const contributorUrl = `${baseUrl}/contributors/${username}`;
 
   const handleDownload = async () => {
-    const imageSrc = `${process.env.NEXT_PUBLIC_HOST_URL}/api/contributors/og-image/${username}`;
+    setLoading(true);
+    const imageSrc = `${baseUrl}/api/contributors/og-image/${username}`;
     try {
       const response = await fetch(imageSrc);
       const blob = await response.blob();
@@ -71,17 +75,30 @@ export const ProfileSharing = ({ userUrl, username }: ProfileProps) => {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error downloading the image:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Container>
-      <StyledButton href={userUrl} target="blank">
-        <GithubIcon color="black" size="24px" />
-        Visit Profile
+      <StyledButton
+        href={`https://www.linkedin.com/sharing/share-offsite/?url=${contributorUrl}`}
+        target="blank"
+      >
+        <LinkedInIcon color="black" size="24px" />
+        Share on LinkedIn
       </StyledButton>
       <StyledButton onClick={handleDownload}>
-        <IconDownload /> Download Image
+        {loading ? (
+          <>
+            <Spinner /> Downloading
+          </>
+        ) : (
+          <>
+            <IconDownload /> Download Image
+          </>
+        )}
       </StyledButton>
       <StyledButton
         href={`http://www.twitter.com/share?url=${contributorUrl}`}

@@ -2,6 +2,7 @@ import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import styled from '@emotion/styled';
 
+import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { TEXT_INPUT_STYLE } from '@/ui/theme/constants/TextInputStyle';
 import { isDefined } from '~/utils/isDefined';
@@ -20,17 +21,33 @@ export type TextAreaInputProps = {
   hotkeyScope: string;
   onChange?: (newText: string) => void;
   maxRows?: number;
+  copyButton?: boolean;
 };
 
 const StyledTextArea = styled(TextareaAutosize)`
   ${TEXT_INPUT_STYLE}
-  width: 100%;
+  align-items: center;
+  display: flex;
+  justify-content: center;
   resize: none;
+  width: calc(100% - ${({ theme }) => theme.spacing(7)});
+`;
+
+const StyledTextAreaContainer = styled.div`
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
   border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
-  padding: ${({ theme }) => theme.spacing(2)};
+  position: relative;
+  width: 100%;
+  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(1)};
   background-color: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
+`;
+
+const StyledLightIconButtonContainer = styled.div`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 0;
 `;
 
 export const TextAreaInput = ({
@@ -47,6 +64,7 @@ export const TextAreaInput = ({
   onClickOutside,
   onChange,
   maxRows,
+  copyButton = true,
 }: TextAreaInputProps) => {
   const [internalText, setInternalText] = useState(value);
 
@@ -56,6 +74,7 @@ export const TextAreaInput = ({
   };
 
   const wrapperRef = useRef<HTMLTextAreaElement>(null);
+  const copyRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (isDefined(wrapperRef.current)) {
@@ -68,6 +87,7 @@ export const TextAreaInput = ({
 
   useRegisterInputEvents({
     inputRef: wrapperRef,
+    copyRef: copyRef,
     inputValue: internalText,
     onEnter,
     onEscape,
@@ -78,15 +98,22 @@ export const TextAreaInput = ({
   });
 
   return (
-    <StyledTextArea
-      placeholder={placeholder}
-      disabled={disabled}
-      className={className}
-      ref={wrapperRef}
-      onChange={handleChange}
-      autoFocus={autoFocus}
-      value={internalText}
-      maxRows={maxRows}
-    />
+    <StyledTextAreaContainer>
+      <StyledTextArea
+        placeholder={placeholder}
+        disabled={disabled}
+        className={className}
+        ref={wrapperRef}
+        onChange={handleChange}
+        autoFocus={autoFocus}
+        value={internalText}
+        maxRows={maxRows}
+      />
+      {copyButton && (
+        <StyledLightIconButtonContainer ref={copyRef}>
+          <LightCopyIconButton copyText={internalText} />
+        </StyledLightIconButtonContainer>
+      )}
+    </StyledTextAreaContainer>
   );
 };

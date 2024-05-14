@@ -3,6 +3,7 @@ import {
   Field,
   Object as MetadataObject,
   Relation,
+  RelationDefinition,
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
 
@@ -44,6 +45,7 @@ export type FieldMetadataItem = Omit<
   defaultValue?: any;
   options?: FieldMetadataItemOption[];
   relationDefinition?: {
+    relationId: RelationDefinition['relationId'];
     direction: RelationDefinitionType;
     sourceFieldMetadata: Pick<Field, 'id' | 'name'>;
     sourceObjectMetadata: Pick<

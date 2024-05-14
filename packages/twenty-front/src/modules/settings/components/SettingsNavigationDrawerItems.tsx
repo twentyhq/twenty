@@ -1,5 +1,3 @@
-import { useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import {
   IconApps,
@@ -11,15 +9,15 @@ import {
   IconDoorEnter,
   IconHierarchy2,
   IconMail,
+  IconRocket,
   IconSettings,
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui';
 
-import { useAuth } from '@/auth/hooks/useAuth';
+import { useSignOutAndRedirect } from '@/auth/hooks/useSignOutAndRedirect';
 import { billingState } from '@/client-config/states/billingState';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
-import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
@@ -27,13 +25,7 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 
 export const SettingsNavigationDrawerItems = () => {
-  const navigate = useNavigate();
-  const { signOut } = useAuth();
-
-  const handleLogout = useCallback(() => {
-    signOut();
-    navigate(AppPath.SignInUp);
-  }, [signOut, navigate]);
+  const handleLogout = useSignOutAndRedirect();
 
   const billing = useRecoilValue(billingState);
 
@@ -114,6 +106,11 @@ export const SettingsNavigationDrawerItems = () => {
 
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label="Other" />
+        <SettingsNavigationDrawerItem
+          label="Releases"
+          path={SettingsPath.Releases}
+          Icon={IconRocket}
+        />
         <NavigationDrawerItem
           label="Logout"
           onClick={handleLogout}

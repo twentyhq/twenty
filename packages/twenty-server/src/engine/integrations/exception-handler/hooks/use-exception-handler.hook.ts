@@ -106,12 +106,11 @@ export const useExceptionHandler = <PluginContext extends GraphQLContext>(
                 ...exceptions.unfiltered,
               ];
               const errors = concatenatedErrors.map((err) => {
-                // Properly convert errors to GraphQLErrors
-                const graphQLError = convertExceptionToGraphQLError(
-                  err.originalError,
-                );
+                if (!err.originalError) {
+                  return err;
+                }
 
-                return graphQLError;
+                return convertExceptionToGraphQLError(err.originalError);
               });
 
               setResult({
