@@ -1,43 +1,20 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
 
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { ApiRestQuery } from 'src/engine/api/rest/types/query.type';
 import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import { capitalize } from 'src/utils/capitalize';
-import { getServerUrl } from 'src/utils/get-server-url';
 import { parseMetadataPath } from 'src/engine/api/rest/core-query-builder/utils/path-parsers/parse-metadata-path.utils';
+import {
+  GraphqlApiType,
+  RestApiService,
+} from 'src/engine/api/rest/services/rest-api.service';
 
 @Injectable()
 export class ApiRestMetadataService {
   constructor(
     private readonly tokenService: TokenService,
-    private readonly environmentService: EnvironmentService,
-    private readonly httpService: HttpService,
+    private readonly restApiService: RestApiService,
   ) {}
-
-  async callMetadata(request, data: ApiRestQuery) {
-    const baseUrl = getServerUrl(
-      request,
-      this.environmentService.get('SERVER_URL'),
-    );
-
-    try {
-      return await this.httpService.axiosRef.post(`${baseUrl}/metadata`, data, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: request.headers.authorization,
-        },
-      });
-    } catch (err) {
-      return {
-        data: {
-          error: `${err}. Please check your query.`,
-          status: err.response.status,
-        },
-      };
-    }
-  }
 
   async fetchMetadataInputFields(request, fieldName: string) {
     const query = `
@@ -52,7 +29,11 @@ export class ApiRestMetadataService {
       variables: {},
     };
 
-    const { data: response } = await this.callMetadata(request, data);
+    const { data: response } = await this.restApiService.call(
+      GraphqlApiType.METADATA,
+      request,
+      data,
+    );
     const fields = response.data.__type.inputFields.map((field) => field.name);
 
     return fields;
@@ -205,7 +186,11 @@ export class ApiRestMetadataService {
         variables: id ? { id } : request.body,
       };
 
-      return await this.callMetadata(request, data);
+      return await this.restApiService.call(
+        GraphqlApiType.METADATA,
+        request,
+        data,
+      );
     } catch (err) {
       return { data: { error: err, status: err.status } };
     }
@@ -239,7 +224,11 @@ export class ApiRestMetadataService {
         },
       };
 
-      return await this.callMetadata(request, data);
+      return await this.restApiService.call(
+        GraphqlApiType.METADATA,
+        request,
+        data,
+      );
     } catch (err) {
       return { data: { error: err, status: err.status } };
     }
@@ -279,7 +268,11 @@ export class ApiRestMetadataService {
         },
       };
 
-      return await this.callMetadata(request, data);
+      return await this.restApiService.call(
+        GraphqlApiType.METADATA,
+        request,
+        data,
+      );
     } catch (err) {
       return { data: { error: err, status: err.status } };
     }
@@ -315,7 +308,11 @@ export class ApiRestMetadataService {
         },
       };
 
-      return await this.callMetadata(request, data);
+      return await this.restApiService.call(
+        GraphqlApiType.METADATA,
+        request,
+        data,
+      );
     } catch (err) {
       return { data: { error: err, status: err.status } };
     }

@@ -8,11 +8,12 @@ import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { ApiRestMetadataController } from 'src/engine/api/rest/controllers/metadata.controller';
 import { ApiRestMetadataService } from 'src/engine/api/rest/services/metadata.service';
 import { CoreBatchController } from 'src/engine/api/rest/controllers/core-batch.controller';
+import { RestApiService } from 'src/engine/api/rest/services/rest-api.service';
 
 @Module({
   imports: [CoreQueryBuilderModule, AuthModule, HttpModule],
   controllers: [ApiRestMetadataController, CoreBatchController, CoreController],
-  providers: [ApiRestMetadataService, CoreService],
+  providers: [ApiRestMetadataService, CoreService, RestApiService],
   exports: [ApiRestMetadataService],
 })
 export class RestApiModule {}
