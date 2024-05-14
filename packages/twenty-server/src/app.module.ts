@@ -14,7 +14,7 @@ import { join } from 'path';
 
 import { YogaDriverConfig, YogaDriver } from '@graphql-yoga/nestjs';
 
-import { ApiRestModule } from 'src/engine/api/rest/api-rest.module';
+import { RestApiModule } from 'src/engine/api/rest/rest-api.module';
 import { ModulesModule } from 'src/modules/modules.module';
 import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
@@ -56,7 +56,7 @@ import { IntegrationsModule } from './engine/integrations/integrations.module';
     // Api modules
     CoreGraphQLApiModule,
     MetadataGraphQLApiModule,
-    ApiRestModule,
+    RestApiModule,
     // Conditional modules
     ...AppModule.getConditionalModules(),
   ],
