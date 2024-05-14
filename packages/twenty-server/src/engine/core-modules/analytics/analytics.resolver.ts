@@ -28,9 +28,11 @@ export class AnalyticsResolver {
   ) {
     return this.analyticsService.create(
       createAnalyticsInput,
-      user,
-      workspace,
-      request,
+      user?.id,
+      workspace?.id,
+      workspace?.displayName,
+      workspace?.domainName,
+      request.hostname,
     );
   }
 }
