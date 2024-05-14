@@ -161,6 +161,7 @@ export const ActivityBodyEditor = ({
             ...oldActivity,
             id: activityId,
             body: newStringifiedBody,
+            __typename: 'Activity',
           };
         });
 
@@ -192,6 +193,7 @@ export const ActivityBodyEditor = ({
               ...oldActivity,
               id: activityId,
               title: newTitleFromBody,
+              __typename: 'Activity',
             };
           });
 

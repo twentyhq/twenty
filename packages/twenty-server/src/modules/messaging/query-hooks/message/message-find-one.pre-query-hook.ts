@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable, MethodNotAllowedException } from '@nestjs/common';
 
 import { WorkspacePreQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/interfaces/workspace-pre-query-hook.interface';
 import { FindOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -11,6 +11,6 @@ export class MessageFindOnePreQueryHook implements WorkspacePreQueryHook {
     _workspaceId: string,
     _payload: FindOneResolverArgs,
   ): Promise<void> {
-    throw new BadRequestException('Method not implemented.');
+    throw new MethodNotAllowedException('Method not allowed.');
   }
 }

@@ -44,6 +44,9 @@ export const useObjectSortDropdown = () => {
     availableSortDefinitionsState,
     onSortSelectState,
     isSortSelectedState,
+    objectSortDropdownSearchInputState,
+    setObjectSortDropdownSearchInput,
+    resetSearchInput,
   } = useSortDropdown({
     sortDropdownId: VIEW_SORT_DROPDOWN_ID,
   });
@@ -71,6 +74,9 @@ export const useObjectSortDropdown = () => {
     toggleSortDropdown,
     resetState,
     isSortSelected,
+    objectSortDropdownSearchInputState,
+    setObjectSortDropdownSearchInput,
+    resetSearchInput,
     availableSortDefinitions,
     handleAddSort,
   };

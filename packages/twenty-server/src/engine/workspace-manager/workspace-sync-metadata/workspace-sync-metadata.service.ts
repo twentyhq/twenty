@@ -12,6 +12,7 @@ import { WorkspaceSyncRelationMetadataService } from 'src/engine/workspace-manag
 import { WorkspaceSyncFieldMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata.service';
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
 import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 
 interface SynchronizeOptions {
   applyChanges?: boolean;
@@ -29,6 +30,7 @@ export class WorkspaceSyncMetadataService {
     private readonly workspaceSyncObjectMetadataService: WorkspaceSyncObjectMetadataService,
     private readonly workspaceSyncRelationMetadataService: WorkspaceSyncRelationMetadataService,
     private readonly workspaceSyncFieldMetadataService: WorkspaceSyncFieldMetadataService,
+    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
   ) {}
 
   /**
@@ -127,6 +129,9 @@ export class WorkspaceSyncMetadataService {
       await queryRunner.rollbackTransaction();
     } finally {
       await queryRunner.release();
+      await this.workspaceCacheVersionService.incrementVersion(
+        context.workspaceId,
+      );
     }
 
     return {

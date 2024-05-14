@@ -5,8 +5,8 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { messageChannelStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { MESSAGE_CHANNEL_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
@@ -36,7 +36,7 @@ export enum MessageChannelType {
 }
 
 @ObjectMetadata({
-  standardId: standardObjectIds.messageChannel,
+  standardId: STANDARD_OBJECT_IDS.messageChannel,
   namePlural: 'messageChannels',
   labelSingular: 'Message Channel',
   labelPlural: 'Message Channels',
@@ -47,7 +47,7 @@ export enum MessageChannelType {
 @IsSystem()
 export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    standardId: messageChannelStandardFieldIds.visibility,
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.visibility,
     type: FieldMetadataType.SELECT,
     label: 'Visibility',
     description: 'Visibility',
@@ -77,7 +77,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   visibility: string;
 
   @FieldMetadata({
-    standardId: messageChannelStandardFieldIds.handle,
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
     label: 'Handle',
     description: 'Handle',
@@ -86,7 +86,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   handle: string;
 
   @FieldMetadata({
-    standardId: messageChannelStandardFieldIds.connectedAccount,
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.connectedAccount,
     type: FieldMetadataType.RELATION,
     label: 'Connected Account',
     description: 'Connected Account',
@@ -96,7 +96,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   connectedAccount: Relation<ConnectedAccountObjectMetadata>;
 
   @FieldMetadata({
-    standardId: messageChannelStandardFieldIds.type,
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.type,
     type: FieldMetadataType.SELECT,
     label: 'Type',
     description: 'Channel Type',
@@ -120,7 +120,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   type: string;
 
   @FieldMetadata({
-    standardId: messageChannelStandardFieldIds.isContactAutoCreationEnabled,
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.isContactAutoCreationEnabled,
     type: FieldMetadataType.BOOLEAN,
     label: 'Is Contact Auto Creation Enabled',
     description: 'Is Contact Auto Creation Enabled',
@@ -130,7 +130,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   isContactAutoCreationEnabled: boolean;
 
   @FieldMetadata({
-    standardId: messageChannelStandardFieldIds.isSyncEnabled,
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.isSyncEnabled,
     type: FieldMetadataType.BOOLEAN,
     label: 'Is Sync Enabled',
     description: 'Is Sync Enabled',
@@ -141,7 +141,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
 
   @FieldMetadata({
     standardId:
-      messageChannelStandardFieldIds.messageChannelMessageAssociations,
+      MESSAGE_CHANNEL_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
     type: FieldMetadataType.RELATION,
     label: 'Message Channel Association',
     description: 'Messages from the channel.',
@@ -158,7 +158,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   >;
 
   @FieldMetadata({
-    standardId: messageChannelStandardFieldIds.syncCursor,
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncCursor,
     type: FieldMetadataType.TEXT,
     label: 'Last sync cursor',
     description: 'Last sync cursor',
@@ -167,7 +167,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   syncCursor: string;
 
   @FieldMetadata({
-    standardId: messageChannelStandardFieldIds.syncedAt,
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncedAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Last sync date',
     description: 'Last sync date',
@@ -177,7 +177,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   syncedAt: string;
 
   @FieldMetadata({
-    standardId: messageChannelStandardFieldIds.syncStatus,
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
     type: FieldMetadataType.SELECT,
     label: 'Last sync status',
     description: 'Last sync status',
@@ -213,7 +213,7 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   syncStatus: MessageChannelSyncStatus;
 
   @FieldMetadata({
-    standardId: messageChannelStandardFieldIds.ongoingSyncStartedAt,
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.ongoingSyncStartedAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Ongoing sync started at',
     description: 'Ongoing sync started at',

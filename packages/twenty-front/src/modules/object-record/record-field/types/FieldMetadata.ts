@@ -45,6 +45,11 @@ export type FieldLinkMetadata = {
   fieldName: string;
 };
 
+export type FieldLinksMetadata = {
+  objectMetadataNameSingular?: string;
+  fieldName: string;
+};
+
 export type FieldCurrencyMetadata = {
   objectMetadataNameSingular?: string;
   fieldName: string;
@@ -143,6 +148,11 @@ export type FieldBooleanValue = boolean;
 export type FieldPhoneValue = string;
 export type FieldEmailValue = string;
 export type FieldLinkValue = { url: string; label: string };
+export type FieldLinksValue = {
+  primaryLinkLabel: string;
+  primaryLinkUrl: string;
+  secondaryLinks?: { label: string; url: string }[] | null;
+};
 export type FieldCurrencyValue = {
   currencyCode: CurrencyCode;
   amountMicros: number | null;
@@ -163,4 +173,8 @@ export type FieldSelectValue = string | null;
 export type FieldMultiSelectValue = string[] | null;
 
 export type FieldRelationValue = EntityForSelect | null;
-export type FieldJsonValue = string;
+
+// See https://zod.dev/?id=json-type
+type Literal = string | number | boolean | null;
+export type Json = Literal | { [key: string]: Json } | Json[];
+export type FieldJsonValue = Record<string, Json> | Json[] | null;

@@ -1,27 +1,25 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/relation-metadata.decorator';
-import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
 import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
 import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
 import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
 import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
 import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
-import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { calendarEventStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { CALENDAR_EVENT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { LinkMetadata } from 'src/engine/metadata-modules/field-metadata/composite-types/link.composite-type';
 import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
 
 @ObjectMetadata({
-  standardId: standardObjectIds.calendarEvent,
+  standardId: STANDARD_OBJECT_IDS.calendarEvent,
   namePlural: 'calendarEvents',
   labelSingular: 'Calendar event',
   labelPlural: 'Calendar events',
@@ -30,12 +28,9 @@ import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-me
 })
 @IsSystem()
 @IsNotAuditLogged()
-@Gate({
-  featureFlag: FeatureFlagKeys.IsCalendarEnabled,
-})
 export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
-    standardId: calendarEventStandardFieldIds.title,
+    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.title,
     type: FieldMetadataType.TEXT,
     label: 'Title',
     description: 'Title',
@@ -44,7 +39,7 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   title: string;
 
   @FieldMetadata({
-    standardId: calendarEventStandardFieldIds.isCanceled,
+    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.isCanceled,
     type: FieldMetadataType.BOOLEAN,
     label: 'Is canceled',
     description: 'Is canceled',
@@ -53,7 +48,7 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   isCanceled: boolean;
 
   @FieldMetadata({
-    standardId: calendarEventStandardFieldIds.isFullDay,
+    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.isFullDay,
     type: FieldMetadataType.BOOLEAN,
     label: 'Is Full Day',
     description: 'Is Full Day',
@@ -62,7 +57,7 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   isFullDay: boolean;
 
   @FieldMetadata({
-    standardId: calendarEventStandardFieldIds.startsAt,
+    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.startsAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Start Date',
     description: 'Start Date',
@@ -72,7 +67,7 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   startsAt: string | null;
 
   @FieldMetadata({
-    standardId: calendarEventStandardFieldIds.endsAt,
+    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.endsAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'End Date',
     description: 'End Date',
@@ -82,7 +77,7 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   endsAt: string | null;
 
   @FieldMetadata({
-    standardId: calendarEventStandardFieldIds.externalCreatedAt,
+    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.externalCreatedAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Creation DateTime',
     description: 'Creation DateTime',
@@ -92,7 +87,7 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   externalCreatedAt: string | null;
 
   @FieldMetadata({
-    standardId: calendarEventStandardFieldIds.externalUpdatedAt,
+    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.externalUpdatedAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Update DateTime',
     description: 'Update DateTime',
@@ -102,7 +97,7 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   externalUpdatedAt: string | null;
 
   @FieldMetadata({
-    standardId: calendarEventStandardFieldIds.description,
+    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.description,
     type: FieldMetadataType.TEXT,
     label: 'Description',
     description: 'Description',
@@ -111,7 +106,7 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   description: string;
 
   @FieldMetadata({
-    standardId: calendarEventStandardFieldIds.location,
+    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.location,
     type: FieldMetadataType.TEXT,
     label: 'Location',
     description: 'Location',
@@ -120,7 +115,7 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   location: string;
 
   @FieldMetadata({
-    standardId: calendarEventStandardFieldIds.iCalUID,
+    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.iCalUID,
     type: FieldMetadataType.TEXT,
     label: 'iCal UID',
     description: 'iCal UID',
@@ -129,7 +124,7 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   iCalUID: string;
 
   @FieldMetadata({
-    standardId: calendarEventStandardFieldIds.conferenceSolution,
+    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.conferenceSolution,
     type: FieldMetadataType.TEXT,
     label: 'Conference Solution',
     description: 'Conference Solution',
@@ -138,7 +133,7 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   conferenceSolution: string;
 
   @FieldMetadata({
-    standardId: calendarEventStandardFieldIds.conferenceLink,
+    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.conferenceLink,
     type: FieldMetadataType.LINK,
     label: 'Meet Link',
     description: 'Meet Link',
@@ -148,7 +143,7 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   conferenceLink: LinkMetadata;
 
   @FieldMetadata({
-    standardId: calendarEventStandardFieldIds.recurringEventExternalId,
+    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.recurringEventExternalId,
     type: FieldMetadataType.TEXT,
     label: 'Recurring Event ID',
     description: 'Recurring Event ID',
@@ -157,7 +152,8 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
   recurringEventExternalId: string;
 
   @FieldMetadata({
-    standardId: calendarEventStandardFieldIds.calendarChannelEventAssociations,
+    standardId:
+      CALENDAR_EVENT_STANDARD_FIELD_IDS.calendarChannelEventAssociations,
     type: FieldMetadataType.RELATION,
     label: 'Calendar Channel Event Associations',
     description: 'Calendar Channel Event Associations',
@@ -169,15 +165,12 @@ export class CalendarEventObjectMetadata extends BaseObjectMetadata {
     onDelete: RelationOnDeleteAction.CASCADE,
     inverseSideFieldKey: 'calendarEvent',
   })
-  @Gate({
-    featureFlag: 'IS_CALENDAR_ENABLED',
-  })
   calendarChannelEventAssociations: Relation<
     CalendarChannelEventAssociationObjectMetadata[]
   >;
 
   @FieldMetadata({
-    standardId: calendarEventStandardFieldIds.calendarEventParticipants,
+    standardId: CALENDAR_EVENT_STANDARD_FIELD_IDS.calendarEventParticipants,
     type: FieldMetadataType.RELATION,
     label: 'Event Participants',
     description: 'Event Participants',

@@ -62,7 +62,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       new ObjectRecordCreateEvent<WorkspaceMemberObjectMetadata>();
 
     payload.workspaceId = workspaceId;
-    payload.details = {
+    payload.properties = {
       after: workspaceMember[0],
     };
     payload.recordId = workspaceMember[0].id;
@@ -70,17 +70,23 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     this.eventEmitter.emit('workspaceMember.created', payload);
   }
 
-  public async getWorkspaceMemberCount(workspaceId: string): Promise<number> {
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
+  public async getWorkspaceMemberCount(
+    workspaceId: string,
+  ): Promise<number | undefined> {
+    try {
+      const dataSourceSchema =
+        this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    return (
-      await this.workspaceDataSourceService.executeRawQuery(
-        `SELECT * FROM ${dataSourceSchema}."workspaceMember"`,
-        [],
-        workspaceId,
-      )
-    ).length;
+      return (
+        await this.workspaceDataSourceService.executeRawQuery(
+          `SELECT * FROM ${dataSourceSchema}."workspaceMember"`,
+          [],
+          workspaceId,
+        )
+      ).length;
+    } catch {
+      return undefined;
+    }
   }
 
   async checkUserWorkspaceExists(

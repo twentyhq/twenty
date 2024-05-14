@@ -10,6 +10,7 @@ import {
   FieldEmailMetadata,
   FieldFullNameMetadata,
   FieldLinkMetadata,
+  FieldLinksMetadata,
   FieldMetadata,
   FieldMultiSelectMetadata,
   FieldNumberMetadata,
@@ -44,23 +45,25 @@ type AssertFieldMetadataFunction = <
                     ? FieldRatingMetadata
                     : E extends 'LINK'
                       ? FieldLinkMetadata
-                      : E extends 'NUMBER'
-                        ? FieldNumberMetadata
-                        : E extends 'PHONE'
-                          ? FieldPhoneMetadata
-                          : E extends 'PROBABILITY'
-                            ? FieldRatingMetadata
-                            : E extends 'RELATION'
-                              ? FieldRelationMetadata
-                              : E extends 'TEXT'
-                                ? FieldTextMetadata
-                                : E extends 'UUID'
-                                  ? FieldUuidMetadata
-                                  : E extends 'ADDRESS'
-                                    ? FieldAddressMetadata
-                                    : E extends 'RAW_JSON'
-                                      ? FieldRawJsonMetadata
-                                      : never,
+                      : E extends 'LINKS'
+                        ? FieldLinksMetadata
+                        : E extends 'NUMBER'
+                          ? FieldNumberMetadata
+                          : E extends 'PHONE'
+                            ? FieldPhoneMetadata
+                            : E extends 'PROBABILITY'
+                              ? FieldRatingMetadata
+                              : E extends 'RELATION'
+                                ? FieldRelationMetadata
+                                : E extends 'TEXT'
+                                  ? FieldTextMetadata
+                                  : E extends 'UUID'
+                                    ? FieldUuidMetadata
+                                    : E extends 'ADDRESS'
+                                      ? FieldAddressMetadata
+                                      : E extends 'RAW_JSON'
+                                        ? FieldRawJsonMetadata
+                                        : never,
 >(
   fieldType: E,
   fieldTypeGuard: (

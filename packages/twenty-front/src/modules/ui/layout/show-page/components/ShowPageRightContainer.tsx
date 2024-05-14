@@ -11,12 +11,12 @@ import {
 
 import { Calendar } from '@/activities/calendar/components/Calendar';
 import { EmailThreads } from '@/activities/emails/components/EmailThreads';
-import { Events } from '@/activities/events/components/Events';
 import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { Timeline } from '@/activities/timeline/components/Timeline';
 import { TimelineQueryEffect } from '@/activities/timeline/components/TimelineQueryEffect';
+import { TimelineActivities } from '@/activities/timelineActivities/components/TimelineActivities';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { TabList } from '@/ui/layout/tab/components/TabList';
@@ -53,6 +53,7 @@ type ShowPageRightContainerProps = {
   tasks?: boolean;
   notes?: boolean;
   emails?: boolean;
+  loading?: boolean;
 };
 
 export const ShowPageRightContainer = ({
@@ -61,11 +62,16 @@ export const ShowPageRightContainer = ({
   tasks,
   notes,
   emails,
+  loading,
 }: ShowPageRightContainerProps) => {
   const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
   const activeTabId = useRecoilValue(activeTabIdState);
 
-  const shouldDisplayCalendarTab = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
+  const shouldDisplayCalendarTab =
+    targetableObject.targetObjectNameSingular ===
+      CoreObjectNameSingular.Company ||
+    targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Person;
+
   const shouldDisplayLogTab = useIsFeatureEnabled('IS_EVENT_OBJECT_ENABLED');
 
   const shouldDisplayEmailsTab =
@@ -123,12 +129,16 @@ export const ShowPageRightContainer = ({
   return (
     <StyledShowPageRightContainer>
       <StyledTabListContainer>
-        <TabList tabListId={TAB_LIST_COMPONENT_ID} tabs={TASK_TABS} />
+        <TabList
+          loading={loading}
+          tabListId={TAB_LIST_COMPONENT_ID}
+          tabs={TASK_TABS}
+        />
       </StyledTabListContainer>
       {activeTabId === 'timeline' && (
         <>
           <TimelineQueryEffect targetableObject={targetableObject} />
-          <Timeline targetableObject={targetableObject} />
+          <Timeline loading={loading} targetableObject={targetableObject} />
         </>
       )}
       {activeTabId === 'tasks' && (
@@ -144,7 +154,9 @@ export const ShowPageRightContainer = ({
       {activeTabId === 'calendar' && (
         <Calendar targetableObject={targetableObject} />
       )}
-      {activeTabId === 'logs' && <Events targetableObject={targetableObject} />}
+      {activeTabId === 'logs' && (
+        <TimelineActivities targetableObject={targetableObject} />
+      )}
     </StyledShowPageRightContainer>
   );
 };
