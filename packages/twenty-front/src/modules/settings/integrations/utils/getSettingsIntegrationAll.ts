@@ -5,11 +5,15 @@ export const getSettingsIntegrationAll = ({
   isAirtableIntegrationActive,
   isPostgresqlIntegrationEnabled,
   isPostgresqlIntegrationActive,
+  isStripeIntegrationEnabled,
+  isStripeIntegrationActive,
 }: {
   isAirtableIntegrationEnabled: boolean;
   isAirtableIntegrationActive: boolean;
   isPostgresqlIntegrationEnabled: boolean;
   isPostgresqlIntegrationActive: boolean;
+  isStripeIntegrationEnabled: boolean;
+  isStripeIntegrationActive: boolean;
 }): SettingsIntegrationCategory => ({
   key: 'all',
   title: 'All',
@@ -39,6 +43,19 @@ export const getSettingsIntegrationAll = ({
           : 'Add',
       text: 'PostgreSQL',
       link: '/settings/integrations/postgresql',
+    },
+    {
+      from: {
+        key: 'stripe',
+        image: '/images/integrations/stripe-logo.png',
+      },
+      type: !isStripeIntegrationEnabled
+        ? 'Soon'
+        : isStripeIntegrationActive
+          ? 'Active'
+          : 'Add',
+      text: 'Stripe',
+      link: '/settings/integrations/stripe',
     },
   ],
 });

@@ -11,11 +11,11 @@ import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
 import { Authorize } from '~/pages/auth/Authorize';
-import { ChooseYourPlan } from '~/pages/auth/ChooseYourPlan.tsx';
+import { ChooseYourPlan } from '~/pages/auth/ChooseYourPlan';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
-import { PaymentSuccess } from '~/pages/auth/PaymentSuccess.tsx';
+import { PaymentSuccess } from '~/pages/auth/PaymentSuccess';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { DefaultHomePage } from '~/pages/DefaultHomePage';
 import { ImpersonateEffect } from '~/pages/impersonate/ImpersonateEffect';
@@ -45,8 +45,9 @@ import { SettingsIntegrationEditDatabaseConnection } from '~/pages/settings/inte
 import { SettingsIntegrationNewDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationNewDatabaseConnection';
 import { SettingsIntegrations } from '~/pages/settings/integrations/SettingsIntegrations';
 import { SettingsIntegrationShowDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationShowDatabaseConnection';
+import { Releases } from '~/pages/settings/Releases';
 import { SettingsAppearance } from '~/pages/settings/SettingsAppearance';
-import { SettingsBilling } from '~/pages/settings/SettingsBilling.tsx';
+import { SettingsBilling } from '~/pages/settings/SettingsBilling';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
@@ -207,6 +208,7 @@ export const App = () => {
                   path={SettingsPath.ObjectFieldEdit}
                   element={<SettingsObjectFieldEdit />}
                 />
+                <Route path={SettingsPath.Releases} element={<Releases />} />
               </Routes>
             }
           />

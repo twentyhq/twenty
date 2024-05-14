@@ -8,7 +8,7 @@ export const DATABASE_CONNECTION_FRAGMENT = gql`
     foreignDataWrapperOptions
     foreignDataWrapperType
     userMappingOptions {
-      username
+      user
     }
     updatedAt
     schema

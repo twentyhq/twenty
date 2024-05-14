@@ -110,7 +110,7 @@ export const SettingsObjects = () => {
                                 updatePayload: { isActive: true },
                               })
                             }
-                            onErase={() =>
+                            onDelete={() =>
                               deleteOneObjectMetadataItem(
                                 inactiveObjectMetadataItem.id,
                               )

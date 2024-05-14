@@ -11,6 +11,7 @@ import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/c
 import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant.repository';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/calendar-messaging-participant/services/add-person-id-and-workspace-member-id/add-person-id-and-workspace-member-id.service';
+import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 @Injectable()
 export class MessageParticipantService {
@@ -24,13 +25,15 @@ export class MessageParticipantService {
   ) {}
 
   public async updateMessageParticipantsAfterPeopleCreation(
+    createdPeople: ObjectRecord<PersonObjectMetadata>[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
-    const participants =
-      await this.messageParticipantRepository.getWithoutPersonIdAndWorkspaceMemberId(
-        workspaceId,
-      );
+    const participants = await this.messageParticipantRepository.getByHandles(
+      createdPeople.map((person) => person.email),
+      workspaceId,
+      transactionManager,
+    );
 
     if (!participants) return;
 

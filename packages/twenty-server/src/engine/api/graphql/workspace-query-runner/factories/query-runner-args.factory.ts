@@ -131,30 +131,46 @@ export class QueryRunnerArgsFactory {
       return;
     }
 
-    const createArgPromiseByArgKey = Object.entries(filter).map(
-      ([key, value]) => {
-        const fieldMetadata = fieldMetadataMap.get(key);
-
-        if (!fieldMetadata) {
-          return [key, value];
+    const overrideFilter = (filterObject: RecordFilter) => {
+      return Object.entries(filterObject).reduce((acc, [key, value]) => {
+        if (key === 'and' || key === 'or') {
+          acc[key] = value.map((nestedFilter: RecordFilter) =>
+            overrideFilter(nestedFilter),
+          );
+        } else if (key === 'not') {
+          acc[key] = overrideFilter(value);
+        } else {
+          acc[key] = this.transformValueByType(key, value, fieldMetadataMap);
         }
 
-        const createFilterByKey = Object.entries(value).map(
-          ([filterKey, filterValue]) => {
-            switch (fieldMetadata.type) {
-              case FieldMetadataType.NUMBER:
-                return [filterKey, Number(filterValue)];
-              default:
-                return [filterKey, filterValue];
-            }
-          },
+        return acc;
+      }, {});
+    };
+
+    return overrideFilter(filter);
+  }
+
+  private transformValueByType(
+    key: string,
+    value: any,
+    fieldMetadataMap: Map<string, FieldMetadataInterface>,
+  ) {
+    const fieldMetadata = fieldMetadataMap.get(key);
+
+    if (!fieldMetadata) {
+      return value;
+    }
+    switch (fieldMetadata.type) {
+      case 'NUMBER':
+        return Object.fromEntries(
+          Object.entries(value).map(([filterKey, filterValue]) => [
+            filterKey,
+            Number(filterValue),
+          ]),
         );
-
-        return [key, Object.fromEntries(createFilterByKey)];
-      },
-    );
-
-    return Object.fromEntries(createArgPromiseByArgKey);
+      default:
+        return value;
+    }
   }
 
   private async overrideValueByFieldMetadata(

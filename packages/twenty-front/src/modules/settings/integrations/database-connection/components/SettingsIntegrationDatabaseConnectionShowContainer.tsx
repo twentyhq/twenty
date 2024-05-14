@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { Section } from '@react-email/components';
 
 import { useDeleteOneDatabaseConnection } from '@/databases/hooks/useDeleteOneDatabaseConnection';
+import { SettingsIntegrationDatabaseConnectionSummaryCard } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionSummaryCard';
 import { SettingsIntegrationDatabaseTablesListCard } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseTablesListCard';
 import { useDatabaseConnection } from '@/settings/integrations/database-connection/hooks/useDatabaseConnection';
 import { getConnectionDbName } from '@/settings/integrations/utils/getConnectionDbName';
@@ -9,7 +10,6 @@ import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { SettingsIntegrationDatabaseConnectionSummaryCard } from '~/pages/settings/integrations/SettingsIntegrationDatabaseConnectionSummaryCard';
 
 export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
   const navigate = useNavigate();
