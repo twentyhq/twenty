@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 
 import { Request } from 'express';
+import { AxiosResponse } from 'axios';
 
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { ApiRestQueryBuilderFactory } from 'src/engine/api/rest/api-rest-query-builder/api-rest-query-builder.factory';
@@ -21,17 +22,28 @@ export class ApiRestService {
       request,
       this.environmentService.get('SERVER_URL'),
     );
+    let response: AxiosResponse;
 
     try {
-      return await this.httpService.axiosRef.post(`${baseUrl}/graphql`, data, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: request.headers.authorization,
+      response = await this.httpService.axiosRef.post(
+        `${baseUrl}/graphql`,
+        data,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: request.headers.authorization,
+          },
         },
-      });
+      );
     } catch (err) {
-      throw new BadRequestException(err.response.data.errors);
+      throw new BadRequestException(err.response.data);
     }
+
+    if (response.data.errors?.length) {
+      throw new BadRequestException(response.data);
+    }
+
+    return response;
   }
 
   async get(request: Request) {
