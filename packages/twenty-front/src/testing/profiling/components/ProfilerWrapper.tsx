@@ -73,6 +73,13 @@ export const ProfilerWrapper = ({
     [profilingId, testIndex, componentName, runName],
   );
 
+  console.log({
+    profilingId,
+    testIndex,
+    componentName,
+    runName,
+  });
+
   return (
     <Profiler id={profilingId} onRender={handleRender}>
       {children}
