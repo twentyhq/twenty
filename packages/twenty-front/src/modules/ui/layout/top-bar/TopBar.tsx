@@ -7,7 +7,6 @@ type TopBarProps = {
   rightComponent?: ReactNode;
   bottomComponent?: ReactNode;
   displayBottomBorder?: boolean;
-  removeSpacing?: boolean;
 };
 
 const StyledContainer = styled.div`
@@ -15,10 +14,7 @@ const StyledContainer = styled.div`
   flex-direction: column;
 `;
 
-const StyledTopBar = styled.div<{
-  displayBottomBorder: boolean;
-  removeSpacing: boolean;
-}>`
+const StyledTopBar = styled.div<{ displayBottomBorder: boolean }>`
   align-items: center;
   border-bottom: ${({ displayBottomBorder, theme }) =>
     displayBottomBorder ? `1px solid ${theme.border.color.light}` : 'none'};
@@ -29,8 +25,7 @@ const StyledTopBar = styled.div<{
   font-weight: ${({ theme }) => theme.font.weight.medium};
   height: 39px;
   justify-content: space-between;
-  padding-left: ${({ removeSpacing, theme }) =>
-    removeSpacing ? '0px' : theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(2)};
   padding-right: ${({ theme }) => theme.spacing(2)};
   z-index: 7;
 `;
@@ -51,13 +46,9 @@ export const TopBar = ({
   rightComponent,
   bottomComponent,
   displayBottomBorder = true,
-  removeSpacing = false,
 }: TopBarProps) => (
   <StyledContainer className={className}>
-    <StyledTopBar
-      displayBottomBorder={displayBottomBorder}
-      removeSpacing={removeSpacing}
-    >
+    <StyledTopBar displayBottomBorder={displayBottomBorder}>
       <StyledLeftSection>{leftComponent}</StyledLeftSection>
       <StyledRightSection>{rightComponent}</StyledRightSection>
     </StyledTopBar>

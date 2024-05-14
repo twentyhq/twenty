@@ -91,7 +91,6 @@ export const ViewBar = ({
             }
           />
         }
-        removeSpacing={true}
       />
     </ViewScope>
   );
