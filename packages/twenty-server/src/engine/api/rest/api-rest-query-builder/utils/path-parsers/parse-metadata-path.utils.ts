@@ -2,34 +2,12 @@ import { BadRequestException } from '@nestjs/common';
 
 import { Request } from 'express';
 
-export const parsePath = (
-  request: Request,
-): { object: string; id?: string } => {
-  const queryAction = request.path.replace('/rest/', '').split('/');
-
-  if (queryAction.length > 2) {
-    throw new BadRequestException(
-      `Query path '${request.path}' invalid. Valid examples: /rest/companies/id or /rest/companies`,
-    );
-  }
-
-  if (queryAction.length === 1) {
-    return { object: queryAction[0] };
-  }
-
-  return { object: queryAction[0], id: queryAction[1] };
-};
-
-export const parseBatchPath = (request: Request): { object: string } => {
-  return { object: request.path.replace('/rest/batch/', '') };
-};
-
 export const parseMetadataPath = (
   request: Request,
 ): { objectNameSingular: string; objectNamePlural: string; id?: string } => {
   const queryAction = request.path.replace('/rest/metadata/', '').split('/');
 
-  if (queryAction.length > 3 || queryAction.length === 0) {
+  if (queryAction.length >= 3 || queryAction.length === 0) {
     throw new BadRequestException(
       `Query path '${request.path}' invalid. Valid examples: /rest/metadata/fields or /rest/metadata/objects/id`,
     );

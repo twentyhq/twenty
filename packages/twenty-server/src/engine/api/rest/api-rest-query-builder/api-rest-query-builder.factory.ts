@@ -13,15 +13,13 @@ import { DeleteVariablesFactory } from 'src/engine/api/rest/api-rest-query-build
 import { CreateVariablesFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/create-variables.factory';
 import { UpdateVariablesFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/update-variables.factory';
 import { GetVariablesFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/get-variables.factory';
-import {
-  parseBatchPath,
-  parsePath,
-} from 'src/engine/api/rest/api-rest-query-builder/utils/parse-path.utils';
+import { parsePath } from 'src/engine/api/rest/api-rest-query-builder/utils/path-parsers/parse-path.utils';
 import { computeDepth } from 'src/engine/api/rest/api-rest-query-builder/utils/compute-depth.utils';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ApiRestQuery } from 'src/engine/api/rest/types/api-rest-query.type';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { CreateManyQueryFactory } from 'src/engine/api/rest/api-rest-query-builder/factories/create-many-query.factory';
+import { parseBatchPath } from 'src/engine/api/rest/api-rest-query-builder/utils/path-parsers/parse-batch-path.utils';
 
 @Injectable()
 export class ApiRestQueryBuilderFactory {

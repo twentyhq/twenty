@@ -1,4 +1,4 @@
-import { cleanGraphQLResponse } from 'src/engine/api/rest/api-rest.controller.utils';
+import { cleanGraphQLResponse } from 'src/engine/api/rest/controllers/utils/api-rest.controller.utils';
 
 describe('cleanGraphQLResponse', () => {
   it('should remove edges/node from results', () => {

@@ -3,7 +3,7 @@ import { Controller, Post, Req, Res } from '@nestjs/common';
 import { Request, Response } from 'express';
 
 import { ApiRestService } from 'src/engine/api/rest/api-rest.service';
-import { cleanGraphQLResponse } from 'src/engine/api/rest/api-rest.controller.utils';
+import { cleanGraphQLResponse } from 'src/engine/api/rest/controllers/utils/api-rest.controller.utils';
 
 @Controller('rest/batch/*')
 export class BatchApiRestController {

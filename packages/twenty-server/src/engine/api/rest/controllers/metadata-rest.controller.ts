@@ -1,13 +1,13 @@
-import { Controller, Delete, Get, Post, Put, Req, Res } from '@nestjs/common';
+import { Controller, Get, Delete, Post, Put, Req, Res } from '@nestjs/common';
 
 import { Request, Response } from 'express';
 
-import { ApiRestService } from 'src/engine/api/rest/api-rest.service';
-import { cleanGraphQLResponse } from 'src/engine/api/rest/api-rest.controller.utils';
+import { ApiRestMetadataService } from 'src/engine/api/rest/metadata-rest.service';
+import { cleanGraphQLResponse } from 'src/engine/api/rest/controllers/utils/api-rest.controller.utils';
 
-@Controller('rest/*')
-export class ApiRestController {
-  constructor(private readonly apiRestService: ApiRestService) {}
+@Controller('rest/metadata/*')
+export class ApiRestMetadataController {
+  constructor(private readonly apiRestService: ApiRestMetadataService) {}
 
   @Get()
   async handleApiGet(@Req() request: Request, @Res() res: Response) {
@@ -25,7 +25,7 @@ export class ApiRestController {
 
   @Post()
   async handleApiPost(@Req() request: Request, @Res() res: Response) {
-    const result = await this.apiRestService.createOne(request);
+    const result = await this.apiRestService.create(request);
 
     res.send(cleanGraphQLResponse(result.data));
   }
