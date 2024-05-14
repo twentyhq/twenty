@@ -24,6 +24,7 @@ import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/wo
 import {
   WorkspaceMigrationColumnActionType,
   WorkspaceMigrationColumnDrop,
+  WorkspaceMigrationCreateComment,
   WorkspaceMigrationTableActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import {
@@ -62,6 +63,7 @@ import { validateObjectMetadataInput } from 'src/engine/metadata-modules/object-
 import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
+import { buildAlteredCommentOnForeignKeyDeletion } from 'src/engine/metadata-modules/object-metadata/utils/build-altered-comment-on-foreign-key-deletion.util';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -205,6 +207,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
             },
           ],
         );
+
+        // for remote objects, we need to update the comment of the foreign key column
+        if (objectMetadata.isRemote) {
+          await this.createMigrationToAlterCommentOnForeignKeyDeletion(
+            workspaceId,
+            relationToDelete,
+          );
+        }
       }
     }
 
@@ -958,5 +968,49 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     ]);
 
     return { favoriteObjectMetadata };
+  }
+
+  private async createMigrationToAlterCommentOnForeignKeyDeletion(
+    workspaceId: string,
+    relationToDelete: RelationToDelete,
+  ) {
+    const dataSourceMetadata =
+      await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
+        workspaceId,
+      );
+
+    const workspaceDataSource =
+      await this.typeORMService.connectToDataSource(dataSourceMetadata);
+
+    const alteredComment = await buildAlteredCommentOnForeignKeyDeletion(
+      relationToDelete.toObjectName,
+      relationToDelete.fromObjectName,
+      dataSourceMetadata.schema,
+      workspaceDataSource,
+    );
+
+    if (alteredComment) {
+      await this.workspaceMigrationService.createCustomMigration(
+        generateMigrationName(
+          `alter-comment-${relationToDelete.fromObjectName}-${relationToDelete.toObjectName}`,
+        ),
+        workspaceId,
+        [
+          {
+            name: computeTableName(
+              relationToDelete.toObjectName,
+              relationToDelete.toObjectMetadataIsCustom,
+            ),
+            action: WorkspaceMigrationTableActionType.ALTER,
+            columns: [
+              {
+                action: WorkspaceMigrationColumnActionType.CREATE_COMMENT,
+                comment: alteredComment,
+              } satisfies WorkspaceMigrationCreateComment,
+            ],
+          },
+        ],
+      );
+    }
   }
 }
