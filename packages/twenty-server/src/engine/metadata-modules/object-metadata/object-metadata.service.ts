@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -56,10 +57,11 @@ import {
 import { createWorkspaceMigrationsForCustomObject } from 'src/engine/metadata-modules/object-metadata/utils/create-workspace-migrations-for-custom-object.util';
 import { createWorkspaceMigrationsForRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/create-workspace-migrations-for-remote-object.util';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { validateObjectMetadataInput } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -81,8 +83,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     private readonly typeORMService: TypeORMService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
+    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
   ) {
     super(objectMetadataRepository);
   }
@@ -227,6 +228,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       workspaceId,
     );
 
+    await this.workspaceCacheVersionService.incrementVersion(workspaceId);
+
     return objectMetadata;
   }
 
@@ -247,6 +250,23 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       throw new BadRequestException(
         'The singular and plural name cannot be the same for an object',
       );
+    }
+
+    const objectAlreadyExists = await this.objectMetadataRepository.findOne({
+      where: [
+        {
+          nameSingular: objectMetadataInput.nameSingular,
+          workspaceId: objectMetadataInput.workspaceId,
+        },
+        {
+          namePlural: objectMetadataInput.namePlural,
+          workspaceId: objectMetadataInput.workspaceId,
+        },
+      ],
+    });
+
+    if (objectAlreadyExists) {
+      throw new ConflictException('Object already exists');
     }
 
     const isCustom = !objectMetadataInput.isRemote;
@@ -384,7 +404,22 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       );
     });
 
+    await this.workspaceCacheVersionService.incrementVersion(
+      objectMetadataInput.workspaceId,
+    );
+
     return createdObjectMetadata;
+  }
+
+  public async updateOneObject(
+    input: UpdateOneObjectInput,
+    workspaceId: string,
+  ): Promise<ObjectMetadataEntity> {
+    const updatedObject = await super.updateOne(input.id, input.update);
+
+    await this.workspaceCacheVersionService.incrementVersion(workspaceId);
+
+    return updatedObject;
   }
 
   public async findOneWithinWorkspace(
@@ -460,6 +495,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
   public async deleteObjectsMetadata(workspaceId: string) {
     await this.objectMetadataRepository.delete({ workspaceId });
+    await this.workspaceCacheVersionService.incrementVersion(workspaceId);
   }
 
   private async createObjectRelationsMetadataAndMigrations(

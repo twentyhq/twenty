@@ -80,7 +80,7 @@ export const UPDATE_ONE_FIELD_METADATA_ITEM = gql`
 export const UPDATE_ONE_OBJECT_METADATA_ITEM = gql`
   mutation UpdateOneObjectMetadataItem(
     $idToUpdate: UUID!
-    $updatePayload: UpdateObjectInput!
+    $updatePayload: UpdateObjectPayload!
   ) {
     updateOneObject(input: { id: $idToUpdate, update: $updatePayload }) {
       id

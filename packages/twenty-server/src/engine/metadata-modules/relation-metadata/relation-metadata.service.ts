@@ -26,6 +26,7 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import { InvalidStringException } from 'src/engine/metadata-modules/errors/InvalidStringException';
 import { validateMetadataName } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 
 import {
   RelationMetadataEntity,
@@ -42,6 +43,7 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     private readonly fieldMetadataService: FieldMetadataService,
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
+    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
   ) {
     super(relationMetadataRepository);
   }
@@ -58,7 +60,6 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       validateMetadataName(relationMetadataInput.toName);
     } catch (error) {
       if (error instanceof InvalidStringException) {
-        console.error(error.message);
         throw new BadRequestException(
           `Characters used in name "${relationMetadataInput.fromName}" or "${relationMetadataInput.toName}" are not supported`,
         );
@@ -108,6 +109,10 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     );
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+      relationMetadataInput.workspaceId,
+    );
+
+    await this.workspaceCacheVersionService.incrementVersion(
       relationMetadataInput.workspaceId,
     );
 
@@ -308,7 +313,10 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
     });
   }
 
-  override async deleteOne(id: string): Promise<RelationMetadataEntity> {
+  public async deleteOneRelation(
+    id: string,
+    workspaceId: string,
+  ): Promise<RelationMetadataEntity> {
     // TODO: This logic is duplicated with the BeforeDeleteOneRelation hook
     const relationMetadata = await this.relationMetadataRepository.findOne({
       where: { id },
@@ -319,10 +327,10 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       throw new NotFoundException('Relation does not exist');
     }
 
-    const deletedRelationMetadata = super.deleteOne(id);
+    await super.deleteOne(id);
 
     // TODO: Move to a cdc scheduler
-    this.fieldMetadataService.deleteMany({
+    await this.fieldMetadataService.deleteMany({
       id: {
         in: [
           relationMetadata.fromFieldMetadataId,
@@ -331,7 +339,10 @@ export class RelationMetadataService extends TypeOrmQueryService<RelationMetadat
       },
     });
 
-    return deletedRelationMetadata;
+    await this.workspaceCacheVersionService.incrementVersion(workspaceId);
+
+    // TODO: Return id for delete endpoints
+    return relationMetadata;
   }
 
   async findManyRelationMetadataByFieldMetadataIds(

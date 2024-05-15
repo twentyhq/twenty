@@ -10,6 +10,7 @@ const calendarEvents: CalendarEvent[] = [
     isFullDay: false,
     startsAt: '2024-02-17T21:45:27.822Z',
     visibility: 'METADATA',
+    __typename: 'CalendarEvent',
   },
   {
     id: '5678',
@@ -17,6 +18,7 @@ const calendarEvents: CalendarEvent[] = [
     isFullDay: false,
     startsAt: '2024-02-18T21:43:27.754Z',
     visibility: 'SHARE_EVERYTHING',
+    __typename: 'CalendarEvent',
   },
   {
     id: '91011',
@@ -24,6 +26,7 @@ const calendarEvents: CalendarEvent[] = [
     isFullDay: true,
     startsAt: '2024-02-19T22:05:27.653Z',
     visibility: 'METADATA',
+    __typename: 'CalendarEvent',
   },
   {
     id: '121314',
@@ -31,6 +34,7 @@ const calendarEvents: CalendarEvent[] = [
     isFullDay: true,
     startsAt: '2024-02-20T23:15:23.150Z',
     visibility: 'SHARE_EVERYTHING',
+    __typename: 'CalendarEvent',
   },
 ];
 

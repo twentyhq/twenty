@@ -1,4 +1,10 @@
-import React, { ReactElement, useContext, useState } from 'react';
+import React, {
+  ReactElement,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { IconArrowUpRight } from 'twenty-ui';
@@ -14,6 +20,7 @@ import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/rec
 import { RecordTableScopeInternalContext } from '@/object-record/record-table/scopes/scope-internal-context/RecordTableScopeInternalContext';
 import { isSoftFocusOnTableCellComponentFamilyState } from '@/object-record/record-table/states/isSoftFocusOnTableCellComponentFamilyState';
 import { isTableCellInEditModeComponentFamilyState } from '@/object-record/record-table/states/isTableCellInEditModeComponentFamilyState';
+import { ExpandableListProps } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 import { useAvailableScopeIdOrThrow } from '@/ui/utilities/recoil-scope/scopes-internal/hooks/useAvailableScopeId';
 import { getScopeIdOrUndefinedFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdOrUndefinedFromComponentId';
@@ -33,7 +40,7 @@ const StyledTd = styled.td<{ isSelected: boolean; isInEditMode: boolean }>`
   z-index: ${({ isInEditMode }) => (isInEditMode ? '4 !important' : '3')};
 `;
 
-const StyledCellBaseContainer = styled.div`
+const StyledCellBaseContainer = styled.div<{ softFocus: boolean }>`
   align-items: center;
   box-sizing: border-box;
   cursor: pointer;
@@ -41,6 +48,12 @@ const StyledCellBaseContainer = styled.div`
   height: 32px;
   position: relative;
   user-select: none;
+  ${(props) =>
+    props.softFocus
+      ? `background: ${props.theme.background.transparent.secondary};
+      border-radius: ${props.theme.border.radius.sm};
+      outline: 1px solid ${props.theme.font.color.extraLight};`
+      : ''}
 `;
 
 export type RecordTableCellContainerProps = {
@@ -63,6 +76,10 @@ export const RecordTableCellContainer = ({
   editHotkeyScope,
 }: RecordTableCellContainerProps) => {
   const { columnIndex } = useContext(RecordTableCellContext);
+  const reference = useRef<HTMLTableCellElement>(null);
+  const [isHovered, setIsHovered] = useState(false);
+  const [newNonEditModeContent, setNewNonEditModeContent] =
+    useState<ReactElement>(nonEditModeContent);
   const { isReadOnly, isSelected, recordId } = useContext(
     RecordTableRowContext,
   );
@@ -70,8 +87,6 @@ export const RecordTableCellContainer = ({
     useContext(RecordTableContext);
 
   const cellPosition = useCurrentTableCellPosition();
-
-  const [isHovered, setIsHovered] = useState(false);
 
   const { openTableCell } = useOpenRecordTableCellFromCell();
 
@@ -135,8 +150,20 @@ export const RecordTableCellContainer = ({
     (!isFirstColumn || !isEmpty) &&
     !isReadOnly;
 
+  useEffect(() => {
+    if (React.isValidElement<ExpandableListProps>(nonEditModeContent)) {
+      setNewNonEditModeContent(
+        React.cloneElement(nonEditModeContent, {
+          isHovered: showButton,
+          reference: reference.current || undefined,
+        }),
+      );
+    }
+  }, [nonEditModeContent, showButton, reference]);
+
   return (
     <StyledTd
+      ref={reference}
       isSelected={isSelected}
       onContextMenu={handleContextMenu}
       isInEditMode={isCurrentTableCellInEditMode}
@@ -147,33 +174,36 @@ export const RecordTableCellContainer = ({
         <StyledCellBaseContainer
           onMouseEnter={handleContainerMouseEnter}
           onMouseLeave={handleContainerMouseLeave}
+          softFocus={hasSoftFocus}
         >
           {isCurrentTableCellInEditMode ? (
             <RecordTableCellEditMode>{editModeContent}</RecordTableCellEditMode>
           ) : hasSoftFocus ? (
             <>
+              <RecordTableCellSoftFocusMode>
+                {editModeContentOnly ? editModeContent : newNonEditModeContent}
+              </RecordTableCellSoftFocusMode>
               {showButton && (
                 <RecordTableCellButton
                   onClick={handleButtonClick}
                   Icon={buttonIcon}
                 />
               )}
-              <RecordTableCellSoftFocusMode>
-                {editModeContentOnly ? editModeContent : nonEditModeContent}
-              </RecordTableCellSoftFocusMode>
             </>
           ) : (
             <>
+              {!isEmpty && (
+                <RecordTableCellDisplayMode>
+                  {editModeContentOnly
+                    ? editModeContent
+                    : newNonEditModeContent}
+                </RecordTableCellDisplayMode>
+              )}
               {showButton && (
                 <RecordTableCellButton
                   onClick={handleButtonClick}
                   Icon={buttonIcon}
                 />
-              )}
-              {!isEmpty && (
-                <RecordTableCellDisplayMode>
-                  {editModeContentOnly ? editModeContent : nonEditModeContent}
-                </RecordTableCellDisplayMode>
               )}
             </>
           )}
