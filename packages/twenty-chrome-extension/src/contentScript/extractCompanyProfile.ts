@@ -112,6 +112,9 @@ export const insertButtonForCompany = async () => {
   };
 
   if (isDefined(company)) {
+    await changeSidePanelUrl(
+      `${import.meta.env.VITE_FRONT_BASE_URL}/object/company/${company.id}`,
+    );
     if (isDefined(company.id)) openCompanyOnSidePanel(company.id);
   } else {
     companyButtonSpan.textContent = 'Add to Twenty';

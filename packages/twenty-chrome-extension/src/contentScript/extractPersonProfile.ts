@@ -98,21 +98,15 @@ export const insertButtonForPerson = async () => {
   const personButtonDiv = createDefaultButton('twenty-person-btn');
 
   if (isDefined(personButtonDiv)) {
-    const newProfileDiv: HTMLDivElement | null = document.querySelector(
-      '.uYcujyCsaDYxUNAaBqobOEpVeyuRkA',
-    );
-
     const addedProfileDiv: HTMLDivElement | null = document.querySelector(
       '.pv-top-card-v2-ctas__custom',
     );
 
-    if (isDefined(newProfileDiv) || isDefined(addedProfileDiv)) {
+    if (isDefined(addedProfileDiv)) {
       Object.assign(personButtonDiv.style, {
         marginRight: '.8rem',
       });
-      if (isDefined(newProfileDiv)) newProfileDiv.prepend(personButtonDiv);
-      else if (isDefined(addedProfileDiv))
-        addedProfileDiv.prepend(personButtonDiv);
+      addedProfileDiv.prepend(personButtonDiv);
     }
 
     const personButtonSpan = personButtonDiv.getElementsByTagName('span')[0];
@@ -129,6 +123,9 @@ export const insertButtonForPerson = async () => {
     };
 
     if (isDefined(person)) {
+      await changeSidePanelUrl(
+        `${import.meta.env.VITE_FRONT_BASE_URL}/object/person/${person.id}`,
+      );
       if (isDefined(person.id)) openPersonOnSidePanel(person.id);
     } else {
       personButtonSpan.textContent = 'Add to Twenty';
