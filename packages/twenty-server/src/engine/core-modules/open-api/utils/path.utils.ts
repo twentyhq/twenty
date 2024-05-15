@@ -6,8 +6,8 @@ import {
   getDeleteResponse200,
   getJsonResponse,
   getFindManyResponse200,
-  getCreateOneResponse200,
-  getCreateManyResponse200,
+  getCreateOneResponse201,
+  getCreateManyResponse201,
   getFindOneResponse200,
   getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
@@ -24,7 +24,7 @@ export const computeBatchPath = (
       parameters: [{ $ref: '#/components/parameters/depth' }],
       requestBody: getRequestBody(capitalize(item.namePlural)),
       responses: {
-        '201': getCreateManyResponse200(item),
+        '201': getCreateManyResponse201(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },
@@ -61,7 +61,7 @@ export const computeManyResultPath = (
       parameters: [{ $ref: '#/components/parameters/depth' }],
       requestBody: getRequestBody(capitalize(item.nameSingular)),
       responses: {
-        '201': getCreateOneResponse200(item),
+        '201': getCreateOneResponse201(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },

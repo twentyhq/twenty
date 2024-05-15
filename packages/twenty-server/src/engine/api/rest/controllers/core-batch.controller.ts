@@ -13,6 +13,6 @@ export class CoreBatchController {
   async handleApiPost(@Req() request: Request, @Res() res: Response) {
     const result = await this.apiRestService.createMany(request);
 
-    res.send(cleanGraphQLResponse(result.data));
+    res.status(201).send(cleanGraphQLResponse(result.data));
   }
 }

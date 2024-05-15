@@ -70,7 +70,7 @@ export const getFindOneResponse200 = (
   };
 };
 
-export const getCreateOneResponse200 = (
+export const getCreateOneResponse201 = (
   item: Pick<ObjectMetadataEntity, 'nameSingular'>,
 ) => {
   return {
@@ -102,7 +102,7 @@ export const getCreateOneResponse200 = (
   };
 };
 
-export const getCreateManyResponse200 = (
+export const getCreateManyResponse201 = (
   item: Pick<ObjectMetadataEntity, 'nameSingular' | 'namePlural'>,
 ) => {
   return {

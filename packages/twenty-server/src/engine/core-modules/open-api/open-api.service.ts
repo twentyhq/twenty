@@ -23,7 +23,7 @@ import { capitalize } from 'src/utils/capitalize';
 import {
   getDeleteResponse200,
   getFindManyResponse200,
-  getCreateOneResponse200,
+  getCreateOneResponse201,
   getFindOneResponse200,
   getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
@@ -143,7 +143,7 @@ export class OpenApiService {
           operationId: `createOne${capitalize(item.nameSingular)}`,
           requestBody: getRequestBody(capitalize(item.nameSingular)),
           responses: {
-            '200': getCreateOneResponse200(item),
+            '200': getCreateOneResponse201(item),
             '400': { $ref: '#/components/responses/400' },
             '401': { $ref: '#/components/responses/401' },
           },
