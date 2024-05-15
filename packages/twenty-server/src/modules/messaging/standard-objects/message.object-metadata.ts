@@ -7,18 +7,18 @@ import {
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { MESSAGE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
-import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
-import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
-import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/relation-metadata.decorator';
-import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
 import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
 import { MessageThreadObjectMetadata } from 'src/modules/messaging/standard-objects/message-thread.object-metadata';
-import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 
-@ObjectMetadata({
+@WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.message,
   namePlural: 'messages',
   labelSingular: 'Message',
@@ -26,10 +26,10 @@ import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-me
   description: 'Message',
   icon: 'IconMessage',
 })
-@IsNotAuditLogged()
-@IsSystem()
-export class MessageObjectMetadata extends BaseObjectMetadata {
-  @FieldMetadata({
+@WorkspaceIsNotAuditLogged()
+@WorkspaceIsSystem()
+export class MessageObjectMetadata extends BaseWorkspaceEntity {
+  @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.headerMessageId,
     type: FieldMetadataType.TEXT,
     label: 'Header message Id',
@@ -38,18 +38,7 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   })
   headerMessageId: string;
 
-  @FieldMetadata({
-    standardId: MESSAGE_STANDARD_FIELD_IDS.messageThread,
-    type: FieldMetadataType.RELATION,
-    label: 'Message Thread Id',
-    description: 'Message Thread Id',
-    icon: 'IconHash',
-    joinColumn: 'messageThreadId',
-  })
-  @IsNullable()
-  messageThread: Relation<MessageThreadObjectMetadata>;
-
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.direction,
     type: FieldMetadataType.SELECT,
     label: 'Direction',
@@ -63,7 +52,7 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   })
   direction: string;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.subject,
     type: FieldMetadataType.TEXT,
     label: 'Subject',
@@ -72,7 +61,7 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   })
   subject: string;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.text,
     type: FieldMetadataType.TEXT,
     label: 'Text',
@@ -81,45 +70,52 @@ export class MessageObjectMetadata extends BaseObjectMetadata {
   })
   text: string;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: MESSAGE_STANDARD_FIELD_IDS.receivedAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Received At',
     description: 'The date the message was received',
     icon: 'IconCalendar',
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   receivedAt: string;
 
-  @FieldMetadata({
+  @WorkspaceRelation({
+    standardId: MESSAGE_STANDARD_FIELD_IDS.messageThread,
+    type: RelationMetadataType.MANY_TO_ONE,
+    label: 'Message Thread Id',
+    description: 'Message Thread Id',
+    icon: 'IconHash',
+    joinColumn: 'messageThreadId',
+    inverseSideTarget: () => MessageThreadObjectMetadata,
+    inverseSideFieldKey: 'messages',
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  messageThread: Relation<MessageThreadObjectMetadata>;
+
+  @WorkspaceRelation({
     standardId: MESSAGE_STANDARD_FIELD_IDS.messageParticipants,
-    type: FieldMetadataType.RELATION,
+    type: RelationMetadataType.ONE_TO_MANY,
     label: 'Message Participants',
     description: 'Message Participants',
     icon: 'IconUserCircle',
-  })
-  @RelationMetadata({
-    type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => MessageParticipantObjectMetadata,
-    inverseSideFieldKey: 'message',
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   messageParticipants: Relation<MessageParticipantObjectMetadata[]>;
 
-  @FieldMetadata({
+  @WorkspaceRelation({
     standardId: MESSAGE_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
-    type: FieldMetadataType.RELATION,
+    type: RelationMetadataType.ONE_TO_MANY,
     label: 'Message Channel Association',
     description: 'Messages from the channel.',
     icon: 'IconMessage',
-  })
-  @RelationMetadata({
-    type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => MessageChannelMessageAssociationObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   messageChannelMessageAssociations: Relation<
     MessageChannelMessageAssociationObjectMetadata[]
   >;

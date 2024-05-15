@@ -8,17 +8,13 @@ import {
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
-export interface WorkspaceRelationMetadataArgs {
+export type WorkspaceDynamicRelationMetadataArgsFactory = (
+  oppositeObjectMetadata: ObjectMetadataEntity,
+) => {
   /**
    * Standard id.
    */
   readonly standardId: string;
-
-  /**
-   * Class to which relation is applied.
-   */
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  readonly target: Function;
 
   /**
    * Relation name.
@@ -28,24 +24,40 @@ export interface WorkspaceRelationMetadataArgs {
   /**
    * Relation label.
    */
-  readonly label: string | ((objectMetadata: ObjectMetadataEntity) => string);
-
-  /**
-   * Relation type.
-   */
-  readonly type: RelationMetadataType;
+  readonly label: string;
 
   /**
    * Relation description.
    */
-  readonly description?:
-    | string
-    | ((objectMetadata: ObjectMetadataEntity) => string);
+  readonly description?: string;
 
   /**
    * Relation icon.
    */
   readonly icon?: string;
+
+  /**
+   * Relation join column.
+   */
+  readonly joinColumn?: string;
+};
+
+export interface WorkspaceDynamicRelationMetadataArgs {
+  /**
+   * Class to which relation is applied.
+   */
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  readonly target: Function;
+
+  /**
+   * Factory function
+   */
+  readonly argsFactory: WorkspaceDynamicRelationMetadataArgsFactory;
+
+  /**
+   * Relation type.
+   */
+  readonly type: RelationMetadataType;
 
   /**
    * Relation inverse side target.
@@ -61,11 +73,6 @@ export interface WorkspaceRelationMetadataArgs {
    * Relation on delete action.
    */
   readonly onDelete?: RelationOnDeleteAction;
-
-  /**
-   * Relation join column.
-   */
-  readonly joinColumn?: string;
 
   /**
    * Is primary field.

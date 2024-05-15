@@ -1,15 +1,17 @@
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { VIEW_FIELD_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
-import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
-import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
-import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
-import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { ViewObjectMetadata } from 'src/modules/view/standard-objects/view.object-metadata';
 
-@ObjectMetadata({
+@WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.viewField,
   namePlural: 'viewFields',
   labelSingular: 'View Field',
@@ -17,10 +19,10 @@ import { ViewObjectMetadata } from 'src/modules/view/standard-objects/view.objec
   description: '(System) View Fields',
   icon: 'IconTag',
 })
-@IsNotAuditLogged()
-@IsSystem()
-export class ViewFieldObjectMetadata extends BaseObjectMetadata {
-  @FieldMetadata({
+@WorkspaceIsNotAuditLogged()
+@WorkspaceIsSystem()
+export class ViewFieldObjectMetadata extends BaseWorkspaceEntity {
+  @WorkspaceField({
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.fieldMetadataId,
     type: FieldMetadataType.UUID,
     label: 'Field Metadata Id',
@@ -29,7 +31,7 @@ export class ViewFieldObjectMetadata extends BaseObjectMetadata {
   })
   fieldMetadataId: string;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.isVisible,
     type: FieldMetadataType.BOOLEAN,
     label: 'Visible',
@@ -39,7 +41,7 @@ export class ViewFieldObjectMetadata extends BaseObjectMetadata {
   })
   isVisible: boolean;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.size,
     type: FieldMetadataType.NUMBER,
     label: 'Size',
@@ -49,7 +51,7 @@ export class ViewFieldObjectMetadata extends BaseObjectMetadata {
   })
   size: number;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.NUMBER,
     label: 'Position',
@@ -59,14 +61,16 @@ export class ViewFieldObjectMetadata extends BaseObjectMetadata {
   })
   position: number;
 
-  @FieldMetadata({
+  @WorkspaceRelation({
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.view,
-    type: FieldMetadataType.RELATION,
+    type: RelationMetadataType.MANY_TO_ONE,
     label: 'View',
     description: 'View Field related view',
     icon: 'IconLayoutCollage',
+    inverseSideTarget: () => ViewObjectMetadata,
+    inverseSideFieldKey: 'viewFields',
     joinColumn: 'viewId',
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   view?: ViewObjectMetadata;
 }
