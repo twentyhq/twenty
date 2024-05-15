@@ -1,4 +1,13 @@
-import { Controller, Get, Delete, Post, Req, Res, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Delete,
+  Post,
+  Req,
+  Res,
+  Patch,
+  Put,
+} from '@nestjs/common';
 
 import { Request, Response } from 'express';
 
@@ -32,6 +41,16 @@ export class ApiRestMetadataController {
 
   @Patch()
   async handleApiPatch(@Req() request: Request, @Res() res: Response) {
+    const result = await this.apiRestService.update(request);
+
+    res.status(200).send(cleanGraphQLResponse(result.data));
+  }
+
+  // This endpoint is not documented in the OpenAPI schema.
+  // We keep it to avoid a breaking change since it initially used PUT instead of PATCH,
+  // and because the PUT verb is often used as a PATCH.
+  @Put()
+  async handleApiPut(@Req() request: Request, @Res() res: Response) {
     const result = await this.apiRestService.update(request);
 
     res.status(200).send(cleanGraphQLResponse(result.data));
