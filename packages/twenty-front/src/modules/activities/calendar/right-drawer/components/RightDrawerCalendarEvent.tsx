@@ -18,7 +18,9 @@ export const RightDrawerCalendarEvent = () => {
     onCompleted: (record) => setRecords([record]),
   });
 
-  if (!calendarEvent) return null;
+  if (!calendarEvent) {
+    return null;
+  }
 
   return <CalendarEventDetails calendarEvent={calendarEvent} />;
 };
