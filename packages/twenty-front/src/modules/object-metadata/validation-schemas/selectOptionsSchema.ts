@@ -1,11 +1,9 @@
 import { z } from 'zod';
 
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
-import {
-  getOptionValueFromLabel,
-  transliterateLabel,
-} from '@/settings/data-model/fields/forms/utils/getOptionValueFromLabel';
+import { getOptionValueFromLabel } from '@/settings/data-model/fields/forms/utils/getOptionValueFromLabel';
 import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
+import { computeOptionValueFromLabelOrThrow } from '~/pages/settings/data-model/utils/compute-option-value-from-label.utils';
 
 const selectOptionSchema = z
   .object({
@@ -21,7 +19,7 @@ const selectOptionSchema = z
   .refine(
     (option) => {
       try {
-        transliterateLabel(option.label);
+        computeOptionValueFromLabelOrThrow(option.label);
         return true;
       } catch (error) {
         return false;

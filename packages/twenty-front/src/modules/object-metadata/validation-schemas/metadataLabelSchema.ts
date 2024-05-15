@@ -1,20 +1,17 @@
 import { z } from 'zod';
 
-import {
-  METADATA_LABEL_VALID_STRING_PATTERN,
-  METADATA_NAME_VALID_STRING_PATTERN,
-} from '~/pages/settings/data-model/utils/constants.utils';
-import { formatLabelOrThrows } from '~/pages/settings/data-model/utils/format-label.util';
+import { METADATA_LABEL_VALID_PATTERN } from '~/pages/settings/data-model/constants/MetadataLabelValidPattern.constants';
+import { computeMetadataNameFromLabelOrThrow } from '~/pages/settings/data-model/utils/compute-metadata-name-from-label.utils';
 
 export const metadataLabelSchema = z
   .string()
   .trim()
   .min(1)
-  .regex(METADATA_LABEL_VALID_STRING_PATTERN)
+  .regex(METADATA_LABEL_VALID_PATTERN)
   .refine(
     (label) => {
       try {
-        formatLabelOrThrows(label, METADATA_NAME_VALID_STRING_PATTERN);
+        computeMetadataNameFromLabelOrThrow(label);
         return true;
       } catch (error) {
         return false;
