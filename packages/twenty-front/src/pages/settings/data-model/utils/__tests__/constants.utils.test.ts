@@ -11,6 +11,12 @@ describe('METADATA_NAME_VALID_STRING_PATTERN', () => {
     expect(input.match(METADATA_NAME_VALID_STRING_PATTERN)).toBeNull();
   });
 
+  it('matches 1 char long string', () => {
+    const input = 'a';
+
+    expect(input.match(METADATA_NAME_VALID_STRING_PATTERN)).toHaveLength(1);
+  });
+
   it('does not match string starting with digits', () => {
     const input = '1string';
 
@@ -29,6 +35,12 @@ describe('METADATA_LABEL_VALID_STRING_PATTERN', () => {
     const input = ' ';
 
     expect(input.match(METADATA_LABEL_VALID_STRING_PATTERN)).toBeNull();
+  });
+
+  it('matches 1 char long string', () => {
+    const input = 'a';
+
+    expect(input.match(METADATA_LABEL_VALID_STRING_PATTERN)).toHaveLength(1);
   });
 
   it('does not match string starting with digits', () => {
@@ -51,10 +63,16 @@ describe('OPTION_VALUE_VALID_STRING_PATTERN', () => {
     expect(input.match(OPTION_VALUE_VALID_STRING_PATTERN)).toBeNull();
   });
 
+  it('matches 1 char long string', () => {
+    const input = 'a';
+
+    expect(input.match(OPTION_VALUE_VALID_STRING_PATTERN)).toHaveLength(1);
+  });
+
   it('matches string starting with digits', () => {
     const input = '1string';
 
-    expect(input.match(OPTION_VALUE_VALID_STRING_PATTERN)).toBeNull();
+    expect(input.match(OPTION_VALUE_VALID_STRING_PATTERN)).toHaveLength(1);
   });
 
   it('matches string with non-latin char', () => {
