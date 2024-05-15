@@ -19,6 +19,7 @@ export type MenuItemIconButton = {
 export type MenuItemProps = {
   LeftIcon?: IconComponent | null;
   RightIcon?: IconComponent | null;
+  hasRightIcon?: boolean;
   accent?: MenuItemAccent;
   text: string;
   iconButtons?: MenuItemIconButton[];
@@ -32,6 +33,7 @@ export type MenuItemProps = {
 export const MenuItem = ({
   LeftIcon,
   RightIcon,
+  hasRightIcon,
   accent = 'default',
   text,
   iconButtons,
@@ -63,14 +65,18 @@ export const MenuItem = ({
       <StyledMenuItemLeftContent>
         <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />
       </StyledMenuItemLeftContent>
-      <div className="hoverable-buttons">
-        {showIconButtons && (
-          <LightIconButtonGroup iconButtons={iconButtons} size="small" />
-        )}
-      </div>
       <StyledMenuItemRightContent>
-        <MenuItemLeftContent LeftIcon={RightIcon ?? undefined} text={''} />
+        {hasRightIcon && (
+          <MenuItemLeftContent LeftIcon={RightIcon ?? undefined} />
+        )}
       </StyledMenuItemRightContent>
+      {!hasRightIcon && (
+        <div className="hoverable-buttons">
+          {showIconButtons && (
+            <LightIconButtonGroup iconButtons={iconButtons} size="small" />
+          )}
+        </div>
+      )}
     </StyledHoverableMenuItemBase>
   );
 };

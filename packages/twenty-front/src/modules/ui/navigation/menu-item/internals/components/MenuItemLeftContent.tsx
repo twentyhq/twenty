@@ -14,7 +14,7 @@ type MenuItemLeftContentProps = {
   className?: string;
   LeftIcon: IconComponent | null | undefined;
   showGrip?: boolean;
-  text: string;
+  text?: string;
 };
 
 export const MenuItemLeftContent = ({

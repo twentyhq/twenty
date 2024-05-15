@@ -158,6 +158,7 @@ export const RecordIndexOptionsDropdownContent = ({
             onClick={() => handleSelectMenu('hiddenFields')}
             LeftIcon={IconEyeOff}
             RightIcon={IconChevronRight}
+            hasRightIcon={true}
             text="Hidden Fields"
           />
         </>
