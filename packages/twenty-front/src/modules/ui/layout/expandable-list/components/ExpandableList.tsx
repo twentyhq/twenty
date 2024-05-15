@@ -1,48 +1,49 @@
-import { ReactElement, useEffect, useState } from 'react';
+import { ReactElement, useCallback, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
-import { offset, useFloating } from '@floating-ui/react';
 import { Chip, ChipVariant } from 'twenty-ui';
 
 import { AnimatedContainer } from '@/object-record/record-table/components/AnimatedContainer';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { ChildrenContainer } from '@/ui/layout/expandable-list/components/ChildrenContainer';
-import { getChildrenProperties } from '@/ui/layout/expandable-list/utils/getChildProperties';
-import { getChipContentWidth } from '@/ui/layout/expandable-list/utils/getChipContentWidth';
-
-export const GAP_WIDTH = 4;
+import { ExpandedListDropdown } from '@/ui/layout/expandable-list/components/ExpandedListDropdown';
+import { isFirstOverflowingChildElement } from '@/ui/layout/expandable-list/utils/isFirstOverflowingChildElement';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
   justify-content: space-between;
+  min-width: 100%;
   width: 100%;
 `;
 
-const StyledRelationsListContainer = styled.div<{
-  withDropDownBorder?: boolean;
-}>`
-  backdrop-filter: ${({ theme }) => theme.blur.strong};
-  background-color: ${({ theme }) => theme.background.secondary};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  box-shadow: '0px 2px 4px ${({ theme }) =>
-    theme.boxShadow.light}, 2px 4px 16px ${({ theme }) =>
-    theme.boxShadow.strong}';
+const StyledChildrenContainer = styled.div`
   display: flex;
-  flex-wrap: wrap;
   gap: ${({ theme }) => theme.spacing(1)};
-  padding: ${({ theme }) => theme.spacing(2)};
-  outline: ${(props) =>
-    props.withDropDownBorder
-      ? `1px solid ${props.theme.font.color.extraLight}`
-      : 'none'};
+  overflow: hidden;
+  max-width: 100%;
+  flex: 0 1 fit-content;
+  position: relative; // Needed so children elements compute their offsetLeft relatively to this element.
+`;
+
+const StyledChildContainer = styled.div`
+  display: flex;
+  flex-shrink: 0;
+  overflow: hidden;
+
+  &:last-child {
+    flex-shrink: 1;
+  }
+`;
+
+const StyledChipCount = styled(Chip)`
+  flex-shrink: 0;
 `;
 
 export type ExpandableListProps = {
-  isHovered?: boolean;
-  reference?: HTMLDivElement;
-  forceDisplayHiddenCount?: boolean;
-  withDropDownBorder?: boolean;
+  anchorElement?: HTMLElement;
+  isChipCountDisplayed?: boolean;
+  withExpandedListBorder?: boolean;
 };
 
 export type ChildrenProperty = {
@@ -52,95 +53,127 @@ export type ChildrenProperty = {
 
 export const ExpandableList = ({
   children,
-  isHovered,
-  reference,
-  forceDisplayHiddenCount = false,
-  withDropDownBorder = false,
+  anchorElement,
+  isChipCountDisplayed: isChipCountDisplayedFromProps,
+  withExpandedListBorder = false,
 }: {
   children: ReactElement[];
 } & ExpandableListProps) => {
-  const [containerWidth, setContainerWidth] = useState(0);
-  const [isDropdownMenuOpen, setIsDropdownMenuOpen] = useState(false);
-  const [childrenWidths, setChildrenWidths] = useState<Record<number, number>>(
-    {},
+  // isChipCountDisplayedInternal => uncontrolled display of the chip count.
+  // isChipCountDisplayedFromProps => controlled display of the chip count.
+  // If isChipCountDisplayedFromProps is provided, isChipCountDisplayedInternal is not taken into account.
+  const [isChipCountDisplayedInternal, setIsChipCountDisplayedInternal] =
+    useState(false);
+  const isChipCountDisplayed = isDefined(isChipCountDisplayedFromProps)
+    ? isChipCountDisplayedFromProps
+    : isChipCountDisplayedInternal;
+
+  const [isListExpanded, setIsListExpanded] = useState(false);
+
+  // Used with floating-ui if anchorElement is not provided.
+  // floating-ui mentions that `useState` must be used instead of `useRef`
+  // @see https://floating-ui.com/docs/useFloating#elements
+  const [childrenContainerElement, setChildrenContainerElement] =
+    useState<HTMLDivElement | null>(null);
+  const [previousChildrenContainerWidth, setPreviousChildrenContainerWidth] =
+    useState(childrenContainerElement?.clientWidth ?? 0);
+
+  // Used with useListenClickOutside.
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const [firstHiddenChildIndex, setFirstHiddenChildIndex] = useState(
+    children.length,
   );
 
-  // Because Chip width depends on the number of hidden children which depends on the Chip width, we have a circular dependency
-  // To avoid it, we set the Chip width and make sure it can display its content (a number greater than 1)
-  const chipContentWidth = getChipContentWidth(children.length);
-  const chipContainerWidth = chipContentWidth + 2 * GAP_WIDTH; // Because Chip component has 4px padding-left and right
-  const availableWidth = containerWidth - (chipContainerWidth + GAP_WIDTH); // Because there is a 4px gap between ChildrenContainer and ChipContainer
-  const isFocusedMode =
-    (isHovered || forceDisplayHiddenCount) &&
-    Object.values(childrenWidths).length > 0;
+  const hiddenChildrenCount = children.length - firstHiddenChildIndex;
+  const canDisplayChipCount = isChipCountDisplayed && hiddenChildrenCount > 0;
 
-  const childrenProperties = getChildrenProperties(
-    isFocusedMode,
-    availableWidth,
-    childrenWidths,
-  );
-
-  const hiddenChildrenCount = Object.values(childrenProperties).filter(
-    (childProperties) => !childProperties.isVisible,
-  ).length;
-
-  const displayHiddenCountChip = isFocusedMode && hiddenChildrenCount > 0;
-
-  const { refs, floatingStyles } = useFloating({
-    // @ts-expect-error placement accepts 'start' as value even if the typing does not permit it
-    placement: 'start',
-    middleware: [offset({ mainAxis: -1, crossAxis: -1 })],
-    elements: { reference },
-  });
-
-  const openDropdownMenu = (event: React.MouseEvent) => {
+  const handleChipCountClick = useCallback((event: React.MouseEvent) => {
     event.stopPropagation();
-    setIsDropdownMenuOpen(true);
-  };
+    setIsListExpanded(true);
+  }, []);
 
+  const resetFirstHiddenChildIndex = useCallback(() => {
+    setFirstHiddenChildIndex(children.length);
+  }, [children.length]);
+
+  // Recompute first hidden child when:
+  // - isChipCountDisplayed changes
+  // - children length changes
   useEffect(() => {
-    if (!isHovered) {
-      setIsDropdownMenuOpen(false);
-    }
-  }, [isHovered]);
+    resetFirstHiddenChildIndex();
+  }, [isChipCountDisplayed, children.length, resetFirstHiddenChildIndex]);
+
+  useListenClickOutside({
+    refs: [containerRef],
+    callback: () => {
+      // Handle container resize
+      if (
+        childrenContainerElement?.clientWidth !== previousChildrenContainerWidth
+      ) {
+        resetFirstHiddenChildIndex();
+        setPreviousChildrenContainerWidth(
+          childrenContainerElement?.clientWidth ?? 0,
+        );
+      }
+    },
+  });
 
   return (
     <StyledContainer
-      ref={(el) => {
-        if (!el) return;
-        setContainerWidth(el.getBoundingClientRect().width);
-      }}
+      ref={containerRef}
+      onMouseEnter={
+        isChipCountDisplayedFromProps
+          ? undefined
+          : () => setIsChipCountDisplayedInternal(true)
+      }
+      onMouseLeave={
+        isChipCountDisplayedFromProps
+          ? undefined
+          : () => setIsChipCountDisplayedInternal(false)
+      }
     >
-      <ChildrenContainer
-        childrenProperties={childrenProperties}
-        setChildrenWidths={setChildrenWidths}
-        isFocusedMode={isFocusedMode}
-      >
-        {children}
-      </ChildrenContainer>
-      {displayHiddenCountChip && (
+      <StyledChildrenContainer ref={setChildrenContainerElement}>
+        {children.slice(0, firstHiddenChildIndex).map((child, index) => (
+          <StyledChildContainer
+            key={index}
+            ref={(childElement) => {
+              if (
+                // First element is always displayed.
+                index > 0 &&
+                isFirstOverflowingChildElement({
+                  containerElement: childrenContainerElement,
+                  childElement,
+                })
+              ) {
+                setFirstHiddenChildIndex(index);
+              }
+            }}
+          >
+            {child}
+          </StyledChildContainer>
+        ))}
+      </StyledChildrenContainer>
+      {canDisplayChipCount && (
         <AnimatedContainer>
-          <Chip
+          <StyledChipCount
             label={`+${hiddenChildrenCount}`}
             variant={ChipVariant.Highlighted}
-            onClick={openDropdownMenu}
+            onClick={handleChipCountClick}
           />
         </AnimatedContainer>
       )}
-      {isDropdownMenuOpen && (
-        <DropdownMenu
-          ref={refs.setFloating}
-          style={floatingStyles}
-          width={
-            reference
-              ? Math.max(220, reference.getBoundingClientRect().width)
-              : undefined
-          }
+      {isListExpanded && (
+        <ExpandedListDropdown
+          anchorElement={anchorElement ?? childrenContainerElement ?? undefined}
+          onClickOutside={() => {
+            resetFirstHiddenChildIndex();
+            setIsListExpanded(false);
+          }}
+          withBorder={withExpandedListBorder}
         >
-          <StyledRelationsListContainer withDropDownBorder={withDropDownBorder}>
-            {children}
-          </StyledRelationsListContainer>
-        </DropdownMenu>
+          {children}
+        </ExpandedListDropdown>
       )}
     </StyledContainer>
   );
