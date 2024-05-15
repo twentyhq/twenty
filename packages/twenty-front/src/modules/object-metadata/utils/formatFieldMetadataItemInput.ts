@@ -1,5 +1,6 @@
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { formatMetadataLabelToMetadataNameOrThrows } from '~/pages/settings/data-model/utils/format-metadata-label-to-name.util';
+import { METADATA_NAME_VALID_STRING_PATTERN } from '~/pages/settings/data-model/utils/constants.utils';
+import { formatLabelOrThrows } from '~/pages/settings/data-model/utils/format-label.util';
 
 export const formatFieldMetadataItemInput = (
   input: Partial<
@@ -16,7 +17,9 @@ export const formatFieldMetadataItemInput = (
     description: input.description?.trim() ?? null,
     icon: input.icon,
     label,
-    name: label ? formatMetadataLabelToMetadataNameOrThrows(label) : undefined,
+    name: label
+      ? formatLabelOrThrows(label, METADATA_NAME_VALID_STRING_PATTERN)
+      : undefined,
     options: input.options,
   };
 };
