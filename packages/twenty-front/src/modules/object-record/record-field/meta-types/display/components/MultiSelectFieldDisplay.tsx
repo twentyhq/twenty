@@ -14,7 +14,7 @@ export const MultiSelectFieldDisplay = ({
   const { fieldValues, fieldDefinition } = useMultiSelectField();
 
   const selectedOptions = fieldValues
-    ? fieldDefinition.metadata.options.filter((option) =>
+    ? fieldDefinition.metadata.options?.filter((option) =>
         fieldValues.includes(option.value),
       )
     : [];

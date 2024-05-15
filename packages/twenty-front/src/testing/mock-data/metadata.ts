@@ -54,6 +54,7 @@ const customObjectMetadataItemEdge: ObjectEdge = {
             updatedAt: '2024-04-08T12:48:49.538Z',
             defaultValue: null,
             relationDefinition: {
+              relationId: '1ec22b36-9e3c-4f24-8cf6-6c387ec3f243',
               __typename: 'RelationDefinition',
               direction: 'ONE_TO_MANY',
               sourceObjectMetadata: {

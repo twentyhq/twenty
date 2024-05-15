@@ -8,7 +8,7 @@ import { z } from 'zod';
 import { useUpdateOneDatabaseConnection } from '@/databases/hooks/useUpdateOneDatabaseConnection';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
-import { SettingsIntegrationPostgreSQLConnectionForm } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionForm';
+import { SettingsIntegrationDatabaseConnectionForm } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionForm';
 import {
   formatValuesForUpdate,
   getEditionSchemaForForm,
@@ -132,18 +132,17 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
             accent={'blue'}
           />
         )}
-        {databaseKey === 'postgresql' ? (
-          <Section>
-            <H2Title
-              title="Edit PostgreSQL Connection"
-              description="Edit the information to connect your PostgreSQL database"
-            />
+        <Section>
+          <H2Title
+            title="Edit Connection"
+            description="Edit the information to connect your database"
+          />
 
-            <SettingsIntegrationPostgreSQLConnectionForm
-              disabled={hasSyncedTables}
-            />
-          </Section>
-        ) : null}
+          <SettingsIntegrationDatabaseConnectionForm
+            databaseKey={databaseKey}
+            disabled={hasSyncedTables}
+          />
+        </Section>
       </FormProvider>
     </>
   );

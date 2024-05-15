@@ -33,7 +33,7 @@ export const Default: Story = {
     await canvas.findByText('Settings');
     await canvas.findByText('Objects');
     await canvas.findByText('Companies');
-    await canvas.findByText('Check disabled fields');
+    await canvas.findByText('Check deactivated fields');
     await canvas.findByText('Add Custom Field');
   },
 };

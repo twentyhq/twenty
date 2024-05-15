@@ -71,7 +71,7 @@ export class User {
 
   @Field(() => Workspace, { nullable: false })
   @ManyToOne(() => Workspace, (workspace) => workspace.users, {
-    onDelete: 'SET NULL',
+    onDelete: 'RESTRICT',
   })
   defaultWorkspace: Relation<Workspace>;
 

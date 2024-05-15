@@ -55,6 +55,7 @@ export const fieldMetadataItemSchema = z.object({
   relationDefinition: z
     .object({
       __typename: z.literal('RelationDefinition').optional(),
+      relationId: z.string().uuid(),
       direction: z.nativeEnum(RelationDefinitionType),
       sourceFieldMetadata: z.object({
         __typename: z.literal('field').optional(),

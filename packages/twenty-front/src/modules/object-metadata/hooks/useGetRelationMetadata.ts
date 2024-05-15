@@ -12,7 +12,14 @@ import { FieldMetadataItem } from '../types/FieldMetadataItem';
 export const useGetRelationMetadata = () =>
   useRecoilCallback(
     ({ snapshot }) =>
-      ({ fieldMetadataItem }: { fieldMetadataItem: FieldMetadataItem }) => {
+      ({
+        fieldMetadataItem,
+      }: {
+        fieldMetadataItem: Pick<
+          FieldMetadataItem,
+          'fromRelationMetadata' | 'toRelationMetadata' | 'type'
+        >;
+      }) => {
         if (fieldMetadataItem.type !== FieldMetadataType.Relation) return null;
 
         const relationMetadata =
