@@ -17,31 +17,31 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  front-sb-build:
-    runs-on: ubuntu-latest
-    env:
-      REACT_APP_SERVER_BASE_URL: http://localhost:3000
-    steps:
-      - name: Cancel Previous Runs
-        uses: styfle/cancel-workflow-action@0.11.0
-        with:
-          access_token: ${{ github.token }}
-      - name: Fetch local actions
-        uses: actions/checkout@v4
-      - name: Install dependencies
-        uses: ./.github/workflows/actions/yarn-install
-      - name: Front / Restore Storybook Task Cache
-        uses: ./.github/workflows/actions/task-cache
-        with:
-          tag: scope:frontend
-          tasks: storybook:build
-      - name: Front / Write .env
-        run: npx nx reset:env twenty-front
-      - name: Front / Build storybook
-        run: NODE_OPTIONS=--max-old-space-size=5000 npx nx storybook:build twenty-front
+  # front-sb-build:
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     REACT_APP_SERVER_BASE_URL: http://localhost:3000
+  #   steps:
+  #     - name: Cancel Previous Runs
+  #       uses: styfle/cancel-workflow-action@0.11.0
+  #       with:
+  #         access_token: ${{ github.token }}
+  #     - name: Fetch local actions
+  #       uses: actions/checkout@v4
+  #     - name: Install dependencies
+  #       uses: ./.github/workflows/actions/yarn-install
+  #     - name: Front / Restore Storybook Task Cache
+  #       uses: ./.github/workflows/actions/task-cache
+  #       with:
+  #         tag: scope:frontend
+  #         tasks: storybook:build
+  #     - name: Front / Write .env
+  #       run: npx nx reset:env twenty-front
+  #     - name: Front / Build storybook
+  #       run: NODE_OPTIONS=--max-old-space-size=5000 npx nx storybook:build twenty-front
   front-sb-test:
     runs-on: ci-8-cores
-    needs: front-sb-build
+    # needs: front-sb-build
     strategy:
       matrix:
         # storybook_scope: [pages, modules]
