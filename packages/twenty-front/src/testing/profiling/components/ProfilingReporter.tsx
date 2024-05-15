@@ -29,11 +29,6 @@ export const ProfilingReporter = () => {
     [profilingSessionDataPoints],
   );
 
-  console.log({
-    profilingSessionDataPoints,
-    profilingReport,
-  });
-
   return (
     <div
       data-profiling-report={JSON.stringify(profilingReport)}

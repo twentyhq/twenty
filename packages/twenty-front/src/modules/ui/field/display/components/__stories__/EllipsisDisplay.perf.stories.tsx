@@ -17,4 +17,4 @@ const meta: Meta = {
 
 export default meta;
 
-export const Performance = getProfilingStory('EllipsisDisplay', 0.25, 2, 2);
+export const Performance = getProfilingStory('EllipsisDisplay', 0.1, 2, 2);

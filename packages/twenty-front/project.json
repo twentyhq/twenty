@@ -68,7 +68,8 @@
       "configurations": {
         "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
         "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
-        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } }
+        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } },
+        "performance": { "env": { "STORYBOOK_SCOPE": "performance" } }
       }
     },
     "storybook:dev": {
@@ -82,7 +83,8 @@
       "configurations": {
         "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
         "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
-        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } }
+        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } },
+        "performance": { "env": { "STORYBOOK_SCOPE": "performance" } }
       }
     },
     "storybook:static": {
@@ -99,14 +101,16 @@
       "configurations": {
         "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
         "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
-        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } }
+        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } },
+        "performance": { "env": { "STORYBOOK_SCOPE": "performance" } }
       }
     },
     "storybook:coverage": {
       "configurations": {
         "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
         "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
-        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } }
+        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } },
+        "performance": { "env": { "STORYBOOK_SCOPE": "performance" } }
       }
     },
     "storybook:test": {
@@ -116,13 +120,15 @@
       "configurations": {
         "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
         "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
-        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } }
+        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } },
+        "performance": { "env": { "STORYBOOK_SCOPE": "performance" } }
+
       }
     },
     "storybook:static:test": {
       "options": {
         "commands": [
-          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:static {projectName} --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port} --configuration={args.scope}'"
+          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:dev:scope {projectName} --configuration={args.scope} --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port} --configuration={args.scope}'"
         ],
         "port": 6006,
         "env": { "NODE_OPTIONS": "--max-old-space-size=5000" }
@@ -130,7 +136,8 @@
       "configurations": {
         "docs": { "scope": "ui-docs" },
         "modules": { "scope": "modules" },
-        "pages": { "scope": "pages" }
+        "pages": { "scope": "pages" },
+        "performance": { "scope": "performance" }
       }
     },
     "graphql:generate": {

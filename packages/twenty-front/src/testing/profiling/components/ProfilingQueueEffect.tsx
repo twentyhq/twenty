@@ -6,7 +6,7 @@ import { profilingQueueState } from '~/testing/profiling/states/profilingQueueSt
 import { profilingSessionRunsState } from '~/testing/profiling/states/profilingSessionRunsState';
 import { profilingSessionStatusState } from '~/testing/profiling/states/profilingSessionStatusState';
 
-const TIME_BETWEEN_TEST_RUNS_IN_MS = 5000;
+const TIME_BETWEEN_TEST_RUNS_IN_MS = 500;
 
 export const getQueueIdentifier = (
   profilingId: string,
@@ -48,16 +48,6 @@ export const ProfilingQueueEffect = ({
 
   const [profilingQueue, setProfilingQueue] =
     useRecoilState(profilingQueueState);
-
-  console.log({
-    profilingQueue,
-    numberOfTestsPerRun,
-    profilingId,
-    currentProfilingRunIndex,
-    profilingSessionStatus,
-    profilingSessionRuns,
-    numberOfRuns,
-  });
 
   useEffect(() => {
     (async () => {

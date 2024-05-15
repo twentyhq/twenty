@@ -26,15 +26,6 @@ export const ProfilerDecorator: Decorator = (Story, { id, parameters }) => {
 
   const testArray = getTestArray(id, numberOfTests, currentRunName);
 
-  // eslint-disable-next-line no-console
-  console.log({
-    numberOfTests,
-    numberOfRuns,
-    currentProfilingRunIndex,
-    currentRunName,
-    profilingSessionStatus,
-  });
-
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
       <ProfilingQueueEffect
