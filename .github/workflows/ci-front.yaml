@@ -77,11 +77,6 @@ jobs:
         uses: ./.github/workflows/actions/yarn-install
       - name: Install Playwright
         run: cd packages/twenty-front && npx playwright install
-      - name: Front / Restore Storybook Task Cache
-        uses: ./.github/workflows/actions/task-cache
-        with:
-          tag: scope:frontend
-          tasks: storybook:build
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
