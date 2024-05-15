@@ -29,7 +29,6 @@ import {
   getCreateOneResponse201,
   getFindOneResponse200,
   getUpdateOneResponse200,
-  getCreateManyResponse201,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
 import { getRequestBody } from 'src/engine/core-modules/open-api/utils/request-body.utils';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
@@ -147,20 +146,7 @@ export class OpenApiService {
           operationId: `createOne${capitalize(item.nameSingular)}`,
           requestBody: getRequestBody(capitalize(item.nameSingular)),
           responses: {
-            '200': getCreateOneResponse201(item),
-            '400': { $ref: '#/components/responses/400' },
-            '401': { $ref: '#/components/responses/401' },
-          },
-        },
-      } as OpenAPIV3_1.PathItemObject;
-      path[`/batch/${item.namePlural}`] = {
-        post: {
-          tags: [item.namePlural],
-          summary: `Create Many ${item.namePlural}`,
-          operationId: `createMany${capitalize(item.namePlural)}`,
-          requestBody: getRequestBody(capitalize(item.namePlural)),
-          responses: {
-            '201': getCreateManyResponse201(item),
+            '200': getCreateOneResponse201(item, true),
             '400': { $ref: '#/components/responses/400' },
             '401': { $ref: '#/components/responses/401' },
           },
@@ -183,7 +169,7 @@ export class OpenApiService {
           operationId: `deleteOne${capitalize(item.nameSingular)}`,
           parameters: [{ $ref: '#/components/parameters/idPath' }],
           responses: {
-            '200': getDeleteResponse200(item),
+            '200': getDeleteResponse200(item, true),
             '400': { $ref: '#/components/responses/400' },
             '401': { $ref: '#/components/responses/401' },
           },
@@ -195,7 +181,7 @@ export class OpenApiService {
           parameters: [{ $ref: '#/components/parameters/idPath' }],
           requestBody: getRequestBody(capitalize(item.nameSingular)),
           responses: {
-            '200': getUpdateOneResponse200(item),
+            '200': getUpdateOneResponse200(item, true),
             '400': { $ref: '#/components/responses/400' },
             '401': { $ref: '#/components/responses/401' },
           },

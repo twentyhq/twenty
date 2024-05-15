@@ -72,7 +72,10 @@ export const getFindOneResponse200 = (
 
 export const getCreateOneResponse201 = (
   item: Pick<ObjectMetadataEntity, 'nameSingular'>,
+  fromMetadata = false,
 ) => {
+  const one = fromMetadata ? 'One' : '';
+
   return {
     description: 'Successful operation',
     content: {
@@ -83,7 +86,7 @@ export const getCreateOneResponse201 = (
             data: {
               type: 'object',
               properties: {
-                [`create${capitalize(item.nameSingular)}`]: {
+                [`create${one}${capitalize(item.nameSingular)}`]: {
                   $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
                 },
               },
@@ -91,7 +94,7 @@ export const getCreateOneResponse201 = (
           },
           example: {
             data: {
-              [`create${capitalize(item.nameSingular)}`]: `${capitalize(
+              [`create${one}${capitalize(item.nameSingular)}`]: `${capitalize(
                 item.nameSingular,
               )}Object`,
             },
@@ -143,7 +146,10 @@ export const getCreateManyResponse201 = (
 
 export const getUpdateOneResponse200 = (
   item: Pick<ObjectMetadataEntity, 'nameSingular'>,
+  fromMetadata = false,
 ) => {
+  const one = fromMetadata ? 'One' : '';
+
   return {
     description: 'Successful operation',
     content: {
@@ -154,7 +160,7 @@ export const getUpdateOneResponse200 = (
             data: {
               type: 'object',
               properties: {
-                [`update${capitalize(item.nameSingular)}`]: {
+                [`update${one}${capitalize(item.nameSingular)}`]: {
                   $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
                 },
               },
@@ -162,7 +168,7 @@ export const getUpdateOneResponse200 = (
           },
           example: {
             data: {
-              [`update${capitalize(item.nameSingular)}`]: `${capitalize(
+              [`update${one}${capitalize(item.nameSingular)}`]: `${capitalize(
                 item.nameSingular,
               )}Object`,
             },
@@ -175,7 +181,10 @@ export const getUpdateOneResponse200 = (
 
 export const getDeleteResponse200 = (
   item: Pick<ObjectMetadataEntity, 'nameSingular'>,
+  fromMetadata = false,
 ) => {
+  const one = fromMetadata ? 'One' : '';
+
   return {
     description: 'Successful operation',
     content: {
@@ -186,7 +195,7 @@ export const getDeleteResponse200 = (
             data: {
               type: 'object',
               properties: {
-                [`delete${capitalize(item.nameSingular)}`]: {
+                [`delete${one}${capitalize(item.nameSingular)}`]: {
                   type: 'object',
                   properties: {
                     id: {
@@ -200,7 +209,7 @@ export const getDeleteResponse200 = (
           },
           example: {
             data: {
-              [`delete${capitalize(item.nameSingular)}`]: {
+              [`delete${one}${capitalize(item.nameSingular)}`]: {
                 id: 'ffe75ac3-9786-4846-b56f-640685c3631e',
               },
             },
