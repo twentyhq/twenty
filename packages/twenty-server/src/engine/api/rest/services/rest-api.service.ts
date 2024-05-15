@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 
 import { Request } from 'express';
@@ -7,6 +7,7 @@ import { AxiosResponse } from 'axios';
 import { Query } from 'src/engine/api/rest/types/query.type';
 import { getServerUrl } from 'src/utils/get-server-url';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { RestApiException } from 'src/engine/api/rest/errors/RestApiException';
 
 export enum GraphqlApiType {
   CORE = 'core',
@@ -40,11 +41,11 @@ export class RestApiService {
         },
       });
     } catch (err) {
-      throw new BadRequestException(err.response.data);
+      throw new RestApiException(err.response.data.errors);
     }
 
     if (response.data.errors?.length) {
-      throw new BadRequestException(response.data);
+      throw new RestApiException(response.data.errors);
     }
 
     return response;
