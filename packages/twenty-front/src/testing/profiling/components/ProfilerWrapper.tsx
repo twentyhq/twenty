@@ -34,10 +34,6 @@ export const ProfilerWrapper = ({
           durationInMs: actualDurationInMs,
         };
 
-        console.log({
-          newDataPoint,
-        });
-
         set(
           profilingSessionDataPointsState,
           (currentProfilingSessionDataPoints) => [
@@ -72,13 +68,6 @@ export const ProfilerWrapper = ({
       },
     [profilingId, testIndex, componentName, runName],
   );
-
-  console.log({
-    profilingId,
-    testIndex,
-    componentName,
-    runName,
-  });
 
   return (
     <Profiler id={profilingId} onRender={handleRender}>
