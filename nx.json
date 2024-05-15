@@ -177,11 +177,31 @@
         "port": 6006
       }
     },
+    "storybook:test:nocoverage": {
+      "executor": "nx:run-commands",
+      "inputs": ["^default", "excludeTests"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "test-storybook --url http://localhost:{args.port} --maxWorkers=3"
+        ],
+        "port": 6006
+      }
+    },
     "storybook:static:test": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
           "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:static {projectName} --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port}'"
+        ],
+        "port": 6006
+      }
+    },
+    "storybook:performance:test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:dev {projectName} --configuration=performance --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test:nocoverage {projectName} --port={args.port} --configuration=performance'"
         ],
         "port": 6006
       }
