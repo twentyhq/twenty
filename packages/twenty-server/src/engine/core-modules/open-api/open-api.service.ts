@@ -7,6 +7,7 @@ import { TokenService } from 'src/engine/core-modules/auth/services/token.servic
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { baseSchema } from 'src/engine/core-modules/open-api/utils/base-schema.utils';
 import {
+  computeBatchPath,
   computeManyResultPath,
   computeSingleResultPath,
 } from 'src/engine/core-modules/open-api/utils/path.utils';
@@ -60,6 +61,7 @@ export class OpenApiService {
     }
     schema.paths = objectMetadataItems.reduce((paths, item) => {
       paths[`/${item.namePlural}`] = computeManyResultPath(item);
+      paths[`/batch/${item.namePlural}`] = computeBatchPath(item);
       paths[`/${item.namePlural}/{id}`] = computeSingleResultPath(item);
 
       return paths;
@@ -137,7 +139,7 @@ export class OpenApiService {
           tags: [item.namePlural],
           summary: `Create One ${item.nameSingular}`,
           operationId: `createOne${capitalize(item.nameSingular)}`,
-          requestBody: getRequestBody(item),
+          requestBody: getRequestBody(capitalize(item.nameSingular)),
           responses: {
             '200': getSingleResultSuccessResponse(item),
             '400': { $ref: '#/components/responses/400' },
@@ -172,7 +174,7 @@ export class OpenApiService {
           summary: `Update One ${item.namePlural}`,
           operationId: `updateOne${capitalize(item.nameSingular)}`,
           parameters: [{ $ref: '#/components/parameters/idPath' }],
-          requestBody: getRequestBody(item),
+          requestBody: getRequestBody(capitalize(item.nameSingular)),
           responses: {
             '200': getSingleResultSuccessResponse(item),
             '400': { $ref: '#/components/responses/400' },

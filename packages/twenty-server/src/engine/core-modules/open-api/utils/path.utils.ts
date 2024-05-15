@@ -10,6 +10,25 @@ import {
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
 import { getRequestBody } from 'src/engine/core-modules/open-api/utils/request-body.utils';
 
+export const computeBatchPath = (
+  item: ObjectMetadataEntity,
+): OpenAPIV3_1.PathItemObject => {
+  return {
+    post: {
+      tags: [item.namePlural],
+      summary: `Create Many ${item.namePlural}`,
+      operationId: `createMany${capitalize(item.namePlural)}`,
+      parameters: [{ $ref: '#/components/parameters/depth' }],
+      requestBody: getRequestBody(capitalize(item.namePlural)),
+      responses: {
+        '201': getSingleResultSuccessResponse(item),
+        '400': { $ref: '#/components/responses/400' },
+        '401': { $ref: '#/components/responses/401' },
+      },
+    },
+  } as OpenAPIV3_1.PathItemObject;
+};
+
 export const computeManyResultPath = (
   item: ObjectMetadataEntity,
 ): OpenAPIV3_1.PathItemObject => {
@@ -37,7 +56,7 @@ export const computeManyResultPath = (
       summary: `Create One ${item.nameSingular}`,
       operationId: `createOne${capitalize(item.nameSingular)}`,
       parameters: [{ $ref: '#/components/parameters/depth' }],
-      requestBody: getRequestBody(item),
+      requestBody: getRequestBody(capitalize(item.nameSingular)),
       responses: {
         '201': getSingleResultSuccessResponse(item),
         '400': { $ref: '#/components/responses/400' },
@@ -85,7 +104,7 @@ export const computeSingleResultPath = (
         { $ref: '#/components/parameters/idPath' },
         { $ref: '#/components/parameters/depth' },
       ],
-      requestBody: getRequestBody(item),
+      requestBody: getRequestBody(capitalize(item.nameSingular)),
       responses: {
         '200': getSingleResultSuccessResponse(item),
         '400': { $ref: '#/components/responses/400' },
