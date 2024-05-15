@@ -11,7 +11,10 @@ import {
   computeManyResultPath,
   computeSingleResultPath,
 } from 'src/engine/core-modules/open-api/utils/path.utils';
-import { getErrorResponses } from 'src/engine/core-modules/open-api/utils/get-error-responses.utils';
+import {
+  get400ErrorResponses,
+  get401ErrorResponses,
+} from 'src/engine/core-modules/open-api/utils/get-error-responses.utils';
 import {
   computeMetadataSchemaComponents,
   computeParameterComponents,
@@ -90,8 +93,8 @@ export class OpenApiService {
       schemas: computeSchemaComponents(objectMetadataItems),
       parameters: computeParameterComponents(),
       responses: {
-        '400': getErrorResponses('Invalid request'),
-        '401': getErrorResponses('Unauthorized'),
+        '400': get400ErrorResponses(),
+        '401': get401ErrorResponses(),
       },
     };
 
@@ -193,8 +196,8 @@ export class OpenApiService {
       schemas: computeMetadataSchemaComponents(metadata),
       parameters: computeParameterComponents(),
       responses: {
-        '400': getErrorResponses('Invalid request'),
-        '401': getErrorResponses('Unauthorized'),
+        '400': get400ErrorResponses(),
+        '401': get401ErrorResponses(),
       },
     };
 
