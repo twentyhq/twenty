@@ -77,7 +77,7 @@ jobs:
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
-        run: npx nx storybook:performance:test twenty-front --configuration=performance
+        run: npx nx storybook:performance:test twenty-front
   front-chromatic-deployment:
     if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
     needs: front-sb-build

@@ -179,9 +179,7 @@
     },
     "storybook:test:nocoverage": {
       "executor": "nx:run-commands",
-      "cache": true,
       "inputs": ["^default", "excludeTests"],
-      "outputs": ["{projectRoot}/coverage/storybook"],
       "options": {
         "cwd": "{projectRoot}",
         "commands": [
@@ -203,7 +201,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:dev {projectName} --configuration={args.scope} --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test:nocoverage {projectName} --port={args.port} --configuration={args.scope}'"
+          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:dev {projectName} --configuration=performance --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test:nocoverage {projectName} --port={args.port} --configuration=performance'"
         ],
         "port": 6006
       }

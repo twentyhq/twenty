@@ -150,14 +150,7 @@
         "performance": { "scope": "performance" }
       }
     },
-    "storybook:performance:test": {
-      "configurations": {
-        "docs": { "scope": "ui-docs" },
-        "modules": { "scope": "modules" },
-        "pages": { "scope": "pages" },
-        "performance": { "scope": "performance" }
-      }
-    },
+    "storybook:performance:test": {},
     "graphql:generate": {
       "executor": "nx:run-commands",
       "defaultConfiguration": "data",
