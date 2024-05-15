@@ -61,7 +61,7 @@ export const ProfilingReporter = () => {
             <td>{Math.round(profilingReport.total.max * 1000) / 1000}ms</td>
           </tr>
           {Object.entries(profilingReport.runs).map(([runName, report]) => (
-            <tr>
+            <tr key={runName}>
               <td>{runName}</td>
               <td>{Math.round(report.min * 1000) / 1000}ms</td>
               <td>{Math.round(report.average * 1000) / 1000}ms</td>

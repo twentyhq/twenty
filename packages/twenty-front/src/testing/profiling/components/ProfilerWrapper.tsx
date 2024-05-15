@@ -1,11 +1,11 @@
 import { Profiler, ProfilerOnRenderCallback } from 'react';
 import { useRecoilCallback } from 'recoil';
 
-import { getQueueIdentifier } from '~/testing/profiling/components/ProfilingQueueEffect';
 import { profilingQueueState } from '~/testing/profiling/states/profilingQueueState';
 import { profilingSessionDataPointsState } from '~/testing/profiling/states/profilingSessionDataPointsState';
 import { profilingSessionState } from '~/testing/profiling/states/profilingSessionState';
 import { ProfilingDataPoint } from '~/testing/profiling/types/ProfilingDataPoint';
+import { getProfilingQueueIdentifier } from '~/testing/profiling/utils/getProfilingQueueIdentifier';
 import { isDefined } from '~/utils/isDefined';
 
 export const ProfilerWrapper = ({
@@ -24,7 +24,11 @@ export const ProfilerWrapper = ({
   const handleRender: ProfilerOnRenderCallback = useRecoilCallback(
     ({ set, snapshot }) =>
       (id, phase, actualDurationInMs) => {
-        const dataPointId = getQueueIdentifier(profilingId, testIndex, runName);
+        const dataPointId = getProfilingQueueIdentifier(
+          profilingId,
+          testIndex,
+          runName,
+        );
 
         const newDataPoint: ProfilingDataPoint = {
           componentName,

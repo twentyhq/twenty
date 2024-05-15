@@ -16,4 +16,9 @@ const meta: Meta = {
 
 export default meta;
 
-export const Performance = getProfilingStory('EllipsisDisplay', 10, 2, 2);
+export const Performance = getProfilingStory({
+  componentName: 'EllipsisDisplay',
+  averageThresholdInMs: 0.1,
+  numberOfRuns: 20,
+  numberOfTestsPerRun: 10,
+});

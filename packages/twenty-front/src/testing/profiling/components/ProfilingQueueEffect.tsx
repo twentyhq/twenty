@@ -1,30 +1,12 @@
 import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 
+import { TIME_BETWEEN_TEST_RUNS_IN_MS } from '~/testing/profiling/constants/TimeBetweenTestRunsInMs';
 import { currentProfilingRunIndexState } from '~/testing/profiling/states/currentProfilingRunState';
 import { profilingQueueState } from '~/testing/profiling/states/profilingQueueState';
 import { profilingSessionRunsState } from '~/testing/profiling/states/profilingSessionRunsState';
 import { profilingSessionStatusState } from '~/testing/profiling/states/profilingSessionStatusState';
-
-const TIME_BETWEEN_TEST_RUNS_IN_MS = 500;
-
-export const getQueueIdentifier = (
-  profilingId: string,
-  testIndex: number,
-  runName: string,
-) => `${profilingId}-run[${runName}]-test[${testIndex}]`;
-
-export const getTestArray = (
-  profilingId: string,
-  numberOfTestsPerRun: number,
-  runName: string,
-) => {
-  const testArray = Array.from({ length: numberOfTestsPerRun }, (_, i) =>
-    getQueueIdentifier(profilingId, i, runName),
-  );
-
-  return testArray;
-};
+import { getTestArray } from '~/testing/profiling/utils/getTestArray';
 
 export const ProfilingQueueEffect = ({
   profilingId,

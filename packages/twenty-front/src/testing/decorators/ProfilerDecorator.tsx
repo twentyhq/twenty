@@ -2,14 +2,12 @@ import { Decorator } from '@storybook/react';
 import { useRecoilState } from 'recoil';
 
 import { ProfilerWrapper } from '~/testing/profiling/components/ProfilerWrapper';
-import {
-  getTestArray,
-  ProfilingQueueEffect,
-} from '~/testing/profiling/components/ProfilingQueueEffect';
+import { ProfilingQueueEffect } from '~/testing/profiling/components/ProfilingQueueEffect';
 import { ProfilingReporter } from '~/testing/profiling/components/ProfilingReporter';
 import { currentProfilingRunIndexState } from '~/testing/profiling/states/currentProfilingRunState';
 import { profilingSessionRunsState } from '~/testing/profiling/states/profilingSessionRunsState';
 import { profilingSessionStatusState } from '~/testing/profiling/states/profilingSessionStatusState';
+import { getTestArray } from '~/testing/profiling/utils/getTestArray';
 
 export const ProfilerDecorator: Decorator = (Story, { id, parameters }) => {
   const numberOfTests = parameters.numberOfTests ?? 2;
@@ -21,6 +19,8 @@ export const ProfilerDecorator: Decorator = (Story, { id, parameters }) => {
 
   const [profilingSessionStatus] = useRecoilState(profilingSessionStatusState);
   const [profilingSessionRuns] = useRecoilState(profilingSessionRunsState);
+
+  const skip = profilingSessionRuns.length === 0;
 
   const currentRunName = profilingSessionRuns[currentProfilingRunIndex];
 
@@ -37,22 +37,28 @@ export const ProfilerDecorator: Decorator = (Story, { id, parameters }) => {
         Profiling {numberOfTests} times the component {parameters.componentName}{' '}
         :
       </div>
-      <ProfilingReporter />
-      <div style={{ visibility: 'hidden', width: 0, height: 0 }}>
-        {testArray.map((_, index) => (
-          <ProfilerWrapper
-            key={id + index}
-            componentName={parameters.componentName}
-            runName={currentRunName}
-            testIndex={index}
-            profilingId={id}
-          >
-            <Story />
-          </ProfilerWrapper>
-        ))}
-      </div>
-      {profilingSessionStatus === 'finished' && (
-        <div data-testid="profiling-session-finished" />
+      {skip ? (
+        <></>
+      ) : (
+        <>
+          <ProfilingReporter />
+          <div style={{ visibility: 'hidden', width: 0, height: 0 }}>
+            {testArray.map((_, index) => (
+              <ProfilerWrapper
+                key={id + index}
+                componentName={parameters.componentName}
+                runName={currentRunName}
+                testIndex={index}
+                profilingId={id}
+              >
+                <Story />
+              </ProfilerWrapper>
+            ))}
+          </div>
+          {profilingSessionStatus === 'finished' && (
+            <div data-testid="profiling-session-finished" />
+          )}
+        </>
       )}
     </div>
   );
