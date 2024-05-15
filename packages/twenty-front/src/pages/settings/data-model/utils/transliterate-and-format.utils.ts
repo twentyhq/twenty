@@ -3,7 +3,7 @@ import { slugify, transliterate } from 'transliteration';
 
 import { isDefined } from '~/utils/isDefined';
 
-export const formatLabelOrThrows = (
+export const transliterateAndFormatOrThrow = (
   string: string,
   validStringPattern: RegExp,
 ): string => {
