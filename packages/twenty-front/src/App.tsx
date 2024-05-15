@@ -35,11 +35,11 @@ import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
 import { PageChangeEffect } from '~/effect-components/PageChangeEffect';
 import { Authorize } from '~/pages/auth/Authorize';
-import { ChooseYourPlan } from '~/pages/auth/ChooseYourPlan.tsx';
+import { ChooseYourPlan } from '~/pages/auth/ChooseYourPlan';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
-import { PaymentSuccess } from '~/pages/auth/PaymentSuccess.tsx';
+import { PaymentSuccess } from '~/pages/auth/PaymentSuccess';
 import { SignInUp } from '~/pages/auth/SignInUp';
 import { DefaultHomePage } from '~/pages/DefaultHomePage';
 import { ImpersonateEffect } from '~/pages/impersonate/ImpersonateEffect';
@@ -65,11 +65,13 @@ import { SettingsDevelopers } from '~/pages/settings/developers/SettingsDevelope
 import { SettingsDevelopersWebhooksDetail } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhookDetail';
 import { SettingsDevelopersWebhooksNew } from '~/pages/settings/developers/webhooks/SettingsDevelopersWebhooksNew';
 import { SettingsIntegrationDatabase } from '~/pages/settings/integrations/SettingsIntegrationDatabase';
-import { SettingsIntegrationDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationDatabaseConnection';
+import { SettingsIntegrationEditDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationEditDatabaseConnection';
 import { SettingsIntegrationNewDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationNewDatabaseConnection';
 import { SettingsIntegrations } from '~/pages/settings/integrations/SettingsIntegrations';
+import { SettingsIntegrationShowDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationShowDatabaseConnection';
+import { Releases } from '~/pages/settings/Releases';
 import { SettingsAppearance } from '~/pages/settings/SettingsAppearance';
-import { SettingsBilling } from '~/pages/settings/SettingsBilling.tsx';
+import { SettingsBilling } from '~/pages/settings/SettingsBilling';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
 import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
@@ -244,8 +246,12 @@ const createRouter = (isBillingEnabled?: boolean) =>
                   element={<SettingsIntegrationNewDatabaseConnection />}
                 />
                 <Route
+                  path={SettingsPath.IntegrationEditDatabaseConnection}
+                  element={<SettingsIntegrationEditDatabaseConnection />}
+                />
+                <Route
                   path={SettingsPath.IntegrationDatabaseConnection}
-                  element={<SettingsIntegrationDatabaseConnection />}
+                  element={<SettingsIntegrationShowDatabaseConnection />}
                 />
                 <Route
                   path={SettingsPath.ObjectNewFieldStep1}
@@ -259,6 +265,7 @@ const createRouter = (isBillingEnabled?: boolean) =>
                   path={SettingsPath.ObjectFieldEdit}
                   element={<SettingsObjectFieldEdit />}
                 />
+                <Route path={SettingsPath.Releases} element={<Releases />} />
               </Routes>
             }
           />

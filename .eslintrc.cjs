@@ -13,6 +13,7 @@ module.exports = {
     'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
     'no-console': ['warn', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
     'no-control-regex': 0,
+    'no-debugger': 'error',
     'no-duplicate-imports': 'error',
     'no-undef': 'off',
     'no-unused-vars': 'off',
@@ -24,8 +25,16 @@ module.exports = {
         allow: [],
         depConstraints: [
           {
-            sourceTag: '*',
-            onlyDependOnLibsWithTags: ['*'],
+            sourceTag: 'scope:shared',
+            onlyDependOnLibsWithTags: ['scope:shared'],
+          },
+          {
+            sourceTag: 'scope:backend',
+            onlyDependOnLibsWithTags: ['scope:shared', 'scope:backend'],
+          },
+          {
+            sourceTag: 'scope:frontend',
+            onlyDependOnLibsWithTags: ['scope:shared', 'scope:frontend'],
           },
         ],
       },

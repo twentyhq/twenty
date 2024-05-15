@@ -15,9 +15,10 @@ import {
 } from 'src/engine/metadata-modules/field-metadata/composite-types/link.composite-type';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import {
-  AddressMetadata,
   addressCompositeType,
+  AddressMetadata,
 } from 'src/engine/metadata-modules/field-metadata/composite-types/address.composite-type';
+import { linksCompositeType } from 'src/engine/metadata-modules/field-metadata/composite-types/links.composite-type';
 
 export type CompositeFieldsDefinitionFunction = (
   fieldMetadata?: FieldMetadataInterface,
@@ -28,6 +29,7 @@ export const compositeTypeDefintions = new Map<
   CompositeType
 >([
   [FieldMetadataType.LINK, linkCompositeType],
+  [FieldMetadataType.LINKS, linksCompositeType],
   [FieldMetadataType.CURRENCY, currencyCompositeType],
   [FieldMetadataType.FULL_NAME, fullNameCompositeType],
   [FieldMetadataType.ADDRESS, addressCompositeType],

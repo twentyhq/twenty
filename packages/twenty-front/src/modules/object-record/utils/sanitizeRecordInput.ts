@@ -4,9 +4,9 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isFieldRelationValue } from '@/object-record/record-field/types/guards/isFieldRelationValue';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { sanitizeLink } from '@/object-record/utils/sanitizeLinkRecordInput';
 import { FieldMetadataType } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { getUrlHostName } from '~/utils/url/getUrlHostName';
 
 export const sanitizeRecordInput = ({
   objectMetadataItem,
@@ -54,6 +54,6 @@ export const sanitizeRecordInput = ({
 
   return {
     ...filteredResultRecord,
-    domainName: sanitizeLink(filteredResultRecord.domainName),
+    domainName: getUrlHostName(filteredResultRecord.domainName),
   };
 };

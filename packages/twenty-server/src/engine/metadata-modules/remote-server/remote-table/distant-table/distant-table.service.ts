@@ -11,6 +11,7 @@ import {
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { DistantTableColumn } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/types/distant-table-column';
 import { DistantTables } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/types/distant-table';
+import { STRIPE_DISTANT_TABLES } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/util/stripe-distant-tables.util';
 
 @Injectable()
 export class DistantTableService {
@@ -22,29 +23,46 @@ export class DistantTableService {
     >,
   ) {}
 
-  public async fetchDistantTableColumns(
+  public getDistantTableColumns(
     remoteServer: RemoteServerEntity<RemoteServerType>,
     tableName: string,
-  ): Promise<DistantTableColumn[]> {
+  ): DistantTableColumn[] {
     if (!remoteServer.availableTables) {
-      throw new Error('Remote server available tables are not defined');
+      throw new BadRequestException(
+        'Remote server available tables are not defined',
+      );
     }
 
     return remoteServer.availableTables[tableName];
   }
 
-  public async fetchDistantTableNames(
+  public async fetchDistantTables(
     remoteServer: RemoteServerEntity<RemoteServerType>,
     workspaceId: string,
-  ): Promise<string[]> {
-    const availableTables =
-      remoteServer.availableTables ??
-      (await this.createAvailableTables(remoteServer, workspaceId));
+    refreshData?: boolean,
+  ): Promise<DistantTables> {
+    if (!refreshData && remoteServer.availableTables) {
+      return remoteServer.availableTables;
+    }
 
-    return Object.keys(availableTables);
+    return await this.createAvailableTables(remoteServer, workspaceId);
   }
 
   private async createAvailableTables(
+    remoteServer: RemoteServerEntity<RemoteServerType>,
+    workspaceId: string,
+  ): Promise<DistantTables> {
+    if (remoteServer.schema) {
+      return this.createAvailableTablesFromDynamicSchema(
+        remoteServer,
+        workspaceId,
+      );
+    }
+
+    return this.createAvailableTablesFromStaticSchema(remoteServer);
+  }
+
+  private async createAvailableTablesFromDynamicSchema(
     remoteServer: RemoteServerEntity<RemoteServerType>,
     workspaceId: string,
   ): Promise<DistantTables> {
@@ -98,5 +116,22 @@ export class DistantTableService {
     });
 
     return availableTables;
+  }
+
+  private async createAvailableTablesFromStaticSchema(
+    remoteServer: RemoteServerEntity<RemoteServerType>,
+  ): Promise<DistantTables> {
+    switch (remoteServer.foreignDataWrapperType) {
+      case RemoteServerType.STRIPE_FDW:
+        this.remoteServerRepository.update(remoteServer.id, {
+          availableTables: STRIPE_DISTANT_TABLES,
+        });
+
+        return STRIPE_DISTANT_TABLES;
+      default:
+        throw new BadRequestException(
+          `Type ${remoteServer.foreignDataWrapperType} does not have a static schema.`,
+        );
+    }
   }
 }

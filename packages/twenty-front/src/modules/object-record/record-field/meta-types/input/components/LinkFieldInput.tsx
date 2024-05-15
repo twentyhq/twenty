@@ -27,7 +27,7 @@ export const LinkFieldInput = ({
     onEnter?.(() =>
       persistLinkField({
         url: newURL,
-        label: newURL,
+        label: '',
       }),
     );
   };
@@ -36,7 +36,7 @@ export const LinkFieldInput = ({
     onEscape?.(() =>
       persistLinkField({
         url: newURL,
-        label: newURL,
+        label: '',
       }),
     );
   };
@@ -48,7 +48,7 @@ export const LinkFieldInput = ({
     onClickOutside?.(() =>
       persistLinkField({
         url: newURL,
-        label: newURL,
+        label: '',
       }),
     );
   };
@@ -57,7 +57,7 @@ export const LinkFieldInput = ({
     onTab?.(() =>
       persistLinkField({
         url: newURL,
-        label: newURL,
+        label: '',
       }),
     );
   };
@@ -66,7 +66,7 @@ export const LinkFieldInput = ({
     onShiftTab?.(() =>
       persistLinkField({
         url: newURL,
-        label: newURL,
+        label: '',
       }),
     );
   };
@@ -74,7 +74,7 @@ export const LinkFieldInput = ({
   const handleChange = (newURL: string) => {
     setDraftValue({
       url: newURL,
-      label: newURL,
+      label: '',
     });
   };
 

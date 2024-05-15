@@ -102,7 +102,13 @@ export const RecordTableCell = ({
           isReadOnly={isReadOnly}
         />
       }
-      nonEditModeContent={<FieldDisplay />}
+      nonEditModeContent={({ isCellSoftFocused, cellElement }) => (
+        <FieldDisplay
+          isCellSoftFocused={isCellSoftFocused}
+          cellElement={cellElement}
+          fromTableCell
+        />
+      )}
     />
   );
 };

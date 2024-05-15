@@ -76,6 +76,7 @@ export const SettingsAccountsMessageChannelsListCard = () => {
         <StyledRowRightContainer>
           <SettingsAccountsSynchronizationStatus
             syncStatus={messageChannel.syncStatus}
+            isSyncEnabled={messageChannel.isSyncEnabled}
           />
           <LightIconButton Icon={IconChevronRight} accent="tertiary" />
         </StyledRowRightContainer>

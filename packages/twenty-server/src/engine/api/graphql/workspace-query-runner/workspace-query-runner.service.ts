@@ -244,7 +244,7 @@ export class WorkspaceQueryRunnerService {
     assertMutationNotOnRemoteObject(objectMetadataItem);
 
     args.data.forEach((record) => {
-      if (record.id) {
+      if (record?.id) {
         assertIsValidUuid(record.id);
       }
     });
@@ -436,6 +436,14 @@ export class WorkspaceQueryRunnerService {
       atMost: maximumRecordAffected,
     });
 
+    await this.workspacePreQueryHookService.executePreHooks(
+      userId,
+      workspaceId,
+      objectMetadataItem.nameSingular,
+      'deleteMany',
+      args,
+    );
+
     const result = await this.execute(query, workspaceId);
 
     const parsedResults = (
@@ -475,6 +483,7 @@ export class WorkspaceQueryRunnerService {
     const { workspaceId, userId, objectMetadataItem } = options;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
+    assertIsValidUuid(args.id);
 
     const query = await this.workspaceQueryBuilderFactory.deleteOne(
       args,
@@ -494,6 +503,14 @@ export class WorkspaceQueryRunnerService {
       objectMetadataItem,
     );
     // TODO END
+
+    await this.workspacePreQueryHookService.executePreHooks(
+      userId,
+      workspaceId,
+      objectMetadataItem.nameSingular,
+      'deleteOne',
+      args,
+    );
 
     const result = await this.execute(query, workspaceId);
 
@@ -582,13 +599,6 @@ export class WorkspaceQueryRunnerService {
     )}Collection`;
     const result = graphqlResult?.[0]?.resolve?.data?.[entityKey];
     const errors = graphqlResult?.[0]?.resolve?.errors;
-
-    if (!result) {
-      this.logger.log(
-        `No result found for ${entityKey}, graphqlResult: ` +
-          JSON.stringify(graphqlResult, null, 3),
-      );
-    }
 
     if (
       result &&

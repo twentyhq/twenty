@@ -1,4 +1,6 @@
 import { useCallback, useContext } from 'react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import qs from 'qs';
 import { useRecoilValue } from 'recoil';
@@ -27,11 +29,36 @@ import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
+type RecordDetailRelationSectionProps = {
+  loading: boolean;
+};
+
 const StyledAddDropdown = styled(Dropdown)`
   margin-left: auto;
 `;
 
-export const RecordDetailRelationSection = () => {
+const StyledSkeletonDiv = styled.div`
+  height: 40px;
+`;
+
+const StyledRecordDetailRelationSectionSkeletonLoader = () => {
+  const theme = useTheme();
+  return (
+    <SkeletonTheme
+      baseColor={theme.background.tertiary}
+      highlightColor={theme.background.transparent.lighter}
+      borderRadius={4}
+    >
+      <StyledSkeletonDiv>
+        <Skeleton width={129} height={16} />
+      </StyledSkeletonDiv>
+    </SkeletonTheme>
+  );
+};
+
+export const RecordDetailRelationSection = ({
+  loading,
+}: RecordDetailRelationSectionProps) => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
   const {
     fieldName,
@@ -113,6 +140,20 @@ export const RecordDetailRelationSection = () => {
     relationObjectMetadataItem.namePlural
   }?${qs.stringify(filterQueryParams)}`;
 
+  const showContent = () => {
+    if (loading) {
+      return <StyledRecordDetailRelationSectionSkeletonLoader />;
+    }
+
+    return relationRecords.length ? (
+      <RecordDetailRelationRecordsList relationRecords={relationRecords} />
+    ) : (
+      <RecordDetailRelationRecordsListEmptyState
+        relationObjectMetadataItem={relationObjectMetadataItem}
+      />
+    );
+  };
+
   return (
     <RecordDetailSection>
       <RecordDetailSectionHeader
@@ -159,13 +200,7 @@ export const RecordDetailRelationSection = () => {
           </DropdownScope>
         }
       />
-      {relationRecords.length ? (
-        <RecordDetailRelationRecordsList relationRecords={relationRecords} />
-      ) : (
-        <RecordDetailRelationRecordsListEmptyState
-          relationObjectMetadataItem={relationObjectMetadataItem}
-        />
-      )}
+      {showContent()}
     </RecordDetailSection>
   );
 };

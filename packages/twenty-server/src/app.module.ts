@@ -21,8 +21,8 @@ import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphq
 import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graphql-config.module';
 import { GraphQLConfigService } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { UserWorkspaceMiddleware } from 'src/engine/middlewares/user-workspace.middleware';
 import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
+import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
 
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
 import { IntegrationsModule } from './engine/integrations/integrations.module';
@@ -79,11 +79,11 @@ export class AppModule {
 
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(UserWorkspaceMiddleware)
+      .apply(GraphQLHydrateRequestFromTokenMiddleware)
       .forRoutes({ path: 'graphql', method: RequestMethod.ALL });
 
     consumer
-      .apply(UserWorkspaceMiddleware)
+      .apply(GraphQLHydrateRequestFromTokenMiddleware)
       .forRoutes({ path: 'metadata', method: RequestMethod.ALL });
   }
 }

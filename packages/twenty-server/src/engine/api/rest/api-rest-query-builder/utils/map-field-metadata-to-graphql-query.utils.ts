@@ -92,6 +92,15 @@ export const mapFieldMetadataToGraphqlQuery = (
         url
       }
     `;
+  } else if (fieldType === FieldMetadataType.LINKS) {
+    return `
+      ${field.name}
+      {
+        primaryLinkLabel
+        primaryLinkUrl
+        secondaryLinks
+      }
+    `;
   } else if (fieldType === FieldMetadataType.CURRENCY) {
     return `
       ${field.name}

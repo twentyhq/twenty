@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { createPortal } from 'react-dom';
 import styled from '@emotion/styled';
 import { v4 as uuidV4 } from 'uuid';
@@ -29,22 +29,13 @@ export const OverflowingTextWithTooltip = ({
   mutliline?: boolean;
 }) => {
   const textElementId = `title-id-${uuidV4()}`;
+  const [textElement, setTextElement] = useState<HTMLDivElement | null>(null);
 
-  const textRef = useRef<HTMLDivElement>(null);
-
-  const [isTitleOverflowing, setIsTitleOverflowing] = useState(false);
-
-  useEffect(() => {
-    const isOverflowing =
-      (text?.length ?? 0) > 0 && textRef.current
-        ? textRef.current?.scrollHeight > textRef.current?.clientHeight ||
-          textRef.current.scrollWidth > textRef.current.clientWidth
-        : false;
-
-    if (isTitleOverflowing !== isOverflowing) {
-      setIsTitleOverflowing(isOverflowing);
-    }
-  }, [isTitleOverflowing, text]);
+  const isTitleOverflowing =
+    (text?.length ?? 0) > 0 &&
+    !!textElement &&
+    (textElement.scrollHeight > textElement.clientHeight ||
+      textElement.scrollWidth > textElement.clientWidth);
 
   const handleTooltipClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
@@ -56,7 +47,7 @@ export const OverflowingTextWithTooltip = ({
       <StyledOverflowingText
         data-testid="tooltip"
         className={className}
-        ref={textRef}
+        ref={setTextElement}
         id={textElementId}
         cursorPointer={isTitleOverflowing}
       >
