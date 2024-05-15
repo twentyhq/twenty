@@ -33,11 +33,6 @@ export const getProfilingStory = (
 
     const p95result = profilingReport?.total.p95;
 
-    // eslint-disable-next-line no-console
-    console.log({
-      profilingReport,
-    });
-
     expect(
       p95result,
       `Component render time is more than p95 threshold (${p95ThresholdInMs}ms)`,
