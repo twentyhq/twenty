@@ -26,7 +26,6 @@ const StyledCommentBody = styled.div`
   overflow-wrap: anywhere;
 
   padding-left: 24px;
-
   text-align: left;
 `;
 
