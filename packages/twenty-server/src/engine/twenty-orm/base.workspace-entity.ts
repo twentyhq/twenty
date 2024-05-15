@@ -25,7 +25,6 @@ export abstract class BaseWorkspaceEntity {
     icon: 'IconCalendar',
     defaultValue: 'now',
   })
-  @WorkspaceIsSystem()
   createdAt: Date;
 
   @WorkspaceField({
