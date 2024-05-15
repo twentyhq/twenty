@@ -1,7 +1,10 @@
 import { createContext, RefObject, useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
 import { OverlayScrollbars } from 'overlayscrollbars';
-import { useOverlayScrollbars } from 'overlayscrollbars-react';
+import {
+  useOverlayScrollbars,
+  UseOverlayScrollbarsInstance,
+} from 'overlayscrollbars-react';
 import { useRecoilCallback } from 'recoil';
 
 import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
@@ -9,8 +12,13 @@ import { scrollTopState } from '@/ui/utilities/scroll/states/scrollTopState';
 
 import 'overlayscrollbars/overlayscrollbars.css';
 
-export const ScrollWrapperContext = createContext<RefObject<HTMLDivElement>>({
-  current: null,
+export const ScrollWrapperContext = createContext<{
+  ref: RefObject<HTMLDivElement>;
+  instance?: UseOverlayScrollbarsInstance;
+}>({
+  ref: {
+    current: null,
+  },
 });
 
 const StyledScrollWrapper = styled.div`
@@ -48,7 +56,7 @@ export const ScrollWrapper = ({
     [],
   );
 
-  const [initialize] = useOverlayScrollbars({
+  const [initialize, instance] = useOverlayScrollbars({
     options: {
       scrollbars: { autoHide: 'scroll' },
       overflow: {
@@ -68,8 +76,12 @@ export const ScrollWrapper = ({
   }, [initialize, scrollableRef]);
 
   return (
-    <ScrollWrapperContext.Provider value={scrollableRef}>
-      <StyledScrollWrapper ref={scrollableRef} className={className}>
+    <ScrollWrapperContext.Provider value={{ ref: scrollableRef, instance }}>
+      <StyledScrollWrapper
+        ref={scrollableRef}
+        className={className}
+        id="scroll-wrapper"
+      >
         {children}
       </StyledScrollWrapper>
     </ScrollWrapperContext.Provider>

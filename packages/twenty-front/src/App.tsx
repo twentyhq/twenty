@@ -119,7 +119,12 @@ const ProvidersThatNeedRouterContext = () => {
 const createRouter = (isBillingEnabled?: boolean) =>
   createBrowserRouter(
     createRoutesFromElements(
-      <Route element={<ProvidersThatNeedRouterContext />}>
+      <Route
+        element={<ProvidersThatNeedRouterContext />}
+        // To switch state to `loading` temporarily to enable us
+        // to set scroll position before the page is rendered
+        loader={async () => Promise.resolve(null)}
+      >
         <Route element={<DefaultLayout />}>
           <Route path={AppPath.Verify} element={<VerifyEffect />} />
           <Route path={AppPath.SignInUp} element={<SignInUp />} />
