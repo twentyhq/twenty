@@ -6,5 +6,6 @@ export const REMOTE_TABLE_FRAGMENT = gql`
     name
     schema
     status
+    schemaPendingUpdates
   }
 `;
