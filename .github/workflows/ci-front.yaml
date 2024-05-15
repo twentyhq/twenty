@@ -65,9 +65,6 @@ jobs:
         run: npx nx storybook:static:test twenty-front --configuration=${{ matrix.storybook_scope }}
   front-sb-test-performance:
     runs-on: ci-8-cores
-    strategy:
-      matrix:
-        storybook_scope: [performance]
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
     steps:
@@ -80,7 +77,7 @@ jobs:
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
-        run: npx nx storybook:performance:test twenty-front --configuration=${{ matrix.storybook_scope }}
+        run: npx nx storybook:performance:test twenty-front --configuration=performance
   front-chromatic-deployment:
     if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
     needs: front-sb-build
