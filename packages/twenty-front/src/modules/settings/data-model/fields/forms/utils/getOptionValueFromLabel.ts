@@ -1,15 +1,18 @@
 import snakeCase from 'lodash.snakecase';
 
-export const getOptionValueFromLabel = (label: string) => {
-  // Remove accents
-  const unaccentedLabel = label
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '');
-  // Remove special characters
-  const noSpecialCharactersLabel = unaccentedLabel.replace(
-    /[^a-zA-Z0-9 ]/g,
-    '',
-  );
+import { OPTION_VALUE_VALID_STRING_PATTERN } from '~/pages/settings/data-model/utils/constants.utils';
+import { formatLabelOrThrows } from '~/pages/settings/data-model/utils/format-label.util';
 
-  return snakeCase(noSpecialCharactersLabel).toUpperCase();
+export const transliterateLabel = (label: string) =>
+  formatLabelOrThrows(label, OPTION_VALUE_VALID_STRING_PATTERN);
+
+export const getOptionValueFromLabel = (label: string) => {
+  const transliteratedLabel = label;
+  try {
+    transliterateLabel(label);
+  } catch (error) {
+    return label;
+  }
+
+  return snakeCase(transliteratedLabel).toUpperCase();
 };
