@@ -1,7 +1,7 @@
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { capitalize } from 'src/utils/capitalize';
 
-export const getManyResultResponse200 = (
+export const getFindManyResponse200 = (
   item: Pick<ObjectMetadataEntity, 'nameSingular' | 'namePlural'>,
 ) => {
   return {
@@ -28,7 +28,8 @@ export const getManyResultResponse200 = (
           example: {
             data: {
               [item.namePlural]: [
-                `${capitalize(item.nameSingular)}Object`,
+                `${capitalize(item.nameSingular)}Object1`,
+                `${capitalize(item.nameSingular)}Object2`,
                 '...',
               ],
             },
@@ -39,7 +40,7 @@ export const getManyResultResponse200 = (
   };
 };
 
-export const getSingleResultSuccessResponse = (
+export const getFindOneResponse200 = (
   item: Pick<ObjectMetadataEntity, 'nameSingular'>,
 ) => {
   return {
@@ -56,6 +57,114 @@ export const getSingleResultSuccessResponse = (
                   $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
                 },
               },
+            },
+          },
+          example: {
+            data: {
+              [item.nameSingular]: `${capitalize(item.nameSingular)}Object`,
+            },
+          },
+        },
+      },
+    },
+  };
+};
+
+export const getCreateOneResponse200 = (
+  item: Pick<ObjectMetadataEntity, 'nameSingular'>,
+) => {
+  return {
+    description: 'Successful operation',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            data: {
+              type: 'object',
+              properties: {
+                [`create${capitalize(item.nameSingular)}`]: {
+                  $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+                },
+              },
+            },
+          },
+          example: {
+            data: {
+              [`create${capitalize(item.nameSingular)}`]: `${capitalize(
+                item.nameSingular,
+              )}Object`,
+            },
+          },
+        },
+      },
+    },
+  };
+};
+
+export const getCreateManyResponse200 = (
+  item: Pick<ObjectMetadataEntity, 'nameSingular' | 'namePlural'>,
+) => {
+  return {
+    description: 'Successful operation',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            data: {
+              type: 'object',
+              properties: {
+                [`create${capitalize(item.namePlural)}`]: {
+                  type: 'array',
+                  items: {
+                    $ref: `#/components/schemas/${capitalize(
+                      item.nameSingular,
+                    )}`,
+                  },
+                },
+              },
+            },
+          },
+          example: {
+            data: {
+              [`create${capitalize(item.namePlural)}`]: [
+                `${capitalize(item.nameSingular)}Object1`,
+                `${capitalize(item.nameSingular)}Object2`,
+                '...',
+              ],
+            },
+          },
+        },
+      },
+    },
+  };
+};
+
+export const getUpdateOneResponse200 = (
+  item: Pick<ObjectMetadataEntity, 'nameSingular'>,
+) => {
+  return {
+    description: 'Successful operation',
+    content: {
+      'application/json': {
+        schema: {
+          type: 'object',
+          properties: {
+            data: {
+              type: 'object',
+              properties: {
+                [`update${capitalize(item.nameSingular)}`]: {
+                  $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+                },
+              },
+            },
+          },
+          example: {
+            data: {
+              [`update${capitalize(item.nameSingular)}`]: `${capitalize(
+                item.nameSingular,
+              )}Object`,
             },
           },
         },
@@ -77,7 +186,7 @@ export const getDeleteResponse200 = (
             data: {
               type: 'object',
               properties: {
-                [item.nameSingular]: {
+                [`delete${capitalize(item.nameSingular)}`]: {
                   type: 'object',
                   properties: {
                     id: {
@@ -86,6 +195,13 @@ export const getDeleteResponse200 = (
                     },
                   },
                 },
+              },
+            },
+          },
+          example: {
+            data: {
+              [`delete${capitalize(item.nameSingular)}`]: {
+                id: 'ffe75ac3-9786-4846-b56f-640685c3631e',
               },
             },
           },

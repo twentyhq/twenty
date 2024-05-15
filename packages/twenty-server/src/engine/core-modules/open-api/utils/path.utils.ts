@@ -5,8 +5,11 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import {
   getDeleteResponse200,
   getJsonResponse,
-  getManyResultResponse200,
-  getSingleResultSuccessResponse,
+  getFindManyResponse200,
+  getCreateOneResponse200,
+  getCreateManyResponse200,
+  getFindOneResponse200,
+  getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
 import { getRequestBody } from 'src/engine/core-modules/open-api/utils/request-body.utils';
 
@@ -21,7 +24,7 @@ export const computeBatchPath = (
       parameters: [{ $ref: '#/components/parameters/depth' }],
       requestBody: getRequestBody(capitalize(item.namePlural)),
       responses: {
-        '201': getSingleResultSuccessResponse(item),
+        '201': getCreateManyResponse200(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },
@@ -46,7 +49,7 @@ export const computeManyResultPath = (
         { $ref: '#/components/parameters/lastCursor' },
       ],
       responses: {
-        '200': getManyResultResponse200(item),
+        '200': getFindManyResponse200(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },
@@ -58,7 +61,7 @@ export const computeManyResultPath = (
       parameters: [{ $ref: '#/components/parameters/depth' }],
       requestBody: getRequestBody(capitalize(item.nameSingular)),
       responses: {
-        '201': getSingleResultSuccessResponse(item),
+        '201': getCreateOneResponse200(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },
@@ -80,7 +83,7 @@ export const computeSingleResultPath = (
         { $ref: '#/components/parameters/depth' },
       ],
       responses: {
-        '200': getSingleResultSuccessResponse(item),
+        '200': getFindOneResponse200(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },
@@ -106,7 +109,7 @@ export const computeSingleResultPath = (
       ],
       requestBody: getRequestBody(capitalize(item.nameSingular)),
       responses: {
-        '200': getSingleResultSuccessResponse(item),
+        '200': getUpdateOneResponse200(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },

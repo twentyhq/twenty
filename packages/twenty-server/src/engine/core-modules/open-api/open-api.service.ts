@@ -22,8 +22,10 @@ import { computeWebhooks } from 'src/engine/core-modules/open-api/utils/computeW
 import { capitalize } from 'src/utils/capitalize';
 import {
   getDeleteResponse200,
-  getManyResultResponse200,
-  getSingleResultSuccessResponse,
+  getFindManyResponse200,
+  getCreateOneResponse200,
+  getFindOneResponse200,
+  getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
 import { getRequestBody } from 'src/engine/core-modules/open-api/utils/request-body.utils';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
@@ -130,7 +132,7 @@ export class OpenApiService {
           summary: `Find Many ${item.namePlural}`,
           parameters: [{ $ref: '#/components/parameters/filter' }],
           responses: {
-            '200': getManyResultResponse200(item),
+            '200': getFindManyResponse200(item),
             '400': { $ref: '#/components/responses/400' },
             '401': { $ref: '#/components/responses/401' },
           },
@@ -141,7 +143,7 @@ export class OpenApiService {
           operationId: `createOne${capitalize(item.nameSingular)}`,
           requestBody: getRequestBody(capitalize(item.nameSingular)),
           responses: {
-            '200': getSingleResultSuccessResponse(item),
+            '200': getCreateOneResponse200(item),
             '400': { $ref: '#/components/responses/400' },
             '401': { $ref: '#/components/responses/401' },
           },
@@ -153,7 +155,7 @@ export class OpenApiService {
           summary: `Find One ${item.nameSingular}`,
           parameters: [{ $ref: '#/components/parameters/idPath' }],
           responses: {
-            '200': getSingleResultSuccessResponse(item),
+            '200': getFindOneResponse200(item),
             '400': { $ref: '#/components/responses/400' },
             '401': { $ref: '#/components/responses/401' },
           },
@@ -176,7 +178,7 @@ export class OpenApiService {
           parameters: [{ $ref: '#/components/parameters/idPath' }],
           requestBody: getRequestBody(capitalize(item.nameSingular)),
           responses: {
-            '200': getSingleResultSuccessResponse(item),
+            '200': getUpdateOneResponse200(item),
             '400': { $ref: '#/components/responses/400' },
             '401': { $ref: '#/components/responses/401' },
           },
