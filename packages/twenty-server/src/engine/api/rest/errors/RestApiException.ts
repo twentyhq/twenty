@@ -4,7 +4,7 @@ import { BaseGraphQLError } from 'src/engine/utils/graphql-errors.util';
 
 const formatMessage = (message: BaseGraphQLError) => {
   if (message.extensions) {
-    return message.extensions.response;
+    return message.extensions.response.message || message.extensions.response;
   }
 
   return message.message;
