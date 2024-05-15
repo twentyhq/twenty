@@ -16,29 +16,6 @@ export class MetadataService {
     private readonly restApiService: RestApiService,
   ) {}
 
-  async fetchMetadataInputFields(request, fieldName: string) {
-    const query = `
-            query { 
-                __type(name: "${fieldName}") { 
-                    inputFields { name } 
-                }
-            }
-        `;
-    const data: Query = {
-      query,
-      variables: {},
-    };
-
-    const { data: response } = await this.restApiService.call(
-      GraphqlApiType.METADATA,
-      request,
-      data,
-    );
-    const fields = response.data.__type.inputFields.map((field) => field.name);
-
-    return fields;
-  }
-
   fetchMetadataFields(objectNamePlural: string) {
     const fields = `
           type
@@ -195,17 +172,17 @@ export class MetadataService {
   async create(request) {
     await this.tokenService.validateToken(request);
 
-    const { objectNameSingular: objectName } = parseMetadataPath(request);
+    const { objectNameSingular: objectName, objectNamePlural } =
+      parseMetadataPath(request);
     const objectNameCapitalized = capitalize(objectName);
 
-    const fieldName = `Create${objectNameCapitalized}Input`;
-    const fields = await this.fetchMetadataInputFields(request, fieldName);
+    const fields = this.fetchMetadataFields(objectNamePlural);
 
     const query = `
             mutation Create${objectNameCapitalized}($input: CreateOne${objectNameCapitalized}Input!) {
               createOne${objectNameCapitalized}(input: $input) {
                 id
-                ${fields.map((field) => field).join('\n')}
+                ${fields}
               }
             }
           `;
@@ -229,7 +206,11 @@ export class MetadataService {
   async update(request) {
     await this.tokenService.validateToken(request);
 
-    const { objectNameSingular: objectName, id } = parseMetadataPath(request);
+    const {
+      objectNameSingular: objectName,
+      objectNamePlural,
+      id,
+    } = parseMetadataPath(request);
     const objectNameCapitalized = capitalize(objectName);
 
     if (!id) {
@@ -237,14 +218,13 @@ export class MetadataService {
         `update ${objectName} query invalid. Id missing. eg: /rest/metadata/${objectName}/0d4389ef-ea9c-4ae8-ada1-1cddc440fb56`,
       );
     }
-    const fieldName = `Update${objectNameCapitalized}Input`;
-    const fields = await this.fetchMetadataInputFields(request, fieldName);
+    const fields = this.fetchMetadataFields(objectNamePlural);
 
     const query = `
             mutation Update${objectNameCapitalized}($input: UpdateOne${objectNameCapitalized}Input!) {
               updateOne${objectNameCapitalized}(input: $input) {
                 id
-                ${fields.map((field) => field).join('\n')}
+                ${fields}
               }
             }
           `;
