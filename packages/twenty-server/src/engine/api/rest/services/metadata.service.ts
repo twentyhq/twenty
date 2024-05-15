@@ -171,42 +171,37 @@ export class MetadataService {
   }
 
   async get(request) {
-    try {
-      await this.tokenService.validateToken(request);
+    await this.tokenService.validateToken(request);
 
-      const { objectNameSingular, objectNamePlural, id } =
-        parseMetadataPath(request);
+    const { objectNameSingular, objectNamePlural, id } =
+      parseMetadataPath(request);
 
-      const query = id
-        ? this.generateFindOneQuery(objectNameSingular, objectNamePlural)
-        : this.generateFindManyQuery(objectNameSingular, objectNamePlural);
+    const query = id
+      ? this.generateFindOneQuery(objectNameSingular, objectNamePlural)
+      : this.generateFindManyQuery(objectNameSingular, objectNamePlural);
 
-      const data: Query = {
-        query,
-        variables: id ? { id } : request.body,
-      };
+    const data: Query = {
+      query,
+      variables: id ? { id } : request.body,
+    };
 
-      return await this.restApiService.call(
-        GraphqlApiType.METADATA,
-        request,
-        data,
-      );
-    } catch (err) {
-      return { data: { error: err, status: err.status } };
-    }
+    return await this.restApiService.call(
+      GraphqlApiType.METADATA,
+      request,
+      data,
+    );
   }
 
   async create(request) {
-    try {
-      await this.tokenService.validateToken(request);
+    await this.tokenService.validateToken(request);
 
-      const { objectNameSingular: objectName } = parseMetadataPath(request);
-      const objectNameCapitalized = capitalize(objectName);
+    const { objectNameSingular: objectName } = parseMetadataPath(request);
+    const objectNameCapitalized = capitalize(objectName);
 
-      const fieldName = `Create${objectNameCapitalized}Input`;
-      const fields = await this.fetchMetadataInputFields(request, fieldName);
+    const fieldName = `Create${objectNameCapitalized}Input`;
+    const fields = await this.fetchMetadataInputFields(request, fieldName);
 
-      const query = `
+    const query = `
             mutation Create${objectNameCapitalized}($input: CreateOne${objectNameCapitalized}Input!) {
               createOne${objectNameCapitalized}(input: $input) {
                 id
@@ -215,41 +210,37 @@ export class MetadataService {
             }
           `;
 
-      const data: Query = {
-        query,
-        variables: {
-          input: {
-            [objectName]: request.body,
-          },
+    const data: Query = {
+      query,
+      variables: {
+        input: {
+          [objectName]: request.body,
         },
-      };
+      },
+    };
 
-      return await this.restApiService.call(
-        GraphqlApiType.METADATA,
-        request,
-        data,
-      );
-    } catch (err) {
-      return { data: { error: err, status: err.status } };
-    }
+    return await this.restApiService.call(
+      GraphqlApiType.METADATA,
+      request,
+      data,
+    );
   }
 
   async update(request) {
-    try {
-      await this.tokenService.validateToken(request);
+    await this.tokenService.validateToken(request);
 
-      const { objectNameSingular: objectName, id } = parseMetadataPath(request);
-      const objectNameCapitalized = capitalize(objectName);
+    const { objectNameSingular: objectName, id } = parseMetadataPath(request);
+    const objectNameCapitalized = capitalize(objectName);
 
-      if (!id) {
-        throw new BadRequestException(
-          `update ${objectName} query invalid. Id missing. eg: /rest/metadata/${objectName}/0d4389ef-ea9c-4ae8-ada1-1cddc440fb56`,
-        );
-      }
-      const fieldName = `Update${objectNameCapitalized}Input`;
-      const fields = await this.fetchMetadataInputFields(request, fieldName);
+    if (!id) {
+      throw new BadRequestException(
+        `update ${objectName} query invalid. Id missing. eg: /rest/metadata/${objectName}/0d4389ef-ea9c-4ae8-ada1-1cddc440fb56`,
+      );
+    }
+    const fieldName = `Update${objectNameCapitalized}Input`;
+    const fields = await this.fetchMetadataInputFields(request, fieldName);
 
-      const query = `
+    const query = `
             mutation Update${objectNameCapitalized}($input: UpdateOne${objectNameCapitalized}Input!) {
               updateOne${objectNameCapitalized}(input: $input) {
                 id
@@ -258,40 +249,36 @@ export class MetadataService {
             }
           `;
 
-      const data: Query = {
-        query,
-        variables: {
-          input: {
-            update: request.body,
-            id,
-          },
+    const data: Query = {
+      query,
+      variables: {
+        input: {
+          update: request.body,
+          id,
         },
-      };
+      },
+    };
 
-      return await this.restApiService.call(
-        GraphqlApiType.METADATA,
-        request,
-        data,
-      );
-    } catch (err) {
-      return { data: { error: err, status: err.status } };
-    }
+    return await this.restApiService.call(
+      GraphqlApiType.METADATA,
+      request,
+      data,
+    );
   }
 
   async delete(request) {
-    try {
-      await this.tokenService.validateToken(request);
+    await this.tokenService.validateToken(request);
 
-      const { objectNameSingular: objectName, id } = parseMetadataPath(request);
-      const objectNameCapitalized = capitalize(objectName);
+    const { objectNameSingular: objectName, id } = parseMetadataPath(request);
+    const objectNameCapitalized = capitalize(objectName);
 
-      if (!id) {
-        throw new BadRequestException(
-          `delete ${objectName} query invalid. Id missing. eg: /rest/metadata/${objectName}/0d4389ef-ea9c-4ae8-ada1-1cddc440fb56`,
-        );
-      }
+    if (!id) {
+      throw new BadRequestException(
+        `delete ${objectName} query invalid. Id missing. eg: /rest/metadata/${objectName}/0d4389ef-ea9c-4ae8-ada1-1cddc440fb56`,
+      );
+    }
 
-      const query = `
+    const query = `
             mutation Delete${objectNameCapitalized}($input: DeleteOne${objectNameCapitalized}Input!) {
               deleteOne${objectNameCapitalized}(input: $input) {
                 id
@@ -299,22 +286,19 @@ export class MetadataService {
             }
           `;
 
-      const data: Query = {
-        query,
-        variables: {
-          input: {
-            id,
-          },
+    const data: Query = {
+      query,
+      variables: {
+        input: {
+          id,
         },
-      };
+      },
+    };
 
-      return await this.restApiService.call(
-        GraphqlApiType.METADATA,
-        request,
-        data,
-      );
-    } catch (err) {
-      return { data: { error: err, status: err.status } };
-    }
+    return await this.restApiService.call(
+      GraphqlApiType.METADATA,
+      request,
+      data,
+    );
   }
 }
