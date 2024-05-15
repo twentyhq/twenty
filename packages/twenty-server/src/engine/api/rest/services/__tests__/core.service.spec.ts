@@ -1,10 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { HttpService } from '@nestjs/axios';
 
 import { CoreService } from 'src/engine/api/rest/services/core.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { TokenService } from 'src/engine/core-modules/auth/services/token.service';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core-query-builder/core-query-builder.factory';
+import { RestApiService } from 'src/engine/api/rest/services/rest-api.service';
 
 describe('CoreService', () => {
   let service: CoreService;
@@ -18,15 +16,7 @@ describe('CoreService', () => {
           useValue: {},
         },
         {
-          provide: EnvironmentService,
-          useValue: {},
-        },
-        {
-          provide: TokenService,
-          useValue: {},
-        },
-        {
-          provide: HttpService,
+          provide: RestApiService,
           useValue: {},
         },
       ],

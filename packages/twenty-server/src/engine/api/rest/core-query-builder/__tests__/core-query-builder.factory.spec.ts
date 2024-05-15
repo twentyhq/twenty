@@ -3,6 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core-query-builder/core-query-builder.factory';
 import { DeleteQueryFactory } from 'src/engine/api/rest/core-query-builder/factories/delete-query.factory';
 import { CreateOneQueryFactory } from 'src/engine/api/rest/core-query-builder/factories/create-one-query.factory';
+import { CreateManyQueryFactory } from 'src/engine/api/rest/core-query-builder/factories/create-many-query.factory';
 import { UpdateQueryFactory } from 'src/engine/api/rest/core-query-builder/factories/update-query.factory';
 import { FindOneQueryFactory } from 'src/engine/api/rest/core-query-builder/factories/find-one-query.factory';
 import { FindManyQueryFactory } from 'src/engine/api/rest/core-query-builder/factories/find-many-query.factory';
@@ -23,6 +24,7 @@ describe('CoreQueryBuilderFactory', () => {
         CoreQueryBuilderFactory,
         { provide: DeleteQueryFactory, useValue: {} },
         { provide: CreateOneQueryFactory, useValue: {} },
+        { provide: CreateManyQueryFactory, useValue: {} },
         { provide: UpdateQueryFactory, useValue: {} },
         { provide: FindOneQueryFactory, useValue: {} },
         { provide: FindManyQueryFactory, useValue: {} },
