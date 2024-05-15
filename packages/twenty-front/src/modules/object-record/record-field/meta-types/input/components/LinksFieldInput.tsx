@@ -14,6 +14,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { toSpliced } from '~/utils/array/toSpliced';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledDropdownMenu = styled(DropdownMenu)`
@@ -35,14 +36,13 @@ export const LinksFieldInput = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const links = useMemo<{ url: string; label: string; isPrimary?: boolean }[]>(
+  const links = useMemo<{ url: string; label: string }[]>(
     () =>
       [
         fieldValue.primaryLinkUrl
           ? {
               url: fieldValue.primaryLinkUrl,
               label: fieldValue.primaryLinkLabel,
-              isPrimary: true,
             }
           : null,
         ...(fieldValue.secondaryLinks ?? []),
@@ -74,37 +74,27 @@ export const LinksFieldInput = ({
     setIsInputDisplayed(false);
     setInputValue('');
 
-    if (!links.length) {
-      onSubmit?.(() =>
-        persistLinksField({
-          primaryLinkUrl: inputValue,
-          primaryLinkLabel: '',
-          secondaryLinks: [],
-        }),
-      );
-
-      return;
-    }
+    const nextLinks = [...links, { label: '', url: inputValue }];
+    const [nextPrimaryLink, ...nextSecondaryLinks] = nextLinks;
 
     onSubmit?.(() =>
       persistLinksField({
-        ...fieldValue,
-        secondaryLinks: [
-          ...(fieldValue.secondaryLinks ?? []),
-          { label: '', url: inputValue },
-        ],
+        primaryLinkUrl: nextPrimaryLink.url ?? '',
+        primaryLinkLabel: nextPrimaryLink.label ?? '',
+        secondaryLinks: nextSecondaryLinks,
       }),
     );
   };
 
   const handleDeleteLink = (index: number) => {
-    const nextSecondaryLinks = [...(fieldValue.secondaryLinks ?? [])];
-    nextSecondaryLinks.splice(index - 1, 1);
-
     onSubmit?.(() =>
       persistLinksField({
         ...fieldValue,
-        secondaryLinks: nextSecondaryLinks,
+        secondaryLinks: toSpliced(
+          fieldValue.secondaryLinks ?? [],
+          index - 1,
+          1,
+        ),
       }),
     );
   };
@@ -114,11 +104,11 @@ export const LinksFieldInput = ({
       {!!links.length && (
         <>
           <DropdownMenuItemsContainer>
-            {links.map(({ isPrimary, label, url }, index) => (
+            {links.map(({ label, url }, index) => (
               <LinksFieldMenuItem
                 key={index}
                 dropdownId={`${hotkeyScope}-links-${index}`}
-                isPrimary={isPrimary}
+                isPrimary={index === 0}
                 label={label}
                 onDelete={() => handleDeleteLink(index)}
                 url={url}
