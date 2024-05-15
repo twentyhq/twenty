@@ -11,7 +11,6 @@ const meta: Meta = {
     maxWidth: 100,
     children: 'This is a long text that should be truncated',
   },
-  tags: ['performance'],
 };
 
 export default meta;
