@@ -18,7 +18,7 @@ const computeStoriesGlob = () => {
   }
 
   if (process.env.STORYBOOK_SCOPE === 'performance') {
-    return ['../src/modules/**/*.perf.stories.@(js|jsx|ts|tsx)'];
+    return ['../src/modules/**/*.stories.perf.@(js|jsx|ts|tsx)'];
   }
 
   if (process.env.STORYBOOK_SCOPE === 'ui-docs') {

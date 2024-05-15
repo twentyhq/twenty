@@ -210,13 +210,12 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "cross-var chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name={args.targetPackageJsonScript} --exit-zero-on-changes {args.ci}",
-        "ci": false,
+        "command": "cross-var chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name={args.targetPackageJsonScript} {args.ci}",
         "targetPackageJsonScript": "storybook:build:chromatic"
       },
       "configurations": {
         "ci": {
-          "ci": true
+          "ci": "--exit-zero-on-changes"
         }
       }
     },
