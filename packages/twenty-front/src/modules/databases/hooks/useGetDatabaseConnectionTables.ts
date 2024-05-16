@@ -29,7 +29,7 @@ export const useGetDatabaseConnectionTables = ({
     variables: {
       input: {
         id: connectionId,
-        shouldFetchPendingSchemaUpdates: shouldFetchPendingSchemaUpdates,
+        shouldFetchPendingSchemaUpdates,
       },
     },
   });
