@@ -1,16 +1,16 @@
 import { Test, TestingModule } from '@nestjs/testing';
 
-import { CoreService } from 'src/engine/api/rest/services/core.service';
-import { CoreQueryBuilderFactory } from 'src/engine/api/rest/core-query-builder/core-query-builder.factory';
+import { RestApiCoreService } from 'src/engine/api/rest/services/rest-api-core.service';
+import { CoreQueryBuilderFactory } from 'src/engine/api/rest/rest-api-core-query-builder/core-query-builder.factory';
 import { RestApiService } from 'src/engine/api/rest/services/rest-api.service';
 
-describe('CoreService', () => {
-  let service: CoreService;
+describe('RestApiCoreService', () => {
+  let service: RestApiCoreService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        CoreService,
+        RestApiCoreService,
         {
           provide: CoreQueryBuilderFactory,
           useValue: {},
@@ -22,7 +22,7 @@ describe('CoreService', () => {
       ],
     }).compile();
 
-    service = module.get<CoreService>(CoreService);
+    service = module.get<RestApiCoreService>(RestApiCoreService);
   });
   it('should be defined', () => {
     expect(service).toBeDefined();
