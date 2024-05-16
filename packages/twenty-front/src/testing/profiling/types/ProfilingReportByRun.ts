@@ -10,6 +10,7 @@ export type ProfilingReportItem = {
   p99: number;
   min: number;
   max: number;
+  variance: number;
 };
 
 export type ProfilingReport = {

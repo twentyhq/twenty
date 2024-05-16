@@ -46,6 +46,7 @@ export const ProfilingReporter = () => {
             <th>P95</th>
             <th>P99</th>
             <th>Max</th>
+            <th>Variance</th>
           </tr>
         </thead>
         <tbody>
@@ -59,6 +60,9 @@ export const ProfilingReporter = () => {
             <td>{Math.round(profilingReport.total.p95 * 1000) / 1000}ms</td>
             <td>{Math.round(profilingReport.total.p99 * 1000) / 1000}ms</td>
             <td>{Math.round(profilingReport.total.max * 1000) / 1000}ms</td>
+            <td>
+              {Math.round(profilingReport.total.variance * 1000000) / 1000000}
+            </td>
           </tr>
           {Object.entries(profilingReport.runs).map(([runName, report]) => (
             <tr key={runName}>
@@ -71,6 +75,7 @@ export const ProfilingReporter = () => {
               <td>{Math.round(report.p95 * 1000) / 1000}ms</td>
               <td>{Math.round(report.p99 * 1000) / 1000}ms</td>
               <td>{Math.round(report.max * 1000) / 1000}ms</td>
+              <td>{Math.round(report.variance * 1000000) / 1000000}</td>
             </tr>
           ))}
         </tbody>

@@ -41,6 +41,13 @@ export const ProfilingQueueEffect = ({
           'warm-up-1',
           'warm-up-2',
           'warm-up-3',
+          'warm-up-4',
+          'warm-up-5',
+          'warm-up-6',
+          'warm-up-7',
+          'warm-up-8',
+          'warm-up-9',
+          'warm-up-10',
           ...[
             ...Array.from({ length: numberOfRuns }, (_, i) => `real-run-${i}`),
           ],
@@ -76,9 +83,13 @@ export const ProfilingQueueEffect = ({
             return;
           }
 
-          await new Promise((resolve) =>
-            setTimeout(resolve, TIME_BETWEEN_TEST_RUNS_IN_MS),
-          );
+          const timeInMs = profilingSessionRuns[
+            currentProfilingRunIndex
+          ].startsWith('warm-up')
+            ? TIME_BETWEEN_TEST_RUNS_IN_MS * 2
+            : TIME_BETWEEN_TEST_RUNS_IN_MS;
+
+          await new Promise((resolve) => setTimeout(resolve, timeInMs));
 
           const nextIndex = currentProfilingRunIndex + 1;
 
