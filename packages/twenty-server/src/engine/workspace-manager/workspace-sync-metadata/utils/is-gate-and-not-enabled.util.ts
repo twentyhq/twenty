@@ -1,7 +1,7 @@
-import { GateDecoratorParams } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/gate-decorator.interface';
+import { Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
 export const isGatedAndNotEnabled = (
-  gate: GateDecoratorParams | undefined,
+  gate: Gate | undefined,
   workspaceFeatureFlagsMap: Record<string, boolean>,
 ): boolean => {
   const featureFlagValue =

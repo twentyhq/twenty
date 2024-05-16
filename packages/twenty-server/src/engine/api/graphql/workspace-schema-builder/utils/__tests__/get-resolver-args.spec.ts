@@ -1,18 +1,20 @@
+import { GraphQLID, GraphQLInt, GraphQLString } from 'graphql';
+
 import { WorkspaceResolverBuilderMethodNames } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { InputTypeDefinitionKind } from 'src/engine/api/graphql/workspace-schema-builder/factories/input-type-definition.factory';
 import { getResolverArgs } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-resolver-args.util';
 
 describe('getResolverArgs', () => {
   const expectedOutputs = {
     findMany: {
-      first: { type: FieldMetadataType.NUMBER, isNullable: true },
-      last: { type: FieldMetadataType.NUMBER, isNullable: true },
-      before: { type: FieldMetadataType.TEXT, isNullable: true },
-      after: { type: FieldMetadataType.TEXT, isNullable: true },
+      first: { type: GraphQLInt, isNullable: true },
+      last: { type: GraphQLInt, isNullable: true },
+      before: { type: GraphQLString, isNullable: true },
+      after: { type: GraphQLString, isNullable: true },
       filter: { kind: InputTypeDefinitionKind.Filter, isNullable: true },
       orderBy: { kind: InputTypeDefinitionKind.OrderBy, isNullable: true },
+      limit: { type: GraphQLInt, isNullable: true },
     },
     findOne: {
       filter: { kind: InputTypeDefinitionKind.Filter, isNullable: false },
@@ -28,14 +30,14 @@ describe('getResolverArgs', () => {
       data: { kind: InputTypeDefinitionKind.Create, isNullable: false },
     },
     updateOne: {
-      id: { type: FieldMetadataType.UUID, isNullable: false },
+      id: { type: GraphQLID, isNullable: false },
       data: { kind: InputTypeDefinitionKind.Update, isNullable: false },
     },
     deleteOne: {
-      id: { type: FieldMetadataType.UUID, isNullable: false },
+      id: { type: GraphQLID, isNullable: false },
     },
     executeQuickActionOnOne: {
-      id: { type: FieldMetadataType.UUID, isNullable: false },
+      id: { type: GraphQLID, isNullable: false },
     },
   };
 

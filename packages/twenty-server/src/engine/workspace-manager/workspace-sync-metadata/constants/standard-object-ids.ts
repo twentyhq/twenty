@@ -5,7 +5,7 @@
  * For readability keys can be edited but the values should not be changed.
  */
 
-export const standardObjectIds = {
+export const STANDARD_OBJECT_IDS = {
   activityTarget: '20202020-2945-440e-8d1a-f84672d33d5e',
   activity: '20202020-39aa-4a89-843b-eb5f2a8b677f',
   apiKey: '20202020-4c00-401d-8cda-ec6a4c41cd7d',
@@ -19,7 +19,6 @@ export const standardObjectIds = {
   comment: '20202020-435f-4de9-89b5-97e32233bf5f',
   company: '20202020-b374-4779-a561-80086cb2e17f',
   connectedAccount: '20202020-977e-46b2-890b-c3002ddfd5c5',
-  event: '20202020-6736-4337-b5c4-8b39fae325a5', // Todo: remove
   favorite: '20202020-ab56-4e05-92a3-e2414a499860',
   auditLog: '20202020-0566-476a-b4c4-a0f9781bd80a',
   messageChannelMessageAssociation: '20202020-ad1e-4127-bccb-d83ae04d2ccb',

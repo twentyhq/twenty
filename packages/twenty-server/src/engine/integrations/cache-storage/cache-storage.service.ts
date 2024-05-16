@@ -44,7 +44,7 @@ export class CacheStorageService {
     });
   }
 
-  async setPop(key: string, size: number = 1) {
+  async setPop(key: string, size = 1) {
     if (this.isRedisCache()) {
       return (this.cache as RedisCache).store.client.sPop(
         `${this.namespace}:${key}`,
@@ -55,10 +55,16 @@ export class CacheStorageService {
     return this.get(key).then((res: string[]) => {
       if (res) {
         this.set(key, res.slice(0, -size));
+
+        return res.slice(-size);
       }
 
-      return res;
+      return [];
     });
+  }
+
+  async flush() {
+    return this.cache.reset();
   }
 
   private isRedisCache() {

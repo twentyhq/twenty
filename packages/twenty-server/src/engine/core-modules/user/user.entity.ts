@@ -71,7 +71,7 @@ export class User {
 
   @Field(() => Workspace, { nullable: false })
   @ManyToOne(() => Workspace, (workspace) => workspace.users, {
-    onDelete: 'SET NULL',
+    onDelete: 'RESTRICT',
   })
   defaultWorkspace: Relation<Workspace>;
 
@@ -79,11 +79,19 @@ export class User {
   @Column()
   defaultWorkspaceId: string;
 
-  @Field({ nullable: true })
+  @Field({
+    nullable: true,
+    deprecationReason:
+      'field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021',
+  })
   @Column({ nullable: true })
   passwordResetToken: string;
 
-  @Field({ nullable: true })
+  @Field({
+    nullable: true,
+    deprecationReason:
+      'field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021',
+  })
   @Column({ nullable: true, type: 'timestamptz' })
   passwordResetTokenExpiresAt: Date;
 

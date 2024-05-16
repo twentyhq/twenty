@@ -10,12 +10,12 @@ import {
   FloatFilter,
   FullNameFilter,
   NotObjectRecordFilter,
-  ObjectRecordQueryFilter,
   OrObjectRecordFilter,
+  RecordGqlOperationFilter,
   StringFilter,
   URLFilter,
   UUIDFilter,
-} from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
+} from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { isMatchingBooleanFilter } from '@/object-record/record-filter/utils/isMatchingBooleanFilter';
 import { isMatchingCurrencyFilter } from '@/object-record/record-filter/utils/isMatchingCurrencyFilter';
 import { isMatchingDateFilter } from '@/object-record/record-filter/utils/isMatchingDateFilter';
@@ -27,15 +27,15 @@ import { isDefined } from '~/utils/isDefined';
 import { isEmptyObject } from '~/utils/isEmptyObject';
 
 const isAndFilter = (
-  filter: ObjectRecordQueryFilter,
+  filter: RecordGqlOperationFilter,
 ): filter is AndObjectRecordFilter => 'and' in filter && !!filter.and;
 
 const isOrFilter = (
-  filter: ObjectRecordQueryFilter,
+  filter: RecordGqlOperationFilter,
 ): filter is OrObjectRecordFilter => 'or' in filter && !!filter.or;
 
 const isNotFilter = (
-  filter: ObjectRecordQueryFilter,
+  filter: RecordGqlOperationFilter,
 ): filter is NotObjectRecordFilter => 'not' in filter && !!filter.not;
 
 export const isRecordMatchingFilter = ({
@@ -44,7 +44,7 @@ export const isRecordMatchingFilter = ({
   objectMetadataItem,
 }: {
   record: any;
-  filter: ObjectRecordQueryFilter;
+  filter: RecordGqlOperationFilter;
   objectMetadataItem: ObjectMetadataItem;
 }): boolean => {
   if (Object.keys(filter).length === 0) {

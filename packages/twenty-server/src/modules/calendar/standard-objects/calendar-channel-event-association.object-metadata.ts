@@ -1,57 +1,62 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { calendarChannelEventAssociationStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { Gate } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/gate.decorator';
-import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
-import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
-import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CalendarEventObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event.object-metadata';
-import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
+import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 
-@ObjectMetadata({
-  standardId: standardObjectIds.calendarChannelEventAssociation,
+@WorkspaceEntity({
+  standardId: STANDARD_OBJECT_IDS.calendarChannelEventAssociation,
   namePlural: 'calendarChannelEventAssociations',
   labelSingular: 'Calendar Channel Event Association',
   labelPlural: 'Calendar Channel Event Associations',
   description: 'Calendar Channel Event Associations',
   icon: 'IconCalendar',
 })
-@IsSystem()
-@IsNotAuditLogged()
-@Gate({
-  featureFlag: FeatureFlagKeys.IsCalendarEnabled,
-})
-export class CalendarChannelEventAssociationObjectMetadata extends BaseObjectMetadata {
-  @FieldMetadata({
-    standardId: calendarChannelEventAssociationStandardFieldIds.calendarChannel,
-    type: FieldMetadataType.RELATION,
-    label: 'Channel ID',
-    description: 'Channel ID',
-    icon: 'IconCalendar',
-    joinColumn: 'calendarChannelId',
-  })
-  calendarChannel: Relation<CalendarEventObjectMetadata>;
-
-  @FieldMetadata({
-    standardId: calendarChannelEventAssociationStandardFieldIds.calendarEvent,
-    type: FieldMetadataType.RELATION,
-    label: 'Event ID',
-    description: 'Event ID',
-    icon: 'IconCalendar',
-    joinColumn: 'calendarEventId',
-  })
-  calendarEvent: Relation<CalendarEventObjectMetadata>;
-
-  @FieldMetadata({
-    standardId: calendarChannelEventAssociationStandardFieldIds.eventExternalId,
+@WorkspaceIsSystem()
+@WorkspaceIsNotAuditLogged()
+export class CalendarChannelEventAssociationObjectMetadata extends BaseWorkspaceEntity {
+  @WorkspaceField({
+    standardId:
+      CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.eventExternalId,
     type: FieldMetadataType.TEXT,
     label: 'Event external ID',
     description: 'Event external ID',
     icon: 'IconCalendar',
   })
   eventExternalId: string;
+
+  @WorkspaceRelation({
+    standardId:
+      CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.calendarChannel,
+    type: RelationMetadataType.MANY_TO_ONE,
+    label: 'Channel ID',
+    description: 'Channel ID',
+    icon: 'IconCalendar',
+    joinColumn: 'calendarChannelId',
+    inverseSideTarget: () => CalendarEventObjectMetadata,
+    inverseSideFieldKey: 'calendarChannelEventAssociations',
+  })
+  calendarChannel: Relation<CalendarEventObjectMetadata>;
+
+  @WorkspaceRelation({
+    standardId:
+      CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.calendarEvent,
+    type: RelationMetadataType.MANY_TO_ONE,
+    label: 'Event ID',
+    description: 'Event ID',
+    icon: 'IconCalendar',
+    joinColumn: 'calendarEventId',
+    inverseSideTarget: () => CalendarEventObjectMetadata,
+    inverseSideFieldKey: 'calendarChannelEventAssociations',
+  })
+  calendarEvent: Relation<CalendarEventObjectMetadata>;
 }

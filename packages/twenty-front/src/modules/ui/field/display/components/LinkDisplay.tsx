@@ -8,15 +8,14 @@ import {
   SocialLink,
 } from '@/ui/navigation/link/components/SocialLink';
 import { checkUrlType } from '~/utils/checkUrlType';
+import { getAbsoluteUrl } from '~/utils/url/getAbsoluteUrl';
+import { getUrlHostName } from '~/utils/url/getUrlHostName';
 
 import { EllipsisDisplay } from './EllipsisDisplay';
 
 const StyledRawLink = styled(RoundedLink)`
-  overflow: hidden;
-
   a {
-    overflow: hidden;
-    text-overflow: ellipsis;
+    font-size: ${({ theme }) => theme.font.size.md};
     white-space: nowrap;
   }
 `;
@@ -30,14 +29,8 @@ export const LinkDisplay = ({ value }: LinkDisplayProps) => {
     event.stopPropagation();
   };
 
-  const absoluteUrl = value?.url
-    ? value.url.startsWith('http')
-      ? value.url
-      : 'https://' + value.url
-    : '';
-
-  const displayedValue = value?.label || value?.url || '';
-
+  const absoluteUrl = getAbsoluteUrl(value?.url || '');
+  const displayedValue = value?.label || getUrlHostName(absoluteUrl);
   const type = checkUrlType(absoluteUrl);
 
   if (type === LinkType.LinkedIn || type === LinkType.Twitter) {
