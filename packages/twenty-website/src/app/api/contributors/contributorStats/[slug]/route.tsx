@@ -1,5 +1,5 @@
 import { getContributorActivity } from '@/app/contributors/utils/get-contributor-activity';
-import { executePartialSync } from '@/github-sync/execute-partial-sync';
+import { executePartialSync } from '@/github/execute-partial-sync';
 
 export const dynamic = 'force-dynamic';
 

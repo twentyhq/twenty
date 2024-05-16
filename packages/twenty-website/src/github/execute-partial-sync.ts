@@ -1,13 +1,12 @@
-import { global } from '@apollo/client/utilities/globals';
 import { graphql } from '@octokit/graphql';
 
-import { fetchAssignableUsers } from '@/github-sync/contributors/fetch-assignable-users';
-import { saveIssuesToDB } from '@/github-sync/contributors/save-issues-to-db';
-import { savePRsToDB } from '@/github-sync/contributors/save-prs-to-db';
-import { searchIssuesPRs } from '@/github-sync/contributors/search-issues-prs';
-import { IssueNode, PullRequestNode } from '@/github-sync/contributors/types';
-import { fetchAndSaveGithubReleases } from '@/github-sync/github-releases/fetch-and-save-github-releases';
-import { fetchAndSaveGithubStars } from '@/github-sync/github-stars/fetch-and-save-github-stars';
+import { fetchAssignableUsers } from '@/github/contributors/fetch-assignable-users';
+import { saveIssuesToDB } from '@/github/contributors/save-issues-to-db';
+import { savePRsToDB } from '@/github/contributors/save-prs-to-db';
+import { searchIssuesPRs } from '@/github/contributors/search-issues-prs';
+import { IssueNode, PullRequestNode } from '@/github/contributors/types';
+import { fetchAndSaveGithubReleases } from '@/github/github-releases/fetch-and-save-github-releases';
+import { fetchAndSaveGithubStars } from '@/github/github-stars/fetch-and-save-github-stars';
 
 export const executePartialSync = async () => {
   if (!global.process.env.GITHUB_TOKEN) {

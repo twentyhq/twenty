@@ -54,7 +54,6 @@ interface ProfileProps {
 }
 
 export const ProfileSharing = ({ username }: ProfileProps) => {
-
   const [loading, setLoading] = useState(false);
   const baseUrl = 'https://twenty.com';
   const contributorUrl = `${baseUrl}/contributors/${username}`;
