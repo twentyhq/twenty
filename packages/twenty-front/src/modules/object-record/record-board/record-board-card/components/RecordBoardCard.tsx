@@ -13,6 +13,7 @@ import {
   RecordUpdateHook,
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
+import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -266,6 +267,10 @@ export const RecordBoardCard = () => {
                       type: fieldDefinition.type,
                       metadata: fieldDefinition.metadata,
                       defaultValue: fieldDefinition.defaultValue,
+                      editButtonIcon: getFieldButtonIcon({
+                        metadata: fieldDefinition.metadata,
+                        type: fieldDefinition.type,
+                      }),
                     },
                     useUpdateRecord: useUpdateOneRecordHook,
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,
