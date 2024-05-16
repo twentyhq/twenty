@@ -32,7 +32,10 @@ export const RecordTableBodyEffect = ({
     isFetchingMoreRecordsFamilyState(queryStateIdentifier),
   );
 
-  useScrollRestoration();
+  const rowHeight = 32;
+  const viewportHeight = records.length * rowHeight;
+
+  useScrollRestoration(viewportHeight);
 
   useEffect(() => {
     if (!loading) {

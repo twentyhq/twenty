@@ -1,8 +1,8 @@
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useLocation, useNavigation } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { overlayScrollbarsState } from '@/ui/utilities/scroll/states/overlayScrollbarsState';
 import { scrollPositionState } from '@/ui/utilities/scroll/states/scrollPositionState';
 import { scrollTopState } from '@/ui/utilities/scroll/states/scrollTopState';
 import { isDefined } from '~/utils/isDefined';
@@ -12,7 +12,7 @@ import { isDefined } from '~/utils/isDefined';
  * so the same path navigated to at different points in the history stack will
  * not share the same scroll position.
  */
-export const useScrollRestoration = () => {
+export const useScrollRestoration = (viewportHeight?: number) => {
   const key = `scroll-position-${useLocation().key}`;
   const { state } = useNavigation();
 
@@ -21,17 +21,17 @@ export const useScrollRestoration = () => {
   );
 
   const scrollTop = useRecoilValue(scrollTopState); // Ensure Recoil state is initialized
+  const overlayScrollbars = useRecoilValue(overlayScrollbarsState);
 
-  const { instance: scrollbarInstance } = useContext(ScrollWrapperContext);
-
-  const scrollWrapper = scrollbarInstance?.()?.elements().viewport;
+  const scrollWrapper = overlayScrollbars?.elements().viewport;
+  const skip = isDefined(viewportHeight) && scrollPosition > viewportHeight;
 
   useEffect(() => {
     if (state === 'loading') {
       setScrollPosition(scrollTop ?? 0);
-    } else if (state === 'idle' && isDefined(scrollWrapper)) {
+    } else if (state === 'idle' && isDefined(scrollWrapper) && !skip) {
       scrollWrapper.scrollTo({ top: scrollPosition });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key, state, scrollWrapper]);
+  }, [key, state, scrollWrapper, skip]);
 };
