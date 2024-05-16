@@ -51,9 +51,7 @@ export const validateObjectMetadataInput = <
 const validateNameIsNotReservedKeyword = (name?: string) => {
   if (name) {
     if (reservedKeywords.includes(name)) {
-      throw new ForbiddenException(
-        `You cannot create an object with the name "${name}"`,
-      );
+      throw new ForbiddenException(`The name "${name}" is not available`);
     }
   }
 };
