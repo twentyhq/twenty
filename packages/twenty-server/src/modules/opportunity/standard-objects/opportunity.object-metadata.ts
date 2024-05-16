@@ -118,8 +118,8 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.company,
     type: FieldMetadataType.RELATION,
-    label: 'Company',
-    description: 'Opportunity company',
+    label: 'Organization',
+    description: 'Opportunity organization',
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'companyId',
   })

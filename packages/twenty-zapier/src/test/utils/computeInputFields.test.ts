@@ -115,8 +115,8 @@ describe('computeInputFields', () => {
             node: {
               type: 'UUID',
               name: 'companyId',
-              label: 'Company id (foreign key)',
-              description: 'Contact’s company id foreign key',
+              label: 'Organization id (foreign key)',
+              description: 'Contact’s organization id foreign key',
               isNullable: true,
               defaultValue: null,
             },
@@ -201,7 +201,7 @@ describe('computeInputFields', () => {
         key: 'companyId',
         label: 'Company id (foreign key)',
         type: 'string',
-        helpText: 'Contact’s company id foreign key',
+        helpText: 'Contact’s organization id foreign key',
         required: false,
       },
     ];
