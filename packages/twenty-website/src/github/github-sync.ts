@@ -1,14 +1,16 @@
+import { executePartialSync } from '@/github/execute-partial-sync';
 import { fetchAndSaveGithubData } from '@/github/fetch-and-save-github-data';
 
 export const githubSync = async () => {
-  const pageLimitFlagIndex = process.argv.indexOf('--pageLimit');
-  let pageLimit = 0;
+  const isFullSyncFlagIndex = process.argv.indexOf('--isFullSync');
+  const isFullSync = isFullSyncFlagIndex > -1;
 
-  if (pageLimitFlagIndex > -1) {
-    pageLimit = parseInt(process.argv[pageLimitFlagIndex + 1], 10);
+  if (isFullSync) {
+    await fetchAndSaveGithubData();
+  } else {
+    await executePartialSync();
   }
 
-  await fetchAndSaveGithubData({ pageLimit });
   process.exit(0);
 };
 

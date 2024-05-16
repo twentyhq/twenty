@@ -1,6 +1,6 @@
 import { graphql } from '@octokit/graphql';
 
-import { getLatestUpdate } from '@/github-sync/contributors/get-latest-update';
+import { getLatestUpdate } from '@/github/contributors/get-latest-update';
 import {
   IssueNode,
   PullRequestNode,
@@ -82,6 +82,7 @@ export async function searchIssuesPRs(
       cursor,
     },
   );
+
   const newAccumulatedData: Array<PullRequestNode | IssueNode> = [
     ...accumulatedData,
     ...search.edges.map(({ node }) => node),

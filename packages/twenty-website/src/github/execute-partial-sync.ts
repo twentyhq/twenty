@@ -25,7 +25,6 @@ export const executePartialSync = async () => {
   await fetchAndSaveGithubReleases(query);
 
   const assignableUsers = await fetchAssignableUsers(query);
-  console.log(assignableUsers);
 
   const fetchedPRs = (await searchIssuesPRs(
     query,
