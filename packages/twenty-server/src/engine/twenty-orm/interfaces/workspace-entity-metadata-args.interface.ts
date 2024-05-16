@@ -1,6 +1,6 @@
 import { Gate } from 'src/engine/twenty-orm/interfaces/gate.interface';
 
-export interface WorkspaceObjectMetadataArgs {
+export interface WorkspaceEntityMetadataArgs {
   /**
    * Standard id.
    */
@@ -12,27 +12,27 @@ export interface WorkspaceObjectMetadataArgs {
    * String target is a table defined in a json schema.
    */
   // eslint-disable-next-line @typescript-eslint/ban-types
-  readonly target: Function | string;
+  readonly target: Function;
 
   /**
-   * Object name.
+   * Entity name.
    */
   readonly nameSingular: string;
   readonly namePlural: string;
 
   /**
-   * Object label.
+   * Entity label.
    */
   readonly labelSingular: string;
   readonly labelPlural: string;
 
   /**
-   * Object description.
+   * Entity description.
    */
   readonly description?: string;
 
   /**
-   * Object icon.
+   * Entity icon.
    */
   readonly icon?: string;
 
@@ -44,10 +44,10 @@ export interface WorkspaceObjectMetadataArgs {
   /**
    * Is system object.
    */
-  readonly isSystem?: boolean;
+  readonly isSystem: boolean;
 
   /**
-   * Object gate.
+   * Entity gate.
    */
   readonly gate?: Gate;
 }

@@ -12,13 +12,13 @@ const computeStoriesGlob = () => {
 
   if (process.env.STORYBOOK_SCOPE === 'modules') {
     return [
-      '../src/modules/**/*.stories.@(js|jsx|ts|tsx)',
+      '../src/modules/**/!(perf)/*.stories.@(js|jsx|ts|tsx)',
       '../src/modules/**/*.docs.mdx',
     ];
   }
 
   if (process.env.STORYBOOK_SCOPE === 'performance') {
-    return ['../src/modules/**/*.perf.stories.@(js|jsx|ts|tsx)'];
+    return ['../src/modules/**/perf/*.perf.stories.@(js|jsx|ts|tsx)'];
   }
 
   if (process.env.STORYBOOK_SCOPE === 'ui-docs') {

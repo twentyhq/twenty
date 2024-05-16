@@ -23,6 +23,7 @@ export const getProfilingStory = ({
     numberOfRuns,
     numberOfTests: numberOfTestsPerRun,
     componentName,
+    chromatic: { disableSnapshot: true },
   },
   play: async ({ canvasElement }) => {
     await findByTestId(

@@ -3,14 +3,13 @@ import { slugify, transliterate } from 'transliteration';
 
 import { isDefined } from '~/utils/isDefined';
 
-const VALID_STRING_PATTERN = /^[a-zA-Z][a-zA-Z0-9 ]*$/;
-
-export const formatMetadataLabelToMetadataNameOrThrows = (
+export const transliterateAndFormatOrThrow = (
   string: string,
+  validStringPattern: RegExp,
 ): string => {
   let formattedString = string;
 
-  if (isDefined(formattedString.match(VALID_STRING_PATTERN))) {
+  if (isDefined(formattedString.match(validStringPattern))) {
     return toCamelCase(formattedString);
   }
 
@@ -18,7 +17,7 @@ export const formatMetadataLabelToMetadataNameOrThrows = (
     slugify(transliterate(formattedString, { trim: true })),
   );
 
-  if (!formattedString.match(VALID_STRING_PATTERN)) {
+  if (!formattedString.match(validStringPattern)) {
     throw new Error(`"${string}" is not a valid name`);
   }
 

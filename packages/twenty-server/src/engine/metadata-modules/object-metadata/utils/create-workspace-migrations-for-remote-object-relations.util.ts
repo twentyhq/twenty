@@ -47,7 +47,7 @@ const buildCommentForRemoteObjectForeignKey = async (
   return `@graphql(${JSON.stringify(parsedComment)})`;
 };
 
-export const createWorkspaceMigrationsForRemoteObject = async (
+export const createWorkspaceMigrationsForRemoteObjectRelations = async (
   createdObjectMetadata: ObjectMetadataEntity,
   activityTargetObjectMetadata: ObjectMetadataEntity,
   attachmentObjectMetadata: ObjectMetadataEntity,
