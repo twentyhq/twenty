@@ -39,7 +39,9 @@ export const SettingsIntegrationDatabaseConnectionSyncStatus = ({
           ? `1 tracked table${
               updatesAvailable ? ' (with pending schema updates)' : ''
             }`
-          : `${syncedTables.length} tracked tables`
+          : `${syncedTables.length} tracked tables${
+              updatesAvailable ? ' (with pending schema updates)' : ''
+            }`
       }
     />
   );
