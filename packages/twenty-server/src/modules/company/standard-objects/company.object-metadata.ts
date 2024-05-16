@@ -26,9 +26,9 @@ import { TimelineActivityObjectMetadata } from 'src/modules/timeline/standard-ob
 @ObjectMetadata({
   standardId: STANDARD_OBJECT_IDS.company,
   namePlural: 'companies',
-  labelSingular: 'Company',
-  labelPlural: 'Companies',
-  description: 'A company',
+  labelSingular: 'Organization',
+  labelPlural: 'Organizations',
+  description: 'An organization',
   icon: 'IconBuildingSkyscraper',
 })
 export class CompanyObjectMetadata extends BaseObjectMetadata {
@@ -36,7 +36,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     standardId: COMPANY_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: 'Name',
-    description: 'The company name',
+    description: 'The organization name',
     icon: 'IconBuildingSkyscraper',
   })
   name: string;
@@ -46,7 +46,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.TEXT,
     label: 'Domain Name',
     description:
-      'The company website URL. We use this url to fetch the company icon',
+      'The organization website URL. We use this url to fetch the organization icon',
     icon: 'IconLink',
   })
   domainName?: string;
@@ -55,7 +55,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     standardId: COMPANY_STANDARD_FIELD_IDS.address,
     type: FieldMetadataType.TEXT,
     label: 'Address',
-    description: 'The company address',
+    description: 'The organization address',
     icon: 'IconMap',
   })
   address: string;
@@ -64,7 +64,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     standardId: COMPANY_STANDARD_FIELD_IDS.employees,
     type: FieldMetadataType.NUMBER,
     label: 'Employees',
-    description: 'Number of employees in the company',
+    description: 'Number of employees in the organization',
     icon: 'IconUsers',
   })
   @IsNullable()
@@ -74,7 +74,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     standardId: COMPANY_STANDARD_FIELD_IDS.linkedinLink,
     type: FieldMetadataType.LINK,
     label: 'Linkedin',
-    description: 'The company Linkedin account',
+    description: 'The organization Linkedin account',
     icon: 'IconBrandLinkedin',
   })
   @IsNullable()
@@ -84,7 +84,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     standardId: COMPANY_STANDARD_FIELD_IDS.xLink,
     type: FieldMetadataType.LINK,
     label: 'X',
-    description: 'The company Twitter/X account',
+    description: 'The organization Twitter/X account',
     icon: 'IconBrandX',
   })
   @IsNullable()
@@ -95,7 +95,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.CURRENCY,
     label: 'ARR',
     description:
-      'Annual Recurring Revenue: The actual or estimated annual revenue of the company',
+      'Annual Recurring Revenue: The actual or estimated annual revenue of the organization',
     icon: 'IconMoneybag',
   })
   @IsNullable()
@@ -106,7 +106,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.BOOLEAN,
     label: 'ICP',
     description:
-      'Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you',
+      'Ideal Customer Profile:  Indicates whether the organization is the most suitable and valuable customer for you',
     icon: 'IconTarget',
     defaultValue: false,
   })
@@ -116,7 +116,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     standardId: COMPANY_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: 'Position',
-    description: 'Company record position',
+    description: 'Organization record position',
     icon: 'IconHierarchy2',
   })
   @IsSystem()
@@ -128,7 +128,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     standardId: COMPANY_STANDARD_FIELD_IDS.people,
     type: FieldMetadataType.RELATION,
     label: 'People',
-    description: 'People linked to the company.',
+    description: 'People linked to the organization.',
     icon: 'IconUsers',
   })
   @RelationMetadata({
@@ -144,7 +144,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.RELATION,
     label: 'Account Owner',
     description:
-      'Your team member responsible for managing the company account',
+      'Your team member responsible for managing the organization account',
     icon: 'IconUserCircle',
     joinColumn: 'accountOwnerId',
   })
@@ -155,7 +155,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     standardId: COMPANY_STANDARD_FIELD_IDS.activityTargets,
     type: FieldMetadataType.RELATION,
     label: 'Activities',
-    description: 'Activities tied to the company',
+    description: 'Activities tied to the organization',
     icon: 'IconCheckbox',
   })
   @RelationMetadata({
@@ -170,7 +170,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     standardId: COMPANY_STANDARD_FIELD_IDS.opportunities,
     type: FieldMetadataType.RELATION,
     label: 'Opportunities',
-    description: 'Opportunities linked to the company.',
+    description: 'Opportunities linked to the organization.',
     icon: 'IconTargetArrow',
   })
   @RelationMetadata({
@@ -185,7 +185,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     standardId: COMPANY_STANDARD_FIELD_IDS.favorites,
     type: FieldMetadataType.RELATION,
     label: 'Favorites',
-    description: 'Favorites linked to the company',
+    description: 'Favorites linked to the organization',
     icon: 'IconHeart',
   })
   @RelationMetadata({
@@ -201,7 +201,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     standardId: COMPANY_STANDARD_FIELD_IDS.attachments,
     type: FieldMetadataType.RELATION,
     label: 'Attachments',
-    description: 'Attachments linked to the company.',
+    description: 'Attachments linked to the organization.',
     icon: 'IconFileImport',
   })
   @RelationMetadata({
@@ -216,7 +216,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     standardId: COMPANY_STANDARD_FIELD_IDS.timelineActivities,
     type: FieldMetadataType.RELATION,
     label: 'Timeline Activities',
-    description: 'Timeline Activities linked to the company',
+    description: 'Timeline Activities linked to the organization',
     icon: 'IconIconTimelineEvent',
   })
   @RelationMetadata({

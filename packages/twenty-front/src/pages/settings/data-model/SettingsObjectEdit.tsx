@@ -116,15 +116,15 @@ export const SettingsObjectEdit = () => {
                 { children: 'Edit' },
               ]}
             />
-            {activeObjectMetadataItem.isCustom && (
-              <SaveAndCancelButtons
-                isSaveDisabled={!canSave}
-                onCancel={() =>
-                  navigate(`${settingsObjectsPagePath}/${objectSlug}`)
-                }
-                onSave={formConfig.handleSubmit(handleSave)}
-              />
-            )}
+            {/* {activeObjectMetadataItem.isCustom && ( */}
+            <SaveAndCancelButtons
+              // isSaveDisabled={!canSave}
+              onCancel={() =>
+                navigate(`${settingsObjectsPagePath}/${objectSlug}`)
+              }
+              onSave={formConfig.handleSubmit(handleSave)}
+            />
+            {/* )} */}
           </SettingsHeaderContainer>
           <Section>
             <H2Title
@@ -132,7 +132,7 @@ export const SettingsObjectEdit = () => {
               description="Name in both singular (e.g., 'Invoice') and plural (e.g., 'Invoices') forms."
             />
             <SettingsDataModelObjectAboutForm
-              disabled={!activeObjectMetadataItem.isCustom}
+              // disabled={!activeObjectMetadataItem.isCustom}
               objectMetadataItem={activeObjectMetadataItem}
             />
           </Section>

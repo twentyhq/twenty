@@ -26,7 +26,7 @@ export const viewPrefillData = async (
     ])
     .values([
       {
-        name: 'All Companies',
+        name: 'All Organizations',
         objectMetadataId: objectMetadataMap[STANDARD_OBJECT_IDS.company].id,
         type: 'table',
         key: 'INDEX',
