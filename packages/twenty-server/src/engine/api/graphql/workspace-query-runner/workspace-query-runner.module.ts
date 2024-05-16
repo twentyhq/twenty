@@ -25,7 +25,7 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
     WorkspaceDataSourceModule,
     WorkspacePreQueryHookModule,
     TypeOrmModule.forFeature([Workspace, FeatureFlagEntity], 'core'),
-    ObjectMetadataRepositoryModule.forFeature([WorkspaceMemberObjectMetadata]),
+    ObjectMetadataRepositoryModule.forFeature([WorkspaceMemberWorkspaceEntity]),
     AnalyticsModule,
   ],
   providers: [
