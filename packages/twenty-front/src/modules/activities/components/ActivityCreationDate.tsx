@@ -8,7 +8,7 @@ import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 const StyledCreationDisplay = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   display: flex;
-  font-size: 15px;
+  font-size: ${({ theme }) => theme.font.size.md};
   margin-top: ${({ theme }) => theme.spacing(2)};
   user-select: none;
   width: 100%;
