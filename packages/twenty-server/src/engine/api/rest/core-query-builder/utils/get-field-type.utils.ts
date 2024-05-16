@@ -6,9 +6,5 @@ export const getFieldType = (
   objectMetadata: ObjectMetadataInterface,
   fieldName: string,
 ): FieldMetadataType | undefined => {
-  for (const fieldMetadata of objectMetadata.fields) {
-    if (fieldName === fieldMetadata.name) {
-      return fieldMetadata.type;
-    }
-  }
+  return objectMetadata.fields.find((field) => field.name === fieldName)?.type;
 };
