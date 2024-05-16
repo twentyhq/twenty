@@ -23,10 +23,10 @@ export class DistantTableService {
     >,
   ) {}
 
-  public async fetchDistantTableColumns(
+  public getDistantTableColumns(
     remoteServer: RemoteServerEntity<RemoteServerType>,
     tableName: string,
-  ): Promise<DistantTableColumn[]> {
+  ): DistantTableColumn[] {
     if (!remoteServer.availableTables) {
       throw new BadRequestException(
         'Remote server available tables are not defined',
@@ -36,15 +36,16 @@ export class DistantTableService {
     return remoteServer.availableTables[tableName];
   }
 
-  public async fetchDistantTableNames(
+  public async fetchDistantTables(
     remoteServer: RemoteServerEntity<RemoteServerType>,
     workspaceId: string,
-  ): Promise<string[]> {
-    const availableTables =
-      remoteServer.availableTables ??
-      (await this.createAvailableTables(remoteServer, workspaceId));
+    refreshData?: boolean,
+  ): Promise<DistantTables> {
+    if (!refreshData && remoteServer.availableTables) {
+      return remoteServer.availableTables;
+    }
 
-    return Object.keys(availableTables);
+    return await this.createAvailableTables(remoteServer, workspaceId);
   }
 
   private async createAvailableTables(

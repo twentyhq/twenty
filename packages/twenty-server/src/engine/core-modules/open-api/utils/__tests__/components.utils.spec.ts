@@ -40,6 +40,17 @@ describe('computeSchemaComponents', () => {
           },
         },
       },
+      ObjectsName: {
+        description: 'A list of objectsName',
+        example: {
+          fieldNumber: '',
+        },
+        items: {
+          $ref: '#/components/schemas/ObjectName',
+        },
+        required: ['fieldNumber'],
+        type: 'array',
+      },
     });
   });
 });

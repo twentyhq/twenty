@@ -3,7 +3,10 @@ import isEmpty from 'lodash.isempty';
 import pickBy from 'lodash.pickby';
 import { z } from 'zod';
 
-import { settingsIntegrationPostgreSQLConnectionFormSchema } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionForm';
+import {
+  settingsIntegrationPostgreSQLConnectionFormSchema,
+  settingsIntegrationStripeConnectionFormSchema,
+} from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionForm';
 import { RemoteServer } from '~/generated-metadata/graphql';
 
 export const getEditionSchemaForForm = (databaseKey: string) => {
@@ -12,6 +15,8 @@ export const getEditionSchemaForForm = (databaseKey: string) => {
       return settingsIntegrationPostgreSQLConnectionFormSchema.extend({
         password: z.string().optional(),
       });
+    case 'stripe':
+      return settingsIntegrationStripeConnectionFormSchema;
     default:
       throw new Error(`No schema found for database key: ${databaseKey}`);
   }
@@ -33,6 +38,10 @@ export const getFormDefaultValuesFromConnection = ({
         user: connection.userMappingOptions?.user || undefined,
         schema: connection.schema || undefined,
         password: '',
+      };
+    case 'stripe':
+      return {
+        api_key: connection.foreignDataWrapperOptions.api_key,
       };
     default:
       throw new Error(
@@ -71,6 +80,12 @@ export const formatValuesForUpdate = ({
 
       return pickBy(formattedValues, (obj) => !isEmpty(obj));
     }
+    case 'stripe':
+      return {
+        foreignDataWrapperOptions: {
+          api_key: formValues.api_key,
+        },
+      };
     default:
       throw new Error(`Cannot format values for database key: ${databaseKey}`);
   }

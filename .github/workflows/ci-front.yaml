@@ -21,6 +21,7 @@ jobs:
     runs-on: ci-8-cores
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
+      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     steps:
       - name: Cancel Previous Runs
         uses: styfle/cancel-workflow-action@0.11.0
@@ -47,6 +48,7 @@ jobs:
         storybook_scope: [pages, modules]
     env:
       REACT_APP_SERVER_BASE_URL: http://localhost:3000
+      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     steps:
       - name: Fetch local actions
         uses: actions/checkout@v4
@@ -63,6 +65,22 @@ jobs:
         run: npx nx reset:env twenty-front
       - name: Run storybook tests
         run: npx nx storybook:static:test twenty-front --configuration=${{ matrix.storybook_scope }}
+  front-sb-test-performance:
+    runs-on: ci-8-cores
+    env:
+      REACT_APP_SERVER_BASE_URL: http://localhost:3000
+      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
+    steps:
+      - name: Fetch local actions
+        uses: actions/checkout@v4
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/yarn-install
+      - name: Install Playwright
+        run: cd packages/twenty-front && npx playwright install
+      - name: Front / Write .env
+        run: npx nx reset:env twenty-front
+      - name: Run storybook tests
+        run: npx nx storybook:performance:test twenty-front
   front-chromatic-deployment:
     if: contains(github.event.pull_request.labels.*.name, 'run-chromatic') || github.event_name == 'push'
     needs: front-sb-build
@@ -70,6 +88,7 @@ jobs:
     env:
       REACT_APP_SERVER_BASE_URL: http://127.0.0.1:3000
       CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     steps:
       - uses: actions/checkout@v4
         with:
@@ -90,6 +109,8 @@ jobs:
         run: npx nx run twenty-front:chromatic:ci
   front-task:
     runs-on: ubuntu-latest
+    env:
+      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     strategy:
       matrix:
         task: [lint, typecheck, test]

@@ -38,6 +38,11 @@ const StyledWrapper = styled.div`
     max-width: 720px;
     margin: ${Theme.spacing(10)} 92px ${Theme.spacing(20)};
   }
+
+  @media (min-width: 1500px) {
+    max-width: 720px;
+    margin: ${Theme.spacing(10)} auto ${Theme.spacing(20)};
+  }
 `;
 
 const StyledHeader = styled.div`

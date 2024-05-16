@@ -529,6 +529,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           : RelationDefinitionType.ONE_TO_MANY;
 
       return {
+        relationId: relationMetadata.id,
         sourceObjectMetadata: relationMetadata.fromObjectMetadata,
         sourceFieldMetadata: relationMetadata.fromFieldMetadata,
         targetObjectMetadata: relationMetadata.toObjectMetadata,
@@ -542,6 +543,7 @@ export class FieldMetadataService extends TypeOrmQueryService<FieldMetadataEntit
           : RelationDefinitionType.MANY_TO_ONE;
 
       return {
+        relationId: relationMetadata.id,
         sourceObjectMetadata: relationMetadata.toObjectMetadata,
         sourceFieldMetadata: relationMetadata.toFieldMetadata,
         targetObjectMetadata: relationMetadata.fromObjectMetadata,

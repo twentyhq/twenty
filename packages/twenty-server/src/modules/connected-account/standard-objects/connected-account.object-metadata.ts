@@ -7,22 +7,22 @@ import {
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { CONNECTED_ACCOUNT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
-import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
-import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
-import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/relation-metadata.decorator';
-import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
-import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
+import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 
 export enum ConnectedAccountProvider {
   GOOGLE = 'google',
 }
 
-@ObjectMetadata({
+@WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.connectedAccount,
   namePlural: 'connectedAccounts',
   labelSingular: 'Connected Account',
@@ -30,10 +30,10 @@ export enum ConnectedAccountProvider {
   description: 'A connected account',
   icon: 'IconAt',
 })
-@IsSystem()
-@IsNotAuditLogged()
-export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
-  @FieldMetadata({
+@WorkspaceIsSystem()
+@WorkspaceIsNotAuditLogged()
+export class ConnectedAccountObjectMetadata extends BaseWorkspaceEntity {
+  @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
     label: 'handle',
@@ -42,7 +42,7 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
   })
   handle: string;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.provider,
     type: FieldMetadataType.TEXT,
     label: 'provider',
@@ -51,7 +51,7 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
   })
   provider: ConnectedAccountProvider; // field metadata should be a SELECT
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accessToken,
     type: FieldMetadataType.TEXT,
     label: 'Access Token',
@@ -60,7 +60,7 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
   })
   accessToken: string;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.refreshToken,
     type: FieldMetadataType.TEXT,
     label: 'Refresh Token',
@@ -69,17 +69,7 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
   })
   refreshToken: string;
 
-  @FieldMetadata({
-    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accountOwner,
-    type: FieldMetadataType.RELATION,
-    label: 'Account Owner',
-    description: 'Account Owner',
-    icon: 'IconUserCircle',
-    joinColumn: 'accountOwnerId',
-  })
-  accountOwner: Relation<WorkspaceMemberObjectMetadata>;
-
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.lastSyncHistoryId,
     type: FieldMetadataType.TEXT,
     label: 'Last sync history ID',
@@ -88,39 +78,45 @@ export class ConnectedAccountObjectMetadata extends BaseObjectMetadata {
   })
   lastSyncHistoryId: string;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.authFailedAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Auth failed at',
     description: 'Auth failed at',
     icon: 'IconX',
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   authFailedAt: Date;
 
-  @FieldMetadata({
-    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.messageChannels,
-    type: FieldMetadataType.RELATION,
-    label: 'Message Channel',
-    description: 'Message Channel',
-    icon: 'IconMessage',
+  @WorkspaceRelation({
+    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accountOwner,
+    type: RelationMetadataType.MANY_TO_ONE,
+    label: 'Account Owner',
+    description: 'Account Owner',
+    icon: 'IconUserCircle',
+    joinColumn: 'accountOwnerId',
+    inverseSideTarget: () => WorkspaceMemberObjectMetadata,
+    inverseSideFieldKey: 'connectedAccounts',
   })
-  @RelationMetadata({
+  accountOwner: Relation<WorkspaceMemberObjectMetadata>;
+
+  @WorkspaceRelation({
+    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.messageChannels,
     type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Message Channels',
+    description: 'Message Channels',
+    icon: 'IconMessage',
     inverseSideTarget: () => MessageChannelObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   messageChannels: Relation<MessageChannelObjectMetadata[]>;
 
-  @FieldMetadata({
+  @WorkspaceRelation({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.calendarChannels,
-    type: FieldMetadataType.RELATION,
-    label: 'Calendar Channel',
-    description: 'Calendar Channel',
-    icon: 'IconCalendar',
-  })
-  @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Calendar Channels',
+    description: 'Calendar Channels',
+    icon: 'IconCalendar',
     inverseSideTarget: () => CalendarChannelObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })

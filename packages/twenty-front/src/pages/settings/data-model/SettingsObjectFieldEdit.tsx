@@ -1,13 +1,11 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { isNonEmptyString } from '@sniptt/guards';
 import omit from 'lodash.omit';
 import pick from 'lodash.pick';
 import { IconArchive, IconSettings } from 'twenty-ui';
-import { v4 } from 'uuid';
 import { z } from 'zod';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -33,6 +31,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer'
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 type SettingsDataModelFieldEditFormValues = z.infer<
   typeof settingsFieldFormSchema
@@ -65,22 +64,13 @@ export const SettingsObjectFieldEdit = () => {
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
 
-  const { disableMetadataField } = useFieldMetadataItem();
+  const { deactivateMetadataField } = useFieldMetadataItem();
   const activeMetadataField = activeObjectMetadataItem?.fields.find(
     (metadataField) =>
       metadataField.isActive && getFieldSlug(metadataField) === fieldSlug,
   );
 
   const getRelationMetadata = useGetRelationMetadata();
-  const { relationFieldMetadataItem } =
-    useMemo(
-      () =>
-        activeMetadataField
-          ? getRelationMetadata({ fieldMetadataItem: activeMetadataField })
-          : null,
-      [activeMetadataField, getRelationMetadata],
-    ) ?? {};
-
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
 
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
@@ -96,28 +86,38 @@ export const SettingsObjectFieldEdit = () => {
 
   if (!activeObjectMetadataItem || !activeMetadataField) return null;
 
-  const canSave = formConfig.formState.isValid && formConfig.formState.isDirty;
+  const canSave =
+    formConfig.formState.isValid &&
+    formConfig.formState.isDirty &&
+    !formConfig.formState.isSubmitting;
 
   const isLabelIdentifier = isLabelIdentifierField({
     fieldMetadataItem: activeMetadataField,
     objectMetadataItem: activeObjectMetadataItem,
   });
 
-  const handleSave = async () => {
-    const formValues = formConfig.getValues();
+  const handleSave = async (
+    formValues: SettingsDataModelFieldEditFormValues,
+  ) => {
     const { dirtyFields } = formConfig.formState;
 
     try {
       if (
         formValues.type === FieldMetadataType.Relation &&
         'relation' in formValues &&
-        'relation' in dirtyFields &&
-        isNonEmptyString(relationFieldMetadataItem?.id)
+        'relation' in dirtyFields
       ) {
-        await updateOneFieldMetadataItem({
-          fieldMetadataIdToUpdate: relationFieldMetadataItem.id,
-          updatePayload: formValues.relation.field,
-        });
+        const { relationFieldMetadataItem } =
+          getRelationMetadata({
+            fieldMetadataItem: activeMetadataField,
+          }) ?? {};
+
+        if (isDefined(relationFieldMetadataItem)) {
+          await updateOneFieldMetadataItem({
+            fieldMetadataIdToUpdate: relationFieldMetadataItem.id,
+            updatePayload: formValues.relation.field,
+          });
+        }
       }
 
       const otherDirtyFields = omit(dirtyFields, 'relation');
@@ -128,14 +128,9 @@ export const SettingsObjectFieldEdit = () => {
           Object.keys(otherDirtyFields),
         );
 
-        const options = formattedInput.options?.map((option) => ({
-          ...option,
-          id: option.id ?? v4(),
-        }));
-
         await updateOneFieldMetadataItem({
           fieldMetadataIdToUpdate: activeMetadataField.id,
-          updatePayload: { ...formattedInput, options },
+          updatePayload: formattedInput,
         });
       }
 
@@ -147,8 +142,8 @@ export const SettingsObjectFieldEdit = () => {
     }
   };
 
-  const handleDisable = async () => {
-    await disableMetadataField(activeMetadataField);
+  const handleDeactivate = async () => {
+    await deactivateMetadataField(activeMetadataField);
     navigate(`/settings/objects/${objectSlug}`);
   };
 
@@ -175,7 +170,7 @@ export const SettingsObjectFieldEdit = () => {
               <SaveAndCancelButtons
                 isSaveDisabled={!canSave}
                 onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-                onSave={handleSave}
+                onSave={formConfig.handleSubmit(handleSave)}
               />
             )}
           </SettingsHeaderContainer>
@@ -202,17 +197,19 @@ export const SettingsObjectFieldEdit = () => {
               disableCurrencyForm
               fieldMetadataItem={activeMetadataField}
               objectMetadataItem={activeObjectMetadataItem}
-              relationFieldMetadataItem={relationFieldMetadataItem}
             />
           </Section>
           {!isLabelIdentifier && (
             <Section>
-              <H2Title title="Danger zone" description="Disable this field" />
+              <H2Title
+                title="Danger zone"
+                description="Deactivate this field"
+              />
               <Button
                 Icon={IconArchive}
-                title="Disable"
+                title="Deactivate"
                 size="small"
-                onClick={handleDisable}
+                onClick={handleDeactivate}
               />
             </Section>
           )}

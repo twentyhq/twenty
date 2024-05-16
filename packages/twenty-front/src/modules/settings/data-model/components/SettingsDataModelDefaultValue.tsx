@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { Select } from '@/ui/input/components/Select';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { isDefined } from '~/utils/isDefined';
 
 // TODO: rename to SettingsDataModelFieldBooleanForm and move to settings/data-model/fields/forms/components
 
@@ -41,6 +42,7 @@ export const SettingsDataModelFieldBooleanForm = ({
 }: SettingsDataModelFieldBooleanFormProps) => {
   const { control } = useFormContext<SettingsDataModelFieldBooleanFormValues>();
 
+  const isEditMode = isDefined(fieldMetadataItem?.defaultValue);
   const initialValue = fieldMetadataItem?.defaultValue ?? true;
 
   return (
@@ -54,6 +56,9 @@ export const SettingsDataModelFieldBooleanForm = ({
           <Select
             className={className}
             fullWidth
+            // TODO: temporary fix - disabling edition because after editing the defaultValue,
+            // newly created records are not taking into account the updated defaultValue properly.
+            disabled={isEditMode}
             dropdownId="object-field-default-value-select"
             value={value}
             onChange={onChange}

@@ -2,11 +2,9 @@ import React from 'react';
 import { desc } from 'drizzle-orm';
 import { Metadata } from 'next';
 
-import { Line } from '@/app/_components/releases/Line';
-import { Release } from '@/app/_components/releases/Release';
+import { ReleaseContainer } from '@/app/_components/releases/ReleaseContainer';
 import { Title } from '@/app/_components/releases/StyledTitle';
 import { ContentContainer } from '@/app/_components/ui/layout/ContentContainer';
-import { getGithubReleaseDateFromReleaseNote } from '@/app/releases/utils/get-github-release-date-from-release-note';
 import {
   getMdxReleasesContent,
   getReleases,
@@ -43,21 +41,11 @@ const Home = async () => {
   return (
     <ContentContainer>
       <Title />
-
-      {visibleReleasesNotes.map((note, index) => (
-        <React.Fragment key={note.slug}>
-          <Release
-            githubPublishedAt={getGithubReleaseDateFromReleaseNote(
-              githubReleases,
-              note.release,
-              note.date,
-            )}
-            release={note}
-            mdxReleaseContent={mdxReleasesContent[index]}
-          />
-          {index != releaseNotes.length - 1 && <Line />}
-        </React.Fragment>
-      ))}
+      <ReleaseContainer
+        visibleReleasesNotes={visibleReleasesNotes}
+        githubReleases={githubReleases}
+        mdxReleasesContent={mdxReleasesContent}
+      />
     </ContentContainer>
   );
 };
