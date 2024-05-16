@@ -38,9 +38,9 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { RemoteTableEntity } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.entity';
 import { getRemoteTableLocalName } from 'src/engine/metadata-modules/remote-server/remote-table/utils/get-remote-table-local-name.util';
 import { DistantTableService } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.service';
-import { DistantTableColumn } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/types/distant-table-column';
 import { DistantTables } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/types/distant-table';
-import { TableSchemaColumn } from 'src/engine/metadata-modules/remote-server/remote-table/types/table-schema-column';
+import { getForeignTableColumnName } from 'src/engine/metadata-modules/remote-server/remote-table/utils/get-foreign-table-column-name.util';
+import { PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/types/postgres-table-schema-column';
 
 export class RemoteTableService {
   private readonly logger = new Logger(RemoteTableService.name);
@@ -184,7 +184,7 @@ export class RemoteTableService {
 
       const distantTableColumnNames = new Set(
         distantTable.map((column) =>
-          this.convertDistantTableColumnName(column.columnName),
+          getForeignTableColumnName(column.columnName),
         ),
       );
       const foreignTableColumnNames = new Set(
@@ -456,7 +456,7 @@ export class RemoteTableService {
   private async fetchTableColumns(
     workspaceId: string,
     tableName: string,
-  ): Promise<TableSchemaColumn[]> {
+  ): Promise<PostgresTableSchemaColumn[]> {
     const workspaceDataSource =
       await this.workspaceDataSourceService.connectToWorkspaceDataSource(
         workspaceId,
@@ -466,7 +466,7 @@ export class RemoteTableService {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     const res = await workspaceDataSource.query(
-      `SELECT column_name, data_type
+      `SELECT column_name, data_type, udt_name
         FROM information_schema.columns
         WHERE table_schema = '${schemaName}' AND table_name = '${tableName}'`,
     );
@@ -474,6 +474,7 @@ export class RemoteTableService {
     return res.map((column) => ({
       columnName: column.column_name,
       dataType: column.data_type,
+      udtName: column.udt_name,
     }));
   }
 
@@ -482,7 +483,7 @@ export class RemoteTableService {
     localTableName: string,
     remoteTableInput: RemoteTableInput,
     remoteServer: RemoteServerEntity<RemoteServerType>,
-    distantTableColumns: DistantTableColumn[],
+    distantTableColumns: PostgresTableSchemaColumn[],
   ) {
     const referencedTable: ReferencedTable = this.buildReferencedTable(
       remoteServer,
@@ -501,9 +502,7 @@ export class RemoteTableService {
               columns: distantTableColumns.map(
                 (column) =>
                   ({
-                    columnName: this.convertDistantTableColumnName(
-                      column.columnName,
-                    ),
+                    columnName: getForeignTableColumnName(column.columnName),
                     columnType: column.dataType,
                     distantColumnName: column.columnName,
                   }) satisfies WorkspaceMigrationForeignColumnDefinition,
@@ -532,8 +531,8 @@ export class RemoteTableService {
   private async createRemoteTableMetadata(
     workspaceId: string,
     localTableName: string,
-    distantTableColumns: DistantTableColumn[],
-    distantTableIdColumn: DistantTableColumn,
+    distantTableColumns: PostgresTableSchemaColumn[],
+    distantTableIdColumn: PostgresTableSchemaColumn,
     dataSourceMetadataId: string,
   ) {
     const objectMetadata = await this.objectMetadataService.createOne({
@@ -599,8 +598,4 @@ export class RemoteTableService {
         throw new BadRequestException('Foreign data wrapper not supported');
     }
   }
-
-  private convertDistantTableColumnName = (columnName: string) => {
-    return camelCase(columnName);
-  };
 }

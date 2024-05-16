@@ -9,9 +9,9 @@ import {
   RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { DistantTableColumn } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/types/distant-table-column';
 import { DistantTables } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/types/distant-table';
 import { STRIPE_DISTANT_TABLES } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/util/stripe-distant-tables.util';
+import { PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/types/postgres-table-schema-column';
 
 @Injectable()
 export class DistantTableService {
@@ -26,7 +26,7 @@ export class DistantTableService {
   public getDistantTableColumns(
     remoteServer: RemoteServerEntity<RemoteServerType>,
     tableName: string,
-  ): DistantTableColumn[] {
+  ): PostgresTableSchemaColumn[] {
     if (!remoteServer.availableTables) {
       throw new BadRequestException(
         'Remote server available tables are not defined',
