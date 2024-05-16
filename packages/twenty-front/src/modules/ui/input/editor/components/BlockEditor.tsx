@@ -30,6 +30,9 @@ const StyledEditor = styled.div`
     color: ${({ theme }) => theme.font.color.tertiary};
     font-style: normal !important;
   }
+  & .editor .bn-inline-content:has(> .ProseMirror-trailingBreak):before {
+    font-style: normal;
+  }
 `;
 
 export const BlockEditor = ({
