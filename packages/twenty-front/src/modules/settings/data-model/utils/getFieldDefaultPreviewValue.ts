@@ -2,39 +2,41 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
-import { SettingsDataModelFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
+import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 export const getFieldDefaultPreviewValue = ({
   fieldMetadataItem,
   objectMetadataItem,
   relationObjectMetadataItem,
-  selectOptions,
 }: {
-  fieldMetadataItem: Pick<FieldMetadataItem, 'type'> & {
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'type' | 'defaultValue' | 'options'
+  > & {
     id?: string;
     name?: string;
   };
   objectMetadataItem: ObjectMetadataItem;
   relationObjectMetadataItem?: ObjectMetadataItem;
-  selectOptions?: SettingsDataModelFieldSelectFormValues['options'];
 }) => {
-  if (
-    fieldMetadataItem.type === FieldMetadataType.Select &&
-    isDefined(selectOptions)
-  ) {
-    const defaultSelectOption =
-      selectOptions.find(({ isDefault }) => isDefault) || selectOptions[0];
-    return defaultSelectOption.value;
+  if (fieldMetadataItem.type === FieldMetadataType.Select) {
+    const defaultValue = fieldMetadataItem.defaultValue
+      ? stripSimpleQuotesFromString(fieldMetadataItem.defaultValue)
+      : null;
+    return defaultValue ?? fieldMetadataItem.options?.[0]?.value ?? null;
   }
 
-  if (
-    fieldMetadataItem.type === FieldMetadataType.MultiSelect &&
-    isDefined(selectOptions)
-  ) {
-    return selectOptions.map((selectOption) => selectOption.value);
+  if (fieldMetadataItem.type === FieldMetadataType.MultiSelect) {
+    const defaultValues = fieldMetadataItem.defaultValue?.map(
+      (defaultValue: `'${string}'`) =>
+        stripSimpleQuotesFromString(defaultValue),
+    );
+    return defaultValues?.length
+      ? defaultValues
+      : fieldMetadataItem.options?.map(({ value }) => value) ?? null;
   }
 
   if (

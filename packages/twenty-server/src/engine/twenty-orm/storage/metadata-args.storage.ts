@@ -1,24 +1,72 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
+import { WorkspaceDynamicRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-dynamic-relation-metadata-args.interface';
 import { WorkspaceFieldMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-field-metadata-args.interface';
-import { WorkspaceObjectMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-object-metadata-args.interface';
+import { WorkspaceEntityMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-entity-metadata-args.interface';
 import { WorkspaceRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-relation-metadata-args.interface';
+import { WorkspaceExtendedEntityMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-extended-entity-metadata-args.interface';
 
 export class MetadataArgsStorage {
-  readonly objects: WorkspaceObjectMetadataArgs[] = [];
-  readonly fields: WorkspaceFieldMetadataArgs[] = [];
-  readonly relations: WorkspaceRelationMetadataArgs[] = [];
+  private readonly entities: WorkspaceEntityMetadataArgs[] = [];
+  private readonly extendedEntities: WorkspaceExtendedEntityMetadataArgs[] = [];
+  private readonly fields: WorkspaceFieldMetadataArgs[] = [];
+  private readonly relations: WorkspaceRelationMetadataArgs[] = [];
+  private readonly dynamicRelations: WorkspaceDynamicRelationMetadataArgs[] =
+    [];
 
-  filterObjects(
+  addEntities(...entities: WorkspaceEntityMetadataArgs[]): void {
+    this.entities.push(...entities);
+  }
+
+  addExtendedEntities(
+    ...extendedEntities: WorkspaceExtendedEntityMetadataArgs[]
+  ): void {
+    this.extendedEntities.push(...extendedEntities);
+  }
+
+  addFields(...fields: WorkspaceFieldMetadataArgs[]): void {
+    this.fields.push(...fields);
+  }
+
+  addRelations(...relations: WorkspaceRelationMetadataArgs[]): void {
+    this.relations.push(...relations);
+  }
+
+  addDynamicRelations(
+    ...dynamicRelations: WorkspaceDynamicRelationMetadataArgs[]
+  ): void {
+    this.dynamicRelations.push(...dynamicRelations);
+  }
+
+  filterEntities(
     target: Function | string,
-  ): WorkspaceObjectMetadataArgs | undefined;
+  ): WorkspaceEntityMetadataArgs | undefined;
 
-  filterObjects(target: (Function | string)[]): WorkspaceObjectMetadataArgs[];
+  filterEntities(target: (Function | string)[]): WorkspaceEntityMetadataArgs[];
 
-  filterObjects(
+  filterEntities(
     target: (Function | string) | (Function | string)[],
-  ): WorkspaceObjectMetadataArgs | undefined | WorkspaceObjectMetadataArgs[] {
-    const objects = this.filterByTarget(this.objects, target);
+  ): WorkspaceEntityMetadataArgs | undefined | WorkspaceEntityMetadataArgs[] {
+    const objects = this.filterByTarget(this.entities, target);
+
+    return Array.isArray(objects) ? objects[0] : objects;
+  }
+
+  filterExtendedEntities(
+    target: Function | string,
+  ): WorkspaceExtendedEntityMetadataArgs | undefined;
+
+  filterExtendedEntities(
+    target: (Function | string)[],
+  ): WorkspaceExtendedEntityMetadataArgs[];
+
+  filterExtendedEntities(
+    target: (Function | string) | (Function | string)[],
+  ):
+    | WorkspaceExtendedEntityMetadataArgs
+    | undefined
+    | WorkspaceExtendedEntityMetadataArgs[] {
+    const objects = this.filterByTarget(this.extendedEntities, target);
 
     return Array.isArray(objects) ? objects[0] : objects;
   }
@@ -43,6 +91,20 @@ export class MetadataArgsStorage {
     target: (Function | string) | (Function | string)[],
   ): WorkspaceRelationMetadataArgs[] {
     return this.filterByTarget(this.relations, target);
+  }
+
+  filterDynamicRelations(
+    target: Function | string,
+  ): WorkspaceDynamicRelationMetadataArgs[];
+
+  filterDynamicRelations(
+    target: (Function | string)[],
+  ): WorkspaceDynamicRelationMetadataArgs[];
+
+  filterDynamicRelations(
+    target: (Function | string) | (Function | string)[],
+  ): WorkspaceDynamicRelationMetadataArgs[] {
+    return this.filterByTarget(this.dynamicRelations, target);
   }
 
   protected filterByTarget<T extends { target: Function | string }>(

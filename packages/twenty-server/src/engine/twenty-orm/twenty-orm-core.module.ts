@@ -45,7 +45,7 @@ export class TwentyORMCoreModule
           entitySchemaFactory: EntitySchemaFactory,
           scopedWorkspaceDatasourceFactory: ScopedWorkspaceDatasourceFactory,
         ) => {
-          const entities = options.objects.map((entityClass) =>
+          const entities = options.workspaceEntities.map((entityClass) =>
             entitySchemaFactory.create(entityClass),
           );
 
@@ -80,7 +80,7 @@ export class TwentyORMCoreModule
           scopedWorkspaceDatasourceFactory: ScopedWorkspaceDatasourceFactory,
           options: TwentyORMOptions,
         ) => {
-          const entities = options.objects.map((entityClass) =>
+          const entities = options.workspaceEntities.map((entityClass) =>
             entitySchemaFactory.create(entityClass),
           );
 

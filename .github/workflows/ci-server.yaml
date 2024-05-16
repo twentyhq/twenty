@@ -19,6 +19,8 @@ concurrency:
 jobs:
   server-test:
     runs-on: ubuntu-latest
+    env:
+      NX_REJECT_UNKNOWN_LOCAL_CACHE: 0
     services:
       postgres:
         image: twentycrm/twenty-postgres

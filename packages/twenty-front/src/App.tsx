@@ -45,6 +45,7 @@ import { SettingsIntegrationEditDatabaseConnection } from '~/pages/settings/inte
 import { SettingsIntegrationNewDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationNewDatabaseConnection';
 import { SettingsIntegrations } from '~/pages/settings/integrations/SettingsIntegrations';
 import { SettingsIntegrationShowDatabaseConnection } from '~/pages/settings/integrations/SettingsIntegrationShowDatabaseConnection';
+import { Releases } from '~/pages/settings/Releases';
 import { SettingsAppearance } from '~/pages/settings/SettingsAppearance';
 import { SettingsBilling } from '~/pages/settings/SettingsBilling';
 import { SettingsProfile } from '~/pages/settings/SettingsProfile';
@@ -207,6 +208,7 @@ export const App = () => {
                   path={SettingsPath.ObjectFieldEdit}
                   element={<SettingsObjectFieldEdit />}
                 />
+                <Route path={SettingsPath.Releases} element={<Releases />} />
               </Routes>
             }
           />

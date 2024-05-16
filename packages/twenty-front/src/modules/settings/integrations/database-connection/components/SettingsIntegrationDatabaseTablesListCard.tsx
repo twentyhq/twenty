@@ -6,7 +6,11 @@ import { useSyncRemoteTable } from '@/databases/hooks/useSyncRemoteTable';
 import { useUnsyncRemoteTable } from '@/databases/hooks/useUnsyncRemoteTable';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsIntegrationRemoteTableSyncStatusToggle } from '@/settings/integrations/components/SettingsIntegrationRemoteTableSyncStatusToggle';
-import { RemoteTable, RemoteTableStatus } from '~/generated-metadata/graphql';
+import {
+  RemoteTable,
+  RemoteTableStatus,
+  TableUpdate,
+} from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const settingsIntegrationsDatabaseTablesSchema = z.object({
@@ -28,6 +32,32 @@ const StyledRowRightContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
+const StyledText = styled.h3`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
+  margin: 0;
+`;
+
+const getTableUpdatesText = (schemaPendingUpdates: TableUpdate[]) => {
+  if (schemaPendingUpdates.includes(TableUpdate.TableDeleted)) {
+    return 'Table has been deleted';
+  }
+  if (
+    schemaPendingUpdates.includes(TableUpdate.ColumnsAdded) &&
+    schemaPendingUpdates.includes(TableUpdate.ColumnsDeleted)
+  ) {
+    return 'Columns have been added and other deleted';
+  }
+  if (schemaPendingUpdates.includes(TableUpdate.ColumnsAdded)) {
+    return 'Columns have been added';
+  }
+  if (schemaPendingUpdates.includes(TableUpdate.ColumnsDeleted)) {
+    return 'Columns have been deleted';
+  }
+  return null;
+};
+
 export const SettingsIntegrationDatabaseTablesListCard = ({
   connectionId,
   tables,
@@ -40,6 +70,9 @@ export const SettingsIntegrationDatabaseTablesListCard = ({
     tables.map((table) => ({
       ...table,
       id: table.name,
+      updatesText: table.schemaPendingUpdates
+        ? getTableUpdatesText(table.schemaPendingUpdates)
+        : null,
     })),
   );
 
@@ -68,9 +101,15 @@ export const SettingsIntegrationDatabaseTablesListCard = ({
     ({
       item,
     }: {
-      item: { id: string; name: string; status: RemoteTableStatus };
+      item: {
+        id: string;
+        name: string;
+        status: RemoteTableStatus;
+        updatesText?: string | null;
+      };
     }) => (
       <StyledRowRightContainer>
+        {item.updatesText && <StyledText>{item.updatesText}</StyledText>}
         <SettingsIntegrationRemoteTableSyncStatusToggle
           table={item}
           onSyncUpdate={onSyncUpdate}

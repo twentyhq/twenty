@@ -17,6 +17,14 @@ type SettingsIntegrationPostgreSQLConnectionFormValues = z.infer<
   typeof settingsIntegrationPostgreSQLConnectionFormSchema
 >;
 
+export const settingsIntegrationStripeConnectionFormSchema = z.object({
+  api_key: z.string().min(1),
+});
+
+type SettingsIntegrationStripeConnectionFormValues = z.infer<
+  typeof settingsIntegrationStripeConnectionFormSchema
+>;
+
 const StyledInputsContainer = styled.div`
   display: grid;
   gap: ${({ theme }) => theme.spacing(2, 4)};
@@ -31,19 +39,35 @@ const StyledInputsContainer = styled.div`
   }
 `;
 
-type SettingsIntegrationPostgreSQLConnectionFormProps = {
+type SettingsIntegrationDatabaseConnectionFormProps = {
+  databaseKey: string;
   disabled?: boolean;
 };
 
-export const SettingsIntegrationPostgreSQLConnectionForm = ({
-  disabled,
-}: SettingsIntegrationPostgreSQLConnectionFormProps) => {
-  const { control } =
-    useFormContext<SettingsIntegrationPostgreSQLConnectionFormValues>();
+type SettingsIntegrationConnectionFormValues =
+  | SettingsIntegrationPostgreSQLConnectionFormValues
+  | SettingsIntegrationStripeConnectionFormValues;
 
-  return (
-    <StyledInputsContainer>
-      {[
+const getFormFields = (
+  databaseKey: string,
+):
+  | {
+      name:
+        | 'dbname'
+        | 'host'
+        | 'port'
+        | 'user'
+        | 'password'
+        | 'schema'
+        | 'api_key';
+      label: string;
+      type?: string;
+      placeholder: string;
+    }[]
+  | null => {
+  switch (databaseKey) {
+    case 'postgresql':
+      return [
         {
           name: 'dbname' as const,
           label: 'Database Name',
@@ -63,7 +87,28 @@ export const SettingsIntegrationPostgreSQLConnectionForm = ({
           placeholder: '••••••',
         },
         { name: 'schema' as const, label: 'Schema', placeholder: 'public' },
-      ].map(({ name, label, type, placeholder }) => (
+      ];
+    case 'stripe':
+      return [
+        { name: 'api_key' as const, label: 'API Key', placeholder: 'API key' },
+      ];
+    default:
+      return null;
+  }
+};
+
+export const SettingsIntegrationDatabaseConnectionForm = ({
+  databaseKey,
+  disabled,
+}: SettingsIntegrationDatabaseConnectionFormProps) => {
+  const { control } = useFormContext<SettingsIntegrationConnectionFormValues>();
+  const formFields = getFormFields(databaseKey);
+
+  if (!formFields) return null;
+
+  return (
+    <StyledInputsContainer>
+      {formFields.map(({ name, label, type, placeholder }) => (
         <Controller
           key={name}
           name={name}
@@ -71,7 +116,7 @@ export const SettingsIntegrationPostgreSQLConnectionForm = ({
           render={({ field: { onChange, value } }) => {
             return (
               <TextInput
-                autoComplete="new-password"
+                autoComplete="new-password" // Disable autocomplete
                 label={label}
                 value={value}
                 onChange={onChange}

@@ -13,6 +13,7 @@ import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
 import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
 import { RelationMetadataResolver } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.resolver';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 import { RelationMetadataService } from './relation-metadata.service';
 import { RelationMetadataEntity } from './relation-metadata.entity';
@@ -25,7 +26,7 @@ import { RelationMetadataDTO } from './dtos/relation-metadata.dto';
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature(
-          [RelationMetadataEntity],
+          [RelationMetadataEntity, FieldMetadataEntity],
           'metadata',
         ),
         ObjectMetadataModule,

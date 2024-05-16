@@ -4,26 +4,28 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
-import { SettingsDataModelFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
 import { getFieldDefaultPreviewValue } from '@/settings/data-model/utils/getFieldDefaultPreviewValue';
 import { getFieldPreviewValueFromRecord } from '@/settings/data-model/utils/getFieldPreviewValueFromRecord';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type UseFieldPreviewParams = {
-  fieldMetadataItem: Pick<FieldMetadataItem, 'icon' | 'type'> & {
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'icon' | 'type' | 'options' | 'defaultValue'
+  > & {
+    // id and name are undefined in create mode (field does not exist yet)
+    // and are defined in edit mode.
     id?: string;
     name?: string;
   };
   objectMetadataItem: ObjectMetadataItem;
   relationObjectMetadataItem?: ObjectMetadataItem;
-  selectOptions?: SettingsDataModelFieldSelectFormValues['options'];
 };
 
 export const useFieldPreview = ({
   fieldMetadataItem,
   objectMetadataItem,
   relationObjectMetadataItem,
-  selectOptions,
 }: UseFieldPreviewParams) => {
   const isLabelIdentifier =
     !!fieldMetadataItem.id &&
@@ -40,6 +42,9 @@ export const useFieldPreview = ({
     objectNameSingular: objectMetadataItem.nameSingular,
     limit: 1,
     skip: !fieldMetadataItem.name,
+    orderBy: {
+      [fieldMetadataItem.name ?? '']: 'AscNullsLast',
+    },
   });
   const [firstRecord] = records;
 
@@ -51,17 +56,17 @@ export const useFieldPreview = ({
             name: fieldMetadataItem.name,
             type: fieldMetadataItem.type,
           },
-          selectOptions,
         })
       : null;
 
-  const selectOptionValues = selectOptions?.map((option) => option.value);
   const isValueFromFirstRecord =
     firstRecord &&
     !isFieldValueEmpty({
       fieldDefinition: { type: fieldMetadataItem.type },
       fieldValue: fieldPreviewValueFromFirstRecord,
-      selectOptionValues,
+      selectOptionValues: fieldMetadataItem.options?.map(
+        (option) => option.value,
+      ),
     });
 
   const { records: relationRecords } = useFindManyRecords({
@@ -83,7 +88,6 @@ export const useFieldPreview = ({
         fieldMetadataItem,
         objectMetadataItem,
         relationObjectMetadataItem,
-        selectOptions,
       });
 
   const fieldName =

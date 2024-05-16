@@ -1,20 +1,9 @@
 import { NextResponse } from 'next/server';
 
-const allowedOrigins = [
-  'http://localhost:3000',
-  'https://app.twenty.com',
-  'https://twenty.com',
-];
-
-export function middleware(req: any) {
+export function middleware() {
   const res = NextResponse.next();
 
-  const origin = req.headers.get('origin');
-
-  if (allowedOrigins.includes(origin)) {
-    res.headers.append('Access-Control-Allow-Origin', origin);
-  }
-
+  res.headers.append('Access-Control-Allow-Origin', '*');
   res.headers.append('Access-Control-Allow-Credentials', 'true');
   res.headers.append(
     'Access-Control-Allow-Methods',
