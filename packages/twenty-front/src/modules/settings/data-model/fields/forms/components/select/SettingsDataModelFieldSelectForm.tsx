@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
@@ -23,9 +24,7 @@ import { toSpliced } from '~/utils/array/toSpliced';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
 import { simpleQuotesStringSchema } from '~/utils/validation-schemas/simpleQuotesStringSchema';
 
-import { SettingsObjectFieldSelectFormOptionRow } from './SettingsObjectFieldSelectFormOptionRow';
-
-// TODO: rename to SettingsDataModelFieldSelectForm and move to settings/data-model/fields/forms/components
+import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 
 export const settingsDataModelFieldSelectFormSchema = z.object({
   defaultValue: simpleQuotesStringSchema.nullable(),
@@ -87,6 +86,7 @@ export const SettingsDataModelFieldSelectForm = ({
     setValue: setFormValue,
     watch: watchFormValue,
     getValues,
+    resetField,
   } = useFormContext<SettingsDataModelFieldSelectFormValues>();
 
   const handleDragEnd = (
@@ -168,6 +168,11 @@ export const SettingsDataModelFieldSelectForm = ({
     }
   };
 
+  // Reset defaultValue on mount or on field type change, so it doesn't conflict with other field types.
+  useEffect(() => {
+    resetField('defaultValue', { defaultValue: initialDefaultValue });
+  }, [initialDefaultValue, initialOptions, resetField, fieldMetadataItem.type]);
+
   return (
     <>
       <Controller
@@ -195,7 +200,7 @@ export const SettingsDataModelFieldSelectForm = ({
                         index={index}
                         isDragDisabled={options.length === 1}
                         itemComponent={
-                          <SettingsObjectFieldSelectFormOptionRow
+                          <SettingsDataModelFieldSelectFormOptionRow
                             key={option.id}
                             option={option}
                             onChange={(nextOption) => {
