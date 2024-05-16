@@ -16,32 +16,32 @@ import { cleanGraphQLResponse } from 'src/engine/api/rest/utils/clean-graphql-re
 
 @Controller('rest/*')
 export class CoreController {
-  constructor(private readonly apiRestService: CoreService) {}
+  constructor(private readonly coreService: CoreService) {}
 
   @Get()
   async handleApiGet(@Req() request: Request, @Res() res: Response) {
-    const result = await this.apiRestService.get(request);
+    const result = await this.coreService.get(request);
 
     res.status(200).send(cleanGraphQLResponse(result.data));
   }
 
   @Delete()
   async handleApiDelete(@Req() request: Request, @Res() res: Response) {
-    const result = await this.apiRestService.delete(request);
+    const result = await this.coreService.delete(request);
 
     res.status(200).send(cleanGraphQLResponse(result.data));
   }
 
   @Post()
   async handleApiPost(@Req() request: Request, @Res() res: Response) {
-    const result = await this.apiRestService.createOne(request);
+    const result = await this.coreService.createOne(request);
 
     res.status(201).send(cleanGraphQLResponse(result.data));
   }
 
   @Patch()
   async handleApiPatch(@Req() request: Request, @Res() res: Response) {
-    const result = await this.apiRestService.update(request);
+    const result = await this.coreService.update(request);
 
     res.status(200).send(cleanGraphQLResponse(result.data));
   }
@@ -51,7 +51,7 @@ export class CoreController {
   // and because the PUT verb is often used as a PATCH.
   @Put()
   async handleApiPut(@Req() request: Request, @Res() res: Response) {
-    const result = await this.apiRestService.update(request);
+    const result = await this.coreService.update(request);
 
     res.status(200).send(cleanGraphQLResponse(result.data));
   }

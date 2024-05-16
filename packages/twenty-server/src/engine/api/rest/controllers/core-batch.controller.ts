@@ -7,11 +7,11 @@ import { cleanGraphQLResponse } from 'src/engine/api/rest/utils/clean-graphql-re
 
 @Controller('rest/batch/*')
 export class CoreBatchController {
-  constructor(private readonly apiRestService: CoreService) {}
+  constructor(private readonly coreService: CoreService) {}
 
   @Post()
   async handleApiPost(@Req() request: Request, @Res() res: Response) {
-    const result = await this.apiRestService.createMany(request);
+    const result = await this.coreService.createMany(request);
 
     res.status(201).send(cleanGraphQLResponse(result.data));
   }
