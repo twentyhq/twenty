@@ -1,5 +1,5 @@
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
-import { validateObjectMetadataInput } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
+import { validateObjectMetadataInputOrThrow } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 
 const validObjectInput: UpdateObjectPayload = {
   labelPlural: 'Car',
@@ -12,7 +12,9 @@ const reservedKeyword = 'user';
 
 describe('validateObjectName', () => {
   it('should not throw if names are valid', () => {
-    expect(() => validateObjectMetadataInput(validObjectInput)).not.toThrow();
+    expect(() =>
+      validateObjectMetadataInputOrThrow(validObjectInput),
+    ).not.toThrow();
   });
 
   it('should throw is nameSingular has invalid characters', () => {
@@ -21,7 +23,9 @@ describe('validateObjectName', () => {
       nameSingular: 'μ',
     };
 
-    expect(() => validateObjectMetadataInput(invalidObjectInput)).toThrow();
+    expect(() =>
+      validateObjectMetadataInputOrThrow(invalidObjectInput),
+    ).toThrow();
   });
 
   it('should throw is namePlural has invalid characters', () => {
@@ -30,7 +34,9 @@ describe('validateObjectName', () => {
       namePlural: 'μ',
     };
 
-    expect(() => validateObjectMetadataInput(invalidObjectInput)).toThrow();
+    expect(() =>
+      validateObjectMetadataInputOrThrow(invalidObjectInput),
+    ).toThrow();
   });
 
   it('should throw if nameSingular is a reserved keyword', async () => {
@@ -39,7 +45,9 @@ describe('validateObjectName', () => {
       nameSingular: reservedKeyword,
     };
 
-    expect(() => validateObjectMetadataInput(invalidObjectInput)).toThrow();
+    expect(() =>
+      validateObjectMetadataInputOrThrow(invalidObjectInput),
+    ).toThrow();
   });
 
   it('should throw if namePlural is a reserved keyword', async () => {
@@ -48,6 +56,8 @@ describe('validateObjectName', () => {
       namePlural: reservedKeyword,
     };
 
-    expect(() => validateObjectMetadataInput(invalidObjectInput)).toThrow();
+    expect(() =>
+      validateObjectMetadataInputOrThrow(invalidObjectInput),
+    ).toThrow();
   });
 });

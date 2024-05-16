@@ -36,19 +36,19 @@ const reservedKeywords = [
   'addresses',
 ];
 
-export const validateObjectMetadataInput = <
+export const validateObjectMetadataInputOrThrow = <
   T extends UpdateObjectPayload | CreateObjectInput,
 >(
   objectMetadataInput: T,
 ): void => {
-  validateNameCharacters(objectMetadataInput.nameSingular);
-  validateNameCharacters(objectMetadataInput.namePlural);
+  validateNameCharactersOrThrow(objectMetadataInput.nameSingular);
+  validateNameCharactersOrThrow(objectMetadataInput.namePlural);
 
-  validateNameIsNotReservedKeyword(objectMetadataInput.nameSingular);
-  validateNameIsNotReservedKeyword(objectMetadataInput.namePlural);
+  validateNameIsNotReservedKeywordOrThrow(objectMetadataInput.nameSingular);
+  validateNameIsNotReservedKeywordOrThrow(objectMetadataInput.namePlural);
 };
 
-const validateNameIsNotReservedKeyword = (name?: string) => {
+const validateNameIsNotReservedKeywordOrThrow = (name?: string) => {
   if (name) {
     if (reservedKeywords.includes(name)) {
       throw new ForbiddenException(`The name "${name}" is not available`);
@@ -56,7 +56,7 @@ const validateNameIsNotReservedKeyword = (name?: string) => {
   }
 };
 
-const validateNameCharacters = (name?: string) => {
+const validateNameCharactersOrThrow = (name?: string) => {
   try {
     if (name) {
       validateMetadataName(name);
