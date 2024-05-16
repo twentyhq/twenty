@@ -9,7 +9,6 @@ const StyledCreationDisplay = styled.span`
   color: ${({ theme }) => theme.font.color.light};
   display: flex;
   font-size: ${({ theme }) => theme.font.size.md};
-  margin-top: ${({ theme }) => theme.spacing(2)};
   user-select: none;
   width: 100%;
 `;
