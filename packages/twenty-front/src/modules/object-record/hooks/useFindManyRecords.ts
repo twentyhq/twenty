@@ -1,11 +1,18 @@
 import { useCallback, useMemo } from 'react';
-import { useQuery, WatchQueryFetchPolicy } from '@apollo/client';
+import {
+  ApolloQueryResult,
+  FetchMoreQueryOptions,
+  OperationVariables,
+  useQuery,
+  WatchQueryFetchPolicy,
+} from '@apollo/client';
 import { isNonEmptyArray } from '@apollo/client/utilities';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
@@ -39,16 +46,41 @@ export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
     fetchPolicy?: WatchQueryFetchPolicy;
   };
 
-export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
+type UseFindManyRecordsStateParams<
+  T,
+  TData = RecordGqlOperationFindManyResult,
+> = Omit<
+  UseFindManyRecordsParams<T>,
+  'skip' | 'recordGqlFields' | 'fetchPolicy'
+> & {
+  data: RecordGqlOperationFindManyResult | undefined;
+  fetchMore<
+    TFetchData = TData,
+    TFetchVars extends OperationVariables = OperationVariables,
+  >(
+    fetchMoreOptions: FetchMoreQueryOptions<TFetchVars, TFetchData> & {
+      updateQuery?: (
+        previousQueryResult: TData,
+        options: {
+          fetchMoreResult: TFetchData;
+          variables: TFetchVars;
+        },
+      ) => TData;
+    },
+  ): Promise<ApolloQueryResult<TFetchData>>;
+  objectMetadataItem: ObjectMetadataItem;
+};
+
+export const useFindManyRecordsState = <T extends ObjectRecord = ObjectRecord>({
   objectNameSingular,
   filter,
   orderBy,
   limit,
   onCompleted,
-  skip,
-  recordGqlFields,
-  fetchPolicy,
-}: UseFindManyRecordsParams<T>) => {
+  data,
+  fetchMore,
+  objectMetadataItem,
+}: UseFindManyRecordsStateParams<T>) => {
   const findManyQueryStateIdentifier =
     objectNameSingular +
     JSON.stringify(filter) +
@@ -67,61 +99,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     isFetchingMoreRecordsFamilyState(findManyQueryStateIdentifier),
   );
 
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular,
-  });
-
-  const { findManyRecordsQuery } = useFindManyRecordsQuery({
-    objectNameSingular,
-    recordGqlFields,
-  });
-
   const { enqueueSnackBar } = useSnackBar();
-  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
-
-  const { data, loading, error, fetchMore } =
-    useQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
-      skip: skip || !objectMetadataItem || !currentWorkspaceMember,
-      variables: {
-        filter,
-        limit,
-        orderBy,
-      },
-      fetchPolicy: fetchPolicy,
-      onCompleted: (data) => {
-        if (!isDefined(data)) {
-          onCompleted?.([]);
-        }
-
-        const pageInfo = data?.[objectMetadataItem.namePlural]?.pageInfo;
-
-        const records = getRecordsFromRecordConnection({
-          recordConnection: data?.[objectMetadataItem.namePlural],
-        }) as T[];
-
-        onCompleted?.(records, {
-          pageInfo,
-          totalCount: data?.[objectMetadataItem.namePlural]?.totalCount,
-        });
-
-        if (isDefined(data?.[objectMetadataItem.namePlural])) {
-          setLastCursor(pageInfo.endCursor ?? '');
-          setHasNextPage(pageInfo.hasNextPage ?? false);
-        }
-      },
-      onError: (error) => {
-        logError(
-          `useFindManyRecords for "${objectMetadataItem.namePlural}" error : ` +
-            error,
-        );
-        enqueueSnackBar(
-          `Error during useFindManyRecords for "${objectMetadataItem.namePlural}", ${error.message}`,
-          {
-            variant: 'error',
-          },
-        );
-      },
-    });
 
   const fetchMoreRecords = useCallback(async () => {
     if (hasNextPage) {
@@ -227,6 +205,98 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
     [data, objectMetadataItem.namePlural],
   );
+
+  return {
+    findManyQueryStateIdentifier,
+    setLastCursor,
+    setHasNextPage,
+    fetchMoreRecords,
+    totalCount,
+    records,
+  };
+};
+
+export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
+  objectNameSingular,
+  filter,
+  orderBy,
+  limit,
+  onCompleted,
+  skip,
+  recordGqlFields,
+  fetchPolicy,
+}: UseFindManyRecordsParams<T>) => {
+  const { enqueueSnackBar } = useSnackBar();
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+  const { findManyRecordsQuery } = useFindManyRecordsQuery({
+    objectNameSingular,
+    recordGqlFields,
+  });
+
+  const { data, loading, error, fetchMore } =
+    useQuery<RecordGqlOperationFindManyResult>(findManyRecordsQuery, {
+      skip: skip || !objectMetadataItem || !currentWorkspaceMember,
+      variables: {
+        filter,
+        limit,
+        orderBy,
+      },
+      fetchPolicy: fetchPolicy,
+      onCompleted: (data) => {
+        if (!isDefined(data)) {
+          onCompleted?.([]);
+        }
+
+        const pageInfo = data?.[objectMetadataItem.namePlural]?.pageInfo;
+
+        const records = getRecordsFromRecordConnection({
+          recordConnection: data?.[objectMetadataItem.namePlural],
+        }) as T[];
+
+        onCompleted?.(records, {
+          pageInfo,
+          totalCount: data?.[objectMetadataItem.namePlural]?.totalCount,
+        });
+
+        if (isDefined(data?.[objectMetadataItem.namePlural])) {
+          setLastCursor(pageInfo.endCursor ?? '');
+          setHasNextPage(pageInfo.hasNextPage ?? false);
+        }
+      },
+      onError: (error) => {
+        logError(
+          `useFindManyRecords for "${objectMetadataItem.namePlural}" error : ` +
+            error,
+        );
+        enqueueSnackBar(
+          `Error during useFindManyRecords for "${objectMetadataItem.namePlural}", ${error.message}`,
+          {
+            variant: 'error',
+          },
+        );
+      },
+    });
+
+  const {
+    findManyQueryStateIdentifier,
+    setLastCursor,
+    setHasNextPage,
+    fetchMoreRecords,
+    totalCount,
+    records,
+  } = useFindManyRecordsState<T>({
+    objectNameSingular,
+    filter,
+    orderBy,
+    limit,
+    onCompleted,
+    fetchMore,
+    data,
+    objectMetadataItem,
+  });
 
   return {
     objectMetadataItem,
