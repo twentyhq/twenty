@@ -14,7 +14,7 @@ import {
   UnmatchParticipantJobData,
   UnmatchParticipantJob,
 } from 'src/modules/calendar-messaging-participant/jobs/unmatch-participant.job';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class ParticipantWorkspaceMemberListener {
@@ -25,7 +25,7 @@ export class ParticipantWorkspaceMemberListener {
 
   @OnEvent('workspaceMember.created')
   async handleCreatedEvent(
-    payload: ObjectRecordCreateEvent<WorkspaceMemberObjectMetadata>,
+    payload: ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>,
   ) {
     if (payload.properties.after.userEmail === null) {
       return;
@@ -43,7 +43,7 @@ export class ParticipantWorkspaceMemberListener {
 
   @OnEvent('workspaceMember.updated')
   async handleUpdatedEvent(
-    payload: ObjectRecordUpdateEvent<WorkspaceMemberObjectMetadata>,
+    payload: ObjectRecordUpdateEvent<WorkspaceMemberWorkspaceEntity>,
   ) {
     if (
       objectRecordUpdateEventChangedProperties(

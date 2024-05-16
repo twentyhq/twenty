@@ -9,7 +9,7 @@ import {
   CalendarCreateCompanyAndContactAfterSyncJobData,
   CalendarCreateCompanyAndContactAfterSyncJob,
 } from 'src/modules/calendar/jobs/calendar-create-company-and-contact-after-sync.job';
-import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
 export class CalendarChannelListener {
@@ -20,7 +20,7 @@ export class CalendarChannelListener {
 
   @OnEvent('calendarChannel.updated')
   async handleUpdatedEvent(
-    payload: ObjectRecordUpdateEvent<MessageChannelObjectMetadata>,
+    payload: ObjectRecordUpdateEvent<MessageChannelWorkspaceEntity>,
   ) {
     if (
       objectRecordChangedProperties(

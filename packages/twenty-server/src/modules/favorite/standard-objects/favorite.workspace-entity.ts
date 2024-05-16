@@ -4,12 +4,12 @@ import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/fi
 import { FAVORITE_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
-import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
-import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
-import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -28,7 +28,7 @@ import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/works
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
-export class FavoriteObjectMetadata extends BaseWorkspaceEntity {
+export class FavoriteWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: FAVORITE_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.NUMBER,
@@ -48,9 +48,9 @@ export class FavoriteObjectMetadata extends BaseWorkspaceEntity {
     icon: 'IconCircleUser',
     joinColumn: 'workspaceMemberId',
     inverseSideFieldKey: 'favorites',
-    inverseSideTarget: () => WorkspaceMemberObjectMetadata,
+    inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
   })
-  workspaceMember: Relation<WorkspaceMemberObjectMetadata>;
+  workspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.person,
@@ -59,11 +59,11 @@ export class FavoriteObjectMetadata extends BaseWorkspaceEntity {
     description: 'Favorite person',
     icon: 'IconUser',
     joinColumn: 'personId',
-    inverseSideTarget: () => PersonObjectMetadata,
+    inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
   })
   @WorkspaceIsNullable()
-  person: Relation<PersonObjectMetadata>;
+  person: Relation<PersonWorkspaceEntity>;
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.company,
@@ -72,11 +72,11 @@ export class FavoriteObjectMetadata extends BaseWorkspaceEntity {
     description: 'Favorite company',
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'companyId',
-    inverseSideTarget: () => CompanyObjectMetadata,
+    inverseSideTarget: () => CompanyWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
   })
   @WorkspaceIsNullable()
-  company: Relation<CompanyObjectMetadata>;
+  company: Relation<CompanyWorkspaceEntity>;
 
   @WorkspaceRelation({
     standardId: FAVORITE_STANDARD_FIELD_IDS.opportunity,
@@ -85,11 +85,11 @@ export class FavoriteObjectMetadata extends BaseWorkspaceEntity {
     description: 'Favorite opportunity',
     icon: 'IconTargetArrow',
     joinColumn: 'opportunityId',
-    inverseSideTarget: () => OpportunityObjectMetadata,
+    inverseSideTarget: () => OpportunityWorkspaceEntity,
     inverseSideFieldKey: 'favorites',
   })
   @WorkspaceIsNullable()
-  opportunity: Relation<OpportunityObjectMetadata>;
+  opportunity: Relation<OpportunityWorkspaceEntity>;
 
   @WorkspaceDynamicRelation({
     type: RelationMetadataType.MANY_TO_ONE,

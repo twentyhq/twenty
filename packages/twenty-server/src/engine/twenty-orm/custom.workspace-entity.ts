@@ -3,11 +3,11 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { ActivityTargetObjectMetadata } from 'src/modules/activity/standard-objects/activity-target.object-metadata';
-import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
-import { AttachmentObjectMetadata } from 'src/modules/attachment/standard-objects/attachment.object-metadata';
+import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
+import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
+import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { CUSTOM_OBJECT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { TimelineActivityObjectMetadata } from 'src/modules/timeline/standard-objects/timeline-activity.object-metadata';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
@@ -45,11 +45,11 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
     description: (objectMetadata) =>
       `Activities tied to the ${objectMetadata.labelSingular}`,
     icon: 'IconCheckbox',
-    inverseSideTarget: () => ActivityTargetObjectMetadata,
+    inverseSideTarget: () => ActivityTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
-  activityTargets: ActivityTargetObjectMetadata[];
+  activityTargets: ActivityTargetWorkspaceEntity[];
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.favorites,
@@ -58,12 +58,12 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
     description: (objectMetadata) =>
       `Favorites tied to the ${objectMetadata.labelSingular}`,
     icon: 'IconHeart',
-    inverseSideTarget: () => FavoriteObjectMetadata,
+    inverseSideTarget: () => FavoriteWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  favorites: FavoriteObjectMetadata[];
+  favorites: FavoriteWorkspaceEntity[];
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.attachments,
@@ -72,11 +72,11 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
     description: (objectMetadata) =>
       `Attachments tied to the ${objectMetadata.labelSingular}`,
     icon: 'IconFileImport',
-    inverseSideTarget: () => AttachmentObjectMetadata,
+    inverseSideTarget: () => AttachmentWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
-  attachments: AttachmentObjectMetadata[];
+  attachments: AttachmentWorkspaceEntity[];
 
   @WorkspaceRelation({
     standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.timelineActivities,
@@ -85,10 +85,10 @@ export class CustomWorkspaceEntity extends BaseWorkspaceEntity {
     description: (objectMetadata) =>
       `Timeline Activities tied to the ${objectMetadata.labelSingular}`,
     icon: 'IconIconTimelineEvent',
-    inverseSideTarget: () => TimelineActivityObjectMetadata,
+    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  timelineActivities: TimelineActivityObjectMetadata[];
+  timelineActivities: TimelineActivityWorkspaceEntity[];
 }

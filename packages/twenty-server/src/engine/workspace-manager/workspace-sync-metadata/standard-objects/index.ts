@@ -1,61 +1,61 @@
-import { ActivityTargetObjectMetadata } from 'src/modules/activity/standard-objects/activity-target.object-metadata';
-import { ActivityObjectMetadata } from 'src/modules/activity/standard-objects/activity.object-metadata';
-import { ApiKeyObjectMetadata } from 'src/modules/api-key/standard-objects/api-key.object-metadata';
-import { AttachmentObjectMetadata } from 'src/modules/attachment/standard-objects/attachment.object-metadata';
-import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
-import { CalendarEventObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event.object-metadata';
-import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
-import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
-import { CommentObjectMetadata } from 'src/modules/activity/standard-objects/comment.object-metadata';
-import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
-import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
-import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
-import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
-import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
-import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
-import { MessageThreadObjectMetadata } from 'src/modules/messaging/standard-objects/message-thread.object-metadata';
-import { MessageObjectMetadata } from 'src/modules/messaging/standard-objects/message.object-metadata';
-import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
-import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
-import { ViewFieldObjectMetadata } from 'src/modules/view/standard-objects/view-field.object-metadata';
-import { ViewFilterObjectMetadata } from 'src/modules/view/standard-objects/view-filter.object-metadata';
-import { ViewSortObjectMetadata } from 'src/modules/view/standard-objects/view-sort.object-metadata';
-import { ViewObjectMetadata } from 'src/modules/view/standard-objects/view.object-metadata';
-import { WebhookObjectMetadata } from 'src/modules/webhook/standard-objects/webhook.object-metadata';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
-import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
-import { AuditLogObjectMetadata } from 'src/modules/timeline/standard-objects/audit-log.object-metadata';
-import { TimelineActivityObjectMetadata } from 'src/modules/timeline/standard-objects/timeline-activity.object-metadata';
-import { BehavioralEventObjectMetadata } from 'src/modules/timeline/standard-objects/behavioral-event.object-metadata';
+import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
+import { ActivityWorkspaceEntity } from 'src/modules/activity/standard-objects/activity.workspace-entity';
+import { ApiKeyWorkspaceEntity } from 'src/modules/api-key/standard-objects/api-key.workspace-entity';
+import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
+import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
+import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event.workspace-entity';
+import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
+import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
+import { CommentWorkspaceEntity } from 'src/modules/activity/standard-objects/comment.workspace-entity';
+import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
+import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel-message-association.workspace-entity';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
+import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-participant.workspace-entity';
+import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-thread.workspace-entity';
+import { MessageWorkspaceEntity } from 'src/modules/messaging/standard-objects/message.workspace-entity';
+import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
+import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
+import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
+import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
+import { WebhookWorkspaceEntity } from 'src/modules/webhook/standard-objects/webhook.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.workspace-entity';
+import { AuditLogWorkspaceEntity } from 'src/modules/timeline/standard-objects/audit-log.workspace-entity';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
+import { BehavioralEventWorkspaceEntity } from 'src/modules/timeline/standard-objects/behavioral-event.workspace-entity';
 
 export const standardObjectMetadataDefinitions = [
-  ActivityTargetObjectMetadata,
-  ActivityObjectMetadata,
-  ApiKeyObjectMetadata,
-  AuditLogObjectMetadata,
-  AttachmentObjectMetadata,
-  BehavioralEventObjectMetadata,
-  BlocklistObjectMetadata,
-  CalendarEventObjectMetadata,
-  CalendarChannelObjectMetadata,
-  CalendarChannelEventAssociationObjectMetadata,
-  CalendarEventParticipantObjectMetadata,
-  CommentObjectMetadata,
-  CompanyObjectMetadata,
-  ConnectedAccountObjectMetadata,
-  FavoriteObjectMetadata,
-  OpportunityObjectMetadata,
-  PersonObjectMetadata,
-  TimelineActivityObjectMetadata,
-  ViewFieldObjectMetadata,
-  ViewFilterObjectMetadata,
-  ViewSortObjectMetadata,
-  ViewObjectMetadata,
-  WebhookObjectMetadata,
-  WorkspaceMemberObjectMetadata,
-  MessageThreadObjectMetadata,
-  MessageObjectMetadata,
-  MessageChannelObjectMetadata,
-  MessageParticipantObjectMetadata,
-  MessageChannelMessageAssociationObjectMetadata,
+  ActivityTargetWorkspaceEntity,
+  ActivityWorkspaceEntity,
+  ApiKeyWorkspaceEntity,
+  AuditLogWorkspaceEntity,
+  AttachmentWorkspaceEntity,
+  BehavioralEventWorkspaceEntity,
+  BlocklistWorkspaceEntity,
+  CalendarEventWorkspaceEntity,
+  CalendarChannelWorkspaceEntity,
+  CalendarChannelEventAssociationWorkspaceEntity,
+  CalendarEventParticipantWorkspaceEntity,
+  CommentWorkspaceEntity,
+  CompanyWorkspaceEntity,
+  ConnectedAccountWorkspaceEntity,
+  FavoriteWorkspaceEntity,
+  OpportunityWorkspaceEntity,
+  PersonWorkspaceEntity,
+  TimelineActivityWorkspaceEntity,
+  ViewFieldWorkspaceEntity,
+  ViewFilterWorkspaceEntity,
+  ViewSortWorkspaceEntity,
+  ViewWorkspaceEntity,
+  WebhookWorkspaceEntity,
+  WorkspaceMemberWorkspaceEntity,
+  MessageThreadWorkspaceEntity,
+  MessageWorkspaceEntity,
+  MessageChannelWorkspaceEntity,
+  MessageParticipantWorkspaceEntity,
+  MessageChannelMessageAssociationWorkspaceEntity,
 ];

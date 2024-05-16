@@ -5,11 +5,11 @@ import { EntityManager } from 'typeorm';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ParticipantWithMessageId } from 'src/modules/messaging/types/gmail-message';
 import { PersonRepository } from 'src/modules/person/repositories/person.repository';
-import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/get-flattened-values-and-values-string-for-batch-raw-query.util';
 import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant.repository';
-import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
+import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-participant.workspace-entity';
 import { AddPersonIdAndWorkspaceMemberIdService } from 'src/modules/calendar-messaging-participant/services/add-person-id-and-workspace-member-id/add-person-id-and-workspace-member-id.service';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
@@ -17,15 +17,15 @@ import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metada
 export class MessageParticipantService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    @InjectObjectMetadataRepository(MessageParticipantObjectMetadata)
+    @InjectObjectMetadataRepository(MessageParticipantWorkspaceEntity)
     private readonly messageParticipantRepository: MessageParticipantRepository,
-    @InjectObjectMetadataRepository(PersonObjectMetadata)
+    @InjectObjectMetadataRepository(PersonWorkspaceEntity)
     private readonly personRepository: PersonRepository,
     private readonly addPersonIdAndWorkspaceMemberIdService: AddPersonIdAndWorkspaceMemberIdService,
   ) {}
 
   public async updateMessageParticipantsAfterPeopleCreation(
-    createdPeople: ObjectRecord<PersonObjectMetadata>[],
+    createdPeople: ObjectRecord<PersonWorkspaceEntity>[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {

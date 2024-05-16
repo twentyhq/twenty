@@ -2,7 +2,7 @@ import { EntityManager } from 'typeorm';
 
 import { DEV_SEED_PERSON_IDS } from 'src/database/typeorm-seeds/workspace/people';
 import { DEV_SEED_WORKSPACE_MEMBER_IDS } from 'src/database/typeorm-seeds/workspace/workspace-members';
-import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
+import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
 
 const tableName = 'calendarEventParticipant';
 

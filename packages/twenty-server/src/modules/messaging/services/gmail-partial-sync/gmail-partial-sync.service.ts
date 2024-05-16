@@ -9,11 +9,11 @@ import { MessageQueue } from 'src/engine/integrations/message-queue/message-queu
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
-  MessageChannelObjectMetadata,
+  MessageChannelWorkspaceEntity,
   MessageChannelSyncStatus,
-} from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+} from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { GMAIL_USERS_HISTORY_MAX_RESULT } from 'src/modules/messaging/constants/gmail-users-history-max-result.constant';
 import { GmailError } from 'src/modules/messaging/types/gmail-error';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
@@ -24,7 +24,7 @@ import {
   GmailFullSyncJob,
   GmailFullSyncJobData,
 } from 'src/modules/messaging/jobs/gmail-full-sync.job';
-import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
+import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
 
 @Injectable()
@@ -35,15 +35,15 @@ export class GmailPartialSyncV2Service {
     private readonly gmailClientProvider: GmailClientProvider,
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
-    @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
+    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
+    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
     private readonly cacheStorage: CacheStorageService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     @InjectObjectMetadataRepository(
-      MessageChannelMessageAssociationObjectMetadata,
+      MessageChannelMessageAssociationWorkspaceEntity,
     )
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
   ) {}

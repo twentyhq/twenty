@@ -8,14 +8,14 @@ import {
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { ActivityTargetObjectMetadata } from 'src/modules/activity/standard-objects/activity-target.object-metadata';
-import { AttachmentObjectMetadata } from 'src/modules/attachment/standard-objects/attachment.object-metadata';
-import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
-import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
-import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
-import { TimelineActivityObjectMetadata } from 'src/modules/timeline/standard-objects/timeline-activity.object-metadata';
+import { ActivityTargetWorkspaceEntity } from 'src/modules/activity/standard-objects/activity-target.workspace-entity';
+import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
+import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { FavoriteWorkspaceEntity } from 'src/modules/favorite/standard-objects/favorite.workspace-entity';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
@@ -31,7 +31,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
   icon: 'IconTargetArrow',
 })
 @WorkspaceIsNotAuditLogged()
-export class OpportunityObjectMetadata extends BaseWorkspaceEntity {
+export class OpportunityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
@@ -111,12 +111,12 @@ export class OpportunityObjectMetadata extends BaseWorkspaceEntity {
     description: 'Opportunity point of contact',
     icon: 'IconUser',
     joinColumn: 'pointOfContactId',
-    inverseSideTarget: () => PersonObjectMetadata,
+    inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'pointOfContactForOpportunities',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  pointOfContact: Relation<PersonObjectMetadata>;
+  pointOfContact: Relation<PersonWorkspaceEntity>;
 
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.company,
@@ -125,12 +125,12 @@ export class OpportunityObjectMetadata extends BaseWorkspaceEntity {
     description: 'Opportunity company',
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'companyId',
-    inverseSideTarget: () => CompanyObjectMetadata,
+    inverseSideTarget: () => CompanyWorkspaceEntity,
     inverseSideFieldKey: 'opportunities',
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  company: Relation<CompanyObjectMetadata>;
+  company: Relation<CompanyWorkspaceEntity>;
 
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.favorites,
@@ -138,12 +138,12 @@ export class OpportunityObjectMetadata extends BaseWorkspaceEntity {
     label: 'Favorites',
     description: 'Favorites linked to the opportunity',
     icon: 'IconHeart',
-    inverseSideTarget: () => FavoriteObjectMetadata,
+    inverseSideTarget: () => FavoriteWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   @WorkspaceIsSystem()
-  favorites: Relation<FavoriteObjectMetadata[]>;
+  favorites: Relation<FavoriteWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.activityTargets,
@@ -151,11 +151,11 @@ export class OpportunityObjectMetadata extends BaseWorkspaceEntity {
     label: 'Activities',
     description: 'Activities tied to the opportunity',
     icon: 'IconCheckbox',
-    inverseSideTarget: () => ActivityTargetObjectMetadata,
+    inverseSideTarget: () => ActivityTargetWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
-  activityTargets: Relation<ActivityTargetObjectMetadata[]>;
+  activityTargets: Relation<ActivityTargetWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.attachments,
@@ -163,11 +163,11 @@ export class OpportunityObjectMetadata extends BaseWorkspaceEntity {
     label: 'Attachments',
     description: 'Attachments linked to the opportunity',
     icon: 'IconFileImport',
-    inverseSideTarget: () => AttachmentObjectMetadata,
+    inverseSideTarget: () => AttachmentWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
-  attachments: Relation<AttachmentObjectMetadata[]>;
+  attachments: Relation<AttachmentWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.timelineActivities,
@@ -175,9 +175,9 @@ export class OpportunityObjectMetadata extends BaseWorkspaceEntity {
     label: 'Timeline Activities',
     description: 'Timeline Activities linked to the opportunity.',
     icon: 'IconTimelineEvent',
-    inverseSideTarget: () => TimelineActivityObjectMetadata,
+    inverseSideTarget: () => TimelineActivityWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  timelineActivities: Relation<TimelineActivityObjectMetadata[]>;
+  timelineActivities: Relation<TimelineActivityWorkspaceEntity[]>;
 }

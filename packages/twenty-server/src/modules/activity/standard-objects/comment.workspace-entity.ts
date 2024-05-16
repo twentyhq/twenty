@@ -3,9 +3,9 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { COMMENT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { ActivityObjectMetadata } from 'src/modules/activity/standard-objects/activity.object-metadata';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
-import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { ActivityWorkspaceEntity } from 'src/modules/activity/standard-objects/activity.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -23,7 +23,7 @@ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
-export class CommentObjectMetadata extends BaseWorkspaceEntity {
+export class CommentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: COMMENT_STANDARD_FIELD_IDS.body,
     type: FieldMetadataType.TEXT,
@@ -40,10 +40,10 @@ export class CommentObjectMetadata extends BaseWorkspaceEntity {
     description: 'Comment author',
     icon: 'IconCircleUser',
     joinColumn: 'authorId',
-    inverseSideTarget: () => WorkspaceMemberObjectMetadata,
+    inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'authoredComments',
   })
-  author: Relation<WorkspaceMemberObjectMetadata>;
+  author: Relation<WorkspaceMemberWorkspaceEntity>;
 
   @WorkspaceRelation({
     standardId: COMMENT_STANDARD_FIELD_IDS.activity,
@@ -52,8 +52,8 @@ export class CommentObjectMetadata extends BaseWorkspaceEntity {
     description: 'Comment activity',
     icon: 'IconNotes',
     joinColumn: 'activityId',
-    inverseSideTarget: () => ActivityObjectMetadata,
+    inverseSideTarget: () => ActivityWorkspaceEntity,
     inverseSideFieldKey: 'comments',
   })
-  activity: Relation<ActivityObjectMetadata>;
+  activity: Relation<ActivityWorkspaceEntity>;
 }

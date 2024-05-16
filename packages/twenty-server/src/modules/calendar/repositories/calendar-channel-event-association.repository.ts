@@ -4,7 +4,7 @@ import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
-import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
+import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.workspace-entity';
 import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/get-flattened-values-and-values-string-for-batch-raw-query.util';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class CalendarChannelEventAssociationRepository {
     calendarChannelId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<CalendarChannelEventAssociationObjectMetadata>[]> {
+  ): Promise<ObjectRecord<CalendarChannelEventAssociationWorkspaceEntity>[]> {
     if (eventExternalIds.length === 0) {
       return [];
     }
@@ -56,7 +56,7 @@ export class CalendarChannelEventAssociationRepository {
     calendarChannelIds: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<CalendarChannelEventAssociationObjectMetadata>[]> {
+  ): Promise<ObjectRecord<CalendarChannelEventAssociationWorkspaceEntity>[]> {
     if (calendarChannelIds.length === 0) {
       return [];
     }
@@ -117,7 +117,7 @@ export class CalendarChannelEventAssociationRepository {
     calendarEventIds: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<CalendarChannelEventAssociationObjectMetadata>[]> {
+  ): Promise<ObjectRecord<CalendarChannelEventAssociationWorkspaceEntity>[]> {
     if (calendarEventIds.length === 0) {
       return [];
     }
@@ -136,7 +136,7 @@ export class CalendarChannelEventAssociationRepository {
 
   public async saveCalendarChannelEventAssociations(
     calendarChannelEventAssociations: Omit<
-      ObjectRecord<CalendarChannelEventAssociationObjectMetadata>,
+      ObjectRecord<CalendarChannelEventAssociationWorkspaceEntity>,
       'id' | 'createdAt' | 'updatedAt' | 'calendarChannel' | 'calendarEvent'
     >[],
     workspaceId: string,

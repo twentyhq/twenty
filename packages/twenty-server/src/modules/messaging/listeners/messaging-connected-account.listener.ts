@@ -15,7 +15,7 @@ import {
   DeleteConnectedAccountAssociatedMessagingDataJobData,
   DeleteConnectedAccountAssociatedMessagingDataJob,
 } from 'src/modules/messaging/jobs/delete-connected-account-associated-messaging-data.job';
-import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @Injectable()
@@ -31,7 +31,7 @@ export class MessagingConnectedAccountListener {
 
   @OnEvent('connectedAccount.deleted')
   async handleDeletedEvent(
-    payload: ObjectRecordDeleteEvent<ConnectedAccountObjectMetadata>,
+    payload: ObjectRecordDeleteEvent<ConnectedAccountWorkspaceEntity>,
   ) {
     await this.messageQueueService.add<DeleteConnectedAccountAssociatedMessagingDataJobData>(
       DeleteConnectedAccountAssociatedMessagingDataJob.name,

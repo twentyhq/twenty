@@ -4,7 +4,7 @@ import { ObjectRecordBaseEvent } from 'src/engine/integrations/event-emitter/typ
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositiories/timeline-activity.repository';
-import { TimelineActivityObjectMetadata } from 'src/modules/timeline/standard-objects/timeline-activity.object-metadata';
+import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 
 type TransformedEvent = ObjectRecordBaseEvent & {
   objectName?: string;
@@ -16,7 +16,7 @@ type TransformedEvent = ObjectRecordBaseEvent & {
 @Injectable()
 export class TimelineActivityService {
   constructor(
-    @InjectObjectMetadataRepository(TimelineActivityObjectMetadata)
+    @InjectObjectMetadataRepository(TimelineActivityWorkspaceEntity)
     private readonly timelineActivityRepository: TimelineActivityRepository,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}

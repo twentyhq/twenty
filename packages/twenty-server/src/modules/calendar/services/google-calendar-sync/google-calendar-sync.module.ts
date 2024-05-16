@@ -8,27 +8,27 @@ import { CalendarEventCleanerModule } from 'src/modules/calendar/services/calend
 import { CalendarEventParticipantModule } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.module';
 import { GoogleCalendarSyncService } from 'src/modules/calendar/services/google-calendar-sync/google-calendar-sync.service';
 import { CalendarProvidersModule } from 'src/modules/calendar/services/providers/calendar-providers.module';
-import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
-import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
-import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
-import { CalendarEventObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event.object-metadata';
-import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
-import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
-import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.workspace-entity';
+import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
+import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
+import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event.workspace-entity';
+import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Module({
   imports: [
     CalendarProvidersModule,
     ObjectMetadataRepositoryModule.forFeature([
-      ConnectedAccountObjectMetadata,
-      CalendarEventObjectMetadata,
-      CalendarChannelObjectMetadata,
-      CalendarChannelEventAssociationObjectMetadata,
-      CalendarEventParticipantObjectMetadata,
-      BlocklistObjectMetadata,
-      PersonObjectMetadata,
-      WorkspaceMemberObjectMetadata,
+      ConnectedAccountWorkspaceEntity,
+      CalendarEventWorkspaceEntity,
+      CalendarChannelWorkspaceEntity,
+      CalendarChannelEventAssociationWorkspaceEntity,
+      CalendarEventParticipantWorkspaceEntity,
+      BlocklistWorkspaceEntity,
+      PersonWorkspaceEntity,
+      WorkspaceMemberWorkspaceEntity,
     ]),
     CalendarEventParticipantModule,
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),

@@ -3,7 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class WorkspaceMemberRepository {
   public async getByIds(
     userIds: string[],
     workspaceId: string,
-  ): Promise<ObjectRecord<WorkspaceMemberObjectMetadata>[]> {
+  ): Promise<ObjectRecord<WorkspaceMemberWorkspaceEntity>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -31,7 +31,7 @@ export class WorkspaceMemberRepository {
   public async getByIdOrFail(
     userId: string,
     workspaceId: string,
-  ): Promise<ObjectRecord<WorkspaceMemberObjectMetadata>> {
+  ): Promise<ObjectRecord<WorkspaceMemberWorkspaceEntity>> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -54,7 +54,7 @@ export class WorkspaceMemberRepository {
   public async getAllByWorkspaceId(
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<WorkspaceMemberObjectMetadata>[]> {
+  ): Promise<ObjectRecord<WorkspaceMemberWorkspaceEntity>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 

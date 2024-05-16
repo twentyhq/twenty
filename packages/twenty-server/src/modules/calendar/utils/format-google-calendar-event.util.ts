@@ -1,7 +1,7 @@
 import { calendar_v3 as calendarV3 } from 'googleapis';
 import { v4 } from 'uuid';
 
-import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
+import { CalendarEventParticipantResponseStatus } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
 import { CalendarEventWithParticipants } from 'src/modules/calendar/types/calendar-event';
 
 export const formatGoogleCalendarEvent = (

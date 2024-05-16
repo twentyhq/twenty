@@ -7,10 +7,10 @@ import {
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { MESSAGE_CHANNEL_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
-import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel-message-association.workspace-entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -45,7 +45,7 @@ export enum MessageChannelType {
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
-export class MessageChannelObjectMetadata extends BaseWorkspaceEntity {
+export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.visibility,
     type: FieldMetadataType.SELECT,
@@ -201,10 +201,10 @@ export class MessageChannelObjectMetadata extends BaseWorkspaceEntity {
     description: 'Connected Account',
     icon: 'IconUserCircle',
     joinColumn: 'connectedAccountId',
-    inverseSideTarget: () => ConnectedAccountObjectMetadata,
+    inverseSideTarget: () => ConnectedAccountWorkspaceEntity,
     inverseSideFieldKey: 'messageChannels',
   })
-  connectedAccount: Relation<ConnectedAccountObjectMetadata>;
+  connectedAccount: Relation<ConnectedAccountWorkspaceEntity>;
 
   @WorkspaceRelation({
     standardId:
@@ -213,11 +213,11 @@ export class MessageChannelObjectMetadata extends BaseWorkspaceEntity {
     label: 'Message Channel Association',
     description: 'Messages from the channel.',
     icon: 'IconMessage',
-    inverseSideTarget: () => MessageChannelMessageAssociationObjectMetadata,
+    inverseSideTarget: () => MessageChannelMessageAssociationWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   @WorkspaceIsNullable()
   messageChannelMessageAssociations: Relation<
-    MessageChannelMessageAssociationObjectMetadata[]
+    MessageChannelMessageAssociationWorkspaceEntity[]
   >;
 }

@@ -4,15 +4,15 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { MessageThreadRepository } from 'src/modules/messaging/repositories/message-thread.repository';
 import { MessageRepository } from 'src/modules/messaging/repositories/message.repository';
 import { deleteUsingPagination } from 'src/modules/messaging/services/thread-cleaner/utils/delete-using-pagination.util';
-import { MessageThreadObjectMetadata } from 'src/modules/messaging/standard-objects/message-thread.object-metadata';
-import { MessageObjectMetadata } from 'src/modules/messaging/standard-objects/message.object-metadata';
+import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-thread.workspace-entity';
+import { MessageWorkspaceEntity } from 'src/modules/messaging/standard-objects/message.workspace-entity';
 
 @Injectable()
 export class ThreadCleanerService {
   constructor(
-    @InjectObjectMetadataRepository(MessageObjectMetadata)
+    @InjectObjectMetadataRepository(MessageWorkspaceEntity)
     private readonly messageRepository: MessageRepository,
-    @InjectObjectMetadataRepository(MessageThreadObjectMetadata)
+    @InjectObjectMetadataRepository(MessageThreadWorkspaceEntity)
     private readonly messageThreadRepository: MessageThreadRepository,
   ) {}
 

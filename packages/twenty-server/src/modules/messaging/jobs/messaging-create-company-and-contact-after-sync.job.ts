@@ -6,8 +6,8 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { CreateCompanyAndContactService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/services/create-company-and-contact.service';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant.repository';
-import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
-import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
+import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-participant.workspace-entity';
 
 export type MessagingCreateCompanyAndContactAfterSyncJobData = {
   workspaceId: string;
@@ -23,9 +23,9 @@ export class MessagingCreateCompanyAndContactAfterSyncJob
   );
   constructor(
     private readonly createCompanyAndContactService: CreateCompanyAndContactService,
-    @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
+    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelService: MessageChannelRepository,
-    @InjectObjectMetadataRepository(MessageParticipantObjectMetadata)
+    @InjectObjectMetadataRepository(MessageParticipantWorkspaceEntity)
     private readonly messageParticipantRepository: MessageParticipantRepository,
   ) {}
 

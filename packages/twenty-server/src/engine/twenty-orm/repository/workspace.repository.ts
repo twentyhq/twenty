@@ -21,6 +21,7 @@ import { ObjectLiteralStorage } from 'src/engine/twenty-orm/storage/object-liter
 import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
 import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { isPlainObject } from 'src/utils/is-plain-object';
 
 export class WorkspaceRepository<
   Entity extends ObjectLiteral,
@@ -492,7 +493,7 @@ export class WorkspaceRepository<
       const fieldMetadataArgs = compositeFieldMetadataArgsMap.get(key);
 
       if (!fieldMetadataArgs) {
-        if (typeof value === 'object') {
+        if (isPlainObject(value)) {
           newData[key] = this.formatData(value);
         } else {
           newData[key] = value;
@@ -524,25 +525,30 @@ export class WorkspaceRepository<
     return newData as T;
   }
 
-  private formatResult<T>(data: T): T {
+  private formatResult<T>(
+    data: T,
+    target = ObjectLiteralStorage.getObjectLiteral(this.target as any),
+  ): T {
     if (!data) {
       return data;
     }
 
     if (Array.isArray(data)) {
-      return data.map((item) => this.formatResult(item)) as T;
+      return data.map((item) => this.formatResult(item, target)) as T;
     }
 
-    const objectLiteral = ObjectLiteralStorage.getObjectLiteral(
-      this.target as any,
-    );
+    if (!isPlainObject(data)) {
+      return data;
+    }
 
-    if (!objectLiteral) {
+    if (!target) {
       throw new Error('Object literal is missing');
     }
 
     const fieldMetadataArgsCollection =
-      metadataArgsStorage.filterFields(objectLiteral);
+      metadataArgsStorage.filterFields(target);
+    const relationMetadataArgsCollection =
+      metadataArgsStorage.filterRelations(target);
     const compositeFieldMetadataArgsCollection =
       fieldMetadataArgsCollection.filter((fieldMetadataArg) =>
         isCompositeFieldMetadataType(fieldMetadataArg.type),
@@ -565,17 +571,36 @@ export class WorkspaceRepository<
         ]);
       }),
     );
+    const relationMetadataArgsMap = new Map(
+      relationMetadataArgsCollection.map((relationMetadataArgs) => [
+        relationMetadataArgs.name,
+        relationMetadataArgs,
+      ]),
+    );
     const newData: object = {};
 
     for (const [key, value] of Object.entries(data)) {
       const compositePropertyArgs = compositeFieldMetadataArgsMap.get(key);
+      const relationMetadataArgs = relationMetadataArgsMap.get(key);
 
-      if (!compositePropertyArgs) {
-        if (typeof value === 'object') {
+      if (!compositePropertyArgs && !relationMetadataArgs) {
+        if (isPlainObject(value)) {
           newData[key] = this.formatResult(value);
         } else {
           newData[key] = value;
         }
+        continue;
+      }
+
+      if (relationMetadataArgs) {
+        newData[key] = this.formatResult(
+          value,
+          relationMetadataArgs.inverseSideTarget() as any,
+        );
+        continue;
+      }
+
+      if (!compositePropertyArgs) {
         continue;
       }
 

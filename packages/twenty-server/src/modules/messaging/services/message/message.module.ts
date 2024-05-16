@@ -4,19 +4,19 @@ import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repos
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { MessageThreadModule } from 'src/modules/messaging/services/message-thread/message-thread.module';
 import { MessageService } from 'src/modules/messaging/services/message/message.service';
-import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
-import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
-import { MessageThreadObjectMetadata } from 'src/modules/messaging/standard-objects/message-thread.object-metadata';
-import { MessageObjectMetadata } from 'src/modules/messaging/standard-objects/message.object-metadata';
+import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel-message-association.workspace-entity';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
+import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-thread.workspace-entity';
+import { MessageWorkspaceEntity } from 'src/modules/messaging/standard-objects/message.workspace-entity';
 
 @Module({
   imports: [
     WorkspaceDataSourceModule,
     ObjectMetadataRepositoryModule.forFeature([
-      MessageChannelMessageAssociationObjectMetadata,
-      MessageObjectMetadata,
-      MessageChannelObjectMetadata,
-      MessageThreadObjectMetadata,
+      MessageChannelMessageAssociationWorkspaceEntity,
+      MessageWorkspaceEntity,
+      MessageChannelWorkspaceEntity,
+      MessageThreadWorkspaceEntity,
     ]),
     MessageThreadModule,
   ],

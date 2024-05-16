@@ -10,13 +10,13 @@ import { FindOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver-b
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { CanAccessCalendarEventService } from 'src/modules/calendar/query-hooks/calendar-event/services/can-access-calendar-event.service';
 import { CalendarChannelEventAssociationRepository } from 'src/modules/calendar/repositories/calendar-channel-event-association.repository';
-import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
+import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.workspace-entity';
 
 @Injectable()
 export class CalendarEventFindOnePreQueryHook implements WorkspacePreQueryHook {
   constructor(
     @InjectObjectMetadataRepository(
-      CalendarChannelEventAssociationObjectMetadata,
+      CalendarChannelEventAssociationWorkspaceEntity,
     )
     private readonly calendarChannelEventAssociationRepository: CalendarChannelEventAssociationRepository,
     private readonly canAccessCalendarEventService: CanAccessCalendarEventService,

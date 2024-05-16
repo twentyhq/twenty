@@ -4,12 +4,12 @@ import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/fi
 import { ATTACHMENT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
-import { ActivityObjectMetadata } from 'src/modules/activity/standard-objects/activity.object-metadata';
-import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
-import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
-import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
-import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { ActivityWorkspaceEntity } from 'src/modules/activity/standard-objects/activity.workspace-entity';
+import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -29,7 +29,7 @@ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
-export class AttachmentObjectMetadata extends BaseWorkspaceEntity {
+export class AttachmentWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
@@ -64,10 +64,10 @@ export class AttachmentObjectMetadata extends BaseWorkspaceEntity {
     description: 'Attachment author',
     icon: 'IconCircleUser',
     joinColumn: 'authorId',
-    inverseSideTarget: () => WorkspaceMemberObjectMetadata,
+    inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'authoredAttachments',
   })
-  author: Relation<WorkspaceMemberObjectMetadata>;
+  author: Relation<WorkspaceMemberWorkspaceEntity>;
 
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.activity,
@@ -76,11 +76,11 @@ export class AttachmentObjectMetadata extends BaseWorkspaceEntity {
     description: 'Attachment activity',
     icon: 'IconNotes',
     joinColumn: 'activityId',
-    inverseSideTarget: () => ActivityObjectMetadata,
+    inverseSideTarget: () => ActivityWorkspaceEntity,
     inverseSideFieldKey: 'attachments',
   })
   @WorkspaceIsNullable()
-  activity: Relation<ActivityObjectMetadata>;
+  activity: Relation<ActivityWorkspaceEntity>;
 
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.person,
@@ -89,11 +89,11 @@ export class AttachmentObjectMetadata extends BaseWorkspaceEntity {
     description: 'Attachment person',
     icon: 'IconUser',
     joinColumn: 'personId',
-    inverseSideTarget: () => PersonObjectMetadata,
+    inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'attachments',
   })
   @WorkspaceIsNullable()
-  person: Relation<PersonObjectMetadata>;
+  person: Relation<PersonWorkspaceEntity>;
 
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.company,
@@ -102,11 +102,11 @@ export class AttachmentObjectMetadata extends BaseWorkspaceEntity {
     description: 'Attachment company',
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'companyId',
-    inverseSideTarget: () => CompanyObjectMetadata,
+    inverseSideTarget: () => CompanyWorkspaceEntity,
     inverseSideFieldKey: 'attachments',
   })
   @WorkspaceIsNullable()
-  company: Relation<CompanyObjectMetadata>;
+  company: Relation<CompanyWorkspaceEntity>;
 
   @WorkspaceRelation({
     standardId: ATTACHMENT_STANDARD_FIELD_IDS.opportunity,
@@ -115,11 +115,11 @@ export class AttachmentObjectMetadata extends BaseWorkspaceEntity {
     description: 'Attachment opportunity',
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'opportunityId',
-    inverseSideTarget: () => OpportunityObjectMetadata,
+    inverseSideTarget: () => OpportunityWorkspaceEntity,
     inverseSideFieldKey: 'attachments',
   })
   @WorkspaceIsNullable()
-  opportunity: Relation<OpportunityObjectMetadata>;
+  opportunity: Relation<OpportunityWorkspaceEntity>;
 
   @WorkspaceDynamicRelation({
     type: RelationMetadataType.MANY_TO_ONE,

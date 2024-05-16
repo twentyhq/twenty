@@ -5,31 +5,31 @@ import groupBy from 'lodash.groupby';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
-import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
+import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.workspace-entity';
 import {
-  CalendarChannelObjectMetadata,
+  CalendarChannelWorkspaceEntity,
   CalendarChannelVisibility,
-} from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
+} from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
-import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 @Injectable()
 export class CanAccessCalendarEventService {
   constructor(
-    @InjectObjectMetadataRepository(CalendarChannelObjectMetadata)
+    @InjectObjectMetadataRepository(CalendarChannelWorkspaceEntity)
     private readonly calendarChannelRepository: CalendarChannelRepository,
-    @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
+    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    @InjectObjectMetadataRepository(WorkspaceMemberObjectMetadata)
+    @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
     private readonly workspaceMemberService: WorkspaceMemberRepository,
   ) {}
 
   public async canAccessCalendarEvent(
     userId: string,
     workspaceId: string,
-    calendarChannelCalendarEventAssociations: ObjectRecord<CalendarChannelEventAssociationObjectMetadata>[],
+    calendarChannelCalendarEventAssociations: ObjectRecord<CalendarChannelEventAssociationWorkspaceEntity>[],
   ) {
     const calendarChannels = await this.calendarChannelRepository.getByIds(
       calendarChannelCalendarEventAssociations.map(

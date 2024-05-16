@@ -3,9 +3,9 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { AUDIT_LOGS_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
@@ -21,7 +21,7 @@ import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metad
   icon: 'IconIconTimelineEvent',
 })
 @WorkspaceIsSystem()
-export class AuditLogObjectMetadata extends BaseWorkspaceEntity {
+export class AuditLogWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
@@ -87,9 +87,9 @@ export class AuditLogObjectMetadata extends BaseWorkspaceEntity {
     description: 'Event workspace member',
     icon: 'IconCircleUser',
     joinColumn: 'workspaceMemberId',
-    inverseSideTarget: () => WorkspaceMemberObjectMetadata,
+    inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'auditLogs',
   })
   @WorkspaceIsNullable()
-  workspaceMember: Relation<WorkspaceMemberObjectMetadata>;
+  workspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
 }

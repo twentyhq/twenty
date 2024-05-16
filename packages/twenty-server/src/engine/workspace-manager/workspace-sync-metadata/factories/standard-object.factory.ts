@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { WorkspaceSyncContext } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/workspace-sync-context.interface';
-import { PartialObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
+import { PartialWorkspaceEntity } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 import { FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
 
 import { isGatedAndNotEnabled } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/is-gate-and-not-enabled.util';
@@ -18,19 +18,19 @@ export class StandardObjectFactory {
     standardObjectMetadataDefinitions: (typeof BaseWorkspaceEntity)[],
     context: WorkspaceSyncContext,
     workspaceFeatureFlagsMap: FeatureFlagMap,
-  ): PartialObjectMetadata[] {
+  ): PartialWorkspaceEntity[] {
     return standardObjectMetadataDefinitions
       .map((metadata) =>
         this.createObjectMetadata(metadata, context, workspaceFeatureFlagsMap),
       )
-      .filter((metadata): metadata is PartialObjectMetadata => !!metadata);
+      .filter((metadata): metadata is PartialWorkspaceEntity => !!metadata);
   }
 
   private createObjectMetadata(
     target: typeof BaseWorkspaceEntity,
     context: WorkspaceSyncContext,
     workspaceFeatureFlagsMap: FeatureFlagMap,
-  ): PartialObjectMetadata | undefined {
+  ): PartialWorkspaceEntity | undefined {
     const workspaceEntityMetadataArgs =
       metadataArgsStorage.filterEntities(target);
 

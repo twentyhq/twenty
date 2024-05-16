@@ -4,15 +4,15 @@ import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repos
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { AddPersonIdAndWorkspaceMemberIdModule } from 'src/modules/calendar-messaging-participant/services/add-person-id-and-workspace-member-id/add-person-id-and-workspace-member-id.module';
 import { MessageParticipantService } from 'src/modules/messaging/services/message-participant/message-participant.service';
-import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
-import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
+import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-participant.workspace-entity';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @Module({
   imports: [
     WorkspaceDataSourceModule,
     ObjectMetadataRepositoryModule.forFeature([
-      PersonObjectMetadata,
-      MessageParticipantObjectMetadata,
+      PersonWorkspaceEntity,
+      MessageParticipantWorkspaceEntity,
     ]),
     AddPersonIdAndWorkspaceMemberIdModule,
   ],
