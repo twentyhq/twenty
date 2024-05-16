@@ -5,6 +5,10 @@ import { ComponentDecorator } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { RelationFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RelationFieldDisplay';
+import {
+  RecordFieldValueSelectorContextProvider,
+  useSetRecordValue,
+} from '@/object-record/record-index/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { FieldMetadataType } from '~/generated/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
@@ -129,10 +133,15 @@ const RelationFieldValueSetterEffect = () => {
     recordStoreFamilyState(mock.relationEntityId),
   );
 
+  const setRecordValue = useSetRecordValue();
+
   useEffect(() => {
     setEntity(mock.entityValue);
     setRelationEntity(mock.relationFieldValue);
-  }, [setEntity, setRelationEntity]);
+
+    setRecordValue(mock.entityValue.id, mock.entityValue);
+    setRecordValue(mock.relationFieldValue.id, mock.relationFieldValue);
+  }, [setEntity, setRelationEntity, setRecordValue]);
 
   return null;
 };
@@ -142,20 +151,22 @@ const meta: Meta = {
   decorators: [
     MemoryRouterDecorator,
     (Story) => (
-      <FieldContext.Provider
-        value={{
-          entityId: mock.entityId,
-          basePathToShowPage: '/object-record/',
-          isLabelIdentifier: false,
-          fieldDefinition: {
-            ...mock.fieldDefinition,
-          },
-          hotkeyScope: 'hotkey-scope',
-        }}
-      >
-        <RelationFieldValueSetterEffect />
-        <Story />
-      </FieldContext.Provider>
+      <RecordFieldValueSelectorContextProvider>
+        <FieldContext.Provider
+          value={{
+            entityId: mock.entityId,
+            basePathToShowPage: '/object-record/',
+            isLabelIdentifier: false,
+            fieldDefinition: {
+              ...mock.fieldDefinition,
+            },
+            hotkeyScope: 'hotkey-scope',
+          }}
+        >
+          <RelationFieldValueSetterEffect />
+          <Story />
+        </FieldContext.Provider>
+      </RecordFieldValueSelectorContextProvider>
     ),
     ComponentDecorator,
   ],
