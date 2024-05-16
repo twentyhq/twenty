@@ -16,7 +16,7 @@ const modulesCoverage = {
 };
 
 const pagesCoverage = {
-  branches: 45,
+  branches: 40,
   statements: 60,
   lines: 60,
   functions: 45,

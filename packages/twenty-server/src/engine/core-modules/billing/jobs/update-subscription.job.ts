@@ -21,7 +21,7 @@ export class UpdateSubscriptionJob
     const workspaceMembersCount =
       await this.userWorkspaceService.getWorkspaceMemberCount(data.workspaceId);
 
-    if (workspaceMembersCount <= 0) {
+    if (!workspaceMembersCount || workspaceMembersCount <= 0) {
       return;
     }
 

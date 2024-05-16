@@ -7,21 +7,21 @@ import {
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { CALENDAR_CHANNEL_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
-import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
-import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
-import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/relation-metadata.decorator';
-import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
+import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 
 export enum CalendarChannelVisibility {
   METADATA = 'METADATA',
   SHARE_EVERYTHING = 'SHARE_EVERYTHING',
 }
 
-@ObjectMetadata({
+@WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.calendarChannel,
   namePlural: 'calendarChannels',
   labelSingular: 'Calendar Channel',
@@ -29,20 +29,10 @@ export enum CalendarChannelVisibility {
   description: 'Calendar Channels',
   icon: 'IconCalendar',
 })
-@IsSystem()
-@IsNotAuditLogged()
-export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
-  @FieldMetadata({
-    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.connectedAccount,
-    type: FieldMetadataType.RELATION,
-    label: 'Connected Account',
-    description: 'Connected Account',
-    icon: 'IconUserCircle',
-    joinColumn: 'connectedAccountId',
-  })
-  connectedAccount: Relation<ConnectedAccountObjectMetadata>;
-
-  @FieldMetadata({
+@WorkspaceIsSystem()
+@WorkspaceIsNotAuditLogged()
+export class CalendarChannelObjectMetadata extends BaseWorkspaceEntity {
+  @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
     label: 'Handle',
@@ -51,7 +41,7 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
   })
   handle: string;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.visibility,
     type: FieldMetadataType.SELECT,
     label: 'Visibility',
@@ -75,7 +65,7 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
   })
   visibility: string;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId:
       CALENDAR_CHANNEL_STANDARD_FIELD_IDS.isContactAutoCreationEnabled,
     type: FieldMetadataType.BOOLEAN,
@@ -86,7 +76,7 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
   })
   isContactAutoCreationEnabled: boolean;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.isSyncEnabled,
     type: FieldMetadataType.BOOLEAN,
     label: 'Is Sync Enabled',
@@ -96,7 +86,7 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
   })
   isSyncEnabled: boolean;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.syncCursor,
     type: FieldMetadataType.TEXT,
     label: 'Sync Cursor',
@@ -106,16 +96,25 @@ export class CalendarChannelObjectMetadata extends BaseObjectMetadata {
   })
   syncCursor: string;
 
-  @FieldMetadata({
+  @WorkspaceRelation({
+    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.connectedAccount,
+    type: RelationMetadataType.MANY_TO_ONE,
+    label: 'Connected Account',
+    description: 'Connected Account',
+    icon: 'IconUserCircle',
+    joinColumn: 'connectedAccountId',
+    inverseSideTarget: () => ConnectedAccountObjectMetadata,
+    inverseSideFieldKey: 'calendarChannels',
+  })
+  connectedAccount: Relation<ConnectedAccountObjectMetadata>;
+
+  @WorkspaceRelation({
     standardId:
       CALENDAR_CHANNEL_STANDARD_FIELD_IDS.calendarChannelEventAssociations,
-    type: FieldMetadataType.RELATION,
+    type: RelationMetadataType.ONE_TO_MANY,
     label: 'Calendar Channel Event Associations',
     description: 'Calendar Channel Event Associations',
     icon: 'IconCalendar',
-  })
-  @RelationMetadata({
-    type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => CalendarChannelEventAssociationObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })

@@ -1,6 +1,6 @@
 {
   "name": "twenty-website",
-  "version": "0.11.1",
+  "version": "0.11.2",
   "private": true,
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-website node ../../node_modules/nx/bin/nx.js",
@@ -8,8 +8,8 @@
     "build": "npx next build",
     "start": "npx next start",
     "lint": "npx next lint",
-    "github:sync": "npx tsx src/github-sync/github-sync.ts",
-    "github:init": "npx tsx src/github-sync/github-sync.ts -isFullSync",
+    "github:sync": "npx tsx src/github/github-sync.ts",
+    "github:init": "npx tsx src/github/github-sync.ts --isFullSync",
     "database:migrate": "npx tsx src/database/migrate-database.ts",
     "database:generate:pg": "npx drizzle-kit generate:pg --config=src/database/drizzle-posgres.config.ts"
   },

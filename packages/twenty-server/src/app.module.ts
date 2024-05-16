@@ -7,7 +7,6 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { GraphQLModule } from '@nestjs/graphql';
-import { DevtoolsModule } from '@nestjs/devtools-integration';
 
 import { existsSync } from 'fs';
 import { join } from 'path';
@@ -20,7 +19,6 @@ import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.mo
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
 import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graphql-config.module';
 import { GraphQLConfigService } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
 
@@ -30,13 +28,13 @@ import { IntegrationsModule } from './engine/integrations/integrations.module';
 @Module({
   imports: [
     // Nest.js devtools, use devtools.nestjs.com to debug
-    DevtoolsModule.registerAsync({
-      useFactory: (environmentService: EnvironmentService) => ({
-        http: environmentService.get('DEBUG_MODE'),
-        port: environmentService.get('DEBUG_PORT'),
-      }),
-      inject: [EnvironmentService],
-    }),
+    // DevtoolsModule.registerAsync({
+    //   useFactory: (environmentService: EnvironmentService) => ({
+    //     http: environmentService.get('DEBUG_MODE'),
+    //     port: environmentService.get('DEBUG_PORT'),
+    //   }),
+    //   inject: [EnvironmentService],
+    // }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),

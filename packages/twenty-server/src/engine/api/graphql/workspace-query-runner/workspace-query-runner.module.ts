@@ -11,6 +11,8 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
+import { TelemetryListener } from 'src/engine/api/graphql/workspace-query-runner/listeners/telemetry.listener';
+import { AnalyticsModule } from 'src/engine/core-modules/analytics/analytics.module';
 
 import { WorkspaceQueryRunnerService } from './workspace-query-runner.service';
 
@@ -24,12 +26,14 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
     WorkspacePreQueryHookModule,
     TypeOrmModule.forFeature([Workspace, FeatureFlagEntity], 'core'),
     ObjectMetadataRepositoryModule.forFeature([WorkspaceMemberObjectMetadata]),
+    AnalyticsModule,
   ],
   providers: [
     WorkspaceQueryRunnerService,
     ...workspaceQueryRunnerFactories,
     RecordPositionListener,
     EntityEventsToDbListener,
+    TelemetryListener,
   ],
   exports: [WorkspaceQueryRunnerService],
 })

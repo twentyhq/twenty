@@ -100,9 +100,6 @@ export class WorkspaceMigrationRunnerService {
       );
     }
 
-    // Increment workspace cache version
-    await this.workspaceCacheVersionService.incrementVersion(workspaceId);
-
     return flattenedPendingMigrations;
   }
 

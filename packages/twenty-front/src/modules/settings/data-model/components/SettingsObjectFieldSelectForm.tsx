@@ -1,30 +1,56 @@
+import { Controller, useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
 import { IconPlus } from 'twenty-ui';
-import { v4 } from 'uuid';
+import { z } from 'zod';
 
+import {
+  FieldMetadataItem,
+  FieldMetadataItemOption,
+} from '@/object-metadata/types/FieldMetadataItem';
+import { selectOptionsSchema } from '@/object-metadata/validation-schemas/selectOptionsSchema';
+import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/hooks/useSelectSettingsFormInitialValues';
+import { generateNewSelectOption } from '@/settings/data-model/fields/forms/utils/generateNewSelectOption';
+import { isSelectOptionDefaultValue } from '@/settings/data-model/utils/isSelectOptionDefaultValue';
 import { LightButton } from '@/ui/input/button/components/LightButton';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { CardFooter } from '@/ui/layout/card/components/CardFooter';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
-import {
-  MAIN_COLOR_NAMES,
-  ThemeColor,
-} from '@/ui/theme/constants/MainColorNames';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
-
-import { SettingsObjectFieldSelectFormOption } from '../types/SettingsObjectFieldSelectFormOption';
+import { toSpliced } from '~/utils/array/toSpliced';
+import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
+import { simpleQuotesStringSchema } from '~/utils/validation-schemas/simpleQuotesStringSchema';
 
 import { SettingsObjectFieldSelectFormOptionRow } from './SettingsObjectFieldSelectFormOptionRow';
 
-export type SettingsObjectFieldSelectFormValues =
-  SettingsObjectFieldSelectFormOption[];
+// TODO: rename to SettingsDataModelFieldSelectForm and move to settings/data-model/fields/forms/components
 
-type SettingsObjectFieldSelectFormProps = {
-  onChange: (values: SettingsObjectFieldSelectFormValues) => void;
-  values: SettingsObjectFieldSelectFormValues;
-  isMultiSelect?: boolean;
+export const settingsDataModelFieldSelectFormSchema = z.object({
+  defaultValue: simpleQuotesStringSchema.nullable(),
+  options: selectOptionsSchema,
+});
+
+export const settingsDataModelFieldMultiSelectFormSchema = z.object({
+  defaultValue: z.array(simpleQuotesStringSchema).nullable(),
+  options: selectOptionsSchema,
+});
+
+const selectOrMultiSelectFormSchema = z.union([
+  settingsDataModelFieldSelectFormSchema,
+  settingsDataModelFieldMultiSelectFormSchema,
+]);
+
+export type SettingsDataModelFieldSelectFormValues = z.infer<
+  typeof selectOrMultiSelectFormSchema
+>;
+
+type SettingsDataModelFieldSelectFormProps = {
+  fieldMetadataItem: Pick<
+    FieldMetadataItem,
+    'defaultValue' | 'options' | 'type'
+  >;
 };
 
 const StyledContainer = styled(CardContent)`
@@ -50,122 +76,184 @@ const StyledButton = styled(LightButton)`
   width: 100%;
 `;
 
-const getNextColor = (currentColor: ThemeColor) => {
-  const currentColorIndex = MAIN_COLOR_NAMES.findIndex(
-    (color) => color === currentColor,
-  );
-  const nextColorIndex = (currentColorIndex + 1) % MAIN_COLOR_NAMES.length;
-  return MAIN_COLOR_NAMES[nextColorIndex];
-};
+export const SettingsDataModelFieldSelectForm = ({
+  fieldMetadataItem,
+}: SettingsDataModelFieldSelectFormProps) => {
+  const { initialDefaultValue, initialOptions } =
+    useSelectSettingsFormInitialValues({ fieldMetadataItem });
 
-export const SettingsObjectFieldSelectForm = ({
-  onChange,
-  values,
-  isMultiSelect = false,
-}: SettingsObjectFieldSelectFormProps) => {
-  const handleDragEnd = (result: DropResult) => {
+  const {
+    control,
+    setValue: setFormValue,
+    watch: watchFormValue,
+    getValues,
+  } = useFormContext<SettingsDataModelFieldSelectFormValues>();
+
+  const handleDragEnd = (
+    values: FieldMetadataItemOption[],
+    result: DropResult,
+    onChange: (options: FieldMetadataItemOption[]) => void,
+  ) => {
     if (!result.destination) return;
 
     const nextOptions = moveArrayItem(values, {
       fromIndex: result.source.index,
       toIndex: result.destination.index,
+    }).map((option, index) => ({ ...option, position: index }));
+
+    onChange(nextOptions);
+  };
+
+  const isOptionDefaultValue = (
+    optionValue: FieldMetadataItemOption['value'],
+  ) =>
+    isSelectOptionDefaultValue(optionValue, {
+      type: fieldMetadataItem.type,
+      defaultValue: watchFormValue('defaultValue'),
     });
 
-    onChange(nextOptions);
-  };
-
-  const handleDefaultValueChange = (
-    index: number,
-    option: SettingsObjectFieldSelectFormOption,
-    nextOption: SettingsObjectFieldSelectFormOption,
-    forceUniqueDefaultValue: boolean,
+  const handleSetOptionAsDefault = (
+    optionValue: FieldMetadataItemOption['value'],
   ) => {
-    const computeUniqueDefaultValue =
-      forceUniqueDefaultValue && option.isDefault !== nextOption.isDefault;
+    if (isOptionDefaultValue(optionValue)) return;
 
-    const nextOptions = computeUniqueDefaultValue
-      ? values.map((value) => ({
-          ...value,
-          isDefault: false,
-        }))
-      : [...values];
+    if (fieldMetadataItem.type === FieldMetadataType.Select) {
+      setFormValue('defaultValue', applySimpleQuotesToString(optionValue), {
+        shouldDirty: true,
+      });
+      return;
+    }
 
-    nextOptions.splice(index, 1, nextOption);
-    onChange(nextOptions);
+    const previousDefaultValue = getValues('defaultValue');
+
+    if (
+      fieldMetadataItem.type === FieldMetadataType.MultiSelect &&
+      (Array.isArray(previousDefaultValue) || previousDefaultValue === null)
+    ) {
+      setFormValue(
+        'defaultValue',
+        [
+          ...(previousDefaultValue ?? []),
+          applySimpleQuotesToString(optionValue),
+        ],
+        { shouldDirty: true },
+      );
+    }
   };
 
-  const findNewLabel = () => {
-    let optionIndex = values.length + 1;
-    while (optionIndex < 100) {
-      const newLabel = `Option ${optionIndex}`;
-      if (!values.map((value) => value.label).includes(newLabel)) {
-        return newLabel;
-      }
-      optionIndex += 1;
+  const handleRemoveOptionAsDefault = (
+    optionValue: FieldMetadataItemOption['value'],
+  ) => {
+    if (!isOptionDefaultValue(optionValue)) return;
+
+    if (fieldMetadataItem.type === FieldMetadataType.Select) {
+      setFormValue('defaultValue', null, { shouldDirty: true });
+      return;
     }
-    return `Option 100`;
+
+    const previousDefaultValue = getValues('defaultValue');
+
+    if (
+      fieldMetadataItem.type === FieldMetadataType.MultiSelect &&
+      (Array.isArray(previousDefaultValue) || previousDefaultValue === null)
+    ) {
+      const nextDefaultValue = previousDefaultValue?.filter(
+        (value) => value !== applySimpleQuotesToString(optionValue),
+      );
+      setFormValue(
+        'defaultValue',
+        nextDefaultValue?.length ? nextDefaultValue : null,
+        { shouldDirty: true },
+      );
+    }
   };
 
   return (
     <>
-      <StyledContainer>
-        <StyledLabel>Options</StyledLabel>
-        <DraggableList
-          onDragEnd={handleDragEnd}
-          draggableItems={
-            <>
-              {values.map((option, index) => (
-                <DraggableItem
-                  key={option.value}
-                  draggableId={option.value}
-                  index={index}
-                  isDragDisabled={values.length === 1}
-                  itemComponent={
-                    <SettingsObjectFieldSelectFormOptionRow
-                      key={option.value}
-                      isDefault={option.isDefault}
-                      onChange={(nextOption) => {
-                        handleDefaultValueChange(
-                          index,
-                          option,
-                          nextOption,
-                          !isMultiSelect,
-                        );
-                      }}
-                      onRemove={
-                        values.length > 1
-                          ? () => {
-                              const nextOptions = [...values];
-                              nextOptions.splice(index, 1);
+      <Controller
+        name="defaultValue"
+        control={control}
+        defaultValue={initialDefaultValue}
+        render={() => <></>}
+      />
+      <Controller
+        name="options"
+        control={control}
+        defaultValue={initialOptions}
+        render={({ field: { onChange, value: options } }) => (
+          <>
+            <StyledContainer>
+              <StyledLabel>Options</StyledLabel>
+              <DraggableList
+                onDragEnd={(result) => handleDragEnd(options, result, onChange)}
+                draggableItems={
+                  <>
+                    {options.map((option, index) => (
+                      <DraggableItem
+                        key={option.id}
+                        draggableId={option.id}
+                        index={index}
+                        isDragDisabled={options.length === 1}
+                        itemComponent={
+                          <SettingsObjectFieldSelectFormOptionRow
+                            key={option.id}
+                            option={option}
+                            onChange={(nextOption) => {
+                              const nextOptions = toSpliced(
+                                options,
+                                index,
+                                1,
+                                nextOption,
+                              );
                               onChange(nextOptions);
+
+                              // Update option value in defaultValue if value has changed
+                              if (
+                                nextOption.value !== option.value &&
+                                isOptionDefaultValue(option.value)
+                              ) {
+                                handleRemoveOptionAsDefault(option.value);
+                                handleSetOptionAsDefault(nextOption.value);
+                              }
+                            }}
+                            onRemove={() => {
+                              const nextOptions = toSpliced(
+                                options,
+                                index,
+                                1,
+                              ).map((option, nextOptionIndex) => ({
+                                ...option,
+                                position: nextOptionIndex,
+                              }));
+                              onChange(nextOptions);
+                            }}
+                            isDefault={isOptionDefaultValue(option.value)}
+                            onSetAsDefault={() =>
+                              handleSetOptionAsDefault(option.value)
                             }
-                          : undefined
-                      }
-                      option={option}
-                    />
-                  }
-                />
-              ))}
-            </>
-          }
-        />
-      </StyledContainer>
-      <StyledFooter>
-        <StyledButton
-          title="Add option"
-          Icon={IconPlus}
-          onClick={() =>
-            onChange([
-              ...values,
-              {
-                color: getNextColor(values[values.length - 1].color),
-                label: findNewLabel(),
-                value: v4(),
-              },
-            ])
-          }
-        />
-      </StyledFooter>
+                            onRemoveAsDefault={() =>
+                              handleRemoveOptionAsDefault(option.value)
+                            }
+                          />
+                        }
+                      />
+                    ))}
+                  </>
+                }
+              />
+            </StyledContainer>
+            <StyledFooter>
+              <StyledButton
+                title="Add option"
+                Icon={IconPlus}
+                onClick={() =>
+                  onChange([...options, generateNewSelectOption(options)])
+                }
+              />
+            </StyledFooter>
+          </>
+        )}
+      />
     </>
   );
 };
