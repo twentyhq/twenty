@@ -23,9 +23,48 @@ const fetchContributorImage = async (username: string) => {
   await fetch(apiUrl);
 };
 
+const getTeamMembers = async () => {
+  const org = 'twentyhq';
+  const team_slug = 'core-team';
+  const response = await danger.github.api.teams.listMembersInOrg({
+    org,
+    team_slug,
+  });
+  return response.data.map((user) => user.login);
+};
+
 const runCongratulate = async () => {
   const pullRequest = danger.github.pr;
   const userName = pullRequest.user.login;
+
+  const staticExcludedUsers = [
+    'dependabot',
+    'cyborch',
+    'emilienchvt',
+    'Samox',
+    'charlesBochet',
+    'gitstart-app',
+    'thaisguigon',
+    'lucasbordeau',
+    'magrinj',
+    'Weiko',
+    'gitstart-twenty',
+    'bosiraphael',
+    'martmull',
+    'FelixMalfait',
+    'thomtrp',
+    'Bonapara',
+    'nimraahmed',
+    'ady-beraud',
+  ];
+
+  const teamMembers = await getTeamMembers();
+
+  const excludedUsers = new Set([...staticExcludedUsers, ...teamMembers]);
+
+  if (excludedUsers.has(userName)) {
+    return;
+  }
 
   const { data: pullRequests } =
     await danger.github.api.rest.search.issuesAndPullRequests({
@@ -34,15 +73,13 @@ const runCongratulate = async () => {
       page: 1,
     });
 
-  let stats;
   const isFirstPR = pullRequests.total_count === 1;
 
-  if (!isFirstPR) {
-    stats = await fetchContributorStats(userName);
-  } else {
-    stats = { mergedPRsCount: 1, rank: 52 };
+  if (isFirstPR) {
+    return;
   }
 
+  const stats = await fetchContributorStats(userName);
   const contributorUrl = `https://twenty.com/contributors/${userName}`;
 
   // Pre-fetch to trigger cloudflare cache
