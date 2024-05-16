@@ -250,6 +250,14 @@ export type DeleteOneRelationInput = {
   id: Scalars['UUID']['input'];
 };
 
+/** Schema update on a table */
+export enum DistantTableUpdate {
+  ColumnsAdded = 'COLUMNS_ADDED',
+  ColumnsDeleted = 'COLUMNS_DELETED',
+  ColumnsTypeChanged = 'COLUMNS_TYPE_CHANGED',
+  TableDeleted = 'TABLE_DELETED'
+}
+
 export type EmailPasswordResetLink = {
   __typename?: 'EmailPasswordResetLink';
   /** Boolean that confirms query was dispatched */
@@ -330,8 +338,6 @@ export enum FileFolder {
 export type FindManyRemoteTablesInput = {
   /** The id of the remote server. */
   id: Scalars['ID']['input'];
-  /** Indicates if data from distant tables should be refreshed. */
-  refreshData?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type FullName = {
@@ -812,7 +818,7 @@ export type RemoteTable = {
   id?: Maybe<Scalars['UUID']['output']>;
   name: Scalars['String']['output'];
   schema?: Maybe<Scalars['String']['output']>;
-  schemaPendingUpdates?: Maybe<Array<TableUpdate>>;
+  schemaPendingUpdates?: Maybe<Array<DistantTableUpdate>>;
   status: RemoteTableStatus;
 };
 
@@ -856,14 +862,6 @@ export type Support = {
   supportDriver: Scalars['String']['output'];
   supportFrontChatId?: Maybe<Scalars['String']['output']>;
 };
-
-/** Schema update on a table */
-export enum TableUpdate {
-  ColumnsAdded = 'COLUMNS_ADDED',
-  ColumnsDeleted = 'COLUMNS_DELETED',
-  ColumnsTypeChanged = 'COLUMNS_TYPE_CHANGED',
-  TableDeleted = 'TABLE_DELETED'
-}
 
 export type Telemetry = {
   __typename?: 'Telemetry';
@@ -1261,7 +1259,7 @@ export type RelationEdge = {
 
 export type RemoteServerFieldsFragment = { __typename?: 'RemoteServer', id: string, createdAt: any, foreignDataWrapperId: string, foreignDataWrapperOptions?: any | null, foreignDataWrapperType: string, updatedAt: any, schema?: string | null, userMappingOptions?: { __typename?: 'UserMappingOptionsUser', user?: string | null } | null };
 
-export type RemoteTableFieldsFragment = { __typename?: 'RemoteTable', id?: any | null, name: string, schema?: string | null, status: RemoteTableStatus, schemaPendingUpdates?: Array<TableUpdate> | null };
+export type RemoteTableFieldsFragment = { __typename?: 'RemoteTable', id?: any | null, name: string, schema?: string | null, status: RemoteTableStatus, schemaPendingUpdates?: Array<DistantTableUpdate> | null };
 
 export type CreateServerMutationVariables = Exact<{
   input: CreateRemoteServerInput;
@@ -1282,14 +1280,14 @@ export type SyncRemoteTableMutationVariables = Exact<{
 }>;
 
 
-export type SyncRemoteTableMutation = { __typename?: 'Mutation', syncRemoteTable: { __typename?: 'RemoteTable', id?: any | null, name: string, schema?: string | null, status: RemoteTableStatus, schemaPendingUpdates?: Array<TableUpdate> | null } };
+export type SyncRemoteTableMutation = { __typename?: 'Mutation', syncRemoteTable: { __typename?: 'RemoteTable', id?: any | null, name: string, schema?: string | null, status: RemoteTableStatus, schemaPendingUpdates?: Array<DistantTableUpdate> | null } };
 
 export type UnsyncRemoteTableMutationVariables = Exact<{
   input: RemoteTableInput;
 }>;
 
 
-export type UnsyncRemoteTableMutation = { __typename?: 'Mutation', unsyncRemoteTable: { __typename?: 'RemoteTable', id?: any | null, name: string, schema?: string | null, status: RemoteTableStatus, schemaPendingUpdates?: Array<TableUpdate> | null } };
+export type UnsyncRemoteTableMutation = { __typename?: 'Mutation', unsyncRemoteTable: { __typename?: 'RemoteTable', id?: any | null, name: string, schema?: string | null, status: RemoteTableStatus, schemaPendingUpdates?: Array<DistantTableUpdate> | null } };
 
 export type UpdateServerMutationVariables = Exact<{
   input: UpdateRemoteServerInput;
@@ -1310,7 +1308,7 @@ export type GetManyRemoteTablesQueryVariables = Exact<{
 }>;
 
 
-export type GetManyRemoteTablesQuery = { __typename?: 'Query', findAvailableRemoteTablesByServerId: Array<{ __typename?: 'RemoteTable', id?: any | null, name: string, schema?: string | null, status: RemoteTableStatus, schemaPendingUpdates?: Array<TableUpdate> | null }> };
+export type GetManyRemoteTablesQuery = { __typename?: 'Query', findAvailableRemoteTablesByServerId: Array<{ __typename?: 'RemoteTable', id?: any | null, name: string, schema?: string | null, status: RemoteTableStatus, schemaPendingUpdates?: Array<DistantTableUpdate> | null }> };
 
 export type GetOneDatabaseConnectionQueryVariables = Exact<{
   input: RemoteServerIdInput;
