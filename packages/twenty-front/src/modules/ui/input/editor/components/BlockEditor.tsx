@@ -33,6 +33,13 @@ const StyledEditor = styled.div`
   & .editor .bn-inline-content:has(> .ProseMirror-trailingBreak):before {
     font-style: normal;
   }
+  & .mantine-ActionIcon-icon {
+    width: 20px;
+  }
+  & .bn-container .bn-drag-handle {
+    width: 20px;
+    height: 20px;
+  }
 `;
 
 export const BlockEditor = ({
