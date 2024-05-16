@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { IconCheckbox, IconInbox, IconSearch, IconSettings } from 'twenty-ui';
+import { IconCheckbox, IconSearch, IconSettings } from 'twenty-ui';
 
 import { CurrentUserDueTaskCountEffect } from '@/activities/tasks/components/CurrentUserDueTaskCountEffect';
 import { currentUserDueTaskCountState } from '@/activities/tasks/states/currentUserTaskCountState';
@@ -35,12 +35,6 @@ export const MainNavigationDrawerItems = () => {
             Icon={IconSearch}
             onClick={toggleCommandMenu}
             keyboard={['⌘', 'K']}
-          />
-          <NavigationDrawerItem
-            label="Inbox"
-            to="/inbox"
-            Icon={IconInbox}
-            soon
           />
           <NavigationDrawerItem
             label="Settings"
