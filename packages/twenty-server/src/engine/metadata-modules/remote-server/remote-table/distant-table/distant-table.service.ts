@@ -39,13 +39,8 @@ export class DistantTableService {
   public async fetchDistantTables(
     remoteServer: RemoteServerEntity<RemoteServerType>,
     workspaceId: string,
-    shouldFetchPendingSchemaUpdates?: boolean,
   ): Promise<DistantTables> {
-    if (!shouldFetchPendingSchemaUpdates && remoteServer.availableTables) {
-      return remoteServer.availableTables;
-    }
-
-    return await this.createAvailableTables(remoteServer, workspaceId);
+    return this.createAvailableTables(remoteServer, workspaceId);
   }
 
   private async createAvailableTables(

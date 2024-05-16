@@ -338,8 +338,6 @@ export enum FileFolder {
 export type FindManyRemoteTablesInput = {
   /** The id of the remote server. */
   id: Scalars['ID']['input'];
-  /** Indicates if data from distant tables should be refreshed. */
-  shouldFetchPendingSchemaUpdates?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type FullName = {

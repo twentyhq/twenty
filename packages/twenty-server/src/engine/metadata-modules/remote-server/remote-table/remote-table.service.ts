@@ -62,11 +62,7 @@ export class RemoteTableService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
-  public async findDistantTablesByServerId(
-    id: string,
-    workspaceId: string,
-    shouldFetchPendingSchemaUpdates?: boolean,
-  ) {
+  public async findDistantTablesByServerId(id: string, workspaceId: string) {
     const remoteServer = await this.remoteServerRepository.findOne({
       where: {
         id,
@@ -90,10 +86,9 @@ export class RemoteTableService {
     const distantTables = await this.distantTableService.fetchDistantTables(
       remoteServer,
       workspaceId,
-      shouldFetchPendingSchemaUpdates,
     );
 
-    if (!shouldFetchPendingSchemaUpdates || currentRemoteTables.length === 0) {
+    if (currentRemoteTables.length === 0) {
       const distantTablesWithStatus = Object.keys(distantTables).map(
         (tableName) => ({
           name: tableName,
