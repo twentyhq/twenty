@@ -12,9 +12,9 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 import { getOperandsForFilterType } from '../utils/getOperandsForFilterType';
 
 export const StyledInput = styled.input`
-  background: ${({ theme }) => theme.background.secondary};
+  background: transparent;
   border: none;
-  border-top: 1px solid ${({ theme }) => theme.border.color.light};
+  border-top: none;
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
   border-radius: 0;
   border-top-left-radius: ${({ theme }) => theme.border.radius.md};
@@ -23,7 +23,7 @@ export const StyledInput = styled.input`
   margin: 0;
   outline: none;
   padding: ${({ theme }) => theme.spacing(2)};
-  height: 20px;
+  height: 19px;
   font-family: inherit;
   font-size: ${({ theme }) => theme.font.size.sm};
 
