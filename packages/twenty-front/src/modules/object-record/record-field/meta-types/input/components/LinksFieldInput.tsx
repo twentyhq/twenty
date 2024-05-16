@@ -14,6 +14,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
 import { isDefined } from '~/utils/isDefined';
 
@@ -86,6 +87,19 @@ export const LinksFieldInput = ({
     );
   };
 
+  const handleSetPrimaryLink = (index: number) => {
+    const nextLinks = moveArrayItem(links, { fromIndex: index, toIndex: 0 });
+    const [nextPrimaryLink, ...nextSecondaryLinks] = nextLinks;
+
+    onSubmit?.(() =>
+      persistLinksField({
+        primaryLinkUrl: nextPrimaryLink.url ?? '',
+        primaryLinkLabel: nextPrimaryLink.label ?? '',
+        secondaryLinks: nextSecondaryLinks,
+      }),
+    );
+  };
+
   const handleDeleteLink = (index: number) => {
     onSubmit?.(() =>
       persistLinksField({
@@ -110,6 +124,7 @@ export const LinksFieldInput = ({
                 dropdownId={`${hotkeyScope}-links-${index}`}
                 isPrimary={index === 0}
                 label={label}
+                onSetAsPrimary={() => handleSetPrimaryLink(index)}
                 onDelete={() => handleDeleteLink(index)}
                 url={url}
               />
