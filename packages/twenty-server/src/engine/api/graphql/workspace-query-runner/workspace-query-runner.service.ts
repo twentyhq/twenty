@@ -483,6 +483,7 @@ export class WorkspaceQueryRunnerService {
     const { workspaceId, userId, objectMetadataItem } = options;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
+    assertIsValidUuid(args.id);
 
     const query = await this.workspaceQueryBuilderFactory.deleteOne(
       args,

@@ -21,6 +21,7 @@ type SingleTabProps = {
 type TabListProps = {
   tabListId: string;
   tabs: SingleTabProps[];
+  loading?: boolean;
 };
 
 const StyledContainer = styled.div`
@@ -33,7 +34,7 @@ const StyledContainer = styled.div`
   user-select: none;
 `;
 
-export const TabList = ({ tabs, tabListId }: TabListProps) => {
+export const TabList = ({ tabs, tabListId, loading }: TabListProps) => {
   const initialActiveTabId = tabs[0].id;
 
   const { activeTabIdState, setActiveTabId } = useTabList(tabListId);
@@ -60,7 +61,7 @@ export const TabList = ({ tabs, tabListId }: TabListProps) => {
                 onClick={() => {
                   setActiveTabId(tab.id);
                 }}
-                disabled={tab.disabled}
+                disabled={tab.disabled ?? loading}
                 hasBetaPill={tab.hasBetaPill}
               />
             ))}

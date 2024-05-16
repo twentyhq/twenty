@@ -6,6 +6,7 @@ import { useGetDatabaseConnections } from '@/databases/hooks/useGetDatabaseConne
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsIntegrationPreview } from '@/settings/integrations/components/SettingsIntegrationPreview';
 import { SettingsIntegrationDatabaseConnectionsListCard } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionsListCard';
+import { useIsSettingsIntegrationEnabled } from '@/settings/integrations/hooks/useIsSettingsIntegrationEnabled';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
@@ -14,7 +15,6 @@ import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 export const SettingsIntegrationDatabase = () => {
   const { databaseKey = '' } = useParams();
@@ -25,16 +25,9 @@ export const SettingsIntegrationDatabase = () => {
     ({ from: { key } }) => key === databaseKey,
   );
 
-  const isAirtableIntegrationEnabled = useIsFeatureEnabled(
-    'IS_AIRTABLE_INTEGRATION_ENABLED',
-  );
-  const isPostgresqlIntegrationEnabled = useIsFeatureEnabled(
-    'IS_POSTGRESQL_INTEGRATION_ENABLED',
-  );
-  const isIntegrationAvailable =
-    !!integration &&
-    ((databaseKey === 'airtable' && isAirtableIntegrationEnabled) ||
-      (databaseKey === 'postgresql' && isPostgresqlIntegrationEnabled));
+  const isIntegrationEnabled = useIsSettingsIntegrationEnabled(databaseKey);
+
+  const isIntegrationAvailable = !!integration && isIntegrationEnabled;
 
   useEffect(() => {
     if (!isIntegrationAvailable) {

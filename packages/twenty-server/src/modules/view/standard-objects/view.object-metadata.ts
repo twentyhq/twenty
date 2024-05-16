@@ -7,18 +7,18 @@ import {
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { VIEW_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
-import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
-import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
-import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/relation-metadata.decorator';
-import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { ViewFieldObjectMetadata } from 'src/modules/view/standard-objects/view-field.object-metadata';
 import { ViewFilterObjectMetadata } from 'src/modules/view/standard-objects/view-filter.object-metadata';
 import { ViewSortObjectMetadata } from 'src/modules/view/standard-objects/view-sort.object-metadata';
-import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 
-@ObjectMetadata({
+@WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.view,
   namePlural: 'views',
   labelSingular: 'View',
@@ -26,10 +26,10 @@ import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-me
   description: '(System) Views',
   icon: 'IconLayoutCollage',
 })
-@IsNotAuditLogged()
-@IsSystem()
-export class ViewObjectMetadata extends BaseObjectMetadata {
-  @FieldMetadata({
+@WorkspaceIsNotAuditLogged()
+@WorkspaceIsSystem()
+export class ViewObjectMetadata extends BaseWorkspaceEntity {
+  @WorkspaceField({
     standardId: VIEW_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: 'Name',
@@ -37,7 +37,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   })
   name: string;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: VIEW_STANDARD_FIELD_IDS.objectMetadataId,
     type: FieldMetadataType.UUID,
     label: 'Object Metadata Id',
@@ -45,7 +45,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   })
   objectMetadataId: string;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: VIEW_STANDARD_FIELD_IDS.type,
     type: FieldMetadataType.TEXT,
     label: 'Type',
@@ -54,7 +54,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   })
   type: string;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: VIEW_STANDARD_FIELD_IDS.key,
     type: FieldMetadataType.SELECT,
     label: 'Key',
@@ -62,10 +62,10 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
     options: [{ value: 'INDEX', label: 'Index', position: 0, color: 'red' }],
     defaultValue: "'INDEX'",
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   key: string;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: VIEW_STANDARD_FIELD_IDS.icon,
     type: FieldMetadataType.TEXT,
     label: 'Icon',
@@ -73,7 +73,7 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   })
   icon: string;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: VIEW_STANDARD_FIELD_IDS.kanbanFieldMetadataId,
     type: FieldMetadataType.TEXT,
     label: 'kanbanfieldMetadataId',
@@ -81,16 +81,16 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   })
   kanbanFieldMetadataId: string;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: VIEW_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: 'Position',
     description: 'View position',
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   position: number;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: VIEW_STANDARD_FIELD_IDS.isCompact,
     type: FieldMetadataType.BOOLEAN,
     label: 'Compact View',
@@ -99,48 +99,39 @@ export class ViewObjectMetadata extends BaseObjectMetadata {
   })
   isCompact: boolean;
 
-  @FieldMetadata({
+  @WorkspaceRelation({
     standardId: VIEW_STANDARD_FIELD_IDS.viewFields,
-    type: FieldMetadataType.RELATION,
+    type: RelationMetadataType.ONE_TO_MANY,
     label: 'View Fields',
     description: 'View Fields',
     icon: 'IconTag',
-  })
-  @RelationMetadata({
-    type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => ViewFieldObjectMetadata,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   viewFields: Relation<ViewFieldObjectMetadata[]>;
 
-  @FieldMetadata({
+  @WorkspaceRelation({
     standardId: VIEW_STANDARD_FIELD_IDS.viewFilters,
-    type: FieldMetadataType.RELATION,
+    type: RelationMetadataType.ONE_TO_MANY,
     label: 'View Filters',
     description: 'View Filters',
     icon: 'IconFilterBolt',
-  })
-  @RelationMetadata({
-    type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => ViewFilterObjectMetadata,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   viewFilters: Relation<ViewFilterObjectMetadata[]>;
 
-  @FieldMetadata({
+  @WorkspaceRelation({
     standardId: VIEW_STANDARD_FIELD_IDS.viewSorts,
-    type: FieldMetadataType.RELATION,
+    type: RelationMetadataType.ONE_TO_MANY,
     label: 'View Sorts',
     description: 'View Sorts',
     icon: 'IconArrowsSort',
-  })
-  @RelationMetadata({
-    type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => ViewSortObjectMetadata,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   viewSorts: Relation<ViewSortObjectMetadata[]>;
 }

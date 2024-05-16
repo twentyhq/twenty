@@ -366,6 +366,11 @@ export type MutationTrackArgs = {
 };
 
 
+export type MutationUpdateOneObjectArgs = {
+  input: UpdateOneObjectInput;
+};
+
+
 export type MutationUpdatePasswordViaResetTokenArgs = {
   newPassword: Scalars['String'];
   passwordResetToken: Scalars['String'];
@@ -548,18 +553,6 @@ export enum RelationDefinitionType {
   OneToOne = 'ONE_TO_ONE'
 }
 
-export type RelationDeleteResponse = {
-  __typename?: 'RelationDeleteResponse';
-  createdAt?: Maybe<Scalars['DateTime']>;
-  fromFieldMetadataId?: Maybe<Scalars['String']>;
-  fromObjectMetadataId?: Maybe<Scalars['String']>;
-  id?: Maybe<Scalars['UUID']>;
-  relationType?: Maybe<RelationMetadataType>;
-  toFieldMetadataId?: Maybe<Scalars['String']>;
-  toObjectMetadataId?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-};
-
 /** Type of the relation */
 export enum RelationMetadataType {
   ManyToMany = 'MANY_TO_MANY',
@@ -726,6 +719,24 @@ export type UpdateBillingEntity = {
   __typename?: 'UpdateBillingEntity';
   /** Boolean that confirms query was successful */
   success: Scalars['Boolean'];
+};
+
+export type UpdateObjectPayload = {
+  description?: InputMaybe<Scalars['String']>;
+  icon?: InputMaybe<Scalars['String']>;
+  imageIdentifierFieldMetadataId?: InputMaybe<Scalars['String']>;
+  isActive?: InputMaybe<Scalars['Boolean']>;
+  labelIdentifierFieldMetadataId?: InputMaybe<Scalars['String']>;
+  labelPlural?: InputMaybe<Scalars['String']>;
+  labelSingular?: InputMaybe<Scalars['String']>;
+  namePlural?: InputMaybe<Scalars['String']>;
+  nameSingular?: InputMaybe<Scalars['String']>;
+};
+
+export type UpdateOneObjectInput = {
+  /** The id of the object to update */
+  id: Scalars['UUID'];
+  update: UpdateObjectPayload;
 };
 
 export type UpdateWorkspaceInput = {

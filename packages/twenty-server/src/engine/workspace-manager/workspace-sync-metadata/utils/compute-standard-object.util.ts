@@ -21,11 +21,11 @@ export const computeStandardObject = (
   const fields: ComputedPartialFieldMetadata[] = [];
 
   for (const partialFieldMetadata of standardObjectMetadata.fields) {
-    if ('paramsFactory' in partialFieldMetadata) {
+    if ('argsFactory' in partialFieldMetadata) {
       // Compute standard fields of custom object
       for (const customObjectMetadata of customObjectMetadataCollection) {
-        const { paramsFactory, ...rest } = partialFieldMetadata;
-        const { joinColumn, ...data } = paramsFactory(customObjectMetadata);
+        const { argsFactory, ...rest } = partialFieldMetadata;
+        const { joinColumn, ...data } = argsFactory(customObjectMetadata);
         const relationStandardId = createRelationDeterministicUuid({
           objectId: customObjectMetadata.id,
           standardId: data.standardId,
@@ -34,6 +34,12 @@ export const computeStandardObject = (
           objectId: customObjectMetadata.id,
           standardId: data.standardId,
         });
+
+        if (!joinColumn) {
+          throw new Error(
+            `Missing joinColumn for field ${data.name} in object ${customObjectMetadata.nameSingular}`,
+          );
+        }
 
         // Relation
         fields.push({

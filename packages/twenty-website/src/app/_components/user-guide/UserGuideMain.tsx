@@ -13,6 +13,9 @@ const StyledContainer = styled.div`
     flexDirection: 'row',
     justifyContent: 'center',
   })};
+  @media (min-width: 1500px) {
+    width: 100%;
+  }
 `;
 
 const StyledWrapper = styled.div`
@@ -29,6 +32,12 @@ const StyledWrapper = styled.div`
   @media (min-width: 450px) and (max-width: 800px) {
     padding: ${Theme.spacing(10)} 50px ${Theme.spacing(20)};
     align-items: center;
+  }
+
+  @media (min-width: 1500px) {
+    width: 720px;
+    padding: ${Theme.spacing(10)} 0px ${Theme.spacing(20)};
+    margin-right: 300px;
   }
 `;
 

@@ -10,7 +10,7 @@ import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/
 import { StandardObjectFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-object.factory';
 import { computeStandardObject } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-standard-object.util';
 import { StandardFieldFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-field.factory';
-import { CustomObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/custom-objects/custom.object-metadata';
+import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 
 interface RunCommandOptions {
   workspaceId?: string;
@@ -61,7 +61,7 @@ export class AddStandardIdCommand extends CommandRunner {
           },
         );
       const standardFieldMetadataCollection = this.standardFieldFactory.create(
-        CustomObjectMetadata,
+        CustomWorkspaceEntity,
         {
           workspaceId: '',
           dataSourceId: '',

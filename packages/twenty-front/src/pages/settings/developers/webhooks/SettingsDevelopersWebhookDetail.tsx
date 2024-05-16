@@ -64,7 +64,7 @@ export const SettingsDevelopersWebhooksDetail = () => {
               <Button
                 accent="danger"
                 variant="secondary"
-                title="Disable"
+                title="Delete"
                 Icon={IconTrash}
                 onClick={() => setIsDeleteWebhookModalOpen(true)}
               />

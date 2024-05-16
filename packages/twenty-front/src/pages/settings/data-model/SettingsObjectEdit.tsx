@@ -146,10 +146,10 @@ export const SettingsObjectEdit = () => {
             />
           </Section>
           <Section>
-            <H2Title title="Danger zone" description="Disable object" />
+            <H2Title title="Danger zone" description="Deactivate object" />
             <Button
               Icon={IconArchive}
-              title="Disable"
+              title="Deactivate"
               size="small"
               onClick={handleDisable}
             />

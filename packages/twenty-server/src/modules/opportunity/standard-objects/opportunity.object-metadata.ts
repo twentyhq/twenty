@@ -8,21 +8,21 @@ import {
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
-import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
-import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
-import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/relation-metadata.decorator';
 import { ActivityTargetObjectMetadata } from 'src/modules/activity/standard-objects/activity-target.object-metadata';
 import { AttachmentObjectMetadata } from 'src/modules/attachment/standard-objects/attachment.object-metadata';
-import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
 import { FavoriteObjectMetadata } from 'src/modules/favorite/standard-objects/favorite.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
 import { TimelineActivityObjectMetadata } from 'src/modules/timeline/standard-objects/timeline-activity.object-metadata';
-import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
+import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 
-@ObjectMetadata({
+@WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.opportunity,
   namePlural: 'opportunities',
   labelSingular: 'Opportunity',
@@ -30,9 +30,9 @@ import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-me
   description: 'An opportunity',
   icon: 'IconTargetArrow',
 })
-@IsNotAuditLogged()
-export class OpportunityObjectMetadata extends BaseObjectMetadata {
-  @FieldMetadata({
+@WorkspaceIsNotAuditLogged()
+export class OpportunityObjectMetadata extends BaseWorkspaceEntity {
+  @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: 'Name',
@@ -41,27 +41,27 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   })
   name: string;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.amount,
     type: FieldMetadataType.CURRENCY,
     label: 'Amount',
     description: 'Opportunity amount',
     icon: 'IconCurrencyDollar',
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   amount: CurrencyMetadata;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.closeDate,
     type: FieldMetadataType.DATE_TIME,
     label: 'Close date',
     description: 'Opportunity close date',
     icon: 'IconCalendarEvent',
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   closeDate: Date;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.probability,
     type: FieldMetadataType.TEXT,
     label: 'Probability',
@@ -71,7 +71,7 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   })
   probability: string;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.stage,
     type: FieldMetadataType.SELECT,
     label: 'Stage',
@@ -93,97 +93,91 @@ export class OpportunityObjectMetadata extends BaseObjectMetadata {
   })
   stage: string;
 
-  @FieldMetadata({
+  @WorkspaceField({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: 'Position',
     description: 'Opportunity record position',
     icon: 'IconHierarchy2',
   })
-  @IsSystem()
-  @IsNullable()
+  @WorkspaceIsSystem()
+  @WorkspaceIsNullable()
   position: number;
 
-  @FieldMetadata({
+  @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.pointOfContact,
-    type: FieldMetadataType.RELATION,
+    type: RelationMetadataType.MANY_TO_ONE,
     label: 'Point of Contact',
     description: 'Opportunity point of contact',
     icon: 'IconUser',
     joinColumn: 'pointOfContactId',
+    inverseSideTarget: () => PersonObjectMetadata,
+    inverseSideFieldKey: 'pointOfContactForOpportunities',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   pointOfContact: Relation<PersonObjectMetadata>;
 
-  @FieldMetadata({
+  @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.company,
-    type: FieldMetadataType.RELATION,
+    type: RelationMetadataType.MANY_TO_ONE,
     label: 'Company',
     description: 'Opportunity company',
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'companyId',
+    inverseSideTarget: () => CompanyObjectMetadata,
+    inverseSideFieldKey: 'opportunities',
+    onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   company: Relation<CompanyObjectMetadata>;
 
-  @FieldMetadata({
+  @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.favorites,
-    type: FieldMetadataType.RELATION,
+    type: RelationMetadataType.ONE_TO_MANY,
     label: 'Favorites',
     description: 'Favorites linked to the opportunity',
     icon: 'IconHeart',
-  })
-  @RelationMetadata({
-    type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => FavoriteObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  @IsNullable()
-  @IsSystem()
+  @WorkspaceIsNullable()
+  @WorkspaceIsSystem()
   favorites: Relation<FavoriteObjectMetadata[]>;
 
-  @FieldMetadata({
+  @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.activityTargets,
-    type: FieldMetadataType.RELATION,
+    type: RelationMetadataType.ONE_TO_MANY,
     label: 'Activities',
     description: 'Activities tied to the opportunity',
     icon: 'IconCheckbox',
-  })
-  @RelationMetadata({
-    type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => ActivityTargetObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   activityTargets: Relation<ActivityTargetObjectMetadata[]>;
 
-  @FieldMetadata({
+  @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.attachments,
-    type: FieldMetadataType.RELATION,
-    label: 'Attachments',
-    description: 'Attachments linked to the opportunity.',
-    icon: 'IconFileImport',
-  })
-  @RelationMetadata({
     type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Attachments',
+    description: 'Attachments linked to the opportunity',
+    icon: 'IconFileImport',
     inverseSideTarget: () => AttachmentObjectMetadata,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   attachments: Relation<AttachmentObjectMetadata[]>;
 
-  @FieldMetadata({
+  @WorkspaceRelation({
     standardId: OPPORTUNITY_STANDARD_FIELD_IDS.timelineActivities,
-    type: FieldMetadataType.RELATION,
+    type: RelationMetadataType.ONE_TO_MANY,
     label: 'Timeline Activities',
     description: 'Timeline Activities linked to the opportunity.',
     icon: 'IconTimelineEvent',
-  })
-  @RelationMetadata({
-    type: RelationMetadataType.ONE_TO_MANY,
     inverseSideTarget: () => TimelineActivityObjectMetadata,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   timelineActivities: Relation<TimelineActivityObjectMetadata[]>;
 }

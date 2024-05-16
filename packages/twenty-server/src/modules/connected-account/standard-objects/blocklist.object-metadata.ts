@@ -3,14 +3,16 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { BLOCKLIST_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
-import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
-import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
-import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
+import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
+import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
-@ObjectMetadata({
+@WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.blocklist,
   namePlural: 'blocklists',
   labelSingular: 'Blocklist',
@@ -18,10 +20,10 @@ import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-me
   description: 'Blocklist',
   icon: 'IconForbid2',
 })
-@IsSystem()
-@IsNotAuditLogged()
-export class BlocklistObjectMetadata extends BaseObjectMetadata {
-  @FieldMetadata({
+@WorkspaceIsSystem()
+@WorkspaceIsNotAuditLogged()
+export class BlocklistObjectMetadata extends BaseWorkspaceEntity {
+  @WorkspaceField({
     standardId: BLOCKLIST_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
     label: 'Handle',
@@ -30,13 +32,15 @@ export class BlocklistObjectMetadata extends BaseObjectMetadata {
   })
   handle: string;
 
-  @FieldMetadata({
+  @WorkspaceRelation({
     standardId: BLOCKLIST_STANDARD_FIELD_IDS.workspaceMember,
-    type: FieldMetadataType.RELATION,
+    type: RelationMetadataType.MANY_TO_ONE,
     label: 'WorkspaceMember',
     description: 'WorkspaceMember',
     icon: 'IconCircleUser',
     joinColumn: 'workspaceMemberId',
+    inverseSideTarget: () => WorkspaceMemberObjectMetadata,
+    inverseSideFieldKey: 'blocklist',
   })
   workspaceMember: Relation<WorkspaceMemberObjectMetadata>;
 }

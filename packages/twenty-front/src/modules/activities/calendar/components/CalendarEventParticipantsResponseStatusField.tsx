@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
@@ -88,7 +88,6 @@ export const CalendarEventParticipantsResponseStatusField = ({
   ];
 
   const participantsContainerRef = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
   const styledChips = orderedParticipants.map((participant, index) => (
     <ParticipantChip key={index} participant={participant} />
   ));
@@ -103,16 +102,11 @@ export const CalendarEventParticipantsResponseStatusField = ({
             <EllipsisDisplay>{responseStatus}</EllipsisDisplay>
           </StyledLabelContainer>
         </StyledLabelAndIconContainer>
-        <StyledDiv
-          ref={participantsContainerRef}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-        >
+        <StyledDiv ref={participantsContainerRef}>
           {isRightDrawerAnimationCompleted && (
             <ExpandableList
-              isHovered={isHovered}
-              reference={participantsContainerRef.current || undefined}
-              forceDisplayHiddenCount
+              anchorElement={participantsContainerRef.current || undefined}
+              isChipCountDisplayed
             >
               {styledChips}
             </ExpandableList>
