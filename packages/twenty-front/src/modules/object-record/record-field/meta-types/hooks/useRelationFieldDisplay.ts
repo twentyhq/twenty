@@ -28,6 +28,17 @@ export const useRelationFieldDisplay = () => {
     recordStoreFamilySelector({ recordId: entityId, fieldName }),
   );
 
+  // // const tableValue = useContextSelector(
+  // //   RecordFieldValueSelectorContext,
+  // //   (value) => value[0],
+  // // );
+
+  // // console.log({
+  // //   tableValue,
+  // // });
+
+  // const fieldValue = useRecordFieldValue(entityId, fieldName);
+
   const maxWidthForField =
     isDefined(button) && isDefined(maxWidth)
       ? maxWidth - FIELD_EDIT_BUTTON_WIDTH
@@ -36,7 +47,6 @@ export const useRelationFieldDisplay = () => {
   return {
     fieldDefinition,
     fieldValue,
-    setFieldValue,
     maxWidth: maxWidthForField,
   };
 };

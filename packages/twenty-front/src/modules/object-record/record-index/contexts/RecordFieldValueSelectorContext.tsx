@@ -17,10 +17,7 @@ export const useSetRecordValue = () => {
     (value) => value[1],
   );
 
-  return (
-    recordId: string,
-    newRecord: Dispatch<SetStateAction<RecordFiedValue['recordId']>>,
-  ) => {
+  return (recordId: string, newRecord: any) => {
     setTableValue((currentTable) => ({
       ...currentTable,
       [recordId]: newRecord,
@@ -34,7 +31,7 @@ export const useRecordValue = (recordId: string) => {
     (value) => value[0],
   );
 
-  return tableValue[recordId];
+  return tableValue?.[recordId];
 };
 
 export const useRecordFieldValue = (recordId: string, fieldName: string) => {
@@ -43,7 +40,7 @@ export const useRecordFieldValue = (recordId: string, fieldName: string) => {
     (value) => value[0],
   );
 
-  return tableValue[recordId][fieldName];
+  return tableValue?.[recordId]?.[fieldName];
 };
 
 export const useSetRecordFieldValue = () => {

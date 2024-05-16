@@ -1,5 +1,6 @@
 import { useRecoilCallback } from 'recoil';
 
+import { useSetRecordValue } from '@/object-record/record-index/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -22,6 +23,8 @@ export const useSetRecordTableData = ({
     hasUserSelectedAllRowState,
   } = useRecordTableStates(recordTableId);
 
+  const setRecordValue = useSetRecordValue();
+
   return useRecoilCallback(
     ({ set, snapshot }) =>
       <T extends ObjectRecord>(newEntityArray: T[], totalCount: number) => {
@@ -32,6 +35,7 @@ export const useSetRecordTableData = ({
             .getValue();
 
           if (JSON.stringify(currentEntity) !== JSON.stringify(entity)) {
+            setRecordValue(entity.id, entity);
             set(recordStoreFamilyState(entity.id), entity);
           }
         }
@@ -63,6 +67,7 @@ export const useSetRecordTableData = ({
       onEntityCountChange,
       isRowSelectedFamilyState,
       hasUserSelectedAllRowState,
+      setRecordValue,
     ],
   );
 };
