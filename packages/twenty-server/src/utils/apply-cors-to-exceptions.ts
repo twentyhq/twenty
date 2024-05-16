@@ -11,6 +11,10 @@ export class ApplyCorsToExceptions implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
 
+    if (!response.header) {
+      return;
+    }
+
     response.header('Access-Control-Allow-Origin', '*');
     response.header(
       'Access-Control-Allow-Methods',
