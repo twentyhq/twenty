@@ -1,4 +1,5 @@
 import { getContributorActivity } from '@/app/contributors/utils/get-contributor-activity';
+import { executePartialSync } from '@/github-sync/execute-partial-sync';
 
 export const dynamic = 'force-dynamic';
 
@@ -7,6 +8,8 @@ export async function GET(request: Request) {
     const url = request.url;
 
     const username = url.split('/')?.pop() || '';
+
+    await executePartialSync();
 
     const contributorActivity = await getContributorActivity(username);
 

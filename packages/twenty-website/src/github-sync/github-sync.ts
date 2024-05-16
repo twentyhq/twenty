@@ -1,7 +1,7 @@
-import { fetchAndSaveGithubData } from '@/github-sync/fetch-and-save-github-data';
+import { executePartialSync } from '@/github-sync/execute-partial-sync';
 
 export const githubSync = async () => {
-  await fetchAndSaveGithubData();
+  await executePartialSync();
   process.exit(0);
 };
 
