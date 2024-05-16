@@ -5,10 +5,32 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import {
   getDeleteResponse200,
   getJsonResponse,
-  getManyResultResponse200,
-  getSingleResultSuccessResponse,
+  getFindManyResponse200,
+  getCreateOneResponse201,
+  getCreateManyResponse201,
+  getFindOneResponse200,
+  getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
 import { getRequestBody } from 'src/engine/core-modules/open-api/utils/request-body.utils';
+
+export const computeBatchPath = (
+  item: ObjectMetadataEntity,
+): OpenAPIV3_1.PathItemObject => {
+  return {
+    post: {
+      tags: [item.namePlural],
+      summary: `Create Many ${item.namePlural}`,
+      operationId: `createMany${capitalize(item.namePlural)}`,
+      parameters: [{ $ref: '#/components/parameters/depth' }],
+      requestBody: getRequestBody(capitalize(item.namePlural)),
+      responses: {
+        '201': getCreateManyResponse201(item),
+        '400': { $ref: '#/components/responses/400' },
+        '401': { $ref: '#/components/responses/401' },
+      },
+    },
+  } as OpenAPIV3_1.PathItemObject;
+};
 
 export const computeManyResultPath = (
   item: ObjectMetadataEntity,
@@ -27,7 +49,7 @@ export const computeManyResultPath = (
         { $ref: '#/components/parameters/lastCursor' },
       ],
       responses: {
-        '200': getManyResultResponse200(item),
+        '200': getFindManyResponse200(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },
@@ -37,9 +59,9 @@ export const computeManyResultPath = (
       summary: `Create One ${item.nameSingular}`,
       operationId: `createOne${capitalize(item.nameSingular)}`,
       parameters: [{ $ref: '#/components/parameters/depth' }],
-      requestBody: getRequestBody(item),
+      requestBody: getRequestBody(capitalize(item.nameSingular)),
       responses: {
-        '201': getSingleResultSuccessResponse(item),
+        '201': getCreateOneResponse201(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },
@@ -61,7 +83,7 @@ export const computeSingleResultPath = (
         { $ref: '#/components/parameters/depth' },
       ],
       responses: {
-        '200': getSingleResultSuccessResponse(item),
+        '200': getFindOneResponse200(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },
@@ -77,7 +99,7 @@ export const computeSingleResultPath = (
         '401': { $ref: '#/components/responses/401' },
       },
     },
-    put: {
+    patch: {
       tags: [item.namePlural],
       summary: `Update One ${item.namePlural}`,
       operationId: `UpdateOne${capitalize(item.nameSingular)}`,
@@ -85,9 +107,9 @@ export const computeSingleResultPath = (
         { $ref: '#/components/parameters/idPath' },
         { $ref: '#/components/parameters/depth' },
       ],
-      requestBody: getRequestBody(item),
+      requestBody: getRequestBody(capitalize(item.nameSingular)),
       responses: {
-        '200': getSingleResultSuccessResponse(item),
+        '200': getUpdateOneResponse200(item),
         '400': { $ref: '#/components/responses/400' },
         '401': { $ref: '#/components/responses/401' },
       },
