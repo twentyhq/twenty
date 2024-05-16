@@ -15,7 +15,6 @@ export const SettingsIntegrationDatabaseConnectionSyncStatus = ({
   const { tables, error } = useGetDatabaseConnectionTables({
     connectionId,
     skip,
-    shouldFetchPendingSchemaUpdates: true,
   });
 
   if (isDefined(error)) {
@@ -34,7 +33,7 @@ export const SettingsIntegrationDatabaseConnectionSyncStatus = ({
 
   return (
     <Status
-      color="green"
+      color={updatesAvailable ? 'yellow' : 'green'}
       text={
         syncedTables.length === 1
           ? `1 tracked table${
