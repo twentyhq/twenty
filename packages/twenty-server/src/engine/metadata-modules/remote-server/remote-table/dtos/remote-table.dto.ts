@@ -10,11 +10,11 @@ export enum RemoteTableStatus {
   NOT_SYNCED = 'NOT_SYNCED',
 }
 
-export enum TableUpdate {
+export enum DistantTableUpdate {
   TABLE_DELETED = 'TABLE_DELETED',
-  COLUMNS_DELETED = 'COLUMN_DELETED',
-  COLUMNS_ADDED = 'COLUMN_ADDED',
-  COLUMNS_TYPE_CHANGED = 'COLUMN_TYPE_CHANGED',
+  COLUMNS_DELETED = 'COLUMNS_DELETED',
+  COLUMNS_ADDED = 'COLUMNS_ADDED',
+  COLUMNS_TYPE_CHANGED = 'COLUMNS_TYPE_CHANGED',
 }
 
 registerEnumType(RemoteTableStatus, {
@@ -22,8 +22,8 @@ registerEnumType(RemoteTableStatus, {
   description: 'Status of the table',
 });
 
-registerEnumType(TableUpdate, {
-  name: 'TableUpdate',
+registerEnumType(DistantTableUpdate, {
+  name: 'DistantTableUpdate',
   description: 'Schema update on a table',
 });
 
@@ -43,6 +43,6 @@ export class RemoteTableDTO {
   schema?: string;
 
   @IsOptional()
-  @Field(() => [TableUpdate], { nullable: true })
-  schemaPendingUpdates?: [TableUpdate];
+  @Field(() => [DistantTableUpdate], { nullable: true })
+  schemaPendingUpdates?: [DistantTableUpdate];
 }

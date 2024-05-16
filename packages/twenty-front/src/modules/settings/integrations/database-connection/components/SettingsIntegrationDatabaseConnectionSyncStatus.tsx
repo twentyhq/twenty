@@ -15,6 +15,7 @@ export const SettingsIntegrationDatabaseConnectionSyncStatus = ({
   const { tables, error } = useGetDatabaseConnectionTables({
     connectionId,
     skip,
+    shouldFetchPendingSchemaUpdates: true,
   });
 
   if (isDefined(error)) {
@@ -25,12 +26,20 @@ export const SettingsIntegrationDatabaseConnectionSyncStatus = ({
     (table) => table.status === RemoteTableStatus.Synced,
   );
 
+  const updatesAvailable = tables.some(
+    (table) =>
+      table.schemaPendingUpdates?.length &&
+      table.schemaPendingUpdates.length > 0,
+  );
+
   return (
     <Status
       color="green"
       text={
         syncedTables.length === 1
-          ? `1 tracked table`
+          ? `1 tracked table${
+              updatesAvailable ? ' (with pending schema updates)' : ''
+            }`
           : `${syncedTables.length} tracked tables`
       }
     />

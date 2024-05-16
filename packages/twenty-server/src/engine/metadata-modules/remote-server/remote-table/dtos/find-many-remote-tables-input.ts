@@ -13,5 +13,5 @@ export class FindManyRemoteTablesInput {
     description: 'Indicates if data from distant tables should be refreshed.',
     nullable: true,
   })
-  refreshData?: boolean;
+  shouldFetchPendingSchemaUpdates?: boolean;
 }

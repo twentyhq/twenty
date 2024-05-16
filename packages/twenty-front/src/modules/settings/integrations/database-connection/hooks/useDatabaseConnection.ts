@@ -42,7 +42,7 @@ export const useDatabaseConnection = () => {
   const { tables } = useGetDatabaseConnectionTables({
     connectionId,
     skip: !connection,
-    refreshData: true,
+    shouldFetchPendingSchemaUpdates: true,
   });
 
   return { connection, integration, databaseKey, tables };
