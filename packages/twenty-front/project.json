@@ -82,7 +82,7 @@
             "STORYBOOK_SCOPE": "pages"
           }
         },
-        "performance": { 
+        "performance": {
           "env": {
             "NODE_OPTIONS": "--max_old_space_size=5000",
             "STORYBOOK_SCOPE": "performance"
@@ -124,7 +124,6 @@
         "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
         "pages": { "env": { "STORYBOOK_SCOPE": "pages" } },
         "performance": { "env": { "STORYBOOK_SCOPE": "performance" } }
-
       }
     },
     "storybook:test:nocoverage": {
@@ -133,7 +132,6 @@
         "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
         "pages": { "env": { "STORYBOOK_SCOPE": "pages" } },
         "performance": { "env": { "STORYBOOK_SCOPE": "performance" } }
-
       }
     },
     "storybook:static:test": {
