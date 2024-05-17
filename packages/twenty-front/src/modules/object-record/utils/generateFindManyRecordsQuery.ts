@@ -15,14 +15,17 @@ export const generateFindManyRecordsQuery = ({
   objectMetadataItems: ObjectMetadataItem[];
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
   computeReferences?: boolean;
-}) => gql`
+}) => {
+  const shouldQueryCounts = !objectMetadataItem.isRemote;
+
+  return gql`
 query FindMany${capitalize(
-  objectMetadataItem.namePlural,
-)}($filter: ${capitalize(
-  objectMetadataItem.nameSingular,
-)}FilterInput, $orderBy: ${capitalize(
-  objectMetadataItem.nameSingular,
-)}OrderByInput, $lastCursor: String, $limit: Int) {
+    objectMetadataItem.namePlural,
+  )}($filter: ${capitalize(
+    objectMetadataItem.nameSingular,
+  )}FilterInput, $orderBy: ${capitalize(
+    objectMetadataItem.nameSingular,
+  )}OrderByInput, $lastCursor: String, $limit: Int) {
   ${
     objectMetadataItem.namePlural
   }(filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor){
@@ -36,11 +39,12 @@ query FindMany${capitalize(
       cursor
     }
     pageInfo {
-      hasNextPage
+      ${shouldQueryCounts ? 'hasNextPage' : ''}
       startCursor
       endCursor
     }
-    totalCount
+    ${shouldQueryCounts ? 'totalCount' : ''}
   }
 }
 `;
+};

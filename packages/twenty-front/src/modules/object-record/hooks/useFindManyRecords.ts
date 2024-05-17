@@ -122,7 +122,8 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     });
 
   const fetchMoreRecords = useCallback(async () => {
-    if (hasNextPage) {
+    // Remote objects does not support hasNextPage. We cannot rely on it to fetch more records.
+    if (hasNextPage || objectMetadataItem.isRemote) {
       setIsFetchingMoreObjects(true);
 
       try {
@@ -145,6 +146,10 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
                 ...(fetchMoreResult?.[objectMetadataItem.namePlural]?.edges ??
                   []),
               ]);
+            }
+
+            if (isNonEmptyArray(previousEdges) && !isNonEmptyArray(nextEdges)) {
+              newEdges = prev?.[objectMetadataItem.namePlural]?.edges ?? [];
             }
 
             const pageInfo =
@@ -199,15 +204,16 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     }
   }, [
     hasNextPage,
+    objectMetadataItem.isRemote,
+    objectMetadataItem.namePlural,
+    objectMetadataItem.nameSingular,
     setIsFetchingMoreObjects,
     fetchMore,
     filter,
     orderBy,
     lastCursor,
-    objectMetadataItem.namePlural,
-    objectMetadataItem.nameSingular,
-    onCompleted,
     data,
+    onCompleted,
     setLastCursor,
     setHasNextPage,
     enqueueSnackBar,

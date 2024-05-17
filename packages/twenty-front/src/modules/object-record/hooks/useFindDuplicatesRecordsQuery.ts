@@ -18,6 +18,8 @@ export const useFindDuplicateRecordsQuery = ({
 
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
+  const shouldQueryCounts = !objectMetadataItem.isRemote;
+
   const findDuplicateRecordsQuery = gql`
     query FindDuplicate${capitalize(
       objectMetadataItem.nameSingular,
@@ -33,11 +35,11 @@ export const useFindDuplicateRecordsQuery = ({
           cursor
         }
         pageInfo {
-          hasNextPage
+          ${shouldQueryCounts ? 'hasNextPage' : ''}
           startCursor
           endCursor
         }
-        totalCount
+        ${shouldQueryCounts ? 'totalCount' : ''}
       }
     }
   `;
