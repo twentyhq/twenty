@@ -10,7 +10,6 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedOnboardingUsersData } from '~/testing/mock-data/users';
 
 import { SignInUp } from '../SignInUp';
 
@@ -24,14 +23,13 @@ const meta: Meta<PageDecoratorArgs> = {
       handlers: [
         graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
           return HttpResponse.json({
-            data: {
-              currentUser: mockedOnboardingUsersData[0],
-            },
+            data: null,
           });
         }),
         graphqlMocks.handlers,
       ],
     },
+    cookie: '',
   },
 };
 
