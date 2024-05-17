@@ -34,13 +34,13 @@ export const mapUdtNameToFieldSettings = (
     case 'int4':
       return {
         precision: 0,
-        isBig: false,
+        isBigInt: false,
       } satisfies FieldMetadataSettings<FieldMetadataType.NUMBER>;
     case 'int8':
     case 'bigint':
       return {
         precision: 0,
-        isBig: true,
+        isBigInt: true,
       } satisfies FieldMetadataSettings<FieldMetadataType.NUMBER>;
     default:
       return undefined;

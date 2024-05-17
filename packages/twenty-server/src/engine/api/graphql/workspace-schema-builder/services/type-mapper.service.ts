@@ -63,7 +63,8 @@ export class TypeMapperService {
       fieldMetadataType === FieldMetadataType.NUMBER &&
       (settings as FieldMetadataSettings<FieldMetadataType.NUMBER>)
         ?.precision === 0
-        ? (settings as FieldMetadataSettings<FieldMetadataType.NUMBER>)?.isBig
+        ? (settings as FieldMetadataSettings<FieldMetadataType.NUMBER>)
+            ?.isBigInt
           ? GraphQLBigInt
           : GraphQLInt
         : GraphQLFloat;
@@ -99,7 +100,8 @@ export class TypeMapperService {
       fieldMetadataType === FieldMetadataType.NUMBER &&
       (settings as FieldMetadataSettings<FieldMetadataType.NUMBER>)
         ?.precision === 0
-        ? (settings as FieldMetadataSettings<FieldMetadataType.NUMBER>)?.isBig
+        ? (settings as FieldMetadataSettings<FieldMetadataType.NUMBER>)
+            ?.isBigInt
           ? BigIntFilterType
           : IntFilterType
         : FloatFilterType;
