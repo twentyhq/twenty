@@ -1,15 +1,39 @@
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { StrictMode } from 'react';
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Outlet,
+  redirect,
+  Route,
+  RouterProvider,
+  Routes,
+  useLocation,
+} from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
+import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { VerifyEffect } from '@/auth/components/VerifyEffect';
+import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
+import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
 import { billingState } from '@/client-config/states/billingState';
+import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
+import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
+import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
+import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
+import { DialogManager } from '@/ui/feedback/dialog-manager/components/DialogManager';
+import { DialogManagerScope } from '@/ui/feedback/dialog-manager/scopes/DialogManagerScope';
+import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
 import { BlankLayout } from '@/ui/layout/page/BlankLayout';
 import { DefaultLayout } from '@/ui/layout/page/DefaultLayout';
+import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
+import { UserProvider } from '@/users/components/UserProvider';
+import { UserProviderEffect } from '@/users/components/UserProviderEffect';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
+import { PageChangeEffect } from '~/effect-components/PageChangeEffect';
 import { Authorize } from '~/pages/auth/Authorize';
 import { ChooseYourPlan } from '~/pages/auth/ChooseYourPlan';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
@@ -54,17 +78,53 @@ import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMemb
 import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
 
-export const App = () => {
-  const billing = useRecoilValue(billingState);
+const ProvidersThatNeedRouterContext = () => {
   const { pathname } = useLocation();
   const pageTitle = getPageTitleFromPath(pathname);
 
   return (
-    <>
-      <PageTitle title={pageTitle} />
-      <GotoHotkeysEffect />
-      <CommandMenuEffect />
-      <Routes>
+    <ApolloProvider>
+      <ClientConfigProviderEffect />
+      <ClientConfigProvider>
+        <UserProviderEffect />
+        <UserProvider>
+          <ApolloMetadataClientProvider>
+            <ObjectMetadataItemsProvider>
+              <PrefetchDataProvider>
+                <AppThemeProvider>
+                  <SnackBarProvider>
+                    <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                      <DialogManager>
+                        <StrictMode>
+                          <PromiseRejectionEffect />
+                          <CommandMenuEffect />
+                          <GotoHotkeysEffect />
+                          <PageTitle title={pageTitle} />
+                          <Outlet />
+                        </StrictMode>
+                      </DialogManager>
+                    </DialogManagerScope>
+                  </SnackBarProvider>
+                </AppThemeProvider>
+              </PrefetchDataProvider>
+              <PageChangeEffect />
+            </ObjectMetadataItemsProvider>
+          </ApolloMetadataClientProvider>
+        </UserProvider>
+      </ClientConfigProvider>
+    </ApolloProvider>
+  );
+};
+
+const createRouter = (isBillingEnabled?: boolean) =>
+  createBrowserRouter(
+    createRoutesFromElements(
+      <Route
+        element={<ProvidersThatNeedRouterContext />}
+        // To switch state to `loading` temporarily to enable us
+        // to set scroll position before the page is rendered
+        loader={async () => Promise.resolve(null)}
+      >
         <Route element={<DefaultLayout />}>
           <Route path={AppPath.Verify} element={<VerifyEffect />} />
           <Route path={AppPath.SignInUp} element={<SignInUp />} />
@@ -119,12 +179,14 @@ export const App = () => {
                   path={SettingsPath.AccountsEmailsInboxSettings}
                   element={<SettingsAccountsEmailsInboxSettings />}
                 />
-                {billing?.isBillingEnabled && (
-                  <Route
-                    path={SettingsPath.Billing}
-                    element={<SettingsBilling />}
-                  />
-                )}
+                <Route
+                  path={SettingsPath.Billing}
+                  element={<SettingsBilling />}
+                  loader={() => {
+                    if (!isBillingEnabled) return redirect(AppPath.Index);
+                    return null;
+                  }}
+                />
                 <Route
                   path={SettingsPath.WorkspaceMembersPage}
                   element={<SettingsWorkspaceMembers />}
@@ -217,7 +279,12 @@ export const App = () => {
         <Route element={<BlankLayout />}>
           <Route path={AppPath.Authorize} element={<Authorize />} />
         </Route>
-      </Routes>
-    </>
+      </Route>,
+    ),
   );
+
+export const App = () => {
+  const billing = useRecoilValue(billingState);
+
+  return <RouterProvider router={createRouter(billing?.isBillingEnabled)} />;
 };
