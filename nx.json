@@ -219,9 +219,13 @@
       "options": {
         "cwd": "{projectRoot}",
         "commands": [
-          "nx storybook:build {projectName} --configuration=test",
+          {
+            "command": "nx storybook:build {projectName} --configuration=test",
+            "forwardAllArgs": false
+          },
           "cross-var chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --storybook-build-dir=storybook-static {args.ci}"
-        ]
+        ],
+        "parallel": false
       },
       "configurations": {
         "ci": {
