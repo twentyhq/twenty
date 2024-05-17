@@ -4,6 +4,7 @@ import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
+import { RecordFieldValueIndexPageSetterEffect } from '@/object-record/record-index/components/RecordFieldValueIndexPageSetterEffect';
 import { RecordIndexBoardContainer } from '@/object-record/record-index/components/RecordIndexBoardContainer';
 import { RecordIndexBoardContainerEffect } from '@/object-record/record-index/components/RecordIndexBoardContainerEffect';
 import { RecordIndexTableContainer } from '@/object-record/record-index/components/RecordIndexTableContainer';
@@ -107,6 +108,7 @@ export const RecordIndexContainer = ({
   return (
     <StyledContainer>
       <RecordFieldValueSelectorContextProvider>
+        <RecordFieldValueIndexPageSetterEffect recordIndexId={recordIndexId} />
         <SpreadsheetImportProvider>
           <ViewBar
             viewBarId={recordIndexId}

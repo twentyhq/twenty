@@ -1,8 +1,6 @@
 import { useContext } from 'react';
-import { useRecoilState } from 'recoil';
 
-import { FieldRelationValue } from '@/object-record/record-field/types/FieldMetadata';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
+import { useRecordFieldValue } from '@/object-record/record-index/contexts/RecordFieldValueSelectorContext';
 import { FIELD_EDIT_BUTTON_WIDTH } from '@/ui/field/display/constants/FieldEditButtonWidth';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
@@ -24,20 +22,7 @@ export const useRelationFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const [fieldValue, setFieldValue] = useRecoilState<FieldRelationValue>(
-    recordStoreFamilySelector({ recordId: entityId, fieldName }),
-  );
-
-  // // const tableValue = useContextSelector(
-  // //   RecordFieldValueSelectorContext,
-  // //   (value) => value[0],
-  // // );
-
-  // // console.log({
-  // //   tableValue,
-  // // });
-
-  // const fieldValue = useRecordFieldValue(entityId, fieldName);
+  const fieldValue = useRecordFieldValue(entityId, fieldName);
 
   const maxWidthForField =
     isDefined(button) && isDefined(maxWidth)
