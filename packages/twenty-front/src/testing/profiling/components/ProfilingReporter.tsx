@@ -3,7 +3,9 @@ import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
 import { PROFILING_REPORTER_DIV_ID } from '~/testing/profiling/constants/ProfilingReporterDivId';
+import { currentProfilingRunIndexState } from '~/testing/profiling/states/currentProfilingRunIndexState';
 import { profilingSessionDataPointsState } from '~/testing/profiling/states/profilingSessionDataPointsState';
+import { profilingSessionStatusState } from '~/testing/profiling/states/profilingSessionStatusState';
 import { computeProfilingReport } from '~/testing/profiling/utils/computeProfilingReport';
 
 const StyledTable = styled.table`
@@ -24,6 +26,12 @@ export const ProfilingReporter = () => {
     profilingSessionDataPointsState,
   );
 
+  const [currentProfilingRunIndex] = useRecoilState(
+    currentProfilingRunIndexState,
+  );
+
+  const [profilingSessionStatus] = useRecoilState(profilingSessionStatusState);
+
   const profilingReport = useMemo(
     () => computeProfilingReport(profilingSessionDataPoints),
     [profilingSessionDataPoints],
@@ -34,6 +42,10 @@ export const ProfilingReporter = () => {
       data-profiling-report={JSON.stringify(profilingReport)}
       id={PROFILING_REPORTER_DIV_ID}
     >
+      <h2>Profiling report</h2>
+      <div>
+        Run #{currentProfilingRunIndex} - Status {profilingSessionStatus}
+      </div>
       <StyledTable>
         <thead>
           <tr>

@@ -1,7 +1,10 @@
 import { ProfilingDataPoint } from '~/testing/profiling/types/ProfilingDataPoint';
 import { ProfilingReport } from '~/testing/profiling/types/ProfilingReportByRun';
 
-export const computeProfilingReport = (dataPoints: ProfilingDataPoint[]) => {
+export const computeProfilingReport = (
+  dataPoints: ProfilingDataPoint[],
+  varianceThreshold?: number,
+) => {
   const profilingReport = { total: {}, runs: {} } as ProfilingReport;
 
   for (const dataPoint of dataPoints) {
@@ -64,9 +67,9 @@ export const computeProfilingReport = (dataPoints: ProfilingDataPoint[]) => {
     runName.startsWith('real-run'),
   );
 
-  const runsForTotal = runNamesForTotal.map(
-    (runName) => profilingReport.runs[runName],
-  );
+  const runsForTotal = runNamesForTotal
+    .map((runName) => profilingReport.runs[runName])
+    .filter((run) => run.variance < (varianceThreshold ?? 0.2));
 
   profilingReport.total = {
     sum: Object.values(runsForTotal).reduce((acc, run) => acc + run.sum, 0),

@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { TIME_BETWEEN_TEST_RUNS_IN_MS } from '~/testing/profiling/constants/TimeBetweenTestRunsInMs';
-import { currentProfilingRunIndexState } from '~/testing/profiling/states/currentProfilingRunState';
+import { currentProfilingRunIndexState } from '~/testing/profiling/states/currentProfilingRunIndexState';
 import { profilingQueueState } from '~/testing/profiling/states/profilingQueueState';
 import { profilingSessionRunsState } from '~/testing/profiling/states/profilingSessionRunsState';
 import { profilingSessionStatusState } from '~/testing/profiling/states/profilingSessionStatusState';
@@ -12,10 +12,12 @@ export const ProfilingQueueEffect = ({
   profilingId,
   numberOfTestsPerRun,
   numberOfRuns,
+  warmUpRounds,
 }: {
   profilingId: string;
   numberOfTestsPerRun: number;
   numberOfRuns: number;
+  warmUpRounds: number;
 }) => {
   const [currentProfilingRunIndex, setCurrentProfilingRunIndex] =
     useRecoilState(currentProfilingRunIndexState);
@@ -38,16 +40,9 @@ export const ProfilingQueueEffect = ({
         setCurrentProfilingRunIndex(0);
 
         const newTestRuns = [
-          'warm-up-1',
-          'warm-up-2',
-          'warm-up-3',
-          'warm-up-4',
-          'warm-up-5',
-          'warm-up-6',
-          'warm-up-7',
-          'warm-up-8',
-          'warm-up-9',
-          'warm-up-10',
+          ...[
+            ...Array.from({ length: warmUpRounds }, (_, i) => `warm-up-${i}`),
+          ],
           ...[
             ...Array.from({ length: numberOfRuns }, (_, i) => `real-run-${i}`),
           ],
