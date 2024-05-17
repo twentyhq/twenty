@@ -4,7 +4,6 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { overlayScrollbarsState } from '@/ui/utilities/scroll/states/overlayScrollbarsState';
 import { scrollPositionState } from '@/ui/utilities/scroll/states/scrollPositionState';
-import { scrollTopState } from '@/ui/utilities/scroll/states/scrollTopState';
 import { isDefined } from '~/utils/isDefined';
 
 /**
@@ -20,7 +19,6 @@ export const useScrollRestoration = (viewportHeight?: number) => {
     scrollPositionState(key),
   );
 
-  const scrollTop = useRecoilValue(scrollTopState); // Ensure Recoil state is initialized
   const overlayScrollbars = useRecoilValue(overlayScrollbarsState);
 
   const scrollWrapper = overlayScrollbars?.elements().viewport;
@@ -28,10 +26,9 @@ export const useScrollRestoration = (viewportHeight?: number) => {
 
   useEffect(() => {
     if (state === 'loading') {
-      setScrollPosition(scrollTop ?? 0);
+      setScrollPosition(scrollWrapper?.scrollTop ?? 0);
     } else if (state === 'idle' && isDefined(scrollWrapper) && !skip) {
       scrollWrapper.scrollTo({ top: scrollPosition });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key, state, scrollWrapper, skip]);
+  }, [key, state, scrollWrapper, skip, scrollPosition, setScrollPosition]);
 };
