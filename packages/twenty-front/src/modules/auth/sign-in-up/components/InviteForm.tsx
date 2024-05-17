@@ -71,6 +71,18 @@ export const InviteForm = () => {
         navigate(AppPath.SignInUp);
       }
     }
+    if (
+      isDefined(currentWorkspace) &&
+      currentWorkspace.id === workspaceFromInviteHash?.id
+    ) {
+      enqueueSnackBar(
+        `You already belong to ${workspaceFromInviteHash?.displayName} workspace`,
+        {
+          variant: 'info',
+        },
+      );
+      navigate(AppPath.Index);
+    }
   }, [
     navigate,
     enqueueSnackBar,
