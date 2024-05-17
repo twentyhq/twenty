@@ -115,6 +115,7 @@ export const ProfilingQueueEffect = ({
     profilingSessionRuns,
     setProfilingSessionRuns,
     numberOfRuns,
+    warmUpRounds,
   ]);
 
   return <></>;

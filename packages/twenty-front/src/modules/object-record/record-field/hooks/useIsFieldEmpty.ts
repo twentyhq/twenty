@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
 import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
-import { useRecordFieldValue } from '@/object-record/record-index/contexts/RecordFieldValueSelectorContext';
+import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 
 import { FieldContext } from '../contexts/FieldContext';
 

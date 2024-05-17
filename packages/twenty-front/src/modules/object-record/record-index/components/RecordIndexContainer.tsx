@@ -4,13 +4,11 @@ import { useRecoilCallback, useRecoilState, useSetRecoilState } from 'recoil';
 import { useColumnDefinitionsFromFieldMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromFieldMetadata';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectNameSingularFromPlural } from '@/object-metadata/hooks/useObjectNameSingularFromPlural';
-import { RecordFieldValueIndexPageSetterEffect } from '@/object-record/record-index/components/RecordFieldValueIndexPageSetterEffect';
 import { RecordIndexBoardContainer } from '@/object-record/record-index/components/RecordIndexBoardContainer';
 import { RecordIndexBoardContainerEffect } from '@/object-record/record-index/components/RecordIndexBoardContainerEffect';
 import { RecordIndexTableContainer } from '@/object-record/record-index/components/RecordIndexTableContainer';
 import { RecordIndexTableContainerEffect } from '@/object-record/record-index/components/RecordIndexTableContainerEffect';
 import { RecordIndexViewBarEffect } from '@/object-record/record-index/components/RecordIndexViewBarEffect';
-import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-index/contexts/RecordFieldValueSelectorContext';
 import { RecordIndexOptionsDropdown } from '@/object-record/record-index/options/components/RecordIndexOptionsDropdown';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
 import { recordIndexFiltersState } from '@/object-record/record-index/states/recordIndexFiltersState';
@@ -18,6 +16,7 @@ import { recordIndexIsCompactModeActiveState } from '@/object-record/record-inde
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 import { recordIndexSortsState } from '@/object-record/record-index/states/recordIndexSortsState';
 import { recordIndexViewTypeState } from '@/object-record/record-index/states/recordIndexViewTypeState';
+import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
 import { ViewBar } from '@/views/components/ViewBar';
@@ -108,7 +107,6 @@ export const RecordIndexContainer = ({
   return (
     <StyledContainer>
       <RecordFieldValueSelectorContextProvider>
-        <RecordFieldValueIndexPageSetterEffect recordIndexId={recordIndexId} />
         <SpreadsheetImportProvider>
           <ViewBar
             viewBarId={recordIndexId}

@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { useRecordFieldValue } from '@/object-record/record-index/contexts/RecordFieldValueSelectorContext';
+import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { FIELD_EDIT_BUTTON_WIDTH } from '@/ui/field/display/constants/FieldEditButtonWidth';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';

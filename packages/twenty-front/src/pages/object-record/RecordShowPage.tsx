@@ -7,10 +7,10 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
-import { RecordValueShowPageSetterEffect } from '@/object-record/record-index/components/RecordValueShowPageSetterEffect';
-import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-index/contexts/RecordFieldValueSelectorContext';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 import { findOneRecordForShowPageOperationSignatureFactory } from '@/object-record/record-show/graphql/operations/factories/findOneRecordForShowPageOperationSignatureFactory';
+import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
+import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
@@ -108,7 +108,7 @@ export const RecordShowPage = () => {
 
   return (
     <RecordFieldValueSelectorContextProvider>
-      <RecordValueShowPageSetterEffect record={record} />
+      <RecordValueSetterEffect recordId={objectRecordId} />
       <PageContainer>
         <PageTitle title={pageTitle} />
         <PageHeader
