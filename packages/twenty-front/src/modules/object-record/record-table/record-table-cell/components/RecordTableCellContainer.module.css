@@ -1,0 +1,32 @@
+.td-in-edit-mode {
+  z-index: 4 !important;
+}
+
+.td-not-in-edit-mode {
+  z-index: 3;
+}
+
+.td-is-selected {
+  background: #f5f5f5;
+}
+
+.td-is-not-selected {
+  background: #ffffff;
+}
+
+.cell-base-container {
+  align-items: center;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  height: 32px;
+  position: relative;
+  user-select: none;
+}
+
+.cell-base-container-soft-focus {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  outline: 1px solid #f5f5f5;
+}
+

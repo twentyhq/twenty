@@ -1,0 +1,24 @@
+.cell-display-outer-container {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  padding-left: 8px;
+  padding-right: 4px;
+  width: 100%;
+}
+
+.cell-display-outer-container-soft-focus {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 4px;
+  outline: 1px solid #f5f5f5;
+}
+
+.cell-display-inner-container {
+  align-items: center;
+  display: flex;
+  height: 100%;
+  overflow: hidden;
+  width: 100%;
+}
+

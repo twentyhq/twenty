@@ -8,7 +8,7 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import {
   RecordFieldValueSelectorContextProvider,
   useSetRecordValue,
-} from '@/object-record/record-index/contexts/RecordFieldValueSelectorContext';
+} from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/components/RecordTableCellFieldContextWrapper';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
