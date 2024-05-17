@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
-import { UnloggedSignInUp } from '@/auth/sign-in-up/components/UnloggedSignInUp';
+import { AuthForm } from '@/auth/sign-in-up/components/AuthForm';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -116,7 +116,7 @@ export const InviteForm = () => {
             </FooterNote>
           </>
         ) : (
-          <UnloggedSignInUp />
+          <AuthForm />
         )}
       </>
     )

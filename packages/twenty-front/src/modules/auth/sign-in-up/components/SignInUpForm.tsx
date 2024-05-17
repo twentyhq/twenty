@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { Title } from '@/auth/components/Title';
-import { UnloggedSignInUp } from '@/auth/sign-in-up/components/UnloggedSignInUp';
+import { AuthForm } from '@/auth/sign-in-up/components/AuthForm';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isDefined } from '~/utils/isDefined';
@@ -34,7 +34,7 @@ export const SignInUpForm = () => {
   return (
     <>
       <Title animate>{title}</Title>
-      <UnloggedSignInUp />
+      <AuthForm />
     </>
   );
 };

@@ -46,7 +46,7 @@ const StyledInputContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(3)};
 `;
 
-export const UnloggedSignInUp = () => {
+export const AuthForm = () => {
   const captchaProvider = useRecoilValue(captchaProviderState);
   const isRequestingCaptchaToken = useRecoilValue(
     isRequestingCaptchaTokenState,
