@@ -1,17 +1,15 @@
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 import {
-  IconCheckbox,
   IconCirclePlus,
   IconEditCircle,
   IconFocusCentered,
-  IconNotes,
   useIcons,
 } from 'twenty-ui';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { useLinkedObject } from '@/activities/timeline/hooks/useLinkedObject';
-import { EventUpdateProperty } from '@/activities/timelineActivities/components/EventUpdateProperty';
+import { EventDescription } from '@/activities/timelineActivities/components/EventDescription';
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -19,7 +17,7 @@ import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledIconContainer = styled.div`
   align-items: center;
@@ -32,12 +30,6 @@ const StyledIconContainer = styled.div`
   text-decoration-line: underline;
   width: 16px;
   z-index: 2;
-`;
-
-const StyledActionName = styled.span`
-  overflow: hidden;
-  flex: none;
-  white-space: nowrap;
 `;
 
 const StyledItemContainer = styled.div`
@@ -132,126 +124,68 @@ const StyledSummary = styled.summary`
   overflow: hidden;
 `;
 
-type EventRowProps = {
+type EventRowV2Props = {
   mainObjectMetadataItem: ObjectMetadataItem | null;
   isLastEvent?: boolean;
   event: TimelineActivity;
 };
 
-export const EventRow = ({
+export const EventRowV2 = ({
   isLastEvent,
   event,
   mainObjectMetadataItem,
-}: EventRowProps) => {
+}: EventRowV2Props) => {
+  const { getIcon } = useIcons();
+  const openActivityRightDrawer = useOpenActivityRightDrawer();
+
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(event.createdAt);
   const exactCreatedAt = beautifyExactDateTime(event.createdAt);
-
-  const properties = event.properties;
-  const diff: Record<string, { before: any; after: any }> = properties?.diff;
+  const linkedObjectMetadata = useLinkedObject(event.linkedObjectMetadataId);
+  const authorFullName = event.workspaceMember
+    ? `${event.workspaceMember?.name.firstName} ${event.workspaceMember?.name.lastName}`
+    : 'Twenty';
 
   const isEventType = (type: 'created' | 'updated') => {
-    if (event.name.includes('.')) {
-      return event.name.split('.')[1] === type;
-    }
-    return false;
+    return event.name.split('.').includes(type);
   };
 
-  const { getIcon } = useIcons();
+  const EventIcon = () => {
+    if (isDefined(event.linkedObjectMetadataId)) {
+      const IconComponent = getIcon(linkedObjectMetadata?.icon);
 
-  const linkedObjectMetadata = useLinkedObject(event.linkedObjectMetadataId);
-
-  const linkedObjectLabel = event.name.includes('note')
-    ? 'note'
-    : event.name.includes('task')
-      ? 'task'
-      : linkedObjectMetadata?.labelSingular;
-
-  const ActivityIcon = event.linkedObjectMetadataId
-    ? event.name.includes('note')
-      ? IconNotes
-      : event.name.includes('task')
-        ? IconCheckbox
-        : getIcon(linkedObjectMetadata?.icon)
-    : isEventType('created')
-      ? IconCirclePlus
-      : isEventType('updated')
-        ? IconEditCircle
-        : IconFocusCentered;
-
-  const author =
-    event.workspaceMember?.name.firstName +
-    ' ' +
-    event.workspaceMember?.name.lastName;
-
-  const action = isEventType('created')
-    ? 'created'
-    : isEventType('updated')
-      ? 'updated'
-      : event.name;
-
-  let description;
-
-  if (!isUndefinedOrNull(linkedObjectMetadata)) {
-    description = 'a ' + linkedObjectLabel;
-  } else if (!event.linkedObjectMetadataId && isEventType('created')) {
-    description = `a new ${mainObjectMetadataItem?.labelSingular}`;
-  } else if (isEventType('updated')) {
-    const diffKeys = Object.keys(diff);
-    if (diffKeys.length === 0) {
-      description = `a ${mainObjectMetadataItem?.labelSingular}`;
-    } else if (diffKeys.length === 1) {
-      const [key, value] = Object.entries(diff)[0];
-      description = [
-        <EventUpdateProperty
-          propertyName={key}
-          after={value?.after as string}
-        />,
-      ];
-    } else if (diffKeys.length === 2) {
-      description =
-        mainObjectMetadataItem?.fields.find(
-          (field) => diffKeys[0] === field.name,
-        )?.label +
-        ' and ' +
-        mainObjectMetadataItem?.fields.find(
-          (field) => diffKeys[1] === field.name,
-        )?.label;
-    } else if (diffKeys.length > 2) {
-      description =
-        diffKeys[0] + ' and ' + (diffKeys.length - 1) + ' other fields';
+      return <IconComponent />;
     }
-  } else if (!isEventType('created') && !isEventType('updated')) {
-    description = JSON.stringify(diff);
-  }
-  const details = JSON.stringify(diff);
 
-  const openActivityRightDrawer = useOpenActivityRightDrawer();
+    if (isEventType('created')) return <IconCirclePlus />;
+    if (isEventType('updated')) return <IconEditCircle />;
+
+    return <IconFocusCentered />;
+  };
 
   return (
     <>
       <StyledTimelineItemContainer>
         <StyledIconContainer>
-          <ActivityIcon />
+          <EventIcon />
         </StyledIconContainer>
         <StyledItemContainer>
-          <details>
-            <StyledSummary>
-              <StyledItemAuthorText>{author}</StyledItemAuthorText>
-              <StyledActionName>{action}</StyledActionName>
-              <StyledItemTitle>{description}</StyledItemTitle>
-              {isUndefinedOrNull(linkedObjectMetadata) ? (
-                <></>
-              ) : (
-                <StyledLinkedObject
-                  onClick={() => openActivityRightDrawer(event.linkedRecordId)}
-                >
-                  {event.linkedRecordCachedName}
-                </StyledLinkedObject>
-              )}
-            </StyledSummary>
-            {details}
-          </details>
-
+          <StyledSummary>
+            <StyledItemAuthorText>{authorFullName}</StyledItemAuthorText>
+            <StyledItemTitle>
+              <EventDescription
+                event={event}
+                mainObjectMetadataItem={mainObjectMetadataItem}
+                linkedObjectMetadata={linkedObjectMetadata}
+              />
+            </StyledItemTitle>
+            {linkedObjectMetadata && (
+              <StyledLinkedObject
+                onClick={() => openActivityRightDrawer(event.linkedRecordId)}
+              >
+                {event.linkedRecordCachedName}
+              </StyledLinkedObject>
+            )}
+          </StyledSummary>
           <StyledItemTitleDate id={`id-${event.id}`}>
             {beautifiedCreatedAt}
           </StyledItemTitleDate>
@@ -266,7 +200,7 @@ export const EventRow = ({
       {!isLastEvent && (
         <StyledTimelineItemContainer isGap>
           <StyledVerticalLineContainer>
-            <StyledVerticalLine></StyledVerticalLine>
+            <StyledVerticalLine />
           </StyledVerticalLineContainer>
         </StyledTimelineItemContainer>
       )}

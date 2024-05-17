@@ -22,7 +22,17 @@ export const useTimelineActivities = (
     orderBy: {
       createdAt: 'DescNullsFirst',
     },
-    fetchPolicy: 'network-only',
+    recordGqlFields: {
+      createdAt: true,
+      linkedObjectMetadataId: true,
+      linkedRecordCachedName: true,
+      linkedRecordId: true,
+      name: true,
+      properties: true,
+      happensAt: true,
+      workspaceMember: true,
+      person: true,
+    },
   });
 
   return {

@@ -7,7 +7,6 @@ import { Repository } from 'typeorm';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
-import { CreateAuditLogFromInternalEvent } from 'src/modules/timeline/jobs/create-audit-log-from-internal-event';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
@@ -67,10 +66,10 @@ export class EntityEventsToDbListener {
       return;
     }
 
-    this.messageQueueService.add<ObjectRecordBaseEvent>(
-      CreateAuditLogFromInternalEvent.name,
-      payload,
-    );
+    // this.messageQueueService.add<ObjectRecordBaseEvent>(
+    //   CreateAuditLogFromInternalEvent.name,
+    //   payload,
+    // );
 
     this.messageQueueService.add<ObjectRecordBaseEvent>(
       UpsertTimelineActivityFromInternalEvent.name,
