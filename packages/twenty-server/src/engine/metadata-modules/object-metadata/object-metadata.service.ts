@@ -58,7 +58,7 @@ import { createWorkspaceMigrationsForCustomObjectRelations } from 'src/engine/me
 import { createWorkspaceMigrationsForRemoteObjectRelations } from 'src/engine/metadata-modules/object-metadata/utils/create-workspace-migrations-for-remote-object-relations.util';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
-import { validateObjectMetadataInput } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
+import { validateObjectMetadataInputOrThrow } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
@@ -253,7 +253,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         objectMetadataInput.workspaceId,
       );
 
-    validateObjectMetadataInput(objectMetadataInput);
+    validateObjectMetadataInputOrThrow(objectMetadataInput);
 
     if (
       objectMetadataInput.nameSingular.toLowerCase() ===
@@ -427,6 +427,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     input: UpdateOneObjectInput,
     workspaceId: string,
   ): Promise<ObjectMetadataEntity> {
+    validateObjectMetadataInputOrThrow(input.update);
+
     const updatedObject = await super.updateOne(input.id, input.update);
 
     await this.workspaceCacheVersionService.incrementVersion(workspaceId);

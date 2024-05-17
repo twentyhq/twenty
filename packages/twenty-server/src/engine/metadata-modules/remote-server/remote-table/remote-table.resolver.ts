@@ -22,7 +22,6 @@ export class RemoteTableResolver {
     return this.remoteTableService.findDistantTablesByServerId(
       input.id,
       workspaceId,
-      input.refreshData,
     );
   }
 
