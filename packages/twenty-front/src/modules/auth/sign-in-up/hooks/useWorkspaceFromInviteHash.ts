@@ -10,6 +10,7 @@ export const useWorkspaceFromInviteHash = () => {
     });
   return {
     workspace: workspaceFromInviteHash?.findWorkspaceFromInviteHash,
+    workspaceInviteHash,
     loading,
   };
 };

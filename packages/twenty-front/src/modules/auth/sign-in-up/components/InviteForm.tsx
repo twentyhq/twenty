@@ -11,7 +11,9 @@ import { AppPath } from '@/types/AppPath';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
+import { useWorkspaceSwitching } from '@/ui/navigation/navigation-drawer/hooks/useWorkspaceSwitching';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
+import { useAddUserToWorkspaceMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 import { Logo } from '../../components/Logo';
@@ -30,15 +32,30 @@ export const InviteForm = () => {
   const {
     workspace: workspaceFromInviteHash,
     loading: workspaceFromInviteHashLoading,
+    workspaceInviteHash,
   } = useWorkspaceFromInviteHash();
   const { form } = useSignInUpForm();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const [addUserToWorkspace] = useAddUserToWorkspaceMutation();
+  const { switchWorkspace } = useWorkspaceSwitching();
 
   const title = useMemo(() => {
     return `Join ${workspaceFromInviteHash?.displayName ?? ''} team`;
   }, [workspaceFromInviteHash?.displayName]);
 
-  const addUserToWorkspace = () => {};
+  const handleUserJoinWorkspace = async () => {
+    if (
+      !(isDefined(workspaceInviteHash) && isDefined(workspaceFromInviteHash))
+    ) {
+      return;
+    }
+    await addUserToWorkspace({
+      variables: {
+        inviteHash: workspaceInviteHash,
+      },
+    });
+    await switchWorkspace(workspaceFromInviteHash.id);
+  };
 
   useEffect(() => {
     if (
@@ -76,7 +93,7 @@ export const InviteForm = () => {
                 variant="secondary"
                 title="Continue"
                 type="submit"
-                onClick={addUserToWorkspace}
+                onClick={handleUserJoinWorkspace}
                 Icon={() => form.formState.isSubmitting && <Loader />}
                 fullWidth
               />
