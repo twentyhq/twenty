@@ -39,7 +39,7 @@ jobs:
       - name: Front / Write .env
         run: npx nx reset:env twenty-front
       - name: Front / Build storybook
-        run: npx nx storybook:build twenty-front
+        run: npx nx storybook:build twenty-front --configuration=test
   front-sb-test:
     runs-on: ci-8-cores
     needs: front-sb-build

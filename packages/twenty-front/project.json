@@ -62,6 +62,9 @@
     "storybook:build": {
       "options": {
         "env": { "NODE_OPTIONS": "--max_old_space_size=5000" }
+      },
+      "configurations": {
+        "test": {}
       }
     },
     "storybook:dev": {
@@ -74,7 +77,10 @@
       }
     },
     "storybook:static": {
-      "options": { "port": 6006 }
+      "options": { "port": 6006 },
+      "configurations": {
+        "test": {}
+      }
     },
     "storybook:coverage": {
       "configurations": {
@@ -105,7 +111,7 @@
     "storybook:static:test": {
       "options": {
         "commands": [
-          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:static {projectName} --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port} --configuration={args.scope}'"
+          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:static {projectName} --configuration=test --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port} --configuration={args.scope}'"
         ],
         "port": 6006
       },
