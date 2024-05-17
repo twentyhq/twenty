@@ -64,30 +64,7 @@
         "env": { "NODE_OPTIONS": "--max_old_space_size=5000" }
       },
       "configurations": {
-        "docs": {
-          "env": {
-            "NODE_OPTIONS": "--max_old_space_size=5000",
-            "STORYBOOK_SCOPE": "ui-docs"
-          }
-        },
-        "modules": {
-          "env": {
-            "NODE_OPTIONS": "--max_old_space_size=5000",
-            "STORYBOOK_SCOPE": "modules"
-          }
-        },
-        "pages": {
-          "env": {
-            "NODE_OPTIONS": "--max_old_space_size=5000",
-            "STORYBOOK_SCOPE": "pages"
-          }
-        },
-        "performance": {
-          "env": {
-            "NODE_OPTIONS": "--max_old_space_size=5000",
-            "STORYBOOK_SCOPE": "performance"
-          }
-        }
+        "test": {}
       }
     },
     "storybook:dev": {
@@ -102,10 +79,7 @@
     "storybook:static": {
       "options": { "port": 6006 },
       "configurations": {
-        "docs": { "env": { "STORYBOOK_SCOPE": "ui-docs" } },
-        "modules": { "env": { "STORYBOOK_SCOPE": "modules" } },
-        "pages": { "env": { "STORYBOOK_SCOPE": "pages" } },
-        "performance": { "env": { "STORYBOOK_SCOPE": "performance" } }
+        "test": {}
       }
     },
     "storybook:coverage": {
@@ -137,7 +111,7 @@
     "storybook:static:test": {
       "options": {
         "commands": [
-          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:static {projectName} --configuration={args.scope} --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port} --configuration={args.scope}'"
+          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:static {projectName} --configuration=test --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port} --configuration={args.scope}'"
         ],
         "port": 6006
       },
