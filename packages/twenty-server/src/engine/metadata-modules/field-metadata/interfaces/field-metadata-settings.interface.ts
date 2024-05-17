@@ -6,6 +6,7 @@ type FieldMetadataDefaultSettings = {
 
 type FieldMetadataNumberSettings = {
   precision: number;
+  isBig: boolean;
 };
 
 type FieldMetadataSettingsMapping = {

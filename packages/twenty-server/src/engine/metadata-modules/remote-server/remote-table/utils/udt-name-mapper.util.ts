@@ -8,8 +8,6 @@ export const mapUdtNameToFieldType = (udtName: string): FieldMetadataType => {
       return FieldMetadataType.UUID;
     case 'varchar':
     case 'text':
-    case 'bigint':
-    case 'int8':
       return FieldMetadataType.TEXT;
     case 'bool':
       return FieldMetadataType.BOOLEAN;
@@ -19,6 +17,8 @@ export const mapUdtNameToFieldType = (udtName: string): FieldMetadataType => {
     case 'integer':
     case 'int2':
     case 'int4':
+    case 'int8':
+    case 'bigint':
       return FieldMetadataType.NUMBER;
     default:
       return FieldMetadataType.TEXT;
@@ -34,6 +34,13 @@ export const mapUdtNameToFieldSettings = (
     case 'int4':
       return {
         precision: 0,
+        isBig: false,
+      } satisfies FieldMetadataSettings<FieldMetadataType.NUMBER>;
+    case 'int8':
+    case 'bigint':
+      return {
+        precision: 0,
+        isBig: true,
       } satisfies FieldMetadataSettings<FieldMetadataType.NUMBER>;
     default:
       return undefined;

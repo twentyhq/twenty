@@ -15,6 +15,7 @@ import {
   GraphQLString,
   GraphQLType,
 } from 'graphql';
+import { GraphQLBigInt } from 'graphql-scalars';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
@@ -27,6 +28,7 @@ import {
   BigFloatFilterType,
   RawJsonFilterType,
   IntFilterType,
+  BigIntFilterType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input';
 import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
 import {
@@ -61,7 +63,9 @@ export class TypeMapperService {
       fieldMetadataType === FieldMetadataType.NUMBER &&
       (settings as FieldMetadataSettings<FieldMetadataType.NUMBER>)
         ?.precision === 0
-        ? GraphQLInt
+        ? (settings as FieldMetadataSettings<FieldMetadataType.NUMBER>)?.isBig
+          ? GraphQLBigInt
+          : GraphQLInt
         : GraphQLFloat;
 
     const typeScalarMapping = new Map<FieldMetadataType, GraphQLScalarType>([
@@ -95,7 +99,9 @@ export class TypeMapperService {
       fieldMetadataType === FieldMetadataType.NUMBER &&
       (settings as FieldMetadataSettings<FieldMetadataType.NUMBER>)
         ?.precision === 0
-        ? IntFilterType
+        ? (settings as FieldMetadataSettings<FieldMetadataType.NUMBER>)?.isBig
+          ? BigIntFilterType
+          : IntFilterType
         : FloatFilterType;
 
     const typeFilterMapping = new Map<
