@@ -218,8 +218,10 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "cross-var chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name={args.targetPackageJsonScript} {args.ci}",
-        "targetPackageJsonScript": "storybook:build:chromatic"
+        "commands": [
+          "nx storybook:build {projectName} --configuration=test",
+          "cross-var chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --storybook-build-dir=storybook-static {args.ci}"
+        ]
       },
       "configurations": {
         "ci": {
