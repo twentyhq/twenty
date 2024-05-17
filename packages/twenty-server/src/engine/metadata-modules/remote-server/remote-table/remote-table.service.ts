@@ -258,13 +258,21 @@ export class RemoteTableService {
         workspaceId,
       );
 
-    const localTableName = getRemoteTableLocalName(input.name);
+    const workspaceDataSource =
+      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
+        workspaceId,
+      );
 
-    await this.validateTableNameDoesNotExists(
-      localTableName,
-      workspaceId,
-      dataSourceMetatada.schema,
-    );
+    const { baseName: localTableBaseName, suffix: localTableSuffix } =
+      await getRemoteTableLocalName(
+        input.name,
+        dataSourceMetatada.schema,
+        workspaceDataSource,
+      );
+
+    const localTableName = localTableSuffix
+      ? `${localTableBaseName}${localTableSuffix}`
+      : localTableBaseName;
 
     const remoteTableEntity = this.remoteTableRepository.create({
       distantTableName: input.name,
@@ -297,7 +305,8 @@ export class RemoteTableService {
 
     await this.createRemoteTableMetadata(
       workspaceId,
-      localTableName,
+      localTableBaseName,
+      localTableSuffix,
       distantTableColumns,
       distantTableIdColumn,
       dataSourceMetatada.id,
@@ -411,27 +420,6 @@ export class RemoteTableService {
     await this.workspaceCacheVersionService.incrementVersion(workspaceId);
   }
 
-  private async validateTableNameDoesNotExists(
-    tableName: string,
-    workspaceId: string,
-    workspaceSchemaName: string,
-  ) {
-    const workspaceDataSource =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
-        workspaceId,
-      );
-
-    const numberOfTablesWithSameName = +(
-      await workspaceDataSource.query(
-        `SELECT count(table_name) FROM information_schema.tables WHERE table_name LIKE '${tableName}' AND table_schema IN ('core', 'metadata', '${workspaceSchemaName}')`,
-      )
-    )[0].count;
-
-    if (numberOfTablesWithSameName > 0) {
-      throw new BadRequestException('Table name is not available.');
-    }
-  }
-
   private async fetchForeignTableNamesWithinWorkspace(
     workspaceId: string,
     foreignDataWrapperId: string,
@@ -525,16 +513,25 @@ export class RemoteTableService {
 
   private async createRemoteTableMetadata(
     workspaceId: string,
-    localTableName: string,
+    localTableBaseName: string,
+    localTableSuffix: number | undefined,
     distantTableColumns: PostgresTableSchemaColumn[],
     distantTableIdColumn: PostgresTableSchemaColumn,
     dataSourceMetadataId: string,
   ) {
+    const localTableNameSingular = localTableSuffix
+      ? `${localTableBaseName}${localTableSuffix}`
+      : localTableBaseName;
+
+    const localTableNamePlural = localTableSuffix
+      ? `${plural(localTableBaseName)}${localTableSuffix}`
+      : plural(localTableBaseName);
+
     const objectMetadata = await this.objectMetadataService.createOne({
-      nameSingular: localTableName,
-      namePlural: plural(localTableName),
-      labelSingular: camelToTitleCase(camelCase(localTableName)),
-      labelPlural: camelToTitleCase(plural(camelCase(localTableName))),
+      nameSingular: localTableNameSingular,
+      namePlural: localTableNamePlural,
+      labelSingular: camelToTitleCase(camelCase(localTableBaseName)),
+      labelPlural: camelToTitleCase(plural(camelCase(localTableBaseName))),
       description: 'Remote table',
       dataSourceId: dataSourceMetadataId,
       workspaceId: workspaceId,
@@ -571,7 +568,7 @@ export class RemoteTableService {
         }
       } catch (error) {
         this.logger.error(
-          `Could not create field ${columnName} for remote table ${localTableName}: ${error}`,
+          `Could not create field ${columnName} for remote table ${localTableNameSingular}: ${error}`,
         );
       }
     }
