@@ -124,8 +124,8 @@ export class PersonObjectMetadata extends BaseObjectMetadata {
   @FieldMetadata({
     standardId: PERSON_STANDARD_FIELD_IDS.company,
     type: FieldMetadataType.RELATION,
-    label: 'Company',
-    description: 'Contact’s company',
+    label: 'Organization',
+    description: 'Contact’s organization',
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'companyId',
   })

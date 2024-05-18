@@ -18,9 +18,9 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 @WorkspaceObject({
   standardId: STANDARD_OBJECT_IDS.company,
   namePlural: 'companies',
-  labelSingular: 'Company',
-  labelPlural: 'Companies',
-  description: 'A company',
+  labelSingular: 'Organization',
+  labelPlural: 'Organizations',
+  description: 'An organization',
   icon: 'IconBuildingSkyscraper',
 })
 export class CompanyObjectMetadata extends BaseObjectMetadata {
@@ -28,7 +28,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     standardId: COMPANY_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: 'Name',
-    description: 'The company name',
+    description: 'The organization name',
     icon: 'IconBuildingSkyscraper',
   })
   name: string;
@@ -38,7 +38,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.TEXT,
     label: 'Domain Name',
     description:
-      'The company website URL. We use this url to fetch the company icon',
+      'The organization website URL. We use this url to fetch the organization icon',
     icon: 'IconLink',
   })
   domainName?: string;
@@ -47,7 +47,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     standardId: COMPANY_STANDARD_FIELD_IDS.address,
     type: FieldMetadataType.TEXT,
     label: 'Address',
-    description: 'The company address',
+    description: 'The organization address',
     icon: 'IconMap',
   })
   address: string;
@@ -56,7 +56,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     standardId: COMPANY_STANDARD_FIELD_IDS.employees,
     type: FieldMetadataType.NUMBER,
     label: 'Employees',
-    description: 'Number of employees in the company',
+    description: 'Number of employees in the organization',
     icon: 'IconUsers',
   })
   @WorkspaceIsNullable()
@@ -66,7 +66,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     standardId: COMPANY_STANDARD_FIELD_IDS.linkedinLink,
     type: FieldMetadataType.LINK,
     label: 'Linkedin',
-    description: 'The company Linkedin account',
+    description: 'The organization Linkedin account',
     icon: 'IconBrandLinkedin',
   })
   @WorkspaceIsNullable()
@@ -76,7 +76,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     standardId: COMPANY_STANDARD_FIELD_IDS.xLink,
     type: FieldMetadataType.LINK,
     label: 'X',
-    description: 'The company Twitter/X account',
+    description: 'The organization Twitter/X account',
     icon: 'IconBrandX',
   })
   @WorkspaceIsNullable()
@@ -85,9 +85,8 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
   @WorkspaceField({
     standardId: COMPANY_STANDARD_FIELD_IDS.annualRecurringRevenue,
     type: FieldMetadataType.CURRENCY,
-    label: 'ARR',
-    description:
-      'Annual Recurring Revenue: The actual or estimated annual revenue of the company',
+    label: 'Annual Revenue',
+    description: 'The actual or estimated annual revenue of the organization',
     icon: 'IconMoneybag',
   })
   @WorkspaceIsNullable()
@@ -98,7 +97,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     type: FieldMetadataType.BOOLEAN,
     label: 'ICP',
     description:
-      'Ideal Customer Profile:  Indicates whether the company is the most suitable and valuable customer for you',
+      'Ideal Customer Profile:  Indicates whether the organization is the most suitable and valuable customer for you',
     icon: 'IconTarget',
     defaultValue: false,
   })
@@ -108,7 +107,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     standardId: COMPANY_STANDARD_FIELD_IDS.position,
     type: FieldMetadataType.POSITION,
     label: 'Position',
-    description: 'Company record position',
+    description: 'Organization record position',
     icon: 'IconHierarchy2',
   })
   @WorkspaceIsSystem()
@@ -119,7 +118,7 @@ export class CompanyObjectMetadata extends BaseObjectMetadata {
     standardId: COMPANY_STANDARD_FIELD_IDS.accountOwner,
     label: 'Account Owner',
     description:
-      'Your team member responsible for managing the company account',
+      'Your team member responsible for managing the organization account',
     type: RelationMetadataType.MANY_TO_ONE,
     inverseSideTarget: () => WorkspaceMemberObjectMetadata,
     inverseSideFieldKey: 'accountOwnerForCompanies',

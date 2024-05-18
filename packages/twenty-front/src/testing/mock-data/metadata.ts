@@ -43,7 +43,7 @@ const customObjectMetadataItemEdge: ObjectEdge = {
             id: 'ea83af89-be10-49af-a605-10c3392ae007',
             type: 'RELATION',
             name: 'companies',
-            label: 'Companies',
+            label: 'Organizations',
             description: 'A custom Relation example',
             icon: 'IconTag',
             isCustom: false,
