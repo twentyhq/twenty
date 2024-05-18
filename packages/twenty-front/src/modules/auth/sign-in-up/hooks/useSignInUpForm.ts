@@ -31,8 +31,8 @@ export const useSignInUpForm = () => {
 
   useEffect(() => {
     if (isSignInPrefilled === true) {
-      form.setValue('email', 'tim@apple.dev');
-      form.setValue('password', 'Applecar2025');
+      form.setValue('email', '');
+      form.setValue('password', '');
     }
   }, [form, isSignInPrefilled]);
   return { form: form };

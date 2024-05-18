@@ -23,7 +23,7 @@ export const Default: Story = {
           that I expect you to, anyways. :)
         </ModalLayout.Content>
         <ModalLayout.Footer>
-          By using Twenty, you're opting for the finest CRM experience you'll
+          By using Day1, you're opting for the finest CRM experience you'll
           ever encounter.
         </ModalLayout.Footer>
       </>

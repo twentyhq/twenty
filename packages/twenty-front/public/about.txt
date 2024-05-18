@@ -1,0 +1,6 @@
+This favicon was generated using the following font:
+
+- Font Title: ABeeZee
+- Font Author: Copyright 2011 The ABeeZee Project Authors (https://github.com/googlefonts/abeezee) with Reserved Font Name ABeeZee
+- Font Source: https://fonts.gstatic.com/s/abeezee/v22/esDR31xSG-6AGleN6tKukbcHCpE.ttf
+- Font License: SIL Open Font License, 1.1 (http://scripts.sil.org/OFL))

@@ -15,13 +15,13 @@ const StyledContainer = styled.div`
   width: 48px;
 `;
 
-const StyledTwentyLogo = styled.img`
+const StyledDay1Logo = styled.img`
   border-radius: ${({ theme }) => theme.border.radius.xs};
   height: 24px;
   width: 24px;
 `;
 
-const StyledTwentyLogoContainer = styled.div`
+const StyledDay1LogoContainer = styled.div`
   align-items: center;
   background-color: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -59,9 +59,9 @@ export const Logo = ({ workspaceLogo }: LogoProps) => {
   return (
     <StyledContainer>
       <StyledMainLogo logo={getImageAbsoluteURIOrBase64(workspaceLogo)} />
-      <StyledTwentyLogoContainer>
-        <StyledTwentyLogo src="/icons/android/android-launchericon-192-192.png" />
-      </StyledTwentyLogoContainer>
+      <StyledDay1LogoContainer>
+        <StyledDay1Logo src="/icons/android/android-launchericon-192-192.png" />
+      </StyledDay1LogoContainer>
     </StyledContainer>
   );
 };

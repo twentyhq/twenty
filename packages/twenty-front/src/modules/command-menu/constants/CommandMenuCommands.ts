@@ -21,7 +21,7 @@ export const COMMAND_MENU_COMMANDS: Command[] = [
   {
     id: 'go-to-companies',
     to: '/objects/companies',
-    label: 'Go to Companies',
+    label: 'Go to Organizations',
     type: CommandType.Navigate,
     firstHotKey: 'G',
     secondHotKey: 'C',

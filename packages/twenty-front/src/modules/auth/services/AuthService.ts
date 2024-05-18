@@ -16,7 +16,7 @@ import {
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
-const logger = loggerLink(() => 'Twenty-Refresh');
+const logger = loggerLink(() => 'Day1-Refresh');
 
 const renewTokenMutation = async (
   uri: string | UriFunction | undefined,
