@@ -1,3 +1,5 @@
+import * as React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import { isNonEmptyString } from '@sniptt/guards';
 
@@ -19,14 +21,12 @@ export type EntityChipProps = {
   maxWidth?: number;
 };
 
-type InnerEntityChipProps = EntityChipProps;
-
 export enum EntityChipVariant {
   Regular = 'regular',
   Transparent = 'transparent',
 }
 
-const InnerEntityChip = ({
+export const EntityChip = ({
   linkToEntity,
   entityId,
   name,
@@ -36,8 +36,17 @@ const InnerEntityChip = ({
   LeftIcon,
   className,
   maxWidth,
-}: InnerEntityChipProps) => {
+}: EntityChipProps) => {
+  const navigate = useNavigate();
   const theme = useTheme();
+
+  const handleLinkClick = (event: React.MouseEvent<HTMLDivElement>) => {
+    if (isNonEmptyString(linkToEntity)) {
+      event.preventDefault();
+      event.stopPropagation();
+      navigate(linkToEntity);
+    }
+  };
 
   return (
     <Chip
@@ -63,50 +72,9 @@ const InnerEntityChip = ({
         )
       }
       clickable={!!linkToEntity}
+      onClick={handleLinkClick}
       className={className}
       maxWidth={maxWidth}
     />
   );
-};
-
-export const EntityChip = ({
-  linkToEntity,
-  entityId,
-  name,
-  avatarUrl,
-  avatarType = 'rounded',
-  variant = EntityChipVariant.Regular,
-  LeftIcon,
-  className,
-  maxWidth,
-}: EntityChipProps) => {
-  if (isNonEmptyString(linkToEntity)) {
-    return (
-      <a href={linkToEntity}>
-        <InnerEntityChip
-          entityId={entityId}
-          name={name}
-          avatarUrl={avatarUrl}
-          avatarType={avatarType}
-          variant={variant}
-          LeftIcon={LeftIcon}
-          className={className}
-          maxWidth={maxWidth}
-        />
-      </a>
-    );
-  } else {
-    return (
-      <InnerEntityChip
-        entityId={entityId}
-        name={name}
-        avatarUrl={avatarUrl}
-        avatarType={avatarType}
-        variant={variant}
-        LeftIcon={LeftIcon}
-        className={className}
-        maxWidth={maxWidth}
-      />
-    );
-  }
 };
