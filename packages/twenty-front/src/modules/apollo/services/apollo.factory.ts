@@ -20,7 +20,7 @@ import { logDebug } from '~/utils/logDebug';
 import { ApolloManager } from '../types/apolloManager.interface';
 import { loggerLink } from '../utils';
 
-const logger = loggerLink(() => 'Twenty');
+const logger = loggerLink(() => 'Day1');
 
 export interface Options<TCacheShape> extends ApolloClientOptions<TCacheShape> {
   onError?: (err: GraphQLErrors | undefined) => void;

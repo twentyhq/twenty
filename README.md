@@ -2,7 +2,7 @@
 <br>
 <p align="center">
   <a href="https://www.twenty.com">
-    <img src="./packages/twenty-docs/static/img/logo-square-dark.svg" width="100px" alt="Twenty logo" />
+    <img src="./packages/twenty-docs/static/img/logo-square-dark.svg" width="100px" alt="Day1 logo" />
   </a>
 </p>
 

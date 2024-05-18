@@ -46,7 +46,7 @@ describe('title-utils', () => {
     expect(getPageTitleFromPath('/settings/workspace')).toBe(
       SettingsPageTitles.General,
     );
-    expect(getPageTitleFromPath('/')).toBe('Twenty');
-    expect(getPageTitleFromPath('/random')).toBe('Twenty');
+    expect(getPageTitleFromPath('/')).toBe('Day1');
+    expect(getPageTitleFromPath('/random')).toBe('Day1');
   });
 });

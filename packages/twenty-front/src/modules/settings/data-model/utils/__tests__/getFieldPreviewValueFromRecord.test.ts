@@ -37,7 +37,7 @@ describe('getFieldPreviewValueFromRecord', () => {
 
     it('returns the record field value ("to one" relation)', () => {
       // Given
-      const relationRecord = { id: '20', name: 'Twenty' };
+      const relationRecord = { id: '20', name: 'Day1' };
       const record = {
         id: '',
         company: relationRecord,
@@ -61,7 +61,7 @@ describe('getFieldPreviewValueFromRecord', () => {
   describe('Other fields', () => {
     it('returns the record field value', () => {
       // Given
-      const record = { id: '', name: 'Twenty', __typename: 'Opportunity' };
+      const record = { id: '', name: 'Day1', __typename: 'Opportunity' };
       const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
         ({ name }) => name === 'name',
       )!;
