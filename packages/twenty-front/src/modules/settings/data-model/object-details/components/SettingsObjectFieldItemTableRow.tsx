@@ -1,5 +1,4 @@
 import { ReactNode, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { Nullable, useIcons } from 'twenty-ui';
@@ -50,7 +49,6 @@ export const SettingsObjectFieldItemTableRow = ({
   const theme = useTheme();
   const { getIcon } = useIcons();
   const Icon = getIcon(fieldMetadataItem.icon);
-  const navigate = useNavigate();
 
   const getRelationMetadata = useGetRelationMetadata();
 

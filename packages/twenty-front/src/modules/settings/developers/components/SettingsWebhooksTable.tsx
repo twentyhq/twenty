@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -19,8 +18,6 @@ const StyledTableRow = styled(TableRow)`
 `;
 
 export const SettingsWebhooksTable = () => {
-  const navigate = useNavigate();
-
   const { records: webhooks } = useFindManyRecords<Webhook>({
     objectNameSingular: CoreObjectNameSingular.Webhook,
   });
