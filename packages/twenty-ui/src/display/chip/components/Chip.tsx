@@ -1,4 +1,5 @@
 import { MouseEvent, ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -33,17 +34,19 @@ type ChipProps = {
   rightComponent?: ReactNode;
   className?: string;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
+  to?: string;
 };
 
 const StyledContainer = styled.div<
   Pick<
     ChipProps,
-    'accent' | 'clickable' | 'disabled' | 'maxWidth' | 'size' | 'variant'
+    'accent' | 'clickable' | 'disabled' | 'maxWidth' | 'size' | 'variant' | 'to'
   >
 >`
   --chip-horizontal-padding: ${({ theme }) => theme.spacing(1)};
   --chip-vertical-padding: ${({ theme }) => theme.spacing(1)};
 
+  text-decoration: none;
   align-items: center;
   border-radius: ${({ theme }) => theme.border.radius.sm};
   color: ${({ theme, disabled }) =>
@@ -158,22 +161,27 @@ export const Chip = ({
   maxWidth,
   className,
   onClick,
-}: ChipProps) => (
-  <StyledContainer
-    data-testid="chip"
-    clickable={clickable}
-    variant={variant}
-    accent={accent}
-    size={size}
-    disabled={disabled}
-    className={className}
-    maxWidth={maxWidth}
-    onClick={onClick}
-  >
-    {leftComponent}
-    <StyledLabel>
-      <OverflowingTextWithTooltip text={label} />
-    </StyledLabel>
-    {rightComponent}
-  </StyledContainer>
-);
+  to,
+}: ChipProps) => {
+  return (
+    <StyledContainer
+      data-testid="chip"
+      clickable={clickable}
+      variant={variant}
+      accent={accent}
+      size={size}
+      disabled={disabled}
+      className={className}
+      maxWidth={maxWidth}
+      onClick={onClick}
+      as={to ? Link : 'div'}
+      to={to ? to : undefined}
+    >
+      {leftComponent}
+      <StyledLabel>
+        <OverflowingTextWithTooltip text={label} />
+      </StyledLabel>
+      {rightComponent}
+    </StyledContainer>
+  );
+};
