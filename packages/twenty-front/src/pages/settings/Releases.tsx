@@ -35,6 +35,7 @@ const StyledReleaseContainer = styled.div`
   }
 
   h3 {
+    color: ${({ theme }) => theme.font.color.primary};
     margin: ${({ theme }) => theme.spacing(6)} 0px 0px;
   }
   code {
@@ -43,7 +44,7 @@ const StyledReleaseContainer = styled.div`
     border-radius: 4px;
   }
   p {
-    color: #474747;
+    color: ${({ theme }) => theme.font.color.secondary};
     font-family: Inter, sans-serif;
     font-size: ${({ theme }) => theme.font.size.md};
     line-height: 19.5px;
@@ -54,6 +55,7 @@ const StyledReleaseContainer = styled.div`
 `;
 
 const StyledReleaseHeader = styled.h2`
+  color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   line-height: 18px;
   font-size: ${({ theme }) => theme.font.size.md};
