@@ -1,5 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { CatalogDecorator, CatalogStory, ComponentDecorator } from 'twenty-ui';
+
+import { CatalogDecorator } from '@ui/testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from '@ui/testing/decorators/ComponentDecorator';
+import { CatalogStory } from '@ui/testing/types/CatalogStory';
 
 import { H1Title, H1TitleFontColor } from '../H1Title';
 
