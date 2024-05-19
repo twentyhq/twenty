@@ -37,11 +37,7 @@ export const SettingsWebhooksTable = () => {
             <SettingsDevelopersWebhookTableRow
               key={webhookFieldItem.id}
               fieldItem={webhookFieldItem}
-              onClick={() => {
-                navigate(
-                  `/settings/developers/webhooks/${webhookFieldItem.id}`,
-                );
-              }}
+              to={`/settings/developers/webhooks/${webhookFieldItem.id}`}
             />
           ))}
         </StyledTableBody>

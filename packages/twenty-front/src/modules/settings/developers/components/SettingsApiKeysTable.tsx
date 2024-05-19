@@ -41,9 +41,7 @@ export const SettingsApiKeysTable = () => {
             <SettingsApiKeysFieldItemTableRow
               key={fieldItem.id}
               fieldItem={fieldItem as ApiFieldItem}
-              onClick={() => {
-                navigate(`/settings/developers/api-keys/${fieldItem.id}`);
-              }}
+              to={`/settings/developers/api-keys/${fieldItem.id}`}
             />
           ))}
         </StyledTableBody>

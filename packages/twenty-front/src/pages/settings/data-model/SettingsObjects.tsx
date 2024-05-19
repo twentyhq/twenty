@@ -82,13 +82,9 @@ export const SettingsObjects = () => {
                           stroke={theme.icon.stroke.sm}
                         />
                       }
-                      onClick={() =>
-                        navigate(
-                          `/settings/objects/${getObjectSlug(
-                            activeObjectMetadataItem,
-                          )}`,
-                        )
-                      }
+                      to={`/settings/objects/${getObjectSlug(
+                        activeObjectMetadataItem,
+                      )}`}
                     />
                   ))}
                 </TableSection>
