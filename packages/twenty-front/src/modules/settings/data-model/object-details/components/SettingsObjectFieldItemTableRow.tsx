@@ -22,6 +22,7 @@ type SettingsObjectFieldItemTableRowProps = {
   identifierType?: Nullable<FieldIdentifierType>;
   variant?: 'field-type' | 'identifier';
   isRemoteObjectField?: boolean;
+  to?: string;
 };
 
 export const StyledObjectFieldTableRow = styled(TableRow)`
@@ -44,6 +45,7 @@ export const SettingsObjectFieldItemTableRow = ({
   identifierType,
   variant = 'field-type',
   isRemoteObjectField,
+  to,
 }: SettingsObjectFieldItemTableRowProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
@@ -68,7 +70,7 @@ export const SettingsObjectFieldItemTableRow = ({
     : undefined;
 
   return (
-    <StyledObjectFieldTableRow>
+    <StyledObjectFieldTableRow to={to}>
       <StyledNameTableCell>
         {!!Icon && (
           <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
@@ -90,15 +92,10 @@ export const SettingsObjectFieldItemTableRow = ({
         <SettingsObjectFieldDataType
           Icon={RelationIcon}
           label={relationObjectMetadataItem?.labelPlural}
-          onClick={
+          to={
             relationObjectMetadataItem?.namePlural &&
             !relationObjectMetadataItem.isSystem
-              ? () =>
-                  navigate(
-                    `/settings/objects/${getObjectSlug(
-                      relationObjectMetadataItem,
-                    )}`,
-                  )
+              ? `/settings/objects/${getObjectSlug(relationObjectMetadataItem)}`
               : undefined
           }
           value={fieldType}
