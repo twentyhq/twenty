@@ -10,8 +10,6 @@ import { visit } from 'unist-util-visit';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { H1Title } from '@/ui/display/typography/components/H1Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import { useColorScheme } from '@/ui/theme/hooks/useColorScheme';
-import { useSystemColorScheme } from '@/ui/theme/hooks/useSystemColorScheme';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 const StyledH1Title = styled(H1Title)`
@@ -55,10 +53,8 @@ const StyledReleaseContainer = styled.div`
   }
 `;
 
-const StyledReleaseHeader = styled.h2<{ $colorScheme: string }>`
+const StyledReleaseHeader = styled.h2`
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  color: ${({ $colorScheme, theme }) =>
-    $colorScheme === 'Dark' ? theme.font.color.primary : ''};
   line-height: 18px;
   font-size: ${({ theme }) => theme.font.size.md};
   margin: 0;
@@ -76,20 +72,8 @@ const StyledReleaseDate = styled.span`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
-const StyledHTMLWrapper = styled.div<{ $colorScheme: string }>`
-  h3 {
-    color: ${({ $colorScheme, theme }) =>
-      $colorScheme === 'Dark' ? theme.font.color.secondary : ''};
-  }
-`;
-
 export const Releases = () => {
-  const systemColorScheme = useSystemColorScheme();
-  const { colorScheme } = useColorScheme();
   const [releases, setReleases] = useState<ReleaseNote[]>([]);
-
-  const computedColorScheme =
-    colorScheme === 'System' ? systemColorScheme : colorScheme;
 
   useEffect(() => {
     fetch('https://twenty.com/api/releases').then(async (res) => {
@@ -122,14 +106,9 @@ export const Releases = () => {
           <StyledReleaseContainer>
             {releases.map((release) => (
               <React.Fragment key={release.slug}>
-                <StyledReleaseHeader $colorScheme={computedColorScheme}>
-                  {release.release}
-                </StyledReleaseHeader>
+                <StyledReleaseHeader>{release.release}</StyledReleaseHeader>
                 <StyledReleaseDate>{release.date}</StyledReleaseDate>
-                <StyledHTMLWrapper
-                  $colorScheme={computedColorScheme}
-                  dangerouslySetInnerHTML={{ __html: release.html }}
-                />
+                <div dangerouslySetInnerHTML={{ __html: release.html }}></div>
               </React.Fragment>
             ))}
           </StyledReleaseContainer>
