@@ -39,7 +39,7 @@ export const SettingsApiKeysFieldItemTableRow = ({
       <TableCell
         color={
           fieldItem.expiration === 'Expired'
-            ? theme.color.red
+            ? theme.font.color.danger
             : theme.font.color.tertiary
         }
       >

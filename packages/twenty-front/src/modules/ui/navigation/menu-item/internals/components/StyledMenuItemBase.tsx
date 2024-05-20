@@ -38,7 +38,7 @@ export const StyledMenuItemBase = styled.li<MenuItemBaseProps>`
     switch (accent) {
       case 'danger': {
         return css`
-          color: ${theme.color.red};
+          color: ${theme.font.color.danger};
           &:hover {
             background: ${theme.background.transparent.danger};
           }

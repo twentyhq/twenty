@@ -69,7 +69,7 @@ const StyledText = styled.span`
 `;
 
 const StyledErrorText = styled.span`
-  color: ${({ theme }) => theme.color.red};
+  color: ${({ theme }) => theme.font.color.danger};
   font-size: ${({ theme }) => theme.font.size.xs};
   margin-top: ${({ theme }) => theme.spacing(1)};
 `;
