@@ -15757,6 +15757,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/addressparser@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@types/addressparser@npm:1.0.3"
+  dependencies:
+    "@types/node": "npm:*"
+  checksum: ed8dfe05271eca6b4904a870fc3fd9b5d0e72c7e7aa36254dee9ede496bbbc16acd3630bc072b7e5d84fabb9257e4ed4a82c363b2f4a99c877e3a1accc271fc6
+  languageName: node
+  linkType: hard
+
 "@types/apollo-upload-client@npm:^17.0.2":
   version: 17.0.5
   resolution: "@types/apollo-upload-client@npm:17.0.5"
@@ -16753,16 +16762,6 @@ __metadata:
   version: 3.3.8
   resolution: "@types/luxon@npm:3.3.8"
   checksum: f2ffa31364eb94ca0474a196f533d301025a203bb2758ce0cf209f338cece0af169edea230b5c0b1a68a71adb02f369faa5ec0bd824deb8f0a08cac6803b1b06
-  languageName: node
-  linkType: hard
-
-"@types/mailparser@npm:^3.4.4":
-  version: 3.4.4
-  resolution: "@types/mailparser@npm:3.4.4"
-  dependencies:
-    "@types/node": "npm:*"
-    iconv-lite: "npm:^0.6.3"
-  checksum: 5d16e87cebff438f9e725ebb4f4cea4e6c55dfa1d5cdda3c56f3f91b915a0801a84675fee2a8d20b6de20ca8be79678a4e99fb5956104e2eb3344dfac387691c
   languageName: node
   linkType: hard
 
@@ -18532,6 +18531,13 @@ __metadata:
   version: 1.2.2
   resolution: "address@npm:1.2.2"
   checksum: 1c8056b77fb124456997b78ed682ecc19d2fd7ea8bd5850a2aa8c3e3134c913847c57bcae418622efd32ba858fa1e242a40a251ac31da0515664fc0ac03a047d
+  languageName: node
+  linkType: hard
+
+"addressparser@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "addressparser@npm:1.0.1"
+  checksum: 15a6b149c643e3fb0888bcad89aa385e7718714a33049b5f357063b64b84a2febd6a0775011783c25e6b161982663d38a84fd4522de69adb4779971b92b4ddb3
   languageName: node
   linkType: hard
 
@@ -25349,13 +25355,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"encoding-japanese@npm:2.0.0":
-  version: 2.0.0
-  resolution: "encoding-japanese@npm:2.0.0"
-  checksum: 453bbca71d3666213a9bc873d5a69441b379f158a2992aa5cd1fc124c915b518e19fce7654f973d1334234f870e8053443a464c8f73ff9d7efe66bbc1ce1f4f6
-  languageName: node
-  linkType: hard
-
 "encoding@npm:^0.1.12, encoding@npm:^0.1.13":
   version: 0.1.13
   resolution: "encoding@npm:0.1.13"
@@ -29775,7 +29774,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"he@npm:1.2.0, he@npm:^1.2.0":
+"he@npm:^1.2.0":
   version: 1.2.0
   resolution: "he@npm:1.2.0"
   bin:
@@ -30401,7 +30400,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"iconv-lite@npm:0.6.3, iconv-lite@npm:^0.6.2, iconv-lite@npm:^0.6.3":
+"iconv-lite@npm:0.6.3, iconv-lite@npm:^0.6.2":
   version: 0.6.3
   resolution: "iconv-lite@npm:0.6.3"
   dependencies:
@@ -33468,48 +33467,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"libbase64@npm:1.2.1":
-  version: 1.2.1
-  resolution: "libbase64@npm:1.2.1"
-  checksum: 908db9dc88cbcd9e1b9355c78b9fefde5034d933a50e823bbbb6008a56908de1e5183e25bf648e9e7fe907f53e10e11676d5ac89fd624a300c46a705556182a5
-  languageName: node
-  linkType: hard
-
-"libmime@npm:5.2.0":
-  version: 5.2.0
-  resolution: "libmime@npm:5.2.0"
-  dependencies:
-    encoding-japanese: "npm:2.0.0"
-    iconv-lite: "npm:0.6.3"
-    libbase64: "npm:1.2.1"
-    libqp: "npm:2.0.1"
-  checksum: 22a75d7aad8f01bed7d9b32270a40a32c4d4e44070edda1067ea5229df99a09f34aedf3481693394aa998fa8375b6c90d1c651b491655692cb313561c5a48762
-  languageName: node
-  linkType: hard
-
-"libmime@npm:5.2.1":
-  version: 5.2.1
-  resolution: "libmime@npm:5.2.1"
-  dependencies:
-    encoding-japanese: "npm:2.0.0"
-    iconv-lite: "npm:0.6.3"
-    libbase64: "npm:1.2.1"
-    libqp: "npm:2.0.1"
-  checksum: cf91c78a05824f160e45b36850d52eee9e18073bfd4561ace3b3af8e52a8d551eccc0dcef428505e44d1f2146c16cec84e91e17d9489244451c38572862a857a
-  languageName: node
-  linkType: hard
-
 "libphonenumber-js@npm:^1.10.14, libphonenumber-js@npm:^1.10.26, libphonenumber-js@npm:^1.10.53":
   version: 1.10.53
   resolution: "libphonenumber-js@npm:1.10.53"
   checksum: de5630a2c8c3a481fd4e37f2a36b5f199a7079b92f0e802e431124fe437c0401424a793bf3f18bcca151a57a6556d20ff8ccc2deea655a5675e2676ba2775224
-  languageName: node
-  linkType: hard
-
-"libqp@npm:2.0.1":
-  version: 2.0.1
-  resolution: "libqp@npm:2.0.1"
-  checksum: c52e51c70180fbf0b000036de33ed976da1f8355fd63feffbbf5a9653a816e9169917b1ce28b289a5006b28e44b2d84d234fdedbdfefc0de4802867aa03537df
   languageName: node
   linkType: hard
 
@@ -33541,21 +33502,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"linkify-it@npm:5.0.0, linkify-it@npm:^5.0.0":
-  version: 5.0.0
-  resolution: "linkify-it@npm:5.0.0"
-  dependencies:
-    uc.micro: "npm:^2.0.0"
-  checksum: ff4abbcdfa2003472fc3eb4b8e60905ec97718e11e33cca52059919a4c80cc0e0c2a14d23e23d8c00e5402bc5a885cdba8ca053a11483ab3cc8b3c7a52f88e2d
-  languageName: node
-  linkType: hard
-
 "linkify-it@npm:^3.0.1":
   version: 3.0.3
   resolution: "linkify-it@npm:3.0.3"
   dependencies:
     uc.micro: "npm:^1.0.1"
   checksum: 468cb4954f85cdfc16e169db89a42d65287e3f121a9448b29c3c00d64c6f5a8f4367bea3978ba9109a0e3a10b19d50632b983639f91b9be9f20d1f63a5ff5bc1
+  languageName: node
+  linkType: hard
+
+"linkify-it@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "linkify-it@npm:5.0.0"
+  dependencies:
+    uc.micro: "npm:^2.0.0"
+  checksum: ff4abbcdfa2003472fc3eb4b8e60905ec97718e11e33cca52059919a4c80cc0e0c2a14d23e23d8c00e5402bc5a885cdba8ca053a11483ab3cc8b3c7a52f88e2d
   languageName: node
   linkType: hard
 
@@ -34272,34 +34233,6 @@ __metadata:
   dependencies:
     "@jridgewell/sourcemap-codec": "npm:^1.4.15"
   checksum: 51a1f06f678c082aceddfb5943de9b6bdb88f2ea1385a1c2adf116deb73dfcfa50df6c222901d691b529455222d4d68d0b28be5689ac6f69b3baa3462861f922
-  languageName: node
-  linkType: hard
-
-"mailparser@npm:^3.6.5":
-  version: 3.6.6
-  resolution: "mailparser@npm:3.6.6"
-  dependencies:
-    encoding-japanese: "npm:2.0.0"
-    he: "npm:1.2.0"
-    html-to-text: "npm:9.0.5"
-    iconv-lite: "npm:0.6.3"
-    libmime: "npm:5.2.1"
-    linkify-it: "npm:5.0.0"
-    mailsplit: "npm:5.4.0"
-    nodemailer: "npm:6.9.8"
-    tlds: "npm:1.248.0"
-  checksum: 5cf6f3f3d457b7564aa96d3e682f1f4cb27ffcdb86219138568b4e2b6bb8ebea6d0b14cd9f6c75b9ff4b33c6f3151d04fbb30b4d5d3a7ba688d8e04e83c3bd5a
-  languageName: node
-  linkType: hard
-
-"mailsplit@npm:5.4.0":
-  version: 5.4.0
-  resolution: "mailsplit@npm:5.4.0"
-  dependencies:
-    libbase64: "npm:1.2.1"
-    libmime: "npm:5.2.0"
-    libqp: "npm:2.0.1"
-  checksum: b0e1ce1866ea44413ca0ee8b7291afb671cb3f7ced2a53c644e3097b64b74079a4cb1ec02c9aaaef6a9927a71187304ac1a809852503aba2f829b67ce2d41496
   languageName: node
   linkType: hard
 
@@ -37524,7 +37457,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemailer@npm:6.9.8, nodemailer@npm:^6.9.8":
+"nodemailer@npm:^6.9.8":
   version: 6.9.8
   resolution: "nodemailer@npm:6.9.8"
   checksum: 9332587975240ac648e1295b1df15e339fcace3f7fab8af0382e7f2dd10e48296344dfa698d58f1667f220f7fe13c779d55d39144c9cd9ed6f5f559714183c75
@@ -45640,15 +45573,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tlds@npm:1.248.0":
-  version: 1.248.0
-  resolution: "tlds@npm:1.248.0"
-  bin:
-    tlds: bin.js
-  checksum: 640cb52fa15c116ef6b76ca81173c37314b482c3f2e70424fd8684ae172f4a007be40f6e3b47afcd530c6586b877ddd6142640fc18a0b9c0ae5ce5ffd9f27a0f
-  languageName: node
-  linkType: hard
-
 "tmp@npm:0.2.1, tmp@npm:~0.2.1":
   version: 0.2.1
   resolution: "tmp@npm:0.2.1"
@@ -46492,6 +46416,7 @@ __metadata:
     "@tabler/icons-react": "npm:^2.44.0"
     "@testing-library/jest-dom": "npm:^6.1.5"
     "@testing-library/react": "npm:14.0.0"
+    "@types/addressparser": "npm:^1.0.3"
     "@types/apollo-upload-client": "npm:^17.0.2"
     "@types/bcrypt": "npm:^5.0.0"
     "@types/better-sqlite3": "npm:^7.6.8"
@@ -46523,7 +46448,6 @@ __metadata:
     "@types/lodash.snakecase": "npm:^4.1.7"
     "@types/lodash.upperfirst": "npm:^4.3.7"
     "@types/luxon": "npm:^3.3.0"
-    "@types/mailparser": "npm:^3.4.4"
     "@types/ms": "npm:^0.7.31"
     "@types/node": "npm:18.19.26"
     "@types/nodemailer": "npm:^6.4.14"
@@ -46543,6 +46467,7 @@ __metadata:
     "@vitejs/plugin-react-swc": "npm:^3.5.0"
     "@vitest/ui": "npm:1.4.0"
     add: "npm:^2.0.6"
+    addressparser: "npm:^1.0.1"
     afterframe: "npm:^1.0.2"
     apollo-server-express: "npm:^3.12.0"
     apollo-upload-client: "npm:^17.0.0"
@@ -46634,7 +46559,6 @@ __metadata:
     lodash.snakecase: "npm:^4.1.1"
     lodash.upperfirst: "npm:^4.3.1"
     luxon: "npm:^3.3.0"
-    mailparser: "npm:^3.6.5"
     microdiff: "npm:^1.3.2"
     msw: "npm:^2.0.11"
     msw-storybook-addon: "npm:2.0.0--canary.122.b3ed3b1.0"
