@@ -1,4 +1,4 @@
-import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
+import { ExceptionFilter, Catch, ArgumentsHost, Logger } from '@nestjs/common';
 
 import { Response } from 'express';
 
@@ -7,6 +7,7 @@ import { Response } from 'express';
 // This class add CORS headers to exception response to avoid misleading CORS error
 @Catch()
 export class ApplyCorsToExceptions implements ExceptionFilter {
+  private readonly logger = new Logger(ApplyCorsToExceptions.name);
   catch(exception: any, host: ArgumentsHost) {
     try {
       const ctx = host.switchToHttp();
@@ -23,7 +24,9 @@ export class ApplyCorsToExceptions implements ExceptionFilter {
       );
 
       response.status(exception.getStatus()).json(exception.response);
-    } catch {
+    } catch (e) {
+      this.logger.error(e);
+
       return;
     }
   }
