@@ -38,6 +38,7 @@ import { Authorize } from '~/pages/auth/Authorize';
 import { ChooseYourPlan } from '~/pages/auth/ChooseYourPlan';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
 import { CreateWorkspace } from '~/pages/auth/CreateWorkspace';
+import { Invite } from '~/pages/auth/Invite';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { PaymentSuccess } from '~/pages/auth/PaymentSuccess';
 import { SignInUp } from '~/pages/auth/SignInUp';
@@ -128,7 +129,7 @@ const createRouter = (isBillingEnabled?: boolean) =>
         <Route element={<DefaultLayout />}>
           <Route path={AppPath.Verify} element={<VerifyEffect />} />
           <Route path={AppPath.SignInUp} element={<SignInUp />} />
-          <Route path={AppPath.Invite} element={<SignInUp />} />
+          <Route path={AppPath.Invite} element={<Invite />} />
           <Route path={AppPath.ResetPassword} element={<PasswordReset />} />
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />

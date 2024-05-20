@@ -80,6 +80,7 @@ export const DefaultLayout = () => {
           OnboardingStatus.OngoingWorkspaceActivation,
         ].includes(onboardingStatus)) ||
       isMatchingLocation(AppPath.ResetPassword) ||
+      isMatchingLocation(AppPath.Invite) ||
       (isMatchingLocation(AppPath.PlanRequired) &&
         (OnboardingStatus.CompletedWithoutSubscription ||
           OnboardingStatus.Canceled))
