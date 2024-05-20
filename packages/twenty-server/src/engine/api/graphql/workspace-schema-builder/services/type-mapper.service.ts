@@ -8,14 +8,12 @@ import {
   GraphQLID,
   GraphQLInputObjectType,
   GraphQLInputType,
-  GraphQLInt,
   GraphQLList,
   GraphQLNonNull,
   GraphQLScalarType,
   GraphQLString,
   GraphQLType,
 } from 'graphql';
-import { GraphQLBigInt } from 'graphql-scalars';
 
 import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
@@ -27,8 +25,6 @@ import {
   BooleanFilterType,
   BigFloatFilterType,
   RawJsonFilterType,
-  IntFilterType,
-  BigIntFilterType,
 } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input';
 import { OrderByDirectionType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/enum';
 import {
@@ -38,6 +34,8 @@ import {
 import { PositionScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/position.scalar';
 import { RawJSONScalar } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars/raw-json.scalar';
 import { IDFilterType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/input/id-filter.input-type';
+import { getNumberFilterType } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-number-filter-type.util';
+import { getNumberScalarType } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-number-scalar-type.util';
 
 export interface TypeOptions<T = any> {
   nullable?: boolean;
@@ -59,16 +57,6 @@ export class TypeMapperService {
       return GraphQLID;
     }
 
-    const numberScalar =
-      fieldMetadataType === FieldMetadataType.NUMBER &&
-      (settings as FieldMetadataSettings<FieldMetadataType.NUMBER>)
-        ?.precision === 0
-        ? (settings as FieldMetadataSettings<FieldMetadataType.NUMBER>)
-            ?.isBigInt
-          ? GraphQLBigInt
-          : GraphQLInt
-        : GraphQLFloat;
-
     const typeScalarMapping = new Map<FieldMetadataType, GraphQLScalarType>([
       [FieldMetadataType.UUID, UUIDScalarType],
       [FieldMetadataType.TEXT, GraphQLString],
@@ -77,7 +65,13 @@ export class TypeMapperService {
       [FieldMetadataType.DATE_TIME, GraphQLISODateTime],
       [FieldMetadataType.DATE, GraphQLISODateTime],
       [FieldMetadataType.BOOLEAN, GraphQLBoolean],
-      [FieldMetadataType.NUMBER, numberScalar],
+      [
+        FieldMetadataType.NUMBER,
+        getNumberScalarType(
+          (settings as FieldMetadataSettings<FieldMetadataType.NUMBER>)
+            ?.dataType,
+        ),
+      ],
       [FieldMetadataType.NUMERIC, BigFloatScalarType],
       [FieldMetadataType.PROBABILITY, GraphQLFloat],
       [FieldMetadataType.POSITION, PositionScalarType],
@@ -96,16 +90,6 @@ export class TypeMapperService {
       return IDFilterType;
     }
 
-    const numberScalar =
-      fieldMetadataType === FieldMetadataType.NUMBER &&
-      (settings as FieldMetadataSettings<FieldMetadataType.NUMBER>)
-        ?.precision === 0
-        ? (settings as FieldMetadataSettings<FieldMetadataType.NUMBER>)
-            ?.isBigInt
-          ? BigIntFilterType
-          : IntFilterType
-        : FloatFilterType;
-
     const typeFilterMapping = new Map<
       FieldMetadataType,
       GraphQLInputObjectType | GraphQLScalarType
@@ -117,7 +101,13 @@ export class TypeMapperService {
       [FieldMetadataType.DATE_TIME, DateFilterType],
       [FieldMetadataType.DATE, DateFilterType],
       [FieldMetadataType.BOOLEAN, BooleanFilterType],
-      [FieldMetadataType.NUMBER, numberScalar],
+      [
+        FieldMetadataType.NUMBER,
+        getNumberFilterType(
+          (settings as FieldMetadataSettings<FieldMetadataType.NUMBER>)
+            ?.dataType,
+        ),
+      ],
       [FieldMetadataType.NUMERIC, BigFloatFilterType],
       [FieldMetadataType.PROBABILITY, FloatFilterType],
       [FieldMetadataType.POSITION, FloatFilterType],

@@ -1,12 +1,17 @@
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
+export enum NumberDataType {
+  FLOAT = 'float',
+  INT = 'int',
+  BIGINT = 'bigint',
+}
+
 type FieldMetadataDefaultSettings = {
   isForeignKey?: boolean;
 };
 
 type FieldMetadataNumberSettings = {
-  precision: number;
-  isBigInt: boolean;
+  dataType: NumberDataType;
 };
 
 type FieldMetadataSettingsMapping = {

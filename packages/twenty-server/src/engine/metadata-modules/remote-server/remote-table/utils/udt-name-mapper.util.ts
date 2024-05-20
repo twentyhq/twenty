@@ -1,4 +1,7 @@
-import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import {
+  FieldMetadataSettings,
+  NumberDataType,
+} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
@@ -33,14 +36,12 @@ export const mapUdtNameToFieldSettings = (
     case 'int2':
     case 'int4':
       return {
-        precision: 0,
-        isBigInt: false,
+        dataType: NumberDataType.INT,
       } satisfies FieldMetadataSettings<FieldMetadataType.NUMBER>;
     case 'int8':
     case 'bigint':
       return {
-        precision: 0,
-        isBigInt: true,
+        dataType: NumberDataType.BIGINT,
       } satisfies FieldMetadataSettings<FieldMetadataType.NUMBER>;
     default:
       return undefined;
