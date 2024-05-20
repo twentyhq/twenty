@@ -1,4 +1,6 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import isPropValid from '@emotion/is-prop-valid';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconComponent, Pill } from 'twenty-ui';
@@ -22,9 +24,14 @@ export type ButtonProps = {
   disabled?: boolean;
   focus?: boolean;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  to?: string;
+  target?: string;
 } & React.ComponentProps<'button'>;
 
-const StyledButton = styled.button<
+const StyledButton = styled('button', {
+  shouldForwardProp: (prop) =>
+    !['fullWidth'].includes(prop) && isPropValid(prop),
+})<
   Pick<
     ButtonProps,
     | 'fullWidth'
@@ -34,6 +41,8 @@ const StyledButton = styled.button<
     | 'accent'
     | 'focus'
     | 'justify'
+    | 'to'
+    | 'target'
   >
 >`
   align-items: center;
@@ -210,6 +219,7 @@ const StyledButton = styled.button<
     }
   }}
 
+  text-decoration: none;
   border-radius: ${({ position, theme }) => {
     switch (position) {
       case 'left':
@@ -273,6 +283,8 @@ export const Button = ({
   justify = 'flex-start',
   focus = false,
   onClick,
+  to,
+  target,
 }: ButtonProps) => {
   const theme = useTheme();
 
@@ -288,6 +300,9 @@ export const Button = ({
       accent={accent}
       className={className}
       onClick={onClick}
+      to={to}
+      as={to ? Link : 'button'}
+      target={target}
     >
       {Icon && <Icon size={theme.icon.size.sm} />}
       {title}

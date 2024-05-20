@@ -86,21 +86,23 @@ export const SettingsIntegrationComponent = ({
         <Status color="green" text="Active" />
       ) : integration.type === 'Add' ? (
         <Button
-          onClick={navigateToIntegrationPage}
+          to={integration.link}
           Icon={IconPlus}
           title="Add"
           size="small"
         />
       ) : integration.type === 'Use' ? (
         <Button
-          onClick={openExternalLink}
+          to={integration.link}
+          target="_blank"
           Icon={IconBolt}
           title="Use"
           size="small"
         />
       ) : (
         <Button
-          onClick={openExternalLink}
+          to={integration.link}
+          target="_blank"
           Icon={IconArrowUpRight}
           title={integration.linkText}
           size="small"
