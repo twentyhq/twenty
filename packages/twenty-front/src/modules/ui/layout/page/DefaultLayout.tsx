@@ -63,7 +63,7 @@ const StyledMainContainer = styled.div`
   overflow: hidden;
 `;
 
-export const DefaultLayout = ({ loading }: { loading?: boolean }) => {
+export const DefaultLayout = () => {
   const onboardingStatus = useOnboardingStatus();
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
@@ -80,6 +80,7 @@ export const DefaultLayout = ({ loading }: { loading?: boolean }) => {
           OnboardingStatus.OngoingWorkspaceActivation,
         ].includes(onboardingStatus)) ||
       isMatchingLocation(AppPath.ResetPassword) ||
+      isMatchingLocation(AppPath.Invite) ||
       (isMatchingLocation(AppPath.PlanRequired) &&
         (OnboardingStatus.CompletedWithoutSubscription ||
           OnboardingStatus.Canceled))
@@ -114,7 +115,7 @@ export const DefaultLayout = ({ loading }: { loading?: boolean }) => {
             duration: theme.animation.duration.normal,
           }}
         >
-          <StyledAppNavigationDrawer loading={loading} />
+          <StyledAppNavigationDrawer />
           <StyledMainContainer>
             {showAuthModal ? (
               <>

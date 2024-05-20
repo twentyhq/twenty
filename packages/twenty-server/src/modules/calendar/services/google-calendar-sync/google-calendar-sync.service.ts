@@ -17,13 +17,13 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { CalendarEventRepository } from 'src/modules/calendar/repositories/calendar-event.repository';
 import { formatGoogleCalendarEvent } from 'src/modules/calendar/utils/format-google-calendar-event.util';
 import { CalendarEventParticipantRepository } from 'src/modules/calendar/repositories/calendar-event-participant.repository';
-import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { CalendarEventObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event.object-metadata';
-import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
-import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
-import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
-import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
+import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event.workspace-entity';
+import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
+import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.workspace-entity';
+import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
+import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 import { CalendarEventCleanerService } from 'src/modules/calendar/services/calendar-event-cleaner/calendar-event-cleaner.service';
 import { CalendarEventParticipantService } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.service';
 import { CalendarEventWithParticipants } from 'src/modules/calendar/types/calendar-event';
@@ -42,19 +42,19 @@ export class GoogleCalendarSyncService {
 
   constructor(
     private readonly googleCalendarClientProvider: GoogleCalendarClientProvider,
-    @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
+    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    @InjectObjectMetadataRepository(CalendarEventObjectMetadata)
+    @InjectObjectMetadataRepository(CalendarEventWorkspaceEntity)
     private readonly calendarEventRepository: CalendarEventRepository,
-    @InjectObjectMetadataRepository(CalendarChannelObjectMetadata)
+    @InjectObjectMetadataRepository(CalendarChannelWorkspaceEntity)
     private readonly calendarChannelRepository: CalendarChannelRepository,
     @InjectObjectMetadataRepository(
-      CalendarChannelEventAssociationObjectMetadata,
+      CalendarChannelEventAssociationWorkspaceEntity,
     )
     private readonly calendarChannelEventAssociationRepository: CalendarChannelEventAssociationRepository,
-    @InjectObjectMetadataRepository(CalendarEventParticipantObjectMetadata)
+    @InjectObjectMetadataRepository(CalendarEventParticipantWorkspaceEntity)
     private readonly calendarEventParticipantsRepository: CalendarEventParticipantRepository,
-    @InjectObjectMetadataRepository(BlocklistObjectMetadata)
+    @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
@@ -364,8 +364,8 @@ export class GoogleCalendarSyncService {
       eventExternalId: string;
       calendarChannelId: string;
     }[],
-    connectedAccount: ConnectedAccountObjectMetadata,
-    calendarChannel: CalendarChannelObjectMetadata,
+    connectedAccount: ConnectedAccountWorkspaceEntity,
+    calendarChannel: CalendarChannelWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
     const dataSourceMetadata =

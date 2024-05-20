@@ -17,6 +17,7 @@ export type MenuItemDraggableProps = {
   text: string;
   isDragDisabled?: boolean;
   className?: string;
+  isIconDisplayedOnHoverOnly?: boolean;
 };
 export const MenuItemDraggable = ({
   LeftIcon,
@@ -27,6 +28,7 @@ export const MenuItemDraggable = ({
   text,
   isDragDisabled = false,
   className,
+  isIconDisplayedOnHoverOnly = true,
 }: MenuItemDraggableProps) => {
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
 
@@ -36,6 +38,7 @@ export const MenuItemDraggable = ({
       accent={accent}
       className={className}
       isMenuOpen={!!isTooltipOpen}
+      isIconDisplayedOnHoverOnly={isIconDisplayedOnHoverOnly}
     >
       <MenuItemLeftContent
         LeftIcon={LeftIcon}

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { SettingsIntegrationComponent } from '@/settings/integrations/components/SettingsIntegrationComponent';
@@ -16,13 +17,15 @@ const StyledIntegrationGroupHeader = styled.div`
   justify-content: space-between;
 `;
 
-const StyledGroupLink = styled.div`
+const StyledGroupLink = styled(Link)`
   align-items: start;
   display: flex;
   flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.md};
   gap: ${({ theme }) => theme.spacing(1)};
   cursor: pointer;
+  text-decoration: none;
+  color: ${({ theme }) => theme.font.color.primary};
 `;
 
 const StyledIntegrationsSection = styled.div`
@@ -39,7 +42,8 @@ export const SettingsIntegrationGroup = ({
       <H2Title title={integrationGroup.title} />
       {integrationGroup.hyperlink && (
         <StyledGroupLink
-          onClick={() => window.open(integrationGroup.hyperlink ?? '')}
+          target={'_blank'}
+          to={integrationGroup.hyperlink ?? ''}
         >
           <div>{integrationGroup.hyperlinkText}</div>
           <div>→</div>

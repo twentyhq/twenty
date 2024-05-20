@@ -2,8 +2,9 @@ import { createContext, RefObject, useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
 import { OverlayScrollbars } from 'overlayscrollbars';
 import { useOverlayScrollbars } from 'overlayscrollbars-react';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
+import { overlayScrollbarsState } from '@/ui/utilities/scroll/states/overlayScrollbarsState';
 import { scrollLeftState } from '@/ui/utilities/scroll/states/scrollLeftState';
 import { scrollTopState } from '@/ui/utilities/scroll/states/scrollTopState';
 
@@ -48,7 +49,9 @@ export const ScrollWrapper = ({
     [],
   );
 
-  const [initialize] = useOverlayScrollbars({
+  const setOverlayScrollbars = useSetRecoilState(overlayScrollbarsState);
+
+  const [initialize, instance] = useOverlayScrollbars({
     options: {
       scrollbars: { autoHide: 'scroll' },
       overflow: {
@@ -66,6 +69,10 @@ export const ScrollWrapper = ({
       initialize(scrollableRef.current);
     }
   }, [initialize, scrollableRef]);
+
+  useEffect(() => {
+    setOverlayScrollbars(instance());
+  }, [instance, setOverlayScrollbars]);
 
   return (
     <ScrollWrapperContext.Provider value={scrollableRef}>

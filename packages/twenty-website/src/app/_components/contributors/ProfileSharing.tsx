@@ -1,9 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import styled from '@emotion/styled';
 import { IconDownload } from '@tabler/icons-react';
 
 import { CardContainer } from '@/app/_components/contributors/CardContainer';
+import Spinner from '@/app/_components/contributors/Spinner';
 import { LinkedInIcon, XIcon } from '@/app/_components/ui/icons/SvgIcons';
 import { Theme } from '@/app/_components/ui/theme/theme';
 
@@ -52,10 +54,12 @@ interface ProfileProps {
 }
 
 export const ProfileSharing = ({ username }: ProfileProps) => {
+  const [loading, setLoading] = useState(false);
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
   const contributorUrl = `${baseUrl}/contributors/${username}`;
 
   const handleDownload = async () => {
+    setLoading(true);
     const imageSrc = `${baseUrl}/api/contributors/og-image/${username}`;
     try {
       const response = await fetch(imageSrc);
@@ -71,6 +75,8 @@ export const ProfileSharing = ({ username }: ProfileProps) => {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error downloading the image:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -84,7 +90,15 @@ export const ProfileSharing = ({ username }: ProfileProps) => {
         Share on LinkedIn
       </StyledButton>
       <StyledButton onClick={handleDownload}>
-        <IconDownload /> Download Image
+        {loading ? (
+          <>
+            <Spinner /> Downloading
+          </>
+        ) : (
+          <>
+            <IconDownload /> Download Image
+          </>
+        )}
       </StyledButton>
       <StyledButton
         href={`http://www.twitter.com/share?url=${contributorUrl}`}

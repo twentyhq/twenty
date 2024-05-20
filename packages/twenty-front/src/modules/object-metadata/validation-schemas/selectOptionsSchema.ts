@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { getOptionValueFromLabel } from '@/settings/data-model/fields/forms/utils/getOptionValueFromLabel';
 import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
+import { computeOptionValueFromLabelOrThrow } from '~/pages/settings/data-model/utils/compute-option-value-from-label.utils';
 
 const selectOptionSchema = z
   .object({
@@ -14,7 +15,20 @@ const selectOptionSchema = z
   })
   .refine((option) => option.value === getOptionValueFromLabel(option.label), {
     message: 'Value does not match label',
-  }) satisfies z.ZodType<FieldMetadataItemOption>;
+  })
+  .refine(
+    (option) => {
+      try {
+        computeOptionValueFromLabelOrThrow(option.label);
+        return true;
+      } catch (error) {
+        return false;
+      }
+    },
+    {
+      message: 'Label is not transliterable',
+    },
+  ) satisfies z.ZodType<FieldMetadataItemOption>;
 
 export const selectOptionsSchema = z
   .array(selectOptionSchema)

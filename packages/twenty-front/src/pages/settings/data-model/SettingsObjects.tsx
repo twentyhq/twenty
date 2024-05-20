@@ -82,13 +82,9 @@ export const SettingsObjects = () => {
                           stroke={theme.icon.stroke.sm}
                         />
                       }
-                      onClick={() =>
-                        navigate(
-                          `/settings/objects/${getObjectSlug(
-                            activeObjectMetadataItem,
-                          )}`,
-                        )
-                      }
+                      to={`/settings/objects/${getObjectSlug(
+                        activeObjectMetadataItem,
+                      )}`}
                     />
                   ))}
                 </TableSection>
@@ -110,7 +106,7 @@ export const SettingsObjects = () => {
                                 updatePayload: { isActive: true },
                               })
                             }
-                            onErase={() =>
+                            onDelete={() =>
                               deleteOneObjectMetadataItem(
                                 inactiveObjectMetadataItem.id,
                               )

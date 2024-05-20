@@ -1,6 +1,7 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
+import { LightCopyIconButton } from '@/object-record/record-field/components/LightCopyIconButton';
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { TEXT_INPUT_STYLE } from '@/ui/theme/constants/TextInputStyle';
 
@@ -21,6 +22,7 @@ type TextInputProps = {
   onClickOutside: (event: MouseEvent | TouchEvent, inputValue: string) => void;
   hotkeyScope: string;
   onChange?: (newText: string) => void;
+  copyButton?: boolean;
 };
 
 export const TextInput = ({
@@ -34,10 +36,12 @@ export const TextInput = ({
   onShiftTab,
   onClickOutside,
   onChange,
+  copyButton = true,
 }: TextInputProps) => {
   const [internalText, setInternalText] = useState(value);
 
   const wrapperRef = useRef<HTMLInputElement>(null);
+  const copyRef = useRef<HTMLDivElement>(null);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInternalText(event.target.value);
@@ -50,6 +54,7 @@ export const TextInput = ({
 
   useRegisterInputEvents({
     inputRef: wrapperRef,
+    copyRef: copyRef,
     inputValue: internalText,
     onEnter,
     onEscape,
@@ -60,13 +65,20 @@ export const TextInput = ({
   });
 
   return (
-    <StyledTextInput
-      autoComplete="off"
-      ref={wrapperRef}
-      placeholder={placeholder}
-      onChange={handleChange}
-      autoFocus={autoFocus}
-      value={internalText}
-    />
+    <>
+      <StyledTextInput
+        autoComplete="off"
+        ref={wrapperRef}
+        placeholder={placeholder}
+        onChange={handleChange}
+        autoFocus={autoFocus}
+        value={internalText}
+      />
+      {copyButton && (
+        <div ref={copyRef}>
+          <LightCopyIconButton copyText={internalText} />
+        </div>
+      )}
+    </>
   );
 };

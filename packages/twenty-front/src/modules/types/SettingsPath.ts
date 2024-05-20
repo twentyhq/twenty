@@ -27,4 +27,5 @@ export enum SettingsPath {
   IntegrationNewDatabaseConnection = 'integrations/:databaseKey/new',
   DevelopersNewWebhook = 'webhooks/new',
   DevelopersNewWebhookDetail = 'webhooks/:webhookId',
+  Releases = 'releases',
 }

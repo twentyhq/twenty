@@ -8,6 +8,7 @@ import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
+import { useUserOrMetadataLoading } from '~/hooks/useUserOrMetadataLoading';
 
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
 
@@ -63,17 +64,17 @@ type NavigationDrawerHeaderProps = {
   name?: string;
   logo?: string;
   showCollapseButton: boolean;
-  loading?: boolean;
 };
 
 export const NavigationDrawerHeader = ({
   name = DEFAULT_WORKSPACE_NAME,
   logo = DEFAULT_WORKSPACE_LOGO,
   showCollapseButton,
-  loading = false,
 }: NavigationDrawerHeaderProps) => {
   const isMobile = useIsMobile();
   const workspaces = useRecoilValue(workspacesState);
+
+  const loading = useUserOrMetadataLoading();
 
   if (loading) {
     return <StyledSkeletonLoader />;

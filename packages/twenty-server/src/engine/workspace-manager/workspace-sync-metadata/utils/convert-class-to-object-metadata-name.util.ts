@@ -1,7 +1,8 @@
 import { camelCase } from 'src/utils/camel-case';
 
+const classSuffix = 'WorkspaceEntity';
+
 export const convertClassNameToObjectMetadataName = (name: string): string => {
-  const classSuffix = 'ObjectMetadata';
   let objectName = camelCase(name);
 
   if (objectName.endsWith(classSuffix)) {

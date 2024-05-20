@@ -11,11 +11,7 @@ import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { View } from '@/views/types/View';
 import { isDefined } from '~/utils/isDefined';
 
-export const PrefetchRunQueriesEffect = ({
-  setLoading,
-}: {
-  setLoading: (loading: boolean) => void;
-}) => {
+export const PrefetchRunQueriesEffect = () => {
   const currentUser = useRecoilValue(currentUserState);
 
   const { upsertRecordsInCache: upsertViewsInCache } =
@@ -28,17 +24,13 @@ export const PrefetchRunQueriesEffect = ({
       prefetchKey: PrefetchKey.AllFavorites,
     });
 
-  const { result, loading } = useCombinedFindManyRecords({
+  const { result } = useCombinedFindManyRecords({
     operationSignatures: [
       FIND_ALL_VIEWS_OPERATION_SIGNATURE,
       FIND_ALL_FAVORITES_OPERATION_SIGNATURE,
     ],
     skip: !currentUser,
   });
-
-  useEffect(() => {
-    setLoading(loading);
-  }, [loading, setLoading]);
 
   useEffect(() => {
     if (isDefined(result.views)) {

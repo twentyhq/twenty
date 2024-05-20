@@ -3,10 +3,10 @@ import { useTheme } from '@emotion/react';
 import { IconPlus } from 'twenty-ui';
 
 import { IconButton } from '@/ui/input/button/components/IconButton';
+import { useUserOrMetadataLoading } from '~/hooks/useUserOrMetadataLoading';
 
 type PageAddButtonProps = {
   onClick: () => void;
-  loading?: boolean;
 };
 
 const StyledSkeletonLoader = () => {
@@ -22,10 +22,9 @@ const StyledSkeletonLoader = () => {
   );
 };
 
-export const PageAddButton = ({
-  onClick,
-  loading = false,
-}: PageAddButtonProps) => {
+export const PageAddButton = ({ onClick }: PageAddButtonProps) => {
+  const loading = useUserOrMetadataLoading();
+
   if (loading) {
     return <StyledSkeletonLoader />;
   }

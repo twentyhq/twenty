@@ -4,18 +4,18 @@ import { DataSource, EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { MessageObjectMetadata } from 'src/modules/messaging/standard-objects/message.object-metadata';
+import { MessageWorkspaceEntity } from 'src/modules/messaging/standard-objects/message.workspace-entity';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { GmailMessage } from 'src/modules/messaging/types/gmail-message';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
 import { MessageRepository } from 'src/modules/messaging/repositories/message.repository';
-import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
-import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel-message-association.workspace-entity';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { MessageThreadService } from 'src/modules/messaging/services/message-thread/message-thread.service';
-import { MessageThreadObjectMetadata } from 'src/modules/messaging/standard-objects/message-thread.object-metadata';
+import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-thread.workspace-entity';
 import { MessageThreadRepository } from 'src/modules/messaging/repositories/message-thread.repository';
 
 @Injectable()
@@ -25,21 +25,21 @@ export class MessageService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     @InjectObjectMetadataRepository(
-      MessageChannelMessageAssociationObjectMetadata,
+      MessageChannelMessageAssociationWorkspaceEntity,
     )
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
-    @InjectObjectMetadataRepository(MessageObjectMetadata)
+    @InjectObjectMetadataRepository(MessageWorkspaceEntity)
     private readonly messageRepository: MessageRepository,
-    @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
+    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
-    @InjectObjectMetadataRepository(MessageThreadObjectMetadata)
+    @InjectObjectMetadataRepository(MessageThreadWorkspaceEntity)
     private readonly messageThreadRepository: MessageThreadRepository,
     private readonly messageThreadService: MessageThreadService,
   ) {}
 
   public async saveMessagesWithinTransaction(
     messages: GmailMessage[],
-    connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
+    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
     gmailMessageChannelId: string,
     workspaceId: string,
     transactionManager: EntityManager,
@@ -99,7 +99,7 @@ export class MessageService {
   public async saveMessages(
     messages: GmailMessage[],
     workspaceDataSource: DataSource,
-    connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
+    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
     gmailMessageChannelId: string,
     workspaceId: string,
   ): Promise<Map<string, string>> {
@@ -191,7 +191,7 @@ export class MessageService {
   private async saveMessageOrReturnExistingMessage(
     message: GmailMessage,
     messageThreadId: string,
-    connectedAccount: ObjectRecord<ConnectedAccountObjectMetadata>,
+    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
     workspaceId: string,
     manager: EntityManager,
   ): Promise<string> {

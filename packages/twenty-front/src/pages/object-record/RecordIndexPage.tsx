@@ -19,7 +19,7 @@ const StyledIndexContainer = styled.div`
   width: 100%;
 `;
 
-export const RecordIndexPage = ({ loading }: { loading?: boolean }) => {
+export const RecordIndexPage = () => {
   const objectNamePlural = useParams().objectNamePlural ?? '';
 
   const recordIndexId = objectNamePlural ?? '';
@@ -43,10 +43,7 @@ export const RecordIndexPage = ({ loading }: { loading?: boolean }) => {
   return (
     <PageContainer>
       <PageTitle title={`${capitalize(objectNamePlural)}`} />
-      <RecordIndexPageHeader
-        createRecord={handleAddButtonClick}
-        loading={loading}
-      />
+      <RecordIndexPageHeader createRecord={handleAddButtonClick} />
       <PageBody>
         <StyledIndexContainer>
           <RecordIndexContainer

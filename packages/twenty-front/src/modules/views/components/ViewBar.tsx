@@ -1,5 +1,7 @@
 import { ReactNode } from 'react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useParams } from 'react-router-dom';
+import { useTheme } from '@emotion/react';
 
 import { ObjectFilterDropdownButton } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownButton';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
@@ -14,6 +16,7 @@ import { ViewBarSortEffect } from '@/views/components/ViewBarSortEffect';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { GraphQLView } from '@/views/types/GraphQLView';
 import { ViewPickerDropdown } from '@/views/view-picker/components/ViewPickerDropdown';
+import { useUserOrMetadataLoading } from '~/hooks/useUserOrMetadataLoading';
 
 import { ViewsHotkeyScope } from '../types/ViewsHotkeyScope';
 
@@ -27,6 +30,19 @@ export type ViewBarProps = {
   onCurrentViewChange: (view: GraphQLView | undefined) => void | Promise<void>;
 };
 
+const StyledViewBarSkeletonLoader = () => {
+  const theme = useTheme();
+  return (
+    <SkeletonTheme
+      baseColor={theme.background.tertiary}
+      highlightColor={theme.background.transparent.lighter}
+      borderRadius={4}
+    >
+      <Skeleton width={140} height={16} />
+    </SkeletonTheme>
+  );
+};
+
 export const ViewBar = ({
   viewBarId,
   className,
@@ -34,6 +50,8 @@ export const ViewBar = ({
   onCurrentViewChange,
 }: ViewBarProps) => {
   const { objectNamePlural } = useParams();
+
+  const loading = useUserOrMetadataLoading();
 
   const filterDropdownId = 'view-filter';
   const sortDropdownId = 'view-sort';
@@ -58,7 +76,7 @@ export const ViewBar = ({
         className={className}
         leftComponent={
           <>
-            <ViewPickerDropdown />
+            {loading ? <StyledViewBarSkeletonLoader /> : <ViewPickerDropdown />}
           </>
         }
         displayBottomBorder={false}

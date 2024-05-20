@@ -8,7 +8,7 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { RecordIndexPage } from '../RecordIndexPage';
 
-const meta: Meta<PageDecoratorArgs & { loading?: boolean }> = {
+const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/ObjectRecord/RecordIndexPage',
   component: RecordIndexPage,
   decorators: [PageDecorator],
