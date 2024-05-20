@@ -29,15 +29,26 @@ export type PageDecoratorArgs = {
   additionalRoutes?: string[];
 };
 
-type RouteParams = {
+export type RouteParams = {
   [param: string]: string;
 };
 
-const computeLocation = (routePath: string, routeParams: RouteParams) => {
+export const isRouteParams = (obj: any): obj is RouteParams => {
+  if (typeof obj !== 'object' || obj === null) {
+    return false;
+  }
+
+  return Object.keys(obj).every((key) => typeof obj[key] === 'string');
+};
+
+export const computeLocation = (
+  routePath: string,
+  routeParams?: RouteParams,
+) => {
   return {
     pathname: routePath.replace(
       /:(\w+)/g,
-      (paramName) => routeParams[paramName] ?? '',
+      (paramName) => routeParams?.[paramName] ?? '',
     ),
   };
 };
