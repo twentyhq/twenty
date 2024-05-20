@@ -8,6 +8,7 @@ import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetI
 import { SpreadsheetOptions, Validation } from '@/spreadsheet-import/types';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { convertCurrencyMicrosToCurrency } from '~/utils/convert-currency-amount';
 import { isDefined } from '~/utils/isDefined';
 
 const firstName = 'Firstname';
@@ -151,8 +152,8 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
                   )
                 ) {
                   fieldMapping[field.name] = {
-                    amountMicros: Number(
-                      record[`${amountMicros} (${field.name})`],
+                    amountMicros: convertCurrencyMicrosToCurrency(
+                      Number(record[`${amountMicros} (${field.name})`]),
                     ),
                     currencyCode:
                       record[`${currencyCode} (${field.name})`] || 'USD',
