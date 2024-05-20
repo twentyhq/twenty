@@ -3,7 +3,6 @@ import { Handle, NodeProps, Position } from 'reactflow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
-  IconArchive,
   IconBox,
   IconPencil,
   IconSettings,

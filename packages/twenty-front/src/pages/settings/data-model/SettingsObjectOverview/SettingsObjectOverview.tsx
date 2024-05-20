@@ -158,33 +158,56 @@ export const SettingsObjectOverview = () => {
             ),
           )
         ) {
+          console.log('field', field);
           const sourceObj =
             field.relationDefinition?.sourceObjectMetadata.namePlural;
           const targetObj =
             field.relationDefinition?.targetObjectMetadata.namePlural;
-          edges.push({
-            id: `${sourceObj}-${targetObj}`,
-            source: object.namePlural,
-            target: field.toRelationMetadata.fromObjectMetadata.namePlural,
-            type: 'customStep',
-            style: {
-              strokeWidth: 1,
-              stroke: theme.color.gray,
-            },
-            data: {
-              sourceField: field.id,
-              targetField: field.toRelationMetadata.fromFieldMetadataId,
+
+          const existingEdge = edges.find(
+            (x) => x.id === `${sourceObj}-${targetObj}`,
+          );
+
+          console.log(
+            JSON.parse(JSON.stringify(edges)),
+            `${sourceObj}-${targetObj}`,
+          );
+
+          if (isDefined(existingEdge)) {
+            existingEdge.data.relations.push({
+              fromField: field.toRelationMetadata.fromFieldMetadataId,
+              toField: field.id,
               relation: field.toRelationMetadata.relationType,
-              sourceObject: sourceObj,
-              targetObject: targetObj,
-            },
-          });
-          edges[edges.length - 1].markerStart = edgeMarkerNameSource(
-            edges.at(-1),
-          );
-          edges[edges.length - 1].markerEnd = edgeMarkerNameTarget(
-            edges.at(-1),
-          );
+            });
+          } else {
+            edges.push({
+              id: `${sourceObj}-${targetObj}`,
+              source: object.namePlural,
+              target: field.toRelationMetadata.fromObjectMetadata.namePlural,
+              type: 'customStep',
+              style: {
+                strokeWidth: 1,
+                stroke: theme.color.gray,
+              },
+              data: {
+                relations: [
+                  {
+                    fromField: field.toRelationMetadata.fromFieldMetadataId,
+                    toField: field.id,
+                    relation: field.toRelationMetadata.relationType,
+                  },
+                ],
+                sourceObject: sourceObj,
+                targetObject: targetObj,
+              },
+            });
+            edges[edges.length - 1].markerStart = edgeMarkerNameSource(
+              edges.at(-1),
+            );
+            edges[edges.length - 1].markerEnd = edgeMarkerNameTarget(
+              edges.at(-1),
+            );
+          }
         }
       }
       i++;

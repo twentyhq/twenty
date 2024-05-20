@@ -1,7 +1,13 @@
 import { useCallback } from 'react';
-import { Edge, getSmoothStepPath, useStore } from 'reactflow';
+import {
+  Edge,
+  EdgeLabelRenderer,
+  getSmoothStepPath,
+  useStore,
+} from 'reactflow';
 import { useTheme } from '@emotion/react';
 
+import { Button } from '@/ui/input/button/components/Button';
 import { getEdgeParams } from '~/pages/settings/data-model/SettingsObjectOverview/EdgeUtil';
 type StepEdgeProps = Edge;
 
@@ -12,6 +18,7 @@ export const StepEdge = ({
   markerStart,
   markerEnd,
   style,
+  data,
 }: StepEdgeProps) => {
   const theme = useTheme();
   const sourceNode = useStore(
@@ -30,7 +37,7 @@ export const StepEdge = ({
     targetNode,
   );
 
-  const [edgePath] = getSmoothStepPath({
+  const [edgePath, labelX, labelY] = getSmoothStepPath({
     sourceX: sx,
     sourceY: sy,
     sourcePosition: sourcePos,
@@ -39,22 +46,34 @@ export const StepEdge = ({
     targetY: ty,
   });
 
-  /*
-  const start = markerStart
-    ?.toString()
-    .replace('hasMany', 'hasMany-' + sourcePos);
-  const end = markerEnd?.toString().replace('hasMany', 'hasMany-' + targetPos);
-  */
-
   return (
-    <path
-      id={id}
-      className="react-flow__edge-path"
-      d={edgePath}
-      stroke={theme.color.gray}
-      markerStart={markerStart?.toString()}
-      markerEnd={markerEnd?.toString()}
-      style={style}
-    />
+    <>
+      <path
+        id={id}
+        className="react-flow__edge-path"
+        d={edgePath}
+        stroke={theme.color.gray}
+        markerStart={markerStart?.toString()}
+        markerEnd={markerEnd?.toString()}
+        style={style}
+      />
+      <EdgeLabelRenderer>
+        <div
+          style={{
+            position: 'absolute',
+            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
+          }}
+        >
+          <Button
+            size="small"
+            title={
+              data.relations.length +
+              ' Relation' +
+              (data.relations.length > 1 ? 's' : '')
+            }
+          ></Button>
+        </div>
+      </EdgeLabelRenderer>
+    </>
   );
 };
