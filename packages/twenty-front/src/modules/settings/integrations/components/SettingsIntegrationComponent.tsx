@@ -60,7 +60,6 @@ export const SettingsIntegrationComponent = ({
   const navigate = useNavigate();
 
   const navigateToIntegrationPage = () => navigate(integration.link);
-  const openExternalLink = () => window.open(integration.link);
 
   return (
     <StyledContainer
