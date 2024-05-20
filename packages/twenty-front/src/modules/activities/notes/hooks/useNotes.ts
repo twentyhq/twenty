@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useRecoilState } from 'recoil';
 
 import { useActivities } from '@/activities/hooks/useActivities';
@@ -31,6 +31,9 @@ export const useNotes = (targetableObject: ActivityTargetableObject) => {
   const [currentNotesQueryVariables, setCurrentNotesQueryVariables] =
     useRecoilState(currentNotesQueryVariablesState);
 
+  const [cachedNotes, setCachedNotes] = useState<Note[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
   // TODO: fix useEffect, remove with better pattern
   useEffect(() => {
     if (!isDeeplyEqual(notesQueryVariables, currentNotesQueryVariables)) {
@@ -42,8 +45,15 @@ export const useNotes = (targetableObject: ActivityTargetableObject) => {
     setCurrentNotesQueryVariables,
   ]);
 
+  useEffect(() => {
+    if (!loading) {
+      setCachedNotes(activities as Note[]);
+      setIsLoading(false);
+    }
+  }, [loading, activities]);
+
   return {
-    notes: activities as Note[],
-    loading,
+    notes: cachedNotes,
+    loading: isLoading,
   };
 };
