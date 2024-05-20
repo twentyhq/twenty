@@ -263,6 +263,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
         color: 'orange',
       },
     ],
+    defaultValue: `'${MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING}'`,
   })
   syncSubStatus: MessageChannelSyncSubStatus;
 
