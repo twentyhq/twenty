@@ -3,9 +3,9 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { VIEW_SORT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { ViewObjectMetadata } from 'src/modules/view/standard-objects/view.object-metadata';
+import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -23,7 +23,7 @@ import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metad
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
-export class ViewSortObjectMetadata extends BaseWorkspaceEntity {
+export class ViewSortWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_SORT_STANDARD_FIELD_IDS.fieldMetadataId,
     type: FieldMetadataType.UUID,
@@ -49,9 +49,9 @@ export class ViewSortObjectMetadata extends BaseWorkspaceEntity {
     description: 'View Sort related view',
     icon: 'IconLayoutCollage',
     joinColumn: 'viewId',
-    inverseSideTarget: () => ViewObjectMetadata,
+    inverseSideTarget: () => ViewWorkspaceEntity,
     inverseSideFieldKey: 'viewSorts',
   })
   @WorkspaceIsNullable()
-  view: Relation<ViewObjectMetadata>;
+  view: Relation<ViewWorkspaceEntity>;
 }

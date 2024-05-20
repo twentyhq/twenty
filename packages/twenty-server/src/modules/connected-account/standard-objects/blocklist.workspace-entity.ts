@@ -3,9 +3,9 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { BLOCKLIST_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -22,7 +22,7 @@ import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metad
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
-export class BlocklistObjectMetadata extends BaseWorkspaceEntity {
+export class BlocklistWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: BLOCKLIST_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
@@ -39,8 +39,8 @@ export class BlocklistObjectMetadata extends BaseWorkspaceEntity {
     description: 'WorkspaceMember',
     icon: 'IconCircleUser',
     joinColumn: 'workspaceMemberId',
-    inverseSideTarget: () => WorkspaceMemberObjectMetadata,
+    inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'blocklist',
   })
-  workspaceMember: Relation<WorkspaceMemberObjectMetadata>;
+  workspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
 }

@@ -9,7 +9,7 @@ import {
   MessagingCreateCompanyAndContactAfterSyncJobData,
   MessagingCreateCompanyAndContactAfterSyncJob,
 } from 'src/modules/messaging/jobs/messaging-create-company-and-contact-after-sync.job';
-import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
 export class MessagingMessageChannelListener {
@@ -20,7 +20,7 @@ export class MessagingMessageChannelListener {
 
   @OnEvent('messageChannel.updated')
   async handleUpdatedEvent(
-    payload: ObjectRecordUpdateEvent<MessageChannelObjectMetadata>,
+    payload: ObjectRecordUpdateEvent<MessageChannelWorkspaceEntity>,
   ) {
     if (
       objectRecordChangedProperties(

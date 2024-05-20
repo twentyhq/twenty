@@ -3,11 +3,11 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { MessageObjectMetadata } from 'src/modules/messaging/standard-objects/message.object-metadata';
-import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { MessageWorkspaceEntity } from 'src/modules/messaging/standard-objects/message.workspace-entity';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -25,7 +25,7 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
-export class MessageParticipantObjectMetadata extends BaseWorkspaceEntity {
+export class MessageParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.role,
     type: FieldMetadataType.SELECT,
@@ -67,10 +67,10 @@ export class MessageParticipantObjectMetadata extends BaseWorkspaceEntity {
     description: 'Message',
     icon: 'IconMessage',
     joinColumn: 'messageId',
-    inverseSideTarget: () => MessageObjectMetadata,
+    inverseSideTarget: () => MessageWorkspaceEntity,
     inverseSideFieldKey: 'messageParticipants',
   })
-  message: Relation<MessageObjectMetadata>;
+  message: Relation<MessageWorkspaceEntity>;
 
   @WorkspaceRelation({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.person,
@@ -79,11 +79,11 @@ export class MessageParticipantObjectMetadata extends BaseWorkspaceEntity {
     description: 'Person',
     icon: 'IconUser',
     joinColumn: 'personId',
-    inverseSideTarget: () => PersonObjectMetadata,
+    inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'messageParticipants',
   })
   @WorkspaceIsNullable()
-  person: Relation<PersonObjectMetadata>;
+  person: Relation<PersonWorkspaceEntity>;
 
   @WorkspaceRelation({
     standardId: MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS.workspaceMember,
@@ -92,9 +92,9 @@ export class MessageParticipantObjectMetadata extends BaseWorkspaceEntity {
     description: 'Workspace member',
     icon: 'IconCircleUser',
     joinColumn: 'workspaceMemberId',
-    inverseSideTarget: () => WorkspaceMemberObjectMetadata,
+    inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'messageParticipants',
   })
   @WorkspaceIsNullable()
-  workspaceMember: Relation<WorkspaceMemberObjectMetadata>;
+  workspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
 }

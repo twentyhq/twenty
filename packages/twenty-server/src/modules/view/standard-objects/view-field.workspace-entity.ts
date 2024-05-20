@@ -5,11 +5,11 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
-import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { VIEW_FIELD_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { ViewObjectMetadata } from 'src/modules/view/standard-objects/view.object-metadata';
+import { ViewWorkspaceEntity } from 'src/modules/view/standard-objects/view.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.viewField,
@@ -21,7 +21,7 @@ import { ViewObjectMetadata } from 'src/modules/view/standard-objects/view.objec
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
-export class ViewFieldObjectMetadata extends BaseWorkspaceEntity {
+export class ViewFieldWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_FIELD_STANDARD_FIELD_IDS.fieldMetadataId,
     type: FieldMetadataType.UUID,
@@ -67,10 +67,10 @@ export class ViewFieldObjectMetadata extends BaseWorkspaceEntity {
     label: 'View',
     description: 'View Field related view',
     icon: 'IconLayoutCollage',
-    inverseSideTarget: () => ViewObjectMetadata,
+    inverseSideTarget: () => ViewWorkspaceEntity,
     inverseSideFieldKey: 'viewFields',
     joinColumn: 'viewId',
   })
   @WorkspaceIsNullable()
-  view?: ViewObjectMetadata;
+  view?: ViewWorkspaceEntity;
 }

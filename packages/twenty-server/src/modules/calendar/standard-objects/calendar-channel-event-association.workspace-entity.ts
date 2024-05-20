@@ -3,15 +3,15 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { CalendarEventObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event.object-metadata';
-import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
-import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.calendarChannelEventAssociation,
@@ -23,7 +23,7 @@ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
-export class CalendarChannelEventAssociationObjectMetadata extends BaseWorkspaceEntity {
+export class CalendarChannelEventAssociationWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId:
       CALENDAR_CHANNEL_EVENT_ASSOCIATION_STANDARD_FIELD_IDS.eventExternalId,
@@ -42,10 +42,10 @@ export class CalendarChannelEventAssociationObjectMetadata extends BaseWorkspace
     description: 'Channel ID',
     icon: 'IconCalendar',
     joinColumn: 'calendarChannelId',
-    inverseSideTarget: () => CalendarEventObjectMetadata,
+    inverseSideTarget: () => CalendarChannelWorkspaceEntity,
     inverseSideFieldKey: 'calendarChannelEventAssociations',
   })
-  calendarChannel: Relation<CalendarEventObjectMetadata>;
+  calendarChannel: Relation<CalendarChannelWorkspaceEntity>;
 
   @WorkspaceRelation({
     standardId:
@@ -55,8 +55,8 @@ export class CalendarChannelEventAssociationObjectMetadata extends BaseWorkspace
     description: 'Event ID',
     icon: 'IconCalendar',
     joinColumn: 'calendarEventId',
-    inverseSideTarget: () => CalendarEventObjectMetadata,
+    inverseSideTarget: () => CalendarEventWorkspaceEntity,
     inverseSideFieldKey: 'calendarChannelEventAssociations',
   })
-  calendarEvent: Relation<CalendarEventObjectMetadata>;
+  calendarEvent: Relation<CalendarEventWorkspaceEntity>;
 }

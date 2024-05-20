@@ -3,13 +3,13 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { TIMELINE_ACTIVITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
-import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
-import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { CompanyWorkspaceEntity } from 'src/modules/company/standard-objects/company.workspace-entity';
+import { OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -28,7 +28,7 @@ import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/works
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
-export class TimelineActivityObjectMetadata extends BaseWorkspaceEntity {
+export class TimelineActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.happensAt,
     type: FieldMetadataType.DATE_TIME,
@@ -96,11 +96,11 @@ export class TimelineActivityObjectMetadata extends BaseWorkspaceEntity {
     description: 'Event workspace member',
     icon: 'IconCircleUser',
     joinColumn: 'workspaceMemberId',
-    inverseSideTarget: () => WorkspaceMemberObjectMetadata,
+    inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
   })
   @WorkspaceIsNullable()
-  workspaceMember: Relation<WorkspaceMemberObjectMetadata>;
+  workspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
 
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.person,
@@ -109,11 +109,11 @@ export class TimelineActivityObjectMetadata extends BaseWorkspaceEntity {
     description: 'Event person',
     icon: 'IconUser',
     joinColumn: 'personId',
-    inverseSideTarget: () => PersonObjectMetadata,
+    inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
   })
   @WorkspaceIsNullable()
-  person: Relation<PersonObjectMetadata>;
+  person: Relation<PersonWorkspaceEntity>;
 
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.company,
@@ -122,11 +122,11 @@ export class TimelineActivityObjectMetadata extends BaseWorkspaceEntity {
     description: 'Event company',
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'companyId',
-    inverseSideTarget: () => CompanyObjectMetadata,
+    inverseSideTarget: () => CompanyWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
   })
   @WorkspaceIsNullable()
-  company: Relation<CompanyObjectMetadata>;
+  company: Relation<CompanyWorkspaceEntity>;
 
   @WorkspaceRelation({
     standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.opportunity,
@@ -135,11 +135,11 @@ export class TimelineActivityObjectMetadata extends BaseWorkspaceEntity {
     description: 'Event opportunity',
     icon: 'IconTargetArrow',
     joinColumn: 'opportunityId',
-    inverseSideTarget: () => OpportunityObjectMetadata,
+    inverseSideTarget: () => OpportunityWorkspaceEntity,
     inverseSideFieldKey: 'timelineActivities',
   })
   @WorkspaceIsNullable()
-  opportunity: Relation<OpportunityObjectMetadata>;
+  opportunity: Relation<OpportunityWorkspaceEntity>;
 
   @WorkspaceDynamicRelation({
     type: RelationMetadataType.MANY_TO_ONE,

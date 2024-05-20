@@ -3,11 +3,11 @@ import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/i
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { CalendarEventObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event.object-metadata';
-import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event.workspace-entity';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -32,7 +32,7 @@ export enum CalendarEventParticipantResponseStatus {
 })
 @WorkspaceIsSystem()
 @WorkspaceIsNotAuditLogged()
-export class CalendarEventParticipantObjectMetadata extends BaseWorkspaceEntity {
+export class CalendarEventParticipantWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
@@ -104,10 +104,10 @@ export class CalendarEventParticipantObjectMetadata extends BaseWorkspaceEntity 
     description: 'Event ID',
     icon: 'IconCalendar',
     joinColumn: 'calendarEventId',
-    inverseSideTarget: () => CalendarEventObjectMetadata,
+    inverseSideTarget: () => CalendarEventWorkspaceEntity,
     inverseSideFieldKey: 'calendarEventParticipants',
   })
-  calendarEvent: Relation<CalendarEventObjectMetadata>;
+  calendarEvent: Relation<CalendarEventWorkspaceEntity>;
 
   @WorkspaceRelation({
     standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.person,
@@ -116,11 +116,11 @@ export class CalendarEventParticipantObjectMetadata extends BaseWorkspaceEntity 
     description: 'Person',
     icon: 'IconUser',
     joinColumn: 'personId',
-    inverseSideTarget: () => PersonObjectMetadata,
+    inverseSideTarget: () => PersonWorkspaceEntity,
     inverseSideFieldKey: 'calendarEventParticipants',
   })
   @WorkspaceIsNullable()
-  person: Relation<PersonObjectMetadata>;
+  person: Relation<PersonWorkspaceEntity>;
 
   @WorkspaceRelation({
     standardId: CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS.workspaceMember,
@@ -129,9 +129,9 @@ export class CalendarEventParticipantObjectMetadata extends BaseWorkspaceEntity 
     description: 'Workspace Member',
     icon: 'IconUser',
     joinColumn: 'workspaceMemberId',
-    inverseSideTarget: () => WorkspaceMemberObjectMetadata,
+    inverseSideTarget: () => WorkspaceMemberWorkspaceEntity,
     inverseSideFieldKey: 'calendarEventParticipants',
   })
   @WorkspaceIsNullable()
-  workspaceMember: Relation<WorkspaceMemberObjectMetadata>;
+  workspaceMember: Relation<WorkspaceMemberWorkspaceEntity>;
 }

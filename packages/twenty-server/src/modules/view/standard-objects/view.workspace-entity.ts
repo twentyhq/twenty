@@ -7,11 +7,11 @@ import {
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 import { VIEW_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { ViewFieldObjectMetadata } from 'src/modules/view/standard-objects/view-field.object-metadata';
-import { ViewFilterObjectMetadata } from 'src/modules/view/standard-objects/view-filter.object-metadata';
-import { ViewSortObjectMetadata } from 'src/modules/view/standard-objects/view-sort.object-metadata';
+import { ViewFieldWorkspaceEntity } from 'src/modules/view/standard-objects/view-field.workspace-entity';
+import { ViewFilterWorkspaceEntity } from 'src/modules/view/standard-objects/view-filter.workspace-entity';
+import { ViewSortWorkspaceEntity } from 'src/modules/view/standard-objects/view-sort.workspace-entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
@@ -28,7 +28,7 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
-export class ViewObjectMetadata extends BaseWorkspaceEntity {
+export class ViewWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: VIEW_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
@@ -105,11 +105,11 @@ export class ViewObjectMetadata extends BaseWorkspaceEntity {
     label: 'View Fields',
     description: 'View Fields',
     icon: 'IconTag',
-    inverseSideTarget: () => ViewFieldObjectMetadata,
+    inverseSideTarget: () => ViewFieldWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  viewFields: Relation<ViewFieldObjectMetadata[]>;
+  viewFields: Relation<ViewFieldWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: VIEW_STANDARD_FIELD_IDS.viewFilters,
@@ -117,11 +117,11 @@ export class ViewObjectMetadata extends BaseWorkspaceEntity {
     label: 'View Filters',
     description: 'View Filters',
     icon: 'IconFilterBolt',
-    inverseSideTarget: () => ViewFilterObjectMetadata,
+    inverseSideTarget: () => ViewFilterWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  viewFilters: Relation<ViewFilterObjectMetadata[]>;
+  viewFilters: Relation<ViewFilterWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId: VIEW_STANDARD_FIELD_IDS.viewSorts,
@@ -129,9 +129,9 @@ export class ViewObjectMetadata extends BaseWorkspaceEntity {
     label: 'View Sorts',
     description: 'View Sorts',
     icon: 'IconArrowsSort',
-    inverseSideTarget: () => ViewSortObjectMetadata,
+    inverseSideTarget: () => ViewSortWorkspaceEntity,
     onDelete: RelationOnDeleteAction.SET_NULL,
   })
   @WorkspaceIsNullable()
-  viewSorts: Relation<ViewSortObjectMetadata[]>;
+  viewSorts: Relation<ViewSortWorkspaceEntity[]>;
 }
