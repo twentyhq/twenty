@@ -231,6 +231,7 @@ export const MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS = {
 export const MESSAGE_THREAD_STANDARD_FIELD_IDS = {
   messages: '20202020-3115-404f-aade-e1154b28e35a',
   messageChannelMessageAssociations: '20202020-314e-40a4-906d-a5d5d6c285f6',
+  everyone: '20202020-5f9b-4d7d-8c5d-3f4f6b7f8d3a',
 };
 
 export const MESSAGE_STANDARD_FIELD_IDS = {

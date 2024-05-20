@@ -21,6 +21,7 @@ export const seedMessageThread = async (
       'createdAt',
       'updatedAt',
       'deletedAt',
+      'everyone',
     ])
     .orIgnore()
     .values([
@@ -29,24 +30,28 @@ export const seedMessageThread = async (
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
+        everyone: false,
       },
       {
         id: DEV_SEED_MESSAGE_THREAD_IDS.MESSAGE_THREAD_2,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
+        everyone: false,
       },
       {
         id: DEV_SEED_MESSAGE_THREAD_IDS.MESSAGE_THREAD_3,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
+        everyone: true,
       },
       {
         id: DEV_SEED_MESSAGE_THREAD_IDS.MESSAGE_THREAD_4,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
+        everyone: true,
       },
     ])
     .execute();

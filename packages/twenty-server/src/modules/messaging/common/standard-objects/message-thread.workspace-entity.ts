@@ -14,6 +14,8 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageThread,
@@ -26,6 +28,16 @@ import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-ob
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
 export class MessageThreadWorkspaceEntity extends BaseWorkspaceEntity {
+  @WorkspaceField({
+    standardId: MESSAGE_THREAD_STANDARD_FIELD_IDS.everyone,
+    type: FieldMetadataType.BOOLEAN,
+    label: 'Everyone',
+    description: 'Permission to everyone',
+    icon: 'IconCalendar',
+    defaultValue: false,
+  })
+  everyone: boolean;
+
   @WorkspaceRelation({
     standardId: MESSAGE_THREAD_STANDARD_FIELD_IDS.messages,
     type: RelationMetadataType.ONE_TO_MANY,
