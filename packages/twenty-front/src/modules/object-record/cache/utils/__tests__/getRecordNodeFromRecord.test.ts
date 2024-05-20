@@ -1,7 +1,5 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { mockedCompaniesData } from '~/testing/mock-data/companies';
 import {
-  mockedCompanyObjectMetadataItem,
   mockedObjectMetadataItems,
   mockedPersonObjectMetadataItem,
 } from '~/testing/mock-data/metadata';
@@ -51,13 +49,12 @@ describe('getRecordNodeFromRecord', () => {
     const objectMetadataItem: Pick<
       ObjectMetadataItem,
       'fields' | 'namePlural' | 'nameSingular'
-    > = mockedCompanyObjectMetadataItem;
+    > = mockedPersonObjectMetadataItem;
     const recordGqlFields = {
       name: true,
-      accountOwner: true,
-      people: true,
+      company: true,
     };
-    const record = mockedCompaniesData[0];
+    const record = mockedPeopleData[0];
     const computeReferences = false;
 
     // When
@@ -71,41 +68,13 @@ describe('getRecordNodeFromRecord', () => {
 
     // Then
     expect(result).toEqual({
-      __typename: 'Company',
-      accountOwner: record.accountOwner,
-      name: 'Airbnb',
-    });
-  });
-
-  it('adds a `__typename` property for composite fields', () => {
-    // Given
-    const objectMetadataItems: ObjectMetadataItem[] = mockedObjectMetadataItems;
-    const objectMetadataItem: Pick<
-      ObjectMetadataItem,
-      'fields' | 'namePlural' | 'nameSingular'
-    > = mockedCompanyObjectMetadataItem;
-    const recordGqlFields = {
-      name: true,
-      linkedinLink: true,
-    };
-    const record = mockedCompaniesData[0];
-
-    // When
-    const result = getRecordNodeFromRecord({
-      objectMetadataItems,
-      objectMetadataItem,
-      recordGqlFields,
-      record,
-    });
-
-    // Then
-    expect(result).toEqual({
-      __typename: 'Company',
-      linkedinLink: {
-        __typename: 'Link',
-        ...record.linkedinLink,
+      __typename: 'Person',
+      company: record.company,
+      name: {
+        __typename: 'FullName',
+        firstName: 'Alexandre',
+        lastName: 'Prot',
       },
-      name: 'Airbnb',
     });
   });
 });
