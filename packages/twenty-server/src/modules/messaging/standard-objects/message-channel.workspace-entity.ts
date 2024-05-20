@@ -24,6 +24,14 @@ export enum MessageChannelSyncStatus {
   FAILED = 'FAILED',
 }
 
+export enum MessageChannelSyncSubStatus {
+  FULL_MESSAGES_LIST_FETCH_PENDING = 'FULL_MESSAGES_LIST_FETCH_PENDING',
+  PARTIAL_MESSAGES_LIST_FETCH_PENDING = 'PARTIAL_MESSAGES_LIST_FETCH_PENDING',
+  MESSAGES_LIST_FETCH_ONGOING = 'MESSAGES_LIST_FETCH_ONGOING',
+  MESSAGES_IMPORT_PENDING = 'MESSAGES_IMPORT_PENDING',
+  MESSAGES_IMPORT_ONGOING = 'MESSAGES_IMPORT_ONGOING',
+}
+
 export enum MessageChannelVisibility {
   METADATA = 'metadata',
   SUBJECT = 'subject',
@@ -151,9 +159,9 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
     type: FieldMetadataType.SELECT,
-    label: 'Last sync status',
-    description: 'Last sync status',
-    icon: 'IconHistory',
+    label: 'Sync status',
+    description: 'Sync status',
+    icon: 'IconStatusChange',
     options: [
       {
         value: MessageChannelSyncStatus.PENDING,
@@ -183,6 +191,47 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   syncStatus: MessageChannelSyncStatus;
+
+  @WorkspaceField({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncSubStatus,
+    type: FieldMetadataType.SELECT,
+    label: 'Sync sub status',
+    description: 'Sync sub status',
+    icon: 'IconStatusChange',
+    options: [
+      {
+        value: MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING,
+        label: 'Full messages list fetch pending',
+        position: 0,
+        color: 'blue',
+      },
+      {
+        value: MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
+        label: 'Partial messages list fetch pending',
+        position: 1,
+        color: 'blue',
+      },
+      {
+        value: MessageChannelSyncSubStatus.MESSAGES_LIST_FETCH_ONGOING,
+        label: 'Messages list fetch ongoing',
+        position: 2,
+        color: 'orange',
+      },
+      {
+        value: MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING,
+        label: 'Messages import pending',
+        position: 3,
+        color: 'blue',
+      },
+      {
+        value: MessageChannelSyncSubStatus.MESSAGES_IMPORT_ONGOING,
+        label: 'Messages import ongoing',
+        position: 4,
+        color: 'orange',
+      },
+    ],
+  })
+  syncSubStatus: MessageChannelSyncSubStatus;
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.ongoingSyncStartedAt,
