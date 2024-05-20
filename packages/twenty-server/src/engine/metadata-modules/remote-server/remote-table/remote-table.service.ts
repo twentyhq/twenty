@@ -174,10 +174,12 @@ export class RemoteTableService {
       remoteServerId: remoteServer.id,
     });
 
-    const distantTableColumns = this.distantTableService.getDistantTableColumns(
-      remoteServer,
-      input.name,
-    );
+    const distantTableColumns =
+      await this.distantTableService.getDistantTableColumns(
+        remoteServer,
+        workspaceId,
+        input.name,
+      );
 
     // We only support remote tables with an id column for now.
     const distantTableIdColumn = distantTableColumns.find(
