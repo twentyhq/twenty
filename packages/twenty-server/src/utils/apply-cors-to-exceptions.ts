@@ -8,23 +8,23 @@ import { Response } from 'express';
 @Catch()
 export class ApplyCorsToExceptions implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
-    const ctx = host.switchToHttp();
-    const response = ctx.getResponse<Response>();
+    try {
+      const ctx = host.switchToHttp();
+      const response = ctx.getResponse<Response>();
 
-    if (!response.header) {
+      response.header('Access-Control-Allow-Origin', '*');
+      response.header(
+        'Access-Control-Allow-Methods',
+        'GET,HEAD,PUT,PATCH,POST,DELETE',
+      );
+      response.header(
+        'Access-Control-Allow-Headers',
+        'Origin, X-Requested-With, Content-Type, Accept',
+      );
+
+      response.status(exception.getStatus()).json(exception.response);
+    } catch {
       return;
     }
-
-    response.header('Access-Control-Allow-Origin', '*');
-    response.header(
-      'Access-Control-Allow-Methods',
-      'GET,HEAD,PUT,PATCH,POST,DELETE',
-    );
-    response.header(
-      'Access-Control-Allow-Headers',
-      'Origin, X-Requested-With, Content-Type, Accept',
-    );
-
-    response.status(exception.getStatus()).json(exception.response);
   }
 }
