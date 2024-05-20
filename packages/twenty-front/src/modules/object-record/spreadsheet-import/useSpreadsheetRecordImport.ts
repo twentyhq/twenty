@@ -13,6 +13,9 @@ import { isDefined } from '~/utils/isDefined';
 const firstName = 'Firstname';
 const lastName = 'Lastname';
 
+const currencyCode = 'Currency Code';
+const amountMicros = 'Amount Micros';
+
 export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
   const { openSpreadsheetImport } = useSpreadsheetImport<any>();
   const { enqueueSnackBar } = useSnackBar();
@@ -79,6 +82,31 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
           field.label + ' (ID)',
         ),
       });
+    } else if (field.type === FieldMetadataType.Currency) {
+      templateFields.push({
+        icon: getIcon(field.icon),
+        label: `${currencyCode} (${field.label})`,
+        key: `${currencyCode} (${field.name})`,
+        fieldType: {
+          type: 'input',
+        },
+        validations: getSpreadSheetValidation(
+          field.type,
+          `${currencyCode} (${field.label})`,
+        ),
+      });
+      templateFields.push({
+        icon: getIcon(field.icon),
+        label: `${amountMicros} (${field.label})`,
+        key: `${amountMicros} (${field.name})`,
+        fieldType: {
+          type: 'input',
+        },
+        validations: getSpreadSheetValidation(
+          field.type,
+          `${amountMicros} (${field.label})`,
+        ),
+      });
     } else {
       templateFields.push({
         icon: getIcon(field.icon),
@@ -116,10 +144,18 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
                 fieldMapping[field.name] = Number(value);
                 break;
               case FieldMetadataType.Currency:
-                if (value !== undefined) {
+                if (
+                  isDefined(
+                    record[`${amountMicros} (${field.name})`] ||
+                      record[`${currencyCode} (${field.name})`],
+                  )
+                ) {
                   fieldMapping[field.name] = {
-                    amountMicros: Number(value),
-                    currencyCode: 'USD',
+                    amountMicros: Number(
+                      record[`${amountMicros} (${field.name})`],
+                    ),
+                    currencyCode:
+                      record[`${currencyCode} (${field.name})`] || 'USD',
                   };
                 }
                 break;
