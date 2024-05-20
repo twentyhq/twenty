@@ -184,9 +184,7 @@ export const SettingsObjectNewFieldStep1 = () => {
             title="Add Custom Field"
             size="small"
             variant="secondary"
-            onClick={() =>
-              navigate(`/settings/objects/${objectSlug}/new-field/step-2`)
-            }
+            to={`/settings/objects/${objectSlug}/new-field/step-2`}
           />
         </StyledSection>
       </SettingsPageContainer>

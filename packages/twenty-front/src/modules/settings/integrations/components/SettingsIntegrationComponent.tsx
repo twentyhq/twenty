@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconArrowUpRight, IconBolt, IconPlus, Pill } from 'twenty-ui';
@@ -12,7 +12,7 @@ interface SettingsIntegrationComponentProps {
   integration: SettingsIntegration;
 }
 
-const StyledContainer = styled.div`
+const StyledContainer = styled.div<{ to?: string }>`
   align-items: center;
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -22,9 +22,11 @@ const StyledContainer = styled.div`
   flex-direction: row;
   justify-content: space-between;
   padding: ${({ theme }) => theme.spacing(3)};
+  text-decoration: none;
+  color: ${({ theme }) => theme.font.color.primary};
 
-  ${({ onClick }) =>
-    isDefined(onClick) &&
+  ${({ to }) =>
+    isDefined(to) &&
     css`
       cursor: pointer;
     `}
@@ -57,16 +59,10 @@ const StyledLogo = styled.img`
 export const SettingsIntegrationComponent = ({
   integration,
 }: SettingsIntegrationComponentProps) => {
-  const navigate = useNavigate();
-
-  const navigateToIntegrationPage = () => navigate(integration.link);
-  const openExternalLink = () => window.open(integration.link);
-
   return (
     <StyledContainer
-      onClick={
-        integration.type === 'Active' ? navigateToIntegrationPage : undefined
-      }
+      to={integration.type === 'Active' ? integration.link : undefined}
+      as={integration.type === 'Active' ? Link : 'div'}
     >
       <StyledSection>
         <StyledIntegrationLogo>
@@ -86,21 +82,23 @@ export const SettingsIntegrationComponent = ({
         <Status color="green" text="Active" />
       ) : integration.type === 'Add' ? (
         <Button
-          onClick={navigateToIntegrationPage}
+          to={integration.link}
           Icon={IconPlus}
           title="Add"
           size="small"
         />
       ) : integration.type === 'Use' ? (
         <Button
-          onClick={openExternalLink}
+          to={integration.link}
+          target="_blank"
           Icon={IconBolt}
           title="Use"
           size="small"
         />
       ) : (
         <Button
-          onClick={openExternalLink}
+          to={integration.link}
+          target="_blank"
           Icon={IconArrowUpRight}
           title={integration.linkText}
           size="small"
