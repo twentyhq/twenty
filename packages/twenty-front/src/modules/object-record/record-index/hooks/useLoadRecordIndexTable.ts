@@ -71,7 +71,7 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
       currentWorkspace?.activationStatus === 'active'
         ? records
         : SIGN_IN_BACKGROUND_MOCK_COMPANIES,
-    totalCount: totalCount || 0,
+    totalCount: totalCount,
     loading,
     fetchMoreRecords,
     queryStateIdentifier,

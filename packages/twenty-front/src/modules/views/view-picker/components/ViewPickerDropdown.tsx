@@ -17,6 +17,7 @@ import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { useViewPickerPersistView } from '@/views/view-picker/hooks/useViewPickerPersistView';
 
 import { useViewStates } from '../../hooks/internal/useViewStates';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledDropdownLabelAdornments = styled.span`
   align-items: center;
@@ -89,7 +90,9 @@ export const ViewPickerDropdown = () => {
             {currentViewWithCombinedFiltersAndSorts?.name ?? 'All'}
           </StyledViewName>
           <StyledDropdownLabelAdornments>
-            · {entityCountInCurrentView}{' '}
+            {isDefined(entityCountInCurrentView) && (
+              <>· {entityCountInCurrentView} </>
+            )}
             <IconChevronDown size={theme.icon.size.sm} />
           </StyledDropdownLabelAdornments>
         </StyledDropdownButtonContainer>

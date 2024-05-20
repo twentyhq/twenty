@@ -1,6 +1,8 @@
 import { createComponentState } from '@/ui/utilities/state/component-state/utils/createComponentState';
 
-export const numberOfTableRowsComponentState = createComponentState<number>({
+export const numberOfTableRowsComponentState = createComponentState<
+  number | undefined
+>({
   key: 'numberOfTableRowsComponentState',
-  defaultValue: 0,
+  defaultValue: undefined,
 });

@@ -8,7 +8,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type useSetRecordTableDataProps = {
   recordTableId?: string;
-  onEntityCountChange: (entityCount: number) => void;
+  onEntityCountChange: (entityCount: number | undefined) => void;
 };
 
 export const useSetRecordTableData = ({
@@ -24,7 +24,7 @@ export const useSetRecordTableData = ({
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
-      <T extends ObjectRecord>(newEntityArray: T[], totalCount: number) => {
+      <T extends ObjectRecord>(newEntityArray: T[], totalCount?: number) => {
         for (const entity of newEntityArray) {
           // TODO: refactor with scoped state later
           const currentEntity = snapshot

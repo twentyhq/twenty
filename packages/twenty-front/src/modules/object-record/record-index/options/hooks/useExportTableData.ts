@@ -150,7 +150,9 @@ export const useExportTableData = ({
   });
 
   useEffect(() => {
-    const MAXIMUM_REQUESTS = Math.min(maximumRequests, totalCount / pageSize);
+    const MAXIMUM_REQUESTS = isDefined(totalCount)
+      ? Math.min(maximumRequests, totalCount / pageSize)
+      : maximumRequests;
 
     const downloadCsv = (rows: object[]) => {
       csvDownloader(filename, { rows, columns });
