@@ -95,6 +95,7 @@
     "graphql-fields": "^2.0.3",
     "graphql-middleware": "^6.1.35",
     "graphql-rate-limit": "^3.3.0",
+    "graphql-scalars": "^1.23.0",
     "graphql-subscriptions": "2.0.0",
     "graphql-tag": "^2.12.6",
     "graphql-type-json": "^0.3.2",
