@@ -583,11 +583,10 @@ export class WorkspaceQueryRunnerService {
         )};
       `);
 
-    const results = await workspaceDataSource?.query<PGGraphQLResult>(`
-        SELECT graphql.resolve($$
-          ${query}
-        $$);
-      `);
+    const results = await workspaceDataSource?.query<PGGraphQLResult>(
+      `SELECT graphql.resolve($1);`,
+      [query],
+    );
 
     return results;
   }
