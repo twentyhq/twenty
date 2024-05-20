@@ -1,5 +1,6 @@
 import { MouseEvent, ReactNode } from 'react';
 import { Link } from 'react-router-dom';
+import isPropValid from '@emotion/is-prop-valid';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 
@@ -37,7 +38,10 @@ type ChipProps = {
   to?: string;
 };
 
-const StyledContainer = styled.div<
+const StyledContainer = styled('div', {
+  shouldForwardProp: (prop) =>
+    !['clickable', 'maxWidth'].includes(prop) && isPropValid(prop),
+})<
   Pick<
     ChipProps,
     'accent' | 'clickable' | 'disabled' | 'maxWidth' | 'size' | 'variant' | 'to'

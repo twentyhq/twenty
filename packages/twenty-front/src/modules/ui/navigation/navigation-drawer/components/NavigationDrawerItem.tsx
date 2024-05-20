@@ -1,4 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
+import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -32,7 +33,10 @@ type StyledItemProps = {
   to?: string;
 };
 
-const StyledItem = styled.div<StyledItemProps>`
+const StyledItem = styled('div', {
+  shouldForwardProp: (prop) =>
+    !['active', 'danger', 'soon'].includes(prop) && isPropValid(prop),
+})<StyledItemProps>`
   align-items: center;
   background: ${(props) =>
     props.active ? props.theme.background.transparent.light : 'inherit'};
