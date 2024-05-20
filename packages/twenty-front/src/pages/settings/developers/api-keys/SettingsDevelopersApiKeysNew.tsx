@@ -28,7 +28,7 @@ export const SettingsDevelopersApiKeysNew = () => {
     name: string;
     expirationDate: number | null;
   }>({
-    expirationDate: EXPIRATION_DATES[0].value,
+    expirationDate: EXPIRATION_DATES[5].value,
     name: '',
   });
 

@@ -1,7 +1,11 @@
 import { Link } from 'react-router-dom';
+import isPropValid from '@emotion/is-prop-valid';
 import styled from '@emotion/styled';
 
-const StyledTableRow = styled.div<{
+const StyledTableRow = styled('div', {
+  shouldForwardProp: (prop) =>
+    !['isSelected'].includes(prop) && isPropValid(prop),
+})<{
   isSelected?: boolean;
   onClick?: () => void;
   to?: string;
