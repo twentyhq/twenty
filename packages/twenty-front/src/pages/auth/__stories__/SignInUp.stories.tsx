@@ -24,6 +24,18 @@ const meta: Meta<PageDecoratorArgs> = {
         graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
           return HttpResponse.json({
             data: null,
+            errors: [
+              {
+                message: 'Unauthorized',
+                extensions: {
+                  code: 'UNAUTHENTICATED',
+                  response: {
+                    statusCode: 401,
+                    message: 'Unauthorized',
+                  },
+                },
+              },
+            ],
           });
         }),
         graphqlMocks.handlers,
