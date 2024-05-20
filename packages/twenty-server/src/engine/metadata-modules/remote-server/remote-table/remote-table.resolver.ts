@@ -22,6 +22,7 @@ export class RemoteTableResolver {
     return this.remoteTableService.findDistantTablesWithStatusByServerId(
       input.id,
       workspaceId,
+      input.shouldFetchPendingSchemaUpdates,
     );
   }
 
