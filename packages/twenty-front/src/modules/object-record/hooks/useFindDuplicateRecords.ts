@@ -9,6 +9,7 @@ import { RecordGqlOperationFindManyResult } from '@/object-record/graphql/types/
 import { useFindDuplicateRecordsQuery } from '@/object-record/hooks/useFindDuplicatesRecordsQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getFindDuplicateRecordsQueryResponseField } from '@/object-record/utils/getFindDuplicateRecordsQueryResponseField';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { logError } from '~/utils/logError';
 
@@ -54,7 +55,7 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
         enqueueSnackBar(
           `Error during useFindDuplicateRecords for "${objectMetadataItem.nameSingular}", ${error.message}`,
           {
-            variant: 'error',
+            variant: SnackBarVariant.Error,
           },
         );
       },

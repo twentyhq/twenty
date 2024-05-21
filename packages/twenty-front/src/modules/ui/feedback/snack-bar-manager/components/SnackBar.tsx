@@ -34,7 +34,7 @@ export type SnackBarProps = Pick<
   icon?: ReactNode;
   message?: string;
   onCancel?: () => void;
-  onClose: () => void;
+  onClose?: () => void;
   role?: 'alert' | 'status';
   variant?: SnackBarVariant;
 };
@@ -165,7 +165,9 @@ export const SnackBar = ({
         {title}
         <StyledActions>
           {!!onCancel && <LightButton title="Cancel" onClick={onCancel} />}
-          <LightIconButton title="Close" Icon={IconX} onClick={onClose} />
+          {!!onClose && (
+            <LightIconButton title="Close" Icon={IconX} onClick={onClose} />
+          )}
         </StyledActions>
       </StyledHeader>
       <StyledDescription>{children || message}</StyledDescription>
