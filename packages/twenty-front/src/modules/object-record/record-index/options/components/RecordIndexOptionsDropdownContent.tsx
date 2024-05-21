@@ -123,7 +123,13 @@ export const RecordIndexOptionsDropdownContent = ({
           <MenuItem
             onClick={download}
             LeftIcon={IconFileExport}
-            text={progress === undefined ? `Export` : `Export (${progress}%)`}
+            text={
+              progress?.count === undefined
+                ? `Export`
+                : `Export (${progress.count}${
+                    progress.type === 'percentage' ? '%' : ''
+                  })`
+            }
           />
         </DropdownMenuItemsContainer>
       )}

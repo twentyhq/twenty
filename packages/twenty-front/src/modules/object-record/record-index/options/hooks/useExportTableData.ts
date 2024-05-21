@@ -30,6 +30,11 @@ type GenerateExportOptions = {
 
 type GenerateExport = (data: GenerateExportOptions) => string;
 
+type ExportProgress = {
+  count?: number;
+  type: 'percentage' | 'number';
+};
+
 export const generateCsv: GenerateExport = ({
   columns,
   rows,
@@ -110,8 +115,11 @@ export const useExportTableData = ({
   const [isDownloading, setIsDownloading] = useState(false);
   const [inflight, setInflight] = useState(false);
   const [pageCount, setPageCount] = useState(0);
-  const [progress, setProgress] = useState<number | undefined>(undefined);
-  const [hasNextPage, setHasNextPage] = useState(true);
+  const [progress, setProgress] = useState<ExportProgress>({
+    count: undefined,
+    type: 'number',
+  });
+  const [previousRecordCount, setPreviousRecordCount] = useState(0);
 
   const { visibleTableColumnsSelector, selectedRowIdsSelector } =
     useRecordTableStates(recordIndexId);
@@ -144,9 +152,6 @@ export const useExportTableData = ({
   const { totalCount, records, fetchMoreRecords } = useFindManyRecords({
     ...usedFindManyParams,
     limit: pageSize,
-    onCompleted: (_data, options) => {
-      setHasNextPage(options?.pageInfo?.hasNextPage ?? false);
-    },
   });
 
   useEffect(() => {
@@ -157,14 +162,23 @@ export const useExportTableData = ({
     const downloadCsv = (rows: object[]) => {
       csvDownloader(filename, { rows, columns });
       setIsDownloading(false);
-      setProgress(undefined);
+      setProgress({
+        count: undefined,
+        type: 'number',
+      });
     };
 
     const fetchNextPage = async () => {
       setInflight(true);
+      setPreviousRecordCount(records.length);
       await fetchMoreRecords();
       setPageCount((state) => state + 1);
-      setProgress(percentage(pageCount, MAXIMUM_REQUESTS));
+      setProgress({
+        count: totalCount
+          ? percentage(pageCount, MAXIMUM_REQUESTS)
+          : records.length,
+        type: totalCount ? 'percentage' : 'number',
+      });
       await sleep(delayMs);
       setInflight(false);
     };
@@ -173,7 +187,10 @@ export const useExportTableData = ({
       return;
     }
 
-    if (!hasNextPage || pageCount >= MAXIMUM_REQUESTS) {
+    if (
+      pageCount >= MAXIMUM_REQUESTS ||
+      records.length === previousRecordCount
+    ) {
       downloadCsv(records);
     } else {
       fetchNextPage();
@@ -182,7 +199,6 @@ export const useExportTableData = ({
     delayMs,
     fetchMoreRecords,
     filename,
-    hasNextPage,
     inflight,
     isDownloading,
     pageCount,
@@ -191,6 +207,7 @@ export const useExportTableData = ({
     columns,
     maximumRequests,
     pageSize,
+    previousRecordCount,
   ]);
 
   return { progress, download: () => setIsDownloading(true) };

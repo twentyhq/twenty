@@ -54,7 +54,7 @@ export const useSetRecordTableData = ({
           }
         }
 
-        set(numberOfTableRowsState, totalCount || 0);
+        set(numberOfTableRowsState, totalCount ?? 0);
         onEntityCountChange(totalCount);
       },
     [

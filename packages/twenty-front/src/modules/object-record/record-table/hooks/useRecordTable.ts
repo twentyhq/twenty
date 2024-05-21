@@ -99,7 +99,7 @@ export const useRecordTable = (props?: useRecordTableProps) => {
 
   const onEntityCountChange = useRecoilCallback(
     ({ snapshot }) =>
-      (count: number | undefined) => {
+      (count?: number) => {
         const onEntityCountChange = getSnapshotValue(
           snapshot,
           onEntityCountChangeState,

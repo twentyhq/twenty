@@ -111,7 +111,13 @@ export const useRecordActionBar = ({
   const baseActions: ContextMenuEntry[] = useMemo(
     () => [
       {
-        label: `${progress === undefined ? `Export` : `Export (${progress}%)`}`,
+        label: `${
+          progress?.count === undefined
+            ? `Export`
+            : `Export (${progress.count}${
+                progress.type === 'percentage' ? '%' : ''
+              })`
+        }`,
         Icon: IconFileExport,
         accent: 'default',
         onClick: () => download(),
