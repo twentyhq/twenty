@@ -15,7 +15,18 @@ const firstName = 'Firstname';
 const lastName = 'Lastname';
 
 const currencyCode = 'Currency Code';
-const amountMicros = 'Amount Micros';
+const amountMicros = 'Amount';
+
+const addressFields = {
+  addressStreet1: 'Address 1',
+  addressStreet2: 'Address 2',
+  addressCity: 'City',
+  addressPostcode: 'Post Code',
+  addressState: 'State',
+  addressCountry: 'Country',
+  addressLat: 'Latitude',
+  addressLng: 'Longitude',
+};
 
 export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
   const { openSpreadsheetImport } = useSpreadsheetImport<any>();
@@ -108,6 +119,21 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
           `${amountMicros} (${field.label})`,
         ),
       });
+    } else if (field.type === FieldMetadataType.Address) {
+      Object.entries(addressFields).forEach(([key, value]) => {
+        templateFields.push({
+          icon: getIcon(field.icon),
+          label: `${value} (${field.label})`,
+          key: `${value} (${field.name})`,
+          fieldType: {
+            type: 'input',
+          },
+          validations: getSpreadSheetValidation(
+            field.type,
+            `${value} (${field.label})`,
+          ),
+        });
+      });
     } else {
       templateFields.push({
         icon: getIcon(field.icon),
@@ -160,6 +186,59 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
                   };
                 }
                 break;
+              case FieldMetadataType.Address: {
+                if (
+                  isDefined(
+                    record[`${addressFields.addressStreet1} (${field.name})`] ||
+                      record[
+                        `${addressFields.addressStreet2} (${field.name})`
+                      ] ||
+                      record[`${addressFields.addressCity} (${field.name})`] ||
+                      record[
+                        `${addressFields.addressPostcode} (${field.name})`
+                      ] ||
+                      record[`${addressFields.addressState} (${field.name})`] ||
+                      record[
+                        `${addressFields.addressCountry} (${field.name})`
+                      ] ||
+                      record[`${addressFields.addressLat} (${field.name})`] ||
+                      record[`${addressFields.addressLng} (${field.name})`],
+                  )
+                ) {
+                  fieldMapping[field.name] = {
+                    addressStreet1:
+                      record[
+                        `${addressFields.addressStreet1} (${field.name})`
+                      ] || '',
+                    addressStreet2:
+                      record[
+                        `${addressFields.addressStreet2} (${field.name})`
+                      ] || '',
+                    addressCity:
+                      record[`${addressFields.addressCity} (${field.name})`] ||
+                      '',
+                    addressPostcode: Number(
+                      record[
+                        `${addressFields.addressPostcode} (${field.name})`
+                      ],
+                    ),
+                    addressState:
+                      record[`${addressFields.addressState} (${field.name})`] ||
+                      '',
+                    addressCountry:
+                      record[
+                        `${addressFields.addressCountry} (${field.name})`
+                      ] || '',
+                    addressLat: Number(
+                      record[`${addressFields.addressLat} (${field.name})`],
+                    ),
+                    addressLng: Number(
+                      record[`${addressFields.addressLng} (${field.name})`],
+                    ),
+                  };
+                }
+                break;
+              }
               case FieldMetadataType.Link:
                 if (value !== undefined) {
                   fieldMapping[field.name] = {
