@@ -10,6 +10,7 @@ import { FetchMessagesByBatchesService } from 'src/modules/messaging/services/fe
 import {
   MessageChannelWorkspaceEntity,
   MessageChannelSyncStatus,
+  MessageChannelSyncSubStatus,
 } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { createQueriesFromMessageIds } from 'src/modules/messaging/utils/create-queries-from-message-ids.util';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
@@ -17,10 +18,6 @@ import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/typ
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/constants/gmail-users-messages-get-batch-size.constant';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import {
-  GmailFullSyncJobData,
-  GmailFullSyncJob,
-} from 'src/modules/messaging/jobs/gmail-full-sync.job';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { GMAIL_ONGOING_SYNC_TIMEOUT } from 'src/modules/messaging/constants/gmail-ongoing-sync-timeout.constant';
@@ -101,36 +98,25 @@ export class GmailFetchMessageContentFromCacheV2Service {
       return;
     }
 
-    if (gmailMessageChannel.syncStatus !== MessageChannelSyncStatus.PENDING) {
+    if (
+      gmailMessageChannel?.syncStatus ===
+        MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS ||
+      gmailMessageChannel?.syncStatus === MessageChannelSyncStatus.FAILED
+    ) {
+      this.logger.error(
+        `Connected account ${connectedAccountId} in workspace ${workspaceId} is in a failed state. Skipping...`,
+      );
+
+      return;
+    }
+
+    if (
+      gmailMessageChannel.syncSubStatus !==
+      MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING
+    ) {
       this.logger.log(
         `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} is not pending.`,
       );
-
-      if (gmailMessageChannel.syncStatus !== MessageChannelSyncStatus.ONGOING) {
-        return;
-      }
-
-      const ongoingSyncStartedAt = new Date(
-        gmailMessageChannel.ongoingSyncStartedAt,
-      );
-
-      if (
-        ongoingSyncStartedAt < new Date(Date.now() - GMAIL_ONGOING_SYNC_TIMEOUT)
-      ) {
-        this.logger.log(
-          `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} failed due to ongoing sync timeout. Restarting full-sync...`,
-        );
-
-        await this.messageChannelRepository.updateSyncStatus(
-          gmailMessageChannel.id,
-          MessageChannelSyncStatus.FAILED,
-          workspaceId,
-        );
-
-        await this.fallbackToFullSync(workspaceId, connectedAccountId);
-
-        return;
-      }
 
       return;
     }
@@ -144,9 +130,15 @@ export class GmailFetchMessageContentFromCacheV2Service {
       )) ?? [];
 
     if (!messageIdsToFetch?.length) {
+      await this.messageChannelRepository.updateSyncSubStatus(
+        gmailMessageChannelId,
+        MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
+        workspaceId,
+      );
+
       await this.messageChannelRepository.updateSyncStatus(
         gmailMessageChannelId,
-        MessageChannelSyncStatus.SUCCEEDED,
+        MessageChannelSyncStatus.COMPLETED,
         workspaceId,
       );
 
@@ -157,9 +149,9 @@ export class GmailFetchMessageContentFromCacheV2Service {
       return;
     }
 
-    await this.messageChannelRepository.updateSyncStatus(
+    await this.messageChannelRepository.updateSyncSubStatus(
       gmailMessageChannelId,
-      MessageChannelSyncStatus.ONGOING,
+      MessageChannelSyncSubStatus.MESSAGES_IMPORT_ONGOING,
       workspaceId,
     );
 
@@ -232,7 +224,14 @@ export class GmailFetchMessageContentFromCacheV2Service {
           if (messageIdsToFetch.length < GMAIL_USERS_MESSAGES_GET_BATCH_SIZE) {
             await this.messageChannelRepository.updateSyncStatus(
               gmailMessageChannelId,
-              MessageChannelSyncStatus.SUCCEEDED,
+              MessageChannelSyncStatus.COMPLETED,
+              workspaceId,
+              transactionManager,
+            );
+
+            await this.messageChannelRepository.updateSyncSubStatus(
+              gmailMessageChannelId,
+              MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
               workspaceId,
               transactionManager,
             );
@@ -241,9 +240,9 @@ export class GmailFetchMessageContentFromCacheV2Service {
               `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} done with no more messages to import.`,
             );
           } else {
-            await this.messageChannelRepository.updateSyncStatus(
+            await this.messageChannelRepository.updateSyncSubStatus(
               gmailMessageChannelId,
-              MessageChannelSyncStatus.PENDING,
+              MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING,
               workspaceId,
               transactionManager,
             );
@@ -279,7 +278,7 @@ export class GmailFetchMessageContentFromCacheV2Service {
 
       await this.messageChannelRepository.updateSyncStatus(
         gmailMessageChannelId,
-        MessageChannelSyncStatus.FAILED,
+        MessageChannelSyncStatus.FAILED_UNKNOWN,
         workspaceId,
       );
 
@@ -291,15 +290,5 @@ export class GmailFetchMessageContentFromCacheV2Service {
         `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
       );
     }
-  }
-
-  private async fallbackToFullSync(
-    workspaceId: string,
-    connectedAccountId: string,
-  ) {
-    await this.messageQueueService.add<GmailFullSyncJobData>(
-      GmailFullSyncJob.name,
-      { workspaceId, connectedAccountId },
-    );
   }
 }
