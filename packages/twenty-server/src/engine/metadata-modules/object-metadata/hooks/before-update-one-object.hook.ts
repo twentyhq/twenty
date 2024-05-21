@@ -30,10 +30,8 @@ export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
   // TODO: this logic could be moved to a policy guard
   async run(
     instance: UpdateOneInputType<T>,
-    context: any,
+    workspaceId: string,
   ): Promise<UpdateOneInputType<T>> {
-    const workspaceId = context?.req?.user?.workspace?.id;
-
     if (!workspaceId) {
       throw new UnauthorizedException();
     }
