@@ -1,12 +1,30 @@
+import styled from '@emotion/styled';
+import { useIcons } from 'twenty-ui';
+
+import { EventCalendarEventDescription } from '@/activities/timelineActivities/components/EventCalendarEventDescription';
+import { EventMessageDescription } from '@/activities/timelineActivities/components/EventMessageDescription';
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type EventDescriptionProps = {
   event: TimelineActivity;
   mainObjectMetadataItem: ObjectMetadataItem | null;
   linkedObjectMetadata: ObjectMetadataItem | null;
 };
+
+const StyledIconContainer = styled.div`
+  align-items: center;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  display: flex;
+  height: 14px;
+  width: 14px;
+`;
+
+const StyledDescriptionContainer = styled.div`
+  align-items: center;
+  display: flex;
+  padding: ${({ theme }) => theme.spacing(1)};
+`;
 
 export const EventDescription = ({
   event,
@@ -15,40 +33,60 @@ export const EventDescription = ({
 }: EventDescriptionProps) => {
   const diff: Record<string, { before: any; after: any }> =
     event.properties?.diff;
-  const eventType = event.name.split('.')[1];
+  const { getIcon } = useIcons();
 
-  switch (eventType) {
+  const [eventName, eventAction] = event.name.split('.');
+
+  if (eventName === 'calendarEvent') {
+    return (
+      <EventCalendarEventDescription
+        eventAction={eventAction}
+        mainObjectMetadataItem={mainObjectMetadataItem}
+        calendarEventObjectMetadataItem={linkedObjectMetadata}
+      />
+    );
+  }
+  if (eventName === 'message') {
+    return (
+      <EventMessageDescription
+        eventAction={eventAction}
+        mainObjectMetadataItem={mainObjectMetadataItem}
+        messageObjectMetadataItem={linkedObjectMetadata}
+      />
+    );
+  }
+
+  switch (eventAction) {
     case 'created': {
-      if (isUndefinedOrNull(linkedObjectMetadata)) {
-        return `created a new ${mainObjectMetadataItem?.labelSingular}`;
-      }
-      return `created a ${mainObjectMetadataItem?.labelSingular}`;
+      return `created this ${mainObjectMetadataItem?.labelSingular?.toLowerCase()}`;
     }
     case 'updated': {
       const diffKeys = Object.keys(diff);
 
       if (diffKeys.length === 0) {
-        return `updated NAME`;
+        return `updated this ${mainObjectMetadataItem?.labelSingular?.toLowerCase()}`;
       }
 
       if (diffKeys.length === 1) {
         const key = Object.keys(diff)[0];
+        const field = mainObjectMetadataItem?.fields.find(
+          (field) => field.name === key,
+        );
+        const IconComponent = getIcon(field?.icon);
 
-        return `updated ${key}`;
+        return (
+          <StyledDescriptionContainer>
+            <StyledIconContainer>
+              <IconComponent />
+            </StyledIconContainer>
+            <span>{field?.label}</span>
+          </StyledDescriptionContainer>
+        );
       }
 
-      if (diffKeys.length === 2) {
-        return `${mainObjectMetadataItem?.fields.find(
-          (field) => diffKeys[0] === field.name,
-        )?.label} and ${mainObjectMetadataItem?.fields.find(
-          (field) => diffKeys[1] === field.name,
-        )?.label}`;
+      if (diffKeys.length > 1) {
+        return `updated ${diffKeys.length} fields`;
       }
-
-      if (diffKeys.length > 2) {
-        return `${diffKeys[0]} and ${diffKeys.length - 1} other fields`;
-      }
-      break;
     }
   }
 };

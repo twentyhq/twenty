@@ -15,6 +15,7 @@ import { objectRecordChangedValues } from 'src/engine/integrations/event-emitter
 import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
 import { ObjectRecordBaseEvent } from 'src/engine/integrations/event-emitter/types/object-record.base.event';
 import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
+import { CreateAuditLogFromInternalEvent } from 'src/modules/timeline/jobs/create-audit-log-from-internal-event';
 
 @Injectable()
 export class EntityEventsToDbListener {
@@ -66,10 +67,10 @@ export class EntityEventsToDbListener {
       return;
     }
 
-    // this.messageQueueService.add<ObjectRecordBaseEvent>(
-    //   CreateAuditLogFromInternalEvent.name,
-    //   payload,
-    // );
+    this.messageQueueService.add<ObjectRecordBaseEvent>(
+      CreateAuditLogFromInternalEvent.name,
+      payload,
+    );
 
     this.messageQueueService.add<ObjectRecordBaseEvent>(
       UpsertTimelineActivityFromInternalEvent.name,
