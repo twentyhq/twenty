@@ -30,4 +30,7 @@ export enum AppPath {
   // 404 page not found
   NotFoundWildcard = '*',
   NotFound = '/not-found',
+
+  // For storybook testing purposes only
+  StorybookIframe = '/iframe.html',
 }
