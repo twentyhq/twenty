@@ -187,6 +187,23 @@ export class MessageChannelRepository {
     );
   }
 
+  public async updateSubSyncStatus(
+    id: string,
+    subSyncStatus: MessageChannelSyncStatus,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<void> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."messageChannel" SET "subSyncStatus" = $1 WHERE "id" = $2`,
+      [subSyncStatus, id],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async updateLastSyncCursorIfHigher(
     id: string,
     syncCursor: string,

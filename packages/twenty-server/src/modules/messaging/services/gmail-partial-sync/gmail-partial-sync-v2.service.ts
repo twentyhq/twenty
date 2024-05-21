@@ -13,6 +13,7 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import {
   MessageChannelWorkspaceEntity,
   MessageChannelSyncStatus,
+  MessageChannelSyncSubStatus,
 } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { GMAIL_USERS_HISTORY_MAX_RESULT } from 'src/modules/messaging/constants/gmail-users-history-max-result.constant';
 import { GmailError } from 'src/modules/messaging/types/gmail-error';
@@ -28,8 +29,8 @@ import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/mes
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
 
 @Injectable()
-export class GmailPartialSyncService {
-  private readonly logger = new Logger(GmailPartialSyncService.name);
+export class GmailPartialSyncV2Service {
+  private readonly logger = new Logger(GmailPartialSyncV2Service.name);
 
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
@@ -82,6 +83,17 @@ export class GmailPartialSyncService {
     if (!gmailMessageChannel) {
       this.logger.error(
         `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
+      );
+
+      return;
+    }
+
+    if (
+      gmailMessageChannel.syncSubStatus !==
+      MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING
+    ) {
+      this.logger.log(
+        `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} is locked, import will be retried later.`,
       );
 
       return;
