@@ -26,7 +26,7 @@ export default defineManifest({
   action: {},
 
   //TODO: change this to a documenation page
-  options_page: 'options.html',
+  options_page: 'sidepanel.html',
 
   background: {
     service_worker: 'src/background/index.ts',
@@ -43,12 +43,12 @@ export default defineManifest({
 
   web_accessible_resources: [
     {
-      resources: ['options.html'],
+      resources: ['sidepanel.html', 'page-inaccessible.html'],
       matches: ['https://www.linkedin.com/*'],
     },
   ],
 
-  permissions: ['activeTab', 'storage', 'identity'],
+  permissions: ['activeTab', 'storage', 'identity', 'sidePanel'],
 
   host_permissions: host_permissions,
 
