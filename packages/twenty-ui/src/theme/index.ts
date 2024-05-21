@@ -23,6 +23,7 @@ export * from './constants/Modal';
 export * from './constants/OverlayBackground';
 export * from './constants/Rgba';
 export * from './constants/SecondaryColors';
+export * from './constants/SnackBar';
 export * from './constants/TagDark';
 export * from './constants/TagLight';
 export * from './constants/Text';
