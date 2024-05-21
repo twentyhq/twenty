@@ -7,7 +7,6 @@ import {
   IconInfoCircle,
   IconSquareRoundedCheck,
   IconX,
-  RGBA,
 } from 'twenty-ui';
 
 import { ProgressBar } from '@/ui/feedback/progress-bar/components/ProgressBar';
@@ -119,53 +118,24 @@ export const SnackBar = ({
       return iconComponent;
     }
 
+    const color = theme.snackBar[variant].color;
+    const size = theme.icon.size.md;
+
     switch (variant) {
       case SnackBarVariant.Error:
-        return (
-          <IconAlertTriangle
-            aria-label="Error"
-            color={theme.snackBar.color.error}
-            size={theme.icon.size.md}
-          />
-        );
+        return <IconAlertTriangle aria-label="Error" {...{ color, size }} />;
       case SnackBarVariant.Info:
-        return (
-          <IconInfoCircle
-            aria-label="Info"
-            color={theme.snackBar.color.info}
-            size={theme.icon.size.md}
-          />
-        );
+        return <IconInfoCircle aria-label="Info" {...{ color, size }} />;
       case SnackBarVariant.Success:
         return (
-          <IconSquareRoundedCheck
-            aria-label="Success"
-            color={theme.snackBar.color.success}
-            size={theme.icon.size.md}
-          />
+          <IconSquareRoundedCheck aria-label="Success" {...{ color, size }} />
         );
       case SnackBarVariant.Warning:
-        return (
-          <IconAlertTriangle
-            aria-label="Warning"
-            color={theme.snackBar.color.warning}
-            size={theme.icon.size.md}
-          />
-        );
+        return <IconAlertTriangle aria-label="Warning" {...{ color, size }} />;
       default:
-        return (
-          <IconAlertTriangle aria-label="Alert" size={theme.icon.size.md} />
-        );
+        return <IconAlertTriangle aria-label="Alert" {...{ color, size }} />;
     }
-  }, [
-    iconComponent,
-    theme.icon.size.md,
-    theme.snackBar.color.error,
-    theme.snackBar.color.info,
-    theme.snackBar.color.success,
-    theme.snackBar.color.warning,
-    variant,
-  ]);
+  }, [iconComponent, theme.icon.size.md, theme.snackBar, variant]);
 
   const handleMouseEnter = () => {
     if (progressAnimation?.state === 'running') {
@@ -179,11 +149,6 @@ export const SnackBar = ({
     }
   };
 
-  const progressBarColor = useMemo(
-    () => RGBA(theme.snackBar.color[variant], 0.04),
-    [theme.snackBar.color, variant],
-  );
-
   return (
     <StyledContainer
       aria-live={role === 'alert' ? 'assertive' : 'polite'}
@@ -191,7 +156,10 @@ export const SnackBar = ({
       onMouseLeave={handleMouseLeave}
       {...{ className, id, role, title, variant }}
     >
-      <StyledProgressBar color={progressBarColor} value={progressValue} />
+      <StyledProgressBar
+        color={theme.snackBar[variant].backgroundColor}
+        value={progressValue}
+      />
       <StyledHeader>
         {icon}
         {title}
