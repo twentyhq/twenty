@@ -190,7 +190,7 @@ export class MessageChannelRepository {
 
   public async updateSyncSubStatus(
     id: string,
-    subSyncStatus: MessageChannelSyncSubStatus,
+    syncSubStatus: MessageChannelSyncSubStatus,
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
@@ -198,8 +198,8 @@ export class MessageChannelRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."messageChannel" SET "subSyncStatus" = $1 WHERE "id" = $2`,
-      [subSyncStatus, id],
+      `UPDATE ${dataSourceSchema}."messageChannel" SET "syncSubStatus" = $1 WHERE "id" = $2`,
+      [syncSubStatus, id],
       workspaceId,
       transactionManager,
     );
