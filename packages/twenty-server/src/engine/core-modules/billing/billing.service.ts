@@ -265,14 +265,6 @@ export class BillingService {
       subscriptionStatus: data.object.status,
     });
 
-    const billingSubscription = await this.getCurrentBillingSubscription({
-      workspaceId,
-    });
-
-    if (!billingSubscription) {
-      return;
-    }
-
     await this.billingSubscriptionRepository.upsert(
       {
         workspaceId: workspaceId,
@@ -286,6 +278,14 @@ export class BillingService {
         skipUpdateIfNoValuesChanged: true,
       },
     );
+
+    const billingSubscription = await this.getCurrentBillingSubscription({
+      workspaceId,
+    });
+
+    if (!billingSubscription) {
+      return;
+    }
 
     await this.billingSubscriptionItemRepository.upsert(
       data.object.items.data.map((item) => {
