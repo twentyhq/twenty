@@ -12,6 +12,11 @@ import { MessageChannelRepository } from 'src/modules/messaging/repositories/mes
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { GmailFetchMessageContentFromCacheService } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { GmailFetchMessageContentFromCacheV2Service } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache-v2.service';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @Injectable()
 export class GmailFetchMessagesFromCacheCronJob
@@ -25,6 +30,9 @@ export class GmailFetchMessagesFromCacheCronJob
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
     private readonly gmailFetchMessageContentFromCacheService: GmailFetchMessageContentFromCacheService,
+    private readonly gmailFetchMessageContentFromCacheV2Service: GmailFetchMessageContentFromCacheV2Service,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     private readonly environmentService: EnvironmentService,
   ) {}
 
@@ -59,11 +67,27 @@ export class GmailFetchMessagesFromCacheCronJob
     const messageChannels =
       await this.messageChannelRepository.getAll(workspaceId);
 
+    const isGmailSyncV2EnabledFeatureFlag =
+      await this.featureFlagRepository.findOneBy({
+        workspaceId: workspaceId,
+        key: FeatureFlagKeys.IsGmailSyncV2Enabled,
+        value: true,
+      });
+
+    const isGmailSyncV2Enabled = isGmailSyncV2EnabledFeatureFlag?.value;
+
     for (const messageChannel of messageChannels) {
-      await this.gmailFetchMessageContentFromCacheService.fetchMessageContentFromCache(
-        workspaceId,
-        messageChannel.connectedAccountId,
-      );
+      if (isGmailSyncV2Enabled) {
+        await this.gmailFetchMessageContentFromCacheV2Service.fetchMessageContentFromCache(
+          workspaceId,
+          messageChannel.connectedAccountId,
+        );
+      } else {
+        await this.gmailFetchMessageContentFromCacheService.fetchMessageContentFromCache(
+          workspaceId,
+          messageChannel.connectedAccountId,
+        );
+      }
     }
   }
 }
