@@ -3,14 +3,14 @@ import ReactDOM from 'react-dom/client';
 
 import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
 import { ThemeType } from '@/ui/theme/constants/ThemeLight';
-import Sidepanel from '~/options/Sidepanel';
+import PageInaccessible from '~/options/PageInaccessible';
 
 import '~/index.css';
 
 ReactDOM.createRoot(document.getElementById('app') as HTMLElement).render(
   <AppThemeProvider>
     <React.StrictMode>
-      <Sidepanel />
+      <PageInaccessible />
     </React.StrictMode>
   </AppThemeProvider>,
 );
