@@ -120,7 +120,7 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
         ),
       });
     } else if (field.type === FieldMetadataType.Address) {
-      Object.entries(addressFields).forEach(([key, value]) => {
+      Object.entries(addressFields).forEach(([_, value]) => {
         templateFields.push({
           icon: getIcon(field.icon),
           label: `${value} (${field.label})`,
