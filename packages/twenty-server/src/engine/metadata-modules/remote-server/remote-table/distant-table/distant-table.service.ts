@@ -40,19 +40,19 @@ export class DistantTableService {
     tableName: string,
   ): Promise<PostgresTableSchemaColumn[]> {
     if (remoteServer.schema) {
-      const distantTableInList = await this.getDistantTablesFromDynamicSchema(
+      const distantTables = await this.getDistantTablesFromDynamicSchema(
         remoteServer,
         workspaceId,
         tableName,
       );
 
-      return distantTableInList[tableName];
+      return distantTables[tableName];
     }
 
-    const distantTableInList =
+    const distantTables =
       await this.getDistantTablesFromStaticSchema(remoteServer);
 
-    return distantTableInList[tableName];
+    return distantTables[tableName];
   }
 
   private async getDistantTablesFromDynamicSchema(

@@ -43,11 +43,11 @@ export class RemoteTableResolver {
   }
 
   @Mutation(() => RemoteTableDTO)
-  async updateRemoteTabletoDistantTable(
+  async syncRemoteTableSchemaChanges(
     @Args('input') input: RemoteTableInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.remoteTableService.updateRemoteTableToDistantTable(
+    return this.remoteTableService.syncRemoteTableSchemaChanges(
       input,
       workspaceId,
     );

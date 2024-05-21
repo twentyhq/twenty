@@ -20,7 +20,6 @@ import {
   WorkspaceMigrationColumnDropRelation,
   WorkspaceMigrationTableActionType,
   WorkspaceMigrationForeignTable,
-  WorkspaceMigrationAlterForeignTableAlteration,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { WorkspaceMigrationEnumService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-enum.service';
@@ -156,12 +155,12 @@ export class WorkspaceMigrationRunnerService {
           `DROP FOREIGN TABLE ${schemaName}."${tableMigration.name}"`,
         );
         break;
-      case 'alter_foreign_table':
+      case WorkspaceMigrationTableActionType.ALTER_FOREIGN_TABLE:
         await this.alterForeignTable(
           queryRunner,
           schemaName,
           tableMigration.name,
-          tableMigration.foreignTableAlterations,
+          tableMigration.columns,
         );
         break;
       default:
@@ -521,22 +520,24 @@ export class WorkspaceMigrationRunnerService {
     queryRunner: QueryRunner,
     schemaName: string,
     name: string,
-    alterations: WorkspaceMigrationAlterForeignTableAlteration[] | undefined,
+    columns: WorkspaceMigrationColumnAction[] | undefined,
   ) {
-    const alterationsQuery = alterations
-      ?.map((alteration) => {
-        if (alteration.action === WorkspaceMigrationColumnActionType.DROP) {
-          return `DROP COLUMN "${alteration.columnName}"`;
-        } else if (
-          alteration.action === WorkspaceMigrationColumnActionType.CREATE
-        ) {
-          return `ADD COLUMN "${alteration.columnName}" ${alteration.columnType}`;
+    const columnUpdatesQuery = columns
+      ?.map((column) => {
+        switch (column.action) {
+          case WorkspaceMigrationColumnActionType.DROP:
+            return `DROP COLUMN "${column.columnName}"`;
+          case WorkspaceMigrationColumnActionType.CREATE:
+            return `ADD COLUMN "${column.columnName}" ${column.columnType}`;
+          default:
+            return '';
         }
       })
+      .filter(Boolean)
       .join(', ');
 
     await queryRunner.query(
-      `ALTER FOREIGN TABLE ${schemaName}."${name}" ${alterationsQuery};`,
+      `ALTER FOREIGN TABLE ${schemaName}."${name}" ${columnUpdatesQuery};`,
     );
   }
 }

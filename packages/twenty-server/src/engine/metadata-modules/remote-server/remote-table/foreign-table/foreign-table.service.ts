@@ -14,7 +14,7 @@ import {
   WorkspaceMigrationTableActionType,
   WorkspaceMigrationForeignColumnDefinition,
   WorkspaceMigrationForeignTable,
-  WorkspaceMigrationAlterForeignTableAlteration,
+  WorkspaceMigrationColumnAction,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
@@ -40,7 +40,8 @@ export class ForeignTableService {
 
     return (
       await workspaceDataSource.query(
-        `SELECT foreign_table_name, foreign_server_name FROM information_schema.foreign_tables WHERE foreign_server_name = '${foreignDataWrapperId}'`,
+        `SELECT foreign_table_name, foreign_server_name FROM information_schema.foreign_tables WHERE foreign_server_name = '$1'`,
+        [foreignDataWrapperId],
       )
     ).map((foreignTable) => foreignTable.foreign_table_name);
   }
@@ -96,19 +97,19 @@ export class ForeignTableService {
   }
 
   public async updateForeignTable(
-    tableName: string,
+    foreignTableName: string,
     workspaceId: string,
-    alterations?: WorkspaceMigrationAlterForeignTableAlteration[],
+    columnsUpdates?: WorkspaceMigrationColumnAction[],
   ) {
     const workspaceMigration =
       await this.workspaceMigrationService.createCustomMigration(
-        generateMigrationName(`alter-foreign-table-${tableName}`),
+        generateMigrationName(`alter-foreign-table-${foreignTableName}`),
         workspaceId,
         [
           {
-            name: tableName,
+            name: foreignTableName,
             action: WorkspaceMigrationTableActionType.ALTER_FOREIGN_TABLE,
-            foreignTableAlterations: alterations,
+            columns: columnsUpdates,
           },
         ],
       );
@@ -122,7 +123,7 @@ export class ForeignTableService {
       await this.workspaceCacheVersionService.incrementVersion(workspaceId);
 
       return {
-        name: tableName,
+        name: foreignTableName,
         status: RemoteTableStatus.SYNCED,
         schemaPendingUpdates: [],
       };
@@ -133,13 +134,16 @@ export class ForeignTableService {
     }
   }
 
-  public async deleteForeignTable(tableName: string, workspaceId: string) {
+  public async deleteForeignTable(
+    foreignTableName: string,
+    workspaceId: string,
+  ) {
     await this.workspaceMigrationService.createCustomMigration(
-      generateMigrationName(`drop-foreign-table-${tableName}`),
+      generateMigrationName(`drop-foreign-table-${foreignTableName}`),
       workspaceId,
       [
         {
-          name: tableName,
+          name: foreignTableName,
           action: WorkspaceMigrationTableActionType.DROP_FOREIGN_TABLE,
         },
       ],
@@ -152,16 +156,16 @@ export class ForeignTableService {
 
   private buildReferencedTable(
     remoteServer: RemoteServerEntity<RemoteServerType>,
-    tableName: string,
+    distantTableName: string,
   ): ReferencedTable {
     switch (remoteServer.foreignDataWrapperType) {
       case RemoteServerType.POSTGRES_FDW:
         return {
-          table_name: tableName,
+          table_name: distantTableName,
           schema_name: remoteServer.schema,
         };
       case RemoteServerType.STRIPE_FDW:
-        return { object: tableName };
+        return { object: distantTableName };
       default:
         throw new BadRequestException('Foreign data wrapper not supported');
     }

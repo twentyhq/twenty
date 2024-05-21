@@ -7,6 +7,7 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
 import { RemoteServerEntity } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import { DistantTableModule } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.module';
 import { ForeignTableModule } from 'src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.module';
+import { RemoteTableSchemaUpdateModule } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-schema-update/remote-table-schema-update.module';
 import { RemoteTableEntity } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.entity';
 import { RemoteTableResolver } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.resolver';
 import { RemoteTableService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.service';
@@ -26,6 +27,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
     WorkspaceCacheVersionModule,
     WorkspaceDataSourceModule,
     ForeignTableModule,
+    RemoteTableSchemaUpdateModule,
   ],
   providers: [RemoteTableService, RemoteTableResolver],
   exports: [RemoteTableService],

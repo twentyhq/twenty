@@ -6,15 +6,14 @@ export const fetchTableColumns = async (
   workspaceId: string,
   tableName: string,
 ): Promise<PostgresTableSchemaColumn[]> => {
-  const workspaceDataSource =
-    await workspaceDataSourceService.connectToWorkspaceDataSource(workspaceId);
-
   const schemaName = workspaceDataSourceService.getSchemaName(workspaceId);
 
-  const res = await workspaceDataSource.query(
+  const res = await workspaceDataSourceService.executeRawQuery(
     `SELECT column_name, data_type, udt_name
         FROM information_schema.columns
-        WHERE table_schema = '${schemaName}' AND table_name = '${tableName}'`,
+        WHERE table_schema = $1 AND table_name = $2`,
+    [schemaName, tableName],
+    workspaceId,
   );
 
   return res.map((column) => ({
