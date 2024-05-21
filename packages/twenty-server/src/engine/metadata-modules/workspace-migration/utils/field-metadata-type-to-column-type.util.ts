@@ -26,7 +26,7 @@ export const fieldMetadataTypeToColumnType = <Type extends FieldMetadataType>(
     case FieldMetadataType.DATE_TIME:
       return 'timestamptz';
     case FieldMetadataType.DATE:
-      return 'datetime';
+      return 'date';
     case FieldMetadataType.RATING:
     case FieldMetadataType.SELECT:
     case FieldMetadataType.MULTI_SELECT:
