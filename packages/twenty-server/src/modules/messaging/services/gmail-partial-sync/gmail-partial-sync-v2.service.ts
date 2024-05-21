@@ -220,6 +220,14 @@ export class GmailPartialSyncV2Service {
             workspaceId,
             transactionManager,
           );
+
+          await this.connectedAccountRepository.updateAuthFailedAt(
+            connectedAccountId,
+            workspaceId,
+            transactionManager,
+          );
+
+          return;
         }
 
         if (!historyId) {
