@@ -174,7 +174,7 @@ export class GmailFetchMessageContentFromCacheService {
     const messageQueries = createQueriesFromMessageIds(messageIdsToFetch);
 
     try {
-      const { messages: messagesToSave, errors } =
+      const messagesToSave =
         await this.fetchMessagesByBatchesService.fetchAllMessages(
           messageQueries,
           accessToken,
@@ -192,22 +192,6 @@ export class GmailFetchMessageContentFromCacheService {
             );
 
             return [];
-          }
-
-          if (errors.length) {
-            const errorsCanBeIgnored = errors.every(
-              (error) => error.code === 404,
-            );
-
-            if (!errorsCanBeIgnored) {
-              throw new Error(
-                `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${JSON.stringify(
-                  errors,
-                  null,
-                  2,
-                )}`,
-              );
-            }
           }
 
           const messageExternalIdsAndIdsMap =
@@ -292,21 +276,19 @@ export class GmailFetchMessageContentFromCacheService {
         messageIdsToFetch,
       );
 
-      if (error?.message?.code === 429) {
-        this.logger.error(
-          `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: Resource has been exhausted, locking for ${GMAIL_ONGOING_SYNC_TIMEOUT}ms...`,
-        );
+      await this.messageChannelRepository.updateSyncStatus(
+        gmailMessageChannelId,
+        MessageChannelSyncStatus.FAILED,
+        workspaceId,
+      );
 
-        await this.messageChannelRepository.updateSyncStatus(
-          gmailMessageChannelId,
-          MessageChannelSyncStatus.FAILED,
-          workspaceId,
-        );
+      this.logger.error(
+        `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: locking for ${GMAIL_ONGOING_SYNC_TIMEOUT}ms...`,
+      );
 
-        throw new Error(
-          `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
-        );
-      }
+      throw new Error(
+        `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
+      );
     }
   }
 
