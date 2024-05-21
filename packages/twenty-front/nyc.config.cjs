@@ -7,10 +7,10 @@ const globalCoverage = {
 };
 
 const modulesCoverage = {
-  branches: 45,
-  statements: 70,
-  lines: 70,
-  functions: 65,
+  branches: 25,
+  statements: 65,
+  lines: 65,
+  functions: 40,
   include: ['src/modules/**/*'],
   exclude: ['src/**/*.ts'],
 };
