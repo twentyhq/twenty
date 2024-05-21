@@ -26,6 +26,7 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
+import { MessageThreadMembersObjectMetadata } from 'src/modules/messaging/standard-objects/message-thread-members.object-metadata';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workspaceMember,
@@ -129,6 +130,17 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     onDelete: RelationOnDeleteAction.CASCADE,
   })
   favorites: Relation<FavoriteWorkspaceEntity[]>;
+
+  @WorkspaceRelation({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.messageThreadMembers,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Message Threads',
+    description: 'Message Threads linked to the workspace member',
+    icon: 'IconMessage',
+    inverseSideTarget: () => MessageThreadMembersObjectMetadata,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  messageThreadMembers: Relation<MessageThreadMembersObjectMetadata[]>;
 
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.accountOwnerForCompanies,

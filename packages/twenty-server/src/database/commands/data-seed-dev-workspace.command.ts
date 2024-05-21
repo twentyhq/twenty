@@ -21,6 +21,7 @@ import { seedMessageChannel } from 'src/database/typeorm-seeds/workspace/message
 import { seedMessageChannelMessageAssociation } from 'src/database/typeorm-seeds/workspace/message-channel-message-associations';
 import { seedMessageParticipant } from 'src/database/typeorm-seeds/workspace/message-participants';
 import { seedMessageThread } from 'src/database/typeorm-seeds/workspace/message-threads';
+import { seedMessageThreadMembers } from 'src/database/typeorm-seeds/workspace/message-thread-members';
 import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
 import { seedCalendarEvents } from 'src/database/typeorm-seeds/workspace/calendar-events';
 import { seedCalendarChannels } from 'src/database/typeorm-seeds/workspace/calendar-channel';
@@ -128,6 +129,10 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
             if (workspaceId === SEED_APPLE_WORKSPACE_ID) {
               await seedMessageThread(entityManager, dataSourceMetadata.schema);
               await seedConnectedAccount(
+                entityManager,
+                dataSourceMetadata.schema,
+              );
+              await seedMessageThreadMembers(
                 entityManager,
                 dataSourceMetadata.schema,
               );

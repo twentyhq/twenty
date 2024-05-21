@@ -27,6 +27,7 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/stan
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { MessageThreadMembersWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-thread-members.workspace-entity';
 
 export const standardObjectMetadataDefinitions = [
   ActivityTargetWorkspaceEntity,
@@ -54,6 +55,7 @@ export const standardObjectMetadataDefinitions = [
   WebhookWorkspaceEntity,
   WorkspaceMemberWorkspaceEntity,
   MessageThreadWorkspaceEntity,
+  MessageThreadMembersWorkspaceEntity,
   MessageWorkspaceEntity,
   MessageChannelWorkspaceEntity,
   MessageParticipantWorkspaceEntity,
