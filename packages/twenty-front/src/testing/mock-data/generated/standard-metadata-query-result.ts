@@ -80,7 +80,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'ea83af89-be10-49af-a605-10c3392ae007',
                       name: 'viewFields',
                     },
@@ -92,7 +91,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'c9607ed7-168d-4743-a56a-689ffcfffe98',
                       name: 'view',
                     },
@@ -145,7 +143,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '5e054149-2d41-4591-b968-8fdf0afcbc79',
                       name: 'viewFilters',
                     },
@@ -157,7 +154,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '6ce40790-295a-4aac-a65e-9ae863ba1d90',
                       name: 'view',
                     },
@@ -233,7 +229,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '405aa0c6-ce96-4597-8b61-2271020fde11',
                       name: 'viewSorts',
                     },
@@ -245,7 +240,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '5ab02c12-acdd-4663-b913-78c25dd7f199',
                       name: 'view',
                     },
@@ -639,7 +633,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'd99cc1b4-4874-4c78-bcfe-0908c0a51466',
                       name: 'messageThread',
                     },
@@ -651,7 +644,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '442b3224-f4c6-49b8-979e-693606a22875',
                       name: 'messageChannelMessageAssociations',
                     },
@@ -819,7 +811,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '29a3af93-a6b9-464f-bc83-84fd2abf2054',
                       name: 'message',
                     },
@@ -831,7 +822,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'ae82a0a0-d928-499a-a6b1-ad46006452b0',
                       name: 'messageChannelMessageAssociations',
                     },
@@ -884,7 +874,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '8b39502b-7400-480f-aff3-fa010bdbf50c',
                       name: 'messageChannel',
                     },
@@ -896,7 +885,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '1cbbd683-b426-4509-9557-54671e6f0447',
                       name: 'messageChannelMessageAssociations',
                     },
@@ -1098,7 +1086,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '5d578b49-324e-43a3-a10a-512c5606d29b',
                       name: 'workspaceMember',
                     },
@@ -1110,7 +1097,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'ca7a26f0-84f3-4215-a3a1-6967961de3c4',
                       name: 'blocklist',
                     },
@@ -1220,7 +1206,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '372d5559-abc9-43c8-aa89-62d95e384c5a',
                       name: 'message',
                     },
@@ -1232,7 +1217,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '12099cb8-ee26-4ce7-836c-73230c94c3e8',
                       name: 'messageParticipants',
                     },
@@ -1400,7 +1384,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '02b1656e-251d-4229-b86a-de621678bd96',
                       name: 'person',
                     },
@@ -1412,7 +1395,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '776f05e8-fe39-47c7-861e-586361299462',
                       name: 'messageParticipants',
                     },
@@ -1540,7 +1522,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'd96db94f-cffa-494b-9551-4d639d47cee3',
                       name: 'workspaceMember',
                     },
@@ -1552,7 +1533,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '67044674-2477-44b4-a7a2-fba9add0e9ce',
                       name: 'messageParticipants',
                     },
@@ -1662,7 +1642,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '728b91ef-bda8-4d47-80a7-36e64f659ea7',
                       name: 'person',
                     },
@@ -1674,7 +1653,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '62332d09-84c5-4959-af41-f1e9cc22ec8d',
                       name: 'events',
                     },
@@ -1773,7 +1751,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'bcfa8dd3-080a-43f1-ab82-7b6a5b81a64c',
                       name: 'opportunity',
                     },
@@ -1785,7 +1762,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'a16e97e2-2d9f-45f7-85bf-c6cc78de9175',
                       name: 'events',
                     },
@@ -1930,7 +1906,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'e8998178-223e-42a8-9978-a72a4477c8d4',
                       name: 'workspaceMember',
                     },
@@ -1942,7 +1917,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'a06ac5ca-493e-413e-a305-0812deeaab85',
                       name: 'events',
                     },
@@ -2087,7 +2061,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '439ddfe9-1a1d-4992-9bd0-3c7b965e05d5',
                       name: 'listing',
                     },
@@ -2099,7 +2072,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'bfff2fe1-f45e-4cb4-bd9e-9d68dfe9af7e',
                       name: 'events',
                     },
@@ -2152,7 +2124,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '155c7d0c-1974-426a-a072-6cee0424d71c',
                       name: 'company',
                     },
@@ -2164,7 +2135,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '29f251c2-fd6f-4fa7-a55b-80e6481f4ba9',
                       name: 'events',
                     },
@@ -2343,7 +2313,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '6ce40790-295a-4aac-a65e-9ae863ba1d90',
                       name: 'view',
                     },
@@ -2355,7 +2324,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '5e054149-2d41-4591-b968-8fdf0afcbc79',
                       name: 'viewFilters',
                     },
@@ -2557,7 +2525,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'c9607ed7-168d-4743-a56a-689ffcfffe98',
                       name: 'view',
                     },
@@ -2569,7 +2536,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'ea83af89-be10-49af-a605-10c3392ae007',
                       name: 'viewFields',
                     },
@@ -2840,7 +2806,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'fefbe526-b75b-494e-a06a-e89d6790cc3b',
                       name: 'connectedAccount',
                     },
@@ -2852,7 +2817,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'fc92c00d-e5ff-4982-965e-514ee30bcf1c',
                       name: 'calendarChannels',
                     },
@@ -3035,7 +2999,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '60c518d0-c6ec-4b37-8bac-129e1442f390',
                       name: 'calendarChannelEventAssociations',
                     },
@@ -3047,7 +3010,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '9b6e136f-3c9e-4c4b-92f8-a50291eb21f8',
                       name: 'calendarChannel',
                     },
@@ -3227,7 +3189,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'b802682c-3f9d-4f86-856b-a8e91048ae02',
                       name: 'calendarEventParticipants',
                     },
@@ -3239,7 +3200,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'e9fb5ddb-4231-46c3-971f-0dfb321641b8',
                       name: 'person',
                     },
@@ -3338,7 +3298,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '483d8221-01cd-4d70-83f7-f3d1b60c5575',
                       name: 'activityTargets',
                     },
@@ -3350,7 +3309,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '5bb6652c-6eba-4c1a-b6e5-aae3ca46b132',
                       name: 'person',
                     },
@@ -3567,7 +3525,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '17a9cee7-7f68-42bb-abd0-50932466f901',
                       name: 'favorites',
                     },
@@ -3579,7 +3536,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'd737cd4a-4032-476d-a594-1952ba7883b2',
                       name: 'person',
                     },
@@ -3655,7 +3611,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '776f05e8-fe39-47c7-861e-586361299462',
                       name: 'messageParticipants',
                     },
@@ -3667,7 +3622,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '02b1656e-251d-4229-b86a-de621678bd96',
                       name: 'person',
                     },
@@ -3720,7 +3674,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'fae2489f-7f59-4385-bec8-9d3f4044d1da',
                       name: 'attachments',
                     },
@@ -3732,7 +3685,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'ef4c93f7-b0fb-40a5-932b-2db0f4fe2271',
                       name: 'person',
                     },
@@ -3785,7 +3737,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '62332d09-84c5-4959-af41-f1e9cc22ec8d',
                       name: 'events',
                     },
@@ -3797,7 +3748,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '728b91ef-bda8-4d47-80a7-36e64f659ea7',
                       name: 'person',
                     },
@@ -3876,7 +3826,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'c624bade-5070-4155-bd0c-8704fb2cdf8b',
                       name: 'company',
                     },
@@ -3888,7 +3837,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '6be4ff53-c65b-4955-9f86-935dd953154d',
                       name: 'people',
                     },
@@ -3967,7 +3915,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'c2897c17-90a9-487b-a358-579c14cdd862',
                       name: 'pointOfContactForOpportunities',
                     },
@@ -3979,7 +3926,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '4a6abf2d-56dd-44e4-a52f-048d05b8bee5',
                       name: 'pointOfContact',
                     },
@@ -4066,7 +4012,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'bfff2fe1-f45e-4cb4-bd9e-9d68dfe9af7e',
                       name: 'events',
                     },
@@ -4078,7 +4023,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '439ddfe9-1a1d-4992-9bd0-3c7b965e05d5',
                       name: 'listing',
                     },
@@ -4177,7 +4121,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '2629a000-8bee-443d-9379-1c89a597df21',
                       name: 'activityTargets',
                     },
@@ -4189,7 +4132,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'b407e872-8151-4bef-8277-0df5f638153d',
                       name: 'listing',
                     },
@@ -4242,7 +4184,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '178e9a07-cd88-47c0-8faf-cbd3918ba8b0',
                       name: 'c',
                     },
@@ -4254,7 +4195,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'fc6a4a82-f80f-4aad-85e3-b2ae9b8fb26b',
                       name: 'listings',
                     },
@@ -4330,7 +4270,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'ff20f9f0-f081-436b-8526-d7b2b3c80c92',
                       name: 'company',
                     },
@@ -4342,7 +4281,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '3a78ab26-7c4b-498a-b839-92b38223a3d5',
                       name: 'listing',
                     },
@@ -4418,7 +4356,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '78ab1b0d-e6b7-4c45-ac46-decdcf913b23',
                       name: 'favorites',
                     },
@@ -4430,7 +4367,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'd94f1f82-1aab-441c-b6ff-6ec2f561921d',
                       name: 'listing',
                     },
@@ -4506,7 +4442,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'a19d48b1-889e-4e6c-ad5a-a5707e92f8bf',
                       name: 'attachments',
                     },
@@ -4518,7 +4453,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '7c18721a-75dd-419b-a9eb-73ea84a5be85',
                       name: 'listing',
                     },
@@ -4800,7 +4734,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '77da807c-10c9-4084-b396-25bbfb371ef4',
                       name: 'messages',
                     },
@@ -4812,7 +4745,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'c9807e13-e48b-4ccb-8f2f-2289a351a86b',
                       name: 'messageThread',
                     },
@@ -4934,7 +4866,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '442b3224-f4c6-49b8-979e-693606a22875',
                       name: 'messageChannelMessageAssociations',
                     },
@@ -4946,7 +4877,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'd99cc1b4-4874-4c78-bcfe-0908c0a51466',
                       name: 'messageThread',
                     },
@@ -5079,7 +5009,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '9b6e136f-3c9e-4c4b-92f8-a50291eb21f8',
                       name: 'calendarChannel',
                     },
@@ -5091,7 +5020,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '60c518d0-c6ec-4b37-8bac-129e1442f390',
                       name: 'calendarChannelEventAssociations',
                     },
@@ -5213,7 +5141,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '1c40e6e9-437b-47fc-84bf-57d4a8a0513d',
                       name: 'calendarEvent',
                     },
@@ -5225,7 +5152,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'b2be8cfa-97dc-4482-bad2-b8576b4090e7',
                       name: 'calendarChannelEventAssociations',
                     },
@@ -5358,7 +5284,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'f54661da-2ada-4179-82aa-5dcbbfde553c',
                       name: 'author',
                     },
@@ -5370,7 +5295,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '79c3c3b7-b71c-47c0-a6ca-93ebf9842932',
                       name: 'authoredActivities',
                     },
@@ -5469,7 +5393,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '5f4ea983-40a2-4377-a9ec-4bdfc52b0941',
                       name: 'comments',
                     },
@@ -5481,7 +5404,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '56919379-c98d-4a84-9f6a-accddd892620',
                       name: 'activity',
                     },
@@ -5580,7 +5502,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '50b1c013-d292-4440-b95c-866156cb3e50',
                       name: 'attachments',
                     },
@@ -5592,7 +5513,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '80f9f757-fdf4-4c1a-ade8-4dcd8063eda0',
                       name: 'activity',
                     },
@@ -5668,7 +5588,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '946beaa4-8816-4019-bd33-28c8463bfeaa',
                       name: 'activityTargets',
                     },
@@ -5680,7 +5599,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'c2ba4efb-604d-4c2f-8a03-0b569b47b55d',
                       name: 'activity',
                     },
@@ -5848,7 +5766,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '16e12150-bca4-4d81-b0d3-87fc7e5ef7a4',
                       name: 'assignee',
                     },
@@ -5860,7 +5777,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '59abd17e-faa3-4527-94ee-6aa54c1ebae0',
                       name: 'assignedActivities',
                     },
@@ -5970,7 +5886,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'fc3cfebb-722e-42dd-9646-e9f9f07dc152',
                       name: 'connectedAccounts',
                     },
@@ -5982,7 +5897,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'cff5f362-1299-4e44-bcf5-49bb0d2d611b',
                       name: 'accountOwner',
                     },
@@ -6081,7 +5995,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '79c3c3b7-b71c-47c0-a6ca-93ebf9842932',
                       name: 'authoredActivities',
                     },
@@ -6093,7 +6006,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'f54661da-2ada-4179-82aa-5dcbbfde553c',
                       name: 'author',
                     },
@@ -6218,7 +6130,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '20577261-01ca-43ae-a6c8-d558dce6c0ee',
                       name: 'accountOwnerForCompanies',
                     },
@@ -6230,7 +6141,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'f1bbe372-b283-4061-b7b4-5a5039196b8c',
                       name: 'accountOwner',
                     },
@@ -6283,7 +6193,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '605cc521-9640-49bd-b2c2-c5aa6c588b90',
                       name: 'authoredAttachments',
                     },
@@ -6295,7 +6204,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'd65234a9-f3a7-4985-93fb-52b1ee7517fb',
                       name: 'author',
                     },
@@ -6348,7 +6256,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '67044674-2477-44b4-a7a2-fba9add0e9ce',
                       name: 'messageParticipants',
                     },
@@ -6360,7 +6267,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'd96db94f-cffa-494b-9551-4d639d47cee3',
                       name: 'workspaceMember',
                     },
@@ -6436,7 +6342,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '59abd17e-faa3-4527-94ee-6aa54c1ebae0',
                       name: 'assignedActivities',
                     },
@@ -6448,7 +6353,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '16e12150-bca4-4d81-b0d3-87fc7e5ef7a4',
                       name: 'assignee',
                     },
@@ -6501,7 +6405,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'a06ac5ca-493e-413e-a305-0812deeaab85',
                       name: 'events',
                     },
@@ -6513,7 +6416,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'e8998178-223e-42a8-9978-a72a4477c8d4',
                       name: 'workspaceMember',
                     },
@@ -6566,7 +6468,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'aee6daaa-a9e3-4f1a-a4dc-aa34c57cef7f',
                       name: 'calendarEventParticipants',
                     },
@@ -6578,7 +6479,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'c0705e9a-d868-45ee-83b7-6055ca6ac1a8',
                       name: 'workspaceMember',
                     },
@@ -6654,7 +6554,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'ca7a26f0-84f3-4215-a3a1-6967961de3c4',
                       name: 'blocklist',
                     },
@@ -6666,7 +6565,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '5d578b49-324e-43a3-a10a-512c5606d29b',
                       name: 'workspaceMember',
                     },
@@ -6742,7 +6640,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '28419ee0-5f10-4130-ad39-31fe4fc4ae62',
                       name: 'favorites',
                     },
@@ -6754,7 +6651,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '8813fd75-e0d8-4a65-abd9-186dcbe9f1a7',
                       name: 'workspaceMember',
                     },
@@ -6807,7 +6703,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '9ea86ae6-c26b-4ea0-b207-820b3ebf7110',
                       name: 'authoredComments',
                     },
@@ -6819,7 +6714,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '70073404-9690-4b2d-b2b7-e823ab279d74',
                       name: 'author',
                     },
@@ -6952,7 +6846,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '1cbbd683-b426-4509-9557-54671e6f0447',
                       name: 'messageChannelMessageAssociations',
                     },
@@ -6964,7 +6857,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '8b39502b-7400-480f-aff3-fa010bdbf50c',
                       name: 'messageChannel',
                     },
@@ -7063,7 +6955,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'b914db46-eea0-496c-ba56-1209b3fd9537',
                       name: 'connectedAccount',
                     },
@@ -7075,7 +6966,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'c68fb8af-ad36-439c-8c9d-799ba4cf4169',
                       name: 'messageChannels',
                     },
@@ -7412,7 +7302,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '80f9f757-fdf4-4c1a-ade8-4dcd8063eda0',
                       name: 'activity',
                     },
@@ -7424,7 +7313,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '50b1c013-d292-4440-b95c-866156cb3e50',
                       name: 'attachments',
                     },
@@ -7500,7 +7388,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '0181aae2-1683-453a-b858-fe5260bb19e6',
                       name: 'company',
                     },
@@ -7512,7 +7399,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '8f7912c8-8dc7-40ca-8625-b6d0ec2dc1f4',
                       name: 'attachments',
                     },
@@ -7657,7 +7543,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '528427e3-e988-44b3-9b3f-fa47a9e64ca6',
                       name: 'opportunity',
                     },
@@ -7669,7 +7554,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '2c2077f0-2efc-4569-b2d9-44c8583a2a58',
                       name: 'attachments',
                     },
@@ -7722,7 +7606,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'ef4c93f7-b0fb-40a5-932b-2db0f4fe2271',
                       name: 'person',
                     },
@@ -7734,7 +7617,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'fae2489f-7f59-4385-bec8-9d3f4044d1da',
                       name: 'attachments',
                     },
@@ -7925,7 +7807,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'd65234a9-f3a7-4985-93fb-52b1ee7517fb',
                       name: 'author',
                     },
@@ -7937,7 +7818,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '605cc521-9640-49bd-b2c2-c5aa6c588b90',
                       name: 'authoredAttachments',
                     },
@@ -7990,7 +7870,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '7c18721a-75dd-419b-a9eb-73ea84a5be85',
                       name: 'listing',
                     },
@@ -8002,7 +7881,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'a19d48b1-889e-4e6c-ad5a-a5707e92f8bf',
                       name: 'attachments',
                     },
@@ -8112,7 +7990,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '4a6abf2d-56dd-44e4-a52f-048d05b8bee5',
                       name: 'pointOfContact',
                     },
@@ -8124,7 +8001,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'c2897c17-90a9-487b-a358-579c14cdd862',
                       name: 'pointOfContactForOpportunities',
                     },
@@ -8177,7 +8053,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '2c2077f0-2efc-4569-b2d9-44c8583a2a58',
                       name: 'attachments',
                     },
@@ -8189,7 +8064,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '528427e3-e988-44b3-9b3f-fa47a9e64ca6',
                       name: 'opportunity',
                     },
@@ -8265,7 +8139,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'a16e97e2-2d9f-45f7-85bf-c6cc78de9175',
                       name: 'events',
                     },
@@ -8277,7 +8150,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'bcfa8dd3-080a-43f1-ab82-7b6a5b81a64c',
                       name: 'opportunity',
                     },
@@ -8330,7 +8202,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'be148e1f-256c-4ea8-a016-c25cbd6ec841',
                       name: 'company',
                     },
@@ -8342,7 +8213,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'efba6645-b939-4751-bd55-a2fa787997aa',
                       name: 'opportunities',
                     },
@@ -8441,7 +8311,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'd61da288-7a71-47d5-ba6a-7700356e9a3a',
                       name: 'favorites',
                     },
@@ -8453,7 +8322,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '32ae5023-12c5-4a3a-8ec0-3f024eae8377',
                       name: 'opportunity',
                     },
@@ -8729,7 +8597,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'adc8f6dd-aee1-492f-a715-7dd02bdfb5f5',
                       name: 'activityTargets',
                     },
@@ -8741,7 +8608,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '48714e13-1203-424e-8bfa-0f2baff626e7',
                       name: 'opportunity',
                     },
@@ -8943,7 +8809,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '87b36790-10ac-40ce-b309-c8033c0aa083',
                       name: 'eventParticipants',
                     },
@@ -8955,7 +8820,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '58906c98-2b5a-41bf-bc22-0b4df50e24dd',
                       name: 'calendarEvent',
                     },
@@ -9123,7 +8987,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'b2be8cfa-97dc-4482-bad2-b8576b4090e7',
                       name: 'calendarChannelEventAssociations',
                     },
@@ -9135,7 +8998,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '1c40e6e9-437b-47fc-84bf-57d4a8a0513d',
                       name: 'calendarEvent',
                     },
@@ -9535,7 +9397,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'ae82a0a0-d928-499a-a6b1-ad46006452b0',
                       name: 'messageChannelMessageAssociations',
                     },
@@ -9547,7 +9408,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '29a3af93-a6b9-464f-bc83-84fd2abf2054',
                       name: 'message',
                     },
@@ -9692,7 +9552,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '12099cb8-ee26-4ce7-836c-73230c94c3e8',
                       name: 'messageParticipants',
                     },
@@ -9704,7 +9563,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '372d5559-abc9-43c8-aa89-62d95e384c5a',
                       name: 'message',
                     },
@@ -9780,7 +9638,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'c9807e13-e48b-4ccb-8f2f-2289a351a86b',
                       name: 'messageThread',
                     },
@@ -9792,7 +9649,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '77da807c-10c9-4084-b396-25bbfb371ef4',
                       name: 'messages',
                     },
@@ -10032,7 +9888,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '70073404-9690-4b2d-b2b7-e823ab279d74',
                       name: 'author',
                     },
@@ -10044,7 +9899,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '9ea86ae6-c26b-4ea0-b207-820b3ebf7110',
                       name: 'authoredComments',
                     },
@@ -10166,7 +10020,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '56919379-c98d-4a84-9f6a-accddd892620',
                       name: 'activity',
                     },
@@ -10178,7 +10031,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '5f4ea983-40a2-4377-a9ec-4bdfc52b0941',
                       name: 'comments',
                     },
@@ -10265,7 +10117,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'efba6645-b939-4751-bd55-a2fa787997aa',
                       name: 'opportunities',
                     },
@@ -10277,7 +10128,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'be148e1f-256c-4ea8-a016-c25cbd6ec841',
                       name: 'company',
                     },
@@ -10353,7 +10203,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '3500a80f-b0a8-45b1-8ca7-3d6b1ed45d3c',
                       name: 'activityTargets',
                     },
@@ -10365,7 +10214,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '038d194c-ba8c-4ff8-aeaa-846558e420c2',
                       name: 'company',
                     },
@@ -10464,7 +10312,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '6be4ff53-c65b-4955-9f86-935dd953154d',
                       name: 'people',
                     },
@@ -10476,7 +10323,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'c624bade-5070-4155-bd0c-8704fb2cdf8b',
                       name: 'company',
                     },
@@ -10553,7 +10399,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'f1bbe372-b283-4061-b7b4-5a5039196b8c',
                       name: 'accountOwner',
                     },
@@ -10565,7 +10410,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '20577261-01ca-43ae-a6c8-d558dce6c0ee',
                       name: 'accountOwnerForCompanies',
                     },
@@ -10641,7 +10485,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '8f7912c8-8dc7-40ca-8625-b6d0ec2dc1f4',
                       name: 'attachments',
                     },
@@ -10653,7 +10496,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '0181aae2-1683-453a-b858-fe5260bb19e6',
                       name: 'company',
                     },
@@ -10804,7 +10646,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'fc6a4a82-f80f-4aad-85e3-b2ae9b8fb26b',
                       name: 'listings',
                     },
@@ -10816,7 +10657,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '178e9a07-cd88-47c0-8faf-cbd3918ba8b0',
                       name: 'c',
                     },
@@ -10869,7 +10709,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '29f251c2-fd6f-4fa7-a55b-80e6481f4ba9',
                       name: 'events',
                     },
@@ -10881,7 +10720,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '155c7d0c-1974-426a-a072-6cee0424d71c',
                       name: 'company',
                     },
@@ -10934,7 +10772,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '3a78ab26-7c4b-498a-b839-92b38223a3d5',
                       name: 'listing',
                     },
@@ -10946,7 +10783,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'ff20f9f0-f081-436b-8526-d7b2b3c80c92',
                       name: 'company',
                     },
@@ -11075,7 +10911,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '1579d027-2443-42a3-97e5-c3e6e81abe5c',
                       name: 'favorites',
                     },
@@ -11087,7 +10922,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'dd203027-190c-471c-8e16-da0260b6274c',
                       name: 'company',
                     },
@@ -11428,7 +11262,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'cff5f362-1299-4e44-bcf5-49bb0d2d611b',
                       name: 'accountOwner',
                     },
@@ -11440,7 +11273,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'fc3cfebb-722e-42dd-9646-e9f9f07dc152',
                       name: 'connectedAccounts',
                     },
@@ -11493,7 +11325,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'fc92c00d-e5ff-4982-965e-514ee30bcf1c',
                       name: 'calendarChannels',
                     },
@@ -11505,7 +11336,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'fefbe526-b75b-494e-a06a-e89d6790cc3b',
                       name: 'connectedAccount',
                     },
@@ -11581,7 +11411,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'c68fb8af-ad36-439c-8c9d-799ba4cf4169',
                       name: 'messageChannels',
                     },
@@ -11593,7 +11422,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'b914db46-eea0-496c-ba56-1209b3fd9537',
                       name: 'connectedAccount',
                     },
@@ -11870,7 +11698,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'c0705e9a-d868-45ee-83b7-6055ca6ac1a8',
                       name: 'workspaceMember',
                     },
@@ -11882,7 +11709,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'aee6daaa-a9e3-4f1a-a4dc-aa34c57cef7f',
                       name: 'calendarEventParticipants',
                     },
@@ -11935,7 +11761,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'e9fb5ddb-4231-46c3-971f-0dfb321641b8',
                       name: 'person',
                     },
@@ -11947,7 +11772,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'b802682c-3f9d-4f86-856b-a8e91048ae02',
                       name: 'calendarEventParticipants',
                     },
@@ -12023,7 +11847,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '58906c98-2b5a-41bf-bc22-0b4df50e24dd',
                       name: 'calendarEvent',
                     },
@@ -12035,7 +11858,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '87b36790-10ac-40ce-b309-c8033c0aa083',
                       name: 'eventParticipants',
                     },
@@ -12191,7 +12013,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'c2ba4efb-604d-4c2f-8a03-0b569b47b55d',
                       name: 'activity',
                     },
@@ -12203,7 +12024,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '946beaa4-8816-4019-bd33-28c8463bfeaa',
                       name: 'activityTargets',
                     },
@@ -12279,7 +12099,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '5bb6652c-6eba-4c1a-b6e5-aae3ca46b132',
                       name: 'person',
                     },
@@ -12291,7 +12110,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '483d8221-01cd-4d70-83f7-f3d1b60c5575',
                       name: 'activityTargets',
                     },
@@ -12413,7 +12231,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '038d194c-ba8c-4ff8-aeaa-846558e420c2',
                       name: 'company',
                     },
@@ -12425,7 +12242,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '3500a80f-b0a8-45b1-8ca7-3d6b1ed45d3c',
                       name: 'activityTargets',
                     },
@@ -12501,7 +12317,6 @@ isRemote: false,
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '48714e13-1203-424e-8bfa-0f2baff626e7',
                       name: 'opportunity',
                     },
@@ -12513,7 +12328,6 @@ isRemote: false,
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'adc8f6dd-aee1-492f-a715-7dd02bdfb5f5',
                       name: 'activityTargets',
                     },
@@ -12566,7 +12380,6 @@ isRemote: false,
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'b407e872-8151-4bef-8277-0df5f638153d',
                       name: 'listing',
                     },
@@ -12578,7 +12391,6 @@ isRemote: false,
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '2629a000-8bee-443d-9379-1c89a597df21',
                       name: 'activityTargets',
                     },
@@ -12711,7 +12523,6 @@ isRemote: false,
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '5ab02c12-acdd-4663-b913-78c25dd7f199',
                       name: 'view',
                     },
@@ -12723,7 +12534,6 @@ isRemote: false,
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '405aa0c6-ce96-4597-8b61-2271020fde11',
                       name: 'viewSorts',
                     },
@@ -12994,7 +12804,6 @@ isRemote: false,
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'd94f1f82-1aab-441c-b6ff-6ec2f561921d',
                       name: 'listing',
                     },
@@ -13006,7 +12815,6 @@ isRemote: false,
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '78ab1b0d-e6b7-4c45-ac46-decdcf913b23',
                       name: 'favorites',
                     },
@@ -13121,7 +12929,6 @@ isRemote: false,
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'd737cd4a-4032-476d-a594-1952ba7883b2',
                       name: 'person',
                     },
@@ -13133,7 +12940,6 @@ isRemote: false,
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '17a9cee7-7f68-42bb-abd0-50932466f901',
                       name: 'favorites',
                     },
@@ -13194,7 +13000,6 @@ isRemote: false,
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '32ae5023-12c5-4a3a-8ec0-3f024eae8377',
                       name: 'opportunity',
                     },
@@ -13206,7 +13011,6 @@ isRemote: false,
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'd61da288-7a71-47d5-ba6a-7700356e9a3a',
                       name: 'favorites',
                     },
@@ -13282,7 +13086,6 @@ isRemote: false,
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '8813fd75-e0d8-4a65-abd9-186dcbe9f1a7',
                       name: 'workspaceMember',
                     },
@@ -13294,7 +13097,6 @@ isRemote: false,
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '28419ee0-5f10-4130-ad39-31fe4fc4ae62',
                       name: 'favorites',
                     },
@@ -13431,7 +13233,6 @@ isRemote: false,
                     },
                     sourceFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: 'dd203027-190c-471c-8e16-da0260b6274c',
                       name: 'company',
                     },
@@ -13443,7 +13244,6 @@ isRemote: false,
                     },
                     targetFieldMetadata: {
                       __typename: 'field',
-                      options: null,
                       id: '1579d027-2443-42a3-97e5-c3e6e81abe5c',
                       name: 'favorites',
                     },

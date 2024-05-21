@@ -47,7 +47,7 @@ export const Default: Story = {
   play: async () => {
     jest
       .spyOn(indexAppPath, 'getIndexAppPath')
-      .mockReturnValue(AppPath.StorybookIframe);
+      .mockReturnValue('iframe.html' as AppPath);
   },
 };
 
@@ -55,7 +55,7 @@ export const DarkMode: Story = {
   play: async () => {
     jest
       .spyOn(indexAppPath, 'getIndexAppPath')
-      .mockReturnValue(AppPath.StorybookIframe);
+      .mockReturnValue('iframe.html' as AppPath);
   },
   parameters: {
     msw: {
