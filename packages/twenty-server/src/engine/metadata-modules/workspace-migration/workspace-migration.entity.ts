@@ -95,6 +95,10 @@ export type WorkspaceMigrationColumnAction = {
   | WorkspaceMigrationCreateComment
 );
 
+export type WorkspaceMigrationAlterForeignTableAlteration =
+  | WorkspaceMigrationColumnDrop
+  | WorkspaceMigrationColumnCreate;
+
 /**
  * Enum values are lowercase to avoid issues with already existing enum values
  */
@@ -104,6 +108,7 @@ export enum WorkspaceMigrationTableActionType {
   DROP = 'drop',
   CREATE_FOREIGN_TABLE = 'create_foreign_table',
   DROP_FOREIGN_TABLE = 'drop_foreign_table',
+  ALTER_FOREIGN_TABLE = 'alter_foreign_table',
 }
 
 export type WorkspaceMigrationTableAction = {
@@ -112,6 +117,7 @@ export type WorkspaceMigrationTableAction = {
   action: WorkspaceMigrationTableActionType;
   columns?: WorkspaceMigrationColumnAction[];
   foreignTable?: WorkspaceMigrationForeignTable;
+  foreignTableAlterations?: WorkspaceMigrationAlterForeignTableAlteration[];
 };
 
 @Entity('workspaceMigration')

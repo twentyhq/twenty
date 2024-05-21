@@ -4,14 +4,17 @@ import {
   RemoteServerEntity,
   RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
+import { RemoteTableStatus } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
 import { getForeignTableColumnName } from 'src/engine/metadata-modules/remote-server/remote-table/foreign-table/utils/get-foreign-table-column-name.util';
 import { PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/types/postgres-table-schema-column';
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
 import {
   ReferencedTable,
   WorkspaceMigrationTableActionType,
   WorkspaceMigrationForeignColumnDefinition,
   WorkspaceMigrationForeignTable,
+  WorkspaceMigrationAlterForeignTableAlteration,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
@@ -23,6 +26,7 @@ export class ForeignTableService {
     private readonly workspaceMigrationService: WorkspaceMigrationService,
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
   ) {}
 
   public async fetchForeignTableNamesWithinWorkspace(
@@ -88,6 +92,44 @@ export class ForeignTableService {
       throw new BadRequestException(
         'Could not create foreign table. The table may already exists or a column type may not be supported.',
       );
+    }
+  }
+
+  public async updateForeignTable(
+    tableName: string,
+    workspaceId: string,
+    alterations?: WorkspaceMigrationAlterForeignTableAlteration[],
+  ) {
+    const workspaceMigration =
+      await this.workspaceMigrationService.createCustomMigration(
+        generateMigrationName(`alter-foreign-table-${tableName}`),
+        workspaceId,
+        [
+          {
+            name: tableName,
+            action: WorkspaceMigrationTableActionType.ALTER_FOREIGN_TABLE,
+            foreignTableAlterations: alterations,
+          },
+        ],
+      );
+
+    // TODO: This should be done in a transaction. Waiting for a global refactoring of transaction management.
+    try {
+      await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
+        workspaceId,
+      );
+
+      await this.workspaceCacheVersionService.incrementVersion(workspaceId);
+
+      return {
+        name: tableName,
+        status: RemoteTableStatus.SYNCED,
+        schemaPendingUpdates: [],
+      };
+    } catch (exception) {
+      this.workspaceMigrationService.deleteById(workspaceMigration.id);
+
+      throw new BadRequestException('Could not alter foreign table.');
     }
   }
 

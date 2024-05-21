@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 import { plural } from 'pluralize';
+import isEmpty from 'lodash.isempty';
 
 import {
   RemoteServerType,
@@ -30,10 +31,16 @@ import { RemoteTableEntity } from 'src/engine/metadata-modules/remote-server/rem
 import { getRemoteTableLocalName } from 'src/engine/metadata-modules/remote-server/remote-table/utils/get-remote-table-local-name.util';
 import { DistantTableService } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/distant-table.service';
 import { DistantTables } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/types/distant-table';
-import { getForeignTableColumnName } from 'src/engine/metadata-modules/remote-server/remote-table/foreign-table/utils/get-foreign-table-column-name.util';
+import { getForeignTableColumnName as convertToForeignTableColumnName } from 'src/engine/metadata-modules/remote-server/remote-table/foreign-table/utils/get-foreign-table-column-name.util';
 import { PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/types/postgres-table-schema-column';
 import { fetchTableColumns } from 'src/engine/metadata-modules/remote-server/remote-table/utils/fetch-table-columns.util';
 import { ForeignTableService } from 'src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.service';
+import {
+  WorkspaceMigrationAlterForeignTableAlteration,
+  WorkspaceMigrationColumnActionType,
+  WorkspaceMigrationColumnCreate,
+  WorkspaceMigrationColumnDrop,
+} from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 
 export class RemoteTableService {
   private readonly logger = new Logger(RemoteTableService.name);
@@ -268,6 +275,78 @@ export class RemoteTableService {
     }
   }
 
+  public async updateRemoteTableToDistantTable(
+    input: RemoteTableInput,
+    workspaceId: string,
+  ) {
+    const remoteServer = await this.remoteServerRepository.findOne({
+      where: {
+        id: input.remoteServerId,
+        workspaceId,
+      },
+    });
+
+    if (!remoteServer) {
+      throw new NotFoundException('Remote server does not exist');
+    }
+
+    const remoteTable = await this.remoteTableRepository.findOne({
+      where: {
+        distantTableName: input.name,
+        remoteServerId: remoteServer.id,
+        workspaceId,
+      },
+    });
+
+    if (!remoteTable) {
+      throw new NotFoundException('Remote table does not exist');
+    }
+
+    const distantTableColumns =
+      await this.distantTableService.getDistantTableColumns(
+        remoteServer,
+        workspaceId,
+        remoteTable.distantTableName,
+      );
+
+    if (!distantTableColumns) {
+      await this.unsyncOne(workspaceId, remoteTable, remoteServer);
+
+      return {};
+    }
+
+    const foreignTableColumns = await fetchTableColumns(
+      this.workspaceDataSourceService,
+      workspaceId,
+      remoteTable.localTableName,
+    );
+
+    const alterations = this.computeForeignTableAlterations(
+      foreignTableColumns,
+      distantTableColumns,
+    );
+
+    if (isEmpty(alterations)) {
+      this.logger.log(
+        `No update to perform on table "${remoteTable.localTableName}" for workspace ${workspaceId}`,
+      );
+
+      return {
+        name: remoteTable.localTableName,
+        status: RemoteTableStatus.SYNCED,
+        schemaPendingUpdates: [],
+      };
+    }
+
+    const updatedTable = await this.foreignTableService.updateForeignTable(
+      remoteTable.localTableName,
+      workspaceId,
+      alterations,
+    );
+
+    return updatedTable;
+  }
+
   private async unsyncOne(
     workspaceId: string,
     remoteTable: RemoteTableEntity,
@@ -435,27 +514,15 @@ export class RemoteTableService {
         continue;
       }
 
-      const distantTableColumnNames = new Set(
-        distantTable.map((column) =>
-          getForeignTableColumnName(column.columnName),
-        ),
-      );
-      const foreignTableColumnNames = new Set(
-        (
-          await fetchTableColumns(
-            this.workspaceDataSourceService,
-            workspaceId,
-            remoteTable.localTableName,
-          )
-        ).map((column) => column.columnName),
+      const foreignTable = await fetchTableColumns(
+        this.workspaceDataSourceService,
+        workspaceId,
+        remoteTable.localTableName,
       );
 
-      const columnsAdded = [...distantTableColumnNames].filter(
-        (columnName) => !foreignTableColumnNames.has(columnName),
-      );
-
-      const columnsDeleted = [...foreignTableColumnNames].filter(
-        (columnName) => !distantTableColumnNames.has(columnName),
+      const { columnsAdded, columnsDeleted } = this.compareForeignTableColumns(
+        foreignTable,
+        distantTable,
       );
 
       if (columnsAdded.length > 0) {
@@ -474,4 +541,60 @@ export class RemoteTableService {
 
     return updates;
   }
+
+  private compareForeignTableColumns = (
+    foreignTableColumns: PostgresTableSchemaColumn[],
+    distantTableColumns: PostgresTableSchemaColumn[],
+  ) => {
+    const foreignTableColumnNames = foreignTableColumns.map(
+      (column) => column.columnName,
+    );
+    const distantTableColumnsWithConvertedName = distantTableColumns.map(
+      (column) => {
+        return {
+          name: convertToForeignTableColumnName(column.columnName),
+          type: column.dataType,
+        };
+      },
+    );
+
+    const columnsAdded = distantTableColumnsWithConvertedName.filter(
+      (column) => !foreignTableColumnNames.includes(column.name),
+    );
+    const columnsDeleted = foreignTableColumnNames.filter(
+      (columnName) =>
+        !distantTableColumnsWithConvertedName
+          .map((column) => column.name)
+          .includes(columnName),
+    );
+
+    return {
+      columnsAdded,
+      columnsDeleted,
+    };
+  };
+
+  private computeForeignTableAlterations = (
+    foreignTableColumns: PostgresTableSchemaColumn[],
+    distantTableColumns: PostgresTableSchemaColumn[],
+  ): WorkspaceMigrationAlterForeignTableAlteration[] => {
+    const { columnsAdded, columnsDeleted } = this.compareForeignTableColumns(
+      foreignTableColumns,
+      distantTableColumns,
+    );
+    const columnsAddedAlterations: WorkspaceMigrationColumnCreate[] =
+      columnsAdded.map((columnAdded) => ({
+        action: WorkspaceMigrationColumnActionType.CREATE,
+        columnName: columnAdded.name,
+        columnType: columnAdded.type,
+      }));
+
+    const columnsDeletedAlterations: WorkspaceMigrationColumnDrop[] =
+      columnsDeleted.map((columnDeleted) => ({
+        action: WorkspaceMigrationColumnActionType.DROP,
+        columnName: columnDeleted,
+      }));
+
+    return [...columnsAddedAlterations, ...columnsDeletedAlterations];
+  };
 }

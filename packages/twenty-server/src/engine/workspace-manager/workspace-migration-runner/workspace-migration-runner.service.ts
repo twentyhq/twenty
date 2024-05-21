@@ -20,6 +20,7 @@ import {
   WorkspaceMigrationColumnDropRelation,
   WorkspaceMigrationTableActionType,
   WorkspaceMigrationForeignTable,
+  WorkspaceMigrationAlterForeignTableAlteration,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { WorkspaceMigrationEnumService } from 'src/engine/workspace-manager/workspace-migration-runner/services/workspace-migration-enum.service';
@@ -153,6 +154,14 @@ export class WorkspaceMigrationRunnerService {
       case 'drop_foreign_table':
         await queryRunner.query(
           `DROP FOREIGN TABLE ${schemaName}."${tableMigration.name}"`,
+        );
+        break;
+      case 'alter_foreign_table':
+        await this.alterForeignTable(
+          queryRunner,
+          schemaName,
+          tableMigration.name,
+          tableMigration.foreignTableAlterations,
         );
         break;
       default:
@@ -506,5 +515,28 @@ export class WorkspaceMigrationRunnerService {
     await queryRunner.query(`
       COMMENT ON FOREIGN TABLE "${schemaName}"."${name}" IS '@graphql({"primary_key_columns": ["id"], "totalCount": {"enabled": true}})';
     `);
+  }
+
+  private async alterForeignTable(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    name: string,
+    alterations: WorkspaceMigrationAlterForeignTableAlteration[] | undefined,
+  ) {
+    const alterationsQuery = alterations
+      ?.map((alteration) => {
+        if (alteration.action === WorkspaceMigrationColumnActionType.DROP) {
+          return `DROP COLUMN "${alteration.columnName}"`;
+        } else if (
+          alteration.action === WorkspaceMigrationColumnActionType.CREATE
+        ) {
+          return `ADD COLUMN "${alteration.columnName}" ${alteration.columnType}`; // Add OPTIONS (column_name '${column.distantColumnName}')` ?
+        }
+      })
+      .join(', ');
+
+    await queryRunner.query(
+      `ALTER FOREIGN TABLE ${schemaName}."${name}" ${alterationsQuery};`,
+    );
   }
 }
