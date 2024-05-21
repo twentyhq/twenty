@@ -21,10 +21,6 @@ import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import {
-  GmailFullSyncJob,
-  GmailFullSyncJobData,
-} from 'src/modules/messaging/jobs/gmail-full-sync.job';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
 
@@ -99,14 +95,6 @@ export class GmailPartialSyncV2Service {
       return;
     }
 
-    if (gmailMessageChannel.syncStatus !== MessageChannelSyncStatus.SUCCEEDED) {
-      this.logger.log(
-        `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} is locked, import will be retried later.`,
-      );
-
-      return;
-    }
-
     await this.messageChannelRepository.updateSyncStatus(
       gmailMessageChannel.id,
       MessageChannelSyncStatus.ONGOING,
@@ -127,14 +115,19 @@ export class GmailPartialSyncV2Service {
             `No lastSyncHistoryId for workspace ${workspaceId} and account ${connectedAccountId}, falling back to full sync.`,
           );
 
-          await this.messageChannelRepository.updateSyncStatus(
+          await this.messageChannelRepository.updateSyncSubStatus(
             gmailMessageChannel.id,
-            MessageChannelSyncStatus.PENDING,
+            MessageChannelSyncSubStatus.MESSAGES_LIST_FETCH_ONGOING,
             workspaceId,
             transactionManager,
           );
 
-          await this.fallbackToFullSync(workspaceId, connectedAccountId);
+          await this.messageChannelRepository.updateSyncSubStatus(
+            gmailMessageChannel.id,
+            MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING,
+            workspaceId,
+            transactionManager,
+          );
 
           return;
         }
@@ -158,14 +151,12 @@ export class GmailPartialSyncV2Service {
             transactionManager,
           );
 
-          await this.messageChannelRepository.updateSyncStatus(
+          await this.messageChannelRepository.updateSyncSubStatus(
             gmailMessageChannel.id,
-            MessageChannelSyncStatus.PENDING,
+            MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING,
             workspaceId,
             transactionManager,
           );
-
-          await this.fallbackToFullSync(workspaceId, connectedAccountId);
 
           return;
         }
@@ -175,9 +166,11 @@ export class GmailPartialSyncV2Service {
             `429: rate limit reached for workspace ${workspaceId} and account ${connectedAccountId}: ${error.message}, import will be retried later.`,
           );
 
-          await this.messageChannelRepository.updateSyncStatus(
+          //Add throttle logic here
+
+          await this.messageChannelRepository.updateSyncSubStatus(
             gmailMessageChannel.id,
-            MessageChannelSyncStatus.PENDING,
+            MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
             workspaceId,
             transactionManager,
           );
@@ -185,9 +178,41 @@ export class GmailPartialSyncV2Service {
           return;
         }
 
-        if (error) {
-          throw new Error(
-            `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
+        if (
+          error?.code === 403 &&
+          (error?.errors?.[0]?.reason === 'rateLimitExceeded' ||
+            error?.errors?.[0]?.reason === 'userRateLimitExceeded')
+        ) {
+          this.logger.log(
+            `403:${
+              error?.errors?.[0]?.reason === 'userRateLimitExceeded' && ' user'
+            } rate limit exceeded for workspace ${workspaceId} and account ${connectedAccountId}: ${
+              error.message
+            }, import will be retried later.`,
+          );
+
+          //Add throttle logic here
+
+          await this.messageChannelRepository.updateSyncSubStatus(
+            gmailMessageChannel.id,
+            MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
+            workspaceId,
+            transactionManager,
+          );
+
+          return;
+        }
+
+        if (error?.code === 403 || error?.code === 401) {
+          this.logger.error(
+            `${error?.code}: ${error.message} for workspace ${workspaceId} and account ${connectedAccountId}: ${error.message}`,
+          );
+
+          await this.messageChannelRepository.updateSyncStatus(
+            gmailMessageChannel.id,
+            MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
+            workspaceId,
+            transactionManager,
           );
         }
 
@@ -202,9 +227,9 @@ export class GmailPartialSyncV2Service {
             `Messaging import done with history ${historyId} and nothing to update for workspace ${workspaceId} and account ${connectedAccountId}`,
           );
 
-          await this.messageChannelRepository.updateSyncStatus(
+          await this.messageChannelRepository.updateSyncSubStatus(
             gmailMessageChannel.id,
-            MessageChannelSyncStatus.PENDING,
+            MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
             workspaceId,
           );
 
@@ -232,18 +257,11 @@ export class GmailPartialSyncV2Service {
           workspaceId,
           transactionManager,
         );
-
-        await this.messageChannelRepository.updateSyncStatus(
-          gmailMessageChannel.id,
-          MessageChannelSyncStatus.PENDING,
-          workspaceId,
-          transactionManager,
-        );
       })
       .catch(async (error) => {
         await this.messageChannelRepository.updateSyncStatus(
           gmailMessageChannel.id,
-          MessageChannelSyncStatus.FAILED,
+          MessageChannelSyncStatus.FAILED_UNKNOWN,
           workspaceId,
         );
 
@@ -344,15 +362,5 @@ export class GmailPartialSyncV2Service {
     }
 
     return { history: fullHistory, historyId: nextHistoryId };
-  }
-
-  private async fallbackToFullSync(
-    workspaceId: string,
-    connectedAccountId: string,
-  ) {
-    await this.messageQueueService.add<GmailFullSyncJobData>(
-      GmailFullSyncJob.name,
-      { workspaceId, connectedAccountId },
-    );
   }
 }

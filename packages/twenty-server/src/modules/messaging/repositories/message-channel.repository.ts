@@ -6,6 +6,7 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import {
   MessageChannelWorkspaceEntity,
   MessageChannelSyncStatus,
+  MessageChannelSyncSubStatus,
 } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
@@ -187,9 +188,9 @@ export class MessageChannelRepository {
     );
   }
 
-  public async updateSubSyncStatus(
+  public async updateSyncSubStatus(
     id: string,
-    subSyncStatus: MessageChannelSyncStatus,
+    subSyncStatus: MessageChannelSyncSubStatus,
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
