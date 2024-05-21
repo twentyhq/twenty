@@ -27,7 +27,6 @@ export type SnackBarProps = Pick<
   ComponentPropsWithoutRef<'div'>,
   'id' | 'title'
 > & {
-  children?: ReactNode;
   className?: string;
   progress?: number;
   duration?: number;
@@ -88,8 +87,15 @@ const StyledDescription = styled.div`
   width: 200px;
 `;
 
+const defaultTitleByVariant: Record<SnackBarVariant, string> = {
+  [SnackBarVariant.Default]: 'Alert',
+  [SnackBarVariant.Error]: 'Error',
+  [SnackBarVariant.Info]: 'Info',
+  [SnackBarVariant.Success]: 'Success',
+  [SnackBarVariant.Warning]: 'Warning',
+};
+
 export const SnackBar = ({
-  children,
   className,
   progress: overrideProgressValue,
   duration = 6000,
@@ -99,8 +105,8 @@ export const SnackBar = ({
   onCancel,
   onClose,
   role = 'status',
-  title,
   variant = SnackBarVariant.Default,
+  title = defaultTitleByVariant[variant],
 }: SnackBarProps) => {
   const theme = useTheme();
   const { animation: progressAnimation, value: progressValue } =
@@ -118,22 +124,31 @@ export const SnackBar = ({
       return iconComponent;
     }
 
+    const ariaLabel = defaultTitleByVariant[variant];
     const color = theme.snackBar[variant].color;
     const size = theme.icon.size.md;
 
     switch (variant) {
       case SnackBarVariant.Error:
-        return <IconAlertTriangle aria-label="Error" {...{ color, size }} />;
+        return (
+          <IconAlertTriangle {...{ 'aria-label': ariaLabel, color, size }} />
+        );
       case SnackBarVariant.Info:
-        return <IconInfoCircle aria-label="Info" {...{ color, size }} />;
+        return <IconInfoCircle {...{ 'aria-label': ariaLabel, color, size }} />;
       case SnackBarVariant.Success:
         return (
-          <IconSquareRoundedCheck aria-label="Success" {...{ color, size }} />
+          <IconSquareRoundedCheck
+            {...{ 'aria-label': ariaLabel, color, size }}
+          />
         );
       case SnackBarVariant.Warning:
-        return <IconAlertTriangle aria-label="Warning" {...{ color, size }} />;
+        return (
+          <IconAlertTriangle {...{ 'aria-label': ariaLabel, color, size }} />
+        );
       default:
-        return <IconAlertTriangle aria-label="Alert" {...{ color, size }} />;
+        return (
+          <IconAlertTriangle {...{ 'aria-label': ariaLabel, color, size }} />
+        );
     }
   }, [iconComponent, theme.icon.size.md, theme.snackBar, variant]);
 
@@ -154,7 +169,8 @@ export const SnackBar = ({
       aria-live={role === 'alert' ? 'assertive' : 'polite'}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      {...{ className, id, role, title, variant }}
+      title={message || title || defaultTitleByVariant[variant]}
+      {...{ className, id, role, variant }}
     >
       <StyledProgressBar
         color={theme.snackBar[variant].backgroundColor}
@@ -170,7 +186,7 @@ export const SnackBar = ({
           )}
         </StyledActions>
       </StyledHeader>
-      <StyledDescription>{children || message}</StyledDescription>
+      {message && <StyledDescription>{message}</StyledDescription>}
     </StyledContainer>
   );
 };
