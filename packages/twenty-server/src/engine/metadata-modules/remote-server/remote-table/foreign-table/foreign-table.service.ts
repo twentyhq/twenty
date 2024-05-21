@@ -40,7 +40,7 @@ export class ForeignTableService {
 
     return (
       await workspaceDataSource.query(
-        `SELECT foreign_table_name, foreign_server_name FROM information_schema.foreign_tables WHERE foreign_server_name = '$1'`,
+        `SELECT foreign_table_name, foreign_server_name FROM information_schema.foreign_tables WHERE foreign_server_name = $1`,
         [foreignDataWrapperId],
       )
     ).map((foreignTable) => foreignTable.foreign_table_name);
