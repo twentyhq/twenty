@@ -221,6 +221,12 @@ export class GmailPartialSyncV2Service {
             transactionManager,
           );
 
+          await this.messageChannelRepository.updateSyncSubStatus(
+            gmailMessageChannel.id,
+            MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
+            workspaceId,
+          );
+
           await this.connectedAccountRepository.updateAuthFailedAt(
             connectedAccountId,
             workspaceId,
@@ -244,6 +250,12 @@ export class GmailPartialSyncV2Service {
           await this.messageChannelRepository.updateSyncSubStatus(
             gmailMessageChannel.id,
             MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
+            workspaceId,
+          );
+
+          await this.messageChannelRepository.updateSyncStatus(
+            gmailMessageChannel.id,
+            MessageChannelSyncStatus.COMPLETED,
             workspaceId,
           );
 
@@ -271,11 +283,23 @@ export class GmailPartialSyncV2Service {
           workspaceId,
           transactionManager,
         );
+
+        await this.messageChannelRepository.updateSyncSubStatus(
+          gmailMessageChannel.id,
+          MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
+          workspaceId,
+        );
       })
       .catch(async (error) => {
         await this.messageChannelRepository.updateSyncStatus(
           gmailMessageChannel.id,
           MessageChannelSyncStatus.FAILED_UNKNOWN,
+          workspaceId,
+        );
+
+        await this.messageChannelRepository.updateSyncSubStatus(
+          gmailMessageChannel.id,
+          MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
           workspaceId,
         );
 
