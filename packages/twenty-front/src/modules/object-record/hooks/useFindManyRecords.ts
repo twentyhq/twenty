@@ -214,7 +214,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     enqueueSnackBar,
   ]);
 
-  const totalCount = data?.[objectMetadataItem.namePlural].totalCount;
+  const totalCount = data?.[objectMetadataItem.namePlural]?.totalCount;
 
   const records = useMemo(
     () =>
