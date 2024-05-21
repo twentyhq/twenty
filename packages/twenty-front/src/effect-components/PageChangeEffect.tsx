@@ -76,7 +76,8 @@ export const PageChangeEffect = () => {
       navigate(AppPath.SignInUp);
     } else if (
       isDefined(onboardingStatus) &&
-      onboardingStatus === OnboardingStatus.Incomplete &&
+      (onboardingStatus === OnboardingStatus.Incomplete ||
+        onboardingStatus === OnboardingStatus.OngoingSubscriptionPayment) &&
       !isMatchingLocation(AppPath.PlanRequired)
     ) {
       navigate(AppPath.PlanRequired);

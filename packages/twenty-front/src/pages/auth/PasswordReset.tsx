@@ -13,7 +13,6 @@ import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
-import { useNavigateAfterSignInUp } from '@/auth/sign-in-up/hooks/useNavigateAfterSignInUp';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -115,8 +114,6 @@ export const PasswordReset = () => {
 
   const { signInWithCredentials } = useAuth();
 
-  const { navigateAfterSignInUp } = useNavigateAfterSignInUp();
-
   const onSubmit = async (formData: Form) => {
     try {
       const { data } = await updatePasswordViaToken({
@@ -141,12 +138,7 @@ export const PasswordReset = () => {
         return;
       }
 
-      const {
-        workspace: currentWorkspace,
-        workspaceMember: currentWorkspaceMember,
-      } = await signInWithCredentials(email || '', formData.newPassword);
-
-      navigateAfterSignInUp(currentWorkspace, currentWorkspaceMember);
+      await signInWithCredentials(email || '', formData.newPassword);
     } catch (err) {
       logError(err);
       enqueueSnackBar(
