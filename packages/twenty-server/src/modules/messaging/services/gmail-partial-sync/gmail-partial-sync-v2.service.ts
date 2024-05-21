@@ -270,6 +270,10 @@ export class GmailPartialSyncV2Service {
           messagesAdded,
         );
 
+        this.logger.log(
+          `Added ${messagesAdded.length} messages to import for workspace ${workspaceId} and account ${connectedAccountId}`,
+        );
+
         await this.messageChannelMessageAssociationRepository.deleteByMessageExternalIdsAndMessageChannelId(
           messagesDeleted,
           gmailMessageChannel.id,
@@ -277,11 +281,23 @@ export class GmailPartialSyncV2Service {
           transactionManager,
         );
 
+        this.logger.log(
+          `Deleted ${messagesDeleted.length} messages for workspace ${workspaceId} and account ${connectedAccountId}`,
+        );
+
         await this.messageChannelRepository.updateLastSyncCursorIfHigher(
           gmailMessageChannel.id,
           historyId,
           workspaceId,
           transactionManager,
+        );
+
+        this.logger.log(
+          `Updated lastSyncHistoryId to ${historyId} for workspace ${workspaceId} and account ${connectedAccountId}`,
+        );
+
+        this.logger.log(
+          `gmail partial-sync done with history for workspace ${workspaceId} and account ${connectedAccountId}`,
         );
 
         await this.messageChannelRepository.updateSyncSubStatus(
