@@ -7,6 +7,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
+import { isAggregationEnabled } from '@/object-metadata/utils/isAggregationEnabled';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { RecordGqlEdge } from '@/object-record/graphql/types/RecordGqlEdge';
@@ -123,7 +124,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const fetchMoreRecords = useCallback(async () => {
     // Remote objects does not support hasNextPage. We cannot rely on it to fetch more records.
-    if (hasNextPage || objectMetadataItem.isRemote) {
+    if (hasNextPage || !isAggregationEnabled(objectMetadataItem)) {
       setIsFetchingMoreObjects(true);
 
       try {
@@ -138,18 +139,14 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
             const nextEdges =
               fetchMoreResult?.[objectMetadataItem.namePlural]?.edges;
 
-            let newEdges: RecordGqlEdge[] = [];
+            let newEdges: RecordGqlEdge[] = previousEdges ?? [];
 
-            if (isNonEmptyArray(previousEdges) && isNonEmptyArray(nextEdges)) {
+            if (isNonEmptyArray(nextEdges)) {
               newEdges = filterUniqueRecordEdgesByCursor([
-                ...(prev?.[objectMetadataItem.namePlural]?.edges ?? []),
+                ...newEdges,
                 ...(fetchMoreResult?.[objectMetadataItem.namePlural]?.edges ??
                   []),
               ]);
-            }
-
-            if (isNonEmptyArray(previousEdges) && !isNonEmptyArray(nextEdges)) {
-              newEdges = prev?.[objectMetadataItem.namePlural]?.edges ?? [];
             }
 
             const pageInfo =

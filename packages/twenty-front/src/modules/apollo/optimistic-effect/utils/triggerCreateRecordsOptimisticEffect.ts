@@ -62,7 +62,7 @@ export const triggerCreateRecordsOptimisticEffect = ({
           rootQueryCachedObjectRecordConnection,
         );
 
-        const rootQueryCachedRecordTotalCount = readField<number>(
+        const rootQueryCachedRecordTotalCount = readField<number | undefined>(
           'totalCount',
           rootQueryCachedObjectRecordConnection,
         );

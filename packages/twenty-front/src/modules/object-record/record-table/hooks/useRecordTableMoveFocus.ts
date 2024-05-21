@@ -3,7 +3,6 @@ import { useRecoilCallback } from 'recoil';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
-import { isDefined } from '~/utils/isDefined';
 
 import { useSetSoftFocusPosition } from './internal/useSetSoftFocusPosition';
 
@@ -53,10 +52,6 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
           numberOfTableRowsState,
         );
 
-        if (!isDefined(numberOfTableRows)) {
-          return;
-        }
-
         let newRowNumber = softFocusPosition.row + 1;
 
         if (newRowNumber >= numberOfTableRows) {
@@ -88,10 +83,6 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
           snapshot,
           numberOfTableRowsState,
         );
-
-        if (!isDefined(numberOfTableRows)) {
-          return;
-        }
 
         const currentColumnNumber = softFocusPosition.column;
         const currentRowNumber = softFocusPosition.row;

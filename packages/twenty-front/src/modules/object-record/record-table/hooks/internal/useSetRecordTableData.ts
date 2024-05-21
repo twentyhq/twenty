@@ -8,7 +8,7 @@ import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type useSetRecordTableDataProps = {
   recordTableId?: string;
-  onEntityCountChange: (entityCount: number | undefined) => void;
+  onEntityCountChange: (entityCount?: number) => void;
 };
 
 export const useSetRecordTableData = ({
@@ -54,7 +54,7 @@ export const useSetRecordTableData = ({
           }
         }
 
-        set(numberOfTableRowsState, totalCount);
+        set(numberOfTableRowsState, totalCount || 0);
         onEntityCountChange(totalCount);
       },
     [

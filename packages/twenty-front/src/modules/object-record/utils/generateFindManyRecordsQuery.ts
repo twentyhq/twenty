@@ -1,6 +1,7 @@
 import gql from 'graphql-tag';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isAggregationEnabled } from '@/object-metadata/utils/isAggregationEnabled';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { capitalize } from '~/utils/string/capitalize';
@@ -15,17 +16,14 @@ export const generateFindManyRecordsQuery = ({
   objectMetadataItems: ObjectMetadataItem[];
   recordGqlFields?: RecordGqlOperationGqlRecordFields;
   computeReferences?: boolean;
-}) => {
-  const shouldQueryCounts = !objectMetadataItem.isRemote;
-
-  return gql`
+}) => gql`
 query FindMany${capitalize(
-    objectMetadataItem.namePlural,
-  )}($filter: ${capitalize(
-    objectMetadataItem.nameSingular,
-  )}FilterInput, $orderBy: ${capitalize(
-    objectMetadataItem.nameSingular,
-  )}OrderByInput, $lastCursor: String, $limit: Int) {
+  objectMetadataItem.namePlural,
+)}($filter: ${capitalize(
+  objectMetadataItem.nameSingular,
+)}FilterInput, $orderBy: ${capitalize(
+  objectMetadataItem.nameSingular,
+)}OrderByInput, $lastCursor: String, $limit: Int) {
   ${
     objectMetadataItem.namePlural
   }(filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor){
@@ -39,12 +37,11 @@ query FindMany${capitalize(
       cursor
     }
     pageInfo {
-      ${shouldQueryCounts ? 'hasNextPage' : ''}
+      ${isAggregationEnabled(objectMetadataItem) ? 'hasNextPage' : ''}
       startCursor
       endCursor
     }
-    ${shouldQueryCounts ? 'totalCount' : ''}
+    ${isAggregationEnabled(objectMetadataItem) ? 'totalCount' : ''}
   }
 }
 `;
-};
