@@ -71,6 +71,9 @@ export const DefaultLayout = () => {
   const widowsWidth = useScreenSize().width;
   const isMatchingLocation = useIsMatchingLocation();
   const showAuthModal = useMemo(() => {
+    if (isMatchingLocation(AppPath.Verify)) {
+      return false;
+    }
     return (
       (onboardingStatus &&
         [
