@@ -4,9 +4,9 @@ import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import {
-  MessageChannelObjectMetadata,
+  MessageChannelWorkspaceEntity,
   MessageChannelSyncStatus,
-} from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+} from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class MessageChannelRepository {
 
   public async create(
     messageChannel: Pick<
-      ObjectRecord<MessageChannelObjectMetadata>,
+      ObjectRecord<MessageChannelWorkspaceEntity>,
       'id' | 'connectedAccountId' | 'type' | 'handle' | 'visibility'
     >,
     workspaceId: string,
@@ -61,7 +61,7 @@ export class MessageChannelRepository {
   public async getAll(
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelObjectMetadata>[]> {
+  ): Promise<ObjectRecord<MessageChannelWorkspaceEntity>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -77,7 +77,7 @@ export class MessageChannelRepository {
     connectedAccountId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelObjectMetadata>[]> {
+  ): Promise<ObjectRecord<MessageChannelWorkspaceEntity>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -92,7 +92,7 @@ export class MessageChannelRepository {
   public async getFirstByConnectedAccountIdOrFail(
     connectedAccountId: string,
     workspaceId: string,
-  ): Promise<ObjectRecord<MessageChannelObjectMetadata>> {
+  ): Promise<ObjectRecord<MessageChannelWorkspaceEntity>> {
     const messageChannel = await this.getFirstByConnectedAccountId(
       connectedAccountId,
       workspaceId,
@@ -111,7 +111,7 @@ export class MessageChannelRepository {
     connectedAccountId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelObjectMetadata> | undefined> {
+  ): Promise<ObjectRecord<MessageChannelWorkspaceEntity> | undefined> {
     const messageChannels = await this.getByConnectedAccountId(
       connectedAccountId,
       workspaceId,
@@ -125,7 +125,7 @@ export class MessageChannelRepository {
     ids: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelObjectMetadata>[]> {
+  ): Promise<ObjectRecord<MessageChannelWorkspaceEntity>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -141,7 +141,7 @@ export class MessageChannelRepository {
     workspaceMemberId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelObjectMetadata>[]> {
+  ): Promise<ObjectRecord<MessageChannelWorkspaceEntity>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 

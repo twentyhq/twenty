@@ -5,7 +5,7 @@ import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/t
 import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
+import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 import {
   BlocklistReimportMessagesJob,
   BlocklistReimportMessagesJobData,
@@ -25,7 +25,7 @@ export class MessagingBlocklistListener {
 
   @OnEvent('blocklist.created')
   async handleCreatedEvent(
-    payload: ObjectRecordCreateEvent<BlocklistObjectMetadata>,
+    payload: ObjectRecordCreateEvent<BlocklistWorkspaceEntity>,
   ) {
     await this.messageQueueService.add<BlocklistItemDeleteMessagesJobData>(
       BlocklistItemDeleteMessagesJob.name,
@@ -38,7 +38,7 @@ export class MessagingBlocklistListener {
 
   @OnEvent('blocklist.deleted')
   async handleDeletedEvent(
-    payload: ObjectRecordDeleteEvent<BlocklistObjectMetadata>,
+    payload: ObjectRecordDeleteEvent<BlocklistWorkspaceEntity>,
   ) {
     await this.messageQueueService.add<BlocklistReimportMessagesJobData>(
       BlocklistReimportMessagesJob.name,
@@ -52,7 +52,7 @@ export class MessagingBlocklistListener {
 
   @OnEvent('blocklist.updated')
   async handleUpdatedEvent(
-    payload: ObjectRecordUpdateEvent<BlocklistObjectMetadata>,
+    payload: ObjectRecordUpdateEvent<BlocklistWorkspaceEntity>,
   ) {
     await this.messageQueueService.add<BlocklistItemDeleteMessagesJobData>(
       BlocklistItemDeleteMessagesJob.name,

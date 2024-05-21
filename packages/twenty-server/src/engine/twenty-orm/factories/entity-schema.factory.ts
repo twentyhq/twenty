@@ -28,9 +28,11 @@ export class EntitySchemaFactory {
 
     const columns = this.entitySchemaColumnFactory.create(
       fieldMetadataArgsCollection,
+      relationMetadataArgsCollection,
     );
 
     const relations = this.entitySchemaRelationFactory.create(
+      target,
       relationMetadataArgsCollection,
     );
 

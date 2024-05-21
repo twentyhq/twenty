@@ -10,13 +10,16 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   constructor(
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
+    @InjectRepository(User, 'core')
+    private readonly userRepository: Repository<User>,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
@@ -59,7 +62,7 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       `Error while creating workspace member ${user.email} on workspace ${workspaceId}`,
     );
     const payload =
-      new ObjectRecordCreateEvent<WorkspaceMemberObjectMetadata>();
+      new ObjectRecordCreateEvent<WorkspaceMemberWorkspaceEntity>();
 
     payload.workspaceId = workspaceId;
     payload.properties = {
@@ -68,6 +71,25 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     payload.recordId = workspaceMember[0].id;
 
     this.eventEmitter.emit('workspaceMember.created', payload);
+  }
+
+  async addUserToWorkspace(user: User, workspace: Workspace) {
+    const userWorkspaceExists = await this.checkUserWorkspaceExists(
+      user.id,
+      workspace.id,
+    );
+
+    if (!userWorkspaceExists) {
+      await this.create(user.id, workspace.id);
+
+      await this.createWorkspaceMember(workspace.id, user);
+    }
+
+    return await this.userRepository.save({
+      id: user.id,
+      defaultWorkspace: workspace,
+      updatedAt: new Date().toISOString(),
+    });
   }
 
   public async getWorkspaceMemberCount(

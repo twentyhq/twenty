@@ -14,17 +14,17 @@ import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/typ
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
-import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
-import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { GMAIL_USERS_MESSAGES_LIST_MAX_RESULT } from 'src/modules/messaging/constants/gmail-users-messages-list-max-result.constant';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { GmailClientProvider } from 'src/modules/messaging/services/providers/gmail/gmail-client.provider';
-import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
+import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel-message-association.workspace-entity';
 import {
-  MessageChannelObjectMetadata,
+  MessageChannelWorkspaceEntity,
   MessageChannelSyncStatus,
-} from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+} from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { gmailSearchFilterEmailAdresses } from 'src/modules/messaging/utils/gmail-search-filter.util';
 
@@ -34,18 +34,18 @@ export class GmailFullSyncService {
 
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
-    @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
+    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
+    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
-    @InjectObjectMetadataRepository(BlocklistObjectMetadata)
+    @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
     private readonly cacheStorage: CacheStorageService,
     @InjectObjectMetadataRepository(
-      MessageChannelMessageAssociationObjectMetadata,
+      MessageChannelMessageAssociationWorkspaceEntity,
     )
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,

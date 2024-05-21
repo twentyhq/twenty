@@ -3,7 +3,7 @@ import { FactoryProvider, ModuleMetadata, Type } from '@nestjs/common';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 
 export interface TwentyORMOptions {
-  workspaceEntities: Type<BaseWorkspaceEntity>[];
+  workspaceEntities: (Type<BaseWorkspaceEntity> | string)[];
 }
 
 export type TwentyORMModuleAsyncOptions = {

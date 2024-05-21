@@ -13,7 +13,7 @@ export const createWorkspaceMigrationsForCustomObjectRelations = (
   createdObjectMetadata: ObjectMetadataEntity,
   activityTargetObjectMetadata: ObjectMetadataEntity,
   attachmentObjectMetadata: ObjectMetadataEntity,
-  eventObjectMetadata: ObjectMetadataEntity,
+  timelineActivityObjectMetadata: ObjectMetadataEntity,
   favoriteObjectMetadata: ObjectMetadataEntity,
 ): WorkspaceMigrationTableAction[] => [
   {
@@ -80,9 +80,9 @@ export const createWorkspaceMigrationsForCustomObjectRelations = (
       },
     ],
   },
-  // Add event relation
+  // Add timeline activity relation
   {
-    name: computeObjectTargetTable(eventObjectMetadata),
+    name: computeObjectTargetTable(timelineActivityObjectMetadata),
     action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {
@@ -96,7 +96,7 @@ export const createWorkspaceMigrationsForCustomObjectRelations = (
     ],
   },
   {
-    name: computeObjectTargetTable(eventObjectMetadata),
+    name: computeObjectTargetTable(timelineActivityObjectMetadata),
     action: WorkspaceMigrationTableActionType.ALTER,
     columns: [
       {

@@ -5,7 +5,7 @@ import { MessageQueueJob } from 'src/engine/integrations/message-queue/interface
 import { ObjectRecordBaseEvent } from 'src/engine/integrations/event-emitter/types/object-record.base.event';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { TimelineActivityService } from 'src/modules/timeline/services/timeline-activity.service';
 
 @Injectable()
@@ -13,7 +13,7 @@ export class UpsertTimelineActivityFromInternalEvent
   implements MessageQueueJob<ObjectRecordBaseEvent>
 {
   constructor(
-    @InjectObjectMetadataRepository(WorkspaceMemberObjectMetadata)
+    @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
     private readonly workspaceMemberService: WorkspaceMemberRepository,
     private readonly timelineActivityService: TimelineActivityService,
   ) {}
