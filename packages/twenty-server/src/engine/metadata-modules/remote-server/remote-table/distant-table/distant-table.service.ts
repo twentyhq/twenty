@@ -26,9 +26,14 @@ export class DistantTableService {
   public async fetchDistantTables(
     remoteServer: RemoteServerEntity<RemoteServerType>,
     workspaceId: string,
+    tableName?: string,
   ): Promise<DistantTables> {
     if (remoteServer.schema) {
-      return this.getDistantTablesFromDynamicSchema(remoteServer, workspaceId);
+      return this.getDistantTablesFromDynamicSchema(
+        remoteServer,
+        workspaceId,
+        tableName,
+      );
     }
 
     return this.getDistantTablesFromStaticSchema(remoteServer);
@@ -39,20 +44,13 @@ export class DistantTableService {
     workspaceId: string,
     tableName: string,
   ): Promise<PostgresTableSchemaColumn[]> {
-    if (remoteServer.schema) {
-      const distantTables = await this.getDistantTablesFromDynamicSchema(
-        remoteServer,
-        workspaceId,
-        tableName,
-      );
+    const distantTables = await this.fetchDistantTables(
+      remoteServer,
+      workspaceId,
+      tableName,
+    );
 
-      return distantTables[tableName];
-    }
-
-    const distantTables =
-      await this.getDistantTablesFromStaticSchema(remoteServer);
-
-    return distantTables[tableName];
+    return distantTables[tableName] || [];
   }
 
   private async getDistantTablesFromDynamicSchema(

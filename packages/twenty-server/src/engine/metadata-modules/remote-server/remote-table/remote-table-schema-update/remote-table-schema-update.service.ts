@@ -41,18 +41,18 @@ export class RemoteTableSchemaUpdateService {
         distantTables,
       });
 
-    const remoteTablesDistantNames = remoteTables.map(
-      (remoteTable) => remoteTable.distantTableName,
+    const remoteTablesDistantNames = new Set(
+      remoteTables.map((remoteTable) => remoteTable.distantTableName),
     );
 
     const distantTablesWithUpdates = Object.keys(distantTables).map(
       (tableName) => ({
         name: tableName,
         schema: remoteServerSchema,
-        status: remoteTablesDistantNames.includes(tableName)
+        status: remoteTablesDistantNames.has(tableName)
           ? RemoteTableStatus.SYNCED
           : RemoteTableStatus.NOT_SYNCED,
-        schemaPendingUpdates: schemaPendingUpdates[tableName],
+        schemaPendingUpdates: schemaPendingUpdates[tableName] || [],
       }),
     );
 
@@ -67,7 +67,7 @@ export class RemoteTableSchemaUpdateService {
         schemaPendingUpdates: updates,
       }));
 
-    return distantTablesWithUpdates.concat(deletedTables);
+    return [...distantTablesWithUpdates, ...deletedTables];
   }
 
   public computeForeignTableColumnsUpdates = (
@@ -146,8 +146,8 @@ export class RemoteTableSchemaUpdateService {
     foreignTableColumns: PostgresTableSchemaColumn[],
     distantTableColumns: PostgresTableSchemaColumn[],
   ) => {
-    const foreignTableColumnNames = foreignTableColumns.map(
-      (column) => column.columnName,
+    const foreignTableColumnNames = new Set(
+      foreignTableColumns.map((column) => column.columnName),
     );
     const distantTableColumnsWithConvertedName = distantTableColumns.map(
       (column) => {
@@ -159,9 +159,9 @@ export class RemoteTableSchemaUpdateService {
     );
 
     const columnsAdded = distantTableColumnsWithConvertedName.filter(
-      (column) => !foreignTableColumnNames.includes(column.name),
+      (column) => !foreignTableColumnNames.has(column.name),
     );
-    const columnsDeleted = foreignTableColumnNames.filter(
+    const columnsDeleted = Array.from(foreignTableColumnNames).filter(
       (columnName) =>
         !distantTableColumnsWithConvertedName
           .map((column) => column.name)

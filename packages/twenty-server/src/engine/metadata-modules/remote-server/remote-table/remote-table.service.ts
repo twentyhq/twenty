@@ -300,7 +300,7 @@ export class RemoteTableService {
         remoteTable.distantTableName,
       );
 
-    if (!distantTableColumns) {
+    if (isEmpty(distantTableColumns)) {
       await this.unsyncOne(workspaceId, remoteTable, remoteServer);
 
       return {};
