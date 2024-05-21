@@ -297,7 +297,7 @@ export class GmailPartialSyncV2Service {
         );
 
         this.logger.log(
-          `gmail partial-sync done with history for workspace ${workspaceId} and account ${connectedAccountId}`,
+          `gmail partial-sync done for workspace ${workspaceId} and account ${connectedAccountId}`,
         );
 
         await this.messageChannelRepository.updateSyncSubStatus(
