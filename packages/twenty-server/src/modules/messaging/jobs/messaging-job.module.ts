@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { AutoCompaniesAndContactsCreationModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/auto-companies-and-contacts-creation.module';
 import { GoogleAPIRefreshAccessTokenModule } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.module';
@@ -32,6 +34,7 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/standar
     ThreadCleanerModule,
     GoogleAPIRefreshAccessTokenModule,
     AutoCompaniesAndContactsCreationModule,
+    TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
   ],
   providers: [
     {
