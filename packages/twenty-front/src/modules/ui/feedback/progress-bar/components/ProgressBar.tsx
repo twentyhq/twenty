@@ -21,7 +21,6 @@ const StyledBar = styled.div<StyledBarProps>`
 const StyledBarFilling = styled(motion.div)<{ color?: string }>`
   background-color: ${({ color, theme }) => color ?? theme.font.color.primary};
   height: 100%;
-  transform-origin: 0;
 `;
 
 export const ProgressBar = ({ className, color, value }: ProgressBarProps) => {
