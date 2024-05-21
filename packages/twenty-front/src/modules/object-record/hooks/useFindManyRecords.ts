@@ -201,9 +201,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     }
   }, [
     hasNextPage,
-    objectMetadataItem.isRemote,
-    objectMetadataItem.namePlural,
-    objectMetadataItem.nameSingular,
+    objectMetadataItem,
     setIsFetchingMoreObjects,
     fetchMore,
     filter,
