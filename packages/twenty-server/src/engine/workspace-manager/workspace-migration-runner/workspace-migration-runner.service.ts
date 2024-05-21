@@ -530,7 +530,7 @@ export class WorkspaceMigrationRunnerService {
         } else if (
           alteration.action === WorkspaceMigrationColumnActionType.CREATE
         ) {
-          return `ADD COLUMN "${alteration.columnName}" ${alteration.columnType}`; // Add OPTIONS (column_name '${column.distantColumnName}')` ?
+          return `ADD COLUMN "${alteration.columnName}" ${alteration.columnType}`;
         }
       })
       .join(', ');
