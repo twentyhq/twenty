@@ -95,6 +95,12 @@ export class GmailPartialSyncV2Service {
       return;
     }
 
+    await this.messageChannelRepository.updateSyncSubStatus(
+      gmailMessageChannel.id,
+      MessageChannelSyncSubStatus.MESSAGES_LIST_FETCH_ONGOING,
+      workspaceId,
+    );
+
     await this.messageChannelRepository.updateSyncStatus(
       gmailMessageChannel.id,
       MessageChannelSyncStatus.ONGOING,
