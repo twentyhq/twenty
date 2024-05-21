@@ -1,4 +1,9 @@
-import { ExceptionFilter, Catch, ArgumentsHost } from '@nestjs/common';
+import {
+  ExceptionFilter,
+  Catch,
+  ArgumentsHost,
+  HttpException,
+} from '@nestjs/common';
 
 import { Response } from 'express';
 
@@ -25,6 +30,9 @@ export class ApplyCorsToExceptions implements ExceptionFilter {
       'Origin, X-Requested-With, Content-Type, Accept',
     );
 
-    response.status(exception.getStatus()).json(exception.response);
+    const status =
+      exception instanceof HttpException ? exception.getStatus() : 500;
+
+    response.status(status).json(exception.response);
   }
 }
