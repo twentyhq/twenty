@@ -8,8 +8,8 @@
     "build": "npx next build",
     "start": "npx next start",
     "lint": "npx next lint",
-    "github:sync": "npx tsx src/github/github-sync.ts --pageLimit 1",
-    "github:init": "npx tsx src/github/github-sync.ts",
+    "github:sync": "npx tsx src/github/github-sync.ts",
+    "github:init": "npx tsx src/github/github-sync.ts --isFullSync",
     "database:migrate": "npx tsx src/database/migrate-database.ts",
     "database:generate:pg": "npx drizzle-kit generate:pg --config=src/database/drizzle-posgres.config.ts"
   },
