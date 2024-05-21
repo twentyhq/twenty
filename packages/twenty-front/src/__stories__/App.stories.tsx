@@ -1,21 +1,17 @@
 import { HelmetProvider } from 'react-helmet-async';
 import { getOperationName } from '@apollo/client/utilities';
+import { jest } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { graphql, HttpResponse } from 'msw';
+import { RecoilRoot } from 'recoil';
 import { IconsProvider } from 'twenty-ui';
 
-import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
-import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
-import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
-import { SnackBarProvider } from '@/ui/feedback/snack-bar-manager/components/SnackBarProvider';
+import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
+import indexAppPath from '@/navigation/utils/indexAppPath';
+import { AppPath } from '@/types/AppPath';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
-import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
-import { UserProvider } from '@/users/components/UserProvider';
-import { UserProviderEffect } from '@/users/components/UserProviderEffect';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { App } from '~/App';
-import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
-import { FullHeightStorybookLayout } from '~/testing/FullHeightStorybookLayout';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedUsersData } from '~/testing/mock-data/users';
 
@@ -23,36 +19,21 @@ const meta: Meta<typeof App> = {
   title: 'App/App',
   component: App,
   decorators: [
-    MemoryRouterDecorator,
-    (Story) => (
-      <>
-        <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-          <ClientConfigProviderEffect />
-          <ClientConfigProvider>
-            <UserProviderEffect />
-            <UserProvider>
-              <FullHeightStorybookLayout>
-                <ObjectMetadataItemsProvider>
-                  <IconsProvider>
-                    <HelmetProvider>
-                      <SnackBarProvider>
-                        <AppThemeProvider>
-                          <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-                            <ObjectMetadataItemsProvider>
-                              <Story />
-                            </ObjectMetadataItemsProvider>
-                          </SnackBarProviderScope>
-                        </AppThemeProvider>
-                      </SnackBarProvider>
-                    </HelmetProvider>
-                  </IconsProvider>
-                </ObjectMetadataItemsProvider>
-              </FullHeightStorybookLayout>
-            </UserProvider>
-          </ClientConfigProvider>
-        </SnackBarProviderScope>
-      </>
-    ),
+    (Story) => {
+      return (
+        <RecoilRoot>
+          <AppErrorBoundary>
+            <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+              <IconsProvider>
+                <HelmetProvider>
+                  <Story />
+                </HelmetProvider>
+              </IconsProvider>
+            </SnackBarProviderScope>
+          </AppErrorBoundary>
+        </RecoilRoot>
+      );
+    },
   ],
   parameters: {
     msw: graphqlMocks,
@@ -62,9 +43,20 @@ const meta: Meta<typeof App> = {
 export default meta;
 export type Story = StoryObj<typeof App>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async () => {
+    jest
+      .spyOn(indexAppPath, 'getIndexAppPath')
+      .mockReturnValue('iframe.html' as AppPath);
+  },
+};
 
 export const DarkMode: Story = {
+  play: async () => {
+    jest
+      .spyOn(indexAppPath, 'getIndexAppPath')
+      .mockReturnValue('iframe.html' as AppPath);
+  },
   parameters: {
     msw: {
       handlers: [
