@@ -21,7 +21,7 @@ const isNameAvailable = async (
     await workspaceDataSource.query(
       `SELECT count(table_name) FROM information_schema.tables WHERE table_name LIKE '${tableName}' AND table_schema IN ('core', 'metadata', '${workspaceSchemaName}')`,
     )
-  )[0].count; // parameterize this?
+  )[0].count;
 
   return numberOfTablesWithSameName === 0;
 };
