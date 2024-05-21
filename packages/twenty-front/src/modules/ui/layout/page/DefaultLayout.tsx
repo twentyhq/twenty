@@ -74,6 +74,12 @@ export const DefaultLayout = () => {
     if (isMatchingLocation(AppPath.Verify)) {
       return false;
     }
+    if (
+      isMatchingLocation(AppPath.ResetPassword) ||
+      isMatchingLocation(AppPath.Invite)
+    ) {
+      return true;
+    }
     return (
       (onboardingStatus &&
         [
@@ -82,8 +88,6 @@ export const DefaultLayout = () => {
           OnboardingStatus.OngoingProfileCreation,
           OnboardingStatus.OngoingWorkspaceActivation,
         ].includes(onboardingStatus)) ||
-      isMatchingLocation(AppPath.ResetPassword) ||
-      isMatchingLocation(AppPath.Invite) ||
       (isMatchingLocation(AppPath.PlanRequired) &&
         (OnboardingStatus.CompletedWithoutSubscription ||
           OnboardingStatus.Canceled))
