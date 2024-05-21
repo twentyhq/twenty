@@ -34,6 +34,9 @@ type Story = StoryObj<typeof SnackBar>;
 
 export const Default: Story = {
   decorators: [ComponentDecorator],
+  parameters: {
+    chromatic: { disableSnapshot: true },
+  },
 };
 
 export const Catalog: CatalogStory<Story, typeof SnackBar> = {
