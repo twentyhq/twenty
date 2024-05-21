@@ -8,7 +8,7 @@ import { RelationFieldDisplay } from '@/object-record/record-field/meta-types/di
 import {
   RecordFieldValueSelectorContextProvider,
   useSetRecordValue,
-} from '@/object-record/record-index/contexts/RecordFieldValueSelectorContext';
+} from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { FieldMetadataType } from '~/generated/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';

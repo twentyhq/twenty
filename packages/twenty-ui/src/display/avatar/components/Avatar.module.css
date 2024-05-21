@@ -1,0 +1,15 @@
+.avatar {
+  align-items: center;
+  border-radius: 2px;
+  display: flex;
+  flex-shrink: 0;
+  justify-content: center;
+}
+
+.rounded {
+  border-radius: 50%;
+}
+
+.avatar-onclick:hover {
+  box-shadow: 0 0 0 4px var(--twentycrm-background-transparent-light);
+}

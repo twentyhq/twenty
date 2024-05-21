@@ -4,6 +4,8 @@ import { ThemeProvider as EmotionThemeProvider } from '@emotion/react';
 
 import { ThemeType } from '..';
 
+import './CSSModuleConstants.css';
+
 type ThemeProviderProps = {
   theme: ThemeType;
   children: React.ReactNode;

@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
+import clsx from 'clsx';
 
 import { Nullable, stringToHslColor } from '@ui/utilities';
+
+import styles from './Avatar.module.css';
 
 export type AvatarType = 'squared' | 'rounded';
 
@@ -105,19 +108,14 @@ export const Avatar = ({
       : 'none');
 
   return (
-    <StyledAvatar
-      className={className}
-      avatarUrl={avatarUrl}
-      placeholder={placeholder}
-      size={size}
-      type={type}
-      entityId={entityId}
+    <div
+      className={clsx({
+        [styles.avatar]: true,
+      })}
       onClick={onClick}
-      color={fixedColor}
-      backgroundColor={fixedBackgroundColor}
     >
       {(noAvatarUrl || isInvalidAvatarUrl) &&
         placeholder?.[0]?.toLocaleUpperCase()}
-    </StyledAvatar>
+    </div>
   );
 };
