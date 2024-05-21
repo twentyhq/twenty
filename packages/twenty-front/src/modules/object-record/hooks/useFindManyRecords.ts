@@ -124,7 +124,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
 
   const fetchMoreRecords = useCallback(async () => {
     // Remote objects does not support hasNextPage. We cannot rely on it to fetch more records.
-    if (hasNextPage || !isAggregationEnabled(objectMetadataItem)) {
+    if (hasNextPage || (!isAggregationEnabled(objectMetadataItem) && !error)) {
       setIsFetchingMoreObjects(true);
 
       try {
@@ -202,6 +202,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   }, [
     hasNextPage,
     objectMetadataItem,
+    error,
     setIsFetchingMoreObjects,
     fetchMore,
     filter,

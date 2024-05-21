@@ -15,9 +15,9 @@ import { ViewPickerListContent } from '@/views/view-picker/components/ViewPicker
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { useViewPickerPersistView } from '@/views/view-picker/hooks/useViewPickerPersistView';
+import { isDefined } from '~/utils/isDefined';
 
 import { useViewStates } from '../../hooks/internal/useViewStates';
-import { isDefined } from '~/utils/isDefined';
 
 const StyledDropdownLabelAdornments = styled.span`
   align-items: center;
