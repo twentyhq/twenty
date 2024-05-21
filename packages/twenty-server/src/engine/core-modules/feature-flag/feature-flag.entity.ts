@@ -21,6 +21,7 @@ export enum FeatureFlagKeys {
   IsAirtableIntegrationEnabled = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IsPostgreSQLIntegrationEnabled = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IsStripeIntegrationEnabled = 'IS_STRIPE_INTEGRATION_ENABLED',
+  IsGmailSyncV2Enabled = 'IS_GMAIL_SYNC_V2_ENABLED',
 }
 
 @Entity({ name: 'featureFlag', schema: 'core' })
