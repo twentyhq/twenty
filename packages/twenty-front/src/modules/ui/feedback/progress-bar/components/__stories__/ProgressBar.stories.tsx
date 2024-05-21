@@ -1,5 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator, SECONDARY_COLORS } from 'twenty-ui';
+import { ComponentDecorator } from 'twenty-ui';
 
 import { useProgressAnimation } from '@/ui/feedback/progress-bar/hooks/useProgressAnimation';
 
@@ -12,9 +12,6 @@ const meta: Meta<typeof ProgressBar> = {
   argTypes: {
     className: { control: false },
     value: { control: { type: 'range', min: 0, max: 100, step: 1 } },
-  },
-  args: {
-    color: SECONDARY_COLORS.gray80,
   },
 };
 
