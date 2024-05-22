@@ -1,13 +1,18 @@
 'use client';
 
+import React from 'react';
 import styled from '@emotion/styled';
 import { useRouter } from 'next/navigation';
 
 import { IconBook } from '@/app/_components/ui/icons';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
+import { AlgoliaDocSearch } from '@/app/_components/user-guide/AlgoliaDocSearch';
 import UserGuideSidebarSection from '@/app/_components/user-guide/UserGuideSidebarSection';
 import { UserGuideArticlesProps } from '@/content/user-guide/constants/getUserGuideArticles';
+
+import '@docsearch/css';
+import '../../user-guide/algolia.css';
 
 const StyledContainer = styled.div`
   ${mq({
@@ -66,6 +71,7 @@ const UserGuideSidebar = ({
 
   return (
     <StyledContainer>
+      <AlgoliaDocSearch />
       <StyledHeading>
         <StyledIconContainer>
           <IconBook size={Theme.icon.size.md} />
