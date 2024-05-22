@@ -1,5 +1,6 @@
 import { findAll } from '@/database/database';
 import { pullRequestModel, userModel } from '@/database/model';
+import { TWENTY_TEAM_MEMBERS } from '@/shared-utils/listTeamMembers';
 
 export const getContributorActivity = async (username: string) => {
   const contributors = await findAll(userModel);
@@ -15,28 +16,7 @@ export const getContributorActivity = async (username: string) => {
   const pullRequests = await findAll(pullRequestModel);
   const mergedPullRequests = pullRequests
     .filter((pr) => pr.mergedAt !== null)
-    .filter(
-      (pr) =>
-        ![
-          'dependabot',
-          'cyborch',
-          'emilienchvt',
-          'Samox',
-          'charlesBochet',
-          'gitstart-app',
-          'thaisguigon',
-          'lucasbordeau',
-          'magrinj',
-          'Weiko',
-          'gitstart-twenty',
-          'bosiraphael',
-          'martmull',
-          'FelixMalfait',
-          'thomtrp',
-          'Bonapara',
-          'nimraahmed',
-        ].includes(pr.authorId),
-    );
+    .filter((pr) => !TWENTY_TEAM_MEMBERS.includes(pr.authorId));
 
   const contributorPullRequests = pullRequests.filter(
     (pr) => pr.authorId === contributor.id,

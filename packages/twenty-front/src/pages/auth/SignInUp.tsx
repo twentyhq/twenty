@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
+import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { SignInUpForm } from '@/auth/sign-in-up/components/SignInUpForm';
 import {
@@ -10,6 +11,7 @@ import {
 } from '@/auth/sign-in-up/hooks/useSignInUp';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 import { isDefined } from '~/utils/isDefined';
 
 export const SignInUp = () => {
@@ -36,6 +38,9 @@ export const SignInUp = () => {
 
   return (
     <>
+      <AnimatedEaseIn>
+        <Logo />
+      </AnimatedEaseIn>
       <Title animate>{title}</Title>
       <SignInUpForm />
     </>

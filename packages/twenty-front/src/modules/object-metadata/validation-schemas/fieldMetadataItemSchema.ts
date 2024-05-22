@@ -51,6 +51,7 @@ export const fieldMetadataItemSchema = z.object({
         value: z.string().trim().min(1),
       }),
     )
+    .nullable()
     .optional(),
   relationDefinition: z
     .object({

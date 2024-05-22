@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
+
+import { ComponentDecorator } from '@ui/testing/decorators/ComponentDecorator';
 
 import { H2Title } from '../H2Title';
 

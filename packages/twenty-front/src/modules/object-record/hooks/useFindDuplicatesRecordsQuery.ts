@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
+import { isAggregationEnabled } from '@/object-metadata/utils/isAggregationEnabled';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { getFindDuplicateRecordsQueryResponseField } from '@/object-record/utils/getFindDuplicateRecordsQueryResponseField';
 import { capitalize } from '~/utils/string/capitalize';
@@ -33,11 +34,11 @@ export const useFindDuplicateRecordsQuery = ({
           cursor
         }
         pageInfo {
-          hasNextPage
+          ${isAggregationEnabled(objectMetadataItem) ? 'hasNextPage' : ''}
           startCursor
           endCursor
         }
-        totalCount
+        ${isAggregationEnabled(objectMetadataItem) ? 'totalCount' : ''}
       }
     }
   `;
