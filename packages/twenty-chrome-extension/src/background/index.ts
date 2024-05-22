@@ -68,22 +68,33 @@ chrome.tabs.onUpdated.addListener(async (tabId, _, tab) => {
   });
 });
 
+const setTokenStateFromCookie = (cookie: string) => {
+  const decodedValue = decodeURIComponent(cookie);
+  const tokenPair = JSON.parse(decodedValue);
+  if (isDefined(tokenPair)) {
+    chrome.storage.local.set({
+      isAuthenticated: true,
+      accessToken: tokenPair.accessToken,
+      refreshToken: tokenPair.refreshToken,
+    });
+  }
+};
+
 chrome.cookies.onChanged.addListener(async ({ cookie }) => {
   if (cookie.name === 'tokenPair') {
-    const decodedValue = decodeURIComponent(cookie.value);
-    const tokenPair = JSON.parse(decodedValue);
-    if (isDefined(tokenPair)) {
-      chrome.storage.local.set({
-        isAuthenticated: true,
-        accessToken: tokenPair.accessToken,
-        refreshToken: tokenPair.refreshToken,
-      });
-      chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
-        if (isDefined(tab) && isDefined(tab.id)) {
-          chrome.tabs.sendMessage(tab.id, { action: 'executeContentScript' });
-        }
-      });
-      chrome.runtime.sendMessage({ action: 'userIsLoggedIn' });
-    }
+    setTokenStateFromCookie(cookie.value);
   }
 });
+
+// This will only run the very first time the extension loads, after we have stored the
+// cookiesRead variable to true, this will not allow to change the token state everytime background script runs
+chrome.cookies.get(
+  { name: 'tokenPair', url: `${import.meta.env.VITE_FRONT_BASE_URL}` },
+  async (cookie) => {
+    const store = await chrome.storage.local.get(['cookiesRead']);
+    if (isDefined(cookie) && !isDefined(store.cookiesRead)) {
+      setTokenStateFromCookie(cookie.value);
+      chrome.storage.local.set({ cookiesRead: true });
+    }
+  },
+);
