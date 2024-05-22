@@ -287,6 +287,12 @@ export class GmailPartialSyncV2Service {
       this.logger.log(
         `gmail partial-sync done for workspace ${workspaceId} and account ${connectedAccountId}`,
       );
+
+      await this.messageChannelRepository.updateSyncSubStatus(
+        gmailMessageChannel.id,
+        MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING,
+        workspaceId,
+      );
     } catch (error) {
       await this.messageChannelRepository.updateSyncStatus(
         gmailMessageChannel.id,
@@ -304,12 +310,6 @@ export class GmailPartialSyncV2Service {
         `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
       );
     }
-
-    await this.messageChannelRepository.updateSyncSubStatus(
-      gmailMessageChannel.id,
-      MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING,
-      workspaceId,
-    );
   }
 
   private async getMessageIdsFromHistory(
