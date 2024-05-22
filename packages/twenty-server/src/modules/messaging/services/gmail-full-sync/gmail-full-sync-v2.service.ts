@@ -111,11 +111,6 @@ export class GmailFullSyncV2Service {
       workspaceId,
     );
 
-    const workspaceDataSource =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
-        workspaceId,
-      );
-
     const gmailClient: gmail_v1.Gmail =
       await this.gmailClientProvider.getGmailClient(refreshToken);
 
