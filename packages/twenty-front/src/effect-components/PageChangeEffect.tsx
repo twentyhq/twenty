@@ -59,7 +59,8 @@ export const PageChangeEffect = () => {
     const isMatchingOngoingUserCreationRoute =
       isMatchingLocation(AppPath.SignInUp) ||
       isMatchingLocation(AppPath.Invite) ||
-      isMatchingLocation(AppPath.Verify);
+      isMatchingLocation(AppPath.Verify) ||
+      isMatchingLocation(AppPath.ResetPassword);
 
     const isMatchingOnboardingRoute =
       isMatchingOngoingUserCreationRoute ||
@@ -70,14 +71,15 @@ export const PageChangeEffect = () => {
 
     if (
       onboardingStatus === OnboardingStatus.OngoingUserCreation &&
-      !isMatchingOngoingUserCreationRoute &&
-      !isMatchingLocation(AppPath.ResetPassword)
+      !isMatchingOngoingUserCreationRoute
     ) {
       navigate(AppPath.SignInUp);
     } else if (
       isDefined(onboardingStatus) &&
-      (onboardingStatus === OnboardingStatus.Incomplete ||
-        onboardingStatus === OnboardingStatus.OngoingSubscriptionPayment) &&
+      [
+        OnboardingStatus.Incomplete,
+        OnboardingStatus.OngoingSubscriptionPayment,
+      ].includes(onboardingStatus) &&
       !isMatchingLocation(AppPath.PlanRequired)
     ) {
       navigate(AppPath.PlanRequired);
@@ -108,13 +110,15 @@ export const PageChangeEffect = () => {
     } else if (
       onboardingStatus === OnboardingStatus.Completed &&
       isMatchingOnboardingRoute &&
-      !isMatchingLocation(AppPath.Invite)
+      !isMatchingLocation(AppPath.Invite) &&
+      !isMatchingLocation(AppPath.ResetPassword)
     ) {
       navigate(AppPath.Index);
     } else if (
       onboardingStatus === OnboardingStatus.CompletedWithoutSubscription &&
       isMatchingOnboardingRoute &&
-      !isMatchingLocation(AppPath.PlanRequired)
+      !isMatchingLocation(AppPath.PlanRequired) &&
+      !isMatchingLocation(AppPath.ResetPassword)
     ) {
       navigate(AppPath.Index);
     }
