@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository, In } from 'typeorm';
@@ -12,7 +12,7 @@ import { MessageChannelRepository } from 'src/modules/messaging/repositories/mes
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { GmailMessagesImportService } from 'src/modules/messaging/services/gmail-messages-import/gmail-messages-import.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { GmailMessagesImportV2Service } from 'src/modules/messaging/services/gmail-messages-import/gmail-messages-import-v2.service.service';
+import { GmailMessagesImportV2Service } from 'src/modules/messaging/services/gmail-messages-import/gmail-messages-import-v2.service';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
@@ -20,6 +20,8 @@ import {
 
 @Injectable()
 export class GmailMessagesImportCronJob implements MessageQueueJob<undefined> {
+  private readonly logger = new Logger(GmailMessagesImportCronJob.name);
+
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -76,10 +78,14 @@ export class GmailMessagesImportCronJob implements MessageQueueJob<undefined> {
 
     for (const messageChannel of messageChannels) {
       if (isGmailSyncV2Enabled) {
-        await this.gmailFetchMessageContentFromCacheV2Service.fetchMessageContentFromCache(
-          workspaceId,
-          messageChannel.connectedAccountId,
-        );
+        try {
+          await this.gmailFetchMessageContentFromCacheV2Service.fetchMessageContentFromCache(
+            workspaceId,
+            messageChannel.connectedAccountId,
+          );
+        } catch (error) {
+          this.logger.log(error.message);
+        }
       } else {
         await this.gmailFetchMessageContentFromCacheService.fetchMessageContentFromCache(
           workspaceId,

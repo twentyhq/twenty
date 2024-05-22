@@ -59,21 +59,17 @@ export class GmailMessagesImportV2Service {
     );
 
     if (!connectedAccount) {
-      this.logger.error(
+      throw new Error(
         `Connected account ${connectedAccountId} not found in workspace ${workspaceId}`,
       );
-
-      return;
     }
 
     const { accessToken, refreshToken, authFailedAt } = connectedAccount;
 
     if (authFailedAt) {
-      this.logger.error(
+      throw new Error(
         `Connected account ${connectedAccountId} in workspace ${workspaceId} is in a failed state. Skipping...`,
       );
-
-      return;
     }
 
     if (!refreshToken) {
@@ -89,11 +85,9 @@ export class GmailMessagesImportV2Service {
       );
 
     if (!gmailMessageChannel) {
-      this.logger.error(
+      throw new Error(
         `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
       );
-
-      return;
     }
 
     if (
@@ -101,22 +95,18 @@ export class GmailMessagesImportV2Service {
         MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS ||
       gmailMessageChannel?.syncStatus === MessageChannelSyncStatus.FAILED
     ) {
-      this.logger.error(
+      throw new Error(
         `Connected account ${connectedAccountId} in workspace ${workspaceId} is in a failed state. Skipping...`,
       );
-
-      return;
     }
 
     if (
       gmailMessageChannel.syncSubStatus !==
       MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING
     ) {
-      this.logger.log(
+      throw new Error(
         `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} is not pending.`,
       );
-
-      return;
     }
 
     const gmailMessageChannelId = gmailMessageChannel.id;
