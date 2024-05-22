@@ -1,13 +1,12 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getFieldPreviewValue';
 import {
   mockedCompanyObjectMetadataItem,
   mockedOpportunityObjectMetadataItem,
   mockedPersonObjectMetadataItem,
 } from '~/testing/mock-data/metadata';
 
-import { getFieldDefaultPreviewValue } from '../getFieldDefaultPreviewValue';
-
-describe('getFieldDefaultPreviewValue', () => {
+describe('getFieldPreviewValue', () => {
   describe('SELECT field', () => {
     it('returns the default select option value', () => {
       // Given
@@ -17,7 +16,7 @@ describe('getFieldDefaultPreviewValue', () => {
       )!;
 
       // When
-      const result = getFieldDefaultPreviewValue({
+      const result = getFieldPreviewValue({
         objectMetadataItem,
         fieldMetadataItem: { ...fieldMetadataItem, defaultValue: "'MEETING'" },
       });
@@ -34,7 +33,7 @@ describe('getFieldDefaultPreviewValue', () => {
       )!;
 
       // When
-      const result = getFieldDefaultPreviewValue({
+      const result = getFieldPreviewValue({
         objectMetadataItem,
         fieldMetadataItem: { ...fieldMetadataItem, defaultValue: null },
       });
@@ -54,7 +53,7 @@ describe('getFieldDefaultPreviewValue', () => {
       const relationObjectMetadataItem = mockedPersonObjectMetadataItem;
 
       // When
-      const result = getFieldDefaultPreviewValue({
+      const result = getFieldPreviewValue({
         objectMetadataItem,
         fieldMetadataItem,
         relationObjectMetadataItem,
@@ -78,7 +77,7 @@ describe('getFieldDefaultPreviewValue', () => {
       const relationObjectMetadataItem = mockedCompanyObjectMetadataItem;
 
       // When
-      const result = getFieldDefaultPreviewValue({
+      const result = getFieldPreviewValue({
         objectMetadataItem,
         fieldMetadataItem,
         relationObjectMetadataItem,
@@ -105,7 +104,7 @@ describe('getFieldDefaultPreviewValue', () => {
       };
 
       // When
-      const result = getFieldDefaultPreviewValue({
+      const result = getFieldPreviewValue({
         objectMetadataItem,
         fieldMetadataItem,
         relationObjectMetadataItem,
@@ -125,7 +124,7 @@ describe('getFieldDefaultPreviewValue', () => {
       )!;
 
       // When
-      const result = getFieldDefaultPreviewValue({
+      const result = getFieldPreviewValue({
         objectMetadataItem,
         fieldMetadataItem,
       });
@@ -142,7 +141,7 @@ describe('getFieldDefaultPreviewValue', () => {
       )!;
 
       // When
-      const result = getFieldDefaultPreviewValue({
+      const result = getFieldPreviewValue({
         objectMetadataItem,
         fieldMetadataItem,
       });
@@ -162,7 +161,7 @@ describe('getFieldDefaultPreviewValue', () => {
       )!;
 
       // When
-      const result = getFieldDefaultPreviewValue({
+      const result = getFieldPreviewValue({
         objectMetadataItem,
         fieldMetadataItem,
       });

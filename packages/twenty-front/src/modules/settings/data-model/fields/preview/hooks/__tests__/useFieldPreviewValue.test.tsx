@@ -6,7 +6,7 @@ import { RecoilRoot } from 'recoil';
 import { SnackBarProviderScope } from '@/ui/feedback/snack-bar-manager/scopes/SnackBarProviderScope';
 import { mockedCompanyObjectMetadataItem } from '~/testing/mock-data/metadata';
 
-import { useFieldPreview } from '../useFieldPreview';
+import { useFieldPreviewValue } from '../useFieldPreviewValue';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
@@ -28,7 +28,7 @@ describe('useFieldPreview', () => {
 
     // When
     const { result } = renderHook(
-      () => useFieldPreview({ fieldMetadataItem, objectMetadataItem }),
+      () => useFieldPreviewValue({ fieldMetadataItem, objectMetadataItem }),
       { wrapper: Wrapper },
     );
 
@@ -51,7 +51,7 @@ describe('useFieldPreview', () => {
 
     // When
     const { result } = renderHook(
-      () => useFieldPreview({ fieldMetadataItem, objectMetadataItem }),
+      () => useFieldPreviewValue({ fieldMetadataItem, objectMetadataItem }),
       { wrapper: Wrapper },
     );
 
