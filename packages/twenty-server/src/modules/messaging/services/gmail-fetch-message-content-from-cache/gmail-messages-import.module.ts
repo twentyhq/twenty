@@ -4,8 +4,8 @@ import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repos
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { FetchMessagesByBatchesModule } from 'src/modules/messaging/services/fetch-messages-by-batches/fetch-messages-by-batches.module';
-import { GmailFetchMessageContentFromCacheV2Service } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache-v2.service';
-import { GmailFetchMessageContentFromCacheService } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.service';
+import { GmailMessagesImportV2Service } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-messages-import-v2.service.service';
+import { GmailMessagesImportService } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-messages-import.service';
 import { MessageParticipantModule } from 'src/modules/messaging/services/message-participant/message-participant.module';
 import { MessageModule } from 'src/modules/messaging/services/message/message.module';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
@@ -22,13 +22,7 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-ob
     MessageModule,
     MessageParticipantModule,
   ],
-  providers: [
-    GmailFetchMessageContentFromCacheService,
-    GmailFetchMessageContentFromCacheV2Service,
-  ],
-  exports: [
-    GmailFetchMessageContentFromCacheService,
-    GmailFetchMessageContentFromCacheV2Service,
-  ],
+  providers: [GmailMessagesImportService, GmailMessagesImportV2Service],
+  exports: [GmailMessagesImportService, GmailMessagesImportV2Service],
 })
-export class GmailFetchMessageContentFromCacheModule {}
+export class GmailMessagesImportModule {}

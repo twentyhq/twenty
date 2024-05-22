@@ -33,10 +33,8 @@ import {
 } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
 
 @Injectable()
-export class GmailFetchMessageContentFromCacheService {
-  private readonly logger = new Logger(
-    GmailFetchMessageContentFromCacheService.name,
-  );
+export class GmailMessagesImportService {
+  private readonly logger = new Logger(GmailMessagesImportService.name);
 
   constructor(
     private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,

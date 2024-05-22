@@ -10,18 +10,16 @@ import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-s
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
-import { GmailFetchMessageContentFromCacheService } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.service';
+import { GmailMessagesImportService } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-messages-import.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { GmailFetchMessageContentFromCacheV2Service } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache-v2.service';
+import { GmailMessagesImportV2Service } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-messages-import-v2.service.service';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
 } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @Injectable()
-export class GmailFetchMessagesFromCacheCronJob
-  implements MessageQueueJob<undefined>
-{
+export class GmailMessagesImportCronJob implements MessageQueueJob<undefined> {
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -29,8 +27,8 @@ export class GmailFetchMessagesFromCacheCronJob
     private readonly dataSourceRepository: Repository<DataSourceEntity>,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
-    private readonly gmailFetchMessageContentFromCacheService: GmailFetchMessageContentFromCacheService,
-    private readonly gmailFetchMessageContentFromCacheV2Service: GmailFetchMessageContentFromCacheV2Service,
+    private readonly gmailFetchMessageContentFromCacheService: GmailMessagesImportService,
+    private readonly gmailFetchMessageContentFromCacheV2Service: GmailMessagesImportV2Service,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     private readonly environmentService: EnvironmentService,

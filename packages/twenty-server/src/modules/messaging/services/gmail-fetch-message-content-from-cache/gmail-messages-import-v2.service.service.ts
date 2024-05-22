@@ -28,13 +28,11 @@ import {
   CreateCompanyAndContactJobData,
   CreateCompanyAndContactJob,
 } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
-import { GmailFetchMessageContentFromCacheService } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.service';
+import { GmailMessagesImportService } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-messages-import.service';
 
 @Injectable()
-export class GmailFetchMessageContentFromCacheV2Service {
-  private readonly logger = new Logger(
-    GmailFetchMessageContentFromCacheService.name,
-  );
+export class GmailMessagesImportV2Service {
+  private readonly logger = new Logger(GmailMessagesImportService.name);
 
   constructor(
     private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,
