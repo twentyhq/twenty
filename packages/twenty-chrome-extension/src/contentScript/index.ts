@@ -1,5 +1,6 @@
 import { insertButtonForCompany } from '~/contentScript/extractCompanyProfile';
 import { insertButtonForPerson } from '~/contentScript/extractPersonProfile';
+import { isDefined } from '~/utils/isDefined';
 
 // Inject buttons into the DOM when SPA is reloaded on the resource url.
 // e.g. reload the page when on https://www.linkedin.com/in/mabdullahabaid/
@@ -20,4 +21,13 @@ chrome.runtime.onMessage.addListener(async (message, _, sendResponse) => {
   }
 
   sendResponse('Executing!');
+});
+
+chrome.storage.local.onChanged.addListener(async (store) => {
+  if (isDefined(store.accessToken)) {
+    if (isDefined(store.accessToken.newValue)) {
+      await insertButtonForCompany();
+      await insertButtonForPerson();
+    }
+  }
 });
