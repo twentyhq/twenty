@@ -7,7 +7,7 @@ import { MessageQueueService } from 'src/engine/integrations/message-queue/servi
 import { GmailMessagesImportCronJob } from 'src/modules/messaging/crons/jobs/gmail-messages-import.cron.job';
 
 @Command({
-  name: 'cron:messaging:gmail-fetch-messages-from-cache',
+  name: 'cron:messaging:gmail-messages-import',
   description: 'Starts a cron job to fetch all messages from cache',
 })
 export class GmailMessagesImportCronCommand extends CommandRunner {
