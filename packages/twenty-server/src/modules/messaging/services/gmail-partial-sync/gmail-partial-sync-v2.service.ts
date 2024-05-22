@@ -1,10 +1,8 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { gmail_v1 } from 'googleapis';
 
 import { GmailClientProvider } from 'src/modules/messaging/services/providers/gmail/gmail-client.provider';
-import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
@@ -19,7 +17,6 @@ import { GmailError } from 'src/modules/messaging/types/gmail-error';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
 
@@ -29,15 +26,12 @@ export class GmailPartialSyncV2Service {
 
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
-    @Inject(MessageQueue.messagingQueue)
-    private readonly messageQueueService: MessageQueueService,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
     private readonly cacheStorage: CacheStorageService,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     @InjectObjectMetadataRepository(
       MessageChannelMessageAssociationWorkspaceEntity,
     )
