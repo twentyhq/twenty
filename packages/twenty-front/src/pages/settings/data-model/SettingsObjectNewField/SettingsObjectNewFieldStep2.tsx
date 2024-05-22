@@ -31,7 +31,9 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type SettingsDataModelNewFieldFormValues = z.infer<
@@ -108,6 +110,8 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   const { createOneRelationMetadataItem: createOneRelationMetadata } =
     useCreateOneRelationMetadataItem();
+
+  const isLinksFieldEnabled = useIsFeatureEnabled('IS_LINKS_FIELD_ENABLED');
 
   if (!activeObjectMetadataItem) return null;
 
@@ -263,16 +267,18 @@ export const SettingsObjectNewFieldStep2 = () => {
     }
   };
 
-  const excludedFieldTypes: SettingsSupportedFieldType[] = [
-    FieldMetadataType.Email,
-    FieldMetadataType.FullName,
-    FieldMetadataType.Link,
-    FieldMetadataType.Links,
-    FieldMetadataType.Numeric,
-    FieldMetadataType.Probability,
-    FieldMetadataType.Uuid,
-    FieldMetadataType.Phone,
-  ];
+  const excludedFieldTypes: SettingsSupportedFieldType[] = (
+    [
+      FieldMetadataType.Email,
+      FieldMetadataType.FullName,
+      FieldMetadataType.Link,
+      isLinksFieldEnabled ? undefined : FieldMetadataType.Links,
+      FieldMetadataType.Numeric,
+      FieldMetadataType.Probability,
+      FieldMetadataType.Uuid,
+      FieldMetadataType.Phone,
+    ] as const
+  ).filter(isDefined);
 
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
