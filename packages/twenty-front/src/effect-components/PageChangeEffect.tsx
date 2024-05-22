@@ -9,7 +9,6 @@ import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
-import { isSignUpDisabledState } from '@/client-config/states/isSignUpDisabledState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
 import { CommandType } from '@/command-menu/types/Command';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
@@ -17,9 +16,8 @@ import { AppBasePath } from '@/types/AppBasePath';
 import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { useGetWorkspaceFromInviteHashLazyQuery } from '~/generated/graphql';
+import { useDefaultHomePagePath } from '~/hooks/useDefaultHomePagePath';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { isDefined } from '~/utils/isDefined';
 
@@ -27,7 +25,6 @@ import { isDefined } from '~/utils/isDefined';
 export const PageChangeEffect = () => {
   const navigate = useNavigate();
   const isMatchingLocation = useIsMatchingLocation();
-  const { enqueueSnackBar } = useSnackBar();
 
   const [previousLocation, setPreviousLocation] = useState('');
 
@@ -37,15 +34,15 @@ export const PageChangeEffect = () => {
 
   const location = useLocation();
 
+  const { defaultHomePagePath } = useDefaultHomePagePath();
+
+  console.log('location', location, 'onboardingStatus', onboardingStatus);
+
   const eventTracker = useEventTracker();
 
-  const [workspaceFromInviteHashQuery] =
-    useGetWorkspaceFromInviteHashLazyQuery();
   const { addToCommandMenu, setToInitialCommandMenu } = useCommandMenu();
 
   const openCreateActivity = useOpenCreateActivityDrawer();
-
-  const isSignUpDisabled = useRecoilValue(isSignUpDisabledState);
 
   useEffect(() => {
     if (!previousLocation || previousLocation !== location.pathname) {
@@ -56,11 +53,14 @@ export const PageChangeEffect = () => {
   }, [location, previousLocation]);
 
   useEffect(() => {
-    const isMatchingOngoingUserCreationRoute =
-      isMatchingLocation(AppPath.SignInUp) ||
+    const isMatchingOpenRoute =
       isMatchingLocation(AppPath.Invite) ||
-      isMatchingLocation(AppPath.Verify) ||
       isMatchingLocation(AppPath.ResetPassword);
+
+    const isMatchingOngoingUserCreationRoute =
+      isMatchingOpenRoute ||
+      isMatchingLocation(AppPath.SignInUp) ||
+      isMatchingLocation(AppPath.Verify);
 
     const isMatchingOnboardingRoute =
       isMatchingOngoingUserCreationRoute ||
@@ -75,11 +75,7 @@ export const PageChangeEffect = () => {
     ) {
       navigate(AppPath.SignInUp);
     } else if (
-      isDefined(onboardingStatus) &&
-      [
-        OnboardingStatus.Incomplete,
-        OnboardingStatus.OngoingSubscriptionPayment,
-      ].includes(onboardingStatus) &&
+      onboardingStatus === OnboardingStatus.Incomplete &&
       !isMatchingLocation(AppPath.PlanRequired)
     ) {
       navigate(AppPath.PlanRequired);
@@ -110,26 +106,25 @@ export const PageChangeEffect = () => {
     } else if (
       onboardingStatus === OnboardingStatus.Completed &&
       isMatchingOnboardingRoute &&
-      !isMatchingLocation(AppPath.Invite) &&
-      !isMatchingLocation(AppPath.ResetPassword)
+      !isMatchingOpenRoute
     ) {
-      navigate(AppPath.Index);
+      navigate(defaultHomePagePath);
     } else if (
       onboardingStatus === OnboardingStatus.CompletedWithoutSubscription &&
       isMatchingOnboardingRoute &&
-      !isMatchingLocation(AppPath.PlanRequired) &&
-      !isMatchingLocation(AppPath.ResetPassword)
+      !isMatchingOpenRoute &&
+      !isMatchingLocation(AppPath.PlanRequired)
     ) {
-      navigate(AppPath.Index);
+      navigate(defaultHomePagePath);
+    } else if (isMatchingLocation(AppPath.Index)) {
+      navigate(defaultHomePagePath);
     }
   }, [
-    enqueueSnackBar,
     isMatchingLocation,
-    isSignUpDisabled,
     location.pathname,
     navigate,
     onboardingStatus,
-    workspaceFromInviteHashQuery,
+    defaultHomePagePath,
   ]);
 
   useEffect(() => {
