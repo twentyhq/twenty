@@ -9,7 +9,7 @@ import { RecordPositionListener } from 'src/engine/api/graphql/workspace-query-r
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { TelemetryListener } from 'src/engine/api/graphql/workspace-query-runner/listeners/telemetry.listener';
 import { AnalyticsModule } from 'src/engine/core-modules/analytics/analytics.module';
@@ -25,7 +25,7 @@ import { EntityEventsToDbListener } from './listeners/entity-events-to-db.listen
     WorkspaceDataSourceModule,
     WorkspacePreQueryHookModule,
     TypeOrmModule.forFeature([Workspace, FeatureFlagEntity], 'core'),
-    ObjectMetadataRepositoryModule.forFeature([WorkspaceMemberObjectMetadata]),
+    ObjectMetadataRepositoryModule.forFeature([WorkspaceMemberWorkspaceEntity]),
     AnalyticsModule,
   ],
   providers: [

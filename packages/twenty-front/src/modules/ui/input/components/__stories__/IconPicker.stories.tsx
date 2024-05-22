@@ -1,3 +1,4 @@
+import { useArgs } from '@storybook/preview-api';
 import { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, within } from '@storybook/test';
 import { ComponentDecorator } from 'twenty-ui';
@@ -5,12 +6,29 @@ import { ComponentDecorator } from 'twenty-ui';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { sleep } from '~/testing/sleep';
 
-import { IconPicker } from '../IconPicker';
+import { IconPicker, IconPickerProps } from '../IconPicker';
+
+type RenderProps = IconPickerProps;
+const Render = (args: RenderProps) => {
+  const [{ selectedIconKey }, updateArgs] = useArgs();
+
+  return (
+    <IconPicker
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...args}
+      onChange={({ iconKey }) => {
+        updateArgs({ selectedIconKey: iconKey });
+      }}
+      selectedIconKey={selectedIconKey}
+    />
+  );
+};
 
 const meta: Meta<typeof IconPicker> = {
   title: 'UI/Input/IconPicker/IconPicker',
   component: IconPicker,
   decorators: [IconsProviderDecorator, ComponentDecorator],
+  render: Render,
 };
 
 export default meta;
@@ -18,39 +36,45 @@ type Story = StoryObj<typeof IconPicker>;
 
 export const Default: Story = {};
 
-export const WithSelectedIcon: Story = {
-  args: { selectedIconKey: 'IconCalendarEvent' },
-};
-
 export const WithOpen: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const iconPickerButton = await canvas.findByRole('button');
+    const iconPickerButton = await canvas.findByRole('button', {
+      name: 'Click to select icon (no icon selected)',
+    });
 
-    userEvent.click(iconPickerButton);
+    await userEvent.click(iconPickerButton);
   },
 };
 
-export const WithOpenAndSelectedIcon: Story = {
+export const WithSelectedIcon: Story = {
   args: { selectedIconKey: 'IconCalendarEvent' },
+};
+
+export const WithOpenAndSelectedIcon: Story = {
+  ...WithSelectedIcon,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const iconPickerButton = await canvas.findByRole('button');
+    const iconPickerButton = await canvas.findByRole('button', {
+      name: 'Click to select icon (selected: IconCalendarEvent)',
+    });
 
-    userEvent.click(iconPickerButton);
+    await userEvent.click(iconPickerButton);
   },
 };
 
 export const WithSearch: Story = {
-  args: { selectedIconKey: 'IconBuildingSkyscraper' },
+  ...WithSelectedIcon,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const iconPickerButton = await canvas.findByRole('button');
+    const iconPickerButton = await canvas.findByRole('button', {
+      name: 'Click to select icon (selected: IconCalendarEvent)',
+    });
 
-    userEvent.click(iconPickerButton);
+    await userEvent.click(iconPickerButton);
 
     const searchInput = await canvas.findByRole('textbox');
 
@@ -67,13 +91,15 @@ export const WithSearch: Story = {
 };
 
 export const WithSearchAndClose: Story = {
-  args: { selectedIconKey: 'IconBuildingSkyscraper' },
+  ...WithSelectedIcon,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    const iconPickerButton = await canvas.findByRole('button');
+    let iconPickerButton = await canvas.findByRole('button', {
+      name: 'Click to select icon (selected: IconCalendarEvent)',
+    });
 
-    userEvent.click(iconPickerButton);
+    await userEvent.click(iconPickerButton);
 
     let searchInput = await canvas.findByRole('textbox');
 
@@ -87,13 +113,19 @@ export const WithSearchAndClose: Story = {
 
     expect(searchedIcon).toBeInTheDocument();
 
-    userEvent.click(searchedIcon);
+    await userEvent.click(searchedIcon);
 
-    await sleep(100);
+    await sleep(500);
+
+    expect(searchedIcon).not.toBeInTheDocument();
+
+    iconPickerButton = await canvas.findByRole('button', {
+      name: 'Click to select icon (selected: IconBuildingSkyscraper)',
+    });
 
     userEvent.click(iconPickerButton);
 
-    await sleep(100);
+    await sleep(500);
 
     searchInput = await canvas.findByRole('textbox');
 

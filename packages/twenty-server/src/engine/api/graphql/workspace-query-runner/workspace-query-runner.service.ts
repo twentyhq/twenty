@@ -56,7 +56,10 @@ import {
   PGGraphQLMutation,
   PGGraphQLResult,
 } from './interfaces/pg-graphql.interface';
-import { computePgGraphQLError } from './utils/compute-pg-graphql-error.util';
+import {
+  PgGraphQLConfig,
+  computePgGraphQLError,
+} from './utils/compute-pg-graphql-error.util';
 
 @Injectable()
 export class WorkspaceQueryRunnerService {
@@ -374,7 +377,7 @@ export class WorkspaceQueryRunnerService {
     const { userId, workspaceId, objectMetadataItem } = options;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
-    assertIsValidUuid(args.data.id);
+    args.filter?.id?.in?.forEach((id) => assertIsValidUuid(id));
 
     const maximumRecordAffected = this.environmentService.get(
       'MUTATION_MAXIMUM_RECORD_AFFECTED',
@@ -580,11 +583,10 @@ export class WorkspaceQueryRunnerService {
         )};
       `);
 
-    const results = await workspaceDataSource?.query<PGGraphQLResult>(`
-        SELECT graphql.resolve($$
-          ${query}
-        $$);
-      `);
+    const results = await workspaceDataSource?.query<PGGraphQLResult>(
+      `SELECT graphql.resolve($1);`,
+      [query],
+    );
 
     return results;
   }
@@ -613,6 +615,11 @@ export class WorkspaceQueryRunnerService {
         command,
         objectMetadataItem.nameSingular,
         errors,
+        {
+          atMost: this.environmentService.get(
+            'MUTATION_MAXIMUM_RECORD_AFFECTED',
+          ),
+        } satisfies PgGraphQLConfig,
       );
 
       throw error;

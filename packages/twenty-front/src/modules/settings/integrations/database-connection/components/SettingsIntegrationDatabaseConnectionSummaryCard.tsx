@@ -53,6 +53,7 @@ export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
         <>
           <SettingsIntegrationDatabaseConnectionSyncStatus
             connectionId={connectionId}
+            shouldFetchPendingSchemaUpdates
           />
           <Dropdown
             dropdownId={dropdownId}

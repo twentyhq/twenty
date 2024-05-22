@@ -26,15 +26,15 @@ const StyledIconChevronRight = styled(IconChevronRight)`
 
 export const SettingsApiKeysFieldItemTableRow = ({
   fieldItem,
-  onClick,
+  to,
 }: {
   fieldItem: ApiFieldItem;
-  onClick: () => void;
+  to: string;
 }) => {
   const theme = useTheme();
 
   return (
-    <StyledApisFieldTableRow onClick={() => onClick()}>
+    <StyledApisFieldTableRow to={to}>
       <StyledNameTableCell>{fieldItem.name}</StyledNameTableCell>
       <TableCell
         color={

@@ -19,13 +19,14 @@ export function generateMetadata({
   params: { slug: string };
 }): Metadata {
   return {
+    metadataBase: new URL(`https://twenty.com`),
     title: 'Twenty - ' + params.slug,
     description:
       'Explore the impactful contributions of ' +
       params.slug +
       ' on the Twenty Github Repo. Discover their merged pull requests, ongoing work, and top ranking. Join and contribute to the #1 Open-Source CRM thriving community!',
     openGraph: {
-      images: [`/api/contributors/og-image/${params.slug}`],
+      images: [`https://twenty.com/api/contributors/${params.slug}/og.png`],
     },
   };
 }

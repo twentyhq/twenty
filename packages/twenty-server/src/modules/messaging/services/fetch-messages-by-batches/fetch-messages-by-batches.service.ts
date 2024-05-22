@@ -1,14 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { AxiosResponse } from 'axios';
-import { simpleParser } from 'mailparser';
 import planer from 'planer';
+import addressparser from 'addressparser';
+import { gmail_v1 } from 'googleapis';
 
 import { GmailMessage } from 'src/modules/messaging/types/gmail-message';
 import { MessageQuery } from 'src/modules/messaging/types/message-or-thread-query';
-import { GmailMessageParsedResponse } from 'src/modules/messaging/types/gmail-message-parsed-response';
 import { FetchByBatchesService } from 'src/modules/messaging/services/fetch-by-batch/fetch-by-batch.service';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/services/utils/format-address-object-as-participants.util';
+import { assert, assertNotNull } from 'src/utils/assert';
 
 @Injectable()
 export class FetchMessagesByBatchesService {
@@ -19,9 +20,9 @@ export class FetchMessagesByBatchesService {
   async fetchAllMessages(
     queries: MessageQuery[],
     accessToken: string,
-    workspaceId?: string,
-    connectedAccountId?: string,
-  ): Promise<{ messages: GmailMessage[]; errors: any[] }> {
+    workspaceId: string,
+    connectedAccountId: string,
+  ): Promise<GmailMessage[]> {
     let startTime = Date.now();
     const batchResponses = await this.fetchByBatchesService.fetchAllByBatches(
       queries,
@@ -38,8 +39,11 @@ export class FetchMessagesByBatchesService {
 
     startTime = Date.now();
 
-    const formattedResponse =
-      await this.formatBatchResponsesAsGmailMessages(batchResponses);
+    const formattedResponse = this.formatBatchResponsesAsGmailMessages(
+      batchResponses,
+      workspaceId,
+      connectedAccountId,
+    );
 
     endTime = Date.now();
 
@@ -52,109 +56,172 @@ export class FetchMessagesByBatchesService {
     return formattedResponse;
   }
 
-  async formatBatchResponseAsGmailMessage(
+  private formatBatchResponseAsGmailMessage(
     responseCollection: AxiosResponse<any, any>,
-  ): Promise<{ messages: GmailMessage[]; errors: any[] }> {
-    const parsedResponses = this.fetchByBatchesService.parseBatch(
-      responseCollection,
-    ) as GmailMessageParsedResponse[];
-
-    const errors: any = [];
+    workspaceId: string,
+    connectedAccountId: string,
+  ): GmailMessage[] {
+    const parsedResponses =
+      this.fetchByBatchesService.parseBatch(responseCollection);
 
     const sanitizeString = (str: string) => {
       return str.replace(/\0/g, '');
     };
 
-    const formattedResponse = Promise.all(
-      parsedResponses.map(async (message: GmailMessageParsedResponse) => {
-        if (message.error) {
-          errors.push(message.error);
+    const formattedResponse = parsedResponses.map(
+      (response): GmailMessage | null => {
+        if ('error' in response) {
+          if (response.error.code === 404) {
+            return null;
+          }
 
-          return;
+          throw response.error;
         }
 
-        const { historyId, id, threadId, internalDate, raw } = message;
+        const {
+          historyId,
+          id,
+          threadId,
+          internalDate,
+          subject,
+          from,
+          to,
+          cc,
+          bcc,
+          headerMessageId,
+          text,
+          attachments,
+          deliveredTo,
+        } = this.parseGmailMessage(response);
 
-        const body = atob(raw?.replace(/-/g, '+').replace(/_/g, '/'));
+        if (!from) {
+          this.logger.log(
+            `From value is missing while importing message in workspace ${workspaceId} and account ${connectedAccountId}`,
+          );
 
-        try {
-          const parsed = await simpleParser(body, {
-            skipHtmlToText: true,
-            skipImageLinks: true,
-            skipTextToHtml: true,
-            maxHtmlLengthToParse: 0,
-          });
-
-          const { subject, messageId, from, to, cc, bcc, text, attachments } =
-            parsed;
-
-          if (!from) throw new Error('From value is missing');
-
-          const participants = [
-            ...formatAddressObjectAsParticipants(from, 'from'),
-            ...formatAddressObjectAsParticipants(to, 'to'),
-            ...formatAddressObjectAsParticipants(cc, 'cc'),
-            ...formatAddressObjectAsParticipants(bcc, 'bcc'),
-          ];
-
-          let textWithoutReplyQuotations = text;
-
-          if (text)
-            try {
-              textWithoutReplyQuotations = planer.extractFrom(
-                text,
-                'text/plain',
-              );
-            } catch (error) {
-              console.log(
-                'Error while trying to remove reply quotations',
-                error,
-              );
-            }
-
-          const messageFromGmail: GmailMessage = {
-            historyId,
-            externalId: id,
-            headerMessageId: messageId || '',
-            subject: subject || '',
-            messageThreadExternalId: threadId,
-            internalDate,
-            fromHandle: from.value[0].address || '',
-            fromDisplayName: from.value[0].name || '',
-            participants,
-            text: sanitizeString(textWithoutReplyQuotations || ''),
-            attachments,
-          };
-
-          return messageFromGmail;
-        } catch (error) {
-          console.log('Error', error);
-
-          errors.push(error);
+          return null;
         }
-      }),
+
+        if (!to && !deliveredTo && !bcc && !cc) {
+          this.logger.log(
+            `To, Delivered-To, Bcc or Cc value is missing while importing message in workspace ${workspaceId} and account ${connectedAccountId}`,
+          );
+
+          return null;
+        }
+
+        const participants = [
+          ...formatAddressObjectAsParticipants(from, 'from'),
+          ...formatAddressObjectAsParticipants(to ?? deliveredTo, 'to'),
+          ...formatAddressObjectAsParticipants(cc, 'cc'),
+          ...formatAddressObjectAsParticipants(bcc, 'bcc'),
+        ];
+
+        let textWithoutReplyQuotations = text;
+
+        if (text) {
+          textWithoutReplyQuotations = planer.extractFrom(text, 'text/plain');
+        }
+
+        const messageFromGmail: GmailMessage = {
+          historyId,
+          externalId: id,
+          headerMessageId,
+          subject: subject || '',
+          messageThreadExternalId: threadId,
+          internalDate,
+          fromHandle: from[0].address || '',
+          fromDisplayName: from[0].name || '',
+          participants,
+          text: sanitizeString(textWithoutReplyQuotations || ''),
+          attachments,
+        };
+
+        return messageFromGmail;
+      },
     );
 
-    const filteredMessages = (await formattedResponse).filter(
-      (message) => message,
+    const filteredMessages = formattedResponse.filter((message) =>
+      assertNotNull(message),
     ) as GmailMessage[];
 
-    return { messages: filteredMessages, errors };
+    return filteredMessages;
   }
 
-  async formatBatchResponsesAsGmailMessages(
+  private formatBatchResponsesAsGmailMessages(
     batchResponses: AxiosResponse<any, any>[],
-  ): Promise<{ messages: GmailMessage[]; errors: any[] }> {
-    const messagesAndErrors = await Promise.all(
-      batchResponses.map(async (response) => {
-        return this.formatBatchResponseAsGmailMessage(response);
-      }),
+    workspaceId: string,
+    connectedAccountId: string,
+  ): GmailMessage[] {
+    const messageBatches = batchResponses.map((response) => {
+      return this.formatBatchResponseAsGmailMessage(
+        response,
+        workspaceId,
+        connectedAccountId,
+      );
+    });
+
+    return messageBatches.flat();
+  }
+
+  private parseGmailMessage(message: gmail_v1.Schema$Message) {
+    const subject = this.getPropertyFromHeaders(message, 'Subject');
+    const rawFrom = this.getPropertyFromHeaders(message, 'From');
+    const rawTo = this.getPropertyFromHeaders(message, 'To');
+    const rawDeliveredTo = this.getPropertyFromHeaders(message, 'Delivered-To');
+    const rawCc = this.getPropertyFromHeaders(message, 'Cc');
+    const rawBcc = this.getPropertyFromHeaders(message, 'Bcc');
+    const messageId = this.getPropertyFromHeaders(message, 'Message-ID');
+    const id = message.id;
+    const threadId = message.threadId;
+    const historyId = message.historyId;
+    const internalDate = message.internalDate;
+
+    assert(id);
+    assert(messageId);
+    assert(threadId);
+    assert(historyId);
+    assert(internalDate);
+
+    const bodyData = this.getBodyData(message);
+    const text = bodyData ? Buffer.from(bodyData, 'base64').toString() : '';
+
+    return {
+      id,
+      headerMessageId: messageId,
+      threadId,
+      historyId,
+      internalDate,
+      subject,
+      from: rawFrom ? addressparser(rawFrom) : undefined,
+      deliveredTo: rawDeliveredTo ? addressparser(rawDeliveredTo) : undefined,
+      to: rawTo ? addressparser(rawTo) : undefined,
+      cc: rawCc ? addressparser(rawCc) : undefined,
+      bcc: rawBcc ? addressparser(rawBcc) : undefined,
+      text,
+      attachments: [],
+    };
+  }
+
+  private getBodyData(message: gmail_v1.Schema$Message) {
+    const firstPart = message.payload?.parts?.[0];
+
+    if (firstPart?.mimeType === 'text/plain') {
+      return firstPart?.body?.data;
+    }
+
+    return firstPart?.parts?.find((part) => part.mimeType === 'text/plain')
+      ?.body?.data;
+  }
+
+  private getPropertyFromHeaders(
+    message: gmail_v1.Schema$Message,
+    property: string,
+  ) {
+    const header = message.payload?.headers?.find(
+      (header) => header.name?.toLowerCase() === property.toLowerCase(),
     );
 
-    const messages = messagesAndErrors.map((item) => item.messages).flat();
-
-    const errors = messagesAndErrors.map((item) => item.errors).flat();
-
-    return { messages, errors };
+    return header?.value;
   }
 }

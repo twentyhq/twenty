@@ -2,16 +2,12 @@ import { formatAddressObjectAsParticipants } from 'src/modules/messaging/service
 
 describe('formatAddressObjectAsParticipants', () => {
   it('should format address object as participants', () => {
-    const addressObject = {
-      value: [
-        { name: 'John Doe', address: 'john.doe @example.com' },
-        { name: 'Jane Smith', address: 'jane.smith@example.com ' },
-      ],
-      html: '',
-      text: '',
-    };
+    const addresses = [
+      { name: 'John Doe', address: 'john.doe @example.com' },
+      { name: 'Jane Smith', address: 'jane.smith@example.com ' },
+    ];
 
-    const result = formatAddressObjectAsParticipants(addressObject, 'from');
+    const result = formatAddressObjectAsParticipants(addresses, 'from');
 
     expect(result).toEqual([
       {

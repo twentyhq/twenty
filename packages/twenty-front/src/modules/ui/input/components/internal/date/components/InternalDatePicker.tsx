@@ -460,7 +460,7 @@ export const InternalDatePicker = ({
         />
       </div>
       {clearable && (
-        <StyledButtonContainer onClick={handleClear} isMenuOpen={false}>
+        <StyledButtonContainer onClick={handleClear}>
           <StyledButton LeftIcon={IconCalendarX} text="Clear" />
         </StyledButtonContainer>
       )}
