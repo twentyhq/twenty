@@ -1,17 +1,14 @@
 import { Tooltip } from 'react-tooltip';
 import styled from '@emotion/styled';
 import {
-  IconCheckbox,
   IconCirclePlus,
   IconEditCircle,
   IconFocusCentered,
-  IconNotes,
   useIcons,
 } from 'twenty-ui';
 
-import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { useLinkedObject } from '@/activities/timeline/hooks/useLinkedObject';
-import { EventUpdateProperty } from '@/activities/timelineActivities/components/EventUpdateProperty';
+import { EventDescription } from '@/activities/timelineActivities/components/EventDescription';
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -19,57 +16,47 @@ import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,
 } from '~/utils/date-utils';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledIconContainer = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
-  user-select: none;
-  height: 16px;
-  margin: 5px;
+  align-items: center;
   justify-content: center;
-  text-decoration-line: underline;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  height: 16px;
   width: 16px;
+  margin: 5px;
+  user-select: none;
+  text-decoration-line: underline;
   z-index: 2;
 `;
 
-const StyledActionName = styled.span`
-  overflow: hidden;
-  flex: none;
-  white-space: nowrap;
-`;
-
 const StyledItemContainer = styled.div`
-  align-content: center;
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
-  flex: 1;
+  align-items: center;
   gap: ${({ theme }) => theme.spacing(1)};
+  flex: 1;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  overflow: hidden;
+
   span {
     color: ${({ theme }) => theme.font.color.secondary};
   }
-  overflow: hidden;
 `;
 
 const StyledItemAuthorText = styled.span`
   display: flex;
-  color: ${({ theme }) => theme.font.color.primary};
+  align-items: center;
   gap: ${({ theme }) => theme.spacing(1)};
+  color: ${({ theme }) => theme.font.color.primary};
   white-space: nowrap;
 `;
 
 const StyledItemTitle = styled.span`
   display: flex;
-  flex-flow: row nowrap;
+  flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
-`;
-
-const StyledLinkedObject = styled.span`
-  cursor: pointer;
-  text-decoration: underline;
 `;
 
 const StyledItemTitleDate = styled.div`
@@ -114,9 +101,9 @@ const StyledTooltip = styled(Tooltip)`
 `;
 
 const StyledTimelineItemContainer = styled.div<{ isGap?: boolean }>`
-  align-items: center;
-  align-self: stretch;
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: ${({ theme }) => theme.spacing(4)};
   height: ${({ isGap, theme }) =>
     isGap ? (useIsMobile() ? theme.spacing(6) : theme.spacing(3)) : 'auto'};
@@ -127,8 +114,9 @@ const StyledTimelineItemContainer = styled.div<{ isGap?: boolean }>`
 const StyledSummary = styled.summary`
   display: flex;
   flex: 1;
-  flex-flow: row ${() => (useIsMobile() ? 'wrap' : 'nowrap')};
+  flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
+  align-items: center;
   overflow: hidden;
 `;
 
@@ -143,115 +131,47 @@ export const EventRow = ({
   event,
   mainObjectMetadataItem,
 }: EventRowProps) => {
-  const beautifiedCreatedAt = beautifyPastDateRelativeToNow(event.createdAt);
-  const exactCreatedAt = beautifyExactDateTime(event.createdAt);
-
-  const properties = event.properties;
-  const diff: Record<string, { before: any; after: any }> = properties?.diff;
-
-  const isEventType = (type: 'created' | 'updated') => {
-    if (event.name.includes('.')) {
-      return event.name.split('.')[1] === type;
-    }
-    return false;
-  };
-
   const { getIcon } = useIcons();
 
+  const beautifiedCreatedAt = beautifyPastDateRelativeToNow(event.createdAt);
+  const exactCreatedAt = beautifyExactDateTime(event.createdAt);
   const linkedObjectMetadata = useLinkedObject(event.linkedObjectMetadataId);
+  const authorFullName = event.workspaceMember
+    ? `${event.workspaceMember?.name.firstName} ${event.workspaceMember?.name.lastName}`
+    : 'Twenty';
 
-  const linkedObjectLabel = event.name.includes('note')
-    ? 'note'
-    : event.name.includes('task')
-      ? 'task'
-      : linkedObjectMetadata?.labelSingular;
+  const [, eventAction] = event.name.split('.');
 
-  const ActivityIcon = event.linkedObjectMetadataId
-    ? event.name.includes('note')
-      ? IconNotes
-      : event.name.includes('task')
-        ? IconCheckbox
-        : getIcon(linkedObjectMetadata?.icon)
-    : isEventType('created')
-      ? IconCirclePlus
-      : isEventType('updated')
-        ? IconEditCircle
-        : IconFocusCentered;
+  const EventIcon = () => {
+    if (isDefined(event.linkedObjectMetadataId)) {
+      const IconComponent = getIcon(linkedObjectMetadata?.icon);
 
-  const author =
-    event.workspaceMember?.name.firstName +
-    ' ' +
-    event.workspaceMember?.name.lastName;
-
-  const action = isEventType('created')
-    ? 'created'
-    : isEventType('updated')
-      ? 'updated'
-      : event.name;
-
-  let description;
-
-  if (!isUndefinedOrNull(linkedObjectMetadata)) {
-    description = 'a ' + linkedObjectLabel;
-  } else if (!event.linkedObjectMetadataId && isEventType('created')) {
-    description = `a new ${mainObjectMetadataItem?.labelSingular}`;
-  } else if (isEventType('updated')) {
-    const diffKeys = Object.keys(diff);
-    if (diffKeys.length === 0) {
-      description = `a ${mainObjectMetadataItem?.labelSingular}`;
-    } else if (diffKeys.length === 1) {
-      const [key, value] = Object.entries(diff)[0];
-      description = [
-        <EventUpdateProperty
-          propertyName={key}
-          after={value?.after as string}
-        />,
-      ];
-    } else if (diffKeys.length === 2) {
-      description =
-        mainObjectMetadataItem?.fields.find(
-          (field) => diffKeys[0] === field.name,
-        )?.label +
-        ' and ' +
-        mainObjectMetadataItem?.fields.find(
-          (field) => diffKeys[1] === field.name,
-        )?.label;
-    } else if (diffKeys.length > 2) {
-      description =
-        diffKeys[0] + ' and ' + (diffKeys.length - 1) + ' other fields';
+      return <IconComponent />;
     }
-  } else if (!isEventType('created') && !isEventType('updated')) {
-    description = JSON.stringify(diff);
-  }
-  const details = JSON.stringify(diff);
 
-  const openActivityRightDrawer = useOpenActivityRightDrawer();
+    if (eventAction === 'created') return <IconCirclePlus />;
+    if (eventAction === 'updated') return <IconEditCircle />;
+
+    return <IconFocusCentered />;
+  };
 
   return (
     <>
       <StyledTimelineItemContainer>
         <StyledIconContainer>
-          <ActivityIcon />
+          <EventIcon />
         </StyledIconContainer>
         <StyledItemContainer>
-          <details>
-            <StyledSummary>
-              <StyledItemAuthorText>{author}</StyledItemAuthorText>
-              <StyledActionName>{action}</StyledActionName>
-              <StyledItemTitle>{description}</StyledItemTitle>
-              {isUndefinedOrNull(linkedObjectMetadata) ? (
-                <></>
-              ) : (
-                <StyledLinkedObject
-                  onClick={() => openActivityRightDrawer(event.linkedRecordId)}
-                >
-                  {event.linkedRecordCachedName}
-                </StyledLinkedObject>
-              )}
-            </StyledSummary>
-            {details}
-          </details>
-
+          <StyledSummary>
+            <StyledItemAuthorText>{authorFullName}</StyledItemAuthorText>
+            <StyledItemTitle>
+              <EventDescription
+                event={event}
+                mainObjectMetadataItem={mainObjectMetadataItem}
+                linkedObjectMetadata={linkedObjectMetadata}
+              />
+            </StyledItemTitle>
+          </StyledSummary>
           <StyledItemTitleDate id={`id-${event.id}`}>
             {beautifiedCreatedAt}
           </StyledItemTitleDate>
@@ -266,7 +186,7 @@ export const EventRow = ({
       {!isLastEvent && (
         <StyledTimelineItemContainer isGap>
           <StyledVerticalLineContainer>
-            <StyledVerticalLine></StyledVerticalLine>
+            <StyledVerticalLine />
           </StyledVerticalLineContainer>
         </StyledTimelineItemContainer>
       )}

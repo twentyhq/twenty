@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { EventRowV2 } from '@/activities/timelineActivities/components/EventRowV2';
+import { EventRow } from '@/activities/timelineActivities/components/EventRow';
 import { EventGroup } from '@/activities/timelineActivities/utils/groupEventsByMonth';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
@@ -8,7 +8,6 @@ type EventsGroupProps = {
   group: EventGroup;
   month: string;
   year?: number;
-  recordId: string;
   mainObjectMetadataItem: ObjectMetadataItem | null;
 };
 
@@ -58,7 +57,6 @@ export const EventsGroup = ({
   group,
   month,
   year,
-  recordId,
   mainObjectMetadataItem,
 }: EventsGroupProps) => {
   return (
@@ -70,7 +68,7 @@ export const EventsGroup = ({
       <StyledActivityGroupContainer>
         <StyledActivityGroupBar />
         {group.items.map((event, index) => (
-          <EventRowV2
+          <EventRow
             mainObjectMetadataItem={mainObjectMetadataItem}
             key={index}
             event={event}

@@ -1,16 +1,19 @@
+import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 type EventMessageDescriptionProps = {
-  eventAction: string;
+  event: TimelineActivity;
   mainObjectMetadataItem: ObjectMetadataItem | null;
   messageObjectMetadataItem: ObjectMetadataItem | null;
 };
 
 export const EventMessageDescription = ({
-  eventAction,
+  event,
   mainObjectMetadataItem,
   messageObjectMetadataItem,
 }: EventMessageDescriptionProps) => {
+  const [, eventAction] = event.name.split('.');
+
   switch (eventAction) {
     case 'sent': {
       return `sent an email to this ${mainObjectMetadataItem?.labelSingular?.toLowerCase()}`;

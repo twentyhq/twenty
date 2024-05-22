@@ -15,6 +15,7 @@ import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { Timeline } from '@/activities/timeline/components/Timeline';
+import { TimelineActivitiesQueryEffect } from '@/activities/timeline/components/TimelineActivitiesQueryEffect';
 import { TimelineQueryEffect } from '@/activities/timeline/components/TimelineQueryEffect';
 import { TimelineActivities } from '@/activities/timelineActivities/components/TimelineActivities';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
@@ -108,7 +109,9 @@ export const ShowPageRightContainer = ({
       case 'timeline':
         return shouldDisplayLogTab ? (
           <>
-            <TimelineQueryEffect targetableObject={targetableObject} />
+            <TimelineActivitiesQueryEffect
+              targetableObject={targetableObject}
+            />
             <TimelineActivities targetableObject={targetableObject} />
           </>
         ) : (

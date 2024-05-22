@@ -1,16 +1,19 @@
+import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 type EventCalendarEventDescriptionProps = {
-  eventAction: string;
+  event: TimelineActivity;
   mainObjectMetadataItem: ObjectMetadataItem | null;
   calendarEventObjectMetadataItem: ObjectMetadataItem | null;
 };
 
 export const EventCalendarEventDescription = ({
-  eventAction,
+  event,
   mainObjectMetadataItem,
   calendarEventObjectMetadataItem,
 }: EventCalendarEventDescriptionProps) => {
+  const [, eventAction] = event.name.split('.');
+
   switch (eventAction) {
     case 'sent': {
       return `created an event`;

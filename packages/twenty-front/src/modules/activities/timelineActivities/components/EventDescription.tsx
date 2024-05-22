@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { IconChevronDown, useIcons } from 'twenty-ui';
 
+import { EventActivityDescription } from '@/activities/timelineActivities/components/EventActivityDescription';
 import { EventCalendarEventDescription } from '@/activities/timelineActivities/components/EventCalendarEventDescription';
 import { EventMessageDescription } from '@/activities/timelineActivities/components/EventMessageDescription';
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
@@ -84,7 +85,7 @@ export const EventDescription = ({
   if (eventName === 'calendarEvent') {
     return (
       <EventCalendarEventDescription
-        eventAction={eventAction}
+        event={event}
         mainObjectMetadataItem={mainObjectMetadataItem}
         calendarEventObjectMetadataItem={linkedObjectMetadata}
       />
@@ -93,33 +94,45 @@ export const EventDescription = ({
   if (eventName === 'message') {
     return (
       <EventMessageDescription
-        eventAction={eventAction}
+        event={event}
         mainObjectMetadataItem={mainObjectMetadataItem}
         messageObjectMetadataItem={linkedObjectMetadata}
       />
     );
   }
 
-  switch (eventAction) {
-    case 'created': {
-      return `created this ${mainObjectMetadataItem?.labelSingular?.toLowerCase()}`;
+  if (eventName === 'task' || eventName === 'note') {
+    return (
+      <EventActivityDescription
+        event={event}
+        mainObjectMetadataItem={mainObjectMetadataItem}
+        activityObjectMetadataItem={linkedObjectMetadata}
+      />
+    );
+  }
+
+  if (eventName === mainObjectMetadataItem?.nameSingular) {
+    switch (eventAction) {
+      case 'created': {
+        return `created this ${mainObjectMetadataItem?.labelSingular?.toLowerCase()}`;
+      }
+      case 'updated': {
+        return (
+          <StyledDescriptionContainer>
+            {renderUpdatedDescription(diff, mainObjectMetadataItem, getIcon)}
+            <StyledButtonContainer>
+              <IconButton
+                Icon={IconChevronDown}
+                onClick={() => openDiff()}
+                size="small"
+                variant="secondary"
+              />
+            </StyledButtonContainer>
+          </StyledDescriptionContainer>
+        );
+      }
+      default:
+        return null;
     }
-    case 'updated': {
-      return (
-        <StyledDescriptionContainer>
-          {renderUpdatedDescription(diff, mainObjectMetadataItem, getIcon)}
-          <StyledButtonContainer>
-            <IconButton
-              Icon={IconChevronDown}
-              onClick={() => openDiff()}
-              size="small"
-              variant="secondary"
-            />
-          </StyledButtonContainer>
-        </StyledDescriptionContainer>
-      );
-    }
-    default:
-      return null;
   }
 };
