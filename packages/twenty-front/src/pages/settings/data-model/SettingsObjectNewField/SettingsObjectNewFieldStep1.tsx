@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { IconMinus, IconPlus, IconSettings } from 'twenty-ui';
+import { H2Title, IconMinus, IconPlus, IconSettings } from 'twenty-ui';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -14,7 +14,6 @@ import {
   StyledObjectFieldTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { AppPath } from '@/types/AppPath';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -44,14 +43,14 @@ export const SettingsObjectNewFieldStep1 = () => {
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
 
-  const { activateMetadataField, disableMetadataField } =
+  const { activateMetadataField, deactivateMetadataField } =
     useFieldMetadataItem();
   const [metadataFields, setMetadataFields] = useState(
     activeObjectMetadataItem?.fields ?? [],
   );
 
   const activeMetadataFields = metadataFields.filter((field) => field.isActive);
-  const disabledMetadataFields = metadataFields.filter(
+  const deactivatedMetadataFields = metadataFields.filter(
     (field) => !field.isActive,
   );
 
@@ -93,7 +92,7 @@ export const SettingsObjectNewFieldStep1 = () => {
 
         return metadataField.isActive
           ? activateMetadataField(metadataField)
-          : disableMetadataField(metadataField);
+          : deactivateMetadataField(metadataField);
       }),
     );
 
@@ -124,8 +123,8 @@ export const SettingsObjectNewFieldStep1 = () => {
         </SettingsHeaderContainer>
         <StyledSection>
           <H2Title
-            title="Check disabled fields"
-            description="Before creating a custom field, check if it already exists in the disabled section."
+            title="Check deactivated fields"
+            description="Before creating a custom field, check if it already exists in the deactivated section."
           />
           <Table>
             <StyledObjectFieldTableRow>
@@ -159,18 +158,18 @@ export const SettingsObjectNewFieldStep1 = () => {
                 ))}
               </TableSection>
             )}
-            {!!disabledMetadataFields.length && (
+            {!!deactivatedMetadataFields.length && (
               <TableSection title="Disabled">
-                {disabledMetadataFields.map((disabledMetadataField) => (
+                {deactivatedMetadataFields.map((deactivatedMetadataField) => (
                   <SettingsObjectFieldItemTableRow
-                    key={disabledMetadataField.name}
-                    fieldMetadataItem={disabledMetadataField}
+                    key={deactivatedMetadataField.name}
+                    fieldMetadataItem={deactivatedMetadataField}
                     ActionIcon={
                       <LightIconButton
                         Icon={IconPlus}
                         accent="tertiary"
                         onClick={() =>
-                          handleToggleField(disabledMetadataField.id)
+                          handleToggleField(deactivatedMetadataField.id)
                         }
                       />
                     }
@@ -184,9 +183,7 @@ export const SettingsObjectNewFieldStep1 = () => {
             title="Add Custom Field"
             size="small"
             variant="secondary"
-            onClick={() =>
-              navigate(`/settings/objects/${objectSlug}/new-field/step-2`)
-            }
+            to={`/settings/objects/${objectSlug}/new-field/step-2`}
           />
         </StyledSection>
       </SettingsPageContainer>

@@ -1,15 +1,17 @@
 import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField';
 import { Tag } from '@/ui/display/tag/components/Tag';
-import {
-  ExpandableList,
-  ExpandableListProps,
-} from '@/ui/layout/expandable-list/components/ExpandableList';
+import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 
-type MultiSelectFieldDisplayProps = ExpandableListProps;
+type MultiSelectFieldDisplayProps = {
+  isCellSoftFocused?: boolean;
+  cellElement?: HTMLElement;
+  fromTableCell?: boolean;
+};
+
 export const MultiSelectFieldDisplay = ({
-  isHovered,
-  reference,
-  withDropDownBorder,
+  isCellSoftFocused,
+  cellElement,
+  fromTableCell,
 }: MultiSelectFieldDisplayProps) => {
   const { fieldValues, fieldDefinition } = useMultiSelectField();
 
@@ -19,11 +21,13 @@ export const MultiSelectFieldDisplay = ({
       )
     : [];
 
-  return selectedOptions ? (
+  if (!selectedOptions) return null;
+
+  return (
     <ExpandableList
-      isHovered={isHovered}
-      reference={reference}
-      withDropDownBorder={withDropDownBorder}
+      anchorElement={cellElement}
+      isChipCountDisplayed={isCellSoftFocused}
+      withExpandedListBorder={fromTableCell}
     >
       {selectedOptions.map((selectedOption, index) => (
         <Tag
@@ -33,7 +37,5 @@ export const MultiSelectFieldDisplay = ({
         />
       ))}
     </ExpandableList>
-  ) : (
-    <></>
   );
 };

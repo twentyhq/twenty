@@ -21,7 +21,7 @@ type RightDrawerActivityProps = {
 
 export const RightDrawerActivity = ({
   activityId,
-  showComment = true,
+  showComment = false,
   fillTitleFromBody = false,
 }: RightDrawerActivityProps) => {
   return (

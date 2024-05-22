@@ -18,9 +18,3 @@ export const exchangeAuthorizationCode = async (
     return data.exchangeAuthorizationCode;
   else return null;
 };
-
-// export const RenewToken = async (appToken: string): Promise<Tokens | null> => {
-//   const data = await callQuery<Tokens>(RENEW_TOKEN, { appToken });
-//   if (isDefined(data)) return data;
-//   else return null;
-// };

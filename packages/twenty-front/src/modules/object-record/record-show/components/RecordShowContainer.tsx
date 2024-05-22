@@ -36,11 +36,13 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 type RecordShowContainerProps = {
   objectNameSingular: string;
   objectRecordId: string;
+  loading: boolean;
 };
 
 export const RecordShowContainer = ({
   objectNameSingular,
   objectRecordId,
+  loading,
 }: RecordShowContainerProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -130,13 +132,14 @@ export const RecordShowContainer = ({
     <RecoilScope CustomRecoilScopeContext={ShowPageRecoilScopeContext}>
       <ShowPageContainer>
         <ShowPageLeftContainer>
-          {!recordLoading && isDefined(recordFromStore) && (
+          {isDefined(recordFromStore) && (
             <>
               <ShowPageSummaryCard
                 id={objectRecordId}
                 logoOrAvatar={recordIdentifier?.avatarUrl ?? ''}
                 avatarPlaceholder={recordIdentifier?.name ?? ''}
                 date={recordFromStore.createdAt ?? ''}
+                loading={loading || recordLoading}
                 title={
                   <FieldContext.Provider
                     value={{
@@ -193,7 +196,10 @@ export const RecordShowContainer = ({
                       hotkeyScope: InlineCellHotkeyScope.InlineCell,
                     }}
                   >
-                    <RecordInlineCell readonly={isReadOnly} />
+                    <RecordInlineCell
+                      loading={loading || recordLoading}
+                      readonly={isReadOnly}
+                    />
                   </FieldContext.Provider>
                 ))}
               </PropertyBox>
@@ -217,7 +223,9 @@ export const RecordShowContainer = ({
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,
                   }}
                 >
-                  <RecordDetailRelationSection />
+                  <RecordDetailRelationSection
+                    loading={loading || recordLoading}
+                  />
                 </FieldContext.Provider>
               ))}
             </>
@@ -233,6 +241,7 @@ export const RecordShowContainer = ({
             tasks
             notes
             emails
+            loading={loading || recordLoading}
           />
         ) : (
           <></>

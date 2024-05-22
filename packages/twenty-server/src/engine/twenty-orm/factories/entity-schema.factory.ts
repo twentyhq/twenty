@@ -15,10 +15,10 @@ export class EntitySchemaFactory {
   ) {}
 
   create<T>(target: Type<T>): EntitySchema {
-    const objectMetadataArgs = metadataArgsStorage.filterObjects(target);
+    const entityMetadataArgs = metadataArgsStorage.filterEntities(target);
 
-    if (!objectMetadataArgs) {
-      throw new Error('Object metadata args are missing on this target');
+    if (!entityMetadataArgs) {
+      throw new Error('Entity metadata args are missing on this target');
     }
 
     const fieldMetadataArgsCollection =
@@ -28,15 +28,17 @@ export class EntitySchemaFactory {
 
     const columns = this.entitySchemaColumnFactory.create(
       fieldMetadataArgsCollection,
+      relationMetadataArgsCollection,
     );
 
     const relations = this.entitySchemaRelationFactory.create(
+      target,
       relationMetadataArgsCollection,
     );
 
     const entitySchema = new EntitySchema({
-      name: objectMetadataArgs.nameSingular,
-      tableName: objectMetadataArgs.nameSingular,
+      name: entityMetadataArgs.nameSingular,
+      tableName: entityMetadataArgs.nameSingular,
       columns,
       relations,
     });

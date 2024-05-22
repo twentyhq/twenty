@@ -4,13 +4,13 @@ import { EntityManager } from 'typeorm';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
-import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { FetchMessagesByBatchesService } from 'src/modules/messaging/services/fetch-messages-by-batches/fetch-messages-by-batches.service';
 import {
-  MessageChannelObjectMetadata,
+  MessageChannelWorkspaceEntity,
   MessageChannelSyncStatus,
-} from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+} from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { createQueriesFromMessageIds } from 'src/modules/messaging/utils/create-queries-from-message-ids.util';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
@@ -40,9 +40,9 @@ export class GmailFetchMessageContentFromCacheService {
 
   constructor(
     private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,
-    @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
+    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
+    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
     private readonly cacheStorage: CacheStorageService,
@@ -174,7 +174,7 @@ export class GmailFetchMessageContentFromCacheService {
     const messageQueries = createQueriesFromMessageIds(messageIdsToFetch);
 
     try {
-      const { messages: messagesToSave, errors } =
+      const messagesToSave =
         await this.fetchMessagesByBatchesService.fetchAllMessages(
           messageQueries,
           accessToken,
@@ -192,22 +192,6 @@ export class GmailFetchMessageContentFromCacheService {
             );
 
             return [];
-          }
-
-          if (errors.length) {
-            const errorsCanBeIgnored = errors.every(
-              (error) => error.code === 404,
-            );
-
-            if (!errorsCanBeIgnored) {
-              throw new Error(
-                `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${JSON.stringify(
-                  errors,
-                  null,
-                  2,
-                )}`,
-              );
-            }
           }
 
           const messageExternalIdsAndIdsMap =
@@ -292,21 +276,19 @@ export class GmailFetchMessageContentFromCacheService {
         messageIdsToFetch,
       );
 
-      if (error?.message?.code === 429) {
-        this.logger.error(
-          `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: Resource has been exhausted, locking for ${GMAIL_ONGOING_SYNC_TIMEOUT}ms...`,
-        );
+      await this.messageChannelRepository.updateSyncStatus(
+        gmailMessageChannelId,
+        MessageChannelSyncStatus.FAILED,
+        workspaceId,
+      );
 
-        await this.messageChannelRepository.updateSyncStatus(
-          gmailMessageChannelId,
-          MessageChannelSyncStatus.FAILED,
-          workspaceId,
-        );
+      this.logger.error(
+        `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: locking for ${GMAIL_ONGOING_SYNC_TIMEOUT}ms...`,
+      );
 
-        throw new Error(
-          `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
-        );
-      }
+      throw new Error(
+        `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
+      );
     }
   }
 

@@ -7,4 +7,8 @@ export const MOCK_REMOTE_DATABASES = [
     name: 'postgresql',
     isActive: true,
   },
+  {
+    name: 'stripe',
+    isActive: true,
+  },
 ];

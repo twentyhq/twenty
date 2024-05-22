@@ -9,6 +9,7 @@ import {
   IconDoorEnter,
   IconHierarchy2,
   IconMail,
+  IconRocket,
   IconSettings,
   IconUserCircle,
   IconUsers,
@@ -105,6 +106,11 @@ export const SettingsNavigationDrawerItems = () => {
 
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label="Other" />
+        <SettingsNavigationDrawerItem
+          label="Releases"
+          path={SettingsPath.Releases}
+          Icon={IconRocket}
+        />
         <NavigationDrawerItem
           label="Logout"
           onClick={handleLogout}

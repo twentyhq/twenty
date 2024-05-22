@@ -3,7 +3,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import pick from 'lodash.pick';
-import { IconArchive, IconSettings } from 'twenty-ui';
+import { H2Title, IconArchive, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -22,7 +22,6 @@ import { settingsUpdateObjectInputSchema } from '@/settings/data-model/validatio
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -63,11 +62,12 @@ export const SettingsObjectEdit = () => {
 
   if (!activeObjectMetadataItem) return null;
 
-  const { isDirty, isValid } = formConfig.formState;
-  const canSave = isDirty && isValid;
+  const { isDirty, isValid, isSubmitting } = formConfig.formState;
+  const canSave = isDirty && isValid && !isSubmitting;
 
-  const handleSave = async () => {
-    const formValues = formConfig.getValues();
+  const handleSave = async (
+    formValues: SettingsDataModelObjectEditFormValues,
+  ) => {
     const dirtyFieldKeys = Object.keys(
       formConfig.formState.dirtyFields,
     ) as (keyof SettingsDataModelObjectEditFormValues)[];
@@ -121,7 +121,7 @@ export const SettingsObjectEdit = () => {
                 onCancel={() =>
                   navigate(`${settingsObjectsPagePath}/${objectSlug}`)
                 }
-                onSave={handleSave}
+                onSave={formConfig.handleSubmit(handleSave)}
               />
             )}
           </SettingsHeaderContainer>
@@ -132,6 +132,7 @@ export const SettingsObjectEdit = () => {
             />
             <SettingsDataModelObjectAboutForm
               disabled={!activeObjectMetadataItem.isCustom}
+              disableNameEdit
               objectMetadataItem={activeObjectMetadataItem}
             />
           </Section>
@@ -145,10 +146,10 @@ export const SettingsObjectEdit = () => {
             />
           </Section>
           <Section>
-            <H2Title title="Danger zone" description="Disable object" />
+            <H2Title title="Danger zone" description="Deactivate object" />
             <Button
               Icon={IconArchive}
-              title="Disable"
+              title="Deactivate"
               size="small"
               onClick={handleDisable}
             />

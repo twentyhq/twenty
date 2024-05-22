@@ -26,3 +26,20 @@ export const EXCHANGE_AUTHORIZATION_CODE = gql`
     }
   }
 `;
+
+export const RENEW_TOKEN = gql`
+  mutation RenewToken($appToken: String!) {
+    renewToken(appToken: $appToken) {
+      tokens {
+        accessToken {
+          token
+          expiresAt
+        }
+        refreshToken {
+          token
+          expiresAt
+        }
+      }
+    }
+  }
+`;

@@ -9,12 +9,12 @@ import {
   GoogleCalendarSyncJob,
 } from 'src/modules/calendar/jobs/google-calendar-sync.job';
 import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
-import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
+import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 
 @Injectable()
 export class WorkspaceGoogleCalendarSyncService {
   constructor(
-    @InjectObjectMetadataRepository(CalendarChannelObjectMetadata)
+    @InjectObjectMetadataRepository(CalendarChannelWorkspaceEntity)
     private readonly calendarChannelRepository: CalendarChannelRepository,
     @InjectMessageQueue(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,

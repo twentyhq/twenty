@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { ApolloClient, useMutation } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 
 import { UNSYNC_REMOTE_TABLE } from '@/databases/graphql/mutations/unsyncRemoteTable';
 import { GET_MANY_REMOTE_TABLES } from '@/databases/graphql/queries/findManyRemoteTables';
@@ -31,7 +30,16 @@ export const useUnsyncRemoteTable = () => {
           input,
         },
         awaitRefetchQueries: true,
-        refetchQueries: [getOperationName(GET_MANY_REMOTE_TABLES) ?? ''],
+        refetchQueries: [
+          {
+            query: GET_MANY_REMOTE_TABLES,
+            variables: {
+              input: {
+                id: input.remoteServerId,
+              },
+            },
+          },
+        ],
       });
 
       await refetchObjectMetadataItems();

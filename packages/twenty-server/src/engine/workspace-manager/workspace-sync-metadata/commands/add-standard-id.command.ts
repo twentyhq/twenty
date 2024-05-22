@@ -10,7 +10,7 @@ import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/
 import { StandardObjectFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-object.factory';
 import { computeStandardObject } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-standard-object.util';
 import { StandardFieldFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-field.factory';
-import { CustomObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/custom-objects/custom.object-metadata';
+import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 
 interface RunCommandOptions {
   workspaceId?: string;
@@ -58,10 +58,11 @@ export class AddStandardIdCommand extends CommandRunner {
             IS_AIRTABLE_INTEGRATION_ENABLED: true,
             IS_POSTGRESQL_INTEGRATION_ENABLED: true,
             IS_STRIPE_INTEGRATION_ENABLED: false,
+            IS_GMAIL_SYNC_V2_ENABLED: true,
           },
         );
       const standardFieldMetadataCollection = this.standardFieldFactory.create(
-        CustomObjectMetadata,
+        CustomWorkspaceEntity,
         {
           workspaceId: '',
           dataSourceId: '',
@@ -72,6 +73,7 @@ export class AddStandardIdCommand extends CommandRunner {
           IS_AIRTABLE_INTEGRATION_ENABLED: true,
           IS_POSTGRESQL_INTEGRATION_ENABLED: true,
           IS_STRIPE_INTEGRATION_ENABLED: false,
+          IS_GMAIL_SYNC_V2_ENABLED: true,
         },
       );
 

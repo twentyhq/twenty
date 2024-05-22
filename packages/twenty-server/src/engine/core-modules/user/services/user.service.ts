@@ -1,4 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
@@ -8,17 +9,20 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
+import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
+import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 
 export class UserService extends TypeOrmQueryService<User> {
   constructor(
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    @InjectRepository(UserWorkspace, 'core')
-    private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
+    private readonly eventEmitter: EventEmitter2,
+    private readonly workspaceService: WorkspaceService,
   ) {
     super(userRepository);
   }
@@ -95,64 +99,46 @@ export class UserService extends TypeOrmQueryService<User> {
 
     assert(user, 'User not found');
 
+    const workspaceId = user.defaultWorkspaceId;
+
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
-        user.defaultWorkspace.id,
+        workspaceId,
       );
 
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
+    const workspaceMembers = await workspaceDataSource?.query(
+      `SELECT * FROM ${dataSourceMetadata.schema}."workspaceMember"`,
+    );
+    const workspaceMember = workspaceMembers.filter(
+      (member: ObjectRecord<WorkspaceMemberWorkspaceEntity>) =>
+        member.userId === userId,
+    )?.[0];
+
+    assert(workspaceMember, 'WorkspaceMember not found');
+
+    if (workspaceMembers.length === 1) {
+      await this.workspaceService.deleteWorkspace(workspaceId);
+
+      return user;
+    }
+
     await workspaceDataSource?.query(
       `DELETE FROM ${dataSourceMetadata.schema}."workspaceMember" WHERE "userId" = '${userId}'`,
     );
+    const payload =
+      new ObjectRecordDeleteEvent<WorkspaceMemberWorkspaceEntity>();
 
-    await this.userWorkspaceRepository.delete({ userId });
+    payload.workspaceId = workspaceId;
+    payload.properties = {
+      before: workspaceMember,
+    };
+    payload.recordId = workspaceMember.id;
 
-    await this.userRepository.delete(user.id);
+    this.eventEmitter.emit('workspaceMember.deleted', payload);
 
     return user;
-  }
-
-  async handleRemoveWorkspaceMember(workspaceId: string, userId: string) {
-    await this.userWorkspaceRepository.delete({
-      userId,
-      workspaceId,
-    });
-    await this.reassignOrRemoveUserDefaultWorkspace(workspaceId, userId);
-  }
-
-  private async reassignOrRemoveUserDefaultWorkspace(
-    workspaceId: string,
-    userId: string,
-  ) {
-    const userWorkspaces = await this.userWorkspaceRepository.find({
-      where: { userId: userId },
-    });
-
-    if (userWorkspaces.length === 0) {
-      await this.userRepository.delete({ id: userId });
-
-      return;
-    }
-
-    const user = await this.userRepository.findOne({
-      where: {
-        id: userId,
-      },
-    });
-
-    if (!user) {
-      throw new Error(`User ${userId} not found in workspace ${workspaceId}`);
-    }
-
-    if (user.defaultWorkspaceId === workspaceId) {
-      await this.userRepository.update(
-        { id: userId },
-        {
-          defaultWorkspaceId: userWorkspaces[0].workspaceId,
-        },
-      );
-    }
   }
 }

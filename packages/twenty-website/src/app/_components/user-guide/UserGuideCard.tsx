@@ -46,6 +46,8 @@ const StyledSubHeading = styled.div`
 const StyledImage = styled.img`
   border-bottom: 1.5px solid #14141429;
   height: 160px;
+  border-top-right-radius: 8px;
+  border-top-left-radius: 8px;
 `;
 
 export default function UserGuideCard({

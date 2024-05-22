@@ -3,12 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Section } from '@react-email/components';
 import pick from 'lodash.pick';
+import { H2Title } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useUpdateOneDatabaseConnection } from '@/databases/hooks/useUpdateOneDatabaseConnection';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
-import { SettingsIntegrationPostgreSQLConnectionForm } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionForm';
+import { SettingsIntegrationDatabaseConnectionForm } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionForm';
 import {
   formatValuesForUpdate,
   getEditionSchemaForForm,
@@ -19,7 +20,6 @@ import { getConnectionDbName } from '@/settings/integrations/utils/getConnection
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Info } from '@/ui/display/info/components/Info';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import {
@@ -132,18 +132,17 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
             accent={'blue'}
           />
         )}
-        {databaseKey === 'postgresql' ? (
-          <Section>
-            <H2Title
-              title="Edit PostgreSQL Connection"
-              description="Edit the information to connect your PostgreSQL database"
-            />
+        <Section>
+          <H2Title
+            title="Edit Connection"
+            description="Edit the information to connect your database"
+          />
 
-            <SettingsIntegrationPostgreSQLConnectionForm
-              disabled={hasSyncedTables}
-            />
-          </Section>
-        ) : null}
+          <SettingsIntegrationDatabaseConnectionForm
+            databaseKey={databaseKey}
+            disabled={hasSyncedTables}
+          />
+        </Section>
       </FormProvider>
     </>
   );

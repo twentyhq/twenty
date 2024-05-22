@@ -53,12 +53,13 @@ export const ActivityTargetsInlineCell = ({
           />
         }
         label="Relations"
-        displayModeContent={
+        displayModeContent={({ cellElement }) => (
           <ActivityTargetChips
+            anchorElement={cellElement}
             activityTargetObjectRecords={activityTargetObjectRecords}
             maxWidth={maxWidth}
           />
-        }
+        )}
         isDisplayModeContentEmpty={activityTargetObjectRecords.length === 0}
       />
     </RecordFieldInputScope>

@@ -5,7 +5,7 @@ import { MessageQueueJob } from 'src/engine/integrations/message-queue/interface
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { GoogleCalendarSyncService } from 'src/modules/calendar/services/google-calendar-sync/google-calendar-sync.service';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
-import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 export type BlocklistReimportCalendarEventsJobData = {
   workspaceId: string;
@@ -20,7 +20,7 @@ export class BlocklistReimportCalendarEventsJob
   private readonly logger = new Logger(BlocklistReimportCalendarEventsJob.name);
 
   constructor(
-    @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
+    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly googleCalendarSyncService: GoogleCalendarSyncService,
   ) {}

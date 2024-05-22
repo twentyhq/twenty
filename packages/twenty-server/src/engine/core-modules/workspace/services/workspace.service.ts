@@ -13,18 +13,18 @@ import { ActivateWorkspaceInput } from 'src/engine/core-modules/workspace/dtos/a
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { BillingService } from 'src/engine/core-modules/billing/billing.service';
-import { UserService } from 'src/engine/core-modules/user/services/user.service';
 
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(User, 'core')
+    private readonly userRepository: Repository<User>,
     @InjectRepository(UserWorkspace, 'core')
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     private readonly workspaceManagerService: WorkspaceManagerService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly billingService: BillingService,
-    private readonly userService: UserService,
   ) {
     super(workspaceRepository);
   }
@@ -49,7 +49,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     return await this.workspaceManagerService.doesDataSourceExist(id);
   }
 
-  async solfDeleteWorkspace(id: string) {
+  async softDeleteWorkspace(id: string) {
     const workspace = await this.workspaceRepository.findOneBy({ id });
 
     assert(workspace, 'Workspace not found');
@@ -67,14 +67,12 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       workspaceId: id,
     });
 
-    const workspace = await this.solfDeleteWorkspace(id);
+    const workspace = await this.softDeleteWorkspace(id);
 
     for (const userWorkspace of userWorkspaces) {
-      await this.userService.handleRemoveWorkspaceMember(
-        id,
-        userWorkspace.userId,
-      );
+      await this.handleRemoveWorkspaceMember(id, userWorkspace.userId);
     }
+
     await this.workspaceRepository.delete(id);
 
     return workspace;
@@ -84,5 +82,47 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     return this.workspaceRepository
       .find()
       .then((workspaces) => workspaces.map((workspace) => workspace.id));
+  }
+
+  async handleRemoveWorkspaceMember(workspaceId: string, userId: string) {
+    await this.userWorkspaceRepository.delete({
+      userId,
+      workspaceId,
+    });
+    await this.reassignOrRemoveUserDefaultWorkspace(workspaceId, userId);
+  }
+
+  private async reassignOrRemoveUserDefaultWorkspace(
+    workspaceId: string,
+    userId: string,
+  ) {
+    const userWorkspaces = await this.userWorkspaceRepository.find({
+      where: { userId: userId },
+    });
+
+    if (userWorkspaces.length === 0) {
+      await this.userRepository.delete({ id: userId });
+
+      return;
+    }
+
+    const user = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) {
+      throw new Error(`User ${userId} not found in workspace ${workspaceId}`);
+    }
+
+    if (user.defaultWorkspaceId === workspaceId) {
+      await this.userRepository.update(
+        { id: userId },
+        {
+          defaultWorkspaceId: userWorkspaces[0].workspaceId,
+        },
+      );
+    }
   }
 }
