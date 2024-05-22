@@ -20,6 +20,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
 import { BeforeUpdateOneObject } from 'src/engine/metadata-modules/object-metadata/hooks/before-update-one-object.hook';
+import { RemoteTableRelationsModule } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.module';
 
 import { ObjectMetadataService } from './object-metadata.service';
 import { ObjectMetadataEntity } from './object-metadata.entity';
@@ -43,6 +44,7 @@ import { ObjectMetadataDTO } from './dtos/object-metadata.dto';
         WorkspaceMigrationRunnerModule,
         WorkspaceCacheVersionModule,
         FeatureFlagModule,
+        RemoteTableRelationsModule,
       ],
       services: [ObjectMetadataService],
       resolvers: [
