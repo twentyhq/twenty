@@ -12,6 +12,11 @@ describe('validateMetadataName', () => {
 
     expect(() => validateMetadataName(input)).toThrow(InvalidStringException);
   });
+  it('throws error if string starts with capital letter', () => {
+    const input = 'StringStartingWithCapitalLetter';
+
+    expect(() => validateMetadataName(input)).toThrow(InvalidStringException);
+  });
 
   it('throws error if string has non latin characters', () => {
     const input = 'בְרִבְרִ';
