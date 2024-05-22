@@ -18,10 +18,25 @@ import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 
 export enum MessageChannelSyncStatus {
+  // TO BE DEPRECATED
   PENDING = 'PENDING',
-  ONGOING = 'ONGOING',
   SUCCEEDED = 'SUCCEEDED',
   FAILED = 'FAILED',
+
+  // NEW STATUSES
+  NOT_SYNCED = 'NOT_SYNCED',
+  ONGOING = 'ONGOING',
+  COMPLETED = 'COMPLETED',
+  FAILED_INSUFFICIENT_PERMISSIONS = 'FAILED_INSUFFICIENT_PERMISSIONS',
+  FAILED_UNKNOWN = 'FAILED_UNKNOWN',
+}
+
+export enum MessageChannelSyncSubStatus {
+  FULL_MESSAGES_LIST_FETCH_PENDING = 'FULL_MESSAGES_LIST_FETCH_PENDING',
+  PARTIAL_MESSAGES_LIST_FETCH_PENDING = 'PARTIAL_MESSAGES_LIST_FETCH_PENDING',
+  MESSAGES_LIST_FETCH_ONGOING = 'MESSAGES_LIST_FETCH_ONGOING',
+  MESSAGES_IMPORT_PENDING = 'MESSAGES_IMPORT_PENDING',
+  MESSAGES_IMPORT_ONGOING = 'MESSAGES_IMPORT_ONGOING',
 }
 
 export enum MessageChannelVisibility {
@@ -151,21 +166,16 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
     type: FieldMetadataType.SELECT,
-    label: 'Last sync status',
-    description: 'Last sync status',
-    icon: 'IconHistory',
+    label: 'Sync status',
+    description: 'Sync status',
+    icon: 'IconStatusChange',
     options: [
+      // TO BE DEPRECATED: PENDING, SUCCEEDED, FAILED
       {
         value: MessageChannelSyncStatus.PENDING,
         label: 'Pending',
         position: 0,
         color: 'blue',
-      },
-      {
-        value: MessageChannelSyncStatus.ONGOING,
-        label: 'Ongoing',
-        position: 1,
-        color: 'yellow',
       },
       {
         value: MessageChannelSyncStatus.SUCCEEDED,
@@ -179,10 +189,83 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
         position: 3,
         color: 'red',
       },
+      // NEW STATUSES
+      {
+        value: MessageChannelSyncStatus.ONGOING,
+        label: 'Ongoing',
+        position: 1,
+        color: 'yellow',
+      },
+      {
+        value: MessageChannelSyncStatus.NOT_SYNCED,
+        label: 'Not Synced',
+        position: 4,
+        color: 'blue',
+      },
+      {
+        value: MessageChannelSyncStatus.COMPLETED,
+        label: 'Completed',
+        position: 5,
+        color: 'green',
+      },
+      {
+        value: MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
+        label: 'Failed Insufficient Permissions',
+        position: 6,
+        color: 'red',
+      },
+      {
+        value: MessageChannelSyncStatus.FAILED_UNKNOWN,
+        label: 'Failed Unknown',
+        position: 7,
+        color: 'red',
+      },
     ],
   })
   @WorkspaceIsNullable()
   syncStatus: MessageChannelSyncStatus;
+
+  @WorkspaceField({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncSubStatus,
+    type: FieldMetadataType.SELECT,
+    label: 'Sync sub status',
+    description: 'Sync sub status',
+    icon: 'IconStatusChange',
+    options: [
+      {
+        value: MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING,
+        label: 'Full messages list fetch pending',
+        position: 0,
+        color: 'blue',
+      },
+      {
+        value: MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
+        label: 'Partial messages list fetch pending',
+        position: 1,
+        color: 'blue',
+      },
+      {
+        value: MessageChannelSyncSubStatus.MESSAGES_LIST_FETCH_ONGOING,
+        label: 'Messages list fetch ongoing',
+        position: 2,
+        color: 'orange',
+      },
+      {
+        value: MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING,
+        label: 'Messages import pending',
+        position: 3,
+        color: 'blue',
+      },
+      {
+        value: MessageChannelSyncSubStatus.MESSAGES_IMPORT_ONGOING,
+        label: 'Messages import ongoing',
+        position: 4,
+        color: 'orange',
+      },
+    ],
+    defaultValue: `'${MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING}'`,
+  })
+  syncSubStatus: MessageChannelSyncSubStatus;
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.ongoingSyncStartedAt,

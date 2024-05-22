@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import { ImageResponse } from 'next/og';
 
 import {
-  bottomBackgroundImage,
+  backgroundImage,
   container,
   contributorInfo,
   contributorInfoBox,
@@ -15,8 +15,7 @@ import {
   profileInfoContainer,
   profileUsernameHeader,
   styledContributorAvatar,
-  topBackgroundImage,
-} from '@/app/api/contributors/og-image/[slug]/style';
+} from '@/app/api/contributors/[slug]/og.png/style';
 import { getContributorActivity } from '@/app/contributors/utils/get-contributor-activity';
 
 const GABARITO_FONT_CDN_URL =
@@ -33,8 +32,10 @@ const getGabarito = async () => {
 export async function GET(request: Request) {
   try {
     const url = request.url;
-
-    const username = url.split('/')?.pop() || '';
+    const splitUrl = url.split('/');
+    const usernameIndex =
+      splitUrl.findIndex((part) => part === 'contributors') + 1;
+    const username = splitUrl[usernameIndex];
 
     const contributorActivity = await getContributorActivity(username);
     if (contributorActivity) {
@@ -45,11 +46,11 @@ export async function GET(request: Request) {
         activeDays,
         contributorAvatar,
       } = contributorActivity;
-      return await new ImageResponse(
+
+      const imageResponse = await new ImageResponse(
         (
           <div style={container}>
-            <div style={topBackgroundImage}></div>
-            <div style={bottomBackgroundImage}></div>
+            <div style={backgroundImage}></div>
             <div style={profileContainer}>
               <img src={contributorAvatar} style={styledContributorAvatar} />
               <div style={profileInfoContainer}>
@@ -59,8 +60,8 @@ export async function GET(request: Request) {
                 </h2>
               </div>
               <svg
-                width="96"
-                height="96"
+                width="134"
+                height="134"
                 viewBox="0 0 136 136"
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -122,6 +123,7 @@ export async function GET(request: Request) {
           ],
         },
       );
+      return imageResponse;
     }
   } catch (error) {
     return new Response(`error: ${error}`, {

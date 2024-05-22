@@ -19,9 +19,10 @@ export class RemoteTableResolver {
     @Args('input') input: FindManyRemoteTablesInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.remoteTableService.findDistantTablesByServerId(
+    return this.remoteTableService.findDistantTablesWithStatusByServerId(
       input.id,
       workspaceId,
+      input.shouldFetchPendingSchemaUpdates,
     );
   }
 
@@ -39,5 +40,16 @@ export class RemoteTableResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
     return this.remoteTableService.unsyncRemoteTable(input, workspaceId);
+  }
+
+  @Mutation(() => RemoteTableDTO)
+  async syncRemoteTableSchemaChanges(
+    @Args('input') input: RemoteTableInput,
+    @AuthWorkspace() { id: workspaceId }: Workspace,
+  ) {
+    return this.remoteTableService.syncRemoteTableSchemaChanges(
+      input,
+      workspaceId,
+    );
   }
 }

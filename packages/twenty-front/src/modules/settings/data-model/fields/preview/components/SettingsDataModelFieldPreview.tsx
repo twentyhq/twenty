@@ -103,7 +103,7 @@ export const SettingsDataModelFieldPreview = ({
                 objectMetadataNameSingular: objectMetadataItem.nameSingular,
                 relationObjectMetadataNameSingular:
                   relationObjectMetadataItem?.nameSingular,
-                options: fieldMetadataItem.options,
+                options: fieldMetadataItem.options ?? [],
               },
               defaultValue: fieldMetadataItem.defaultValue,
             },

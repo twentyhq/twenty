@@ -1,4 +1,7 @@
-import { FieldMetadataSettings } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
+import {
+  FieldMetadataSettings,
+  NumberDataType,
+} from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata-settings.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
@@ -8,8 +11,6 @@ export const mapUdtNameToFieldType = (udtName: string): FieldMetadataType => {
       return FieldMetadataType.UUID;
     case 'varchar':
     case 'text':
-    case 'bigint':
-    case 'int8':
       return FieldMetadataType.TEXT;
     case 'bool':
       return FieldMetadataType.BOOLEAN;
@@ -19,6 +20,8 @@ export const mapUdtNameToFieldType = (udtName: string): FieldMetadataType => {
     case 'integer':
     case 'int2':
     case 'int4':
+    case 'int8':
+    case 'bigint':
       return FieldMetadataType.NUMBER;
     default:
       return FieldMetadataType.TEXT;
@@ -33,7 +36,12 @@ export const mapUdtNameToFieldSettings = (
     case 'int2':
     case 'int4':
       return {
-        precision: 0,
+        dataType: NumberDataType.INT,
+      } satisfies FieldMetadataSettings<FieldMetadataType.NUMBER>;
+    case 'int8':
+    case 'bigint':
+      return {
+        dataType: NumberDataType.BIGINT,
       } satisfies FieldMetadataSettings<FieldMetadataType.NUMBER>;
     default:
       return undefined;
