@@ -143,7 +143,7 @@ export const SettingsObjectOverview = () => {
     for (const object of items) {
       nodes.push({
         id: object.namePlural,
-        width: 170,
+        width: 220,
         height: 100,
         position: { x: i * 300, y: 0 },
         data: object,
@@ -158,7 +158,6 @@ export const SettingsObjectOverview = () => {
             ),
           )
         ) {
-          console.log('field', field);
           const sourceObj =
             field.relationDefinition?.sourceObjectMetadata.namePlural;
           const targetObj =
@@ -166,11 +165,6 @@ export const SettingsObjectOverview = () => {
 
           const existingEdge = edges.find(
             (x) => x.id === `${sourceObj}-${targetObj}`,
-          );
-
-          console.log(
-            JSON.parse(JSON.stringify(edges)),
-            `${sourceObj}-${targetObj}`,
           );
 
           if (isDefined(existingEdge)) {

@@ -1,25 +1,14 @@
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Handle, NodeProps, Position } from 'reactflow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import {
-  IconBox,
-  IconPencil,
-  IconSettings,
-  IconTag,
-  useIcons,
-} from 'twenty-ui';
+import { IconTag, useIcons } from 'twenty-ui';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/SettingsDataModelObjectTypeTag';
 import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
-import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { ObjectFieldRow } from '~/pages/settings/data-model/SettingsObjectOverview/ObjectFieldRow';
 import { capitalize } from '~/utils/string/capitalize';
 
 import '@reactflow/node-resizer/dist/style.css';
@@ -31,7 +20,7 @@ const StyledObjectNode = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
   flex-direction: column;
-  width: 200px;
+  width: 220px;
   padding: ${({ theme }) => theme.spacing(2)};
   gap: ${({ theme }) => theme.spacing(2)};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
@@ -49,7 +38,6 @@ const StyledObjectName = styled.div`
   display: flex;
   font-weight: bold;
   gap: ${({ theme }) => theme.spacing(1)};
-  padding: 8px;
   position: relative;
   text-align: center;
 `;
@@ -79,72 +67,69 @@ const StyledObjectInstanceCount = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
 `;
 
+const StyledObjectLink = styled(Link)`
+  align-items: center;
+  display: flex;
+  text-decoration: none;
+  color: ${({ theme }) => theme.font.color.primary};
+
+  &:hover {
+    color: ${({ theme }) => theme.font.color.secondary};
+  }
+`;
+
 export const ObjectNode = ({ data }: ObjectNodeProps) => {
-  const dropdownId = `settings-object-overview-action-dropdown-${data.namePlural}`;
   const theme = useTheme();
   const { getIcon } = useIcons();
-  const { closeDropdown } = useDropdown(dropdownId);
-  const navigate = useNavigate();
 
   const { totalCount } = useFindManyRecords({
     objectNameSingular: data.nameSingular,
   });
 
-  const Icon = getIcon(data.icon);
+  const countNonRelation = data.fields.filter(
+    (x) => !x.toRelationMetadata && !x.fromRelationMetadata,
+  ).length;
 
-  const handleEdit = () => {
-    navigate('/settings/objects/' + data.namePlural);
-    closeDropdown();
-  };
+  const Icon = getIcon(data.icon);
 
   return (
     <StyledObjectNode>
       <StyledHeader>
         <StyledObjectName onMouseEnter={() => {}} onMouseLeave={() => {}}>
-          {Icon && <Icon size={theme.icon.size.md} />}
-          {capitalize(data.namePlural)}
+          <StyledObjectLink to={'/settings/objects/' + data.namePlural}>
+            {Icon && <Icon size={theme.icon.size.md} />}
+            {capitalize(data.namePlural)}
+          </StyledObjectLink>
           <StyledObjectInstanceCount> · {totalCount}</StyledObjectInstanceCount>
         </StyledObjectName>
-
-        <Dropdown
-          dropdownId={dropdownId}
-          clickableComponent={
-            <LightIconButton
-              aria-label="Object Options"
-              Icon={IconSettings}
-              accent="tertiary"
-            />
-          }
-          dropdownComponents={
-            <DropdownMenu width="160px">
-              <DropdownMenuItemsContainer>
-                <MenuItem
-                  text="Edit"
-                  LeftIcon={IconPencil}
-                  onClick={handleEdit}
-                />
-              </DropdownMenuItemsContainer>
-            </DropdownMenu>
-          }
-          dropdownHotkeyScope={{
-            scope: dropdownId,
-          }}
-        />
+        <SettingsDataModelObjectTypeTag
+          objectTypeLabel={getObjectTypeLabel(data)}
+        ></SettingsDataModelObjectTypeTag>
       </StyledHeader>
 
       <StyledInnerCard>
-        <StyledCardRow>
-          <IconBox size={theme.icon.size.md} />
-          <StyledCardRowText>
-            <SettingsDataModelObjectTypeTag
-              objectTypeLabel={getObjectTypeLabel(data)}
-            ></SettingsDataModelObjectTypeTag>
-          </StyledCardRowText>
-        </StyledCardRow>
-        <StyledCardRow>
-          <IconTag size={theme.icon.size.md} />
-          <StyledCardRowText>{data.fields.length} fields</StyledCardRowText>
-        </StyledCardRow>
+        {data.fields
+          .filter((x) => x.toRelationMetadata && !x.isSystem)
+          .map((field) => (
+            <StyledCardRow>
+              <ObjectFieldRow field={field} type="from"></ObjectFieldRow>
+            </StyledCardRow>
+          ))}
+        {data.fields
+          .filter((x) => x.fromRelationMetadata && !x.isSystem)
+          .map((field) => (
+            <StyledCardRow>
+              <ObjectFieldRow field={field} type="to"></ObjectFieldRow>
+            </StyledCardRow>
+          ))}
+        {countNonRelation > 0 && (
+          <StyledCardRow>
+            <IconTag size={theme.icon.size.md} />
+            <StyledCardRowText>
+              {countNonRelation} other fields
+            </StyledCardRowText>
+          </StyledCardRow>
+        )}
       </StyledInnerCard>
       <Handle
         type="target"

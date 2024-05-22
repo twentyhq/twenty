@@ -1,13 +1,7 @@
 import { useCallback } from 'react';
-import {
-  Edge,
-  EdgeLabelRenderer,
-  getSmoothStepPath,
-  useStore,
-} from 'reactflow';
+import { Edge, getSmoothStepPath, useStore } from 'reactflow';
 import { useTheme } from '@emotion/react';
 
-import { Button } from '@/ui/input/button/components/Button';
 import { getEdgeParams } from '~/pages/settings/data-model/SettingsObjectOverview/EdgeUtil';
 type StepEdgeProps = Edge;
 
@@ -57,23 +51,6 @@ export const StepEdge = ({
         markerEnd={markerEnd?.toString()}
         style={style}
       />
-      <EdgeLabelRenderer>
-        <div
-          style={{
-            position: 'absolute',
-            transform: `translate(-50%, -50%) translate(${labelX}px,${labelY}px)`,
-          }}
-        >
-          <Button
-            size="small"
-            title={
-              data.relations.length +
-              ' Relation' +
-              (data.relations.length > 1 ? 's' : '')
-            }
-          ></Button>
-        </div>
-      </EdgeLabelRenderer>
     </>
   );
 };
