@@ -41,6 +41,7 @@ export const EventList = ({ events, targetableObject }: EventListProps) => {
       <StyledTimelineContainer>
         {groupedEvents.map((group, index) => (
           <EventsGroup
+            recordId={targetableObject.id}
             mainObjectMetadataItem={mainObjectMetadataItem}
             key={group.year.toString() + group.month}
             group={group}

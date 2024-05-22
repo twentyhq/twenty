@@ -20,41 +20,42 @@ import {
 import { isDefined } from '~/utils/isDefined';
 
 const StyledIconContainer = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
-  user-select: none;
-  height: 16px;
-  margin: 5px;
+  align-items: center;
   justify-content: center;
-  text-decoration-line: underline;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  height: 16px;
   width: 16px;
+  margin: 5px;
+  user-select: none;
+  text-decoration-line: underline;
   z-index: 2;
 `;
 
 const StyledItemContainer = styled.div`
-  align-content: center;
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
-  flex: 1;
+  align-items: center;
   gap: ${({ theme }) => theme.spacing(1)};
+  flex: 1;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  overflow: hidden;
+
   span {
     color: ${({ theme }) => theme.font.color.secondary};
   }
-  overflow: hidden;
 `;
 
 const StyledItemAuthorText = styled.span`
   display: flex;
-  color: ${({ theme }) => theme.font.color.primary};
+  align-items: center;
   gap: ${({ theme }) => theme.spacing(1)};
+  color: ${({ theme }) => theme.font.color.primary};
   white-space: nowrap;
 `;
 
 const StyledItemTitle = styled.span`
   display: flex;
-  flex-flow: row nowrap;
+  flex-direction: row;
   overflow: hidden;
   white-space: nowrap;
 `;
@@ -106,9 +107,9 @@ const StyledTooltip = styled(Tooltip)`
 `;
 
 const StyledTimelineItemContainer = styled.div<{ isGap?: boolean }>`
-  align-items: center;
-  align-self: stretch;
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: ${({ theme }) => theme.spacing(4)};
   height: ${({ isGap, theme }) =>
     isGap ? (useIsMobile() ? theme.spacing(6) : theme.spacing(3)) : 'auto'};
@@ -119,8 +120,9 @@ const StyledTimelineItemContainer = styled.div<{ isGap?: boolean }>`
 const StyledSummary = styled.summary`
   display: flex;
   flex: 1;
-  flex-flow: row ${() => (useIsMobile() ? 'wrap' : 'nowrap')};
+  flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
+  align-items: center;
   overflow: hidden;
 `;
 

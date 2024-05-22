@@ -1,10 +1,11 @@
 import styled from '@emotion/styled';
-import { useIcons } from 'twenty-ui';
+import { IconChevronDown, useIcons } from 'twenty-ui';
 
 import { EventCalendarEventDescription } from '@/activities/timelineActivities/components/EventCalendarEventDescription';
 import { EventMessageDescription } from '@/activities/timelineActivities/components/EventMessageDescription';
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { IconButton } from '@/ui/input/button/components/IconButton';
 
 type EventDescriptionProps = {
   event: TimelineActivity;
@@ -12,7 +13,7 @@ type EventDescriptionProps = {
   linkedObjectMetadata: ObjectMetadataItem | null;
 };
 
-const StyledIconContainer = styled.div`
+const StyledMainObjectIconContainer = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
@@ -23,8 +24,47 @@ const StyledIconContainer = styled.div`
 const StyledDescriptionContainer = styled.div`
   align-items: center;
   display: flex;
-  padding: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(1)};
 `;
+
+const StyledButtonContainer = styled.div`
+  border-radius: 4px;
+`;
+
+const renderUpdatedDescription = (
+  diff: Record<string, { before: any; after: any }>,
+  mainObjectMetadataItem: any,
+  getIcon: (iconName: string) => React.ComponentType,
+) => {
+  const diffKeys = Object.keys(diff);
+
+  if (diffKeys.length === 0) {
+    return `updated this ${mainObjectMetadataItem?.labelSingular?.toLowerCase()}`;
+  }
+
+  if (diffKeys.length === 1) {
+    const key = diffKeys[0];
+    const field = mainObjectMetadataItem?.fields.find(
+      (field: any) => field.name === key,
+    );
+
+    const IconComponent = getIcon(field?.icon);
+
+    return (
+      <>
+        <span>updated</span>
+        <StyledMainObjectIconContainer>
+          <IconComponent />
+        </StyledMainObjectIconContainer>
+        <span>{field?.label}</span>
+      </>
+    );
+  }
+
+  if (diffKeys.length > 1) {
+    return `updated ${diffKeys.length} fields`;
+  }
+};
 
 export const EventDescription = ({
   event,
@@ -36,6 +76,10 @@ export const EventDescription = ({
   const { getIcon } = useIcons();
 
   const [eventName, eventAction] = event.name.split('.');
+
+  const openDiff = () => {
+    console.log('openDiff');
+  };
 
   if (eventName === 'calendarEvent') {
     return (
@@ -61,32 +105,21 @@ export const EventDescription = ({
       return `created this ${mainObjectMetadataItem?.labelSingular?.toLowerCase()}`;
     }
     case 'updated': {
-      const diffKeys = Object.keys(diff);
-
-      if (diffKeys.length === 0) {
-        return `updated this ${mainObjectMetadataItem?.labelSingular?.toLowerCase()}`;
-      }
-
-      if (diffKeys.length === 1) {
-        const key = Object.keys(diff)[0];
-        const field = mainObjectMetadataItem?.fields.find(
-          (field) => field.name === key,
-        );
-        const IconComponent = getIcon(field?.icon);
-
-        return (
-          <StyledDescriptionContainer>
-            <StyledIconContainer>
-              <IconComponent />
-            </StyledIconContainer>
-            <span>{field?.label}</span>
-          </StyledDescriptionContainer>
-        );
-      }
-
-      if (diffKeys.length > 1) {
-        return `updated ${diffKeys.length} fields`;
-      }
+      return (
+        <StyledDescriptionContainer>
+          {renderUpdatedDescription(diff, mainObjectMetadataItem, getIcon)}
+          <StyledButtonContainer>
+            <IconButton
+              Icon={IconChevronDown}
+              onClick={() => openDiff()}
+              size="small"
+              variant="secondary"
+            />
+          </StyledButtonContainer>
+        </StyledDescriptionContainer>
+      );
     }
+    default:
+      return null;
   }
 };

@@ -8,6 +8,7 @@ type EventsGroupProps = {
   group: EventGroup;
   month: string;
   year?: number;
+  recordId: string;
   mainObjectMetadataItem: ObjectMetadataItem | null;
 };
 
@@ -57,6 +58,7 @@ export const EventsGroup = ({
   group,
   month,
   year,
+  recordId,
   mainObjectMetadataItem,
 }: EventsGroupProps) => {
   return (
