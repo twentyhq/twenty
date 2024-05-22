@@ -151,7 +151,7 @@ export class GmailFetchMessageContentFromCacheV2Service {
 
     await this.messageChannelRepository.updateSyncSubStatus(
       gmailMessageChannelId,
-      MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING,
+      MessageChannelSyncSubStatus.MESSAGES_IMPORT_ONGOING,
       workspaceId,
     );
 
@@ -175,18 +175,24 @@ export class GmailFetchMessageContentFromCacheV2Service {
           connectedAccountId,
         );
 
+      if (!messagesToSave.length) {
+        await this.messageChannelRepository.updateSyncStatus(
+          gmailMessageChannelId,
+          MessageChannelSyncStatus.COMPLETED,
+          workspaceId,
+        );
+
+        await this.messageChannelRepository.updateSyncSubStatus(
+          gmailMessageChannelId,
+          MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
+          workspaceId,
+        );
+
+        return [];
+      }
+
       const participantsWithMessageId = await workspaceDataSource?.transaction(
         async (transactionManager: EntityManager) => {
-          if (!messagesToSave.length) {
-            await this.messageChannelRepository.updateSyncStatus(
-              gmailMessageChannelId,
-              MessageChannelSyncStatus.PENDING,
-              workspaceId,
-            );
-
-            return [];
-          }
-
           const messageExternalIdsAndIdsMap =
             await this.messageService.saveMessagesWithinTransaction(
               messagesToSave,
@@ -221,40 +227,37 @@ export class GmailFetchMessageContentFromCacheV2Service {
             transactionManager,
           );
 
-          if (messageIdsToFetch.length < GMAIL_USERS_MESSAGES_GET_BATCH_SIZE) {
-            await this.messageChannelRepository.updateSyncStatus(
-              gmailMessageChannelId,
-              MessageChannelSyncStatus.COMPLETED,
-              workspaceId,
-              transactionManager,
-            );
-
-            await this.messageChannelRepository.updateSyncSubStatus(
-              gmailMessageChannelId,
-              MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
-              workspaceId,
-              transactionManager,
-            );
-
-            this.logger.log(
-              `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} done with no more messages to import.`,
-            );
-          } else {
-            await this.messageChannelRepository.updateSyncSubStatus(
-              gmailMessageChannelId,
-              MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING,
-              workspaceId,
-              transactionManager,
-            );
-
-            this.logger.log(
-              `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} done with more messages to import.`,
-            );
-          }
-
           return participantsWithMessageId;
         },
       );
+
+      if (messageIdsToFetch.length < GMAIL_USERS_MESSAGES_GET_BATCH_SIZE) {
+        await this.messageChannelRepository.updateSyncStatus(
+          gmailMessageChannelId,
+          MessageChannelSyncStatus.COMPLETED,
+          workspaceId,
+        );
+
+        await this.messageChannelRepository.updateSyncSubStatus(
+          gmailMessageChannelId,
+          MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
+          workspaceId,
+        );
+
+        this.logger.log(
+          `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} done with no more messages to import.`,
+        );
+      } else {
+        await this.messageChannelRepository.updateSyncSubStatus(
+          gmailMessageChannelId,
+          MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING,
+          workspaceId,
+        );
+
+        this.logger.log(
+          `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} done with more messages to import.`,
+        );
+      }
 
       if (gmailMessageChannel.isContactAutoCreationEnabled) {
         const contactsToCreate = participantsWithMessageId.filter(
@@ -274,6 +277,12 @@ export class GmailFetchMessageContentFromCacheV2Service {
       await this.cacheStorage.setAdd(
         `messages-to-import:${workspaceId}:gmail:${gmailMessageChannelId}`,
         messageIdsToFetch,
+      );
+
+      await this.messageChannelRepository.updateSyncSubStatus(
+        gmailMessageChannelId,
+        MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
+        workspaceId,
       );
 
       await this.messageChannelRepository.updateSyncStatus(

@@ -293,7 +293,7 @@ export class GmailPartialSyncV2Service {
         );
 
         this.logger.log(
-          `Updated lastSyncHistoryId to ${historyId} for workspace ${workspaceId} and account ${connectedAccountId}`,
+          `Updated lastSyncCursor to ${historyId} for workspace ${workspaceId} and account ${connectedAccountId}`,
         );
 
         this.logger.log(
@@ -302,7 +302,7 @@ export class GmailPartialSyncV2Service {
 
         await this.messageChannelRepository.updateSyncSubStatus(
           gmailMessageChannel.id,
-          MessageChannelSyncSubStatus.MESSAGES_IMPORT_ONGOING,
+          MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING,
           workspaceId,
         );
       })
