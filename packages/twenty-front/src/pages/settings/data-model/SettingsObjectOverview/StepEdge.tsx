@@ -12,7 +12,6 @@ export const StepEdge = ({
   markerStart,
   markerEnd,
   style,
-  data,
 }: StepEdgeProps) => {
   const theme = useTheme();
   const sourceNode = useStore(
@@ -31,7 +30,7 @@ export const StepEdge = ({
     targetNode,
   );
 
-  const [edgePath, labelX, labelY] = getSmoothStepPath({
+  const [edgePath] = getSmoothStepPath({
     sourceX: sx,
     sourceY: sy,
     sourcePosition: sourcePos,
