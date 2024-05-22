@@ -7,7 +7,6 @@ import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateAct
 import { useEventTracker } from '@/analytics/hooks/useEventTracker';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { passwordResetTokenVerificationState } from '@/auth/states/passwordResetTokenVerificationState';
-import { workspaceInviteHashVerificationState } from '@/auth/states/workspaceInviteHashVerificationState';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
@@ -43,9 +42,6 @@ export const PageChangeEffect = () => {
 
   const passwordResetTokenVerification = useRecoilValue(
     passwordResetTokenVerificationState,
-  );
-  const workspaceInviteHashVerification = useRecoilValue(
-    workspaceInviteHashVerificationState,
   );
 
   const [workspaceFromInviteHashQuery] =
@@ -135,7 +131,6 @@ export const PageChangeEffect = () => {
     navigate,
     onboardingStatus,
     passwordResetTokenVerification,
-    workspaceInviteHashVerification,
     workspaceFromInviteHashQuery,
   ]);
 

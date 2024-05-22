@@ -9,8 +9,6 @@ import { SignInUpForm } from '@/auth/sign-in-up/components/SignInUpForm';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { workspaceInviteHashVerificationState } from '@/auth/states/workspaceInviteHashVerificationState';
-import { TokenVerificationType } from '@/auth/types/tokenVerificationType';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { useWorkspaceSwitching } from '@/ui/navigation/navigation-drawer/hooks/useWorkspaceSwitching';
@@ -28,9 +26,6 @@ export const Invite = () => {
     useWorkspaceFromInviteHash();
   const { form } = useSignInUpForm();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const workspaceInviteHashVerification = useRecoilValue(
-    workspaceInviteHashVerificationState,
-  );
   const [addUserToWorkspace] = useAddUserToWorkspaceMutation();
   const { switchWorkspace } = useWorkspaceSwitching();
 
@@ -53,7 +48,7 @@ export const Invite = () => {
   };
 
   return (
-    workspaceInviteHashVerification === TokenVerificationType.Valid && (
+    isDefined(workspaceFromInviteHash) && (
       <>
         <AnimatedEaseIn>
           <Logo workspaceLogo={workspaceFromInviteHash?.logo} />

@@ -8,7 +8,6 @@ import { useRecoilValue } from 'recoil';
 import { AuthModal } from '@/auth/components/Modal';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { passwordResetTokenVerificationState } from '@/auth/states/passwordResetTokenVerificationState';
-import { workspaceInviteHashVerificationState } from '@/auth/states/workspaceInviteHashVerificationState';
 import { TokenVerificationType } from '@/auth/types/tokenVerificationType';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
@@ -20,6 +19,7 @@ import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
 import { AppPath } from '@/types/AppPath';
+import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
 import { DESKTOP_NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/DesktopNavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useScreenSize } from '@/ui/utilities/screen-size/hooks/useScreenSize';
@@ -77,8 +77,8 @@ export const DefaultLayout = () => {
   const passwordResetTokenVerification = useRecoilValue(
     passwordResetTokenVerificationState,
   );
-  const workspaceInviteHashVerification = useRecoilValue(
-    workspaceInviteHashVerificationState,
+  const isDefaultLayoutAuthModalVisible = useRecoilValue(
+    isDefaultLayoutAuthModalVisibleState,
   );
   const showAuthModal = useMemo(() => {
     if (isMatchingLocation(AppPath.Verify)) {
@@ -91,7 +91,11 @@ export const DefaultLayout = () => {
       return passwordResetTokenVerification === TokenVerificationType.Valid;
     }
     if (isMatchingLocation(AppPath.Invite)) {
-      return workspaceInviteHashVerification === TokenVerificationType.Valid;
+      console.log(
+        'isDefaultLayoutAuthModalVisible',
+        isDefaultLayoutAuthModalVisible,
+      );
+      return isDefaultLayoutAuthModalVisible === true;
     }
     return (
       (onboardingStatus &&
@@ -107,7 +111,7 @@ export const DefaultLayout = () => {
     );
   }, [
     passwordResetTokenVerification,
-    workspaceInviteHashVerification,
+    isDefaultLayoutAuthModalVisible,
     isMatchingLocation,
     onboardingStatus,
   ]);
