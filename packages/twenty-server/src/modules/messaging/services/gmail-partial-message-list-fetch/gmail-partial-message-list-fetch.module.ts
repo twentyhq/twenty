@@ -7,8 +7,8 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { FetchMessagesByBatchesModule } from 'src/modules/messaging/services/fetch-messages-by-batches/fetch-messages-by-batches.module';
-import { GmailPartialMessageListFetchV2Service } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-message-list-fetch-v2.service';
-import { GmailPartialMessageListFetchService } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-message-list-fetch.service';
+import { GmailPartialMessageListFetchV2Service } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-partial-message-list-fetch-v2.service';
+import { GmailPartialMessageListFetchService } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-partial-message-list-fetch.service';
 import { MessageModule } from 'src/modules/messaging/services/message/message.module';
 import { MessagingProvidersModule } from 'src/modules/messaging/services/providers/messaging-providers.module';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';

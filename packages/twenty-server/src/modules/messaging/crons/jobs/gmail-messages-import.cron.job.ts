@@ -10,9 +10,9 @@ import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-s
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
-import { GmailMessagesImportService } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-messages-import.service';
+import { GmailMessagesImportService } from 'src/modules/messaging/services/gmail-messages-import/gmail-messages-import.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { GmailMessagesImportV2Service } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-messages-import-v2.service.service';
+import { GmailMessagesImportV2Service } from 'src/modules/messaging/services/gmail-messages-import/gmail-messages-import-v2.service.service';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,

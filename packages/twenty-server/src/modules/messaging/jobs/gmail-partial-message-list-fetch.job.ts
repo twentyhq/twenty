@@ -10,8 +10,8 @@ import {
   FeatureFlagKeys,
 } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
-import { GmailPartialMessageListFetchService } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-message-list-fetch.service';
-import { GmailPartialMessageListFetchV2Service } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-message-list-fetch-v2.service';
+import { GmailPartialMessageListFetchService } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-partial-message-list-fetch.service';
+import { GmailPartialMessageListFetchV2Service } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-partial-message-list-fetch-v2.service';
 
 export type GmailPartialMessageListFetchJobData = {
   workspaceId: string;

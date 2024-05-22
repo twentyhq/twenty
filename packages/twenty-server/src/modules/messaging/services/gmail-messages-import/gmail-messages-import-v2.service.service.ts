@@ -28,7 +28,7 @@ import {
   CreateCompanyAndContactJobData,
   CreateCompanyAndContactJob,
 } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
-import { GmailMessagesImportService } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-messages-import.service';
+import { GmailMessagesImportService } from 'src/modules/messaging/services/gmail-messages-import/gmail-messages-import.service';
 
 @Injectable()
 export class GmailMessagesImportV2Service {
