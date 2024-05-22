@@ -40,7 +40,9 @@ const RIGHT_DRAWER_PAGES_CONFIG = {
   },
   [RightDrawerPages.ViewEmailThread]: {
     page: <RightDrawerEmailThread />,
-    topBar: <RightDrawerTopBar page={RightDrawerPages.ViewEmailThread} />,
+    topBar: (
+      <RightDrawerTopBar page={RightDrawerPages.ViewEmailThread}  showActionBar={false} showMembersBar={true} />
+    ),
   },
   [RightDrawerPages.ViewCalendarEvent]: {
     page: <RightDrawerCalendarEvent />,
