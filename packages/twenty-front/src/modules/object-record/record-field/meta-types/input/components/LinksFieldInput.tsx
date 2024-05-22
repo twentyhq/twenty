@@ -4,8 +4,8 @@ import { Key } from 'ts-key-enum';
 import { IconPlus } from 'twenty-ui';
 
 import { useLinksField } from '@/object-record/record-field/meta-types/hooks/useLinksField';
+import { LinksFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/LinksFieldMenuItem';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { LinkDisplay } from '@/ui/field/display/components/LinkDisplay';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
@@ -14,6 +14,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { toSpliced } from '~/utils/array/toSpliced';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledDropdownMenu = styled(DropdownMenu)`
@@ -35,7 +36,7 @@ export const LinksFieldInput = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const links = useMemo(
+  const links = useMemo<{ url: string; label: string }[]>(
     () =>
       [
         fieldValue.primaryLinkUrl
@@ -53,51 +54,47 @@ export const LinksFieldInput = ({
     ],
   );
 
+  const handleDropdownClose = () => {
+    onCancel?.();
+  };
+
   useListenClickOutside({
     refs: [containerRef],
-    callback: (event) => {
-      event.stopImmediatePropagation();
-
-      const isTargetInput =
-        event.target instanceof HTMLInputElement &&
-        event.target.tagName === 'INPUT';
-
-      if (!isTargetInput) {
-        onCancel?.();
-      }
-    },
+    callback: handleDropdownClose,
   });
+
+  useScopedHotkeys(Key.Escape, handleDropdownClose, hotkeyScope);
 
   const [isInputDisplayed, setIsInputDisplayed] = useState(false);
   const [inputValue, setInputValue] = useState('');
 
-  useScopedHotkeys(Key.Escape, onCancel ?? (() => {}), hotkeyScope);
-
-  const handleSubmit = () => {
+  const handleAddLink = () => {
     if (!inputValue) return;
 
     setIsInputDisplayed(false);
     setInputValue('');
 
-    if (!links.length) {
-      onSubmit?.(() =>
-        persistLinksField({
-          primaryLinkUrl: inputValue,
-          primaryLinkLabel: '',
-          secondaryLinks: [],
-        }),
-      );
-
-      return;
-    }
+    const nextLinks = [...links, { label: '', url: inputValue }];
+    const [nextPrimaryLink, ...nextSecondaryLinks] = nextLinks;
 
     onSubmit?.(() =>
       persistLinksField({
+        primaryLinkUrl: nextPrimaryLink.url ?? '',
+        primaryLinkLabel: nextPrimaryLink.label ?? '',
+        secondaryLinks: nextSecondaryLinks,
+      }),
+    );
+  };
+
+  const handleDeleteLink = (index: number) => {
+    onSubmit?.(() =>
+      persistLinksField({
         ...fieldValue,
-        secondaryLinks: [
-          ...(fieldValue.secondaryLinks ?? []),
-          { label: '', url: inputValue },
-        ],
+        secondaryLinks: toSpliced(
+          fieldValue.secondaryLinks ?? [],
+          index - 1,
+          1,
+        ),
       }),
     );
   };
@@ -108,9 +105,13 @@ export const LinksFieldInput = ({
         <>
           <DropdownMenuItemsContainer>
             {links.map(({ label, url }, index) => (
-              <MenuItem
+              <LinksFieldMenuItem
                 key={index}
-                text={<LinkDisplay value={{ label, url }} />}
+                dropdownId={`${hotkeyScope}-links-${index}`}
+                isPrimary={index === 0}
+                label={label}
+                onDelete={() => handleDeleteLink(index)}
+                url={url}
               />
             ))}
           </DropdownMenuItemsContainer>
@@ -124,9 +125,9 @@ export const LinksFieldInput = ({
           value={inputValue}
           hotkeyScope={hotkeyScope}
           onChange={(event) => setInputValue(event.target.value)}
-          onEnter={handleSubmit}
+          onEnter={handleAddLink}
           rightComponent={
-            <LightIconButton Icon={IconPlus} onClick={handleSubmit} />
+            <LightIconButton Icon={IconPlus} onClick={handleAddLink} />
           }
         />
       ) : (

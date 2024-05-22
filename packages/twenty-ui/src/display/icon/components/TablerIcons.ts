@@ -19,6 +19,7 @@ export {
   IconBell,
   IconBolt,
   IconBook2,
+  IconBookmark,
   IconBox,
   IconBrandGithub,
   IconBrandGoogle,

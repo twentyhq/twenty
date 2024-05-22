@@ -6,6 +6,7 @@ import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableE
 import { ObjectFilterDropdownScope } from '@/object-record/object-filter-dropdown/scopes/ObjectFilterDropdownScope';
 import { ComponentWithRecoilScopeDecorator } from '~/testing/decorators/ComponentWithRecoilScopeDecorator';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
+import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedTasks } from '~/testing/mock-data/activities';
@@ -21,10 +22,10 @@ const meta: Meta<typeof TaskGroups> = {
     ),
     ComponentWithRouterDecorator,
     ComponentWithRecoilScopeDecorator,
+    ObjectMetadataItemsDecorator,
     SnackBarDecorator,
   ],
   parameters: {
-    msw: graphqlMocks,
     customRecoilScopeContext: TasksRecoilScopeContext,
   },
 };
@@ -42,5 +43,8 @@ export const WithTasks: Story = {
         targetObjectNameSingular: 'person',
       },
     ] as ActivityTargetableObject[],
+  },
+  parameters: {
+    msw: graphqlMocks,
   },
 };

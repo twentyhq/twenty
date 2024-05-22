@@ -6,15 +6,18 @@ import { isDefined } from '~/utils/isDefined';
 type SettingsIntegrationDatabaseConnectionSyncStatusProps = {
   connectionId: string;
   skip?: boolean;
+  shouldFetchPendingSchemaUpdates?: boolean;
 };
 
 export const SettingsIntegrationDatabaseConnectionSyncStatus = ({
   connectionId,
   skip,
+  shouldFetchPendingSchemaUpdates,
 }: SettingsIntegrationDatabaseConnectionSyncStatusProps) => {
   const { tables, error } = useGetDatabaseConnectionTables({
     connectionId,
     skip,
+    shouldFetchPendingSchemaUpdates,
   });
 
   if (isDefined(error)) {

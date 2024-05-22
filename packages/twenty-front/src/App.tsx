@@ -17,6 +17,7 @@ import { ClientConfigProvider } from '@/client-config/components/ClientConfigPro
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
 import { billingState } from '@/client-config/states/billingState';
 import { PromiseRejectionEffect } from '@/error-handler/components/PromiseRejectionEffect';
+import indexAppPath from '@/navigation/utils/indexAppPath';
 import { ApolloMetadataClientProvider } from '@/object-metadata/components/ApolloMetadataClientProvider';
 import { ObjectMetadataItemsProvider } from '@/object-metadata/components/ObjectMetadataItemsProvider';
 import { PrefetchDataProvider } from '@/prefetch/components/PrefetchDataProvider';
@@ -138,7 +139,10 @@ const createRouter = (isBillingEnabled?: boolean) =>
             path={AppPath.PlanRequiredSuccess}
             element={<PaymentSuccess />}
           />
-          <Route path={AppPath.Index} element={<DefaultHomePage />} />
+          <Route
+            path={indexAppPath.getIndexAppPath()}
+            element={<DefaultHomePage />}
+          />
           <Route path={AppPath.TasksPage} element={<Tasks />} />
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
           <Route path={AppPath.RecordIndexPage} element={<RecordIndexPage />} />

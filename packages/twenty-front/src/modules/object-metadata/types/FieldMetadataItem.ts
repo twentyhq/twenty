@@ -43,7 +43,7 @@ export type FieldMetadataItem = Omit<
       })
     | null;
   defaultValue?: any;
-  options?: FieldMetadataItemOption[];
+  options?: FieldMetadataItemOption[] | null;
   relationDefinition?: {
     relationId: RelationDefinition['relationId'];
     direction: RelationDefinitionType;
