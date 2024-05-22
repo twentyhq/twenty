@@ -52,7 +52,7 @@ export const useDropdown = (dropdownId?: string) => {
 
   return {
     scopeId,
-    isDropdownOpen: isDropdownOpen,
+    isDropdownOpen,
     closeDropdown,
     toggleDropdown,
     openDropdown,

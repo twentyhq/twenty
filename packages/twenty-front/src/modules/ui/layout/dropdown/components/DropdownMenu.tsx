@@ -25,8 +25,8 @@ const StyledDropdownMenu = styled.div<{
 
   flex-direction: column;
   z-index: 1;
-  width: ${({ width }) =>
-    width ? `${typeof width === 'number' ? `${width}px` : width}` : '160px'};
+  width: ${({ width = 160 }) =>
+    typeof width === 'number' ? `${width}px` : width};
 `;
 
 export const DropdownMenu = StyledDropdownMenu;
