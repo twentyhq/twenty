@@ -577,18 +577,28 @@ export class WorkspaceQueryRunnerService {
         workspaceId,
       );
 
-    const results = await workspaceDataSource?.query<PGGraphQLResult>(
-      `
-      BEGIN;
-      SET search_path TO ${this.workspaceDataSourceService.getSchemaName(
-        workspaceId,
-      )};
-      SELECT graphql.resolve($1);
-      COMMIT`,
-      [query],
-    );
+    await workspaceDataSource?.query(`
+        SET search_path TO ${this.workspaceDataSourceService.getSchemaName(
+          workspaceId,
+        )};
+      `);
 
-    return results;
+    return await workspaceDataSource?.transaction(
+      async (transactionManager) => {
+        await transactionManager.query(`
+        SET search_path TO ${this.workspaceDataSourceService.getSchemaName(
+          workspaceId,
+        )};
+      `);
+
+        const results = transactionManager.query<PGGraphQLResult>(
+          `SELECT graphql.resolve($1);`,
+          [query],
+        );
+
+        return results;
+      },
+    );
   }
 
   private async parseResult<Result>(
