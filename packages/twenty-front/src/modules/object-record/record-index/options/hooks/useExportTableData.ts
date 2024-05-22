@@ -7,6 +7,7 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { useFindManyParams } from '../../hooks/useLoadRecordIndexTable';
 
@@ -31,8 +32,9 @@ type GenerateExportOptions = {
 type GenerateExport = (data: GenerateExportOptions) => string;
 
 type ExportProgress = {
-  count?: number;
-  type: 'percentage' | 'number';
+  exportedRecordCount?: number;
+  totalRecordCount?: number;
+  displayType: 'percentage' | 'number';
 };
 
 export const generateCsv: GenerateExport = ({
@@ -82,8 +84,26 @@ export const generateCsv: GenerateExport = ({
   });
 };
 
-export const percentage = (part: number, whole: number): number => {
+const percentage = (part: number, whole: number): number => {
   return Math.round((part / whole) * 100);
+};
+
+export const displayedExportProgress = (progress?: ExportProgress): string => {
+  if (isUndefinedOrNull(progress?.exportedRecordCount)) {
+    return 'Export';
+  }
+
+  if (
+    progress.displayType === 'percentage' &&
+    isDefined(progress?.totalRecordCount)
+  ) {
+    return `Export (${percentage(
+      progress.exportedRecordCount,
+      progress.totalRecordCount,
+    )}%)`;
+  }
+
+  return `Export (${progress.exportedRecordCount})`;
 };
 
 const downloader = (mimeType: string, generator: GenerateExport) => {
@@ -116,8 +136,7 @@ export const useExportTableData = ({
   const [inflight, setInflight] = useState(false);
   const [pageCount, setPageCount] = useState(0);
   const [progress, setProgress] = useState<ExportProgress>({
-    count: undefined,
-    type: 'number',
+    displayType: 'number',
   });
   const [previousRecordCount, setPreviousRecordCount] = useState(0);
 
@@ -163,8 +182,7 @@ export const useExportTableData = ({
       csvDownloader(filename, { rows, columns });
       setIsDownloading(false);
       setProgress({
-        count: undefined,
-        type: 'number',
+        displayType: 'number',
       });
     };
 
@@ -174,10 +192,9 @@ export const useExportTableData = ({
       await fetchMoreRecords();
       setPageCount((state) => state + 1);
       setProgress({
-        count: totalCount
-          ? percentage(pageCount, MAXIMUM_REQUESTS)
-          : records.length,
-        type: totalCount ? 'percentage' : 'number',
+        exportedRecordCount: records.length,
+        totalRecordCount: totalCount,
+        displayType: totalCount ? 'percentage' : 'number',
       });
       await sleep(delayMs);
       setInflight(false);

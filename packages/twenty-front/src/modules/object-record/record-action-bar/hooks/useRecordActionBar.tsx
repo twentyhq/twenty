@@ -15,7 +15,10 @@ import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useExecuteQuickActionOnOneRecord } from '@/object-record/hooks/useExecuteQuickActionOnOneRecord';
-import { useExportTableData } from '@/object-record/record-index/options/hooks/useExportTableData';
+import {
+  displayedExportProgress,
+  useExportTableData,
+} from '@/object-record/record-index/options/hooks/useExportTableData';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
@@ -111,13 +114,7 @@ export const useRecordActionBar = ({
   const baseActions: ContextMenuEntry[] = useMemo(
     () => [
       {
-        label: `${
-          progress?.count === undefined
-            ? `Export`
-            : `Export (${progress.count}${
-                progress.type === 'percentage' ? '%' : ''
-              })`
-        }`,
+        label: displayedExportProgress(progress),
         Icon: IconFileExport,
         accent: 'default',
         onClick: () => download(),

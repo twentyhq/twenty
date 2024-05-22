@@ -9,7 +9,10 @@ import {
 } from 'twenty-ui';
 
 import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
-import { useExportTableData } from '@/object-record/record-index/options/hooks/useExportTableData';
+import {
+  displayedExportProgress,
+  useExportTableData,
+} from '@/object-record/record-index/options/hooks/useExportTableData';
 import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForBoard';
 import { useRecordIndexOptionsForTable } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForTable';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
@@ -123,13 +126,7 @@ export const RecordIndexOptionsDropdownContent = ({
           <MenuItem
             onClick={download}
             LeftIcon={IconFileExport}
-            text={
-              progress?.count === undefined
-                ? `Export`
-                : `Export (${progress.count}${
-                    progress.type === 'percentage' ? '%' : ''
-                  })`
-            }
+            text={displayedExportProgress(progress)}
           />
         </DropdownMenuItemsContainer>
       )}
