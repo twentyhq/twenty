@@ -10,8 +10,8 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { BlocklistItemDeleteMessagesJob } from 'src/modules/messaging/jobs/blocklist-item-delete-messages.job';
 import { BlocklistReimportMessagesJob } from 'src/modules/messaging/jobs/blocklist-reimport-messages.job';
 import { DeleteConnectedAccountAssociatedMessagingDataJob } from 'src/modules/messaging/jobs/delete-connected-account-associated-messaging-data.job';
-import { GmailFullSyncJob } from 'src/modules/messaging/jobs/gmail-full-sync.job';
-import { GmailPartialSyncJob } from 'src/modules/messaging/jobs/gmail-partial-sync.job';
+import { GmailFullMessageListFetchJob } from 'src/modules/messaging/jobs/gmail-full-message-list-fetch.job';
+import { GmailPartialMessageListFetchJob } from 'src/modules/messaging/jobs/gmail-partial-message-list-fetch.job';
 import { MessagingCreateCompanyAndContactAfterSyncJob } from 'src/modules/messaging/jobs/messaging-create-company-and-contact-after-sync.job';
 import { GmailFullSyncModule } from 'src/modules/messaging/services/gmail-full-sync/gmail-full-sync.module';
 import { GmailPartialSyncModule } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync.module';
@@ -46,12 +46,12 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/standar
       useClass: BlocklistItemDeleteMessagesJob,
     },
     {
-      provide: GmailFullSyncJob.name,
-      useClass: GmailFullSyncJob,
+      provide: GmailFullMessageListFetchJob.name,
+      useClass: GmailFullMessageListFetchJob,
     },
     {
-      provide: GmailPartialSyncJob.name,
-      useClass: GmailPartialSyncJob,
+      provide: GmailPartialMessageListFetchJob.name,
+      useClass: GmailPartialMessageListFetchJob,
     },
     {
       provide: DeleteConnectedAccountAssociatedMessagingDataJob.name,

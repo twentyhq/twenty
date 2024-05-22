@@ -8,9 +8,9 @@ import { MessageQueueJob } from 'src/engine/integrations/message-queue/interface
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import {
-  GmailPartialSyncJobData,
-  GmailPartialSyncJob,
-} from 'src/modules/messaging/jobs/gmail-partial-sync.job';
+  GmailPartialMessageListFetchJobData,
+  GmailPartialMessageListFetchJob,
+} from 'src/modules/messaging/jobs/gmail-partial-message-list-fetch.job';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
@@ -19,8 +19,12 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-ob
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
 @Injectable()
-export class GmailPartialSyncCronJob implements MessageQueueJob<undefined> {
-  private readonly logger = new Logger(GmailPartialSyncCronJob.name);
+export class GmailPartialMessageListFetchCronJob
+  implements MessageQueueJob<undefined>
+{
+  private readonly logger = new Logger(
+    GmailPartialMessageListFetchCronJob.name,
+  );
 
   constructor(
     @InjectRepository(Workspace, 'core')
@@ -71,8 +75,8 @@ export class GmailPartialSyncCronJob implements MessageQueueJob<undefined> {
           continue;
         }
 
-        await this.messageQueueService.add<GmailPartialSyncJobData>(
-          GmailPartialSyncJob.name,
+        await this.messageQueueService.add<GmailPartialMessageListFetchJobData>(
+          GmailPartialMessageListFetchJob.name,
           {
             workspaceId,
             connectedAccountId: messageChannel.connectedAccountId,

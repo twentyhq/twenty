@@ -18,9 +18,9 @@ import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache
 import { GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/constants/gmail-users-messages-get-batch-size.constant';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import {
-  GmailFullSyncJobData,
-  GmailFullSyncJob,
-} from 'src/modules/messaging/jobs/gmail-full-sync.job';
+  GmailFullMessageListFetchJobData,
+  GmailFullMessageListFetchJob,
+} from 'src/modules/messaging/jobs/gmail-full-message-list-fetch.job';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { GMAIL_ONGOING_SYNC_TIMEOUT } from 'src/modules/messaging/constants/gmail-ongoing-sync-timeout.constant';
@@ -294,8 +294,8 @@ export class GmailMessagesImportService {
     workspaceId: string,
     connectedAccountId: string,
   ) {
-    await this.messageQueueService.add<GmailFullSyncJobData>(
-      GmailFullSyncJob.name,
+    await this.messageQueueService.add<GmailFullMessageListFetchJobData>(
+      GmailFullMessageListFetchJob.name,
       { workspaceId, connectedAccountId },
     );
   }

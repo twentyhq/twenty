@@ -13,16 +13,16 @@ import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-accoun
 import { GmailPartialSyncService } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync.service';
 import { GmailPartialSyncV2Service } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync-v2.service';
 
-export type GmailPartialSyncJobData = {
+export type GmailPartialMessageListFetchJobData = {
   workspaceId: string;
   connectedAccountId: string;
 };
 
 @Injectable()
-export class GmailPartialSyncJob
-  implements MessageQueueJob<GmailPartialSyncJobData>
+export class GmailPartialMessageListFetchJob
+  implements MessageQueueJob<GmailPartialMessageListFetchJobData>
 {
-  private readonly logger = new Logger(GmailPartialSyncJob.name);
+  private readonly logger = new Logger(GmailPartialMessageListFetchJob.name);
 
   constructor(
     private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
@@ -32,7 +32,7 @@ export class GmailPartialSyncJob
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
-  async handle(data: GmailPartialSyncJobData): Promise<void> {
+  async handle(data: GmailPartialMessageListFetchJobData): Promise<void> {
     this.logger.log(
       `gmail partial-sync for workspace ${data.workspaceId} and account ${data.connectedAccountId}`,
     );
