@@ -6,7 +6,6 @@ import { IconCheckbox } from 'twenty-ui';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { useEventTracker } from '@/analytics/hooks/useEventTracker';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
-import { passwordResetTokenVerificationState } from '@/auth/states/passwordResetTokenVerificationState';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
@@ -39,10 +38,6 @@ export const PageChangeEffect = () => {
   const location = useLocation();
 
   const eventTracker = useEventTracker();
-
-  const passwordResetTokenVerification = useRecoilValue(
-    passwordResetTokenVerificationState,
-  );
 
   const [workspaceFromInviteHashQuery] =
     useGetWorkspaceFromInviteHashLazyQuery();
@@ -130,7 +125,6 @@ export const PageChangeEffect = () => {
     location.pathname,
     navigate,
     onboardingStatus,
-    passwordResetTokenVerification,
     workspaceFromInviteHashQuery,
   ]);
 

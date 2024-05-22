@@ -7,20 +7,19 @@ import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { z } from 'zod';
 
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
-import { passwordResetTokenVerificationState } from '@/auth/states/passwordResetTokenVerificationState';
-import { TokenVerificationType } from '@/auth/types/tokenVerificationType';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 import {
   useUpdatePasswordViaResetTokenMutation,
@@ -74,6 +73,7 @@ export const PasswordReset = () => {
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
+  const [isTokenValid, setIsTokenValid] = useState(false);
 
   const theme = useTheme();
 
@@ -81,8 +81,9 @@ export const PasswordReset = () => {
 
   const isLoggedIn = useIsLogged();
 
-  const [passwordResetTokenVerification, setPasswordResetTokenVerification] =
-    useRecoilState(passwordResetTokenVerificationState);
+  const setIsDefaultLayoutAuthModalVisibleState = useSetRecoilState(
+    isDefaultLayoutAuthModalVisibleState,
+  );
   const { control, handleSubmit } = useForm<Form>({
     mode: 'onChange',
     defaultValues: {
@@ -98,14 +99,15 @@ export const PasswordReset = () => {
     },
     skip: !passwordResetToken,
     onError: (error) => {
-      setPasswordResetTokenVerification(TokenVerificationType.Invalid);
+      setIsDefaultLayoutAuthModalVisibleState(false);
       enqueueSnackBar(error?.message ?? 'Token Invalid', {
         variant: 'error',
       });
       navigate(AppPath.Index);
     },
     onCompleted: (data) => {
-      setPasswordResetTokenVerification(TokenVerificationType.Valid);
+      setIsTokenValid(true);
+      setIsDefaultLayoutAuthModalVisibleState(true);
       if (isNonEmptyString(data?.validatePasswordResetToken?.email)) {
         setEmail(data.validatePasswordResetToken.email);
       }
@@ -154,26 +156,27 @@ export const PasswordReset = () => {
   };
 
   return (
-    passwordResetTokenVerification === TokenVerificationType.Valid && (
+    isTokenValid && (
       <StyledMainContainer>
         <AnimatedEaseIn>
           <Logo />
         </AnimatedEaseIn>
         <Title animate>Reset Password</Title>
         <StyledContentContainer>
-          <SkeletonTheme
-            baseColor={theme.background.quaternary}
-            highlightColor={theme.background.secondary}
-          >
-            <Skeleton
-              height={32}
-              count={2}
-              style={{
-                marginBottom: theme.spacing(2),
-              }}
-            />
-          </SkeletonTheme>
-          {email && (
+          {!email ? (
+            <SkeletonTheme
+              baseColor={theme.background.quaternary}
+              highlightColor={theme.background.secondary}
+            >
+              <Skeleton
+                height={32}
+                count={2}
+                style={{
+                  marginBottom: theme.spacing(2),
+                }}
+              />
+            </SkeletonTheme>
+          ) : (
             <StyledForm onSubmit={handleSubmit(onSubmit)}>
               <StyledFullWidthMotionDiv
                 initial={{ opacity: 0, height: 0 }}
