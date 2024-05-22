@@ -151,7 +151,7 @@ export class GmailFetchMessageContentFromCacheV2Service {
 
     await this.messageChannelRepository.updateSyncSubStatus(
       gmailMessageChannelId,
-      MessageChannelSyncSubStatus.MESSAGES_IMPORT_ONGOING,
+      MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING,
       workspaceId,
     );
 
