@@ -155,6 +155,7 @@ export const SettingsObjectDetail = () => {
                       }
                       fieldMetadataItem={activeMetadataField}
                       isRemoteObjectField={activeObjectMetadataItem.isRemote}
+                      // to={`./${getFieldSlug(activeMetadataField)}`}
                       ActionIcon={
                         <SettingsObjectFieldActiveActionDropdown
                           isCustomField={!!activeMetadataField.isCustom}

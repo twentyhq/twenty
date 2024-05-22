@@ -23,43 +23,40 @@ export class DistantTableService {
     >,
   ) {}
 
-  public getDistantTableColumns(
-    remoteServer: RemoteServerEntity<RemoteServerType>,
-    tableName: string,
-  ): PostgresTableSchemaColumn[] {
-    if (!remoteServer.availableTables) {
-      throw new BadRequestException(
-        'Remote server available tables are not defined',
-      );
-    }
-
-    return remoteServer.availableTables[tableName];
-  }
-
   public async fetchDistantTables(
     remoteServer: RemoteServerEntity<RemoteServerType>,
     workspaceId: string,
-  ): Promise<DistantTables> {
-    return this.createAvailableTables(remoteServer, workspaceId);
-  }
-
-  private async createAvailableTables(
-    remoteServer: RemoteServerEntity<RemoteServerType>,
-    workspaceId: string,
+    tableName?: string,
   ): Promise<DistantTables> {
     if (remoteServer.schema) {
-      return this.createAvailableTablesFromDynamicSchema(
+      return this.getDistantTablesFromDynamicSchema(
         remoteServer,
         workspaceId,
+        tableName,
       );
     }
 
-    return this.createAvailableTablesFromStaticSchema(remoteServer);
+    return this.getDistantTablesFromStaticSchema(remoteServer);
   }
 
-  private async createAvailableTablesFromDynamicSchema(
+  public async getDistantTableColumns(
     remoteServer: RemoteServerEntity<RemoteServerType>,
     workspaceId: string,
+    tableName: string,
+  ): Promise<PostgresTableSchemaColumn[]> {
+    const distantTables = await this.fetchDistantTables(
+      remoteServer,
+      workspaceId,
+      tableName,
+    );
+
+    return distantTables[tableName] || [];
+  }
+
+  private async getDistantTablesFromDynamicSchema(
+    remoteServer: RemoteServerEntity<RemoteServerType>,
+    workspaceId: string,
+    tableName?: string,
   ): Promise<DistantTables> {
     if (!remoteServer.schema) {
       throw new BadRequestException('Remote server schema is not defined');
@@ -73,12 +70,16 @@ export class DistantTableService {
         workspaceId,
       );
 
-    const availableTables = await workspaceDataSource.transaction(
+    const distantTables = await workspaceDataSource.transaction(
       async (entityManager: EntityManager) => {
         await entityManager.query(`CREATE SCHEMA "${tmpSchemaName}"`);
 
+        const tableLimitationsOptions = tableName
+          ? ` LIMIT TO (${tableName})`
+          : '';
+
         await entityManager.query(
-          `IMPORT FOREIGN SCHEMA "${remoteServer.schema}" FROM SERVER "${remoteServer.foreignDataWrapperId}" INTO "${tmpSchemaName}"`,
+          `IMPORT FOREIGN SCHEMA "${remoteServer.schema}"${tableLimitationsOptions} FROM SERVER "${remoteServer.foreignDataWrapperId}" INTO "${tmpSchemaName}"`,
         );
 
         const createdForeignTableNames = await entityManager.query(
@@ -106,22 +107,14 @@ export class DistantTableService {
       },
     );
 
-    await this.remoteServerRepository.update(remoteServer.id, {
-      availableTables,
-    });
-
-    return availableTables;
+    return distantTables;
   }
 
-  private async createAvailableTablesFromStaticSchema(
+  private async getDistantTablesFromStaticSchema(
     remoteServer: RemoteServerEntity<RemoteServerType>,
   ): Promise<DistantTables> {
     switch (remoteServer.foreignDataWrapperType) {
       case RemoteServerType.STRIPE_FDW:
-        this.remoteServerRepository.update(remoteServer.id, {
-          availableTables: STRIPE_DISTANT_TABLES,
-        });
-
         return STRIPE_DISTANT_TABLES;
       default:
         throw new BadRequestException(

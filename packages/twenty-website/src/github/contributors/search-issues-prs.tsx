@@ -1,5 +1,6 @@
 import { graphql } from '@octokit/graphql';
 
+import { getLatestUpdate } from '@/github/contributors/get-latest-update';
 import {
   IssueNode,
   PullRequestNode,
@@ -12,12 +13,13 @@ export async function searchIssuesPRs(
   isIssues = false,
   accumulatedData: Array<PullRequestNode | IssueNode> = [],
 ): Promise<Array<PullRequestNode | IssueNode>> {
+  const since = await getLatestUpdate();
   const { search } = await query<SearchIssuesPRsQuery>(
     `
         query searchPullRequestsAndIssues($cursor: String) {
           search(query: "repo:twentyhq/twenty ${
             isIssues ? 'is:issue' : 'is:pr'
-          } updated:>2024-02-27", type: ISSUE, first: 100, after: $cursor) {
+          } updated:>${since}", type: ISSUE, first: 100, after: $cursor) {
             edges {
               node {
                 ... on PullRequest {
@@ -80,6 +82,7 @@ export async function searchIssuesPRs(
       cursor,
     },
   );
+
   const newAccumulatedData: Array<PullRequestNode | IssueNode> = [
     ...accumulatedData,
     ...search.edges.map(({ node }) => node),

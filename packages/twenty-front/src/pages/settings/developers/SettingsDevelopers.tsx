@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { H2Title, IconPlus, IconSettings } from 'twenty-ui';
 
@@ -19,8 +18,6 @@ const StyledButtonContainer = styled.div`
 `;
 
 export const SettingsDevelopers = () => {
-  const navigate = useNavigate();
-
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
@@ -40,9 +37,7 @@ export const SettingsDevelopers = () => {
               title="Create API key"
               size="small"
               variant="secondary"
-              onClick={() => {
-                navigate('/settings/developers/api-keys/new');
-              }}
+              to={'/settings/developers/api-keys/new'}
             />
           </StyledButtonContainer>
         </Section>
@@ -58,9 +53,7 @@ export const SettingsDevelopers = () => {
               title="Create Webhook"
               size="small"
               variant="secondary"
-              onClick={() => {
-                navigate('/settings/developers/webhooks/new');
-              }}
+              to={'/settings/developers/webhooks/new'}
             />
           </StyledButtonContainer>
         </Section>

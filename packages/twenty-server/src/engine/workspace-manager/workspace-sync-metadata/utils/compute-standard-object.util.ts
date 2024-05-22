@@ -1,6 +1,6 @@
 import {
-  ComputedPartialObjectMetadata,
-  PartialObjectMetadata,
+  ComputedPartialWorkspaceEntity,
+  PartialWorkspaceEntity,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 import { ComputedPartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 
@@ -12,12 +12,12 @@ import {
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
 
 export const computeStandardObject = (
-  standardObjectMetadata: Omit<PartialObjectMetadata, 'standardId'> & {
+  standardObjectMetadata: Omit<PartialWorkspaceEntity, 'standardId'> & {
     standardId: string | null;
   },
   originalObjectMetadata: ObjectMetadataEntity,
   customObjectMetadataCollection: ObjectMetadataEntity[] = [],
-): ComputedPartialObjectMetadata => {
+): ComputedPartialWorkspaceEntity => {
   const fields: ComputedPartialFieldMetadata[] = [];
 
   for (const partialFieldMetadata of standardObjectMetadata.fields) {
