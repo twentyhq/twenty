@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { IconCheck, IconX } from 'twenty-ui';
@@ -7,8 +8,6 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { Select } from '@/ui/input/components/Select';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { isDefined } from '~/utils/isDefined';
-
-// TODO: rename to SettingsDataModelFieldBooleanForm and move to settings/data-model/fields/forms/components
 
 export const settingsDataModelFieldBooleanFormSchema = z.object({
   defaultValue: z.boolean(),
@@ -33,17 +32,22 @@ const StyledLabel = styled.span`
   font-size: ${({ theme }) => theme.font.size.xs};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
   margin-bottom: 6px;
-  margin-top: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const SettingsDataModelFieldBooleanForm = ({
   className,
   fieldMetadataItem,
 }: SettingsDataModelFieldBooleanFormProps) => {
-  const { control } = useFormContext<SettingsDataModelFieldBooleanFormValues>();
+  const { control, resetField } =
+    useFormContext<SettingsDataModelFieldBooleanFormValues>();
 
   const isEditMode = isDefined(fieldMetadataItem?.defaultValue);
   const initialValue = fieldMetadataItem?.defaultValue ?? true;
+
+  // Reset defaultValue on mount, so it doesn't conflict with other field types.
+  useEffect(() => {
+    resetField('defaultValue', { defaultValue: initialValue });
+  }, [initialValue, resetField]);
 
   return (
     <StyledContainer>

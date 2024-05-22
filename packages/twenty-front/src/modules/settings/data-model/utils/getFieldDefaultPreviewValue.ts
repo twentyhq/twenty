@@ -1,3 +1,5 @@
+import { isString } from '@sniptt/guards';
+
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
@@ -23,17 +25,18 @@ export const getFieldDefaultPreviewValue = ({
   relationObjectMetadataItem?: ObjectMetadataItem;
 }) => {
   if (fieldMetadataItem.type === FieldMetadataType.Select) {
-    const defaultValue = fieldMetadataItem.defaultValue
+    const defaultValue = isString(fieldMetadataItem.defaultValue)
       ? stripSimpleQuotesFromString(fieldMetadataItem.defaultValue)
       : null;
     return defaultValue ?? fieldMetadataItem.options?.[0]?.value ?? null;
   }
 
   if (fieldMetadataItem.type === FieldMetadataType.MultiSelect) {
-    const defaultValues = fieldMetadataItem.defaultValue?.map(
-      (defaultValue: `'${string}'`) =>
-        stripSimpleQuotesFromString(defaultValue),
-    );
+    const defaultValues = Array.isArray(fieldMetadataItem.defaultValue)
+      ? fieldMetadataItem.defaultValue?.map((defaultValue: `'${string}'`) =>
+          stripSimpleQuotesFromString(defaultValue),
+        )
+      : null;
     return defaultValues?.length
       ? defaultValues
       : fieldMetadataItem.options?.map(({ value }) => value) ?? null;
