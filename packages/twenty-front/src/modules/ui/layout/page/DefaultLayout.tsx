@@ -6,6 +6,8 @@ import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 
 import { AuthModal } from '@/auth/components/Modal';
+import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
@@ -69,6 +71,7 @@ export const DefaultLayout = () => {
   const theme = useTheme();
   const widowsWidth = useScreenSize().width;
   const isMatchingLocation = useIsMatchingLocation();
+  const onboardingStatus = useOnboardingStatus();
   const isDefaultLayoutAuthModalVisible = useRecoilValue(
     isDefaultLayoutAuthModalVisibleState,
   );
@@ -79,14 +82,22 @@ export const DefaultLayout = () => {
     ) {
       return isDefaultLayoutAuthModalVisible === true;
     }
-    return (
-      isMatchingLocation(AppPath.SignInUp) ||
-      isMatchingLocation(AppPath.CreateWorkspace) ||
-      isMatchingLocation(AppPath.CreateProfile) ||
-      isMatchingLocation(AppPath.PlanRequired) ||
-      isMatchingLocation(AppPath.PlanRequiredSuccess)
-    );
-  }, [isDefaultLayoutAuthModalVisible, isMatchingLocation]);
+    if (
+      OnboardingStatus.Incomplete === onboardingStatus ||
+      OnboardingStatus.OngoingUserCreation === onboardingStatus ||
+      OnboardingStatus.OngoingProfileCreation === onboardingStatus ||
+      OnboardingStatus.OngoingWorkspaceActivation === onboardingStatus
+    ) {
+      return true;
+    }
+    if (isMatchingLocation(AppPath.PlanRequired)) {
+      return (
+        OnboardingStatus.CompletedWithoutSubscription === onboardingStatus ||
+        OnboardingStatus.Canceled === onboardingStatus
+      );
+    }
+    return false;
+  }, [isDefaultLayoutAuthModalVisible, isMatchingLocation, onboardingStatus]);
 
   return (
     <>
