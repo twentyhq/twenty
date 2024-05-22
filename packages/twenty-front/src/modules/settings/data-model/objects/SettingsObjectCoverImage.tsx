@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { IconEye } from 'twenty-ui';
 
@@ -28,8 +27,6 @@ const StyledButtonContainer = styled.div`
   padding-top: ${({ theme }) => theme.spacing(5)};
 `;
 export const SettingsObjectCoverImage = () => {
-  const navigate = useNavigate();
-
   return (
     <StyledCoverImageContainer>
       <StyledButtonContainer>
@@ -37,7 +34,7 @@ export const SettingsObjectCoverImage = () => {
           Icon={IconEye}
           title="Visualize"
           size="small"
-          onClick={() => navigate('/settings/objects/overview')}
+          to="/settings/objects/overview"
         ></Button>
       </StyledButtonContainer>
     </StyledCoverImageContainer>

@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Handle, NodeProps, Position } from 'reactflow';
+import { NodeProps } from 'reactflow';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconTag, useIcons } from 'twenty-ui';
@@ -46,8 +46,8 @@ const StyledInnerCard = styled.div`
   border: 1px solid ${({ theme }) => theme.border.color.light};
   background-color: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
-  padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(2)}
-    ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(2.5)};
+  padding: ${({ theme }) => theme.spacing(2)} 0
+    ${({ theme }) => theme.spacing(2)} 0;
   display: flex;
   flex-flow: column nowrap;
   gap: ${({ theme }) => theme.spacing(0.5)};
@@ -58,6 +58,14 @@ const StyledCardRow = styled.div`
   align-items: center;
   display: flex;
   height: 24px;
+  gap: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledCardRowOther = styled.div`
+  align-items: center;
+  display: flex;
+  height: 24px;
+  padding: 0 ${({ theme }) => theme.spacing(2)};
   gap: ${({ theme }) => theme.spacing(1)};
 `;
 
@@ -123,62 +131,14 @@ export const ObjectNode = ({ data }: ObjectNodeProps) => {
             </StyledCardRow>
           ))}
         {countNonRelation > 0 && (
-          <StyledCardRow>
+          <StyledCardRowOther>
             <IconTag size={theme.icon.size.md} />
             <StyledCardRowText>
               {countNonRelation} other fields
             </StyledCardRowText>
-          </StyledCardRow>
+          </StyledCardRowOther>
         )}
       </StyledInnerCard>
-      <Handle
-        type="target"
-        position={Position.Right}
-        className="right-handle"
-        id={data.namePlural + '-target-right'}
-      ></Handle>
-      <Handle
-        type="target"
-        className="left-handle"
-        position={Position.Left}
-        id={data.namePlural + '-target-left'}
-      ></Handle>
-      <Handle
-        type="target"
-        className="top-handle"
-        position={Position.Top}
-        id={data.namePlural + '-target-top'}
-      ></Handle>
-      <Handle
-        type="target"
-        className="bottom-handle"
-        position={Position.Bottom}
-        id={data.namePlural + '-target-bottom'}
-      ></Handle>
-      <Handle
-        type="source"
-        className="right-handle"
-        position={Position.Right}
-        id={data.namePlural + '-source-right'}
-      ></Handle>
-      <Handle
-        type="source"
-        className="left-handle"
-        position={Position.Left}
-        id={data.namePlural + '-source-left'}
-      ></Handle>
-      <Handle
-        type="source"
-        className="top-handle"
-        position={Position.Top}
-        id={data.namePlural + '-source-top'}
-      ></Handle>
-      <Handle
-        type="source"
-        className="bottom-handle"
-        position={Position.Bottom}
-        id={data.namePlural + '-source-bottom'}
-      ></Handle>
     </StyledObjectNode>
   );
 };

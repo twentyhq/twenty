@@ -1,5 +1,4 @@
 import { useCallback, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import ReactFlow, {
   applyEdgeChanges,
   applyNodeChanges,
@@ -7,6 +6,8 @@ import ReactFlow, {
   Controls,
   Edge,
   EdgeChange,
+  getIncomers,
+  getOutgoers,
   NodeChange,
   useEdgesState,
   useNodesState,
@@ -20,9 +21,12 @@ import { IconSettings, IconX } from 'twenty-ui';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
+import {
+  calculateSourcePosition,
+  calculateTargetPosition,
+} from '~/pages/settings/data-model/SettingsObjectOverview/EdgeUtil';
 import { Markers } from '~/pages/settings/data-model/SettingsObjectOverview/Markers';
 import { ObjectNode } from '~/pages/settings/data-model/SettingsObjectOverview/ObjectNode';
-import { StepEdge } from '~/pages/settings/data-model/SettingsObjectOverview/StepEdge';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -31,10 +35,6 @@ import 'reactflow/dist/style.css';
 const NodeTypes = {
   object: ObjectNode,
 };
-const EdgeTypes = {
-  customStep: StepEdge,
-};
-
 const StyledContainer = styled.div`
   height: 100%;
   .has-many-edge {
@@ -105,6 +105,9 @@ const StyledContainer = styled.div`
       fill: ${({ theme }) => theme.font.color.secondary};
     }
   }
+  .react-flow__node {
+    z-index: -1 !important;
+  }
 `;
 
 const StyledCloseButton = styled.div`
@@ -116,7 +119,6 @@ const StyledCloseButton = styled.div`
 
 export const SettingsObjectOverview = () => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
-  const navigate = useNavigate();
   const theme = useTheme();
   const [nodes, setNodes] = useNodesState([]);
   const [edges, setEdges] = useEdgesState([]);
@@ -130,6 +132,98 @@ export const SettingsObjectOverview = () => {
     (changes: EdgeChange[]) =>
       setEdges((eds) => applyEdgeChanges(changes, eds)),
     [setEdges],
+  );
+
+  const handleNodesChange = useCallback(
+    (nodeChanges: any[]) => {
+      nodeChanges.forEach((nodeChange) => {
+        const node = nodes.find((node) => node.id === nodeChange.id);
+        if (!node) {
+          return;
+        }
+
+        const incomingNodes = getIncomers(node, nodes, edges);
+        const newXPos =
+          'positionAbsolute' in nodeChange
+            ? nodeChange.positionAbsolute?.x
+            : node.position.x || 0;
+
+        incomingNodes.forEach((incomingNode) => {
+          const edge = edges.find((edge) => {
+            return edge.target === node.id && edge.source === incomingNode.id;
+          });
+
+          if (isDefined(newXPos)) {
+            setEdges((eds) =>
+              eds.map((ed) => {
+                if (isDefined(edge) && ed.id === edge.id) {
+                  const sourcePosition = calculateSourcePosition(
+                    incomingNode.width as number,
+                    incomingNode.position.x,
+                    node.width as number,
+                    newXPos,
+                  );
+                  const targetPosition = calculateTargetPosition(
+                    incomingNode.width as number,
+                    incomingNode.position.x,
+                    node.width as number,
+                    newXPos,
+                  );
+                  const sourceHandle = `${edge.data.sourceField}-${sourcePosition}`;
+                  const targetHandle = `${edge.data.targetField}-${targetPosition}`;
+                  ed.sourceHandle = sourceHandle;
+                  ed.targetHandle = targetHandle;
+                  ed.markerEnd = 'marker';
+                  ed.markerStart = 'marker';
+                }
+
+                return ed;
+              }),
+            );
+          }
+        });
+
+        const outgoingNodes = getOutgoers(node, nodes, edges);
+        outgoingNodes.forEach((targetNode) => {
+          const edge = edges.find((edge) => {
+            return edge.target === targetNode.id && edge.source === node.id;
+          });
+          if (isDefined(newXPos)) {
+            setEdges((eds) =>
+              eds.map((ed) => {
+                if (isDefined(edge) && ed.id === edge.id) {
+                  const sourcePosition = calculateSourcePosition(
+                    node.width as number,
+                    newXPos,
+                    targetNode.width as number,
+                    targetNode.position.x,
+                  );
+                  const targetPosition = calculateTargetPosition(
+                    node.width as number,
+                    newXPos,
+                    targetNode.width as number,
+                    targetNode.position.x,
+                  );
+
+                  const sourceHandle = `${edge.data.sourceField}-${sourcePosition}`;
+                  const targetHandle = `${edge.data.targetField}-${targetPosition}`;
+
+                  ed.sourceHandle = sourceHandle;
+                  ed.targetHandle = targetHandle;
+                  ed.markerEnd = 'marker';
+                  ed.markerStart = 'marker';
+                }
+
+                return ed;
+              }),
+            );
+          }
+        });
+      });
+
+      onNodesChange(nodeChanges);
+    },
+    [onNodesChange, setEdges, nodes, edges],
   );
 
   useEffect(() => {
@@ -167,44 +261,29 @@ export const SettingsObjectOverview = () => {
           const targetObj =
             field.relationDefinition?.targetObjectMetadata.namePlural;
 
-          const existingEdge = edges.find(
-            (x) => x.id === `${sourceObj}-${targetObj}`,
-          );
-
-          if (isDefined(existingEdge)) {
-            existingEdge.data.relations.push({
-              fromField: field.toRelationMetadata.fromFieldMetadataId,
-              toField: field.id,
+          edges.push({
+            id: `${sourceObj}-${targetObj}`,
+            source: object.namePlural,
+            sourceHandle: `${field.id}-right`,
+            target: field.toRelationMetadata.fromObjectMetadata.namePlural,
+            targetHandle: `${field.toRelationMetadata.fromFieldMetadataId}-left`,
+            type: 'smoothstep',
+            style: {
+              strokeWidth: 1,
+              stroke: theme.color.gray,
+            },
+            markerEnd: 'marker',
+            markerStart: 'marker',
+            data: {
+              sourceField: field.id,
+              targetField: field.toRelationMetadata.fromFieldMetadataId,
               relation: field.toRelationMetadata.relationType,
-            });
-          } else {
-            edges.push({
-              id: `${sourceObj}-${targetObj}`,
-              source: object.namePlural,
-              target: field.toRelationMetadata.fromObjectMetadata.namePlural,
-              type: 'customStep',
-              style: {
-                strokeWidth: 1,
-                stroke: theme.color.gray,
-              },
-              data: {
-                relations: [
-                  {
-                    fromField: field.toRelationMetadata.fromFieldMetadataId,
-                    toField: field.id,
-                    relation: field.toRelationMetadata.relationType,
-                  },
-                ],
-                sourceObject: sourceObj,
-                targetObject: targetObj,
-              },
-            });
-            if (
-              !isUndefinedOrNull(sourceObj) &&
-              !isUndefinedOrNull(targetObj)
-            ) {
-              g.setEdge(sourceObj, targetObj);
-            }
+              sourceObject: sourceObj,
+              targetObject: targetObj,
+            },
+          });
+          if (!isUndefinedOrNull(sourceObj) && !isUndefinedOrNull(targetObj)) {
+            g.setEdge(sourceObj, targetObj);
           }
         }
       }
@@ -231,20 +310,16 @@ export const SettingsObjectOverview = () => {
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <StyledContainer>
         <StyledCloseButton>
-          <Button
-            Icon={IconX}
-            onClick={() => navigate('/settings/objects')}
-          ></Button>
+          <Button Icon={IconX} to="/settings/objects"></Button>
         </StyledCloseButton>
         <Markers />
         <ReactFlow
           fitView
           nodes={nodes}
-          onNodesChange={onNodesChange}
           edges={edges}
           onEdgesChange={onEdgesChange}
           nodeTypes={NodeTypes}
-          edgeTypes={EdgeTypes}
+          onNodesChange={handleNodesChange}
           proOptions={{ hideAttribution: true }}
         >
           <Background />
