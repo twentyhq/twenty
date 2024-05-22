@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { AnimatePresence, motion } from 'framer-motion';
+import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { useSnackBarManagerScopedStates } from '@/ui/feedback/snack-bar-manager/hooks/internal/useSnackBarManagerScopedStates';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -10,14 +11,15 @@ const StyledSnackBarContainer = styled.div`
   display: flex;
   flex-direction: column;
   position: fixed;
-  right: 12px;
-  bottom: 12px;
+  right: ${({ theme }) => theme.spacing(3)};
+  bottom: ${({ theme }) => theme.spacing(3)};
   z-index: ${({ theme }) => theme.lastLayerZIndex};
-`;
 
-const StyledSnackBarMotionContainer = styled(motion.div)`
-  margin-right: ${({ theme }) => theme.spacing(3)};
-  margin-top: ${({ theme }) => theme.spacing(3)};
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    bottom: ${({ theme }) => theme.spacing(16)};
+    right: 50%;
+    transform: translateX(50%);
+  }
 `;
 
 const variants = {
@@ -42,7 +44,7 @@ export const SnackBarProvider = ({ children }: React.PropsWithChildren) => {
         <AnimatePresence>
           {snackBarInternal.queue.map(
             ({ duration, icon, id, message, title, variant }) => (
-              <StyledSnackBarMotionContainer
+              <motion.div
                 key={id}
                 variants={variants}
                 initial="out"
@@ -55,7 +57,7 @@ export const SnackBarProvider = ({ children }: React.PropsWithChildren) => {
                   {...{ duration, icon, message, title, variant }}
                   onClose={() => handleSnackBarClose(id)}
                 />
-              </StyledSnackBarMotionContainer>
+              </motion.div>
             ),
           )}
         </AnimatePresence>
