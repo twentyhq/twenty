@@ -11,6 +11,7 @@ import ReactFlow, {
   useEdgesState,
   useNodesState,
 } from 'reactflow';
+import dagre from '@dagrejs/dagre';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
@@ -19,14 +20,11 @@ import { IconSettings, IconX } from 'twenty-ui';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
-import {
-  edgeMarkerNameSource,
-  edgeMarkerNameTarget,
-} from '~/pages/settings/data-model/SettingsObjectOverview/EdgeUtil';
 import { Markers } from '~/pages/settings/data-model/SettingsObjectOverview/Markers';
 import { ObjectNode } from '~/pages/settings/data-model/SettingsObjectOverview/ObjectNode';
 import { StepEdge } from '~/pages/settings/data-model/SettingsObjectOverview/StepEdge';
 import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import 'reactflow/dist/style.css';
 
@@ -137,6 +135,10 @@ export const SettingsObjectOverview = () => {
   useEffect(() => {
     const items = objectMetadataItems.filter((x) => !x.isSystem);
 
+    const g = new dagre.graphlib.Graph();
+    g.setGraph({ rankdir: 'LR' });
+    g.setDefaultEdgeLabel(() => ({}));
+
     const edges: Edge[] = [];
     const nodes = [];
     let i = 0;
@@ -149,6 +151,8 @@ export const SettingsObjectOverview = () => {
         data: object,
         type: 'object',
       });
+      g.setNode(object.namePlural, { width: 220, height: 100 });
+
       for (const field of object.fields) {
         if (
           isDefined(field.toRelationMetadata) &&
@@ -195,17 +199,30 @@ export const SettingsObjectOverview = () => {
                 targetObject: targetObj,
               },
             });
-            edges[edges.length - 1].markerStart = edgeMarkerNameSource(
-              edges.at(-1),
-            );
-            edges[edges.length - 1].markerEnd = edgeMarkerNameTarget(
-              edges.at(-1),
-            );
+            if (
+              !isUndefinedOrNull(sourceObj) &&
+              !isUndefinedOrNull(targetObj)
+            ) {
+              g.setEdge(sourceObj, targetObj);
+            }
           }
         }
       }
       i++;
     }
+
+    dagre.layout(g);
+
+    nodes.forEach((node) => {
+      const nodeWithPosition = g.node(node.id);
+      node.position = {
+        // We are shifting the dagre node position (anchor=center center) to the top left
+        // so it matches the React Flow node anchor point (top left).
+        x: nodeWithPosition.x - node.width / 2,
+        y: nodeWithPosition.y - node.height / 2,
+      };
+    });
+
     setNodes(nodes);
     setEdges(edges);
   }, [objectMetadataItems, setEdges, setNodes, theme]);

@@ -4112,6 +4112,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@dagrejs/dagre@npm:^1.1.2":
+  version: 1.1.2
+  resolution: "@dagrejs/dagre@npm:1.1.2"
+  dependencies:
+    "@dagrejs/graphlib": "npm:2.2.2"
+  checksum: 717b3e6974b67a3839ea828228582fa3bd310fac5aadc4a68d5e4b96c3f7bcb97cb6f78518bdbd4c14e4fa1cc764ac6259fa567734916fa51f078f5747c85877
+  languageName: node
+  linkType: hard
+
+"@dagrejs/graphlib@npm:2.2.2":
+  version: 2.2.2
+  resolution: "@dagrejs/graphlib@npm:2.2.2"
+  checksum: 2e79a4f5c6c402054b7ef42e786459645495934476170999f13867a55a00072636a23914772cce6bc03ce51eef70de589058860b8f034c1d70804fb61e01fcfc
+  languageName: node
+  linkType: hard
+
 "@discoveryjs/json-ext@npm:0.5.7, @discoveryjs/json-ext@npm:^0.5.3":
   version: 0.5.7
   resolution: "@discoveryjs/json-ext@npm:0.5.7"
@@ -16433,6 +16449,13 @@ __metadata:
     "@types/d3-transition": "npm:*"
     "@types/d3-zoom": "npm:*"
   checksum: a9c6d65b13ef3b42c87f2a89ea63a6d5640221869f97d0657b0cb2f1dac96a0f164bf5605643c0794e0de3aa2bf05df198519aaf15d24ca135eb0e8bd8a9d879
+  languageName: node
+  linkType: hard
+
+"@types/dagre@npm:^0.7.52":
+  version: 0.7.52
+  resolution: "@types/dagre@npm:0.7.52"
+  checksum: 0e196a8c17a92765d6e28b10d78d5c1cb1ee540598428cbb61ce3b90e0fedaac2b11f6dbeebf0d2f69d5332d492b12091be5f1e575f538194e20d8887979d006
   languageName: node
   linkType: hard
 
@@ -46799,6 +46822,7 @@ __metadata:
     "@chakra-ui/system": "npm:^2.6.0"
     "@codesandbox/sandpack-react": "npm:^2.13.5"
     "@crxjs/vite-plugin": "npm:^1.0.14"
+    "@dagrejs/dagre": "npm:^1.1.2"
     "@docusaurus/core": "npm:^3.1.0"
     "@docusaurus/module-type-aliases": "npm:^3.1.0"
     "@docusaurus/preset-classic": "npm:^3.1.0"
@@ -46888,6 +46912,7 @@ __metadata:
     "@types/bytes": "npm:^3.1.1"
     "@types/chrome": "npm:^0.0.267"
     "@types/crypto-js": "npm:^4.2.2"
+    "@types/dagre": "npm:^0.7.52"
     "@types/deep-equal": "npm:^1.0.1"
     "@types/dompurify": "npm:^3.0.5"
     "@types/express": "npm:^4.17.13"
