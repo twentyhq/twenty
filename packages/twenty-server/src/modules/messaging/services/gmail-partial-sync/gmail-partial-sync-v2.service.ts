@@ -302,7 +302,7 @@ export class GmailPartialSyncV2Service {
 
         await this.messageChannelRepository.updateSyncSubStatus(
           gmailMessageChannel.id,
-          MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
+          MessageChannelSyncSubStatus.MESSAGES_IMPORT_ONGOING,
           workspaceId,
         );
       })
