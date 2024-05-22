@@ -12,6 +12,18 @@
 
 .DocSearch-Footer{
     flex-direction: row;
+    box-shadow: none;
+    border: 1px solid #14141414;
+}
+
+.DocSearch-Form {
+    box-shadow: none;
+    border: 1px solid #141414;
+    border-radius: 8px;
+}
+
+.DocSearch-Modal {
+    background-color: white;
 }
 
 .DocSearch-Hits {
@@ -20,7 +32,12 @@
 }
 
 .DocSearch-Hit[aria-selected=true] mark {
-    background-color: transparent;
+    color: #1961ED !important;
+    text-decoration: none;
+}
+
+.DocSearch-Hit a {
+    box-shadow: none;
 }
 
 .DocSearch-Hits mark {
@@ -41,15 +58,18 @@
 .DocSearch-Hit-action h2{
     font-size: .9em;
     margin: 0 0 4px;
+    font-weight: 500;
 }
 
 .DocSearch-Hit-action p{
-    font-size: .9em;
+    font-size: 12px;
     margin: 0;
     width: 90%;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    font-family: var(--font-inter);
+    font-weight: 400;
 }
 
 .DocSearch-Button {
@@ -75,6 +95,13 @@
     color: #B3B3B3 !important;
 }
 
+.DocSearch-Hit-source {
+    background: none;
+    font-weight: 600;
+    font-size: 12px;
+    font-family: var(--font-inter);
+}
+
 .DocSearch-Button-Placeholder {
     font-weight: 500;
     font-family: var(--font-gabarito);
@@ -86,7 +113,8 @@
 
 :root {
     --docsearch-primary-color: #1c1e21;
-    --docsearch-highlight-color: #5468ff;
+    --docsearch-highlight-color: #1414140F;
+    --docsearch-hit-active-color: var(--docsearch-muted-color);
   }
 
 .anchor {
