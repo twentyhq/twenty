@@ -122,15 +122,15 @@ export class GmailPartialSyncV2Service {
       return;
     }
 
-    const gmailClient: gmail_v1.Gmail =
-      await this.gmailClientProvider.getGmailClient(refreshToken);
-
-    const { history, historyId, error } = await this.getHistoryFromGmail(
-      gmailClient,
-      lastSyncHistoryId,
-    );
-
     try {
+      const gmailClient: gmail_v1.Gmail =
+        await this.gmailClientProvider.getGmailClient(refreshToken);
+
+      const { history, historyId, error } = await this.getHistoryFromGmail(
+        gmailClient,
+        lastSyncHistoryId,
+      );
+
       if (error?.code === 404) {
         this.logger.log(
           `404: Invalid lastSyncHistoryId: ${lastSyncHistoryId} for workspace ${workspaceId} and account ${connectedAccountId}, falling back to full sync.`,
