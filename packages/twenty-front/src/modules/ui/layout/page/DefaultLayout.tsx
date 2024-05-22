@@ -6,8 +6,6 @@ import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 import { useRecoilValue } from 'recoil';
 
 import { AuthModal } from '@/auth/components/Modal';
-import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
-import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
@@ -66,7 +64,6 @@ const StyledMainContainer = styled.div`
 `;
 
 export const DefaultLayout = () => {
-  const onboardingStatus = useOnboardingStatus();
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
   const theme = useTheme();
@@ -76,31 +73,20 @@ export const DefaultLayout = () => {
     isDefaultLayoutAuthModalVisibleState,
   );
   const showAuthModal = useMemo(() => {
-    if (isMatchingLocation(AppPath.Verify)) {
-      return false;
-    }
-    if (isMatchingLocation(AppPath.Index)) {
-      return false;
-    }
-    if (isMatchingLocation(AppPath.ResetPassword)) {
-      return isDefaultLayoutAuthModalVisible === true;
-    }
-    if (isMatchingLocation(AppPath.Invite)) {
+    if (
+      isMatchingLocation(AppPath.Invite) ||
+      isMatchingLocation(AppPath.ResetPassword)
+    ) {
       return isDefaultLayoutAuthModalVisible === true;
     }
     return (
-      (onboardingStatus &&
-        [
-          OnboardingStatus.Incomplete,
-          OnboardingStatus.OngoingUserCreation,
-          OnboardingStatus.OngoingProfileCreation,
-          OnboardingStatus.OngoingWorkspaceActivation,
-        ].includes(onboardingStatus)) ||
-      (isMatchingLocation(AppPath.PlanRequired) &&
-        (OnboardingStatus.CompletedWithoutSubscription ||
-          OnboardingStatus.Canceled))
+      isMatchingLocation(AppPath.SignInUp) ||
+      isMatchingLocation(AppPath.CreateWorkspace) ||
+      isMatchingLocation(AppPath.CreateProfile) ||
+      isMatchingLocation(AppPath.PlanRequired) ||
+      isMatchingLocation(AppPath.PlanRequiredSuccess)
     );
-  }, [isDefaultLayoutAuthModalVisible, isMatchingLocation, onboardingStatus]);
+  }, [isDefaultLayoutAuthModalVisible, isMatchingLocation]);
 
   return (
     <>
