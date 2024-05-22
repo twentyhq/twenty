@@ -577,14 +577,14 @@ export class WorkspaceQueryRunnerService {
         workspaceId,
       );
 
-    await workspaceDataSource?.query(`
-        SET search_path TO ${this.workspaceDataSourceService.getSchemaName(
-          workspaceId,
-        )};
-      `);
-
     const results = await workspaceDataSource?.query<PGGraphQLResult>(
-      `SELECT graphql.resolve($1);`,
+      `
+      BEGIN;
+      SET search_path TO ${this.workspaceDataSourceService.getSchemaName(
+        workspaceId,
+      )};
+      SELECT graphql.resolve($1);
+      COMMIT`,
       [query],
     );
 
