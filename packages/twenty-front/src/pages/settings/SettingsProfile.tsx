@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { IconSettings } from 'twenty-ui';
+import { H1Title, H2Title, IconSettings } from 'twenty-ui';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { ChangePassword } from '@/settings/profile/components/ChangePassword';
@@ -7,8 +7,6 @@ import { DeleteAccount } from '@/settings/profile/components/DeleteAccount';
 import { EmailField } from '@/settings/profile/components/EmailField';
 import { NameFields } from '@/settings/profile/components/NameFields';
 import { ProfilePictureUploader } from '@/settings/profile/components/ProfilePictureUploader';
-import { H1Title } from '@/ui/display/typography/components/H1Title';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 
