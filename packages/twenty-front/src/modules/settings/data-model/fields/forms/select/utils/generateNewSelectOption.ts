@@ -2,8 +2,8 @@ import { getNextThemeColor } from 'twenty-ui';
 import { v4 } from 'uuid';
 
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
-import { generateNewSelectOptionLabel } from '@/settings/data-model/fields/forms/utils/generateNewSelectOptionLabel';
-import { getOptionValueFromLabel } from '@/settings/data-model/fields/forms/utils/getOptionValueFromLabel';
+import { generateNewSelectOptionLabel } from '@/settings/data-model/fields/forms/select/utils/generateNewSelectOptionLabel';
+import { getOptionValueFromLabel } from '@/settings/data-model/fields/forms/select/utils/getOptionValueFromLabel';
 
 export const generateNewSelectOption = (
   options: FieldMetadataItemOption[],

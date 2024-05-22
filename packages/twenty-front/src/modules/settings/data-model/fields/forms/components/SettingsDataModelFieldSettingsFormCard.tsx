@@ -8,18 +8,18 @@ import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/Set
 import {
   SettingsDataModelFieldBooleanForm,
   settingsDataModelFieldBooleanFormSchema,
-} from '@/settings/data-model/fields/forms/components/boolean/SettingsDataModelFieldBooleanForm';
+} from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm';
 import {
   SettingsDataModelFieldCurrencyForm,
   settingsDataModelFieldCurrencyFormSchema,
-} from '@/settings/data-model/fields/forms/components/currency/SettingsDataModelFieldCurrencyForm';
-import { settingsDataModelFieldRelationFormSchema } from '@/settings/data-model/fields/forms/components/relation/SettingsDataModelFieldRelationForm';
-import { SettingsDataModelFieldRelationSettingsFormCard } from '@/settings/data-model/fields/forms/components/relation/SettingsDataModelFieldRelationSettingsFormCard';
+} from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm';
+import { settingsDataModelFieldRelationFormSchema } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm';
+import { SettingsDataModelFieldRelationSettingsFormCard } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationSettingsFormCard';
 import {
   settingsDataModelFieldMultiSelectFormSchema,
   settingsDataModelFieldSelectFormSchema,
-} from '@/settings/data-model/fields/forms/components/select/SettingsDataModelFieldSelectForm';
-import { SettingsDataModelFieldSelectSettingsFormCard } from '@/settings/data-model/fields/forms/components/select/SettingsDataModelFieldSelectSettingsFormCard';
+} from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm';
+import { SettingsDataModelFieldSelectSettingsFormCard } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectSettingsFormCard';
 import {
   SettingsDataModelFieldPreviewCard,
   SettingsDataModelFieldPreviewCardProps,

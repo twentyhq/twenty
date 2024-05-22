@@ -8,8 +8,8 @@ import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import {
   SettingsDataModelFieldRelationForm,
   SettingsDataModelFieldRelationFormValues,
-} from '@/settings/data-model/fields/forms/components/relation/SettingsDataModelFieldRelationForm';
-import { useRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/hooks/useRelationSettingsFormInitialValues';
+} from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm';
+import { useRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/relation/hooks/useRelationSettingsFormInitialValues';
 import {
   SettingsDataModelFieldPreviewCard,
   SettingsDataModelFieldPreviewCardProps,

@@ -1,10 +1,10 @@
-import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { IconCheck, IconX } from 'twenty-ui';
 import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/fields/forms/boolean/hooks/useBooleanSettingsFormInitialValues';
 import { Select } from '@/ui/input/components/Select';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { isDefined } from '~/utils/isDefined';
@@ -13,13 +13,13 @@ export const settingsDataModelFieldBooleanFormSchema = z.object({
   defaultValue: z.boolean(),
 });
 
-type SettingsDataModelFieldBooleanFormValues = z.infer<
+export type SettingsDataModelFieldBooleanFormValues = z.infer<
   typeof settingsDataModelFieldBooleanFormSchema
 >;
 
 type SettingsDataModelFieldBooleanFormProps = {
   className?: string;
-  fieldMetadataItem?: Pick<FieldMetadataItem, 'defaultValue'>;
+  fieldMetadataItem: Pick<FieldMetadataItem, 'defaultValue'>;
 };
 
 const StyledContainer = styled(CardContent)`
@@ -38,16 +38,12 @@ export const SettingsDataModelFieldBooleanForm = ({
   className,
   fieldMetadataItem,
 }: SettingsDataModelFieldBooleanFormProps) => {
-  const { control, resetField } =
-    useFormContext<SettingsDataModelFieldBooleanFormValues>();
+  const { control } = useFormContext<SettingsDataModelFieldBooleanFormValues>();
 
   const isEditMode = isDefined(fieldMetadataItem?.defaultValue);
-  const initialValue = fieldMetadataItem?.defaultValue ?? true;
-
-  // Reset defaultValue on mount, so it doesn't conflict with other field types.
-  useEffect(() => {
-    resetField('defaultValue', { defaultValue: initialValue });
-  }, [initialValue, resetField]);
+  const { initialDefaultValue } = useBooleanSettingsFormInitialValues({
+    fieldMetadataItem,
+  });
 
   return (
     <StyledContainer>
@@ -55,7 +51,7 @@ export const SettingsDataModelFieldBooleanForm = ({
       <Controller
         name="defaultValue"
         control={control}
-        defaultValue={initialValue}
+        defaultValue={initialDefaultValue}
         render={({ field: { onChange, value } }) => (
           <Select
             className={className}

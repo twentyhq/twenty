@@ -8,8 +8,8 @@ import {
   settingsDataModelFieldMultiSelectFormSchema,
   SettingsDataModelFieldSelectForm,
   settingsDataModelFieldSelectFormSchema,
-} from '@/settings/data-model/fields/forms/components/select/SettingsDataModelFieldSelectForm';
-import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/hooks/useSelectSettingsFormInitialValues';
+} from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm';
+import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
 import {
   SettingsDataModelFieldPreviewCard,
   SettingsDataModelFieldPreviewCardProps,
