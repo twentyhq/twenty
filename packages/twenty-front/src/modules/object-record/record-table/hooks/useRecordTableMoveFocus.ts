@@ -83,6 +83,7 @@ export const useRecordTableMoveFocus = (recordTableId?: string) => {
           snapshot,
           numberOfTableRowsState,
         );
+
         const currentColumnNumber = softFocusPosition.column;
         const currentRowNumber = softFocusPosition.row;
 

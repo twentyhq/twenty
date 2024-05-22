@@ -7,6 +7,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
+import { isAggregationEnabled } from '@/object-metadata/utils/isAggregationEnabled';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { RecordGqlEdge } from '@/object-record/graphql/types/RecordGqlEdge';
@@ -122,7 +123,8 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     });
 
   const fetchMoreRecords = useCallback(async () => {
-    if (hasNextPage) {
+    // Remote objects does not support hasNextPage. We cannot rely on it to fetch more records.
+    if (hasNextPage || (!isAggregationEnabled(objectMetadataItem) && !error)) {
       setIsFetchingMoreObjects(true);
 
       try {
@@ -137,11 +139,11 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
             const nextEdges =
               fetchMoreResult?.[objectMetadataItem.namePlural]?.edges;
 
-            let newEdges: RecordGqlEdge[] = [];
+            let newEdges: RecordGqlEdge[] = previousEdges ?? [];
 
-            if (isNonEmptyArray(previousEdges) && isNonEmptyArray(nextEdges)) {
+            if (isNonEmptyArray(nextEdges)) {
               newEdges = filterUniqueRecordEdgesByCursor([
-                ...(prev?.[objectMetadataItem.namePlural]?.edges ?? []),
+                ...newEdges,
                 ...(fetchMoreResult?.[objectMetadataItem.namePlural]?.edges ??
                   []),
               ]);
@@ -199,21 +201,21 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     }
   }, [
     hasNextPage,
+    objectMetadataItem,
+    error,
     setIsFetchingMoreObjects,
     fetchMore,
     filter,
     orderBy,
     lastCursor,
-    objectMetadataItem.namePlural,
-    objectMetadataItem.nameSingular,
-    onCompleted,
     data,
+    onCompleted,
     setLastCursor,
     setHasNextPage,
     enqueueSnackBar,
   ]);
 
-  const totalCount = data?.[objectMetadataItem.namePlural].totalCount ?? 0;
+  const totalCount = data?.[objectMetadataItem.namePlural]?.totalCount;
 
   const records = useMemo(
     () =>
