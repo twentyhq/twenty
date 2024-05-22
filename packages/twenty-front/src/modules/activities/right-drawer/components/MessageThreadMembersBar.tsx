@@ -10,7 +10,7 @@ const StyledButtonContainer = styled.div`
 export const MessageThreadMembersBar = () => {
   return (
     <StyledButtonContainer>
-      <EmailThreadMembersChip />
+      <EmailThreadMembersChip member="everyone" />
     </StyledButtonContainer>
   );
 };
