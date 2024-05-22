@@ -2,8 +2,8 @@ import { createState } from 'twenty-ui';
 
 import { TokenVerificationType } from '@/auth/types/tokenVerificationType';
 
-export const passwordResetTokenVerificationState =
+export const workspaceInviteHashVerificationState =
   createState<TokenVerificationType>({
-    key: 'passwordResetTokenVerification',
+    key: 'workspaceInviteHashVerificationState',
     defaultValue: TokenVerificationType.Pending,
   });

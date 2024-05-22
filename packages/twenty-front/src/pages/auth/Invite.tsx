@@ -1,5 +1,4 @@
-import { useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useMemo } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
@@ -10,9 +9,9 @@ import { SignInUpForm } from '@/auth/sign-in-up/components/SignInUpForm';
 import { useSignInUpForm } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspaceFromInviteHash';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { AppPath } from '@/types/AppPath';
+import { workspaceInviteHashVerificationState } from '@/auth/states/workspaceInviteHashVerificationState';
+import { TokenVerificationType } from '@/auth/types/tokenVerificationType';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { useWorkspaceSwitching } from '@/ui/navigation/navigation-drawer/hooks/useWorkspaceSwitching';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
@@ -25,15 +24,13 @@ const StyledContentContainer = styled.div`
 `;
 
 export const Invite = () => {
-  const { enqueueSnackBar } = useSnackBar();
-  const navigate = useNavigate();
-  const {
-    workspace: workspaceFromInviteHash,
-    loading: workspaceFromInviteHashLoading,
-    workspaceInviteHash,
-  } = useWorkspaceFromInviteHash();
+  const { workspace: workspaceFromInviteHash, workspaceInviteHash } =
+    useWorkspaceFromInviteHash();
   const { form } = useSignInUpForm();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const workspaceInviteHashVerification = useRecoilValue(
+    workspaceInviteHashVerificationState,
+  );
   const [addUserToWorkspace] = useAddUserToWorkspaceMutation();
   const { switchWorkspace } = useWorkspaceSwitching();
 
@@ -55,42 +52,8 @@ export const Invite = () => {
     await switchWorkspace(workspaceFromInviteHash.id);
   };
 
-  useEffect(() => {
-    if (
-      !isDefined(workspaceFromInviteHash) &&
-      !workspaceFromInviteHashLoading
-    ) {
-      enqueueSnackBar('workspace does not exist', {
-        variant: 'error',
-      });
-      if (isDefined(currentWorkspace)) {
-        navigate(AppPath.Index);
-      } else {
-        navigate(AppPath.SignInUp);
-      }
-    }
-    if (
-      isDefined(currentWorkspace) &&
-      currentWorkspace.id === workspaceFromInviteHash?.id
-    ) {
-      enqueueSnackBar(
-        `You already belong to ${workspaceFromInviteHash?.displayName} workspace`,
-        {
-          variant: 'info',
-        },
-      );
-      navigate(AppPath.Index);
-    }
-  }, [
-    navigate,
-    enqueueSnackBar,
-    currentWorkspace,
-    workspaceFromInviteHash,
-    workspaceFromInviteHashLoading,
-  ]);
-
   return (
-    !workspaceFromInviteHashLoading && (
+    workspaceInviteHashVerification === TokenVerificationType.Valid && (
       <>
         <AnimatedEaseIn>
           <Logo workspaceLogo={workspaceFromInviteHash?.logo} />

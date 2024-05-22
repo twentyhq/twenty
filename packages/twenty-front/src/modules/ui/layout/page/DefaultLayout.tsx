@@ -8,6 +8,7 @@ import { useRecoilValue } from 'recoil';
 import { AuthModal } from '@/auth/components/Modal';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { passwordResetTokenVerificationState } from '@/auth/states/passwordResetTokenVerificationState';
+import { workspaceInviteHashVerificationState } from '@/auth/states/workspaceInviteHashVerificationState';
 import { TokenVerificationType } from '@/auth/types/tokenVerificationType';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
@@ -76,6 +77,9 @@ export const DefaultLayout = () => {
   const passwordResetTokenVerification = useRecoilValue(
     passwordResetTokenVerificationState,
   );
+  const workspaceInviteHashVerification = useRecoilValue(
+    workspaceInviteHashVerificationState,
+  );
   const showAuthModal = useMemo(() => {
     if (isMatchingLocation(AppPath.Verify)) {
       return false;
@@ -84,7 +88,7 @@ export const DefaultLayout = () => {
       return passwordResetTokenVerification === TokenVerificationType.Valid;
     }
     if (isMatchingLocation(AppPath.Invite)) {
-      return true;
+      return workspaceInviteHashVerification === TokenVerificationType.Valid;
     }
     return (
       (onboardingStatus &&
@@ -98,7 +102,12 @@ export const DefaultLayout = () => {
         (OnboardingStatus.CompletedWithoutSubscription ||
           OnboardingStatus.Canceled))
     );
-  }, [passwordResetTokenVerification, isMatchingLocation, onboardingStatus]);
+  }, [
+    passwordResetTokenVerification,
+    workspaceInviteHashVerification,
+    isMatchingLocation,
+    onboardingStatus,
+  ]);
 
   return (
     <>
