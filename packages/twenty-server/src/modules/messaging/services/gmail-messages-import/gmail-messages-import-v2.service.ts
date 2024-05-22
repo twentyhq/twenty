@@ -49,7 +49,7 @@ export class GmailMessagesImportV2Service {
     private readonly messageParticipantService: MessageParticipantService,
   ) {}
 
-  async fetchMessageContentFromCache(
+  async processMessageBatchImport(
     workspaceId: string,
     connectedAccountId: string,
   ) {

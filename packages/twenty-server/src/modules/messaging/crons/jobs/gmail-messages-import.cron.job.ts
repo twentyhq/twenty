@@ -79,7 +79,7 @@ export class GmailMessagesImportCronJob implements MessageQueueJob<undefined> {
     for (const messageChannel of messageChannels) {
       if (isGmailSyncV2Enabled) {
         try {
-          await this.gmailFetchMessageContentFromCacheV2Service.fetchMessageContentFromCache(
+          await this.gmailFetchMessageContentFromCacheV2Service.processMessageBatchImport(
             workspaceId,
             messageChannel.connectedAccountId,
           );
