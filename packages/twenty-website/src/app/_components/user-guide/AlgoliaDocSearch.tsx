@@ -42,7 +42,7 @@ export const AlgoliaDocSearch = () => {
       )}
       appId={process.env.NEXT_PUBLIC_ALGOLIA_APP_ID as string}
       apiKey={process.env.NEXT_PUBLIC_ALGOLIA_API_KEY as string}
-      indexName="crawler_Twenty User Guide"
+      indexName="twenty-user-guide"
     />
   );
 };
