@@ -24,6 +24,7 @@ import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/mes
 import {
   MessageChannelWorkspaceEntity,
   MessageChannelSyncStatus,
+  MessageChannelSyncSubStatus,
 } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { gmailSearchFilterEmailAdresses } from 'src/modules/messaging/utils/gmail-search-filter.util';
@@ -91,13 +92,18 @@ export class GmailFullSyncV2Service {
       return;
     }
 
-    if (gmailMessageChannel.syncStatus === MessageChannelSyncStatus.ONGOING) {
-      this.logger.log(
-        `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} is locked, import will be retried later.`,
-      );
-
+    if (
+      gmailMessageChannel.syncSubStatus !==
+      MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING
+    ) {
       return;
     }
+
+    await this.messageChannelRepository.updateSyncSubStatus(
+      gmailMessageChannel.id,
+      MessageChannelSyncSubStatus.MESSAGES_LIST_FETCH_ONGOING,
+      workspaceId,
+    );
 
     await this.messageChannelRepository.updateSyncStatus(
       gmailMessageChannel.id,
@@ -118,35 +124,31 @@ export class GmailFullSyncV2Service {
       workspaceId,
     );
 
-    await workspaceDataSource
-      ?.transaction(async (transactionManager) => {
-        await this.fetchAllMessageIdsFromGmailAndStoreInCache(
-          gmailClient,
-          gmailMessageChannel.id,
-          includedEmails || [],
-          blocklistedEmails,
-          workspaceId,
-          transactionManager,
-        );
+    try {
+      await this.fetchAllMessageIdsFromGmailAndStoreInCache(
+        gmailClient,
+        gmailMessageChannel.id,
+        includedEmails || [],
+        blocklistedEmails,
+        workspaceId,
+      );
 
-        await this.messageChannelRepository.updateSyncStatus(
-          gmailMessageChannel.id,
-          MessageChannelSyncStatus.PENDING,
-          workspaceId,
-          transactionManager,
-        );
-      })
-      .catch(async (error) => {
-        await this.messageChannelRepository.updateSyncStatus(
-          gmailMessageChannel.id,
-          MessageChannelSyncStatus.FAILED,
-          workspaceId,
-        );
+      await this.messageChannelRepository.updateSyncStatus(
+        gmailMessageChannel.id,
+        MessageChannelSyncStatus.PENDING,
+        workspaceId,
+      );
+    } catch (error) {
+      await this.messageChannelRepository.updateSyncStatus(
+        gmailMessageChannel.id,
+        MessageChannelSyncStatus.FAILED,
+        workspaceId,
+      );
 
-        throw new Error(
-          `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
-        );
-      });
+      throw new Error(
+        `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
+      );
+    }
   }
 
   public async fetchAllMessageIdsFromGmailAndStoreInCache(
