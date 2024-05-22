@@ -3,9 +3,12 @@ import { Outlet } from 'react-router-dom';
 import { css, Global, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
+import { useRecoilValue } from 'recoil';
 
 import { AuthModal } from '@/auth/components/Modal';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { passwordResetTokenVerificationState } from '@/auth/states/passwordResetTokenVerificationState';
+import { TokenVerificationType } from '@/auth/types/tokenVerificationType';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
@@ -70,14 +73,17 @@ export const DefaultLayout = () => {
   const theme = useTheme();
   const widowsWidth = useScreenSize().width;
   const isMatchingLocation = useIsMatchingLocation();
+  const passwordResetTokenVerification = useRecoilValue(
+    passwordResetTokenVerificationState,
+  );
   const showAuthModal = useMemo(() => {
     if (isMatchingLocation(AppPath.Verify)) {
       return false;
     }
-    if (
-      isMatchingLocation(AppPath.ResetPassword) ||
-      isMatchingLocation(AppPath.Invite)
-    ) {
+    if (isMatchingLocation(AppPath.ResetPassword)) {
+      return passwordResetTokenVerification === TokenVerificationType.Valid;
+    }
+    if (isMatchingLocation(AppPath.Invite)) {
       return true;
     }
     return (
@@ -92,7 +98,7 @@ export const DefaultLayout = () => {
         (OnboardingStatus.CompletedWithoutSubscription ||
           OnboardingStatus.Canceled))
     );
-  }, [isMatchingLocation, onboardingStatus]);
+  }, [passwordResetTokenVerification, isMatchingLocation, onboardingStatus]);
 
   return (
     <>

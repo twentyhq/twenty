@@ -7,12 +7,15 @@ import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { isNonEmptyString } from '@sniptt/guards';
 import { motion } from 'framer-motion';
+import { useRecoilState } from 'recoil';
 import { z } from 'zod';
 
 import { Logo } from '@/auth/components/Logo';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { passwordResetTokenVerificationState } from '@/auth/states/passwordResetTokenVerificationState';
+import { TokenVerificationType } from '@/auth/types/tokenVerificationType';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -78,6 +81,8 @@ export const PasswordReset = () => {
 
   const isLoggedIn = useIsLogged();
 
+  const [passwordResetTokenVerification, setPasswordResetTokenVerification] =
+    useRecoilState(passwordResetTokenVerificationState);
   const { control, handleSubmit } = useForm<Form>({
     mode: 'onChange',
     defaultValues: {
@@ -87,22 +92,19 @@ export const PasswordReset = () => {
     resolver: zodResolver(validationSchema),
   });
 
-  const { loading: isValidatingToken } = useValidatePasswordResetTokenQuery({
+  useValidatePasswordResetTokenQuery({
     variables: {
       token: passwordResetToken ?? '',
     },
     skip: !passwordResetToken,
     onError: (error) => {
+      setPasswordResetTokenVerification(TokenVerificationType.Invalid);
       enqueueSnackBar(error?.message ?? 'Token Invalid', {
         variant: 'error',
       });
-      if (!isLoggedIn) {
-        navigate(AppPath.SignInUp);
-      } else {
-        navigate(AppPath.Index);
-      }
     },
     onCompleted: (data) => {
+      setPasswordResetTokenVerification(TokenVerificationType.Valid);
       if (isNonEmptyString(data?.validatePasswordResetToken?.email)) {
         setEmail(data.validatePasswordResetToken.email);
       }
@@ -151,13 +153,13 @@ export const PasswordReset = () => {
   };
 
   return (
-    <StyledMainContainer>
-      <AnimatedEaseIn>
-        <Logo />
-      </AnimatedEaseIn>
-      <Title animate>Reset Password</Title>
-      <StyledContentContainer>
-        {isValidatingToken && (
+    passwordResetTokenVerification === TokenVerificationType.Valid && (
+      <StyledMainContainer>
+        <AnimatedEaseIn>
+          <Logo />
+        </AnimatedEaseIn>
+        <Title animate>Reset Password</Title>
+        <StyledContentContainer>
           <SkeletonTheme
             baseColor={theme.background.quaternary}
             highlightColor={theme.background.secondary}
@@ -170,70 +172,70 @@ export const PasswordReset = () => {
               }}
             />
           </SkeletonTheme>
-        )}
-        {email && (
-          <StyledForm onSubmit={handleSubmit(onSubmit)}>
-            <StyledFullWidthMotionDiv
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              transition={{
-                type: 'spring',
-                stiffness: 800,
-                damping: 35,
-              }}
-            >
-              <StyledInputContainer>
-                <TextInputV2
-                  autoFocus
-                  value={email}
-                  placeholder="Email"
-                  fullWidth
-                  disabled
+          {email && (
+            <StyledForm onSubmit={handleSubmit(onSubmit)}>
+              <StyledFullWidthMotionDiv
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 800,
+                  damping: 35,
+                }}
+              >
+                <StyledInputContainer>
+                  <TextInputV2
+                    autoFocus
+                    value={email}
+                    placeholder="Email"
+                    fullWidth
+                    disabled
+                  />
+                </StyledInputContainer>
+              </StyledFullWidthMotionDiv>
+              <StyledFullWidthMotionDiv
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                transition={{
+                  type: 'spring',
+                  stiffness: 800,
+                  damping: 35,
+                }}
+              >
+                <Controller
+                  name="newPassword"
+                  control={control}
+                  render={({
+                    field: { onChange, onBlur, value },
+                    fieldState: { error },
+                  }) => (
+                    <StyledInputContainer>
+                      <TextInputV2
+                        autoFocus
+                        value={value}
+                        type="password"
+                        placeholder="New Password"
+                        onBlur={onBlur}
+                        onChange={onChange}
+                        error={error?.message}
+                        fullWidth
+                      />
+                    </StyledInputContainer>
+                  )}
                 />
-              </StyledInputContainer>
-            </StyledFullWidthMotionDiv>
-            <StyledFullWidthMotionDiv
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              transition={{
-                type: 'spring',
-                stiffness: 800,
-                damping: 35,
-              }}
-            >
-              <Controller
-                name="newPassword"
-                control={control}
-                render={({
-                  field: { onChange, onBlur, value },
-                  fieldState: { error },
-                }) => (
-                  <StyledInputContainer>
-                    <TextInputV2
-                      autoFocus
-                      value={value}
-                      type="password"
-                      placeholder="New Password"
-                      onBlur={onBlur}
-                      onChange={onChange}
-                      error={error?.message}
-                      fullWidth
-                    />
-                  </StyledInputContainer>
-                )}
-              />
-            </StyledFullWidthMotionDiv>
+              </StyledFullWidthMotionDiv>
 
-            <MainButton
-              variant="secondary"
-              title="Change Password"
-              type="submit"
-              fullWidth
-              disabled={isUpdatingPassword}
-            />
-          </StyledForm>
-        )}
-      </StyledContentContainer>
-    </StyledMainContainer>
+              <MainButton
+                variant="secondary"
+                title="Change Password"
+                type="submit"
+                fullWidth
+                disabled={isUpdatingPassword}
+              />
+            </StyledForm>
+          )}
+        </StyledContentContainer>
+      </StyledMainContainer>
+    )
   );
 };

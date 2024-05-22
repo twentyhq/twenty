@@ -6,6 +6,8 @@ import { IconCheckbox } from 'twenty-ui';
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { useEventTracker } from '@/analytics/hooks/useEventTracker';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { passwordResetTokenVerificationState } from '@/auth/states/passwordResetTokenVerificationState';
+import { TokenVerificationType } from '@/auth/types/tokenVerificationType';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
@@ -38,6 +40,10 @@ export const PageChangeEffect = () => {
   const location = useLocation();
 
   const eventTracker = useEventTracker();
+
+  const passwordResetTokenVerification = useRecoilValue(
+    passwordResetTokenVerificationState,
+  );
 
   const [workspaceFromInviteHashQuery] =
     useGetWorkspaceFromInviteHashLazyQuery();
@@ -117,6 +123,15 @@ export const PageChangeEffect = () => {
       !isMatchingLocation(AppPath.PlanRequired)
     ) {
       navigate(AppPath.Index);
+    } else if (
+      isMatchingLocation(AppPath.ResetPassword) &&
+      passwordResetTokenVerification === TokenVerificationType.Invalid
+    ) {
+      if (onboardingStatus === OnboardingStatus.OngoingUserCreation) {
+        navigate(AppPath.SignInUp);
+      } else {
+        navigate(AppPath.Index);
+      }
     }
   }, [
     enqueueSnackBar,
@@ -125,6 +140,7 @@ export const PageChangeEffect = () => {
     location.pathname,
     navigate,
     onboardingStatus,
+    passwordResetTokenVerification,
     workspaceFromInviteHashQuery,
   ]);
 
