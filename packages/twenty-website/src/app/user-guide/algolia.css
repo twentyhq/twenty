@@ -77,7 +77,7 @@
 
 .DocSearch-Button-Placeholder {
     font-weight: 500;
-    font-family: '__Gabarito_3f9e60'
+    font-family: var(--font-gabarito);
 }
 
 .DocSearch-Button-Keys {
