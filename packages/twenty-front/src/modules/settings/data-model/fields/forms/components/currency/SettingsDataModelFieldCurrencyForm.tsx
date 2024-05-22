@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -13,6 +14,7 @@ import { simpleQuotesStringSchema } from '~/utils/validation-schemas/simpleQuote
 
 export const settingsDataModelFieldCurrencyFormSchema = z.object({
   defaultValue: z.object({
+    amountMicros: z.null(),
     currencyCode: simpleQuotesStringSchema.refine(
       (value) =>
         currencyCodeSchema.safeParse(stripSimpleQuotesFromString(value))
@@ -43,19 +45,38 @@ export const SettingsDataModelFieldCurrencyForm = ({
   disabled,
   fieldMetadataItem,
 }: SettingsDataModelFieldCurrencyFormProps) => {
-  const { control } =
+  const { control, resetField } =
     useFormContext<SettingsDataModelFieldCurrencyFormValues>();
 
-  const initialValue =
+  const initialAmountMicrosValue = null;
+  const initialCurrencyCode =
     (fieldMetadataItem?.defaultValue?.currencyCode as CurrencyCode) ??
     CurrencyCode.USD;
+  const initialCurrencyCodeValue =
+    applySimpleQuotesToString(initialCurrencyCode);
+
+  // Reset defaultValue on mount, so it doesn't conflict with other field types.
+  useEffect(() => {
+    resetField('defaultValue', {
+      defaultValue: {
+        amountMicros: initialAmountMicrosValue,
+        currencyCode: initialCurrencyCodeValue,
+      },
+    });
+  }, [initialCurrencyCodeValue, resetField]);
 
   return (
     <CardContent>
       <Controller
+        name="defaultValue.amountMicros"
+        control={control}
+        defaultValue={initialAmountMicrosValue}
+        render={() => <></>}
+      />
+      <Controller
         name="defaultValue.currencyCode"
         control={control}
-        defaultValue={applySimpleQuotesToString(initialValue)}
+        defaultValue={initialCurrencyCodeValue}
         render={({ field: { onChange, value } }) => (
           <Select
             fullWidth

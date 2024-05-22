@@ -23,7 +23,7 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelectColor } from '@/ui/navigation/menu-item/components/MenuItemSelectColor';
 import { MAIN_COLOR_NAMES } from '@/ui/theme/constants/MainColorNames';
 
-type SettingsObjectFieldSelectFormOptionRowProps = {
+type SettingsDataModelFieldSelectFormOptionRowProps = {
   className?: string;
   isDefault?: boolean;
   onChange: (value: FieldMetadataItemOption) => void;
@@ -55,7 +55,7 @@ const StyledOptionInput = styled(TextInput)`
   }
 `;
 
-export const SettingsObjectFieldSelectFormOptionRow = ({
+export const SettingsDataModelFieldSelectFormOptionRow = ({
   className,
   isDefault,
   onChange,
@@ -63,7 +63,7 @@ export const SettingsObjectFieldSelectFormOptionRow = ({
   onSetAsDefault,
   onRemoveAsDefault,
   option,
-}: SettingsObjectFieldSelectFormOptionRowProps) => {
+}: SettingsDataModelFieldSelectFormOptionRowProps) => {
   const theme = useTheme();
 
   const dropdownIds = useMemo(() => {

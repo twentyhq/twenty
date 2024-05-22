@@ -7,15 +7,12 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
+import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import { useRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/hooks/useRelationSettingsFormInitialValues';
+import { RelationType } from '@/settings/data-model/types/RelationType';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
-
-import { RELATION_TYPES } from '../constants/RelationTypes';
-import { RelationType } from '../types/RelationType';
-
-// TODO: rename to SettingsDataModelFieldRelationForm and move to settings/data-model/fields/forms/components
 
 export const settingsDataModelFieldRelationFormSchema = z.object({
   relation: z.object({
