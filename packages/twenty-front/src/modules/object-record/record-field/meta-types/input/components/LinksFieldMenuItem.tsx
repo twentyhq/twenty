@@ -5,6 +5,7 @@ import {
   IconBookmarkPlus,
   IconComponent,
   IconDotsVertical,
+  IconPencil,
   IconTrash,
 } from 'twenty-ui';
 
@@ -18,8 +19,9 @@ type LinksFieldMenuItemProps = {
   dropdownId: string;
   isPrimary?: boolean;
   label: string;
-  onSetAsPrimary: () => void;
-  onDelete: () => void;
+  onEdit?: () => void;
+  onSetAsPrimary?: () => void;
+  onDelete?: () => void;
   url: string;
 };
 
@@ -33,6 +35,7 @@ export const LinksFieldMenuItem = ({
   dropdownId,
   isPrimary,
   label,
+  onEdit,
   onSetAsPrimary,
   onDelete,
   url,
@@ -70,6 +73,11 @@ export const LinksFieldMenuItem = ({
                         LeftIcon={IconBookmarkPlus}
                         text="Set as Primary"
                         onClick={onSetAsPrimary}
+                      />
+                      <MenuItem
+                        LeftIcon={IconPencil}
+                        text="Edit"
+                        onClick={onEdit}
                       />
                       <MenuItem
                         accent="danger"
