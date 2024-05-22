@@ -106,11 +106,6 @@ export class GmailPartialSyncV2Service {
       workspaceId,
     );
 
-    const workspaceDataSource =
-      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
-        workspaceId,
-      );
-
     const lastSyncHistoryId = gmailMessageChannel.syncCursor;
 
     if (!lastSyncHistoryId) {
