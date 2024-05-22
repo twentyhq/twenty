@@ -1,6 +1,6 @@
 import { EntityManager } from 'typeorm';
 
-const tableName = 'messageThreadMembers';
+const tableName = 'messageThreadMember';
 
 export const DEV_SEED_MESSAGE_THREAD_MEMBERS_IDS = {
   MESSAGE_THREAD_MEMBER_1: '20202020-cc69-44ef-a82c-600c0dbf39ba',
@@ -14,7 +14,7 @@ export const DEV_SEED_USER_IDS = {
   PHIL: '20202020-1553-45c6-a028-5a9064cce07f',
 };
 
-export const seedMessageThreadMembers = async (
+export const seedmessageThreadMember = async (
   entityManager: EntityManager,
   schemaName: string,
 ) => {

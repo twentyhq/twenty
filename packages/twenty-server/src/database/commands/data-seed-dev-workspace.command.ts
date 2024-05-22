@@ -21,7 +21,7 @@ import { seedMessageChannel } from 'src/database/typeorm-seeds/workspace/message
 import { seedMessageChannelMessageAssociation } from 'src/database/typeorm-seeds/workspace/message-channel-message-associations';
 import { seedMessageParticipant } from 'src/database/typeorm-seeds/workspace/message-participants';
 import { seedMessageThread } from 'src/database/typeorm-seeds/workspace/message-threads';
-import { seedMessageThreadMembers } from 'src/database/typeorm-seeds/workspace/message-thread-members';
+import { seedmessageThreadMember } from 'src/database/typeorm-seeds/workspace/message-thread-members';
 import { viewPrefillData } from 'src/engine/workspace-manager/standard-objects-prefill-data/view';
 import { seedCalendarEvents } from 'src/database/typeorm-seeds/workspace/calendar-events';
 import { seedCalendarChannels } from 'src/database/typeorm-seeds/workspace/calendar-channel';
@@ -132,7 +132,7 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
                 entityManager,
                 dataSourceMetadata.schema,
               );
-              await seedMessageThreadMembers(
+              await seedmessageThreadMember(
                 entityManager,
                 dataSourceMetadata.schema,
               );

@@ -10,6 +10,8 @@ import { MessageRepository } from 'src/modules/messaging/common/repositories/mes
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { MessageThreadMemberRepository } from 'src/modules/messaging/repositories/message-thread-member.repository';
+import { MessageThreadMemberWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-thread-members.workspace-entity';
 
 @Injectable()
 export class MessagingMessageThreadService {
@@ -22,7 +24,26 @@ export class MessagingMessageThreadService {
     private readonly messageRepository: MessageRepository,
     @InjectObjectMetadataRepository(MessageThreadWorkspaceEntity)
     private readonly messageThreadRepository: MessageThreadRepository,
+    @InjectObjectMetadataRepository(MessageThreadMemberObjectMetadata)
+    private readonly messageThreadMemberRepository: MessageThreadMemberRepository,
   ) {}
+
+  public async saveMessageThreadMember(
+    messageThreadId: string,
+    workspaceMemberId: string,
+    workspaceId: string,
+    manager: EntityManager,
+  ) {
+    const id = v4();
+
+    await this.messageThreadMemberRepository.insert(
+      id,
+      messageThreadId,
+      workspaceMemberId,
+      workspaceId,
+      manager,
+    );
+  }
 
   public async saveMessageThreadOrReturnExistingMessageThread(
     headerMessageId: string,

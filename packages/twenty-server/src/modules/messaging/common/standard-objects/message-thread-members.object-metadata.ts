@@ -12,8 +12,8 @@ import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/stan
 import { MessageThreadObjectMetadata } from 'src/modules/messaging/standard-objects/message-thread.object-metadata';
 
 @WorkspaceEntity({
-  standardId: STANDARD_OBJECT_IDS.messageThreadMembers,
-  namePlural: 'messageThreadMembers',
+  standardId: STANDARD_OBJECT_IDS.messageThreadMember,
+  namePlural: 'messageThreadMember',
   labelSingular: 'Message Thread Member',
   labelPlural: 'Message Threads Members',
   description: 'Message Thread Members',
@@ -21,7 +21,7 @@ import { MessageThreadObjectMetadata } from 'src/modules/messaging/standard-obje
 })
 @WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
-export class MessageThreadMembersObjectMetadata extends BaseWorkspaceEntity {
+export class MessageThreadMemberObjectMetadata extends BaseWorkspaceEntity {
   @WorkspaceRelation({
     standardId: MESSAGE_THREAD_MEMBERS_STANDARD_FIELD_IDS.messageThread,
     type: RelationMetadataType.MANY_TO_ONE,
@@ -29,7 +29,7 @@ export class MessageThreadMembersObjectMetadata extends BaseWorkspaceEntity {
     description: 'Message Thread that the member is part of',
     icon: 'IconMessage',
     joinColumn: 'messageThreadId',
-    inverseSideFieldKey: 'messageThreadMembers',
+    inverseSideFieldKey: 'messageThreadMember',
     inverseSideTarget: () => MessageThreadObjectMetadata,
   })
   messageThread: Relation<MessageThreadObjectMetadata>;
@@ -41,7 +41,7 @@ export class MessageThreadMembersObjectMetadata extends BaseWorkspaceEntity {
     description: 'Workspace Member that is part of the message thread',
     icon: 'IconCircleUser',
     joinColumn: 'workspaceMemberId',
-    inverseSideFieldKey: 'messageThreadMembers',
+    inverseSideFieldKey: 'messageThreadMember',
     inverseSideTarget: () => WorkspaceMemberObjectMetadata,
   })
   workspaceMember: Relation<WorkspaceMemberObjectMetadata>;
