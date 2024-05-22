@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
-import { GmailFullSyncService } from 'src/modules/messaging/services/gmail-full-sync/gmail-full-sync.service';
+import { GmailFullMessageListFetchService } from 'src/modules/messaging/services/gmail-full-sync/gmail-full-message-list-fetch.service';
 
 export type GmailFullMessageListFetchJobData = {
   workspaceId: string;
@@ -18,7 +18,7 @@ export class GmailFullMessageListFetchJob
 
   constructor(
     private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
-    private readonly gmailFullSyncService: GmailFullSyncService,
+    private readonly gmailFullSyncService: GmailFullMessageListFetchService,
   ) {}
 
   async handle(data: GmailFullMessageListFetchJobData): Promise<void> {

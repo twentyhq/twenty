@@ -7,8 +7,8 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { FetchMessagesByBatchesModule } from 'src/modules/messaging/services/fetch-messages-by-batches/fetch-messages-by-batches.module';
-import { GmailPartialSyncV2Service } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync-v2.service';
-import { GmailPartialSyncService } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync.service';
+import { GmailPartialMessageListFetchV2Service } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-message-list-fetch-v2.service';
+import { GmailPartialMessageListFetchService } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-message-list-fetch.service';
 import { MessageModule } from 'src/modules/messaging/services/message/message.module';
 import { MessagingProvidersModule } from 'src/modules/messaging/services/providers/messaging-providers.module';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
@@ -26,7 +26,13 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-ob
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     WorkspaceDataSourceModule,
   ],
-  providers: [GmailPartialSyncService, GmailPartialSyncV2Service],
-  exports: [GmailPartialSyncService, GmailPartialSyncV2Service],
+  providers: [
+    GmailPartialMessageListFetchService,
+    GmailPartialMessageListFetchV2Service,
+  ],
+  exports: [
+    GmailPartialMessageListFetchService,
+    GmailPartialMessageListFetchV2Service,
+  ],
 })
-export class GmailPartialSyncModule {}
+export class GmailPartialMessageListFetchModule {}

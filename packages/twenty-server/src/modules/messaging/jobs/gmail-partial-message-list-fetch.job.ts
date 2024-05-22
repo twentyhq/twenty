@@ -10,8 +10,8 @@ import {
   FeatureFlagKeys,
 } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
-import { GmailPartialSyncService } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync.service';
-import { GmailPartialSyncV2Service } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync-v2.service';
+import { GmailPartialMessageListFetchService } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-message-list-fetch.service';
+import { GmailPartialMessageListFetchV2Service } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-message-list-fetch-v2.service';
 
 export type GmailPartialMessageListFetchJobData = {
   workspaceId: string;
@@ -26,8 +26,8 @@ export class GmailPartialMessageListFetchJob
 
   constructor(
     private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
-    private readonly gmailPartialSyncService: GmailPartialSyncService,
-    private readonly gmailPartialSyncV2Service: GmailPartialSyncV2Service,
+    private readonly gmailPartialSyncService: GmailPartialMessageListFetchService,
+    private readonly gmailPartialSyncV2Service: GmailPartialMessageListFetchV2Service,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
