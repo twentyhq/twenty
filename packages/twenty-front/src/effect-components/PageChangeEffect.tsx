@@ -8,7 +8,6 @@ import { useEventTracker } from '@/analytics/hooks/useEventTracker';
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
 import { passwordResetTokenVerificationState } from '@/auth/states/passwordResetTokenVerificationState';
 import { workspaceInviteHashVerificationState } from '@/auth/states/workspaceInviteHashVerificationState';
-import { TokenVerificationType } from '@/auth/types/tokenVerificationType';
 import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
@@ -127,24 +126,6 @@ export const PageChangeEffect = () => {
       !isMatchingLocation(AppPath.PlanRequired)
     ) {
       navigate(AppPath.Index);
-    } else if (
-      isMatchingLocation(AppPath.ResetPassword) &&
-      passwordResetTokenVerification === TokenVerificationType.Invalid
-    ) {
-      if (onboardingStatus === OnboardingStatus.OngoingUserCreation) {
-        navigate(AppPath.SignInUp);
-      } else {
-        navigate(AppPath.Index);
-      }
-    } else if (
-      isMatchingLocation(AppPath.Invite) &&
-      workspaceInviteHashVerification === TokenVerificationType.Invalid
-    ) {
-      if (onboardingStatus === OnboardingStatus.OngoingUserCreation) {
-        navigate(AppPath.SignInUp);
-      } else {
-        navigate(AppPath.Index);
-      }
     }
   }, [
     enqueueSnackBar,

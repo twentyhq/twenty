@@ -84,6 +84,9 @@ export const DefaultLayout = () => {
     if (isMatchingLocation(AppPath.Verify)) {
       return false;
     }
+    if (isMatchingLocation(AppPath.Index)) {
+      return false;
+    }
     if (isMatchingLocation(AppPath.ResetPassword)) {
       return passwordResetTokenVerification === TokenVerificationType.Valid;
     }

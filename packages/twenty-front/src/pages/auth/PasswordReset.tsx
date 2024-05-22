@@ -102,6 +102,7 @@ export const PasswordReset = () => {
       enqueueSnackBar(error?.message ?? 'Token Invalid', {
         variant: 'error',
       });
+      navigate(AppPath.Index);
     },
     onCompleted: (data) => {
       setPasswordResetTokenVerification(TokenVerificationType.Valid);
