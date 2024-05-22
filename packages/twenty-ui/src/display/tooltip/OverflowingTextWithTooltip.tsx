@@ -44,8 +44,8 @@ export const OverflowingTextWithTooltip = ({
       <div
         data-testid="tooltip"
         className={clsx({
-          [styles.overflowingText]: true,
-          [styles.cursorPointer]: isTitleOverflowing,
+          [styles.main]: true,
+          [styles.cursor]: isTitleOverflowing,
         })}
         ref={textRef}
         id={textElementId}
@@ -60,8 +60,9 @@ export const OverflowingTextWithTooltip = ({
             <AppTooltip
               anchorSelect={`#${textElementId}`}
               content={mutliline ? undefined : text ?? ''}
-              delayHide={0}
+              delayHide={1}
               offset={5}
+              isOpen
               noArrow
               place="bottom"
               positionStrategy="absolute"

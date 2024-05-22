@@ -4,12 +4,20 @@
   display: flex;
   flex-shrink: 0;
   justify-content: center;
+  overflow: hidden;
+  user-select: none;
 }
 
 .rounded {
   border-radius: 50%;
 }
 
-.avatar-onclick:hover {
+.avatar-on-click:hover {
   box-shadow: 0 0 0 4px var(--twentycrm-background-transparent-light);
+}
+
+.avatar-image {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
 }
