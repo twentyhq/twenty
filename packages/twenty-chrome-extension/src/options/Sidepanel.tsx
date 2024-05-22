@@ -78,21 +78,14 @@ const Sidepanel = () => {
   }, [setIframeState, clientUrl]);
 
   useEffect(() => {
-    const handleBrowserEvents = ({ action }: { action: string }) => {
-      if (action === 'changeSidepanelUrl') {
-        setClientUrl('');
+    chrome.storage.local.onChanged.addListener((store) => {
+      if (isDefined(store.isAuthenticated)) {
+        if (store.isAuthenticated.newValue === true) {
+          setIframeState();
+        }
       }
-
-      if (action === 'userIsLoggedIn') {
-        setIframeState();
-      }
-    };
-    chrome.runtime.onMessage.addListener(handleBrowserEvents);
-
-    return () => {
-      chrome.runtime.onMessage.removeListener(handleBrowserEvents);
-    };
-  }, []);
+    });
+  }, [setIframeState]);
 
   return isAuthenticated ? (
     <StyledIframe
