@@ -9,7 +9,6 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
   MessageChannelWorkspaceEntity,
-  MessageChannelSyncStatus,
   MessageChannelSyncSubStatus,
 } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
@@ -19,6 +18,7 @@ import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/mes
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
 import { GmailPartialMessageListFetchErrorHandlingService } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-partial-message-list-fetch-error-handling.service';
 import { GmailGetHistoryService } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-get-history.service';
+import { GmailSetStatusService } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-set-status.service';
 
 @Injectable()
 export class GmailPartialMessageListFetchV2Service {
@@ -40,6 +40,7 @@ export class GmailPartialMessageListFetchV2Service {
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
     private readonly gmailPartialMessageListFetchErrorHandlingService: GmailPartialMessageListFetchErrorHandlingService,
     private readonly gmailGetHistoryService: GmailGetHistoryService,
+    private readonly gmailSetStatusService: GmailSetStatusService,
   ) {}
 
   public async processMessageListFetch(
@@ -67,13 +68,13 @@ export class GmailPartialMessageListFetchV2Service {
       );
     }
 
-    const gmailMessageChannel =
+    const messageChannel =
       await this.messageChannelRepository.getFirstByConnectedAccountId(
         connectedAccountId,
         workspaceId,
       );
 
-    if (!gmailMessageChannel) {
+    if (!messageChannel) {
       this.logger.error(
         `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
       );
@@ -82,7 +83,7 @@ export class GmailPartialMessageListFetchV2Service {
     }
 
     if (
-      gmailMessageChannel.syncSubStatus !==
+      messageChannel.syncSubStatus !==
       MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING
     ) {
       this.logger.log(
@@ -92,34 +93,20 @@ export class GmailPartialMessageListFetchV2Service {
       return;
     }
 
-    await this.messageChannelRepository.updateSyncSubStatus(
-      gmailMessageChannel.id,
-      MessageChannelSyncSubStatus.MESSAGES_LIST_FETCH_ONGOING,
+    await this.gmailSetStatusService.setMessageListFetchOnGoingStatus(
+      messageChannel.id,
       workspaceId,
     );
 
-    await this.messageChannelRepository.updateSyncStatus(
-      gmailMessageChannel.id,
-      MessageChannelSyncStatus.ONGOING,
-      workspaceId,
-    );
-
-    const lastSyncHistoryId = gmailMessageChannel.syncCursor;
+    const lastSyncHistoryId = messageChannel.syncCursor;
 
     if (!lastSyncHistoryId) {
       this.logger.log(
         `No lastSyncHistoryId for workspace ${workspaceId} and account ${connectedAccountId}, falling back to full sync.`,
       );
 
-      await this.messageChannelRepository.updateSyncSubStatus(
-        gmailMessageChannel.id,
-        MessageChannelSyncSubStatus.MESSAGES_LIST_FETCH_ONGOING,
-        workspaceId,
-      );
-
-      await this.messageChannelRepository.updateSyncSubStatus(
-        gmailMessageChannel.id,
-        MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING,
+      await this.gmailSetStatusService.setFullMessageListFetchPendingStatus(
+        messageChannel.id,
         workspaceId,
       );
 
@@ -138,7 +125,7 @@ export class GmailPartialMessageListFetchV2Service {
     if (error) {
       await this.gmailPartialMessageListFetchErrorHandlingService.handleGmailError(
         error,
-        gmailMessageChannel,
+        messageChannel,
         workspaceId,
         connectedAccountId,
       );
@@ -157,15 +144,8 @@ export class GmailPartialMessageListFetchV2Service {
         `Messaging import done with history ${historyId} and nothing to update for workspace ${workspaceId} and account ${connectedAccountId}`,
       );
 
-      await this.messageChannelRepository.updateSyncSubStatus(
-        gmailMessageChannel.id,
-        MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
-        workspaceId,
-      );
-
-      await this.messageChannelRepository.updateSyncStatus(
-        gmailMessageChannel.id,
-        MessageChannelSyncStatus.COMPLETED,
+      await this.gmailSetStatusService.setCompletedStatus(
+        messageChannel.id,
         workspaceId,
       );
 
@@ -176,7 +156,7 @@ export class GmailPartialMessageListFetchV2Service {
       await this.gmailGetHistoryService.getMessageIdsFromHistory(history);
 
     await this.cacheStorage.setAdd(
-      `messages-to-import:${workspaceId}:gmail:${gmailMessageChannel.id}`,
+      `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
       messagesAdded,
     );
 
@@ -186,7 +166,7 @@ export class GmailPartialMessageListFetchV2Service {
 
     await this.messageChannelMessageAssociationRepository.deleteByMessageExternalIdsAndMessageChannelId(
       messagesDeleted,
-      gmailMessageChannel.id,
+      messageChannel.id,
       workspaceId,
     );
 
@@ -195,7 +175,7 @@ export class GmailPartialMessageListFetchV2Service {
     );
 
     await this.messageChannelRepository.updateLastSyncCursorIfHigher(
-      gmailMessageChannel.id,
+      messageChannel.id,
       historyId,
       workspaceId,
     );
@@ -208,9 +188,8 @@ export class GmailPartialMessageListFetchV2Service {
       `gmail partial-sync done for workspace ${workspaceId} and account ${connectedAccountId}`,
     );
 
-    await this.messageChannelRepository.updateSyncSubStatus(
-      gmailMessageChannel.id,
-      MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING,
+    await this.gmailSetStatusService.setMessagesImportPendingStatus(
+      messageChannel.id,
       workspaceId,
     );
   }
