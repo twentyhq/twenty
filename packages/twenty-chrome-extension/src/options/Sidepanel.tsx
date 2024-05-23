@@ -51,19 +51,19 @@ const Sidepanel = () => {
       'sidepanelUrl',
       'clientUrl',
     ]);
-    if (store.isAuthenticated === true) setIsAuthenticated(true);
-
-    if (isDefined(store.sidepanelUrl)) {
-      isDefined(store.clientUrl)
-        ? setClientUrl(`${store.clientUrl}${store.sidepanelUrl}`)
-        : setClientUrl(`${clientUrl}${store.sidepanelUrl}`);
+    if (store.isAuthenticated === true) {
+      setIsAuthenticated(true);
+      if (isDefined(store.sidepanelUrl)) {
+        isDefined(store.clientUrl)
+          ? setClientUrl(`${store.clientUrl}${store.sidepanelUrl}`)
+          : setClientUrl(`${import.meta.env.VITE_FRONT_BASE_URL}${store.sidepanelUrl}`);
+      }
     }
-  }, [clientUrl, setClientUrl]);
+  }, [setClientUrl]);
 
   useEffect(() => {
     void setIframeState();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [setIframeState]);
 
   useEffect(() => {
     window.addEventListener('message', async (event) => {
@@ -98,26 +98,30 @@ const Sidepanel = () => {
   }, []);
 
   useEffect(() => {
-    chrome.storage.local.onChanged.addListener(async (store) => {
-      if (isDefined(store.isAuthenticated)) {
-        if (store.isAuthenticated.newValue === true) {
+    chrome.storage.local.onChanged.addListener(async (updatedStore) => {
+      if (isDefined(updatedStore.isAuthenticated)) {
+        if (updatedStore.isAuthenticated.newValue === true) {
           setIframeState();
         }
       }
 
-      if (isDefined(store.sidepanelUrl)) {
-        if (isDefined(store.sidepanelUrl.newValue)) {
+      if (isDefined(updatedStore.sidepanelUrl)) {
+        if (isDefined(updatedStore.sidepanelUrl.newValue)) {
+          const store = await chrome.storage.local.get(['clientUrl']);
+          const clientUrl = isDefined(store.clientUrl)
+              ? store.clientUrl
+              : import.meta.env.VITE_FRONT_BASE_URL;
+
           iframeRef.current?.contentWindow?.postMessage(
             {
               type: 'navigate',
-              value: store.sidepanelUrl.newValue,
+              value: updatedStore.sidepanelUrl.newValue,
             },
             clientUrl,
           );
         }
       }
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setIframeState]);
 
   return isAuthenticated ? (
