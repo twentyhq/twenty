@@ -1,9 +1,9 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
-import { REACT_APP_CHROME_EXTENSION_ID } from '~/config';
+import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionIdState';
 
 const isInFrame = () => {
   try {
@@ -16,13 +16,12 @@ const isInFrame = () => {
 export const WindowEventEffect = () => {
   const navigate = useNavigate();
   const setTokenPair = useSetRecoilState(tokenPairState);
+  const chromeExtensionId = useRecoilValue(chromeExtensionIdState);
 
   useEffect(() => {
     if (isInFrame()) {
       const handleWindowEvents = (event: MessageEvent<any>) => {
-        if (
-          event.origin === `chrome-extension://${REACT_APP_CHROME_EXTENSION_ID}`
-        ) {
+        if (event.origin === `chrome-extension://${chromeExtensionId}`) {
           switch (event.data.type) {
             case 'tokens':
               setTokenPair(event.data.value);
@@ -37,14 +36,14 @@ export const WindowEventEffect = () => {
       };
       window.parent.postMessage(
         'loaded',
-        `chrome-extension://${REACT_APP_CHROME_EXTENSION_ID}`,
+        `chrome-extension://${chromeExtensionId}`,
       );
       window.addEventListener('message', handleWindowEvents);
       return () => {
         window.removeEventListener('message', handleWindowEvents);
       };
     }
-  }, [setTokenPair, navigate]);
+  }, [chromeExtensionId, setTokenPair, navigate]);
 
   return <></>;
 };

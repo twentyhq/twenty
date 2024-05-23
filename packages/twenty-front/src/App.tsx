@@ -87,9 +87,9 @@ const ProvidersThatNeedRouterContext = () => {
 
   return (
     <>
-      <WindowEventEffect />
       <ApolloProvider>
         <ClientConfigProviderEffect />
+        <WindowEventEffect />
         <ClientConfigProvider>
           <UserProviderEffect />
           <UserProvider>
