@@ -1,7 +1,7 @@
 import { useRecoilCallback } from 'recoil';
 
 import { useOpenEmailThreadRightDrawer } from '@/activities/emails/right-drawer/hooks/useOpenEmailThreadRightDrawer';
-import { viewableEmailThreadIdState } from '@/activities/emails/states/viewableEmailThreadIdState';
+import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
 
@@ -17,17 +17,17 @@ export const useEmailThread = () => {
           .getValue();
 
         const viewableEmailThreadId = snapshot
-          .getLoadable(viewableEmailThreadIdState)
+          .getLoadable(viewableRecordIdState)
           .getValue();
 
         if (isRightDrawerOpen && viewableEmailThreadId === threadId) {
-          set(viewableEmailThreadIdState, null);
+          set(viewableRecordIdState, null);
           closeRightDrawer();
           return;
         }
 
         openEmailThredRightDrawer();
-        set(viewableEmailThreadIdState, threadId);
+        set(viewableRecordIdState, threadId);
       },
     [closeRightDrawer, openEmailThredRightDrawer],
   );
