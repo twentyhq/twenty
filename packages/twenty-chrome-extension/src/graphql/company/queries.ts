@@ -5,6 +5,7 @@ export const FIND_COMPANY = gql`
     companies(filter: $filter) {
       edges {
         node {
+          id
           name
           linkedinLink {
             url

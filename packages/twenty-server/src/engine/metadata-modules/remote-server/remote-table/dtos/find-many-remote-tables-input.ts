@@ -10,8 +10,9 @@ export class FindManyRemoteTablesInput {
 
   @IsOptional()
   @Field(() => Boolean, {
-    description: 'Indicates if data from distant tables should be refreshed.',
+    description:
+      'Indicates if pending schema updates status should be computed.',
     nullable: true,
   })
-  refreshData?: boolean;
+  shouldFetchPendingSchemaUpdates?: boolean;
 }

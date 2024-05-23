@@ -3,12 +3,11 @@ import styled from '@emotion/styled';
 import rehypeStringify from 'rehype-stringify';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
-import { IconSettings } from 'twenty-ui';
+import { H1Title, IconSettings } from 'twenty-ui';
 import { unified } from 'unified';
 import { visit } from 'unist-util-visit';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { H1Title } from '@/ui/display/typography/components/H1Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
@@ -35,6 +34,7 @@ const StyledReleaseContainer = styled.div`
   }
 
   h3 {
+    color: ${({ theme }) => theme.font.color.primary};
     margin: ${({ theme }) => theme.spacing(6)} 0px 0px;
   }
   code {
@@ -43,7 +43,7 @@ const StyledReleaseContainer = styled.div`
     border-radius: 4px;
   }
   p {
-    color: #474747;
+    color: ${({ theme }) => theme.font.color.secondary};
     font-family: Inter, sans-serif;
     font-size: ${({ theme }) => theme.font.size.md};
     line-height: 19.5px;
@@ -54,6 +54,7 @@ const StyledReleaseContainer = styled.div`
 `;
 
 const StyledReleaseHeader = styled.h2`
+  color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   line-height: 18px;
   font-size: ${({ theme }) => theme.font.size.md};

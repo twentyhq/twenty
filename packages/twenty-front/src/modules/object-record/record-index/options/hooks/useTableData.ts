@@ -6,6 +6,7 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { isDefined } from '~/utils/isDefined';
 
 import { useFindManyParams } from '../../hooks/useLoadRecordIndexTable';
 
@@ -28,6 +29,12 @@ export type UseTableDataOptions = {
   ) => void;
 };
 
+type ExportProgress = {
+  exportedRecordCount?: number;
+  totalRecordCount?: number;
+  displayType: 'percentage' | 'number';
+};
+
 export const useTableData = ({
   delayMs,
   maximumRequests = 100,
@@ -39,8 +46,11 @@ export const useTableData = ({
   const [isDownloading, setIsDownloading] = useState(false);
   const [inflight, setInflight] = useState(false);
   const [pageCount, setPageCount] = useState(0);
-  const [progress, setProgress] = useState<number | undefined>(undefined);
+  const [progress, setProgress] = useState<ExportProgress>({
+    displayType: 'number',
+  });
   const [hasNextPage, setHasNextPage] = useState(true);
+  const [previousRecordCount, setPreviousRecordCount] = useState(0);
 
   const {
     visibleTableColumnsSelector,
@@ -88,13 +98,20 @@ export const useTableData = ({
     });
 
   useEffect(() => {
-    const MAXIMUM_REQUESTS = Math.min(maximumRequests, totalCount / pageSize);
+    const MAXIMUM_REQUESTS = isDefined(totalCount)
+      ? Math.min(maximumRequests, totalCount / pageSize)
+      : maximumRequests;
 
     const fetchNextPage = async () => {
       setInflight(true);
+      setPreviousRecordCount(records.length);
       await fetchMoreRecords();
       setPageCount((state) => state + 1);
-      setProgress(percentage(pageCount, MAXIMUM_REQUESTS));
+      setProgress({
+        exportedRecordCount: records.length,
+        totalRecordCount: totalCount,
+        displayType: totalCount ? 'percentage' : 'number',
+      });
       await sleep(delayMs);
       setInflight(false);
     };
@@ -104,10 +121,11 @@ export const useTableData = ({
     }
 
     if (!loading) {
-      if (!hasNextPage || pageCount >= MAXIMUM_REQUESTS) {
+      if (
+        pageCount >= MAXIMUM_REQUESTS ||
+        records.length === previousRecordCount
+      ) {
         callback(records, columns);
-        setIsDownloading(false);
-        setProgress(undefined);
       } else {
         fetchNextPage();
       }
@@ -126,6 +144,7 @@ export const useTableData = ({
     pageSize,
     loading,
     callback,
+    previousRecordCount,
   ]);
 
   return {

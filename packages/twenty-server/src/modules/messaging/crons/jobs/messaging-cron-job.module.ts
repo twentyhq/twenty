@@ -8,13 +8,13 @@ import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repos
 import { GmailFetchMessagesFromCacheCronJob } from 'src/modules/messaging/crons/jobs/gmail-fetch-messages-from-cache.cron.job';
 import { GmailPartialSyncCronJob } from 'src/modules/messaging/crons/jobs/gmail-partial-sync.cron.job';
 import { GmailFetchMessageContentFromCacheModule } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.module';
-import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Workspace, FeatureFlagEntity], 'core'),
     TypeOrmModule.forFeature([DataSourceEntity], 'metadata'),
-    ObjectMetadataRepositoryModule.forFeature([MessageChannelObjectMetadata]),
+    ObjectMetadataRepositoryModule.forFeature([MessageChannelWorkspaceEntity]),
     GmailFetchMessageContentFromCacheModule,
   ],
   providers: [

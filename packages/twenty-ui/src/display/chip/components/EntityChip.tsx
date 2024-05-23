@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import { isNonEmptyString } from '@sniptt/guards';
 
@@ -37,14 +36,11 @@ export const EntityChip = ({
   className,
   maxWidth,
 }: EntityChipProps) => {
-  const navigate = useNavigate();
   const theme = useTheme();
 
   const handleLinkClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (isNonEmptyString(linkToEntity)) {
-      event.preventDefault();
       event.stopPropagation();
-      navigate(linkToEntity);
     }
   };
 
@@ -75,6 +71,7 @@ export const EntityChip = ({
       onClick={handleLinkClick}
       className={className}
       maxWidth={maxWidth}
+      to={linkToEntity}
     />
   );
 };

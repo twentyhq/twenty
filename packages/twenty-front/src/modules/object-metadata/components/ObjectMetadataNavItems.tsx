@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { useIcons } from 'twenty-ui';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -10,7 +10,6 @@ import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemV
 
 export const ObjectMetadataNavItems = () => {
   const { activeObjectMetadataItems } = useFilteredObjectMetadataItems();
-  const navigate = useNavigate();
   const { getIcon } = useIcons();
   const currentPath = useLocation().pathname;
 
@@ -63,9 +62,6 @@ export const ObjectMetadataNavItems = () => {
             to={navigationPath}
             active={currentPath === `/objects/${objectMetadataItem.namePlural}`}
             Icon={getIcon(objectMetadataItem.icon)}
-            onClick={() => {
-              navigate(navigationPath);
-            }}
           />
         );
       })}

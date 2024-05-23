@@ -1,12 +1,16 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { useSetRecoilState } from 'recoil';
 import { IconComponent, useIcons } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords';
+import { useLazyFindManyRecords } from '@/object-record/hooks/useLazyFindManyRecords';
 import { getSpreadSheetValidation } from '@/object-record/spreadsheet-import/util/getSpreadSheetValidation';
 import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
 import { SpreadsheetOptions, Validation } from '@/spreadsheet-import/types';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useViewStates } from '@/views/hooks/internal/useViewStates';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -21,6 +25,16 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+  const { objectNamePlural } = useObjectNamePluralFromSingular({
+    objectNameSingular,
+  });
+
+  const { entityCountInCurrentViewState } = useViewStates(objectNamePlural);
+
+  const setEntityCountInCurrentView = useSetRecoilState(
+    entityCountInCurrentViewState,
+  );
+
   const fields = objectMetadataItem.fields
     .filter(
       (x) =>
@@ -96,6 +110,10 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
     objectNameSingular,
   });
 
+  const { findManyRecords } = useLazyFindManyRecords({
+    objectNameSingular,
+  });
+
   const openRecordSpreadsheetImport = (
     options?: Omit<SpreadsheetOptions<any>, 'fields' | 'isOpen' | 'onClose'>,
   ) => {
@@ -161,6 +179,9 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
         });
         try {
           await createManyRecords(createInputs);
+          const res = await findManyRecords();
+          const totalCount = res?.data?.[objectNamePlural]?.totalCount;
+          if (isDefined(totalCount)) setEntityCountInCurrentView(totalCount);
         } catch (error: any) {
           enqueueSnackBar(error?.message || 'Something went wrong', {
             variant: 'error',

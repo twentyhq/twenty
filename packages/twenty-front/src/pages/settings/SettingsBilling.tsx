@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
+  H1Title,
+  H2Title,
   IconCalendarEvent,
   IconCircleX,
   IconCreditCard,
@@ -17,8 +19,6 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SupportChat } from '@/support/components/SupportChat';
 import { AppPath } from '@/types/AppPath';
 import { Info } from '@/ui/display/info/components/Info';
-import { H1Title } from '@/ui/display/typography/components/H1Title';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';

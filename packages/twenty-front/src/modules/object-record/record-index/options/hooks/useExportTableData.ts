@@ -9,6 +9,7 @@ import {
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const download = (blob: Blob, filename: string) => {
   const url = URL.createObjectURL(blob);
@@ -26,6 +27,12 @@ type GenerateExportOptions = {
 };
 
 type GenerateExport = (data: GenerateExportOptions) => string;
+
+type ExportProgress = {
+  exportedRecordCount?: number;
+  totalRecordCount?: number;
+  displayType: 'percentage' | 'number';
+};
 
 export const generateCsv: GenerateExport = ({
   columns,
@@ -72,6 +79,28 @@ export const generateCsv: GenerateExport = ({
     keys,
     emptyFieldValue: '',
   });
+};
+
+const percentage = (part: number, whole: number): number => {
+  return Math.round((part / whole) * 100);
+};
+
+export const displayedExportProgress = (progress?: ExportProgress): string => {
+  if (isUndefinedOrNull(progress?.exportedRecordCount)) {
+    return 'Export';
+  }
+
+  if (
+    progress.displayType === 'percentage' &&
+    isDefined(progress?.totalRecordCount)
+  ) {
+    return `Export (${percentage(
+      progress.exportedRecordCount,
+      progress.totalRecordCount,
+    )}%)`;
+  }
+
+  return `Export (${progress.exportedRecordCount})`;
 };
 
 const downloader = (mimeType: string, generator: GenerateExport) => {

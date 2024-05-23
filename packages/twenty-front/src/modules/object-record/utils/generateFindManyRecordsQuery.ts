@@ -1,6 +1,7 @@
 import gql from 'graphql-tag';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isAggregationEnabled } from '@/object-metadata/utils/isAggregationEnabled';
 import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObjectMetadataToGraphQLQuery';
 import { RecordGqlOperationGqlRecordFields } from '@/object-record/graphql/types/RecordGqlOperationGqlRecordFields';
 import { capitalize } from '~/utils/string/capitalize';
@@ -36,11 +37,11 @@ query FindMany${capitalize(
       cursor
     }
     pageInfo {
-      hasNextPage
+      ${isAggregationEnabled(objectMetadataItem) ? 'hasNextPage' : ''}
       startCursor
       endCursor
     }
-    totalCount
+    ${isAggregationEnabled(objectMetadataItem) ? 'totalCount' : ''}
   }
 }
 `;

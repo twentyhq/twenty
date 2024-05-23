@@ -7,9 +7,9 @@ import { useUnsyncRemoteTable } from '@/databases/hooks/useUnsyncRemoteTable';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsIntegrationRemoteTableSyncStatusToggle } from '@/settings/integrations/components/SettingsIntegrationRemoteTableSyncStatusToggle';
 import {
+  DistantTableUpdate,
   RemoteTable,
   RemoteTableStatus,
-  TableUpdate,
 } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -39,20 +39,22 @@ const StyledText = styled.h3`
   margin: 0;
 `;
 
-const getTableUpdatesText = (schemaPendingUpdates: TableUpdate[]) => {
-  if (schemaPendingUpdates.includes(TableUpdate.TableDeleted)) {
+const getDistantTableUpdatesText = (
+  schemaPendingUpdates: DistantTableUpdate[],
+) => {
+  if (schemaPendingUpdates.includes(DistantTableUpdate.TableDeleted)) {
     return 'Table has been deleted';
   }
   if (
-    schemaPendingUpdates.includes(TableUpdate.ColumnsAdded) &&
-    schemaPendingUpdates.includes(TableUpdate.ColumnsDeleted)
+    schemaPendingUpdates.includes(DistantTableUpdate.ColumnsAdded) &&
+    schemaPendingUpdates.includes(DistantTableUpdate.ColumnsDeleted)
   ) {
     return 'Columns have been added and other deleted';
   }
-  if (schemaPendingUpdates.includes(TableUpdate.ColumnsAdded)) {
+  if (schemaPendingUpdates.includes(DistantTableUpdate.ColumnsAdded)) {
     return 'Columns have been added';
   }
-  if (schemaPendingUpdates.includes(TableUpdate.ColumnsDeleted)) {
+  if (schemaPendingUpdates.includes(DistantTableUpdate.ColumnsDeleted)) {
     return 'Columns have been deleted';
   }
   return null;
@@ -71,7 +73,7 @@ export const SettingsIntegrationDatabaseTablesListCard = ({
       ...table,
       id: table.name,
       updatesText: table.schemaPendingUpdates
-        ? getTableUpdatesText(table.schemaPendingUpdates)
+        ? getDistantTableUpdatesText(table.schemaPendingUpdates)
         : null,
     })),
   );

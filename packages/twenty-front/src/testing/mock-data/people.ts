@@ -8,6 +8,7 @@ type RequiredAndNotNull<T> = {
 type MockedPerson = RequiredAndNotNull<
   Pick<
     Person,
+    | '__typename'
     | 'id'
     | 'name'
     | 'linkedinLink'
@@ -20,12 +21,13 @@ type MockedPerson = RequiredAndNotNull<
     | 'createdAt'
     | 'companyId'
   > & {
-    company: Pick<Company, 'id' | 'name' | 'domainName'>;
+    company: Pick<Company, '__typename' | 'id' | 'name' | 'domainName'>;
   }
 >;
 
 export const mockedPeopleData: MockedPerson[] = [
   {
+    __typename: 'Person',
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6b',
     name: {
       firstName: 'Alexandre',
@@ -45,6 +47,7 @@ export const mockedPeopleData: MockedPerson[] = [
     jobTitle: 'CEO',
     companyId: '5c21e19e-e049-4393-8c09-3e3f8fb09ecb',
     company: {
+      __typename: 'Company',
       id: '5c21e19e-e049-4393-8c09-3e3f8fb09ecb',
       name: 'Qonto',
       domainName: 'qonto.com',
@@ -54,6 +57,7 @@ export const mockedPeopleData: MockedPerson[] = [
     city: 'Paris',
   },
   {
+    __typename: 'Person',
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6d',
     name: { firstName: 'John', lastName: 'Doe' },
     linkedinLink: {
@@ -69,6 +73,7 @@ export const mockedPeopleData: MockedPerson[] = [
     email: 'john@linkedin.com',
     companyId: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6e',
     company: {
+      __typename: 'Company',
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6e',
       name: 'LinkedIn',
       domainName: 'linkedin.com',
@@ -78,6 +83,7 @@ export const mockedPeopleData: MockedPerson[] = [
     city: 'Paris',
   },
   {
+    __typename: 'Person',
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6f',
     name: {
       firstName: 'Jane',
@@ -96,6 +102,7 @@ export const mockedPeopleData: MockedPerson[] = [
     email: 'jane@sequoiacap.com',
     companyId: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6g',
     company: {
+      __typename: 'Company',
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6g',
       name: 'Sequoia',
       domainName: 'sequoiacap.com',
@@ -105,6 +112,7 @@ export const mockedPeopleData: MockedPerson[] = [
     city: 'Paris',
   },
   {
+    __typename: 'Person',
     id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6h',
     name: {
       firstName: 'Janice',
@@ -123,6 +131,7 @@ export const mockedPeopleData: MockedPerson[] = [
     jobTitle: 'CEO',
     companyId: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6i',
     company: {
+      __typename: 'Company',
       id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6i',
       name: 'Facebook',
       domainName: 'facebook.com',

@@ -1,4 +1,4 @@
-import { ComputedPartialObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
+import { ComputedPartialWorkspaceEntity } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 import { ComputedPartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
@@ -7,9 +7,9 @@ import { RelationMetadataEntity } from 'src/engine/metadata-modules/relation-met
 
 export class WorkspaceSyncStorage {
   // Object metadata
-  private readonly _objectMetadataCreateCollection: ComputedPartialObjectMetadata[] =
+  private readonly _objectMetadataCreateCollection: ComputedPartialWorkspaceEntity[] =
     [];
-  private readonly _objectMetadataUpdateCollection: (Partial<ComputedPartialObjectMetadata> & {
+  private readonly _objectMetadataUpdateCollection: (Partial<ComputedPartialWorkspaceEntity> & {
     id: string;
   })[] = [];
   private readonly _objectMetadataDeleteCollection: ObjectMetadataEntity[] = [];
@@ -68,12 +68,12 @@ export class WorkspaceSyncStorage {
     return this._relationMetadataDeleteCollection;
   }
 
-  addCreateObjectMetadata(object: ComputedPartialObjectMetadata) {
+  addCreateObjectMetadata(object: ComputedPartialWorkspaceEntity) {
     this._objectMetadataCreateCollection.push(object);
   }
 
   addUpdateObjectMetadata(
-    object: Partial<ComputedPartialObjectMetadata> & { id: string },
+    object: Partial<ComputedPartialWorkspaceEntity> & { id: string },
   ) {
     this._objectMetadataUpdateCollection.push(object);
   }

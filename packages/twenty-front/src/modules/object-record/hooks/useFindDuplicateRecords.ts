@@ -76,7 +76,7 @@ export const useFindDuplicateRecords = <T extends ObjectRecord = ObjectRecord>({
   return {
     objectMetadataItem,
     records,
-    totalCount: objectRecordConnection?.totalCount || 0,
+    totalCount: objectRecordConnection?.totalCount,
     loading,
     error,
     queryStateIdentifier: findDuplicateQueryStateIdentifier,

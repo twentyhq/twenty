@@ -38,7 +38,11 @@
     },
     "test": {},
     "typecheck": {},
-    "storybook:build": {},
+    "storybook:build": {
+      "configurations": {
+        "test": {}
+      }
+    },
     "storybook:dev": {
       "options": { "port": 6007 }
     },
@@ -46,6 +50,9 @@
       "options": {
         "buildTarget": "twenty-ui:storybook:build",
         "port": 6007
+      },
+      "configurations": {
+        "test": {}
       }
     },
     "storybook:coverage": {},
