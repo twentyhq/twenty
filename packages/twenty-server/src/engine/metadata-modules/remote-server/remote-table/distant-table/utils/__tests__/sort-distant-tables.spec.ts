@@ -11,7 +11,7 @@ const table2 = {
   name: 'table2',
 };
 
-describe('distantTablesSorter', () => {
+describe('sortDistantTables', () => {
   it('should return -1 when first param status is SYNCED and second param status is NOT_SYNCED', () => {
     const result = distantTablesSorter(table1, table2);
 

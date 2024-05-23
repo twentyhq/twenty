@@ -9,7 +9,10 @@ import {
   RemoteServerType,
   RemoteServerEntity,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
-import { RemoteTableStatus } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
+import {
+  DistantTableUpdate,
+  RemoteTableStatus,
+} from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
 import {
   mapUdtNameToFieldType,
   mapUdtNameToFieldSettings,
@@ -53,7 +56,7 @@ export class RemoteTableService {
     private readonly remoteTableSchemaUpdateService: RemoteTableSchemaUpdateService,
   ) {}
 
-  public async findDistantTablesWithStatusByServerId(
+  public async findDistantTablesWithStatus(
     id: string,
     workspaceId: string,
     shouldFetchPendingSchemaUpdates?: boolean,
@@ -83,25 +86,37 @@ export class RemoteTableService {
       workspaceId,
     );
 
-    const shouldGetTablesWithPendingSchemaUpdates =
-      currentRemoteTables.length > 0 && shouldFetchPendingSchemaUpdates;
+    const distantTablesWithStatus = Object.keys(distantTables).map(
+      (tableName) => ({
+        name: tableName,
+        schema: remoteServer.schema,
+        status: currentRemoteTableDistantNames.includes(tableName)
+          ? RemoteTableStatus.SYNCED
+          : RemoteTableStatus.NOT_SYNCED,
+      }),
+    );
 
-    const distantTablesWithStatus = shouldGetTablesWithPendingSchemaUpdates
-      ? await this.remoteTableSchemaUpdateService.getDistantTablesWithUpdates({
-          remoteServerSchema: remoteServer.schema,
+    if (!shouldFetchPendingSchemaUpdates || isEmpty(distantTablesWithStatus)) {
+      return distantTablesWithStatus.sort(sortDistantTables);
+    }
+
+    const schemaPendingUpdates =
+      await this.remoteTableSchemaUpdateService.getSchemaUpdatesBetweenForeignAndDistantTables(
+        {
           workspaceId,
           remoteTables: currentRemoteTables,
           distantTables,
-        })
-      : Object.keys(distantTables).map((tableName) => ({
-          name: tableName,
-          schema: remoteServer.schema,
-          status: currentRemoteTableDistantNames.includes(tableName)
-            ? RemoteTableStatus.SYNCED
-            : RemoteTableStatus.NOT_SYNCED,
-        }));
+        },
+      );
 
-    return distantTablesWithStatus.sort(sortDistantTables);
+    const distantTablesWithPendingUpdates =
+      this.getDistantTablesWithPendingUpdates(
+        schemaPendingUpdates,
+        distantTablesWithStatus,
+        remoteServer.schema,
+      );
+
+    return distantTablesWithPendingUpdates.sort(sortDistantTables);
   }
 
   public async findRemoteTablesByServerId({
@@ -441,5 +456,33 @@ export class RemoteTableService {
         );
       }
     }
+  }
+
+  private getDistantTablesWithPendingUpdates(
+    schemaPendingUpdates: { [tablename: string]: DistantTableUpdate[] },
+    distantTablesWithStatus: {
+      name: string;
+      schema: string;
+      status: RemoteTableStatus;
+    }[],
+    remoteServerSchema: string,
+  ) {
+    const distantTablesWithUpdates = distantTablesWithStatus.map((table) => ({
+      ...table,
+      schemaPendingUpdates: schemaPendingUpdates[table.name] || [],
+    }));
+
+    const deletedTables = Object.entries(schemaPendingUpdates)
+      .filter(([_tableName, updates]) =>
+        updates.includes(DistantTableUpdate.TABLE_DELETED),
+      )
+      .map(([tableName, updates]) => ({
+        name: tableName,
+        schema: remoteServerSchema,
+        status: RemoteTableStatus.SYNCED,
+        schemaPendingUpdates: updates,
+      }));
+
+    return [...distantTablesWithUpdates, ...deletedTables];
   }
 }
