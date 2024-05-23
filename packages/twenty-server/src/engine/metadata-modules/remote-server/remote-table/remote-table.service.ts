@@ -96,7 +96,7 @@ export class RemoteTableService {
       }),
     );
 
-    if (!shouldFetchPendingSchemaUpdates || isEmpty(distantTablesWithStatus)) {
+    if (!shouldFetchPendingSchemaUpdates) {
       return distantTablesWithStatus.sort(sortDistantTables);
     }
 
