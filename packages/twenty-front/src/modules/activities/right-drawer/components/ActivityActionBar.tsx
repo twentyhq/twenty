@@ -10,7 +10,6 @@ import { activityTargetableEntityArrayState } from '@/activities/states/activity
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
 import { temporaryActivityForEditorState } from '@/activities/states/temporaryActivityForEditorState';
-import { viewableActivityIdState } from '@/activities/states/viewableActivityIdState';
 import { objectShowPageTargetableObjectState } from '@/activities/timeline/states/objectShowPageTargetableObjectIdState';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
@@ -18,6 +17,7 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useDeleteRecordFromCache } from '@/object-record/cache/hooks/useDeleteRecordFromCache';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { mapToRecordId } from '@/object-record/utils/mapToObjectId';
 import { IconButton } from '@/ui/input/button/components/IconButton';
@@ -30,7 +30,7 @@ const StyledButtonContainer = styled.div`
 `;
 
 export const ActivityActionBar = () => {
-  const viewableActivityId = useRecoilValue(viewableActivityIdState);
+  const viewableRecordId = useRecoilValue(viewableRecordIdState);
   const activityIdInDrawer = useRecoilValue(activityIdInDrawerState);
 
   const activityTargetableEntityArray = useRecoilValue(
@@ -86,7 +86,7 @@ export const ActivityActionBar = () => {
 
         setIsRightDrawerOpen(false);
 
-        if (!isNonEmptyString(viewableActivityId)) {
+        if (!isNonEmptyString(viewableRecordId)) {
           return;
         }
 
@@ -111,13 +111,13 @@ export const ActivityActionBar = () => {
             await deleteManyActivityTargets(activityTargetIdsToDelete);
           }
 
-          await deleteOneActivity?.(viewableActivityId);
+          await deleteOneActivity?.(viewableRecordId);
         }
       },
     [
       activityIdInDrawer,
       setIsRightDrawerOpen,
-      viewableActivityId,
+      viewableRecordId,
       isActivityInCreateMode,
       temporaryActivityForEditor,
       deleteActivityFromCache,
@@ -129,9 +129,7 @@ export const ActivityActionBar = () => {
     ],
   );
 
-  const record = useRecoilValue(
-    recordStoreFamilyState(viewableActivityId ?? ''),
-  );
+  const record = useRecoilValue(recordStoreFamilyState(viewableRecordId ?? ''));
 
   const addActivity = () => {
     setIsRightDrawerOpen(false);
