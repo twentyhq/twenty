@@ -43,6 +43,10 @@ export class GmailPartialMessageListFetchV2Service {
     connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
     workspaceId: string,
   ): Promise<void> {
+    this.logger.log(
+      `Fetching partial message list for workspace ${workspaceId} and account ${connectedAccount.id}`,
+    );
+
     await this.setMessageChannelSyncStatusService.setMessageListFetchOnGoingStatus(
       messageChannel.id,
       workspaceId,
@@ -93,7 +97,7 @@ export class GmailPartialMessageListFetchV2Service {
 
     if (historyId === lastSyncHistoryId || !history?.length) {
       this.logger.log(
-        `Messaging import done with history ${historyId} and nothing to update for workspace ${workspaceId} and account ${connectedAccount.id}`,
+        `Partial message list import done with history ${historyId} and nothing to update for workspace ${workspaceId} and account ${connectedAccount.id}`,
       );
 
       await this.setMessageChannelSyncStatusService.setCompletedStatus(
@@ -137,7 +141,7 @@ export class GmailPartialMessageListFetchV2Service {
     );
 
     this.logger.log(
-      `gmail partial-sync done for workspace ${workspaceId} and account ${connectedAccount.id}`,
+      `Partial message list import done with history ${historyId} for workspace ${workspaceId} and account ${connectedAccount.id}`,
     );
 
     await this.setMessageChannelSyncStatusService.setMessagesImportPendingStatus(

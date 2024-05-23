@@ -30,7 +30,7 @@ export class GmailMessageListFetchJob
     const { workspaceId, connectedAccountId } = data;
 
     this.logger.log(
-      `gmail partial-sync for workspace ${workspaceId} and account ${connectedAccountId}`,
+      `Fetch gmail message list for workspace ${workspaceId} and account ${connectedAccountId}`,
     );
 
     try {
