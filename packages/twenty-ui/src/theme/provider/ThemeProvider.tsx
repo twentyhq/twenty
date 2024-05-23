@@ -1,5 +1,4 @@
-// ThemeProvider.tsx
-import * as React from 'react';
+import { ReactNode, useEffect } from 'react';
 import { ThemeProvider as EmotionThemeProvider } from '@emotion/react';
 
 import { ThemeType } from '..';
@@ -8,10 +7,15 @@ import './theme.css';
 
 type ThemeProviderProps = {
   theme: ThemeType;
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
-const ThemeProvider: React.FC<ThemeProviderProps> = ({ theme, children }) => {
+const ThemeProvider = ({ theme, children }: ThemeProviderProps) => {
+  useEffect(() => {
+    document.documentElement.className =
+      theme.name === 'dark' ? 'dark' : 'light';
+  }, [theme]);
+
   return <EmotionThemeProvider theme={theme}>{children}</EmotionThemeProvider>;
 };
 

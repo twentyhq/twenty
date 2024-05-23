@@ -38,52 +38,48 @@
   --twentycrm-blue-accent-10: #f5f9fd,
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    /* Accent color */
-    --twentycrm-accent-quaternary: var(--twentycrm-blue-accent-90);
+:root.dark {
+  /* Accent color */
+  --twentycrm-accent-quaternary: var(--twentycrm-blue-accent-90);
 
-    /* Font color */
-    --twentycrm-font-color-secondary: var(--twentycrm-gray-35);
-    --twentycrm-font-color-primary: var(--twentycrm-gray-20);
-    --twentycrm-font-color-light: var(--twentycrm-gray-50);
-    --twentycrm-font-color-extra-light: var(--twentycrm-gray-55);
-  
-    /* Background color */
-    --twentycrm-background-primary: var(--twentycrm-gray-85);
+  /* Font color */
+  --twentycrm-font-color-secondary: var(--twentycrm-gray-35);
+  --twentycrm-font-color-primary: var(--twentycrm-gray-20);
+  --twentycrm-font-color-light: var(--twentycrm-gray-50);
+  --twentycrm-font-color-extra-light: var(--twentycrm-gray-55);
 
-    /* Background transparent color */
-    --twentycrm-background-transparent-secondary: var(--twentycrm-gray-80-80);
-    --twentycrm-background-transparent-light: var(--twentycrm-gray-0-6);
-    --twentycrm-background-transparent-medium: var(--twentycrm-gray-0-10);
-    --twentycrm-background-transparent-strong: var(--twentycrm-gray-0-14);
-  
-    /* Border color */
-    --twentycrm-border-color-medium: var(--twentycrm-gray-65);
-  }
+  /* Background color */
+  --twentycrm-background-primary: var(--twentycrm-gray-85);
+
+  /* Background transparent color */
+  --twentycrm-background-transparent-secondary: var(--twentycrm-gray-80-80);
+  --twentycrm-background-transparent-light: var(--twentycrm-gray-0-6);
+  --twentycrm-background-transparent-medium: var(--twentycrm-gray-0-10);
+  --twentycrm-background-transparent-strong: var(--twentycrm-gray-0-14);
+
+  /* Border color */
+  --twentycrm-border-color-medium: var(--twentycrm-gray-65);
 }
 
-@media (prefers-color-scheme: light) {
-  :root {  
-    /* Accent color */
-    --twentycrm-accent-quaternary: var(--twentycrm-blue-accent-10);
+:root.light {  
+  /* Accent color */
+  --twentycrm-accent-quaternary: var(--twentycrm-blue-accent-10);
 
-    /* Colors */
-    --twentycrm-font-color-primary: var(--twentycrm-gray-60);
-    --twentycrm-font-color-secondary: var(--twentycrm-gray-50);
-    --twentycrm-font-color-light: var(--twentycrm-gray-35);
-    --twentycrm-font-color-extra-light: var(--twentycrm-gray-30);
+  /* Colors */
+  --twentycrm-font-color-primary: var(--twentycrm-gray-60);
+  --twentycrm-font-color-secondary: var(--twentycrm-gray-50);
+  --twentycrm-font-color-light: var(--twentycrm-gray-35);
+  --twentycrm-font-color-extra-light: var(--twentycrm-gray-30);
 
-    /* Background color */
-    --twentycrm-background-primary: var(--twentycrm-gray-0);
-    
-    /* Background transparent color */
-    --twentycrm-background-transparent-secondary: var(--twentycrm-gray-10-80);
-    --twentycrm-background-transparent-light: var(--twentycrm-gray-100-4);
-    --twentycrm-background-transparent-medium: var(--twentycrm-gray-100-10);
-    --twentycrm-background-transparent-strong: var(--twentycrm-gray-100-16);
+  /* Background color */
+  --twentycrm-background-primary: var(--twentycrm-gray-0);
+  
+  /* Background transparent color */
+  --twentycrm-background-transparent-secondary: var(--twentycrm-gray-10-80);
+  --twentycrm-background-transparent-light: var(--twentycrm-gray-100-4);
+  --twentycrm-background-transparent-medium: var(--twentycrm-gray-100-10);
+  --twentycrm-background-transparent-strong: var(--twentycrm-gray-100-16);
 
-    /* Border color */
-    --twentycrm-border-color-medium: var(--twentycrm-gray-20);
-  }
+  /* Border color */
+  --twentycrm-border-color-medium: var(--twentycrm-gray-20);
 }
