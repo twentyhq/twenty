@@ -9,11 +9,11 @@ import { GmailMessageListFetchCronJob } from 'src/modules/messaging/crons/jobs/g
 const GMAIL_PARTIAL_SYNC_CRON_PATTERN = '*/5 * * * *';
 
 @Command({
-  name: 'cron:messaging:gmail-partial-message-list-fetch',
+  name: 'cron:messaging:gmail-message-list-fetch',
   description:
     'Starts a cron job to sync existing connected account messages and store them in the cache',
 })
-export class GmailPartialSyncCronCommand extends CommandRunner {
+export class GmailMessageListFetchCronCommand extends CommandRunner {
   constructor(
     @Inject(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
