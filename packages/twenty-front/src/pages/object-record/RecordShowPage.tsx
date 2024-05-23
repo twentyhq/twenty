@@ -134,6 +134,7 @@ export const RecordShowPage = () => {
           objectNameSingular={objectNameSingular}
           objectRecordId={objectRecordId}
           loading={loading}
+          isInRightDrawer={false}
         />
       </PageBody>
     </PageContainer>

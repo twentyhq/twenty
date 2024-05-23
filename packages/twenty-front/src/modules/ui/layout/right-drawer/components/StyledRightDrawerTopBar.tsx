@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
 
-export const StyledRightDrawerTopBar = styled.div`
+export const StyledRightDrawerTopBar = styled.div<{
+  isRightDrawerMinimized: boolean;
+}>`
   align-items: center;
   background: ${({ theme }) => theme.background.secondary};
   border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
@@ -14,4 +16,6 @@ export const StyledRightDrawerTopBar = styled.div`
   padding-left: ${({ theme }) => theme.spacing(2)};
 
   padding-right: ${({ theme }) => theme.spacing(2)};
+  cursor: ${({ isRightDrawerMinimized }) =>
+    isRightDrawerMinimized ? 'pointer' : 'default'};
 `;

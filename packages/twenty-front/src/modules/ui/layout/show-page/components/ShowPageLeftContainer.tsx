@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
-const StyledOuterContainer = styled.div`
+const StyledOuterContainer = styled.div<{ isInRightDrawer: boolean }>`
   background: ${({ theme }) => theme.background.secondary};
   border-bottom-left-radius: 8px;
   border-right: ${({ theme }) =>
@@ -14,12 +14,14 @@ const StyledOuterContainer = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
   z-index: 10;
+  width: ${({ isInRightDrawer }) => (isInRightDrawer ? `100%` : 'auto')};
 `;
 
-const StyledInnerContainer = styled.div`
+const StyledInnerContainer = styled.div<{ isInRightDrawer: boolean }>`
   display: flex;
   flex-direction: column;
-  width: ${() => (useIsMobile() ? `100%` : '348px')};
+  width: ${({ isInRightDrawer }) =>
+    useIsMobile() || isInRightDrawer ? `100%` : '348px'};
 `;
 
 const StyledIntermediateContainer = styled.div`
@@ -29,22 +31,28 @@ const StyledIntermediateContainer = styled.div`
 `;
 
 export type ShowPageLeftContainerProps = {
+  isInRightDrawer: boolean;
   children: ReactNode;
 };
 
 export const ShowPageLeftContainer = ({
+  isInRightDrawer = false,
   children,
 }: ShowPageLeftContainerProps) => {
   const isMobile = useIsMobile();
-  return isMobile ? (
-    <StyledOuterContainer>
-      <StyledInnerContainer>{children}</StyledInnerContainer>
+  return isMobile || isInRightDrawer ? (
+    <StyledOuterContainer isInRightDrawer={isInRightDrawer}>
+      <StyledInnerContainer isInRightDrawer={isInRightDrawer}>
+        {children}
+      </StyledInnerContainer>
     </StyledOuterContainer>
   ) : (
-    <StyledOuterContainer>
+    <StyledOuterContainer isInRightDrawer={isInRightDrawer}>
       <ScrollWrapper>
         <StyledIntermediateContainer>
-          <StyledInnerContainer>{children}</StyledInnerContainer>
+          <StyledInnerContainer isInRightDrawer={isInRightDrawer}>
+            {children}
+          </StyledInnerContainer>
         </StyledIntermediateContainer>
       </ScrollWrapper>
     </StyledOuterContainer>

@@ -48,6 +48,7 @@ export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
           getBasePathToShowPage({
             objectNameSingular: objectMetadataItem.nameSingular,
           }) + recordId,
+        objectNameSingular: objectMetadataItem.nameSingular,
         isSelected: currentRowSelected,
         isReadOnly: objectMetadataItem.isRemote ?? false,
       }}

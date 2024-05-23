@@ -1,12 +1,14 @@
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { RightDrawerCalendarEvent } from '@/activities/calendar/right-drawer/components/RightDrawerCalendarEvent';
 import { RightDrawerEmailThread } from '@/activities/emails/right-drawer/components/RightDrawerEmailThread';
 import { RightDrawerCreateActivity } from '@/activities/right-drawer/components/create/RightDrawerCreateActivity';
 import { RightDrawerEditActivity } from '@/activities/right-drawer/components/edit/RightDrawerEditActivity';
+import { RightDrawerRecord } from '@/object-record/record-right-drawer/components/RightDrawerRecord';
+import { RightDrawerGenericTopBar } from '@/ui/layout/right-drawer/components/RightDrawerGenericTopBar';
+import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
 
-import { RightDrawerActivityTopBar } from '../../../../activities/right-drawer/components/RightDrawerActivityTopBar';
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
 import { RightDrawerPages } from '../types/RightDrawerPages';
 
@@ -30,19 +32,27 @@ const StyledRightDrawerBody = styled.div`
 const RIGHT_DRAWER_PAGES_CONFIG = {
   [RightDrawerPages.CreateActivity]: {
     page: <RightDrawerCreateActivity />,
-    topBar: <RightDrawerActivityTopBar />,
+    topBar: <RightDrawerGenericTopBar page={RightDrawerPages.CreateActivity} />,
   },
   [RightDrawerPages.EditActivity]: {
     page: <RightDrawerEditActivity />,
-    topBar: <RightDrawerActivityTopBar />,
+    topBar: <RightDrawerGenericTopBar page={RightDrawerPages.EditActivity} />,
   },
   [RightDrawerPages.ViewEmailThread]: {
     page: <RightDrawerEmailThread />,
-    topBar: <RightDrawerActivityTopBar showActionBar={false} />,
+    topBar: (
+      <RightDrawerGenericTopBar page={RightDrawerPages.ViewEmailThread} />
+    ),
   },
   [RightDrawerPages.ViewCalendarEvent]: {
     page: <RightDrawerCalendarEvent />,
-    topBar: <RightDrawerActivityTopBar showActionBar={false} />,
+    topBar: (
+      <RightDrawerGenericTopBar page={RightDrawerPages.ViewCalendarEvent} />
+    ),
+  },
+  [RightDrawerPages.ViewRecord]: {
+    page: <RightDrawerRecord />,
+    topBar: <RightDrawerGenericTopBar page={RightDrawerPages.ViewRecord} />,
   },
 };
 
@@ -53,10 +63,14 @@ export const RightDrawerRouter = () => {
     ? RIGHT_DRAWER_PAGES_CONFIG[rightDrawerPage]
     : {};
 
+  const isRightDrawerMinimized = useRecoilValue(isRightDrawerMinimizedState);
+
   return (
     <StyledRightDrawerPage>
       {topBar}
-      <StyledRightDrawerBody>{page}</StyledRightDrawerBody>
+      {!isRightDrawerMinimized && (
+        <StyledRightDrawerBody>{page}</StyledRightDrawerBody>
+      )}
     </StyledRightDrawerPage>
   );
 };

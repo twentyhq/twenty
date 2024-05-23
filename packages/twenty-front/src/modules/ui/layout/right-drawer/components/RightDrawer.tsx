@@ -7,6 +7,7 @@ import { Key } from 'ts-key-enum';
 
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
 import { isRightDrawerAnimationCompletedState } from '@/ui/layout/right-drawer/states/isRightDrawerAnimationCompleted';
+import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
 import { rightDrawerCloseEventState } from '@/ui/layout/right-drawer/states/rightDrawerCloseEventsState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
@@ -46,6 +47,8 @@ export const RightDrawer = () => {
     isRightDrawerOpenState,
   );
 
+  const isRightDrawerMinimized = useRecoilValue(isRightDrawerMinimizedState);
+
   const isRightDrawerExpanded = useRecoilValue(isRightDrawerExpandedState);
   const [, setIsRightDrawerAnimationCompleted] = useRecoilState(
     isRightDrawerAnimationCompletedState,
@@ -53,7 +56,7 @@ export const RightDrawer = () => {
 
   const rightDrawerPage = useRecoilValue(rightDrawerPageState);
 
-  const { closeRightDrawer } = useRightDrawer();
+  const { closeRightDrawer, minimizeRightDrawer } = useRightDrawer();
 
   const rightDrawerRef = useRef<HTMLDivElement>(null);
 
@@ -72,10 +75,10 @@ export const RightDrawer = () => {
 
           if (isRightDrawerOpen) {
             set(rightDrawerCloseEventState, event);
-            closeRightDrawer();
+            minimizeRightDrawer();
           }
         },
-      [closeRightDrawer],
+      [minimizeRightDrawer],
     ),
     mode: ClickOutsideMode.comparePixels,
   });
@@ -115,6 +118,13 @@ export const RightDrawer = () => {
     closed: {
       x: '100%',
     },
+    minimized: {
+      x: '0%',
+      width: 'auto',
+      height: 'auto',
+      bottom: '0',
+      top: 'auto',
+    },
   };
   const handleAnimationComplete = () => {
     setIsRightDrawerAnimationCompleted(isRightDrawerOpen);
@@ -123,7 +133,13 @@ export const RightDrawer = () => {
   return (
     <StyledContainer
       initial="closed"
-      animate={isRightDrawerOpen ? 'normal' : 'closed'}
+      animate={
+        isRightDrawerOpen
+          ? isRightDrawerMinimized
+            ? 'minimized'
+            : 'normal'
+          : 'closed'
+      }
       variants={variants}
       transition={{
         duration: theme.animation.duration.normal,

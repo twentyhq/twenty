@@ -1,15 +1,19 @@
 import { useNavigate } from 'react-router-dom';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { useInitDraftValueV2 } from '@/object-record/record-field/hooks/useInitDraftValueV2';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
+import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
+import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { SOFT_FOCUS_CLICK_OUTSIDE_LISTENER_ID } from '@/object-record/record-table/constants/SoftFocusClickOutsideListenerId';
 import { useLeaveTableFocus } from '@/object-record/record-table/hooks/internal/useLeaveTableFocus';
 import { useMoveEditModeToTableCellPosition } from '@/object-record/record-table/hooks/internal/useMoveEditModeToCellPosition';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
+import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
+import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -28,6 +32,7 @@ export type OpenTableCellArgs = {
   cellPosition: TableCellPosition;
   isReadOnly: boolean;
   pathToShowPage: string;
+  objectNameSingular: string;
   customCellHotkeyScope: HotkeyScope | null;
   fieldDefinition: FieldDefinition<FieldMetadata>;
   entityId: string;
@@ -48,6 +53,12 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
 
   const initDraftValue = useInitDraftValueV2();
 
+  const { openRightDrawer } = useRightDrawer();
+  const setViewableRecordId = useSetRecoilState(viewableRecordIdState);
+  const setViewableRecordNameSingular = useSetRecoilState(
+    viewableRecordNameSingularState,
+  );
+
   const openTableCell = useRecoilCallback(
     ({ snapshot }) =>
       ({
@@ -55,6 +66,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
         cellPosition,
         isReadOnly,
         pathToShowPage,
+        objectNameSingular,
         customCellHotkeyScope,
         fieldDefinition,
         entityId,
@@ -80,7 +92,11 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
 
         if (isFirstColumnCell && !isEmpty) {
           leaveTableFocus();
-          navigate(pathToShowPage);
+          // navigate(pathToShowPage);
+          setViewableRecordId(entityId);
+          setViewableRecordNameSingular(objectNameSingular);
+          openRightDrawer(RightDrawerPages.ViewRecord);
+
           return;
         }
 

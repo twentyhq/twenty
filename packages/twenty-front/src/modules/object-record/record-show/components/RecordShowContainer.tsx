@@ -37,12 +37,14 @@ type RecordShowContainerProps = {
   objectNameSingular: string;
   objectRecordId: string;
   loading: boolean;
+  isInRightDrawer?: boolean;
 };
 
 export const RecordShowContainer = ({
   objectNameSingular,
   objectRecordId,
   loading,
+  isInRightDrawer = false,
 }: RecordShowContainerProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -131,7 +133,7 @@ export const RecordShowContainer = ({
   return (
     <RecoilScope CustomRecoilScopeContext={ShowPageRecoilScopeContext}>
       <ShowPageContainer>
-        <ShowPageLeftContainer>
+        <ShowPageLeftContainer isInRightDrawer={isInRightDrawer}>
           {isDefined(recordFromStore) && (
             <>
               <ShowPageSummaryCard
@@ -203,10 +205,12 @@ export const RecordShowContainer = ({
                   </FieldContext.Provider>
                 ))}
               </PropertyBox>
-              <RecordDetailDuplicatesSection
-                objectRecordId={objectRecordId}
-                objectNameSingular={objectNameSingular}
-              />
+              {!isInRightDrawer && (
+                <RecordDetailDuplicatesSection
+                  objectRecordId={objectRecordId}
+                  objectNameSingular={objectNameSingular}
+                />
+              )}
               {relationFieldMetadataItems?.map((fieldMetadataItem, index) => (
                 <FieldContext.Provider
                   key={objectRecordId + fieldMetadataItem.id}
@@ -231,7 +235,7 @@ export const RecordShowContainer = ({
             </>
           )}
         </ShowPageLeftContainer>
-        {recordFromStore ? (
+        {recordFromStore && !isInRightDrawer ? (
           <ShowPageRightContainer
             targetableObject={{
               id: objectRecordId,

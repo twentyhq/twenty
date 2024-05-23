@@ -2,6 +2,7 @@ import { createContext } from 'react';
 
 export type RecordTableRowContextProps = {
   pathToShowPage: string;
+  objectNameSingular: string;
   recordId: string;
   rowIndex: number;
   isSelected: boolean;
