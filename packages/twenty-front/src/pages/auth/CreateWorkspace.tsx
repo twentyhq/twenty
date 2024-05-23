@@ -18,6 +18,7 @@ import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetada
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { AppPath } from '@/types/AppPath';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
@@ -93,7 +94,7 @@ export const CreateWorkspace = () => {
         }, 20);
       } catch (error: any) {
         enqueueSnackBar(error?.message, {
-          variant: 'error',
+          variant: SnackBarVariant.Error,
         });
       }
     },
