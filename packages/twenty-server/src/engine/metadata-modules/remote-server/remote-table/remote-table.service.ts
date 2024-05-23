@@ -31,6 +31,7 @@ import { PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-se
 import { fetchTableColumns } from 'src/engine/metadata-modules/remote-server/remote-table/utils/fetch-table-columns.util';
 import { ForeignTableService } from 'src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.service';
 import { RemoteTableSchemaUpdateService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-schema-update/remote-table-schema-update.service';
+import { sortDistantTables } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/utils/sort-distant-tables.util';
 
 export class RemoteTableService {
   private readonly logger = new Logger(RemoteTableService.name);
@@ -82,26 +83,25 @@ export class RemoteTableService {
       workspaceId,
     );
 
-    if (currentRemoteTables.length === 0 || !shouldFetchPendingSchemaUpdates) {
-      const distantTablesWithStatus = Object.keys(distantTables).map(
-        (tableName) => ({
+    const shouldGetTablesWithPendingSchemaUpdates =
+      currentRemoteTables.length > 0 && shouldFetchPendingSchemaUpdates;
+
+    const distantTablesWithStatus = shouldGetTablesWithPendingSchemaUpdates
+      ? await this.remoteTableSchemaUpdateService.getDistantTablesWithUpdates({
+          remoteServerSchema: remoteServer.schema,
+          workspaceId,
+          remoteTables: currentRemoteTables,
+          distantTables,
+        })
+      : Object.keys(distantTables).map((tableName) => ({
           name: tableName,
           schema: remoteServer.schema,
           status: currentRemoteTableDistantNames.includes(tableName)
             ? RemoteTableStatus.SYNCED
             : RemoteTableStatus.NOT_SYNCED,
-        }),
-      );
+        }));
 
-      return distantTablesWithStatus;
-    }
-
-    return this.remoteTableSchemaUpdateService.getDistantTablesWithUpdates({
-      remoteServerSchema: remoteServer.schema,
-      workspaceId,
-      remoteTables: currentRemoteTables,
-      distantTables,
-    });
+    return distantTablesWithStatus.sort(sortDistantTables);
   }
 
   public async findRemoteTablesByServerId({
