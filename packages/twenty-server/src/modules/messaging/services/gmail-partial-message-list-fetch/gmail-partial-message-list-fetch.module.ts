@@ -11,9 +11,9 @@ import { GmailGetHistoryService } from 'src/modules/messaging/services/gmail-par
 import { GmailPartialMessageListFetchErrorHandlingService } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-partial-message-list-fetch-error-handling.service';
 import { GmailPartialMessageListFetchV2Service } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-partial-message-list-fetch-v2.service';
 import { GmailPartialMessageListFetchService } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-partial-message-list-fetch.service';
-import { GmailSetStatusService } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-set-status.service';
 import { MessageModule } from 'src/modules/messaging/services/message/message.module';
 import { MessagingProvidersModule } from 'src/modules/messaging/services/providers/messaging-providers.module';
+import { SetMessageChannelSyncStatusModule } from 'src/modules/messaging/services/set-message-channel-sync-status/set-message-channel-sync-status.module';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 
 @Module({
@@ -28,13 +28,13 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-ob
     MessageModule,
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     WorkspaceDataSourceModule,
+    SetMessageChannelSyncStatusModule,
   ],
   providers: [
     GmailPartialMessageListFetchService,
     GmailPartialMessageListFetchV2Service,
     GmailPartialMessageListFetchErrorHandlingService,
     GmailGetHistoryService,
-    GmailSetStatusService,
   ],
   exports: [
     GmailPartialMessageListFetchService,

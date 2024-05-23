@@ -29,6 +29,7 @@ import {
   CreateCompanyAndContactJob,
 } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
 import { GmailMessagesImportService } from 'src/modules/messaging/services/gmail-messages-import/gmail-messages-import.service';
+import { SetMessageChannelSyncStatusService } from 'src/modules/messaging/services/set-message-channel-sync-status/set-message-channel-sync-status.service';
 
 @Injectable()
 export class GmailMessagesImportV2Service {
@@ -47,6 +48,7 @@ export class GmailMessagesImportV2Service {
     private readonly messageQueueService: MessageQueueService,
     private readonly messageService: MessageService,
     private readonly messageParticipantService: MessageParticipantService,
+    private readonly setMessageChannelSyncStatusService: SetMessageChannelSyncStatusService,
   ) {}
 
   async processMessageBatchImport(
@@ -111,9 +113,8 @@ export class GmailMessagesImportV2Service {
 
     const messageChannelId = messageChannel.id;
 
-    await this.messageChannelRepository.updateSyncSubStatus(
+    await this.setMessageChannelSyncStatusService.setMessagesImportOnGoingStatus(
       messageChannelId,
-      MessageChannelSyncSubStatus.MESSAGES_IMPORT_ONGOING,
       workspaceId,
     );
 
@@ -128,15 +129,8 @@ export class GmailMessagesImportV2Service {
       )) ?? [];
 
     if (!messageIdsToFetch?.length) {
-      await this.messageChannelRepository.updateSyncSubStatus(
+      await this.setMessageChannelSyncStatusService.setCompletedStatus(
         messageChannelId,
-        MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
-        workspaceId,
-      );
-
-      await this.messageChannelRepository.updateSyncStatus(
-        messageChannelId,
-        MessageChannelSyncStatus.COMPLETED,
         workspaceId,
       );
 
@@ -164,15 +158,8 @@ export class GmailMessagesImportV2Service {
         );
 
       if (!messagesToSave.length) {
-        await this.messageChannelRepository.updateSyncStatus(
+        await this.setMessageChannelSyncStatusService.setCompletedStatus(
           messageChannelId,
-          MessageChannelSyncStatus.COMPLETED,
-          workspaceId,
-        );
-
-        await this.messageChannelRepository.updateSyncSubStatus(
-          messageChannelId,
-          MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
           workspaceId,
         );
 
@@ -220,15 +207,8 @@ export class GmailMessagesImportV2Service {
       );
 
       if (messageIdsToFetch.length < GMAIL_USERS_MESSAGES_GET_BATCH_SIZE) {
-        await this.messageChannelRepository.updateSyncStatus(
+        await this.setMessageChannelSyncStatusService.setCompletedStatus(
           messageChannelId,
-          MessageChannelSyncStatus.COMPLETED,
-          workspaceId,
-        );
-
-        await this.messageChannelRepository.updateSyncSubStatus(
-          messageChannelId,
-          MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
           workspaceId,
         );
 
@@ -236,9 +216,8 @@ export class GmailMessagesImportV2Service {
           `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} done with no more messages to import.`,
         );
       } else {
-        await this.messageChannelRepository.updateSyncSubStatus(
+        await this.setMessageChannelSyncStatusService.setMessagesImportPendingStatus(
           messageChannelId,
-          MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING,
           workspaceId,
         );
 
@@ -267,15 +246,8 @@ export class GmailMessagesImportV2Service {
         messageIdsToFetch,
       );
 
-      await this.messageChannelRepository.updateSyncSubStatus(
+      await this.setMessageChannelSyncStatusService.setFailedUnkownStatus(
         messageChannelId,
-        MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
-        workspaceId,
-      );
-
-      await this.messageChannelRepository.updateSyncStatus(
-        messageChannelId,
-        MessageChannelSyncStatus.FAILED_UNKNOWN,
         workspaceId,
       );
 

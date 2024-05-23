@@ -1,4 +1,4 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
@@ -9,9 +9,7 @@ import {
 } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
-export class GmailSetStatusService {
-  private readonly logger = new Logger(GmailSetStatusService.name);
-
+export class SetMessageChannelSyncStatusService {
   constructor(
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
@@ -69,6 +67,34 @@ export class GmailSetStatusService {
     await this.messageChannelRepository.updateSyncSubStatus(
       messageChannelId,
       MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING,
+      workspaceId,
+    );
+  }
+
+  public async setMessagesImportOnGoingStatus(
+    messageChannelId: string,
+    workspaceId: string,
+  ) {
+    await this.messageChannelRepository.updateSyncSubStatus(
+      messageChannelId,
+      MessageChannelSyncSubStatus.MESSAGES_IMPORT_ONGOING,
+      workspaceId,
+    );
+  }
+
+  public async setFailedUnkownStatus(
+    messageChannelId: string,
+    workspaceId: string,
+  ) {
+    await this.messageChannelRepository.updateSyncSubStatus(
+      messageChannelId,
+      MessageChannelSyncSubStatus.FAILED,
+      workspaceId,
+    );
+
+    await this.messageChannelRepository.updateSyncStatus(
+      messageChannelId,
+      MessageChannelSyncStatus.FAILED_UNKNOWN,
       workspaceId,
     );
   }
