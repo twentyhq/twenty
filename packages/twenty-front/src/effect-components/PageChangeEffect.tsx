@@ -36,8 +36,6 @@ export const PageChangeEffect = () => {
 
   const { defaultHomePagePath } = useDefaultHomePagePath();
 
-  console.log('location', location, 'onboardingStatus', onboardingStatus);
-
   const eventTracker = useEventTracker();
 
   const { addToCommandMenu, setToInitialCommandMenu } = useCommandMenu();

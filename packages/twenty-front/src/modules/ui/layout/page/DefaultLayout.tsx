@@ -1,13 +1,9 @@
-import { useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 import { css, Global, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
-import { useRecoilValue } from 'recoil';
 
 import { AuthModal } from '@/auth/components/Modal';
-import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
-import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
@@ -16,12 +12,10 @@ import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
-import { AppPath } from '@/types/AppPath';
-import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
+import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { DESKTOP_NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/DesktopNavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useScreenSize } from '@/ui/utilities/screen-size/hooks/useScreenSize';
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 const StyledLayout = styled.div`
   background: ${({ theme }) => theme.background.noisy};
@@ -70,34 +64,7 @@ export const DefaultLayout = () => {
   const isSettingsPage = useIsSettingsPage();
   const theme = useTheme();
   const widowsWidth = useScreenSize().width;
-  const isMatchingLocation = useIsMatchingLocation();
-  const onboardingStatus = useOnboardingStatus();
-  const isDefaultLayoutAuthModalVisible = useRecoilValue(
-    isDefaultLayoutAuthModalVisibleState,
-  );
-  const showAuthModal = useMemo(() => {
-    if (
-      isMatchingLocation(AppPath.Invite) ||
-      isMatchingLocation(AppPath.ResetPassword)
-    ) {
-      return isDefaultLayoutAuthModalVisible === true;
-    }
-    if (
-      OnboardingStatus.Incomplete === onboardingStatus ||
-      OnboardingStatus.OngoingUserCreation === onboardingStatus ||
-      OnboardingStatus.OngoingProfileCreation === onboardingStatus ||
-      OnboardingStatus.OngoingWorkspaceActivation === onboardingStatus
-    ) {
-      return true;
-    }
-    if (isMatchingLocation(AppPath.PlanRequired)) {
-      return (
-        OnboardingStatus.CompletedWithoutSubscription === onboardingStatus ||
-        OnboardingStatus.Canceled === onboardingStatus
-      );
-    }
-    return false;
-  }, [isDefaultLayoutAuthModalVisible, isMatchingLocation, onboardingStatus]);
+  const showAuthModal = useShowAuthModal();
 
   return (
     <>
