@@ -86,9 +86,7 @@ export const addPerson = async () => {
   const personId = await createPerson(personData);
 
   if (isDefined(personId)) {
-    await changeSidePanelUrl(
-      `${import.meta.env.VITE_FRONT_BASE_URL}/object/person/${personId}`,
-    );
+    await changeSidePanelUrl(`/object/person/${personId}`);
   }
 
   return personId;
@@ -115,19 +113,16 @@ export const insertButtonForPerson = async () => {
     const openPersonOnSidePanel = (personId: string) => {
       personButtonSpan.textContent = 'View in Twenty';
       personButtonDiv.onClickHandler(async () => {
-        await changeSidePanelUrl(
-          `${import.meta.env.VITE_FRONT_BASE_URL}/object/person/${personId}`,
-        );
+        await changeSidePanelUrl(`/object/person/${personId}`);
         chrome.runtime.sendMessage({ action: 'openSidepanel' });
       });
     };
 
     if (isDefined(person)) {
-      await changeSidePanelUrl(
-        `${import.meta.env.VITE_FRONT_BASE_URL}/object/person/${person.id}`,
-      );
+      await changeSidePanelUrl(`/object/person/${person.id}`);
       if (isDefined(person.id)) openPersonOnSidePanel(person.id);
     } else {
+      await changeSidePanelUrl(`/objects/people`);
       personButtonSpan.textContent = 'Add to Twenty';
       personButtonDiv.onClickHandler(async () => {
         personButtonSpan.textContent = 'Saving...';

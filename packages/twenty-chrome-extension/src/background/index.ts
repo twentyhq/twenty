@@ -30,17 +30,6 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
       });
       break;
     }
-    case 'changeSidepanelUrl': {
-      chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
-        if (isDefined(tab) && isDefined(tab.id)) {
-          chrome.tabs.sendMessage(tab.id, {
-            action: 'changeSidepanelUrl',
-            message,
-          });
-        }
-      });
-      break;
-    }
     default:
       break;
   }

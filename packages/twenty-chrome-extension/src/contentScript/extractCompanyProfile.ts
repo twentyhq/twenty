@@ -75,9 +75,7 @@ export const addCompany = async () => {
   const companyId = await createCompany(companyInputData);
 
   if (isDefined(companyId)) {
-    await changeSidePanelUrl(
-      `${import.meta.env.VITE_FRONT_BASE_URL}/object/company/${companyId}`,
-    );
+    await changeSidePanelUrl(`/object/company/${companyId}`);
   }
 
   return companyId;
@@ -104,19 +102,16 @@ export const insertButtonForCompany = async () => {
   const openCompanyOnSidePanel = (companyId: string) => {
     companyButtonSpan.textContent = 'View in Twenty';
     companyButtonDiv.onClickHandler(async () => {
-      await changeSidePanelUrl(
-        `${import.meta.env.VITE_FRONT_BASE_URL}/object/company/${companyId}`,
-      );
+      await changeSidePanelUrl(`/object/company/${companyId}`);
       chrome.runtime.sendMessage({ action: 'openSidepanel' });
     });
   };
 
   if (isDefined(company)) {
-    await changeSidePanelUrl(
-      `${import.meta.env.VITE_FRONT_BASE_URL}/object/company/${company.id}`,
-    );
+    await changeSidePanelUrl(`/object/company/${company.id}`);
     if (isDefined(company.id)) openCompanyOnSidePanel(company.id);
   } else {
+    await changeSidePanelUrl(`/objects/companies`);
     companyButtonSpan.textContent = 'Add to Twenty';
 
     companyButtonDiv.onClickHandler(async () => {
