@@ -33,3 +33,4 @@ export * from './constants/ThemeLight';
 export * from './provider/ThemeProvider';
 export * from './types/ThemeType';
 export * from './utils/getNextThemeColor';
+export * from './utils/themeColorSchema';

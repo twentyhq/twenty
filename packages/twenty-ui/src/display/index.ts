@@ -17,6 +17,7 @@ export * from './icon/hooks/useIcons';
 export * from './icon/providers/IconsProvider';
 export * from './icon/states/iconsState';
 export * from './icon/types/IconComponent';
+export * from './tag/components/Tag';
 export * from './tooltip/AppTooltip';
 export * from './tooltip/OverflowingTextWithTooltip';
 export * from './typography/components/H1Title';
