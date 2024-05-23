@@ -50,7 +50,7 @@ export class DistantTableService {
       tableName,
     );
 
-    return distantTables[tableName] || [];
+    return distantTables[tableName];
   }
 
   private async getDistantTablesFromDynamicSchema(
