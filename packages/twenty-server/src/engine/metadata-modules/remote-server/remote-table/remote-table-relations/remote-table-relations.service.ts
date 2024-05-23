@@ -22,6 +22,7 @@ import {
 import { buildMigrationsToCreateRemoteTableRelations } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/utils/build-migrations-to-create-remote-table-relations.util';
 import { buildMigrationsToRemoveRemoteTableRelations } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/utils/build-migrations-to-remove-remote-table-relations.util';
 import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
+import { createRelationForeignKeyFieldMetadataName } from 'src/engine/metadata-modules/relation-metadata/utils/create-relation-foreign-key-field-metadata-name.util';
 
 @Injectable()
 export class RemoteTableRelationsService {
@@ -34,7 +35,7 @@ export class RemoteTableRelationsService {
     private readonly workspaceMigrationService: WorkspaceMigrationService,
   ) {}
 
-  public async createAll(
+  public async createForeignKeysMetadataAndMigrations(
     workspaceId: string,
     remoteObjectMetadata: ObjectMetadataEntity,
     objectPrimaryKeyFieldSettings:
@@ -95,7 +96,7 @@ export class RemoteTableRelationsService {
     );
   }
 
-  public async deleteAll(
+  public async deleteForeignKeysMetadataAndCreateMigrations(
     workspaceId: string,
     remoteObjectMetadata: ObjectMetadataEntity,
   ) {
@@ -125,7 +126,9 @@ export class RemoteTableRelationsService {
       });
 
     // compute the target column name
-    const targetColumnName = `${remoteObjectMetadata.nameSingular}Id`;
+    const targetColumnName = createRelationForeignKeyFieldMetadataName(
+      remoteObjectMetadata.nameSingular,
+    );
 
     // find the foreign key fields to delete
     const foreignKeyFieldsToDelete = await this.fieldMetadataRepository.find({

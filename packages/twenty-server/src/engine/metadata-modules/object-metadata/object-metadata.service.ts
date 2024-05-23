@@ -126,7 +126,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     // DELETE RELATIONS
     if (objectMetadata.isRemote) {
-      await this.remoteTableRelationsService.deleteAll(
+      await this.remoteTableRelationsService.deleteForeignKeysMetadataAndCreateMigrations(
         objectMetadata.workspaceId,
         objectMetadata,
       );
@@ -283,7 +283,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         createdObjectMetadata,
       );
     } else {
-      await this.remoteTableRelationsService.createAll(
+      await this.remoteTableRelationsService.createForeignKeysMetadataAndMigrations(
         objectMetadataInput.workspaceId,
         createdObjectMetadata,
         objectMetadataInput.primaryKeyFieldMetadataSettings,
