@@ -1,4 +1,5 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
+
 import { ANIMATION } from './Animation';
 import { BLUR } from './Blur';
 import { COLOR } from './Colors';

@@ -4,7 +4,7 @@ import { ThemeProvider as EmotionThemeProvider } from '@emotion/react';
 
 import { ThemeType } from '..';
 
-import './CSSModuleConstants.css';
+import './theme.css';
 
 type ThemeProviderProps = {
   theme: ThemeType;

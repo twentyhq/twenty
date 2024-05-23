@@ -1,13 +1,11 @@
 import { useMemo } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
+import { getAvatarUrl } from '@/object-metadata/utils/getAvatarUrl';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
-import {
-  getAvatarType,
-  getAvatarUrl,
-  getLabelIdentifierFieldValue,
-  getLinkToShowPage,
-} from '@/object-metadata/utils/getObjectRecordIdentifier';
+import { getLabelIdentifierFieldValue } from '@/object-metadata/utils/getLabelIdentifierFieldValue';
+import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { RecordChipData } from '@/object-record/record-field/types/RecordChipData';

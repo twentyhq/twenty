@@ -78,7 +78,7 @@ export const Avatar = ({
       className={clsx({
         [styles.avatar]: true,
         [styles.rounded]: type === 'rounded',
-        [styles['avatar-on-click']]: !isUndefined(onClick),
+        [styles.avatarOnClick]: !isUndefined(onClick),
       })}
       onClick={onClick}
       style={{
@@ -94,7 +94,7 @@ export const Avatar = ({
       ) : (
         <img
           src={avatarUrl}
-          className={styles['avatar-image']}
+          className={styles.avatarImage}
           onError={handleImageError}
           alt=""
         />

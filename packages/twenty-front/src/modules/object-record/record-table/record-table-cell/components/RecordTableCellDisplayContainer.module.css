@@ -9,9 +9,9 @@
 }
 
 .cell-display-outer-container-soft-focus {
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 4px;
-  outline: 1px solid #f5f5f5;
+  background: var(--twentycrm-background-transparent-secondary);
+  border-radius: var(--twentycrm-border-radius-sm);
+  outline: 1px solid var(--twentycrm-font-color-extra-light);
 }
 
 .cell-display-inner-container {

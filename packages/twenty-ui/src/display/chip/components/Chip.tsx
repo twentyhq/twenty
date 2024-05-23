@@ -54,13 +54,13 @@ export const Chip = ({
         [styles.chip]: true,
         [styles.clickable]: clickable,
         [styles.disabled]: disabled,
-        [styles['accent-text-primary']]: accent === ChipAccent.TextPrimary,
-        [styles['accent-text-secondary']]: accent === ChipAccent.TextSecondary,
-        [styles['size-large']]: size === ChipSize.Large,
-        [styles['variant-regular']]: variant === ChipVariant.Regular,
-        [styles['variant-highlighted']]: variant === ChipVariant.Highlighted,
-        [styles['variant-rounded']]: variant === ChipVariant.Rounded,
-        [styles['variant-transparent']]: variant === ChipVariant.Transparent,
+        [styles.accentTextPrimary]: accent === ChipAccent.TextPrimary,
+        [styles.accentTextSecondary]: accent === ChipAccent.TextSecondary,
+        [styles.sizeLarge]: size === ChipSize.Large,
+        [styles.variantRegular]: variant === ChipVariant.Regular,
+        [styles.variantHighlighted]: variant === ChipVariant.Highlighted,
+        [styles.variantRounded]: variant === ChipVariant.Rounded,
+        [styles.variantTransparent]: variant === ChipVariant.Transparent,
       })}
       onClick={onClick}
     >
