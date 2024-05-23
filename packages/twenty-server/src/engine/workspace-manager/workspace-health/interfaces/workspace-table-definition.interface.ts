@@ -8,6 +8,7 @@ export interface WorkspaceTableStructure {
   isPrimaryKey: boolean;
   isForeignKey: boolean;
   isUnique: boolean;
+  isArray: boolean;
   onUpdateAction: string;
   onDeleteAction: string;
 }

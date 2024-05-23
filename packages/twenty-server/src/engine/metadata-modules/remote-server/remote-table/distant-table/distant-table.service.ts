@@ -75,7 +75,7 @@ export class DistantTableService {
         await entityManager.query(`CREATE SCHEMA "${tmpSchemaName}"`);
 
         const tableLimitationsOptions = tableName
-          ? ` LIMIT TO (${tableName})`
+          ? ` LIMIT TO ("${tableName}")`
           : '';
 
         await entityManager.query(

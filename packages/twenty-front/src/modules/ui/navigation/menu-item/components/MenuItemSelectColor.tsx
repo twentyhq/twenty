@@ -1,10 +1,6 @@
 import { useTheme } from '@emotion/react';
-import { IconCheck } from 'twenty-ui';
+import { ColorSample, ColorSampleVariant, IconCheck } from 'twenty-ui';
 
-import {
-  ColorSample,
-  ColorSampleVariant,
-} from '@/ui/display/color/components/ColorSample';
 import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
 
 import {

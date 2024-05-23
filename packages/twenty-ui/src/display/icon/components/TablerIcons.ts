@@ -133,6 +133,7 @@ export {
   IconSend,
   IconSettings,
   IconSortDescending,
+  IconSquareRoundedCheck,
   IconTable,
   IconTag,
   IconTags,
