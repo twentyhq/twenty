@@ -23,9 +23,8 @@ export const useSelectSettingsFormInitialValues = ({
   fieldMetadataItem?: Pick<FieldMetadataItem, 'defaultValue' | 'options'>;
 }) => {
   const initialDefaultValue =
-    (fieldMetadataItem?.defaultValue as
-      | SettingsDataModelFieldSelectFormValues['defaultValue']
-      | undefined) ?? null;
+    (fieldMetadataItem?.defaultValue as SettingsDataModelFieldSelectFormValues['defaultValue']) ??
+    null;
   const initialOptions = useMemo(
     () =>
       fieldMetadataItem?.options?.length

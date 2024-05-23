@@ -9,9 +9,8 @@ export const useBooleanSettingsFormInitialValues = ({
   fieldMetadataItem?: Pick<FieldMetadataItem, 'defaultValue'>;
 }) => {
   const initialDefaultValue =
-    (fieldMetadataItem?.defaultValue as
-      | SettingsDataModelFieldBooleanFormValues['defaultValue']
-      | undefined) ?? true;
+    (fieldMetadataItem?.defaultValue as SettingsDataModelFieldBooleanFormValues['defaultValue']) ??
+    true;
 
   const { resetField } =
     useFormContext<SettingsDataModelFieldBooleanFormValues>();
