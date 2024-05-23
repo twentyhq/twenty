@@ -6,16 +6,17 @@ import { IconTag, useIcons } from 'twenty-ui';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { ObjectFieldRow } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewField';
 import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/SettingsDataModelObjectTypeTag';
 import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
-import { ObjectFieldRow } from '~/pages/settings/data-model/SettingsObjectOverview/ObjectFieldRow';
+import { FieldMetadataType } from '~/generated/graphql';
 import { capitalize } from '~/utils/string/capitalize';
 
 import '@reactflow/node-resizer/dist/style.css';
 
-type ObjectNodeProps = NodeProps<ObjectMetadataItem>;
+type SettingsDataModelOverviewObjectProps = NodeProps<ObjectMetadataItem>;
 
-const StyledObjectNode = styled.div`
+const StyledNode = styled.div`
   background-color: ${({ theme }) => theme.background.secondary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
   display: flex;
@@ -86,7 +87,9 @@ const StyledObjectLink = styled(Link)`
   }
 `;
 
-export const ObjectNode = ({ data }: ObjectNodeProps) => {
+export const SettingsDataModelOverviewObject = ({
+  data,
+}: SettingsDataModelOverviewObjectProps) => {
   const theme = useTheme();
   const { getIcon } = useIcons();
 
@@ -94,14 +97,16 @@ export const ObjectNode = ({ data }: ObjectNodeProps) => {
     objectNameSingular: data.nameSingular,
   });
 
-  const countNonRelation = data.fields.filter(
-    (x) => !x.toRelationMetadata && !x.fromRelationMetadata,
+  const fields = data.fields.filter((x) => !x.isSystem);
+
+  const countNonRelation = fields.filter(
+    (x) => x.type !== FieldMetadataType.Relation,
   ).length;
 
   const Icon = getIcon(data.icon);
 
   return (
-    <StyledObjectNode>
+    <StyledNode>
       <StyledHeader>
         <StyledObjectName onMouseEnter={() => {}} onMouseLeave={() => {}}>
           <StyledObjectLink to={'/settings/objects/' + data.namePlural}>
@@ -116,18 +121,11 @@ export const ObjectNode = ({ data }: ObjectNodeProps) => {
       </StyledHeader>
 
       <StyledInnerCard>
-        {data.fields
-          .filter((x) => x.toRelationMetadata && !x.isSystem)
+        {fields
+          .filter((x) => x.type === FieldMetadataType.Relation)
           .map((field) => (
             <StyledCardRow>
-              <ObjectFieldRow field={field} type="from"></ObjectFieldRow>
-            </StyledCardRow>
-          ))}
-        {data.fields
-          .filter((x) => x.fromRelationMetadata && !x.isSystem)
-          .map((field) => (
-            <StyledCardRow>
-              <ObjectFieldRow field={field} type="to"></ObjectFieldRow>
+              <ObjectFieldRow field={field}></ObjectFieldRow>
             </StyledCardRow>
           ))}
         {countNonRelation > 0 && (
@@ -139,6 +137,6 @@ export const ObjectNode = ({ data }: ObjectNodeProps) => {
           </StyledCardRowOther>
         )}
       </StyledInnerCard>
-    </StyledObjectNode>
+    </StyledNode>
   );
 };

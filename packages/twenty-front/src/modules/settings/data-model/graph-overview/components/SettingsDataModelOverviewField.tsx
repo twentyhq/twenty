@@ -10,7 +10,6 @@ import { capitalize } from '~/utils/string/capitalize';
 
 type ObjectFieldRowProps = {
   field: FieldMetadataItem;
-  type: 'from' | 'to';
 };
 
 const StyledRow = styled.div`
@@ -22,15 +21,13 @@ const StyledRow = styled.div`
   padding: 0 ${({ theme }) => theme.spacing(2)};
 `;
 
-export const ObjectFieldRow = ({ field, type }: ObjectFieldRowProps) => {
+export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
   const { getIcon } = useIcons();
   const theme = useTheme();
 
-  const relatedObjectId =
-    type === 'from'
-      ? field.toRelationMetadata?.fromObjectMetadata.id
-      : field.fromRelationMetadata?.toObjectMetadata.id;
+  const relatedObjectId = field.relationDefinition?.targetObjectMetadata.id;
+
   const relatedObject = objectMetadataItems.find(
     (x) => x.id === relatedObjectId,
   );

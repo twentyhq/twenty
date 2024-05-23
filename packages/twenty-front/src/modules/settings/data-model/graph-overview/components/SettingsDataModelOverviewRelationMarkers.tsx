@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 
-export const Markers = () => {
+export const SettingsDataModelOverviewRelationMarkers = () => {
   const theme = useTheme();
   return (
     <svg style={{ position: 'absolute', top: 0, left: 0 }}>
