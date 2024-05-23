@@ -55,24 +55,32 @@ export class GmailMessageListFetchJob
 
     switch (messageChannel.syncSubStatus) {
       case MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING:
-        await this.gmailPartialMessageListFetchV2Service.processMessageListFetch(
-          messageChannel,
-          connectedAccount,
-          workspaceId,
-        );
+        try {
+          await this.gmailPartialMessageListFetchV2Service.processMessageListFetch(
+            messageChannel,
+            connectedAccount,
+            workspaceId,
+          );
+        } catch (e) {
+          this.logger.error(e);
+        }
 
         return;
 
       case MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING:
-        await this.gmailFullSyncService.fetchConnectedAccountThreads(
-          workspaceId,
-          connectedAccountId,
-        );
+        try {
+          await this.gmailFullSyncService.fetchConnectedAccountThreads(
+            workspaceId,
+            connectedAccountId,
+          );
+        } catch (e) {
+          this.logger.error(e);
+        }
 
         return;
 
       default:
-        throw new Error(
+        this.logger.error(
           `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} is locked, import will be retried later.`,
         );
     }
