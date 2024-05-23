@@ -10,6 +10,7 @@ import {
   SyncRemoteTableSchemaChangesMutationVariables,
 } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
+
 export const useSyncRemoteTableSchemaChanges = () => {
   const apolloMetadataClient = useApolloMetadataClient();
 

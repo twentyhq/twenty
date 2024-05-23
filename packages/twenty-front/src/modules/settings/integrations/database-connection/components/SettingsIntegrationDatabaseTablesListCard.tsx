@@ -89,7 +89,7 @@ export const SettingsIntegrationDatabaseTablesListCard = ({
 
   const onSyncSchemaUpdate = useCallback(
     async (tableName: string) =>
-      await syncRemoteTableSchemaChanges({
+      syncRemoteTableSchemaChanges({
         remoteServerId: connectionId,
         name: tableName,
       }),
