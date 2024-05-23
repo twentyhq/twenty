@@ -35,6 +35,7 @@ export type OpenTableCellArgs = {
   customCellHotkeyScope: HotkeyScope | null;
   fieldDefinition: FieldDefinition<FieldMetadata>;
   entityId: string;
+  isActionButtonClick: boolean;
 };
 
 export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
@@ -71,6 +72,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
         customCellHotkeyScope,
         fieldDefinition,
         entityId,
+        isActionButtonClick,
       }: OpenTableCellArgs) => {
         if (isReadOnly) {
           return;
@@ -91,7 +93,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
           fieldValue,
         });
 
-        if (isFirstColumnCell && !isEmpty) {
+        if (isFirstColumnCell && !isEmpty && isActionButtonClick) {
           leaveTableFocus();
           // navigate(pathToShowPage);
           setViewableRecordId(entityId);

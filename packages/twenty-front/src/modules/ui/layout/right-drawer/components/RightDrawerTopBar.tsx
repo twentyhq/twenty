@@ -80,7 +80,9 @@ export const RightDrawerTopBar = ({ page }: { page: RightDrawerPages }) => {
         </StyledMinimizeTopBarTitleContainer>
       )}
       <StyledTopBarWrapper>
-        {!isRightDrawerMinimized && <RightDrawerTopBarMinimizeButton />}
+        {!isMobile && !isRightDrawerMinimized && (
+          <RightDrawerTopBarMinimizeButton />
+        )}
         {!isMobile && !isRightDrawerMinimized && (
           <RightDrawerTopBarExpandButton />
         )}

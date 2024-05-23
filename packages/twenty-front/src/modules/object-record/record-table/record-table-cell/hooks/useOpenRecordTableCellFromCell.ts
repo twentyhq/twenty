@@ -35,7 +35,10 @@ export const useOpenRecordTableCellFromCell = () => {
     RecordTableRowContext,
   );
 
-  const openTableCell = (initialValue?: string) => {
+  const openTableCell = (
+    initialValue?: string,
+    isActionButtonClick = false,
+  ) => {
     onOpenTableCell({
       cellPosition,
       customCellHotkeyScope,
@@ -45,6 +48,7 @@ export const useOpenRecordTableCellFromCell = () => {
       pathToShowPage,
       objectNameSingular,
       initialValue,
+      isActionButtonClick,
     });
   };
 

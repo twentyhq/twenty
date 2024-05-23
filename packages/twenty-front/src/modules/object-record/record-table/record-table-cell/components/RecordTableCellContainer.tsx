@@ -1,7 +1,7 @@
 import React, { ReactElement, useContext, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { IconArrowUpRight } from 'twenty-ui';
+import { IconLayoutSidebarRightExpand } from 'twenty-ui';
 
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
 import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
@@ -120,7 +120,7 @@ export const RecordTableCellContainer = ({
 
   const handleButtonClick = () => {
     onMoveSoftFocusToCell(cellPosition);
-    openTableCell();
+    openTableCell(undefined, true);
   };
 
   const handleContextMenu = (event: React.MouseEvent) => {
@@ -143,7 +143,9 @@ export const RecordTableCellContainer = ({
 
   const isFirstColumn = columnIndex === 0;
   const customButtonIcon = useGetButtonIcon();
-  const buttonIcon = isFirstColumn ? IconArrowUpRight : customButtonIcon;
+  const buttonIcon = isFirstColumn
+    ? IconLayoutSidebarRightExpand
+    : customButtonIcon;
 
   const showButton =
     !!buttonIcon &&

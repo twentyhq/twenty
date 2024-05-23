@@ -72,8 +72,11 @@ export const RightDrawer = () => {
           const isRightDrawerOpen = snapshot
             .getLoadable(isRightDrawerOpenState)
             .getValue();
+          const isRightDrawerMinimized = snapshot
+            .getLoadable(isRightDrawerMinimizedState)
+            .getValue();
 
-          if (isRightDrawerOpen) {
+          if (isRightDrawerOpen && !isRightDrawerMinimized) {
             set(rightDrawerCloseEventState, event);
             closeRightDrawer();
           }
