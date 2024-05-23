@@ -97,6 +97,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     onCompleted,
     fetchMore,
     data,
+    error,
     objectMetadataItem,
   });
 
