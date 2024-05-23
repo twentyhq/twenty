@@ -29,14 +29,7 @@ export const useFindManyParams = (
     objectMetadataItem?.fields ?? [],
   );
 
-  if (objectMetadataItem?.isRemote) {
-    return { objectNameSingular, filter };
-  }
-
-  const orderBy = turnSortsIntoOrderBy(
-    tableSorts,
-    objectMetadataItem?.fields ?? [],
-  );
+  const orderBy = turnSortsIntoOrderBy(objectMetadataItem, tableSorts);
 
   return { objectNameSingular, filter, orderBy };
 };
@@ -71,7 +64,7 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
       currentWorkspace?.activationStatus === 'active'
         ? records
         : SIGN_IN_BACKGROUND_MOCK_COMPANIES,
-    totalCount: totalCount || 0,
+    totalCount: totalCount,
     loading,
     fetchMoreRecords,
     queryStateIdentifier,

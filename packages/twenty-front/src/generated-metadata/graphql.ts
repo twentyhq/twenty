@@ -338,6 +338,8 @@ export enum FileFolder {
 export type FindManyRemoteTablesInput = {
   /** The id of the remote server. */
   id: Scalars['ID']['input'];
+  /** Indicates if pending schema updates status should be computed. */
+  shouldFetchPendingSchemaUpdates?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type FullName = {

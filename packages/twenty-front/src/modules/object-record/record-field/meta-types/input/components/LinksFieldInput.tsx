@@ -1,11 +1,11 @@
 import { useMemo, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 import { Key } from 'ts-key-enum';
-import { IconPlus } from 'twenty-ui';
+import { IconCheck, IconPlus } from 'twenty-ui';
 
 import { useLinksField } from '@/object-record/record-field/meta-types/hooks/useLinksField';
+import { LinksFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/LinksFieldMenuItem';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
-import { LinkDisplay } from '@/ui/field/display/components/LinkDisplay';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
@@ -14,7 +14,10 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { moveArrayItem } from '~/utils/array/moveArrayItem';
+import { toSpliced } from '~/utils/array/toSpliced';
 import { isDefined } from '~/utils/isDefined';
+import { absoluteUrlSchema } from '~/utils/validation-schemas/absoluteUrlSchema';
 
 const StyledDropdownMenu = styled(DropdownMenu)`
   left: -1px;
@@ -35,7 +38,7 @@ export const LinksFieldInput = ({
 
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const links = useMemo(
+  const links = useMemo<{ url: string; label: string }[]>(
     () =>
       [
         fieldValue.primaryLinkUrl
@@ -53,51 +56,93 @@ export const LinksFieldInput = ({
     ],
   );
 
+  const handleDropdownClose = () => {
+    onCancel?.();
+  };
+
   useListenClickOutside({
     refs: [containerRef],
-    callback: (event) => {
-      event.stopImmediatePropagation();
-
-      const isTargetInput =
-        event.target instanceof HTMLInputElement &&
-        event.target.tagName === 'INPUT';
-
-      if (!isTargetInput) {
-        onCancel?.();
-      }
-    },
+    callback: handleDropdownClose,
   });
+
+  useScopedHotkeys(Key.Escape, handleDropdownClose, hotkeyScope);
 
   const [isInputDisplayed, setIsInputDisplayed] = useState(false);
   const [inputValue, setInputValue] = useState('');
+  const [linkToEditIndex, setLinkToEditIndex] = useState(-1);
+  const isAddingNewLink = linkToEditIndex === -1;
 
-  useScopedHotkeys(Key.Escape, onCancel ?? (() => {}), hotkeyScope);
+  const handleAddButtonClick = () => {
+    setLinkToEditIndex(-1);
+    setIsInputDisplayed(true);
+  };
 
-  const handleSubmit = () => {
-    if (!inputValue) return;
+  const handleEditButtonClick = (index: number) => {
+    setLinkToEditIndex(index);
+    setInputValue(links[index].url);
+    setIsInputDisplayed(true);
+  };
 
-    setIsInputDisplayed(false);
-    setInputValue('');
+  const urlInputValidation = inputValue
+    ? absoluteUrlSchema.safeParse(inputValue)
+    : null;
 
-    if (!links.length) {
-      onSubmit?.(() =>
-        persistLinksField({
-          primaryLinkUrl: inputValue,
-          primaryLinkLabel: '',
-          secondaryLinks: [],
-        }),
-      );
+  const handleSubmitInput = () => {
+    if (!urlInputValidation?.success) return;
 
+    const validatedInputValue = urlInputValidation.data;
+
+    // Don't persist if value hasn't changed.
+    if (
+      !isAddingNewLink &&
+      validatedInputValue === links[linkToEditIndex].url
+    ) {
+      setIsInputDisplayed(false);
+      setInputValue('');
+      onCancel?.();
       return;
     }
 
+    const linkValue = { label: '', url: validatedInputValue };
+    const nextLinks = isAddingNewLink
+      ? [...links, linkValue]
+      : toSpliced(links, linkToEditIndex, 1, linkValue);
+    const [nextPrimaryLink, ...nextSecondaryLinks] = nextLinks;
+
+    onSubmit?.(() =>
+      persistLinksField({
+        primaryLinkUrl: nextPrimaryLink.url ?? '',
+        primaryLinkLabel: nextPrimaryLink.label ?? '',
+        secondaryLinks: nextSecondaryLinks,
+      }),
+    );
+
+    setIsInputDisplayed(false);
+    setInputValue('');
+  };
+
+  const handleSetPrimaryLink = (index: number) => {
+    const nextLinks = moveArrayItem(links, { fromIndex: index, toIndex: 0 });
+    const [nextPrimaryLink, ...nextSecondaryLinks] = nextLinks;
+
+    onSubmit?.(() =>
+      persistLinksField({
+        primaryLinkUrl: nextPrimaryLink.url ?? '',
+        primaryLinkLabel: nextPrimaryLink.label ?? '',
+        secondaryLinks: nextSecondaryLinks,
+      }),
+    );
+  };
+
+  const handleDeleteLink = (index: number) => {
     onSubmit?.(() =>
       persistLinksField({
         ...fieldValue,
-        secondaryLinks: [
-          ...(fieldValue.secondaryLinks ?? []),
-          { label: '', url: inputValue },
-        ],
+        secondaryLinks: toSpliced(
+          fieldValue.secondaryLinks ?? [],
+          index - 1,
+          1,
+        ),
       }),
     );
   };
@@ -108,9 +153,15 @@ export const LinksFieldInput = ({
         <>
           <DropdownMenuItemsContainer>
             {links.map(({ label, url }, index) => (
-              <MenuItem
+              <LinksFieldMenuItem
                 key={index}
-                text={<LinkDisplay value={{ label, url }} />}
+                dropdownId={`${hotkeyScope}-links-${index}`}
+                isPrimary={index === 0}
+                label={label}
+                onEdit={() => handleEditButtonClick(index)}
+                onSetAsPrimary={() => handleSetPrimaryLink(index)}
+                onDelete={() => handleDeleteLink(index)}
+                url={url}
               />
             ))}
           </DropdownMenuItemsContainer>
@@ -124,15 +175,19 @@ export const LinksFieldInput = ({
           value={inputValue}
           hotkeyScope={hotkeyScope}
           onChange={(event) => setInputValue(event.target.value)}
-          onEnter={handleSubmit}
+          onEnter={handleSubmitInput}
           rightComponent={
-            <LightIconButton Icon={IconPlus} onClick={handleSubmit} />
+            <LightIconButton
+              Icon={isAddingNewLink ? IconPlus : IconCheck}
+              disabled={!urlInputValidation?.success}
+              onClick={handleSubmitInput}
+            />
           }
         />
       ) : (
         <DropdownMenuItemsContainer>
           <MenuItem
-            onClick={() => setIsInputDisplayed(true)}
+            onClick={handleAddButtonClick}
             LeftIcon={IconPlus}
             text="Add link"
           />
