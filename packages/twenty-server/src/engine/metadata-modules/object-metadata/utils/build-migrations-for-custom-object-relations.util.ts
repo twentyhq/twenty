@@ -9,7 +9,7 @@ import {
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
-export const createWorkspaceMigrationsForCustomObjectRelations = (
+export const buildMigrationsForCustomObjectRelations = (
   createdObjectMetadata: ObjectMetadataEntity,
   activityTargetObjectMetadata: ObjectMetadataEntity,
   attachmentObjectMetadata: ObjectMetadataEntity,

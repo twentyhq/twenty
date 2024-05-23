@@ -2,10 +2,6 @@ import { defineManifest } from '@crxjs/vite-plugin';
 
 import packageData from '../package.json';
 
-const host_permissions =
-  process.env.VITE_MODE === 'development'
-    ? ['https://www.linkedin.com/*', 'http://localhost:3001/*']
-    : ['https://www.linkedin.com/*'];
 const external_sites =
   process.env.VITE_MODE === 'development'
     ? [`https://app.twenty.com/*`, `http://localhost:3001/*`]
@@ -48,9 +44,12 @@ export default defineManifest({
     },
   ],
 
-  permissions: ['activeTab', 'storage', 'identity', 'sidePanel'],
+  permissions: ['activeTab', 'storage', 'identity', 'sidePanel', 'cookies'],
 
-  host_permissions: host_permissions,
+  // setting host permissions to all http connections will allow 
+  // for people who host on their custom domain to get access to
+  // extension instead of white listing individual urls
+  host_permissions: ['https://*/*', 'http://*/*'],
 
   externally_connectable: {
     matches: external_sites,

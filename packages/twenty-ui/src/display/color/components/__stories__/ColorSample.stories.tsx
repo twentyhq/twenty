@@ -1,5 +1,6 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { ComponentDecorator } from 'twenty-ui';
+
+import { ComponentDecorator } from '@ui/testing';
 
 import { ColorSample } from '../ColorSample';
 

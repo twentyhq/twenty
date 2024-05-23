@@ -2,6 +2,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconCopy } from 'twenty-ui';
 
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 
@@ -24,7 +25,7 @@ export const LightCopyIconButton = ({ copyText }: LightCopyIconButtonProps) => {
         Icon={IconCopy}
         onClick={() => {
           enqueueSnackBar('Text copied to clipboard', {
-            variant: 'success',
+            variant: SnackBarVariant.Success,
             icon: <IconCopy size={theme.icon.size.md} />,
             duration: 2000,
           });

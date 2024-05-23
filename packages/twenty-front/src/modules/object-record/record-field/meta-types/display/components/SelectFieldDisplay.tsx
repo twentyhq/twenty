@@ -1,4 +1,4 @@
-import { Tag } from '@/ui/display/tag/components/Tag';
+import { Tag } from 'twenty-ui';
 
 import { useSelectField } from '../../hooks/useSelectField';
 

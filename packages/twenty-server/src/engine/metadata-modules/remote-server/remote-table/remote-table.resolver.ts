@@ -19,7 +19,7 @@ export class RemoteTableResolver {
     @Args('input') input: FindManyRemoteTablesInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.remoteTableService.findDistantTablesWithStatusByServerId(
+    return this.remoteTableService.findDistantTablesWithStatus(
       input.id,
       workspaceId,
       input.shouldFetchPendingSchemaUpdates,

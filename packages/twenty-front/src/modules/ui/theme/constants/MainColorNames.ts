@@ -1,4 +1,4 @@
-import { MAIN_COLORS } from '@/ui/theme/constants/MainColors';
+import { MAIN_COLORS } from 'twenty-ui';
 
 export const MAIN_COLOR_NAMES = Object.keys(MAIN_COLORS) as ThemeColor[];
 
