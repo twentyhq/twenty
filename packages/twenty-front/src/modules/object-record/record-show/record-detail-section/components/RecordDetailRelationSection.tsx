@@ -3,14 +3,18 @@ import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import qs from 'qs';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconForbid, IconPencil, IconPlus } from 'twenty-ui';
+import { v4 } from 'uuid';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
+import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
+import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
 import { RecordDetailRelationRecordsListEmptyState } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsListEmptyState';
 import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';
@@ -26,6 +30,8 @@ import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
+import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
+import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
@@ -154,6 +160,26 @@ export const RecordDetailRelationSection = ({
     );
   };
 
+  const { openRightDrawer } = useRightDrawer();
+  const setViewableRecordId = useSetRecoilState(viewableRecordIdState);
+  const setViewableRecordNameSingular = useSetRecoilState(
+    viewableRecordNameSingularState,
+  );
+
+  const { createOneRecord } = useCreateOneRecord({
+    objectNameSingular: relationObjectMetadataNameSingular,
+  });
+
+  const handleOnCreate = async () => {
+    const newRecordId = v4();
+    await createOneRecord({
+      id: newRecordId,
+    });
+    setViewableRecordId(newRecordId);
+    setViewableRecordNameSingular(relationObjectMetadataNameSingular);
+    openRightDrawer(RightDrawerPages.ViewRecord);
+  };
+
   return (
     <RecordDetailSection>
       <RecordDetailSectionHeader
@@ -190,6 +216,7 @@ export const RecordDetailRelationSection = ({
                       relationObjectMetadataNameSingular
                     }
                     relationPickerScopeId={dropdownId}
+                    onCreate={handleOnCreate}
                   />
                 </RelationPickerScope>
               }

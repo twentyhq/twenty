@@ -63,6 +63,10 @@ export const RecordShowContainer = ({
     recordStoreFamilyState(objectRecordId),
   );
 
+  console.log('yo');
+  console.log(recordFromStore);
+  console.log(objectRecordId);
+
   const recordIdentifier = useRecoilValue(
     recordStoreIdentifierFamilySelector({
       objectNameSingular,
@@ -211,27 +215,29 @@ export const RecordShowContainer = ({
                   objectNameSingular={objectNameSingular}
                 />
               )}
-              {relationFieldMetadataItems?.map((fieldMetadataItem, index) => (
-                <FieldContext.Provider
-                  key={objectRecordId + fieldMetadataItem.id}
-                  value={{
-                    entityId: objectRecordId,
-                    recoilScopeId: objectRecordId + fieldMetadataItem.id,
-                    isLabelIdentifier: false,
-                    fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
-                      field: fieldMetadataItem,
-                      position: index,
-                      objectMetadataItem,
-                    }),
-                    useUpdateRecord: useUpdateOneObjectRecordMutation,
-                    hotkeyScope: InlineCellHotkeyScope.InlineCell,
-                  }}
-                >
-                  <RecordDetailRelationSection
-                    loading={loading || recordLoading}
-                  />
-                </FieldContext.Provider>
-              ))}
+              {!isInRightDrawer &&
+                relationFieldMetadataItems?.map((fieldMetadataItem, index) => (
+                  <FieldContext.Provider
+                    key={objectRecordId + fieldMetadataItem.id}
+                    value={{
+                      entityId: objectRecordId,
+                      recoilScopeId: objectRecordId + fieldMetadataItem.id,
+                      isLabelIdentifier: false,
+                      fieldDefinition:
+                        formatFieldMetadataItemAsColumnDefinition({
+                          field: fieldMetadataItem,
+                          position: index,
+                          objectMetadataItem,
+                        }),
+                      useUpdateRecord: useUpdateOneObjectRecordMutation,
+                      hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                    }}
+                  >
+                    <RecordDetailRelationSection
+                      loading={loading || recordLoading}
+                    />
+                  </FieldContext.Provider>
+                ))}
             </>
           )}
         </ShowPageLeftContainer>
