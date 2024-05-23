@@ -28,3 +28,6 @@ export const REACT_APP_SERVER_BASE_URL =
   window._env_?.REACT_APP_SERVER_BASE_URL ||
   process.env.REACT_APP_SERVER_BASE_URL ||
   getDefaultUrl();
+
+export const REACT_APP_CHROME_EXTENSION_ID =
+  process.env.REACT_APP_CHROME_EXTENSION_ID || undefined;

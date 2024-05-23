@@ -79,12 +79,15 @@ import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
 import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
+import { WindowEventEffect } from '~/effect-components/WindowEventEffect';
 
 const ProvidersThatNeedRouterContext = () => {
   const { pathname } = useLocation();
   const pageTitle = getPageTitleFromPath(pathname);
 
   return (
+    <>
+    <WindowEventEffect />
     <ApolloProvider>
       <ClientConfigProviderEffect />
       <ClientConfigProvider>
@@ -115,6 +118,7 @@ const ProvidersThatNeedRouterContext = () => {
         </UserProvider>
       </ClientConfigProvider>
     </ApolloProvider>
+    </>
   );
 };
 
