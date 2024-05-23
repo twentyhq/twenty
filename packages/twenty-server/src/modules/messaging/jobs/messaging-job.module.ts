@@ -11,8 +11,10 @@ import { BlocklistItemDeleteMessagesJob } from 'src/modules/messaging/jobs/block
 import { BlocklistReimportMessagesJob } from 'src/modules/messaging/jobs/blocklist-reimport-messages.job';
 import { DeleteConnectedAccountAssociatedMessagingDataJob } from 'src/modules/messaging/jobs/delete-connected-account-associated-messaging-data.job';
 import { GmailFullMessageListFetchJob } from 'src/modules/messaging/jobs/gmail-full-message-list-fetch.job';
+import { GmailMessageListFetchJob } from 'src/modules/messaging/jobs/gmail-message-list-fetch.job';
 import { GmailPartialMessageListFetchJob } from 'src/modules/messaging/jobs/gmail-partial-message-list-fetch.job';
 import { MessagingCreateCompanyAndContactAfterSyncJob } from 'src/modules/messaging/jobs/messaging-create-company-and-contact-after-sync.job';
+import { GetConnectedAccountAndMessageChannelModule } from 'src/modules/messaging/services/get-connected-account-and-message-channel/get-connected-account-and-message-channel.module';
 import { GmailFullMessageListFetchModule } from 'src/modules/messaging/services/gmail-full-message-list-fetch/gmail-full-message-list-fetch.module';
 import { GmailPartialMessageListFetchModule } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-partial-message-list-fetch.module';
 import { ThreadCleanerModule } from 'src/modules/messaging/services/thread-cleaner/thread-cleaner.module';
@@ -35,6 +37,7 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/standar
     GoogleAPIRefreshAccessTokenModule,
     AutoCompaniesAndContactsCreationModule,
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
+    GetConnectedAccountAndMessageChannelModule,
   ],
   providers: [
     {
@@ -52,6 +55,10 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/standar
     {
       provide: GmailPartialMessageListFetchJob.name,
       useClass: GmailPartialMessageListFetchJob,
+    },
+    {
+      provide: GmailMessageListFetchJob.name,
+      useClass: GmailMessageListFetchJob,
     },
     {
       provide: DeleteConnectedAccountAssociatedMessagingDataJob.name,
