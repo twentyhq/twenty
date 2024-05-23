@@ -17,14 +17,20 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import {
+  GmailMessageListFetchJobData,
+  GmailMessageListFetchJob,
+} from 'src/modules/messaging/jobs/gmail-message-list-fetch.job';
 
 @Injectable()
-export class GmailPartialMessageListFetchCronJob
+export class GmailMessageListFetchCronJob
   implements MessageQueueJob<undefined>
 {
-  private readonly logger = new Logger(
-    GmailPartialMessageListFetchCronJob.name,
-  );
+  private readonly logger = new Logger(GmailMessageListFetchCronJob.name);
 
   constructor(
     @InjectRepository(Workspace, 'core')
@@ -36,6 +42,8 @@ export class GmailPartialMessageListFetchCronJob
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
     private readonly environmentService: EnvironmentService,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   async handle(): Promise<void> {
@@ -61,11 +69,20 @@ export class GmailPartialMessageListFetchCronJob
     );
 
     for (const workspaceId of workspaceIdsWithDataSources) {
-      await this.enqueuePartialSyncs(workspaceId);
+      await this.enqueueSyncs(workspaceId);
     }
   }
 
-  private async enqueuePartialSyncs(workspaceId: string): Promise<void> {
+  private async enqueueSyncs(workspaceId: string): Promise<void> {
+    const isGmailSyncV2EnabledFeatureFlag =
+      await this.featureFlagRepository.findOneBy({
+        workspaceId: workspaceId,
+        key: FeatureFlagKeys.IsGmailSyncV2Enabled,
+        value: true,
+      });
+
+    const isGmailSyncV2Enabled = isGmailSyncV2EnabledFeatureFlag?.value;
+
     try {
       const messageChannels =
         await this.messageChannelRepository.getAll(workspaceId);
@@ -75,16 +92,29 @@ export class GmailPartialMessageListFetchCronJob
           continue;
         }
 
-        await this.messageQueueService.add<GmailPartialMessageListFetchJobData>(
-          GmailPartialMessageListFetchJob.name,
-          {
-            workspaceId,
-            connectedAccountId: messageChannel.connectedAccountId,
-          },
-          {
-            retryLimit: 2,
-          },
-        );
+        if (isGmailSyncV2Enabled) {
+          await this.messageQueueService.add<GmailMessageListFetchJobData>(
+            GmailMessageListFetchJob.name,
+            {
+              workspaceId,
+              connectedAccountId: messageChannel.connectedAccountId,
+            },
+            {
+              retryLimit: 2,
+            },
+          );
+        } else {
+          await this.messageQueueService.add<GmailPartialMessageListFetchJobData>(
+            GmailPartialMessageListFetchJob.name,
+            {
+              workspaceId,
+              connectedAccountId: messageChannel.connectedAccountId,
+            },
+            {
+              retryLimit: 2,
+            },
+          );
+        }
       }
     } catch (error) {
       this.logger.error(

@@ -3,14 +3,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { gmail_v1 } from 'googleapis';
 
 import { GmailClientProvider } from 'src/modules/messaging/services/providers/gmail/gmail-client.provider';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import {
-  MessageChannelWorkspaceEntity,
-  MessageChannelSyncSubStatus,
-} from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
@@ -19,6 +15,7 @@ import { MessageChannelMessageAssociationRepository } from 'src/modules/messagin
 import { GmailPartialMessageListFetchErrorHandlingService } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-partial-message-list-fetch-error-handling.service';
 import { GmailGetHistoryService } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-get-history.service';
 import { SetMessageChannelSyncStatusService } from 'src/modules/messaging/services/set-message-channel-sync-status/set-message-channel-sync-status.service';
+import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 @Injectable()
 export class GmailPartialMessageListFetchV2Service {
@@ -28,8 +25,6 @@ export class GmailPartialMessageListFetchV2Service {
 
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
-    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
-    private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
@@ -44,55 +39,10 @@ export class GmailPartialMessageListFetchV2Service {
   ) {}
 
   public async processMessageListFetch(
+    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
     workspaceId: string,
-    connectedAccountId: string,
   ): Promise<void> {
-    const connectedAccount = await this.connectedAccountRepository.getById(
-      connectedAccountId,
-      workspaceId,
-    );
-
-    if (!connectedAccount) {
-      this.logger.error(
-        `Connected account ${connectedAccountId} not found in workspace ${workspaceId}`,
-      );
-
-      return;
-    }
-
-    const refreshToken = connectedAccount.refreshToken;
-
-    if (!refreshToken) {
-      throw new Error(
-        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
-      );
-    }
-
-    const messageChannel =
-      await this.messageChannelRepository.getFirstByConnectedAccountId(
-        connectedAccountId,
-        workspaceId,
-      );
-
-    if (!messageChannel) {
-      this.logger.error(
-        `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
-      );
-
-      return;
-    }
-
-    if (
-      messageChannel.syncSubStatus !==
-      MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING
-    ) {
-      this.logger.log(
-        `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} is locked, import will be retried later.`,
-      );
-
-      return;
-    }
-
     await this.setMessageChannelSyncStatusService.setMessageListFetchOnGoingStatus(
       messageChannel.id,
       workspaceId,
@@ -102,7 +52,7 @@ export class GmailPartialMessageListFetchV2Service {
 
     if (!lastSyncHistoryId) {
       this.logger.log(
-        `No lastSyncHistoryId for workspace ${workspaceId} and account ${connectedAccountId}, falling back to full sync.`,
+        `No lastSyncHistoryId for workspace ${workspaceId} and account ${connectedAccount.id}, falling back to full sync.`,
       );
 
       await this.setMessageChannelSyncStatusService.setFullMessageListFetchPendingStatus(
@@ -114,7 +64,9 @@ export class GmailPartialMessageListFetchV2Service {
     }
 
     const gmailClient: gmail_v1.Gmail =
-      await this.gmailClientProvider.getGmailClient(refreshToken);
+      await this.gmailClientProvider.getGmailClient(
+        connectedAccount.refreshToken,
+      );
 
     const { history, historyId, error } =
       await this.gmailGetHistoryService.getHistory(
@@ -127,7 +79,7 @@ export class GmailPartialMessageListFetchV2Service {
         error,
         messageChannel,
         workspaceId,
-        connectedAccountId,
+        connectedAccount.id,
       );
 
       return;
@@ -135,13 +87,13 @@ export class GmailPartialMessageListFetchV2Service {
 
     if (!historyId) {
       throw new Error(
-        `No historyId found for ${connectedAccountId} in workspace ${workspaceId} in gmail history response.`,
+        `No historyId found for ${connectedAccount.id} in workspace ${workspaceId} in gmail history response.`,
       );
     }
 
     if (historyId === lastSyncHistoryId || !history?.length) {
       this.logger.log(
-        `Messaging import done with history ${historyId} and nothing to update for workspace ${workspaceId} and account ${connectedAccountId}`,
+        `Messaging import done with history ${historyId} and nothing to update for workspace ${workspaceId} and account ${connectedAccount.id}`,
       );
 
       await this.setMessageChannelSyncStatusService.setCompletedStatus(
@@ -161,7 +113,7 @@ export class GmailPartialMessageListFetchV2Service {
     );
 
     this.logger.log(
-      `Added ${messagesAdded.length} messages to import for workspace ${workspaceId} and account ${connectedAccountId}`,
+      `Added ${messagesAdded.length} messages to import for workspace ${workspaceId} and account ${connectedAccount.id}`,
     );
 
     await this.messageChannelMessageAssociationRepository.deleteByMessageExternalIdsAndMessageChannelId(
@@ -171,7 +123,7 @@ export class GmailPartialMessageListFetchV2Service {
     );
 
     this.logger.log(
-      `Deleted ${messagesDeleted.length} messages for workspace ${workspaceId} and account ${connectedAccountId}`,
+      `Deleted ${messagesDeleted.length} messages for workspace ${workspaceId} and account ${connectedAccount.id}`,
     );
 
     await this.messageChannelRepository.updateLastSyncCursorIfHigher(
@@ -181,11 +133,11 @@ export class GmailPartialMessageListFetchV2Service {
     );
 
     this.logger.log(
-      `Updated lastSyncCursor to ${historyId} for workspace ${workspaceId} and account ${connectedAccountId}`,
+      `Updated lastSyncCursor to ${historyId} for workspace ${workspaceId} and account ${connectedAccount.id}`,
     );
 
     this.logger.log(
-      `gmail partial-sync done for workspace ${workspaceId} and account ${connectedAccountId}`,
+      `gmail partial-sync done for workspace ${workspaceId} and account ${connectedAccount.id}`,
     );
 
     await this.setMessageChannelSyncStatusService.setMessagesImportPendingStatus(

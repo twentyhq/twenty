@@ -4,7 +4,7 @@ import { Command, CommandRunner } from 'nest-commander';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { GmailPartialMessageListFetchCronJob } from 'src/modules/messaging/crons/jobs/gmail-partial-message-list-fetch.cron.job';
+import { GmailMessageListFetchCronJob } from 'src/modules/messaging/crons/jobs/gmail-message-list-fetch.cron.job';
 
 const GMAIL_PARTIAL_SYNC_CRON_PATTERN = '*/5 * * * *';
 
@@ -23,7 +23,7 @@ export class GmailPartialSyncCronCommand extends CommandRunner {
 
   async run(): Promise<void> {
     await this.messageQueueService.addCron<undefined>(
-      GmailPartialMessageListFetchCronJob.name,
+      GmailMessageListFetchCronJob.name,
       undefined,
       {
         repeat: { pattern: GMAIL_PARTIAL_SYNC_CRON_PATTERN },
