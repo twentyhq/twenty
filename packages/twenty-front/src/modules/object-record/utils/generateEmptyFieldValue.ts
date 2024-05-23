@@ -19,7 +19,7 @@ export const generateEmptyFieldValue = (
       };
     }
     case FieldMetadataType.Links: {
-      return { primaryLinkUrl: '', primaryLinkLabel: '' };
+      return { primaryLinkUrl: '', primaryLinkLabel: '', secondaryLinks: null };
     }
     case FieldMetadataType.FullName: {
       return {

@@ -1,8 +1,11 @@
+import { useEffect } from 'react';
 import styled from '@emotion/styled';
 import {
   IconBookmark,
+  IconBookmarkPlus,
   IconComponent,
   IconDotsVertical,
+  IconPencil,
   IconTrash,
 } from 'twenty-ui';
 
@@ -16,7 +19,9 @@ type LinksFieldMenuItemProps = {
   dropdownId: string;
   isPrimary?: boolean;
   label: string;
-  onDelete: () => void;
+  onEdit?: () => void;
+  onSetAsPrimary?: () => void;
+  onDelete?: () => void;
   url: string;
 };
 
@@ -30,10 +35,19 @@ export const LinksFieldMenuItem = ({
   dropdownId,
   isPrimary,
   label,
+  onEdit,
+  onSetAsPrimary,
   onDelete,
   url,
 }: LinksFieldMenuItemProps) => {
-  const { isDropdownOpen } = useDropdown(dropdownId);
+  const { isDropdownOpen, closeDropdown } = useDropdown(dropdownId);
+
+  // Make sure dropdown closes on unmount.
+  useEffect(() => {
+    if (isDropdownOpen) {
+      return () => closeDropdown();
+    }
+  }, [closeDropdown, isDropdownOpen]);
 
   return (
     <MenuItem
@@ -55,6 +69,16 @@ export const LinksFieldMenuItem = ({
                   clickableComponent={iconButton}
                   dropdownComponents={
                     <DropdownMenuItemsContainer>
+                      <MenuItem
+                        LeftIcon={IconBookmarkPlus}
+                        text="Set as Primary"
+                        onClick={onSetAsPrimary}
+                      />
+                      <MenuItem
+                        LeftIcon={IconPencil}
+                        text="Edit"
+                        onClick={onEdit}
+                      />
                       <MenuItem
                         accent="danger"
                         LeftIcon={IconTrash}

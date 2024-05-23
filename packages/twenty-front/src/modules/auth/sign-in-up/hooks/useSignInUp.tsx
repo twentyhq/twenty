@@ -6,6 +6,7 @@ import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { AppPath } from '@/types/AppPath';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
@@ -72,7 +73,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       },
       onError: (error) => {
         enqueueSnackBar(`${error.message}`, {
-          variant: 'error',
+          variant: SnackBarVariant.Error,
         });
       },
       onCompleted: (data) => {
@@ -115,7 +116,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
             );
       } catch (err: any) {
         enqueueSnackBar(err?.message, {
-          variant: 'error',
+          variant: SnackBarVariant.Error,
         });
       }
     },

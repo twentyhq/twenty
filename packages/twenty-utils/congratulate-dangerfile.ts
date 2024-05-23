@@ -23,21 +23,10 @@ const fetchContributorImage = async (username: string) => {
   await fetch(apiUrl);
 };
 
-const getTeamMembers = async () => {
-  const org = 'twentyhq';
-  const team_slug = 'core-team';
-  const response = await danger.github.api.teams.listMembersInOrg({
-    org,
-    team_slug,
-  });
-  return response.data.map((user) => user.login);
-};
-
 const runCongratulate = async () => {
   const pullRequest = danger.github.pr;
   const userName = pullRequest.user.login;
-
-  const staticExcludedUsers = [
+  const teamMembers = [
     'dependabot',
     'cyborch',
     'emilienchvt',
@@ -56,13 +45,11 @@ const runCongratulate = async () => {
     'Bonapara',
     'nimraahmed',
     'ady-beraud',
+    'Freebios',
+    'ijreilly',
   ];
 
-  const teamMembers = await getTeamMembers();
-
-  const excludedUsers = new Set([...staticExcludedUsers, ...teamMembers]);
-
-  if (excludedUsers.has(userName)) {
+  if (teamMembers.includes(userName)) {
     return;
   }
 

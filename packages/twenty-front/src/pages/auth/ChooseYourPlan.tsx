@@ -11,6 +11,7 @@ import { SubscriptionCard } from '@/billing/components/SubscriptionCard';
 import { billingState } from '@/client-config/states/billingState';
 import { AppPath } from '@/types/AppPath';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { CardPicker } from '@/ui/input/components/CardPicker';
@@ -131,7 +132,7 @@ export const ChooseYourPlan = () => {
       enqueueSnackBar(
         'Checkout session error. Please retry or contact Twenty team',
         {
-          variant: 'error',
+          variant: SnackBarVariant.Error,
         },
       );
       return;

@@ -3,12 +3,11 @@ import styled from '@emotion/styled';
 import rehypeStringify from 'rehype-stringify';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
-import { IconSettings } from 'twenty-ui';
+import { H1Title, IconSettings } from 'twenty-ui';
 import { unified } from 'unified';
 import { visit } from 'unist-util-visit';
 
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { H1Title } from '@/ui/display/typography/components/H1Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 

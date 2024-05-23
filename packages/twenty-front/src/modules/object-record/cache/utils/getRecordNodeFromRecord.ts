@@ -11,7 +11,7 @@ import {
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
-import { lowerAndCapitalize } from '~/utils/string/lowerAndCapitalize';
+import { pascalCase } from '~/utils/string/pascalCase';
 
 export const getRecordNodeFromRecord = <T extends ObjectRecord>({
   objectMetadataItems,
@@ -129,6 +129,7 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
             ];
           }
           case FieldMetadataType.Link:
+          case FieldMetadataType.Links:
           case FieldMetadataType.Address:
           case FieldMetadataType.FullName:
           case FieldMetadataType.Currency: {
@@ -136,7 +137,7 @@ export const getRecordNodeFromRecord = <T extends ObjectRecord>({
               fieldName,
               {
                 ...value,
-                __typename: lowerAndCapitalize(field.type),
+                __typename: pascalCase(field.type),
               },
             ];
           }
