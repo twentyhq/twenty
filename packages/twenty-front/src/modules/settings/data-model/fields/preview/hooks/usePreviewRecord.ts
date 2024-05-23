@@ -2,7 +2,7 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { getPlaceholderRecord } from '@/settings/data-model/fields/preview/utils/getPlaceholderRecord';
 
-type UseLabelIdentifierFieldPreviewParams = {
+type UsePreviewRecordParams = {
   objectMetadataItem: Pick<
     ObjectMetadataItem,
     | 'fields'
@@ -13,10 +13,10 @@ type UseLabelIdentifierFieldPreviewParams = {
   skip?: boolean;
 };
 
-export const useLabelIdentifierFieldPreviewValue = ({
+export const usePreviewRecord = ({
   objectMetadataItem,
   skip,
-}: UseLabelIdentifierFieldPreviewParams) => {
+}: UsePreviewRecordParams) => {
   const { records } = useFindManyRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     limit: 1,
@@ -27,10 +27,10 @@ export const useLabelIdentifierFieldPreviewValue = ({
 
   const [firstRecord] = records;
 
-  const fieldPreviewValue =
+  const previewRecord =
     firstRecord ??
     // If no record was found, display a placeholder record
     getPlaceholderRecord({ objectMetadataItem });
 
-  return fieldPreviewValue;
+  return previewRecord;
 };

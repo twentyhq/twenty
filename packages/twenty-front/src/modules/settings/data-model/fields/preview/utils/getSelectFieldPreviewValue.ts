@@ -1,6 +1,8 @@
-import { isString } from '@sniptt/guards';
+import { isNonEmptyString } from '@sniptt/guards';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { FieldSelectValue } from '@/object-record/record-field/types/FieldMetadata';
+import { selectFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/selectFieldDefaultValueSchema';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
@@ -12,17 +14,20 @@ export const getSelectFieldPreviewValue = ({
     FieldMetadataItem,
     'defaultValue' | 'options' | 'type'
   >;
-}) => {
-  if (fieldMetadataItem.type !== FieldMetadataType.Select) return null;
+}): FieldSelectValue => {
+  if (
+    fieldMetadataItem.type !== FieldMetadataType.Select ||
+    !fieldMetadataItem.options?.length
+  ) {
+    return null;
+  }
 
-  const defaultValue = isString(fieldMetadataItem.defaultValue)
-    ? stripSimpleQuotesFromString(fieldMetadataItem.defaultValue)
-    : null;
+  const firstOptionValue = fieldMetadataItem.options[0].value;
 
-  if (isDefined(defaultValue)) return defaultValue;
-
-  const firstOptionValue = fieldMetadataItem.options?.[0]?.value;
-
-  // If no default value is set, display the first option value.
-  return firstOptionValue ?? null;
+  return selectFieldDefaultValueSchema(fieldMetadataItem.options)
+    .refine(isDefined)
+    .transform(stripSimpleQuotesFromString)
+    .refine(isNonEmptyString)
+    .catch(firstOptionValue)
+    .parse(fieldMetadataItem.defaultValue);
 };

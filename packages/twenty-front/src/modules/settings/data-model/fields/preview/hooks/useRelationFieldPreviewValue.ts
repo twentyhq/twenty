@@ -1,5 +1,5 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useLabelIdentifierFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useLabelIdentifierFieldPreviewValue';
+import { usePreviewRecord } from '@/settings/data-model/fields/preview/hooks/usePreviewRecord';
 
 type UseRelationFieldPreviewParams = {
   relationObjectMetadataItem: Pick<
@@ -16,7 +16,7 @@ export const useRelationFieldPreviewValue = ({
   relationObjectMetadataItem,
   skip,
 }: UseRelationFieldPreviewParams) =>
-  useLabelIdentifierFieldPreviewValue({
+  usePreviewRecord({
     objectMetadataItem: relationObjectMetadataItem,
     skip,
   });

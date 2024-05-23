@@ -1,12 +1,15 @@
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { useLabelIdentifierFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useLabelIdentifierFieldPreviewValue';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
+import { usePreviewRecord } from '@/settings/data-model/fields/preview/hooks/usePreviewRecord';
 import { useRelationFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useRelationFieldPreviewValue';
+import { getCurrencyFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getCurrencyFieldPreviewValue';
 import { getFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getFieldPreviewValue';
 import { getMultiSelectFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getMultiSelectFieldPreviewValue';
 import { getSelectFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getSelectFieldPreviewValue';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 type UseFieldPreviewParams = {
   fieldMetadataItem: Pick<
@@ -24,7 +27,7 @@ export const useFieldPreviewValue = ({
   objectMetadataItem,
   relationObjectMetadataItem,
 }: UseFieldPreviewParams) => {
-  const labelIdentifierFieldPreviewValue = useLabelIdentifierFieldPreviewValue({
+  const previewRecord = usePreviewRecord({
     objectMetadataItem,
     skip: !isLabelIdentifier,
   });
@@ -40,9 +43,18 @@ export const useFieldPreviewValue = ({
       !relationObjectMetadataItem,
   });
 
-  if (isLabelIdentifier) return labelIdentifierFieldPreviewValue;
+  if (isLabelIdentifier === true && isDefined(previewRecord)) {
+    const labelIdentifierFieldMetadataItem =
+      getLabelIdentifierFieldMetadataItem(objectMetadataItem);
+
+    if (isDefined(labelIdentifierFieldMetadataItem)) {
+      return previewRecord[labelIdentifierFieldMetadataItem.name];
+    }
+  }
 
   switch (fieldMetadataItem.type) {
+    case FieldMetadataType.Currency:
+      return getCurrencyFieldPreviewValue({ fieldMetadataItem });
     case FieldMetadataType.Relation:
       return relationFieldPreviewValue;
     case FieldMetadataType.Select:

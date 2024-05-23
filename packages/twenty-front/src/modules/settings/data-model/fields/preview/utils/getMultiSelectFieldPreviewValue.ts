@@ -1,4 +1,9 @@
+import { isNonEmptyArray } from '@apollo/client/utilities';
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { FieldMultiSelectValue } from '@/object-record/record-field/types/FieldMetadata';
+import { multiSelectFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/multiSelectFieldDefaultValueSchema';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
@@ -10,20 +15,22 @@ export const getMultiSelectFieldPreviewValue = ({
     FieldMetadataItem,
     'defaultValue' | 'options' | 'type'
   >;
-}) => {
-  if (fieldMetadataItem.type !== FieldMetadataType.MultiSelect) return null;
+}): FieldMultiSelectValue => {
+  if (
+    fieldMetadataItem.type !== FieldMetadataType.MultiSelect ||
+    !fieldMetadataItem.options?.length
+  ) {
+    return null;
+  }
 
-  const defaultValues = Array.isArray(fieldMetadataItem.defaultValue)
-    ? fieldMetadataItem.defaultValue.map((defaultValue: `'${string}'`) =>
-        stripSimpleQuotesFromString(defaultValue),
-      )
-    : null;
+  const allOptionValues = fieldMetadataItem.options.map(({ value }) => value);
 
-  if (isDefined(defaultValues) && defaultValues.length > 0)
-    return defaultValues;
-
-  const allOptionValues = fieldMetadataItem.options?.map(({ value }) => value);
-
-  // If no default value is set, display all options.
-  return allOptionValues ?? null;
+  return multiSelectFieldDefaultValueSchema(fieldMetadataItem.options)
+    .refine(isDefined)
+    .transform((value) =>
+      value.map(stripSimpleQuotesFromString).filter(isNonEmptyString),
+    )
+    .refine(isNonEmptyArray)
+    .catch(allOptionValues)
+    .parse(fieldMetadataItem.defaultValue);
 };
