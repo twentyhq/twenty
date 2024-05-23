@@ -5,4 +5,5 @@ export const RIGHT_DRAWER_PAGE_ICONS = {
   [RightDrawerPages.EditActivity]: 'IconNote',
   [RightDrawerPages.ViewEmailThread]: 'IconMail',
   [RightDrawerPages.ViewCalendarEvent]: 'IconCalendarEvent',
+  [RightDrawerPages.ViewRecord]: 'Icon123',
 };

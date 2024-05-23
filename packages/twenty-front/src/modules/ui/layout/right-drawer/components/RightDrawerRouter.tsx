@@ -6,7 +6,7 @@ import { RightDrawerEmailThread } from '@/activities/emails/right-drawer/compone
 import { RightDrawerCreateActivity } from '@/activities/right-drawer/components/create/RightDrawerCreateActivity';
 import { RightDrawerEditActivity } from '@/activities/right-drawer/components/edit/RightDrawerEditActivity';
 import { RightDrawerRecord } from '@/object-record/record-right-drawer/components/RightDrawerRecord';
-import { RightDrawerGenericTopBar } from '@/ui/layout/right-drawer/components/RightDrawerGenericTopBar';
+import { RightDrawerTopBar } from '@/ui/layout/right-drawer/components/RightDrawerTopBar';
 import { isRightDrawerMinimizedState } from '@/ui/layout/right-drawer/states/isRightDrawerMinimizedState';
 
 import { rightDrawerPageState } from '../states/rightDrawerPageState';
@@ -32,27 +32,23 @@ const StyledRightDrawerBody = styled.div`
 const RIGHT_DRAWER_PAGES_CONFIG = {
   [RightDrawerPages.CreateActivity]: {
     page: <RightDrawerCreateActivity />,
-    topBar: <RightDrawerGenericTopBar page={RightDrawerPages.CreateActivity} />,
+    topBar: <RightDrawerTopBar page={RightDrawerPages.CreateActivity} />,
   },
   [RightDrawerPages.EditActivity]: {
     page: <RightDrawerEditActivity />,
-    topBar: <RightDrawerGenericTopBar page={RightDrawerPages.EditActivity} />,
+    topBar: <RightDrawerTopBar page={RightDrawerPages.EditActivity} />,
   },
   [RightDrawerPages.ViewEmailThread]: {
     page: <RightDrawerEmailThread />,
-    topBar: (
-      <RightDrawerGenericTopBar page={RightDrawerPages.ViewEmailThread} />
-    ),
+    topBar: <RightDrawerTopBar page={RightDrawerPages.ViewEmailThread} />,
   },
   [RightDrawerPages.ViewCalendarEvent]: {
     page: <RightDrawerCalendarEvent />,
-    topBar: (
-      <RightDrawerGenericTopBar page={RightDrawerPages.ViewCalendarEvent} />
-    ),
+    topBar: <RightDrawerTopBar page={RightDrawerPages.ViewCalendarEvent} />,
   },
   [RightDrawerPages.ViewRecord]: {
     page: <RightDrawerRecord />,
-    topBar: <RightDrawerGenericTopBar page={RightDrawerPages.ViewRecord} />,
+    topBar: <RightDrawerTopBar page={RightDrawerPages.ViewRecord} />,
   },
 };
 

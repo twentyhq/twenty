@@ -2,7 +2,6 @@ import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot, useRecoilState, useRecoilValue } from 'recoil';
 
 import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
-import { viewableEmailThreadIdState } from '@/activities/emails/states/viewableEmailThreadIdState';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightDrawerOpenState';
 
@@ -39,15 +38,16 @@ describe('useEmailThread', () => {
         const [isRightDrawerOpen, setIsRightDrawerOpen] = useRecoilState(
           isRightDrawerOpenState,
         );
-        const [viewableEmailThreadId, setViewableEmailThreadId] =
-          useRecoilState(viewableEmailThreadIdState);
+        const [viewableRecordId, setViewableRecordId] = useRecoilState(
+          viewableRecordIdState,
+        );
 
         return {
           ...emailThread,
           isRightDrawerOpen,
-          viewableEmailThreadId,
+          viewableRecordId,
           setIsRightDrawerOpen,
-          setViewableEmailThreadId,
+          setViewableRecordId,
         };
       },
       { wrapper: RecoilRoot },
@@ -55,7 +55,7 @@ describe('useEmailThread', () => {
 
     act(() => {
       result.current.setIsRightDrawerOpen(true);
-      result.current.setViewableEmailThreadId(viewableEmailThreadId);
+      result.current.setViewableRecordId(viewableEmailThreadId);
     });
 
     act(() => {
@@ -63,6 +63,6 @@ describe('useEmailThread', () => {
     });
 
     expect(result.current.isRightDrawerOpen).toBe(false);
-    expect(result.current.viewableEmailThreadId).toBeNull();
+    expect(result.current.viewableRecordId).toBeNull();
   });
 });

@@ -36,11 +36,7 @@ const StyledMinimizeTopBarIcon = styled.div`
   display: flex;
 `;
 
-export const RightDrawerGenericTopBar = ({
-  page,
-}: {
-  page: RightDrawerPages;
-}) => {
+export const RightDrawerTopBar = ({ page }: { page: RightDrawerPages }) => {
   const isMobile = useIsMobile();
 
   const [isRightDrawerMinimized, setIsRightDrawerMinimized] = useRecoilState(
