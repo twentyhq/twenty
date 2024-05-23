@@ -1,6 +1,7 @@
 'use client';
 import React from 'react';
 import styled from '@emotion/styled';
+import { usePathname } from 'next/navigation';
 
 import { ArticleContent } from '@/app/_components/ui/layout/articles/ArticleContent';
 import { Breadcrumbs } from '@/app/_components/ui/layout/Breadcrumbs';
@@ -113,10 +114,13 @@ const StyledImageContainer = styled.div`
 `;
 
 export default function UserGuideContent({ item }: { item: FileContent }) {
+  const pathname = usePathname();
+  const uri = pathname.includes('user-guide') ? '/user-guide' : '/docs';
+  const label = pathname.includes('user-guide') ? 'User Guide' : 'Developers';
   const BREADCRUMB_ITEMS = [
     {
-      uri: '/user-guide',
-      label: 'User Guide',
+      uri: uri,
+      label: label,
     },
   ];
 

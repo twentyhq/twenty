@@ -3,8 +3,8 @@ import { ReactNode } from 'react';
 import { UserGuideMainLayout } from '@/app/_components/user-guide/UserGuideMainLayout';
 import { getUserGuideArticles } from '@/content/user-guide/constants/getUserGuideArticles';
 
-export default function UserGuideLayout({ children }: { children: ReactNode }) {
-  const filePath = 'src/content/user-guide/';
+export default function DocsLayout({ children }: { children: ReactNode }) {
+  const filePath = 'src/content/docs/';
   const userGuideIndex = getUserGuideArticles(filePath);
   return (
     <UserGuideMainLayout userGuideIndex={userGuideIndex}>

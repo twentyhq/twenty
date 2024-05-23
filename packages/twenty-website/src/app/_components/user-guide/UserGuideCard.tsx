@@ -1,6 +1,6 @@
 'use client';
 import styled from '@emotion/styled';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 import { Theme } from '@/app/_components/ui/theme/theme';
 import { UserGuideArticlesProps } from '@/content/user-guide/constants/getUserGuideArticles';
@@ -56,9 +56,10 @@ export default function UserGuideCard({
   card: UserGuideArticlesProps;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   return (
     <StyledContainer
-      onClick={() => router.push(`/user-guide/${card.fileName}`)}
+      onClick={() => router.push(`${pathname}/${card.fileName}`)}
     >
       <StyledImage src={card.image} alt={card.title} />
       <StyledHeading>{card.title}</StyledHeading>

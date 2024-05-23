@@ -3,6 +3,7 @@ import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 import { usePathname } from 'next/navigation';
 
+import DocsSidebar from '@/app/_components/docs/DocsSideBar';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import UserGuideTableContents from '@/app/_components/user-guide/TableContent';
@@ -34,9 +35,13 @@ export const UserGuideMainLayout = ({
   const pathname = usePathname();
   return (
     <StyledContainer>
-      <UserGuideSidebar userGuideIndex={userGuideIndex} />
+      {pathname.includes('user-guide') ? (
+        <UserGuideSidebar userGuideIndex={userGuideIndex} />
+      ) : (
+        <DocsSidebar userGuideIndex={userGuideIndex} />
+      )}
       {children}
-      {pathname === '/user-guide' ? (
+      {pathname === '/user-guide' || pathname === '/docs' ? (
         <StyledEmptySideBar />
       ) : (
         <UserGuideTableContents />

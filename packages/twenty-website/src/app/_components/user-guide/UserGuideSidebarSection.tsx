@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import styled from '@emotion/styled';
+import { IconPoint } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { IconChevronDown, IconChevronRight } from '@/app/_components/ui/icons';
@@ -75,6 +76,17 @@ const StyledIcon = styled.div`
   align-items: center;
 `;
 
+const StyledIconContainer = styled.div`
+  margin-left: -8px;
+  color: ${Theme.color.gray30};
+`;
+
+const StyledCardTitle = styled.p`
+  margin: 0px -5px;
+  color: ${Theme.color.gray30};
+  font-weight: 600;
+`;
+
 const StyledRectangle = styled.div<{ isselected: boolean; isHovered: boolean }>`
   height: ${(props) =>
     props.isselected ? '95%' : props.isHovered ? '70%' : '100%'};
@@ -101,6 +113,7 @@ const UserGuideSidebarSection = ({
   const router = useRouter();
   const topics = groupArticlesByTopic(userGuideIndex);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  const path = pathname.includes('user-guide') ? '/user-guide/' : '/docs/';
 
   const [unfolded, setUnfolded] = useState<TopicsState>(() =>
     Object.keys(topics).reduce((acc: TopicsState, topic: string) => {
@@ -112,44 +125,64 @@ const UserGuideSidebarSection = ({
   const toggleFold = (topic: string) => {
     setUnfolded((prev: TopicsState) => ({ ...prev, [topic]: !prev[topic] }));
   };
+
   return (
     <StyledContainer>
-      {Object.entries(topics).map(([topic, cards]) => (
-        <StyledIndex key={topic}>
-          <StyledTitle onClick={() => toggleFold(topic)}>
-            {unfolded[topic] ? (
-              <StyledIcon>
-                <IconChevronDown size={Theme.icon.size.md} />
-              </StyledIcon>
-            ) : (
-              <StyledIcon>
-                <IconChevronRight size={Theme.icon.size.md} />
-              </StyledIcon>
-            )}
-            <div>{topic}</div>
-          </StyledTitle>
-          {unfolded[topic] &&
-            cards.map((card) => {
-              const isselected = pathname === `/user-guide/${card.fileName}`;
-              return (
-                <StyledSubTopicItem
-                  key={card.title}
-                  isselected={isselected}
-                  href={`/user-guide/${card.fileName}`}
-                  onClick={() => router.push(`/user-guide/${card.fileName}`)}
-                  onMouseEnter={() => setHoveredItem(card.title)}
-                  onMouseLeave={() => setHoveredItem(null)}
-                >
-                  <StyledRectangle
+      {Object.entries(topics).map(([topic, cards]) => {
+        const hasMultipleFiles = cards.some((card) => card.numberOfFiles > 1);
+
+        return (
+          <StyledIndex key={topic}>
+            {hasMultipleFiles ? (
+              <StyledTitle onClick={() => toggleFold(topic)}>
+                {unfolded[topic] ? (
+                  <StyledIcon>
+                    <IconChevronDown size={Theme.icon.size.md} />
+                  </StyledIcon>
+                ) : (
+                  <StyledIcon>
+                    <IconChevronRight size={Theme.icon.size.md} />
+                  </StyledIcon>
+                )}
+                <div>{topic}</div>
+              </StyledTitle>
+            ) : null}
+
+            {unfolded[topic] &&
+              cards.map((card) => {
+                const isselected = pathname === `${path}${card.fileName}`;
+
+                return (
+                  <StyledSubTopicItem
+                    key={card.title}
                     isselected={isselected}
-                    isHovered={hoveredItem === card.title}
-                  />
-                  {card.title}
-                </StyledSubTopicItem>
-              );
-            })}
-        </StyledIndex>
-      ))}
+                    href={`${path}${card.fileName}`}
+                    onClick={() => router.push(`${path}${card.fileName}`)}
+                    onMouseEnter={() => setHoveredItem(card.title)}
+                    onMouseLeave={() => setHoveredItem(null)}
+                  >
+                    {card.numberOfFiles > 1 ? (
+                      <>
+                        <StyledRectangle
+                          isselected={isselected}
+                          isHovered={hoveredItem === card.title}
+                        />
+                        {card.title}
+                      </>
+                    ) : (
+                      <>
+                        <StyledIconContainer>
+                          <IconPoint size={Theme.icon.size.md} />
+                        </StyledIconContainer>
+                        <StyledCardTitle>{card.title}</StyledCardTitle>
+                      </>
+                    )}
+                  </StyledSubTopicItem>
+                );
+              })}
+          </StyledIndex>
+        );
+      })}
     </StyledContainer>
   );
 };
