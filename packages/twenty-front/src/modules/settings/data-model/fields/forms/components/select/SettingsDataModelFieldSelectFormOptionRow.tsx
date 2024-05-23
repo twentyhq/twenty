@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
+  ColorSample,
   IconCheck,
   IconDotsVertical,
   IconGripVertical,
@@ -12,7 +13,6 @@ import { v4 } from 'uuid';
 
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { getOptionValueFromLabel } from '@/settings/data-model/fields/forms/utils/getOptionValueFromLabel';
-import { ColorSample } from '@/ui/display/color/components/ColorSample';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
