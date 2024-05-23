@@ -1,30 +1,27 @@
 import { useCallback } from 'react';
 import { ApolloClient, useMutation } from '@apollo/client';
 
-import { UNSYNC_REMOTE_TABLE } from '@/databases/graphql/mutations/unsyncRemoteTable';
+import { SYNC_REMOTE_TABLE_SCHEMA_CHANGES } from '@/databases/graphql/mutations/syncRemoteTableSchemaChanges';
 import { modifyRemoteTableFromCache } from '@/databases/utils/modifyRemoteTableFromCache';
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
-import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
 import {
   RemoteTableInput,
-  UnsyncRemoteTableMutation,
-  UnsyncRemoteTableMutationVariables,
+  SyncRemoteTableSchemaChangesMutation,
+  SyncRemoteTableSchemaChangesMutationVariables,
 } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
-export const useUnsyncRemoteTable = () => {
+export const useSyncRemoteTableSchemaChanges = () => {
   const apolloMetadataClient = useApolloMetadataClient();
-  const { refetch: refetchObjectMetadataItems } =
-    useFindManyObjectMetadataItems();
 
-  const [mutate] = useMutation<
-    UnsyncRemoteTableMutation,
-    UnsyncRemoteTableMutationVariables
-  >(UNSYNC_REMOTE_TABLE, {
+  const [mutate, mutationInformation] = useMutation<
+    SyncRemoteTableSchemaChangesMutation,
+    SyncRemoteTableSchemaChangesMutationVariables
+  >(SYNC_REMOTE_TABLE_SCHEMA_CHANGES, {
     client: apolloMetadataClient ?? ({} as ApolloClient<any>),
   });
 
-  const unsyncRemoteTable = useCallback(
+  const syncRemoteTableSchemaChanges = useCallback(
     async (input: RemoteTableInput) => {
       const remoteTable = await mutate({
         variables: {
@@ -36,21 +33,21 @@ export const useUnsyncRemoteTable = () => {
               cache: cache,
               remoteTableName: input.name,
               fieldModifiers: {
-                status: () => data.unsyncRemoteTable.status,
+                schemaPendingUpdates: () =>
+                  data.syncRemoteTableSchemaChanges.schemaPendingUpdates || [],
               },
             });
           }
         },
       });
 
-      await refetchObjectMetadataItems();
-
       return remoteTable;
     },
-    [mutate, refetchObjectMetadataItems],
+    [mutate],
   );
 
   return {
-    unsyncRemoteTable,
+    syncRemoteTableSchemaChanges,
+    isLoading: mutationInformation.loading,
   };
 };

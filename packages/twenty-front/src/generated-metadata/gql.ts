@@ -18,6 +18,7 @@ const documents = {
     "\n  \n  mutation createServer($input: CreateRemoteServerInput!) {\n    createOneRemoteServer(input: $input) {\n      ...RemoteServerFields\n    }\n  }\n": types.CreateServerDocument,
     "\n  mutation deleteServer($input: RemoteServerIdInput!) {\n    deleteOneRemoteServer(input: $input) {\n      id\n    }\n  }\n": types.DeleteServerDocument,
     "\n  \n  mutation syncRemoteTable($input: RemoteTableInput!) {\n    syncRemoteTable(input: $input) {\n      ...RemoteTableFields\n    }\n  }\n": types.SyncRemoteTableDocument,
+    "\n  \n  mutation syncRemoteTableSchemaChanges($input: RemoteTableInput!) {\n    syncRemoteTableSchemaChanges(input: $input) {\n      ...RemoteTableFields\n    }\n  }\n": types.SyncRemoteTableSchemaChangesDocument,
     "\n  \n  mutation unsyncRemoteTable($input: RemoteTableInput!) {\n    unsyncRemoteTable(input: $input) {\n      ...RemoteTableFields\n    }\n  }\n": types.UnsyncRemoteTableDocument,
     "\n  \n  mutation updateServer($input: UpdateRemoteServerInput!) {\n    updateOneRemoteServer(input: $input) {\n      ...RemoteServerFields\n    }\n  }\n": types.UpdateServerDocument,
     "\n  \n  query GetManyDatabaseConnections($input: RemoteServerTypeInput!) {\n    findManyRemoteServersByType(input: $input) {\n      ...RemoteServerFields\n    }\n  }\n": types.GetManyDatabaseConnectionsDocument,
@@ -68,6 +69,10 @@ export function graphql(source: "\n  mutation deleteServer($input: RemoteServerI
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function graphql(source: "\n  \n  mutation syncRemoteTable($input: RemoteTableInput!) {\n    syncRemoteTable(input: $input) {\n      ...RemoteTableFields\n    }\n  }\n"): (typeof documents)["\n  \n  mutation syncRemoteTable($input: RemoteTableInput!) {\n    syncRemoteTable(input: $input) {\n      ...RemoteTableFields\n    }\n  }\n"];
+/**
+ * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function graphql(source: "\n  \n  mutation syncRemoteTableSchemaChanges($input: RemoteTableInput!) {\n    syncRemoteTableSchemaChanges(input: $input) {\n      ...RemoteTableFields\n    }\n  }\n"): (typeof documents)["\n  \n  mutation syncRemoteTableSchemaChanges($input: RemoteTableInput!) {\n    syncRemoteTableSchemaChanges(input: $input) {\n      ...RemoteTableFields\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

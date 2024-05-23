@@ -303,7 +303,11 @@ export class RemoteTableService {
     if (isEmpty(distantTableColumns)) {
       await this.unsyncOne(workspaceId, remoteTable, remoteServer);
 
-      return {};
+      return {
+        name: remoteTable.localTableName,
+        status: RemoteTableStatus.NOT_SYNCED,
+        schemaPendingUpdates: [],
+      };
     }
 
     const foreignTableColumns = await fetchTableColumns(
