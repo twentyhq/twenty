@@ -8,6 +8,7 @@ import { GmailMessagesImportV2Service } from 'src/modules/messaging/services/gma
 import { GmailMessagesImportService } from 'src/modules/messaging/services/gmail-messages-import/gmail-messages-import.service';
 import { MessageParticipantModule } from 'src/modules/messaging/services/message-participant/message-participant.module';
 import { MessageModule } from 'src/modules/messaging/services/message/message.module';
+import { SetMessageChannelSyncStatusModule } from 'src/modules/messaging/services/set-message-channel-sync-status/set-message-channel-sync-status.module';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 
 @Module({
@@ -21,6 +22,7 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-ob
     WorkspaceDataSourceModule,
     MessageModule,
     MessageParticipantModule,
+    SetMessageChannelSyncStatusModule,
   ],
   providers: [GmailMessagesImportService, GmailMessagesImportV2Service],
   exports: [GmailMessagesImportService, GmailMessagesImportV2Service],
