@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { ApolloClient, useMutation } from '@apollo/client';
 
 import { SYNC_REMOTE_TABLE_SCHEMA_CHANGES } from '@/databases/graphql/mutations/syncRemoteTableSchemaChanges';
-import { modifyRemoteTableFromCache } from '@/databases/utils/modifyRecordTableFromCache';
+import { modifyRemoteTableFromCache } from '@/databases/utils/modifyRemoteTableFromCache';
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import {
   RemoteTableInput,

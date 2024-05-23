@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { ApolloClient, useMutation } from '@apollo/client';
 
 import { UNSYNC_REMOTE_TABLE } from '@/databases/graphql/mutations/unsyncRemoteTable';
-import { modifyRemoteTableFromCache } from '@/databases/utils/modifyRecordTableFromCache';
+import { modifyRemoteTableFromCache } from '@/databases/utils/modifyRemoteTableFromCache';
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
 import {
