@@ -3,23 +3,23 @@ import omit from 'lodash.omit';
 import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
+import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
 import {
   SettingsDataModelFieldBooleanForm,
   settingsDataModelFieldBooleanFormSchema,
-} from '@/settings/data-model/components/SettingsDataModelDefaultValue';
-import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
-import { settingsDataModelFieldRelationFormSchema } from '@/settings/data-model/components/SettingsObjectFieldRelationForm';
-import {
-  settingsDataModelFieldMultiSelectFormSchema,
-  settingsDataModelFieldSelectFormSchema,
-} from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
-import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
+} from '@/settings/data-model/fields/forms/components/boolean/SettingsDataModelFieldBooleanForm';
 import {
   SettingsDataModelFieldCurrencyForm,
   settingsDataModelFieldCurrencyFormSchema,
-} from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldCurrencyForm';
-import { SettingsDataModelFieldRelationSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldRelationSettingsFormCard';
-import { SettingsDataModelFieldSelectSettingsFormCard } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldSelectSettingsFormCard';
+} from '@/settings/data-model/fields/forms/components/currency/SettingsDataModelFieldCurrencyForm';
+import { settingsDataModelFieldRelationFormSchema } from '@/settings/data-model/fields/forms/components/relation/SettingsDataModelFieldRelationForm';
+import { SettingsDataModelFieldRelationSettingsFormCard } from '@/settings/data-model/fields/forms/components/relation/SettingsDataModelFieldRelationSettingsFormCard';
+import {
+  settingsDataModelFieldMultiSelectFormSchema,
+  settingsDataModelFieldSelectFormSchema,
+} from '@/settings/data-model/fields/forms/components/select/SettingsDataModelFieldSelectForm';
+import { SettingsDataModelFieldSelectSettingsFormCard } from '@/settings/data-model/fields/forms/components/select/SettingsDataModelFieldSelectSettingsFormCard';
 import {
   SettingsDataModelFieldPreviewCard,
   SettingsDataModelFieldPreviewCardProps,

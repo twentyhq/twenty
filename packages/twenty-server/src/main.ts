@@ -8,6 +8,8 @@ import bytes from 'bytes';
 import { useContainer } from 'class-validator';
 import '@sentry/tracing';
 
+import { ApplyCorsToExceptions } from 'src/utils/apply-cors-to-exceptions';
+
 import { AppModule } from './app.module';
 
 import { generateFrontConfig } from './utils/generate-front-config';
@@ -37,6 +39,8 @@ const bootstrap = async () => {
     app.use(Sentry.Handlers.requestHandler());
     app.use(Sentry.Handlers.tracingHandler());
   }
+
+  app.useGlobalFilters(new ApplyCorsToExceptions());
 
   // Apply validation pipes globally
   app.useGlobalPipes(

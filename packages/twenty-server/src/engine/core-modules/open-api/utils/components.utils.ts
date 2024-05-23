@@ -105,6 +105,33 @@ const getRequiredFields = (item: ObjectMetadataEntity): string[] => {
   }, [] as string[]);
 };
 
+const computeBatchSchemaComponent = (
+  item: ObjectMetadataEntity,
+): OpenAPIV3_1.SchemaObject => {
+  const result = {
+    type: 'array',
+    description: `A list of ${item.namePlural}`,
+    items: { $ref: `#/components/schemas/${capitalize(item.nameSingular)}` },
+    example: [{}],
+  } as OpenAPIV3_1.SchemaObject;
+
+  const requiredFields = getRequiredFields(item);
+
+  if (requiredFields?.length) {
+    result.required = requiredFields;
+    result.example = requiredFields.reduce(
+      (example, requiredField) => {
+        example[requiredField] = '';
+
+        return example;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  return result;
+};
+
 const computeSchemaComponent = (
   item: ObjectMetadataEntity,
 ): OpenAPIV3_1.SchemaObject => {
@@ -138,6 +165,7 @@ export const computeSchemaComponents = (
   return objectMetadataItems.reduce(
     (schemas, item) => {
       schemas[capitalize(item.nameSingular)] = computeSchemaComponent(item);
+      schemas[capitalize(item.namePlural)] = computeBatchSchemaComponent(item);
 
       return schemas;
     },
@@ -168,6 +196,7 @@ export const computeMetadataSchemaComponents = (
         case 'object': {
           schemas[`${capitalize(item.nameSingular)}`] = {
             type: 'object',
+            description: `An object`,
             properties: {
               dataSourceId: { type: 'string' },
               nameSingular: { type: 'string' },
@@ -201,6 +230,15 @@ export const computeMetadataSchemaComponents = (
                 },
               },
             },
+            example: {},
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+            example: [{}],
           };
 
           return schemas;
@@ -208,6 +246,7 @@ export const computeMetadataSchemaComponents = (
         case 'field': {
           schemas[`${capitalize(item.nameSingular)}`] = {
             type: 'object',
+            description: `A field`,
             properties: {
               type: { type: 'string' },
               name: { type: 'string' },
@@ -259,6 +298,15 @@ export const computeMetadataSchemaComponents = (
               defaultValue: { type: 'object' },
               options: { type: 'object' },
             },
+            example: {},
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+            example: [{}],
           };
 
           return schemas;
@@ -266,6 +314,7 @@ export const computeMetadataSchemaComponents = (
         case 'relation': {
           schemas[`${capitalize(item.nameSingular)}`] = {
             type: 'object',
+            description: 'A relation',
             properties: {
               relationType: { type: 'string' },
               fromObjectMetadata: {
@@ -293,6 +342,15 @@ export const computeMetadataSchemaComponents = (
               fromFieldMetadataId: { type: 'string' },
               toFieldMetadataId: { type: 'string' },
             },
+            example: {},
+          };
+          schemas[`${capitalize(item.namePlural)}`] = {
+            type: 'array',
+            description: `A list of ${item.namePlural}`,
+            items: {
+              $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+            },
+            example: [{}],
           };
         }
       }

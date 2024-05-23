@@ -126,7 +126,7 @@ export class RemoteServerService<T extends RemoteServerType> {
     }
 
     const currentRemoteTablesForServer =
-      await this.remoteTableService.findCurrentRemoteTablesByServerId({
+      await this.remoteTableService.findRemoteTablesByServerId({
         remoteServerId: remoteServer.id,
         workspaceId,
       });

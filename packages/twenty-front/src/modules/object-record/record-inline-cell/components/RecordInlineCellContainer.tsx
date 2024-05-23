@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { Tooltip } from 'react-tooltip';
 import { css, useTheme } from '@emotion/react';
@@ -7,7 +7,6 @@ import { IconComponent } from 'twenty-ui';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
-import { ExpandableListProps } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { useInlineCell } from '../hooks/useInlineCell';
@@ -111,7 +110,13 @@ type RecordInlineCellContainerProps = {
   buttonIcon?: IconComponent;
   editModeContent?: React.ReactNode;
   editModeContentOnly?: boolean;
-  displayModeContent: React.ReactNode;
+  displayModeContent: ({
+    isCellSoftFocused,
+    cellElement,
+  }: {
+    isCellSoftFocused: boolean;
+    cellElement?: HTMLDivElement;
+  }) => React.ReactNode;
   customEditHotkeyScope?: HotkeyScope;
   isDisplayModeContentEmpty?: boolean;
   isDisplayModeFixHeight?: boolean;
@@ -136,24 +141,25 @@ export const RecordInlineCellContainer = ({
   loading = false,
 }: RecordInlineCellContainerProps) => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
-  const reference = useRef<HTMLDivElement>(null);
+  // Used by some fields in ExpandableList as an anchor for the floating element.
+  // floating-ui mentions that `useState` must be used instead of `useRef`,
+  // see https://floating-ui.com/docs/useFloating#elements
+  const [cellElement, setCellElement] = useState<HTMLDivElement | null>(null);
   const [isHovered, setIsHovered] = useState(false);
-  const [isHoveredForDisplayMode, setIsHoveredForDisplayMode] = useState(false);
-  const [newDisplayModeContent, setNewDisplayModeContent] =
-    useState<React.ReactNode>(displayModeContent);
+  const [isCellSoftFocused, setIsCellSoftFocused] = useState(false);
 
   const handleContainerMouseEnter = () => {
     if (!readonly) {
       setIsHovered(true);
     }
-    setIsHoveredForDisplayMode(true);
+    setIsCellSoftFocused(true);
   };
 
   const handleContainerMouseLeave = () => {
     if (!readonly) {
       setIsHovered(false);
     }
-    setIsHoveredForDisplayMode(false);
+    setIsCellSoftFocused(false);
   };
 
   const { isInlineCellInEditMode, openInlineCell } = useInlineCell();
@@ -173,17 +179,6 @@ export const RecordInlineCellContainer = ({
 
   const theme = useTheme();
   const labelId = `label-${entityId}-${fieldDefinition?.metadata?.fieldName}`;
-
-  useEffect(() => {
-    if (React.isValidElement<ExpandableListProps>(displayModeContent)) {
-      setNewDisplayModeContent(
-        React.cloneElement(displayModeContent, {
-          isHovered: isHoveredForDisplayMode,
-          reference: reference.current || undefined,
-        }),
-      );
-    }
-  }, [isHoveredForDisplayMode, displayModeContent, reference]);
 
   const showContent = () => {
     if (loading) {
@@ -215,7 +210,10 @@ export const RecordInlineCellContainer = ({
           isHovered={isHovered}
           emptyPlaceholder={showLabel ? 'Empty' : label}
         >
-          {newDisplayModeContent}
+          {displayModeContent({
+            isCellSoftFocused,
+            cellElement: cellElement ?? undefined,
+          })}
         </RecordInlineCellDisplayMode>
         {showEditButton && <RecordInlineCellButton Icon={buttonIcon} />}
       </StyledClickableContainer>
@@ -252,7 +250,7 @@ export const RecordInlineCellContainer = ({
           )}
         </StyledLabelAndIconContainer>
       )}
-      <StyledValueContainer ref={reference}>
+      <StyledValueContainer ref={setCellElement}>
         {showContent()}
       </StyledValueContainer>
     </StyledInlineCellBaseContainer>

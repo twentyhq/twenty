@@ -1,10 +1,4 @@
-import React, {
-  ReactElement,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -18,6 +12,7 @@ import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 import { RecordTableCellDisplayMode } from './RecordTableCellDisplayMode';
 import { RecordTableCellEditMode } from './RecordTableCellEditMode';
 import { RecordTableCellSoftFocusMode } from './RecordTableCellSoftFocusMode';
+import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 
 const StyledTd = styled.td<{ isSelected: boolean; isInEditMode: boolean }>`
   background: ${({ isSelected, theme }) =>
@@ -43,7 +38,13 @@ const StyledCellBaseContainer = styled.div<{ softFocus: boolean }>`
 
 export type RecordTableCellContainerProps = {
   editModeContent: ReactElement;
-  nonEditModeContent: ReactElement;
+  nonEditModeContent?: ({
+    isCellSoftFocused,
+    cellElement,
+  }: {
+    isCellSoftFocused: boolean;
+    cellElement?: HTMLTableCellElement;
+  }) => ReactElement;
   editHotkeyScope?: HotkeyScope;
   transparent?: boolean;
   maxContentWidth?: number;
@@ -60,14 +61,20 @@ export const RecordTableCellContainer = ({
   nonEditModeContent,
   editHotkeyScope,
 }: RecordTableCellContainerProps) => {
-  const reference = useRef<HTMLTableCellElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
-
-  const [hasSoftFocus, setHasSoftFocus] = useState(false);
-  const [isInEditMode, setIsInEditMode] = useState(false);
-
-  const { isSelected, recordId } = useContext(RecordTableRowContext);
-  const { onContextMenu, onCellMouseEnter } = useContext(RecordTableContext);
+  const { columnIndex } = useContext(RecordTableCellContext);
+  // Used by some fields in ExpandableList as an anchor for the floating element.
+  // floating-ui mentions that `useState` must be used instead of `useRef`,
+  // see https://floating-ui.com/docs/useFloating#elements
+  const [cellElement, setCellElement] = useState<HTMLTableCellElement | null>(
+    null,
+  );
+  const [isCellBaseContainerHovered, setIsCellBaseContainerHovered] =
+    useState(false);
+  const { isReadOnly, isSelected, recordId } = useContext(
+    RecordTableRowContext,
+  );
+  const { onMoveSoftFocusToCell, onContextMenu, onCellMouseEnter } =
+    useContext(RecordTableContext);
 
   const cellPosition = useCurrentTableCellPosition();
 
@@ -86,7 +93,7 @@ export const RecordTableCellContainer = ({
   };
 
   const handleContainerMouseLeave = () => {
-    setIsHovered(false);
+    setIsCellBaseContainerHovered(false);
   };
 
   useEffect(() => {
@@ -131,7 +138,7 @@ export const RecordTableCellContainer = ({
 
   return (
     <StyledTd
-      ref={reference}
+      ref={setCellElement}
       isSelected={isSelected}
       onContextMenu={handleContextMenu}
       isInEditMode={isInEditMode}

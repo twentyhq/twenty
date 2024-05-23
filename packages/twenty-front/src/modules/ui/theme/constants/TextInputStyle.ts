@@ -1,6 +1,5 @@
 import { css } from '@emotion/react';
-
-import { ThemeType } from './ThemeLight';
+import { ThemeType } from 'twenty-ui';
 
 export const TEXT_INPUT_STYLE = (props: { theme: ThemeType }) => css`
   background-color: transparent;

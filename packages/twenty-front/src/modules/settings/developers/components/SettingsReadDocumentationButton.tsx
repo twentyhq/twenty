@@ -10,9 +10,8 @@ export const SettingsReadDocumentationButton = () => {
       accent="default"
       size="small"
       Icon={IconBook2}
-      onClick={() => {
-        window.open('https://docs.twenty.com');
-      }}
+      to={'https://docs.twenty.com'}
+      target="_blank"
     ></Button>
   );
 };

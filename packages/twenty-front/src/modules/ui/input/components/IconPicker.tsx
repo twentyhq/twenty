@@ -18,7 +18,7 @@ import { IconButton, IconButtonVariant } from '../button/components/IconButton';
 import { LightIconButton } from '../button/components/LightIconButton';
 import { IconPickerHotkeyScope } from '../types/IconPickerHotkeyScope';
 
-type IconPickerProps = {
+export type IconPickerProps = {
   disabled?: boolean;
   dropdownId?: string;
   onChange: (params: { iconKey: string; Icon: IconComponent }) => void;
@@ -154,6 +154,11 @@ export const IconPicker = ({
         dropdownHotkeyScope={{ scope: IconPickerHotkeyScope.IconPicker }}
         clickableComponent={
           <IconButton
+            ariaLabel={`Click to select icon ${
+              selectedIconKey
+                ? `(selected: ${selectedIconKey})`
+                : `(no icon selected)`
+            }`}
             disabled={disabled}
             Icon={selectedIconKey ? getIcon(selectedIconKey) : IconApps}
             variant={variant}

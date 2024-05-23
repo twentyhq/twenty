@@ -4,8 +4,13 @@ import { useGetWorkspaceFromInviteHashQuery } from '~/generated/graphql';
 
 export const useWorkspaceFromInviteHash = () => {
   const workspaceInviteHash = useParams().workspaceInviteHash;
-  const { data: workspaceFromInviteHash } = useGetWorkspaceFromInviteHashQuery({
-    variables: { inviteHash: workspaceInviteHash || '' },
-  });
-  return workspaceFromInviteHash?.findWorkspaceFromInviteHash;
+  const { data: workspaceFromInviteHash, loading } =
+    useGetWorkspaceFromInviteHashQuery({
+      variables: { inviteHash: workspaceInviteHash || '' },
+    });
+  return {
+    workspace: workspaceFromInviteHash?.findWorkspaceFromInviteHash,
+    workspaceInviteHash,
+    loading,
+  };
 };

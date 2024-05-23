@@ -7,6 +7,7 @@ import { RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { getEdgeTypename } from '@/object-record/cache/utils/getEdgeTypename';
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
+import { isDefined } from '~/utils/isDefined';
 
 /*
   TODO: for now new records are added to all cached record lists, no matter what the variables (filters, orderBy, etc.) are.
@@ -61,11 +62,10 @@ export const triggerCreateRecordsOptimisticEffect = ({
           rootQueryCachedObjectRecordConnection,
         );
 
-        const rootQueryCachedRecordTotalCount =
-          readField<number>(
-            'totalCount',
-            rootQueryCachedObjectRecordConnection,
-          ) || 0;
+        const rootQueryCachedRecordTotalCount = readField<number | undefined>(
+          'totalCount',
+          rootQueryCachedObjectRecordConnection,
+        );
 
         const nextRootQueryCachedRecordEdges = rootQueryCachedRecordEdges
           ? [...rootQueryCachedRecordEdges]
@@ -113,7 +113,9 @@ export const triggerCreateRecordsOptimisticEffect = ({
         return {
           ...rootQueryCachedObjectRecordConnection,
           edges: nextRootQueryCachedRecordEdges,
-          totalCount: rootQueryCachedRecordTotalCount + 1,
+          totalCount: isDefined(rootQueryCachedRecordTotalCount)
+            ? rootQueryCachedRecordTotalCount + 1
+            : undefined,
         };
       },
     },
