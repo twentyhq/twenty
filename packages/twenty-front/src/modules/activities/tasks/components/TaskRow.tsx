@@ -22,7 +22,7 @@ const StyledContainer = styled.div`
   cursor: pointer;
   display: inline-flex;
   height: ${({ theme }) => theme.spacing(12)};
-  min-width: calc(100% - ${({ theme }) => theme.spacing(8)});
+  width: calc(100% - ${({ theme }) => theme.spacing(8)});
   padding: 0 ${({ theme }) => theme.spacing(4)};
 
   &:last-child {
@@ -33,6 +33,10 @@ const StyledContainer = styled.div`
 const StyledTaskBody = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 50%;
 `;
 
 const StyledTaskTitle = styled.div<{
@@ -42,6 +46,10 @@ const StyledTaskTitle = styled.div<{
   font-weight: ${({ theme }) => theme.font.weight.medium};
   padding: 0 ${({ theme }) => theme.spacing(2)};
   text-decoration: ${({ completed }) => (completed ? 'line-through' : 'none')};
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 30%;
 `;
 
 const StyledCommentIcon = styled.div`
@@ -61,6 +69,7 @@ const StyledDueDate = styled.div<{
   gap: ${({ theme }) => theme.spacing(1)};
   padding-left: ${({ theme }) => theme.spacing(2)};
   white-space: nowrap;
+  max-width: 100%;
 `;
 
 const StyledRightSideContainer = styled.div`
@@ -73,6 +82,7 @@ const StyledPlaceholder = styled.div`
 
 const StyledLeftSideContainer = styled.div`
   display: flex;
+  max-width: 60%;
 `;
 
 const StyledCheckboxContainer = styled.div`
