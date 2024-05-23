@@ -48,6 +48,7 @@ export class ClientConfigResolver {
         provider: this.environmentService.get('CAPTCHA_DRIVER'),
         siteKey: this.environmentService.get('CAPTCHA_SITE_KEY'),
       },
+      chromeExtensionId: this.environmentService.get('CHROME_EXTENSION_ID'),
     };
 
     return Promise.resolve(clientConfig);
