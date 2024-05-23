@@ -7,10 +7,10 @@ import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetada
 import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
 import {
   RemoteTableInput,
-  RemoteTableStatus,
   UnsyncRemoteTableMutation,
   UnsyncRemoteTableMutationVariables,
 } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 export const useUnsyncRemoteTable = () => {
   const apolloMetadataClient = useApolloMetadataClient();
@@ -30,14 +30,16 @@ export const useUnsyncRemoteTable = () => {
         variables: {
           input,
         },
-        update: (cache) => {
-          modifyRemoteTableFromCache({
-            cache: cache,
-            remoteTableName: input.name,
-            fieldModifiers: {
-              status: () => RemoteTableStatus.NotSynced,
-            },
-          });
+        update: (cache, { data }) => {
+          if (isDefined(data)) {
+            modifyRemoteTableFromCache({
+              cache: cache,
+              remoteTableName: input.name,
+              fieldModifiers: {
+                status: () => data.unsyncRemoteTable.status,
+              },
+            });
+          }
         },
       });
 

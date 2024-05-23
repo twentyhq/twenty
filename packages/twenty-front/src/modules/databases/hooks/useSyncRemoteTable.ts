@@ -7,12 +7,12 @@ import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetada
 import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
-import { RemoteTableStatus } from '~/generated/graphql';
 import {
   RemoteTableInput,
   SyncRemoteTableMutation,
   SyncRemoteTableMutationVariables,
 } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 export const useSyncRemoteTable = () => {
   const apolloMetadataClient = useApolloMetadataClient();
@@ -37,14 +37,16 @@ export const useSyncRemoteTable = () => {
         variables: {
           input,
         },
-        update: (cache) => {
-          modifyRemoteTableFromCache({
-            cache: cache,
-            remoteTableName: input.name,
-            fieldModifiers: {
-              status: () => RemoteTableStatus.Synced,
-            },
-          });
+        update: (cache, { data }) => {
+          if (isDefined(data)) {
+            modifyRemoteTableFromCache({
+              cache: cache,
+              remoteTableName: input.name,
+              fieldModifiers: {
+                status: () => data.syncRemoteTable.status,
+              },
+            });
+          }
         },
       });
 

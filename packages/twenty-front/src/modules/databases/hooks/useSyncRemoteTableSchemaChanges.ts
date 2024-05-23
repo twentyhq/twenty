@@ -9,6 +9,7 @@ import {
   SyncRemoteTableSchemaChangesMutation,
   SyncRemoteTableSchemaChangesMutationVariables,
 } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 export const useSyncRemoteTableSchemaChanges = () => {
   const apolloMetadataClient = useApolloMetadataClient();
 
@@ -25,14 +26,17 @@ export const useSyncRemoteTableSchemaChanges = () => {
         variables: {
           input,
         },
-        update: (cache) => {
-          modifyRemoteTableFromCache({
-            cache: cache,
-            remoteTableName: input.name,
-            fieldModifiers: {
-              schemaPendingUpdates: () => [],
-            },
-          });
+        update: (cache, { data }) => {
+          if (isDefined(data)) {
+            modifyRemoteTableFromCache({
+              cache: cache,
+              remoteTableName: input.name,
+              fieldModifiers: {
+                schemaPendingUpdates: () =>
+                  data.syncRemoteTableSchemaChanges.schemaPendingUpdates || [],
+              },
+            });
+          }
         },
       });
 
