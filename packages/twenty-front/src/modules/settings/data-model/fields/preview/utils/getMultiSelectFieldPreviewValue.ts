@@ -8,18 +8,18 @@ export const getMultiSelectFieldPreviewValue = ({
 }: {
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'type' | 'defaultValue' | 'options'
+    'defaultValue' | 'options' | 'type'
   >;
 }) => {
   if (fieldMetadataItem.type !== FieldMetadataType.MultiSelect) return null;
 
   const defaultValues = Array.isArray(fieldMetadataItem.defaultValue)
-    ? fieldMetadataItem.defaultValue?.map((defaultValue: `'${string}'`) =>
+    ? fieldMetadataItem.defaultValue.map((defaultValue: `'${string}'`) =>
         stripSimpleQuotesFromString(defaultValue),
       )
     : null;
 
-  if (isDefined(defaultValues) && defaultValues?.length > 0)
+  if (isDefined(defaultValues) && defaultValues.length > 0)
     return defaultValues;
 
   const allOptionValues = fieldMetadataItem.options?.map(({ value }) => value);

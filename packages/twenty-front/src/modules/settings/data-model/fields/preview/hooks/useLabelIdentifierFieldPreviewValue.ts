@@ -23,7 +23,7 @@ export const useLabelIdentifierFieldPreviewValue = ({
     skip,
   });
 
-  if (!skip) return null;
+  if (skip === true) return null;
 
   const [firstRecord] = records;
 

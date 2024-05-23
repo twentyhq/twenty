@@ -1,4 +1,4 @@
-import { id } from 'date-fns/locale';
+import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import {
   FieldMetadataType,
   ObjectEdge,
@@ -3787,10 +3787,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   isNullable: true,
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
-                  defaultValue: {
-                    lastName: "''",
-                    firstName: "''",
-                  },
+                  defaultValue: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -10562,7 +10559,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: {
                     amountMicros: null,
-                    currencyCode: "''",
+                    currencyCode: `'${CurrencyCode.USD}'`,
                   },
                   relationDefinition: null,
                   fromRelationMetadata: null,

@@ -1,3 +1,4 @@
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useLabelIdentifierFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useLabelIdentifierFieldPreviewValue';
@@ -32,7 +33,7 @@ export const useFieldPreviewValue = ({
     relationObjectMetadataItem: relationObjectMetadataItem ?? {
       fields: [],
       labelSingular: '',
-      nameSingular: '',
+      nameSingular: CoreObjectNameSingular.Company,
     },
     skip:
       fieldMetadataItem.type !== FieldMetadataType.Relation ||

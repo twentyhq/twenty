@@ -1,175 +1,85 @@
-import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getFieldPreviewValue';
+import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import {
   mockedCompanyObjectMetadataItem,
-  mockedOpportunityObjectMetadataItem,
+  mockedCustomObjectMetadataItem,
   mockedPersonObjectMetadataItem,
 } from '~/testing/mock-data/metadata';
 
 describe('getFieldPreviewValue', () => {
-  describe('SELECT field', () => {
-    it('returns the default select option value', () => {
-      // Given
-      const objectMetadataItem = mockedOpportunityObjectMetadataItem;
-      const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
-        ({ name }) => name === 'stage',
-      )!;
+  it("returns the field's defaultValue from metadata if it exists", () => {
+    // Given
+    const fieldName = 'idealCustomerProfile';
+    const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
+      ({ name }) => name === fieldName,
+    );
 
-      // When
-      const result = getFieldPreviewValue({
-        objectMetadataItem,
-        fieldMetadataItem: { ...fieldMetadataItem, defaultValue: "'MEETING'" },
-      });
+    if (!fieldMetadataItem) {
+      throw new Error(`Field '${fieldName}' not found`);
+    }
 
-      // Then
-      expect(result).toEqual('MEETING');
-    });
+    // When
+    const result = getFieldPreviewValue({ fieldMetadataItem });
 
-    it('returns the first select option if no default option was found', () => {
-      // Given
-      const objectMetadataItem = mockedOpportunityObjectMetadataItem;
-      const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
-        ({ name }) => name === 'stage',
-      )!;
-
-      // When
-      const result = getFieldPreviewValue({
-        objectMetadataItem,
-        fieldMetadataItem: { ...fieldMetadataItem, defaultValue: null },
-      });
-
-      // Then
-      expect(result).toEqual(fieldMetadataItem.options![0].value);
-    });
+    // Then
+    expect(result).toBe(false);
   });
 
-  describe('RELATION field', () => {
-    it('returns a record with a default label identifier (if relation label identifier type !== TEXT)', () => {
-      // Given
-      const objectMetadataItem = mockedCompanyObjectMetadataItem;
-      const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
-        ({ name }) => name === 'people',
-      )!;
-      const relationObjectMetadataItem = mockedPersonObjectMetadataItem;
+  it('returns a placeholder defaultValue if the field metadata does not have a defaultValue', () => {
+    // Given
+    const fieldName = 'employees';
+    const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
+      ({ name }) => name === fieldName,
+    );
 
-      // When
-      const result = getFieldPreviewValue({
-        objectMetadataItem,
-        fieldMetadataItem,
-        relationObjectMetadataItem,
-      });
+    if (!fieldMetadataItem) {
+      throw new Error(`Field '${fieldName}' not found`);
+    }
 
-      // Then
-      expect(result).toEqual({
-        name: {
-          firstName: 'John',
-          lastName: 'Doe',
-        },
-      });
-    });
+    // When
+    const result = getFieldPreviewValue({ fieldMetadataItem });
 
-    it('returns a record with the relation object label singular as label identifier (if relation label identifier type === TEXT)', () => {
-      // Given
-      const objectMetadataItem = mockedPersonObjectMetadataItem;
-      const fieldMetadataItem = mockedPersonObjectMetadataItem.fields.find(
-        ({ name }) => name === 'company',
-      )!;
-      const relationObjectMetadataItem = mockedCompanyObjectMetadataItem;
-
-      // When
-      const result = getFieldPreviewValue({
-        objectMetadataItem,
-        fieldMetadataItem,
-        relationObjectMetadataItem,
-      });
-
-      // Then
-      expect(result).toEqual({
-        name: 'Company',
-      });
-    });
-
-    it('returns null if the relation object does not have a label identifier field', () => {
-      // Given
-      const objectMetadataItem = mockedPersonObjectMetadataItem;
-      const fieldMetadataItem = mockedPersonObjectMetadataItem.fields.find(
-        ({ name }) => name === 'company',
-      )!;
-      const relationObjectMetadataItem: ObjectMetadataItem = {
-        ...mockedCompanyObjectMetadataItem,
-        labelIdentifierFieldMetadataId: null,
-        fields: mockedCompanyObjectMetadataItem.fields.filter(
-          ({ name }) => name !== 'name',
-        ),
-      };
-
-      // When
-      const result = getFieldPreviewValue({
-        objectMetadataItem,
-        fieldMetadataItem,
-        relationObjectMetadataItem,
-      });
-
-      // Then
-      expect(result).toBeNull();
-    });
+    // Then
+    expect(result).toBe(2000);
+    expect(result).toBe(
+      getSettingsFieldTypeConfig(FieldMetadataType.Number)?.defaultValue,
+    );
   });
 
-  describe('Other fields', () => {
-    it('returns the object singular name as default value for the label identifier field (type TEXT)', () => {
-      // Given
-      const objectMetadataItem = mockedCompanyObjectMetadataItem;
-      const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
-        ({ name }) => name === 'name',
-      )!;
+  it('returns null if the field is supported in Settings but has no pre-configured placeholder defaultValue', () => {
+    // Given
+    const fieldName = 'company';
+    const fieldMetadataItem = mockedPersonObjectMetadataItem.fields.find(
+      ({ name }) => name === fieldName,
+    );
 
-      // When
-      const result = getFieldPreviewValue({
-        objectMetadataItem,
-        fieldMetadataItem,
-      });
+    if (!fieldMetadataItem) {
+      throw new Error(`Field '${fieldName}' not found`);
+    }
 
-      // Then
-      expect(result).toBe('Company');
-    });
+    // When
+    const result = getFieldPreviewValue({ fieldMetadataItem });
 
-    it('returns a default value for the label identifier field (type FULL_NAME)', () => {
-      // Given
-      const objectMetadataItem = mockedPersonObjectMetadataItem;
-      const fieldMetadataItem = mockedPersonObjectMetadataItem.fields.find(
-        ({ name }) => name === 'name',
-      )!;
+    // Then
+    expect(result).toBeNull();
+  });
 
-      // When
-      const result = getFieldPreviewValue({
-        objectMetadataItem,
-        fieldMetadataItem,
-      });
+  it('returns null if the field is not supported in Settings', () => {
+    // Given
+    const fieldName = 'position';
+    const fieldMetadataItem = mockedCustomObjectMetadataItem.fields.find(
+      ({ name }) => name === fieldName,
+    );
 
-      // Then
-      expect(result).toEqual({
-        firstName: 'John',
-        lastName: 'Doe',
-      });
-    });
+    if (!fieldMetadataItem) {
+      throw new Error(`Field '${fieldName}' not found`);
+    }
 
-    it('returns a default value for other field types', () => {
-      // Given
-      const objectMetadataItem = mockedCompanyObjectMetadataItem;
-      const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
-        ({ name }) => name === 'domainName',
-      )!;
+    // When
+    const result = getFieldPreviewValue({ fieldMetadataItem });
 
-      // When
-      const result = getFieldPreviewValue({
-        objectMetadataItem,
-        fieldMetadataItem,
-      });
-
-      // Then
-      expect(result).toBe(
-        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum magna enim, dapibus non enim in, lacinia faucibus nunc. Sed interdum ante sed felis facilisis, eget ultricies neque molestie. Mauris auctor, justo eu volutpat cursus, libero erat tempus nulla, non sodales lorem lacus a est.',
-      );
-    });
+    // Then
+    expect(result).toBeNull();
   });
 });

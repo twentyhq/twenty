@@ -10,7 +10,7 @@ export const getSelectFieldPreviewValue = ({
 }: {
   fieldMetadataItem: Pick<
     FieldMetadataItem,
-    'type' | 'defaultValue' | 'options'
+    'defaultValue' | 'options' | 'type'
   >;
 }) => {
   if (fieldMetadataItem.type !== FieldMetadataType.Select) return null;
