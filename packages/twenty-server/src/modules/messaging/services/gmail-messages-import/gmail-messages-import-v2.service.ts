@@ -1,6 +1,6 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
 
-import { EntityManager } from 'typeorm';
+import { DataSource, EntityManager } from 'typeorm';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
@@ -9,7 +9,6 @@ import { MessageChannelRepository } from 'src/modules/messaging/repositories/mes
 import { FetchMessagesByBatchesService } from 'src/modules/messaging/services/fetch-messages-by-batches/fetch-messages-by-batches.service';
 import {
   MessageChannelWorkspaceEntity,
-  MessageChannelSyncStatus,
   MessageChannelSyncSubStatus,
 } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { createQueriesFromMessageIds } from 'src/modules/messaging/utils/create-queries-from-message-ids.util';
@@ -30,6 +29,7 @@ import {
 } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
 import { GmailMessagesImportService } from 'src/modules/messaging/services/gmail-messages-import/gmail-messages-import.service';
 import { SetMessageChannelSyncStatusService } from 'src/modules/messaging/services/set-message-channel-sync-status/set-message-channel-sync-status.service';
+import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 @Injectable()
 export class GmailMessagesImportV2Service {
@@ -52,53 +52,13 @@ export class GmailMessagesImportV2Service {
   ) {}
 
   async processMessageBatchImport(
+    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
     workspaceId: string,
-    connectedAccountId: string,
   ) {
-    const connectedAccount = await this.connectedAccountRepository.getById(
-      connectedAccountId,
-      workspaceId,
-    );
-
-    if (!connectedAccount) {
+    if (messageChannel.syncSubStatus === MessageChannelSyncSubStatus.FAILED) {
       throw new Error(
-        `Connected account ${connectedAccountId} not found in workspace ${workspaceId}`,
-      );
-    }
-
-    const { accessToken, refreshToken, authFailedAt } = connectedAccount;
-
-    if (authFailedAt) {
-      throw new Error(
-        `Connected account ${connectedAccountId} in workspace ${workspaceId} is in a failed state. Skipping...`,
-      );
-    }
-
-    if (!refreshToken) {
-      throw new Error(
-        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
-      );
-    }
-
-    const messageChannel =
-      await this.messageChannelRepository.getFirstByConnectedAccountId(
-        connectedAccountId,
-        workspaceId,
-      );
-
-    if (!messageChannel) {
-      throw new Error(
-        `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
-      );
-    }
-
-    if (
-      messageChannel?.syncStatus ===
-        MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS ||
-      messageChannel?.syncStatus === MessageChannelSyncStatus.FAILED
-    ) {
-      throw new Error(
-        `Connected account ${connectedAccountId} in workspace ${workspaceId} is in a failed state. Skipping...`,
+        `Connected account ${connectedAccount.id} in workspace ${workspaceId} is in a failed state. Skipping...`,
       );
     }
 
@@ -107,35 +67,33 @@ export class GmailMessagesImportV2Service {
       MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING
     ) {
       throw new Error(
-        `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} is not pending.`,
+        `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} is not pending.`,
       );
     }
 
-    const messageChannelId = messageChannel.id;
-
     await this.setMessageChannelSyncStatusService.setMessagesImportOnGoingStatus(
-      messageChannelId,
+      messageChannel.id,
       workspaceId,
     );
 
     this.logger.log(
-      `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} starting...`,
+      `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} starting...`,
     );
 
     const messageIdsToFetch =
       (await this.cacheStorage.setPop(
-        `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
+        `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
         GMAIL_USERS_MESSAGES_GET_BATCH_SIZE,
       )) ?? [];
 
     if (!messageIdsToFetch?.length) {
       await this.setMessageChannelSyncStatusService.setCompletedStatus(
-        messageChannelId,
+        messageChannel.id,
         workspaceId,
       );
 
       this.logger.log(
-        `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} done with nothing to import or delete.`,
+        `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} done with nothing to import or delete.`,
       );
 
       return;
@@ -152,77 +110,46 @@ export class GmailMessagesImportV2Service {
       const messagesToSave =
         await this.fetchMessagesByBatchesService.fetchAllMessages(
           messageQueries,
-          accessToken,
+          connectedAccount.accessToken,
           workspaceId,
-          connectedAccountId,
+          connectedAccount.id,
         );
 
       if (!messagesToSave.length) {
         await this.setMessageChannelSyncStatusService.setCompletedStatus(
-          messageChannelId,
+          messageChannel.id,
           workspaceId,
         );
 
         return [];
       }
 
-      const participantsWithMessageId = await workspaceDataSource?.transaction(
-        async (transactionManager: EntityManager) => {
-          const messageExternalIdsAndIdsMap =
-            await this.messageService.saveMessagesWithinTransaction(
-              messagesToSave,
-              connectedAccount,
-              messageChannel.id,
-              workspaceId,
-              transactionManager,
-            );
-
-          const participantsWithMessageId: (ParticipantWithMessageId & {
-            shouldCreateContact: boolean;
-          })[] = messagesToSave.flatMap((message) => {
-            const messageId = messageExternalIdsAndIdsMap.get(
-              message.externalId,
-            );
-
-            return messageId
-              ? message.participants.map((participant) => ({
-                  ...participant,
-                  messageId,
-                  shouldCreateContact:
-                    messageChannel.isContactAutoCreationEnabled &&
-                    message.participants.find((p) => p.role === 'from')
-                      ?.handle === connectedAccount.handle,
-                }))
-              : [];
-          });
-
-          await this.messageParticipantService.saveMessageParticipants(
-            participantsWithMessageId,
-            workspaceId,
-            transactionManager,
-          );
-
-          return participantsWithMessageId;
-        },
-      );
+      const participantsWithMessageId =
+        await this.saveMessagesAndParticipantsAndReturnParticipantsWithMessageId(
+          messagesToSave,
+          connectedAccount,
+          messageChannel,
+          workspaceId,
+          workspaceDataSource,
+        );
 
       if (messageIdsToFetch.length < GMAIL_USERS_MESSAGES_GET_BATCH_SIZE) {
         await this.setMessageChannelSyncStatusService.setCompletedStatus(
-          messageChannelId,
+          messageChannel.id,
           workspaceId,
         );
 
         this.logger.log(
-          `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} done with no more messages to import.`,
+          `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} done with no more messages to import.`,
         );
       } else {
         await this.setMessageChannelSyncStatusService.setMessagesImportPendingStatus(
-          messageChannelId,
+          messageChannel.id,
           workspaceId,
         );
 
         this.logger.log(
-          `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} done with more messages to import.`,
+          `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} done with more messages to import.`,
         );
       }
 
@@ -242,22 +169,70 @@ export class GmailMessagesImportV2Service {
       }
     } catch (error) {
       await this.cacheStorage.setAdd(
-        `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
+        `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
         messageIdsToFetch,
       );
 
       await this.setMessageChannelSyncStatusService.setFailedUnkownStatus(
-        messageChannelId,
+        messageChannel.id,
         workspaceId,
       );
 
       this.logger.error(
-        `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: locking for ${GMAIL_ONGOING_SYNC_TIMEOUT}ms...`,
+        `Error fetching messages for ${connectedAccount.id} in workspace ${workspaceId}: locking for ${GMAIL_ONGOING_SYNC_TIMEOUT}ms...`,
       );
 
       throw new Error(
-        `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
+        `Error fetching messages for ${connectedAccount.id} in workspace ${workspaceId}: ${error.message}`,
       );
     }
+  }
+
+  public async saveMessagesAndParticipantsAndReturnParticipantsWithMessageId(
+    messagesToSave: any[],
+    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
+    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    workspaceId: string,
+    workspaceDataSource: DataSource,
+  ) {
+    const participantsWithMessageId = await workspaceDataSource?.transaction(
+      async (transactionManager: EntityManager) => {
+        const messageExternalIdsAndIdsMap =
+          await this.messageService.saveMessagesWithinTransaction(
+            messagesToSave,
+            connectedAccount,
+            messageChannel.id,
+            workspaceId,
+            transactionManager,
+          );
+
+        const participantsWithMessageId: (ParticipantWithMessageId & {
+          shouldCreateContact: boolean;
+        })[] = messagesToSave.flatMap((message) => {
+          const messageId = messageExternalIdsAndIdsMap.get(message.externalId);
+
+          return messageId
+            ? message.participants.map((participant) => ({
+                ...participant,
+                messageId,
+                shouldCreateContact:
+                  messageChannel.isContactAutoCreationEnabled &&
+                  message.participants.find((p) => p.role === 'from')
+                    ?.handle === connectedAccount.handle,
+              }))
+            : [];
+        });
+
+        await this.messageParticipantService.saveMessageParticipants(
+          participantsWithMessageId,
+          workspaceId,
+          transactionManager,
+        );
+
+        return participantsWithMessageId;
+      },
+    );
+
+    return participantsWithMessageId;
   }
 }

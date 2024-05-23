@@ -17,6 +17,8 @@ import {
   FeatureFlagEntity,
   FeatureFlagKeys,
 } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 
 @Injectable()
 export class GmailMessagesImportCronJob implements MessageQueueJob<undefined> {
@@ -34,6 +36,8 @@ export class GmailMessagesImportCronJob implements MessageQueueJob<undefined> {
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     private readonly environmentService: EnvironmentService,
+    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
+    private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {}
 
   async handle(): Promise<void> {
@@ -77,11 +81,22 @@ export class GmailMessagesImportCronJob implements MessageQueueJob<undefined> {
     const isGmailSyncV2Enabled = isGmailSyncV2EnabledFeatureFlag?.value;
 
     for (const messageChannel of messageChannels) {
+      if (!messageChannel?.isSyncEnabled) {
+        continue;
+      }
+
       if (isGmailSyncV2Enabled) {
         try {
+          const connectedAccount =
+            await this.connectedAccountRepository.getConnectedAccountOrThrow(
+              workspaceId,
+              messageChannel.connectedAccountId,
+            );
+
           await this.gmailFetchMessageContentFromCacheV2Service.processMessageBatchImport(
+            messageChannel,
+            connectedAccount,
             workspaceId,
-            messageChannel.connectedAccountId,
           );
         } catch (error) {
           this.logger.log(error.message);
