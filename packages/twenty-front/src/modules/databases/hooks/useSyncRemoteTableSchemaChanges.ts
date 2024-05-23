@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { ApolloClient, useMutation } from '@apollo/client';
 
 import { SYNC_REMOTE_TABLE_SCHEMA_CHANGES } from '@/databases/graphql/mutations/syncRemoteTableSchemaChanges';
-import { GET_MANY_REMOTE_TABLES } from '@/databases/graphql/queries/findManyRemoteTables';
+import { modifyRemoteTableFromCache } from '@/databases/utils/modifyRecordTableFromCache';
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import {
   RemoteTableInput,
@@ -26,18 +26,15 @@ export const useSyncRemoteTableSchemaChanges = () => {
         variables: {
           input,
         },
-        awaitRefetchQueries: true,
-        refetchQueries: [
-          {
-            query: GET_MANY_REMOTE_TABLES,
-            variables: {
-              input: {
-                id: input.remoteServerId,
-                shouldFetchPendingSchemaUpdates: true,
-              },
+        update: (cache) => {
+          modifyRemoteTableFromCache({
+            cache: cache,
+            remoteTableName: input.name,
+            fieldModifiers: {
+              schemaPendingUpdates: () => [],
             },
-          },
-        ],
+          });
+        },
       });
 
       return remoteTable;
