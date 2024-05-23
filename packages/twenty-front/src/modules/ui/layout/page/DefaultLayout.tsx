@@ -63,7 +63,7 @@ export const DefaultLayout = () => {
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
   const theme = useTheme();
-  const widowsWidth = useScreenSize().width;
+  const windowsWidth = useScreenSize().width;
   const showAuthModal = useShowAuthModal();
 
   return (
@@ -83,7 +83,7 @@ export const DefaultLayout = () => {
           animate={{
             marginLeft:
               isSettingsPage && !isMobile
-                ? (widowsWidth -
+                ? (windowsWidth -
                     (OBJECT_SETTINGS_WIDTH +
                       DESKTOP_NAV_DRAWER_WIDTHS.menu +
                       64)) /
