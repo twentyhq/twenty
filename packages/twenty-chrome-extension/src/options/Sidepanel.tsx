@@ -54,11 +54,13 @@ const Sidepanel = () => {
     if (store.isAuthenticated === true) {
       setIsAuthenticated(true);
       if (isDefined(store.sidepanelUrl)) {
-        isDefined(store.clientUrl)
-          ? setClientUrl(`${store.clientUrl}${store.sidepanelUrl}`)
-          : setClientUrl(
-              `${import.meta.env.VITE_FRONT_BASE_URL}${store.sidepanelUrl}`,
-            );
+        if (isDefined(store.clientUrl)) {
+          setClientUrl(`${store.clientUrl}${store.sidepanelUrl}`);
+        } else {
+          setClientUrl(
+            `${import.meta.env.VITE_FRONT_BASE_URL}${store.sidepanelUrl}`,
+          );
+        }
       }
     }
   }, [setClientUrl]);
@@ -78,7 +80,12 @@ const Sidepanel = () => {
         ? store.clientUrl
         : import.meta.env.VITE_FRONT_BASE_URL;
 
-      if (event.origin === clientUrl && event.data === 'loaded') {
+      if (
+        isDefined(store.accessToken) &&
+        isDefined(store.refreshToken) &&
+        event.origin === clientUrl &&
+        event.data === 'loaded'
+      ) {
         iframeRef.current?.contentWindow?.postMessage(
           {
             type: 'tokens',
