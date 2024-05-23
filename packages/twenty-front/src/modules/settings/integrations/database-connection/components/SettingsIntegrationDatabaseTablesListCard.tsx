@@ -6,6 +6,7 @@ import { useSyncRemoteTable } from '@/databases/hooks/useSyncRemoteTable';
 import { useSyncRemoteTableSchemaChanges } from '@/databases/hooks/useSyncRemoteTableSchemaChanges';
 import { useUnsyncRemoteTable } from '@/databases/hooks/useUnsyncRemoteTable';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
+import { SettingsIntegrationRemoteTableSchemaUpdate } from '@/settings/integrations/components/SettingsIntegrationRemoteTableSchemaUpdate';
 import { SettingsIntegrationRemoteTableSyncStatusToggle } from '@/settings/integrations/components/SettingsIntegrationRemoteTableSyncStatusToggle';
 import {
   DistantTableUpdate,
@@ -59,8 +60,7 @@ export const SettingsIntegrationDatabaseTablesListCard = ({
 }: SettingsIntegrationDatabaseTablesListCardProps) => {
   const { syncRemoteTable } = useSyncRemoteTable();
   const { unsyncRemoteTable } = useUnsyncRemoteTable();
-  const { syncRemoteTableSchemaChanges, isLoading } =
-    useSyncRemoteTableSchemaChanges();
+  const { syncRemoteTableSchemaChanges } = useSyncRemoteTableSchemaChanges();
 
   const items = tables.map((table) => ({
     ...table,
@@ -87,6 +87,15 @@ export const SettingsIntegrationDatabaseTablesListCard = ({
     [syncRemoteTable, connectionId, unsyncRemoteTable],
   );
 
+  const onSyncSchemaUpdate = useCallback(
+    async (tableName: string) =>
+      await syncRemoteTableSchemaChanges({
+        remoteServerId: connectionId,
+        name: tableName,
+      }),
+    [syncRemoteTableSchemaChanges, connectionId],
+  );
+
   const rowRightComponent = useCallback(
     ({
       item,
@@ -99,6 +108,12 @@ export const SettingsIntegrationDatabaseTablesListCard = ({
       };
     }) => (
       <StyledRowRightContainer>
+        {item.updatesText && (
+          <SettingsIntegrationRemoteTableSchemaUpdate
+            updatesText={item.updatesText}
+            onUpdate={() => onSyncSchemaUpdate(item.name)}
+          />
+        )}
         <SettingsIntegrationRemoteTableSyncStatusToggle
           tableName={item.name}
           tableStatus={item.status}
@@ -106,7 +121,7 @@ export const SettingsIntegrationDatabaseTablesListCard = ({
         />
       </StyledRowRightContainer>
     ),
-    [onSyncUpdate],
+    [onSyncSchemaUpdate, onSyncUpdate],
   );
   return (
     <SettingsListCard

@@ -6,16 +6,15 @@ import { modifyRemoteTableFromCache } from '@/databases/utils/modifyRecordTableF
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import {
   RemoteTableInput,
-  SyncRemoteTableMutation,
-  SyncRemoteTableMutationVariables,
+  SyncRemoteTableSchemaChangesMutation,
+  SyncRemoteTableSchemaChangesMutationVariables,
 } from '~/generated-metadata/graphql';
-
 export const useSyncRemoteTableSchemaChanges = () => {
   const apolloMetadataClient = useApolloMetadataClient();
 
-  const [mutate] = useMutation<
-    SyncRemoteTableMutation,
-    SyncRemoteTableMutationVariables
+  const [mutate, mutationInformation] = useMutation<
+    SyncRemoteTableSchemaChangesMutation,
+    SyncRemoteTableSchemaChangesMutationVariables
   >(SYNC_REMOTE_TABLE_SCHEMA_CHANGES, {
     client: apolloMetadataClient ?? ({} as ApolloClient<any>),
   });
@@ -44,5 +43,6 @@ export const useSyncRemoteTableSchemaChanges = () => {
 
   return {
     syncRemoteTableSchemaChanges,
+    isLoading: mutationInformation.loading,
   };
 };

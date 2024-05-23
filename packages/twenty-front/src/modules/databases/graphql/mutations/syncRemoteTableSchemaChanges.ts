@@ -4,7 +4,7 @@ import { REMOTE_TABLE_FRAGMENT } from '@/databases/graphql/fragments/remoteTable
 
 export const SYNC_REMOTE_TABLE_SCHEMA_CHANGES = gql`
   ${REMOTE_TABLE_FRAGMENT}
-  mutation syncRemoteTable($input: RemoteTableInput!) {
+  mutation syncRemoteTableSchemaChanges($input: RemoteTableInput!) {
     syncRemoteTableSchemaChanges(input: $input) {
       ...RemoteTableFields
     }
