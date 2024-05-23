@@ -46,45 +46,78 @@ const Sidepanel = () => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const setIframeState = useCallback(async () => {
-    const store = await chrome.storage.local.get();
-    if (isDefined(store.isAuthenticated)) setIsAuthenticated(true);
-    const { tab: activeTab } = await chrome.runtime.sendMessage({
-      action: 'getActiveTab',
-    });
+    const store = await chrome.storage.local.get([
+      'isAuthenticated',
+      'sidepanelUrl',
+      'clientUrl',
+    ]);
+    if (store.isAuthenticated === true) setIsAuthenticated(true);
 
-    if (
-      isDefined(activeTab) &&
-      isDefined(store[`sidepanelUrl_${activeTab.id}`])
-    ) {
-      const url = store[`sidepanelUrl_${activeTab.id}`];
-      setClientUrl(url);
-    } else if (isDefined(store.clientUrl)) {
-      setClientUrl(store.clientUrl);
+    if (isDefined(store.sidepanelUrl)) {
+      isDefined(store.clientUrl)
+        ? setClientUrl(`${store.clientUrl}${store.sidepanelUrl}`)
+        : setClientUrl(`${clientUrl}${store.sidepanelUrl}`);
     }
-  }, [setClientUrl]);
+  }, [clientUrl, setClientUrl]);
 
   useEffect(() => {
-    const initState = async () => {
-      const store = await chrome.storage.local.get();
-      if (isDefined(store.isAuthenticated)) setIsAuthenticated(true);
-      void setIframeState();
-    };
-    void initState();
+    void setIframeState();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    void setIframeState();
-  }, [setIframeState, clientUrl]);
+    window.addEventListener('message', async (event) => {
+      const store = await chrome.storage.local.get([
+        'clientUrl',
+        'accessToken',
+        'refreshToken',
+      ]);
+      const clientUrl = isDefined(store.clientUrl)
+        ? store.clientUrl
+        : import.meta.env.VITE_FRONT_BASE_URL;
+
+      if (event.origin === clientUrl && event.data === 'loaded') {
+        iframeRef.current?.contentWindow?.postMessage(
+          {
+            type: 'tokens',
+            value: {
+              accessToken: {
+                token: store.accessToken.token,
+                expiresAt: store.accessToken.expiresAt,
+              },
+              refreshToken: {
+                token: store.refreshToken.token,
+                expiresAt: store.refreshToken.expiresAt,
+              },
+            },
+          },
+          clientUrl,
+        );
+      }
+    });
+  }, []);
 
   useEffect(() => {
-    chrome.storage.local.onChanged.addListener((store) => {
+    chrome.storage.local.onChanged.addListener(async (store) => {
       if (isDefined(store.isAuthenticated)) {
         if (store.isAuthenticated.newValue === true) {
           setIframeState();
         }
       }
+
+      if (isDefined(store.sidepanelUrl)) {
+        if (isDefined(store.sidepanelUrl.newValue)) {
+          iframeRef.current?.contentWindow?.postMessage(
+            {
+              type: 'navigate',
+              value: store.sidepanelUrl.newValue,
+            },
+            clientUrl,
+          );
+        }
+      }
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [setIframeState]);
 
   return isAuthenticated ? (
