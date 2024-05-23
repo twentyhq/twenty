@@ -5,20 +5,20 @@ import { tokenPairState } from '@/auth/states/tokenPairState';
 import { REACT_APP_CHROME_EXTENSION_ID } from '~/config';
 import { useNavigate } from 'react-router-dom';
 
+const isInFrame = () => {
+  try {
+    return window.self !== window.top;
+  } catch (e) {
+    return true;
+  }
+}
+
 export const WindowEventEffect = () => {
   const navigate = useNavigate();
   const setTokenPair = useSetRecoilState(tokenPairState);
 
-  const inIframe = useCallback(() => {
-    try {
-      return window.self !== window.top;
-    } catch (e) {
-      return true;
-    }
-  }, []);
-
   useEffect(() => {
-    if (inIframe()) {
+    if (isInFrame()) {
       const handleWindowEvents = (event: MessageEvent<any>) => {
         if (
           event.origin === `chrome-extension://${REACT_APP_CHROME_EXTENSION_ID}`
@@ -44,7 +44,7 @@ export const WindowEventEffect = () => {
         window.removeEventListener('message', handleWindowEvents);
       };
     }
-  }, [setTokenPair, inIframe]);
+  }, [setTokenPair, navigate]);
 
   return <></>;
 };
