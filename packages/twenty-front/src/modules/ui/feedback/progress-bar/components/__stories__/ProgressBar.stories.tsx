@@ -1,60 +1,49 @@
 import { Meta, StoryObj } from '@storybook/react';
-import { CatalogDecorator, CatalogStory, ComponentDecorator } from 'twenty-ui';
+import { ComponentDecorator } from 'twenty-ui';
+
+import { useProgressAnimation } from '@/ui/feedback/progress-bar/hooks/useProgressAnimation';
 
 import { ProgressBar } from '../ProgressBar';
 
 const meta: Meta<typeof ProgressBar> = {
   title: 'UI/Feedback/ProgressBar/ProgressBar',
   component: ProgressBar,
-  args: {
-    duration: 10000,
+  decorators: [ComponentDecorator],
+  argTypes: {
+    className: { control: false },
+    value: { control: { type: 'range', min: 0, max: 100, step: 1 } },
   },
 };
 
 export default meta;
 
 type Story = StoryObj<typeof ProgressBar>;
-const args = {};
-const defaultArgTypes = {
-  control: false,
-};
+
 export const Default: Story = {
-  args,
-  decorators: [ComponentDecorator],
+  args: {
+    value: 75,
+  },
 };
 
-export const Catalog: CatalogStory<Story, typeof ProgressBar> = {
-  args: {
-    ...args,
-  },
+export const Animated: Story = {
   argTypes: {
-    barHeight: defaultArgTypes,
-    barColor: defaultArgTypes,
-    autoStart: defaultArgTypes,
+    value: { control: false },
   },
-  parameters: {
-    catalog: {
-      dimensions: [
-        {
-          name: 'animation',
-          values: [true, false],
-          props: (autoStart: string) => ({ autoStart: Boolean(autoStart) }),
-          labels: (autoStart: string) => `AutoStart: ${autoStart}`,
+  decorators: [
+    (Story) => {
+      const { value } = useProgressAnimation({
+        autoPlay: true,
+        initialValue: 0,
+        finalValue: 100,
+        options: {
+          duration: 10000,
         },
-        {
-          name: 'colors',
-          values: [undefined, 'blue'],
-          props: (barColor: string) => ({ barColor }),
-          labels: (color: string) => `Color: ${color ?? 'default'}`,
-        },
-        {
-          name: 'sizes',
-          values: [undefined, 10],
-          props: (barHeight: number) => ({ barHeight }),
-          labels: (size: number) => `Size: ${size ? size + ' px' : 'default'}`,
-        },
-      ],
+      });
+
+      return <Story args={{ value }} />;
     },
+  ],
+  parameters: {
+    chromatic: { disableSnapshot: true },
   },
-  decorators: [CatalogDecorator],
 };
