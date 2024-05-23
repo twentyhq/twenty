@@ -5,8 +5,6 @@ import { IconCheckbox } from 'twenty-ui';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { useEventTracker } from '@/analytics/hooks/useEventTracker';
-import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
-import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { isCaptchaScriptLoadedState } from '@/captcha/states/isCaptchaScriptLoadedState';
 import { useCommandMenu } from '@/command-menu/hooks/useCommandMenu';
@@ -17,24 +15,24 @@ import { AppPath } from '@/types/AppPath';
 import { PageHotkeyScope } from '@/types/PageHotkeyScope';
 import { SettingsPath } from '@/types/SettingsPath';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
-import { useDefaultHomePagePath } from '~/hooks/useDefaultHomePagePath';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
+import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffectNavigateLocation';
 import { isDefined } from '~/utils/isDefined';
 
 // TODO: break down into smaller functions and / or hooks
+//  - moved usePageChangeEffectNavigateLocation into dedicated hook
 export const PageChangeEffect = () => {
   const navigate = useNavigate();
   const isMatchingLocation = useIsMatchingLocation();
 
   const [previousLocation, setPreviousLocation] = useState('');
 
-  const onboardingStatus = useOnboardingStatus();
-
   const setHotkeyScope = useSetHotkeyScope();
 
   const location = useLocation();
 
-  const { defaultHomePagePath } = useDefaultHomePagePath();
+  const pageChangeEffectNavigateLocation =
+    usePageChangeEffectNavigateLocation();
 
   const eventTracker = useEventTracker();
 
@@ -51,79 +49,10 @@ export const PageChangeEffect = () => {
   }, [location, previousLocation]);
 
   useEffect(() => {
-    const isMatchingOpenRoute =
-      isMatchingLocation(AppPath.Invite) ||
-      isMatchingLocation(AppPath.ResetPassword);
-
-    const isMatchingOngoingUserCreationRoute =
-      isMatchingOpenRoute ||
-      isMatchingLocation(AppPath.SignInUp) ||
-      isMatchingLocation(AppPath.Verify);
-
-    const isMatchingOnboardingRoute =
-      isMatchingOngoingUserCreationRoute ||
-      isMatchingLocation(AppPath.CreateWorkspace) ||
-      isMatchingLocation(AppPath.CreateProfile) ||
-      isMatchingLocation(AppPath.PlanRequired) ||
-      isMatchingLocation(AppPath.PlanRequiredSuccess);
-
-    if (
-      onboardingStatus === OnboardingStatus.OngoingUserCreation &&
-      !isMatchingOngoingUserCreationRoute
-    ) {
-      navigate(AppPath.SignInUp);
-    } else if (
-      onboardingStatus === OnboardingStatus.Incomplete &&
-      !isMatchingLocation(AppPath.PlanRequired)
-    ) {
-      navigate(AppPath.PlanRequired);
-    } else if (
-      isDefined(onboardingStatus) &&
-      [OnboardingStatus.Unpaid, OnboardingStatus.Canceled].includes(
-        onboardingStatus,
-      ) &&
-      !(
-        isMatchingLocation(AppPath.SettingsCatchAll) ||
-        isMatchingLocation(AppPath.PlanRequired)
-      )
-    ) {
-      navigate(
-        `${AppPath.SettingsCatchAll.replace('/*', '')}/${SettingsPath.Billing}`,
-      );
-    } else if (
-      onboardingStatus === OnboardingStatus.OngoingWorkspaceActivation &&
-      !isMatchingLocation(AppPath.CreateWorkspace) &&
-      !isMatchingLocation(AppPath.PlanRequiredSuccess)
-    ) {
-      navigate(AppPath.CreateWorkspace);
-    } else if (
-      onboardingStatus === OnboardingStatus.OngoingProfileCreation &&
-      !isMatchingLocation(AppPath.CreateProfile)
-    ) {
-      navigate(AppPath.CreateProfile);
-    } else if (
-      onboardingStatus === OnboardingStatus.Completed &&
-      isMatchingOnboardingRoute &&
-      !isMatchingOpenRoute
-    ) {
-      navigate(defaultHomePagePath);
-    } else if (
-      onboardingStatus === OnboardingStatus.CompletedWithoutSubscription &&
-      isMatchingOnboardingRoute &&
-      !isMatchingOpenRoute &&
-      !isMatchingLocation(AppPath.PlanRequired)
-    ) {
-      navigate(defaultHomePagePath);
-    } else if (isMatchingLocation(AppPath.Index)) {
-      navigate(defaultHomePagePath);
+    if (isDefined(pageChangeEffectNavigateLocation)) {
+      navigate(pageChangeEffectNavigateLocation);
     }
-  }, [
-    isMatchingLocation,
-    location.pathname,
-    navigate,
-    onboardingStatus,
-    defaultHomePagePath,
-  ]);
+  }, [navigate, pageChangeEffectNavigateLocation]);
 
   useEffect(() => {
     switch (true) {
