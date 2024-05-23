@@ -13,7 +13,7 @@ import { simpleQuotesStringSchema } from '~/utils/validation-schemas/simpleQuote
 
 export const settingsDataModelFieldCurrencyFormSchema = z.object({
   defaultValue: z.object({
-    amountMicros: z.null(),
+    amountMicros: z.number().nullable(),
     currencyCode: simpleQuotesStringSchema.refine(
       (value) =>
         currencyCodeSchema.safeParse(stripSimpleQuotesFromString(value))
