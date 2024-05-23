@@ -5,10 +5,7 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { activityIdInDrawerState } from '@/activities/states/activityIdInDrawerState';
-import {
-  viewableRecordIdState,
-  viewableRecordIdState,
-} from '@/object-record/record-right-drawer/states/viewableRecordIdState';
+import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>

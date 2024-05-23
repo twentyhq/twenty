@@ -56,7 +56,7 @@ export const RightDrawer = () => {
 
   const rightDrawerPage = useRecoilValue(rightDrawerPageState);
 
-  const { closeRightDrawer, minimizeRightDrawer } = useRightDrawer();
+  const { closeRightDrawer } = useRightDrawer();
 
   const rightDrawerRef = useRef<HTMLDivElement>(null);
 
@@ -75,10 +75,10 @@ export const RightDrawer = () => {
 
           if (isRightDrawerOpen) {
             set(rightDrawerCloseEventState, event);
-            minimizeRightDrawer();
+            closeRightDrawer();
           }
         },
-      [minimizeRightDrawer],
+      [closeRightDrawer],
     ),
     mode: ClickOutsideMode.comparePixels,
   });

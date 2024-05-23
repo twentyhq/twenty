@@ -7,7 +7,7 @@ import { isRightDrawerOpenState } from '@/ui/layout/right-drawer/states/isRightD
 
 export const useEmailThread = () => {
   const { closeRightDrawer } = useRightDrawer();
-  const openEmailThredRightDrawer = useOpenEmailThreadRightDrawer();
+  const openEmailThreadRightDrawer = useOpenEmailThreadRightDrawer();
 
   const openEmailThread = useRecoilCallback(
     ({ snapshot, set }) =>
@@ -26,10 +26,10 @@ export const useEmailThread = () => {
           return;
         }
 
-        openEmailThredRightDrawer();
+        openEmailThreadRightDrawer();
         set(viewableRecordIdState, threadId);
       },
-    [closeRightDrawer, openEmailThredRightDrawer],
+    [closeRightDrawer, openEmailThreadRightDrawer],
   );
 
   return { openEmailThread };
