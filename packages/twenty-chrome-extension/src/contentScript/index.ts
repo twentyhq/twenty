@@ -21,10 +21,10 @@ const executeScript = async () => {
     default:
       break;
   }
-} 
+};
 
 (async () => {
-  await executeScript()
+  await executeScript();
 })();
 
 // The content script gets executed upon load, so the the content script is executed when a user visits https://www.linkedin.com/feed/.

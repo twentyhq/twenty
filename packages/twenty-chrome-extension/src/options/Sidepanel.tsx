@@ -56,7 +56,9 @@ const Sidepanel = () => {
       if (isDefined(store.sidepanelUrl)) {
         isDefined(store.clientUrl)
           ? setClientUrl(`${store.clientUrl}${store.sidepanelUrl}`)
-          : setClientUrl(`${import.meta.env.VITE_FRONT_BASE_URL}${store.sidepanelUrl}`);
+          : setClientUrl(
+              `${import.meta.env.VITE_FRONT_BASE_URL}${store.sidepanelUrl}`,
+            );
       }
     }
   }, [setClientUrl]);
@@ -109,8 +111,8 @@ const Sidepanel = () => {
         if (isDefined(updatedStore.sidepanelUrl.newValue)) {
           const store = await chrome.storage.local.get(['clientUrl']);
           const clientUrl = isDefined(store.clientUrl)
-              ? store.clientUrl
-              : import.meta.env.VITE_FRONT_BASE_URL;
+            ? store.clientUrl
+            : import.meta.env.VITE_FRONT_BASE_URL;
 
           iframeRef.current?.contentWindow?.postMessage(
             {

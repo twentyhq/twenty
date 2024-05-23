@@ -13,7 +13,12 @@ import { Tokens } from '~/db/types/auth.types';
 import { isDefined } from '~/utils/isDefined';
 
 const clearStore = () => {
-  chrome.storage.local.remove(['loginToken', 'accessToken', 'refreshToken', 'sidepanelUrl']);
+  chrome.storage.local.remove([
+    'loginToken',
+    'accessToken',
+    'refreshToken',
+    'sidepanelUrl',
+  ]);
   chrome.storage.local.set({ isAuthenticated: false });
 };
 

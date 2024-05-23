@@ -1,9 +1,9 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { REACT_APP_CHROME_EXTENSION_ID } from '~/config';
-import { useNavigate } from 'react-router-dom';
 
 const isInFrame = () => {
   try {
@@ -11,7 +11,7 @@ const isInFrame = () => {
   } catch (e) {
     return true;
   }
-}
+};
 
 export const WindowEventEffect = () => {
   const navigate = useNavigate();
@@ -24,10 +24,10 @@ export const WindowEventEffect = () => {
           event.origin === `chrome-extension://${REACT_APP_CHROME_EXTENSION_ID}`
         ) {
           switch (event.data.type) {
-            case "tokens":
+            case 'tokens':
               setTokenPair(event.data.value);
               break;
-            case "navigate":
+            case 'navigate':
               navigate(event.data.value);
               break;
             default:

@@ -35,6 +35,7 @@ import { UserProviderEffect } from '@/users/components/UserProviderEffect';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
 import { PageChangeEffect } from '~/effect-components/PageChangeEffect';
+import { WindowEventEffect } from '~/effect-components/WindowEventEffect';
 import { Authorize } from '~/pages/auth/Authorize';
 import { ChooseYourPlan } from '~/pages/auth/ChooseYourPlan';
 import { CreateProfile } from '~/pages/auth/CreateProfile';
@@ -79,7 +80,6 @@ import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
 import { SettingsWorkspaceMembers } from '~/pages/settings/SettingsWorkspaceMembers';
 import { Tasks } from '~/pages/tasks/Tasks';
 import { getPageTitleFromPath } from '~/utils/title-utils';
-import { WindowEventEffect } from '~/effect-components/WindowEventEffect';
 
 const ProvidersThatNeedRouterContext = () => {
   const { pathname } = useLocation();
@@ -87,37 +87,37 @@ const ProvidersThatNeedRouterContext = () => {
 
   return (
     <>
-    <WindowEventEffect />
-    <ApolloProvider>
-      <ClientConfigProviderEffect />
-      <ClientConfigProvider>
-        <UserProviderEffect />
-        <UserProvider>
-          <ApolloMetadataClientProvider>
-            <ObjectMetadataItemsProvider>
-              <PrefetchDataProvider>
-                <AppThemeProvider>
-                  <SnackBarProvider>
-                    <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                      <DialogManager>
-                        <StrictMode>
-                          <PromiseRejectionEffect />
-                          <CommandMenuEffect />
-                          <GotoHotkeysEffect />
-                          <PageTitle title={pageTitle} />
-                          <Outlet />
-                        </StrictMode>
-                      </DialogManager>
-                    </DialogManagerScope>
-                  </SnackBarProvider>
-                </AppThemeProvider>
-              </PrefetchDataProvider>
-              <PageChangeEffect />
-            </ObjectMetadataItemsProvider>
-          </ApolloMetadataClientProvider>
-        </UserProvider>
-      </ClientConfigProvider>
-    </ApolloProvider>
+      <WindowEventEffect />
+      <ApolloProvider>
+        <ClientConfigProviderEffect />
+        <ClientConfigProvider>
+          <UserProviderEffect />
+          <UserProvider>
+            <ApolloMetadataClientProvider>
+              <ObjectMetadataItemsProvider>
+                <PrefetchDataProvider>
+                  <AppThemeProvider>
+                    <SnackBarProvider>
+                      <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                        <DialogManager>
+                          <StrictMode>
+                            <PromiseRejectionEffect />
+                            <CommandMenuEffect />
+                            <GotoHotkeysEffect />
+                            <PageTitle title={pageTitle} />
+                            <Outlet />
+                          </StrictMode>
+                        </DialogManager>
+                      </DialogManagerScope>
+                    </SnackBarProvider>
+                  </AppThemeProvider>
+                </PrefetchDataProvider>
+                <PageChangeEffect />
+              </ObjectMetadataItemsProvider>
+            </ApolloMetadataClientProvider>
+          </UserProvider>
+        </ClientConfigProvider>
+      </ApolloProvider>
     </>
   );
 };
