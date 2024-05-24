@@ -1,4 +1,4 @@
-import { Tooltip } from 'react-tooltip';
+import { useContext } from 'react';
 import styled from '@emotion/styled';
 import {
   IconCirclePlus,
@@ -8,15 +8,15 @@ import {
 } from 'twenty-ui';
 
 import { useLinkedObject } from '@/activities/timeline/hooks/useLinkedObject';
-import { EventDescription } from '@/activities/timelineActivities/components/EventDescription';
+import { EventDescription } from '@/activities/timelineActivities/components/descriptions/components/EventDescription';
+import { eventDescriptionComponentMap } from '@/activities/timelineActivities/components/descriptions/types/EventDescriptionCommon';
+import { TimelineActivityContext } from '@/activities/timelineActivities/contexts/TimelineActivityContext';
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import {
-  beautifyExactDateTime,
-  beautifyPastDateRelativeToNow,
-} from '~/utils/date-utils';
+import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const StyledIconContainer = styled.div`
   display: flex;
@@ -36,27 +36,7 @@ const StyledItemContainer = styled.div`
   align-items: center;
   gap: ${({ theme }) => theme.spacing(1)};
   flex: 1;
-  color: ${({ theme }) => theme.font.color.tertiary};
   overflow: hidden;
-
-  span {
-    color: ${({ theme }) => theme.font.color.secondary};
-  }
-`;
-
-const StyledItemAuthorText = styled.span`
-  display: flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing(1)};
-  color: ${({ theme }) => theme.font.color.primary};
-  white-space: nowrap;
-`;
-
-const StyledItemTitle = styled.span`
-  display: flex;
-  flex-direction: row;
-  overflow: hidden;
-  white-space: nowrap;
 `;
 
 const StyledItemTitleDate = styled.div`
@@ -83,21 +63,6 @@ const StyledVerticalLine = styled.div`
   background: ${({ theme }) => theme.border.color.light};
   flex-shrink: 0;
   width: 2px;
-`;
-
-const StyledTooltip = styled(Tooltip)`
-  background-color: ${({ theme }) => theme.background.primary};
-
-  box-shadow: 0px 2px 4px 3px
-    ${({ theme }) => theme.background.transparent.light};
-
-  box-shadow: 2px 4px 16px 6px
-    ${({ theme }) => theme.background.transparent.light};
-
-  color: ${({ theme }) => theme.font.color.primary};
-
-  opacity: 1;
-  padding: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTimelineItemContainer = styled.div<{ isGap?: boolean }>`
@@ -133,27 +98,50 @@ export const EventRow = ({
 }: EventRowProps) => {
   const { getIcon } = useIcons();
 
+  const { labelIdentifierValue } = useContext(TimelineActivityContext);
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(event.createdAt);
-  const exactCreatedAt = beautifyExactDateTime(event.createdAt);
-  const linkedObjectMetadata = useLinkedObject(event.linkedObjectMetadataId);
+  const linkedObjectMetadataItem = useLinkedObject(
+    event.linkedObjectMetadataId,
+  );
   const authorFullName = event.workspaceMember
     ? `${event.workspaceMember?.name.firstName} ${event.workspaceMember?.name.lastName}`
     : 'Twenty';
 
-  const [, eventAction] = event.name.split('.');
+  const [eventName, eventAction] = event.name.split('.');
 
-  const EventIcon = () => {
-    if (isDefined(event.linkedObjectMetadataId)) {
-      const IconComponent = getIcon(linkedObjectMetadata?.icon);
+  if (isUndefinedOrNull(mainObjectMetadataItem)) {
+    return null;
+  }
 
-      return <IconComponent />;
+  const getEventIcon = () => {
+    if (isDefined(linkedObjectMetadataItem?.id)) {
+      return getIcon(linkedObjectMetadataItem?.icon);
     }
 
-    if (eventAction === 'created') return <IconCirclePlus />;
-    if (eventAction === 'updated') return <IconEditCircle />;
+    if (eventAction === 'created') return IconCirclePlus;
+    if (eventAction === 'updated') return IconEditCircle;
 
-    return <IconFocusCentered />;
+    return IconFocusCentered;
   };
+
+  const EventIcon = getEventIcon();
+
+  const getEventDescriptionComponent = () => {
+    if (
+      isDefined(eventName) &&
+      isDefined(eventDescriptionComponentMap[eventName])
+    ) {
+      return eventDescriptionComponentMap[eventName];
+    }
+
+    if (eventName === mainObjectMetadataItem?.nameSingular) {
+      return EventDescription;
+    }
+
+    return null;
+  };
+
+  const EventDescriptionComponent = getEventDescriptionComponent();
 
   return (
     <>
@@ -163,24 +151,19 @@ export const EventRow = ({
         </StyledIconContainer>
         <StyledItemContainer>
           <StyledSummary>
-            <StyledItemAuthorText>{authorFullName}</StyledItemAuthorText>
-            <StyledItemTitle>
-              <EventDescription
+            {EventDescriptionComponent && (
+              <EventDescriptionComponent
+                authorFullName={authorFullName}
+                labelIdentifierValue={labelIdentifierValue}
                 event={event}
                 mainObjectMetadataItem={mainObjectMetadataItem}
-                linkedObjectMetadata={linkedObjectMetadata}
+                linkedObjectMetadataItem={linkedObjectMetadataItem}
               />
-            </StyledItemTitle>
+            )}
           </StyledSummary>
           <StyledItemTitleDate id={`id-${event.id}`}>
             {beautifiedCreatedAt}
           </StyledItemTitleDate>
-          <StyledTooltip
-            anchorSelect={`#id-${event.id}`}
-            content={exactCreatedAt}
-            clickable
-            noArrow
-          />
         </StyledItemContainer>
       </StyledTimelineItemContainer>
       {!isLastEvent && (

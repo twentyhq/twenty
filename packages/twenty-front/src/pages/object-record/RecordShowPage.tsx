@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { useIcons } from 'twenty-ui';
 
+import { TimelineActivityContext } from '@/activities/timelineActivities/contexts/TimelineActivityContext';
 import { useFavorites } from '@/favorites/hooks/useFavorites';
 import { useLabelIdentifierFieldMetadataItem } from '@/object-metadata/hooks/useLabelIdentifierFieldMetadataItem';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -130,11 +131,17 @@ export const RecordShowPage = () => {
         </>
       </PageHeader>
       <PageBody>
-        <RecordShowContainer
-          objectNameSingular={objectNameSingular}
-          objectRecordId={objectRecordId}
-          loading={loading}
-        />
+        <TimelineActivityContext.Provider
+          value={{
+            labelIdentifierValue: pageName,
+          }}
+        >
+          <RecordShowContainer
+            objectNameSingular={objectNameSingular}
+            objectRecordId={objectRecordId}
+            loading={loading}
+          />
+        </TimelineActivityContext.Provider>
       </PageBody>
     </PageContainer>
   );
