@@ -1,7 +1,10 @@
 import { ProfilingDataPoint } from '~/testing/profiling/types/ProfilingDataPoint';
 import { ProfilingReport } from '~/testing/profiling/types/ProfilingReportByRun';
 
-export const computeProfilingReport = (dataPoints: ProfilingDataPoint[]) => {
+export const computeProfilingReport = (
+  dataPoints: ProfilingDataPoint[],
+  varianceThreshold?: number,
+) => {
   const profilingReport = { total: {}, runs: {} } as ProfilingReport;
 
   for (const dataPoint of dataPoints) {
@@ -27,8 +30,9 @@ export const computeProfilingReport = (dataPoints: ProfilingDataPoint[]) => {
 
     const numberOfIds = ids.length;
 
-    profilingReport.runs[runName].average =
-      profilingReport.runs[runName].sum / numberOfIds;
+    const mean = profilingReport.runs[runName].sum / numberOfIds;
+
+    profilingReport.runs[runName].average = mean;
 
     profilingReport.runs[runName].min = Math.min(
       ...Object.values(profilingReport.runs[runName].sumById),
@@ -37,6 +41,14 @@ export const computeProfilingReport = (dataPoints: ProfilingDataPoint[]) => {
     profilingReport.runs[runName].max = Math.max(
       ...Object.values(profilingReport.runs[runName].sumById),
     );
+
+    const intermediaryValuesForVariance = valuesUnsorted.map((value) =>
+      Math.pow(value - mean, 2),
+    );
+
+    profilingReport.runs[runName].variance =
+      intermediaryValuesForVariance.reduce((acc, curr) => acc + curr) /
+      numberOfIds;
 
     const p50Index = Math.floor(numberOfIds * 0.5);
     const p80Index = Math.floor(numberOfIds * 0.8);
@@ -55,9 +67,9 @@ export const computeProfilingReport = (dataPoints: ProfilingDataPoint[]) => {
     runName.startsWith('real-run'),
   );
 
-  const runsForTotal = runNamesForTotal.map(
-    (runName) => profilingReport.runs[runName],
-  );
+  const runsForTotal = runNamesForTotal
+    .map((runName) => profilingReport.runs[runName])
+    .filter((run) => run.variance < (varianceThreshold ?? 0.2));
 
   profilingReport.total = {
     sum: Object.values(runsForTotal).reduce((acc, run) => acc + run.sum, 0),
@@ -82,6 +94,9 @@ export const computeProfilingReport = (dataPoints: ProfilingDataPoint[]) => {
       Object.values(runsForTotal).reduce((acc, run) => acc + run.p99, 0) /
       Object.keys(runsForTotal).length,
     dataPointCount: dataPoints.length,
+    variance:
+      runsForTotal.reduce((acc, run) => acc + run.variance, 0) /
+      runsForTotal.length,
   };
 
   return profilingReport;

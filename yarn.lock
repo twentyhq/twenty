@@ -46630,6 +46630,7 @@ __metadata:
     type-fest: "npm:4.10.1"
     typeorm: "npm:^0.3.17"
     typescript: "npm:5.3.3"
+    use-context-selector: "npm:^2.0.0"
     use-debounce: "npm:^10.0.0"
     uuid: "npm:^9.0.0"
     vite: "npm:^5.0.0"
@@ -47656,6 +47657,16 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
   checksum: e64ce52f4b18c020407636784192726807404a2552609acf7497b66a2b7070674fb5d2b950d426c4aa85f353e2bbecb02ebf9c5b865cd06797938c70bcbf5d26
+  languageName: node
+  linkType: hard
+
+"use-context-selector@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "use-context-selector@npm:2.0.0"
+  peerDependencies:
+    react: ">=18.0.0"
+    scheduler: ">=0.19.0"
+  checksum: 4eb6054ab8996ae8b3f87f9d102e576066e5a8b9db5db2c891128ae920bd64bcdcb4e93a13bc99658ef16280929a8331fc8ac45177f4acd716c425b1bc31135a
   languageName: node
   linkType: hard
 

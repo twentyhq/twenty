@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
+import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/components/RecordTableCellFieldContextWrapper';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -52,6 +53,7 @@ export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
         isReadOnly: objectMetadataItem.isRemote ?? false,
       }}
     >
+      <RecordValueSetterEffect recordId={recordId} />
       <tr
         ref={elementRef}
         data-testid={`row-id-${recordId}`}

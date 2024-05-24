@@ -11,19 +11,21 @@ export const getProfilingStory = ({
   averageThresholdInMs,
   numberOfRuns,
   numberOfTestsPerRun,
+  warmUpRounds,
 }: {
   componentName: string;
   p95ThresholdInMs?: number;
   averageThresholdInMs: number;
   numberOfRuns: number;
   numberOfTestsPerRun: number;
+  warmUpRounds?: number;
 }): StoryObj<any> => ({
   decorators: [ProfilerDecorator],
   parameters: {
     numberOfRuns,
     numberOfTests: numberOfTestsPerRun,
     componentName,
-    chromatic: { disableSnapshot: true },
+    warmUpRounds,
   },
   play: async ({ canvasElement }) => {
     await findByTestId(

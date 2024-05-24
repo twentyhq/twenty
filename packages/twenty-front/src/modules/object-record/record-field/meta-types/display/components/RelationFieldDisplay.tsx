@@ -1,16 +1,16 @@
 import { RecordChip } from '@/object-record/components/RecordChip';
+import { useRelationFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useRelationFieldDisplay';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-import { useRelationField } from '../../hooks/useRelationField';
-
 export const RelationFieldDisplay = () => {
-  const { fieldValue, fieldDefinition, maxWidth } = useRelationField();
+  const { fieldValue, fieldDefinition, maxWidth } = useRelationFieldDisplay();
 
   if (
     !fieldValue ||
     !fieldDefinition?.metadata.relationObjectMetadataNameSingular
-  )
+  ) {
     return null;
+  }
 
   return (
     <RecordChip
