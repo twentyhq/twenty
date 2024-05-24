@@ -1,6 +1,7 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 
+import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useCurrentTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useCurrentCellPosition';
@@ -54,6 +55,8 @@ export const RecordTableCellContainer = ({
   nonEditModeContent,
   editHotkeyScope,
 }: RecordTableCellContainerProps) => {
+  const { setIsFocused } = useFieldFocus();
+
   const { isSelected, recordId } = useContext(RecordTableRowContext);
   const { onContextMenu, onCellMouseEnter } = useContext(RecordTableContext);
 
@@ -81,11 +84,16 @@ export const RecordTableCellContainer = ({
     setIsHovered(false);
   };
 
+  const handleContainerMouseMove = () => {
+    handleContainerMouseEnter();
+  };
+
   useEffect(() => {
     const customEventListener = (event: any) => {
       const newHasSoftFocus = event.detail;
 
       setHasSoftFocus(newHasSoftFocus);
+      setIsFocused(newHasSoftFocus);
     };
 
     document.addEventListener(
@@ -99,7 +107,7 @@ export const RecordTableCellContainer = ({
         customEventListener,
       );
     };
-  }, [cellPosition]);
+  }, [cellPosition, setIsFocused]);
 
   useEffect(() => {
     const customEventListener = (event: any) => {
@@ -133,7 +141,7 @@ export const RecordTableCellContainer = ({
         <StyledCellBaseContainer
           onMouseEnter={handleContainerMouseEnter}
           onMouseLeave={handleContainerMouseLeave}
-          onMouseMove={handleContainerMouseEnter}
+          onMouseMove={handleContainerMouseMove}
           softFocus={hasSoftFocus}
         >
           {isInEditMode ? (

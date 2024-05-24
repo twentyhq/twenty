@@ -1,5 +1,6 @@
 import { MouseEventHandler, useMemo } from 'react';
 
+import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink';
@@ -17,6 +18,8 @@ type LinksDisplayProps = {
 };
 
 export const LinksDisplay = ({ value }: LinksDisplayProps) => {
+  const { isFocused } = useFieldFocus();
+
   const links = useMemo(
     () =>
       [
@@ -43,7 +46,7 @@ export const LinksDisplay = ({ value }: LinksDisplayProps) => {
   const handleClick: MouseEventHandler = (event) => event.stopPropagation();
 
   return (
-    <ExpandableList isChipCountDisplayed={true}>
+    <ExpandableList isChipCountDisplayed={isFocused}>
       {links.map(({ url, label, type }, index) =>
         type === LinkType.LinkedIn || type === LinkType.Twitter ? (
           <SocialLink key={index} href={url} onClick={handleClick} type={type}>
