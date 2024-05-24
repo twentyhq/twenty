@@ -1,4 +1,4 @@
-import { getOptionValueFromLabel } from '@/settings/data-model/fields/forms/utils/getOptionValueFromLabel';
+import { getOptionValueFromLabel } from '../getOptionValueFromLabel';
 
 describe('getOptionValueFromLabel', () => {
   it('should return the option value from the label', () => {

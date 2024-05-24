@@ -8,7 +8,7 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { isObjectMetadataAvailableForRelation } from '@/object-metadata/utils/isObjectMetadataAvailableForRelation';
 import { fieldMetadataItemSchema } from '@/object-metadata/validation-schemas/fieldMetadataItemSchema';
 import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
-import { useRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/hooks/useRelationSettingsFormInitialValues';
+import { useRelationSettingsFormInitialValues } from '@/settings/data-model/fields/forms/relation/hooks/useRelationSettingsFormInitialValues';
 import { RelationType } from '@/settings/data-model/types/RelationType';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { Select } from '@/ui/input/components/Select';
@@ -32,7 +32,7 @@ export type SettingsDataModelFieldRelationFormValues = z.infer<
 >;
 
 type SettingsDataModelFieldRelationFormProps = {
-  fieldMetadataItem?: Pick<
+  fieldMetadataItem: Pick<
     FieldMetadataItem,
     'fromRelationMetadata' | 'toRelationMetadata' | 'type'
   >;
