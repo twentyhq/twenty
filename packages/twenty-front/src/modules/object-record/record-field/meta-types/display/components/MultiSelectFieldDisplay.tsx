@@ -1,5 +1,6 @@
+import { Tag } from 'twenty-ui';
+
 import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField';
-import { Tag } from '@/ui/display/tag/components/Tag';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 
 type MultiSelectFieldDisplayProps = {
@@ -10,7 +11,6 @@ type MultiSelectFieldDisplayProps = {
 
 export const MultiSelectFieldDisplay = ({
   isCellSoftFocused,
-  cellElement,
   fromTableCell,
 }: MultiSelectFieldDisplayProps) => {
   const { fieldValues, fieldDefinition } = useMultiSelectField();
@@ -25,7 +25,6 @@ export const MultiSelectFieldDisplay = ({
 
   return (
     <ExpandableList
-      anchorElement={cellElement}
       isChipCountDisplayed={isCellSoftFocused}
       withExpandedListBorder={fromTableCell}
     >

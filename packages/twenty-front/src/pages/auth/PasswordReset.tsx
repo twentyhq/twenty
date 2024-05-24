@@ -16,6 +16,7 @@ import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useNavigateAfterSignInUp } from '@/auth/sign-in-up/hooks/useNavigateAfterSignInUp';
 import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { AppPath } from '@/types/AppPath';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
@@ -95,7 +96,7 @@ export const PasswordReset = () => {
     skip: !passwordResetToken,
     onError: (error) => {
       enqueueSnackBar(error?.message ?? 'Token Invalid', {
-        variant: 'error',
+        variant: SnackBarVariant.Error,
       });
       if (!isLoggedIn) {
         navigate(AppPath.SignInUp);
@@ -128,14 +129,14 @@ export const PasswordReset = () => {
 
       if (!data?.updatePasswordViaResetToken.success) {
         enqueueSnackBar('There was an error while updating password.', {
-          variant: 'error',
+          variant: SnackBarVariant.Error,
         });
         return;
       }
 
       if (isLoggedIn) {
         enqueueSnackBar('Password has been updated', {
-          variant: 'success',
+          variant: SnackBarVariant.Success,
         });
         navigate(AppPath.Index);
         return;
@@ -152,7 +153,7 @@ export const PasswordReset = () => {
       enqueueSnackBar(
         (err as Error)?.message || 'An error occurred while updating password',
         {
-          variant: 'error',
+          variant: SnackBarVariant.Error,
         },
       );
     }

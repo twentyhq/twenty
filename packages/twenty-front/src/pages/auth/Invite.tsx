@@ -12,6 +12,7 @@ import { useWorkspaceFromInviteHash } from '@/auth/sign-in-up/hooks/useWorkspace
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { AppPath } from '@/types/AppPath';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { useWorkspaceSwitching } from '@/ui/navigation/navigation-drawer/hooks/useWorkspaceSwitching';
@@ -61,7 +62,7 @@ export const Invite = () => {
       !workspaceFromInviteHashLoading
     ) {
       enqueueSnackBar('workspace does not exist', {
-        variant: 'error',
+        variant: SnackBarVariant.Error,
       });
       if (isDefined(currentWorkspace)) {
         navigate(AppPath.Index);
@@ -76,7 +77,7 @@ export const Invite = () => {
       enqueueSnackBar(
         `You already belong to ${workspaceFromInviteHash?.displayName} workspace`,
         {
-          variant: 'info',
+          variant: SnackBarVariant.Info,
         },
       );
       navigate(AppPath.Index);

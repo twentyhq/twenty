@@ -3,13 +3,11 @@ import { LinksDisplay } from '@/ui/field/display/components/LinksDisplay';
 
 type LinksFieldDisplayProps = {
   isCellSoftFocused?: boolean;
-  cellElement?: HTMLElement;
   fromTableCell?: boolean;
 };
 
 export const LinksFieldDisplay = ({
   isCellSoftFocused,
-  cellElement,
   fromTableCell,
 }: LinksFieldDisplayProps) => {
   const { fieldValue } = useLinksField();
@@ -17,7 +15,6 @@ export const LinksFieldDisplay = ({
   return (
     <LinksDisplay
       value={fieldValue}
-      anchorElement={cellElement}
       isChipCountDisplayed={isCellSoftFocused}
       withExpandedListBorder={fromTableCell}
     />

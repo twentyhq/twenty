@@ -1,8 +1,7 @@
-import { IconSettings } from 'twenty-ui';
+import { H2Title, IconSettings } from 'twenty-ui';
 
 import { SettingsAccountsMessageChannelsListCard } from '@/settings/accounts/components/SettingsAccountsMessageChannelsListCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
