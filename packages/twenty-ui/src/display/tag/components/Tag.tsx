@@ -1,9 +1,8 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconComponent, OverflowingTextWithTooltip } from 'twenty-ui';
 
-import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
-import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
+import { IconComponent, OverflowingTextWithTooltip } from '@ui/display';
+import { ThemeColor, themeColorSchema } from '@ui/theme';
 
 const StyledTag = styled.h3<{
   color: ThemeColor;

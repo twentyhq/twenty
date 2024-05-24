@@ -2,9 +2,8 @@ import styled from '@emotion/styled';
 import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { userEvent, within } from '@storybook/test';
-import { ComponentDecorator } from 'packages/twenty-ui';
+import { ComponentDecorator, Tag } from 'twenty-ui';
 
-import { Tag } from '@/ui/display/tag/components/Tag';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { MAIN_COLOR_NAMES } from '@/ui/theme/constants/MainColorNames';
 

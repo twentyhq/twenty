@@ -1,4 +1,4 @@
-import { ThemeType } from '..';
+import { SNACK_BAR_DARK, ThemeType } from '..';
 
 import { ACCENT_DARK } from './AccentDark';
 import { BACKGROUND_DARK } from './BackgroundDark';
@@ -14,9 +14,10 @@ export const THEME_DARK: ThemeType = {
     accent: ACCENT_DARK,
     background: BACKGROUND_DARK,
     border: BORDER_DARK,
-    tag: TAG_DARK,
     boxShadow: BOX_SHADOW_DARK,
     font: FONT_DARK,
     name: 'dark',
+    snackBar: SNACK_BAR_DARK,
+    tag: TAG_DARK,
   },
 };

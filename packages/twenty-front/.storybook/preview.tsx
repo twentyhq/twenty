@@ -29,9 +29,8 @@ initialize({
 const preview: Preview = {
   decorators: [
     (Story) => {
-      const mode = useDarkMode() ? 'Dark' : 'Light';
+      const theme = useDarkMode() ? THEME_DARK : THEME_LIGHT;
 
-      const theme = mode === 'Dark' ? THEME_DARK : THEME_LIGHT;
       return (
         <ThemeProvider theme={theme}>
           <Story />

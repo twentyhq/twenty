@@ -17,6 +17,7 @@ import { RecordGqlOperationVariables } from '@/object-record/graphql/types/Recor
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from '~/utils/isDefined';
 import { logError } from '~/utils/logError';
@@ -116,7 +117,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         enqueueSnackBar(
           `Error during useFindManyRecords for "${objectMetadataItem.namePlural}", ${error.message}`,
           {
-            variant: 'error',
+            variant: SnackBarVariant.Error,
           },
         );
       },
@@ -192,7 +193,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         enqueueSnackBar(
           `Error during fetchMoreObjects for "${objectMetadataItem.namePlural}", ${error}`,
           {
-            variant: 'error',
+            variant: SnackBarVariant.Error,
           },
         );
       } finally {
