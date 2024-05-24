@@ -22,7 +22,7 @@ const documents = {
     "\n  \n  mutation unsyncRemoteTable($input: RemoteTableInput!) {\n    unsyncRemoteTable(input: $input) {\n      ...RemoteTableFields\n    }\n  }\n": types.UnsyncRemoteTableDocument,
     "\n  \n  mutation updateServer($input: UpdateRemoteServerInput!) {\n    updateOneRemoteServer(input: $input) {\n      ...RemoteServerFields\n    }\n  }\n": types.UpdateServerDocument,
     "\n  \n  query GetManyDatabaseConnections($input: RemoteServerTypeInput!) {\n    findManyRemoteServersByType(input: $input) {\n      ...RemoteServerFields\n    }\n  }\n": types.GetManyDatabaseConnectionsDocument,
-    "\n  \n  query GetManyRemoteTables($input: FindManyRemoteTablesInput!) {\n    findAvailableRemoteTablesByServerId(input: $input) {\n      ...RemoteTableFields\n    }\n  }\n": types.GetManyRemoteTablesDocument,
+    "\n  \n  query GetManyRemoteTables($input: FindManyRemoteTablesInput!) {\n    findDistantTablesWithStatus(input: $input) {\n      ...RemoteTableFields\n    }\n  }\n": types.GetManyRemoteTablesDocument,
     "\n  \n  query GetOneDatabaseConnection($input: RemoteServerIdInput!) {\n    findOneRemoteServerById(input: $input) {\n      ...RemoteServerFields\n    }\n  }\n": types.GetOneDatabaseConnectionDocument,
     "\n  mutation CreateOneObjectMetadataItem($input: CreateOneObjectInput!) {\n    createOneObject(input: $input) {\n      id\n      dataSourceId\n      nameSingular\n      namePlural\n      labelSingular\n      labelPlural\n      description\n      icon\n      isCustom\n      isActive\n      createdAt\n      updatedAt\n      labelIdentifierFieldMetadataId\n      imageIdentifierFieldMetadataId\n    }\n  }\n": types.CreateOneObjectMetadataItemDocument,
     "\n  mutation CreateOneFieldMetadataItem($input: CreateOneFieldMetadataInput!) {\n    createOneField(input: $input) {\n      id\n      type\n      name\n      label\n      description\n      icon\n      isCustom\n      isActive\n      isNullable\n      createdAt\n      updatedAt\n      defaultValue\n      options\n    }\n  }\n": types.CreateOneFieldMetadataItemDocument,
@@ -88,7 +88,7 @@ export function graphql(source: "\n  \n  query GetManyDatabaseConnections($input
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function graphql(source: "\n  \n  query GetManyRemoteTables($input: FindManyRemoteTablesInput!) {\n    findAvailableRemoteTablesByServerId(input: $input) {\n      ...RemoteTableFields\n    }\n  }\n"): (typeof documents)["\n  \n  query GetManyRemoteTables($input: FindManyRemoteTablesInput!) {\n    findAvailableRemoteTablesByServerId(input: $input) {\n      ...RemoteTableFields\n    }\n  }\n"];
+export function graphql(source: "\n  \n  query GetManyRemoteTables($input: FindManyRemoteTablesInput!) {\n    findDistantTablesWithStatus(input: $input) {\n      ...RemoteTableFields\n    }\n  }\n"): (typeof documents)["\n  \n  query GetManyRemoteTables($input: FindManyRemoteTablesInput!) {\n    findDistantTablesWithStatus(input: $input) {\n      ...RemoteTableFields\n    }\n  }\n"];
 /**
  * The graphql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
