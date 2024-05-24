@@ -341,9 +341,17 @@ export class GoogleCalendarSyncService {
             workspaceId,
           );
 
-          throw new Error(
-            `Sync token no longer valid for connected account ${connectedAccountId} in workspace ${workspaceId}, resetting sync cursor.`,
+          this.logger.log(
+            `Sync token is no longer valid for connected account ${connectedAccountId} in workspace ${workspaceId}, resetting sync cursor.`,
           );
+
+          return {
+            data: {
+              items: [],
+              nextSyncToken: undefined,
+              nextPageToken: undefined,
+            },
+          };
         });
 
       nextSyncToken = googleCalendarEvents.data.nextSyncToken;
