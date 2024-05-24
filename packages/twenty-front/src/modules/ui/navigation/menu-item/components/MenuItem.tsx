@@ -19,26 +19,30 @@ export type MenuItemIconButton = {
 };
 
 export type MenuItemProps = {
-  LeftIcon?: IconComponent | null;
   accent?: MenuItemAccent;
-  text: ReactNode;
+  className?: string;
   iconButtons?: MenuItemIconButton[];
   isIconDisplayedOnHoverOnly?: boolean;
   isTooltipOpen?: boolean;
-  className?: string;
-  testId?: string;
+  LeftIcon?: IconComponent | null;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
+  onMouseEnter?: (event: MouseEvent<HTMLDivElement>) => void;
+  onMouseLeave?: (event: MouseEvent<HTMLDivElement>) => void;
+  testId?: string;
+  text: ReactNode;
 };
 
 export const MenuItem = ({
-  LeftIcon,
   accent = 'default',
-  text,
+  className,
   iconButtons,
   isIconDisplayedOnHoverOnly = true,
-  className,
-  testId,
+  LeftIcon,
   onClick,
+  onMouseEnter,
+  onMouseLeave,
+  testId,
+  text,
 }: MenuItemProps) => {
   const showIconButtons = Array.isArray(iconButtons) && iconButtons.length > 0;
 
@@ -57,6 +61,8 @@ export const MenuItem = ({
       className={className}
       accent={accent}
       isIconDisplayedOnHoverOnly={isIconDisplayedOnHoverOnly}
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
     >
       <StyledMenuItemLeftContent>
         <MenuItemLeftContent LeftIcon={LeftIcon ?? undefined} text={text} />

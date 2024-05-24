@@ -1,10 +1,7 @@
 import { MouseEventHandler, useMemo } from 'react';
 
 import { FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
-import {
-  ExpandableList,
-  ExpandableListProps,
-} from '@/ui/layout/expandable-list/components/ExpandableList';
+import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink';
 import {
   LinkType,
@@ -15,18 +12,12 @@ import { isDefined } from '~/utils/isDefined';
 import { getAbsoluteUrl } from '~/utils/url/getAbsoluteUrl';
 import { getUrlHostName } from '~/utils/url/getUrlHostName';
 
-type LinksDisplayProps = Pick<
-  ExpandableListProps,
-  'isChipCountDisplayed' | 'withExpandedListBorder'
-> & {
+type LinksDisplayProps = {
   value?: FieldLinksValue;
+  isFocused?: boolean;
 };
 
-export const LinksDisplay = ({
-  isChipCountDisplayed,
-  withExpandedListBorder,
-  value,
-}: LinksDisplayProps) => {
+export const LinksDisplay = ({ value, isFocused }: LinksDisplayProps) => {
   const links = useMemo(
     () =>
       [
@@ -53,10 +44,7 @@ export const LinksDisplay = ({
   const handleClick: MouseEventHandler = (event) => event.stopPropagation();
 
   return (
-    <ExpandableList
-      isChipCountDisplayed={isChipCountDisplayed}
-      withExpandedListBorder={withExpandedListBorder}
-    >
+    <ExpandableList isChipCountDisplayed={isFocused}>
       {links.map(({ url, label, type }, index) =>
         type === LinkType.LinkedIn || type === LinkType.Twitter ? (
           <SocialLink key={index} href={url} onClick={handleClick} type={type}>

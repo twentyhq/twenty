@@ -80,21 +80,22 @@ const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
 `;
 
 const previewableTypes = [
+  FieldMetadataType.Address,
   FieldMetadataType.Boolean,
   FieldMetadataType.Currency,
-  FieldMetadataType.DateTime,
   FieldMetadataType.Date,
-  FieldMetadataType.Select,
-  FieldMetadataType.MultiSelect,
+  FieldMetadataType.DateTime,
+  FieldMetadataType.FullName,
   FieldMetadataType.Link,
   FieldMetadataType.Links,
+  FieldMetadataType.MultiSelect,
   FieldMetadataType.Number,
-  FieldMetadataType.Rating,
-  FieldMetadataType.Relation,
-  FieldMetadataType.Text,
-  FieldMetadataType.Address,
-  FieldMetadataType.RawJson,
   FieldMetadataType.Phone,
+  FieldMetadataType.Rating,
+  FieldMetadataType.RawJson,
+  FieldMetadataType.Relation,
+  FieldMetadataType.Select,
+  FieldMetadataType.Text,
 ];
 
 export const SettingsDataModelFieldSettingsFormCard = ({

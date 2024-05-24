@@ -1,5 +1,6 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordTableBody } from '@/object-record/record-table/components/RecordTableBody';
@@ -8,6 +9,7 @@ import { RecordTableHeader } from '@/object-record/record-table/components/Recor
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useHandleContainerMouseEnter } from '@/object-record/record-table/hooks/internal/useHandleContainerMouseEnter';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { useRecordChipDataGenerator } from '@/object-record/record-table/hooks/useRecordChipDataGenerator';
 import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
 import { useCloseRecordTableCellV2 } from '@/object-record/record-table/record-table-cell/hooks/useCloseRecordTableCellV2';
 import { useMoveSoftFocusToCellOnHoverV2 } from '@/object-record/record-table/record-table-cell/hooks/useMoveSoftFocusToCellOnHoverV2';
@@ -145,7 +147,8 @@ export const RecordTable = ({
   onColumnsChange,
   createRecord,
 }: RecordTableProps) => {
-  const { scopeId } = useRecordTableStates(recordTableId);
+  const { scopeId, visibleTableColumnsSelector } =
+    useRecordTableStates(recordTableId);
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -204,6 +207,13 @@ export const RecordTable = ({
     recordTableId,
   });
 
+  const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
+
+  const recordChipDataGeneratorPerFieldName = useRecordChipDataGenerator({
+    objectNameSingular,
+    visibleTableColumns,
+  });
+
   return (
     <RecordTableScope
       recordTableScopeId={scopeId}
@@ -220,6 +230,8 @@ export const RecordTable = ({
             onMoveSoftFocusToCell: handleMoveSoftFocusToCell,
             onContextMenu: handleContextMenu,
             onCellMouseEnter: handleContainerMouseEnter,
+            recordChipDataGeneratorPerFieldName,
+            visibleTableColumns,
           }}
         >
           <StyledTable className="entity-table-cell">

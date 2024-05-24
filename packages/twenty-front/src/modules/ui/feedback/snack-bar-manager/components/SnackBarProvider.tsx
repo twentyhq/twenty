@@ -4,6 +4,7 @@ import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { useSnackBarManagerScopedStates } from '@/ui/feedback/snack-bar-manager/hooks/internal/useSnackBarManagerScopedStates';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { SnackBar } from './SnackBar';
 
@@ -16,26 +17,28 @@ const StyledSnackBarContainer = styled.div`
   z-index: ${({ theme }) => theme.lastLayerZIndex};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    bottom: ${({ theme }) => theme.spacing(16)};
-    right: 50%;
-    transform: translateX(50%);
+    top: 0;
+    bottom: auto;
+    left: 0;
+    right: 0;
   }
 `;
-
-const variants = {
-  out: {
-    opacity: 0,
-    y: 40,
-  },
-  in: {
-    opacity: 1,
-    y: 0,
-  },
-};
 
 export const SnackBarProvider = ({ children }: React.PropsWithChildren) => {
   const { snackBarInternal } = useSnackBarManagerScopedStates();
   const { handleSnackBarClose } = useSnackBar();
+  const isMobile = useIsMobile();
+
+  const variants = {
+    out: {
+      opacity: 0,
+      y: isMobile ? -40 : 40,
+    },
+    in: {
+      opacity: 1,
+      y: 0,
+    },
+  };
 
   return (
     <>

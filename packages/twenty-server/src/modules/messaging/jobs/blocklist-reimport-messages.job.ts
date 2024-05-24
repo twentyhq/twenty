@@ -5,7 +5,7 @@ import { MessageQueueJob } from 'src/engine/integrations/message-queue/interface
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { GmailFullSyncService } from 'src/modules/messaging/services/gmail-full-sync/gmail-full-sync.service';
+import { GmailFullMessageListFetchService } from 'src/modules/messaging/services/gmail-full-message-list-fetch/gmail-full-message-list-fetch.service';
 
 export type BlocklistReimportMessagesJobData = {
   workspaceId: string;
@@ -22,7 +22,7 @@ export class BlocklistReimportMessagesJob
   constructor(
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    private readonly gmailFullSyncService: GmailFullSyncService,
+    private readonly gmailFullSyncService: GmailFullMessageListFetchService,
   ) {}
 
   async handle(data: BlocklistReimportMessagesJobData): Promise<void> {

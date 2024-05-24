@@ -2,25 +2,15 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { currencyCodeSchema } from '@/object-record/record-field/validation-schemas/currencyCodeSchema';
+import { currencyFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/currencyFieldDefaultValueSchema';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { useCurrencySettingsFormInitialValues } from '@/settings/data-model/fields/forms/currency/hooks/useCurrencySettingsFormInitialValues';
 import { Select } from '@/ui/input/components/Select';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
-import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
-import { simpleQuotesStringSchema } from '~/utils/validation-schemas/simpleQuotesStringSchema';
 
 export const settingsDataModelFieldCurrencyFormSchema = z.object({
-  defaultValue: z.object({
-    amountMicros: z.number().nullable(),
-    currencyCode: simpleQuotesStringSchema.refine(
-      (value) =>
-        currencyCodeSchema.safeParse(stripSimpleQuotesFromString(value))
-          .success,
-      { message: 'String is not a valid currencyCode' },
-    ),
-  }),
+  defaultValue: currencyFieldDefaultValueSchema,
 });
 
 export type SettingsDataModelFieldCurrencyFormValues = z.infer<

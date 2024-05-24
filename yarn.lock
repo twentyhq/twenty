@@ -22572,6 +22572,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"clsx@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "clsx@npm:2.1.1"
+  checksum: c4c8eb865f8c82baab07e71bfa8897c73454881c4f99d6bc81585aecd7c441746c1399d08363dc096c550cceaf97bd4ce1e8854e1771e9998d9f94c4fe075839
+  languageName: node
+  linkType: hard
+
 "cluster-key-slot@npm:1.1.2, cluster-key-slot@npm:^1.1.0":
   version: 1.1.2
   resolution: "cluster-key-slot@npm:1.1.2"
@@ -46479,7 +46486,7 @@ __metadata:
     bytes: "npm:^3.1.2"
     chromatic: "npm:^6.18.0"
     class-transformer: "npm:^0.5.1"
-    clsx: "npm:^1.2.1"
+    clsx: "npm:^2.1.1"
     concurrently: "npm:^8.2.2"
     cross-env: "npm:^7.0.3"
     cross-var: "npm:^1.1.0"
@@ -46630,6 +46637,7 @@ __metadata:
     type-fest: "npm:4.10.1"
     typeorm: "npm:^0.3.17"
     typescript: "npm:5.3.3"
+    use-context-selector: "npm:^2.0.0"
     use-debounce: "npm:^10.0.0"
     uuid: "npm:^9.0.0"
     vite: "npm:^5.0.0"
@@ -46639,7 +46647,7 @@ __metadata:
     vite-tsconfig-paths: "npm:^4.2.1"
     vitest: "npm:1.4.0"
     xlsx-ugnis: "npm:^0.19.3"
-    zod: "npm:^3.22.2"
+    zod: "npm:3.23.8"
   languageName: unknown
   linkType: soft
 
@@ -47656,6 +47664,16 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17.0.0 || ^18.0.0
   checksum: e64ce52f4b18c020407636784192726807404a2552609acf7497b66a2b7070674fb5d2b950d426c4aa85f353e2bbecb02ebf9c5b865cd06797938c70bcbf5d26
+  languageName: node
+  linkType: hard
+
+"use-context-selector@npm:^2.0.0":
+  version: 2.0.0
+  resolution: "use-context-selector@npm:2.0.0"
+  peerDependencies:
+    react: ">=18.0.0"
+    scheduler: ">=0.19.0"
+  checksum: 4eb6054ab8996ae8b3f87f9d102e576066e5a8b9db5db2c891128ae920bd64bcdcb4e93a13bc99658ef16280929a8331fc8ac45177f4acd716c425b1bc31135a
   languageName: node
   linkType: hard
 
@@ -49706,7 +49724,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.20.2, zod@npm:^3.22.2":
+"zod@npm:3.23.8":
+  version: 3.23.8
+  resolution: "zod@npm:3.23.8"
+  checksum: 8f14c87d6b1b53c944c25ce7a28616896319d95bc46a9660fe441adc0ed0a81253b02b5abdaeffedbeb23bdd25a0bf1c29d2c12dd919aef6447652dd295e3e69
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.20.2":
   version: 3.22.4
   resolution: "zod@npm:3.22.4"
   checksum: 7578ab283dac0eee66a0ad0fc4a7f28c43e6745aadb3a529f59a4b851aa10872b3890398b3160f257f4b6817b4ce643debdda4fb21a2c040adda7862cab0a587
