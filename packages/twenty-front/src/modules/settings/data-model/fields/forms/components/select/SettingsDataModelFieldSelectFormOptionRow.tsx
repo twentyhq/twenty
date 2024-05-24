@@ -8,6 +8,7 @@ import {
   IconGripVertical,
   IconTrash,
   IconX,
+  MAIN_COLOR_NAMES,
 } from 'twenty-ui';
 import { v4 } from 'uuid';
 
@@ -21,7 +22,6 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelectColor } from '@/ui/navigation/menu-item/components/MenuItemSelectColor';
-import { MAIN_COLOR_NAMES } from '@/ui/theme/constants/MainColorNames';
 
 type SettingsDataModelFieldSelectFormOptionRowProps = {
   className?: string;
