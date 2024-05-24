@@ -47,34 +47,41 @@ export const Invite = () => {
     await switchWorkspace(workspaceFromInviteHash.id);
   };
 
+  if (
+    !isDefined(workspaceFromInviteHash) ||
+    (isDefined(workspaceFromInviteHash) &&
+      isDefined(currentWorkspace) &&
+      workspaceFromInviteHash.id === currentWorkspace.id)
+  ) {
+    return <></>;
+  }
+
   return (
-    isDefined(workspaceFromInviteHash) && (
-      <>
-        <AnimatedEaseIn>
-          <Logo workspaceLogo={workspaceFromInviteHash?.logo} />
-        </AnimatedEaseIn>
-        <Title animate>{title}</Title>
-        {isDefined(currentWorkspace) && workspaceFromInviteHash ? (
-          <>
-            <StyledContentContainer>
-              <MainButton
-                variant="secondary"
-                title="Continue"
-                type="submit"
-                onClick={handleUserJoinWorkspace}
-                Icon={() => form.formState.isSubmitting && <Loader />}
-                fullWidth
-              />
-            </StyledContentContainer>
-            <FooterNote>
-              By using Twenty, you agree to the Terms of Service and Privacy
-              Policy.
-            </FooterNote>
-          </>
-        ) : (
-          <SignInUpForm />
-        )}
-      </>
-    )
+    <>
+      <AnimatedEaseIn>
+        <Logo workspaceLogo={workspaceFromInviteHash?.logo} />
+      </AnimatedEaseIn>
+      <Title animate>{title}</Title>
+      {isDefined(currentWorkspace) ? (
+        <>
+          <StyledContentContainer>
+            <MainButton
+              variant="secondary"
+              title="Continue"
+              type="submit"
+              onClick={handleUserJoinWorkspace}
+              Icon={() => form.formState.isSubmitting && <Loader />}
+              fullWidth
+            />
+          </StyledContentContainer>
+          <FooterNote>
+            By using Twenty, you agree to the Terms of Service and Privacy
+            Policy.
+          </FooterNote>
+        </>
+      ) : (
+        <SignInUpForm />
+      )}
+    </>
   );
 };

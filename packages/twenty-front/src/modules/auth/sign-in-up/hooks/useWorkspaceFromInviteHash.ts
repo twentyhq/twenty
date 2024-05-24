@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
@@ -14,7 +15,8 @@ export const useWorkspaceFromInviteHash = () => {
   const navigate = useNavigate();
   const workspaceInviteHash = useParams().workspaceInviteHash;
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const setIsDefaultLayoutAuthModalVisibleState = useSetRecoilState(
+  const [initiallyLoggedIn] = useState(isDefined(currentWorkspace));
+  const setIsDefaultLayoutAuthModalVisible = useSetRecoilState(
     isDefaultLayoutAuthModalVisibleState,
   );
   const { data: workspaceFromInviteHash, loading } =
@@ -29,17 +31,19 @@ export const useWorkspaceFromInviteHash = () => {
       onCompleted: (data) => {
         if (
           isDefined(currentWorkspace) &&
-          currentWorkspace.id === data?.findWorkspaceFromInviteHash?.id
+          data?.findWorkspaceFromInviteHash &&
+          currentWorkspace.id === data.findWorkspaceFromInviteHash.id
         ) {
-          enqueueSnackBar(
-            `You already belong to ${data?.findWorkspaceFromInviteHash?.displayName} workspace`,
-            {
-              variant: SnackBarVariant.Info,
-            },
-          );
+          initiallyLoggedIn &&
+            enqueueSnackBar(
+              `You already belong to ${data?.findWorkspaceFromInviteHash?.displayName} workspace`,
+              {
+                variant: SnackBarVariant.Info,
+              },
+            );
           navigate(AppPath.Index);
         } else {
-          setIsDefaultLayoutAuthModalVisibleState(true);
+          setIsDefaultLayoutAuthModalVisible(true);
         }
       },
     });
