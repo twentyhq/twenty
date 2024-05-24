@@ -72,6 +72,13 @@ export const RecordTableHeader = ({
       <tr>
         <th
           style={{
+            width: 8,
+            minWidth: 8,
+            maxWidth: 8,
+          }}
+        ></th>
+        <th
+          style={{
             width: 30,
             minWidth: 30,
             maxWidth: 30,

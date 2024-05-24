@@ -1,6 +1,8 @@
 import { useContext } from 'react';
 import { useInView } from 'react-intersection-observer';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { Draggable } from '@hello-pangea/dnd';
 import { useRecoilValue } from 'recoil';
 
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
@@ -13,6 +15,7 @@ import { useRecordTableStates } from '@/object-record/record-table/hooks/interna
 import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 import { CheckboxCell } from './CheckboxCell';
+import { GripCell } from './GripCell';
 
 type RecordTableRowProps = {
   recordId: string;
@@ -20,7 +23,21 @@ type RecordTableRowProps = {
 };
 
 const StyledTd = styled.td`
-  background-color: ${({ theme }) => theme.background.primary};
+  position: relative;
+  user-select: none;
+`;
+
+const StyledTr = styled.tr<{ isDragging: boolean }>`
+  border-left: 3px solid transparent;
+  transition: border-left-color 0.2s ease-in-out;
+
+  ${({ isDragging, theme }) =>
+    isDragging &&
+    `
+    td:nth-of-type(3) {
+      border: 2px solid ${theme.border.color.strong};
+    }
+  `}
 `;
 
 export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
@@ -40,6 +57,8 @@ export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
     rootMargin: '1000px',
   });
 
+  const theme = useTheme();
+
   return (
     <RecordTableRowContext.Provider
       value={{
@@ -54,31 +73,63 @@ export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
       }}
     >
       <RecordValueSetterEffect recordId={recordId} />
-      <tr
-        ref={elementRef}
-        data-testid={`row-id-${recordId}`}
-        data-selectable-id={recordId}
-      >
-        <StyledTd>
-          <CheckboxCell />
-        </StyledTd>
-        {inView
-          ? visibleTableColumns.map((column, columnIndex) => (
-              <RecordTableCellContext.Provider
-                value={{
-                  columnDefinition: column,
-                  columnIndex,
-                }}
-                key={column.fieldMetadataId}
-              >
-                <RecordTableCellFieldContextWrapper />
-              </RecordTableCellContext.Provider>
-            ))
-          : visibleTableColumns.map((column) => (
-              <td key={column.fieldMetadataId}></td>
-            ))}
-        <td></td>
-      </tr>
+
+      <Draggable key={recordId} draggableId={recordId} index={rowIndex}>
+        {(draggableProvided, draggableSnapshot) => (
+          <StyledTr
+            ref={(node) => {
+              elementRef(node);
+              draggableProvided.innerRef(node);
+            }}
+            // eslint-disable-next-line react/jsx-props-no-spreading
+            {...draggableProvided.draggableProps}
+            style={{
+              ...draggableProvided.draggableProps.style,
+              background: draggableSnapshot.isDragging
+                ? theme.background.transparent.light
+                : 'none',
+              height: draggableSnapshot.isDragging ? '40px' : 'auto',
+              paddingTop: draggableSnapshot.isDragging ? '4px' : '0px',
+              paddingLeft: draggableSnapshot.isDragging ? '40px' : '0px',
+              borderLeftColor: draggableSnapshot.isDragging
+                ? `${theme.border.color.strong}`
+                : 'transparent',
+            }}
+            isDragging={draggableSnapshot.isDragging}
+            data-testid={`row-id-${recordId}`}
+            data-selectable-id={recordId}
+          >
+            <StyledTd
+              // eslint-disable-next-line react/jsx-props-no-spreading
+              {...draggableProvided.dragHandleProps}
+              data-select-disable
+            >
+              {!draggableSnapshot.isDragging && <GripCell />}
+            </StyledTd>
+            <StyledTd>
+              {!draggableSnapshot.isDragging && <CheckboxCell />}
+            </StyledTd>
+            {inView || draggableSnapshot.isDragging
+              ? visibleTableColumns.map((column, columnIndex) => (
+                  <RecordTableCellContext.Provider
+                    value={{
+                      columnDefinition: column,
+                      columnIndex,
+                    }}
+                    key={column.fieldMetadataId}
+                  >
+                    {draggableSnapshot.isDragging && columnIndex > 0 ? null : (
+                      <RecordTableCellFieldContextWrapper />
+                    )}
+                  </RecordTableCellContext.Provider>
+                ))
+              : visibleTableColumns.map((column) => (
+                  <StyledTd key={column.fieldMetadataId}></StyledTd>
+                ))}
+            <StyledTd />
+          </StyledTr>
+        )}
+      </Draggable>
     </RecordTableRowContext.Provider>
   );
 };
