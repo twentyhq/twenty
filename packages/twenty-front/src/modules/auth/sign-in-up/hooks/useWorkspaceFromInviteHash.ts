@@ -21,7 +21,6 @@ export const useWorkspaceFromInviteHash = () => {
     useGetWorkspaceFromInviteHashQuery({
       variables: { inviteHash: workspaceInviteHash || '' },
       onError: () => {
-        setIsDefaultLayoutAuthModalVisibleState(false);
         enqueueSnackBar('workspace does not exist', {
           variant: SnackBarVariant.Error,
         });
@@ -32,7 +31,6 @@ export const useWorkspaceFromInviteHash = () => {
           isDefined(currentWorkspace) &&
           currentWorkspace.id === data?.findWorkspaceFromInviteHash?.id
         ) {
-          setIsDefaultLayoutAuthModalVisibleState(false);
           enqueueSnackBar(
             `You already belong to ${data?.findWorkspaceFromInviteHash?.displayName} workspace`,
             {

@@ -21,7 +21,7 @@ export const useShowAuthModal = () => {
       isMatchingLocation(AppPath.Invite) ||
       isMatchingLocation(AppPath.ResetPassword)
     ) {
-      return isDefaultLayoutAuthModalVisible === true;
+      return isDefaultLayoutAuthModalVisible;
     }
     if (
       OnboardingStatus.Incomplete === onboardingStatus ||

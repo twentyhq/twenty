@@ -1,8 +1,6 @@
 import { createState } from 'twenty-ui';
 
-export const isDefaultLayoutAuthModalVisibleState = createState<
-  boolean | undefined
->({
+export const isDefaultLayoutAuthModalVisibleState = createState<boolean>({
   key: 'isDefaultLayoutAuthModalVisibleState',
-  defaultValue: undefined,
+  defaultValue: false,
 });

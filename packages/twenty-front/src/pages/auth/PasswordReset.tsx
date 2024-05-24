@@ -100,7 +100,6 @@ export const PasswordReset = () => {
     },
     skip: !passwordResetToken,
     onError: (error) => {
-      setIsDefaultLayoutAuthModalVisibleState(false);
       enqueueSnackBar(error?.message ?? 'Token Invalid', {
         variant: SnackBarVariant.Error,
       });
