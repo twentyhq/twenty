@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { matchPath, useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { IconCheckbox } from 'twenty-ui';
 
@@ -20,10 +20,8 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope';
 import { useGetWorkspaceFromInviteHashLazyQuery } from '~/generated/graphql';
+import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 import { isDefined } from '~/utils/isDefined';
-import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
-
-import { useIsMatchingLocation } from '../hooks/useIsMatchingLocation';
 
 // TODO: break down into smaller functions and / or hooks
 export const PageChangeEffect = () => {
@@ -70,13 +68,6 @@ export const PageChangeEffect = () => {
       isMatchingLocation(AppPath.PlanRequired) ||
       isMatchingLocation(AppPath.PlanRequiredSuccess);
 
-    const navigateToSignUp = () => {
-      enqueueSnackBar('workspace does not exist', {
-        variant: 'error',
-      });
-      navigate(AppPath.SignInUp);
-    };
-
     if (
       onboardingStatus === OnboardingStatus.OngoingUserCreation &&
       !isMatchingOngoingUserCreationRoute &&
@@ -115,7 +106,8 @@ export const PageChangeEffect = () => {
       navigate(AppPath.CreateProfile);
     } else if (
       onboardingStatus === OnboardingStatus.Completed &&
-      isMatchingOnboardingRoute
+      isMatchingOnboardingRoute &&
+      !isMatchingLocation(AppPath.Invite)
     ) {
       navigate(AppPath.Index);
     } else if (
@@ -124,24 +116,6 @@ export const PageChangeEffect = () => {
       !isMatchingLocation(AppPath.PlanRequired)
     ) {
       navigate(AppPath.Index);
-    } else if (isMatchingLocation(AppPath.Invite)) {
-      const inviteHash =
-        matchPath({ path: '/invite/:workspaceInviteHash' }, location.pathname)
-          ?.params.workspaceInviteHash || '';
-
-      workspaceFromInviteHashQuery({
-        variables: {
-          inviteHash,
-        },
-        onCompleted: (data) => {
-          if (isUndefinedOrNull(data.findWorkspaceFromInviteHash)) {
-            navigateToSignUp();
-          }
-        },
-        onError: (_) => {
-          navigateToSignUp();
-        },
-      });
     }
   }, [
     enqueueSnackBar,

@@ -44,7 +44,10 @@ export async function savePRsToDB(
           authorId: pr.author.login,
         },
       ],
-      { onConflictKey: 'id', onConflictUpdateObject: { title: pr.title } },
+      {
+        onConflictKey: 'id',
+        onConflictUpdateObject: { title: pr.title, updatedAt: pr.updatedAt },
+      },
     );
 
     for (const label of pr.labels.nodes) {

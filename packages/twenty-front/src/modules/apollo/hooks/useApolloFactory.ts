@@ -30,7 +30,13 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   const apolloClient = useMemo(() => {
     apolloRef.current = new ApolloFactory({
       uri: `${REACT_APP_SERVER_BASE_URL}/graphql`,
-      cache: new InMemoryCache(),
+      cache: new InMemoryCache({
+        typePolicies: {
+          RemoteTable: {
+            keyFields: ['name'],
+          },
+        },
+      }),
       headers: {
         ...(currentWorkspace?.currentCacheVersion && {
           'X-Schema-Version': currentWorkspace.currentCacheVersion,

@@ -96,6 +96,12 @@ export class BillingService {
     return notCanceledSubscriptions?.[0];
   }
 
+  async getBillingSubscription(stripeSubscriptionId: string) {
+    return this.billingSubscriptionRepository.findOneOrFail({
+      where: { stripeSubscriptionId },
+    });
+  }
+
   async getStripeCustomerId(workspaceId: string) {
     const subscriptions = await this.billingSubscriptionRepository.find({
       where: { workspaceId },
@@ -265,14 +271,6 @@ export class BillingService {
       subscriptionStatus: data.object.status,
     });
 
-    const billingSubscription = await this.getCurrentBillingSubscription({
-      workspaceId,
-    });
-
-    if (!billingSubscription) {
-      return;
-    }
-
     await this.billingSubscriptionRepository.upsert(
       {
         workspaceId: workspaceId,
@@ -285,6 +283,10 @@ export class BillingService {
         conflictPaths: ['stripeSubscriptionId'],
         skipUpdateIfNoValuesChanged: true,
       },
+    );
+
+    const billingSubscription = await this.getBillingSubscription(
+      data.object.id,
     );
 
     await this.billingSubscriptionItemRepository.upsert(

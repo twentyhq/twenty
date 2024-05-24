@@ -42,7 +42,10 @@ export async function saveIssuesToDB(
           authorId: issue.author.login,
         },
       ],
-      { onConflictKey: 'id' },
+      {
+        onConflictKey: 'id',
+        onConflictUpdateObject: { updatedAt: issue.updatedAt },
+      },
     );
 
     for (const label of issue.labels.nodes) {

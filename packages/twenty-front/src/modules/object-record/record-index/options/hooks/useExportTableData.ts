@@ -7,6 +7,7 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { isDefined } from '~/utils/isDefined';
+import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 import { useFindManyParams } from '../../hooks/useLoadRecordIndexTable';
 
@@ -29,6 +30,12 @@ type GenerateExportOptions = {
 };
 
 type GenerateExport = (data: GenerateExportOptions) => string;
+
+type ExportProgress = {
+  exportedRecordCount?: number;
+  totalRecordCount?: number;
+  displayType: 'percentage' | 'number';
+};
 
 export const generateCsv: GenerateExport = ({
   columns,
@@ -77,8 +84,26 @@ export const generateCsv: GenerateExport = ({
   });
 };
 
-export const percentage = (part: number, whole: number): number => {
+const percentage = (part: number, whole: number): number => {
   return Math.round((part / whole) * 100);
+};
+
+export const displayedExportProgress = (progress?: ExportProgress): string => {
+  if (isUndefinedOrNull(progress?.exportedRecordCount)) {
+    return 'Export';
+  }
+
+  if (
+    progress.displayType === 'percentage' &&
+    isDefined(progress?.totalRecordCount)
+  ) {
+    return `Export (${percentage(
+      progress.exportedRecordCount,
+      progress.totalRecordCount,
+    )}%)`;
+  }
+
+  return `Export (${progress.exportedRecordCount})`;
 };
 
 const downloader = (mimeType: string, generator: GenerateExport) => {
@@ -110,8 +135,10 @@ export const useExportTableData = ({
   const [isDownloading, setIsDownloading] = useState(false);
   const [inflight, setInflight] = useState(false);
   const [pageCount, setPageCount] = useState(0);
-  const [progress, setProgress] = useState<number | undefined>(undefined);
-  const [hasNextPage, setHasNextPage] = useState(true);
+  const [progress, setProgress] = useState<ExportProgress>({
+    displayType: 'number',
+  });
+  const [previousRecordCount, setPreviousRecordCount] = useState(0);
 
   const { visibleTableColumnsSelector, selectedRowIdsSelector } =
     useRecordTableStates(recordIndexId);
@@ -144,25 +171,31 @@ export const useExportTableData = ({
   const { totalCount, records, fetchMoreRecords } = useFindManyRecords({
     ...usedFindManyParams,
     limit: pageSize,
-    onCompleted: (_data, options) => {
-      setHasNextPage(options?.pageInfo?.hasNextPage ?? false);
-    },
   });
 
   useEffect(() => {
-    const MAXIMUM_REQUESTS = Math.min(maximumRequests, totalCount / pageSize);
+    const MAXIMUM_REQUESTS = isDefined(totalCount)
+      ? Math.min(maximumRequests, totalCount / pageSize)
+      : maximumRequests;
 
     const downloadCsv = (rows: object[]) => {
       csvDownloader(filename, { rows, columns });
       setIsDownloading(false);
-      setProgress(undefined);
+      setProgress({
+        displayType: 'number',
+      });
     };
 
     const fetchNextPage = async () => {
       setInflight(true);
+      setPreviousRecordCount(records.length);
       await fetchMoreRecords();
       setPageCount((state) => state + 1);
-      setProgress(percentage(pageCount, MAXIMUM_REQUESTS));
+      setProgress({
+        exportedRecordCount: records.length,
+        totalRecordCount: totalCount,
+        displayType: totalCount ? 'percentage' : 'number',
+      });
       await sleep(delayMs);
       setInflight(false);
     };
@@ -171,7 +204,10 @@ export const useExportTableData = ({
       return;
     }
 
-    if (!hasNextPage || pageCount >= MAXIMUM_REQUESTS) {
+    if (
+      pageCount >= MAXIMUM_REQUESTS ||
+      records.length === previousRecordCount
+    ) {
       downloadCsv(records);
     } else {
       fetchNextPage();
@@ -180,7 +216,6 @@ export const useExportTableData = ({
     delayMs,
     fetchMoreRecords,
     filename,
-    hasNextPage,
     inflight,
     isDownloading,
     pageCount,
@@ -189,6 +224,7 @@ export const useExportTableData = ({
     columns,
     maximumRequests,
     pageSize,
+    previousRecordCount,
   ]);
 
   return { progress, download: () => setIsDownloading(true) };
