@@ -1,20 +1,6 @@
-import { useEffect } from 'react';
-import { Meta, StoryObj } from '@storybook/react';
-import { useSetRecoilState } from 'recoil';
-import { ComponentDecorator } from 'twenty-ui';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
-import { RelationFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RelationFieldDisplay';
-import {
-  RecordFieldValueSelectorContextProvider,
-  useSetRecordValue,
-} from '@/object-record/record-index/contexts/RecordFieldValueSelectorContext';
-import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { FieldMetadataType } from '~/generated/graphql';
-import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
-import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
-
-const mock = {
+export const relationFieldDisplayMock = {
   entityId: '20202020-2d40-4e49-8df4-9c6a049191df',
   relationEntityId: '20202020-c21e-4ec2-873b-de4264d89025',
   entityValue: {
@@ -125,65 +111,3 @@ const mock = {
     defaultValue: null,
   },
 };
-
-const RelationFieldValueSetterEffect = () => {
-  const setEntity = useSetRecoilState(recordStoreFamilyState(mock.entityId));
-
-  const setRelationEntity = useSetRecoilState(
-    recordStoreFamilyState(mock.relationEntityId),
-  );
-
-  const setRecordValue = useSetRecordValue();
-
-  useEffect(() => {
-    setEntity(mock.entityValue);
-    setRelationEntity(mock.relationFieldValue);
-
-    setRecordValue(mock.entityValue.id, mock.entityValue);
-    setRecordValue(mock.relationFieldValue.id, mock.relationFieldValue);
-  }, [setEntity, setRelationEntity, setRecordValue]);
-
-  return null;
-};
-
-const meta: Meta = {
-  title: 'UI/Data/Field/Display/RelationFieldDisplay',
-  decorators: [
-    MemoryRouterDecorator,
-    (Story) => (
-      <RecordFieldValueSelectorContextProvider>
-        <FieldContext.Provider
-          value={{
-            entityId: mock.entityId,
-            basePathToShowPage: '/object-record/',
-            isLabelIdentifier: false,
-            fieldDefinition: {
-              ...mock.fieldDefinition,
-            },
-            hotkeyScope: 'hotkey-scope',
-          }}
-        >
-          <RelationFieldValueSetterEffect />
-          <Story />
-        </FieldContext.Provider>
-      </RecordFieldValueSelectorContextProvider>
-    ),
-    ComponentDecorator,
-  ],
-  component: RelationFieldDisplay,
-  argTypes: { value: { control: 'date' } },
-  args: {},
-};
-
-export default meta;
-
-type Story = StoryObj<typeof RelationFieldDisplay>;
-
-export const Default: Story = {};
-
-export const Performance = getProfilingStory({
-  componentName: 'RelationFieldDisplay',
-  averageThresholdInMs: 0.4,
-  numberOfRuns: 20,
-  numberOfTestsPerRun: 100,
-});
