@@ -125,14 +125,16 @@ export const RecordTableCellSoftFocusMode = ({
     !isReadOnly;
 
   return (
-    <RecordTableCellDisplayContainer
-      onClick={handleClick}
-      scrollRef={scrollRef}
-    >
-      {editModeContentOnly ? editModeContent : nonEditModeContent}
+    <>
+      <RecordTableCellDisplayContainer
+        onClick={handleClick}
+        scrollRef={scrollRef}
+      >
+        {editModeContentOnly ? editModeContent : nonEditModeContent}
+      </RecordTableCellDisplayContainer>
       {showButton && (
         <RecordTableCellButton onClick={handleClick} Icon={buttonIcon} />
       )}
-    </RecordTableCellDisplayContainer>
+    </>
   );
 };

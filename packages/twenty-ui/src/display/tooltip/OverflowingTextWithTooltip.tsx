@@ -8,11 +8,11 @@ import { AppTooltip } from './AppTooltip';
 import styles from './OverflowingTextWithTooltip.module.css';
 
 export const OverflowingTextWithTooltip = ({
-  size,
+  size = 'small',
   text,
   mutliline,
 }: {
-  size: 'large' | 'small';
+  size?: 'large' | 'small';
   text: string | null | undefined;
   mutliline?: boolean;
 }) => {
