@@ -32,12 +32,16 @@ export const usePageChangeEffectNavigateLocation = () => {
     !isMatchingOngoingUserCreationRoute
   ) {
     return AppPath.SignInUp;
-  } else if (
+  }
+
+  if (
     onboardingStatus === OnboardingStatus.Incomplete &&
     !isMatchingLocation(AppPath.PlanRequired)
   ) {
     return AppPath.PlanRequired;
-  } else if (
+  }
+
+  if (
     isDefined(onboardingStatus) &&
     [OnboardingStatus.Unpaid, OnboardingStatus.Canceled].includes(
       onboardingStatus,
@@ -50,32 +54,43 @@ export const usePageChangeEffectNavigateLocation = () => {
     return `${AppPath.SettingsCatchAll.replace('/*', '')}/${
       SettingsPath.Billing
     }`;
-  } else if (
+  }
+
+  if (
     onboardingStatus === OnboardingStatus.OngoingWorkspaceActivation &&
     !isMatchingLocation(AppPath.CreateWorkspace) &&
     !isMatchingLocation(AppPath.PlanRequiredSuccess)
   ) {
     return AppPath.CreateWorkspace;
-  } else if (
+  }
+
+  if (
     onboardingStatus === OnboardingStatus.OngoingProfileCreation &&
     !isMatchingLocation(AppPath.CreateProfile)
   ) {
     return AppPath.CreateProfile;
-  } else if (
+  }
+
+  if (
     onboardingStatus === OnboardingStatus.Completed &&
     isMatchingOnboardingRoute &&
     !isMatchingOpenRoute
   ) {
     return defaultHomePagePath;
-  } else if (
+  }
+
+  if (
     onboardingStatus === OnboardingStatus.CompletedWithoutSubscription &&
     isMatchingOnboardingRoute &&
     !isMatchingOpenRoute &&
     !isMatchingLocation(AppPath.PlanRequired)
   ) {
     return defaultHomePagePath;
-  } else if (isMatchingLocation(AppPath.Index)) {
+  }
+
+  if (isMatchingLocation(AppPath.Index)) {
     return defaultHomePagePath;
   }
+
   return;
 };
