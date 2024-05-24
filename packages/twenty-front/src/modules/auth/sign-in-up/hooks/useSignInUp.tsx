@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { SubmitHandler, UseFormReturn } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
@@ -8,6 +8,7 @@ import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCapt
 import { AppPath } from '@/types/AppPath';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useDefaultHomePagePath } from '~/hooks/useDefaultHomePagePath';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 import { useAuth } from '../../hooks/useAuth';
@@ -25,6 +26,10 @@ export enum SignInUpStep {
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
   const { enqueueSnackBar } = useSnackBar();
+
+  const navigate = useNavigate();
+
+  const { defaultHomePagePath } = useDefaultHomePagePath();
 
   const isMatchingLocation = useIsMatchingLocation();
 
@@ -114,6 +119,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
               workspaceInviteHash,
               token,
             );
+        navigate(defaultHomePagePath);
       } catch (err: any) {
         enqueueSnackBar(err?.message, {
           variant: SnackBarVariant.Error,
@@ -128,6 +134,8 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       signUpWithCredentials,
       workspaceInviteHash,
       enqueueSnackBar,
+      navigate,
+      defaultHomePagePath,
     ],
   );
 
