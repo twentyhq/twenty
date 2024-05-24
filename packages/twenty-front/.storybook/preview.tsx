@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { ThemeProvider } from '@emotion/react';
 import { Preview } from '@storybook/react';
 import { initialize, mswDecorator } from 'msw-storybook-addon';
@@ -30,6 +31,12 @@ const preview: Preview = {
   decorators: [
     (Story) => {
       const theme = useDarkMode() ? THEME_DARK : THEME_LIGHT;
+
+      // TOOD: insert here
+      useEffect(() => {
+        document.documentElement.className =
+          theme.name === 'dark' ? 'dark' : 'light';
+      }, [theme]);
 
       return (
         <ThemeProvider theme={theme}>

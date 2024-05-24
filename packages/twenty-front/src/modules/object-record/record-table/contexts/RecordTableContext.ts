@@ -10,7 +10,7 @@ import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocus
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-type RecordTableContextProps = {
+export type RecordTableContextProps = {
   objectMetadataItem: ObjectMetadataItem;
   onUpsertRecord: ({
     persistField,

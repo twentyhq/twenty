@@ -16,28 +16,6 @@ import { RecordTableCellSoftFocusMode } from './RecordTableCellSoftFocusMode';
 
 import styles from './RecordTableCellContainer.module.css';
 
-// const StyledTd = styled.td<{ isSelected: boolean; isInEditMode: boolean }>`
-//   background: ${({ isSelected, theme }) =>
-//     isSelected ? theme.accent.quaternary : theme.background.primary};
-//   z-index: ${({ isInEditMode }) => (isInEditMode ? '4 !important' : '3')};
-// `;
-
-// const StyledCellBaseContainer = styled.div<{ softFocus: boolean }>`
-//   align-items: center;
-//   box-sizing: border-box;
-//   cursor: pointer;
-//   display: flex;
-//   height: 32px;
-//   position: relative;
-//   user-select: none;
-//   ${(props) =>
-//     props.softFocus
-//       ? `background: ${props.theme.background.transparent.secondary};
-//       border-radius: ${props.theme.border.radius.sm};
-//       outline: 1px solid ${props.theme.font.color.extraLight};`
-//       : ''}
-// `;
-
 export type RecordTableCellContainerProps = {
   editModeContent: ReactElement;
   nonEditModeContent: ReactElement;

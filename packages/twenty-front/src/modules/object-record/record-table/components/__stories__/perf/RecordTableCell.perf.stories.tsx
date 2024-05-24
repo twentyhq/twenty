@@ -15,8 +15,10 @@ import { RecordTableCellContext } from '@/object-record/record-table/contexts/Re
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
+import { getLogoUrlFromDomainName } from '~/utils';
 
 import { recordTableCellMock } from './mock';
 
@@ -64,7 +66,16 @@ const meta: Meta = {
             onMoveSoftFocusToCell: () => {},
             onContextMenu: () => {},
             onCellMouseEnter: () => {},
-            recordChipDataGeneratorPerFieldName: {},
+            recordChipDataGeneratorPerFieldName: {
+              company: (objectRecord: ObjectRecord) => ({
+                name: objectRecord.name,
+                avatarType: 'rounded',
+                avatarUrl:
+                  getLogoUrlFromDomainName(objectRecord.domainName) ?? '',
+                linkToShowPage: '/object-record/company',
+              }),
+            },
+
             visibleTableColumns: [],
           }}
         >
