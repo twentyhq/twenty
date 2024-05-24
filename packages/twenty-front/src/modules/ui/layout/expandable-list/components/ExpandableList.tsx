@@ -41,7 +41,6 @@ const StyledChipCount = styled(Chip)`
 `;
 
 export type ExpandableListProps = {
-  anchorElement?: HTMLElement;
   isChipCountDisplayed?: boolean;
   withExpandedListBorder?: boolean;
 };

@@ -80,7 +80,6 @@ export const FieldDisplay = ({
   ) : isFieldLinks(fieldDefinition) ? (
     <LinksFieldDisplay
       isCellSoftFocused={isCellSoftFocused}
-      cellElement={cellElement}
       fromTableCell={fromTableCell}
     />
   ) : isFieldCurrency(fieldDefinition) ? (
