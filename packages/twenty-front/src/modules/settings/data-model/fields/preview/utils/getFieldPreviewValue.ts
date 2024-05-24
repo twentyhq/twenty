@@ -1,9 +1,7 @@
-import { isNonEmptyString, isString } from '@sniptt/guards';
-
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
 import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSettingsFieldTypeConfig';
 import { isDefined } from '~/utils/isDefined';
-import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
 export const getFieldPreviewValue = ({
   fieldMetadataItem,
@@ -11,11 +9,10 @@ export const getFieldPreviewValue = ({
   fieldMetadataItem: Pick<FieldMetadataItem, 'type' | 'defaultValue'>;
 }) => {
   if (
-    isString(fieldMetadataItem.defaultValue)
-      ? isNonEmptyString(
-          stripSimpleQuotesFromString(fieldMetadataItem.defaultValue),
-        )
-      : isDefined(fieldMetadataItem.defaultValue)
+    !isFieldValueEmpty({
+      fieldDefinition: { type: fieldMetadataItem.type },
+      fieldValue: fieldMetadataItem.defaultValue,
+    })
   ) {
     return fieldMetadataItem.defaultValue;
   }

@@ -1,6 +1,12 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
-import { getPlaceholderRecord } from '@/settings/data-model/fields/preview/utils/getPlaceholderRecord';
+import { isFieldValueEmpty } from '@/object-record/record-field/utils/isFieldValueEmpty';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { getFieldPreviewValue } from '@/settings/data-model/fields/preview/utils/getFieldPreviewValue';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
+import { pascalCase } from '~/utils/string/pascalCase';
 
 type UsePreviewRecordParams = {
   objectMetadataItem: Pick<
@@ -15,22 +21,45 @@ type UsePreviewRecordParams = {
 
 export const usePreviewRecord = ({
   objectMetadataItem,
-  skip,
-}: UsePreviewRecordParams) => {
+  skip: skipFromProps,
+}: UsePreviewRecordParams): ObjectRecord | null => {
+  const labelIdentifierFieldMetadataItem =
+    getLabelIdentifierFieldMetadataItem(objectMetadataItem);
+  const skip = skipFromProps || !labelIdentifierFieldMetadataItem;
+
   const { records } = useFindManyRecords({
     objectNameSingular: objectMetadataItem.nameSingular,
     limit: 1,
     skip,
   });
 
-  if (skip === true) return null;
+  if (skip) return null;
 
   const [firstRecord] = records;
 
-  const previewRecord =
-    firstRecord ??
-    // If no record was found, display a placeholder record
-    getPlaceholderRecord({ objectMetadataItem });
+  if (
+    isDefined(firstRecord) &&
+    !isFieldValueEmpty({
+      fieldDefinition: { type: labelIdentifierFieldMetadataItem.type },
+      fieldValue: firstRecord?.[labelIdentifierFieldMetadataItem.name],
+    })
+  ) {
+    return firstRecord;
+  }
 
-  return previewRecord;
+  const fieldPreviewValue =
+    labelIdentifierFieldMetadataItem.type === FieldMetadataType.Text
+      ? objectMetadataItem.labelSingular
+      : getFieldPreviewValue({
+          fieldMetadataItem: labelIdentifierFieldMetadataItem,
+        });
+
+  const placeholderRecord = {
+    __typename: pascalCase(objectMetadataItem.nameSingular),
+    id: '',
+    [labelIdentifierFieldMetadataItem.name]: fieldPreviewValue,
+  };
+
+  // If no record was found, or if the label identifier field value is empty, display a placeholder record
+  return placeholderRecord;
 };

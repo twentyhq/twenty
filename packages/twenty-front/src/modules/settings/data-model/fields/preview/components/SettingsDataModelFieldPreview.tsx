@@ -10,7 +10,9 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { BooleanFieldInput } from '@/object-record/record-field/meta-types/input/components/BooleanFieldInput';
 import { RatingFieldInput } from '@/object-record/record-field/meta-types/input/components/RatingFieldInput';
 import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetFieldValueEffect';
+import { SettingsDataModelSetRecordEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetRecordEffect';
 import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
+import { usePreviewRecord } from '@/settings/data-model/fields/preview/hooks/usePreviewRecord';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export type SettingsDataModelFieldPreviewProps = {
@@ -62,7 +64,7 @@ export const SettingsDataModelFieldPreview = ({
   const FieldIcon = getIcon(fieldMetadataItem.icon);
 
   // id and name are undefined in create mode (field does not exist yet)
-  // and are defined in edit mode.
+  // and defined in edit mode.
   const isLabelIdentifier =
     !!fieldMetadataItem.id &&
     !!fieldMetadataItem.name &&
@@ -74,24 +76,34 @@ export const SettingsDataModelFieldPreview = ({
       objectMetadataItem,
     });
 
-  const fieldPreviewValue = useFieldPreviewValue({
-    isLabelIdentifier,
-    fieldMetadataItem,
+  const previewRecord = usePreviewRecord({
     objectMetadataItem,
+    skip: !isLabelIdentifier,
+  });
+
+  const fieldPreviewValue = useFieldPreviewValue({
+    fieldMetadataItem,
     relationObjectMetadataItem,
+    skip: isLabelIdentifier,
   });
 
   const fieldName =
     fieldMetadataItem.name || `${fieldMetadataItem.type}-new-field`;
-  const entityId = `${objectMetadataItem.nameSingular}-${fieldName}-preview`;
+  const entityId =
+    previewRecord?.id ??
+    `${objectMetadataItem.nameSingular}-${fieldName}-preview`;
 
   return (
     <>
-      <SettingsDataModelSetFieldValueEffect
-        entityId={entityId}
-        fieldName={fieldName}
-        value={fieldPreviewValue}
-      />
+      {previewRecord ? (
+        <SettingsDataModelSetRecordEffect record={previewRecord} />
+      ) : (
+        <SettingsDataModelSetFieldValueEffect
+          entityId={entityId}
+          fieldName={fieldName}
+          value={fieldPreviewValue}
+        />
+      )}
       <StyledFieldPreview shrink={shrink}>
         {!!withFieldLabel && (
           <StyledFieldLabel>
