@@ -54,6 +54,7 @@ type ShowPageRightContainerProps = {
   notes?: boolean;
   emails?: boolean;
   loading?: boolean;
+  summary?: JSX.Element;
 };
 
 export const ShowPageRightContainer = ({
@@ -63,6 +64,7 @@ export const ShowPageRightContainer = ({
   notes,
   emails,
   loading,
+  summary,
 }: ShowPageRightContainerProps) => {
   const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
   const activeTabId = useRecoilValue(activeTabIdState);
@@ -80,7 +82,15 @@ export const ShowPageRightContainer = ({
         CoreObjectNameSingular.Company) ||
     targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Person;
 
+  const isMobile = useIsMobile();
+
   const TASK_TABS = [
+    {
+      id: 'summary',
+      title: 'Summary',
+      Icon: IconCheckbox,
+      hide: !isMobile,
+    },
     {
       id: 'timeline',
       title: 'Timeline',
@@ -135,6 +145,7 @@ export const ShowPageRightContainer = ({
           tabs={TASK_TABS}
         />
       </StyledTabListContainer>
+      {activeTabId === 'summary' && summary}
       {activeTabId === 'timeline' && (
         <>
           <TimelineQueryEffect targetableObject={targetableObject} />
@@ -157,6 +168,7 @@ export const ShowPageRightContainer = ({
       {activeTabId === 'logs' && (
         <TimelineActivities targetableObject={targetableObject} />
       )}
+      {}
     </StyledShowPageRightContainer>
   );
 };

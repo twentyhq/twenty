@@ -25,6 +25,7 @@ import { ShowPageRightContainer } from '@/ui/layout/show-page/components/ShowPag
 import { ShowPageSummaryCard } from '@/ui/layout/show-page/components/ShowPageSummaryCard';
 import { ShowPageRecoilScopeContext } from '@/ui/layout/states/ShowPageRecoilScopeContext';
 import { RecoilScope } from '@/ui/utilities/recoil-scope/components/RecoilScope';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import {
   FieldMetadataType,
   FileFolder,
@@ -62,10 +63,6 @@ export const RecordShowContainer = ({
   const [recordFromStore] = useRecoilState(
     recordStoreFamilyState(objectRecordId),
   );
-
-  console.log('yo');
-  console.log(recordFromStore);
-  console.log(objectRecordId);
 
   const recordIdentifier = useRecoilValue(
     recordStoreIdentifierFamilySelector({
@@ -133,113 +130,121 @@ export const RecordShowContainer = ({
   );
 
   const isReadOnly = objectMetadataItem.isRemote;
+  const isMobile = useIsMobile();
+
+  const summary = (hideOnMobile: boolean) =>
+    isDefined(recordFromStore) ? (
+      <>
+        {(!isMobile || !hideOnMobile) && (
+          <PropertyBox>
+            {inlineFieldMetadataItems.map((fieldMetadataItem, index) => (
+              <FieldContext.Provider
+                key={objectRecordId + fieldMetadataItem.id}
+                value={{
+                  entityId: objectRecordId,
+                  maxWidth: 200,
+                  recoilScopeId: objectRecordId + fieldMetadataItem.id,
+                  isLabelIdentifier: false,
+                  fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
+                    field: fieldMetadataItem,
+                    position: index,
+                    objectMetadataItem,
+                    showLabel: true,
+                    labelWidth: 90,
+                  }),
+                  useUpdateRecord: useUpdateOneObjectRecordMutation,
+                  hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                }}
+              >
+                <RecordInlineCell
+                  loading={loading || recordLoading}
+                  readonly={isReadOnly}
+                />
+              </FieldContext.Provider>
+            ))}
+          </PropertyBox>
+        )}
+        {!isInRightDrawer && (!isMobile || !hideOnMobile) && (
+          <RecordDetailDuplicatesSection
+            objectRecordId={objectRecordId}
+            objectNameSingular={objectNameSingular}
+          />
+        )}
+        {!isInRightDrawer &&
+          (!isMobile || !hideOnMobile) &&
+          relationFieldMetadataItems?.map((fieldMetadataItem, index) => (
+            <FieldContext.Provider
+              key={objectRecordId + fieldMetadataItem.id}
+              value={{
+                entityId: objectRecordId,
+                recoilScopeId: objectRecordId + fieldMetadataItem.id,
+                isLabelIdentifier: false,
+                fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
+                  field: fieldMetadataItem,
+                  position: index,
+                  objectMetadataItem,
+                }),
+                useUpdateRecord: useUpdateOneObjectRecordMutation,
+                hotkeyScope: InlineCellHotkeyScope.InlineCell,
+              }}
+            >
+              <RecordDetailRelationSection loading={loading || recordLoading} />
+            </FieldContext.Provider>
+          ))}
+      </>
+    ) : (
+      <></>
+    );
 
   return (
     <RecoilScope CustomRecoilScopeContext={ShowPageRecoilScopeContext}>
       <ShowPageContainer>
         <ShowPageLeftContainer isInRightDrawer={isInRightDrawer}>
-          {isDefined(recordFromStore) && (
-            <>
-              <ShowPageSummaryCard
-                id={objectRecordId}
-                logoOrAvatar={recordIdentifier?.avatarUrl ?? ''}
-                avatarPlaceholder={recordIdentifier?.name ?? ''}
-                date={recordFromStore.createdAt ?? ''}
-                loading={loading || recordLoading}
-                title={
-                  <FieldContext.Provider
-                    value={{
-                      entityId: objectRecordId,
-                      recoilScopeId:
-                        objectRecordId + labelIdentifierFieldMetadataItem?.id,
-                      isLabelIdentifier: false,
-                      fieldDefinition: {
-                        type:
-                          labelIdentifierFieldMetadataItem?.type ||
-                          FieldMetadataType.Text,
-                        iconName: '',
-                        fieldMetadataId:
-                          labelIdentifierFieldMetadataItem?.id ?? '',
-                        label: labelIdentifierFieldMetadataItem?.label || '',
-                        metadata: {
-                          fieldName:
-                            labelIdentifierFieldMetadataItem?.name || '',
-                          objectMetadataNameSingular: objectNameSingular,
-                        },
-                        defaultValue:
-                          labelIdentifierFieldMetadataItem?.defaultValue,
+          {isDefined(recordFromStore) ? (
+            <ShowPageSummaryCard
+              id={objectRecordId}
+              logoOrAvatar={recordIdentifier?.avatarUrl ?? ''}
+              avatarPlaceholder={recordIdentifier?.name ?? ''}
+              date={recordFromStore.createdAt ?? ''}
+              loading={loading || recordLoading}
+              title={
+                <FieldContext.Provider
+                  value={{
+                    entityId: objectRecordId,
+                    recoilScopeId:
+                      objectRecordId + labelIdentifierFieldMetadataItem?.id,
+                    isLabelIdentifier: false,
+                    fieldDefinition: {
+                      type:
+                        labelIdentifierFieldMetadataItem?.type ||
+                        FieldMetadataType.Text,
+                      iconName: '',
+                      fieldMetadataId:
+                        labelIdentifierFieldMetadataItem?.id ?? '',
+                      label: labelIdentifierFieldMetadataItem?.label || '',
+                      metadata: {
+                        fieldName: labelIdentifierFieldMetadataItem?.name || '',
+                        objectMetadataNameSingular: objectNameSingular,
                       },
-                      useUpdateRecord: useUpdateOneObjectRecordMutation,
-                      hotkeyScope: InlineCellHotkeyScope.InlineCell,
-                    }}
-                  >
-                    <RecordInlineCell readonly={isReadOnly} />
-                  </FieldContext.Provider>
-                }
-                avatarType={recordIdentifier?.avatarType ?? 'rounded'}
-                onUploadPicture={
-                  objectNameSingular === 'person' ? onUploadPicture : undefined
-                }
-              />
-              <PropertyBox>
-                {inlineFieldMetadataItems.map((fieldMetadataItem, index) => (
-                  <FieldContext.Provider
-                    key={objectRecordId + fieldMetadataItem.id}
-                    value={{
-                      entityId: objectRecordId,
-                      maxWidth: 200,
-                      recoilScopeId: objectRecordId + fieldMetadataItem.id,
-                      isLabelIdentifier: false,
-                      fieldDefinition:
-                        formatFieldMetadataItemAsColumnDefinition({
-                          field: fieldMetadataItem,
-                          position: index,
-                          objectMetadataItem,
-                          showLabel: true,
-                          labelWidth: 90,
-                        }),
-                      useUpdateRecord: useUpdateOneObjectRecordMutation,
-                      hotkeyScope: InlineCellHotkeyScope.InlineCell,
-                    }}
-                  >
-                    <RecordInlineCell
-                      loading={loading || recordLoading}
-                      readonly={isReadOnly}
-                    />
-                  </FieldContext.Provider>
-                ))}
-              </PropertyBox>
-              {!isInRightDrawer && (
-                <RecordDetailDuplicatesSection
-                  objectRecordId={objectRecordId}
-                  objectNameSingular={objectNameSingular}
-                />
-              )}
-              {!isInRightDrawer &&
-                relationFieldMetadataItems?.map((fieldMetadataItem, index) => (
-                  <FieldContext.Provider
-                    key={objectRecordId + fieldMetadataItem.id}
-                    value={{
-                      entityId: objectRecordId,
-                      recoilScopeId: objectRecordId + fieldMetadataItem.id,
-                      isLabelIdentifier: false,
-                      fieldDefinition:
-                        formatFieldMetadataItemAsColumnDefinition({
-                          field: fieldMetadataItem,
-                          position: index,
-                          objectMetadataItem,
-                        }),
-                      useUpdateRecord: useUpdateOneObjectRecordMutation,
-                      hotkeyScope: InlineCellHotkeyScope.InlineCell,
-                    }}
-                  >
-                    <RecordDetailRelationSection
-                      loading={loading || recordLoading}
-                    />
-                  </FieldContext.Provider>
-                ))}
-            </>
+                      defaultValue:
+                        labelIdentifierFieldMetadataItem?.defaultValue,
+                    },
+                    useUpdateRecord: useUpdateOneObjectRecordMutation,
+                    hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                  }}
+                >
+                  <RecordInlineCell readonly={isReadOnly} />
+                </FieldContext.Provider>
+              }
+              avatarType={recordIdentifier?.avatarType ?? 'rounded'}
+              onUploadPicture={
+                objectNameSingular === 'person' ? onUploadPicture : undefined
+              }
+            />
+          ) : (
+            <></>
           )}
+          {summary(true)}
         </ShowPageLeftContainer>
         {recordFromStore && !isInRightDrawer ? (
           <ShowPageRightContainer
@@ -251,6 +256,7 @@ export const RecordShowContainer = ({
             tasks
             notes
             emails
+            summary={summary(false)}
             loading={loading || recordLoading}
           />
         ) : (

@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { useInitDraftValueV2 } from '@/object-record/record-field/hooks/useInitDraftValueV2';
@@ -45,7 +46,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
   const setHotkeyScope = useSetHotkeyScope();
   const { setDragSelectionStartEnabled } = useDragSelect();
 
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const leaveTableFocus = useLeaveTableFocus(tableScopeId);
   const { toggleClickOutsideListener } = useClickOutsideListener(
     SOFT_FOCUS_CLICK_OUTSIDE_LISTENER_ID,
@@ -93,6 +94,13 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
           fieldValue,
         });
 
+        if (isFirstColumnCell && !isEmpty && !isActionButtonClick) {
+          leaveTableFocus();
+          navigate(pathToShowPage);
+
+          return;
+        }
+
         if (isFirstColumnCell && !isEmpty && isActionButtonClick) {
           leaveTableFocus();
           // navigate(pathToShowPage);
@@ -137,6 +145,7 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
       openRightDrawer,
       setViewableRecordId,
       setViewableRecordNameSingular,
+      navigate,
     ],
   );
 
