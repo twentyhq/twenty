@@ -67,7 +67,10 @@ export const Chip = ({
     >
       {leftComponent}
       <div className={styles.label}>
-        <OverflowingTextWithTooltip text={label} />
+        <OverflowingTextWithTooltip
+          size={size === ChipSize.Large ? 'large' : 'small'}
+          text={label}
+        />
       </div>
       {rightComponent}
     </div>
