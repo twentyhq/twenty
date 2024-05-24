@@ -266,8 +266,8 @@ const customObjectMetadataItemEdge: ObjectEdge = {
               },
               {
                 id: '3',
-                value: 'TAG_3',
-                label: 'Tag 3',
+                value: 'HIGH',
+                label: 'High',
                 color: 'red',
               },
             ],

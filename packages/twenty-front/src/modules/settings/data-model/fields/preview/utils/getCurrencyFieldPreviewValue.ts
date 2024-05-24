@@ -23,9 +23,9 @@ export const getCurrencyFieldPreviewValue = ({
   return currencyFieldDefaultValueSchema
     .transform((value) => ({
       amountMicros: value.amountMicros || placeholderDefaultValue.amountMicros,
-      currencyCode:
-        (stripSimpleQuotesFromString(value.currencyCode) as CurrencyCode) ||
-        placeholderDefaultValue.currencyCode,
+      currencyCode: stripSimpleQuotesFromString(
+        value.currencyCode,
+      ) as CurrencyCode,
     }))
     .catch(placeholderDefaultValue)
     .parse(fieldMetadataItem.defaultValue);

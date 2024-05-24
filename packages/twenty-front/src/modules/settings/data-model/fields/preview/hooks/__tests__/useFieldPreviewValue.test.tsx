@@ -26,33 +26,56 @@ const Wrapper = ({ children }: { children: ReactNode }) => (
 );
 
 describe('useFieldPreviewValue', () => {
-  it("returns the object's label identifier preview value if isLabelIdentifier is true", () => {
+  it('returns null if skip is true', () => {
     // Given
-    const objectMetadataItem = mockedCompanyObjectMetadataItem;
-    const fieldMetadataItem = {
-      name: '',
-      type: FieldMetadataType.Text,
-    };
-    const isLabelIdentifier = true;
+    const fieldName = 'amount';
+    const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
+      ({ name, type }) =>
+        name === fieldName && type === FieldMetadataType.Currency,
+    );
+    const skip = true;
+
+    if (!fieldMetadataItem) {
+      throw new Error(`Field ${fieldName} not found`);
+    }
 
     // When
     const { result } = renderHook(
-      () =>
-        useFieldPreviewValue({
-          fieldMetadataItem,
-          isLabelIdentifier,
-          objectMetadataItem,
-        }),
+      () => useFieldPreviewValue({ fieldMetadataItem, skip }),
       { wrapper: Wrapper },
     );
 
     // Then
-    expect(result.current).toEqual({ name: 'Company' });
+    expect(result.current).toBeNull();
+  });
+
+  it("returns the field's preview value for a Currency field", () => {
+    // Given
+    const fieldName = 'amount';
+    const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
+      ({ name, type }) =>
+        name === fieldName && type === FieldMetadataType.Currency,
+    );
+
+    if (!fieldMetadataItem) {
+      throw new Error(`Field ${fieldName} not found`);
+    }
+
+    // When
+    const { result } = renderHook(
+      () => useFieldPreviewValue({ fieldMetadataItem }),
+      { wrapper: Wrapper },
+    );
+
+    // Then
+    expect(result.current).toEqual({
+      amountMicros: 2000000000,
+      currencyCode: 'USD',
+    });
   });
 
   it("returns the relation object's label identifier preview value for a Relation field", () => {
     // Given
-    const objectMetadataItem = mockedCompanyObjectMetadataItem;
     const fieldMetadataItem = {
       name: 'people',
       type: FieldMetadataType.Relation,
@@ -64,7 +87,6 @@ describe('useFieldPreviewValue', () => {
       () =>
         useFieldPreviewValue({
           fieldMetadataItem,
-          objectMetadataItem,
           relationObjectMetadataItem,
         }),
       { wrapper: Wrapper },
@@ -72,6 +94,8 @@ describe('useFieldPreviewValue', () => {
 
     // Then
     expect(result.current).toEqual({
+      __typename: 'Person',
+      id: '',
       name: {
         firstName: 'John',
         lastName: 'Doe',
@@ -81,7 +105,6 @@ describe('useFieldPreviewValue', () => {
 
   it("returns the field's preview value for a Select field", () => {
     // Given
-    const objectMetadataItem = mockedOpportunityObjectMetadataItem;
     const fieldName = 'stage';
     const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
       ({ name, type }) =>
@@ -94,11 +117,7 @@ describe('useFieldPreviewValue', () => {
 
     // When
     const { result } = renderHook(
-      () =>
-        useFieldPreviewValue({
-          fieldMetadataItem,
-          objectMetadataItem,
-        }),
+      () => useFieldPreviewValue({ fieldMetadataItem }),
       { wrapper: Wrapper },
     );
 
@@ -108,7 +127,6 @@ describe('useFieldPreviewValue', () => {
 
   it("returns the field's preview value for a Multi-Select field", () => {
     // Given
-    const objectMetadataItem = mockedCompanyObjectMetadataItem;
     const options: FieldMetadataItemOption[] = [
       {
         color: 'blue',
@@ -140,11 +158,7 @@ describe('useFieldPreviewValue', () => {
 
     // When
     const { result } = renderHook(
-      () =>
-        useFieldPreviewValue({
-          fieldMetadataItem,
-          objectMetadataItem,
-        }),
+      () => useFieldPreviewValue({ fieldMetadataItem }),
       { wrapper: Wrapper },
     );
 
@@ -154,7 +168,6 @@ describe('useFieldPreviewValue', () => {
 
   it("returns the field's preview value for other field types", () => {
     // Given
-    const objectMetadataItem = mockedCompanyObjectMetadataItem;
     const fieldName = 'employees';
     const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
       ({ name }) => name === fieldName,
@@ -166,11 +179,7 @@ describe('useFieldPreviewValue', () => {
 
     // When
     const { result } = renderHook(
-      () =>
-        useFieldPreviewValue({
-          fieldMetadataItem,
-          objectMetadataItem,
-        }),
+      () => useFieldPreviewValue({ fieldMetadataItem }),
       { wrapper: Wrapper },
     );
 

@@ -4,13 +4,13 @@ import {
   mockedCustomObjectMetadataItem,
 } from '~/testing/mock-data/metadata';
 
-import { getSelectFieldPreviewValue } from '../getSelectFieldPreviewValue';
+import { getMultiSelectFieldPreviewValue } from '../getMultiSelectFieldPreviewValue';
 
-describe('getSelectFieldPreviewValue', () => {
-  it('returns null if the field is not a Select field', () => {
+describe('getMultiSelectFieldPreviewValue', () => {
+  it('returns null if the field is not a Multi-Select field', () => {
     // Given
     const fieldMetadataItem = mockedCompanyObjectMetadataItem.fields.find(
-      ({ type }) => type !== FieldMetadataType.Select,
+      ({ type }) => type !== FieldMetadataType.MultiSelect,
     );
 
     if (!fieldMetadataItem) {
@@ -18,39 +18,44 @@ describe('getSelectFieldPreviewValue', () => {
     }
 
     // When
-    const previewValue = getSelectFieldPreviewValue({ fieldMetadataItem });
+    const previewValue = getMultiSelectFieldPreviewValue({ fieldMetadataItem });
 
     // Then
     expect(previewValue).toBeNull();
   });
 
   const fieldName = 'priority';
-  const fieldMetadataItem = mockedCustomObjectMetadataItem.fields.find(
+  const selectFieldMetadataItem = mockedCustomObjectMetadataItem.fields.find(
     ({ name, type }) => name === fieldName && type === FieldMetadataType.Select,
   );
 
-  if (!fieldMetadataItem) {
+  if (!selectFieldMetadataItem) {
     throw new Error(`Field '${fieldName}' not found`);
   }
 
+  const fieldMetadataItem = {
+    ...selectFieldMetadataItem,
+    type: FieldMetadataType.MultiSelect,
+  };
+
   it("returns the defaultValue as an option value if a valid defaultValue is found in the field's metadata", () => {
     // Given
-    const defaultValue = "'MEDIUM'";
+    const defaultValue = ["'MEDIUM'", "'LOW'"];
     const fieldMetadataItemWithDefaultValue = {
       ...fieldMetadataItem,
       defaultValue,
     };
 
     // When
-    const previewValue = getSelectFieldPreviewValue({
+    const previewValue = getMultiSelectFieldPreviewValue({
       fieldMetadataItem: fieldMetadataItemWithDefaultValue,
     });
 
     // Then
-    expect(previewValue).toBe('MEDIUM');
+    expect(previewValue).toEqual(['MEDIUM', 'LOW']);
   });
 
-  it("returns the first option value if no defaultValue was found in the field's metadata", () => {
+  it("returns all option values if no defaultValue was found in the field's metadata", () => {
     // Given
     const defaultValue = null;
     const fieldMetadataItemWithDefaultValue = {
@@ -59,14 +64,14 @@ describe('getSelectFieldPreviewValue', () => {
     };
 
     // When
-    const previewValue = getSelectFieldPreviewValue({
+    const previewValue = getMultiSelectFieldPreviewValue({
       fieldMetadataItem: fieldMetadataItemWithDefaultValue,
     });
 
     // Then
-    expect(previewValue).toBe('LOW');
-    expect(previewValue).toBe(
-      fieldMetadataItemWithDefaultValue.options?.[0]?.value,
+    expect(previewValue).toEqual(['LOW', 'MEDIUM', 'HIGH']);
+    expect(previewValue).toEqual(
+      fieldMetadataItemWithDefaultValue.options?.map(({ value }) => value),
     );
   });
 
@@ -79,14 +84,14 @@ describe('getSelectFieldPreviewValue', () => {
     };
 
     // When
-    const previewValue = getSelectFieldPreviewValue({
+    const previewValue = getMultiSelectFieldPreviewValue({
       fieldMetadataItem: fieldMetadataItemWithDefaultValue,
     });
 
     // Then
-    expect(previewValue).toBe('LOW');
-    expect(previewValue).toBe(
-      fieldMetadataItemWithDefaultValue.options?.[0]?.value,
+    expect(previewValue).toEqual(['LOW', 'MEDIUM', 'HIGH']);
+    expect(previewValue).toEqual(
+      fieldMetadataItemWithDefaultValue.options?.map(({ value }) => value),
     );
   });
 
@@ -98,7 +103,7 @@ describe('getSelectFieldPreviewValue', () => {
     };
 
     // When
-    const previewValue = getSelectFieldPreviewValue({
+    const previewValue = getMultiSelectFieldPreviewValue({
       fieldMetadataItem: fieldMetadataItemWithNoOptions,
     });
 
@@ -114,7 +119,7 @@ describe('getSelectFieldPreviewValue', () => {
     };
 
     // When
-    const previewValue = getSelectFieldPreviewValue({
+    const previewValue = getMultiSelectFieldPreviewValue({
       fieldMetadataItem: fieldMetadataItemWithEmptyOptions,
     });
 
