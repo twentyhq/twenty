@@ -1,6 +1,7 @@
 import { Inject, Injectable, Logger } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { EntityManager } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
@@ -31,6 +32,10 @@ import {
   CreateCompanyAndContactJobData,
   CreateCompanyAndContactJob,
 } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @Injectable()
 export class GmailMessagesImportService {
@@ -49,6 +54,8 @@ export class GmailMessagesImportService {
     private readonly messageQueueService: MessageQueueService,
     private readonly messageService: MessageService,
     private readonly messageParticipantService: MessageParticipantService,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   async fetchMessageContentFromCache(
@@ -171,6 +178,16 @@ export class GmailMessagesImportService {
 
     const messageQueries = createQueriesFromMessageIds(messageIdsToFetch);
 
+    const isContactCreationForSentAndReceivedEmailsEnabledFeatureFlag =
+      await this.featureFlagRepository.findOneBy({
+        workspaceId: workspaceId,
+        key: FeatureFlagKeys.IsContactCreationForSentAndReceivedEmailsEnabled,
+        value: true,
+      });
+
+    const isContactCreationForSentAndReceivedEmailsEnabled =
+      isContactCreationForSentAndReceivedEmailsEnabledFeatureFlag?.value;
+
     try {
       const messagesToSave =
         await this.fetchMessagesByBatchesService.fetchAllMessages(
@@ -214,8 +231,9 @@ export class GmailMessagesImportService {
                   messageId,
                   shouldCreateContact:
                     gmailMessageChannel.isContactAutoCreationEnabled &&
-                    message.participants.find((p) => p.role === 'from')
-                      ?.handle === connectedAccount.handle,
+                    (isContactCreationForSentAndReceivedEmailsEnabled ||
+                      message.participants.find((p) => p.role === 'from')
+                        ?.handle === connectedAccount.handle),
                 }))
               : [];
           });

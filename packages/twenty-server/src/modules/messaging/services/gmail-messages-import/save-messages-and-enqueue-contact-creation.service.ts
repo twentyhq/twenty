@@ -1,6 +1,7 @@
 import { Injectable, Inject } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
-import { EntityManager } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
@@ -18,6 +19,10 @@ import {
   CreateCompanyAndContactJobData,
   CreateCompanyAndContactJob,
 } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
+import {
+  FeatureFlagEntity,
+  FeatureFlagKeys,
+} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @Injectable()
 export class SaveMessagesAndEnqueueContactCreationService {
@@ -27,6 +32,8 @@ export class SaveMessagesAndEnqueueContactCreationService {
     private readonly messageQueueService: MessageQueueService,
     private readonly messageService: MessageService,
     private readonly messageParticipantService: MessageParticipantService,
+    @InjectRepository(FeatureFlagEntity, 'core')
+    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   async saveMessagesAndEnqueueContactCreationJob(
@@ -39,6 +46,16 @@ export class SaveMessagesAndEnqueueContactCreationService {
       await this.workspaceDataSourceService.connectToWorkspaceDataSource(
         workspaceId,
       );
+
+    const isContactCreationForSentAndReceivedEmailsEnabledFeatureFlag =
+      await this.featureFlagRepository.findOneBy({
+        workspaceId: workspaceId,
+        key: FeatureFlagKeys.IsContactCreationForSentAndReceivedEmailsEnabled,
+        value: true,
+      });
+
+    const isContactCreationForSentAndReceivedEmailsEnabled =
+      isContactCreationForSentAndReceivedEmailsEnabledFeatureFlag?.value;
 
     const participantsWithMessageId = await workspaceDataSource?.transaction(
       async (transactionManager: EntityManager) => {
@@ -62,8 +79,9 @@ export class SaveMessagesAndEnqueueContactCreationService {
                 messageId,
                 shouldCreateContact:
                   messageChannel.isContactAutoCreationEnabled &&
-                  message.participants.find((p) => p.role === 'from')
-                    ?.handle === connectedAccount.handle,
+                  (isContactCreationForSentAndReceivedEmailsEnabled ||
+                    message.participants.find((p) => p.role === 'from')
+                      ?.handle === connectedAccount.handle),
               }))
             : [];
         });
