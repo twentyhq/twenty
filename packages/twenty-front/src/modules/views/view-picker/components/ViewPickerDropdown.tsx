@@ -15,6 +15,7 @@ import { ViewPickerListContent } from '@/views/view-picker/components/ViewPicker
 import { VIEW_PICKER_DROPDOWN_ID } from '@/views/view-picker/constants/ViewPickerDropdownId';
 import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { useViewPickerPersistView } from '@/views/view-picker/hooks/useViewPickerPersistView';
+import { isDefined } from '~/utils/isDefined';
 
 import { useViewStates } from '../../hooks/internal/useViewStates';
 
@@ -89,7 +90,9 @@ export const ViewPickerDropdown = () => {
             {currentViewWithCombinedFiltersAndSorts?.name ?? 'All'}
           </StyledViewName>
           <StyledDropdownLabelAdornments>
-            · {entityCountInCurrentView}{' '}
+            {isDefined(entityCountInCurrentView) && (
+              <>· {entityCountInCurrentView} </>
+            )}
             <IconChevronDown size={theme.icon.size.sm} />
           </StyledDropdownLabelAdornments>
         </StyledDropdownButtonContainer>

@@ -24,9 +24,9 @@ import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-
 import { MicrosoftAuthController } from 'src/engine/core-modules/auth/controllers/microsoft-auth.controller';
 import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
-import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
-import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
-import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
+import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -57,9 +57,9 @@ const jwtModule = JwtModule.registerAsync({
       'core',
     ),
     ObjectMetadataRepositoryModule.forFeature([
-      ConnectedAccountObjectMetadata,
-      MessageChannelObjectMetadata,
-      CalendarChannelObjectMetadata,
+      ConnectedAccountWorkspaceEntity,
+      MessageChannelWorkspaceEntity,
+      CalendarChannelWorkspaceEntity,
     ]),
     HttpModule,
     UserWorkspaceModule,

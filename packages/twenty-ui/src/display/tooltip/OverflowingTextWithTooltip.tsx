@@ -15,6 +15,7 @@ export const OverflowingTextWithTooltip = ({
   mutliline?: boolean;
 }) => {
   const textElementId = `title-id-${uuidV4()}`;
+  const [textElement, setTextElement] = useState<HTMLDivElement | null>(null);
 
   const textRef = useRef<HTMLDivElement>(null);
 

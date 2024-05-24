@@ -1,14 +1,14 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import { createContext, useContextSelector } from 'use-context-selector';
 
-export type RecordFiedValue = {
+export type RecordFieldValue = {
   [recordId: string]: {
     [fieldName: string]: any;
   };
 };
 
 export const RecordFieldValueSelectorContext = createContext<
-  [RecordFiedValue, Dispatch<SetStateAction<RecordFiedValue>>]
+  [RecordFieldValue, Dispatch<SetStateAction<RecordFieldValue>>]
 >([{}, () => {}]);
 
 export const useSetRecordValue = () => {
@@ -66,7 +66,7 @@ export const RecordFieldValueSelectorContextProvider = ({
   children: any;
 }) => (
   <RecordFieldValueSelectorContext.Provider
-    value={useState<RecordFiedValue>({})}
+    value={useState<RecordFieldValue>({})}
   >
     {children}
   </RecordFieldValueSelectorContext.Provider>

@@ -1,12 +1,7 @@
-import React, {
-  ReactElement,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import { clsx } from 'clsx';
 
+import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useCurrentTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useCurrentCellPosition';
@@ -62,14 +57,14 @@ export const RecordTableCellContainer = ({
   nonEditModeContent,
   editHotkeyScope,
 }: RecordTableCellContainerProps) => {
-  const reference = useRef<HTMLTableCellElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
-
-  const [hasSoftFocus, setHasSoftFocus] = useState(false);
-  const [isInEditMode, setIsInEditMode] = useState(false);
+  const { setIsFocused } = useFieldFocus();
 
   const { isSelected, recordId } = useContext(RecordTableRowContext);
   const { onContextMenu, onCellMouseEnter } = useContext(RecordTableContext);
+
+  const [isHovered, setIsHovered] = useState(false);
+  const [hasSoftFocus, setHasSoftFocus] = useState(false);
+  const [isInEditMode, setIsInEditMode] = useState(false);
 
   const cellPosition = useCurrentTableCellPosition();
 
@@ -96,6 +91,7 @@ export const RecordTableCellContainer = ({
       const newHasSoftFocus = event.detail;
 
       setHasSoftFocus(newHasSoftFocus);
+      setIsFocused(newHasSoftFocus);
     };
 
     document.addEventListener(
@@ -109,7 +105,7 @@ export const RecordTableCellContainer = ({
         customEventListener,
       );
     };
-  }, [cellPosition]);
+  }, [cellPosition, setIsFocused]);
 
   useEffect(() => {
     const customEventListener = (event: any) => {
@@ -139,7 +135,6 @@ export const RecordTableCellContainer = ({
         [styles.tdIsSelected]: isSelected,
         [styles.tdIsNotSelected]: !isSelected,
       })}
-      ref={reference}
       onContextMenu={handleContextMenu}
     >
       <CellHotkeyScopeContext.Provider

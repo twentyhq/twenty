@@ -7,6 +7,16 @@ describe('validateMetadataName', () => {
 
     expect(validateMetadataName(input)).not.toThrow;
   });
+  it('throws error if string has spaces', () => {
+    const input = 'name with spaces';
+
+    expect(() => validateMetadataName(input)).toThrow(InvalidStringException);
+  });
+  it('throws error if string starts with capital letter', () => {
+    const input = 'StringStartingWithCapitalLetter';
+
+    expect(() => validateMetadataName(input)).toThrow(InvalidStringException);
+  });
 
   it('throws error if string has non latin characters', () => {
     const input = 'בְרִבְרִ';

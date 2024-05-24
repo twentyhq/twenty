@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { IconMinus, IconPlus, IconSettings } from 'twenty-ui';
+import { H2Title, IconMinus, IconPlus, IconSettings } from 'twenty-ui';
 
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -14,7 +14,6 @@ import {
   StyledObjectFieldTableRow,
 } from '@/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow';
 import { AppPath } from '@/types/AppPath';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Button } from '@/ui/input/button/components/Button';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -184,9 +183,7 @@ export const SettingsObjectNewFieldStep1 = () => {
             title="Add Custom Field"
             size="small"
             variant="secondary"
-            onClick={() =>
-              navigate(`/settings/objects/${objectSlug}/new-field/step-2`)
-            }
+            to={`/settings/objects/${objectSlug}/new-field/step-2`}
           />
         </StyledSection>
       </SettingsPageContainer>

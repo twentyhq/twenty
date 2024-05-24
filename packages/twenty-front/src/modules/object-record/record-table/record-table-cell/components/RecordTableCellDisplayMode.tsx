@@ -8,7 +8,7 @@ export const RecordTableCellDisplayMode = ({
   const isEmpty = useIsFieldEmpty();
 
   if (isEmpty) {
-    return null;
+    return <></>;
   }
 
   return (

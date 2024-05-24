@@ -4,10 +4,10 @@ import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
-import { CalendarEventObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event.object-metadata';
+import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event.workspace-entity';
 import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/get-flattened-values-and-values-string-for-batch-raw-query.util';
 import { CalendarEvent } from 'src/modules/calendar/types/calendar-event';
-import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
+import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
 
 @Injectable()
 export class CalendarEventRepository {
@@ -19,7 +19,7 @@ export class CalendarEventRepository {
     calendarEventIds: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<CalendarEventObjectMetadata>[]> {
+  ): Promise<ObjectRecord<CalendarEventWorkspaceEntity>[]> {
     if (calendarEventIds.length === 0) {
       return [];
     }
@@ -39,7 +39,7 @@ export class CalendarEventRepository {
     iCalUIDs: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<CalendarEventObjectMetadata>[]> {
+  ): Promise<ObjectRecord<CalendarEventWorkspaceEntity>[]> {
     if (iCalUIDs.length === 0) {
       return [];
     }
@@ -80,7 +80,7 @@ export class CalendarEventRepository {
     offset: number,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<CalendarEventParticipantObjectMetadata>[]> {
+  ): Promise<ObjectRecord<CalendarEventParticipantWorkspaceEntity>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 

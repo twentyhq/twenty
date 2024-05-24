@@ -10,11 +10,13 @@ import {
 type UseGetDatabaseConnectionTablesParams = {
   connectionId: string;
   skip?: boolean;
+  shouldFetchPendingSchemaUpdates?: boolean;
 };
 
 export const useGetDatabaseConnectionTables = ({
   connectionId,
   skip,
+  shouldFetchPendingSchemaUpdates,
 }: UseGetDatabaseConnectionTablesParams) => {
   const apolloMetadataClient = useApolloMetadataClient();
 
@@ -27,12 +29,13 @@ export const useGetDatabaseConnectionTables = ({
     variables: {
       input: {
         id: connectionId,
+        shouldFetchPendingSchemaUpdates,
       },
     },
   });
 
   return {
-    tables: data?.findAvailableRemoteTablesByServerId || [],
+    tables: data?.findDistantTablesWithStatus || [],
     error,
   };
 };

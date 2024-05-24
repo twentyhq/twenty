@@ -32,6 +32,7 @@ export class GraphQLHydrateRequestFromTokenMiddleware
       'SignUp',
       'RenewToken',
       'IntrospectionQuery',
+      'ExchangeAuthorizationCode',
     ];
 
     if (

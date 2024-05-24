@@ -54,10 +54,11 @@ const StyledHeader = styled.div`
   }
 `;
 
-const StyledHeading = styled.div`
+const StyledHeading = styled.h1`
   font-size: 40px;
   font-weight: 700;
   font-family: var(--font-gabarito);
+  margin: 0px;
   @media (max-width: 800px) {
     font-size: 28px;
   }
@@ -77,12 +78,13 @@ const StyledHeaderInfoSectionTitle = styled.div`
   font-family: var(--font-gabarito);
 `;
 
-const StyledHeaderInfoSectionSub = styled.div`
+const StyledHeaderInfoSectionSub = styled.p`
   display: flex;
   flex-direction: column;
   gap: ${Theme.spacing(4)};
   color: ${Theme.text.color.tertiary};
   line-height: 1.8;
+  margin: 0px;
 `;
 
 const StyledRectangle = styled.div`

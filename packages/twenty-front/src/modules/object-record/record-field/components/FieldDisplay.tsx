@@ -3,7 +3,6 @@ import { useContext } from 'react';
 import { LinksFieldDisplay } from '@/object-record/record-field/meta-types/display/components/LinksFieldDisplay';
 import { isFieldDisplayedAsPhone } from '@/object-record/record-field/types/guards/isFieldDisplayedAsPhone';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
-import { ExpandableListProps } from '@/ui/layout/expandable-list/components/ExpandableList';
 
 import { FieldContext } from '../contexts/FieldContext';
 import { AddressFieldDisplay } from '../meta-types/display/components/AddressFieldDisplay';
@@ -38,13 +37,7 @@ import { isFieldSelect } from '../types/guards/isFieldSelect';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldUuid } from '../types/guards/isFieldUuid';
 
-type FieldDisplayProps = ExpandableListProps;
-
-export const FieldDisplay = ({
-  isHovered,
-  reference,
-  fromTableCell,
-}: FieldDisplayProps & { fromTableCell?: boolean }) => {
+export const FieldDisplay = () => {
   const { fieldDefinition, isLabelIdentifier } = useContext(FieldContext);
 
   const isChipDisplay =
@@ -83,11 +76,7 @@ export const FieldDisplay = ({
   ) : isFieldSelect(fieldDefinition) ? (
     <SelectFieldDisplay />
   ) : isFieldMultiSelect(fieldDefinition) ? (
-    <MultiSelectFieldDisplay
-      isHovered={isHovered}
-      reference={reference}
-      withDropDownBorder={fromTableCell}
-    />
+    <MultiSelectFieldDisplay />
   ) : isFieldAddress(fieldDefinition) ? (
     <AddressFieldDisplay />
   ) : isFieldRawJson(fieldDefinition) ? (

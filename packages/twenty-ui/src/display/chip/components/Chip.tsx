@@ -34,6 +34,7 @@ type ChipProps = {
   rightComponent?: ReactNode;
   className?: string;
   onClick?: (event: MouseEvent<HTMLDivElement>) => void;
+  to?: string;
 };
 
 export const Chip = ({

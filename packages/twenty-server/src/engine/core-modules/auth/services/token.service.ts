@@ -422,8 +422,9 @@ export class TokenService {
 
     assert(token, "This refresh token doesn't exist", NotFoundException);
 
-    const user = await this.userRepository.findOneBy({
-      id: jwtPayload.sub,
+    const user = await this.userRepository.findOne({
+      where: { id: jwtPayload.sub },
+      relations: ['appTokens'],
     });
 
     assert(user, 'User not found', NotFoundException);

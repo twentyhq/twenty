@@ -22,6 +22,7 @@ type SettingsDataModelObjectAboutFormValues = z.infer<
 
 type SettingsDataModelObjectAboutFormProps = {
   disabled?: boolean;
+  disableNameEdit?: boolean;
   objectMetadataItem?: ObjectMetadataItem;
 };
 
@@ -46,6 +47,7 @@ const StyledInputContainer = styled.div`
 
 export const SettingsDataModelObjectAboutForm = ({
   disabled,
+  disableNameEdit,
   objectMetadataItem,
 }: SettingsDataModelObjectAboutFormProps) => {
   const { control } = useFormContext<SettingsDataModelObjectAboutFormValues>();
@@ -93,7 +95,7 @@ export const SettingsDataModelObjectAboutForm = ({
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
-                disabled={disabled}
+                disabled={disabled || disableNameEdit}
                 fullWidth
               />
             )}
