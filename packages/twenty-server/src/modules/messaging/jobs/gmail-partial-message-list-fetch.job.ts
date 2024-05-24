@@ -3,25 +3,27 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
-import { GmailFullSyncService } from 'src/modules/messaging/services/gmail-full-sync/gmail-full-sync.service';
+import { GmailPartialMessageListFetchService } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-partial-message-list-fetch.service';
 
-export type GmailFullSyncJobData = {
+export type GmailPartialMessageListFetchJobData = {
   workspaceId: string;
   connectedAccountId: string;
 };
 
 @Injectable()
-export class GmailFullSyncJob implements MessageQueueJob<GmailFullSyncJobData> {
-  private readonly logger = new Logger(GmailFullSyncJob.name);
+export class GmailPartialMessageListFetchJob
+  implements MessageQueueJob<GmailPartialMessageListFetchJobData>
+{
+  private readonly logger = new Logger(GmailPartialMessageListFetchJob.name);
 
   constructor(
     private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
-    private readonly gmailFullSyncService: GmailFullSyncService,
+    private readonly gmailPartialSyncService: GmailPartialMessageListFetchService,
   ) {}
 
-  async handle(data: GmailFullSyncJobData): Promise<void> {
+  async handle(data: GmailPartialMessageListFetchJobData): Promise<void> {
     this.logger.log(
-      `gmail full-sync for workspace ${data.workspaceId} and account ${data.connectedAccountId}`,
+      `gmail partial-sync for workspace ${data.workspaceId} and account ${data.connectedAccountId}`,
     );
 
     try {
@@ -38,7 +40,7 @@ export class GmailFullSyncJob implements MessageQueueJob<GmailFullSyncJobData> {
       return;
     }
 
-    await this.gmailFullSyncService.fetchConnectedAccountThreads(
+    await this.gmailPartialSyncService.fetchConnectedAccountThreads(
       data.workspaceId,
       data.connectedAccountId,
     );

@@ -4,9 +4,12 @@ import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repos
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { FetchMessagesByBatchesModule } from 'src/modules/messaging/services/fetch-messages-by-batches/fetch-messages-by-batches.module';
-import { GmailFetchMessageContentFromCacheService } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.service';
+import { GmailMessagesImportV2Service } from 'src/modules/messaging/services/gmail-messages-import/gmail-messages-import-v2.service';
+import { GmailMessagesImportService } from 'src/modules/messaging/services/gmail-messages-import/gmail-messages-import.service';
+import { SaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/services/gmail-messages-import/save-messages-and-enqueue-contact-creation.service';
 import { MessageParticipantModule } from 'src/modules/messaging/services/message-participant/message-participant.module';
 import { MessageModule } from 'src/modules/messaging/services/message/message.module';
+import { SetMessageChannelSyncStatusModule } from 'src/modules/messaging/services/set-message-channel-sync-status/set-message-channel-sync-status.module';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 
 @Module({
@@ -20,8 +23,13 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-ob
     WorkspaceDataSourceModule,
     MessageModule,
     MessageParticipantModule,
+    SetMessageChannelSyncStatusModule,
   ],
-  providers: [GmailFetchMessageContentFromCacheService],
-  exports: [GmailFetchMessageContentFromCacheService],
+  providers: [
+    GmailMessagesImportService,
+    GmailMessagesImportV2Service,
+    SaveMessagesAndEnqueueContactCreationService,
+  ],
+  exports: [GmailMessagesImportService, GmailMessagesImportV2Service],
 })
-export class GmailFetchMessageContentFromCacheModule {}
+export class GmailMessagesImportModule {}

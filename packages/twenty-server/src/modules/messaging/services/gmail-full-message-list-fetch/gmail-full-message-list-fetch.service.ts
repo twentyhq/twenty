@@ -29,8 +29,8 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import { gmailSearchFilterEmailAdresses } from 'src/modules/messaging/utils/gmail-search-filter.util';
 
 @Injectable()
-export class GmailFullSyncService {
-  private readonly logger = new Logger(GmailFullSyncService.name);
+export class GmailFullMessageListFetchService {
+  private readonly logger = new Logger(GmailFullMessageListFetchService.name);
 
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,

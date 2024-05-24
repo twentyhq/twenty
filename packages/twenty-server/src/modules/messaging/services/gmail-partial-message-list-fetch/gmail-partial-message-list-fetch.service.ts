@@ -21,15 +21,17 @@ import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decora
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import {
-  GmailFullSyncJob,
-  GmailFullSyncJobData,
-} from 'src/modules/messaging/jobs/gmail-full-sync.job';
+  GmailFullMessageListFetchJob,
+  GmailFullMessageListFetchJobData,
+} from 'src/modules/messaging/jobs/gmail-full-message-list-fetch.job';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
 
 @Injectable()
-export class GmailPartialSyncV2Service {
-  private readonly logger = new Logger(GmailPartialSyncV2Service.name);
+export class GmailPartialMessageListFetchService {
+  private readonly logger = new Logger(
+    GmailPartialMessageListFetchService.name,
+  );
 
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
@@ -338,8 +340,8 @@ export class GmailPartialSyncV2Service {
     workspaceId: string,
     connectedAccountId: string,
   ) {
-    await this.messageQueueService.add<GmailFullSyncJobData>(
-      GmailFullSyncJob.name,
+    await this.messageQueueService.add<GmailFullMessageListFetchJobData>(
+      GmailFullMessageListFetchJob.name,
       { workspaceId, connectedAccountId },
     );
   }
