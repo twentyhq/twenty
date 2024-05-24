@@ -127,6 +127,7 @@ export {
   IconRelationManyToMany,
   IconRelationOneToMany,
   IconRelationOneToOne,
+  IconReload,
   IconRepeat,
   IconRocket,
   IconSearch,

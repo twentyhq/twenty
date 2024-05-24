@@ -11,7 +11,6 @@ type MultiSelectFieldDisplayProps = {
 
 export const MultiSelectFieldDisplay = ({
   isCellSoftFocused,
-  cellElement,
   fromTableCell,
 }: MultiSelectFieldDisplayProps) => {
   const { fieldValues, fieldDefinition } = useMultiSelectField();
@@ -26,7 +25,6 @@ export const MultiSelectFieldDisplay = ({
 
   return (
     <ExpandableList
-      anchorElement={cellElement}
       isChipCountDisplayed={isCellSoftFocused}
       withExpandedListBorder={fromTableCell}
     >

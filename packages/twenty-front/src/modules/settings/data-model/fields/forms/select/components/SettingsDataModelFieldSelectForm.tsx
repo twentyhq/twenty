@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
 import { DropResult } from '@hello-pangea/dnd';
@@ -10,8 +9,8 @@ import {
   FieldMetadataItemOption,
 } from '@/object-metadata/types/FieldMetadataItem';
 import { selectOptionsSchema } from '@/object-metadata/validation-schemas/selectOptionsSchema';
-import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/hooks/useSelectSettingsFormInitialValues';
-import { generateNewSelectOption } from '@/settings/data-model/fields/forms/utils/generateNewSelectOption';
+import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
+import { generateNewSelectOption } from '@/settings/data-model/fields/forms/select/utils/generateNewSelectOption';
 import { isSelectOptionDefaultValue } from '@/settings/data-model/utils/isSelectOptionDefaultValue';
 import { LightButton } from '@/ui/input/button/components/LightButton';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
@@ -86,7 +85,6 @@ export const SettingsDataModelFieldSelectForm = ({
     setValue: setFormValue,
     watch: watchFormValue,
     getValues,
-    resetField,
   } = useFormContext<SettingsDataModelFieldSelectFormValues>();
 
   const handleDragEnd = (
@@ -167,11 +165,6 @@ export const SettingsDataModelFieldSelectForm = ({
       );
     }
   };
-
-  // Reset defaultValue on mount or on field type change, so it doesn't conflict with other field types.
-  useEffect(() => {
-    resetField('defaultValue', { defaultValue: initialDefaultValue });
-  }, [initialDefaultValue, initialOptions, resetField, fieldMetadataItem.type]);
 
   return (
     <>

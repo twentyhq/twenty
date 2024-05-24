@@ -8,8 +8,8 @@ import {
   settingsDataModelFieldMultiSelectFormSchema,
   SettingsDataModelFieldSelectForm,
   settingsDataModelFieldSelectFormSchema,
-} from '@/settings/data-model/fields/forms/components/select/SettingsDataModelFieldSelectForm';
-import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/hooks/useSelectSettingsFormInitialValues';
+} from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm';
+import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
 import {
   SettingsDataModelFieldPreviewCard,
   SettingsDataModelFieldPreviewCardProps,
@@ -20,7 +20,7 @@ const selectOrMultiSelectFormSchema = z.union([
   settingsDataModelFieldMultiSelectFormSchema,
 ]);
 
-type SettingsDataModelFieldSettingsFormValues = z.infer<
+type SettingsDataModelFieldSelectOrMultiSelectFormValues = z.infer<
   typeof selectOrMultiSelectFormSchema
 >;
 
@@ -46,7 +46,7 @@ export const SettingsDataModelFieldSelectSettingsFormCard = ({
     });
 
   const { watch: watchFormValue } =
-    useFormContext<SettingsDataModelFieldSettingsFormValues>();
+    useFormContext<SettingsDataModelFieldSelectOrMultiSelectFormValues>();
 
   return (
     <SettingsDataModelPreviewFormCard

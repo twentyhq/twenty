@@ -35,7 +35,6 @@ const meta: Meta<typeof ExpandableList> = {
   },
   argTypes: {
     children: { control: false },
-    anchorElement: { control: false },
   },
 };
 

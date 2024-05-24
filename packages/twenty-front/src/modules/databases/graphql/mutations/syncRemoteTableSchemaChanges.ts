@@ -2,10 +2,10 @@ import { gql } from '@apollo/client';
 
 import { REMOTE_TABLE_FRAGMENT } from '@/databases/graphql/fragments/remoteTableFragment';
 
-export const GET_MANY_REMOTE_TABLES = gql`
+export const SYNC_REMOTE_TABLE_SCHEMA_CHANGES = gql`
   ${REMOTE_TABLE_FRAGMENT}
-  query GetManyRemoteTables($input: FindManyRemoteTablesInput!) {
-    findDistantTablesWithStatus(input: $input) {
+  mutation syncRemoteTableSchemaChanges($input: RemoteTableInput!) {
+    syncRemoteTableSchemaChanges(input: $input) {
       ...RemoteTableFields
     }
   }
