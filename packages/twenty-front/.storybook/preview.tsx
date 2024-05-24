@@ -32,7 +32,6 @@ const preview: Preview = {
     (Story) => {
       const theme = useDarkMode() ? THEME_DARK : THEME_LIGHT;
 
-      // TOOD: insert here
       useEffect(() => {
         document.documentElement.className =
           theme.name === 'dark' ? 'dark' : 'light';
