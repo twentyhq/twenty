@@ -134,7 +134,7 @@ export const SETTINGS_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.RawJson]: {
     label: 'JSON',
     Icon: IconJson,
-    defaultValue: `{ "key": "value" }`,
+    defaultValue: { key: 'value' },
   },
 } as const satisfies Record<
   SettingsSupportedFieldType,
