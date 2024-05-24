@@ -1,6 +1,5 @@
 import { MouseEventHandler, useMemo } from 'react';
 
-import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink';
@@ -15,11 +14,10 @@ import { getUrlHostName } from '~/utils/url/getUrlHostName';
 
 type LinksDisplayProps = {
   value?: FieldLinksValue;
+  isFocused?: boolean;
 };
 
-export const LinksDisplay = ({ value }: LinksDisplayProps) => {
-  const { isFocused } = useFieldFocus();
-
+export const LinksDisplay = ({ value, isFocused }: LinksDisplayProps) => {
   const links = useMemo(
     () =>
       [
