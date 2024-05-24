@@ -87,13 +87,6 @@ const StyledContainer = styled('div', {
     }
   }}
 
-  // Size style overrides
-  ${({ theme, size }) =>
-    size === ChipSize.Large &&
-    css`
-      height: ${theme.spacing(4)};
-    `}
-
   // Variant style overrides
   ${({ disabled, theme, variant }) => {
     if (variant === ChipVariant.Regular) {
@@ -153,6 +146,13 @@ const StyledLabel = styled.span`
   white-space: nowrap;
 `;
 
+const StyledOverflowingTextWithTooltip = styled(OverflowingTextWithTooltip)<{
+  size?: ChipSize;
+}>`
+  height: ${({ theme, size }) =>
+    size === ChipSize.Large ? theme.spacing(4) : 'auto'};
+`;
+
 export const Chip = ({
   size = ChipSize.Small,
   label,
@@ -183,7 +183,7 @@ export const Chip = ({
     >
       {leftComponent}
       <StyledLabel>
-        <OverflowingTextWithTooltip text={label} />
+        <StyledOverflowingTextWithTooltip size={size} text={label} />
       </StyledLabel>
       {rightComponent}
     </StyledContainer>
