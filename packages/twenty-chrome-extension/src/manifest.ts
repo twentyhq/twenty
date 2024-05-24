@@ -46,7 +46,7 @@ export default defineManifest({
 
   permissions: ['activeTab', 'storage', 'identity', 'sidePanel', 'cookies'],
 
-  // setting host permissions to all http connections will allow 
+  // setting host permissions to all http connections will allow
   // for people who host on their custom domain to get access to
   // extension instead of white listing individual urls
   host_permissions: ['https://*/*', 'http://*/*'],
