@@ -64,6 +64,8 @@ const meta: Meta = {
             onMoveSoftFocusToCell: () => {},
             onContextMenu: () => {},
             onCellMouseEnter: () => {},
+            recordChipDataGeneratorPerFieldName: {},
+            visibleTableColumns: [],
           }}
         >
           <RecordTableScope recordTableScopeId="asd" onColumnsChange={() => {}}>

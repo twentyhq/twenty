@@ -47,7 +47,6 @@ export const Chip = ({
   rightComponent,
   accent = ChipAccent.TextPrimary,
   onClick,
-  className,
 }: ChipProps) => {
   return (
     <div
