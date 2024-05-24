@@ -53,7 +53,7 @@ export const ActivityTargetsInlineCell = ({
           />
         }
         label="Relations"
-        displayModeContent={({ cellElement }) => (
+        displayModeContent={() => (
           <ActivityTargetChips
             activityTargetObjectRecords={activityTargetObjectRecords}
             maxWidth={maxWidth}
