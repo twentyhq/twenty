@@ -214,15 +214,6 @@
         "port": 6006
       }
     },
-    "storybook:performance:test": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:dev {projectName} --configuration=performance --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test:nocoverage {projectName} --port={args.port} --configuration=performance'"
-        ],
-        "port": 6006
-      }
-    },
     "chromatic": {
       "executor": "nx:run-commands",
       "options": {
