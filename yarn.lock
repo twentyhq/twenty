@@ -46640,7 +46640,7 @@ __metadata:
     vite-tsconfig-paths: "npm:^4.2.1"
     vitest: "npm:1.4.0"
     xlsx-ugnis: "npm:^0.19.3"
-    zod: "npm:^3.22.2"
+    zod: "npm:3.23.8"
   languageName: unknown
   linkType: soft
 
@@ -49717,7 +49717,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zod@npm:^3.20.2, zod@npm:^3.22.2":
+"zod@npm:3.23.8":
+  version: 3.23.8
+  resolution: "zod@npm:3.23.8"
+  checksum: 8f14c87d6b1b53c944c25ce7a28616896319d95bc46a9660fe441adc0ed0a81253b02b5abdaeffedbeb23bdd25a0bf1c29d2c12dd919aef6447652dd295e3e69
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.20.2":
   version: 3.22.4
   resolution: "zod@npm:3.22.4"
   checksum: 7578ab283dac0eee66a0ad0fc4a7f28c43e6745aadb3a529f59a4b851aa10872b3890398b3160f257f4b6817b4ce643debdda4fb21a2c040adda7862cab0a587
