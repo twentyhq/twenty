@@ -3,7 +3,10 @@ import styled from '@emotion/styled';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
-import { SettingsDataModelFieldBooleanForm } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm';
+import {
+  SettingsDataModelFieldBooleanForm,
+  SettingsDataModelFieldBooleanFormValues,
+} from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm';
 import { useBooleanSettingsFormInitialValues } from '@/settings/data-model/fields/forms/boolean/hooks/useBooleanSettingsFormInitialValues';
 import {
   SettingsDataModelFieldPreviewCard,
