@@ -99,12 +99,7 @@ export const RecordInlineCell = ({
           isReadOnly={readonly}
         />
       }
-      displayModeContent={({ cellElement, isCellSoftFocused }) => (
-        <FieldDisplay
-          cellElement={cellElement}
-          isCellSoftFocused={isCellSoftFocused}
-        />
-      )}
+      displayModeContent={<FieldDisplay />}
       isDisplayModeContentEmpty={isFieldEmpty}
       isDisplayModeFixHeight
       editModeContentOnly={isFieldInputOnly}

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { ReactElement, useContext, useState } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { Tooltip } from 'react-tooltip';
 import { css, useTheme } from '@emotion/react';
@@ -108,15 +108,9 @@ type RecordInlineCellContainerProps = {
   labelWidth?: number;
   showLabel?: boolean;
   buttonIcon?: IconComponent;
-  editModeContent?: React.ReactNode;
+  editModeContent?: ReactElement;
   editModeContentOnly?: boolean;
-  displayModeContent: ({
-    isCellSoftFocused,
-    cellElement,
-  }: {
-    isCellSoftFocused: boolean;
-    cellElement?: HTMLDivElement;
-  }) => React.ReactNode;
+  displayModeContent: ReactElement;
   customEditHotkeyScope?: HotkeyScope;
   isDisplayModeContentEmpty?: boolean;
   isDisplayModeFixHeight?: boolean;
@@ -210,10 +204,7 @@ export const RecordInlineCellContainer = ({
           isHovered={isHovered}
           emptyPlaceholder={showLabel ? 'Empty' : label}
         >
-          {displayModeContent({
-            isCellSoftFocused,
-            cellElement: cellElement ?? undefined,
-          })}
+          {displayModeContent}
         </RecordInlineCellDisplayMode>
         {showEditButton && <RecordInlineCellButton Icon={buttonIcon} />}
       </StyledClickableContainer>
