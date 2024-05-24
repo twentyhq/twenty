@@ -8,9 +8,11 @@ import { AppTooltip } from './AppTooltip';
 import styles from './OverflowingTextWithTooltip.module.css';
 
 export const OverflowingTextWithTooltip = ({
+  size,
   text,
   mutliline,
 }: {
+  size: 'large' | 'small';
   text: string | null | undefined;
   mutliline?: boolean;
 }) => {
@@ -46,6 +48,7 @@ export const OverflowingTextWithTooltip = ({
         className={clsx({
           [styles.main]: true,
           [styles.cursor]: isTitleOverflowing,
+          [styles.large]: size === 'large',
         })}
         ref={textRef}
         id={textElementId}

@@ -14,3 +14,7 @@
 .cursor {
   cursor: pointer;
 }
+
+.large {
+  height: calc(var(--twentycrm-spacing-multiplicator) * 4px);
+}
