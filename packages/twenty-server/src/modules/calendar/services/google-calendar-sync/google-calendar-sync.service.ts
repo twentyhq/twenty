@@ -330,12 +330,20 @@ export class GoogleCalendarSyncService {
           q: emailOrDomainToReimport,
           showDeleted: true,
         })
-        .catch((error: GaxiosError) => {
+        .catch(async (error: GaxiosError) => {
           if (error.response?.status !== 410) {
             throw error;
           }
 
-          return;
+          await this.calendarChannelRepository.updateSyncCursor(
+            null,
+            connectedAccountId,
+            workspaceId,
+          );
+
+          throw new Error(
+            `Sync token no longer valid for connected account ${connectedAccountId} in workspace ${workspaceId}, resetting sync cursor.`,
+          );
         });
 
       nextSyncToken = googleCalendarEvents.data.nextSyncToken;

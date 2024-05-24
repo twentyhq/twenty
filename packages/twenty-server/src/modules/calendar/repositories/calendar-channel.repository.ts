@@ -117,7 +117,7 @@ export class CalendarChannelRepository {
   }
 
   public async updateSyncCursor(
-    syncCursor: string,
+    syncCursor: string | null,
     calendarChannelId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
