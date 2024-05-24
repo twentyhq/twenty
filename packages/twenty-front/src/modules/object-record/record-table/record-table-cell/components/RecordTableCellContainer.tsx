@@ -1,5 +1,5 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react';
-import styled from '@emotion/styled';
+import { clsx } from 'clsx';
 
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -14,27 +14,7 @@ import { RecordTableCellDisplayMode } from './RecordTableCellDisplayMode';
 import { RecordTableCellEditMode } from './RecordTableCellEditMode';
 import { RecordTableCellSoftFocusMode } from './RecordTableCellSoftFocusMode';
 
-const StyledTd = styled.td<{ isSelected: boolean; isInEditMode: boolean }>`
-  background: ${({ isSelected, theme }) =>
-    isSelected ? theme.accent.quaternary : theme.background.primary};
-  z-index: ${({ isInEditMode }) => (isInEditMode ? '4 !important' : '3')};
-`;
-
-const StyledCellBaseContainer = styled.div<{ softFocus: boolean }>`
-  align-items: center;
-  box-sizing: border-box;
-  cursor: pointer;
-  display: flex;
-  height: 32px;
-  position: relative;
-  user-select: none;
-  ${(props) =>
-    props.softFocus
-      ? `background: ${props.theme.background.transparent.secondary};
-      border-radius: ${props.theme.border.radius.sm};
-      outline: 1px solid ${props.theme.font.color.extraLight};`
-      : ''}
-`;
+import styles from './RecordTableCellContainer.module.css';
 
 export type RecordTableCellContainerProps = {
   editModeContent: ReactElement;
@@ -84,10 +64,6 @@ export const RecordTableCellContainer = ({
     setIsHovered(false);
   };
 
-  const handleContainerMouseMove = () => {
-    handleContainerMouseEnter();
-  };
-
   useEffect(() => {
     const customEventListener = (event: any) => {
       const newHasSoftFocus = event.detail;
@@ -130,19 +106,26 @@ export const RecordTableCellContainer = ({
   }, [cellPosition]);
 
   return (
-    <StyledTd
-      isSelected={isSelected}
+    <td
+      className={clsx({
+        [styles.tdInEditMode]: isInEditMode,
+        [styles.tdNotInEditMode]: !isInEditMode,
+        [styles.tdIsSelected]: isSelected,
+        [styles.tdIsNotSelected]: !isSelected,
+      })}
       onContextMenu={handleContextMenu}
-      isInEditMode={isInEditMode}
     >
       <CellHotkeyScopeContext.Provider
         value={editHotkeyScope ?? DEFAULT_CELL_SCOPE}
       >
-        <StyledCellBaseContainer
+        <div
           onMouseEnter={handleContainerMouseEnter}
           onMouseLeave={handleContainerMouseLeave}
-          onMouseMove={handleContainerMouseMove}
-          softFocus={hasSoftFocus}
+          onMouseMove={handleContainerMouseEnter}
+          className={clsx({
+            [styles.cellBaseContainer]: true,
+            [styles.cellBaseContainerSoftFocus]: hasSoftFocus,
+          })}
         >
           {isInEditMode ? (
             <RecordTableCellEditMode>{editModeContent}</RecordTableCellEditMode>
@@ -158,8 +141,8 @@ export const RecordTableCellContainer = ({
               {nonEditModeContent}
             </RecordTableCellDisplayMode>
           )}
-        </StyledCellBaseContainer>
+        </div>
       </CellHotkeyScopeContext.Provider>
-    </StyledTd>
+    </td>
   );
 };

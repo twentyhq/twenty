@@ -22572,6 +22572,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"clsx@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "clsx@npm:2.1.1"
+  checksum: c4c8eb865f8c82baab07e71bfa8897c73454881c4f99d6bc81585aecd7c441746c1399d08363dc096c550cceaf97bd4ce1e8854e1771e9998d9f94c4fe075839
+  languageName: node
+  linkType: hard
+
 "cluster-key-slot@npm:1.1.2, cluster-key-slot@npm:^1.1.0":
   version: 1.1.2
   resolution: "cluster-key-slot@npm:1.1.2"
@@ -46479,7 +46486,7 @@ __metadata:
     bytes: "npm:^3.1.2"
     chromatic: "npm:^6.18.0"
     class-transformer: "npm:^0.5.1"
-    clsx: "npm:^1.2.1"
+    clsx: "npm:^2.1.1"
     concurrently: "npm:^8.2.2"
     cross-env: "npm:^7.0.3"
     cross-var: "npm:^1.1.0"
