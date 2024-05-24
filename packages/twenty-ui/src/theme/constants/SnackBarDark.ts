@@ -7,5 +7,6 @@ export const SNACK_BAR_DARK = {
   default: {
     color: FONT_DARK.color.primary,
     backgroundColor: BACKGROUND_DARK.transparent.light,
+    backdropFilter: 'blur(12px) saturate(200%) contrast(100%) brightness(130%)',
   },
 };
