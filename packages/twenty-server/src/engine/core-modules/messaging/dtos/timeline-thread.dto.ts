@@ -21,6 +21,9 @@ export class TimelineThread {
   visibility: MessageChannelVisibility;
 
   @Field()
+  everyone: boolean;
+
+  @Field()
   firstParticipant: TimelineThreadParticipant;
 
   @Field(() => [TimelineThreadParticipant])

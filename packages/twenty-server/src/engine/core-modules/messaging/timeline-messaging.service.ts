@@ -146,6 +146,25 @@ export class TimelineMessagingService {
       workspaceId,
     );
 
+    const everyoneFieldInMessageThread:
+      | {
+          id: string;
+          everyone: boolean;
+        }[]
+      | undefined = await this.workspaceDataSourceService.executeRawQuery(
+      `
+      SELECT
+          messageThread.id,
+          messageThread.everyone
+      FROM
+          ${dataSourceSchema}."messageThread" messageThread
+      WHERE
+          messageThread."id" = ANY($1)
+      `,
+      [messageThreadIds],
+      workspaceId,
+    );
+
     const messageThreadsByMessageThreadId: {
       [key: string]: {
         id: string;
@@ -170,6 +189,22 @@ export class TimelineMessagingService {
         threadSubjectAcc[threadSubject.id] = threadSubject;
 
         return threadSubjectAcc;
+      },
+      {},
+    );
+
+    const everyoneByMessageThreadId:
+      | {
+          [key: string]: {
+            id: string;
+            everyone: boolean;
+          };
+        }
+      | undefined = everyoneFieldInMessageThread?.reduce(
+      (everyoneAcc, everyoneField) => {
+        everyoneAcc[everyoneField.id] = everyoneField;
+
+        return everyoneAcc;
       },
       {},
     );
@@ -452,6 +487,9 @@ export class TimelineMessagingService {
       const threadSubject =
         subjectsByMessageThreadId?.[messageThreadId].subject ?? '';
 
+      const everyoneInThread =
+        everyoneByMessageThreadId?.[messageThreadId].everyone ?? false;
+
       const numberOfMessages =
         numberOfMessagesByMessageThreadId?.[messageThreadId]
           .numberOfMessagesInThread ?? 1;
@@ -466,6 +504,7 @@ export class TimelineMessagingService {
         visibility:
           threadVisibilityByThreadId?.[messageThreadId] ??
           MessageChannelVisibility.METADATA,
+        everyone: everyoneInThread,
         subject: threadSubject,
         numberOfMessagesInThread: numberOfMessages,
         participantCount: threadActiveParticipants.length,
