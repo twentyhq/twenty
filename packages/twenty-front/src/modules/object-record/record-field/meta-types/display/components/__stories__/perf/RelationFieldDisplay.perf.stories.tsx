@@ -10,11 +10,8 @@ import {
   useSetRecordValue,
 } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
-import { getLogoUrlFromDomainName } from '~/utils';
 
 import { relationFieldDisplayMock } from './mock';
 
@@ -52,35 +49,20 @@ const meta: Meta = {
     MemoryRouterDecorator,
     (Story) => (
       <RecordFieldValueSelectorContextProvider>
-        <RecordTableContext.Provider
-          value={
-            {
-              recordChipDataGeneratorPerFieldName: {
-                company: (objectRecord: ObjectRecord) => ({
-                  name: objectRecord.name,
-                  avatarType: 'rounded',
-                  avatarUrl: getLogoUrlFromDomainName(objectRecord.domainName),
-                  linkToShowPage: '/object-record/company',
-                }),
-              },
-            } as any
-          }
+        <FieldContext.Provider
+          value={{
+            entityId: relationFieldDisplayMock.entityId,
+            basePathToShowPage: '/object-record/',
+            isLabelIdentifier: false,
+            fieldDefinition: {
+              ...relationFieldDisplayMock.fieldDefinition,
+            },
+            hotkeyScope: 'hotkey-scope',
+          }}
         >
-          <FieldContext.Provider
-            value={{
-              entityId: relationFieldDisplayMock.entityId,
-              basePathToShowPage: '/object-record/',
-              isLabelIdentifier: false,
-              fieldDefinition: {
-                ...relationFieldDisplayMock.fieldDefinition,
-              },
-              hotkeyScope: 'hotkey-scope',
-            }}
-          >
-            <RelationFieldValueSetterEffect />
-            <Story />
-          </FieldContext.Provider>
-        </RecordTableContext.Provider>
+          <RelationFieldValueSetterEffect />
+          <Story />
+        </FieldContext.Provider>
       </RecordFieldValueSelectorContextProvider>
     ),
     ComponentDecorator,
