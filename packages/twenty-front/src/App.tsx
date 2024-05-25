@@ -59,6 +59,7 @@ import { SettingsObjectEdit } from '~/pages/settings/data-model/SettingsObjectEd
 import { SettingsObjectFieldEdit } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 import { SettingsObjectNewFieldStep1 } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep1';
 import { SettingsObjectNewFieldStep2 } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep2';
+import { SettingsObjectOverview } from '~/pages/settings/data-model/SettingsObjectOverview';
 import { SettingsObjects } from '~/pages/settings/data-model/SettingsObjects';
 import { SettingsDevelopersApiKeyDetail } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail';
 import { SettingsDevelopersApiKeysNew } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew';
@@ -199,6 +200,10 @@ const createRouter = (isBillingEnabled?: boolean) =>
                 <Route
                   path={SettingsPath.Objects}
                   element={<SettingsObjects />}
+                />
+                <Route
+                  path={SettingsPath.ObjectOverview}
+                  element={<SettingsObjectOverview />}
                 />
                 <Route
                   path={SettingsPath.ObjectDetail}
