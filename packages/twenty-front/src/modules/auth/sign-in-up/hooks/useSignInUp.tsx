@@ -2,7 +2,6 @@ import { useCallback, useState } from 'react';
 import { SubmitHandler, UseFormReturn } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 
-import { useNavigateAfterSignInUp } from '@/auth/sign-in-up/hooks/useNavigateAfterSignInUp';
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
 import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
 import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
@@ -30,8 +29,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const isMatchingLocation = useIsMatchingLocation();
 
   const workspaceInviteHash = useParams().workspaceInviteHash;
-
-  const { navigateAfterSignInUp } = useNavigateAfterSignInUp();
 
   const [isInviteMode] = useState(() => isMatchingLocation(AppPath.Invite));
 
@@ -105,24 +102,18 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           throw new Error('Email and password are required');
         }
 
-        const {
-          workspace: currentWorkspace,
-          workspaceMember: currentWorkspaceMember,
-        } =
-          signInUpMode === SignInUpMode.SignIn && !isInviteMode
-            ? await signInWithCredentials(
-                data.email.toLowerCase().trim(),
-                data.password,
-                token,
-              )
-            : await signUpWithCredentials(
-                data.email.toLowerCase().trim(),
-                data.password,
-                workspaceInviteHash,
-                token,
-              );
-
-        navigateAfterSignInUp(currentWorkspace, currentWorkspaceMember);
+        signInUpMode === SignInUpMode.SignIn && !isInviteMode
+          ? await signInWithCredentials(
+              data.email.toLowerCase().trim(),
+              data.password,
+              token,
+            )
+          : await signUpWithCredentials(
+              data.email.toLowerCase().trim(),
+              data.password,
+              workspaceInviteHash,
+              token,
+            );
       } catch (err: any) {
         enqueueSnackBar(err?.message, {
           variant: SnackBarVariant.Error,
@@ -136,7 +127,6 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       signInWithCredentials,
       signUpWithCredentials,
       workspaceInviteHash,
-      navigateAfterSignInUp,
       enqueueSnackBar,
     ],
   );
