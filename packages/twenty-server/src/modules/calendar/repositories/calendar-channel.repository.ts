@@ -117,7 +117,7 @@ export class CalendarChannelRepository {
   }
 
   public async updateSyncCursor(
-    syncCursor: string,
+    syncCursor: string | null,
     calendarChannelId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
@@ -127,7 +127,7 @@ export class CalendarChannelRepository {
 
     await this.workspaceDataSourceService.executeRawQuery(
       `UPDATE ${dataSourceSchema}."calendarChannel" SET "syncCursor" = $1 WHERE "id" = $2`,
-      [syncCursor, calendarChannelId],
+      [syncCursor || '', calendarChannelId],
       workspaceId,
       transactionManager,
     );

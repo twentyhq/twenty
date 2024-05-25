@@ -6,7 +6,6 @@ import { ExpandableList } from '@/ui/layout/expandable-list/components/Expandabl
 
 type ActivityTargetChipsProps = {
   activityTargetObjectRecords: ActivityTargetWithTargetRecord[];
-  anchorElement?: HTMLElement;
   maxWidth?: number;
 };
 
@@ -19,12 +18,11 @@ const StyledContainer = styled.div<{ maxWidth?: number }>`
 
 export const ActivityTargetChips = ({
   activityTargetObjectRecords,
-  anchorElement,
   maxWidth,
 }: ActivityTargetChipsProps) => {
   return (
     <StyledContainer maxWidth={maxWidth}>
-      <ExpandableList anchorElement={anchorElement} isChipCountDisplayed>
+      <ExpandableList isChipCountDisplayed>
         {activityTargetObjectRecords.map(
           (activityTargetObjectRecord, index) => (
             <RecordChip

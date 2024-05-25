@@ -194,6 +194,10 @@ export class RemoteTableService {
         input.name,
       );
 
+    if (!distantTableColumns) {
+      throw new BadRequestException('Table not found');
+    }
+
     // We only support remote tables with an id column for now.
     const distantTableIdColumn = distantTableColumns.find(
       (column) => column.columnName === 'id',
@@ -315,7 +319,7 @@ export class RemoteTableService {
         remoteTable.distantTableName,
       );
 
-    if (isEmpty(distantTableColumns)) {
+    if (!distantTableColumns) {
       await this.unsyncOne(workspaceId, remoteTable, remoteServer);
 
       return {
@@ -412,8 +416,8 @@ export class RemoteTableService {
       : plural(localTableBaseName);
 
     const objectMetadata = await this.objectMetadataService.createOne({
-      nameSingular: localTableNameSingular,
-      namePlural: localTableNamePlural,
+      nameSingular: camelCase(localTableNameSingular),
+      namePlural: camelCase(localTableNamePlural),
       labelSingular: camelToTitleCase(camelCase(localTableBaseName)),
       labelPlural: camelToTitleCase(plural(camelCase(localTableBaseName))),
       description: 'Remote table',

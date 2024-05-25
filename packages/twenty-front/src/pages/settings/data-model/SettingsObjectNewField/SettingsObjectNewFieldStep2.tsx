@@ -215,16 +215,6 @@ export const SettingsObjectNewFieldStep2 = () => {
       } else {
         const createdMetadataField = await createMetadataField({
           ...formValues,
-          defaultValue:
-            formValues.type === FieldMetadataType.Currency &&
-            'defaultValue' in formValues
-              ? {
-                  ...formValues.defaultValue,
-                  amountMicros: null,
-                }
-              : 'defaultValue' in formValues
-                ? formValues.defaultValue
-                : undefined,
           objectMetadataId: activeObjectMetadataItem.id,
         });
 

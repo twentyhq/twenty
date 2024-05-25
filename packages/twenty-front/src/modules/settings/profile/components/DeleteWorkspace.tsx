@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { H2Title } from 'twenty-ui';
 
-import { useSignOutAndRedirect } from '@/auth/hooks/useSignOutAndRedirect';
+import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import {
   ConfirmationModal,
@@ -18,11 +18,11 @@ export const DeleteWorkspace = () => {
   const currentUser = useRecoilValue(currentUserState);
   const userEmail = currentUser?.email;
 
-  const handleLogout = useSignOutAndRedirect();
+  const { signOut } = useAuth();
 
   const deleteWorkspace = async () => {
     await deleteCurrentWorkspace();
-    handleLogout();
+    await signOut();
   };
 
   return (

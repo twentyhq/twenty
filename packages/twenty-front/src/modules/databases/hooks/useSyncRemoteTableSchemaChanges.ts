@@ -35,6 +35,7 @@ export const useSyncRemoteTableSchemaChanges = () => {
               fieldModifiers: {
                 schemaPendingUpdates: () =>
                   data.syncRemoteTableSchemaChanges.schemaPendingUpdates || [],
+                status: () => data.syncRemoteTableSchemaChanges.status,
               },
             });
           }
