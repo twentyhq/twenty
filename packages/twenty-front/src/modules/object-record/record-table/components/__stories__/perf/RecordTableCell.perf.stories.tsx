@@ -16,7 +16,6 @@ import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
-import { useRecordChipDataGenerator } from '@/object-record/record-table/hooks/useRecordChipDataGenerator';
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
@@ -59,11 +58,6 @@ const meta: Meta = {
   decorators: [
     MemoryRouterDecorator,
     (Story) => {
-      const recordChipDataGeneratorPerFieldName = useRecordChipDataGenerator({
-        objectNameSingular: mockPerformance.objectMetadataItem.nameSingular,
-        visibleTableColumns: mockPerformance.visibleTableColumns as any,
-      });
-
       return (
         <RecordFieldValueSelectorContextProvider>
           <RecordTableContext.Provider
@@ -76,7 +70,6 @@ const meta: Meta = {
               onMoveSoftFocusToCell: () => {},
               onContextMenu: () => {},
               onCellMouseEnter: () => {},
-              recordChipDataGeneratorPerFieldName,
               visibleTableColumns: mockPerformance.visibleTableColumns as any,
             }}
           >

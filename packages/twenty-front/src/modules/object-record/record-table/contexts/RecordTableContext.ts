@@ -2,13 +2,11 @@ import React, { createContext } from 'react';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { RecordChipData } from '@/object-record/record-field/types/RecordChipData';
 import { HandleContainerMouseEnterArgs } from '@/object-record/record-table/hooks/internal/useHandleContainerMouseEnter';
 import { OpenTableCellArgs } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellV2';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 export type RecordTableContextProps = {
   objectMetadataItem: ObjectMetadataItem;
@@ -27,10 +25,6 @@ export type RecordTableContextProps = {
   onMoveSoftFocusToCell: (cellPosition: TableCellPosition) => void;
   onContextMenu: (event: React.MouseEvent, recordId: string) => void;
   onCellMouseEnter: (args: HandleContainerMouseEnterArgs) => void;
-  recordChipDataGeneratorPerFieldName: Record<
-    string,
-    (record: ObjectRecord) => RecordChipData
-  >;
   visibleTableColumns: ColumnDefinition<FieldMetadata>[];
 };
 
