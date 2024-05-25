@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { useSelectField } from '@/object-record/record-field/meta-types/hooks/useSelectField';
@@ -59,12 +59,24 @@ export const SelectFieldInput = ({
     },
   });
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      const selectedOption = optionsInDropDown.find(
+        (option) =>
+          option.value !== fieldValue &&
+          option.label.toLowerCase().includes(searchFilter.toLowerCase()),
+      );
+      selectedOption && onSubmit?.(() => persistField(selectedOption.value));
+    }
+  };
+
   return (
     <StyledRelationPickerContainer ref={containerRef}>
       <DropdownMenu data-select-disable>
         <DropdownMenuSearchInput
           value={searchFilter}
           onChange={(event) => setSearchFilter(event.currentTarget.value)}
+          onKeyDown={handleKeyDown}
           autoFocus
         />
         <DropdownMenuSeparator />
