@@ -55,6 +55,7 @@ type ShowPageRightContainerProps = {
   emails?: boolean;
   loading?: boolean;
   summary?: JSX.Element;
+  forceMobile?: boolean;
 };
 
 export const ShowPageRightContainer = ({
@@ -65,6 +66,7 @@ export const ShowPageRightContainer = ({
   emails,
   loading,
   summary,
+  forceMobile = false,
 }: ShowPageRightContainerProps) => {
   const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
   const activeTabId = useRecoilValue(activeTabIdState);
@@ -82,7 +84,7 @@ export const ShowPageRightContainer = ({
         CoreObjectNameSingular.Company) ||
     targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Person;
 
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile() || forceMobile;
 
   const TASK_TABS = [
     {

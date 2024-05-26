@@ -4,24 +4,23 @@ import styled from '@emotion/styled';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
-const StyledOuterContainer = styled.div<{ isInRightDrawer: boolean }>`
+const StyledOuterContainer = styled.div<{ isMobile: boolean }>`
   background: ${({ theme }) => theme.background.secondary};
   border-bottom-left-radius: 8px;
-  border-right: ${({ theme }) =>
-    useIsMobile() ? 'none' : `1px solid ${theme.border.color.medium}`};
+  border-right: ${({ theme, isMobile }) =>
+    isMobile ? 'none' : `1px solid ${theme.border.color.medium}`};
   border-top-left-radius: 8px;
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(3)};
   z-index: 10;
-  width: ${({ isInRightDrawer }) => (isInRightDrawer ? `100%` : 'auto')};
+  width: 'auto';
 `;
 
-const StyledInnerContainer = styled.div<{ isInRightDrawer: boolean }>`
+const StyledInnerContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex-direction: column;
-  width: ${({ isInRightDrawer }) =>
-    useIsMobile() || isInRightDrawer ? `100%` : '348px'};
+  width: ${({ isMobile }) => (isMobile ? `100%` : '348px')};
 `;
 
 const StyledIntermediateContainer = styled.div`
@@ -31,26 +30,26 @@ const StyledIntermediateContainer = styled.div`
 `;
 
 export type ShowPageLeftContainerProps = {
-  isInRightDrawer: boolean;
+  forceMobile: boolean;
   children: ReactNode;
 };
 
 export const ShowPageLeftContainer = ({
-  isInRightDrawer = false,
+  forceMobile = false,
   children,
 }: ShowPageLeftContainerProps) => {
-  const isMobile = useIsMobile();
-  return isMobile || isInRightDrawer ? (
-    <StyledOuterContainer isInRightDrawer={isInRightDrawer}>
-      <StyledInnerContainer isInRightDrawer={isInRightDrawer}>
+  const isMobile = useIsMobile() || forceMobile;
+  return isMobile || forceMobile ? (
+    <StyledOuterContainer isMobile={isMobile}>
+      <StyledInnerContainer isMobile={isMobile}>
         {children}
       </StyledInnerContainer>
     </StyledOuterContainer>
   ) : (
-    <StyledOuterContainer isInRightDrawer={isInRightDrawer}>
+    <StyledOuterContainer isMobile={isMobile}>
       <ScrollWrapper>
         <StyledIntermediateContainer>
-          <StyledInnerContainer isInRightDrawer={isInRightDrawer}>
+          <StyledInnerContainer isMobile={isMobile}>
             {children}
           </StyledInnerContainer>
         </StyledIntermediateContainer>
