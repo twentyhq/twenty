@@ -124,7 +124,7 @@ export const RecordDetailRelationSection = ({
     if (loading) {
       return (
         <RecordDetailRelationSectionSkeletonLoader
-          isPeopleField={fieldName === 'people'}
+          numSkeletons={fieldName === 'people' ? 2 : 1}
         />
       );
     }

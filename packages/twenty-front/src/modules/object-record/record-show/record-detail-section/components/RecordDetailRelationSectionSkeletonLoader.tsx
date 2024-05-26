@@ -10,9 +10,9 @@ const StyledSkeletonDiv = styled.div`
 `;
 
 export const RecordDetailRelationSectionSkeletonLoader = ({
-  isPeopleField,
+  numSkeletons = 1,
 }: {
-  isPeopleField: boolean;
+  numSkeletons?: number;
 }) => {
   const theme = useTheme();
   return (
@@ -22,8 +22,9 @@ export const RecordDetailRelationSectionSkeletonLoader = ({
       borderRadius={4}
     >
       <StyledSkeletonDiv>
-        <Skeleton width={129} height={16} />
-        {isPeopleField ? <Skeleton width={129} height={16} /> : null}
+        {Array.from({ length: numSkeletons }).map((_, index) => (
+          <Skeleton key={index} width={129} height={16} />
+        ))}
       </StyledSkeletonDiv>
     </SkeletonTheme>
   );
