@@ -18,7 +18,9 @@ export const ObjectMetadataNavItems = () => {
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
   const loading = useIsPrefetchLoading();
 
-  if (loading) return <ObjectMetadataNavItemsSkeletonLoader />;
+  if (loading) {
+    return <ObjectMetadataNavItemsSkeletonLoader />;
+  }
 
   return (
     <>

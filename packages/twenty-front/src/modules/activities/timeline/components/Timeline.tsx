@@ -33,13 +33,13 @@ export const Timeline = ({
   loading,
 }: {
   targetableObject: ActivityTargetableObject;
-  loading?: boolean;
+  loading: boolean;
 }) => {
   const timelineActivitiesForGroup = useRecoilValue(
     timelineActivitiesForGroupState,
   );
 
-  if (loading === true) {
+  if (loading) {
     return <TimelineSkeletonLoader />;
   }
 

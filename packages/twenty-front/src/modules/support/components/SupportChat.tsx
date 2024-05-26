@@ -8,7 +8,7 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
-import { StyledSupportChatSkeletonLoader } from '@/support/components/StyledSupportChatSkeletonLoader';
+import { SupportChatSkeletonLoader } from '@/support/components/SupportChatSkeletonLoader';
 import { Button } from '@/ui/input/button/components/Button';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { User } from '~/generated/graphql';
@@ -101,7 +101,9 @@ export const SupportChat = () => {
     currentWorkspaceMember,
   ]);
 
-  if (loading) return <StyledSupportChatSkeletonLoader />;
+  if (loading) {
+    return <SupportChatSkeletonLoader />;
+  }
 
   return isFrontChatLoaded ? (
     <StyledButtonContainer>

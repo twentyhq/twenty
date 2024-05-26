@@ -4,7 +4,9 @@ import styled from '@emotion/styled';
 
 const StyledSkeletonTitle = styled.div`
   margin-bottom: ${(props) => props.theme.spacing(2)};
+  padding-left: ${({ theme }) => theme.spacing(1)};
 `;
+
 export const NavigationDrawerSectionTitleSkeletonLoader = () => {
   const theme = useTheme();
   return (

@@ -7,6 +7,7 @@ const StyledSkeletonColumn = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
   height: 76px;
+  padding-left: ${({ theme }) => theme.spacing(1)};
 `;
 
 export const ObjectMetadataNavItemsSkeletonLoader: React.FC = () => {

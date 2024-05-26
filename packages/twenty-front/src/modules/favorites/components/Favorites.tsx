@@ -36,7 +36,9 @@ export const Favorites = () => {
   const { favorites, handleReorderFavorite } = useFavorites();
   const loading = useIsPrefetchLoading();
 
-  if (loading) return <FavoritesSkeletonLoader />;
+  if (loading) {
+    return <FavoritesSkeletonLoader />;
+  }
 
   if (!favorites || favorites.length === 0) return <></>;
 
