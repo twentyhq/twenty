@@ -8,7 +8,6 @@ import { PageAddButton } from '@/ui/layout/page/PageAddButton';
 import { PageHeader } from '@/ui/layout/page/PageHeader';
 import { PageHotkeysEffect } from '@/ui/layout/page/PageHotkeysEffect';
 import { ViewType } from '@/views/types/ViewType';
-import { useUserOrMetadataLoading } from '~/hooks/useUserOrMetadataLoading';
 import { capitalize } from '~/utils/string/capitalize';
 
 type RecordIndexPageHeaderProps = {
@@ -39,10 +38,8 @@ export const RecordIndexPageHeader = ({
   const pageHeaderTitle =
     objectMetadataItem?.labelPlural ?? capitalize(objectNamePlural);
 
-  const loading = useUserOrMetadataLoading();
-
   return (
-    <PageHeader title={pageHeaderTitle} Icon={Icon} loading={loading}>
+    <PageHeader title={pageHeaderTitle} Icon={Icon}>
       <PageHotkeysEffect onAddButtonClick={createRecord} />
       {canAddRecord && <PageAddButton onClick={createRecord} />}
     </PageHeader>

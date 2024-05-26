@@ -1,6 +1,6 @@
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { BACKGROUND_LIGHT, GRAY_SCALE } from 'twenty-ui';
 
 const StyledSkeletonContainer = styled.div`
   display: flex;
@@ -17,12 +17,11 @@ export const MainNavigationDrawerItemsSkeletonLoader = ({
   title?: boolean;
   length: number;
 }) => {
-  const theme = useTheme();
   return (
     <StyledSkeletonContainer>
       <SkeletonTheme
-        baseColor={theme.background.tertiary}
-        highlightColor={theme.background.transparent.lighter}
+        baseColor={GRAY_SCALE.gray15}
+        highlightColor={BACKGROUND_LIGHT.transparent.lighter}
         borderRadius={4}
       >
         {title && <Skeleton width={48} height={13} />}

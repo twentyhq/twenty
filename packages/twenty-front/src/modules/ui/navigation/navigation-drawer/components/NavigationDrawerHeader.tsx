@@ -1,5 +1,3 @@
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
@@ -8,7 +6,6 @@ import { MultiWorkspaceDropdownButton } from '@/ui/navigation/navigation-drawer/
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { DEFAULT_WORKSPACE_NAME } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceName';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useUserOrMetadataLoading } from '~/hooks/useUserOrMetadataLoading';
 
 import { NavigationDrawerCollapseButton } from './NavigationDrawerCollapseButton';
 
@@ -45,21 +42,6 @@ const StyledNavigationDrawerCollapseButton = styled(
   transition: opacity ${({ theme }) => theme.animation.duration.normal}s;
 `;
 
-const StyledSkeletonLoader = () => {
-  const theme = useTheme();
-  return (
-    <StyledContainer>
-      <SkeletonTheme
-        baseColor={theme.background.tertiary}
-        highlightColor={theme.background.transparent.lighter}
-        borderRadius={4}
-      >
-        <Skeleton height={16} width={96} />
-      </SkeletonTheme>
-    </StyledContainer>
-  );
-};
-
 type NavigationDrawerHeaderProps = {
   name?: string;
   logo?: string;
@@ -73,12 +55,6 @@ export const NavigationDrawerHeader = ({
 }: NavigationDrawerHeaderProps) => {
   const isMobile = useIsMobile();
   const workspaces = useRecoilValue(workspacesState);
-
-  const loading = useUserOrMetadataLoading();
-
-  if (loading) {
-    return <StyledSkeletonLoader />;
-  }
 
   return (
     <StyledContainer>
