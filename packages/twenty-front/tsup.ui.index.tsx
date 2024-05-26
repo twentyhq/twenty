@@ -1,4 +1,4 @@
-import { ThemeType } from './src/modules/ui/theme/constants/ThemeLight';
+import { ThemeType } from '@/ui/theme/constants/ThemeLight';
 
 export { ThemeProvider } from '@emotion/react';
 
@@ -21,7 +21,7 @@ export * from './src/modules/ui/input/button/components/FloatingButtonGroup'
 export * from './src/modules/ui/input/button/components/FloatingIconButton'
 export * from './src/modules/ui/input/button/components/FloatingIconButtonGroup'
 export * from './src/modules/ui/input/button/components/LightButton'
-export * from './src/modules/ui/navigation/link/components/ActionLink.tsx'
+export * from './src/modules/ui/navigation/link/components/ActionLink'
 export * from './src/modules/ui/input/button/components/LightIconButton'
 export * from './src/modules/ui/input/button/components/MainButton'
 export * from './src/modules/ui/input/button/components/RoundedIconButton'

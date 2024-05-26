@@ -1,27 +1,29 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { auditLogStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
-import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
-import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
-import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { AUDIT_LOGS_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
+import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
 
-@ObjectMetadata({
-  standardId: standardObjectIds.auditLog,
+@WorkspaceEntity({
+  standardId: STANDARD_OBJECT_IDS.auditLog,
   namePlural: 'auditLogs',
   labelSingular: 'Audit Log',
   labelPlural: 'Audit Logs',
   description: 'An audit log of actions performed in the system',
   icon: 'IconIconTimelineEvent',
 })
-@IsSystem()
-export class AuditLogObjectMetadata extends BaseObjectMetadata {
-  @FieldMetadata({
-    standardId: auditLogStandardFieldIds.name,
+@WorkspaceIsSystem()
+export class AuditLogObjectMetadata extends BaseWorkspaceEntity {
+  @WorkspaceField({
+    standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.name,
     type: FieldMetadataType.TEXT,
     label: 'Event name',
     description: 'Event name/type',
@@ -29,29 +31,29 @@ export class AuditLogObjectMetadata extends BaseObjectMetadata {
   })
   name: string;
 
-  @FieldMetadata({
-    standardId: auditLogStandardFieldIds.properties,
+  @WorkspaceField({
+    standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.properties,
     type: FieldMetadataType.RAW_JSON,
     label: 'Event details',
     description: 'Json value for event details',
     icon: 'IconListDetails',
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   properties: JSON;
 
-  @FieldMetadata({
-    standardId: auditLogStandardFieldIds.context,
+  @WorkspaceField({
+    standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.context,
     type: FieldMetadataType.RAW_JSON,
     label: 'Event context',
     description:
       'Json object to provide context (user, device, workspace, etc.)',
     icon: 'IconListDetails',
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   context: JSON;
 
-  @FieldMetadata({
-    standardId: auditLogStandardFieldIds.objectName,
+  @WorkspaceField({
+    standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.objectName,
     type: FieldMetadataType.TEXT,
     label: 'Object name',
     description: 'If the event is related to a particular object',
@@ -59,8 +61,8 @@ export class AuditLogObjectMetadata extends BaseObjectMetadata {
   })
   objectName: string;
 
-  @FieldMetadata({
-    standardId: auditLogStandardFieldIds.objectName,
+  @WorkspaceField({
+    standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.objectName,
     type: FieldMetadataType.TEXT,
     label: 'Object name',
     description: 'If the event is related to a particular object',
@@ -68,24 +70,26 @@ export class AuditLogObjectMetadata extends BaseObjectMetadata {
   })
   objectMetadataId: string;
 
-  @FieldMetadata({
-    standardId: auditLogStandardFieldIds.recordId,
+  @WorkspaceField({
+    standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.recordId,
     type: FieldMetadataType.UUID,
     label: 'Object id',
     description: 'Event name/type',
     icon: 'IconAbc',
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   recordId: string;
 
-  @FieldMetadata({
-    standardId: auditLogStandardFieldIds.workspaceMember,
-    type: FieldMetadataType.RELATION,
+  @WorkspaceRelation({
+    standardId: AUDIT_LOGS_STANDARD_FIELD_IDS.workspaceMember,
+    type: RelationMetadataType.MANY_TO_ONE,
     label: 'Workspace Member',
     description: 'Event workspace member',
     icon: 'IconCircleUser',
     joinColumn: 'workspaceMemberId',
+    inverseSideTarget: () => WorkspaceMemberObjectMetadata,
+    inverseSideFieldKey: 'auditLogs',
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   workspaceMember: Relation<WorkspaceMemberObjectMetadata>;
 }

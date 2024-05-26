@@ -22,7 +22,7 @@ export type ButtonProps = {
   disabled?: boolean;
   focus?: boolean;
   onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
-};
+} & React.ComponentProps<'button'>;
 
 const StyledButton = styled.button<
   Pick<
@@ -160,7 +160,7 @@ const StyledButton = styled.button<
               border-color: ${variant === 'secondary'
                 ? focus
                   ? theme.color.blue
-                  : theme.color.blue20
+                  : theme.accent.primary
                 : focus
                   ? theme.color.blue
                   : 'transparent'};

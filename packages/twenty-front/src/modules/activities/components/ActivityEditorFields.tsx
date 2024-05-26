@@ -14,6 +14,7 @@ import {
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { isRightDrawerAnimationCompletedState } from '@/ui/layout/right-drawer/states/isRightDrawerAnimationCompleted';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledPropertyBox = styled(PropertyBox)`
@@ -26,6 +27,10 @@ export const ActivityEditorFields = ({
   activityId: string;
 }) => {
   const { upsertActivity } = useUpsertActivity();
+
+  const isRightDrawerAnimationCompleted = useRecoilValue(
+    isRightDrawerAnimationCompletedState,
+  );
 
   const getRecordFromCache = useGetRecordFromCache({
     objectNameSingular: CoreObjectNameSingular.Activity,
@@ -93,11 +98,16 @@ export const ActivityEditorFields = ({
             </AssigneeFieldContextProvider>
           </>
         )}
-      {ActivityTargetsContextProvider && isDefined(activityFromCache) && (
-        <ActivityTargetsContextProvider>
-          <ActivityTargetsInlineCell activity={activityFromCache} />
-        </ActivityTargetsContextProvider>
-      )}
+      {ActivityTargetsContextProvider &&
+        isDefined(activityFromCache) &&
+        isRightDrawerAnimationCompleted && (
+          <ActivityTargetsContextProvider>
+            <ActivityTargetsInlineCell
+              activity={activityFromCache}
+              maxWidth={340}
+            />
+          </ActivityTargetsContextProvider>
+        )}
     </StyledPropertyBox>
   );
 };

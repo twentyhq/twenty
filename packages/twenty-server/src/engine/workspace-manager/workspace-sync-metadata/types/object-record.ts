@@ -1,9 +1,9 @@
-import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 
-export type ObjectRecord<T extends BaseObjectMetadata> = {
-  [K in keyof T as T[K] extends BaseObjectMetadata
+export type ObjectRecord<T extends BaseWorkspaceEntity> = {
+  [K in keyof T as T[K] extends BaseWorkspaceEntity
     ? `${Extract<K, string>}Id`
-    : K]: T[K] extends BaseObjectMetadata ? string : T[K];
+    : K]: T[K] extends BaseWorkspaceEntity ? string : T[K];
 } & {
-  [K in keyof T]: T[K] extends BaseObjectMetadata ? ObjectRecord<T[K]> : T[K];
+  [K in keyof T]: T[K] extends BaseWorkspaceEntity ? ObjectRecord<T[K]> : T[K];
 };

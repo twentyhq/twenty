@@ -3,4 +3,5 @@ export type BlocklistItem = {
   handle: string;
   workspaceMemberId: string;
   createdAt: string;
+  __typename: 'BlocklistItem';
 };

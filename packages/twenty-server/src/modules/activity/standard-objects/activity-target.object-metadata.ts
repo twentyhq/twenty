@@ -1,83 +1,96 @@
 import { Relation } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/relation.interface';
 
-import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { activityTargetStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { CustomObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/custom-objects/custom.object-metadata';
-import { DynamicRelationFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/dynamic-field-metadata.interface';
-import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
-import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
-import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
+import { ACTIVITY_TARGET_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { ActivityObjectMetadata } from 'src/modules/activity/standard-objects/activity.object-metadata';
-import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
 import { CompanyObjectMetadata } from 'src/modules/company/standard-objects/company.object-metadata';
 import { OpportunityObjectMetadata } from 'src/modules/opportunity/standard-objects/opportunity.object-metadata';
 import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
-import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceDynamicRelation } from 'src/engine/twenty-orm/decorators/workspace-dynamic-relation.decorator';
+import { RelationMetadataType } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 
-@ObjectMetadata({
-  standardId: standardObjectIds.activityTarget,
+@WorkspaceEntity({
+  standardId: STANDARD_OBJECT_IDS.activityTarget,
   namePlural: 'activityTargets',
   labelSingular: 'Activity Target',
   labelPlural: 'Activity Targets',
   description: 'An activity target',
   icon: 'IconCheckbox',
 })
-@IsSystem()
-@IsNotAuditLogged()
-export class ActivityTargetObjectMetadata extends BaseObjectMetadata {
-  @FieldMetadata({
-    standardId: activityTargetStandardFieldIds.activity,
-    type: FieldMetadataType.RELATION,
+@WorkspaceIsSystem()
+@WorkspaceIsNotAuditLogged()
+export class ActivityTargetObjectMetadata extends BaseWorkspaceEntity {
+  @WorkspaceRelation({
+    standardId: ACTIVITY_TARGET_STANDARD_FIELD_IDS.activity,
+    type: RelationMetadataType.MANY_TO_ONE,
     label: 'Activity',
     description: 'ActivityTarget activity',
     icon: 'IconNotes',
     joinColumn: 'activityId',
+    inverseSideTarget: () => ActivityObjectMetadata,
+    inverseSideFieldKey: 'activityTargets',
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   activity: Relation<ActivityObjectMetadata>;
 
-  @FieldMetadata({
-    standardId: activityTargetStandardFieldIds.person,
-    type: FieldMetadataType.RELATION,
+  @WorkspaceRelation({
+    standardId: ACTIVITY_TARGET_STANDARD_FIELD_IDS.person,
+    type: RelationMetadataType.MANY_TO_ONE,
     label: 'Person',
     description: 'ActivityTarget person',
     icon: 'IconUser',
     joinColumn: 'personId',
+    inverseSideTarget: () => PersonObjectMetadata,
+    inverseSideFieldKey: 'activityTargets',
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   person: Relation<PersonObjectMetadata>;
 
-  @FieldMetadata({
-    standardId: activityTargetStandardFieldIds.company,
-    type: FieldMetadataType.RELATION,
+  @WorkspaceRelation({
+    standardId: ACTIVITY_TARGET_STANDARD_FIELD_IDS.company,
+    type: RelationMetadataType.MANY_TO_ONE,
     label: 'Company',
     description: 'ActivityTarget company',
     icon: 'IconBuildingSkyscraper',
     joinColumn: 'companyId',
+    inverseSideTarget: () => CompanyObjectMetadata,
+    inverseSideFieldKey: 'activityTargets',
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   company: Relation<CompanyObjectMetadata>;
 
-  @FieldMetadata({
-    standardId: activityTargetStandardFieldIds.opportunity,
-    type: FieldMetadataType.RELATION,
+  @WorkspaceRelation({
+    standardId: ACTIVITY_TARGET_STANDARD_FIELD_IDS.opportunity,
+    type: RelationMetadataType.MANY_TO_ONE,
     label: 'Opportunity',
     description: 'ActivityTarget opportunity',
     icon: 'IconTargetArrow',
     joinColumn: 'opportunityId',
+    inverseSideTarget: () => OpportunityObjectMetadata,
+    inverseSideFieldKey: 'activityTargets',
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   opportunity: Relation<OpportunityObjectMetadata>;
 
-  @DynamicRelationFieldMetadata((oppositeObjectMetadata) => ({
-    standardId: activityTargetStandardFieldIds.custom,
-    name: oppositeObjectMetadata.nameSingular,
-    label: oppositeObjectMetadata.labelSingular,
-    description: `ActivityTarget ${oppositeObjectMetadata.labelSingular}`,
-    joinColumn: `${oppositeObjectMetadata.nameSingular}Id`,
-    icon: 'IconBuildingSkyscraper',
-  }))
-  custom: Relation<CustomObjectMetadata>;
+  @WorkspaceDynamicRelation({
+    type: RelationMetadataType.MANY_TO_ONE,
+    argsFactory: (oppositeObjectMetadata) => ({
+      standardId: ACTIVITY_TARGET_STANDARD_FIELD_IDS.custom,
+      name: oppositeObjectMetadata.nameSingular,
+      label: oppositeObjectMetadata.labelSingular,
+      description: `ActivityTarget ${oppositeObjectMetadata.labelSingular}`,
+      joinColumn: `${oppositeObjectMetadata.nameSingular}Id`,
+      icon: 'IconBuildingSkyscraper',
+    }),
+    inverseSideTarget: () => CustomWorkspaceEntity,
+    inverseSideFieldKey: 'activityTargets',
+  })
+  custom: Relation<CustomWorkspaceEntity>;
 }

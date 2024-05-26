@@ -4,7 +4,7 @@ import styled from '@emotion/styled';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import UserGuideCard from '@/app/_components/user-guide/UserGuideCard';
-import { USER_GUIDE_HOME_CARDS } from '@/content/user-guide/constants/UserGuideHomeCards';
+import { UserGuideArticlesProps } from '@/content/user-guide/constants/getUserGuideArticles';
 
 const StyledContainer = styled.div`
   ${mq({
@@ -13,39 +13,77 @@ const StyledContainer = styled.div`
     flexDirection: 'row',
     justifyContent: 'center',
   })};
-  @media (max-width: 810px) {
-    margin-top: 64px;
+  @media (min-width: 1500px) {
+    width: 100%;
   }
 `;
 
 const StyledWrapper = styled.div`
-  width: 79.3%;
-  padding: ${Theme.spacing(10)} 0px ${Theme.spacing(20)} 0px;
+  padding: ${Theme.spacing(10)} 92px ${Theme.spacing(20)};
   display: flex;
   flex-direction: column;
-  gap: ${Theme.spacing(8)};
+  width: 100%;
+
+  @media (max-width: 450px) {
+    padding: ${Theme.spacing(10)} 30px ${Theme.spacing(20)};
+    align-items: center;
+  }
+
+  @media (min-width: 450px) and (max-width: 800px) {
+    padding: ${Theme.spacing(10)} 50px ${Theme.spacing(20)};
+    align-items: center;
+  }
+
+  @media (min-width: 1500px) {
+    width: 720px;
+    padding: ${Theme.spacing(10)} 0px ${Theme.spacing(20)};
+    margin-right: 300px;
+  }
+`;
+
+const StyledTitle = styled.div`
+  font-size: ${Theme.font.size.sm};
+  color: ${Theme.text.color.quarternary};
+  font-weight: ${Theme.font.weight.medium};
+  margin-bottom: 32px;
+  width: 100%;
+
+  @media (min-width: 450px) and (max-width: 800px) {
+    width: 340px;
+    margin-bottom: 24px;
+  }
 `;
 
 const StyledHeader = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0px;
+  width: 100%;
+  @media (min-width: 450px) and (max-width: 1200px) {
+    width: 340px;
+    margin-bottom: 24px;
+  }
 `;
 
 const StyledHeading = styled.h1`
   line-height: 38px;
   font-weight: 700;
-  font-size: 38px;
+  font-size: 40px;
   color: ${Theme.text.color.primary};
   margin: 0px;
+  @media (max-width: 800px) {
+    font-size: 28px;
+  }
 `;
 
 const StyledSubHeading = styled.h1`
-  line-height: 12px;
-  font-family: ${Theme.font.family};
-  font-size: ${Theme.font.size.sm};
+  line-height: 28.8px;
+  font-size: ${Theme.font.size.lg};
   font-weight: ${Theme.font.weight.regular};
   color: ${Theme.text.color.tertiary};
+  @media (max-width: 800px) {
+    font-size: ${Theme.font.size.sm};
+  }
 `;
 
 const StyledContent = styled.div`
@@ -58,12 +96,23 @@ const StyledContent = styled.div`
     gridTemplateColumns: 'auto auto',
     gap: `${Theme.spacing(6)}`,
   })};
+  @media (min-width: 450px) {
+    justify-content: flex-start;
+    width: 340px;
+  }
 `;
 
-export default function UserGuideMain() {
+interface UserGuideProps {
+  userGuideArticleCards: UserGuideArticlesProps[];
+}
+
+export default function UserGuideMain({
+  userGuideArticleCards,
+}: UserGuideProps) {
   return (
     <StyledContainer>
       <StyledWrapper>
+        <StyledTitle>User Guide</StyledTitle>
         <StyledHeader>
           <StyledHeading>User Guide</StyledHeading>
           <StyledSubHeading>
@@ -71,7 +120,7 @@ export default function UserGuideMain() {
           </StyledSubHeading>
         </StyledHeader>
         <StyledContent>
-          {USER_GUIDE_HOME_CARDS.map((card) => {
+          {userGuideArticleCards.map((card) => {
             return <UserGuideCard key={card.title} card={card} />;
           })}
         </StyledContent>

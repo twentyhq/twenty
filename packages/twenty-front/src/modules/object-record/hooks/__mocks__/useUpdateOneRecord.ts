@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const query = gql`
-  mutation UpdateOnePerson($idToUpdate: UUID!, $input: PersonUpdateInput!) {
+  mutation UpdateOnePerson($idToUpdate: ID!, $input: PersonUpdateInput!) {
     updatePerson(id: $idToUpdate, data: $input) {
       __typename
       xLink {

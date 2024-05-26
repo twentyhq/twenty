@@ -57,6 +57,7 @@ const getSchemaComponentsProperties = (
         }
         break;
       case FieldMetadataType.LINK:
+      case FieldMetadataType.LINKS:
       case FieldMetadataType.CURRENCY:
       case FieldMetadataType.FULL_NAME:
       case FieldMetadataType.ADDRESS:

@@ -20,6 +20,7 @@ export enum AppTokenType {
   RefreshToken = 'REFRESH_TOKEN',
   CodeChallenge = 'CODE_CHALLENGE',
   AuthorizationCode = 'AUTHORIZATION_CODE',
+  PasswordResetToken = 'PASSWORD_RESET_TOKEN',
 }
 
 @Entity({ name: 'appToken', schema: 'core' })

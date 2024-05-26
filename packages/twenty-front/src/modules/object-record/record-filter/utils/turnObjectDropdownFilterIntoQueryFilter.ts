@@ -5,11 +5,11 @@ import {
   CurrencyFilter,
   DateFilter,
   FloatFilter,
-  ObjectRecordQueryFilter,
+  RecordGqlOperationFilter,
   StringFilter,
   URLFilter,
   UUIDFilter,
-} from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
+} from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { makeAndFilterVariables } from '@/object-record/utils/makeAndFilterVariables';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 import { Field } from '~/generated/graphql';
@@ -27,8 +27,8 @@ export type ObjectDropdownFilter = Omit<Filter, 'definition'> & {
 export const turnObjectDropdownFilterIntoQueryFilter = (
   rawUIFilters: ObjectDropdownFilter[],
   fields: Pick<Field, 'id' | 'name'>[],
-): ObjectRecordQueryFilter | undefined => {
-  const objectRecordFilters: ObjectRecordQueryFilter[] = [];
+): RecordGqlOperationFilter | undefined => {
+  const objectRecordFilters: RecordGqlOperationFilter[] = [];
 
   for (const rawUIFilter of rawUIFilters) {
     const correspondingField = fields.find(

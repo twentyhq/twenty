@@ -24,7 +24,7 @@ const StyledButton = styled.button<
 
     switch (variant) {
       case 'primary':
-        return theme.background.radialGradient;
+        return theme.background.primaryInverted;
       case 'secondary':
         return theme.background.primary;
       default:
@@ -39,7 +39,7 @@ const StyledButton = styled.button<
 
     switch (variant) {
       case 'primary':
-        return theme.background.transparent.light;
+        return theme.background.transparent.strong;
       case 'secondary':
         return theme.border.color.medium;
       default:
@@ -61,7 +61,7 @@ const StyledButton = styled.button<
 
     switch (variant) {
       case 'primary':
-        return theme.grayScale.gray0;
+        return theme.font.color.inverted;
       case 'secondary':
         return theme.font.color.primary;
       default:
@@ -90,7 +90,7 @@ const StyledButton = styled.button<
       default:
         return `
           &:hover {
-            background: ${theme.background.radialGradientHover}};
+            background: ${theme.background.primaryInvertedHover}};
           }
         `;
     }

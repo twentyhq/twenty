@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTheme } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconComponent } from 'twenty-ui';
 
@@ -87,10 +87,13 @@ const StyledButton = styled.button<
     `;
   }}
 
-  &:hover {
-    background: ${({ theme, isActive }) =>
-      !!isActive ?? theme.background.transparent.lighter};
-  }
+  ${({ theme, isActive }) =>
+    isActive &&
+    css`
+      &:hover {
+        background: ${theme.background.transparent.lighter};
+      }
+    `}
 
   &:active {
     background: ${({ theme, disabled }) =>

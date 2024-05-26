@@ -16,7 +16,7 @@ export class GmailFullSyncJob implements MessageQueueJob<GmailFullSyncJobData> {
 
   constructor(
     private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
-    private readonly gmailFullSyncV2Service: GmailFullSyncService,
+    private readonly gmailFullSyncService: GmailFullSyncService,
   ) {}
 
   async handle(data: GmailFullSyncJobData): Promise<void> {
@@ -38,7 +38,7 @@ export class GmailFullSyncJob implements MessageQueueJob<GmailFullSyncJobData> {
       return;
     }
 
-    await this.gmailFullSyncV2Service.fetchConnectedAccountThreads(
+    await this.gmailFullSyncService.fetchConnectedAccountThreads(
       data.workspaceId,
       data.connectedAccountId,
     );

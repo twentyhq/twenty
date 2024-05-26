@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-import { groupBy } from 'lodash';
+import groupBy from 'lodash.groupby';
 
 import { WorkspacePreQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-pre-query-hook/interfaces/workspace-pre-query-hook.interface';
 import { FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -32,7 +32,7 @@ export class MessageFindManyPreQueryHook implements WorkspacePreQueryHook {
     @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectObjectMetadataRepository(WorkspaceMemberObjectMetadata)
-    private readonly workspaceMemberService: WorkspaceMemberRepository,
+    private readonly workspaceMemberRepository: WorkspaceMemberRepository,
   ) {}
 
   async execute(
@@ -83,7 +83,7 @@ export class MessageFindManyPreQueryHook implements WorkspacePreQueryHook {
     }
 
     const currentWorkspaceMember =
-      await this.workspaceMemberService.getByIdOrFail(userId, workspaceId);
+      await this.workspaceMemberRepository.getByIdOrFail(userId, workspaceId);
 
     const messageChannelsConnectedAccounts =
       await this.connectedAccountRepository.getByIds(

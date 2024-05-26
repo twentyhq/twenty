@@ -6,19 +6,22 @@ import GraphQLJSON from 'graphql-type-json';
 import {
   ForeignDataWrapperOptions,
   RemoteServerType,
-  UserMappingOptions,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
+import { UserMappingOptions } from 'src/engine/metadata-modules/remote-server/types/user-mapping-options';
 
 @InputType()
 export class CreateRemoteServerInput<T extends RemoteServerType> {
   @Field(() => String)
   foreignDataWrapperType: T;
 
-  @IsOptional()
   @Field(() => GraphQLJSON)
   foreignDataWrapperOptions: ForeignDataWrapperOptions<T>;
 
   @IsOptional()
-  @Field(() => GraphQLJSON, { nullable: true })
+  @Field(() => UserMappingOptions, { nullable: true })
   userMappingOptions?: UserMappingOptions;
+
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  schema?: string;
 }

@@ -12,4 +12,5 @@ export type TimelineActivity = {
   linkedRecordCachedName: string;
   linkedRecordId: string;
   linkedObjectMetadataId: string;
+  __typename: 'TimelineActivity';
 };

@@ -9,7 +9,13 @@ type GetConnectionDbNameParams = {
 export const getConnectionDbName = ({
   integration,
   connection,
-}: GetConnectionDbNameParams) =>
-  integration.from.key === 'postgresql'
-    ? connection.foreignDataWrapperOptions?.dbname
-    : '';
+}: GetConnectionDbNameParams) => {
+  switch (integration.from.key) {
+    case 'postgresql':
+      return connection.foreignDataWrapperOptions?.dbname;
+    case 'stripe':
+      return connection.id;
+    default:
+      return '';
+  }
+};

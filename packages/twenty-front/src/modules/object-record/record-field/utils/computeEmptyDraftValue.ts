@@ -8,7 +8,8 @@ import { isFieldEmail } from '@/object-record/record-field/types/guards/isFieldE
 import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
 import { isFieldLink } from '@/object-record/record-field/types/guards/isFieldLink';
 import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
-import { isFieldRelationValue } from '@/object-record/record-field/types/guards/isFieldRelationValue';
+import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
+import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
 
@@ -26,7 +27,8 @@ export const computeEmptyDraftValue = <FieldValue>({
     isFieldDateTime(fieldDefinition) ||
     isFieldNumber(fieldDefinition) ||
     isFieldEmail(fieldDefinition) ||
-    isFieldRelationValue(fieldDefinition)
+    isFieldRelation(fieldDefinition) ||
+    isFieldRawJson(fieldDefinition)
   ) {
     return '' as FieldInputDraftValue<FieldValue>;
   }

@@ -33,6 +33,12 @@ export const USER_QUERY_FRAGMENT = gql`
         value
         workspaceId
       }
+      currentCacheVersion
+      currentBillingSubscription {
+        id
+        status
+        interval
+      }
     }
     workspaces {
       workspace {

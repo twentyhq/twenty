@@ -10,7 +10,6 @@ import { FetchMessagesByBatchesModule } from 'src/modules/messaging/services/fet
 import { GmailPartialSyncV2Service as GmailPartialSyncService } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync.service';
 import { MessageModule } from 'src/modules/messaging/services/message/message.module';
 import { MessagingProvidersModule } from 'src/modules/messaging/services/providers/messaging-providers.module';
-import { SaveMessageAndEmitContactCreationEventModule } from 'src/modules/messaging/services/save-message-and-emit-contact-creation-event/save-message-and-emit-contact-creation-event.module';
 import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
 
 @Module({
@@ -23,7 +22,6 @@ import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-obj
       BlocklistObjectMetadata,
     ]),
     MessageModule,
-    SaveMessageAndEmitContactCreationEventModule,
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     WorkspaceDataSourceModule,
   ],

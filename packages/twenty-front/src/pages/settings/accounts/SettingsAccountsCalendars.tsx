@@ -24,6 +24,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const SettingsAccountsCalendars = () => {
+  const calendarSettingsEnabled = false;
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { records: accounts } = useFindManyRecords<ConnectedAccount>({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
@@ -63,6 +64,8 @@ export const SettingsAccountsCalendars = () => {
           : '',
         avatarUrl: currentWorkspaceMember?.avatarUrl || '',
         handle: '',
+        personId: '',
+        workspaceMemberId: currentWorkspaceMember?.id || '',
       },
     ],
     endsAt: exampleEndDate.toISOString(),
@@ -99,7 +102,7 @@ export const SettingsAccountsCalendars = () => {
           />
           <SettingsAccountsCalendarChannelsListCard />
         </Section>
-        {!!calendarChannels.length && (
+        {!!calendarChannels.length && calendarSettingsEnabled && (
           <>
             <Section>
               <H2Title

@@ -16,7 +16,7 @@ export class FindManyQueryFactory {
         $filter: ${objectNameSingular}FilterInput,
         $orderBy: ${objectNameSingular}OrderByInput,
         $lastCursor: String,
-        $limit: Float = 60
+        $limit: Int = 60
         ) {
         ${objectNamePlural}(
         filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor

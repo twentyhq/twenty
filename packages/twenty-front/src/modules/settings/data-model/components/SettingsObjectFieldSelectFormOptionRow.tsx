@@ -10,6 +10,8 @@ import {
 } from 'twenty-ui';
 import { v4 } from 'uuid';
 
+import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
+import { getOptionValueFromLabel } from '@/settings/data-model/fields/forms/utils/getOptionValueFromLabel';
 import { ColorSample } from '@/ui/display/color/components/ColorSample';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { TextInput } from '@/ui/input/components/TextInput';
@@ -21,14 +23,14 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemSelectColor } from '@/ui/navigation/menu-item/components/MenuItemSelectColor';
 import { MAIN_COLOR_NAMES } from '@/ui/theme/constants/MainColorNames';
 
-import { SettingsObjectFieldSelectFormOption } from '../types/SettingsObjectFieldSelectFormOption';
-
 type SettingsObjectFieldSelectFormOptionRowProps = {
   className?: string;
   isDefault?: boolean;
-  onChange: (value: SettingsObjectFieldSelectFormOption) => void;
+  onChange: (value: FieldMetadataItemOption) => void;
   onRemove?: () => void;
-  option: SettingsObjectFieldSelectFormOption;
+  onSetAsDefault?: () => void;
+  onRemoveAsDefault?: () => void;
+  option: FieldMetadataItemOption;
 };
 
 const StyledRow = styled.div`
@@ -58,6 +60,8 @@ export const SettingsObjectFieldSelectFormOptionRow = ({
   isDefault,
   onChange,
   onRemove,
+  onSetAsDefault,
+  onRemoveAsDefault,
   option,
 }: SettingsObjectFieldSelectFormOptionRowProps) => {
   const theme = useTheme();
@@ -106,7 +110,9 @@ export const SettingsObjectFieldSelectFormOptionRow = ({
       />
       <StyledOptionInput
         value={option.label}
-        onChange={(label) => onChange({ ...option, label })}
+        onChange={(label) =>
+          onChange({ ...option, label, value: getOptionValueFromLabel(label) })
+        }
         RightIcon={isDefault ? IconCheck : undefined}
       />
       <Dropdown
@@ -124,7 +130,7 @@ export const SettingsObjectFieldSelectFormOptionRow = ({
                   LeftIcon={IconX}
                   text="Remove as default"
                   onClick={() => {
-                    onChange({ ...option, isDefault: false });
+                    onRemoveAsDefault?.();
                     closeActionsDropdown();
                   }}
                 />
@@ -133,7 +139,7 @@ export const SettingsObjectFieldSelectFormOptionRow = ({
                   LeftIcon={IconCheck}
                   text="Set as default"
                   onClick={() => {
-                    onChange({ ...option, isDefault: true });
+                    onSetAsDefault?.();
                     closeActionsDropdown();
                   }}
                 />

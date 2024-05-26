@@ -5,7 +5,7 @@ import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilte
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
-import { GraphQLView } from '@/views/types/GraphQLView';
+import { View } from '@/views/types/View';
 import { getObjectMetadataItemViews } from '@/views/utils/getObjectMetadataItemViews';
 
 export const ObjectMetadataNavItems = () => {
@@ -14,9 +14,7 @@ export const ObjectMetadataNavItems = () => {
   const { getIcon } = useIcons();
   const currentPath = useLocation().pathname;
 
-  const { records: views } = usePrefetchedData<GraphQLView>(
-    PrefetchKey.AllViews,
-  );
+  const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
 
   return (
     <>

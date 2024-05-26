@@ -7,7 +7,6 @@ import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Section } from '@/ui/layout/section/components/Section';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
 const StyledCardsContainer = styled.div`
   display: flex;
@@ -17,7 +16,6 @@ const StyledCardsContainer = styled.div`
 
 export const SettingsAccountsSettingsSection = () => {
   const navigate = useNavigate();
-  const isCalendarEnabled = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
 
   return (
     <Section>
@@ -38,7 +36,6 @@ export const SettingsAccountsSettingsSection = () => {
         <SettingsNavigationCard
           Icon={IconCalendarEvent}
           title="Calendar"
-          soon={!isCalendarEnabled}
           onClick={() =>
             navigate(getSettingsPagePath(SettingsPath.AccountsCalendars))
           }

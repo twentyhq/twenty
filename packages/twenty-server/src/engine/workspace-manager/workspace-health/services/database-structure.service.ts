@@ -166,9 +166,8 @@ export class DatabaseStructureService {
       // Compute enum name to compare data type properly
       if (typeORMType === 'enum') {
         const objectName = fieldMetadata.object?.nameSingular;
-        const prefix = fieldMetadata.isCustom ? '_' : '';
 
-        return `${objectName}_${prefix}${columnName}_enum`;
+        return `${objectName}_${columnName}_enum`;
       }
 
       return mainDataSource.driver.normalizeType({

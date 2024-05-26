@@ -5,7 +5,7 @@ import { EntityManager } from 'typeorm';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
-import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/getFlattenedValuesAndValuesStringForBatchRawQuery.util';
+import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/get-flattened-values-and-values-string-for-batch-raw-query.util';
 
 @Injectable()
 export class CalendarChannelEventAssociationRepository {
@@ -165,6 +165,39 @@ export class CalendarChannelEventAssociationRepository {
       `INSERT INTO ${dataSourceSchema}."calendarChannelEventAssociation" ("calendarChannelId", "calendarEventId", "eventExternalId")
       VALUES ${valuesString}`,
       calendarChannelEventAssociationValues,
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async deleteByCalendarEventParticipantHandleAndCalendarChannelIds(
+    calendarEventParticipantHandle: string,
+    calendarChannelIds: string[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const isHandleDomain = calendarEventParticipantHandle.startsWith('@');
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `DELETE FROM ${dataSourceSchema}."calendarChannelEventAssociation"
+      WHERE "id" IN (
+      SELECT "calendarChannelEventAssociation"."id"
+      FROM ${dataSourceSchema}."calendarChannelEventAssociation" "calendarChannelEventAssociation"
+      JOIN ${dataSourceSchema}."calendarEvent" "calendarEvent" ON "calendarChannelEventAssociation"."calendarEventId" = "calendarEvent"."id"
+      JOIN ${dataSourceSchema}."calendarEventParticipant" "calendarEventParticipant" ON "calendarEvent"."id" = "calendarEventParticipant"."calendarEventId"
+      WHERE "calendarEventParticipant"."handle" ${
+        isHandleDomain ? 'ILIKE' : '='
+      } $1 AND "calendarChannelEventAssociation"."calendarChannelId" = ANY($2)
+      )`,
+      [
+        isHandleDomain
+          ? `%${calendarEventParticipantHandle}`
+          : calendarEventParticipantHandle,
+        calendarChannelIds,
+      ],
       workspaceId,
       transactionManager,
     );

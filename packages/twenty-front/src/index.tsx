@@ -6,6 +6,7 @@ import { RecoilRoot } from 'recoil';
 import { IconsProvider } from 'twenty-ui';
 
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
+import { CaptchaProvider } from '@/captcha/components/CaptchaProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
 import { ApolloDevLogEffect } from '@/debug/components/ApolloDevLogEffect';
@@ -39,45 +40,47 @@ const root = ReactDOM.createRoot(
 root.render(
   <RecoilRoot>
     <AppErrorBoundary>
-      <RecoilDebugObserverEffect />
-      <ApolloDevLogEffect />
-      <BrowserRouter>
-        <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
-          <IconsProvider>
-            <ExceptionHandlerProvider>
-              <ApolloProvider>
-                <HelmetProvider>
-                  <ClientConfigProviderEffect />
-                  <ClientConfigProvider>
-                    <UserProviderEffect />
-                    <UserProvider>
-                      <ApolloMetadataClientProvider>
-                        <ObjectMetadataItemsProvider>
-                          <PrefetchDataProvider>
-                            <AppThemeProvider>
-                              <SnackBarProvider>
-                                <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                                  <DialogManager>
-                                    <StrictMode>
-                                      <PromiseRejectionEffect />
-                                      <App />
-                                    </StrictMode>
-                                  </DialogManager>
-                                </DialogManagerScope>
-                              </SnackBarProvider>
-                            </AppThemeProvider>
-                          </PrefetchDataProvider>
-                          <PageChangeEffect />
-                        </ObjectMetadataItemsProvider>
-                      </ApolloMetadataClientProvider>
-                    </UserProvider>
-                  </ClientConfigProvider>
-                </HelmetProvider>
-              </ApolloProvider>
-            </ExceptionHandlerProvider>
-          </IconsProvider>
-        </SnackBarProviderScope>
-      </BrowserRouter>
+      <CaptchaProvider>
+        <RecoilDebugObserverEffect />
+        <ApolloDevLogEffect />
+        <BrowserRouter>
+          <SnackBarProviderScope snackBarManagerScopeId="snack-bar-manager">
+            <IconsProvider>
+              <ExceptionHandlerProvider>
+                <ApolloProvider>
+                  <HelmetProvider>
+                    <ClientConfigProviderEffect />
+                    <ClientConfigProvider>
+                      <UserProviderEffect />
+                      <UserProvider>
+                        <ApolloMetadataClientProvider>
+                          <ObjectMetadataItemsProvider>
+                            <PrefetchDataProvider>
+                              <AppThemeProvider>
+                                <SnackBarProvider>
+                                  <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                                    <DialogManager>
+                                      <StrictMode>
+                                        <PromiseRejectionEffect />
+                                        <App />
+                                      </StrictMode>
+                                    </DialogManager>
+                                  </DialogManagerScope>
+                                </SnackBarProvider>
+                              </AppThemeProvider>
+                            </PrefetchDataProvider>
+                            <PageChangeEffect />
+                          </ObjectMetadataItemsProvider>
+                        </ApolloMetadataClientProvider>
+                      </UserProvider>
+                    </ClientConfigProvider>
+                  </HelmetProvider>
+                </ApolloProvider>
+              </ExceptionHandlerProvider>
+            </IconsProvider>
+          </SnackBarProviderScope>
+        </BrowserRouter>
+      </CaptchaProvider>
     </AppErrorBoundary>
   </RecoilRoot>,
 );

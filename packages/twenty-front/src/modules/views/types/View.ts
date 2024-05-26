@@ -17,4 +17,5 @@ export type View = {
   kanbanFieldMetadataId: string;
   position: number;
   icon: string;
+  __typename: 'View';
 };

@@ -181,7 +181,7 @@ export class ApiRestMetadataService {
 
     return `
       query FindOne${capitalize(objectNameSingular)}(
-        $id: UUID!,
+        $id: ID!,
         ) {
         ${objectNameSingular}(id: $id) {
           id

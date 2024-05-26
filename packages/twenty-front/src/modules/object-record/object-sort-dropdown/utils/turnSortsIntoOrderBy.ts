@@ -1,5 +1,5 @@
 import { OrderBy } from '@/object-metadata/types/OrderBy';
-import { OrderByField } from '@/object-metadata/types/OrderByField';
+import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
 import { Field } from '~/generated/graphql';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { isDefined } from '~/utils/isDefined';
@@ -10,7 +10,7 @@ import { Sort } from '../types/Sort';
 export const turnSortsIntoOrderBy = (
   sorts: Sort[],
   fields: Pick<Field, 'id' | 'name'>[],
-): OrderByField => {
+): RecordGqlOperationOrderBy => {
   const fieldsById = mapArrayToObject(fields, ({ id }) => id);
   const sortsOrderBy = Object.fromEntries(
     sorts

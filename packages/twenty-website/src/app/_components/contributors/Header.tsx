@@ -1,6 +1,7 @@
 'use client';
 
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 
 const Title = styled.h2`
   font-size: 56px;
@@ -23,10 +24,16 @@ const Title = styled.h2`
 export const Header = () => {
   return (
     <>
-      <Title>
-        Our amazing <br />
-        <span style={{ color: '#141414' }}>Contributors</span>
-      </Title>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.2 }}
+      >
+        <Title>
+          Our amazing <br />
+          <span style={{ color: '#141414' }}>Contributors</span>
+        </Title>
+      </motion.div>
     </>
   );
 };

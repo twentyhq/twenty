@@ -1,11 +1,11 @@
 import { ApolloCache, StoreObject } from '@apollo/client';
 
 import { triggerUpdateRelationsOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRelationsOptimisticEffect';
-import { CachedObjectRecord } from '@/apollo/types/CachedObjectRecord';
-import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
 import { CachedObjectRecordQueryVariables } from '@/apollo/types/CachedObjectRecordQueryVariables';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
+import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { isDefined } from '~/utils/isDefined';
 import { parseApolloStoreFieldName } from '~/utils/parseApolloStoreFieldName';
 
@@ -17,7 +17,7 @@ export const triggerDeleteRecordsOptimisticEffect = ({
 }: {
   cache: ApolloCache<unknown>;
   objectMetadataItem: ObjectMetadataItem;
-  recordsToDelete: CachedObjectRecord[];
+  recordsToDelete: RecordGqlNode[];
   objectMetadataItems: ObjectMetadataItem[];
 }) => {
   cache.modify<StoreObject>({
@@ -45,7 +45,7 @@ export const triggerDeleteRecordsOptimisticEffect = ({
 
         const recordIdsToDelete = recordsToDelete.map(({ id }) => id);
 
-        const cachedEdges = readField<CachedObjectRecordEdge[]>(
+        const cachedEdges = readField<RecordGqlRefEdge[]>(
           'edges',
           rootQueryCachedObjectRecordConnection,
         );

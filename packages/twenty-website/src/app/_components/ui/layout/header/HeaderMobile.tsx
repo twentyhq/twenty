@@ -18,6 +18,7 @@ import {
   NavOpen,
 } from '@/app/_components/ui/layout/header/styled';
 import { Logo } from '@/app/_components/ui/layout/Logo';
+import { formatNumberOfStars } from '@/shared-utils/formatNumberOfStars';
 
 const IBMPlexMono = IBM_Plex_Mono({
   weight: '500',
@@ -25,7 +26,11 @@ const IBMPlexMono = IBM_Plex_Mono({
   display: 'swap',
 });
 
-export const HeaderMobile = () => {
+type Props = {
+  numberOfStars: number;
+};
+
+export const HeaderMobile = ({ numberOfStars }: Props) => {
   const isTwentyDev = false;
 
   const [menuOpen, setMenuOpen] = useState(false);
@@ -59,11 +64,13 @@ export const HeaderMobile = () => {
         <MobileLinkList>
           <ListItem href="/story">Story</ListItem>
           <ListItem href="/pricing">Pricing</ListItem>
+          <ListItem href="/releases">Releases</ListItem>
           <ListItem href="https://docs.twenty.com">
             Docs <ExternalArrow />
           </ListItem>
           <ListItem href="https://github.com/twentyhq/twenty">
-            <GithubIcon color="rgb(71,71,71)" /> 8.3k <ExternalArrow />
+            <GithubIcon color="rgb(71,71,71)" />{' '}
+            {formatNumberOfStars(numberOfStars)} <ExternalArrow />
           </ListItem>
         </MobileLinkList>
         <CallToAction />

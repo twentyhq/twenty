@@ -44,14 +44,14 @@ export const SettingsObjectNewFieldStep1 = () => {
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
 
-  const { activateMetadataField, disableMetadataField } =
+  const { activateMetadataField, deactivateMetadataField } =
     useFieldMetadataItem();
   const [metadataFields, setMetadataFields] = useState(
     activeObjectMetadataItem?.fields ?? [],
   );
 
   const activeMetadataFields = metadataFields.filter((field) => field.isActive);
-  const disabledMetadataFields = metadataFields.filter(
+  const deactivatedMetadataFields = metadataFields.filter(
     (field) => !field.isActive,
   );
 
@@ -93,7 +93,7 @@ export const SettingsObjectNewFieldStep1 = () => {
 
         return metadataField.isActive
           ? activateMetadataField(metadataField)
-          : disableMetadataField(metadataField);
+          : deactivateMetadataField(metadataField);
       }),
     );
 
@@ -124,8 +124,8 @@ export const SettingsObjectNewFieldStep1 = () => {
         </SettingsHeaderContainer>
         <StyledSection>
           <H2Title
-            title="Check disabled fields"
-            description="Before creating a custom field, check if it already exists in the disabled section."
+            title="Check deactivated fields"
+            description="Before creating a custom field, check if it already exists in the deactivated section."
           />
           <Table>
             <StyledObjectFieldTableRow>
@@ -159,18 +159,18 @@ export const SettingsObjectNewFieldStep1 = () => {
                 ))}
               </TableSection>
             )}
-            {!!disabledMetadataFields.length && (
+            {!!deactivatedMetadataFields.length && (
               <TableSection title="Disabled">
-                {disabledMetadataFields.map((disabledMetadataField) => (
+                {deactivatedMetadataFields.map((deactivatedMetadataField) => (
                   <SettingsObjectFieldItemTableRow
-                    key={disabledMetadataField.name}
-                    fieldMetadataItem={disabledMetadataField}
+                    key={deactivatedMetadataField.name}
+                    fieldMetadataItem={deactivatedMetadataField}
                     ActionIcon={
                       <LightIconButton
                         Icon={IconPlus}
                         accent="tertiary"
                         onClick={() =>
-                          handleToggleField(disabledMetadataField.id)
+                          handleToggleField(deactivatedMetadataField.id)
                         }
                       />
                     }

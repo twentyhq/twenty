@@ -14,7 +14,7 @@ import { WorkspaceMetadataUpdaterService } from 'src/engine/workspace-manager/wo
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
 import { WorkspaceMigrationFieldFactory } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-field.factory';
 import { StandardFieldFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-field.factory';
-import { CustomObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/custom-objects/custom.object-metadata';
+import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 import { computeStandardObject } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-standard-object.util';
 
 @Injectable()
@@ -56,7 +56,7 @@ export class WorkspaceSyncFieldMetadataService {
 
     // Create standard field metadata collection
     const standardFieldMetadataCollection = this.standardFieldFactory.create(
-      CustomObjectMetadata,
+      CustomWorkspaceEntity,
       context,
       workspaceFeatureFlagsMap,
     );

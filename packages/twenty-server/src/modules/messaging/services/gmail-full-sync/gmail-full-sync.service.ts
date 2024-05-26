@@ -25,8 +25,8 @@ import {
   MessageChannelObjectMetadata,
   MessageChannelSyncStatus,
 } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
-import { gmailSearchFilterExcludeEmails } from 'src/modules/messaging/utils/gmail-search-filter.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { gmailSearchFilterEmailAdresses } from 'src/modules/messaging/utils/gmail-search-filter.util';
 
 @Injectable()
 export class GmailFullSyncService {
@@ -54,6 +54,7 @@ export class GmailFullSyncService {
   public async fetchConnectedAccountThreads(
     workspaceId: string,
     connectedAccountId: string,
+    includedEmails?: string[],
   ) {
     const connectedAccount = await this.connectedAccountRepository.getById(
       connectedAccountId,
@@ -109,19 +110,20 @@ export class GmailFullSyncService {
         workspaceId,
       );
 
+    const gmailClient: gmail_v1.Gmail =
+      await this.gmailClientProvider.getGmailClient(refreshToken);
+
+    const blocklistedEmails = await this.fetchBlocklistEmails(
+      connectedAccount.accountOwnerId,
+      workspaceId,
+    );
+
     await workspaceDataSource
       ?.transaction(async (transactionManager) => {
-        const gmailClient: gmail_v1.Gmail =
-          await this.gmailClientProvider.getGmailClient(refreshToken);
-
-        const blocklistedEmails = await this.fetchBlocklistEmails(
-          connectedAccount.accountOwnerId,
-          workspaceId,
-        );
-
         await this.fetchAllMessageIdsFromGmailAndStoreInCache(
           gmailClient,
           gmailMessageChannel.id,
+          includedEmails || [],
           blocklistedEmails,
           workspaceId,
           transactionManager,
@@ -150,6 +152,7 @@ export class GmailFullSyncService {
   public async fetchAllMessageIdsFromGmailAndStoreInCache(
     gmailClient: gmail_v1.Gmail,
     messageChannelId: string,
+    includedEmails: string[],
     blocklistedEmails: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
@@ -164,7 +167,7 @@ export class GmailFullSyncService {
         userId: 'me',
         maxResults: GMAIL_USERS_MESSAGES_LIST_MAX_RESULT,
         pageToken,
-        q: gmailSearchFilterExcludeEmails(blocklistedEmails),
+        q: gmailSearchFilterEmailAdresses(includedEmails, blocklistedEmails),
       });
 
       if (response.data?.messages) {

@@ -101,7 +101,6 @@ export const RecordTableCellSoftFocusMode = ({
   return (
     <RecordTableCellDisplayContainer
       onClick={handleClick}
-      softFocus
       scrollRef={scrollRef}
     >
       {children}

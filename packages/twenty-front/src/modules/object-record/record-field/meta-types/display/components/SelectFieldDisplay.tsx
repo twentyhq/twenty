@@ -5,7 +5,7 @@ import { useSelectField } from '../../hooks/useSelectField';
 export const SelectFieldDisplay = () => {
   const { fieldValue, fieldDefinition } = useSelectField();
 
-  const selectedOption = fieldDefinition.metadata.options.find(
+  const selectedOption = fieldDefinition.metadata.options?.find(
     (option) => option.value === fieldValue,
   );
 

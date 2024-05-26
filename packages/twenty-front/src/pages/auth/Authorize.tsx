@@ -52,7 +52,7 @@ const StyledButtonContainer = styled.div`
   gap: 10px;
   width: 100%;
 `;
-const Authorize = () => {
+export const Authorize = () => {
   const navigate = useNavigate();
   const [searchParam] = useSearchParams();
   //TODO: Replace with db call for registered third party apps
@@ -66,6 +66,7 @@ const Authorize = () => {
   const [app, setApp] = useState<App>();
   const clientId = searchParam.get('clientId');
   const codeChallenge = searchParam.get('codeChallenge');
+  const redirectUrl = searchParam.get('redirectUrl');
 
   useEffect(() => {
     const app = apps.find((app) => app.id === clientId);
@@ -76,17 +77,19 @@ const Authorize = () => {
 
   const [authorizeApp] = useAuthorizeAppMutation();
   const handleAuthorize = async () => {
-    if (isDefined(clientId) && isDefined(codeChallenge)) {
+    if (
+      isDefined(clientId) &&
+      isDefined(codeChallenge) &&
+      isDefined(redirectUrl)
+    ) {
       await authorizeApp({
         variables: {
           clientId,
           codeChallenge,
+          redirectUrl,
         },
         onCompleted: (data) => {
           window.location.href = data.authorizeApp.redirectUrl;
-        },
-        onError: (error) => {
-          throw Error(error.message);
         },
       });
     }
@@ -124,5 +127,3 @@ const Authorize = () => {
     </StyledContainer>
   );
 };
-
-export default Authorize;

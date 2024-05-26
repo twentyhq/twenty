@@ -5,8 +5,10 @@ import { FetchMoreLoader } from '@/activities/components/CustomResolverFetchMore
 import { EmailLoader } from '@/activities/emails/components/EmailLoader';
 import { EmailThreadHeader } from '@/activities/emails/components/EmailThreadHeader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
+import { IntermediaryMessages } from '@/activities/emails/right-drawer/components/IntermediaryMessages';
 import { useRightDrawerEmailThread } from '@/activities/emails/right-drawer/hooks/useRightDrawerEmailThread';
 import { emailThreadIdWhenEmailThreadWasClosedState } from '@/activities/emails/states/lastViewableEmailThreadIdState';
+import { EmailThreadMessage as EmailThreadMessageType } from '@/activities/emails/types/EmailThreadMessage';
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 
@@ -20,6 +22,17 @@ const StyledContainer = styled.div`
   position: relative;
 `;
 
+const getVisibleMessages = (messages: EmailThreadMessageType[]) =>
+  messages.filter(({ messageParticipants }) => {
+    const from = messageParticipants.find(
+      (participant) => participant.role === 'from',
+    );
+    const receivers = messageParticipants.filter(
+      (participant) => participant.role !== 'from',
+    );
+    return from && receivers.length > 0;
+  });
+
 export const RightDrawerEmailThread = () => {
   const { thread, messages, fetchMoreMessages, loading } =
     useRightDrawerEmailThread();
@@ -30,7 +43,7 @@ export const RightDrawerEmailThread = () => {
 
   useRegisterClickOutsideListenerCallback({
     callbackId:
-      'EmailThreadClickOutsideCallBack-' + thread.id ?? 'no-thread-id',
+      'EmailThreadClickOutsideCallBack-' + (thread.id ?? 'no-thread-id'),
     callbackFunction: useRecoilCallback(
       ({ set }) =>
         () => {
@@ -44,6 +57,18 @@ export const RightDrawerEmailThread = () => {
     return null;
   }
 
+  const visibleMessages = getVisibleMessages(messages);
+  const visibleMessagesCount = visibleMessages.length;
+  const is5OrMoreMessages = visibleMessagesCount >= 5;
+  const firstMessages = visibleMessages.slice(
+    0,
+    is5OrMoreMessages ? 2 : visibleMessagesCount - 1,
+  );
+  const intermediaryMessages = is5OrMoreMessages
+    ? visibleMessages.slice(2, visibleMessagesCount - 1)
+    : [];
+  const lastMessage = visibleMessages[visibleMessagesCount - 1];
+
   return (
     <StyledContainer>
       <EmailThreadHeader
@@ -54,7 +79,7 @@ export const RightDrawerEmailThread = () => {
         <EmailLoader loadingText="Loading thread" />
       ) : (
         <>
-          {messages.map((message) => (
+          {firstMessages.map((message) => (
             <EmailThreadMessage
               key={message.id}
               participants={message.messageParticipants}
@@ -62,6 +87,14 @@ export const RightDrawerEmailThread = () => {
               sentAt={message.receivedAt}
             />
           ))}
+          <IntermediaryMessages messages={intermediaryMessages} />
+          <EmailThreadMessage
+            key={lastMessage.id}
+            participants={lastMessage.messageParticipants}
+            body={lastMessage.text}
+            sentAt={lastMessage.receivedAt}
+            isExpanded
+          />
           <FetchMoreLoader
             loading={loading}
             onLastRowVisible={fetchMoreMessages}

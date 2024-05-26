@@ -18,7 +18,7 @@ export class GmailPartialSyncJob
 
   constructor(
     private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
-    private readonly gmailPartialSyncV2Service: GmailPartialSyncV2Service,
+    private readonly gmailPartialSyncService: GmailPartialSyncV2Service,
   ) {}
 
   async handle(data: GmailPartialSyncJobData): Promise<void> {
@@ -40,7 +40,7 @@ export class GmailPartialSyncJob
       return;
     }
 
-    await this.gmailPartialSyncV2Service.fetchConnectedAccountThreads(
+    await this.gmailPartialSyncService.fetchConnectedAccountThreads(
       data.workspaceId,
       data.connectedAccountId,
     );

@@ -24,6 +24,7 @@ export const mockedTimelineActivities: Array<TimelineActivity> = [
     },
     workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
     deletedAt: null,
+    __typename: 'TimelineActivity',
   },
   {
     properties:
@@ -49,5 +50,6 @@ export const mockedTimelineActivities: Array<TimelineActivity> = [
     },
     workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
     deletedAt: null,
+    __typename: 'TimelineActivity',
   },
 ];

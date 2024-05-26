@@ -1,6 +1,6 @@
 import { ApolloCache, StoreObject } from '@apollo/client';
 
-import { CachedObjectRecordEdge } from '@/apollo/types/CachedObjectRecordEdge';
+import { RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { isObjectRecordConnectionWithRefs } from '@/object-record/cache/utils/isObjectRecordConnectionWithRefs';
 import { isDefined } from '~/utils/isDefined';
 import { capitalize } from '~/utils/string/capitalize';
@@ -48,7 +48,7 @@ export const triggerAttachRelationOptimisticEffect = ({
         }
 
         if (fieldValueisObjectRecordConnectionWithRefs) {
-          const nextEdges: CachedObjectRecordEdge[] = [
+          const nextEdges: RecordGqlRefEdge[] = [
             ...targetRecordFieldValue.edges,
             {
               __typename: `${sourceRecordTypeName}Edge`,

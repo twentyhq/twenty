@@ -7,19 +7,24 @@ import { IconBook } from '@/app/_components/ui/icons';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import UserGuideSidebarSection from '@/app/_components/user-guide/UserGuideSidebarSection';
-import { USER_GUIDE_INDEX } from '@/content/user-guide/constants/UserGuideIndex';
+import { UserGuideArticlesProps } from '@/content/user-guide/constants/getUserGuideArticles';
 
 const StyledContainer = styled.div`
   ${mq({
-    width: ['20%', '30%', '20%'],
     display: ['none', 'flex', 'flex'],
     flexDirection: 'column',
     background: `${Theme.background.secondary}`,
     borderRight: `1px solid ${Theme.background.transparent.medium}`,
     borderBottom: `1px solid ${Theme.background.transparent.medium}`,
-    padding: `${Theme.spacing(10)} ${Theme.spacing(3)}`,
+    padding: `${Theme.spacing(10)} ${Theme.spacing(4)}`,
     gap: `${Theme.spacing(6)}`,
-  })};
+  })}
+  width: 300px;
+  min-width: 300px;
+  overflow: scroll;
+  height: calc(100vh - 60px);
+  position: sticky;
+  top: 64px;
 `;
 
 const StyledHeading = styled.div`
@@ -49,10 +54,16 @@ const StyledHeadingText = styled.div`
   cursor: pointer;
   font-size: ${Theme.font.size.sm};
   font-weight: ${Theme.font.weight.medium};
+  color: ${Theme.text.color.secondary};
 `;
 
-const UserGuideSidebar = () => {
+const UserGuideSidebar = ({
+  userGuideIndex,
+}: {
+  userGuideIndex: UserGuideArticlesProps[];
+}) => {
   const router = useRouter();
+
   return (
     <StyledContainer>
       <StyledHeading>
@@ -63,13 +74,7 @@ const UserGuideSidebar = () => {
           User Guide
         </StyledHeadingText>
       </StyledHeading>
-      {Object.entries(USER_GUIDE_INDEX).map(([heading, subtopics]) => (
-        <UserGuideSidebarSection
-          key={heading}
-          title={heading}
-          subTopics={subtopics}
-        />
-      ))}
+      <UserGuideSidebarSection userGuideIndex={userGuideIndex} />
     </StyledContainer>
   );
 };

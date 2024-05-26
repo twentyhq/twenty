@@ -4,6 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { useRecordFieldInput } from '@/object-record/record-field/hooks/useRecordFieldInput';
 import { FieldPhoneValue } from '@/object-record/record-field/types/FieldMetadata';
+import { isFieldDisplayedAsPhone } from '@/object-record/record-field/types/guards/isFieldDisplayedAsPhone';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
@@ -15,7 +16,17 @@ import { isFieldPhone } from '../../types/guards/isFieldPhone';
 export const usePhoneField = () => {
   const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
 
-  assertFieldMetadata(FieldMetadataType.Text, isFieldPhone, fieldDefinition);
+  try {
+    // TODO: temporary - remove when 'Phone' field in 'Person' object
+    // is migrated to use FieldMetadataType.Phone as type.
+    assertFieldMetadata(
+      FieldMetadataType.Text,
+      isFieldDisplayedAsPhone,
+      fieldDefinition,
+    );
+  } catch {
+    assertFieldMetadata(FieldMetadataType.Phone, isFieldPhone, fieldDefinition);
+  }
 
   const fieldName = fieldDefinition.metadata.fieldName;
 

@@ -10,7 +10,7 @@ import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/
 import { StandardObjectFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-object.factory';
 import { computeStandardObject } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/compute-standard-object.util';
 import { StandardFieldFactory } from 'src/engine/workspace-manager/workspace-sync-metadata/factories/standard-field.factory';
-import { CustomObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/custom-objects/custom.object-metadata';
+import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 
 interface RunCommandOptions {
   workspaceId?: string;
@@ -54,28 +54,24 @@ export class AddStandardIdCommand extends CommandRunner {
           },
           {
             IS_BLOCKLIST_ENABLED: true,
-            IS_CALENDAR_ENABLED: true,
             IS_EVENT_OBJECT_ENABLED: true,
             IS_AIRTABLE_INTEGRATION_ENABLED: true,
             IS_POSTGRESQL_INTEGRATION_ENABLED: true,
-            IS_MULTI_SELECT_ENABLED: false,
-            IS_RELATION_FOR_REMOTE_OBJECTS_ENABLED: false,
+            IS_STRIPE_INTEGRATION_ENABLED: false,
           },
         );
       const standardFieldMetadataCollection = this.standardFieldFactory.create(
-        CustomObjectMetadata,
+        CustomWorkspaceEntity,
         {
           workspaceId: '',
           dataSourceId: '',
         },
         {
           IS_BLOCKLIST_ENABLED: true,
-          IS_CALENDAR_ENABLED: true,
           IS_EVENT_OBJECT_ENABLED: true,
           IS_AIRTABLE_INTEGRATION_ENABLED: true,
           IS_POSTGRESQL_INTEGRATION_ENABLED: true,
-          IS_MULTI_SELECT_ENABLED: false,
-          IS_RELATION_FOR_REMOTE_OBJECTS_ENABLED: false,
+          IS_STRIPE_INTEGRATION_ENABLED: false,
         },
       );
 

@@ -12,12 +12,24 @@ import {
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 
 const coreObjectNames = [
-  'featureFlag',
   'appToken',
-  'workspace',
+  'billingSubscription',
+  'billingSubscriptionItem',
+  'featureFlag',
   'user',
+  'userWorkspace',
+  'workspace',
+];
+
+const reservedKeywords = [
+  ...coreObjectNames,
   'event',
   'field',
+  'link',
+  'currency',
+  'fullName',
+  'address',
+  'links',
 ];
 
 @Injectable()
@@ -35,8 +47,8 @@ export class BeforeCreateOneObject<T extends CreateObjectInput>
     }
 
     if (
-      coreObjectNames.includes(instance.input.nameSingular) ||
-      coreObjectNames.includes(instance.input.namePlural)
+      reservedKeywords.includes(instance.input.nameSingular) ||
+      reservedKeywords.includes(instance.input.namePlural)
     ) {
       throw new ForbiddenException(
         'You cannot create an object with this name.',

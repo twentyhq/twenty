@@ -34,14 +34,18 @@ export const generateCsv: GenerateExport = ({
   columns,
   rows,
 }: GenerateExportOptions): string => {
-  const columnsWithoutRelations = columns.filter(
-    (col) => !('relationType' in col.metadata && col.metadata.relationType),
+  const columnsToExport = columns.filter(
+    (col) =>
+      !('relationType' in col.metadata && col.metadata.relationType) ||
+      col.metadata.relationType === 'TO_ONE_OBJECT',
   );
 
-  const keys = columnsWithoutRelations.flatMap((col) => {
+  const keys = columnsToExport.flatMap((col) => {
     const column = {
-      field: col.metadata.fieldName,
-      title: col.label,
+      field: `${col.metadata.fieldName}${col.type === 'RELATION' ? 'Id' : ''}`,
+      title: [col.label, col.type === 'RELATION' ? 'Id' : null]
+        .filter(isDefined)
+        .join(' '),
     };
 
     const fieldsWithSubFields = rows.find((row) => {
@@ -139,7 +143,6 @@ export const useExportTableData = ({
   // Todo: this needs to be done on click on the Export not button, not to be reactive. Use Lazy query for example
   const { totalCount, records, fetchMoreRecords } = useFindManyRecords({
     ...usedFindManyParams,
-    depth: 0,
     limit: pageSize,
     onCompleted: (_data, options) => {
       setHasNextPage(options?.pageInfo?.hasNextPage ?? false);

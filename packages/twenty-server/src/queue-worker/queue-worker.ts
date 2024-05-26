@@ -36,7 +36,7 @@ async function bootstrap() {
         const jobClassName = getJobClassName(jobData.name);
         const job: MessageQueueJob<MessageQueueJobData> = app
           .select(JobsModule)
-          .get(jobClassName, { strict: true });
+          .get(jobClassName, { strict: false });
 
         try {
           await job.handle(jobData.data);

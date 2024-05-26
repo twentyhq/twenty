@@ -81,6 +81,8 @@ export const RecordTableWithWrappers = ({
 
   const objectLabel = foundObjectMetadataItem?.labelSingular;
 
+  const isRemote = foundObjectMetadataItem?.isRemote ?? false;
+
   return (
     <EntityDeleteContext.Provider value={deleteOneRecord}>
       <ScrollWrapper>
@@ -113,25 +115,27 @@ export const RecordTableWithWrappers = ({
                 recordTableId={recordTableId}
                 tableBodyRef={tableBodyRef}
               />
-              {!isRecordTableInitialLoading && numberOfTableRows === 0 && (
-                <AnimatedPlaceholderEmptyContainer>
-                  <AnimatedPlaceholder type="noRecord" />
-                  <AnimatedPlaceholderEmptyTextContainer>
-                    <AnimatedPlaceholderEmptyTitle>
-                      Add your first {objectLabel}
-                    </AnimatedPlaceholderEmptyTitle>
-                    <AnimatedPlaceholderEmptySubTitle>
-                      Use our API or add your first {objectLabel} manually
-                    </AnimatedPlaceholderEmptySubTitle>
-                  </AnimatedPlaceholderEmptyTextContainer>
-                  <Button
-                    Icon={IconPlus}
-                    title={`Add a ${objectLabel}`}
-                    variant={'secondary'}
-                    onClick={createRecord}
-                  />
-                </AnimatedPlaceholderEmptyContainer>
-              )}
+              {!isRecordTableInitialLoading &&
+                numberOfTableRows === 0 &&
+                !isRemote && (
+                  <AnimatedPlaceholderEmptyContainer>
+                    <AnimatedPlaceholder type="noRecord" />
+                    <AnimatedPlaceholderEmptyTextContainer>
+                      <AnimatedPlaceholderEmptyTitle>
+                        Add your first {objectLabel}
+                      </AnimatedPlaceholderEmptyTitle>
+                      <AnimatedPlaceholderEmptySubTitle>
+                        Use our API or add your first {objectLabel} manually
+                      </AnimatedPlaceholderEmptySubTitle>
+                    </AnimatedPlaceholderEmptyTextContainer>
+                    <Button
+                      Icon={IconPlus}
+                      title={`Add a ${objectLabel}`}
+                      variant={'secondary'}
+                      onClick={createRecord}
+                    />
+                  </AnimatedPlaceholderEmptyContainer>
+                )}
             </StyledTableContainer>
           </StyledTableWithHeader>
         </RecordUpdateContext.Provider>

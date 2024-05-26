@@ -9,7 +9,6 @@ import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person
 import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
 import { MessageParticipantModule } from 'src/modules/messaging/services/message-participant/message-participant.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
-import { CreateCompanyAndContactListener } from 'src/modules/connected-account/auto-companies-and-contacts-creation/listeners/create-company-and-contact.listener';
 import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
 import { CalendarEventParticipantModule } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.module';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
@@ -28,7 +27,7 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
     CalendarEventParticipantModule,
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
   ],
-  providers: [CreateCompanyAndContactService, CreateCompanyAndContactListener],
+  providers: [CreateCompanyAndContactService],
   exports: [CreateCompanyAndContactService],
 })
 export class AutoCompaniesAndContactsCreationModule {}

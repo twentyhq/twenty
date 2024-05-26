@@ -5,17 +5,17 @@ import {
   RelationMetadataType,
   RelationOnDeleteAction,
 } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.entity';
-import { messageChannelStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { FieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/field-metadata.decorator';
-import { IsNullable } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-nullable.decorator';
-import { IsSystem } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-system.decorator';
-import { ObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/object-metadata.decorator';
-import { RelationMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/relation-metadata.decorator';
-import { BaseObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects/base.object-metadata';
+import { MESSAGE_CHANNEL_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
 import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
-import { IsNotAuditLogged } from 'src/engine/workspace-manager/workspace-sync-metadata/decorators/is-not-audit-logged.decorator';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-object.decorator';
+import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
+import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
+import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
+import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 
 export enum MessageChannelSyncStatus {
   PENDING = 'PENDING',
@@ -35,19 +35,19 @@ export enum MessageChannelType {
   SMS = 'sms',
 }
 
-@ObjectMetadata({
-  standardId: standardObjectIds.messageChannel,
+@WorkspaceEntity({
+  standardId: STANDARD_OBJECT_IDS.messageChannel,
   namePlural: 'messageChannels',
   labelSingular: 'Message Channel',
   labelPlural: 'Message Channels',
   description: 'Message Channels',
   icon: 'IconMessage',
 })
-@IsNotAuditLogged()
-@IsSystem()
-export class MessageChannelObjectMetadata extends BaseObjectMetadata {
-  @FieldMetadata({
-    standardId: messageChannelStandardFieldIds.visibility,
+@WorkspaceIsNotAuditLogged()
+@WorkspaceIsSystem()
+export class MessageChannelObjectMetadata extends BaseWorkspaceEntity {
+  @WorkspaceField({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.visibility,
     type: FieldMetadataType.SELECT,
     label: 'Visibility',
     description: 'Visibility',
@@ -76,8 +76,8 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   })
   visibility: string;
 
-  @FieldMetadata({
-    standardId: messageChannelStandardFieldIds.handle,
+  @WorkspaceField({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.handle,
     type: FieldMetadataType.TEXT,
     label: 'Handle',
     description: 'Handle',
@@ -85,18 +85,8 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   })
   handle: string;
 
-  @FieldMetadata({
-    standardId: messageChannelStandardFieldIds.connectedAccount,
-    type: FieldMetadataType.RELATION,
-    label: 'Connected Account',
-    description: 'Connected Account',
-    icon: 'IconUserCircle',
-    joinColumn: 'connectedAccountId',
-  })
-  connectedAccount: Relation<ConnectedAccountObjectMetadata>;
-
-  @FieldMetadata({
-    standardId: messageChannelStandardFieldIds.type,
+  @WorkspaceField({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.type,
     type: FieldMetadataType.SELECT,
     label: 'Type',
     description: 'Channel Type',
@@ -119,8 +109,8 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   })
   type: string;
 
-  @FieldMetadata({
-    standardId: messageChannelStandardFieldIds.isContactAutoCreationEnabled,
+  @WorkspaceField({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.isContactAutoCreationEnabled,
     type: FieldMetadataType.BOOLEAN,
     label: 'Is Contact Auto Creation Enabled',
     description: 'Is Contact Auto Creation Enabled',
@@ -129,8 +119,8 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   })
   isContactAutoCreationEnabled: boolean;
 
-  @FieldMetadata({
-    standardId: messageChannelStandardFieldIds.isSyncEnabled,
+  @WorkspaceField({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.isSyncEnabled,
     type: FieldMetadataType.BOOLEAN,
     label: 'Is Sync Enabled',
     description: 'Is Sync Enabled',
@@ -139,26 +129,8 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   })
   isSyncEnabled: boolean;
 
-  @FieldMetadata({
-    standardId:
-      messageChannelStandardFieldIds.messageChannelMessageAssociations,
-    type: FieldMetadataType.RELATION,
-    label: 'Message Channel Association',
-    description: 'Messages from the channel.',
-    icon: 'IconMessage',
-  })
-  @RelationMetadata({
-    type: RelationMetadataType.ONE_TO_MANY,
-    inverseSideTarget: () => MessageChannelMessageAssociationObjectMetadata,
-    onDelete: RelationOnDeleteAction.CASCADE,
-  })
-  @IsNullable()
-  messageChannelMessageAssociations: Relation<
-    MessageChannelMessageAssociationObjectMetadata[]
-  >;
-
-  @FieldMetadata({
-    standardId: messageChannelStandardFieldIds.syncCursor,
+  @WorkspaceField({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncCursor,
     type: FieldMetadataType.TEXT,
     label: 'Last sync cursor',
     description: 'Last sync cursor',
@@ -166,18 +138,18 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
   })
   syncCursor: string;
 
-  @FieldMetadata({
-    standardId: messageChannelStandardFieldIds.syncedAt,
+  @WorkspaceField({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncedAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Last sync date',
     description: 'Last sync date',
     icon: 'IconHistory',
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   syncedAt: string;
 
-  @FieldMetadata({
-    standardId: messageChannelStandardFieldIds.syncStatus,
+  @WorkspaceField({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStatus,
     type: FieldMetadataType.SELECT,
     label: 'Last sync status',
     description: 'Last sync status',
@@ -209,16 +181,43 @@ export class MessageChannelObjectMetadata extends BaseObjectMetadata {
       },
     ],
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   syncStatus: MessageChannelSyncStatus;
 
-  @FieldMetadata({
-    standardId: messageChannelStandardFieldIds.ongoingSyncStartedAt,
+  @WorkspaceField({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.ongoingSyncStartedAt,
     type: FieldMetadataType.DATE_TIME,
     label: 'Ongoing sync started at',
     description: 'Ongoing sync started at',
     icon: 'IconHistory',
   })
-  @IsNullable()
+  @WorkspaceIsNullable()
   ongoingSyncStartedAt: string;
+
+  @WorkspaceRelation({
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.connectedAccount,
+    type: RelationMetadataType.MANY_TO_ONE,
+    label: 'Connected Account',
+    description: 'Connected Account',
+    icon: 'IconUserCircle',
+    joinColumn: 'connectedAccountId',
+    inverseSideTarget: () => ConnectedAccountObjectMetadata,
+    inverseSideFieldKey: 'messageChannels',
+  })
+  connectedAccount: Relation<ConnectedAccountObjectMetadata>;
+
+  @WorkspaceRelation({
+    standardId:
+      MESSAGE_CHANNEL_STANDARD_FIELD_IDS.messageChannelMessageAssociations,
+    type: RelationMetadataType.ONE_TO_MANY,
+    label: 'Message Channel Association',
+    description: 'Messages from the channel.',
+    icon: 'IconMessage',
+    inverseSideTarget: () => MessageChannelMessageAssociationObjectMetadata,
+    onDelete: RelationOnDeleteAction.CASCADE,
+  })
+  @WorkspaceIsNullable()
+  messageChannelMessageAssociations: Relation<
+    MessageChannelMessageAssociationObjectMetadata[]
+  >;
 }

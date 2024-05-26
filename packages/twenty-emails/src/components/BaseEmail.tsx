@@ -1,5 +1,6 @@
 import { PropsWithChildren } from 'react';
 import { Container, Html } from '@react-email/components';
+
 import { BaseHead } from 'src/components/BaseHead';
 import { Logo } from 'src/components/Logo';
 

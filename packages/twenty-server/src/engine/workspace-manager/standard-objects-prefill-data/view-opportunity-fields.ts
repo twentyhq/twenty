@@ -1,6 +1,6 @@
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { opportunityStandardFieldIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
-import { standardObjectIds } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
+import { OPPORTUNITY_STANDARD_FIELD_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-field-ids';
+import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 
 export const viewOpportunityFields = (
   viewId: string,
@@ -9,8 +9,8 @@ export const viewOpportunityFields = (
   return [
     {
       fieldMetadataId:
-        objectMetadataMap[standardObjectIds.opportunity].fields[
-          opportunityStandardFieldIds.name
+        objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].fields[
+          OPPORTUNITY_STANDARD_FIELD_IDS.name
         ],
       viewId: viewId,
       position: 0,
@@ -19,8 +19,8 @@ export const viewOpportunityFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap[standardObjectIds.opportunity].fields[
-          opportunityStandardFieldIds.amount
+        objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].fields[
+          OPPORTUNITY_STANDARD_FIELD_IDS.amount
         ],
       viewId: viewId,
       position: 1,
@@ -29,8 +29,8 @@ export const viewOpportunityFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap[standardObjectIds.opportunity].fields[
-          opportunityStandardFieldIds.closeDate
+        objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].fields[
+          OPPORTUNITY_STANDARD_FIELD_IDS.closeDate
         ],
       viewId: viewId,
       position: 2,
@@ -39,8 +39,8 @@ export const viewOpportunityFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap[standardObjectIds.opportunity].fields[
-          opportunityStandardFieldIds.probability
+        objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].fields[
+          OPPORTUNITY_STANDARD_FIELD_IDS.company
         ],
       viewId: viewId,
       position: 3,
@@ -49,11 +49,21 @@ export const viewOpportunityFields = (
     },
     {
       fieldMetadataId:
-        objectMetadataMap[standardObjectIds.opportunity].fields[
-          opportunityStandardFieldIds.pointOfContact
+        objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].fields[
+          OPPORTUNITY_STANDARD_FIELD_IDS.probability
         ],
       viewId: viewId,
       position: 4,
+      isVisible: true,
+      size: 150,
+    },
+    {
+      fieldMetadataId:
+        objectMetadataMap[STANDARD_OBJECT_IDS.opportunity].fields[
+          OPPORTUNITY_STANDARD_FIELD_IDS.pointOfContact
+        ],
+      viewId: viewId,
+      position: 5,
       isVisible: true,
       size: 150,
     },

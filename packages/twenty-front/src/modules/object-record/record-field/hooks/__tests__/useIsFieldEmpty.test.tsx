@@ -45,6 +45,7 @@ describe('useIsFieldEmpty', () => {
       result.current.setFieldState({
         id: 'id',
         phone: '+1 233223',
+        __typename: 'Person',
       });
     });
 

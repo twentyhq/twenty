@@ -1,23 +1,34 @@
-import styled from '@emotion/styled';
-
 import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField';
 import { Tag } from '@/ui/display/tag/components/Tag';
+import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 
-const StyledTagContainer = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
-export const MultiSelectFieldDisplay = () => {
+type MultiSelectFieldDisplayProps = {
+  isCellSoftFocused?: boolean;
+  cellElement?: HTMLElement;
+  fromTableCell?: boolean;
+};
+
+export const MultiSelectFieldDisplay = ({
+  isCellSoftFocused,
+  cellElement,
+  fromTableCell,
+}: MultiSelectFieldDisplayProps) => {
   const { fieldValues, fieldDefinition } = useMultiSelectField();
 
   const selectedOptions = fieldValues
-    ? fieldDefinition.metadata.options.filter((option) =>
+    ? fieldDefinition.metadata.options?.filter((option) =>
         fieldValues.includes(option.value),
       )
     : [];
 
-  return selectedOptions ? (
-    <StyledTagContainer>
+  if (!selectedOptions) return null;
+
+  return (
+    <ExpandableList
+      anchorElement={cellElement}
+      isChipCountDisplayed={isCellSoftFocused}
+      withExpandedListBorder={fromTableCell}
+    >
       {selectedOptions.map((selectedOption, index) => (
         <Tag
           key={index}
@@ -25,8 +36,6 @@ export const MultiSelectFieldDisplay = () => {
           text={selectedOption.label}
         />
       ))}
-    </StyledTagContainer>
-  ) : (
-    <></>
+    </ExpandableList>
   );
 };

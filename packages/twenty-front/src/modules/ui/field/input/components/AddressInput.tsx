@@ -5,7 +5,7 @@ import { Key } from 'ts-key-enum';
 import { FieldAddressDraftValue } from '@/object-record/record-field/types/FieldInputDraftValue';
 import { FieldAddressValue } from '@/object-record/record-field/types/FieldMetadata';
 import { CountrySelect } from '@/ui/input/components/internal/country/components/CountrySelect';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 import { isDefined } from '~/utils/isDefined';
@@ -179,7 +179,7 @@ export const AddressInput = ({
 
   return (
     <StyledAddressContainer ref={wrapperRef}>
-      <TextInput
+      <TextInputV2
         autoFocus
         value={internalValue.addressStreet1 ?? ''}
         ref={inputRefs['addressStreet1']}
@@ -187,46 +187,41 @@ export const AddressInput = ({
         fullWidth
         onChange={getChangeHandler('addressStreet1')}
         onFocus={getFocusHandler('addressStreet1')}
-        disableHotkeys
       />
-      <TextInput
+      <TextInputV2
         value={internalValue.addressStreet2 ?? ''}
         ref={inputRefs['addressStreet2']}
         label="ADDRESS 2"
         fullWidth
         onChange={getChangeHandler('addressStreet2')}
         onFocus={getFocusHandler('addressStreet2')}
-        disableHotkeys
       />
       <StyledHalfRowContainer>
-        <TextInput
+        <TextInputV2
           value={internalValue.addressCity ?? ''}
           ref={inputRefs['addressCity']}
           label="CITY"
           fullWidth
           onChange={getChangeHandler('addressCity')}
           onFocus={getFocusHandler('addressCity')}
-          disableHotkeys
         />
-        <TextInput
+        <TextInputV2
           value={internalValue.addressState ?? ''}
           ref={inputRefs['addressState']}
           label="STATE"
           fullWidth
           onChange={getChangeHandler('addressState')}
           onFocus={getFocusHandler('addressState')}
-          disableHotkeys
         />
       </StyledHalfRowContainer>
       <StyledHalfRowContainer>
-        <TextInput
+        <TextInputV2
           value={internalValue.addressPostcode ?? ''}
           ref={inputRefs['addressPostcode']}
           label="POST CODE"
           fullWidth
           onChange={getChangeHandler('addressPostcode')}
           onFocus={getFocusHandler('addressPostcode')}
-          disableHotkeys
         />
         <CountrySelect
           onChange={getChangeHandler('addressCountry')}

@@ -98,7 +98,7 @@ export class ApiRestQueryBuilderFactory {
     };
   }
 
-  async create(request): Promise<ApiRestQuery> {
+  async create(request: Request): Promise<ApiRestQuery> {
     const objectMetadata = await this.getObjectMetadata(request);
 
     const depth = computeDepth(request);
@@ -109,7 +109,7 @@ export class ApiRestQueryBuilderFactory {
     };
   }
 
-  async update(request): Promise<ApiRestQuery> {
+  async update(request: Request): Promise<ApiRestQuery> {
     const objectMetadata = await this.getObjectMetadata(request);
 
     const depth = computeDepth(request);
@@ -128,7 +128,7 @@ export class ApiRestQueryBuilderFactory {
     };
   }
 
-  async get(request): Promise<ApiRestQuery> {
+  async get(request: Request): Promise<ApiRestQuery> {
     const objectMetadata = await this.getObjectMetadata(request);
 
     const depth = computeDepth(request);

@@ -4,6 +4,8 @@ import { useParams } from 'react-router-dom';
 
 import { useNavigateAfterSignInUp } from '@/auth/sign-in-up/hooks/useNavigateAfterSignInUp';
 import { Form } from '@/auth/sign-in-up/hooks/useSignInUpForm';
+import { useReadCaptchaToken } from '@/captcha/hooks/useReadCaptchaToken';
+import { useRequestFreshCaptchaToken } from '@/captcha/hooks/useRequestFreshCaptchaToken';
 import { AppPath } from '@/types/AppPath';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
@@ -48,24 +50,36 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
     checkUserExists: { checkUserExistsQuery },
   } = useAuth();
 
+  const { requestFreshCaptchaToken } = useRequestFreshCaptchaToken();
+  const { readCaptchaToken } = useReadCaptchaToken();
+
   const continueWithEmail = useCallback(() => {
+    requestFreshCaptchaToken();
     setSignInUpStep(SignInUpStep.Email);
     setSignInUpMode(
       isMatchingLocation(AppPath.SignInUp)
         ? SignInUpMode.SignIn
         : SignInUpMode.SignUp,
     );
-  }, [setSignInUpStep, setSignInUpMode, isMatchingLocation]);
+  }, [isMatchingLocation, requestFreshCaptchaToken]);
 
-  const continueWithCredentials = useCallback(() => {
+  const continueWithCredentials = useCallback(async () => {
+    const token = await readCaptchaToken();
     if (!form.getValues('email')) {
       return;
     }
     checkUserExistsQuery({
       variables: {
         email: form.getValues('email').toLowerCase().trim(),
+        captchaToken: token,
+      },
+      onError: (error) => {
+        enqueueSnackBar(`${error.message}`, {
+          variant: 'error',
+        });
       },
       onCompleted: (data) => {
+        requestFreshCaptchaToken();
         if (data?.checkUserExists.exists) {
           setSignInUpMode(SignInUpMode.SignIn);
         } else {
@@ -74,10 +88,17 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         setSignInUpStep(SignInUpStep.Password);
       },
     });
-  }, [setSignInUpStep, checkUserExistsQuery, form, setSignInUpMode]);
+  }, [
+    readCaptchaToken,
+    form,
+    checkUserExistsQuery,
+    enqueueSnackBar,
+    requestFreshCaptchaToken,
+  ]);
 
   const submitCredentials: SubmitHandler<Form> = useCallback(
     async (data) => {
+      const token = await readCaptchaToken();
       try {
         if (!data.email || !data.password) {
           throw new Error('Email and password are required');
@@ -91,11 +112,13 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
             ? await signInWithCredentials(
                 data.email.toLowerCase().trim(),
                 data.password,
+                token,
               )
             : await signUpWithCredentials(
                 data.email.toLowerCase().trim(),
                 data.password,
                 workspaceInviteHash,
+                token,
               );
 
         navigateAfterSignInUp(currentWorkspace, currentWorkspaceMember);
@@ -106,6 +129,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       }
     },
     [
+      readCaptchaToken,
       signInUpMode,
       isInviteMode,
       signInWithCredentials,

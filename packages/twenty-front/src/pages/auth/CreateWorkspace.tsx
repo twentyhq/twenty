@@ -17,10 +17,10 @@ import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetada
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
 import { AppPath } from '@/types/AppPath';
 import { H2Title } from '@/ui/display/typography/components/H2Title';
-import { Loader } from '@/ui/feedback/loader/components/Loader.tsx';
+import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
-import { TextInput } from '@/ui/input/components/TextInput';
+import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { useActivateWorkspaceMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -141,7 +141,7 @@ export const CreateWorkspace = () => {
               field: { onChange, onBlur, value },
               fieldState: { error },
             }) => (
-              <TextInput
+              <TextInputV2
                 autoFocus
                 value={value}
                 placeholder="Apple"
@@ -150,7 +150,6 @@ export const CreateWorkspace = () => {
                 error={error?.message}
                 onKeyDown={handleKeyDown}
                 fullWidth
-                disableHotkeys
               />
             )}
           />

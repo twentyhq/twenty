@@ -12,4 +12,5 @@ export type ActivityTarget = {
   person?: Pick<Person, 'id' | 'name' | 'avatarUrl'> | null;
   company?: Pick<Company, 'id' | 'name' | 'domainName'> | null;
   [key: string]: any;
+  __typename: 'ActivityTarget';
 };

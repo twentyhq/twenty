@@ -1,12 +1,8 @@
-import { Response } from 'express';
-
-import { ApiRestResponse } from 'src/engine/api/rest/types/api-rest-response.type';
-
 // https://gist.github.com/ManUtopiK/469aec75b655d6a4d912aeb3b75af3c9
-export const cleanGraphQLResponse = (input) => {
+export const cleanGraphQLResponse = (input: any) => {
   if (!input) return null;
   const output = {};
-  const isObject = (obj) => {
+  const isObject = (obj: any) => {
     return obj !== null && typeof obj === 'object' && !Array.isArray(obj);
   };
 
@@ -23,14 +19,4 @@ export const cleanGraphQLResponse = (input) => {
   });
 
   return output;
-};
-
-export const handleResult = (res: Response, result: ApiRestResponse) => {
-  if (result.data.error) {
-    res
-      .status(result.data.status || 400)
-      .send({ error: `${result.data.error}` });
-  } else {
-    res.send(cleanGraphQLResponse(result.data));
-  }
 };

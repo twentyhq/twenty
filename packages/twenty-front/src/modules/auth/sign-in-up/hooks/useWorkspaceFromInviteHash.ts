@@ -1,6 +1,6 @@
 import { useParams } from 'react-router-dom';
 
-import { useGetWorkspaceFromInviteHashQuery } from '~/generated/graphql.tsx';
+import { useGetWorkspaceFromInviteHashQuery } from '~/generated/graphql';
 
 export const useWorkspaceFromInviteHash = () => {
   const workspaceInviteHash = useParams().workspaceInviteHash;

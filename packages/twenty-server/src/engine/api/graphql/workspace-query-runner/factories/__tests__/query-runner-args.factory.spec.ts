@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 
 import { WorkspaceQueryRunnerOptions } from 'src/engine/api/graphql/workspace-query-runner/interfaces/query-runner-option.interface';
 import { FieldMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/field-metadata.interface';
+import { ResolverArgsType } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-runner-args.factory';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
@@ -14,6 +15,7 @@ describe('QueryRunnerArgsFactory', () => {
   const options = {
     fieldMetadataCollection: [
       { name: 'position', type: FieldMetadataType.POSITION },
+      { name: 'testNumber', type: FieldMetadataType.NUMBER },
     ] as FieldMetadataInterface[],
     objectMetadataItem: { isCustom: true, nameSingular: 'test' },
   } as WorkspaceQueryRunnerOptions;
@@ -45,18 +47,92 @@ describe('QueryRunnerArgsFactory', () => {
       const args = {
         data: [],
       };
-      const result = await factory.create(args, options);
+      const result = await factory.create(
+        args,
+        options,
+        ResolverArgsType.CreateMany,
+      );
 
       expect(result).toEqual(args);
     });
 
-    it('should override args when of type array', async () => {
-      const args = { data: [{ id: 1 }, { position: 'last' }] };
+    it('createMany type should override data position and number', async () => {
+      const args = {
+        id: 'uuid',
+        data: [{ position: 'last', testNumber: '1' }],
+      };
 
-      const result = await factory.create(args, options);
+      const result = await factory.create(
+        args,
+        options,
+        ResolverArgsType.CreateMany,
+      );
 
       expect(result).toEqual({
-        data: [{ id: 1 }, { position: 2 }],
+        id: 'uuid',
+        data: [{ position: 2, testNumber: 1 }],
+      });
+    });
+
+    it('findMany type should override data position and number', async () => {
+      const args = {
+        id: 'uuid',
+        filter: { testNumber: { eq: '1' }, otherField: { eq: 'test' } },
+      };
+
+      const result = await factory.create(
+        args,
+        options,
+        ResolverArgsType.FindMany,
+      );
+
+      expect(result).toEqual({
+        id: 'uuid',
+        filter: { testNumber: { eq: 1 }, otherField: { eq: 'test' } },
+      });
+    });
+
+    it('findOne type should override number in filter', async () => {
+      const args = {
+        id: 'uuid',
+        filter: { testNumber: { eq: '1' }, otherField: { eq: 'test' } },
+      };
+
+      const result = await factory.create(
+        args,
+        options,
+        ResolverArgsType.FindOne,
+      );
+
+      expect(result).toEqual({
+        id: 'uuid',
+        filter: { testNumber: { eq: 1 }, otherField: { eq: 'test' } },
+      });
+    });
+
+    it('findDuplicates type should override number in data and id', async () => {
+      const optionsDuplicate = {
+        fieldMetadataCollection: [
+          { name: 'id', type: FieldMetadataType.NUMBER },
+          { name: 'testNumber', type: FieldMetadataType.NUMBER },
+        ] as FieldMetadataInterface[],
+        objectMetadataItem: { isCustom: true, nameSingular: 'test' },
+      } as WorkspaceQueryRunnerOptions;
+
+      const args = {
+        id: '123',
+        data: { testNumber: '1', otherField: 'test' },
+      };
+
+      const result = await factory.create(
+        args,
+        optionsDuplicate,
+        ResolverArgsType.FindDuplicates,
+      );
+
+      expect(result).toEqual({
+        id: 123,
+        data: { testNumber: 1, otherField: 'test' },
       });
     });
   });

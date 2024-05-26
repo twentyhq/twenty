@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useIMask } from 'react-imask';
+import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
 
@@ -26,7 +27,11 @@ const StyledInput = styled.input<{ hasError?: boolean }>`
   font-weight: 500;
   font-size: ${({ theme }) => theme.font.size.md};
   width: 100%;
-  color: ${({ hasError, theme }) => (hasError ? theme.color.red : 'inherit')};
+  ${({ hasError, theme }) =>
+    hasError &&
+    css`
+      color: ${theme.color.red};
+    `};
 `;
 
 type DateTimeInputProps = {

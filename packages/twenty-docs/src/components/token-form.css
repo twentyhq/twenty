@@ -7,6 +7,7 @@
     padding: 0px 8px;
     background: var(--ifm-color-secondary-contrast-background);
     z-index: 2;
+    display: flex;
 }
 
 .form {
@@ -15,6 +16,7 @@
     gap: 10px;
     width: 50%;
     margin-left: auto;
+    flex: 0.7;
 }
 
 .link {
@@ -40,6 +42,10 @@
     border-radius: 4px;
     padding-left:30px;
     height: 32px;
+}
+
+.input[disabled] {
+    color: rgb(153, 153, 153)
 }
 
 [data-theme='dark'] .input {

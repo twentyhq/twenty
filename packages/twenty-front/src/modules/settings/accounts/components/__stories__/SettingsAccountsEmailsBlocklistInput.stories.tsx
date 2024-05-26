@@ -20,6 +20,7 @@ const meta: Meta<typeof SettingsAccountsEmailsBlocklistInput> = {
   decorators: [ComponentDecorator, ClearMocksDecorator],
   args: {
     updateBlockedEmailList: updateBlockedEmailListJestFn,
+    blockedEmailOrDomainList: [],
   },
   argTypes: {
     updateBlockedEmailList: { control: false },

@@ -102,6 +102,8 @@ export class InputTypeDefinitionFactory {
         ? fieldMetadata.type.toString()
         : fieldMetadata.id;
 
+      const isIdField = fieldMetadata.name === 'id';
+
       const type = this.inputTypeFactory.create(
         target,
         fieldMetadata.type,
@@ -111,6 +113,8 @@ export class InputTypeDefinitionFactory {
           nullable: fieldMetadata.isNullable,
           defaultValue: fieldMetadata.defaultValue,
           isArray: fieldMetadata.type === FieldMetadataType.MULTI_SELECT,
+          settings: fieldMetadata.settings,
+          isIdField,
         },
       );
 

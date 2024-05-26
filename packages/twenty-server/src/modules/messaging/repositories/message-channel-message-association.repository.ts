@@ -67,14 +67,17 @@ export class MessageChannelMessageAssociationRepository {
     );
   }
 
-  public async deleteByMessageParticipantHandleAndMessageChannelIds(
+  public async deleteByMessageParticipantHandleAndMessageChannelIdsAndRoles(
     messageParticipantHandle: string,
     messageChannelIds: string[],
+    rolesToDelete: ('from' | 'to' | 'cc' | 'bcc')[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ) {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const isHandleDomain = messageParticipantHandle.startsWith('@');
 
     const messageChannelMessageAssociationIdsToDelete =
       await this.workspaceDataSourceService.executeRawQuery(
@@ -82,8 +85,16 @@ export class MessageChannelMessageAssociationRepository {
       FROM ${dataSourceSchema}."messageChannelMessageAssociation" "messageChannelMessageAssociation"
       JOIN ${dataSourceSchema}."message" ON "messageChannelMessageAssociation"."messageId" = ${dataSourceSchema}."message"."id"
       JOIN ${dataSourceSchema}."messageParticipant" "messageParticipant" ON ${dataSourceSchema}."message"."id" = "messageParticipant"."messageId"
-      WHERE "messageParticipant"."handle" = $1 AND "messageParticipant"."role"= ANY($2) AND "messageChannelMessageAssociation"."messageChannelId" = ANY($3)`,
-        [messageParticipantHandle, ['from', 'to'], messageChannelIds],
+      WHERE "messageParticipant"."handle" ${
+        isHandleDomain ? 'ILIKE' : '='
+      } $1 AND "messageParticipant"."role" = ANY($2) AND "messageChannelMessageAssociation"."messageChannelId" = ANY($3)`,
+        [
+          isHandleDomain
+            ? `%${messageParticipantHandle}`
+            : messageParticipantHandle,
+          rolesToDelete,
+          messageChannelIds,
+        ],
         workspaceId,
         transactionManager,
       );

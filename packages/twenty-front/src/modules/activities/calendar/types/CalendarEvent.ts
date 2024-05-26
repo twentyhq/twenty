@@ -17,4 +17,5 @@ export type CalendarEvent = {
   title?: string;
   visibility: 'METADATA' | 'SHARE_EVERYTHING';
   calendarEventParticipants?: CalendarEventParticipant[];
+  __typename: 'CalendarEvent';
 };
