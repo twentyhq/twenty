@@ -39,6 +39,9 @@ export const RightDrawerEmailThread = () => {
   const { thread, messages, fetchMoreMessages, loading } =
     useRightDrawerEmailThread();
   useEffect(() => {
+    if (!visibleMessages[0]?.messageThread) {
+      return;
+    }
     setMessageThread(visibleMessages[0]?.messageThread);
   });
 

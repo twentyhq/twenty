@@ -13,12 +13,9 @@ const StyledButtonContainer = styled.div`
 
 export const MessageThreadMembersBar = () => {
   const messageThread = useRecoilValue(messageThreadState);
-  const everyone = messageThread?.everyone;
-  const memberProps = everyone ? 'everyone' : 'private';
-
   return (
     <StyledButtonContainer>
-      <EmailThreadMembersChip member={memberProps} />
+      <EmailThreadMembersChip messageThread={messageThread} />
     </StyledButtonContainer>
   );
 };

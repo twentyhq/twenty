@@ -1,43 +1,62 @@
-import { Avatar, Chip, ChipAccent, ChipSize, ChipVariant } from 'twenty-ui';
+import { EntityChip, EntityChipVariant } from 'twenty-ui';
+
+import { MessageThread } from '@/activities/emails/types/MessageThread';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 export const EmailThreadMembersChip = ({
-  member = 'private',
+  messageThread,
 }: {
-  member?: 'private' | 'everyone' | 'shared';
+  messageThread: MessageThread | null;
 }) => {
   const renderChip = () => {
-    switch (member) {
-      case 'private':
+    if (!messageThread) {
+      return null;
+    }
+    const isEveryone = messageThread?.everyone;
+    const numberOfMessageThreadMembers =
+      messageThread?.messageThreadMember.length;
+    switch (isEveryone) {
+      case false:
+        if (numberOfMessageThreadMembers === 1) {
+          return (
+            <EntityChip
+              name="Private"
+              avatarUrl={
+                getImageAbsoluteURIOrBase64(
+                  messageThread?.messageThreadMember[0]?.workspaceMember
+                    ?.avatarUrl,
+                ) || ''
+              }
+              variant={EntityChipVariant.Regular}
+              entityId={messageThread?.id ?? ''}
+            />
+          );
+        } else {
+          return (
+            <EntityChip
+              name={`${numberOfMessageThreadMembers} members`}
+              avatarUrl={
+                getImageAbsoluteURIOrBase64(
+                  messageThread?.messageThreadMember[0]?.workspaceMember
+                    ?.avatarUrl,
+                ) || ''
+              }
+              variant={EntityChipVariant.Regular}
+              entityId={messageThread?.id ?? ''}
+            />
+          );
+        }
+      case true:
         return (
-          <Chip
-            label="Private"
-            leftComponent={
-              <Avatar
-                avatarUrl="https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png"
-                placeholder="private"
-              />
+          <EntityChip
+            name="Everyone"
+            avatarUrl={
+              getImageAbsoluteURIOrBase64(
+                'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png',
+              ) || ''
             }
-            size={ChipSize.Large}
-            accent={ChipAccent.TextSecondary}
-            variant={ChipVariant.Highlighted}
-          />
-        );
-      case 'everyone':
-        return (
-          <Chip
-            label="Everyone"
-            size={ChipSize.Large}
-            accent={ChipAccent.TextSecondary}
-            variant={ChipVariant.Highlighted}
-          />
-        );
-      case 'shared':
-        return (
-          <Chip
-            label="Shared With 1 person"
-            size={ChipSize.Large}
-            accent={ChipAccent.TextSecondary}
-            variant={ChipVariant.Highlighted}
+            variant={EntityChipVariant.Regular}
+            entityId={messageThread?.id ?? ''}
           />
         );
       default:
