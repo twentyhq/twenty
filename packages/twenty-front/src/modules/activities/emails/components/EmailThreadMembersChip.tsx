@@ -1,7 +1,4 @@
-import React from 'react';
-import styled from '@emotion/styled';
 import { Avatar, Chip, ChipAccent, ChipSize, ChipVariant } from 'twenty-ui';
-
 
 export const EmailThreadMembersChip = ({
   member = 'private',

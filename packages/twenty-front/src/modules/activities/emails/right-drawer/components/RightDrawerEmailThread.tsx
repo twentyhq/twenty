@@ -1,5 +1,6 @@
+import { useEffect } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilCallback } from 'recoil';
+import { useRecoilCallback, useSetRecoilState } from 'recoil';
 
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { EmailLoader } from '@/activities/emails/components/EmailLoader';
@@ -10,6 +11,7 @@ import { useRightDrawerEmailThread } from '@/activities/emails/right-drawer/hook
 import { emailThreadIdWhenEmailThreadWasClosedState } from '@/activities/emails/states/lastViewableEmailThreadIdState';
 import { EmailThreadMessage as EmailThreadMessageType } from '@/activities/emails/types/EmailThreadMessage';
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
+import { messageThreadState } from '@/ui/layout/right-drawer/states/messageThreadState';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
 
 const StyledContainer = styled.div`
@@ -36,6 +38,11 @@ const getVisibleMessages = (messages: EmailThreadMessageType[]) =>
 export const RightDrawerEmailThread = () => {
   const { thread, messages, fetchMoreMessages, loading } =
     useRightDrawerEmailThread();
+  useEffect(() => {
+    setMessageThread(visibleMessages[0]?.messageThread);
+  });
+
+  const setMessageThread = useSetRecoilState(messageThreadState);
 
   const { useRegisterClickOutsideListenerCallback } = useClickOutsideListener(
     RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID,
