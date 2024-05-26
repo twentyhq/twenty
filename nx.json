@@ -116,6 +116,11 @@
         "command": "storybook build",
         "output-dir": "storybook-static",
         "config-dir": ".storybook"
+      },
+      "configurations": {
+        "test": {
+          "command": "storybook build --test"
+        }
       }
     },
     "storybook:dev": {
@@ -138,6 +143,9 @@
         "host": "localhost",
         "port": 6006,
         "silent": true
+      },
+      "configurations": {
+        "test": {}
       }
     },
     "storybook:coverage": {
@@ -192,7 +200,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:static {projectName} --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port}'"
+          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:static {projectName} --port={args.port} --configuration=test' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port}'"
         ],
         "port": 6006
       }
@@ -210,8 +218,14 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "cross-var chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name={args.targetPackageJsonScript} {args.ci}",
-        "targetPackageJsonScript": "storybook:build:chromatic"
+        "commands": [
+          {
+            "command": "nx storybook:build {projectName} --configuration=test",
+            "forwardAllArgs": false
+          },
+          "cross-var chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --storybook-build-dir=storybook-static {args.ci}"
+        ],
+        "parallel": false
       },
       "configurations": {
         "ci": {

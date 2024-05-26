@@ -4,7 +4,6 @@ import { captchaTokenState } from '@/captcha/states/captchaTokenState';
 import { isRequestingCaptchaTokenState } from '@/captcha/states/isRequestingCaptchaTokenState';
 import { captchaProviderState } from '@/client-config/states/captchaProviderState';
 import { CaptchaDriverType } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 declare global {
@@ -31,10 +30,6 @@ export const useRequestFreshCaptchaToken = () => {
           return;
         }
 
-        const existingCaptchaToken = snapshot
-          .getLoadable(captchaTokenState)
-          .getValue();
-
         setIsRequestingCaptchaToken(true);
 
         let captchaWidget: any;
@@ -51,12 +46,6 @@ export const useRequestFreshCaptchaToken = () => {
               });
             break;
           case CaptchaDriverType.Turnstile:
-            if (isDefined(existingCaptchaToken)) {
-              // If we already have a token, we don't need to request a new one as turnstile will
-              // automatically refresh the token when the widget is rendered.
-              setIsRequestingCaptchaToken(false);
-              break;
-            }
             // TODO: fix workspace-no-hardcoded-colors rule
             // eslint-disable-next-line @nx/workspace-no-hardcoded-colors
             captchaWidget = window.turnstile.render('#captcha-widget', {

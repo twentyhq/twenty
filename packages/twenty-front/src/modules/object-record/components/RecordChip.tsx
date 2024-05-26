@@ -7,7 +7,6 @@ import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOr
 export type RecordChipProps = {
   objectNameSingular: string;
   record: ObjectRecord;
-  maxWidth?: number;
   className?: string;
   variant?: EntityChipVariant;
 };
@@ -15,7 +14,6 @@ export type RecordChipProps = {
 export const RecordChip = ({
   objectNameSingular,
   record,
-  maxWidth,
   className,
   variant,
 }: RecordChipProps) => {
@@ -34,7 +32,6 @@ export const RecordChip = ({
         getImageAbsoluteURIOrBase64(objectRecordIdentifier.avatarUrl) || ''
       }
       linkToEntity={objectRecordIdentifier.linkToShowPage}
-      maxWidth={maxWidth}
       className={className}
       variant={variant}
     />

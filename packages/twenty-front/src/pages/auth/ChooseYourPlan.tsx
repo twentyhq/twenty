@@ -5,12 +5,13 @@ import { useRecoilValue } from 'recoil';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { useSignOutAndRedirect } from '@/auth/hooks/useSignOutAndRedirect';
+import { useAuth } from '@/auth/hooks/useAuth';
 import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit';
 import { SubscriptionCard } from '@/billing/components/SubscriptionCard';
 import { billingState } from '@/client-config/states/billingState';
 import { AppPath } from '@/types/AppPath';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { CardPicker } from '@/ui/input/components/CardPicker';
@@ -94,7 +95,7 @@ export const ChooseYourPlan = () => {
     };
   };
 
-  const handleLogout = useSignOutAndRedirect();
+  const { signOut } = useAuth();
 
   const computeInfo = (
     price: ProductPriceEntity,
@@ -131,7 +132,7 @@ export const ChooseYourPlan = () => {
       enqueueSnackBar(
         'Checkout session error. Please retry or contact Twenty team',
         {
-          variant: 'error',
+          variant: SnackBarVariant.Error,
         },
       );
       return;
@@ -174,7 +175,7 @@ export const ChooseYourPlan = () => {
           disabled={isSubmitting}
         />
         <StyledLinkGroup>
-          <ActionLink onClick={handleLogout}>Log out</ActionLink>
+          <ActionLink onClick={signOut}>Log out</ActionLink>
           <span />
           <ActionLink href={CAL_LINK} target="_blank" rel="noreferrer">
             Book a Call

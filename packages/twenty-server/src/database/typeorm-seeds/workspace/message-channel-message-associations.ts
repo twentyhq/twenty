@@ -41,7 +41,7 @@ export const seedMessageChannelMessageAssociation = async (
         messageThreadId: DEV_SEED_MESSAGE_THREAD_IDS.MESSAGE_THREAD_1,
         messageExternalId: null,
         messageId: DEV_SEED_MESSAGE_IDS.MESSAGE_1,
-        messageChannelId: DEV_SEED_MESSAGE_CHANNEL_IDS.TIM_INCOMING,
+        messageChannelId: DEV_SEED_MESSAGE_CHANNEL_IDS.TIM,
       },
       {
         id: DEV_SEED_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_IDS.MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_2,
@@ -52,7 +52,7 @@ export const seedMessageChannelMessageAssociation = async (
         messageThreadId: DEV_SEED_MESSAGE_THREAD_IDS.MESSAGE_THREAD_2,
         messageExternalId: null,
         messageId: DEV_SEED_MESSAGE_IDS.MESSAGE_2,
-        messageChannelId: DEV_SEED_MESSAGE_CHANNEL_IDS.TIM_INCOMING,
+        messageChannelId: DEV_SEED_MESSAGE_CHANNEL_IDS.TIM,
       },
       {
         id: DEV_SEED_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_IDS.MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_3,
@@ -63,7 +63,7 @@ export const seedMessageChannelMessageAssociation = async (
         messageThreadId: DEV_SEED_MESSAGE_THREAD_IDS.MESSAGE_THREAD_1,
         messageExternalId: null,
         messageId: DEV_SEED_MESSAGE_IDS.MESSAGE_3,
-        messageChannelId: DEV_SEED_MESSAGE_CHANNEL_IDS.TIM_INCOMING,
+        messageChannelId: DEV_SEED_MESSAGE_CHANNEL_IDS.TIM,
       },
     ])
     .execute();

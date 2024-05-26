@@ -1,7 +1,6 @@
 import styled from '@emotion/styled';
-import { IconMail } from 'twenty-ui';
+import { IconMail, Tag } from 'twenty-ui';
 
-import { Tag } from '@/ui/display/tag/components/Tag';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 
 type EmailThreadHeaderProps = {

@@ -8,22 +8,22 @@ import { DeleteConnectedAccountAssociatedCalendarDataJob } from 'src/modules/cal
 import { GoogleCalendarSyncJob } from 'src/modules/calendar/jobs/google-calendar-sync.job';
 import { CalendarEventCleanerModule } from 'src/modules/calendar/services/calendar-event-cleaner/calendar-event-cleaner.module';
 import { GoogleCalendarSyncModule } from 'src/modules/calendar/services/google-calendar-sync/google-calendar-sync.module';
-import { CalendarChannelEventAssociationObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.object-metadata';
-import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
-import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
+import { CalendarChannelEventAssociationWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel-event-association.workspace-entity';
+import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
+import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
 import { AutoCompaniesAndContactsCreationModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/auto-companies-and-contacts-creation.module';
 import { GoogleAPIRefreshAccessTokenModule } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.module';
-import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
-import { ConnectedAccountObjectMetadata } from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Module({
   imports: [
     ObjectMetadataRepositoryModule.forFeature([
-      CalendarChannelObjectMetadata,
-      CalendarChannelEventAssociationObjectMetadata,
-      CalendarEventParticipantObjectMetadata,
-      ConnectedAccountObjectMetadata,
-      BlocklistObjectMetadata,
+      CalendarChannelWorkspaceEntity,
+      CalendarChannelEventAssociationWorkspaceEntity,
+      CalendarEventParticipantWorkspaceEntity,
+      ConnectedAccountWorkspaceEntity,
+      BlocklistWorkspaceEntity,
     ]),
     CalendarEventCleanerModule,
     AutoCompaniesAndContactsCreationModule,

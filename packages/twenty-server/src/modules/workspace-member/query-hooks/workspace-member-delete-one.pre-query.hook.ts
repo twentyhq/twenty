@@ -5,18 +5,18 @@ import { DeleteOneResolverArgs } from 'src/engine/api/graphql/workspace-resolver
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { CommentRepository } from 'src/modules/activity/repositories/comment.repository';
-import { CommentObjectMetadata } from 'src/modules/activity/standard-objects/comment.object-metadata';
+import { CommentWorkspaceEntity } from 'src/modules/activity/standard-objects/comment.workspace-entity';
 import { AttachmentRepository } from 'src/modules/attachment/repositories/attachment.repository';
-import { AttachmentObjectMetadata } from 'src/modules/attachment/standard-objects/attachment.object-metadata';
+import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 
 @Injectable()
 export class WorkspaceMemberDeleteOnePreQueryHook
   implements WorkspacePreQueryHook
 {
   constructor(
-    @InjectObjectMetadataRepository(AttachmentObjectMetadata)
+    @InjectObjectMetadataRepository(AttachmentWorkspaceEntity)
     private readonly attachmentRepository: AttachmentRepository,
-    @InjectObjectMetadataRepository(CommentObjectMetadata)
+    @InjectObjectMetadataRepository(CommentWorkspaceEntity)
     private readonly commentRepository: CommentRepository,
   ) {}
 

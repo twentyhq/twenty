@@ -1,5 +1,6 @@
+import { Tag } from 'twenty-ui';
+
 import { ObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
-import { Tag } from '@/ui/display/tag/components/Tag';
 
 type SettingsDataModelObjectTypeTagProps = {
   objectTypeLabel: ObjectTypeLabel;

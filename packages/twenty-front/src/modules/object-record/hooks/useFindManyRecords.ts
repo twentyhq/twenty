@@ -7,6 +7,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { ObjectMetadataItemIdentifier } from '@/object-metadata/types/ObjectMetadataItemIdentifier';
+import { isAggregationEnabled } from '@/object-metadata/utils/isAggregationEnabled';
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RecordGqlConnection } from '@/object-record/graphql/types/RecordGqlConnection';
 import { RecordGqlEdge } from '@/object-record/graphql/types/RecordGqlEdge';
@@ -16,6 +17,7 @@ import { RecordGqlOperationVariables } from '@/object-record/graphql/types/Recor
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { filterUniqueRecordEdgesByCursor } from '@/object-record/utils/filterUniqueRecordEdgesByCursor';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from '~/utils/isDefined';
 import { logError } from '~/utils/logError';
@@ -115,14 +117,15 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         enqueueSnackBar(
           `Error during useFindManyRecords for "${objectMetadataItem.namePlural}", ${error.message}`,
           {
-            variant: 'error',
+            variant: SnackBarVariant.Error,
           },
         );
       },
     });
 
   const fetchMoreRecords = useCallback(async () => {
-    if (hasNextPage) {
+    // Remote objects does not support hasNextPage. We cannot rely on it to fetch more records.
+    if (hasNextPage || (!isAggregationEnabled(objectMetadataItem) && !error)) {
       setIsFetchingMoreObjects(true);
 
       try {
@@ -137,11 +140,11 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
             const nextEdges =
               fetchMoreResult?.[objectMetadataItem.namePlural]?.edges;
 
-            let newEdges: RecordGqlEdge[] = [];
+            let newEdges: RecordGqlEdge[] = previousEdges ?? [];
 
-            if (isNonEmptyArray(previousEdges) && isNonEmptyArray(nextEdges)) {
+            if (isNonEmptyArray(nextEdges)) {
               newEdges = filterUniqueRecordEdgesByCursor([
-                ...(prev?.[objectMetadataItem.namePlural]?.edges ?? []),
+                ...newEdges,
                 ...(fetchMoreResult?.[objectMetadataItem.namePlural]?.edges ??
                   []),
               ]);
@@ -190,7 +193,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         enqueueSnackBar(
           `Error during fetchMoreObjects for "${objectMetadataItem.namePlural}", ${error}`,
           {
-            variant: 'error',
+            variant: SnackBarVariant.Error,
           },
         );
       } finally {
@@ -199,21 +202,21 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
     }
   }, [
     hasNextPage,
+    objectMetadataItem,
+    error,
     setIsFetchingMoreObjects,
     fetchMore,
     filter,
     orderBy,
     lastCursor,
-    objectMetadataItem.namePlural,
-    objectMetadataItem.nameSingular,
-    onCompleted,
     data,
+    onCompleted,
     setLastCursor,
     setHasNextPage,
     enqueueSnackBar,
   ]);
 
-  const totalCount = data?.[objectMetadataItem.namePlural].totalCount ?? 0;
+  const totalCount = data?.[objectMetadataItem.namePlural]?.totalCount;
 
   const records = useMemo(
     () =>

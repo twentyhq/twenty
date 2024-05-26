@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { MessageParticipantObjectMetadata } from 'src/modules/messaging/standard-objects/message-participant.object-metadata';
+import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-participant.workspace-entity';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { ParticipantWithId } from 'src/modules/messaging/types/gmail-message';
 
@@ -17,7 +17,7 @@ export class MessageParticipantRepository {
     handles: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageParticipantObjectMetadata>[]> {
+  ): Promise<ObjectRecord<MessageParticipantWorkspaceEntity>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -123,6 +123,41 @@ export class MessageParticipantRepository {
         AND "messageParticipant"."personId" IS NULL
         AND "messageParticipant"."workspaceMemberId" IS NULL
         AND ${dataSourceSchema}."message"."direction" = 'outgoing'`,
+        [messageChannelId],
+        workspaceId,
+        transactionManager,
+      );
+
+    return messageParticipants;
+  }
+
+  public async getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberId(
+    messageChannelId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ParticipantWithId[]> {
+    if (!messageChannelId || !workspaceId) {
+      return [];
+    }
+
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const messageParticipants: ParticipantWithId[] =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT "messageParticipant".id,
+        "messageParticipant"."role",
+        "messageParticipant"."handle",
+        "messageParticipant"."displayName",
+        "messageParticipant"."personId",
+        "messageParticipant"."workspaceMemberId",
+        "messageParticipant"."messageId"
+        FROM ${dataSourceSchema}."messageParticipant" "messageParticipant"
+        LEFT JOIN ${dataSourceSchema}."message" ON "messageParticipant"."messageId" = ${dataSourceSchema}."message"."id" 
+        LEFT JOIN ${dataSourceSchema}."messageChannelMessageAssociation" ON ${dataSourceSchema}."messageChannelMessageAssociation"."messageId" = ${dataSourceSchema}."message"."id"
+        WHERE ${dataSourceSchema}."messageChannelMessageAssociation"."messageChannelId" = $1
+        AND "messageParticipant"."personId" IS NULL
+        AND "messageParticipant"."workspaceMemberId" IS NULL`,
         [messageChannelId],
         workspaceId,
         transactionManager,

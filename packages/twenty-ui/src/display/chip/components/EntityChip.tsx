@@ -1,13 +1,11 @@
 import * as React from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { Avatar, AvatarType } from '@ui/display/avatar/components/Avatar';
+import { Chip, ChipVariant } from '@ui/display/chip/components/Chip';
 import { IconComponent } from '@ui/display/icon/types/IconComponent';
 import { Nullable } from '@ui/utilities/types/Nullable';
-
-import { Chip, ChipVariant } from './Chip';
 
 export type EntityChipProps = {
   linkToEntity?: string;
@@ -18,7 +16,6 @@ export type EntityChipProps = {
   variant?: EntityChipVariant;
   LeftIcon?: IconComponent;
   className?: string;
-  maxWidth?: number;
 };
 
 export enum EntityChipVariant {
@@ -35,16 +32,12 @@ export const EntityChip = ({
   variant = EntityChipVariant.Regular,
   LeftIcon,
   className,
-  maxWidth,
 }: EntityChipProps) => {
-  const navigate = useNavigate();
   const theme = useTheme();
 
   const handleLinkClick = (event: React.MouseEvent<HTMLDivElement>) => {
     if (isNonEmptyString(linkToEntity)) {
-      event.preventDefault();
       event.stopPropagation();
-      navigate(linkToEntity);
     }
   };
 
@@ -74,7 +67,6 @@ export const EntityChip = ({
       clickable={!!linkToEntity}
       onClick={handleLinkClick}
       className={className}
-      maxWidth={maxWidth}
     />
   );
 };

@@ -150,26 +150,10 @@ export class SignInUpService {
     );
 
     if (existingUser) {
-      const userWorkspaceExists =
-        await this.userWorkspaceService.checkUserWorkspaceExists(
-          existingUser.id,
-          workspace.id,
-        );
-
-      if (!userWorkspaceExists) {
-        await this.userWorkspaceService.create(existingUser.id, workspace.id);
-
-        await this.userWorkspaceService.createWorkspaceMember(
-          workspace.id,
-          existingUser,
-        );
-      }
-
-      const updatedUser = await this.userRepository.save({
-        id: existingUser.id,
-        defaultWorkspace: workspace,
-        updatedAt: new Date().toISOString(),
-      });
+      const updatedUser = await this.userWorkspaceService.addUserToWorkspace(
+        existingUser,
+        workspace,
+      );
 
       return Object.assign(existingUser, updatedUser);
     }

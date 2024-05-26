@@ -50,11 +50,10 @@ export const triggerDeleteRecordsOptimisticEffect = ({
           rootQueryCachedObjectRecordConnection,
         );
 
-        const totalCount =
-          readField<number>(
-            'totalCount',
-            rootQueryCachedObjectRecordConnection,
-          ) || 0;
+        const totalCount = readField<number | undefined>(
+          'totalCount',
+          rootQueryCachedObjectRecordConnection,
+        );
 
         const nextCachedEdges =
           cachedEdges?.filter((cachedEdge) => {
@@ -77,7 +76,9 @@ export const triggerDeleteRecordsOptimisticEffect = ({
         return {
           ...rootQueryCachedObjectRecordConnection,
           edges: nextCachedEdges,
-          totalCount: totalCount - recordIdsToDelete.length,
+          totalCount: isDefined(totalCount)
+            ? totalCount - recordIdsToDelete.length
+            : undefined,
         };
       },
     },
