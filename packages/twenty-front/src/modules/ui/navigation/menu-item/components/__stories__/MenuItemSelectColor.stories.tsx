@@ -6,12 +6,9 @@ import {
   CatalogStory,
   ColorSampleVariant,
   ComponentDecorator,
-} from 'twenty-ui';
-
-import {
   MAIN_COLOR_NAMES,
   ThemeColor,
-} from '@/ui/theme/constants/MainColorNames';
+} from 'twenty-ui';
 
 import { MenuItemSelectColor } from '../MenuItemSelectColor';
 

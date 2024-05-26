@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { getForeignTableColumnName as convertToForeignTableColumnName } from 'src/engine/metadata-modules/remote-server/remote-table/foreign-table/utils/get-foreign-table-column-name.util';
 import { DistantTables } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/types/distant-table';
-import {
-  RemoteTableStatus,
-  DistantTableUpdate,
-} from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
+import { DistantTableUpdate } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
 import { RemoteTableEntity } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.entity';
 import { fetchTableColumns } from 'src/engine/metadata-modules/remote-server/remote-table/utils/fetch-table-columns.util';
 import { PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/types/postgres-table-schema-column';
@@ -22,53 +19,6 @@ export class RemoteTableSchemaUpdateService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
-
-  public async getDistantTablesWithUpdates({
-    remoteServerSchema,
-    workspaceId,
-    remoteTables,
-    distantTables,
-  }: {
-    remoteServerSchema: string;
-    workspaceId: string;
-    remoteTables: RemoteTableEntity[];
-    distantTables: DistantTables;
-  }) {
-    const schemaPendingUpdates =
-      await this.getSchemaUpdatesBetweenForeignAndDistantTables({
-        workspaceId,
-        remoteTables,
-        distantTables,
-      });
-
-    const remoteTablesDistantNames = new Set(
-      remoteTables.map((remoteTable) => remoteTable.distantTableName),
-    );
-
-    const distantTablesWithUpdates = Object.keys(distantTables).map(
-      (tableName) => ({
-        name: tableName,
-        schema: remoteServerSchema,
-        status: remoteTablesDistantNames.has(tableName)
-          ? RemoteTableStatus.SYNCED
-          : RemoteTableStatus.NOT_SYNCED,
-        schemaPendingUpdates: schemaPendingUpdates[tableName] || [],
-      }),
-    );
-
-    const deletedTables = Object.entries(schemaPendingUpdates)
-      .filter(([_tableName, updates]) =>
-        updates.includes(DistantTableUpdate.TABLE_DELETED),
-      )
-      .map(([tableName, updates]) => ({
-        name: tableName,
-        schema: remoteServerSchema,
-        status: RemoteTableStatus.SYNCED,
-        schemaPendingUpdates: updates,
-      }));
-
-    return [...distantTablesWithUpdates, ...deletedTables];
-  }
 
   public computeForeignTableColumnsUpdates = (
     foreignTableColumns: PostgresTableSchemaColumn[],
@@ -94,7 +44,7 @@ export class RemoteTableSchemaUpdateService {
     return [...columnsAddedUpdates, ...columnsDeletedUpdates];
   };
 
-  private async getSchemaUpdatesBetweenForeignAndDistantTables({
+  public async getSchemaUpdatesBetweenForeignAndDistantTables({
     workspaceId,
     remoteTables,
     distantTables,

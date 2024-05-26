@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { ThemeProvider } from '@emotion/react';
 import { THEME_DARK, THEME_LIGHT } from 'twenty-ui';
 
@@ -17,6 +18,11 @@ export const AppThemeProvider = ({ children }: AppThemeProviderProps) => {
     colorScheme === 'System' ? systemColorScheme : colorScheme;
 
   const theme = computedColorScheme === 'Dark' ? THEME_DARK : THEME_LIGHT;
+
+  useEffect(() => {
+    document.documentElement.className =
+      theme.name === 'dark' ? 'dark' : 'light';
+  }, [theme]);
 
   return <ThemeProvider theme={theme}>{children}</ThemeProvider>;
 };

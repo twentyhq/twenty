@@ -41,7 +41,6 @@ const StyledChipCount = styled(Chip)`
 `;
 
 export type ExpandableListProps = {
-  anchorElement?: HTMLElement;
   isChipCountDisplayed?: boolean;
   withExpandedListBorder?: boolean;
 };
@@ -53,7 +52,6 @@ export type ChildrenProperty = {
 
 export const ExpandableList = ({
   children,
-  anchorElement,
   isChipCountDisplayed: isChipCountDisplayedFromProps,
   withExpandedListBorder = false,
 }: {
@@ -75,10 +73,10 @@ export const ExpandableList = ({
   // @see https://floating-ui.com/docs/useFloating#elements
   const [childrenContainerElement, setChildrenContainerElement] =
     useState<HTMLDivElement | null>(null);
+
   const [previousChildrenContainerWidth, setPreviousChildrenContainerWidth] =
     useState(childrenContainerElement?.clientWidth ?? 0);
 
-  // Used with useListenClickOutside.
   const containerRef = useRef<HTMLDivElement>(null);
 
   const [firstHiddenChildIndex, setFirstHiddenChildIndex] = useState(
@@ -165,7 +163,7 @@ export const ExpandableList = ({
       )}
       {isListExpanded && (
         <ExpandedListDropdown
-          anchorElement={anchorElement ?? childrenContainerElement ?? undefined}
+          anchorElement={containerRef.current ?? undefined}
           onClickOutside={() => {
             resetFirstHiddenChildIndex();
             setIsListExpanded(false);
