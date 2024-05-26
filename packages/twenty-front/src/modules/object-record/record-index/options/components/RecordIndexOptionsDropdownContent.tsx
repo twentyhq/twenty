@@ -4,7 +4,6 @@ import { Key } from 'ts-key-enum';
 import {
   IconBaselineDensitySmall,
   IconChevronLeft,
-  IconChevronRight,
   IconEyeOff,
   IconFileExport,
   IconFileImport,
@@ -157,8 +156,6 @@ export const RecordIndexOptionsDropdownContent = ({
           <MenuItem
             onClick={() => handleSelectMenu('hiddenFields')}
             LeftIcon={IconEyeOff}
-            RightIcon={IconChevronRight}
-            hasRightIcon={true}
             text="Hidden Fields"
           />
         </>
