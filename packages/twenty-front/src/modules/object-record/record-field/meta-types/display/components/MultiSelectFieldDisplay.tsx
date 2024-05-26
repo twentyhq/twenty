@@ -1,20 +1,13 @@
 import { Tag } from 'twenty-ui';
 
+import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 
-type MultiSelectFieldDisplayProps = {
-  isCellSoftFocused?: boolean;
-  cellElement?: HTMLElement;
-  fromTableCell?: boolean;
-};
-
-export const MultiSelectFieldDisplay = ({
-  isCellSoftFocused,
-  cellElement,
-  fromTableCell,
-}: MultiSelectFieldDisplayProps) => {
+export const MultiSelectFieldDisplay = () => {
   const { fieldValues, fieldDefinition } = useMultiSelectField();
+
+  const { isFocused } = useFieldFocus();
 
   const selectedOptions = fieldValues
     ? fieldDefinition.metadata.options?.filter((option) =>
@@ -25,11 +18,7 @@ export const MultiSelectFieldDisplay = ({
   if (!selectedOptions) return null;
 
   return (
-    <ExpandableList
-      anchorElement={cellElement}
-      isChipCountDisplayed={isCellSoftFocused}
-      withExpandedListBorder={fromTableCell}
-    >
+    <ExpandableList isChipCountDisplayed={isFocused}>
       {selectedOptions.map((selectedOption, index) => (
         <Tag
           key={index}

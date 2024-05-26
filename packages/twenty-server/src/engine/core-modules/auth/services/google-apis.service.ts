@@ -32,9 +32,9 @@ import {
   MessageChannelVisibility,
 } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import {
-  GmailFullSyncJobData,
-  GmailFullSyncJob,
-} from 'src/modules/messaging/jobs/gmail-full-sync.job';
+  GmailFullMessageListFetchJobData,
+  GmailFullMessageListFetchJob,
+} from 'src/modules/messaging/jobs/gmail-full-message-list-fetch.job';
 
 @Injectable()
 export class GoogleAPIsService {
@@ -156,8 +156,8 @@ export class GoogleAPIsService {
     isCalendarEnabled: boolean,
   ) {
     if (this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED')) {
-      await this.messageQueueService.add<GmailFullSyncJobData>(
-        GmailFullSyncJob.name,
+      await this.messageQueueService.add<GmailFullMessageListFetchJobData>(
+        GmailFullMessageListFetchJob.name,
         {
           workspaceId,
           connectedAccountId,

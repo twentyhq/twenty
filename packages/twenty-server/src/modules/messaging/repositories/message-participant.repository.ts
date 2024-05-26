@@ -131,6 +131,41 @@ export class MessageParticipantRepository {
     return messageParticipants;
   }
 
+  public async getByMessageChannelIdWithoutPersonIdAndWorkspaceMemberId(
+    messageChannelId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ParticipantWithId[]> {
+    if (!messageChannelId || !workspaceId) {
+      return [];
+    }
+
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const messageParticipants: ParticipantWithId[] =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT "messageParticipant".id,
+        "messageParticipant"."role",
+        "messageParticipant"."handle",
+        "messageParticipant"."displayName",
+        "messageParticipant"."personId",
+        "messageParticipant"."workspaceMemberId",
+        "messageParticipant"."messageId"
+        FROM ${dataSourceSchema}."messageParticipant" "messageParticipant"
+        LEFT JOIN ${dataSourceSchema}."message" ON "messageParticipant"."messageId" = ${dataSourceSchema}."message"."id" 
+        LEFT JOIN ${dataSourceSchema}."messageChannelMessageAssociation" ON ${dataSourceSchema}."messageChannelMessageAssociation"."messageId" = ${dataSourceSchema}."message"."id"
+        WHERE ${dataSourceSchema}."messageChannelMessageAssociation"."messageChannelId" = $1
+        AND "messageParticipant"."personId" IS NULL
+        AND "messageParticipant"."workspaceMemberId" IS NULL`,
+        [messageChannelId],
+        workspaceId,
+        transactionManager,
+      );
+
+    return messageParticipants;
+  }
+
   public async getWithoutPersonIdAndWorkspaceMemberId(
     workspaceId: string,
     transactionManager?: EntityManager,

@@ -32,10 +32,7 @@ export type SettingsFieldTypeConfig = {
   defaultValue?: unknown;
 };
 
-export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
-  SettingsSupportedFieldType,
-  SettingsFieldTypeConfig
-> = {
+export const SETTINGS_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.Uuid]: {
     label: 'Unique ID',
     Icon: IconKey,
@@ -137,6 +134,9 @@ export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
   [FieldMetadataType.RawJson]: {
     label: 'JSON',
     Icon: IconJson,
-    defaultValue: `{ "key": "value" }`,
+    defaultValue: { key: 'value' },
   },
-};
+} as const satisfies Record<
+  SettingsSupportedFieldType,
+  SettingsFieldTypeConfig
+>;

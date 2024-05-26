@@ -327,7 +327,7 @@ export const graphqlMocks = {
     graphql.query('GetManyRemoteTables', () => {
       return HttpResponse.json({
         data: {
-          findAvailableRemoteTablesByServerId: mockedRemoteTables,
+          findDistantTablesWithStatus: mockedRemoteTables,
         },
       });
     }),

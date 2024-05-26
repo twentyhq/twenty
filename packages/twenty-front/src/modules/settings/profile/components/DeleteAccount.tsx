@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { H2Title } from 'twenty-ui';
 
-import { useSignOutAndRedirect } from '@/auth/hooks/useSignOutAndRedirect';
+import { useAuth } from '@/auth/hooks/useAuth';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { Button } from '@/ui/input/button/components/Button';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -15,11 +15,11 @@ export const DeleteAccount = () => {
   const [deleteUserAccount] = useDeleteUserAccountMutation();
   const currentUser = useRecoilValue(currentUserState);
   const userEmail = currentUser?.email;
-  const handleLogout = useSignOutAndRedirect();
+  const { signOut } = useAuth();
 
   const deleteAccount = async () => {
     await deleteUserAccount();
-    handleLogout();
+    await signOut();
   };
 
   return (

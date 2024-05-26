@@ -24,6 +24,7 @@ import { SettingsDataModelFieldSettingsFormCard } from '@/settings/data-model/fi
 import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/forms/components/SettingsDataModelFieldTypeSelect';
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { AppPath } from '@/types/AppPath';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -136,7 +137,7 @@ export const SettingsObjectFieldEdit = () => {
       navigate(`/settings/objects/${objectSlug}`);
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
-        variant: 'error',
+        variant: SnackBarVariant.Error,
       });
     }
   };

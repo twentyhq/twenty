@@ -1,8 +1,7 @@
 import * as React from 'react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
-
-import { RGBA } from '@/ui/theme/constants/Rgba';
+import { RGBA } from 'twenty-ui';
 
 import { RadioGroup } from './RadioGroup';
 

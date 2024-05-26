@@ -20,6 +20,6 @@ export const useOnboardingStatus = (): OnboardingStatus | undefined => {
     isLoggedIn,
     currentWorkspaceMember,
     currentWorkspace,
-    isBillingEnabled: billing?.isBillingEnabled,
+    isBillingEnabled: billing?.isBillingEnabled || false,
   });
 };
