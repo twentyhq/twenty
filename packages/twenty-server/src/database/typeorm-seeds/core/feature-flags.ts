@@ -46,11 +46,6 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKeys.IsLinksFieldEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKeys.IsContactCreationForSentAndReceivedEmailsEnabled,
         workspaceId: workspaceId,
         value: true,
