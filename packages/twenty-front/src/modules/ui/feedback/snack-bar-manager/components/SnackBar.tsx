@@ -105,7 +105,7 @@ const defaultTitleByVariant: Record<SnackBarVariant, string> = {
 export const SnackBar = ({
   className,
   progress: overrideProgressValue,
-  duration = 6000,
+  duration = 600000,
   icon: iconComponent,
   id,
   message,

@@ -1,3 +1,5 @@
+import { BLUR_DARK } from '@ui/theme/constants/BlurDark';
+
 import { SNACK_BAR_DARK, ThemeType } from '..';
 
 import { ACCENT_DARK } from './AccentDark';
@@ -13,6 +15,7 @@ export const THEME_DARK: ThemeType = {
   ...{
     accent: ACCENT_DARK,
     background: BACKGROUND_DARK,
+    blur: BLUR_DARK,
     border: BORDER_DARK,
     boxShadow: BOX_SHADOW_DARK,
     font: FONT_DARK,

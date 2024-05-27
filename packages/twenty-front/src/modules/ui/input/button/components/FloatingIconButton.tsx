@@ -30,10 +30,8 @@ const StyledButton = styled.button<
   >
 >`
   align-items: center;
-  backdrop-filter: ${({ applyBlur }) =>
-    applyBlur
-      ? 'blur(12px) saturate(200%) contrast(50%) brightness(130%)'
-      : 'none'};
+  backdrop-filter: ${({ theme, applyBlur }) =>
+    applyBlur ? theme.blur.medium : 'none'};
   background: ${({ theme, isActive }) =>
     isActive ? theme.background.transparent.medium : theme.background.primary};
   border: ${({ focus, theme }) =>
