@@ -17,13 +17,18 @@ import { CheckboxCell } from './CheckboxCell';
 type RecordTableRowProps = {
   recordId: string;
   rowIndex: number;
+  isPendingRow?: boolean;
 };
 
 const StyledTd = styled.td`
   background-color: ${({ theme }) => theme.background.primary};
 `;
 
-export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
+export const RecordTableRow = ({
+  recordId,
+  rowIndex,
+  isPendingRow,
+}: RecordTableRowProps) => {
   const { visibleTableColumnsSelector, isRowSelectedFamilyState } =
     useRecordTableStates();
   const currentRowSelected = useRecoilValue(isRowSelectedFamilyState(recordId));
@@ -51,6 +56,7 @@ export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
           }) + recordId,
         isSelected: currentRowSelected,
         isReadOnly: objectMetadataItem.isRemote ?? false,
+        isPendingRow,
       }}
     >
       <RecordValueSetterEffect recordId={recordId} />
