@@ -69,7 +69,7 @@ export class GmailMessageListFetchJob
 
       case MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING:
         try {
-          await this.gmailFullMessageListFetchV2Service.fetchConnectedAccountThreads(
+          await this.gmailFullMessageListFetchV2Service.processMessageListFetch(
             messageChannel,
             connectedAccount,
             workspaceId,

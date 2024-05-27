@@ -4,10 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { EntityManager, Repository } from 'typeorm';
 import { gmail_v1 } from 'googleapis';
 
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
@@ -45,7 +42,7 @@ export class GmailFullMessageListFetchV2Service {
     private readonly setMessageChannelSyncStatusService: SetMessageChannelSyncStatusService,
   ) {}
 
-  public async fetchConnectedAccountThreads(
+  public async processMessageListFetch(
     messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
     connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
     workspaceId: string,
@@ -168,30 +165,6 @@ export class GmailFullMessageListFetchV2Service {
       workspaceId,
       transactionManager,
     );
-  }
-
-  public async fetchBlocklistEmails(
-    workspaceMemberId: string,
-    workspaceId: string,
-  ) {
-    const isBlocklistEnabledFeatureFlag =
-      await this.featureFlagRepository.findOneBy({
-        workspaceId,
-        key: FeatureFlagKeys.IsBlocklistEnabled,
-        value: true,
-      });
-
-    const isBlocklistEnabled =
-      isBlocklistEnabledFeatureFlag && isBlocklistEnabledFeatureFlag.value;
-
-    const blocklist = isBlocklistEnabled
-      ? await this.blocklistRepository.getByWorkspaceMemberId(
-          workspaceMemberId,
-          workspaceId,
-        )
-      : [];
-
-    return blocklist.map((blocklist) => blocklist.handle);
   }
 
   private async updateLastSyncCursor(
