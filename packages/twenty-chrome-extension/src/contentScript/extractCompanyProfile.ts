@@ -84,16 +84,15 @@ export const addCompany = async () => {
 export const insertButtonForCompany = async () => {
   const companyButtonDiv = createDefaultButton('twenty-company-btn');
 
-  const parentDiv: HTMLDivElement | null = document.querySelector(
-    '.org-top-card-primary-actions__inner',
+  const companyDiv: HTMLDivElement | null = document.querySelector(
+    '.org-top-card__primary-content',
   );
 
-  if (isDefined(parentDiv)) {
+  if (isDefined(companyDiv)) {
     Object.assign(companyButtonDiv.style, {
-      marginLeft: '.8rem',
-      marginTop: '.4rem',
+      marginTop: '.8rem',
     });
-    parentDiv.prepend(companyButtonDiv);
+    companyDiv.parentElement?.append(companyButtonDiv);
   }
 
   const companyButtonSpan = companyButtonDiv.getElementsByTagName('span')[0];

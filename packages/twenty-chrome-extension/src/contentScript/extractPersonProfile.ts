@@ -96,15 +96,15 @@ export const insertButtonForPerson = async () => {
   const personButtonDiv = createDefaultButton('twenty-person-btn');
 
   if (isDefined(personButtonDiv)) {
-    const addedProfileDiv: HTMLDivElement | null = document.querySelector(
-      '.pv-top-card-v2-ctas__custom',
+    const addedProfileDiv = document.querySelector(
+      '.artdeco-card > .ph5',
     );
 
     if (isDefined(addedProfileDiv)) {
       Object.assign(personButtonDiv.style, {
-        marginRight: '.8rem',
+        marginTop: '.8rem',
       });
-      addedProfileDiv.prepend(personButtonDiv);
+      addedProfileDiv.append(personButtonDiv);
     }
 
     const personButtonSpan = personButtonDiv.getElementsByTagName('span')[0];
