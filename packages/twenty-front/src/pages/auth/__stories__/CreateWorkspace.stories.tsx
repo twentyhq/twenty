@@ -11,6 +11,7 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
+import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedOnboardingUsersData } from '~/testing/mock-data/users';
 
@@ -25,6 +26,7 @@ const meta: Meta<PageDecoratorArgs> = {
       setCurrentWorkspace(mockedOnboardingUsersData[1].defaultWorkspace);
       return <Story />;
     },
+    PrefetchLoadingDecorator,
     PageDecorator,
   ],
   args: { routePath: AppPath.CreateWorkspace },

@@ -6,6 +6,7 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
+import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedPeopleData } from '~/testing/mock-data/people';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
@@ -15,7 +16,7 @@ import { RecordShowPage } from '../RecordShowPage';
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/ObjectRecord/RecordShowPage',
   component: RecordShowPage,
-  decorators: [PageDecorator],
+  decorators: [PrefetchLoadingDecorator, PageDecorator],
   args: {
     routePath: '/object/:objectNameSingular/:objectRecordId',
     routeParams: {

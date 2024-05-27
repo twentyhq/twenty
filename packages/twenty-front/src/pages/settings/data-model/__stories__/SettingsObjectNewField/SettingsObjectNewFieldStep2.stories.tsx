@@ -5,6 +5,7 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
+import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { SettingsObjectNewFieldStep2 } from '../../SettingsObjectNewField/SettingsObjectNewFieldStep2';
@@ -13,7 +14,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title:
     'Pages/Settings/DataModel/SettingsObjectNewField/SettingsObjectNewFieldStep2',
   component: SettingsObjectNewFieldStep2,
-  decorators: [PageDecorator],
+  decorators: [PrefetchLoadingDecorator, PageDecorator],
   args: {
     routePath: '/settings/objects/:objectSlug/new-field/step-2',
     routeParams: { ':objectSlug': 'companies' },
