@@ -82,6 +82,8 @@ export default meta;
 export type Story = StoryObj<typeof RecordShowPage>;
 
 export const Default: Story = {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   decorators: [PrefetchLoadingDecorator, PageDecorator],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -92,6 +94,8 @@ export const Default: Story = {
 };
 
 export const Loading: Story = {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   decorators: [PageDecorator],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
