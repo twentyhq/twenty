@@ -11,7 +11,7 @@ import {
   FeatureFlagKeys,
 } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { GmailFullMessageListFetchService } from 'src/modules/messaging/services/gmail-full-message-list-fetch/gmail-full-message-list-fetch.service';
-import { GmailFullSyncV2Service } from 'src/modules/messaging/services/gmail-full-message-list-fetch/gmail-full-sync-v2.service';
+import { GmailFullMessageListFetchV2Service } from 'src/modules/messaging/services/gmail-full-message-list-fetch/gmail-full-message-list-fetch-v2.service';
 
 export type GmailFullMessageListFetchJobData = {
   workspaceId: string;
@@ -26,7 +26,7 @@ export class GmailFullMessageListFetchJob
 
   constructor(
     private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
-    private readonly gmailFullSyncV2Service: GmailFullSyncV2Service,
+    private readonly gmailFullSyncV2Service: GmailFullMessageListFetchV2Service,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     private readonly gmailFullSyncService: GmailFullMessageListFetchService,
