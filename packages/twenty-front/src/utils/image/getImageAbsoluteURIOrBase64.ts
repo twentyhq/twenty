@@ -1,7 +1,9 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 export const getImageAbsoluteURIOrBase64 = (imageUrl?: string | null) => {
-  if (!imageUrl) {
+  if (!isNonEmptyString(imageUrl)) {
     return null;
   }
 

@@ -32,6 +32,7 @@ import {
   FileFolder,
   useUploadImageMutation,
 } from '~/generated/graphql';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -139,7 +140,11 @@ export const RecordShowContainer = ({
             <>
               <ShowPageSummaryCard
                 id={objectRecordId}
-                logoOrAvatar={recordIdentifier?.avatarUrl ?? ''}
+                logoOrAvatar={
+                  getImageAbsoluteURIOrBase64(
+                    recordIdentifier?.avatarUrl ?? '',
+                  ) ?? ''
+                }
                 avatarPlaceholder={recordIdentifier?.name ?? ''}
                 date={recordFromStore.createdAt ?? ''}
                 loading={isPrefetchLoading || loading || recordLoading}

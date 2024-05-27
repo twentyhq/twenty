@@ -2,6 +2,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { turnObjectDropdownFilterIntoQueryFilter } from '@/object-record/record-filter/utils/turnObjectDropdownFilterIntoQueryFilter';
@@ -42,7 +43,20 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const params = useFindManyParams(objectNameSingular);
 
-  const recordGqlFields = useRecordTableRecordGqlFields();
+  // TODO: improve this by linking it to metadata
+  const visibleColumnsGqlFields = useRecordTableRecordGqlFields();
+
+  const systemGqlFields =
+    objectNameSingular === CoreObjectNameSingular.Person
+      ? {
+          avatarUrl: true,
+        }
+      : {};
+
+  const recordGqlFields = {
+    ...visibleColumnsGqlFields,
+    ...systemGqlFields,
+  };
 
   const {
     records,
