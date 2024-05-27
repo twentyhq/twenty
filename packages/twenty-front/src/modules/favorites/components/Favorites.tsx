@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { Avatar } from 'twenty-ui';
 
+import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { FavoritesSkeletonLoader } from '@/favorites/components/FavoritesSkeletonLoader';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
@@ -35,8 +36,9 @@ const StyledNavigationDrawerItem = styled(NavigationDrawerItem)`
 export const Favorites = () => {
   const { favorites, handleReorderFavorite } = useFavorites();
   const loading = useIsPrefetchLoading();
+  const isLogged = useIsLogged();
 
-  if (loading) {
+  if (loading && isLogged) {
     return <FavoritesSkeletonLoader />;
   }
 
