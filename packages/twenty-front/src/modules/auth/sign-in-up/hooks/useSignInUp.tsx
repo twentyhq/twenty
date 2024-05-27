@@ -118,6 +118,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         enqueueSnackBar(err?.message, {
           variant: SnackBarVariant.Error,
         });
+        requestFreshCaptchaToken();
       }
     },
     [
@@ -128,6 +129,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       signUpWithCredentials,
       workspaceInviteHash,
       enqueueSnackBar,
+      requestFreshCaptchaToken,
     ],
   );
 
