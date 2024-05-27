@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router-dom';
 import { useIcons } from 'twenty-ui';
 
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useIsMockedDrawerPage } from '@/navigation/hooks/useIsMockedDrawerPage';
 import { ObjectMetadataNavItemsSkeletonLoader } from '@/object-metadata/components/ObjectMetadataNavItemsSkeletonLoader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
@@ -18,9 +18,11 @@ export const ObjectMetadataNavItems = () => {
 
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
   const loading = useIsPrefetchLoading();
-  const isLogged = useIsLogged();
+  const isMockedDrawerPage = useIsMockedDrawerPage();
 
-  if (loading && isLogged) {
+  const displayLoader = loading && !isMockedDrawerPage;
+
+  if (displayLoader) {
     return <ObjectMetadataNavItemsSkeletonLoader />;
   }
 

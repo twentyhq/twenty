@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-import { useIsLogged } from '@/auth/hooks/useIsLogged';
+import { useIsMockedDrawerPage } from '@/navigation/hooks/useIsMockedDrawerPage';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { NavigationDrawerSectionTitleSkeletonLoader } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitleSkeletonLoader';
 
@@ -21,9 +21,11 @@ export const NavigationDrawerSectionTitle = ({
   label,
 }: NavigationDrawerSectionTitleProps) => {
   const loading = useIsPrefetchLoading();
-  const isLogged = useIsLogged();
+  const isMockedDrawerPage = useIsMockedDrawerPage();
 
-  if (loading && isLogged) {
+  const displayLoader = loading && !isMockedDrawerPage;
+
+  if (displayLoader) {
     return <NavigationDrawerSectionTitleSkeletonLoader />;
   }
   return <StyledTitle>{label}</StyledTitle>;
