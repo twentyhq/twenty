@@ -4,6 +4,7 @@ import { InvalidStringException } from 'src/engine/metadata-modules/errors/Inval
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { validateMetadataName } from 'src/engine/metadata-modules/utils/validate-metadata-name.utils';
+import { camelCase } from 'src/utils/camel-case';
 
 const coreObjectNames = [
   'appToken',
@@ -41,6 +42,9 @@ export const validateObjectMetadataInputOrThrow = <
 >(
   objectMetadataInput: T,
 ): void => {
+  validateNameCamelCasedOrThrow(objectMetadataInput.nameSingular);
+  validateNameCamelCasedOrThrow(objectMetadataInput.namePlural);
+
   validateNameCharactersOrThrow(objectMetadataInput.nameSingular);
   validateNameCharactersOrThrow(objectMetadataInput.namePlural);
 
@@ -52,6 +56,14 @@ const validateNameIsNotReservedKeywordOrThrow = (name?: string) => {
   if (name) {
     if (reservedKeywords.includes(name)) {
       throw new ForbiddenException(`The name "${name}" is not available`);
+    }
+  }
+};
+
+const validateNameCamelCasedOrThrow = (name?: string) => {
+  if (name) {
+    if (name !== camelCase(name)) {
+      throw new ForbiddenException(`Name should be in camelCase: ${name}`);
     }
   }
 };

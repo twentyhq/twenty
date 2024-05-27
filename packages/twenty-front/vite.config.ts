@@ -62,5 +62,10 @@ export default defineConfig(({ command, mode }) => {
         REACT_APP_SERVER_BASE_URL,
       },
     },
+    css: {
+      modules: {
+        localsConvention: 'camelCaseOnly',
+      },
+    },
   };
 });

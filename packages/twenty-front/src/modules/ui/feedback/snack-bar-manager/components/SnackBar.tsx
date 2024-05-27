@@ -50,6 +50,7 @@ const StyledContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
   position: relative;
   width: 296px;
+  margin-top: ${({ theme }) => theme.spacing(2)};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     border-radius: 0;

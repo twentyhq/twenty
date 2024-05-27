@@ -1,7 +1,9 @@
 import { useLocation } from 'react-router-dom';
 import { useIcons } from 'twenty-ui';
 
+import { ObjectMetadataNavItemsSkeletonLoader } from '@/object-metadata/components/ObjectMetadataNavItemsSkeletonLoader';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { usePrefetchedData } from '@/prefetch/hooks/usePrefetchedData';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
@@ -14,6 +16,11 @@ export const ObjectMetadataNavItems = () => {
   const currentPath = useLocation().pathname;
 
   const { records: views } = usePrefetchedData<View>(PrefetchKey.AllViews);
+  const loading = useIsPrefetchLoading();
+
+  if (loading) {
+    return <ObjectMetadataNavItemsSkeletonLoader />;
+  }
 
   return (
     <>

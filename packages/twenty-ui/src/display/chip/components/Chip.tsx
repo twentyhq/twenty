@@ -1,10 +1,9 @@
 import { MouseEvent, ReactNode } from 'react';
-import { Link } from 'react-router-dom';
-import isPropValid from '@emotion/is-prop-valid';
-import { css } from '@emotion/react';
-import styled from '@emotion/styled';
+import { clsx } from 'clsx';
 
 import { OverflowingTextWithTooltip } from '@ui/display/tooltip/OverflowingTextWithTooltip';
+
+import styles from './Chip.module.css';
 
 export enum ChipSize {
   Large = 'large',
@@ -38,121 +37,6 @@ type ChipProps = {
   to?: string;
 };
 
-const StyledContainer = styled('div', {
-  shouldForwardProp: (prop) =>
-    !['clickable', 'maxWidth'].includes(prop) && isPropValid(prop),
-})<
-  Pick<
-    ChipProps,
-    'accent' | 'clickable' | 'disabled' | 'maxWidth' | 'size' | 'variant' | 'to'
-  >
->`
-  --chip-horizontal-padding: ${({ theme }) => theme.spacing(1)};
-  --chip-vertical-padding: ${({ theme }) => theme.spacing(1)};
-
-  text-decoration: none;
-  align-items: center;
-  border-radius: ${({ theme }) => theme.border.radius.sm};
-  color: ${({ theme, disabled }) =>
-    disabled ? theme.font.color.light : theme.font.color.secondary};
-  cursor: ${({ clickable, disabled }) =>
-    clickable ? 'pointer' : disabled ? 'not-allowed' : 'inherit'};
-  display: inline-flex;
-  justify-content: center;
-  gap: ${({ theme }) => theme.spacing(1)};
-  height: ${({ theme }) => theme.spacing(3)};
-  max-width: ${({ maxWidth }) =>
-    maxWidth
-      ? `calc(${maxWidth}px - 2 * var(--chip-horizontal-padding))`
-      : '200px'};
-  overflow: hidden;
-  padding: var(--chip-vertical-padding) var(--chip-horizontal-padding);
-  user-select: none;
-
-  // Accent style overrides
-  ${({ accent, disabled, theme }) => {
-    if (accent === ChipAccent.TextPrimary) {
-      return (
-        !disabled &&
-        css`
-          color: ${theme.font.color.primary};
-        `
-      );
-    }
-
-    if (accent === ChipAccent.TextSecondary) {
-      return css`
-        font-weight: ${theme.font.weight.medium};
-      `;
-    }
-  }}
-
-  // Variant style overrides
-  ${({ disabled, theme, variant }) => {
-    if (variant === ChipVariant.Regular) {
-      return (
-        !disabled &&
-        css`
-          :hover {
-            background-color: ${theme.background.transparent.light};
-          }
-
-          :active {
-            background-color: ${theme.background.transparent.medium};
-          }
-        `
-      );
-    }
-
-    if (variant === ChipVariant.Highlighted) {
-      return css`
-        background-color: ${theme.background.transparent.light};
-
-        ${!disabled &&
-        css`
-          :hover {
-            background-color: ${theme.background.transparent.medium};
-          }
-
-          :active {
-            background-color: ${theme.background.transparent.strong};
-          }
-        `}
-      `;
-    }
-
-    if (variant === ChipVariant.Rounded) {
-      return css`
-        --chip-horizontal-padding: ${theme.spacing(2)};
-        --chip-vertical-padding: 3px;
-
-        background-color: ${theme.background.transparent.lighter};
-        border: 1px solid ${theme.border.color.medium};
-        border-radius: 50px;
-      `;
-    }
-
-    if (variant === ChipVariant.Transparent) {
-      return css`
-        cursor: inherit;
-      `;
-    }
-  }}
-`;
-
-const StyledLabel = styled.span`
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledOverflowingTextWithTooltip = styled(OverflowingTextWithTooltip)<{
-  size?: ChipSize;
-}>`
-  height: ${({ theme, size }) =>
-    size === ChipSize.Large ? theme.spacing(4) : 'auto'};
-`;
-
 export const Chip = ({
   size = ChipSize.Small,
   label,
@@ -162,30 +46,33 @@ export const Chip = ({
   leftComponent,
   rightComponent,
   accent = ChipAccent.TextPrimary,
-  maxWidth,
-  className,
   onClick,
-  to,
 }: ChipProps) => {
   return (
-    <StyledContainer
+    <div
       data-testid="chip"
-      clickable={clickable}
-      variant={variant}
-      accent={accent}
-      size={size}
-      disabled={disabled}
-      className={className}
-      maxWidth={maxWidth}
+      className={clsx({
+        [styles.chip]: true,
+        [styles.clickable]: clickable,
+        [styles.disabled]: disabled,
+        [styles.accentTextPrimary]: accent === ChipAccent.TextPrimary,
+        [styles.accentTextSecondary]: accent === ChipAccent.TextSecondary,
+        [styles.sizeLarge]: size === ChipSize.Large,
+        [styles.variantRegular]: variant === ChipVariant.Regular,
+        [styles.variantHighlighted]: variant === ChipVariant.Highlighted,
+        [styles.variantRounded]: variant === ChipVariant.Rounded,
+        [styles.variantTransparent]: variant === ChipVariant.Transparent,
+      })}
       onClick={onClick}
-      as={to ? Link : 'div'}
-      to={to ? to : undefined}
     >
       {leftComponent}
-      <StyledLabel>
-        <StyledOverflowingTextWithTooltip size={size} text={label} />
-      </StyledLabel>
+      <div className={styles.label}>
+        <OverflowingTextWithTooltip
+          size={size === ChipSize.Large ? 'large' : 'small'}
+          text={label}
+        />
+      </div>
       {rightComponent}
-    </StyledContainer>
+    </div>
   );
 };

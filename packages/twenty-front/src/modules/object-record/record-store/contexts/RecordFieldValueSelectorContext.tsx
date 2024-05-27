@@ -35,12 +35,12 @@ export const useRecordValue = (recordId: string) => {
 };
 
 export const useRecordFieldValue = (recordId: string, fieldName: string) => {
-  const tableValue = useContextSelector(
+  const recordFieldValues = useContextSelector(
     RecordFieldValueSelectorContext,
     (value) => value[0],
   );
 
-  return tableValue?.[recordId]?.[fieldName];
+  return recordFieldValues?.[recordId]?.[fieldName];
 };
 
 export const useSetRecordFieldValue = () => {

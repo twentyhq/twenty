@@ -1,5 +1,5 @@
+/* eslint-disable @nx/workspace-no-hardcoded-colors */
 import { ANIMATION } from './Animation';
-import { BLUR } from './Blur';
 import { COLOR } from './Colors';
 import { GRAY_SCALE } from './GrayScale';
 import { ICON } from './Icon';
@@ -12,7 +12,6 @@ export const THEME_COMMON = {
   icon: ICON,
   modal: MODAL,
   text: TEXT,
-  blur: BLUR,
   animation: ANIMATION,
   spacingMultiplicator: 4,
   spacing: (...args: number[]) =>
