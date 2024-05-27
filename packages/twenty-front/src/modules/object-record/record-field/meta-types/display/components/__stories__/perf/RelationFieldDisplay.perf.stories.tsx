@@ -70,6 +70,9 @@ const meta: Meta = {
   component: RelationFieldDisplay,
   argTypes: { value: { control: 'date' } },
   args: {},
+  parameters: {
+    chromatic: { disableSnapshot: true },
+  },
 };
 
 export default meta;
