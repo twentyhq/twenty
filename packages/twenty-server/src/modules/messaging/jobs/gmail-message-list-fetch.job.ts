@@ -6,7 +6,7 @@ import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-accoun
 import { GmailPartialMessageListFetchV2Service } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-partial-message-list-fetch-v2.service';
 import { GetConnectedAccountAndMessageChannelService } from 'src/modules/messaging/services/get-connected-account-and-message-channel/get-connected-account-and-message-channel.service';
 import { MessageChannelSyncSubStatus } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
-import { GmailFullMessageListFetchService } from 'src/modules/messaging/services/gmail-full-message-list-fetch/gmail-full-message-list-fetch.service';
+import { GmailFullMessageListFetchV2Service } from 'src/modules/messaging/services/gmail-full-message-list-fetch/gmail-full-message-list-fetch-v2.service';
 
 export type GmailMessageListFetchJobData = {
   workspaceId: string;
@@ -21,7 +21,7 @@ export class GmailMessageListFetchJob
 
   constructor(
     private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
-    private readonly gmailFullMessageListFetchService: GmailFullMessageListFetchService,
+    private readonly gmailFullMessageListFetchV2Service: GmailFullMessageListFetchV2Service,
     private readonly gmailPartialMessageListFetchV2Service: GmailPartialMessageListFetchV2Service,
     private readonly getConnectedAccountAndMessageChannelService: GetConnectedAccountAndMessageChannelService,
   ) {}
@@ -69,9 +69,10 @@ export class GmailMessageListFetchJob
 
       case MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING:
         try {
-          await this.gmailFullMessageListFetchService.fetchConnectedAccountThreads(
+          await this.gmailFullMessageListFetchV2Service.fetchConnectedAccountThreads(
+            messageChannel,
+            connectedAccount,
             workspaceId,
-            connectedAccountId,
           );
         } catch (e) {
           this.logger.error(e);

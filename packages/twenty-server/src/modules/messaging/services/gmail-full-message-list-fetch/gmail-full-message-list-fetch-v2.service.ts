@@ -26,8 +26,8 @@ import {
   MessageChannelSyncStatus,
   MessageChannelSyncSubStatus,
 } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
-import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { gmailSearchFilterEmailAdresses } from 'src/modules/messaging/utils/gmail-search-filter.util';
+import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 @Injectable()
 export class GmailFullMessageListFetchV2Service {
@@ -49,70 +49,29 @@ export class GmailFullMessageListFetchV2Service {
       MessageChannelMessageAssociationWorkspaceEntity,
     )
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
-    private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
   public async fetchConnectedAccountThreads(
+    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
     workspaceId: string,
-    connectedAccountId: string,
-    includedEmails?: string[],
   ) {
-    const connectedAccount = await this.connectedAccountRepository.getById(
-      connectedAccountId,
-      workspaceId,
-    );
-
-    if (!connectedAccount) {
-      this.logger.error(
-        `Connected account ${connectedAccountId} not found in workspace ${workspaceId}`,
-      );
-
-      return;
-    }
-
-    const refreshToken = connectedAccount.refreshToken;
-
-    if (!refreshToken) {
-      throw new Error(
-        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
-      );
-    }
-
-    const gmailMessageChannel =
-      await this.messageChannelRepository.getFirstByConnectedAccountId(
-        connectedAccountId,
-        workspaceId,
-      );
-
-    if (!gmailMessageChannel) {
-      this.logger.error(
-        `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
-      );
-
-      return;
-    }
-
-    if (
-      gmailMessageChannel.syncSubStatus !==
-      MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING
-    ) {
-      return;
-    }
-
     await this.messageChannelRepository.updateSyncSubStatus(
-      gmailMessageChannel.id,
+      messageChannel.id,
       MessageChannelSyncSubStatus.MESSAGES_LIST_FETCH_ONGOING,
       workspaceId,
     );
 
     await this.messageChannelRepository.updateSyncStatus(
-      gmailMessageChannel.id,
+      messageChannel.id,
       MessageChannelSyncStatus.ONGOING,
       workspaceId,
     );
 
     const gmailClient: gmail_v1.Gmail =
-      await this.gmailClientProvider.getGmailClient(refreshToken);
+      await this.gmailClientProvider.getGmailClient(
+        connectedAccount.refreshToken,
+      );
 
     const blocklistedEmails = await this.fetchBlocklistEmails(
       connectedAccount.accountOwnerId,
@@ -122,26 +81,26 @@ export class GmailFullMessageListFetchV2Service {
     try {
       await this.fetchAllMessageIdsFromGmailAndStoreInCache(
         gmailClient,
-        gmailMessageChannel.id,
-        includedEmails || [],
+        messageChannel.id,
+        [],
         blocklistedEmails,
         workspaceId,
       );
 
       await this.messageChannelRepository.updateSyncStatus(
-        gmailMessageChannel.id,
+        messageChannel.id,
         MessageChannelSyncStatus.PENDING,
         workspaceId,
       );
     } catch (error) {
       await this.messageChannelRepository.updateSyncStatus(
-        gmailMessageChannel.id,
+        messageChannel.id,
         MessageChannelSyncStatus.FAILED,
         workspaceId,
       );
 
       throw new Error(
-        `Error fetching messages for ${connectedAccountId} in workspace ${workspaceId}: ${error.message}`,
+        `Error fetching messages for ${connectedAccount.id} in workspace ${workspaceId}: ${error.message}`,
       );
     }
   }
