@@ -1,12 +1,16 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
-import { IconChevronDown, IconList, useIcons } from 'twenty-ui';
+import {
+  IconChevronDown,
+  IconList,
+  MOBILE_VIEWPORT,
+  useIcons,
+} from 'twenty-ui';
 
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { StyledDropdownButtonContainer } from '@/ui/layout/dropdown/components/StyledDropdownButtonContainer';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewsHotkeyScope } from '@/views/types/ViewsHotkeyScope';
 import { ViewPickerCreateOrEditContent } from '@/views/view-picker/components/ViewPickerCreateOrEditContent';
