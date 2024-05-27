@@ -59,12 +59,16 @@ export type StepState =
 
 interface UploadFlowProps {
   nextStep: () => void;
+  prevStep: () => void;
 }
 
-export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
+export const UploadFlow = ({ nextStep, prevStep }: UploadFlowProps) => {
   const theme = useTheme();
   const { initialStepState } = useSpreadsheetImportInternal();
   const [state, setState] = useState<StepState>(
+    initialStepState || { type: StepType.upload },
+  );
+  const [previousState, setPreviousState] = useState<StepState>(
     initialStepState || { type: StepType.upload },
   );
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
@@ -86,6 +90,16 @@ export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
     },
     [enqueueSnackBar],
   );
+
+  const handleonBack = () => {
+    if (state.type === 'validateData') {
+      setPreviousState(initialStepState || { type: StepType.upload });
+      setState(previousState);
+    } else {
+      setState(previousState);
+    }
+    prevStep();
+  };
 
   switch (state.type) {
     case StepType.upload:
@@ -164,10 +178,12 @@ export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
                 type: StepType.selectHeader,
                 data: mappedWorkbook,
               });
+              setPreviousState(state);
             } catch (e) {
               errorToast((e as Error).message);
             }
           }}
+          onBack={handleonBack}
         />
       );
     case StepType.selectHeader:
@@ -184,11 +200,13 @@ export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
                 data,
                 headerValues,
               });
+              setPreviousState(state);
               nextStep();
             } catch (e) {
               errorToast((e as Error).message);
             }
           }}
+          onBack={handleonBack}
         />
       );
     case StepType.matchColumns:
@@ -203,11 +221,13 @@ export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
                 type: StepType.validateData,
                 data,
               });
+              setPreviousState(state);
               nextStep();
             } catch (e) {
               errorToast((e as Error).message);
             }
           }}
+          onBack={handleonBack}
         />
       );
     case StepType.validateData:
@@ -223,6 +243,7 @@ export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
               type: StepType.loading,
             })
           }
+          onBack={handleonBack}
         />
       );
     case StepType.loading:

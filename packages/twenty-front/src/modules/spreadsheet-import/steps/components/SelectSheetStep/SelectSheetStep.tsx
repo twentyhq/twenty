@@ -6,6 +6,7 @@ import { Heading } from '@/spreadsheet-import/components/Heading';
 import { Radio } from '@/ui/input/components/Radio';
 import { RadioGroup } from '@/ui/input/components/RadioGroup';
 import { Modal } from '@/ui/layout/modal/components/Modal';
+import { BackButton } from '@/spreadsheet-import/components/BackButton';
 
 const StyledContent = styled(Modal.Content)`
   align-items: center;
@@ -27,11 +28,13 @@ const StyledRadioContainer = styled.div`
 type SelectSheetStepProps = {
   sheetNames: string[];
   onContinue: (sheetName: string) => Promise<void>;
+  onBack: () => void;
 };
 
 export const SelectSheetStep = ({
   sheetNames,
   onContinue,
+  onBack,
 }: SelectSheetStepProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -63,6 +66,7 @@ export const SelectSheetStep = ({
         onContinue={() => handleOnContinue(value)}
         title="Next"
       />
+      <BackButton onBack={onBack} title="Back" />
     </>
   );
 };

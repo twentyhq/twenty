@@ -18,6 +18,7 @@ import { isDefined } from '~/utils/isDefined';
 
 import { generateColumns } from './components/columns';
 import { Meta } from './types';
+import { BackButton } from '@/spreadsheet-import/components/BackButton';
 
 const StyledContent = styled(Modal.Content)`
   padding-left: ${({ theme }) => theme.spacing(6)};
@@ -64,12 +65,14 @@ type ValidationStepProps<T extends string> = {
   initialData: Data<T>[];
   file: File;
   onSubmitStart?: () => void;
+  onBack: () => void;
 };
 
 export const ValidationStep = <T extends string>({
   initialData,
   file,
   onSubmitStart,
+  onBack,
 }: ValidationStepProps<T>) => {
   const { enqueueDialog } = useDialogManager();
   const { fields, onClose, onSubmit, rowHook, tableHook } =
@@ -239,6 +242,7 @@ export const ValidationStep = <T extends string>({
         </StyledScrollContainer>
       </StyledContent>
       <ContinueButton onContinue={onContinue} title="Confirm" />
+      <BackButton onBack={onBack} title="Back" />
     </>
   );
 };

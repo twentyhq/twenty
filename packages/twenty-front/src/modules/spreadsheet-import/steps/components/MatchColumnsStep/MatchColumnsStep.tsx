@@ -19,6 +19,7 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import { ColumnGrid } from './components/ColumnGrid';
 import { TemplateColumn } from './components/TemplateColumn';
 import { UserTableColumn } from './components/UserTableColumn';
+import { BackButton } from '@/spreadsheet-import/components/BackButton';
 
 const StyledContent = styled(Modal.Content)`
   align-items: center;
@@ -49,6 +50,7 @@ export type MatchColumnsStepProps<T extends string> = {
   data: RawData[];
   headerValues: RawData;
   onContinue: (data: any[], rawData: RawData[], columns: Columns<T>) => void;
+  onBack: () => void;
 };
 
 export enum ColumnType {
@@ -112,6 +114,7 @@ export const MatchColumnsStep = <T extends string>({
   data,
   headerValues,
   onContinue,
+  onBack,
 }: MatchColumnsStepProps<T>) => {
   const { enqueueDialog } = useDialogManager();
   const { enqueueSnackBar } = useSnackBar();
@@ -289,6 +292,7 @@ export const MatchColumnsStep = <T extends string>({
         onContinue={handleOnContinue}
         title="Next"
       />
+      <BackButton onBack={onBack} title="Back" />
     </>
   );
 };

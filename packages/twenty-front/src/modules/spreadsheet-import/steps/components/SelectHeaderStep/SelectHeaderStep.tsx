@@ -7,6 +7,7 @@ import { RawData } from '@/spreadsheet-import/types';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
 import { SelectHeaderTable } from './components/SelectHeaderTable';
+import { BackButton } from '@/spreadsheet-import/components/BackButton';
 
 const StyledHeading = styled(Heading)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -21,11 +22,13 @@ const StyledTableContainer = styled.div`
 type SelectHeaderStepProps = {
   data: RawData[];
   onContinue: (headerValues: RawData, data: RawData[]) => Promise<void>;
+  onBack: () => void;
 };
 
 export const SelectHeaderStep = ({
   data,
   onContinue,
+  onBack,
 }: SelectHeaderStepProps) => {
   const [selectedRows, setSelectedRows] = useState<ReadonlySet<number>>(
     new Set([0]),
@@ -58,6 +61,7 @@ export const SelectHeaderStep = ({
         title="Next"
         isLoading={isLoading}
       />
+      <BackButton onBack={onBack} title="Back" />
     </>
   );
 };
