@@ -50,8 +50,16 @@ const Sidepanel = () => {
       'isAuthenticated',
       'sidepanelUrl',
       'clientUrl',
+      'accessToken',
+      'refreshToken',
     ]);
-    if (store.isAuthenticated === true) {
+
+    if (store.isAuthenticated === true &&
+        isDefined(store.accessToken) &&
+        isDefined(store.refreshToken) && 
+        new Date(store.accessToken.expiresAt).getTime() >= Date.now() &&
+        new Date(store.refreshToken.expiresAt).getTime() >= Date.now()
+    ) {
       setIsAuthenticated(true);
       if (isDefined(store.sidepanelUrl)) {
         if (isDefined(store.clientUrl)) {
@@ -62,6 +70,8 @@ const Sidepanel = () => {
           );
         }
       }
+    } else {
+      chrome.storage.local.set({ isAuthenticated: false });
     }
   }, [setClientUrl]);
 
@@ -86,7 +96,7 @@ const Sidepanel = () => {
         event.origin === clientUrl &&
         event.data === 'loaded'
       ) {
-        iframeRef.current?.contentWindow?.postMessage(
+        event.source?.postMessage(
           {
             type: 'tokens',
             value: {
