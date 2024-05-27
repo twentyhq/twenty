@@ -96,9 +96,7 @@ export const insertButtonForPerson = async () => {
   const personButtonDiv = createDefaultButton('twenty-person-btn');
 
   if (isDefined(personButtonDiv)) {
-    const addedProfileDiv = document.querySelector(
-      '.artdeco-card > .ph5',
-    );
+    const addedProfileDiv = document.querySelector('.artdeco-card > .ph5');
 
     if (isDefined(addedProfileDiv)) {
       Object.assign(personButtonDiv.style, {
