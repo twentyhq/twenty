@@ -1,6 +1,5 @@
 import styled from '@emotion/styled';
-
-import { OVERLAY_BACKGROUND } from '@/ui/theme/constants/OverlayBackground';
+import { OVERLAY_BACKGROUND } from 'twenty-ui';
 
 const StyledFieldInputOverlay = styled.div`
   align-items: center;

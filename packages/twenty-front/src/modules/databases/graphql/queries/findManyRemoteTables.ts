@@ -5,7 +5,7 @@ import { REMOTE_TABLE_FRAGMENT } from '@/databases/graphql/fragments/remoteTable
 export const GET_MANY_REMOTE_TABLES = gql`
   ${REMOTE_TABLE_FRAGMENT}
   query GetManyRemoteTables($input: FindManyRemoteTablesInput!) {
-    findAvailableRemoteTablesByServerId(input: $input) {
+    findDistantTablesWithStatus(input: $input) {
       ...RemoteTableFields
     }
   }

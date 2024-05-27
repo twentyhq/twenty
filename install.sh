@@ -119,7 +119,7 @@ if command -v nc &> /dev/null; then
   done
 fi
 
-# Ask user if he wants to start the project
+# Ask user if they want to start the project
 read -p "🚀 Do you want to start the project now? (Y/n) " answer
 if [ "$answer" = "n" ]; then
   echo "✅ Project setup completed. Run 'docker compose up -d' to start."
@@ -148,7 +148,7 @@ function ask_open_browser {
   fi
 }
 
-# Ask user if he wants to open the project
+# Ask user if they want to open the project
 # Running on macOS
 if [[ $(uname) == "Darwin" ]]; then
   ask_open_browser

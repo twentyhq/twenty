@@ -1,7 +1,10 @@
 import { useTheme } from '@emotion/react';
-import { ColorSample, ColorSampleVariant, IconCheck } from 'twenty-ui';
-
-import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
+import {
+  ColorSample,
+  ColorSampleVariant,
+  IconCheck,
+  ThemeColor,
+} from 'twenty-ui';
 
 import {
   StyledMenuItemLabel,
