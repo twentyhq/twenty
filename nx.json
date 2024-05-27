@@ -45,8 +45,12 @@
         "ignorePath": "{workspaceRoot}/.gitignore"
       },
       "configurations": {
-        "ci": { "cacheStrategy": "content" },
-        "fix": { "fix": true }
+        "ci": {
+          "cacheStrategy": "content"
+        },
+        "fix": {
+          "fix": true
+        }
       }
     },
     "fmt": {
@@ -61,8 +65,12 @@
         "write": false
       },
       "configurations": {
-        "ci": { "cacheStrategy": "content" },
-        "fix": { "write": true }
+        "ci": {
+          "cacheStrategy": "content"
+        },
+        "fix": {
+          "write": true
+        }
       }
     },
     "typecheck": {
@@ -73,7 +81,9 @@
         "command": "tsc -b tsconfig.json --incremental"
       },
       "configurations": {
-        "watch": { "watch": true }
+        "watch": {
+          "watch": true
+        }
       }
     },
     "test": {
@@ -97,8 +107,12 @@
           "ci": true,
           "maxWorkers": 3
         },
-        "coverage": { "coverageReporters": ["lcov", "text"] },
-        "watch": { "watch": true }
+        "coverage": {
+          "coverageReporters": ["lcov", "text"]
+        },
+        "watch": {
+          "watch": true
+        }
       }
     },
     "test:e2e": {
@@ -166,7 +180,9 @@
         "reporter": "lcov"
       },
       "configurations": {
-        "text": { "reporter": "text" }
+        "text": {
+          "reporter": "text"
+        }
       }
     },
     "storybook:test": {
@@ -266,6 +282,11 @@
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["default", "^default"]
+    },
+    "@nx/esbuild:esbuild": {
+      "cache": true,
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
     }
   },
   "installation": {

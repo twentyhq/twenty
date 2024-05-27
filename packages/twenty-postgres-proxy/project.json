@@ -1,0 +1,66 @@
+{
+  "name": "twenty-postgres-proxy",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/twenty-postgres-proxy/src",
+  "projectType": "application",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/esbuild:esbuild",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "platform": "node",
+        "outputPath": "dist/packages/twenty-postgres-proxy",
+        "format": ["cjs"],
+        "bundle": false,
+        "main": "packages/twenty-postgres-proxy/src/main.ts",
+        "tsConfig": "packages/twenty-postgres-proxy/tsconfig.app.json",
+        "assets": ["packages/twenty-postgres-proxy/src/assets"],
+        "generatePackageJson": true,
+        "esbuildOptions": {
+          "sourcemap": true,
+          "outExtension": {
+            ".js": ".js"
+          }
+        }
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "esbuildOptions": {
+            "sourcemap": false,
+            "outExtension": {
+              ".js": ".js"
+            }
+          }
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "twenty-postgres-proxy:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "twenty-postgres-proxy:build:development"
+        },
+        "production": {
+          "buildTarget": "twenty-postgres-proxy:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "packages/twenty-postgres-proxy/jest.config.ts"
+      }
+    }
+  }
+}
