@@ -140,6 +140,7 @@ export async function getPost(
 ): Promise<FileContent | null> {
   const postsDirectory = path.join(process.cwd(), basePath);
   const filePath = path.join(postsDirectory, `${slug}.mdx`);
+  console.log(filePath);
 
   if (!fs.existsSync(filePath)) {
     return null;

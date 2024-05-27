@@ -54,6 +54,12 @@ const StyledTitle = styled.div`
   }
 `;
 
+const StyledSection = styled.div`
+  &:not(:last-child) {
+    margin-bottom: 100px;
+  }
+`;
+
 const StyledHeader = styled.div`
   display: flex;
   flex-direction: column;
@@ -104,26 +110,70 @@ const StyledContent = styled.div`
 
 interface UserGuideProps {
   userGuideArticleCards: UserGuideArticlesProps[];
+  isSection?: boolean;
 }
 
-export default function UserGuideMain({
+export default function DocsMain({
   userGuideArticleCards,
+  isSection = false,
 }: UserGuideProps) {
+  const filterUserGuideIndex = (
+    userGuideIndex: UserGuideArticlesProps[],
+    sectionName: string,
+  ): UserGuideArticlesProps[] => {
+    return userGuideIndex.filter(
+      (guide) =>
+        guide.section.includes(sectionName) &&
+        guide.title.includes(guide.topic),
+    );
+  };
+
+  let sections;
+
+  if (isSection) {
+    sections = [
+      {
+        name: userGuideArticleCards[0].topic,
+        info: userGuideArticleCards[0].info,
+      },
+    ];
+  } else {
+    sections = Array.from(
+      new Map(
+        userGuideArticleCards.map((guide) => [guide.section, guide]),
+      ).values(),
+    ).map((guide) => ({
+      name: guide.section,
+      info: guide.info,
+    }));
+  }
+
   return (
     <StyledContainer>
       <StyledWrapper>
         <StyledTitle>Developers</StyledTitle>
-        <StyledHeader>
-          <StyledHeading>Getting started</StyledHeading>
-          <StyledSubHeading>
-            A brief guide to grasp the basics of Twenty
-          </StyledSubHeading>
-        </StyledHeader>
-        <StyledContent>
-          {userGuideArticleCards.map((card) => {
-            return <UserGuideCard key={card.title} card={card} />;
-          })}
-        </StyledContent>
+        {sections.map((section) => {
+          const filteredArticles = isSection
+            ? userGuideArticleCards
+            : filterUserGuideIndex(userGuideArticleCards, section.name);
+          return (
+            <StyledSection>
+              <StyledHeader>
+                <StyledHeading>{section.name}</StyledHeading>
+                <StyledSubHeading>{section.info}</StyledSubHeading>
+              </StyledHeader>
+              <StyledContent>
+                {filteredArticles.map((card) => (
+                  <UserGuideCard
+                    key={card.title}
+                    card={card}
+                    isSection={isSection}
+                  />
+                ))}
+              </StyledContent>
+            </StyledSection>
+          );
+        })}
       </StyledWrapper>
     </StyledContainer>
   );

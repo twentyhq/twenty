@@ -33,6 +33,8 @@ export const UserGuideMainLayout = ({
   userGuideIndex: UserGuideArticlesProps[];
 }) => {
   const pathname = usePathname();
+  const isDocsSection =
+    pathname.startsWith('/docs/section') && pathname.split('/').length === 4;
   return (
     <StyledContainer>
       {pathname.includes('user-guide') ? (
@@ -41,7 +43,7 @@ export const UserGuideMainLayout = ({
         <DocsSidebar userGuideIndex={userGuideIndex} />
       )}
       {children}
-      {pathname === '/user-guide' || pathname === '/docs' ? (
+      {pathname === '/user-guide' || pathname === '/docs' || isDocsSection ? (
         <StyledEmptySideBar />
       ) : (
         <UserGuideTableContents />

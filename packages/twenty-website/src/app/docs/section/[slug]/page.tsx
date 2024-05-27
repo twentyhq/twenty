@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 
-import UserGuideContent from '@/app/_components/user-guide/UserGuideContent';
+import DocsMain from '@/app/_components/docs/DocsMain';
+import { getUserGuideArticles } from '@/content/user-guide/constants/getUserGuideArticles';
 import { fetchArticleFromSlug } from '@/shared-utils/fetchArticleFromSlug';
 import { formatSlug } from '@/shared-utils/formatSlug';
 
@@ -25,7 +26,14 @@ export default async function DocsSlug({
 }: {
   params: { slug: string };
 }) {
-  const basePath = '/src/content/docs';
-  const mainPost = await fetchArticleFromSlug(params.slug, basePath);
-  return mainPost && <UserGuideContent item={mainPost} />;
+  const filePath = `src/content/docs/${params.slug}/`;
+  const userGuideArticleCards = getUserGuideArticles(filePath);
+  const isSection = true;
+
+  return (
+    <DocsMain
+      userGuideArticleCards={userGuideArticleCards}
+      isSection={isSection}
+    />
+  );
 }

@@ -75,6 +75,15 @@ const DocsSidebar = ({
     { name: 'User Guide' },
   ];
   const iconSize = Theme.icon.size.md;
+  const filterUserGuideIndex = (
+    sectionName: string,
+  ): UserGuideArticlesProps[] => {
+    return userGuideIndex.filter(
+      (guide) =>
+        guide.section.includes(sectionName) &&
+        !(guide.numberOfFiles > 1 && guide.topic === guide.title),
+    );
+  };
 
   return (
     <StyledContainer>
@@ -96,7 +105,9 @@ const DocsSidebar = ({
               {section.name}
             </StyledHeadingText>
           </StyledHeading>
-          <UserGuideSidebarSection userGuideIndex={userGuideIndex} />
+          <UserGuideSidebarSection
+            userGuideIndex={filterUserGuideIndex(section.name)}
+          />
         </>
       ))}
     </StyledContainer>

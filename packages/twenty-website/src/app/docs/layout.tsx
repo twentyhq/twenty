@@ -5,7 +5,8 @@ import { getUserGuideArticles } from '@/content/user-guide/constants/getUserGuid
 
 export default function DocsLayout({ children }: { children: ReactNode }) {
   const filePath = 'src/content/docs/';
-  const userGuideIndex = getUserGuideArticles(filePath);
+  const getAllArticles = true;
+  const userGuideIndex = getUserGuideArticles(filePath, getAllArticles);
   return (
     <UserGuideMainLayout userGuideIndex={userGuideIndex}>
       {children}

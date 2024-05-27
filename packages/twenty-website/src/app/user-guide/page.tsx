@@ -13,7 +13,6 @@ export const dynamic = 'force-dynamic';
 export default async function UserGuideHome() {
   const filePath = 'src/content/user-guide/';
   const userGuideArticleCards = getUserGuideArticles(filePath);
-  console.log(userGuideArticleCards);
 
   return <UserGuideMain userGuideArticleCards={userGuideArticleCards} />;
 }

@@ -52,15 +52,20 @@ const StyledImage = styled.img`
 
 export default function UserGuideCard({
   card,
+  isSection = false,
 }: {
   card: UserGuideArticlesProps;
+  isSection?: boolean;
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const path =
+    card.numberOfFiles > 1 && !isSection
+      ? `${pathname}/section/${card.fileName}`
+      : `${pathname}/${card.fileName}`;
+
   return (
-    <StyledContainer
-      onClick={() => router.push(`${pathname}/${card.fileName}`)}
-    >
+    <StyledContainer onClick={() => router.push(path)}>
       <StyledImage src={card.image} alt={card.title} />
       <StyledHeading>{card.title}</StyledHeading>
       <StyledSubHeading>{card.info}</StyledSubHeading>

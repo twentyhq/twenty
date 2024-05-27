@@ -16,7 +16,7 @@ const StyledContainer = styled.div`
 `;
 
 const StyledIndex = styled.div`
-  margin-bottom: 24px;
+  margin-bottom: 8px;
 `;
 
 const StyledTitle = styled.div`
@@ -26,6 +26,7 @@ const StyledTitle = styled.div`
   align-items: center;
   gap: ${Theme.spacing(2)};
   color: ${Theme.text.color.quarternary};
+  margin-top: 8px;
   padding-bottom: ${Theme.spacing(2)};
   font-family: ${Theme.font.family};
   font-size: ${Theme.font.size.xs};
