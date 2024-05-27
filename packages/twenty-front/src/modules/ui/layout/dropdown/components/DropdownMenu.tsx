@@ -5,10 +5,8 @@ const StyledDropdownMenu = styled.div<{
   disableBorder?: boolean;
   width?: `${string}px` | `${number}%` | 'auto' | number;
 }>`
-  backdrop-filter: ${({ disableBlur }) =>
-    disableBlur
-      ? 'none'
-      : 'blur(12px) saturate(200%) contrast(50%) brightness(130%)'};
+  backdrop-filter: ${({ theme, disableBlur }) =>
+    disableBlur ? 'none' : theme.blur.medium};
 
   background: ${({ theme, disableBlur }) =>
     disableBlur

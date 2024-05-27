@@ -1,6 +1,7 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react';
 import { clsx } from 'clsx';
 
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
@@ -37,12 +38,18 @@ export const RecordTableCellContainer = ({
 }: RecordTableCellContainerProps) => {
   const { setIsFocused } = useFieldFocus();
 
-  const { isSelected, recordId } = useContext(RecordTableRowContext);
+  const { isSelected, recordId, isPendingRow } = useContext(
+    RecordTableRowContext,
+  );
+  const { isLabelIdentifier } = useContext(FieldContext);
   const { onContextMenu, onCellMouseEnter } = useContext(RecordTableContext);
+
+  const shouldBeInitiallyInEditMode =
+    isPendingRow === true && isLabelIdentifier;
 
   const [isHovered, setIsHovered] = useState(false);
   const [hasSoftFocus, setHasSoftFocus] = useState(false);
-  const [isInEditMode, setIsInEditMode] = useState(false);
+  const [isInEditMode, setIsInEditMode] = useState(shouldBeInitiallyInEditMode);
 
   const cellPosition = useCurrentTableCellPosition();
 

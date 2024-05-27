@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { useSignOutAndRedirect } from '@/auth/hooks/useSignOutAndRedirect';
+import { useAuth } from '@/auth/hooks/useAuth';
 import { SubscriptionBenefit } from '@/billing/components/SubscriptionBenefit';
 import { SubscriptionCard } from '@/billing/components/SubscriptionCard';
 import { billingState } from '@/client-config/states/billingState';
@@ -95,7 +95,7 @@ export const ChooseYourPlan = () => {
     };
   };
 
-  const handleLogout = useSignOutAndRedirect();
+  const { signOut } = useAuth();
 
   const computeInfo = (
     price: ProductPriceEntity,
@@ -175,7 +175,7 @@ export const ChooseYourPlan = () => {
           disabled={isSubmitting}
         />
         <StyledLinkGroup>
-          <ActionLink onClick={handleLogout}>Log out</ActionLink>
+          <ActionLink onClick={signOut}>Log out</ActionLink>
           <span />
           <ActionLink href={CAL_LINK} target="_blank" rel="noreferrer">
             Book a Call

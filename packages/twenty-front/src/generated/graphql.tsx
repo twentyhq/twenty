@@ -157,6 +157,14 @@ export type DeleteOneObjectInput = {
   id: Scalars['UUID'];
 };
 
+/** Schema update on a table */
+export enum DistantTableUpdate {
+  ColumnsAdded = 'COLUMNS_ADDED',
+  ColumnsDeleted = 'COLUMNS_DELETED',
+  ColumnsTypeChanged = 'COLUMNS_TYPE_CHANGED',
+  TableDeleted = 'TABLE_DELETED'
+}
+
 export type EmailPasswordResetLink = {
   __typename?: 'EmailPasswordResetLink';
   /** Boolean that confirms query was dispatched */
@@ -585,7 +593,7 @@ export type RemoteTable = {
   id?: Maybe<Scalars['UUID']>;
   name: Scalars['String'];
   schema?: Maybe<Scalars['String']>;
-  schemaPendingUpdates?: Maybe<Array<TableUpdate>>;
+  schemaPendingUpdates?: Maybe<Array<DistantTableUpdate>>;
   status: RemoteTableStatus;
 };
 
@@ -624,14 +632,6 @@ export type Support = {
   supportDriver: Scalars['String'];
   supportFrontChatId?: Maybe<Scalars['String']>;
 };
-
-/** Schema update on a table */
-export enum TableUpdate {
-  ColumnsAdded = 'COLUMNS_ADDED',
-  ColumnsDeleted = 'COLUMNS_DELETED',
-  ColumnsTypeChanged = 'COLUMNS_TYPE_CHANGED',
-  TableDeleted = 'TABLE_DELETED'
-}
 
 export type Telemetry = {
   __typename?: 'Telemetry';
@@ -2095,7 +2095,7 @@ export type CheckUserExistsQueryHookResult = ReturnType<typeof useCheckUserExist
 export type CheckUserExistsLazyQueryHookResult = ReturnType<typeof useCheckUserExistsLazyQuery>;
 export type CheckUserExistsQueryResult = Apollo.QueryResult<CheckUserExistsQuery, CheckUserExistsQueryVariables>;
 export const ValidatePasswordResetTokenDocument = gql`
-    query validatePasswordResetToken($token: String!) {
+    query ValidatePasswordResetToken($token: String!) {
   validatePasswordResetToken(passwordResetToken: $token) {
     id
     email

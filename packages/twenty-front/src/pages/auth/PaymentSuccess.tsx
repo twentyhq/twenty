@@ -2,13 +2,12 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconCheck } from 'twenty-ui';
+import { IconCheck, RGBA } from 'twenty-ui';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { AppPath } from '@/types/AppPath';
 import { MainButton } from '@/ui/input/button/components/MainButton';
-import { RGBA } from '@/ui/theme/constants/Rgba';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 
 const StyledCheckContainer = styled.div`

@@ -1,6 +1,7 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
+import { MOBILE_VIEWPORT, RGBA } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordTableBody } from '@/object-record/record-table/components/RecordTableBody';
@@ -9,7 +10,6 @@ import { RecordTableHeader } from '@/object-record/record-table/components/Recor
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { useHandleContainerMouseEnter } from '@/object-record/record-table/hooks/internal/useHandleContainerMouseEnter';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
-import { useRecordChipDataGenerator } from '@/object-record/record-table/hooks/useRecordChipDataGenerator';
 import { useRecordTableMoveFocus } from '@/object-record/record-table/hooks/useRecordTableMoveFocus';
 import { useCloseRecordTableCellV2 } from '@/object-record/record-table/record-table-cell/hooks/useCloseRecordTableCellV2';
 import { useMoveSoftFocusToCellOnHoverV2 } from '@/object-record/record-table/record-table-cell/hooks/useMoveSoftFocusToCellOnHoverV2';
@@ -22,8 +22,6 @@ import { useUpsertRecordV2 } from '@/object-record/record-table/record-table-cel
 import { RecordTableScope } from '@/object-record/record-table/scopes/RecordTableScope';
 import { MoveFocusDirection } from '@/object-record/record-table/types/MoveFocusDirection';
 import { TableCellPosition } from '@/object-record/record-table/types/TableCellPosition';
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
-import { RGBA } from '@/ui/theme/constants/Rgba';
 
 const StyledTable = styled.table<{
   freezeFirstColumns?: boolean;
@@ -209,11 +207,6 @@ export const RecordTable = ({
 
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
 
-  const recordChipDataGeneratorPerFieldName = useRecordChipDataGenerator({
-    objectNameSingular,
-    visibleTableColumns,
-  });
-
   return (
     <RecordTableScope
       recordTableScopeId={scopeId}
@@ -230,7 +223,6 @@ export const RecordTable = ({
             onMoveSoftFocusToCell: handleMoveSoftFocusToCell,
             onContextMenu: handleContextMenu,
             onCellMouseEnter: handleContainerMouseEnter,
-            recordChipDataGeneratorPerFieldName,
             visibleTableColumns,
           }}
         >

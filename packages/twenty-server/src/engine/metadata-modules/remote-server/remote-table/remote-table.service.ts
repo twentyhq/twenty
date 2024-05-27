@@ -416,8 +416,8 @@ export class RemoteTableService {
       : plural(localTableBaseName);
 
     const objectMetadata = await this.objectMetadataService.createOne({
-      nameSingular: localTableNameSingular,
-      namePlural: localTableNamePlural,
+      nameSingular: camelCase(localTableNameSingular),
+      namePlural: camelCase(localTableNamePlural),
       labelSingular: camelToTitleCase(camelCase(localTableBaseName)),
       labelPlural: camelToTitleCase(plural(camelCase(localTableBaseName))),
       description: 'Remote table',
