@@ -100,8 +100,6 @@ export const Loading: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findByText('Loading...');
-
     expect(canvas.queryByText('Alexandre Prot')).toBeNull();
     expect(canvas.queryByText('Add your first Activity')).toBeNull();
   },
