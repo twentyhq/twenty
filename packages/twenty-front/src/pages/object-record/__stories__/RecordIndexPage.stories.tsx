@@ -1,4 +1,6 @@
+import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
+import { within } from '@storybook/test';
 
 import {
   PageDecorator,
@@ -12,7 +14,7 @@ import { RecordIndexPage } from '../RecordIndexPage';
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/ObjectRecord/RecordIndexPage',
   component: RecordIndexPage,
-  decorators: [PrefetchLoadingDecorator, PageDecorator],
+
   args: {
     routePath: '/objects/:objectNamePlural',
     routeParams: {
@@ -28,4 +30,27 @@ export default meta;
 
 export type Story = StoryObj<typeof RecordIndexPage>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  decorators: [PrefetchLoadingDecorator, PageDecorator],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('People');
+    await canvas.findAllByText('Companies');
+    await canvas.findByText('Opportunities');
+    await canvas.findByText('Listings');
+    await canvas.findByText('My Customs');
+  },
+};
+
+export const Loading: Story = {
+  decorators: [PageDecorator],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(canvas.queryByText('People')).toBeNull();
+    expect(canvas.queryByText('Opportunities')).toBeNull();
+    expect(canvas.queryByText('Listings')).toBeNull();
+    expect(canvas.queryByText('My Customs')).toBeNull();
+  },
+};
