@@ -1,17 +1,11 @@
-import { useRecoilState } from 'recoil';
-import { EntityChip, EntityChipVariant } from 'twenty-ui';
-
 import { MessageThread } from '@/activities/emails/types/MessageThread';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { SharedDropdownMenu } from '@/ui/layout/dropdown/components/SharedDropdownMenu';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 export const EmailThreadMembersChip = ({
   messageThread,
 }: {
   messageThread: MessageThread | null;
 }) => {
-  const currentWorkspaceMember = useRecoilState(currentWorkspaceMemberState);
   const renderChip = () => {
     if (!messageThread) {
       return null;
@@ -23,15 +17,9 @@ export const EmailThreadMembersChip = ({
       case false:
         if (numberOfMessageThreadMembers === 1) {
           return (
-            <EntityChip
-              name="Private"
-              avatarUrl={
-                getImageAbsoluteURIOrBase64(
-                  currentWorkspaceMember[0]?.avatarUrl,
-                ) || ''
-              }
-              variant={EntityChipVariant.Regular}
-              entityId={messageThread?.id ?? ''}
+            <SharedDropdownMenu
+              label="Private"
+              messageThreadMembers={messageThread?.messageThreadMember}
             />
           );
         } else {
@@ -43,15 +31,10 @@ export const EmailThreadMembersChip = ({
         }
       case true:
         return (
-          <EntityChip
-            name="Everyone"
-            avatarUrl={
-              getImageAbsoluteURIOrBase64(
-                'https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/User-avatar.svg/2048px-User-avatar.svg.png',
-              ) || ''
-            }
-            variant={EntityChipVariant.Regular}
-            entityId={messageThread?.id ?? ''}
+          <SharedDropdownMenu
+            label="Everyone"
+            messageThreadMembers={messageThread?.messageThreadMember}
+            everyone={true}
           />
         );
       default:
