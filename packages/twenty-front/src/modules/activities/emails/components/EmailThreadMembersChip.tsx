@@ -1,6 +1,9 @@
+import { useRecoilState } from 'recoil';
 import { EntityChip, EntityChipVariant } from 'twenty-ui';
 
 import { MessageThread } from '@/activities/emails/types/MessageThread';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { SharedDropdownMenu } from '@/ui/layout/dropdown/components/SharedDropdownMenu';
 import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 export const EmailThreadMembersChip = ({
@@ -8,6 +11,7 @@ export const EmailThreadMembersChip = ({
 }: {
   messageThread: MessageThread | null;
 }) => {
+  const currentWorkspaceMember = useRecoilState(currentWorkspaceMemberState);
   const renderChip = () => {
     if (!messageThread) {
       return null;
@@ -23,8 +27,7 @@ export const EmailThreadMembersChip = ({
               name="Private"
               avatarUrl={
                 getImageAbsoluteURIOrBase64(
-                  messageThread?.messageThreadMember[0]?.workspaceMember
-                    ?.avatarUrl,
+                  currentWorkspaceMember[0]?.avatarUrl,
                 ) || ''
               }
               variant={EntityChipVariant.Regular}
@@ -33,16 +36,8 @@ export const EmailThreadMembersChip = ({
           );
         } else {
           return (
-            <EntityChip
-              name={`${numberOfMessageThreadMembers} members`}
-              avatarUrl={
-                getImageAbsoluteURIOrBase64(
-                  messageThread?.messageThreadMember[0]?.workspaceMember
-                    ?.avatarUrl,
-                ) || ''
-              }
-              variant={EntityChipVariant.Regular}
-              entityId={messageThread?.id ?? ''}
+            <SharedDropdownMenu
+              messageThreadMembers={messageThread?.messageThreadMember}
             />
           );
         }

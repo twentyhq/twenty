@@ -5,6 +5,7 @@ export * from './checkmark/components/AnimatedCheckmark';
 export * from './checkmark/components/Checkmark';
 export * from './chip/components/Chip';
 export * from './chip/components/EntityChip';
+export * from './chip/components/MultiChip';
 export * from './color/components/ColorSample';
 export * from './icon/components/IconAddressBook';
 export * from './icon/components/IconGmail';
