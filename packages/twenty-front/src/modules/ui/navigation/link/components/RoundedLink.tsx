@@ -11,14 +11,18 @@ type RoundedLinkProps = {
 };
 
 const StyledLink = styled(ReactLink)`
+  font-size: ${({ theme }) => theme.font.size.md};
   max-width: 100%;
+  height: ${({ theme }) => theme.spacing(5)};
 `;
 
 const StyledChip = styled(Chip)`
   border-color: ${({ theme }) => theme.border.color.strong};
   box-sizing: border-box;
-  padding: ${({ theme }) => theme.spacing(2)};
+  padding: ${({ theme }) => theme.spacing(0, 2)};
   max-width: 100%;
+  height: ${({ theme }) => theme.spacing(5)};
+  min-width: 40px;
 `;
 
 export const RoundedLink = ({
@@ -39,7 +43,7 @@ export const RoundedLink = ({
       <StyledChip
         label={`${children}`}
         variant={ChipVariant.Rounded}
-        size={ChipSize.Small}
+        size={ChipSize.Large}
       />
     </StyledLink>
   );

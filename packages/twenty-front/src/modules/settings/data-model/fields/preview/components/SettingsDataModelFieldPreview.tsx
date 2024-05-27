@@ -4,13 +4,15 @@ import { useIcons } from 'twenty-ui';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
+import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { FieldDisplay } from '@/object-record/record-field/components/FieldDisplay';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { BooleanFieldInput } from '@/object-record/record-field/meta-types/input/components/BooleanFieldInput';
 import { RatingFieldInput } from '@/object-record/record-field/meta-types/input/components/RatingFieldInput';
 import { SettingsDataModelSetFieldValueEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetFieldValueEffect';
 import { SettingsDataModelSetRecordEffect } from '@/settings/data-model/fields/preview/components/SettingsDataModelSetRecordEffect';
-import { useFieldPreview } from '@/settings/data-model/fields/preview/hooks/useFieldPreview';
+import { useFieldPreviewValue } from '@/settings/data-model/fields/preview/hooks/useFieldPreviewValue';
+import { usePreviewRecord } from '@/settings/data-model/fields/preview/hooks/usePreviewRecord';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export type SettingsDataModelFieldPreviewProps = {
@@ -61,17 +63,40 @@ export const SettingsDataModelFieldPreview = ({
   const { getIcon } = useIcons();
   const FieldIcon = getIcon(fieldMetadataItem.icon);
 
-  const { entityId, fieldName, fieldPreviewValue, isLabelIdentifier, record } =
-    useFieldPreview({
-      fieldMetadataItem,
+  // id and name are undefined in create mode (field does not exist yet)
+  // and defined in edit mode.
+  const isLabelIdentifier =
+    !!fieldMetadataItem.id &&
+    !!fieldMetadataItem.name &&
+    isLabelIdentifierField({
+      fieldMetadataItem: {
+        id: fieldMetadataItem.id,
+        name: fieldMetadataItem.name,
+      },
       objectMetadataItem,
-      relationObjectMetadataItem,
     });
+
+  const previewRecord = usePreviewRecord({
+    objectMetadataItem,
+    skip: !isLabelIdentifier,
+  });
+
+  const fieldPreviewValue = useFieldPreviewValue({
+    fieldMetadataItem,
+    relationObjectMetadataItem,
+    skip: isLabelIdentifier,
+  });
+
+  const fieldName =
+    fieldMetadataItem.name || `${fieldMetadataItem.type}-new-field`;
+  const entityId =
+    previewRecord?.id ??
+    `${objectMetadataItem.nameSingular}-${fieldName}-preview`;
 
   return (
     <>
-      {record ? (
-        <SettingsDataModelSetRecordEffect record={record} />
+      {previewRecord ? (
+        <SettingsDataModelSetRecordEffect record={previewRecord} />
       ) : (
         <SettingsDataModelSetFieldValueEffect
           entityId={entityId}

@@ -1,10 +1,9 @@
 import { forwardRef, InputHTMLAttributes, ReactNode, useRef } from 'react';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
+import { RGBA, TEXT_INPUT_STYLE } from 'twenty-ui';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
-import { RGBA } from '@/ui/theme/constants/Rgba';
-import { TEXT_INPUT_STYLE } from '@/ui/theme/constants/TextInputStyle';
 import { useCombinedRefs } from '~/hooks/useCombinedRefs';
 
 const StyledInput = styled.input<{ withRightComponent?: boolean }>`

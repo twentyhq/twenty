@@ -1,6 +1,3 @@
-import Crypto from 'crypto-js';
-
-import { exchangeAuthorizationCode } from '~/db/auth.db';
 import { isDefined } from '~/utils/isDefined';
 
 // Open options page programmatically in a new tab.
@@ -22,12 +19,6 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
         if (isDefined(tab) && isDefined(tab.id)) {
           sendResponse({ tab });
         }
-      });
-      break;
-    }
-    case 'launchOAuth': {
-      launchOAuth(({ status, message }) => {
-        sendResponse({ status, message });
       });
       break;
     }
@@ -57,84 +48,6 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
   return true;
 });
 
-const generateRandomString = (length: number) => {
-  const charset =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';
-  let result = '';
-  for (let i = 0; i < length; i++) {
-    result += charset.charAt(Math.floor(Math.random() * charset.length));
-  }
-  return result;
-};
-
-const generateCodeVerifierAndChallenge = () => {
-  const codeVerifier = generateRandomString(32);
-  const hash = Crypto.SHA256(codeVerifier);
-  const codeChallenge = hash
-    .toString(Crypto.enc.Base64)
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
-
-  return { codeVerifier, codeChallenge };
-};
-
-const launchOAuth = (
-  callback: ({ status, message }: { status: boolean; message: string }) => void,
-) => {
-  const { codeVerifier, codeChallenge } = generateCodeVerifierAndChallenge();
-  const redirectUrl = chrome.identity.getRedirectURL();
-  chrome.identity
-    .launchWebAuthFlow({
-      url: `${
-        import.meta.env.VITE_FRONT_BASE_URL
-      }/authorize?clientId=chrome&codeChallenge=${codeChallenge}&redirectUrl=${redirectUrl}`,
-      interactive: true,
-    })
-    .then((responseUrl) => {
-      if (typeof responseUrl === 'string') {
-        const url = new URL(responseUrl);
-        const authorizationCode = url.searchParams.get(
-          'authorizationCode',
-        ) as string;
-        exchangeAuthorizationCode({
-          authorizationCode,
-          codeVerifier,
-        }).then((tokens) => {
-          if (isDefined(tokens)) {
-            chrome.storage.local.set({
-              loginToken: tokens.loginToken,
-            });
-
-            chrome.storage.local.set({
-              accessToken: tokens.accessToken,
-            });
-
-            chrome.storage.local.set({
-              refreshToken: tokens.refreshToken,
-            });
-
-            callback({ status: true, message: '' });
-
-            chrome.tabs.query(
-              { active: true, currentWindow: true },
-              ([tab]) => {
-                if (isDefined(tab) && isDefined(tab.id)) {
-                  chrome.tabs.sendMessage(tab.id, {
-                    action: 'executeContentScript',
-                  });
-                }
-              },
-            );
-          }
-        });
-      }
-    })
-    .catch((error) => {
-      callback({ status: false, message: error.message });
-    });
-};
-
 chrome.tabs.onUpdated.addListener(async (tabId, _, tab) => {
   const isDesiredRoute =
     tab.url?.match(/^https?:\/\/(?:www\.)?linkedin\.com\/company(?:\/\S+)?/) ||
@@ -154,3 +67,34 @@ chrome.tabs.onUpdated.addListener(async (tabId, _, tab) => {
     enabled: true,
   });
 });
+
+const setTokenStateFromCookie = (cookie: string) => {
+  const decodedValue = decodeURIComponent(cookie);
+  const tokenPair = JSON.parse(decodedValue);
+  if (isDefined(tokenPair)) {
+    chrome.storage.local.set({
+      isAuthenticated: true,
+      accessToken: tokenPair.accessToken,
+      refreshToken: tokenPair.refreshToken,
+    });
+  }
+};
+
+chrome.cookies.onChanged.addListener(async ({ cookie }) => {
+  if (cookie.name === 'tokenPair') {
+    setTokenStateFromCookie(cookie.value);
+  }
+});
+
+// This will only run the very first time the extension loads, after we have stored the
+// cookiesRead variable to true, this will not allow to change the token state everytime background script runs
+chrome.cookies.get(
+  { name: 'tokenPair', url: `${import.meta.env.VITE_FRONT_BASE_URL}` },
+  async (cookie) => {
+    const store = await chrome.storage.local.get(['cookiesRead']);
+    if (isDefined(cookie) && !isDefined(store.cookiesRead)) {
+      setTokenStateFromCookie(cookie.value);
+      chrome.storage.local.set({ cookiesRead: true });
+    }
+  },
+);

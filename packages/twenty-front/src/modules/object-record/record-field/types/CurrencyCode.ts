@@ -2,6 +2,7 @@ export enum CurrencyCode {
   CAD = 'CAD',
   CHF = 'CHF',
   CNY = 'CNY',
+  CZK = 'CZK',
   EUR = 'EUR',
   GBP = 'GBP',
   HKD = 'HKD',

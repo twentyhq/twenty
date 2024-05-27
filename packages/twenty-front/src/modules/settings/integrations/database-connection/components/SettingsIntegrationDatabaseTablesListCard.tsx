@@ -1,17 +1,18 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import styled from '@emotion/styled';
 import { z } from 'zod';
 
 import { useSyncRemoteTable } from '@/databases/hooks/useSyncRemoteTable';
+import { useSyncRemoteTableSchemaChanges } from '@/databases/hooks/useSyncRemoteTableSchemaChanges';
 import { useUnsyncRemoteTable } from '@/databases/hooks/useUnsyncRemoteTable';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
+import { SettingsIntegrationRemoteTableSchemaUpdate } from '@/settings/integrations/components/SettingsIntegrationRemoteTableSchemaUpdate';
 import { SettingsIntegrationRemoteTableSyncStatusToggle } from '@/settings/integrations/components/SettingsIntegrationRemoteTableSyncStatusToggle';
 import {
   DistantTableUpdate,
   RemoteTable,
   RemoteTableStatus,
 } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined';
 
 export const settingsIntegrationsDatabaseTablesSchema = z.object({
   syncedTablesByName: z.record(z.boolean()),
@@ -30,13 +31,6 @@ const StyledRowRightContainer = styled.div`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(1)};
-`;
-
-const StyledText = styled.h3`
-  color: ${({ theme }) => theme.font.color.tertiary};
-  font-size: ${({ theme }) => theme.font.size.md};
-  font-weight: ${({ theme }) => theme.font.weight.regular};
-  margin: 0;
 `;
 
 const getDistantTableUpdatesText = (
@@ -66,24 +60,18 @@ export const SettingsIntegrationDatabaseTablesListCard = ({
 }: SettingsIntegrationDatabaseTablesListCardProps) => {
   const { syncRemoteTable } = useSyncRemoteTable();
   const { unsyncRemoteTable } = useUnsyncRemoteTable();
+  const { syncRemoteTableSchemaChanges } = useSyncRemoteTableSchemaChanges();
 
-  // We need to use a state because the table status update re-render the whole list of toggles
-  const [items] = useState(
-    tables.map((table) => ({
-      ...table,
-      id: table.name,
-      updatesText: table.schemaPendingUpdates
-        ? getDistantTableUpdatesText(table.schemaPendingUpdates)
-        : null,
-    })),
-  );
+  const items = tables.map((table) => ({
+    ...table,
+    id: table.name,
+    updatesText: table.schemaPendingUpdates
+      ? getDistantTableUpdatesText(table.schemaPendingUpdates)
+      : null,
+  }));
 
   const onSyncUpdate = useCallback(
     async (isSynced: boolean, tableName: string) => {
-      const table = items.find((table) => table.name === tableName);
-
-      if (!isDefined(table)) return;
-
       if (isSynced) {
         await syncRemoteTable({
           remoteServerId: connectionId,
@@ -96,7 +84,16 @@ export const SettingsIntegrationDatabaseTablesListCard = ({
         });
       }
     },
-    [items, syncRemoteTable, connectionId, unsyncRemoteTable],
+    [syncRemoteTable, connectionId, unsyncRemoteTable],
+  );
+
+  const onSyncSchemaUpdate = useCallback(
+    async (tableName: string) =>
+      syncRemoteTableSchemaChanges({
+        remoteServerId: connectionId,
+        name: tableName,
+      }),
+    [syncRemoteTableSchemaChanges, connectionId],
   );
 
   const rowRightComponent = useCallback(
@@ -111,14 +108,20 @@ export const SettingsIntegrationDatabaseTablesListCard = ({
       };
     }) => (
       <StyledRowRightContainer>
-        {item.updatesText && <StyledText>{item.updatesText}</StyledText>}
+        {item.updatesText && (
+          <SettingsIntegrationRemoteTableSchemaUpdate
+            updatesText={item.updatesText}
+            onUpdate={() => onSyncSchemaUpdate(item.name)}
+          />
+        )}
         <SettingsIntegrationRemoteTableSyncStatusToggle
-          table={item}
+          tableName={item.name}
+          tableStatus={item.status}
           onSyncUpdate={onSyncUpdate}
         />
       </StyledRowRightContainer>
     ),
-    [onSyncUpdate],
+    [onSyncSchemaUpdate, onSyncUpdate],
   );
   return (
     <SettingsListCard
