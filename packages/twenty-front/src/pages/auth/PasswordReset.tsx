@@ -144,6 +144,7 @@ export const PasswordReset = () => {
       }
 
       await signInWithCredentials(email || '', formData.newPassword);
+      navigate(AppPath.Index);
     } catch (err) {
       logError(err);
       enqueueSnackBar(
