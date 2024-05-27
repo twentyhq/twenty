@@ -21,7 +21,7 @@ export class GmailMessageListFetchJob
 
   constructor(
     private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
-    private readonly gmailFullSyncService: GmailFullMessageListFetchService,
+    private readonly gmailFullMessageListFetchService: GmailFullMessageListFetchService,
     private readonly gmailPartialMessageListFetchV2Service: GmailPartialMessageListFetchV2Service,
     private readonly getConnectedAccountAndMessageChannelService: GetConnectedAccountAndMessageChannelService,
   ) {}
@@ -69,7 +69,7 @@ export class GmailMessageListFetchJob
 
       case MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING:
         try {
-          await this.gmailFullSyncService.fetchConnectedAccountThreads(
+          await this.gmailFullMessageListFetchService.fetchConnectedAccountThreads(
             workspaceId,
             connectedAccountId,
           );

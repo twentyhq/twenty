@@ -26,10 +26,10 @@ export class GmailFullMessageListFetchJob
 
   constructor(
     private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
-    private readonly gmailFullSyncV2Service: GmailFullMessageListFetchV2Service,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
-    private readonly gmailFullSyncService: GmailFullMessageListFetchService,
+    private readonly gmailFullMessageListFetchService: GmailFullMessageListFetchService,
+    private readonly gmailFullMessageListFetchV2Service: GmailFullMessageListFetchV2Service,
   ) {}
 
   async handle(data: GmailFullMessageListFetchJobData): Promise<void> {
@@ -61,12 +61,12 @@ export class GmailFullMessageListFetchJob
     const isGmailSyncV2Enabled = isGmailSyncV2EnabledFeatureFlag?.value;
 
     if (isGmailSyncV2Enabled) {
-      await this.gmailFullSyncV2Service.fetchConnectedAccountThreads(
+      await this.gmailFullMessageListFetchV2Service.fetchConnectedAccountThreads(
         data.workspaceId,
         data.connectedAccountId,
       );
     } else {
-      await this.gmailFullSyncService.fetchConnectedAccountThreads(
+      await this.gmailFullMessageListFetchService.fetchConnectedAccountThreads(
         data.workspaceId,
         data.connectedAccountId,
       );

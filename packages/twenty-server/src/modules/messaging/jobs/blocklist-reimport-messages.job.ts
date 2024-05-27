@@ -22,7 +22,7 @@ export class BlocklistReimportMessagesJob
   constructor(
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    private readonly gmailFullSyncService: GmailFullMessageListFetchService,
+    private readonly gmailFullMessageListFetchService: GmailFullMessageListFetchService,
   ) {}
 
   async handle(data: BlocklistReimportMessagesJobData): Promise<void> {
@@ -46,7 +46,7 @@ export class BlocklistReimportMessagesJob
       return;
     }
 
-    await this.gmailFullSyncService.fetchConnectedAccountThreads(
+    await this.gmailFullMessageListFetchService.fetchConnectedAccountThreads(
       workspaceId,
       connectedAccount[0].id,
       [handle],
