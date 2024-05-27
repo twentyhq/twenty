@@ -54,11 +54,12 @@ const Sidepanel = () => {
       'refreshToken',
     ]);
 
-    if (store.isAuthenticated === true &&
-        isDefined(store.accessToken) &&
-        isDefined(store.refreshToken) && 
-        new Date(store.accessToken.expiresAt).getTime() >= Date.now() &&
-        new Date(store.refreshToken.expiresAt).getTime() >= Date.now()
+    if (
+      store.isAuthenticated === true &&
+      isDefined(store.accessToken) &&
+      isDefined(store.refreshToken) &&
+      new Date(store.accessToken.expiresAt).getTime() >= Date.now() &&
+      new Date(store.refreshToken.expiresAt).getTime() >= Date.now()
     ) {
       setIsAuthenticated(true);
       if (isDefined(store.sidepanelUrl)) {

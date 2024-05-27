@@ -1,9 +1,4 @@
-import {
-  ApolloClient,
-  from,
-  HttpLink,
-  InMemoryCache,
-} from '@apollo/client';
+import { ApolloClient, from, HttpLink, InMemoryCache } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 
@@ -45,39 +40,37 @@ const getApolloClient = async () => {
       },
     };
   });
-  const errorLink = onError(
-    ({ graphQLErrors, networkError }) => {
-      if (isDefined(graphQLErrors)) {
-        for (const graphQLError of graphQLErrors) {
-          if (graphQLError.message === 'Unauthorized') {
+  const errorLink = onError(({ graphQLErrors, networkError }) => {
+    if (isDefined(graphQLErrors)) {
+      for (const graphQLError of graphQLErrors) {
+        if (graphQLError.message === 'Unauthorized') {
+          clearStore();
+          return;
+        }
+        switch (graphQLError?.extensions?.code) {
+          case 'UNAUTHENTICATED': {
             clearStore();
-            return;
+            break;
           }
-          switch (graphQLError?.extensions?.code) {
-            case 'UNAUTHENTICATED': {
-              clearStore();
-              break;
-            }
-            default:
-              // eslint-disable-next-line no-console
-              console.error(
-                `[GraphQL error]: Message: ${graphQLError.message}, Location: ${
-                  graphQLError.locations
-                    ? JSON.stringify(graphQLError.locations)
-                    : graphQLError.locations
-                }, Path: ${graphQLError.path}`,
-              );
-              break;
-          }
+          default:
+            // eslint-disable-next-line no-console
+            console.error(
+              `[GraphQL error]: Message: ${graphQLError.message}, Location: ${
+                graphQLError.locations
+                  ? JSON.stringify(graphQLError.locations)
+                  : graphQLError.locations
+              }, Path: ${graphQLError.path}`,
+            );
+            break;
         }
       }
+    }
 
-      if (isDefined(networkError)) {
-        // eslint-disable-next-line no-console
-        console.error(`[Network error]: ${networkError}`);
-      }
-    },
-  );
+    if (isDefined(networkError)) {
+      // eslint-disable-next-line no-console
+      console.error(`[Network error]: ${networkError}`);
+    }
+  });
 
   const httpLink = new HttpLink({
     uri: await getServerUrl(),
