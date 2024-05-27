@@ -1,18 +1,15 @@
 import {
   ApolloClient,
   from,
-  fromPromise,
   HttpLink,
   InMemoryCache,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 
-import { renewToken } from '~/db/token.db';
-import { Tokens } from '~/db/types/auth.types';
 import { isDefined } from '~/utils/isDefined';
 
-const clearStore = () => {
+export const clearStore = () => {
   chrome.storage.local.remove([
     'loginToken',
     'accessToken',
@@ -20,19 +17,6 @@ const clearStore = () => {
     'sidepanelUrl',
   ]);
   chrome.storage.local.set({ isAuthenticated: false });
-};
-
-const setStore = (tokens: Tokens) => {
-  if (isDefined(tokens.loginToken)) {
-    chrome.storage.local.set({
-      loginToken: tokens.loginToken,
-    });
-  }
-  chrome.storage.local.set({
-    isAuthenticated: true,
-    accessToken: tokens.accessToken,
-    refreshToken: tokens.refreshToken,
-  });
 };
 
 export const getServerUrl = async () => {
@@ -52,8 +36,6 @@ const getAuthToken = async () => {
 };
 
 const getApolloClient = async () => {
-  const store = await chrome.storage.local.get();
-
   const authLink = setContext(async (_, { headers }) => {
     const token = await getAuthToken();
     return {
@@ -64,35 +46,17 @@ const getApolloClient = async () => {
     };
   });
   const errorLink = onError(
-    ({ graphQLErrors, networkError, forward, operation }) => {
+    ({ graphQLErrors, networkError }) => {
       if (isDefined(graphQLErrors)) {
         for (const graphQLError of graphQLErrors) {
           if (graphQLError.message === 'Unauthorized') {
-            return fromPromise(
-              renewToken(store.refreshToken.token)
-                .then((response) => {
-                  if (isDefined(response)) {
-                    setStore(response.renewToken.tokens);
-                  }
-                })
-                .catch(() => {
-                  clearStore();
-                }),
-            ).flatMap(() => forward(operation));
+            clearStore();
+            return;
           }
           switch (graphQLError?.extensions?.code) {
             case 'UNAUTHENTICATED': {
-              return fromPromise(
-                renewToken(store.refreshToken.token)
-                  .then((response) => {
-                    if (isDefined(response)) {
-                      setStore(response.renewToken.tokens);
-                    }
-                  })
-                  .catch(() => {
-                    clearStore();
-                  }),
-              ).flatMap(() => forward(operation));
+              clearStore();
+              break;
             }
             default:
               // eslint-disable-next-line no-console
