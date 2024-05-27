@@ -1,11 +1,18 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
+import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
+import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import {
   RemoteServerEntity,
   RemoteServerType,
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import { RemoteTableStatus } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
 import { getForeignTableColumnName } from 'src/engine/metadata-modules/remote-server/remote-table/foreign-table/utils/get-foreign-table-column-name.util';
+import {
+  mapUdtNameToFieldType,
+  mapUdtNameToFieldSettings,
+} from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
 import { PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/types/postgres-table-schema-column';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
@@ -15,10 +22,12 @@ import {
   WorkspaceMigrationForeignColumnDefinition,
   WorkspaceMigrationForeignTable,
   WorkspaceMigrationColumnAction,
+  WorkspaceMigrationColumnActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
+import { camelToTitleCase } from 'src/utils/camel-to-title-case';
 
 @Injectable()
 export class ForeignTableService {
@@ -27,6 +36,8 @@ export class ForeignTableService {
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
+    private readonly objectMetadataService: ObjectMetadataService,
+    private readonly fieldMetadataService: FieldMetadataService,
   ) {}
 
   public async fetchForeignTableNamesWithinWorkspace(
@@ -96,7 +107,61 @@ export class ForeignTableService {
     }
   }
 
+  public async updateForeignTableAndFieldsMetadata(
+    foreignTableName: string,
+    workspaceId: string,
+    columnsUpdates?: WorkspaceMigrationColumnAction[],
+  ) {
+    this.updateForeignTable(foreignTableName, workspaceId, columnsUpdates);
+
+    if (columnsUpdates) {
+      const objectMetadata =
+        await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
+          where: { nameSingular: foreignTableName },
+        });
+
+      if (!objectMetadata) {
+        throw new Error(
+          `Cannot find associated object for table ${foreignTableName}`,
+        );
+      }
+      for (const columnUpdate of columnsUpdates) {
+        if (columnUpdate.action === WorkspaceMigrationColumnActionType.CREATE) {
+          const columnName = columnUpdate.columnName;
+
+          await this.fieldMetadataService.createOne({
+            name: columnName,
+            label: camelToTitleCase(columnName),
+            description: 'Field of remote',
+            type: mapUdtNameToFieldType(columnUpdate.columnType), // is this udt ?
+            workspaceId: workspaceId,
+            objectMetadataId: objectMetadata.id,
+            isRemoteCreation: true,
+            isNullable: true,
+            icon: 'IconPlug',
+            settings: mapUdtNameToFieldSettings(columnUpdate.columnType),
+          } satisfies CreateFieldInput);
+        }
+        if (columnUpdate.action === WorkspaceMigrationColumnActionType.DROP) {
+          const columnName = columnUpdate.columnName;
+
+          // TODO find field metadata
+          await this.fieldMetadataService.deleteMany({
+            id: {
+              in: [
+                relationMetadata.fromFieldMetadataId,
+                relationMetadata.toFieldMetadataId,
+                foreignKeyFieldMetadata.id,
+              ],
+            },
+          });
+        }
+      }
+    }
+  }
+
   public async updateForeignTable(
+    // rename ..AnFieldsMetadata
     foreignTableName: string,
     workspaceId: string,
     columnsUpdates?: WorkspaceMigrationColumnAction[],
