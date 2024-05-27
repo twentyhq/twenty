@@ -10,6 +10,7 @@ import { FetchMessagesByBatchesModule } from 'src/modules/messaging/services/fet
 import { GmailFullMessageListFetchV2Service } from 'src/modules/messaging/services/gmail-full-message-list-fetch/gmail-full-message-list-fetch-v2.service';
 import { GmailFullMessageListFetchService } from 'src/modules/messaging/services/gmail-full-message-list-fetch/gmail-full-message-list-fetch.service';
 import { MessagingProvidersModule } from 'src/modules/messaging/services/providers/messaging-providers.module';
+import { SetMessageChannelSyncStatusModule } from 'src/modules/messaging/services/set-message-channel-sync-status/set-message-channel-sync-status.module';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 
@@ -25,6 +26,7 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-ob
     ]),
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     WorkspaceDataSourceModule,
+    SetMessageChannelSyncStatusModule,
   ],
   providers: [
     GmailFullMessageListFetchService,

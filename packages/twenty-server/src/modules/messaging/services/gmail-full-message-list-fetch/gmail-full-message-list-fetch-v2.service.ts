@@ -13,7 +13,6 @@ import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decora
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { GMAIL_USERS_MESSAGES_LIST_MAX_RESULT } from 'src/modules/messaging/constants/gmail-users-messages-list-max-result.constant';
@@ -21,13 +20,9 @@ import { MessageChannelMessageAssociationRepository } from 'src/modules/messagin
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { GmailClientProvider } from 'src/modules/messaging/services/providers/gmail/gmail-client.provider';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel-message-association.workspace-entity';
-import {
-  MessageChannelWorkspaceEntity,
-  MessageChannelSyncStatus,
-  MessageChannelSyncSubStatus,
-} from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
-import { gmailSearchFilterEmailAdresses } from 'src/modules/messaging/utils/gmail-search-filter.util';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
+import { SetMessageChannelSyncStatusService } from 'src/modules/messaging/services/set-message-channel-sync-status/set-message-channel-sync-status.service';
 
 @Injectable()
 export class GmailFullMessageListFetchV2Service {
@@ -35,8 +30,6 @@ export class GmailFullMessageListFetchV2Service {
 
   constructor(
     private readonly gmailClientProvider: GmailClientProvider,
-    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
-    private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
@@ -49,6 +42,7 @@ export class GmailFullMessageListFetchV2Service {
       MessageChannelMessageAssociationWorkspaceEntity,
     )
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
+    private readonly setMessageChannelSyncStatusService: SetMessageChannelSyncStatusService,
   ) {}
 
   public async fetchConnectedAccountThreads(
@@ -56,15 +50,12 @@ export class GmailFullMessageListFetchV2Service {
     connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
     workspaceId: string,
   ) {
-    await this.messageChannelRepository.updateSyncSubStatus(
-      messageChannel.id,
-      MessageChannelSyncSubStatus.MESSAGES_LIST_FETCH_ONGOING,
-      workspaceId,
+    this.logger.log(
+      `Fetching full message list for workspace ${workspaceId} and account ${connectedAccount.id}`,
     );
 
-    await this.messageChannelRepository.updateSyncStatus(
+    await this.setMessageChannelSyncStatusService.setMessageListFetchOnGoingStatus(
       messageChannel.id,
-      MessageChannelSyncStatus.ONGOING,
       workspaceId,
     );
 
@@ -73,29 +64,20 @@ export class GmailFullMessageListFetchV2Service {
         connectedAccount.refreshToken,
       );
 
-    const blocklistedEmails = await this.fetchBlocklistEmails(
-      connectedAccount.accountOwnerId,
-      workspaceId,
-    );
-
     try {
       await this.fetchAllMessageIdsFromGmailAndStoreInCache(
         gmailClient,
         messageChannel.id,
-        [],
-        blocklistedEmails,
         workspaceId,
       );
 
-      await this.messageChannelRepository.updateSyncStatus(
+      await this.setMessageChannelSyncStatusService.setCompletedStatus(
         messageChannel.id,
-        MessageChannelSyncStatus.PENDING,
         workspaceId,
       );
     } catch (error) {
-      await this.messageChannelRepository.updateSyncStatus(
+      await this.setMessageChannelSyncStatusService.setFailedUnkownStatus(
         messageChannel.id,
-        MessageChannelSyncStatus.FAILED,
         workspaceId,
       );
 
@@ -108,8 +90,6 @@ export class GmailFullMessageListFetchV2Service {
   public async fetchAllMessageIdsFromGmailAndStoreInCache(
     gmailClient: gmail_v1.Gmail,
     messageChannelId: string,
-    includedEmails: string[],
-    blocklistedEmails: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ) {
@@ -123,7 +103,6 @@ export class GmailFullMessageListFetchV2Service {
         userId: 'me',
         maxResults: GMAIL_USERS_MESSAGES_LIST_MAX_RESULT,
         pageToken,
-        q: gmailSearchFilterEmailAdresses(includedEmails, blocklistedEmails),
       });
 
       if (response.data?.messages) {
