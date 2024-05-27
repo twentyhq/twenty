@@ -4,7 +4,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: '04b2e9f5-0713-40a5-8216-82802401d33e',
     domainName: 'qonto.com',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 1400,
     name: 'Qonto',
     favorites: {
       __typename: 'FavoriteConnection',
@@ -109,7 +109,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: '0d940997-c21e-4ec2-873b-de4264d89025',
     domainName: 'google.com',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 72_000,
     name: 'Google',
     favorites: {
       __typename: 'FavoriteConnection',
@@ -308,7 +308,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: '118995f3-5d81-46d6-bf83-f7fd33ea6102',
     domainName: 'facebook.com',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 87_000,
     name: 'Facebook',
     favorites: {
       __typename: 'FavoriteConnection',
@@ -438,7 +438,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: '1d3a1c6e-707e-44dc-a1d2-30030bf1a944',
     domainName: 'netflix.com',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 3_000,
     name: 'Netflix',
     favorites: {
       __typename: 'FavoriteConnection',
@@ -486,7 +486,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: '460b6fb1-ed89-413a-b31a-962986e67bb4',
     domainName: 'microsoft.com',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 221_000,
     name: 'Microsoft',
     favorites: {
       __typename: 'FavoriteConnection',
@@ -666,7 +666,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: '7a93d1e5-3f74-492d-a101-2a70f50a1645',
     domainName: 'libeo.io',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 50,
     name: 'Libeo',
     favorites: {
       __typename: 'FavoriteConnection',
@@ -714,7 +714,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: '89bb825c-171e-4bcc-9cf7-43448d6fb278',
     domainName: 'airbnb.com',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 6_000,
     name: 'Airbnb',
     favorites: {
       __typename: 'FavoriteConnection',
@@ -762,7 +762,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: '9d162de6-cfbf-4156-a790-e39854dcd4eb',
     domainName: 'claap.io',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 7,
     name: 'Claap',
     favorites: {
       __typename: 'FavoriteConnection',
@@ -810,7 +810,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: 'a674fa6c-1455-4c57-afaf-dd5dc086361d',
     domainName: 'algolia.com',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 250,
     name: 'Algolia',
     favorites: {
       __typename: 'FavoriteConnection',
@@ -889,7 +889,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: 'a7bc68d5-f79e-40dd-bd06-c36e6abb4678',
     domainName: 'samsung.com',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 400_000,
     name: 'Samsung',
     favorites: {
       __typename: 'FavoriteConnection',
@@ -968,7 +968,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: 'aaffcfbd-f86b-419f-b794-02319abe8637',
     domainName: 'hasura.io',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 17_000,
     name: 'Hasura',
     favorites: {
       __typename: 'FavoriteConnection',
@@ -1016,7 +1016,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: 'f33dc242-5518-4553-9433-42d8eb82834b',
     domainName: 'wework.com',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 2_000,
     name: 'Wework',
     favorites: {
       __typename: 'FavoriteConnection',
@@ -1064,7 +1064,7 @@ export const SIGN_IN_BACKGROUND_MOCK_COMPANIES = [
     id: 'fe256b39-3ec3-4fe3-8997-b76aa0bfa408',
     domainName: 'linkedin.com',
     updatedAt: '2023-11-23T15:38:03.699Z',
-    employees: null,
+    employees: 20_000,
     name: 'Linkedin',
     favorites: {
       __typename: 'FavoriteConnection',
