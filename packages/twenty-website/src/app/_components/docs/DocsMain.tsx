@@ -1,6 +1,8 @@
 'use client';
 import styled from '@emotion/styled';
+import { usePathname } from 'next/navigation';
 
+import { Breadcrumbs } from '@/app/_components/ui/layout/Breadcrumbs';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import UserGuideCard from '@/app/_components/user-guide/UserGuideCard';
@@ -45,12 +47,10 @@ const StyledTitle = styled.div`
   font-size: ${Theme.font.size.sm};
   color: ${Theme.text.color.quarternary};
   font-weight: ${Theme.font.weight.medium};
-  margin-bottom: 32px;
   width: 100%;
 
   @media (min-width: 450px) and (max-width: 800px) {
     width: 340px;
-    margin-bottom: 24px;
   }
 `;
 
@@ -69,6 +69,9 @@ const StyledHeader = styled.div`
     width: 340px;
     margin-bottom: 24px;
   }
+  @media (min-width: 450px) and (max-width: 800px) {
+    margin-bottom: 24px;
+  }
 `;
 
 const StyledHeading = styled.h1`
@@ -77,6 +80,7 @@ const StyledHeading = styled.h1`
   font-size: 40px;
   color: ${Theme.text.color.primary};
   margin: 0px;
+  margin-top: 32px;
   @media (max-width: 800px) {
     font-size: 28px;
   }
@@ -147,11 +151,28 @@ export default function DocsMain({
       info: guide.info,
     }));
   }
+  const pathname = usePathname();
+  const uri = pathname.includes('user-guide') ? '/user-guide' : '/docs';
+  const label = pathname.includes('user-guide') ? 'User Guide' : 'Developers';
+  const BREADCRUMB_ITEMS = [
+    {
+      uri: uri,
+      label: label,
+    },
+  ];
 
   return (
     <StyledContainer>
       <StyledWrapper>
-        <StyledTitle>Developers</StyledTitle>
+        {isSection ? (
+          <Breadcrumbs
+            items={BREADCRUMB_ITEMS}
+            activePage={sections[0].name}
+            separator="/"
+          />
+        ) : (
+          <StyledTitle>Developers</StyledTitle>
+        )}
         {sections.map((section) => {
           const filteredArticles = isSection
             ? userGuideArticleCards
@@ -160,7 +181,9 @@ export default function DocsMain({
             <StyledSection>
               <StyledHeader>
                 <StyledHeading>{section.name}</StyledHeading>
-                <StyledSubHeading>{section.info}</StyledSubHeading>
+                <StyledSubHeading>
+                  A brief guide to grasp the basics of Twenty
+                </StyledSubHeading>
               </StyledHeader>
               <StyledContent>
                 {filteredArticles.map((card) => (

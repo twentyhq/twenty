@@ -8,13 +8,12 @@ export const DOCS_INDEX = {
       { fileName: 'self-hosting-var' },
       { fileName: 'docker-compose' },
       { fileName: 'cloud-providers' },
-      { fileName: 'upgrade-guide' },
     ],
   },
   Contributing: {
     'Bugs and Requests': [{ fileName: 'bug-and-requests' }],
     'Frontend Development': [
-      { fileName: 'front' },
+      { fileName: 'frontend-development' },
       { fileName: 'frontend-commands' },
       { fileName: 'work-with-figma' },
       { fileName: 'best-practices-front' },
@@ -23,7 +22,7 @@ export const DOCS_INDEX = {
       { fileName: 'hotkeys' },
     ],
     'Backend Development': [
-      { fileName: 'server' },
+      { fileName: 'backend-development' },
       { fileName: 'server-commands' },
       { fileName: 'feature-flags' },
       { fileName: 'folder-architecture-server' },
@@ -31,6 +30,40 @@ export const DOCS_INDEX = {
       { fileName: 'best-practices-server' },
       { fileName: 'custom-objects' },
       { fileName: 'queue' },
+    ],
+  },
+  Extending: {
+    Storybook: [{ fileName: 'storybook' }],
+    Components: [{ fileName: 'components' }],
+  },
+  'User Guide': {
+    'Getting Started': [
+      { fileName: 'getting-started' },
+      { fileName: 'what-is-twenty' },
+      { fileName: 'create-workspace' },
+    ],
+    Objects: [
+      { fileName: 'objects' },
+      { fileName: 'standard-objects' },
+      { fileName: 'fields' },
+      { fileName: 'views-sort-filter' },
+      { fileName: 'table-views' },
+      { fileName: 'kanban-views' },
+      { fileName: 'import-export-data' },
+    ],
+    Functions: [
+      { fileName: 'functions' },
+      { fileName: 'emails' },
+      { fileName: 'notes' },
+      { fileName: 'tasks' },
+      { fileName: 'integrations' },
+      { fileName: 'api-webhooks' },
+    ],
+    Other: [
+      { fileName: 'other' },
+      { fileName: 'glossary' },
+      { fileName: 'tips' },
+      { fileName: 'github' },
     ],
   },
 };

@@ -4,6 +4,7 @@ import { ReactNode } from 'react';
 import styled from '@emotion/styled';
 
 import { Theme } from '@/app/_components/ui/theme/theme';
+import { wrapHeadingsWithAnchor } from '@/shared-utils/wrapHeadingsWithAnchor';
 
 const StyledContent = styled.div`
   flex: 1;
@@ -93,6 +94,5 @@ const StyledContent = styled.div`
 `;
 
 export const ArticleContent = ({ children }: { children: ReactNode }) => {
-  // return <StyledContent>{wrapHeadingsWithAnchor(children)}</StyledContent>;
-  return <StyledContent>{children}</StyledContent>;
+  return <StyledContent>{wrapHeadingsWithAnchor(children)}</StyledContent>;
 };

@@ -16,7 +16,7 @@ Custom objects are objects that you can create to store information that is uniq
 ## High-level schema 
 
 <div style={{textAlign: 'center'}}>
-    <img src="/img/contributor/custom-object-schema.jpeg" alt="High level schema" />
+    <img src="/images/docs/server/custom-object-schema.png" alt="High level schema" />
 </div>
 
 <br/>
@@ -31,12 +31,12 @@ Custom objects come from metadata tables that determine the shape, name, and typ
 
 To add a custom object, the workspaceMember will query the /metadata API. This updates the metadata accordingly and computes a GraphQL schema based on the metadata, storing it in a GQL cache for later use.
 <div style={{textAlign: 'center'}}>
-    <img src="/img/contributor/add-custom-objects.jpeg" alt="Query the /metadata API to add custom objects" />
+    <img src="/images/docs/server/add-custom-objects.jpeg" alt="Query the /metadata API to add custom objects" />
 </div>
 
 <br/>
 
 To fetch data, the process involves making queries through the /graphql endpoint and passing them through the Query Resolver.
 <div style={{textAlign: 'center'}}>
-    <img src="/img/contributor/custom-objects-schema.png" alt="Query the /graphql endpoint to fetch data" />
+    <img src="/images/docs/server/custom-object-schema.png" alt="Query the /graphql endpoint to fetch data" />
 </div>

@@ -1,4 +1,5 @@
-import UserGuideMain from '@/app/_components/user-guide/UserGuideMain';
+import DocsMain from '@/app/_components/docs/DocsMain';
+// import UserGuideMain from '@/app/_components/user-guide/UserGuideMain';
 import { getUserGuideArticles } from '@/content/user-guide/constants/getUserGuideArticles';
 
 export const metadata = {
@@ -14,5 +15,5 @@ export default async function UserGuideHome() {
   const filePath = 'src/content/user-guide/';
   const userGuideArticleCards = getUserGuideArticles(filePath);
 
-  return <UserGuideMain userGuideArticleCards={userGuideArticleCards} />;
+  return <DocsMain userGuideArticleCards={userGuideArticleCards} />;
 }

@@ -7,7 +7,7 @@ import {
   IconGitPullRequest,
   IconTool,
 } from '@tabler/icons-react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
@@ -55,7 +55,7 @@ const StyledIconContainer = styled.div`
   padding: ${Theme.spacing(1)};
 `;
 
-const StyledHeadingText = styled.div`
+const StyledHeadingText = styled.h2`
   cursor: pointer;
   font-size: ${Theme.font.size.sm};
   font-weight: ${Theme.font.weight.medium};
@@ -68,47 +68,48 @@ const DocsSidebar = ({
   userGuideIndex: UserGuideArticlesProps[];
 }) => {
   const router = useRouter();
-  const sections = [
-    { name: 'Getting Started' },
-    { name: 'Contributing' },
-    { name: 'Extending' },
-    { name: 'User Guide' },
-  ];
+  const pathName = usePathname();
+  const path = pathName.includes('user-guide') ? '/user-guide' : '/docs';
   const iconSize = Theme.icon.size.md;
-  const filterUserGuideIndex = (
-    sectionName: string,
-  ): UserGuideArticlesProps[] => {
-    return userGuideIndex.filter(
+
+  const sections = Array.from(
+    new Set(userGuideIndex.map((guide) => guide.section)),
+  ).map((section) => ({
+    name: section,
+    icon: section.includes('Started') ? (
+      <IconCode size={iconSize} />
+    ) : section.includes('Contributing') ? (
+      <IconGitPullRequest size={iconSize} />
+    ) : section.includes('Extending') ? (
+      <IconTool size={iconSize} />
+    ) : (
+      <IconBook size={iconSize} />
+    ),
+    guides: userGuideIndex.filter(
       (guide) =>
-        guide.section.includes(sectionName) &&
+        guide.section === section &&
         !(guide.numberOfFiles > 1 && guide.topic === guide.title),
-    );
-  };
+    ),
+  }));
 
   return (
     <StyledContainer>
       {sections.map((section) => (
-        <>
+        <div key={section.name}>
           <StyledHeading>
-            <StyledIconContainer>
-              {section.name.includes('Started') ? (
-                <IconCode size={iconSize} />
-              ) : section.name.includes('Contributing') ? (
-                <IconGitPullRequest size={iconSize} />
-              ) : section.name.includes('Extending') ? (
-                <IconTool size={iconSize} />
-              ) : (
-                <IconBook size={iconSize} />
-              )}
-            </StyledIconContainer>
-            <StyledHeadingText onClick={() => router.push('/docs')}>
+            <StyledIconContainer>{section.icon}</StyledIconContainer>
+            <StyledHeadingText
+              onClick={() =>
+                router.push(
+                  section.name === 'User Guide' ? '/user-guide' : '/docs',
+                )
+              }
+            >
               {section.name}
             </StyledHeadingText>
           </StyledHeading>
-          <UserGuideSidebarSection
-            userGuideIndex={filterUserGuideIndex(section.name)}
-          />
-        </>
+          <UserGuideSidebarSection userGuideIndex={section.guides} />
+        </div>
       ))}
     </StyledContainer>
   );

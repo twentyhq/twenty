@@ -5,16 +5,14 @@ sidebar_custom_props:
   icon: TbDeviceDesktop
 image: /images/user-guide/fields/field.png
 ---
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
 
 
 Follow this guide if you would like to setup the project locally to contribute.
 
 ## Prerequisites
 
-<Tabs>
-<TabItem value="yarn" label="Linux and MacOS" default>
+<ArticleTabs label1="Linux and MacOS" label2="Windows (WSL)">
+<ArticleTab>
 
 Before you can install and use Twenty, make sure you install the following on your computer:
 - [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
@@ -27,13 +25,12 @@ Before you can install and use Twenty, make sure you install the following on yo
 You only have to run `corepack enable` to enable Yarn if you haven't done it yet.
 :::
 
-</TabItem>
+</ArticleTab>
 
-<TabItem value="wsl" label="Windows (WSL)" >
+<ArticleTab>
 
 1. Install WSL
-Open PowerShell as Administrator and run:
-
+Open PowerShell as Administrator and run: 
 ```powershell
 wsl --install
 ```
@@ -58,8 +55,8 @@ corepack enable
 ```
 Close and reopen your terminal to start using nvm. 
 
-</TabItem>
-</Tabs>
+</ArticleTab>
+</ArticleTabs>
 
 ---
 
@@ -68,21 +65,21 @@ Close and reopen your terminal to start using nvm.
 In your terminal, run the following command. 
 
 
-<Tabs>
-<TabItem value="ssh" label="SSH (Recommended)" default>
+<ArticleTabs label1="SSH (Recommended)" label2="HTTPS">
+<ArticleTab>
 If you haven't already set up SSH keys, you can learn how to do so [here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh). 
 ```bash
 git clone git@github.com:twentyhq/twenty.git
 ```
-</TabItem>
-<TabItem value="https" label="HTTPS" >
+</ArticleTab>
+<ArticleTab>
 
 ```bash
 git clone https://github.com/twentyhq/twenty.git
 ```
 
-</TabItem>
-</Tabs>
+</ArticleTab>
+</ArticleTabs>
 
 ## Step 2: Position yourself at the root
 
@@ -96,8 +93,8 @@ You should run all commands in the following steps from the root of the project.
 We rely on [pg_graphql](https://github.com/supabase/pg_graphql) and recommend you use the scripts below to provision a database with the right extensions.  
 You can access the database at [localhost:5432](localhost:5432), with user `twenty` and password `twenty` .
 
-<Tabs>
-  <TabItem value="linux" label="Linux" default>
+<ArticleTabs label1="Linux" label2="Mac OS" label3="Windows (WSL)">
+  <ArticleTab>
     <b>Option 1:</b> To provision your database locally:
     ```bash
     make postgres-on-linux
@@ -107,8 +104,8 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
     ```bash
     make postgres-on-docker
     ```
-  </TabItem>
-  <TabItem value="mac-os" label="Mac OS" default>
+  </ArticleTab>
+  <ArticleTab>
     <b>Option 1:</b> To provision your database locally with `brew`:
     ```bash
     make postgres-on-macos-intel #for intel architecture
@@ -119,8 +116,8 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
     ```bash
     make postgres-on-docker
     ```
-  </TabItem>
-  <TabItem value="wsl" label="Windows (WSL)">
+  </ArticleTab>
+  <ArticleTab>
     <b>Option 1 :</b> To provision your database locally:
     ```bash
     make postgres-on-linux
@@ -134,8 +131,8 @@ You can access the database at [localhost:5432](localhost:5432), with user `twen
     ```bash
     make postgres-on-docker
     ```
-  </TabItem>
-</Tabs>
+  </ArticleTab>
+</ArticleTabs>
 
 
 ## Step 4: Setup environment variables

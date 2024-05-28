@@ -104,10 +104,12 @@ const StyledContent = styled.div`
 
 interface UserGuideProps {
   userGuideArticleCards: UserGuideArticlesProps[];
+  isSection?: boolean;
 }
 
 export default function UserGuideMain({
   userGuideArticleCards,
+  isSection = false,
 }: UserGuideProps) {
   return (
     <StyledContainer>
@@ -121,7 +123,13 @@ export default function UserGuideMain({
         </StyledHeader>
         <StyledContent>
           {userGuideArticleCards.map((card) => {
-            return <UserGuideCard key={card.title} card={card} />;
+            return (
+              <UserGuideCard
+                key={card.title}
+                card={card}
+                isSection={isSection}
+              />
+            );
           })}
         </StyledContent>
       </StyledWrapper>

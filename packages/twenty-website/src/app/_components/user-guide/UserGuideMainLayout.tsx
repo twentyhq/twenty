@@ -7,7 +7,6 @@ import DocsSidebar from '@/app/_components/docs/DocsSideBar';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import UserGuideTableContents from '@/app/_components/user-guide/TableContent';
-import UserGuideSidebar from '@/app/_components/user-guide/UserGuideSidebar';
 import { UserGuideArticlesProps } from '@/content/user-guide/constants/getUserGuideArticles';
 
 const StyledContainer = styled.div`
@@ -37,11 +36,13 @@ export const UserGuideMainLayout = ({
     pathname.startsWith('/docs/section') && pathname.split('/').length === 4;
   return (
     <StyledContainer>
-      {pathname.includes('user-guide') ? (
+      {/* {pathname.includes('user-guide') ? (
         <UserGuideSidebar userGuideIndex={userGuideIndex} />
       ) : (
         <DocsSidebar userGuideIndex={userGuideIndex} />
-      )}
+      )} */}
+      <DocsSidebar userGuideIndex={userGuideIndex} />
+
       {children}
       {pathname === '/user-guide' || pathname === '/docs' || isDocsSection ? (
         <StyledEmptySideBar />

@@ -152,13 +152,23 @@ const UserGuideSidebarSection = ({
             {unfolded[topic] &&
               cards.map((card) => {
                 const isselected = pathname === `${path}${card.fileName}`;
+                const sectionName = card.topic
+                  .toLowerCase()
+                  .replace(/\s+/g, '-');
+                const STORYBOOK_LINK = 'https://storybook.twenty.com';
+                const twentyPath =
+                  card.numberOfFiles > 1
+                    ? `${path}/section/${sectionName}/${card.fileName}`
+                    : `${path}${card.fileName}`;
+                const routerPath =
+                  card.fileName === 'storybook' ? STORYBOOK_LINK : twentyPath;
 
                 return (
                   <StyledSubTopicItem
                     key={card.title}
                     isselected={isselected}
-                    href={`${path}${card.fileName}`}
-                    onClick={() => router.push(`${path}${card.fileName}`)}
+                    href={routerPath}
+                    onClick={() => router.push(routerPath)}
                     onMouseEnter={() => setHoveredItem(card.title)}
                     onMouseLeave={() => setHoveredItem(null)}
                   >

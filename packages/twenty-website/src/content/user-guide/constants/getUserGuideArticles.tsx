@@ -2,7 +2,7 @@ import fs from 'fs';
 import matter from 'gray-matter';
 import path from 'path';
 
-import { DOCS_INDEX } from '@/content/docs/constants/GettingStartedIndex';
+import { DOCS_INDEX } from '@/content/docs/constants/DocsIndex';
 import { USER_GUIDE_INDEX } from '@/content/user-guide/constants/UserGuideIndex';
 
 export interface UserGuideArticlesProps {

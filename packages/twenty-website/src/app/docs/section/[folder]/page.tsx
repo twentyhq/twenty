@@ -10,11 +10,11 @@ export const dynamic = 'force-dynamic';
 export async function generateMetadata({
   params,
 }: {
-  params: { slug: string };
+  params: { folder: string };
 }): Promise<Metadata> {
-  const formattedSlug = formatSlug(params.slug);
+  const formattedSlug = formatSlug(params.folder);
   const basePath = '/src/content/docs';
-  const mainPost = await fetchArticleFromSlug(params.slug, basePath);
+  const mainPost = await fetchArticleFromSlug(params.folder, basePath);
   return {
     title: 'Twenty - ' + formattedSlug,
     description: mainPost?.itemInfo?.info,
@@ -24,12 +24,11 @@ export async function generateMetadata({
 export default async function DocsSlug({
   params,
 }: {
-  params: { slug: string };
+  params: { folder: string };
 }) {
-  const filePath = `src/content/docs/${params.slug}/`;
+  const filePath = `src/content/docs/${params.folder}/`;
   const userGuideArticleCards = getUserGuideArticles(filePath);
   const isSection = true;
-
   return (
     <DocsMain
       userGuideArticleCards={userGuideArticleCards}
