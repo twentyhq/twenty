@@ -39,7 +39,13 @@ export class GoogleAPIsAuthController {
   ) {
     const { user } = req;
 
-    const { email, accessToken, refreshToken, transientToken } = user;
+    const {
+      email,
+      accessToken,
+      refreshToken,
+      transientToken,
+      redirectLocation,
+    } = user;
 
     const { workspaceMemberId, workspaceId } =
       await this.tokenService.verifyTransientToken(transientToken);
@@ -65,7 +71,9 @@ export class GoogleAPIsAuthController {
     });
 
     return res.redirect(
-      `${this.environmentService.get('FRONT_BASE_URL')}/settings/accounts`,
+      `${this.environmentService.get('FRONT_BASE_URL')}${
+        redirectLocation || '/settings/accounts'
+      }`,
     );
   }
 }

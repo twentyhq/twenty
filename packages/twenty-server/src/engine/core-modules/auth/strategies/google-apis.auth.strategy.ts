@@ -19,6 +19,7 @@ export type GoogleAPIsRequest = Omit<
     accessToken: string;
     refreshToken: string;
     transientToken: string;
+    redirectLocation?: string;
   };
 };
 
@@ -64,6 +65,7 @@ export class GoogleAPIsStrategy extends PassportStrategy(
       prompt: 'consent',
       state: JSON.stringify({
         transientToken: req.params.transientToken,
+        redirectLocation: req.params.redirectLocation,
       }),
     };
 
@@ -92,6 +94,7 @@ export class GoogleAPIsStrategy extends PassportStrategy(
       accessToken,
       refreshToken,
       transientToken: state.transientToken,
+      redirectLocation: state.redirectLocation,
     };
 
     done(null, user);

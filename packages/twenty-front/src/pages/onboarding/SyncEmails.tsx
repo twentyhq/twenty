@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconGoogle } from 'twenty-ui';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import {
-  InboxSyncEmailsValue,
-  OnboardingSyncEmailsSettingsCard,
-} from '@/onboarding/components/OnboardingSyncEmailsSettingsCard';
+import { OnboardingSyncEmailsSettingsCard } from '@/onboarding/components/OnboardingSyncEmailsSettingsCard';
+import { InboxSettingsVisibilityValue } from '@/settings/accounts/components/SettingsAccountsInboxVisibilitySettingsCard';
+import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
+import { AppPath } from '@/types/AppPath';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
 
@@ -28,16 +29,18 @@ const StyledActionLinkContainer = styled.div`
 
 export const SyncEmails = () => {
   const theme = useTheme();
-  const handleVisibilityChange = (value: InboxSyncEmailsValue) => {
-    console.log('handleVisibilityChange', value);
-  };
+  const navigate = useNavigate();
+  const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
+  const [visibility, setVisibility] = useState<InboxSettingsVisibilityValue>(
+    InboxSettingsVisibilityValue.Everything,
+  );
 
-  const handleButtonClick = () => {
-    console.log('handleButtonClick');
+  const handleButtonClick = async () => {
+    await triggerGoogleApisOAuth(AppPath.Index);
   };
 
   const continueWithoutSync = () => {
-    console.log('continueWithoutSync');
+    navigate(AppPath.Index);
   };
 
   const isSubmitting = false;
@@ -50,8 +53,8 @@ export const SyncEmails = () => {
       </SubTitle>
       <StyledSyncEmailsContainer>
         <OnboardingSyncEmailsSettingsCard
-          value={undefined}
-          onChange={handleVisibilityChange}
+          value={visibility}
+          onChange={setVisibility}
         />
       </StyledSyncEmailsContainer>
       <MainButton

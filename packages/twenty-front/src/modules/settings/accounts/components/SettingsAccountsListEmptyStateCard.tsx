@@ -35,7 +35,7 @@ export const SettingsAccountsListEmptyStateCard = ({
           Icon={IconGoogle}
           title="Connect with Google"
           variant="secondary"
-          onClick={triggerGoogleApisOAuth}
+          onClick={() => triggerGoogleApisOAuth()}
         />
       </StyledBody>
     </Card>

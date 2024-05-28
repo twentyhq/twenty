@@ -1,21 +1,16 @@
 import styled from '@emotion/styled';
 
+import { InboxSettingsVisibilityValue } from '@/settings/accounts/components/SettingsAccountsInboxVisibilitySettingsCard';
 import { SettingsAccountsRadioSettingsCard } from '@/settings/accounts/components/SettingsAccountsRadioSettingsCard';
 import { SettingsAccountsVisibilitySettingCardMedia } from '@/settings/accounts/components/SettingsAccountsVisibilitySettingCardMedia';
-
-export enum InboxSyncEmailsValue {
-  Everything = 'share_everything',
-  SubjectMetadata = 'subject',
-  Metadata = 'metadata',
-}
 
 const StyledCardMedia = styled(SettingsAccountsVisibilitySettingCardMedia)`
   width: ${({ theme }) => theme.spacing(10)};
 `;
 
 type OnboardingSyncEmailsSettingsCardProps = {
-  onChange: (nextValue: InboxSyncEmailsValue) => void;
-  value?: InboxSyncEmailsValue;
+  onChange: (nextValue: InboxSettingsVisibilityValue) => void;
+  value?: InboxSettingsVisibilityValue;
 };
 
 const onboardingSyncEmailsOptions = [
@@ -23,7 +18,7 @@ const onboardingSyncEmailsOptions = [
     title: 'Everything',
     description:
       'Your emails and events content will be shared with your team.',
-    value: InboxSyncEmailsValue.Everything,
+    value: InboxSettingsVisibilityValue.Everything,
     cardMedia: (
       <StyledCardMedia metadata="active" subject="active" body="active" />
     ),
@@ -32,7 +27,7 @@ const onboardingSyncEmailsOptions = [
     title: 'Subject and metadata',
     description:
       'Your email subjects and meeting titles will be shared with your team.',
-    value: InboxSyncEmailsValue.SubjectMetadata,
+    value: InboxSettingsVisibilityValue.SubjectMetadata,
     cardMedia: (
       <StyledCardMedia metadata="active" subject="active" body="inactive" />
     ),
@@ -41,7 +36,7 @@ const onboardingSyncEmailsOptions = [
     title: 'Metadata',
     description:
       'Only the timestamp & participants will be shared with your team.',
-    value: InboxSyncEmailsValue.Metadata,
+    value: InboxSettingsVisibilityValue.Metadata,
     cardMedia: (
       <StyledCardMedia metadata="active" subject="inactive" body="inactive" />
     ),
@@ -50,7 +45,7 @@ const onboardingSyncEmailsOptions = [
 
 export const OnboardingSyncEmailsSettingsCard = ({
   onChange,
-  value = InboxSyncEmailsValue.Everything,
+  value = InboxSettingsVisibilityValue.Everything,
 }: OnboardingSyncEmailsSettingsCardProps) => (
   <SettingsAccountsRadioSettingsCard
     options={onboardingSyncEmailsOptions}
