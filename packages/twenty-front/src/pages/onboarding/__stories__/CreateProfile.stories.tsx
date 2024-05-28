@@ -5,6 +5,7 @@ import { graphql, HttpResponse } from 'msw';
 
 import { AppPath } from '@/types/AppPath';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { CreateProfile } from '~/pages/onboarding/CreateProfile';
 import {
   PageDecorator,
   PageDecoratorArgs,
@@ -13,10 +14,8 @@ import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDe
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedOnboardingUsersData } from '~/testing/mock-data/users';
 
-import { CreateProfile } from '../CreateProfile';
-
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Auth/CreateProfile',
+  title: 'Pages/Onboarding/CreateProfile',
   component: CreateProfile,
   decorators: [PrefetchLoadingDecorator, PageDecorator],
   args: { routePath: AppPath.CreateProfile },

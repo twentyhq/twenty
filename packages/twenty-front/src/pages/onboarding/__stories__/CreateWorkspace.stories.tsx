@@ -7,6 +7,7 @@ import { useSetRecoilState } from 'recoil';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { AppPath } from '@/types/AppPath';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { CreateWorkspace } from '~/pages/onboarding/CreateWorkspace';
 import {
   PageDecorator,
   PageDecoratorArgs,
@@ -15,10 +16,8 @@ import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDe
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedOnboardingUsersData } from '~/testing/mock-data/users';
 
-import { CreateWorkspace } from '../CreateWorkspace';
-
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Auth/CreateWorkspace',
+  title: 'Pages/Onboarding/CreateWorkspace',
   component: CreateWorkspace,
   decorators: [
     (Story) => {

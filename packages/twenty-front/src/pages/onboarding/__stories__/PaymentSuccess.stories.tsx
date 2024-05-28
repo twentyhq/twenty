@@ -5,6 +5,7 @@ import { graphql, HttpResponse } from 'msw';
 
 import { AppPath } from '@/types/AppPath';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
 import {
   PageDecorator,
   PageDecoratorArgs,
@@ -13,10 +14,8 @@ import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDe
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedOnboardingUsersData } from '~/testing/mock-data/users';
 
-import { PaymentSuccess } from '../PaymentSuccess';
-
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Auth/PaymentSuccess',
+  title: 'Pages/Onboarding/PaymentSuccess',
   component: PaymentSuccess,
   decorators: [PrefetchLoadingDecorator, PageDecorator],
   args: { routePath: AppPath.PlanRequiredSuccess },
