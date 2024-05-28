@@ -353,11 +353,12 @@ export class RemoteTableService {
       };
     }
 
-    const updatedTable = await this.foreignTableService.updateForeignTable(
-      remoteTable.localTableName,
-      workspaceId,
-      columnsUpdates,
-    );
+    const updatedTable =
+      await this.foreignTableService.updateForeignTableAndFieldsMetadata(
+        remoteTable.localTableName,
+        workspaceId,
+        columnsUpdates,
+      );
 
     return updatedTable;
   }

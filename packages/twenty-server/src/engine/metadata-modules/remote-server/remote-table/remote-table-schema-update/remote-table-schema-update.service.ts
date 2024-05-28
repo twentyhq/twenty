@@ -1,7 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import camelCase from 'lodash.camelcase';
-
 import { getForeignTableColumnName as convertToForeignTableColumnName } from 'src/engine/metadata-modules/remote-server/remote-table/foreign-table/utils/get-foreign-table-column-name.util';
 import { DistantTables } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/types/distant-table';
 import { DistantTableUpdate } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
@@ -15,19 +13,11 @@ import {
   WorkspaceMigrationColumnDrop,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
-import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
-import {
-  mapUdtNameToFieldType,
-  mapUdtNameToFieldSettings,
-} from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
-import { camelToTitleCase } from 'src/utils/camel-to-title-case';
 
 @Injectable()
 export class RemoteTableSchemaUpdateService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly fieldMetadataService: FieldMetadataService,
   ) {}
 
   public computeForeignTableColumnsUpdates = (
@@ -100,36 +90,6 @@ export class RemoteTableSchemaUpdateService {
     }
 
     return updates;
-  }
-
-  public async updateRemoteTableFieldsMetadata() {
-    const objectMetadata =
-      await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
-        where: { nameSingular: remoteTable.localTableName },
-      });
-
-    for (const column of distantTableColumns) {
-      const columnName = camelCase(column.columnName);
-
-      try {
-        const field = await this.fieldMetadataService.createOne({
-          name: columnName,
-          label: camelToTitleCase(columnName),
-          description: 'Field of remote',
-          type: mapUdtNameToFieldType(column.udtName),
-          workspaceId: workspaceId,
-          objectMetadataId: objectMetadata.id,
-          isRemoteCreation: true,
-          isNullable: true,
-          icon: 'IconPlug',
-          settings: mapUdtNameToFieldSettings(column.udtName),
-        } satisfies CreateFieldInput);
-      } catch (error) {
-        this.logger.error(
-          `Could not create field ${columnName} for remote table ${localTableNameSingular}: ${error}`,
-        );
-      }
-    }
   }
 
   private compareForeignTableColumns = (

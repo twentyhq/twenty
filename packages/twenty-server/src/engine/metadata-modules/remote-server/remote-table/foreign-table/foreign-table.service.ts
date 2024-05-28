@@ -110,61 +110,69 @@ export class ForeignTableService {
   public async updateForeignTableAndFieldsMetadata(
     foreignTableName: string,
     workspaceId: string,
-    columnsUpdates?: WorkspaceMigrationColumnAction[],
+    columnsUpdates: WorkspaceMigrationColumnAction[],
   ) {
-    this.updateForeignTable(foreignTableName, workspaceId, columnsUpdates);
+    const updatedForeignTable = await this.updateForeignTable(
+      foreignTableName,
+      workspaceId,
+      columnsUpdates,
+    );
 
-    if (columnsUpdates) {
-      const objectMetadata =
-        await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
-          where: { nameSingular: foreignTableName },
-        });
+    const objectMetadata =
+      await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
+        where: { nameSingular: foreignTableName },
+      });
 
-      if (!objectMetadata) {
-        throw new Error(
-          `Cannot find associated object for table ${foreignTableName}`,
-        );
+    if (!objectMetadata) {
+      throw new Error(
+        `Cannot find associated object for table ${foreignTableName}`,
+      );
+    }
+    for (const columnUpdate of columnsUpdates) {
+      if (columnUpdate.action === WorkspaceMigrationColumnActionType.CREATE) {
+        const columnName = columnUpdate.columnName;
+
+        await this.fieldMetadataService.createOne({
+          name: columnName,
+          label: camelToTitleCase(columnName),
+          description: 'Field of remote',
+          type: mapUdtNameToFieldType(columnUpdate.columnType),
+          workspaceId: workspaceId,
+          objectMetadataId: objectMetadata.id,
+          isRemoteCreation: true,
+          isNullable: true,
+          icon: 'IconPlug',
+          settings: mapUdtNameToFieldSettings(columnUpdate.columnType),
+        } satisfies CreateFieldInput);
       }
-      for (const columnUpdate of columnsUpdates) {
-        if (columnUpdate.action === WorkspaceMigrationColumnActionType.CREATE) {
-          const columnName = columnUpdate.columnName;
+      if (columnUpdate.action === WorkspaceMigrationColumnActionType.DROP) {
+        const columnName = columnUpdate.columnName;
 
-          await this.fieldMetadataService.createOne({
-            name: columnName,
-            label: camelToTitleCase(columnName),
-            description: 'Field of remote',
-            type: mapUdtNameToFieldType(columnUpdate.columnType), // is this udt ?
-            workspaceId: workspaceId,
-            objectMetadataId: objectMetadata.id,
-            isRemoteCreation: true,
-            isNullable: true,
-            icon: 'IconPlug',
-            settings: mapUdtNameToFieldSettings(columnUpdate.columnType),
-          } satisfies CreateFieldInput);
-        }
-        if (columnUpdate.action === WorkspaceMigrationColumnActionType.DROP) {
-          const columnName = columnUpdate.columnName;
-
-          // TODO find field metadata
-          await this.fieldMetadataService.deleteMany({
-            id: {
-              in: [
-                relationMetadata.fromFieldMetadataId,
-                relationMetadata.toFieldMetadataId,
-                foreignKeyFieldMetadata.id,
-              ],
+        const fieldMetadataToDelete =
+          await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
+            where: {
+              objectMetadataId: objectMetadata.id,
+              name: columnName,
             },
           });
+
+        if (!fieldMetadataToDelete) {
+          throw new Error(
+            `Cannot find associated field metadata for column ${columnName}`,
+          );
         }
+
+        await this.fieldMetadataService.deleteOne(fieldMetadataToDelete.id);
       }
     }
+
+    return updatedForeignTable;
   }
 
-  public async updateForeignTable(
-    // rename ..AnFieldsMetadata
+  private async updateForeignTable(
     foreignTableName: string,
     workspaceId: string,
-    columnsUpdates?: WorkspaceMigrationColumnAction[],
+    columnsUpdates: WorkspaceMigrationColumnAction[],
   ) {
     const workspaceMigration =
       await this.workspaceMigrationService.createCustomMigration(
