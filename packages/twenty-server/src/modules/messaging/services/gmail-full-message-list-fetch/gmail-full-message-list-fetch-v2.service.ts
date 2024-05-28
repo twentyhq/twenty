@@ -139,7 +139,7 @@ export class GmailFullMessageListFetchV2Service {
               ),
           );
 
-          if (messageIdsToImport && messageIdsToImport.length) {
+          if (messageIdsToImport.length) {
             await this.cacheStorage.setAdd(
               `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
               messageIdsToImport,
