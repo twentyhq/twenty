@@ -88,6 +88,16 @@ const testCases = [
   { loc: AppPath.CreateProfile, status: OnboardingStatus.Completed, res: defaultHomePagePath },
   { loc: AppPath.CreateProfile, status: OnboardingStatus.CompletedWithoutSubscription, res: defaultHomePagePath },
 
+  { loc: AppPath.SyncEmails, status: OnboardingStatus.Incomplete, res: AppPath.PlanRequired },
+  { loc: AppPath.SyncEmails, status: OnboardingStatus.Canceled, res: '/settings/billing' },
+  { loc: AppPath.SyncEmails, status: OnboardingStatus.Unpaid, res: '/settings/billing' },
+  { loc: AppPath.SyncEmails, status: OnboardingStatus.PastDue, res: undefined },
+  { loc: AppPath.SyncEmails, status: OnboardingStatus.OngoingUserCreation, res: AppPath.SignInUp },
+  { loc: AppPath.SyncEmails, status: OnboardingStatus.OngoingWorkspaceActivation, res: AppPath.CreateWorkspace },
+  { loc: AppPath.SyncEmails, status: OnboardingStatus.OngoingProfileCreation, res: AppPath.CreateProfile },
+  { loc: AppPath.SyncEmails, status: OnboardingStatus.Completed, res: undefined },
+  { loc: AppPath.SyncEmails, status: OnboardingStatus.CompletedWithoutSubscription, res: undefined },
+
   { loc: AppPath.PlanRequired, status: OnboardingStatus.Incomplete, res: undefined },
   { loc: AppPath.PlanRequired, status: OnboardingStatus.Canceled, res: undefined },
   { loc: AppPath.PlanRequired, status: OnboardingStatus.Unpaid, res: undefined },

@@ -47,6 +47,7 @@ import { ChooseYourPlan } from '~/pages/onboarding/ChooseYourPlan';
 import { CreateProfile } from '~/pages/onboarding/CreateProfile';
 import { CreateWorkspace } from '~/pages/onboarding/CreateWorkspace';
 import { PaymentSuccess } from '~/pages/onboarding/PaymentSuccess';
+import { SyncEmails } from '~/pages/onboarding/SyncEmails';
 import { SettingsAccounts } from '~/pages/settings/accounts/SettingsAccounts';
 import { SettingsAccountsCalendars } from '~/pages/settings/accounts/SettingsAccountsCalendars';
 import { SettingsAccountsCalendarsSettings } from '~/pages/settings/accounts/SettingsAccountsCalendarsSettings';
@@ -134,6 +135,7 @@ const createRouter = (isBillingEnabled?: boolean) =>
           <Route path={AppPath.ResetPassword} element={<PasswordReset />} />
           <Route path={AppPath.CreateWorkspace} element={<CreateWorkspace />} />
           <Route path={AppPath.CreateProfile} element={<CreateProfile />} />
+          <Route path={AppPath.SyncEmails} element={<SyncEmails />} />
           <Route path={AppPath.PlanRequired} element={<ChooseYourPlan />} />
           <Route
             path={AppPath.PlanRequiredSuccess}
