@@ -17,11 +17,7 @@ function isAllowedIP(ip: string): boolean {
 }
 
 function isAllowedHost(hostname: string): boolean {
-    if (ALLOWED_HOSTS.includes('*')) return true;
-    return ALLOWED_HOSTS.some(allowedHost => {
-        const regex = new RegExp(`^${allowedHost.replace('*', '.*')}$`);
-        return regex.test(hostname);
-    });
+    return ALLOWED_HOSTS.includes('*') || ALLOWED_HOSTS.includes(hostname);
 }
 
 function isAllowedUser(user: string): boolean {
