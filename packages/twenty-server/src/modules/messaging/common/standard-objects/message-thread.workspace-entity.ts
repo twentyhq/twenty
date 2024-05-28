@@ -16,7 +16,7 @@ import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/mes
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { MessageThreadMemberObjectMetadata } from 'src/modules/messaging/standard-objects/message-thread-members.object-metadata';
+import { MessageThreadMemberWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-thread-members.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageThread,
@@ -57,10 +57,10 @@ export class MessageThreadWorkspaceEntity extends BaseWorkspaceEntity {
     label: 'Message Threads',
     description: 'Message Threads',
     icon: 'IconMessage',
-    inverseSideTarget: () => MessageThreadMemberObjectMetadata,
+    inverseSideTarget: () => MessageThreadMemberWorkspaceEntity,
     onDelete: RelationOnDeleteAction.CASCADE,
   })
-  messageThreadMember: Relation<MessageThreadMemberObjectMetadata[]>;
+  messageThreadMember: Relation<MessageThreadMemberWorkspaceEntity[]>;
 
   @WorkspaceRelation({
     standardId:

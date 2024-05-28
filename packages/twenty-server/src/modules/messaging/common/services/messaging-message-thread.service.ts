@@ -24,7 +24,7 @@ export class MessagingMessageThreadService {
     private readonly messageRepository: MessageRepository,
     @InjectObjectMetadataRepository(MessageThreadWorkspaceEntity)
     private readonly messageThreadRepository: MessageThreadRepository,
-    @InjectObjectMetadataRepository(MessageThreadMemberObjectMetadata)
+    @InjectObjectMetadataRepository(MessageThreadMemberWorkspaceEntity)
     private readonly messageThreadMemberRepository: MessageThreadMemberRepository,
   ) {}
 
