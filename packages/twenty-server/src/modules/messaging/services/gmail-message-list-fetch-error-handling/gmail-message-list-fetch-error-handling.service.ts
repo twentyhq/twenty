@@ -28,30 +28,15 @@ export class GmailMessageListFetchErrorHandlingService {
   public async handleGmailError(
     error: GmailError | undefined,
     messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
-    connectedAccountId: string,
     workspaceId: string,
   ): Promise<void> {
     switch (error?.code) {
       case 404:
-        this.logger.log(
-          `404: Invalid lastSyncHistoryId for workspace ${workspaceId} and account ${connectedAccountId}, falling back to full sync.`,
-        );
-        await this.messageChannelRepository.resetSyncCursor(
-          messageChannel.id,
-          workspaceId,
-        );
-        await this.messageChannelRepository.updateSyncSubStatus(
-          messageChannel.id,
-          MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING,
-          workspaceId,
-        );
+        await this.handleNotFound(error, messageChannel, workspaceId);
         break;
 
       case 429:
-        this.logger.log(
-          `429: rate limit reached for workspace ${workspaceId} and account ${connectedAccountId}: ${error.message}, import will be retried later.`,
-        );
-        await this.handleRateLimitExceeded(messageChannel, workspaceId);
+        await this.handleRateLimitExceeded(error, messageChannel, workspaceId);
         break;
 
       case 403:
@@ -59,14 +44,11 @@ export class GmailMessageListFetchErrorHandlingService {
           error?.errors?.[0]?.reason === 'rateLimitExceeded' ||
           error?.errors?.[0]?.reason === 'userRateLimitExceeded'
         ) {
-          this.logger.log(
-            `403:${
-              error?.errors?.[0]?.reason === 'userRateLimitExceeded' && ' user'
-            } rate limit exceeded for workspace ${workspaceId} and account ${connectedAccountId}: ${
-              error.message
-            }, import will be retried later.`,
+          await this.handleRateLimitExceeded(
+            error,
+            messageChannel,
+            workspaceId,
           );
-          this.handleRateLimitExceeded(messageChannel, workspaceId);
         } else {
           await this.handleInsufficientPermissions(
             error,
@@ -77,7 +59,7 @@ export class GmailMessageListFetchErrorHandlingService {
         break;
 
       case 401:
-        this.handleInsufficientPermissions(error, messageChannel, workspaceId);
+        // refresh token
         break;
 
       default:
@@ -86,9 +68,14 @@ export class GmailMessageListFetchErrorHandlingService {
   }
 
   public async handleRateLimitExceeded(
+    error: GmailError,
     messageChannel: MessageChannelWorkspaceEntity,
     workspaceId: string,
   ): Promise<void> {
+    this.logger.log(
+      `${error.code}: ${error.message} for workspace ${workspaceId} and account ${messageChannel.connectedAccount.id}, import will be retried later.`,
+    );
+
     await this.messageChannelRepository.updateSyncSubStatus(
       messageChannel.id,
       MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
@@ -102,7 +89,7 @@ export class GmailMessageListFetchErrorHandlingService {
     workspaceId: string,
   ): Promise<void> {
     this.logger.error(
-      `{error?.code}: ${error.message} for workspace ${workspaceId} and account ${messageChannel.connectedAccount.id}`,
+      `${error?.code}: ${error.message} for workspace ${workspaceId} and account ${messageChannel.connectedAccount.id}`,
     );
     await this.messageChannelRepository.updateSyncStatus(
       messageChannel.id,
@@ -116,6 +103,25 @@ export class GmailMessageListFetchErrorHandlingService {
     );
     await this.connectedAccountRepository.updateAuthFailedAt(
       messageChannel.connectedAccount.id,
+      workspaceId,
+    );
+  }
+
+  public async handleNotFound(
+    error: GmailError,
+    messageChannel: MessageChannelWorkspaceEntity,
+    workspaceId: string,
+  ): Promise<void> {
+    this.logger.log(
+      `404: ${error.message} for workspace ${workspaceId} and account ${messageChannel.connectedAccount.id}.`,
+    );
+    await this.messageChannelRepository.resetSyncCursor(
+      messageChannel.id,
+      workspaceId,
+    );
+    await this.messageChannelRepository.updateSyncSubStatus(
+      messageChannel.id,
+      MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING,
       workspaceId,
     );
   }
