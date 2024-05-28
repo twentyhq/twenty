@@ -13,9 +13,9 @@ import {
 import { GmailError } from 'src/modules/messaging/types/gmail-error';
 
 @Injectable()
-export class GmailPartialMessageListFetchErrorHandlingService {
+export class GmailMessageListFetchErrorHandlingService {
   private readonly logger = new Logger(
-    GmailPartialMessageListFetchErrorHandlingService.name,
+    GmailMessageListFetchErrorHandlingService.name,
   );
 
   constructor(
