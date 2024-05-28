@@ -13,7 +13,7 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
   const navigate = useNavigate();
   const { connection, integration, databaseKey, tables } =
-    useDatabaseConnection();
+    useDatabaseConnection({ fetchPolicy: 'network-only' });
 
   const { deleteOneDatabaseConnection } = useDeleteOneDatabaseConnection();
 
