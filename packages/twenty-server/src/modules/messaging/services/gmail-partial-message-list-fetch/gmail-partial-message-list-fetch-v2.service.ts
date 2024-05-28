@@ -83,7 +83,6 @@ export class GmailPartialMessageListFetchV2Service {
         error,
         messageChannel,
         workspaceId,
-        connectedAccount.id,
       );
 
       return;

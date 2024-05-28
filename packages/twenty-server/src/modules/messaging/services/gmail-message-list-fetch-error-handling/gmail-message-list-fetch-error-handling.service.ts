@@ -12,6 +12,10 @@ import {
 } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { GmailError } from 'src/modules/messaging/types/gmail-error';
 
+type MessageChannel = ObjectRecord<MessageChannelWorkspaceEntity> & {
+  connectedAccountId: string;
+};
+
 @Injectable()
 export class GmailMessageListFetchErrorHandlingService {
   private readonly logger = new Logger(
@@ -27,9 +31,11 @@ export class GmailMessageListFetchErrorHandlingService {
 
   public async handleGmailError(
     error: GmailError | undefined,
-    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    messageChannel: MessageChannel,
     workspaceId: string,
   ): Promise<void> {
+    const reason = error?.errors?.[0]?.reason;
+
     switch (error?.code) {
       case 404:
         await this.handleNotFound(error, messageChannel, workspaceId);
@@ -41,8 +47,8 @@ export class GmailMessageListFetchErrorHandlingService {
 
       case 403:
         if (
-          error?.errors?.[0]?.reason === 'rateLimitExceeded' ||
-          error?.errors?.[0]?.reason === 'userRateLimitExceeded'
+          reason === 'rateLimitExceeded' ||
+          reason === 'userRateLimitExceeded'
         ) {
           await this.handleRateLimitExceeded(
             error,
@@ -69,11 +75,11 @@ export class GmailMessageListFetchErrorHandlingService {
 
   public async handleRateLimitExceeded(
     error: GmailError,
-    messageChannel: MessageChannelWorkspaceEntity,
+    messageChannel: MessageChannel,
     workspaceId: string,
   ): Promise<void> {
     this.logger.log(
-      `${error.code}: ${error.message} for workspace ${workspaceId} and account ${messageChannel.connectedAccount.id}, import will be retried later.`,
+      `${error.code}: ${error.message} for workspace ${workspaceId} and account ${messageChannel.connectedAccountId}, import will be retried later.`,
     );
 
     await this.messageChannelRepository.updateSyncSubStatus(
@@ -85,11 +91,11 @@ export class GmailMessageListFetchErrorHandlingService {
 
   public async handleInsufficientPermissions(
     error: GmailError,
-    messageChannel: MessageChannelWorkspaceEntity,
+    messageChannel: MessageChannel,
     workspaceId: string,
   ): Promise<void> {
     this.logger.error(
-      `${error?.code}: ${error.message} for workspace ${workspaceId} and account ${messageChannel.connectedAccount.id}`,
+      `${error?.code}: ${error.message} for workspace ${workspaceId} and account ${messageChannel.connectedAccountId}`,
     );
     await this.messageChannelRepository.updateSyncStatus(
       messageChannel.id,
@@ -102,23 +108,24 @@ export class GmailMessageListFetchErrorHandlingService {
       workspaceId,
     );
     await this.connectedAccountRepository.updateAuthFailedAt(
-      messageChannel.connectedAccount.id,
+      messageChannel.connectedAccountId,
       workspaceId,
     );
   }
 
   public async handleNotFound(
     error: GmailError,
-    messageChannel: MessageChannelWorkspaceEntity,
+    messageChannel: MessageChannel,
     workspaceId: string,
   ): Promise<void> {
     this.logger.log(
-      `404: ${error.message} for workspace ${workspaceId} and account ${messageChannel.connectedAccount.id}.`,
+      `404: ${error.message} for workspace ${workspaceId} and account ${messageChannel.connectedAccountId}.`,
     );
     await this.messageChannelRepository.resetSyncCursor(
       messageChannel.id,
       workspaceId,
     );
+    // remove nextPageToken from cache
     await this.messageChannelRepository.updateSyncSubStatus(
       messageChannel.id,
       MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING,
