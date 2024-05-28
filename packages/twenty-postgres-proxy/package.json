@@ -1,0 +1,16 @@
+{
+    "name": "twenty-postgres-proxy",
+    "version": "0.11.3",
+    "type": "module",
+    "main": "./src/index.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs"
+        }
+    },
+    "scripts": {
+        "start": "npx tsx src/main.ts"
+    }
+}

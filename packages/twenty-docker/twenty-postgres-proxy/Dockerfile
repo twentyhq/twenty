@@ -14,7 +14,6 @@ COPY ./packages/twenty-postgres-proxy/package.json /app/packages/twenty-postgres
 RUN yarn
 
 COPY ./packages/twenty-postgres-proxy /app/packages/twenty-postgres-proxy
-RUN npx nx build twenty-postgres-proxy
 
 FROM node:18.17.1-alpine as twenty-postgres-proxy
 
