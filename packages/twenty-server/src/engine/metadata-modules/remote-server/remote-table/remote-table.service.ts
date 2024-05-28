@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { plural } from 'pluralize';
 import isEmpty from 'lodash.isempty';
-import { NotFoundError } from 'rxjs';
 
 import {
   RemoteServerType,
@@ -505,41 +504,49 @@ export class RemoteTableService {
       });
 
     if (!objectMetadata) {
-      throw new NotFoundError(
+      throw new NotFoundException(
         `Cannot find associated object for table ${foreignTableName}`,
       );
     }
     for (const columnUpdate of columnsUpdates) {
-      if (columnUpdate.action === WorkspaceMigrationColumnActionType.CREATE) {
-        await createFieldMetadataForForeignTableColumn(
-          this.fieldMetadataService,
-          workspaceId,
-          columnUpdate.columnName,
-          columnUpdate.columnType,
-          objectMetadata.id,
-        );
-      }
-      if (columnUpdate.action === WorkspaceMigrationColumnActionType.DROP) {
-        const columnName = columnUpdate.columnName;
-
-        const fieldMetadataToDelete =
-          await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
-            where: {
-              objectMetadataId: objectMetadata.id,
-              name: columnName,
-            },
-          });
-
-        if (!fieldMetadataToDelete) {
-          throw new NotFoundError(
-            `Cannot find associated field metadata for column ${columnName}`,
-          );
-        }
-
-        await this.fieldMetadataService.deleteOne(fieldMetadataToDelete.id);
-      }
+      this.handleColumnUpdate(columnUpdate, workspaceId, objectMetadata.id);
     }
 
     return updatedForeignTable;
+  }
+
+  private async handleColumnUpdate(
+    columnUpdate: WorkspaceMigrationColumnAction,
+    workspaceId: string,
+    objectMetadataId: string,
+  ) {
+    if (columnUpdate.action === WorkspaceMigrationColumnActionType.CREATE) {
+      await createFieldMetadataForForeignTableColumn(
+        this.fieldMetadataService,
+        workspaceId,
+        columnUpdate.columnName,
+        columnUpdate.columnType,
+        objectMetadataId,
+      );
+    }
+    if (columnUpdate.action === WorkspaceMigrationColumnActionType.DROP) {
+      const columnName = columnUpdate.columnName;
+
+      const fieldMetadataToDelete =
+        await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
+          where: {
+            objectMetadataId: objectMetadataId,
+            name: columnName,
+          },
+        });
+
+      if (!fieldMetadataToDelete) {
+        throw new NotFoundException(
+          `Cannot find associated field metadata for column ${columnName}`,
+        );
+      }
+
+      await this.fieldMetadataService.deleteOne(fieldMetadataToDelete.id);
+    }
   }
 }
