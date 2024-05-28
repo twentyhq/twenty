@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import {
@@ -9,10 +8,6 @@ import {
 } from 'src/engine/metadata-modules/remote-server/remote-server.entity';
 import { RemoteTableStatus } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
 import { getForeignTableColumnName } from 'src/engine/metadata-modules/remote-server/remote-table/foreign-table/utils/get-foreign-table-column-name.util';
-import {
-  mapUdtNameToFieldType,
-  mapUdtNameToFieldSettings,
-} from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
 import { PostgresTableSchemaColumn } from 'src/engine/metadata-modules/remote-server/types/postgres-table-schema-column';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { generateMigrationName } from 'src/engine/metadata-modules/workspace-migration/utils/generate-migration-name.util';
@@ -22,12 +17,10 @@ import {
   WorkspaceMigrationForeignColumnDefinition,
   WorkspaceMigrationForeignTable,
   WorkspaceMigrationColumnAction,
-  WorkspaceMigrationColumnActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
 import { WorkspaceMigrationService } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.service';
-import { camelToTitleCase } from 'src/utils/camel-to-title-case';
 
 @Injectable()
 export class ForeignTableService {
@@ -107,69 +100,7 @@ export class ForeignTableService {
     }
   }
 
-  public async updateForeignTableAndFieldsMetadata(
-    foreignTableName: string,
-    workspaceId: string,
-    columnsUpdates: WorkspaceMigrationColumnAction[],
-  ) {
-    const updatedForeignTable = await this.updateForeignTable(
-      foreignTableName,
-      workspaceId,
-      columnsUpdates,
-    );
-
-    const objectMetadata =
-      await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
-        where: { nameSingular: foreignTableName },
-      });
-
-    if (!objectMetadata) {
-      throw new Error(
-        `Cannot find associated object for table ${foreignTableName}`,
-      );
-    }
-    for (const columnUpdate of columnsUpdates) {
-      if (columnUpdate.action === WorkspaceMigrationColumnActionType.CREATE) {
-        const columnName = columnUpdate.columnName;
-
-        await this.fieldMetadataService.createOne({
-          name: columnName,
-          label: camelToTitleCase(columnName),
-          description: 'Field of remote',
-          type: mapUdtNameToFieldType(columnUpdate.columnType),
-          workspaceId: workspaceId,
-          objectMetadataId: objectMetadata.id,
-          isRemoteCreation: true,
-          isNullable: true,
-          icon: 'IconPlug',
-          settings: mapUdtNameToFieldSettings(columnUpdate.columnType),
-        } satisfies CreateFieldInput);
-      }
-      if (columnUpdate.action === WorkspaceMigrationColumnActionType.DROP) {
-        const columnName = columnUpdate.columnName;
-
-        const fieldMetadataToDelete =
-          await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
-            where: {
-              objectMetadataId: objectMetadata.id,
-              name: columnName,
-            },
-          });
-
-        if (!fieldMetadataToDelete) {
-          throw new Error(
-            `Cannot find associated field metadata for column ${columnName}`,
-          );
-        }
-
-        await this.fieldMetadataService.deleteOne(fieldMetadataToDelete.id);
-      }
-    }
-
-    return updatedForeignTable;
-  }
-
-  private async updateForeignTable(
+  public async updateForeignTable(
     foreignTableName: string,
     workspaceId: string,
     columnsUpdates: WorkspaceMigrationColumnAction[],

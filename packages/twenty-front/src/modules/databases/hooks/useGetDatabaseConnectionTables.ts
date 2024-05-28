@@ -11,7 +11,7 @@ type UseGetDatabaseConnectionTablesParams = {
   connectionId: string;
   skip?: boolean;
   shouldFetchPendingSchemaUpdates?: boolean;
-  fetchPolicy?: WatchQueryFetchPolicy | undefined;
+  fetchPolicy?: WatchQueryFetchPolicy;
 };
 
 export const useGetDatabaseConnectionTables = ({

@@ -11,7 +11,7 @@ import { AppPath } from '@/types/AppPath';
 export const useDatabaseConnection = ({
   fetchPolicy,
 }: {
-  fetchPolicy?: WatchQueryFetchPolicy | undefined;
+  fetchPolicy?: WatchQueryFetchPolicy;
 }) => {
   const { databaseKey = '', connectionId = '' } = useParams();
   const navigate = useNavigate();
