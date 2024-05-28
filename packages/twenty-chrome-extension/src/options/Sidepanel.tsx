@@ -58,8 +58,7 @@ const Sidepanel = () => {
       store.isAuthenticated === true &&
       isDefined(store.accessToken) &&
       isDefined(store.refreshToken) &&
-      new Date(store.accessToken.expiresAt).getTime() >= Date.now() &&
-      new Date(store.refreshToken.expiresAt).getTime() >= Date.now()
+      new Date(store.accessToken.expiresAt).getTime() >= Date.now()
     ) {
       setIsAuthenticated(true);
       if (isDefined(store.sidepanelUrl)) {
@@ -73,6 +72,9 @@ const Sidepanel = () => {
       }
     } else {
       chrome.storage.local.set({ isAuthenticated: false });
+      if (isDefined(store.clientUrl)) {
+        setClientUrl(store.clientUrl);
+      }
     }
   }, [setClientUrl]);
 
