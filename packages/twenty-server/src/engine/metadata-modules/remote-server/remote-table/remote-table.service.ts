@@ -13,7 +13,10 @@ import {
   DistantTableUpdate,
   RemoteTableStatus,
 } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
-import { mapUdtNameToFieldSettings } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
+import {
+  mapUdtNameToFieldSettings,
+  mapUdtNameToFieldType,
+} from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
 import { RemoteTableInput } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table-input';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
@@ -31,11 +34,12 @@ import { fetchTableColumns } from 'src/engine/metadata-modules/remote-server/rem
 import { ForeignTableService } from 'src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.service';
 import { RemoteTableSchemaUpdateService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-schema-update/remote-table-schema-update.service';
 import { sortDistantTables } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/utils/sort-distant-tables.util';
-import { createFieldMetadataForForeignTableColumn } from 'src/engine/metadata-modules/remote-server/remote-table/utils/create-field-metadata-for-foreign-table-column.util';
 import {
   WorkspaceMigrationColumnAction,
   WorkspaceMigrationColumnActionType,
 } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 export class RemoteTableService {
   private readonly logger = new Logger(RemoteTableService.name);
@@ -437,8 +441,7 @@ export class RemoteTableService {
 
       // TODO: return error to the user when a column cannot be managed
       try {
-        const field = await createFieldMetadataForForeignTableColumn(
-          this.fieldMetadataService,
+        const field = await this.createFieldMetadataForForeignTableColumn(
           workspaceId,
           columnName,
           column.udtName,
@@ -509,20 +512,23 @@ export class RemoteTableService {
       );
     }
     for (const columnUpdate of columnsUpdates) {
-      this.handleColumnUpdate(columnUpdate, workspaceId, objectMetadata.id);
+      this.updateFieldMetadataFromColumnUpdate(
+        columnUpdate,
+        workspaceId,
+        objectMetadata.id,
+      );
     }
 
     return updatedForeignTable;
   }
 
-  private async handleColumnUpdate(
+  private async updateFieldMetadataFromColumnUpdate(
     columnUpdate: WorkspaceMigrationColumnAction,
     workspaceId: string,
     objectMetadataId: string,
   ) {
     if (columnUpdate.action === WorkspaceMigrationColumnActionType.CREATE) {
-      await createFieldMetadataForForeignTableColumn(
-        this.fieldMetadataService,
+      await this.createFieldMetadataForForeignTableColumn(
         workspaceId,
         columnUpdate.columnName,
         columnUpdate.columnType,
@@ -548,5 +554,25 @@ export class RemoteTableService {
 
       await this.fieldMetadataService.deleteOne(fieldMetadataToDelete.id);
     }
+  }
+
+  private async createFieldMetadataForForeignTableColumn(
+    workspaceId: string,
+    columnName: string,
+    columnType: string,
+    objectMetadataId: string,
+  ): Promise<FieldMetadataEntity<'default'>> {
+    return this.fieldMetadataService.createOne({
+      name: columnName,
+      label: camelToTitleCase(columnName),
+      description: 'Field of remote',
+      type: mapUdtNameToFieldType(columnType),
+      workspaceId: workspaceId,
+      objectMetadataId: objectMetadataId,
+      isRemoteCreation: true,
+      isNullable: true,
+      icon: 'IconPlug',
+      settings: mapUdtNameToFieldSettings(columnType),
+    } satisfies CreateFieldInput);
   }
 }

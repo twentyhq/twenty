@@ -1,7 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 
-import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import {
   RemoteServerEntity,
   RemoteServerType,
@@ -29,8 +27,6 @@ export class ForeignTableService {
     private readonly workspaceMigrationRunnerService: WorkspaceMigrationRunnerService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
-    private readonly objectMetadataService: ObjectMetadataService,
-    private readonly fieldMetadataService: FieldMetadataService,
   ) {}
 
   public async fetchForeignTableNamesWithinWorkspace(
