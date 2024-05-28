@@ -1,55 +1,50 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
-import { tokenPairState } from '@/auth/states/tokenPairState';
 import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionIdState';
+import { isLoadingTokensFromExtensionState } from '@/window-event/states/isLoadingTokensFromExtensionState';
+import { isDefined } from '~/utils/isDefined';
+import { isInFrame } from '~/utils/isInIframe';
 
-const isInFrame = () => {
-  try {
-    return window.self !== window.top;
-  } catch (e) {
-    return true;
-  }
+const StyledContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  justify-content: center;
+`;
+
+const AppInaccessible = ({ message }: { message: string }) => {
+  return (
+    <StyledContainer>
+      <img
+        src="/images/integrations/twenty-logo.svg"
+        alt="twenty-icon"
+        height={40}
+        width={40}
+      />
+      <h3>{message}</h3>
+    </StyledContainer>
+  );
 };
 
 export const WindowEventProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
-  const navigate = useNavigate();
-  const setTokenPair = useSetRecoilState(tokenPairState);
+  const isLoadingTokensFromExtension = useRecoilValue(
+    isLoadingTokensFromExtensionState,
+  );
   const chromeExtensionId = useRecoilValue(chromeExtensionIdState);
-  const [isLoadingTokens, setIsLoadingTokens] = useState(true);
 
-  useEffect(() => {
-    if (isInFrame()) {
-      window.parent.postMessage(
-        'loaded',
-        `chrome-extension://${chromeExtensionId}`,
-      );
+  if (!isInFrame()) return <>{children}</>;
 
-      const handleWindowEvents = (event: MessageEvent<any>) => {
-        if (event.origin === `chrome-extension://${chromeExtensionId}`) {
-          switch (event.data.type) {
-            case 'tokens': {
-              setTokenPair(event.data.value);
-              setIsLoadingTokens(false);
-              break;
-            }
-            case 'navigate':
-              navigate(event.data.value);
-              break;
-            default:
-              break;
-          }
-        }
-      };
-      window.addEventListener('message', handleWindowEvents);
-      return () => {
-        window.removeEventListener('message', handleWindowEvents);
-      };
-    }
-  }, [chromeExtensionId, setIsLoadingTokens, setTokenPair, navigate]);
+  if (!isDefined(chromeExtensionId))
+    return <AppInaccessible message={`Twenty is not accessible inside an iframe.`} />;
 
-  return isInFrame() ? !isLoadingTokens && <>{children}</> : <>{children}</>;
+  if(isDefined(isLoadingTokensFromExtension) && !isLoadingTokensFromExtension)
+    return <AppInaccessible message={`Unauthorized access from iframe origin. If you're trying to access from chrome extension,
+      please check your chrome extension ID on your server.
+    `} />;
+
+  return isLoadingTokensFromExtension && <>{children}</>;
 };
