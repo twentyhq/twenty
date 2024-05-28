@@ -39,12 +39,18 @@ export const WindowEventProvider: React.FC<React.PropsWithChildren> = ({
   if (!isInFrame()) return <>{children}</>;
 
   if (!isDefined(chromeExtensionId))
-    return <AppInaccessible message={`Twenty is not accessible inside an iframe.`} />;
+    return (
+      <AppInaccessible message={`Twenty is not accessible inside an iframe.`} />
+    );
 
-  if(isDefined(isLoadingTokensFromExtension) && !isLoadingTokensFromExtension)
-    return <AppInaccessible message={`Unauthorized access from iframe origin. If you're trying to access from chrome extension,
+  if (isDefined(isLoadingTokensFromExtension) && !isLoadingTokensFromExtension)
+    return (
+      <AppInaccessible
+        message={`Unauthorized access from iframe origin. If you're trying to access from chrome extension,
       please check your chrome extension ID on your server.
-    `} />;
+    `}
+      />
+    );
 
   return isLoadingTokensFromExtension && <>{children}</>;
 };

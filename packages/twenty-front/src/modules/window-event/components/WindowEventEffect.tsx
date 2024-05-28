@@ -5,8 +5,8 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionIdState';
 import { isLoadingTokensFromExtensionState } from '@/window-event/states/isLoadingTokensFromExtensionState';
-import { isInFrame } from '~/utils/isInIframe';
 import { isDefined } from '~/utils/isDefined';
+import { isInFrame } from '~/utils/isInIframe';
 
 export const WindowEventEffect = () => {
   const navigate = useNavigate();
