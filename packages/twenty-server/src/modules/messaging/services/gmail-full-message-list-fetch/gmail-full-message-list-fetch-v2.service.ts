@@ -1,16 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import { gmail_v1 } from 'googleapis';
 
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
-import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { GMAIL_USERS_MESSAGES_LIST_MAX_RESULT } from 'src/modules/messaging/constants/gmail-users-messages-list-max-result.constant';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
@@ -29,10 +25,6 @@ export class GmailFullMessageListFetchV2Service {
     private readonly gmailClientProvider: GmailClientProvider,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
-    @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
-    private readonly blocklistRepository: BlocklistRepository,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
     private readonly cacheStorage: CacheStorageService,
     @InjectObjectMetadataRepository(
