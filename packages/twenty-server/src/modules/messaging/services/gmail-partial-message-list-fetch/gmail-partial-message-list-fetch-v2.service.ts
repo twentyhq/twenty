@@ -81,6 +81,7 @@ export class GmailPartialMessageListFetchV2Service {
     if (error) {
       await this.gmailMessageListFetchErrorHandlingService.handleGmailError(
         error,
+        'partial',
         messageChannel,
         workspaceId,
       );

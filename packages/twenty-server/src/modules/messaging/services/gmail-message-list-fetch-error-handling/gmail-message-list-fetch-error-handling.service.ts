@@ -31,6 +31,7 @@ export class GmailMessageListFetchErrorHandlingService {
 
   public async handleGmailError(
     error: GmailError | undefined,
+    syncType: 'full' | 'partial',
     messageChannel: MessageChannel,
     workspaceId: string,
   ): Promise<void> {
@@ -42,7 +43,12 @@ export class GmailMessageListFetchErrorHandlingService {
         break;
 
       case 429:
-        await this.handleRateLimitExceeded(error, messageChannel, workspaceId);
+        await this.handleRateLimitExceeded(
+          error,
+          syncType,
+          messageChannel,
+          workspaceId,
+        );
         break;
 
       case 403:
@@ -52,12 +58,14 @@ export class GmailMessageListFetchErrorHandlingService {
         ) {
           await this.handleRateLimitExceeded(
             error,
+            syncType,
             messageChannel,
             workspaceId,
           );
         } else {
           await this.handleInsufficientPermissions(
             error,
+            syncType,
             messageChannel,
             workspaceId,
           );
@@ -75,6 +83,7 @@ export class GmailMessageListFetchErrorHandlingService {
 
   public async handleRateLimitExceeded(
     error: GmailError,
+    syncType: 'full' | 'partial',
     messageChannel: MessageChannel,
     workspaceId: string,
   ): Promise<void> {
@@ -84,13 +93,16 @@ export class GmailMessageListFetchErrorHandlingService {
 
     await this.messageChannelRepository.updateSyncSubStatus(
       messageChannel.id,
-      MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
+      syncType === 'full'
+        ? MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING
+        : MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
       workspaceId,
     );
   }
 
   public async handleInsufficientPermissions(
     error: GmailError,
+    syncType: 'full' | 'partial',
     messageChannel: MessageChannel,
     workspaceId: string,
   ): Promise<void> {
@@ -104,7 +116,9 @@ export class GmailMessageListFetchErrorHandlingService {
     );
     await this.messageChannelRepository.updateSyncSubStatus(
       messageChannel.id,
-      MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
+      syncType === 'full'
+        ? MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING
+        : MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
       workspaceId,
     );
     await this.connectedAccountRepository.updateAuthFailedAt(
