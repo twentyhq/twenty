@@ -6,7 +6,6 @@ import { useDeleteOneDatabaseConnection } from '@/databases/hooks/useDeleteOneDa
 import { SettingsIntegrationDatabaseConnectionSummaryCard } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionSummaryCard';
 import { SettingsIntegrationDatabaseTablesListCard } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseTablesListCard';
 import { useDatabaseConnection } from '@/settings/integrations/database-connection/hooks/useDatabaseConnection';
-import { getConnectionDbName } from '@/settings/integrations/utils/getConnectionDbName';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
@@ -36,8 +35,6 @@ export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
     SettingsPath.Integrations,
   );
 
-  const connectionName = getConnectionDbName({ integration, connection });
-
   return (
     <>
       <Breadcrumb
@@ -50,7 +47,7 @@ export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
             children: integration.text,
             href: `${settingsIntegrationsPagePath}/${databaseKey}`,
           },
-          { children: connectionName },
+          { children: connection.label },
         ]}
       />
       <Section>
@@ -58,7 +55,7 @@ export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
         <SettingsIntegrationDatabaseConnectionSummaryCard
           databaseLogoUrl={integration.from.image}
           connectionId={connection.id}
-          connectionName={connectionName}
+          connectionLabel={connection.label}
           onRemove={deleteConnection}
           onEdit={onEdit}
         />

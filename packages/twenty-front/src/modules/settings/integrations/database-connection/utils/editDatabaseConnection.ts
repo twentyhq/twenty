@@ -37,11 +37,13 @@ export const getFormDefaultValuesFromConnection = ({
         port: connection.foreignDataWrapperOptions.port,
         user: connection.userMappingOptions?.user || undefined,
         schema: connection.schema || undefined,
+        label: connection.label,
         password: '',
       };
     case 'stripe':
       return {
         api_key: connection.foreignDataWrapperOptions.api_key,
+        label: connection.label,
       };
     default:
       throw new Error(
@@ -76,6 +78,7 @@ export const formatValuesForUpdate = ({
           identity,
         ),
         schema: formValues.schema,
+        label: formValues.label,
       };
 
       return pickBy(formattedValues, (obj) => !isEmpty(obj));
@@ -85,6 +88,7 @@ export const formatValuesForUpdate = ({
         foreignDataWrapperOptions: {
           api_key: formValues.api_key,
         },
+        label: formValues.label,
       };
     default:
       throw new Error(`Cannot format values for database key: ${databaseKey}`);
