@@ -37,6 +37,7 @@ export enum MessageChannelSyncSubStatus {
   MESSAGES_LIST_FETCH_ONGOING = 'MESSAGES_LIST_FETCH_ONGOING',
   MESSAGES_IMPORT_PENDING = 'MESSAGES_IMPORT_PENDING',
   MESSAGES_IMPORT_ONGOING = 'MESSAGES_IMPORT_ONGOING',
+  FAILED = 'FAILED',
 }
 
 export enum MessageChannelVisibility {
@@ -261,6 +262,12 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
         label: 'Messages import ongoing',
         position: 4,
         color: 'orange',
+      },
+      {
+        value: MessageChannelSyncSubStatus.FAILED,
+        label: 'Failed',
+        position: 5,
+        color: 'red',
       },
     ],
     defaultValue: `'${MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING}'`,

@@ -1,8 +1,7 @@
 import styled from '@emotion/styled';
+import { ThemeColor, themeColorSchema } from 'twenty-ui';
 
 import { Loader } from '@/ui/feedback/loader/components/Loader';
-import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
-import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 
 const StyledStatus = styled.h3<{
   color: ThemeColor;

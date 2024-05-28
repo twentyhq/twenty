@@ -1,3 +1,5 @@
+import { isString } from '@sniptt/guards';
+
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { isFieldAddress } from '@/object-record/record-field/types/guards/isFieldAddress';
@@ -26,8 +28,11 @@ import { isFieldSelectValue } from '@/object-record/record-field/types/guards/is
 import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { isFieldUuid } from '@/object-record/record-field/types/guards/isFieldUuid';
 import { isDefined } from '~/utils/isDefined';
+import { stripSimpleQuotesFromString } from '~/utils/string/stripSimpleQuotesFromString';
 
-const isValueEmpty = (value: unknown) => !isDefined(value) || value === '';
+const isValueEmpty = (value: unknown) =>
+  !isDefined(value) ||
+  (isString(value) && stripSimpleQuotesFromString(value) === '');
 
 export const isFieldValueEmpty = ({
   fieldDefinition,
@@ -78,7 +83,8 @@ export const isFieldValueEmpty = ({
   if (isFieldFullName(fieldDefinition)) {
     return (
       !isFieldFullNameValue(fieldValue) ||
-      isValueEmpty(fieldValue?.firstName + fieldValue?.lastName)
+      (isValueEmpty(fieldValue?.firstName) &&
+        isValueEmpty(fieldValue?.lastName))
     );
   }
 

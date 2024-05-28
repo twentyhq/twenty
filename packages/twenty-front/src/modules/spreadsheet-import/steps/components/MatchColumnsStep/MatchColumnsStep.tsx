@@ -12,6 +12,7 @@ import { setColumn } from '@/spreadsheet-import/utils/setColumn';
 import { setIgnoreColumn } from '@/spreadsheet-import/utils/setIgnoreColumn';
 import { setSubColumn } from '@/spreadsheet-import/utils/setSubColumn';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
@@ -170,7 +171,7 @@ export const MatchColumnsStep = <T extends string>({
             } else if (index === existingFieldIndex) {
               enqueueSnackBar('Columns cannot duplicate', {
                 title: 'Another column unselected',
-                variant: 'error',
+                variant: SnackBarVariant.Error,
               });
               return setColumn(column);
             } else {

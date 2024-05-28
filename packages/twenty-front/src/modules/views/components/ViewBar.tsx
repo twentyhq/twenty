@@ -4,12 +4,14 @@ import { useParams } from 'react-router-dom';
 import { ObjectFilterDropdownButton } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownButton';
 import { FiltersHotkeyScope } from '@/object-record/object-filter-dropdown/types/FiltersHotkeyScope';
 import { ObjectSortDropdownButton } from '@/object-record/object-sort-dropdown/components/ObjectSortDropdownButton';
+import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { TopBar } from '@/ui/layout/top-bar/TopBar';
 import { QueryParamsFiltersEffect } from '@/views/components/QueryParamsFiltersEffect';
 import { QueryParamsViewIdEffect } from '@/views/components/QueryParamsViewIdEffect';
 import { ViewBarEffect } from '@/views/components/ViewBarEffect';
 import { ViewBarFilterEffect } from '@/views/components/ViewBarFilterEffect';
 import { ViewBarPageTitle } from '@/views/components/ViewBarPageTitle';
+import { ViewBarSkeletonLoader } from '@/views/components/ViewBarSkeletonLoader';
 import { ViewBarSortEffect } from '@/views/components/ViewBarSortEffect';
 import { ViewScope } from '@/views/scopes/ViewScope';
 import { GraphQLView } from '@/views/types/GraphQLView';
@@ -38,6 +40,8 @@ export const ViewBar = ({
   const filterDropdownId = 'view-filter';
   const sortDropdownId = 'view-sort';
 
+  const loading = useIsPrefetchLoading();
+
   if (!objectNamePlural) {
     return;
   }
@@ -57,9 +61,7 @@ export const ViewBar = ({
       <TopBar
         className={className}
         leftComponent={
-          <>
-            <ViewPickerDropdown />
-          </>
+          loading ? <ViewBarSkeletonLoader /> : <ViewPickerDropdown />
         }
         displayBottomBorder={false}
         rightComponent={

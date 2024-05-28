@@ -53,7 +53,7 @@ type ShowPageRightContainerProps = {
   tasks?: boolean;
   notes?: boolean;
   emails?: boolean;
-  loading?: boolean;
+  loading: boolean;
 };
 
 export const ShowPageRightContainer = ({

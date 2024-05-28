@@ -1,184 +1,199 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { ComponentPropsWithoutRef, ReactNode, useMemo } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconAlertTriangle, IconX } from 'twenty-ui';
-
+import { isUndefined } from '@sniptt/guards';
 import {
-  ProgressBar,
-  ProgressBarControls,
-} from '@/ui/feedback/progress-bar/components/ProgressBar';
-import { RGBA } from '@/ui/theme/constants/Rgba';
+  IconAlertTriangle,
+  IconInfoCircle,
+  IconSquareRoundedCheck,
+  IconX,
+  MOBILE_VIEWPORT,
+} from 'twenty-ui';
+
+import { ProgressBar } from '@/ui/feedback/progress-bar/components/ProgressBar';
+import { useProgressAnimation } from '@/ui/feedback/progress-bar/hooks/useProgressAnimation';
+import { LightButton } from '@/ui/input/button/components/LightButton';
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { isDefined } from '~/utils/isDefined';
 
-import { usePausableTimeout } from '../hooks/usePausableTimeout';
+export enum SnackBarVariant {
+  Default = 'default',
+  Error = 'error',
+  Success = 'success',
+  Info = 'info',
+  Warning = 'warning',
+}
 
-const StyledMotionContainer = styled.div<Pick<SnackBarProps, 'variant'>>`
-  align-items: center;
-  background-color: ${({ theme, variant }) => {
-    switch (variant) {
-      case 'error':
-        return theme.snackBar.error.background;
-      case 'success':
-        return theme.snackBar.success.background;
-      case 'info':
-      default:
-        return theme.color.gray80;
-    }
-  }};
-  border-radius: ${({ theme }) => theme.border.radius.sm};
+export type SnackBarProps = Pick<
+  ComponentPropsWithoutRef<'div'>,
+  'id' | 'title'
+> & {
+  className?: string;
+  progress?: number;
+  duration?: number;
+  icon?: ReactNode;
+  message?: string;
+  onCancel?: () => void;
+  onClose?: () => void;
+  role?: 'alert' | 'status';
+  variant?: SnackBarVariant;
+};
+
+const StyledContainer = styled.div`
+  backdrop-filter: ${({ theme }) => theme.blur.medium};
+  background-color: ${({ theme }) => theme.background.transparent.primary};
+  border-radius: ${({ theme }) => theme.border.radius.md};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
-  color: ${({ theme, variant }) => {
-    switch (variant) {
-      case 'error':
-        return theme.snackBar.error.color;
-      case 'success':
-        return theme.snackBar.success.color;
-      case 'info':
-      default:
-        return theme.grayScale.gray0;
-    }
-  }};
+  box-sizing: border-box;
   cursor: pointer;
-  display: flex;
-  height: 40px;
-  overflow: hidden;
+  height: 61px;
   padding: ${({ theme }) => theme.spacing(2)};
-  pointer-events: auto;
   position: relative;
+  width: 296px;
+  margin-top: ${({ theme }) => theme.spacing(2)};
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    border-radius: 0;
+    width: 100%;
+  }
 `;
 
-const StyledIconContainer = styled.div`
-  display: flex;
-  margin-right: ${({ theme }) => theme.spacing(2)};
-`;
-
-const StyledProgressBarContainer = styled.div`
-  height: 5px;
+const StyledProgressBar = styled(ProgressBar)`
+  bottom: 0;
+  height: auto;
   left: 0;
   position: absolute;
   right: 0;
   top: 0;
+  pointer-events: none;
 `;
 
-const StyledCloseButton = styled.button<Pick<SnackBarProps, 'variant'>>`
+const StyledHeader = styled.div`
   align-items: center;
-  background-color: transparent;
-  border: none;
-  border-radius: 12px;
-  color: ${({ theme, variant }) => {
-    switch (variant) {
-      case 'error':
-        return theme.color.red20;
-      case 'success':
-        return theme.color.turquoise20;
-      case 'info':
-      default:
-        return theme.grayScale.gray0;
-    }
-  }};
-  cursor: pointer;
+  color: ${({ theme }) => theme.font.color.primary};
   display: flex;
-  height: 24px;
-  justify-content: center;
-  margin-left: ${({ theme }) => theme.spacing(6)};
-  padding-left: ${({ theme }) => theme.spacing(1)};
-  padding-right: ${({ theme }) => theme.spacing(1)};
-  width: 24px;
-
-  &:hover {
-    background-color: ${({ theme }) => RGBA(theme.grayScale.gray0, 0.1)};
-  }
+  font-weight: ${({ theme }) => theme.font.weight.medium};
+  gap: ${({ theme }) => theme.spacing(2)};
+  height: ${({ theme }) => theme.spacing(6)};
+  margin-bottom: ${({ theme }) => theme.spacing(1)};
 `;
 
-export type SnackbarVariant = 'info' | 'error' | 'success';
+const StyledActions = styled.div`
+  align-items: center;
+  display: flex;
+  margin-left: auto;
+`;
 
-export interface SnackBarProps extends React.ComponentPropsWithoutRef<'div'> {
-  role?: 'alert' | 'status';
-  icon?: React.ReactNode;
-  message?: string;
-  allowDismiss?: boolean;
-  duration?: number;
-  variant?: SnackbarVariant;
-  children?: React.ReactNode;
-  className?: string;
-  onClose?: () => void;
-}
+const StyledDescription = styled.div`
+  color: ${({ theme }) => theme.font.color.tertiary};
+  font-size: ${({ theme }) => theme.font.size.sm};
+  padding-left: ${({ theme }) => theme.spacing(6)};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 200px;
+`;
+
+const defaultTitleByVariant: Record<SnackBarVariant, string> = {
+  [SnackBarVariant.Default]: 'Alert',
+  [SnackBarVariant.Error]: 'Error',
+  [SnackBarVariant.Info]: 'Info',
+  [SnackBarVariant.Success]: 'Success',
+  [SnackBarVariant.Warning]: 'Warning',
+};
 
 export const SnackBar = ({
-  role = 'status',
-  icon: iconComponent,
-  message,
-  allowDismiss = true,
-  duration = 6000,
-  variant = 'info',
-  children,
-  onClose,
-  id,
-  title,
   className,
+  progress: overrideProgressValue,
+  duration = 6000,
+  icon: iconComponent,
+  id,
+  message,
+  onCancel,
+  onClose,
+  role = 'status',
+  variant = SnackBarVariant.Default,
+  title = defaultTitleByVariant[variant],
 }: SnackBarProps) => {
   const theme = useTheme();
-
-  // eslint-disable-next-line @nx/workspace-no-state-useref
-  const progressBarRef = useRef<ProgressBarControls | null>(null);
-
-  const closeSnackbar = useCallback(() => {
-    onClose && onClose();
-  }, [onClose]);
-
-  const { pauseTimeout, resumeTimeout } = usePausableTimeout(
-    closeSnackbar,
-    duration,
-  );
+  const { animation: progressAnimation, value: progressValue } =
+    useProgressAnimation({
+      autoPlay: isUndefined(overrideProgressValue),
+      initialValue: isDefined(overrideProgressValue)
+        ? overrideProgressValue
+        : 100,
+      finalValue: 0,
+      options: { duration, onComplete: onClose },
+    });
 
   const icon = useMemo(() => {
     if (isDefined(iconComponent)) {
       return iconComponent;
     }
 
-    switch (variant) {
-      case 'error':
-        return (
-          <IconAlertTriangle aria-label="Error" size={theme.icon.size.md} />
-        );
-      case 'success':
-      case 'info':
-      default:
-        return null;
-    }
-  }, [iconComponent, theme.icon.size.md, variant]);
+    const ariaLabel = defaultTitleByVariant[variant];
+    const color = theme.snackBar[variant].color;
+    const size = theme.icon.size.md;
 
-  const onMouseEnter = () => {
-    progressBarRef.current?.pause();
-    pauseTimeout();
+    switch (variant) {
+      case SnackBarVariant.Error:
+        return (
+          <IconAlertTriangle {...{ 'aria-label': ariaLabel, color, size }} />
+        );
+      case SnackBarVariant.Info:
+        return <IconInfoCircle {...{ 'aria-label': ariaLabel, color, size }} />;
+      case SnackBarVariant.Success:
+        return (
+          <IconSquareRoundedCheck
+            {...{ 'aria-label': ariaLabel, color, size }}
+          />
+        );
+      case SnackBarVariant.Warning:
+        return (
+          <IconAlertTriangle {...{ 'aria-label': ariaLabel, color, size }} />
+        );
+      default:
+        return (
+          <IconAlertTriangle {...{ 'aria-label': ariaLabel, color, size }} />
+        );
+    }
+  }, [iconComponent, theme.icon.size.md, theme.snackBar, variant]);
+
+  const handleMouseEnter = () => {
+    if (progressAnimation?.state === 'running') {
+      progressAnimation.pause();
+    }
   };
 
-  const onMouseLeave = () => {
-    progressBarRef.current?.start();
-    resumeTimeout();
+  const handleMouseLeave = () => {
+    if (progressAnimation?.state === 'paused') {
+      progressAnimation.play();
+    }
   };
 
   return (
-    <StyledMotionContainer
-      className={className}
+    <StyledContainer
       aria-live={role === 'alert' ? 'assertive' : 'polite'}
-      {...{ id, onMouseEnter, onMouseLeave, role, title, variant }}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      title={message || title || defaultTitleByVariant[variant]}
+      {...{ className, id, role, variant }}
     >
-      <StyledProgressBarContainer>
-        <ProgressBar
-          ref={progressBarRef}
-          barHeight={5}
-          barColor={RGBA(theme.grayScale.gray0, 0.3)}
-          duration={duration}
-        />
-      </StyledProgressBarContainer>
-      {icon && <StyledIconContainer>{icon}</StyledIconContainer>}
-      {children ? children : message}
-      {allowDismiss && (
-        <StyledCloseButton variant={variant} onClick={closeSnackbar}>
-          <IconX aria-label="Close" size={theme.icon.size.md} />
-        </StyledCloseButton>
-      )}
-    </StyledMotionContainer>
+      <StyledProgressBar
+        color={theme.snackBar[variant].backgroundColor}
+        value={progressValue}
+      />
+      <StyledHeader>
+        {icon}
+        {title}
+        <StyledActions>
+          {!!onCancel && <LightButton title="Cancel" onClick={onCancel} />}
+          {!!onClose && (
+            <LightIconButton title="Close" Icon={IconX} onClick={onClose} />
+          )}
+        </StyledActions>
+      </StyledHeader>
+      {message && <StyledDescription>{message}</StyledDescription>}
+    </StyledContainer>
   );
 };

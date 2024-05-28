@@ -49,14 +49,13 @@ import {
   createForeignKeyDeterministicUuid,
   createRelationDeterministicUuid,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/utils/create-deterministic-uuid.util';
-import { createWorkspaceMigrationsForCustomObjectRelations } from 'src/engine/metadata-modules/object-metadata/utils/create-migrations-for-custom-object-relations.util';
-import { createWorkspaceMigrationsForRemoteObjectRelations } from 'src/engine/metadata-modules/object-metadata/utils/create-workspace-migrations-for-remote-object-relations.util';
+import { buildMigrationsForCustomObjectRelations } from 'src/engine/metadata-modules/object-metadata/utils/build-migrations-for-custom-object-relations.util';
 import { computeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
 import { validateObjectMetadataInputOrThrow } from 'src/engine/metadata-modules/object-metadata/utils/validate-object-metadata-input.util';
 import { mapUdtNameToFieldType } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { UpdateOneObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
-import { createMigrationToAlterCommentOnForeignKeyDeletion } from 'src/engine/metadata-modules/object-metadata/utils/create-migration-for-foreign-key-comment-alteration.util';
+import { RemoteTableRelationsService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-relations/remote-table-relations.service';
 
 import { ObjectMetadataEntity } from './object-metadata.entity';
 
@@ -73,6 +72,8 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
 
     @InjectRepository(RelationMetadataEntity, 'metadata')
     private readonly relationMetadataRepository: Repository<RelationMetadataEntity>,
+
+    private readonly remoteTableRelationsService: RemoteTableRelationsService,
 
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
@@ -123,112 +124,17 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       throw new NotFoundException('Object does not exist');
     }
 
-    const relationsToDelete: RelationToDelete[] = [];
-
-    // TODO: Most of this logic should be moved to relation-metadata.service.ts
-    for (const relation of [
-      ...objectMetadata.fromRelations,
-      ...objectMetadata.toRelations,
-    ]) {
-      relationsToDelete.push({
-        id: relation.id,
-        fromFieldMetadataId: relation.fromFieldMetadata.id,
-        toFieldMetadataId: relation.toFieldMetadata.id,
-        fromFieldMetadataName: relation.fromFieldMetadata.name,
-        toFieldMetadataName: relation.toFieldMetadata.name,
-        fromObjectMetadataId: relation.fromObjectMetadata.id,
-        toObjectMetadataId: relation.toObjectMetadata.id,
-        fromObjectName: relation.fromObjectMetadata.nameSingular,
-        toObjectName: relation.toObjectMetadata.nameSingular,
-        toFieldMetadataIsCustom: relation.toFieldMetadata.isCustom,
-        toObjectMetadataIsCustom: relation.toObjectMetadata.isCustom,
-        direction:
-          relation.fromObjectMetadata.nameSingular ===
-          objectMetadata.nameSingular
-            ? 'from'
-            : 'to',
-      });
-    }
-
-    if (relationsToDelete.length > 0) {
-      await this.relationMetadataRepository.delete(
-        relationsToDelete.map((relation) => relation.id),
+    // DELETE RELATIONS
+    if (objectMetadata.isRemote) {
+      await this.remoteTableRelationsService.deleteForeignKeysMetadataAndCreateMigrations(
+        objectMetadata.workspaceId,
+        objectMetadata,
       );
-    }
-
-    for (const relationToDelete of relationsToDelete) {
-      const foreignKeyFieldsToDelete = await this.fieldMetadataRepository.find({
-        where: {
-          name: `${relationToDelete.toFieldMetadataName}Id`,
-          objectMetadataId: relationToDelete.toObjectMetadataId,
-          workspaceId,
-        },
-      });
-
-      const foreignKeyFieldsToDeleteIds = foreignKeyFieldsToDelete.map(
-        (field) => field.id,
-      );
-
-      await this.fieldMetadataRepository.delete([
-        ...foreignKeyFieldsToDeleteIds,
-        relationToDelete.fromFieldMetadataId,
-        relationToDelete.toFieldMetadataId,
-      ]);
-
-      if (relationToDelete.direction === 'from') {
-        await this.workspaceMigrationService.createCustomMigration(
-          generateMigrationName(
-            `delete-${relationToDelete.fromObjectName}-${relationToDelete.toObjectName}`,
-          ),
-          workspaceId,
-          [
-            {
-              name: computeTableName(
-                relationToDelete.toObjectName,
-                relationToDelete.toObjectMetadataIsCustom,
-              ),
-              action: WorkspaceMigrationTableActionType.ALTER,
-              columns: [
-                {
-                  action: WorkspaceMigrationColumnActionType.DROP,
-                  columnName: computeColumnName(
-                    relationToDelete.toFieldMetadataName,
-                    { isForeignKey: true },
-                  ),
-                } satisfies WorkspaceMigrationColumnDrop,
-              ],
-            },
-          ],
-        );
-
-        // for remote objects, we need to update the comment of the foreign key column
-        if (objectMetadata.isRemote) {
-          await createMigrationToAlterCommentOnForeignKeyDeletion(
-            this.dataSourceService,
-            this.typeORMService,
-            this.workspaceMigrationService,
-            workspaceId,
-            relationToDelete,
-          );
-        }
-      }
+    } else {
+      await this.deleteAllRelationsAndDropTable(objectMetadata, workspaceId);
     }
 
     await this.objectMetadataRepository.delete(objectMetadata.id);
-
-    if (!objectMetadata.isRemote) {
-      // DROP TABLE
-      await this.workspaceMigrationService.createCustomMigration(
-        generateMigrationName(`delete-${objectMetadata.nameSingular}`),
-        workspaceId,
-        [
-          {
-            name: computeObjectTargetTable(objectMetadata),
-            action: WorkspaceMigrationTableActionType.DROP,
-          },
-        ],
-      );
-    }
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
       workspaceId,
@@ -371,10 +277,19 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const workspaceDataSource =
       await this.typeORMService.connectToDataSource(dataSourceMetadata);
 
-    await this.createObjectRelationsMetadataAndMigrations(
-      objectMetadataInput,
-      createdObjectMetadata,
-    );
+    if (isCustom) {
+      await this.createObjectRelationsMetadataAndMigrations(
+        objectMetadataInput,
+        createdObjectMetadata,
+      );
+    } else {
+      await this.remoteTableRelationsService.createForeignKeysMetadataAndMigrations(
+        objectMetadataInput.workspaceId,
+        createdObjectMetadata,
+        objectMetadataInput.primaryKeyFieldMetadataSettings,
+        objectMetadataInput.primaryKeyColumnType,
+      );
+    }
 
     await this.workspaceMigrationRunnerService.executeMigrationFromPendingMigrations(
       createdObjectMetadata.workspaceId,
@@ -507,8 +422,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     objectMetadataInput: CreateObjectInput,
     createdObjectMetadata: ObjectMetadataEntity,
   ) {
-    const isRemoteObject = objectMetadataInput.isRemote ?? false;
-
     const { timelineActivityObjectMetadata } =
       await this.createTimelineActivityRelation(
         objectMetadataInput.workspaceId,
@@ -517,7 +430,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           objectMetadataInput.primaryKeyColumnType ?? 'uuid',
         ),
         objectMetadataInput.primaryKeyFieldMetadataSettings,
-        isRemoteObject,
       );
 
     const { activityTargetObjectMetadata } =
@@ -528,7 +440,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           objectMetadataInput.primaryKeyColumnType ?? 'uuid',
         ),
         objectMetadataInput.primaryKeyFieldMetadataSettings,
-        isRemoteObject,
       );
 
     const { favoriteObjectMetadata } = await this.createFavoriteRelation(
@@ -536,7 +447,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       createdObjectMetadata,
       mapUdtNameToFieldType(objectMetadataInput.primaryKeyColumnType ?? 'uuid'),
       objectMetadataInput.primaryKeyFieldMetadataSettings,
-      isRemoteObject,
     );
 
     const { attachmentObjectMetadata } = await this.createAttachmentRelation(
@@ -544,28 +454,18 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       createdObjectMetadata,
       mapUdtNameToFieldType(objectMetadataInput.primaryKeyColumnType ?? 'uuid'),
       objectMetadataInput.primaryKeyFieldMetadataSettings,
-      isRemoteObject,
     );
 
     return this.workspaceMigrationService.createCustomMigration(
       generateMigrationName(`create-${createdObjectMetadata.nameSingular}`),
       createdObjectMetadata.workspaceId,
-      isRemoteObject
-        ? await createWorkspaceMigrationsForRemoteObjectRelations(
-            createdObjectMetadata,
-            activityTargetObjectMetadata,
-            attachmentObjectMetadata,
-            timelineActivityObjectMetadata,
-            favoriteObjectMetadata,
-            objectMetadataInput.primaryKeyColumnType ?? 'uuid',
-          )
-        : createWorkspaceMigrationsForCustomObjectRelations(
-            createdObjectMetadata,
-            activityTargetObjectMetadata,
-            attachmentObjectMetadata,
-            timelineActivityObjectMetadata,
-            favoriteObjectMetadata,
-          ),
+      buildMigrationsForCustomObjectRelations(
+        createdObjectMetadata,
+        activityTargetObjectMetadata,
+        attachmentObjectMetadata,
+        timelineActivityObjectMetadata,
+        favoriteObjectMetadata,
+      ),
     );
   }
 
@@ -576,7 +476,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     objectPrimaryKeyFieldSettings:
       | FieldMetadataSettings<FieldMetadataType | 'default'>
       | undefined,
-    isRemoteObject: boolean,
   ) {
     const activityTargetObjectMetadata =
       await this.objectMetadataRepository.findOneByOrFail({
@@ -607,70 +506,68 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       },
     );
 
-    if (!isRemoteObject) {
-      const activityTargetRelationFieldMetadata =
-        await this.fieldMetadataRepository.save([
-          // FROM
-          {
-            standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.activityTargets,
-            objectMetadataId: createdObjectMetadata.id,
-            workspaceId: workspaceId,
-            isCustom: false,
-            isActive: true,
-            type: FieldMetadataType.RELATION,
-            name: 'activityTargets',
-            label: 'Activities',
-            description: `Activities tied to the ${createdObjectMetadata.labelSingular}`,
-            icon: 'IconCheckbox',
-            isNullable: true,
-          },
-          // TO
-          {
-            standardId: createRelationDeterministicUuid({
-              objectId: createdObjectMetadata.id,
-              standardId: ACTIVITY_TARGET_STANDARD_FIELD_IDS.custom,
-            }),
-            objectMetadataId: activityTargetObjectMetadata.id,
-            workspaceId: workspaceId,
-            isCustom: false,
-            isActive: true,
-            type: FieldMetadataType.RELATION,
-            name: createdObjectMetadata.nameSingular,
-            label: createdObjectMetadata.labelSingular,
-            description: `ActivityTarget ${createdObjectMetadata.labelSingular}`,
-            icon: 'IconBuildingSkyscraper',
-            isNullable: true,
-          },
-        ]);
-
-      const activityTargetRelationFieldMetadataMap =
-        activityTargetRelationFieldMetadata.reduce(
-          (acc, fieldMetadata: FieldMetadataEntity) => {
-            if (fieldMetadata.type === FieldMetadataType.RELATION) {
-              acc[fieldMetadata.objectMetadataId] = fieldMetadata;
-            }
-
-            return acc;
-          },
-          {},
-        );
-
-      await this.relationMetadataRepository.save([
+    const activityTargetRelationFieldMetadata =
+      await this.fieldMetadataRepository.save([
+        // FROM
         {
+          standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.activityTargets,
+          objectMetadataId: createdObjectMetadata.id,
           workspaceId: workspaceId,
-          relationType: RelationMetadataType.ONE_TO_MANY,
-          fromObjectMetadataId: createdObjectMetadata.id,
-          toObjectMetadataId: activityTargetObjectMetadata.id,
-          fromFieldMetadataId:
-            activityTargetRelationFieldMetadataMap[createdObjectMetadata.id].id,
-          toFieldMetadataId:
-            activityTargetRelationFieldMetadataMap[
-              activityTargetObjectMetadata.id
-            ].id,
-          onDeleteAction: RelationOnDeleteAction.CASCADE,
+          isCustom: false,
+          isActive: true,
+          type: FieldMetadataType.RELATION,
+          name: 'activityTargets',
+          label: 'Activities',
+          description: `Activities tied to the ${createdObjectMetadata.labelSingular}`,
+          icon: 'IconCheckbox',
+          isNullable: true,
+        },
+        // TO
+        {
+          standardId: createRelationDeterministicUuid({
+            objectId: createdObjectMetadata.id,
+            standardId: ACTIVITY_TARGET_STANDARD_FIELD_IDS.custom,
+          }),
+          objectMetadataId: activityTargetObjectMetadata.id,
+          workspaceId: workspaceId,
+          isCustom: false,
+          isActive: true,
+          type: FieldMetadataType.RELATION,
+          name: createdObjectMetadata.nameSingular,
+          label: createdObjectMetadata.labelSingular,
+          description: `ActivityTarget ${createdObjectMetadata.labelSingular}`,
+          icon: 'IconBuildingSkyscraper',
+          isNullable: true,
         },
       ]);
-    }
+
+    const activityTargetRelationFieldMetadataMap =
+      activityTargetRelationFieldMetadata.reduce(
+        (acc, fieldMetadata: FieldMetadataEntity) => {
+          if (fieldMetadata.type === FieldMetadataType.RELATION) {
+            acc[fieldMetadata.objectMetadataId] = fieldMetadata;
+          }
+
+          return acc;
+        },
+        {},
+      );
+
+    await this.relationMetadataRepository.save([
+      {
+        workspaceId: workspaceId,
+        relationType: RelationMetadataType.ONE_TO_MANY,
+        fromObjectMetadataId: createdObjectMetadata.id,
+        toObjectMetadataId: activityTargetObjectMetadata.id,
+        fromFieldMetadataId:
+          activityTargetRelationFieldMetadataMap[createdObjectMetadata.id].id,
+        toFieldMetadataId:
+          activityTargetRelationFieldMetadataMap[
+            activityTargetObjectMetadata.id
+          ].id,
+        onDeleteAction: RelationOnDeleteAction.CASCADE,
+      },
+    ]);
 
     return { activityTargetObjectMetadata };
   }
@@ -682,7 +579,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     objectPrimaryKeyFieldSettings:
       | FieldMetadataSettings<FieldMetadataType | 'default'>
       | undefined,
-    isRemoteObject: boolean,
   ) {
     const attachmentObjectMetadata =
       await this.objectMetadataRepository.findOneByOrFail({
@@ -713,68 +609,66 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       },
     );
 
-    if (!isRemoteObject) {
-      const attachmentRelationFieldMetadata =
-        await this.fieldMetadataRepository.save([
-          // FROM
-          {
-            standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.attachments,
-            objectMetadataId: createdObjectMetadata.id,
-            workspaceId: workspaceId,
-            isCustom: false,
-            isActive: true,
-            type: FieldMetadataType.RELATION,
-            name: 'attachments',
-            label: 'Attachments',
-            description: `Attachments tied to the ${createdObjectMetadata.labelSingular}`,
-            icon: 'IconFileImport',
-            isNullable: true,
-          },
-          // TO
-          {
-            standardId: createRelationDeterministicUuid({
-              objectId: createdObjectMetadata.id,
-              standardId: ATTACHMENT_STANDARD_FIELD_IDS.custom,
-            }),
-            objectMetadataId: attachmentObjectMetadata.id,
-            workspaceId: workspaceId,
-            isCustom: false,
-            isActive: true,
-            type: FieldMetadataType.RELATION,
-            name: createdObjectMetadata.nameSingular,
-            label: createdObjectMetadata.labelSingular,
-            description: `Attachment ${createdObjectMetadata.labelSingular}`,
-            icon: 'IconBuildingSkyscraper',
-            isNullable: true,
-          },
-        ]);
-
-      const attachmentRelationFieldMetadataMap =
-        attachmentRelationFieldMetadata.reduce(
-          (acc, fieldMetadata: FieldMetadataEntity) => {
-            if (fieldMetadata.type === FieldMetadataType.RELATION) {
-              acc[fieldMetadata.objectMetadataId] = fieldMetadata;
-            }
-
-            return acc;
-          },
-          {},
-        );
-
-      await this.relationMetadataRepository.save([
+    const attachmentRelationFieldMetadata =
+      await this.fieldMetadataRepository.save([
+        // FROM
         {
+          standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.attachments,
+          objectMetadataId: createdObjectMetadata.id,
           workspaceId: workspaceId,
-          relationType: RelationMetadataType.ONE_TO_MANY,
-          fromObjectMetadataId: createdObjectMetadata.id,
-          toObjectMetadataId: attachmentObjectMetadata.id,
-          fromFieldMetadataId:
-            attachmentRelationFieldMetadataMap[createdObjectMetadata.id].id,
-          toFieldMetadataId:
-            attachmentRelationFieldMetadataMap[attachmentObjectMetadata.id].id,
-          onDeleteAction: RelationOnDeleteAction.CASCADE,
+          isCustom: false,
+          isActive: true,
+          type: FieldMetadataType.RELATION,
+          name: 'attachments',
+          label: 'Attachments',
+          description: `Attachments tied to the ${createdObjectMetadata.labelSingular}`,
+          icon: 'IconFileImport',
+          isNullable: true,
+        },
+        // TO
+        {
+          standardId: createRelationDeterministicUuid({
+            objectId: createdObjectMetadata.id,
+            standardId: ATTACHMENT_STANDARD_FIELD_IDS.custom,
+          }),
+          objectMetadataId: attachmentObjectMetadata.id,
+          workspaceId: workspaceId,
+          isCustom: false,
+          isActive: true,
+          type: FieldMetadataType.RELATION,
+          name: createdObjectMetadata.nameSingular,
+          label: createdObjectMetadata.labelSingular,
+          description: `Attachment ${createdObjectMetadata.labelSingular}`,
+          icon: 'IconBuildingSkyscraper',
+          isNullable: true,
         },
       ]);
-    }
+
+    const attachmentRelationFieldMetadataMap =
+      attachmentRelationFieldMetadata.reduce(
+        (acc, fieldMetadata: FieldMetadataEntity) => {
+          if (fieldMetadata.type === FieldMetadataType.RELATION) {
+            acc[fieldMetadata.objectMetadataId] = fieldMetadata;
+          }
+
+          return acc;
+        },
+        {},
+      );
+
+    await this.relationMetadataRepository.save([
+      {
+        workspaceId: workspaceId,
+        relationType: RelationMetadataType.ONE_TO_MANY,
+        fromObjectMetadataId: createdObjectMetadata.id,
+        toObjectMetadataId: attachmentObjectMetadata.id,
+        fromFieldMetadataId:
+          attachmentRelationFieldMetadataMap[createdObjectMetadata.id].id,
+        toFieldMetadataId:
+          attachmentRelationFieldMetadataMap[attachmentObjectMetadata.id].id,
+        onDeleteAction: RelationOnDeleteAction.CASCADE,
+      },
+    ]);
 
     return { attachmentObjectMetadata };
   }
@@ -786,7 +680,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     objectPrimaryKeyFieldSettings:
       | FieldMetadataSettings<FieldMetadataType | 'default'>
       | undefined,
-    isRemoteObject: boolean,
   ) {
     const timelineActivityObjectMetadata =
       await this.objectMetadataRepository.findOneByOrFail({
@@ -817,71 +710,68 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       },
     );
 
-    if (!isRemoteObject) {
-      const timelineActivityRelationFieldMetadata =
-        await this.fieldMetadataRepository.save([
-          // FROM
-          {
-            standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.timelineActivities,
-            objectMetadataId: createdObjectMetadata.id,
-            workspaceId: workspaceId,
-            isCustom: false,
-            isActive: true,
-            type: FieldMetadataType.RELATION,
-            name: 'timelineActivities',
-            label: 'Timeline Activities',
-            description: `Timeline Activities tied to the ${createdObjectMetadata.labelSingular}`,
-            icon: 'IconTimeline',
-            isNullable: true,
-          },
-          // TO
-          {
-            standardId: createRelationDeterministicUuid({
-              objectId: createdObjectMetadata.id,
-              standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.custom,
-            }),
-            objectMetadataId: timelineActivityObjectMetadata.id,
-            workspaceId: workspaceId,
-            isCustom: false,
-            isActive: true,
-            type: FieldMetadataType.RELATION,
-            name: createdObjectMetadata.nameSingular,
-            label: createdObjectMetadata.labelSingular,
-            description: `Timeline Activity ${createdObjectMetadata.labelSingular}`,
-            icon: 'IconBuildingSkyscraper',
-            isNullable: true,
-          },
-        ]);
-
-      const timelineActivityRelationFieldMetadataMap =
-        timelineActivityRelationFieldMetadata.reduce(
-          (acc, fieldMetadata: FieldMetadataEntity) => {
-            if (fieldMetadata.type === FieldMetadataType.RELATION) {
-              acc[fieldMetadata.objectMetadataId] = fieldMetadata;
-            }
-
-            return acc;
-          },
-          {},
-        );
-
-      await this.relationMetadataRepository.save([
+    const timelineActivityRelationFieldMetadata =
+      await this.fieldMetadataRepository.save([
+        // FROM
         {
+          standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.timelineActivities,
+          objectMetadataId: createdObjectMetadata.id,
           workspaceId: workspaceId,
-          relationType: RelationMetadataType.ONE_TO_MANY,
-          fromObjectMetadataId: createdObjectMetadata.id,
-          toObjectMetadataId: timelineActivityObjectMetadata.id,
-          fromFieldMetadataId:
-            timelineActivityRelationFieldMetadataMap[createdObjectMetadata.id]
-              .id,
-          toFieldMetadataId:
-            timelineActivityRelationFieldMetadataMap[
-              timelineActivityObjectMetadata.id
-            ].id,
-          onDeleteAction: RelationOnDeleteAction.CASCADE,
+          isCustom: false,
+          isActive: true,
+          type: FieldMetadataType.RELATION,
+          name: 'timelineActivities',
+          label: 'Timeline Activities',
+          description: `Timeline Activities tied to the ${createdObjectMetadata.labelSingular}`,
+          icon: 'IconTimeline',
+          isNullable: true,
+        },
+        // TO
+        {
+          standardId: createRelationDeterministicUuid({
+            objectId: createdObjectMetadata.id,
+            standardId: TIMELINE_ACTIVITY_STANDARD_FIELD_IDS.custom,
+          }),
+          objectMetadataId: timelineActivityObjectMetadata.id,
+          workspaceId: workspaceId,
+          isCustom: false,
+          isActive: true,
+          type: FieldMetadataType.RELATION,
+          name: createdObjectMetadata.nameSingular,
+          label: createdObjectMetadata.labelSingular,
+          description: `Timeline Activity ${createdObjectMetadata.labelSingular}`,
+          icon: 'IconBuildingSkyscraper',
+          isNullable: true,
         },
       ]);
-    }
+
+    const timelineActivityRelationFieldMetadataMap =
+      timelineActivityRelationFieldMetadata.reduce(
+        (acc, fieldMetadata: FieldMetadataEntity) => {
+          if (fieldMetadata.type === FieldMetadataType.RELATION) {
+            acc[fieldMetadata.objectMetadataId] = fieldMetadata;
+          }
+
+          return acc;
+        },
+        {},
+      );
+
+    await this.relationMetadataRepository.save([
+      {
+        workspaceId: workspaceId,
+        relationType: RelationMetadataType.ONE_TO_MANY,
+        fromObjectMetadataId: createdObjectMetadata.id,
+        toObjectMetadataId: timelineActivityObjectMetadata.id,
+        fromFieldMetadataId:
+          timelineActivityRelationFieldMetadataMap[createdObjectMetadata.id].id,
+        toFieldMetadataId:
+          timelineActivityRelationFieldMetadataMap[
+            timelineActivityObjectMetadata.id
+          ].id,
+        onDeleteAction: RelationOnDeleteAction.CASCADE,
+      },
+    ]);
 
     return { timelineActivityObjectMetadata };
   }
@@ -893,7 +783,6 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     objectPrimaryKeyFieldSettings:
       | FieldMetadataSettings<FieldMetadataType | 'default'>
       | undefined,
-    isRemoteObject: boolean,
   ) {
     const favoriteObjectMetadata =
       await this.objectMetadataRepository.findOneByOrFail({
@@ -924,70 +813,165 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
       },
     );
 
-    if (!isRemoteObject) {
-      const favoriteRelationFieldMetadata =
-        await this.fieldMetadataRepository.save([
-          // FROM
-          {
-            standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.favorites,
-            objectMetadataId: createdObjectMetadata.id,
-            workspaceId: workspaceId,
-            isCustom: false,
-            isActive: true,
-            isSystem: true,
-            type: FieldMetadataType.RELATION,
-            name: 'favorites',
-            label: 'Favorites',
-            description: `Favorites tied to the ${createdObjectMetadata.labelSingular}`,
-            icon: 'IconHeart',
-            isNullable: true,
-          },
-          // TO
-          {
-            standardId: createRelationDeterministicUuid({
-              objectId: createdObjectMetadata.id,
-              standardId: FAVORITE_STANDARD_FIELD_IDS.custom,
-            }),
-            objectMetadataId: favoriteObjectMetadata.id,
-            workspaceId: workspaceId,
-            isCustom: false,
-            isActive: true,
-            type: FieldMetadataType.RELATION,
-            name: createdObjectMetadata.nameSingular,
-            label: createdObjectMetadata.labelSingular,
-            description: `Favorite ${createdObjectMetadata.labelSingular}`,
-            icon: 'IconBuildingSkyscraper',
-            isNullable: true,
-          },
-        ]);
-
-      const favoriteRelationFieldMetadataMap =
-        favoriteRelationFieldMetadata.reduce(
-          (acc, fieldMetadata: FieldMetadataEntity) => {
-            if (fieldMetadata.type === FieldMetadataType.RELATION) {
-              acc[fieldMetadata.objectMetadataId] = fieldMetadata;
-            }
-
-            return acc;
-          },
-          {},
-        );
-
-      await this.relationMetadataRepository.save([
+    const favoriteRelationFieldMetadata =
+      await this.fieldMetadataRepository.save([
+        // FROM
         {
+          standardId: CUSTOM_OBJECT_STANDARD_FIELD_IDS.favorites,
+          objectMetadataId: createdObjectMetadata.id,
           workspaceId: workspaceId,
-          relationType: RelationMetadataType.ONE_TO_MANY,
-          fromObjectMetadataId: createdObjectMetadata.id,
-          toObjectMetadataId: favoriteObjectMetadata.id,
-          fromFieldMetadataId:
-            favoriteRelationFieldMetadataMap[createdObjectMetadata.id].id,
-          toFieldMetadataId:
-            favoriteRelationFieldMetadataMap[favoriteObjectMetadata.id].id,
-          onDeleteAction: RelationOnDeleteAction.CASCADE,
+          isCustom: false,
+          isActive: true,
+          isSystem: true,
+          type: FieldMetadataType.RELATION,
+          name: 'favorites',
+          label: 'Favorites',
+          description: `Favorites tied to the ${createdObjectMetadata.labelSingular}`,
+          icon: 'IconHeart',
+          isNullable: true,
+        },
+        // TO
+        {
+          standardId: createRelationDeterministicUuid({
+            objectId: createdObjectMetadata.id,
+            standardId: FAVORITE_STANDARD_FIELD_IDS.custom,
+          }),
+          objectMetadataId: favoriteObjectMetadata.id,
+          workspaceId: workspaceId,
+          isCustom: false,
+          isActive: true,
+          type: FieldMetadataType.RELATION,
+          name: createdObjectMetadata.nameSingular,
+          label: createdObjectMetadata.labelSingular,
+          description: `Favorite ${createdObjectMetadata.labelSingular}`,
+          icon: 'IconBuildingSkyscraper',
+          isNullable: true,
         },
       ]);
-    }
+
+    const favoriteRelationFieldMetadataMap =
+      favoriteRelationFieldMetadata.reduce(
+        (acc, fieldMetadata: FieldMetadataEntity) => {
+          if (fieldMetadata.type === FieldMetadataType.RELATION) {
+            acc[fieldMetadata.objectMetadataId] = fieldMetadata;
+          }
+
+          return acc;
+        },
+        {},
+      );
+
+    await this.relationMetadataRepository.save([
+      {
+        workspaceId: workspaceId,
+        relationType: RelationMetadataType.ONE_TO_MANY,
+        fromObjectMetadataId: createdObjectMetadata.id,
+        toObjectMetadataId: favoriteObjectMetadata.id,
+        fromFieldMetadataId:
+          favoriteRelationFieldMetadataMap[createdObjectMetadata.id].id,
+        toFieldMetadataId:
+          favoriteRelationFieldMetadataMap[favoriteObjectMetadata.id].id,
+        onDeleteAction: RelationOnDeleteAction.CASCADE,
+      },
+    ]);
 
     return { favoriteObjectMetadata };
+  }
+
+  private async deleteAllRelationsAndDropTable(
+    objectMetadata: ObjectMetadataEntity,
+    workspaceId: string,
+  ) {
+    const relationsToDelete: RelationToDelete[] = [];
+
+    // TODO: Most of this logic should be moved to relation-metadata.service.ts
+    for (const relation of [
+      ...objectMetadata.fromRelations,
+      ...objectMetadata.toRelations,
+    ]) {
+      relationsToDelete.push({
+        id: relation.id,
+        fromFieldMetadataId: relation.fromFieldMetadata.id,
+        toFieldMetadataId: relation.toFieldMetadata.id,
+        fromFieldMetadataName: relation.fromFieldMetadata.name,
+        toFieldMetadataName: relation.toFieldMetadata.name,
+        fromObjectMetadataId: relation.fromObjectMetadata.id,
+        toObjectMetadataId: relation.toObjectMetadata.id,
+        fromObjectName: relation.fromObjectMetadata.nameSingular,
+        toObjectName: relation.toObjectMetadata.nameSingular,
+        toFieldMetadataIsCustom: relation.toFieldMetadata.isCustom,
+        toObjectMetadataIsCustom: relation.toObjectMetadata.isCustom,
+        direction:
+          relation.fromObjectMetadata.nameSingular ===
+          objectMetadata.nameSingular
+            ? 'from'
+            : 'to',
+      });
+    }
+
+    if (relationsToDelete.length > 0) {
+      await this.relationMetadataRepository.delete(
+        relationsToDelete.map((relation) => relation.id),
+      );
+    }
+
+    for (const relationToDelete of relationsToDelete) {
+      const foreignKeyFieldsToDelete = await this.fieldMetadataRepository.find({
+        where: {
+          name: `${relationToDelete.toFieldMetadataName}Id`,
+          objectMetadataId: relationToDelete.toObjectMetadataId,
+          workspaceId,
+        },
+      });
+
+      const foreignKeyFieldsToDeleteIds = foreignKeyFieldsToDelete.map(
+        (field) => field.id,
+      );
+
+      await this.fieldMetadataRepository.delete([
+        ...foreignKeyFieldsToDeleteIds,
+        relationToDelete.fromFieldMetadataId,
+        relationToDelete.toFieldMetadataId,
+      ]);
+
+      if (relationToDelete.direction === 'from') {
+        await this.workspaceMigrationService.createCustomMigration(
+          generateMigrationName(
+            `delete-${relationToDelete.fromObjectName}-${relationToDelete.toObjectName}`,
+          ),
+          workspaceId,
+          [
+            {
+              name: computeTableName(
+                relationToDelete.toObjectName,
+                relationToDelete.toObjectMetadataIsCustom,
+              ),
+              action: WorkspaceMigrationTableActionType.ALTER,
+              columns: [
+                {
+                  action: WorkspaceMigrationColumnActionType.DROP,
+                  columnName: computeColumnName(
+                    relationToDelete.toFieldMetadataName,
+                    { isForeignKey: true },
+                  ),
+                } satisfies WorkspaceMigrationColumnDrop,
+              ],
+            },
+          ],
+        );
+      }
+    }
+
+    // DROP TABLE
+    await this.workspaceMigrationService.createCustomMigration(
+      generateMigrationName(`delete-${objectMetadata.nameSingular}`),
+      workspaceId,
+      [
+        {
+          name: computeObjectTargetTable(objectMetadata),
+          action: WorkspaceMigrationTableActionType.DROP,
+        },
+      ],
+    );
   }
 }

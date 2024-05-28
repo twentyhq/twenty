@@ -1,8 +1,8 @@
+import { themeColorSchema } from 'twenty-ui';
 import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { metadataLabelSchema } from '@/object-metadata/validation-schemas/metadataLabelSchema';
-import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 import {
   FieldMetadataType,
   RelationDefinitionType,
