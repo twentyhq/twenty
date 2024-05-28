@@ -41,12 +41,12 @@ export class GmailGetHistoryService {
         pageToken = response?.data?.nextPageToken ?? undefined;
         hasMoreMessages = !!pageToken;
       } catch (error) {
-        const errorData = error?.response?.data?.error;
+        const gmailError = error?.response?.data?.error;
 
-        if (errorData) {
+        if (gmailError) {
           return {
             history: [],
-            error: errorData,
+            error: gmailError,
             historyId: lastSyncHistoryId,
           };
         }

@@ -33,7 +33,7 @@ export class GmailPartialMessageListFetchV2Service {
       MessageChannelMessageAssociationWorkspaceEntity,
     )
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
-    private readonly gmailPartialMessageListFetchErrorHandlingService: GmailMessageListFetchErrorHandlingService,
+    private readonly gmailMessageListFetchErrorHandlingService: GmailMessageListFetchErrorHandlingService,
     private readonly gmailGetHistoryService: GmailGetHistoryService,
     private readonly setMessageChannelSyncStatusService: SetMessageChannelSyncStatusService,
   ) {}
@@ -79,7 +79,7 @@ export class GmailPartialMessageListFetchV2Service {
       );
 
     if (error) {
-      await this.gmailPartialMessageListFetchErrorHandlingService.handleGmailError(
+      await this.gmailMessageListFetchErrorHandlingService.handleGmailError(
         error,
         messageChannel,
         workspaceId,
