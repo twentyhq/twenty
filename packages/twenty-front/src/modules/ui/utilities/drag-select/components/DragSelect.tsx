@@ -4,8 +4,7 @@ import {
   useSelectionContainer,
 } from '@air/react-drag-to-select';
 import { useTheme } from '@emotion/react';
-
-import { RGBA } from '@/ui/theme/constants/Rgba';
+import { RGBA } from 'twenty-ui';
 
 import { useDragSelect } from '../hooks/useDragSelect';
 

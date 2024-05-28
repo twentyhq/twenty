@@ -2,7 +2,6 @@ import { useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
 import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField';
-import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
@@ -18,7 +17,6 @@ const StyledRelationPickerContainer = styled.div`
 `;
 
 export type MultiSelectFieldInputProps = {
-  onSubmit?: FieldInputEvent;
   onCancel?: () => void;
 };
 

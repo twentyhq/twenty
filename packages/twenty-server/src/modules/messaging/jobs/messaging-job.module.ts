@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
 import { AutoCompaniesAndContactsCreationModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/auto-companies-and-contacts-creation.module';
 import { GoogleAPIRefreshAccessTokenModule } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.module';
@@ -8,11 +10,13 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { BlocklistItemDeleteMessagesJob } from 'src/modules/messaging/jobs/blocklist-item-delete-messages.job';
 import { BlocklistReimportMessagesJob } from 'src/modules/messaging/jobs/blocklist-reimport-messages.job';
 import { DeleteConnectedAccountAssociatedMessagingDataJob } from 'src/modules/messaging/jobs/delete-connected-account-associated-messaging-data.job';
-import { GmailFullSyncJob } from 'src/modules/messaging/jobs/gmail-full-sync.job';
-import { GmailPartialSyncJob } from 'src/modules/messaging/jobs/gmail-partial-sync.job';
+import { GmailFullMessageListFetchJob } from 'src/modules/messaging/jobs/gmail-full-message-list-fetch.job';
+import { GmailMessageListFetchJob } from 'src/modules/messaging/jobs/gmail-message-list-fetch.job';
+import { GmailPartialMessageListFetchJob } from 'src/modules/messaging/jobs/gmail-partial-message-list-fetch.job';
 import { MessagingCreateCompanyAndContactAfterSyncJob } from 'src/modules/messaging/jobs/messaging-create-company-and-contact-after-sync.job';
-import { GmailFullSyncModule } from 'src/modules/messaging/services/gmail-full-sync/gmail-full-sync.module';
-import { GmailPartialSyncModule } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync.module';
+import { GetConnectedAccountAndMessageChannelModule } from 'src/modules/messaging/services/get-connected-account-and-message-channel/get-connected-account-and-message-channel.module';
+import { GmailFullMessageListFetchModule } from 'src/modules/messaging/services/gmail-full-message-list-fetch/gmail-full-message-list-fetch.module';
+import { GmailPartialMessageListFetchModule } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-partial-message-list-fetch.module';
 import { ThreadCleanerModule } from 'src/modules/messaging/services/thread-cleaner/thread-cleaner.module';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
@@ -27,11 +31,13 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/standar
       MessageChannelMessageAssociationWorkspaceEntity,
       BlocklistWorkspaceEntity,
     ]),
-    GmailFullSyncModule,
-    GmailPartialSyncModule,
+    GmailFullMessageListFetchModule,
+    GmailPartialMessageListFetchModule,
     ThreadCleanerModule,
     GoogleAPIRefreshAccessTokenModule,
     AutoCompaniesAndContactsCreationModule,
+    TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
+    GetConnectedAccountAndMessageChannelModule,
   ],
   providers: [
     {
@@ -43,12 +49,16 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/standar
       useClass: BlocklistItemDeleteMessagesJob,
     },
     {
-      provide: GmailFullSyncJob.name,
-      useClass: GmailFullSyncJob,
+      provide: GmailFullMessageListFetchJob.name,
+      useClass: GmailFullMessageListFetchJob,
     },
     {
-      provide: GmailPartialSyncJob.name,
-      useClass: GmailPartialSyncJob,
+      provide: GmailPartialMessageListFetchJob.name,
+      useClass: GmailPartialMessageListFetchJob,
+    },
+    {
+      provide: GmailMessageListFetchJob.name,
+      useClass: GmailMessageListFetchJob,
     },
     {
       provide: DeleteConnectedAccountAssociatedMessagingDataJob.name,

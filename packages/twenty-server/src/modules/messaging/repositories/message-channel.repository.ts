@@ -6,6 +6,7 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 import {
   MessageChannelWorkspaceEntity,
   MessageChannelSyncStatus,
+  MessageChannelSyncSubStatus,
 } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
@@ -182,6 +183,23 @@ export class MessageChannelRepository {
           : `, "ongoingSyncStartedAt" = NULL`
       } WHERE "id" = $2`,
       [syncStatus, id],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async updateSyncSubStatus(
+    id: string,
+    syncSubStatus: MessageChannelSyncSubStatus,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<void> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."messageChannel" SET "syncSubStatus" = $1 WHERE "id" = $2`,
+      [syncSubStatus, id],
       workspaceId,
       transactionManager,
     );

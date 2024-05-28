@@ -45,7 +45,6 @@ import { Invite } from '~/pages/auth/Invite';
 import { PasswordReset } from '~/pages/auth/PasswordReset';
 import { PaymentSuccess } from '~/pages/auth/PaymentSuccess';
 import { SignInUp } from '~/pages/auth/SignInUp';
-import { DefaultHomePage } from '~/pages/DefaultHomePage';
 import { ImpersonateEffect } from '~/pages/impersonate/ImpersonateEffect';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { RecordIndexPage } from '~/pages/object-record/RecordIndexPage';
@@ -62,6 +61,7 @@ import { SettingsObjectEdit } from '~/pages/settings/data-model/SettingsObjectEd
 import { SettingsObjectFieldEdit } from '~/pages/settings/data-model/SettingsObjectFieldEdit';
 import { SettingsObjectNewFieldStep1 } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep1';
 import { SettingsObjectNewFieldStep2 } from '~/pages/settings/data-model/SettingsObjectNewField/SettingsObjectNewFieldStep2';
+import { SettingsObjectOverview } from '~/pages/settings/data-model/SettingsObjectOverview';
 import { SettingsObjects } from '~/pages/settings/data-model/SettingsObjects';
 import { SettingsDevelopersApiKeyDetail } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail';
 import { SettingsDevelopersApiKeysNew } from '~/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew';
@@ -146,10 +146,7 @@ const createRouter = (isBillingEnabled?: boolean) =>
             path={AppPath.PlanRequiredSuccess}
             element={<PaymentSuccess />}
           />
-          <Route
-            path={indexAppPath.getIndexAppPath()}
-            element={<DefaultHomePage />}
-          />
+          <Route path={indexAppPath.getIndexAppPath()} element={<></>} />
           <Route path={AppPath.TasksPage} element={<Tasks />} />
           <Route path={AppPath.Impersonate} element={<ImpersonateEffect />} />
           <Route path={AppPath.RecordIndexPage} element={<RecordIndexPage />} />
@@ -210,6 +207,10 @@ const createRouter = (isBillingEnabled?: boolean) =>
                 <Route
                   path={SettingsPath.Objects}
                   element={<SettingsObjects />}
+                />
+                <Route
+                  path={SettingsPath.ObjectOverview}
+                  element={<SettingsObjectOverview />}
                 />
                 <Route
                   path={SettingsPath.ObjectDetail}

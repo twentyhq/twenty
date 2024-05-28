@@ -2,7 +2,12 @@ import ReactDatePicker from 'react-datepicker';
 import styled from '@emotion/styled';
 import { DateTime } from 'luxon';
 import { Key } from 'ts-key-enum';
-import { IconCalendarX, IconChevronLeft, IconChevronRight } from 'twenty-ui';
+import {
+  IconCalendarX,
+  IconChevronLeft,
+  IconChevronRight,
+  OVERLAY_BACKGROUND,
+} from 'twenty-ui';
 
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { DateTimeInput } from '@/ui/input/components/internal/date/components/DateTimeInput';
@@ -10,7 +15,6 @@ import { Select } from '@/ui/input/components/Select';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItemLeftContent } from '@/ui/navigation/menu-item/internals/components/MenuItemLeftContent';
 import { StyledHoverableMenuItemBase } from '@/ui/navigation/menu-item/internals/components/StyledMenuItemBase';
-import { OVERLAY_BACKGROUND } from '@/ui/theme/constants/OverlayBackground';
 import { isDefined } from '~/utils/isDefined';
 
 import 'react-datepicker/dist/react-datepicker.css';

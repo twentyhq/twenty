@@ -25,7 +25,7 @@ export const getOnboardingStatus = ({
     'createdAt' | 'updatedAt' | 'userId' | 'userEmail' | '__typename'
   > | null;
   currentWorkspace: CurrentWorkspace | null;
-  isBillingEnabled?: boolean;
+  isBillingEnabled: boolean;
 }) => {
   if (!isLoggedIn) {
     return OnboardingStatus.OngoingUserCreation;
@@ -38,7 +38,7 @@ export const getOnboardingStatus = ({
   }
 
   if (
-    isBillingEnabled === true &&
+    isBillingEnabled &&
     currentWorkspace.subscriptionStatus === 'incomplete'
   ) {
     return OnboardingStatus.Incomplete;
@@ -55,31 +55,19 @@ export const getOnboardingStatus = ({
     return OnboardingStatus.OngoingProfileCreation;
   }
 
-  if (
-    isBillingEnabled === true &&
-    currentWorkspace.subscriptionStatus === 'canceled'
-  ) {
+  if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'canceled') {
     return OnboardingStatus.Canceled;
   }
 
-  if (
-    isBillingEnabled === true &&
-    currentWorkspace.subscriptionStatus === 'past_due'
-  ) {
+  if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'past_due') {
     return OnboardingStatus.PastDue;
   }
 
-  if (
-    isBillingEnabled === true &&
-    currentWorkspace.subscriptionStatus === 'unpaid'
-  ) {
+  if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'unpaid') {
     return OnboardingStatus.Unpaid;
   }
 
-  if (
-    isBillingEnabled === true &&
-    !currentWorkspace.currentBillingSubscription
-  ) {
+  if (isBillingEnabled && !currentWorkspace.currentBillingSubscription) {
     return OnboardingStatus.CompletedWithoutSubscription;
   }
 
