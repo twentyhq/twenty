@@ -1,8 +1,8 @@
+import { themeColorSchema } from 'twenty-ui';
 import { z } from 'zod';
 
 import { FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { getOptionValueFromLabel } from '@/settings/data-model/fields/forms/select/utils/getOptionValueFromLabel';
-import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 import { computeOptionValueFromLabelOrThrow } from '~/pages/settings/data-model/utils/compute-option-value-from-label.utils';
 
 const selectOptionSchema = z

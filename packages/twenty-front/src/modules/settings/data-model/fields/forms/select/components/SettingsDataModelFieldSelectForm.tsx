@@ -9,6 +9,8 @@ import {
   FieldMetadataItemOption,
 } from '@/object-metadata/types/FieldMetadataItem';
 import { selectOptionsSchema } from '@/object-metadata/validation-schemas/selectOptionsSchema';
+import { multiSelectFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/multiSelectFieldDefaultValueSchema';
+import { selectFieldDefaultValueSchema } from '@/object-record/record-field/validation-schemas/selectFieldDefaultValueSchema';
 import { useSelectSettingsFormInitialValues } from '@/settings/data-model/fields/forms/select/hooks/useSelectSettingsFormInitialValues';
 import { generateNewSelectOption } from '@/settings/data-model/fields/forms/select/utils/generateNewSelectOption';
 import { isSelectOptionDefaultValue } from '@/settings/data-model/utils/isSelectOptionDefaultValue';
@@ -21,17 +23,16 @@ import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { moveArrayItem } from '~/utils/array/moveArrayItem';
 import { toSpliced } from '~/utils/array/toSpliced';
 import { applySimpleQuotesToString } from '~/utils/string/applySimpleQuotesToString';
-import { simpleQuotesStringSchema } from '~/utils/validation-schemas/simpleQuotesStringSchema';
 
 import { SettingsDataModelFieldSelectFormOptionRow } from './SettingsDataModelFieldSelectFormOptionRow';
 
 export const settingsDataModelFieldSelectFormSchema = z.object({
-  defaultValue: simpleQuotesStringSchema.nullable(),
+  defaultValue: selectFieldDefaultValueSchema(),
   options: selectOptionsSchema,
 });
 
 export const settingsDataModelFieldMultiSelectFormSchema = z.object({
-  defaultValue: z.array(simpleQuotesStringSchema).nullable(),
+  defaultValue: multiSelectFieldDefaultValueSchema(),
   options: selectOptionsSchema,
 });
 

@@ -5,9 +5,9 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
 import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repository/object-metadata-repository.module';
-import { GmailFetchMessagesFromCacheCronJob } from 'src/modules/messaging/crons/jobs/gmail-fetch-messages-from-cache.cron.job';
-import { GmailPartialSyncCronJob } from 'src/modules/messaging/crons/jobs/gmail-partial-sync.cron.job';
-import { GmailFetchMessageContentFromCacheModule } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.module';
+import { GmailMessagesImportCronJob } from 'src/modules/messaging/crons/jobs/gmail-messages-import.cron.job';
+import { GmailMessageListFetchCronJob } from 'src/modules/messaging/crons/jobs/gmail-message-list-fetch.cron.job';
+import { GmailMessagesImportModule } from 'src/modules/messaging/services/gmail-messages-import/gmail-messages-import.module';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 
 @Module({
@@ -15,16 +15,16 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-ob
     TypeOrmModule.forFeature([Workspace, FeatureFlagEntity], 'core'),
     TypeOrmModule.forFeature([DataSourceEntity], 'metadata'),
     ObjectMetadataRepositoryModule.forFeature([MessageChannelWorkspaceEntity]),
-    GmailFetchMessageContentFromCacheModule,
+    GmailMessagesImportModule,
   ],
   providers: [
     {
-      provide: GmailFetchMessagesFromCacheCronJob.name,
-      useClass: GmailFetchMessagesFromCacheCronJob,
+      provide: GmailMessagesImportCronJob.name,
+      useClass: GmailMessagesImportCronJob,
     },
     {
-      provide: GmailPartialSyncCronJob.name,
-      useClass: GmailPartialSyncCronJob,
+      provide: GmailMessageListFetchCronJob.name,
+      useClass: GmailMessageListFetchCronJob,
     },
   ],
 })

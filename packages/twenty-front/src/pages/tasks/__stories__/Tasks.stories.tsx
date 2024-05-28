@@ -6,6 +6,7 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
+import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 import { sleep } from '~/testing/sleep';
@@ -15,7 +16,7 @@ import { Tasks } from '../Tasks';
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Tasks/Default',
   component: Tasks,
-  decorators: [PageDecorator],
+  decorators: [PrefetchLoadingDecorator, PageDecorator],
   args: { routePath: AppPath.TasksPage },
   parameters: {
     msw: {

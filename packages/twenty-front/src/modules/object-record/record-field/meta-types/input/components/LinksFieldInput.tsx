@@ -5,7 +5,6 @@ import { IconCheck, IconPlus } from 'twenty-ui';
 
 import { useLinksField } from '@/object-record/record-field/meta-types/hooks/useLinksField';
 import { LinksFieldMenuItem } from '@/object-record/record-field/meta-types/input/components/LinksFieldMenuItem';
-import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuInput } from '@/ui/layout/dropdown/components/DropdownMenuInput';
@@ -27,13 +26,9 @@ const StyledDropdownMenu = styled(DropdownMenu)`
 
 export type LinksFieldInputProps = {
   onCancel?: () => void;
-  onSubmit?: FieldInputEvent;
 };
 
-export const LinksFieldInput = ({
-  onCancel,
-  onSubmit,
-}: LinksFieldInputProps) => {
+export const LinksFieldInput = ({ onCancel }: LinksFieldInputProps) => {
   const { persistLinksField, hotkeyScope, fieldValue } = useLinksField();
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -99,7 +94,6 @@ export const LinksFieldInput = ({
     ) {
       setIsInputDisplayed(false);
       setInputValue('');
-      onCancel?.();
       return;
     }
 
@@ -109,14 +103,11 @@ export const LinksFieldInput = ({
       : toSpliced(links, linkToEditIndex, 1, linkValue);
     const [nextPrimaryLink, ...nextSecondaryLinks] = nextLinks;
 
-    onSubmit?.(() =>
-      persistLinksField({
-        primaryLinkUrl: nextPrimaryLink.url ?? '',
-        primaryLinkLabel: nextPrimaryLink.label ?? '',
-        secondaryLinks: nextSecondaryLinks,
-      }),
-    );
-
+    persistLinksField({
+      primaryLinkUrl: nextPrimaryLink.url ?? '',
+      primaryLinkLabel: nextPrimaryLink.label ?? '',
+      secondaryLinks: nextSecondaryLinks,
+    });
     setIsInputDisplayed(false);
     setInputValue('');
   };
@@ -125,26 +116,18 @@ export const LinksFieldInput = ({
     const nextLinks = moveArrayItem(links, { fromIndex: index, toIndex: 0 });
     const [nextPrimaryLink, ...nextSecondaryLinks] = nextLinks;
 
-    onSubmit?.(() =>
-      persistLinksField({
-        primaryLinkUrl: nextPrimaryLink.url ?? '',
-        primaryLinkLabel: nextPrimaryLink.label ?? '',
-        secondaryLinks: nextSecondaryLinks,
-      }),
-    );
+    persistLinksField({
+      primaryLinkUrl: nextPrimaryLink.url ?? '',
+      primaryLinkLabel: nextPrimaryLink.label ?? '',
+      secondaryLinks: nextSecondaryLinks,
+    });
   };
 
   const handleDeleteLink = (index: number) => {
-    onSubmit?.(() =>
-      persistLinksField({
-        ...fieldValue,
-        secondaryLinks: toSpliced(
-          fieldValue.secondaryLinks ?? [],
-          index - 1,
-          1,
-        ),
-      }),
-    );
+    persistLinksField({
+      ...fieldValue,
+      secondaryLinks: toSpliced(fieldValue.secondaryLinks ?? [], index - 1, 1),
+    });
   };
 
   return (

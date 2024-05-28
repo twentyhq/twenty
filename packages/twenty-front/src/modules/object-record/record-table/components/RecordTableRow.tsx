@@ -20,6 +20,7 @@ import { GripCell } from './GripCell';
 type RecordTableRowProps = {
   recordId: string;
   rowIndex: number;
+  isPendingRow?: boolean;
 };
 
 const StyledTd = styled.td`
@@ -40,7 +41,11 @@ const StyledTr = styled.tr<{ isDragging: boolean }>`
   `}
 `;
 
-export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
+export const RecordTableRow = ({
+  recordId,
+  rowIndex,
+  isPendingRow,
+}: RecordTableRowProps) => {
   const { visibleTableColumnsSelector, isRowSelectedFamilyState } =
     useRecordTableStates();
   const currentRowSelected = useRecoilValue(isRowSelectedFamilyState(recordId));
@@ -70,6 +75,7 @@ export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
           }) + recordId,
         isSelected: currentRowSelected,
         isReadOnly: objectMetadataItem.isRemote ?? false,
+        isPendingRow,
       }}
     >
       <RecordValueSetterEffect recordId={recordId} />

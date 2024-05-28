@@ -35,6 +35,10 @@ export const useFindManyParams = (
 };
 
 export const useLoadRecordIndexTable = (objectNameSingular: string) => {
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
   const { setRecordTableData, setIsRecordTableInitialLoading } =
     useRecordTable();
   const { tableLastRowVisibleState } = useRecordTableStates();
@@ -42,7 +46,7 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const params = useFindManyParams(objectNameSingular);
 
-  const recordGqlFields = useRecordTableRecordGqlFields();
+  const recordGqlFields = useRecordTableRecordGqlFields({ objectMetadataItem });
 
   const {
     records,
