@@ -192,7 +192,7 @@ export class GmailFullMessageListFetchV2Service {
     }
 
     this.logger.log(
-      `Updating last external id: ${historyId} for workspace ${workspaceId} and account ${messageChannelId} succeeded.`,
+      `Updating last sync cursor: ${historyId} for workspace ${workspaceId} and account ${messageChannelId} succeeded.`,
     );
 
     await this.messageChannelRepository.updateLastSyncCursorIfHigher(
