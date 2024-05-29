@@ -1,9 +1,12 @@
 import { useCallback } from 'react';
-import { ApolloClient, useMutation } from '@apollo/client';
+import { ApolloClient, useApolloClient, useMutation } from '@apollo/client';
 
 import { SYNC_REMOTE_TABLE_SCHEMA_CHANGES } from '@/databases/graphql/mutations/syncRemoteTableSchemaChanges';
 import { modifyRemoteTableFromCache } from '@/databases/utils/modifyRemoteTableFromCache';
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
+import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import {
   RemoteTableInput,
   SyncRemoteTableSchemaChangesMutation,
@@ -13,6 +16,14 @@ import { isDefined } from '~/utils/isDefined';
 
 export const useSyncRemoteTableSchemaChanges = () => {
   const apolloMetadataClient = useApolloMetadataClient();
+  const apolloClient = useApolloClient();
+
+  const { refetch: refetchObjectMetadataItems } =
+    useFindManyObjectMetadataItems();
+
+  const { findManyRecordsQuery: findManyViewsQuery } = useFindManyRecordsQuery({
+    objectNameSingular: CoreObjectNameSingular.View,
+  });
 
   const [mutate, mutationInformation] = useMutation<
     SyncRemoteTableSchemaChangesMutation,
@@ -42,9 +53,16 @@ export const useSyncRemoteTableSchemaChanges = () => {
         },
       });
 
+      await refetchObjectMetadataItems();
+
+      await apolloClient.query({
+        query: findManyViewsQuery,
+        fetchPolicy: 'network-only',
+      });
+
       return remoteTable;
     },
-    [mutate],
+    [mutate, refetchObjectMetadataItems, findManyViewsQuery, apolloClient],
   );
 
   return {

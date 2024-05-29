@@ -20,6 +20,8 @@ export const Default: Story = {
   args: {
     checked: false,
     indeterminate: false,
+    hoverable: false,
+    disabled: false,
     variant: CheckboxVariant.Primary,
     size: CheckboxSize.Small,
     shape: CheckboxShape.Squared,
@@ -34,6 +36,7 @@ export const Catalog: CatalogStory<Story, typeof Checkbox> = {
     size: { control: false },
     indeterminate: { control: false },
     checked: { control: false },
+    hoverable: { control: false },
     shape: { control: false },
   },
   parameters: {
@@ -41,12 +44,14 @@ export const Catalog: CatalogStory<Story, typeof Checkbox> = {
       dimensions: [
         {
           name: 'state',
-          values: ['unchecked', 'checked', 'indeterminate'],
+          values: ['disabled', 'unchecked', 'checked', 'indeterminate'],
           props: (state: string) => {
+            if (state === 'disabled') {
+              return { disabled: true };
+            }
             if (state === 'checked') {
               return { checked: true };
             }
-
             if (state === 'indeterminate') {
               return { indeterminate: true };
             }
@@ -59,9 +64,14 @@ export const Catalog: CatalogStory<Story, typeof Checkbox> = {
           props: (shape: CheckboxShape) => ({ shape }),
         },
         {
-          name: 'variant',
-          values: Object.values(CheckboxVariant),
-          props: (variant: CheckboxVariant) => ({ variant }),
+          name: 'isHoverable',
+          values: ['default', 'hoverable'],
+          props: (isHoverable: string) => {
+            if (isHoverable === 'hoverable') {
+              return { hoverable: true };
+            }
+            return {};
+          },
         },
         {
           name: 'size',
