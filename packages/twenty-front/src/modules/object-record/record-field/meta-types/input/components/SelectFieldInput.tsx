@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import styled from '@emotion/styled';
+import { Key } from 'ts-key-enum';
 
 import { useSelectField } from '@/object-record/record-field/meta-types/hooks/useSelectField';
 import { FieldInputEvent } from '@/object-record/record-field/types/FieldInputEvent';
@@ -9,6 +10,7 @@ import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/Dropdow
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { MenuItemSelectTag } from '@/ui/navigation/menu-item/components/MenuItemSelectTag';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
+import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledRelationPickerContainer = styled.div`
@@ -26,7 +28,8 @@ export const SelectFieldInput = ({
   onSubmit,
   onCancel,
 }: SelectFieldInputProps) => {
-  const { persistField, fieldDefinition, fieldValue } = useSelectField();
+  const { persistField, fieldDefinition, fieldValue, hotkeyScope } =
+    useSelectField();
   const [searchFilter, setSearchFilter] = useState('');
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -59,16 +62,18 @@ export const SelectFieldInput = ({
     },
   });
 
-  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
+  useScopedHotkeys(
+    Key.Enter,
+    () => {
       const selectedOption = optionsInDropDown.find(
         (option) =>
           option.value !== fieldValue &&
           option.label.toLowerCase().includes(searchFilter.toLowerCase()),
       );
       selectedOption && onSubmit?.(() => persistField(selectedOption.value));
-    }
-  };
+    },
+    hotkeyScope,
+  );
 
   return (
     <StyledRelationPickerContainer ref={containerRef}>
@@ -76,7 +81,6 @@ export const SelectFieldInput = ({
         <DropdownMenuSearchInput
           value={searchFilter}
           onChange={(event) => setSearchFilter(event.currentTarget.value)}
-          onKeyDown={handleKeyDown}
           autoFocus
         />
         <DropdownMenuSeparator />

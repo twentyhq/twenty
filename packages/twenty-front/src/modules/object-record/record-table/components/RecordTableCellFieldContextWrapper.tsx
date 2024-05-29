@@ -11,6 +11,8 @@ import { RecordTableCell } from '@/object-record/record-table/record-table-cell/
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
+import { SelectFieldHotkeyScope } from '@/object-record/select/types/SelectFieldHotkeyScope';
 
 export const RecordTableCellFieldContextWrapper = () => {
   const { objectMetadataItem } = useContext(RecordTableContext);
@@ -25,7 +27,9 @@ export const RecordTableCellFieldContextWrapper = () => {
 
   const customHotkeyScope = isFieldRelation(columnDefinition)
     ? RelationPickerHotkeyScope.RelationPicker
-    : TableHotkeyScope.CellEditMode;
+    : isFieldSelect(columnDefinition)
+      ? SelectFieldHotkeyScope.SelectField
+      : TableHotkeyScope.CellEditMode;
 
   return (
     <FieldContext.Provider
