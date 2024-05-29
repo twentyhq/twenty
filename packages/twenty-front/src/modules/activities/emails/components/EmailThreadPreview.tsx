@@ -12,14 +12,18 @@ import { MessageChannelVisibility, TimelineThread } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils';
 import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
-const StyledCardContent = styled(CardContent)<{ visibility: string }>`
+const StyledCardContent = styled(CardContent)<{
+  visibility: MessageChannelVisibility;
+}>`
   align-items: center;
   display: flex;
   gap: ${({ theme }) => theme.spacing(2)};
   height: ${({ theme }) => theme.spacing(12)};
   padding: ${({ theme }) => theme.spacing(0, 4)};
   cursor: ${({ visibility }) =>
-    visibility === 'share_everything' ? 'pointer' : 'default'};
+    visibility === MessageChannelVisibility.ShareEverything
+      ? 'pointer'
+      : 'default'};
 `;
 
 const StyledHeading = styled.div<{ unread: boolean }>`
@@ -77,8 +81,6 @@ const StyledReceivedAt = styled.div`
   font-weight: ${({ theme }) => theme.font.weight.regular};
   padding: ${({ theme }) => theme.spacing(0, 1)};
 `;
-
-export type EmailThreadVisibility = 'metadata' | 'subject' | 'share_everything';
 
 type EmailThreadPreviewProps = {
   divider?: boolean;
