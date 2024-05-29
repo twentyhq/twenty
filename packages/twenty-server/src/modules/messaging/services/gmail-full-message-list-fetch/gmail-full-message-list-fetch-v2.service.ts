@@ -91,7 +91,7 @@ export class GmailFullMessageListFetchV2Service {
     }
   }
 
-  public async fetchAllMessageIdsFromGmailAndStoreInCache(
+  private async fetchAllMessageIdsFromGmailAndStoreInCache(
     gmailClient: gmail_v1.Gmail,
     messageChannelId: string,
     workspaceId: string,
