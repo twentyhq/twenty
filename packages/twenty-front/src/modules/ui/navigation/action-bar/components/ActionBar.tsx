@@ -4,6 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
+import SharedNavigationModal from '@/ui/navigation/shared/components/NavigationModal';
 
 import { ActionBarItem } from './ActionBarItem';
 
@@ -62,9 +63,10 @@ export const ActionBar = ({ selectedIds }: ActionBarProps) => {
           <ActionBarItem key={index} item={item} />
         ))}
       </StyledContainerActionBar>
-      <div data-select-disable className="action-bar">
-        {actionBarEntries[0]?.ConfirmationModal}
-      </div>
+      <SharedNavigationModal
+        actionBarEntries={actionBarEntries}
+        customClassName="action-bar"
+      />
     </>
   );
 };

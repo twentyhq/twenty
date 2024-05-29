@@ -6,6 +6,7 @@ import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
+import SharedNavigationModal from '@/ui/navigation/shared/components/NavigationModal';
 
 import { contextMenuEntriesState } from '../states/contextMenuEntriesState';
 import { contextMenuIsOpenState } from '../states/contextMenuIsOpenState';
@@ -68,9 +69,10 @@ export const ContextMenu = () => {
           </DropdownMenuItemsContainer>
         </DropdownMenu>
       </StyledContainerContextMenu>
-      <div data-select-disable className="action-bar">
-        {actionBarEntries[0]?.ConfirmationModal}
-      </div>
+      <SharedNavigationModal
+        actionBarEntries={actionBarEntries}
+        customClassName="context-menu"
+      />
     </>
   );
 };
