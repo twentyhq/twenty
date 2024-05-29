@@ -1,4 +1,5 @@
 import { DynamicModule, Global } from '@nestjs/common';
+import { DiscoveryModule } from '@nestjs/core';
 
 import { MessageQueueDriver } from 'src/engine/integrations/message-queue/drivers/interfaces/message-queue-driver.interface';
 
@@ -14,16 +15,16 @@ import { PgBossDriver } from 'src/engine/integrations/message-queue/drivers/pg-b
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { BullMQDriver } from 'src/engine/integrations/message-queue/drivers/bullmq.driver';
 import { SyncDriver } from 'src/engine/integrations/message-queue/drivers/sync.driver';
-import { JobsModule } from 'src/engine/integrations/message-queue/jobs.module';
+import { getQueueToken } from 'src/engine/integrations/message-queue/utils/get-queue-token.util';
 
 @Global()
 export class MessageQueueModule {
   static forRoot(options: MessageQueueModuleAsyncOptions): DynamicModule {
     const providers = [
-      ...Object.values(MessageQueue).map((queue) => ({
-        provide: queue,
+      ...Object.values(MessageQueue).map((queueName) => ({
+        provide: getQueueToken(queueName),
         useFactory: (driver: MessageQueueDriver) => {
-          return new MessageQueueService(driver, queue);
+          return new MessageQueueService(driver, queueName);
         },
         inject: [QUEUE_DRIVER],
       })),
@@ -44,7 +45,7 @@ export class MessageQueueModule {
               return new BullMQDriver(config.options);
             }
             default: {
-              return new SyncDriver(JobsModule.moduleRef);
+              return new SyncDriver();
             }
           }
         },
@@ -54,9 +55,11 @@ export class MessageQueueModule {
 
     return {
       module: MessageQueueModule,
-      imports: [JobsModule, ...(options.imports || [])],
+      imports: [DiscoveryModule, ...(options.imports || [])],
       providers,
-      exports: Object.values(MessageQueue),
+      exports: Object.values(MessageQueue).map((queueName) =>
+        getQueueToken(queueName),
+      ),
     };
   }
 }

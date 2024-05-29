@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 
@@ -16,11 +16,12 @@ import { objectRecordChangedValues } from 'src/engine/integrations/event-emitter
 import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
 import { ObjectRecordBaseEvent } from 'src/engine/integrations/event-emitter/types/object-record.base.event';
 import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 
 @Injectable()
 export class EntityEventsToDbListener {
   constructor(
-    @Inject(MessageQueue.entityEventsToDbQueue)
+    @InjectMessageQueue(MessageQueue.entityEventsToDbQueue)
     private readonly messageQueueService: MessageQueueService,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,

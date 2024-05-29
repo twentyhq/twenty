@@ -4,6 +4,8 @@ import {
   QueueCronJobOptions,
   QueueJobOptions,
 } from 'src/engine/integrations/message-queue/drivers/interfaces/job-options.interface';
+import { MessageQueueJobNew } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
+import { MessageQueueWorkerOptions } from 'src/engine/integrations/message-queue/interfaces/message-queue-worker-options.interface';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 
@@ -39,14 +41,19 @@ export class BullMQDriver implements MessageQueueDriver {
 
   async work<T>(
     queueName: MessageQueue,
-    handler: ({ data, id }: { data: T; id: string }) => Promise<void>,
+    handler: (job: MessageQueueJobNew<T>) => Promise<void>,
+    options?: MessageQueueWorkerOptions,
   ) {
     const worker = new Worker(
       queueName,
       async (job) => {
-        await handler(job as { data: T; id: string });
+        // TODO: Correctly support for job.id
+        await handler({ data: job.data, id: job.id ?? '', name: job.name });
       },
-      this.options,
+      {
+        ...this.options,
+        concurrency: options?.concurrency,
+      },
     );
 
     this.workerMap[queueName] = worker;

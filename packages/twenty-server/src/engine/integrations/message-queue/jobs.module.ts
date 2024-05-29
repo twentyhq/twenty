@@ -25,6 +25,7 @@ import { CalendarJobModule } from 'src/modules/calendar/jobs/calendar-job.module
 import { AutoCompaniesAndContactsCreationJobModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/auto-companies-and-contacts-creation-job.module';
 import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module';
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
+import { ShareContextTestModule } from 'src/engine/core-modules/share-context-test/share-context-test.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
     CalendarJobModule,
     AutoCompaniesAndContactsCreationJobModule,
     TimelineJobModule,
+    ShareContextTestModule,
   ],
   providers: [
     {
@@ -64,6 +66,10 @@ import { MessagingModule } from 'src/modules/messaging/messaging.module';
       provide: HandleWorkspaceMemberDeletedJob.name,
       useClass: HandleWorkspaceMemberDeletedJob,
     },
+    // {
+    //   provide: TestJob.name,
+    //   useClass: TestJob,
+    // },
   ],
 })
 export class JobsModule {

@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
@@ -11,6 +11,7 @@ import {
   CallWebhookJob,
   CallWebhookJobData,
 } from 'src/engine/api/graphql/workspace-query-runner/jobs/call-webhook.job';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 
 export enum CallWebhookJobsJobOperation {
   create = 'create',
@@ -34,7 +35,7 @@ export class CallWebhookJobsJob
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly dataSourceService: DataSourceService,
-    @Inject(MessageQueue.webhookQueue)
+    @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 

@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  Inject,
   Injectable,
   Logger,
   RequestTimeoutException,
@@ -52,6 +51,7 @@ import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/obj
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
 import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
 import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
@@ -72,7 +72,7 @@ export class WorkspaceQueryRunnerService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly queryRunnerArgsFactory: QueryRunnerArgsFactory,
     private readonly queryResultGettersFactory: QueryResultGettersFactory,
-    @Inject(MessageQueue.webhookQueue)
+    @InjectMessageQueue(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly eventEmitter: EventEmitter2,
     private readonly workspacePreQueryHookService: WorkspacePreQueryHookService,

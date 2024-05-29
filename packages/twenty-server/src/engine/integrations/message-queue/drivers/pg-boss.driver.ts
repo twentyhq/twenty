@@ -4,6 +4,8 @@ import {
   QueueCronJobOptions,
   QueueJobOptions,
 } from 'src/engine/integrations/message-queue/drivers/interfaces/job-options.interface';
+import { MessageQueueJobNew } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
+import { MessageQueueWorkerOptions } from 'src/engine/integrations/message-queue/interfaces/message-queue-worker-options.interface';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 
@@ -30,9 +32,18 @@ export class PgBossDriver implements MessageQueueDriver {
 
   async work<T>(
     queueName: string,
-    handler: ({ data, id }: { data: T; id: string }) => Promise<void>,
+    handler: (job: MessageQueueJobNew<T>) => Promise<void>,
+    options?: MessageQueueWorkerOptions,
   ) {
-    return this.pgBoss.work(`${queueName}.*`, handler);
+    return this.pgBoss.work<T>(
+      `${queueName}.*`,
+      {
+        teamConcurrency: options?.concurrency,
+      },
+      async (job) => {
+        await handler({ data: job.data, id: job.id, name: job.name });
+      },
+    );
   }
 
   async addCron<T>(

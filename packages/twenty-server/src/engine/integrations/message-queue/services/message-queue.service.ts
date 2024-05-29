@@ -5,7 +5,11 @@ import {
   QueueJobOptions,
 } from 'src/engine/integrations/message-queue/drivers/interfaces/job-options.interface';
 import { MessageQueueDriver } from 'src/engine/integrations/message-queue/drivers/interfaces/message-queue-driver.interface';
-import { MessageQueueJobData } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
+import {
+  MessageQueueJobData,
+  MessageQueueJobNew,
+} from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
+import { MessageQueueWorkerOptions } from 'src/engine/integrations/message-queue/interfaces/message-queue-worker-options.interface';
 
 import {
   MessageQueue,
@@ -50,8 +54,9 @@ export class MessageQueueService implements OnModuleDestroy {
   }
 
   work<T extends MessageQueueJobData>(
-    handler: ({ data, id }: { data: T; id: string }) => Promise<void> | void,
+    handler: (job: MessageQueueJobNew<T>) => Promise<void> | void,
+    options?: MessageQueueWorkerOptions,
   ) {
-    return this.driver.work(this.queueName, handler);
+    return this.driver.work(this.queueName, handler, options);
   }
 }

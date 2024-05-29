@@ -11,6 +11,7 @@ export class UpdateSubscriptionJob
   implements MessageQueueJob<UpdateSubscriptionJobData>
 {
   protected readonly logger = new Logger(UpdateSubscriptionJob.name);
+
   constructor(
     private readonly billingService: BillingService,
     private readonly userWorkspaceService: UserWorkspaceService,

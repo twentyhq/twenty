@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { OnEvent } from '@nestjs/event-emitter';
 
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
@@ -15,11 +15,12 @@ import {
   BlocklistItemDeleteMessagesJob,
 } from 'src/modules/messaging/blocklist-manager/jobs/messaging-blocklist-item-delete-messages.job';
 import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 
 @Injectable()
 export class MessagingBlocklistListener {
   constructor(
-    @Inject(MessageQueue.messagingQueue)
+    @InjectMessageQueue(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 

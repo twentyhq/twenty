@@ -18,6 +18,7 @@
     "@nestjs/cache-manager": "^2.2.1",
     "@nestjs/devtools-integration": "^0.1.6",
     "@nestjs/graphql": "patch:@nestjs/graphql@12.1.1#./patches/@nestjs+graphql+12.1.1.patch",
+    "@nestjs/schedule": "^4.0.2",
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch",
     "cache-manager": "^5.4.0",
     "cache-manager-redis-yet": "^4.1.2",

@@ -1,7 +1,6 @@
-import { Inject } from '@nestjs/common';
-
 import { Command, CommandRunner } from 'nest-commander';
 
+import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { MessagingMessagesImportCronJob } from 'src/modules/messaging/message-import-manager/crons/jobs/messaging-messages-import.cron.job';
@@ -12,7 +11,7 @@ import { MessagingMessagesImportCronJob } from 'src/modules/messaging/message-im
 })
 export class MessagingMessagesImportCronCommand extends CommandRunner {
   constructor(
-    @Inject(MessageQueue.cronQueue)
+    @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {
     super();
