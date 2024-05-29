@@ -16,7 +16,6 @@ import {
   getFormDefaultValuesFromConnection,
 } from '@/settings/integrations/database-connection/utils/editDatabaseConnection';
 import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
-import { getConnectionDbName } from '@/settings/integrations/utils/getConnectionDbName';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Info } from '@/ui/display/info/components/Info';
@@ -67,8 +66,6 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
     (table) => table?.status === RemoteTableStatus.Synced,
   );
 
-  const connectionName = getConnectionDbName({ integration, connection });
-
   const { isDirty, isValid } = formConfig.formState;
   const canSave = isDirty && isValid && !hasSyncedTables; // order matters here
 
@@ -114,7 +111,7 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
                 children: integration.text,
                 href: `${settingsIntegrationsPagePath}/${databaseKey}`,
               },
-              { children: connectionName },
+              { children: connection.label },
             ]}
           />
           <SaveAndCancelButtons
