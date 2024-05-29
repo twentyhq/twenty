@@ -30,6 +30,7 @@ export const Default: Story = {
     title: 'Button',
     size: 'small',
     variant: 'primary',
+    inverted: false,
     accent: 'danger',
     disabled: false,
     focus: false,
@@ -47,6 +48,7 @@ export const Catalog: CatalogStory<Story, typeof Button> = {
   argTypes: {
     size: { control: false },
     variant: { control: false },
+    inverted: { control: false },
     accent: { control: false },
     disabled: { control: false },
     focus: { control: false },
@@ -107,6 +109,11 @@ export const Catalog: CatalogStory<Story, typeof Button> = {
             'tertiary',
           ] satisfies ButtonVariant[],
           props: (variant: ButtonVariant) => ({ variant }),
+        },
+        {
+          name: 'inverted',
+          values: [true, false],
+          props: (inverted: boolean) => ({ inverted }),
         },
       ],
     },
