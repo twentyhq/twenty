@@ -79,6 +79,8 @@ export const RecordTableCellContainer = ({
 
   useEffect(() => {
     const customEventListener = (event: any) => {
+      event.stopPropagation();
+
       const newHasSoftFocus = event.detail;
 
       setHasSoftFocus(newHasSoftFocus);
