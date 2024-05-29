@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { H2Title, IconPlus, IconSettings } from 'twenty-ui';
 
@@ -214,19 +214,21 @@ export const SettingsObjectDetail = () => {
           </Table>
           {shouldDisplayAddFieldButton && (
             <StyledDiv>
-              <Button
-                Icon={IconPlus}
-                title="Add Field"
-                size="small"
-                variant="secondary"
-                onClick={() =>
-                  navigate(
-                    deactivatedMetadataFields.length
-                      ? './new-field/step-1'
-                      : './new-field/step-2',
-                  )
+              <Link
+                to={
+                  deactivatedMetadataFields.length
+                    ? './new-field/step-1'
+                    : './new-field/step-2'
                 }
-              />
+                style={{ textDecoration: 'none' }}
+              >
+                <Button
+                  Icon={IconPlus}
+                  title="Add Field"
+                  size="small"
+                  variant="secondary"
+                />
+              </Link>
             </StyledDiv>
           )}
         </Section>

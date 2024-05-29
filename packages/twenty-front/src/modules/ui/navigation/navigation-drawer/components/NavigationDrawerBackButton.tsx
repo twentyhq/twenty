@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
@@ -36,22 +36,23 @@ export const NavigationDrawerBackButton = ({
   title,
 }: NavigationDrawerBackButtonProps) => {
   const theme = useTheme();
-  const navigate = useNavigate();
   const navigationMemorizedUrl = useRecoilValue(navigationMemorizedUrlState);
 
   return (
     <StyledContainer>
-      <StyledIconAndButtonContainer
-        onClick={() => {
-          navigate(navigationMemorizedUrl, { replace: true });
-        }}
+      <Link
+        to={navigationMemorizedUrl}
+        style={{ textDecoration: 'none' }}
+        replace
       >
-        <IconChevronLeft
-          size={theme.icon.size.md}
-          stroke={theme.icon.stroke.lg}
-        />
-        <span>{title}</span>
-      </StyledIconAndButtonContainer>
+        <StyledIconAndButtonContainer>
+          <IconChevronLeft
+            size={theme.icon.size.md}
+            stroke={theme.icon.stroke.lg}
+          />
+          <span>{title}</span>
+        </StyledIconAndButtonContainer>
+      </Link>
     </StyledContainer>
   );
 };

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { IconDotsVertical, IconPencil, IconTrash } from 'twenty-ui';
 
@@ -14,7 +15,6 @@ type SettingsIntegrationDatabaseConnectionSummaryCardProps = {
   connectionId: string;
   connectionLabel: string;
   onRemove: () => void;
-  onEdit: () => void;
 };
 
 const StyledDatabaseLogoContainer = styled.div`
@@ -34,7 +34,6 @@ export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
   connectionId,
   connectionLabel,
   onRemove,
-  onEdit,
 }: SettingsIntegrationDatabaseConnectionSummaryCardProps) => {
   const dropdownId =
     'settings-integration-database-connection-summary-card-dropdown';
@@ -69,11 +68,9 @@ export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
                     text="Remove"
                     onClick={onRemove}
                   />
-                  <MenuItem
-                    LeftIcon={IconPencil}
-                    text="Edit"
-                    onClick={onEdit}
-                  />
+                  <Link to="./edit" style={{ textDecoration: 'none' }}>
+                    <MenuItem LeftIcon={IconPencil} text="Edit" />
+                  </Link>
                 </DropdownMenuItemsContainer>
               </DropdownMenu>
             }

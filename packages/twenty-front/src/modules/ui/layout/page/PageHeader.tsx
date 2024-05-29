@@ -1,6 +1,6 @@
 import { ComponentProps, ReactNode } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
@@ -103,7 +103,6 @@ export const PageHeader = ({
   loading,
 }: PageHeaderProps) => {
   const isMobile = useIsMobile();
-  const navigate = useNavigate();
   const theme = useTheme();
   const isNavigationDrawerOpen = useRecoilValue(isNavigationDrawerOpenState);
 
@@ -116,12 +115,13 @@ export const PageHeader = ({
           </StyledTopBarButtonContainer>
         )}
         {hasBackButton && (
-          <IconButton
-            Icon={IconChevronLeft}
-            size="small"
-            onClick={() => navigate(-1)}
-            variant="tertiary"
-          />
+          <Link to={'-1'} style={{ textDecoration: 'none' }}>
+            <IconButton
+              Icon={IconChevronLeft}
+              size="small"
+              variant="tertiary"
+            />
+          </Link>
         )}
         {loading ? (
           <StyledSkeletonLoader />

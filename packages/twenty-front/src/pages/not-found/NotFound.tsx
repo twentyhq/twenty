@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
@@ -33,8 +33,6 @@ const StyledButtonContainer = styled.div`
 `;
 
 export const NotFound = () => {
-  const navigate = useNavigate();
-
   return (
     <>
       <PageTitle title="Page Not Found | Twenty" />
@@ -51,11 +49,9 @@ export const NotFound = () => {
             </AnimatedPlaceholderErrorSubTitle>
           </AnimatedPlaceholderEmptyTextContainer>
           <StyledButtonContainer>
-            <MainButton
-              title="Back to content"
-              fullWidth
-              onClick={() => navigate(AppPath.Index)}
-            />
+            <Link to={AppPath.Index} style={{ textDecoration: 'none' }}>
+              <MainButton title="Back to content" fullWidth />
+            </Link>
           </StyledButtonContainer>
         </AnimatedPlaceholderErrorContainer>
       </StyledBackDrop>

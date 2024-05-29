@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -40,7 +40,6 @@ const StyledH1Title = styled(H1Title)`
 
 export const SettingsObjects = () => {
   const theme = useTheme();
-  const navigate = useNavigate();
 
   const { activeObjectMetadataItems, inactiveObjectMetadataItems } =
     useFilteredObjectMetadataItems();
@@ -52,15 +51,17 @@ export const SettingsObjects = () => {
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <StyledH1Title title="Objects" />
-          <Button
-            Icon={IconPlus}
-            title="Add object"
-            accent="blue"
-            size="small"
-            onClick={() =>
-              navigate(getSettingsPagePath(SettingsPath.NewObject))
-            }
-          />
+          <Link
+            to={getSettingsPagePath(SettingsPath.NewObject)}
+            style={{ textDecoration: 'none' }}
+          >
+            <Button
+              Icon={IconPlus}
+              title="Add object"
+              accent="blue"
+              size="small"
+            />
+          </Link>
         </SettingsHeaderContainer>
         <div>
           <SettingsObjectCoverImage />

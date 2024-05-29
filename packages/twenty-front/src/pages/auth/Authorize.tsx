@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { AppPath } from '@/types/AppPath';
@@ -115,12 +115,9 @@ export const Authorize = () => {
         </StyledAppsContainer>
         <StyledText>{app?.name} wants to access your account</StyledText>
         <StyledButtonContainer>
-          <MainButton
-            title="Cancel"
-            variant="secondary"
-            onClick={() => navigate(AppPath.Index)}
-            fullWidth
-          />
+          <Link to={AppPath.Index} style={{ textDecoration: 'none' }}>
+            <MainButton title="Cancel" variant="secondary" fullWidth />
+          </Link>
           <MainButton title="Authorize" onClick={handleAuthorize} fullWidth />
         </StyledButtonContainer>
       </StyledCardWrapper>

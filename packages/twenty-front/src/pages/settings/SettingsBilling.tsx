@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
@@ -66,7 +66,6 @@ const SWITCH_INFOS = {
 };
 
 export const SettingsBilling = () => {
-  const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
@@ -140,10 +139,6 @@ export const SettingsBilling = () => {
     }
   };
 
-  const redirectToSubscribePage = () => {
-    navigate(AppPath.PlanRequired);
-  };
-
   return (
     <SubMenuTopBarContainer Icon={IconCurrencyDollar} title="Billing">
       <SettingsPageContainer>
@@ -158,20 +153,22 @@ export const SettingsBilling = () => {
           />
         )}
         {displaySubscriptionCanceledInfo && (
-          <Info
-            text={'Subscription canceled. Please start a new one'}
-            buttonTitle={'Subscribe'}
-            accent={'danger'}
-            onClick={redirectToSubscribePage}
-          />
+          <Link to={AppPath.PlanRequired} style={{ textDecoration: 'none' }}>
+            <Info
+              text={'Subscription canceled. Please start a new one'}
+              buttonTitle={'Subscribe'}
+              accent={'danger'}
+            />
+          </Link>
         )}
         {displaySubscribeInfo ? (
-          <Info
-            text={'Your workspace does not have an active subscription'}
-            buttonTitle={'Subscribe'}
-            accent={'danger'}
-            onClick={redirectToSubscribePage}
-          />
+          <Link to={AppPath.PlanRequired}>
+            <Info
+              text={'Your workspace does not have an active subscription'}
+              buttonTitle={'Subscribe'}
+              accent={'danger'}
+            />
+          </Link>
         ) : (
           <>
             <Section>
