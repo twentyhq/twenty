@@ -17,6 +17,8 @@ import { DataSeedDemoWorkspaceCommand } from 'src/database/commands/data-seed-de
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UpdateMessageChannelVisibilityEnumCommand } from 'src/database/commands/update-message-channel-visibility-enum.command';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
 
 @Module({
   imports: [
@@ -24,11 +26,13 @@ import { UpdateMessageChannelVisibilityEnumCommand } from 'src/database/commands
     DataSourceModule,
     TypeORMModule,
     TypeOrmModule.forFeature([Workspace], 'core'),
+    TypeOrmModule.forFeature([FieldMetadataEntity], 'metadata'),
     WorkspaceModule,
     WorkspaceDataSourceModule,
     WorkspaceSyncMetadataModule,
     ObjectMetadataModule,
     DataSeedDemoWorkspaceModule,
+    WorkspaceCacheVersionModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,

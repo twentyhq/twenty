@@ -7,6 +7,8 @@ import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { MessageChannelVisibility } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 
 @Command({
   name: 'migrate-0.20:update-message-channel-visibility-enum',
@@ -17,8 +19,11 @@ export class UpdateMessageChannelVisibilityEnumCommand extends CommandRunner {
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
+    @InjectRepository(FieldMetadataEntity, 'metadata')
+    private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly typeORMService: TypeORMService,
     private readonly dataSourceService: DataSourceService,
+    private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
   ) {
     super();
   }
@@ -87,6 +92,27 @@ export class UpdateMessageChannelVisibilityEnumCommand extends CommandRunner {
           }
         }
       }
+      await this.workspaceCacheVersionService.incrementVersion(workspace.id);
+    }
+
+    const visibilityFieldsMetadata = await this.fieldMetadataRepository.find({
+      where: { name: 'visibility' },
+    });
+
+    for (const visibilityFieldMetadata of visibilityFieldsMetadata) {
+      const newOptions = visibilityFieldMetadata.options.map((option) => {
+        return { ...option, value: option.value.toUpperCase() };
+      });
+
+      const newDefaultValue =
+        typeof visibilityFieldMetadata.defaultValue === 'string'
+          ? visibilityFieldMetadata.defaultValue.toUpperCase()
+          : visibilityFieldMetadata.defaultValue;
+
+      await this.fieldMetadataRepository.update(visibilityFieldMetadata.id, {
+        defaultValue: newDefaultValue,
+        options: newOptions,
+      });
     }
   }
 }

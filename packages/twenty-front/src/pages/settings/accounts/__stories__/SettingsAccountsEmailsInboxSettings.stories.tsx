@@ -1,8 +1,8 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 import { graphql, HttpResponse } from 'msw';
-import { MessageChannelVisibility } from 'packages/twenty-front/src/generated/graphql';
 
+import { MessageChannelVisibility } from '~/generated/graphql';
 import { SettingsAccountsEmailsInboxSettings } from '~/pages/settings/accounts/SettingsAccountsEmailsInboxSettings';
 import {
   PageDecorator,
