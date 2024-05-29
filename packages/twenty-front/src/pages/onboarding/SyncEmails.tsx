@@ -7,11 +7,11 @@ import { IconGoogle } from 'twenty-ui';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { OnboardingSyncEmailsSettingsCard } from '@/onboarding/components/OnboardingSyncEmailsSettingsCard';
-import { InboxSettingsVisibilityValue } from '@/settings/accounts/components/SettingsAccountsInboxVisibilitySettingsCard';
 import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
 import { AppPath } from '@/types/AppPath';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
+import { MessageChannelVisibility } from '~/generated/graphql';
 
 const StyledSyncEmailsContainer = styled.div`
   display: flex;
@@ -31,8 +31,8 @@ export const SyncEmails = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
-  const [visibility, setVisibility] = useState<InboxSettingsVisibilityValue>(
-    InboxSettingsVisibilityValue.Everything,
+  const [visibility, setVisibility] = useState<MessageChannelVisibility>(
+    MessageChannelVisibility.ShareEverything,
   );
 
   const handleButtonClick = async () => {

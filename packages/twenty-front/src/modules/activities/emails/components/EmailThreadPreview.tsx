@@ -8,7 +8,7 @@ import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import { emailThreadIdWhenEmailThreadWasClosedState } from '@/activities/emails/states/lastViewableEmailThreadIdState';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { TimelineThread } from '~/generated/graphql';
+import { MessageChannelVisibility, TimelineThread } from '~/generated/graphql';
 import { formatToHumanReadableDate } from '~/utils';
 import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
@@ -93,7 +93,7 @@ export const EmailThreadPreview = ({
 
   const { openEmailThread } = useEmailThread();
 
-  const visibility = thread.visibility as EmailThreadVisibility;
+  const visibility = thread.visibility;
 
   const senderNames =
     thread.firstParticipant.displayName +
@@ -126,7 +126,7 @@ export const EmailThreadPreview = ({
           .getValue();
 
         const canOpen =
-          thread.visibility === 'share_everything' &&
+          thread.visibility === MessageChannelVisibility.ShareEverything &&
           (!clickJustTriggeredEmailDrawerClose ||
             emailThreadIdWhenEmailThreadWasClosed !== thread.id);
 
@@ -183,13 +183,15 @@ export const EmailThreadPreview = ({
       </StyledHeading>
 
       <StyledSubjectAndBody>
-        {visibility !== 'metadata' && (
+        {visibility !== MessageChannelVisibility.Metadata && (
           <StyledSubject>{thread.subject}</StyledSubject>
         )}
-        {visibility === 'share_everything' && (
+        {visibility === MessageChannelVisibility.ShareEverything && (
           <StyledBody>{thread.lastMessageBody}</StyledBody>
         )}
-        {visibility !== 'share_everything' && <EmailThreadNotShared />}
+        {visibility !== MessageChannelVisibility.ShareEverything && (
+          <EmailThreadNotShared />
+        )}
       </StyledSubjectAndBody>
       <StyledReceivedAt>
         {formatToHumanReadableDate(thread.lastMessageReceivedAt)}
