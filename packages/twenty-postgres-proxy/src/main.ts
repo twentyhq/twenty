@@ -4,9 +4,9 @@ import dotenv from 'dotenv';
 // Load environment variables from .env file
 dotenv.config();
 
-const HOST = process.env.PG_DATABASE_HOST || 'localhost'; // PostgreSQL server host
+const PG_HOST = process.env.PG_DATABASE_HOST || 'localhost'; // PostgreSQL server host
 const PG_PORT = parseInt(process.env.PG_DATABASE_PORT || '5432'); // PostgreSQL server port
-const PROXY_PORT = 5433; // Port for proxy server to listen on
+const PROXY_PORT = parseInt(process.env.PROXY_PORT || '5432') ; // Port for proxy server to listen on
 
 const ALLOWED_HOSTS = (process.env.ALLOWED_HOSTS || '').split(',');
 const ALLOWED_IPS = (process.env.ALLOWED_IPS || '').split(',');
@@ -58,7 +58,7 @@ const server = net.createServer((clientSocket) => {
                 return;
             }
 
-            serverSocket = net.connect({ host: HOST, port: PG_PORT }, () => {
+            serverSocket = net.connect({ host: PG_HOST, port: PG_PORT }, () => {
                 console.log('Proxy connected to PostgreSQL server.');
                 serverSocket?.write(data);
             });
