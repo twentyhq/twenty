@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
@@ -14,12 +15,15 @@ import { StopDataSeedDemoWorkspaceCronCommand } from 'src/database/commands/data
 import { WorkspaceAddTotalCountCommand } from 'src/database/commands/workspace-add-total-count.command';
 import { DataSeedDemoWorkspaceCommand } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace-command';
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
+import { UpdateMessageChannelVisibilityEnumCommand } from 'src/database/commands/update-message-channel-visibility-enum.command';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Module({
   imports: [
     WorkspaceManagerModule,
     DataSourceModule,
     TypeORMModule,
+    TypeOrmModule.forFeature([Workspace], 'core'),
     WorkspaceModule,
     WorkspaceDataSourceModule,
     WorkspaceSyncMetadataModule,
@@ -33,6 +37,7 @@ import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-dem
     ConfirmationQuestion,
     StartDataSeedDemoWorkspaceCronCommand,
     StopDataSeedDemoWorkspaceCronCommand,
+    UpdateMessageChannelVisibilityEnumCommand,
   ],
 })
 export class DatabaseCommandModule {}
