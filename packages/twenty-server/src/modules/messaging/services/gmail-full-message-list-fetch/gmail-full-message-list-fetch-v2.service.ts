@@ -75,7 +75,7 @@ export class GmailFullMessageListFetchV2Service {
         return;
       }
 
-      await this.setMessageChannelSyncStatusService.setCompletedStatus(
+      await this.setMessageChannelSyncStatusService.setMessagesImportPendingStatus(
         messageChannel.id,
         workspaceId,
       );
@@ -229,11 +229,6 @@ export class GmailFullMessageListFetchV2Service {
       historyId,
       workspaceId,
       transactionManager,
-    );
-
-    await this.setMessageChannelSyncStatusService.setMessagesImportPendingStatus(
-      messageChannelId,
-      workspaceId,
     );
   }
 }
