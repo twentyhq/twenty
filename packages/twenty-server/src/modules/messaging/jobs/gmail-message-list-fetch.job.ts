@@ -81,26 +81,6 @@ export class GmailMessageListFetchJob
       );
     }
 
-    const refreshToken = connectedAccount.refreshToken;
-
-    if (!refreshToken) {
-      if (!connectedAccount.authFailedAt) {
-        await this.connectedAccountRepository.updateAuthFailedAt(
-          connectedAccountId,
-          workspaceId,
-        );
-      }
-
-      await this.setMessageChannelSyncStatusService.setFailedInsufficientPermissionsStatus(
-        messageChannel.id,
-        workspaceId,
-      );
-
-      throw new Error(
-        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
-      );
-    }
-
     switch (messageChannel.syncSubStatus) {
       case MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING:
         try {
