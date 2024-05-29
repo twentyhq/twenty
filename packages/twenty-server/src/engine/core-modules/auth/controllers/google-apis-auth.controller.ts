@@ -45,6 +45,8 @@ export class GoogleAPIsAuthController {
       refreshToken,
       transientToken,
       redirectLocation,
+      calendarVisibility,
+      messageVisibility,
     } = user;
 
     const { workspaceMemberId, workspaceId } =
@@ -68,6 +70,8 @@ export class GoogleAPIsAuthController {
       workspaceId: workspaceId,
       accessToken,
       refreshToken,
+      calendarVisibility,
+      messageVisibility,
     });
 
     return res.redirect(

@@ -11,7 +11,10 @@ import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerG
 import { AppPath } from '@/types/AppPath';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
-import { MessageChannelVisibility } from '~/generated/graphql';
+import {
+  CalendarChannelVisibility,
+  MessageChannelVisibility,
+} from '~/generated/graphql';
 
 const StyledSyncEmailsContainer = styled.div`
   display: flex;
@@ -36,7 +39,16 @@ export const SyncEmails = () => {
   );
 
   const handleButtonClick = async () => {
-    await triggerGoogleApisOAuth(AppPath.Index);
+    const calendarChannelVisibility =
+      visibility === MessageChannelVisibility.ShareEverything
+        ? CalendarChannelVisibility.ShareEverything
+        : CalendarChannelVisibility.Metadata;
+
+    await triggerGoogleApisOAuth(
+      AppPath.Index,
+      visibility,
+      calendarChannelVisibility,
+    );
   };
 
   const continueWithoutSync = () => {
