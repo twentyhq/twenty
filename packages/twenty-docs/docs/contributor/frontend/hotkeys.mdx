@@ -102,8 +102,8 @@ const ExamplePageWithModal = () => {
   };
 
   return <div>
-    <h1>My page with a Dropdown</h1>
-    <button onClick={handleOpenModalClick}>Open dropdown</button>
+    <h1>My page with a modal</h1>
+    <button onClick={handleOpenModalClick}>Open modal</button>
     {showModal && <MyModalComponent onClose={handleModalClose} />}
   </div>;
 };
@@ -124,7 +124,7 @@ const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
     ExampleHotkeyScopes.ExampleModal,
   );
 
-  return <div>My Dropdown component</div>;
+  return <div>My modal component</div>;
 };
 ```
 
