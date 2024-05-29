@@ -32,7 +32,7 @@ const server = net.createServer((clientSocket) => {
     });
 
     serverSocket.on('error', (err) => {
-        console.log('Server Error:', err.message);
+        console.log(`Server Error: ${err.message}, host: ${PG_HOST}, port: ${PG_PORT}`);
         serverSocket.destroy();
         clientSocket.end();
     });
