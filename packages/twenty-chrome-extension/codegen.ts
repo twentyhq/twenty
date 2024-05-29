@@ -1,13 +1,17 @@
 import { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
-  schema: [`${import.meta.env.VITE_SERVER_BASE_URL}/graphql`],
-  overwrite: false,
-  documents: ['./src/**/*.ts', 
-    '!src/generated/**/*.*', 
-    '!src/graphql/company/*', 
-    '!src/graphql/person/*'
-  ],
+  schema: [{
+    [`${import.meta.env.VITE_SERVER_BASE_URL}/graphql`]: {
+      // some of the mutations and queries require authorization (people or companies)
+      // so to regenrate the schema with types we need to pass a auth token
+      headers: {
+        Authorization: 'YOUR-TOKEN-HERE',
+      },
+    }
+  }],
+  overwrite: true,
+  documents: ['./src/**/*.ts', '!src/generated/**/*.*' ],
   generates: {
     './src/generated/graphql.tsx': {
       plugins: [
