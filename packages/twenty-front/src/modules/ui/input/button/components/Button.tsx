@@ -14,6 +14,7 @@ export type ButtonProps = {
   title?: string;
   fullWidth?: boolean;
   variant?: ButtonVariant;
+  inverted?: boolean;
   size?: ButtonSize;
   position?: ButtonPosition;
   accent?: ButtonAccent;
@@ -29,6 +30,7 @@ const StyledButton = styled.button<
     ButtonProps,
     | 'fullWidth'
     | 'variant'
+    | 'inverted'
     | 'size'
     | 'position'
     | 'accent'
@@ -37,83 +39,106 @@ const StyledButton = styled.button<
   >
 >`
   align-items: center;
-  ${({ theme, variant, accent, disabled, focus }) => {
+  ${({ theme, variant, inverted, accent, disabled, focus }) => {
     switch (variant) {
       case 'primary':
         switch (accent) {
           case 'default':
             return css`
-              background: ${theme.background.secondary};
-              border-color: ${!disabled
+              background: ${!inverted
+                ? theme.background.secondary
+                : theme.background.primary};
+              border-color: ${!inverted
                 ? focus
                   ? theme.color.blue
                   : theme.background.transparent.light
-                : 'transparent'};
-              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
+                : theme.background.transparent.light};
+              border-width: 1px 1px 1px 1px !important;
+              opacity: ${disabled ? 0.24 : 1};
               box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.accent.tertiary}`
+                ? `0 0 0 3px ${
+                    !inverted ? theme.accent.tertiary : `${theme.color.blue}1A`
+                  }`
                 : 'none'};
-              color: ${!disabled
-                ? theme.font.color.secondary
-                : theme.font.color.extraLight};
+              color: ${!inverted
+                ? !disabled
+                  ? theme.font.color.secondary
+                  : theme.font.color.extraLight
+                : theme.font.color.secondary};
               &:hover {
-                background: ${!disabled
+                background: ${!inverted
                   ? theme.background.tertiary
                   : theme.background.secondary};
               }
               &:active {
-                background: ${!disabled
+                background: ${!inverted
                   ? theme.background.quaternary
-                  : theme.background.secondary};
+                  : theme.background.tertiary};
               }
             `;
           case 'blue':
             return css`
-              background: ${theme.color.blue};
-              border-color: ${!disabled
+              background: ${!inverted
+                ? theme.color.blue
+                : theme.background.primary};
+              border-color: ${!inverted
                 ? focus
                   ? theme.color.blue
                   : theme.background.transparent.light
-                : 'transparent'};
-              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
+                : theme.background.transparent.light};
+              border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.accent.tertiary}`
+                ? `0 0 0 3px ${
+                    !inverted ? theme.accent.tertiary : `${theme.color.blue}1A`
+                  }`
                 : 'none'};
-              color: ${theme.grayScale.gray0};
+              color: ${!inverted ? theme.grayScale.gray0 : theme.color.blue};
               opacity: ${disabled ? 0.24 : 1};
-
               ${disabled
                 ? ''
                 : css`
                     &:hover {
-                      background: ${theme.color.blue50};
+                      background: ${!inverted
+                        ? theme.color.blue50
+                        : theme.background.secondary};
                     }
                     &:active {
-                      background: ${theme.color.blue60};
+                      background: ${!inverted
+                        ? theme.color.blue60
+                        : theme.background.tertiary};
                     }
                   `}
             `;
           case 'danger':
             return css`
-              background: ${theme.color.red};
-              border-color: ${!disabled
+              background: ${!inverted
+                ? theme.color.red
+                : theme.background.primary};
+              border-color: ${!inverted
                 ? focus
                   ? theme.color.red
                   : theme.background.transparent.light
-                : 'transparent'};
-              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
+                : theme.background.transparent.light};
+              border-width: 1px 1px !important;
               box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.color.red10}`
+                ? `0 0 0 3px ${
+                    !inverted ? theme.color.red10 : `${theme.color.blue}1A`
+                  }`
                 : 'none'};
-              color: ${theme.grayScale.gray0};
+              color: ${!inverted ? theme.background.primary : theme.color.red};
               opacity: ${disabled ? 0.24 : 1};
-
               ${disabled
                 ? ''
                 : css`
-                    &:hover,
+                    &:hover {
+                      background: ${!inverted
+                        ? theme.color.red40
+                        : theme.background.secondary};
+                    }
                     &:active {
-                      background: ${theme.color.red50};
+                      background: ${!inverted
+                        ? theme.color.red50
+                        : theme.background.tertiary};
                     }
                   `}
             `;
@@ -182,7 +207,6 @@ const StyledButton = styled.button<
             `;
           case 'danger':
             return css`
-              background: transparent;
               border-color: ${variant === 'secondary'
                 ? focus
                   ? theme.color.red
@@ -265,6 +289,7 @@ export const Button = ({
   title,
   fullWidth = false,
   variant = 'primary',
+  inverted = false,
   size = 'medium',
   accent = 'default',
   position = 'standalone',
@@ -280,6 +305,7 @@ export const Button = ({
     <StyledButton
       fullWidth={fullWidth}
       variant={variant}
+      inverted={inverted}
       size={size}
       position={position}
       disabled={soon || disabled}
