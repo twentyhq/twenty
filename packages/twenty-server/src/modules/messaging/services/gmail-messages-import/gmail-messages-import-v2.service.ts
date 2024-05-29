@@ -129,6 +129,12 @@ export class GmailMessagesImportV2Service {
         messageIdsToFetch,
       );
 
+      if (error.code === 429) {
+        // Implement throttling
+
+        return;
+      }
+
       await this.setMessageChannelSyncStatusService.setFailedUnkownStatus(
         messageChannel.id,
         workspaceId,
@@ -139,7 +145,7 @@ export class GmailMessagesImportV2Service {
       );
 
       throw new Error(
-        `Error fetching messages for ${connectedAccount.id} in workspace ${workspaceId}: ${error.message}`,
+        `${error.code}: ${error.message} for ${connectedAccount.id} in workspace ${workspaceId}`,
       );
     }
   }
