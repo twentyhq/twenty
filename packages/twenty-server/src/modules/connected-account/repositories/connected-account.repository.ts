@@ -254,4 +254,30 @@ export class ConnectedAccountRepository {
       transactionManager,
     );
   }
+
+  public async getConnectedAccountOrThrow(
+    workspaceId: string,
+    connectedAccountId: string,
+  ): Promise<ObjectRecord<ConnectedAccountWorkspaceEntity>> {
+    const connectedAccount = await this.getById(
+      connectedAccountId,
+      workspaceId,
+    );
+
+    if (!connectedAccount) {
+      throw new Error(
+        `Connected account ${connectedAccountId} not found in workspace ${workspaceId}`,
+      );
+    }
+
+    const refreshToken = connectedAccount.refreshToken;
+
+    if (!refreshToken) {
+      throw new Error(
+        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
+      );
+    }
+
+    return connectedAccount;
+  }
 }

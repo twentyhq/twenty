@@ -15,11 +15,11 @@ export class RemoteTableResolver {
   constructor(private readonly remoteTableService: RemoteTableService) {}
 
   @Query(() => [RemoteTableDTO])
-  async findAvailableRemoteTablesByServerId(
+  async findDistantTablesWithStatus(
     @Args('input') input: FindManyRemoteTablesInput,
     @AuthWorkspace() { id: workspaceId }: Workspace,
   ) {
-    return this.remoteTableService.findDistantTablesWithStatusByServerId(
+    return this.remoteTableService.findDistantTablesWithStatus(
       input.id,
       workspaceId,
       input.shouldFetchPendingSchemaUpdates,

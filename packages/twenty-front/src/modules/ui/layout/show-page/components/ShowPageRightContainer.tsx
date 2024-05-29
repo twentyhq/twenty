@@ -53,9 +53,9 @@ type ShowPageRightContainerProps = {
   tasks?: boolean;
   notes?: boolean;
   emails?: boolean;
-  loading?: boolean;
   summary?: JSX.Element;
   forceMobile?: boolean;
+  loading: boolean;
 };
 
 export const ShowPageRightContainer = ({

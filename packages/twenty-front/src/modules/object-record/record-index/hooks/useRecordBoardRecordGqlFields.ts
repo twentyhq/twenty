@@ -2,6 +2,7 @@ import { useRecoilValue } from 'recoil';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getObjectMetadataIdentifierFields } from '@/object-metadata/utils/getObjectMetadataIdentifierFields';
+import { hasPositionField } from '@/object-metadata/utils/hasPositionField';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { isDefined } from '~/utils/isDefined';
 
@@ -41,6 +42,7 @@ export const useRecordBoardRecordGqlFields = ({
         true,
       ]),
     ),
+    ...(hasPositionField(objectMetadataItem) ? { position: true } : undefined),
     ...identifierQueryFields,
   };
 

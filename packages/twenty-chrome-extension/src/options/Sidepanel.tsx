@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { Loader } from '@/ui/display/loader/components/Loader';
 import { MainButton } from '@/ui/input/button/MainButton';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledIframe = styled.iframe`
@@ -41,126 +39,73 @@ const StyledActionContainer = styled.div`
 `;
 
 const Sidepanel = () => {
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [iframeSrc, setIframeSrc] = useState(
+  const [clientUrl, setClientUrl] = useState(
     import.meta.env.VITE_FRONT_BASE_URL,
   );
-  const [error, setError] = useState('');
-  const [serverBaseUrl, setServerBaseUrl] = useState('');
-  const authenticate = () => {
-    setIsAuthenticating(true);
-    setError('');
-    chrome.runtime.sendMessage(
-      { action: 'launchOAuth' },
-      ({ status, message }) => {
-        if (status === true) {
-          setIsAuthenticated(true);
-          setIsAuthenticating(false);
-          chrome.storage.local.set({ isAuthenticated: true });
-        } else {
-          setError(message);
-          setIsAuthenticating(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  const setIframeState = useCallback(async () => {
+    const store = await chrome.storage.local.get();
+    if (isDefined(store.isAuthenticated)) setIsAuthenticated(true);
+    const { tab: activeTab } = await chrome.runtime.sendMessage({
+      action: 'getActiveTab',
+    });
+
+    if (
+      isDefined(activeTab) &&
+      isDefined(store[`sidepanelUrl_${activeTab.id}`])
+    ) {
+      const url = store[`sidepanelUrl_${activeTab.id}`];
+      setClientUrl(url);
+    } else if (isDefined(store.clientUrl)) {
+      setClientUrl(store.clientUrl);
+    }
+  }, [setClientUrl]);
+
+  useEffect(() => {
+    const initState = async () => {
+      const store = await chrome.storage.local.get();
+      if (isDefined(store.isAuthenticated)) setIsAuthenticated(true);
+      void setIframeState();
+    };
+    void initState();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    void setIframeState();
+  }, [setIframeState, clientUrl]);
+
+  useEffect(() => {
+    chrome.storage.local.onChanged.addListener((store) => {
+      if (isDefined(store.isAuthenticated)) {
+        if (store.isAuthenticated.newValue === true) {
+          setIframeState();
         }
-      },
-    );
-  };
-
-  useEffect(() => {
-    const getState = async () => {
-      const store = await chrome.storage.local.get();
-      if (isDefined(store.serverBaseUrl)) {
-        setServerBaseUrl(store.serverBaseUrl);
-      } else {
-        setServerBaseUrl(import.meta.env.VITE_SERVER_BASE_URL);
       }
-
-      if (store.isAuthenticated === true) setIsAuthenticated(true);
-      const { tab: activeTab } = await chrome.runtime.sendMessage({
-        action: 'getActiveTab',
-      });
-
-      if (
-        isDefined(activeTab) &&
-        isDefined(store[`sidepanelUrl_${activeTab.id}`])
-      ) {
-        const url = store[`sidepanelUrl_${activeTab.id}`];
-        setIframeSrc(url);
-      }
-    };
-    void getState();
-  }, []);
-
-  useEffect(() => {
-    const handleBrowserEvents = ({ action }: { action: string }) => {
-      if (action === 'changeSidepanelUrl') {
-        setIframeSrc('');
-      }
-    };
-    chrome.runtime.onMessage.addListener(handleBrowserEvents);
-
-    return () => {
-      chrome.runtime.onMessage.removeListener(handleBrowserEvents);
-    };
-  }, []);
-
-  useEffect(() => {
-    const getIframeState = async () => {
-      const store = await chrome.storage.local.get();
-      const { tab: activeTab } = await chrome.runtime.sendMessage({
-        action: 'getActiveTab',
-      });
-
-      if (
-        isDefined(activeTab) &&
-        isDefined(store[`sidepanelUrl_${activeTab.id}`])
-      ) {
-        const url = store[`sidepanelUrl_${activeTab.id}`];
-        setIframeSrc(url);
-      }
-    };
-    void getIframeState();
-  }, [iframeSrc]);
-
-  const handleBaseUrlChange = (value: string) => {
-    setServerBaseUrl(value);
-    setError('');
-    chrome.storage.local.set({ serverBaseUrl: value });
-  };
+    });
+  }, [setIframeState]);
 
   return isAuthenticated ? (
-    <StyledIframe title="twenty-website" src={iframeSrc}></StyledIframe>
+    <StyledIframe
+      ref={iframeRef}
+      title="twenty-website"
+      src={clientUrl}
+    ></StyledIframe>
   ) : (
     <StyledWrapper>
       <StyledContainer>
         <img src="/logo/32-32.svg" alt="twenty-logo" height={40} width={40} />
-        {isAuthenticating ? (
-          <Loader />
-        ) : (
-          <StyledActionContainer>
-            <TextInput
-              label="Server URL"
-              value={serverBaseUrl}
-              onChange={handleBaseUrlChange}
-              placeholder="My base server URL"
-              error={error}
-              fullWidth
-            />
-            <MainButton
-              title="Connect your account"
-              onClick={() => authenticate()}
-              fullWidth
-            />
-            <MainButton
-              title="Sign up"
-              variant="secondary"
-              onClick={() =>
-                window.open(`${import.meta.env.VITE_FRONT_BASE_URL}`, '_blank')
-              }
-              fullWidth
-            />
-          </StyledActionContainer>
-        )}
+        <StyledActionContainer>
+          <MainButton
+            title="Connect your account"
+            fullWidth
+            onClick={() => {
+              window.open(clientUrl, '_blank');
+            }}
+          />
+        </StyledActionContainer>
       </StyledContainer>
     </StyledWrapper>
   );

@@ -35,7 +35,7 @@ export const useGetDatabaseConnectionTables = ({
   });
 
   return {
-    tables: data?.findAvailableRemoteTablesByServerId || [],
+    tables: data?.findDistantTablesWithStatus || [],
     error,
   };
 };

@@ -1,6 +1,4 @@
 import { useCallback, useContext } from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import qs from 'qs';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -17,6 +15,7 @@ import { viewableRecordIdState } from '@/object-record/record-right-drawer/state
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
 import { RecordDetailRelationRecordsListEmptyState } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsListEmptyState';
+import { RecordDetailRelationSectionSkeletonLoader } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSectionSkeletonLoader';
 import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';
 import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -42,25 +41,6 @@ type RecordDetailRelationSectionProps = {
 const StyledAddDropdown = styled(Dropdown)`
   margin-left: auto;
 `;
-
-const StyledSkeletonDiv = styled.div`
-  height: 40px;
-`;
-
-const StyledRecordDetailRelationSectionSkeletonLoader = () => {
-  const theme = useTheme();
-  return (
-    <SkeletonTheme
-      baseColor={theme.background.tertiary}
-      highlightColor={theme.background.transparent.lighter}
-      borderRadius={4}
-    >
-      <StyledSkeletonDiv>
-        <Skeleton width={129} height={16} />
-      </StyledSkeletonDiv>
-    </SkeletonTheme>
-  );
-};
 
 export const RecordDetailRelationSection = ({
   loading,
@@ -148,7 +128,11 @@ export const RecordDetailRelationSection = ({
 
   const showContent = () => {
     if (loading) {
-      return <StyledRecordDetailRelationSectionSkeletonLoader />;
+      return (
+        <RecordDetailRelationSectionSkeletonLoader
+          numSkeletons={fieldName === 'people' ? 2 : 1}
+        />
+      );
     }
 
     return relationRecords.length ? (

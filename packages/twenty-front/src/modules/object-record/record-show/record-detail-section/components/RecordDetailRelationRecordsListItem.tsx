@@ -28,6 +28,7 @@ import { RecordInlineCell } from '@/object-record/record-inline-cell/components/
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
 import { RecordDetailRecordsListItem } from '@/object-record/record-show/record-detail-section/components/RecordDetailRecordsListItem';
+import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { isFieldCellSupported } from '@/object-record/utils/isFieldCellSupported';
@@ -187,6 +188,7 @@ export const RecordDetailRelationRecordsListItem = ({
 
   return (
     <>
+      <RecordValueSetterEffect recordId={relationRecord.id} />
       <StyledListItem isDropdownOpen={isDropdownOpen}>
         <RecordChip
           record={relationRecord}

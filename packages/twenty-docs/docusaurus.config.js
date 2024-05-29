@@ -115,7 +115,7 @@ const config = {
       },
       algolia: {
         appId: 'J2OX2P2QAO',
-        apiKey: 'e0a7a59c7862598a0cf87307c8ea97f2',
+        apiKey: 'e3de1c1c0b50bd5ea3ffa1ee7ea3f56d',
         indexName: 'twenty-developer-docs',
 
         // Optional: see doc section below

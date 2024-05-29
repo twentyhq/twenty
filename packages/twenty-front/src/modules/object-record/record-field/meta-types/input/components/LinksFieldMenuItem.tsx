@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import {
   IconBookmark,
@@ -40,7 +40,11 @@ export const LinksFieldMenuItem = ({
   onDelete,
   url,
 }: LinksFieldMenuItemProps) => {
+  const [isHovered, setIsHovered] = useState(false);
   const { isDropdownOpen, closeDropdown } = useDropdown(dropdownId);
+
+  const handleMouseEnter = () => setIsHovered(true);
+  const handleMouseLeave = () => setIsHovered(false);
 
   // Make sure dropdown closes on unmount.
   useEffect(() => {
@@ -51,13 +55,14 @@ export const LinksFieldMenuItem = ({
 
   return (
     <MenuItem
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       text={<LinkDisplay value={{ label, url }} />}
       isIconDisplayedOnHoverOnly={!isPrimary && !isDropdownOpen}
       iconButtons={[
         {
-          Wrapper: isPrimary
-            ? undefined
-            : ({ iconButton }) => (
+          Wrapper: isHovered
+            ? ({ iconButton }) => (
                 <Dropdown
                   dropdownId={dropdownId}
                   dropdownHotkeyScope={{
@@ -69,31 +74,37 @@ export const LinksFieldMenuItem = ({
                   clickableComponent={iconButton}
                   dropdownComponents={
                     <DropdownMenuItemsContainer>
-                      <MenuItem
-                        LeftIcon={IconBookmarkPlus}
-                        text="Set as Primary"
-                        onClick={onSetAsPrimary}
-                      />
+                      {!isPrimary && (
+                        <MenuItem
+                          LeftIcon={IconBookmarkPlus}
+                          text="Set as Primary"
+                          onClick={onSetAsPrimary}
+                        />
+                      )}
                       <MenuItem
                         LeftIcon={IconPencil}
                         text="Edit"
                         onClick={onEdit}
                       />
-                      <MenuItem
-                        accent="danger"
-                        LeftIcon={IconTrash}
-                        text="Delete"
-                        onClick={onDelete}
-                      />
+                      {!isPrimary && (
+                        <MenuItem
+                          accent="danger"
+                          LeftIcon={IconTrash}
+                          text="Delete"
+                          onClick={onDelete}
+                        />
+                      )}
                     </DropdownMenuItemsContainer>
                   }
                 />
-              ),
-          Icon: isPrimary
-            ? (StyledIconBookmark as IconComponent)
-            : IconDotsVertical,
+              )
+            : undefined,
+          Icon:
+            isPrimary && !isHovered
+              ? (StyledIconBookmark as IconComponent)
+              : IconDotsVertical,
           accent: 'tertiary',
-          onClick: isPrimary ? undefined : () => {},
+          onClick: isHovered ? () => {} : undefined,
         },
       ]}
     />

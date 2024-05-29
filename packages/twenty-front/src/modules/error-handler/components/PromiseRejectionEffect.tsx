@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 
 import { ObjectMetadataItemNotFoundError } from '@/object-metadata/errors/ObjectMetadataNotFoundError';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 export const PromiseRejectionEffect = () => {
@@ -15,12 +16,12 @@ export const PromiseRejectionEffect = () => {
         enqueueSnackBar(
           `Error with custom object that cannot be found : ${event.reason}`,
           {
-            variant: 'error',
+            variant: SnackBarVariant.Error,
           },
         );
       } else {
         enqueueSnackBar(`Error: ${event.reason}`, {
-          variant: 'error',
+          variant: SnackBarVariant.Error,
         });
       }
     },

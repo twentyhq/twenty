@@ -22,6 +22,7 @@ import { settingsUpdateObjectInputSchema } from '@/settings/data-model/validatio
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -83,7 +84,7 @@ export const SettingsObjectEdit = () => {
       navigate(`${settingsObjectsPagePath}/${getObjectSlug(formValues)}`);
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
-        variant: 'error',
+        variant: SnackBarVariant.Error,
       });
     }
   };

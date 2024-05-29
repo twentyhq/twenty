@@ -12,6 +12,9 @@ const meta: Meta = {
     maxWidth: 100,
     children: 'This is a long text that should be truncated',
   },
+  parameters: {
+    chromatic: { disableSnapshot: true },
+  },
 };
 
 export default meta;

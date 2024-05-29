@@ -19,6 +19,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SupportChat } from '@/support/components/SupportChat';
 import { AppPath } from '@/types/AppPath';
 import { Info } from '@/ui/display/info/components/Info';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
@@ -127,13 +128,13 @@ export const SettingsBilling = () => {
         setCurrentWorkspace(newCurrentWorkspace);
       }
       enqueueSnackBar(`Subscription has been switched ${switchingInfo.to}`, {
-        variant: 'success',
+        variant: SnackBarVariant.Success,
       });
     } catch (error: any) {
       enqueueSnackBar(
         `Error while switching subscription ${switchingInfo.to}.`,
         {
-          variant: 'error',
+          variant: SnackBarVariant.Error,
         },
       );
     }
