@@ -6,7 +6,9 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { SetMessageChannelSyncStatusService } from 'src/modules/messaging/services/set-message-channel-sync-status/set-message-channel-sync-status.service';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
 export class GoogleAPIRefreshAccessTokenService {
@@ -15,6 +17,8 @@ export class GoogleAPIRefreshAccessTokenService {
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly setMessageChannelSyncStatusService: SetMessageChannelSyncStatusService,
+    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
+    private readonly messageChannelRepository: MessageChannelRepository,
   ) {}
 
   async refreshAndSaveAccessToken(
@@ -89,8 +93,20 @@ export class GoogleAPIRefreshAccessTokenService {
         workspaceId,
       );
 
+      const messageChannel =
+        await this.messageChannelRepository.getFirstByConnectedAccountId(
+          connectedAccountId,
+          workspaceId,
+        );
+
+      if (!messageChannel) {
+        throw new Error(
+          `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
+        );
+      }
+
       await this.setMessageChannelSyncStatusService.setFailedInsufficientPermissionsStatus(
-        connectedAccountId,
+        messageChannel.id,
         workspaceId,
       );
 
