@@ -1,9 +1,13 @@
 import { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
-  schema: ['http://localhost:3000/graphql'],
-  overwrite: true,
-  documents: ['./src/**/*.ts', '!src/generated/**/*.*'],
+  schema: [`${import.meta.env.VITE_SERVER_BASE_URL}/graphql`],
+  overwrite: false,
+  documents: ['./src/**/*.ts', 
+    '!src/generated/**/*.*', 
+    '!src/graphql/company/*', 
+    '!src/graphql/person/*'
+  ],
   generates: {
     './src/generated/graphql.tsx': {
       plugins: [
