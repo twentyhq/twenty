@@ -12,10 +12,6 @@ import {
 } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { GmailError } from 'src/modules/messaging/types/gmail-error';
 
-type MessageChannel = ObjectRecord<MessageChannelWorkspaceEntity> & {
-  connectedAccountId: string;
-};
-
 @Injectable()
 export class GmailMessageListFetchErrorHandlingService {
   private readonly logger = new Logger(
@@ -32,7 +28,7 @@ export class GmailMessageListFetchErrorHandlingService {
   public async handleGmailError(
     error: GmailError | undefined,
     syncType: 'full' | 'partial',
-    messageChannel: MessageChannel,
+    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
     workspaceId: string,
   ): Promise<void> {
     const reason = error?.errors?.[0]?.reason;
@@ -84,7 +80,7 @@ export class GmailMessageListFetchErrorHandlingService {
   public async handleRateLimitExceeded(
     error: GmailError,
     syncType: 'full' | 'partial',
-    messageChannel: MessageChannel,
+    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
     workspaceId: string,
   ): Promise<void> {
     this.logger.log(
@@ -103,7 +99,7 @@ export class GmailMessageListFetchErrorHandlingService {
   public async handleInsufficientPermissions(
     error: GmailError,
     syncType: 'full' | 'partial',
-    messageChannel: MessageChannel,
+    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
     workspaceId: string,
   ): Promise<void> {
     this.logger.error(
@@ -129,7 +125,7 @@ export class GmailMessageListFetchErrorHandlingService {
 
   public async handleNotFound(
     error: GmailError,
-    messageChannel: MessageChannel,
+    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
     workspaceId: string,
   ): Promise<void> {
     this.logger.log(
