@@ -47,13 +47,11 @@ const expectedQueryTemplate = `
 describe('useFindDuplicateRecordsQuery', () => {
   it('should return a valid findDuplicateRecordsQuery', () => {
     const objectNameSingular = 'person';
-    const depth = 2;
 
     const { result } = renderHook(
       () =>
         useFindDuplicateRecordsQuery({
           objectNameSingular,
-          depth,
         }),
       {
         wrapper: RecoilRoot,

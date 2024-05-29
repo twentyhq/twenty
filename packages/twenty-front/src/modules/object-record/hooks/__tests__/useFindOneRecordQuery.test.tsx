@@ -36,13 +36,11 @@ query FindOnePerson($objectRecordId: UUID!) {
 describe('useFindOneRecordQuery', () => {
   it('should return a valid findOneRecordQuery', () => {
     const objectNameSingular = 'person';
-    const depth = 2;
 
     const { result } = renderHook(
       () =>
         useFindOneRecordQuery({
           objectNameSingular,
-          depth,
         }),
       {
         wrapper: RecoilRoot,

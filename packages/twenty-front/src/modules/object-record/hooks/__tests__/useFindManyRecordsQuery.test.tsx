@@ -47,14 +47,12 @@ const expectedQueryTemplate = `
 describe('useFindManyRecordsQuery', () => {
   it('should return a valid findManyRecordsQuery', () => {
     const objectNameSingular = 'person';
-    const depth = 2;
     const computeReferences = true;
 
     const { result } = renderHook(
       () =>
         useFindManyRecordsQuery({
           objectNameSingular,
-          depth,
           computeReferences,
         }),
       {

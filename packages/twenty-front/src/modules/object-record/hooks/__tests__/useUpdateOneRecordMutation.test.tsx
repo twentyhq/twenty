@@ -36,13 +36,11 @@ mutation UpdateOnePerson($idToUpdate: UUID!, $input: PersonUpdateInput!) {
 describe('useUpdateOneRecordMutation', () => {
   it('should return a valid createManyRecordsMutation', () => {
     const objectNameSingular = 'person';
-    const depth = 2;
 
     const { result } = renderHook(
       () =>
         useUpdateOneRecordMutation({
           objectNameSingular,
-          depth,
         }),
       {
         wrapper: RecoilRoot,
