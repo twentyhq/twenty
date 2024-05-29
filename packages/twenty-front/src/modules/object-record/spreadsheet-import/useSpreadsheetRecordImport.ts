@@ -1,4 +1,4 @@
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isNull, isUndefined } from '@sniptt/guards';
 import { IconComponent, useIcons } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
@@ -163,13 +163,19 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
           for (const field of fields) {
             const value = record[field.name];
 
+            if (isUndefined(value)) {
+              continue;
+            }
+
             switch (field.type) {
               case FieldMetadataType.Boolean:
                 fieldMapping[field.name] = value === 'true' || value === true;
                 break;
               case FieldMetadataType.Number:
               case FieldMetadataType.Numeric:
-                fieldMapping[field.name] = Number(value);
+                fieldMapping[field.name] = !isNull(value)
+                  ? Number(value)
+                  : null;
                 break;
               case FieldMetadataType.Currency:
                 if (
