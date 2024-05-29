@@ -76,10 +76,11 @@ export class GmailFullMessageListFetchJob
         connectedAccount,
         workspaceId,
       );
+    } else {
+      await this.gmailFullMessageListFetchService.fetchConnectedAccountThreads(
+        data.workspaceId,
+        data.connectedAccountId,
+      );
     }
-    await this.gmailFullMessageListFetchService.fetchConnectedAccountThreads(
-      data.workspaceId,
-      data.connectedAccountId,
-    );
   }
 }
