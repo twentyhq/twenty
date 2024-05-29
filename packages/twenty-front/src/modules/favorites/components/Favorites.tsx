@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import { Avatar } from 'twenty-ui';
 
 import { FavoritesSkeletonLoader } from '@/favorites/components/FavoritesSkeletonLoader';
-import { useIsMockedDrawerPage } from '@/navigation/hooks/useIsMockedDrawerPage';
 import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
 import { DraggableItem } from '@/ui/layout/draggable-list/components/DraggableItem';
 import { DraggableList } from '@/ui/layout/draggable-list/components/DraggableList';
@@ -36,11 +35,8 @@ const StyledNavigationDrawerItem = styled(NavigationDrawerItem)`
 export const Favorites = () => {
   const { favorites, handleReorderFavorite } = useFavorites();
   const loading = useIsPrefetchLoading();
-  const isMockedDrawerPage = useIsMockedDrawerPage();
 
-  const displayLoader = loading && !isMockedDrawerPage;
-
-  if (displayLoader) {
+  if (loading) {
     return <FavoritesSkeletonLoader />;
   }
 
