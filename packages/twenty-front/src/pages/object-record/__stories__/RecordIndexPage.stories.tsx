@@ -7,6 +7,7 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
+import { UserOrMetadataLoadingDecorator } from '~/testing/decorators/UserOrMetadataLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { RecordIndexPage } from '../RecordIndexPage';
@@ -43,10 +44,27 @@ export const Default: Story = {
   },
 };
 
-export const Loading: Story = {
+export const PrefetchLoading: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    expect(canvas.queryByText('People')).toBeNull();
+    expect(canvas.queryByText('Opportunities')).toBeNull();
+    expect(canvas.queryByText('Listings')).toBeNull();
+    expect(canvas.queryByText('My Customs')).toBeNull();
+  },
+};
+
+export const UserMetadataLoading: Story = {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  decorators: [PageDecorator, UserOrMetadataLoadingDecorator],
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(canvas.queryByText('Search')).toBeNull();
+    expect(canvas.queryByText('Settings')).toBeNull();
+    expect(canvas.queryByText('Tasks')).toBeNull();
     expect(canvas.queryByText('People')).toBeNull();
     expect(canvas.queryByText('Opportunities')).toBeNull();
     expect(canvas.queryByText('Listings')).toBeNull();
