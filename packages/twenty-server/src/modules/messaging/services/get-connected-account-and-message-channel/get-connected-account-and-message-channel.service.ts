@@ -36,6 +36,18 @@ export class GetConnectedAccountAndMessageChannelService {
       );
     }
 
+    const messageChannel =
+      await this.messageChannelRepository.getFirstByConnectedAccountId(
+        connectedAccountId,
+        workspaceId,
+      );
+
+    if (!messageChannel) {
+      throw new Error(
+        `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
+      );
+    }
+
     const refreshToken = connectedAccount.refreshToken;
 
     if (!refreshToken) {
@@ -47,24 +59,12 @@ export class GetConnectedAccountAndMessageChannelService {
       }
 
       await this.setMessageChannelSyncStatusService.setFailedInsufficientPermissionsStatus(
-        connectedAccountId,
+        messageChannel.id,
         workspaceId,
       );
 
       throw new Error(
         `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
-      );
-    }
-
-    const messageChannel =
-      await this.messageChannelRepository.getFirstByConnectedAccountId(
-        connectedAccountId,
-        workspaceId,
-      );
-
-    if (!messageChannel) {
-      throw new Error(
-        `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
       );
     }
 
