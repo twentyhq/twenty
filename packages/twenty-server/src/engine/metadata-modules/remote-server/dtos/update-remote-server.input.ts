@@ -22,6 +22,10 @@ export class UpdateRemoteServerInput<T extends RemoteServerType> {
   foreignDataWrapperOptions?: Partial<ForeignDataWrapperOptions<T>>;
 
   @IsOptional()
+  @Field(() => String, { nullable: true })
+  label?: string;
+
+  @IsOptional()
   @Field(() => UserMappingOptionsUpdateInput, { nullable: true })
   userMappingOptions?: Partial<UserMappingOptions>;
 

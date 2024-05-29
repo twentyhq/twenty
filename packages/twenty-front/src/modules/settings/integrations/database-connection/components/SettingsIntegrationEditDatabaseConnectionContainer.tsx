@@ -3,7 +3,7 @@ import { useDatabaseConnection } from '@/settings/integrations/database-connecti
 
 export const SettingsIntegrationEditDatabaseConnectionContainer = () => {
   const { connection, integration, databaseKey, tables } =
-    useDatabaseConnection();
+    useDatabaseConnection({});
 
   if (!connection || !integration) return null;
 

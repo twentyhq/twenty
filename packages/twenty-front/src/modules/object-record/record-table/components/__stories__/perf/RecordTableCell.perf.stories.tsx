@@ -128,6 +128,9 @@ const meta: Meta = {
   component: RecordTableCellFieldContextWrapper,
   argTypes: { value: { control: 'date' } },
   args: {},
+  parameters: {
+    chromatic: { disableSnapshot: true },
+  },
 };
 
 export default meta;

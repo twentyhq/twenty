@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useQuery, WatchQueryFetchPolicy } from '@apollo/client';
 
 import { GET_MANY_REMOTE_TABLES } from '@/databases/graphql/queries/findManyRemoteTables';
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
@@ -11,14 +11,18 @@ type UseGetDatabaseConnectionTablesParams = {
   connectionId: string;
   skip?: boolean;
   shouldFetchPendingSchemaUpdates?: boolean;
+  fetchPolicy?: WatchQueryFetchPolicy;
 };
 
 export const useGetDatabaseConnectionTables = ({
   connectionId,
   skip,
   shouldFetchPendingSchemaUpdates,
+  fetchPolicy,
 }: UseGetDatabaseConnectionTablesParams) => {
   const apolloMetadataClient = useApolloMetadataClient();
+
+  const fetchPolicyOption = fetchPolicy ? { fetchPolicy: fetchPolicy } : {};
 
   const { data, error } = useQuery<
     GetManyRemoteTablesQuery,
@@ -32,6 +36,7 @@ export const useGetDatabaseConnectionTables = ({
         shouldFetchPendingSchemaUpdates,
       },
     },
+    ...fetchPolicyOption,
   });
 
   return {

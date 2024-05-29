@@ -110,9 +110,9 @@ export class DistantTableService {
     return distantTables;
   }
 
-  private async getDistantTablesFromStaticSchema(
+  private getDistantTablesFromStaticSchema(
     remoteServer: RemoteServerEntity<RemoteServerType>,
-  ): Promise<DistantTables> {
+  ): DistantTables {
     switch (remoteServer.foreignDataWrapperType) {
       case RemoteServerType.STRIPE_FDW:
         return STRIPE_DISTANT_TABLES;
