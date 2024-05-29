@@ -43,8 +43,6 @@ const StyledTable = styled.table<{
       border-right-color: transparent;
     }
     :first-of-type {
-      border-left-color: ${({ theme }) => theme.background.primary};
-      border-right-color: ${({ theme }) => theme.background.primary};
       border-top-color: transparent;
       border-bottom-color: transparent;
     }
@@ -53,7 +51,6 @@ const StyledTable = styled.table<{
   td {
     border-bottom: 1px solid ${({ theme }) => theme.border.color.light};
     color: ${({ theme }) => theme.font.color.primary};
-    padding: 0;
     border-right: 1px solid ${({ theme }) => theme.border.color.light};
 
     text-align: left;
@@ -62,8 +59,6 @@ const StyledTable = styled.table<{
       border-right-color: transparent;
     }
     :first-of-type {
-      border-left-color: ${({ theme }) => theme.background.primary};
-      border-right-color: ${({ theme }) => theme.background.primary};
       border-top-color: transparent;
       border-bottom-color: transparent;
     }
@@ -77,50 +72,55 @@ const StyledTable = styled.table<{
   thead th {
     position: sticky;
     top: 0;
-    z-index: 10;
+    z-index: 9;
   }
 
   thead th:nth-of-type(1),
   thead th:nth-of-type(2),
   thead th:nth-of-type(3) {
-    left: 0;
-    z-index: 11;
+    z-index: 12;
     background-color: ${({ theme }) => theme.background.primary};
+  }
+
+  thead th:nth-of-type(1) {
+    width: 9px;
+    left: 0;
+    border-right-color: ${({ theme }) => theme.background.primary};
   }
 
   thead th:nth-of-type(2) {
     left: 9px;
-    z-index: 11;
-    border-right: transparent;
+    border-right-color: ${({ theme }) => theme.background.primary};
   }
 
   thead th:nth-of-type(3) {
     left: 39px;
-    z-index: 11;
   }
 
   tbody td:nth-of-type(1),
   tbody td:nth-of-type(2),
   tbody td:nth-of-type(3) {
     position: sticky;
-    left: 0;
     z-index: 1;
-    background-color: ${({ theme }) => theme.background.primary};
+  }
+
+  tbody td:nth-of-type(1) {
+    left: 0;
+    z-index: 7;
   }
 
   tbody td:nth-of-type(2) {
     left: 9px;
-    z-index: 3;
-    border-right: transparent;
+    z-index: 5;
   }
 
   tbody td:nth-of-type(3) {
     left: 39px;
-    z-index: 4;
+    z-index: 6;
   }
 
-  thead th:nth-of-type(-n + 3),
-  tbody td:nth-of-type(-n + 3) {
+  thead th:nth-of-type(3),
+  tbody td:nth-of-type(3) {
     ${({ freezeFirstColumns }) =>
       freezeFirstColumns &&
       css`

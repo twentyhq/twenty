@@ -1,6 +1,6 @@
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 
-import { removeSortingModalOpenState } from '@/object-record/record-table/states/removeSortingModalOpenState';
+import { isRemoveSortingModalOpenState } from '@/object-record/record-table/states/isRemoveSortingModalOpenState';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useCombinedViewSorts } from '@/views/hooks/useCombinedViewSorts';
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
@@ -17,9 +17,8 @@ export const RemoveSortingModal = ({
   const fieldMetadataIds = viewSorts.map(
     (viewSort) => viewSort.fieldMetadataId,
   );
-  const removeSortingModalOpen = useRecoilValue(removeSortingModalOpenState);
-  const setIsRemoveSortingModalOpen = useSetRecoilState(
-    removeSortingModalOpenState,
+  const isRemoveSortingModalOpen = useRecoilState(
+    isRemoveSortingModalOpenState,
   );
 
   const { removeCombinedViewSort } = useCombinedViewSorts(recordTableId);
@@ -33,8 +32,8 @@ export const RemoveSortingModal = ({
   return (
     <>
       <ConfirmationModal
-        isOpen={removeSortingModalOpen}
-        setIsOpen={setIsRemoveSortingModalOpen}
+        isOpen={isRemoveSortingModalOpen[0]}
+        setIsOpen={isRemoveSortingModalOpen[1]}
         title={'Sorting removal'}
         subtitle={
           <>

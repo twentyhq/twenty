@@ -29,15 +29,33 @@ const StyledTd = styled.td`
 `;
 
 const StyledTr = styled.tr<{ isDragging: boolean }>`
+  border: 1px solid transparent;
   border-left: 3px solid transparent;
   transition: border-left-color 0.2s ease-in-out;
 
-  ${({ isDragging, theme }) =>
+  td:nth-of-type(-n + 2) {
+    background-color: ${({ theme }) => theme.background.primary};
+    border-right-color: ${({ theme }) => theme.background.primary};
+  }
+
+  ${({ isDragging }) =>
     isDragging &&
     `
-    td:nth-of-type(3) {
-      border: 2px solid ${theme.border.color.strong};
+    td:nth-of-type(1) {
+      background-color: transparent;
+      border-color: transparent;
     }
+
+    td:nth-of-type(2) {
+      background-color: transparent;
+      border-color: transparent;
+    }
+
+    td:nth-of-type(3) {
+      background-color: transparent;
+      border-color: transparent;
+    }
+
   `}
 `;
 
@@ -92,12 +110,10 @@ export const RecordTableRow = ({
             style={{
               ...draggableProvided.draggableProps.style,
               background: draggableSnapshot.isDragging
-                ? theme.background.transparent.light
+                ? theme.background.transparent.primary
                 : 'none',
-              height: draggableSnapshot.isDragging ? '40px' : 'auto',
-              paddingTop: draggableSnapshot.isDragging ? '4px' : '0px',
-              paddingLeft: draggableSnapshot.isDragging ? '40px' : '0px',
-              borderLeftColor: draggableSnapshot.isDragging
+              paddingLeft: draggableSnapshot.isDragging ? '34px' : '0px',
+              borderColor: draggableSnapshot.isDragging
                 ? `${theme.border.color.strong}`
                 : 'transparent',
             }}
