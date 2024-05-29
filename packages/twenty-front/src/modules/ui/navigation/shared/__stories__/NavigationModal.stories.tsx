@@ -5,7 +5,7 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import SharedNavigationModal from '@/ui/navigation/shared/components/NavigationModal';
 
 const meta: Meta<typeof SharedNavigationModal> = {
-  title: 'UI/Navigation/SharedNavigationModal/SharedNavigationModal',
+  title: 'UI/Navigation/Shared/SharedNavigationModal',
   component: SharedNavigationModal,
   args: {
     actionBarEntries: [
