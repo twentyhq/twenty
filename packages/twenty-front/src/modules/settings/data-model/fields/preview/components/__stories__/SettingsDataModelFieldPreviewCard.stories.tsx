@@ -8,6 +8,7 @@ import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
   mockedCompanyObjectMetadataItem,
+  mockedOpportunityObjectMetadataItem,
   mockedPersonObjectMetadataItem,
 } from '~/testing/mock-data/metadata';
 
@@ -24,10 +25,7 @@ const meta: Meta<typeof SettingsDataModelFieldPreviewCard> = {
     SnackBarDecorator,
   ],
   args: {
-    fieldMetadataItem: mockedCompanyObjectMetadataItem.fields.find(
-      ({ type }) => type === FieldMetadataType.Text,
-    ),
-    objectMetadataItem: mockedCompanyObjectMetadataItem,
+    objectMetadataItem: mockedPersonObjectMetadataItem,
   },
   parameters: {
     container: { width: 480 },
@@ -38,21 +36,41 @@ const meta: Meta<typeof SettingsDataModelFieldPreviewCard> = {
 export default meta;
 type Story = StoryObj<typeof SettingsDataModelFieldPreviewCard>;
 
-export const Text: Story = {};
+export const LabelIdentifier: Story = {
+  args: {
+    fieldMetadataItem: mockedPersonObjectMetadataItem.fields.find(
+      ({ name, type }) =>
+        name === 'name' && type === FieldMetadataType.FullName,
+    ),
+  },
+};
+
+export const Text: Story = {
+  args: {
+    fieldMetadataItem: mockedPersonObjectMetadataItem.fields.find(
+      ({ name, type }) => name === 'city' && type === FieldMetadataType.Text,
+    ),
+  },
+};
 
 export const Boolean: Story = {
   args: {
     fieldMetadataItem: mockedCompanyObjectMetadataItem.fields.find(
-      ({ type }) => type === FieldMetadataType.Boolean,
+      ({ name, type }) =>
+        name === 'idealCustomerProfile' && type === FieldMetadataType.Boolean,
     ),
+    objectMetadataItem: mockedCompanyObjectMetadataItem,
   },
 };
 
 export const Currency: Story = {
   args: {
     fieldMetadataItem: mockedCompanyObjectMetadataItem.fields.find(
-      ({ type }) => type === FieldMetadataType.Currency,
+      ({ name, type }) =>
+        name === 'annualRecurringRevenue' &&
+        type === FieldMetadataType.Currency,
     ),
+    objectMetadataItem: mockedCompanyObjectMetadataItem,
   },
 };
 
@@ -61,14 +79,27 @@ export const Date: Story = {
     fieldMetadataItem: mockedCompanyObjectMetadataItem.fields.find(
       ({ type }) => type === FieldMetadataType.DateTime,
     ),
+    objectMetadataItem: mockedCompanyObjectMetadataItem,
   },
 };
 
 export const Link: Story = {
   args: {
     fieldMetadataItem: mockedCompanyObjectMetadataItem.fields.find(
-      ({ type }) => type === FieldMetadataType.Link,
+      ({ name, type }) =>
+        name === 'linkedinLink' && type === FieldMetadataType.Link,
     ),
+    objectMetadataItem: mockedCompanyObjectMetadataItem,
+  },
+};
+
+export const Links: Story = {
+  args: {
+    ...Link.args,
+    fieldMetadataItem: {
+      ...Link.args!.fieldMetadataItem!,
+      type: FieldMetadataType.Links,
+    },
   },
 };
 
@@ -77,6 +108,7 @@ export const Number: Story = {
     fieldMetadataItem: mockedCompanyObjectMetadataItem.fields.find(
       ({ type }) => type === FieldMetadataType.Number,
     ),
+    objectMetadataItem: mockedCompanyObjectMetadataItem,
   },
 };
 
@@ -95,7 +127,27 @@ export const Relation: Story = {
     fieldMetadataItem: mockedPersonObjectMetadataItem.fields.find(
       ({ name }) => name === 'company',
     ),
-    objectMetadataItem: mockedPersonObjectMetadataItem,
     relationObjectMetadataItem: mockedCompanyObjectMetadataItem,
+  },
+};
+
+export const Select: Story = {
+  args: {
+    fieldMetadataItem: mockedOpportunityObjectMetadataItem.fields.find(
+      ({ name, type }) => name === 'stage' && type === FieldMetadataType.Select,
+    ),
+    objectMetadataItem: mockedOpportunityObjectMetadataItem,
+  },
+};
+
+export const MultiSelect: Story = {
+  args: {
+    ...Select.args,
+    fieldMetadataItem: {
+      ...Select.args!.fieldMetadataItem!,
+      defaultValue: null,
+      label: 'Stages',
+      type: FieldMetadataType.MultiSelect,
+    },
   },
 };

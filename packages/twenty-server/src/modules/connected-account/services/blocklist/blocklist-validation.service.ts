@@ -10,12 +10,12 @@ import {
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { isDomain } from 'src/engine/utils/is-domain';
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
-import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
+import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export type BlocklistItem = Omit<
-  BlocklistObjectMetadata,
+  BlocklistWorkspaceEntity,
   'createdAt' | 'updatedAt' | 'workspaceMember'
 > & {
   createdAt: string;
@@ -26,9 +26,9 @@ export type BlocklistItem = Omit<
 @Injectable()
 export class BlocklistValidationService {
   constructor(
-    @InjectObjectMetadataRepository(BlocklistObjectMetadata)
+    @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
-    @InjectObjectMetadataRepository(WorkspaceMemberObjectMetadata)
+    @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
     private readonly workspaceMemberRepository: WorkspaceMemberRepository,
   ) {}
 

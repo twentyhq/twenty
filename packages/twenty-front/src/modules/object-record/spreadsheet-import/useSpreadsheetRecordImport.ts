@@ -6,6 +6,7 @@ import { useCreateManyRecords } from '@/object-record/hooks/useCreateManyRecords
 import { getSpreadSheetValidation } from '@/object-record/spreadsheet-import/util/getSpreadSheetValidation';
 import { useSpreadsheetImport } from '@/spreadsheet-import/hooks/useSpreadsheetImport';
 import { SpreadsheetOptions, Validation } from '@/spreadsheet-import/types';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { convertCurrencyMicrosToCurrency } from '~/utils/convert-currency-amount';
@@ -279,7 +280,7 @@ export const useSpreadsheetRecordImport = (objectNameSingular: string) => {
           await createManyRecords(createInputs);
         } catch (error: any) {
           enqueueSnackBar(error?.message || 'Something went wrong', {
-            variant: 'error',
+            variant: SnackBarVariant.Error,
           });
         }
       },

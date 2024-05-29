@@ -8,6 +8,7 @@ import { RawData } from '@/spreadsheet-import/types';
 import { exceedsMaxRecords } from '@/spreadsheet-import/utils/exceedsMaxRecords';
 import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
 import { CircularProgressBar } from '@/ui/feedback/progress-bar/components/CircularProgressBar';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
@@ -80,7 +81,7 @@ export const UploadFlow = ({ nextStep }: UploadFlowProps) => {
     (description: string) => {
       enqueueSnackBar(description, {
         title: 'Error',
-        variant: 'error',
+        variant: SnackBarVariant.Error,
       });
     },
     [enqueueSnackBar],

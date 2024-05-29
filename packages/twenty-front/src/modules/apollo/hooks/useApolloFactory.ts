@@ -1,11 +1,14 @@
 import { useMemo, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { InMemoryCache, NormalizedCacheObject } from '@apollo/client';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
+import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { previousUrlState } from '@/auth/states/previousUrlState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { workspacesState } from '@/auth/states/workspaces';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { AppPath } from '@/types/AppPath';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -18,19 +21,33 @@ import { ApolloFactory, Options } from '../services/apollo.factory';
 export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
   // eslint-disable-next-line @nx/workspace-no-state-useref
   const apolloRef = useRef<ApolloFactory<NormalizedCacheObject> | null>(null);
-  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const [isDebugMode] = useRecoilState(isDebugModeState);
 
   const navigate = useNavigate();
   const isMatchingLocation = useIsMatchingLocation();
   const [tokenPair, setTokenPair] = useRecoilState(tokenPairState);
+  const [currentWorkspace, setCurrentWorkspace] = useRecoilState(
+    currentWorkspaceState,
+  );
+  const setCurrentUser = useSetRecoilState(currentUserState);
+  const setCurrentWorkspaceMember = useSetRecoilState(
+    currentWorkspaceMemberState,
+  );
+
+  const setWorkspaces = useSetRecoilState(workspacesState);
   const [, setPreviousUrl] = useRecoilState(previousUrlState);
   const location = useLocation();
 
   const apolloClient = useMemo(() => {
     apolloRef.current = new ApolloFactory({
       uri: `${REACT_APP_SERVER_BASE_URL}/graphql`,
-      cache: new InMemoryCache(),
+      cache: new InMemoryCache({
+        typePolicies: {
+          RemoteTable: {
+            keyFields: ['name'],
+          },
+        },
+      }),
       headers: {
         ...(currentWorkspace?.currentCacheVersion && {
           'X-Schema-Version': currentWorkspace.currentCacheVersion,
@@ -49,6 +66,10 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
       },
       onUnauthenticatedError: () => {
         setTokenPair(null);
+        setCurrentUser(null);
+        setCurrentWorkspaceMember(null);
+        setCurrentWorkspace(null);
+        setWorkspaces(null);
         if (
           !isMatchingLocation(AppPath.Verify) &&
           !isMatchingLocation(AppPath.SignInUp) &&
@@ -69,6 +90,10 @@ export const useApolloFactory = (options: Partial<Options<any>> = {}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     setTokenPair,
+    setCurrentUser,
+    setCurrentWorkspaceMember,
+    setCurrentWorkspace,
+    setWorkspaces,
     isDebugMode,
     currentWorkspace?.currentCacheVersion,
     setPreviousUrl,

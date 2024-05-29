@@ -14,6 +14,7 @@ export const RecordTablePendingRow = () => {
       key={pendingRecordId}
       recordId={pendingRecordId}
       rowIndex={-1}
+      isPendingRow
     />
   );
 };

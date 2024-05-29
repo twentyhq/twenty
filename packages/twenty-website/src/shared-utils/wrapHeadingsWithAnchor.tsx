@@ -25,6 +25,7 @@ export const wrapHeadingsWithAnchor = (children: ReactNode): ReactNode => {
         .toLowerCase();
       return cloneElement(child as ReactElement<any>, {
         id: id,
+        className: 'anchor',
         children: <a href={`#${id}`}>{child.props.children}</a>,
       });
     }

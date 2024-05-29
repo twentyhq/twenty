@@ -42,7 +42,7 @@ export const ExpandedListDropdown = ({
   const { refs, floatingStyles } = useFloating({
     // @ts-expect-error placement accepts 'start' as value even if the typing does not permit it
     placement: 'start',
-    middleware: [offset({ mainAxis: -1, crossAxis: -1 })],
+    middleware: [offset({ mainAxis: -9, crossAxis: -7 })],
     elements: { reference: anchorElement },
   });
 

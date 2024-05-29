@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { ColumnType, EntitySchemaColumnOptions } from 'typeorm';
 
 import { WorkspaceFieldMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-field-metadata-args.interface';
+import { WorkspaceRelationMetadataArgs } from 'src/engine/twenty-orm/interfaces/workspace-relation-metadata-args.interface';
 
 import { fieldMetadataTypeToColumnType } from 'src/engine/metadata-modules/workspace-migration/utils/field-metadata-type-to-column-type.util';
 import { isEnumFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-enum-field-metadata-type.util';
@@ -20,6 +21,7 @@ type EntitySchemaColumnMap = {
 export class EntitySchemaColumnFactory {
   create(
     fieldMetadataArgsCollection: WorkspaceFieldMetadataArgs[],
+    relationMetadataArgsCollection: WorkspaceRelationMetadataArgs[],
   ): EntitySchemaColumnMap {
     let entitySchemaColumnMap: EntitySchemaColumnMap = {};
 
@@ -52,6 +54,16 @@ export class EntitySchemaColumnFactory {
         array: fieldMetadataArgs.type === FieldMetadataType.MULTI_SELECT,
         default: defaultValue,
       };
+
+      for (const relationMetadataArgs of relationMetadataArgsCollection) {
+        if (relationMetadataArgs.joinColumn) {
+          entitySchemaColumnMap[relationMetadataArgs.joinColumn] = {
+            name: relationMetadataArgs.joinColumn,
+            type: 'uuid',
+            nullable: relationMetadataArgs.isNullable,
+          };
+        }
+      }
 
       if (isEnumFieldMetadataType(fieldMetadataArgs.type)) {
         const values = fieldMetadataArgs.options?.map((option) => option.value);
