@@ -5,6 +5,7 @@ import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metada
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
+import { SetMessageChannelSyncStatusService } from 'src/modules/messaging/services/set-message-channel-sync-status/set-message-channel-sync-status.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
@@ -14,6 +15,7 @@ export class GetConnectedAccountAndMessageChannelService {
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
+    private readonly setMessageChannelSyncStatusService: SetMessageChannelSyncStatusService,
   ) {}
 
   public async getConnectedAccountAndMessageChannelOrThrow(
@@ -37,6 +39,18 @@ export class GetConnectedAccountAndMessageChannelService {
     const refreshToken = connectedAccount.refreshToken;
 
     if (!refreshToken) {
+      if (!connectedAccount.authFailedAt) {
+        await this.connectedAccountRepository.updateAuthFailedAt(
+          connectedAccountId,
+          workspaceId,
+        );
+      }
+
+      await this.setMessageChannelSyncStatusService.setFailedInsufficientPermissionsStatus(
+        connectedAccountId,
+        workspaceId,
+      );
+
       throw new Error(
         `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
       );

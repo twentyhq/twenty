@@ -98,4 +98,21 @@ export class SetMessageChannelSyncStatusService {
       workspaceId,
     );
   }
+
+  public async setFailedInsufficientPermissionsStatus(
+    messageChannelId: string,
+    workspaceId: string,
+  ) {
+    await this.messageChannelRepository.updateSyncSubStatus(
+      messageChannelId,
+      MessageChannelSyncSubStatus.FAILED,
+      workspaceId,
+    );
+
+    await this.messageChannelRepository.updateSyncStatus(
+      messageChannelId,
+      MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
+      workspaceId,
+    );
+  }
 }
