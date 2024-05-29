@@ -91,7 +91,6 @@ export const SharedDropdownMenu = ({
       dropdownComponents={
         <DropdownMenu width="160px" z-index={offset(1)}>
           <DropdownMenuItemsContainer>
-            <DropdownMenuSeparator />
             {messageThreadMembers?.map((member) => (
               <MenuItemSelectAvatar
                 key={member.workspaceMember.id}
