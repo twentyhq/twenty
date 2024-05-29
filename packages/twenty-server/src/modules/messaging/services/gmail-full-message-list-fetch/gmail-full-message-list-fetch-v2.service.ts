@@ -230,5 +230,10 @@ export class GmailFullMessageListFetchV2Service {
       workspaceId,
       transactionManager,
     );
+
+    await this.setMessageChannelSyncStatusService.setMessagesImportPendingStatus(
+      messageChannelId,
+      workspaceId,
+    );
   }
 }
