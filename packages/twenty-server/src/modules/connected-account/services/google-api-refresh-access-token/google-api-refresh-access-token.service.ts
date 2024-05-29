@@ -6,6 +6,7 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { SetMessageChannelSyncStatusService } from 'src/modules/messaging/services/set-message-channel-sync-status/set-message-channel-sync-status.service';
 
 @Injectable()
 export class GoogleAPIRefreshAccessTokenService {
@@ -13,6 +14,7 @@ export class GoogleAPIRefreshAccessTokenService {
     private readonly environmentService: EnvironmentService,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
+    private readonly setMessageChannelSyncStatusService: SetMessageChannelSyncStatusService,
   ) {}
 
   async refreshAndSaveAccessToken(
@@ -83,6 +85,11 @@ export class GoogleAPIRefreshAccessTokenService {
       return response.data.access_token;
     } catch (error) {
       await this.connectedAccountRepository.updateAuthFailedAt(
+        connectedAccountId,
+        workspaceId,
+      );
+
+      await this.setMessageChannelSyncStatusService.setFailedInsufficientPermissionsStatus(
         connectedAccountId,
         workspaceId,
       );
