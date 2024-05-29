@@ -5,18 +5,19 @@ import path from 'path';
 import { DOCS_INDEX } from '@/content/docs/constants/DocsIndex';
 import { USER_GUIDE_INDEX } from '@/content/user-guide/constants/UserGuideIndex';
 
-export interface UserGuideArticlesProps {
+export interface DocsArticlesProps {
   title: string;
   info: string;
   image: string;
   fileName: string;
   topic: string;
   section: string;
+  sectionInfo: string;
   numberOfFiles: number;
 }
 
-export function getUserGuideArticles(basePath: string, isSideBar = false) {
-  const guides: UserGuideArticlesProps[] = [];
+export function getDocsArticles(basePath: string, isSideBar = false) {
+  const guides: DocsArticlesProps[] = [];
   const index = basePath.includes('docs') ? DOCS_INDEX : USER_GUIDE_INDEX;
 
   const findFileRecursively = (
@@ -52,7 +53,7 @@ export function getUserGuideArticles(basePath: string, isSideBar = false) {
       if (isSideBar) {
         const nestedPath = findFileRecursively(basePath, `${fileName}.mdx`);
         const directPath = `${basePath}${fileName}.mdx`;
-
+        console.log(nestedPath);
         filePath = nestedPath || directPath;
       } else {
         filePath = `${basePath}${fileName}.mdx`;
@@ -68,6 +69,7 @@ export function getUserGuideArticles(basePath: string, isSideBar = false) {
           fileName: fileName,
           topic: topic,
           section: section,
+          sectionInfo: frontmatter.sectionInfo || '',
           numberOfFiles: files.length,
         });
       }

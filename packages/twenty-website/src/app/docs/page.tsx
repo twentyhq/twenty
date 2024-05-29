@@ -1,5 +1,5 @@
 import DocsMain from '@/app/_components/docs/DocsMain';
-import { getUserGuideArticles } from '@/content/user-guide/constants/getUserGuideArticles';
+import { getDocsArticles } from '@/content/user-guide/constants/getDocsArticles';
 
 export const metadata = {
   title: 'Twenty - Docs',
@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function DocsHome() {
   const filePath = 'src/content/docs/';
-  const userGuideArticleCards = getUserGuideArticles(filePath);
+  const docsArticleCards = getDocsArticles(filePath);
 
-  return <DocsMain userGuideArticleCards={userGuideArticleCards} />;
+  return <DocsMain docsArticleCards={docsArticleCards} />;
 }

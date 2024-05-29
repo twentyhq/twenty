@@ -4,10 +4,10 @@ import styled from '@emotion/styled';
 import { usePathname } from 'next/navigation';
 
 import DocsSidebar from '@/app/_components/docs/DocsSideBar';
+import DocsTableContents from '@/app/_components/docs/TableContent';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
-import UserGuideTableContents from '@/app/_components/user-guide/TableContent';
-import { UserGuideArticlesProps } from '@/content/user-guide/constants/getUserGuideArticles';
+import { DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -24,30 +24,35 @@ const StyledEmptySideBar = styled.div`
   })};
 `;
 
-export const UserGuideMainLayout = ({
+export const DocsMainLayout = ({
   children,
-  userGuideIndex,
+  docsIndex,
 }: {
   children: ReactNode;
-  userGuideIndex: UserGuideArticlesProps[];
+  docsIndex: DocsArticlesProps[];
 }) => {
   const pathname = usePathname();
-  const isDocsSection =
-    pathname.startsWith('/docs/section') && pathname.split('/').length === 4;
+  const isPathnameSection =
+    pathname?.startsWith('/docs/section') ||
+    pathname?.startsWith('/user-guide/section');
+  const isDocsSection = isPathnameSection && pathname?.split('/').length === 4;
+
+  const isPlaygroundPage =
+    pathname?.startsWith('/docs/rest-api') ||
+    pathname?.startsWith('/docs/graphql-api');
+
   return (
     <StyledContainer>
-      {/* {pathname.includes('user-guide') ? (
-        <UserGuideSidebar userGuideIndex={userGuideIndex} />
-      ) : (
-        <DocsSidebar userGuideIndex={userGuideIndex} />
-      )} */}
-      <DocsSidebar userGuideIndex={userGuideIndex} />
+      {!isPlaygroundPage && <DocsSidebar docsIndex={docsIndex} />}
 
       {children}
-      {pathname === '/user-guide' || pathname === '/docs' || isDocsSection ? (
+      {pathname === '/user-guide' ||
+      pathname === '/docs' ||
+      isDocsSection ||
+      isPlaygroundPage ? (
         <StyledEmptySideBar />
       ) : (
-        <UserGuideTableContents />
+        <DocsTableContents />
       )}
     </StyledContainer>
   );

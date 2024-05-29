@@ -16,29 +16,41 @@ React and Recoil handle state management in the codebase.
 
 It's good practice to create as many atoms as you need to store your state. 
 
-:::tip 
+<ArticleWarning>
 
 It's better to use extra atoms than trying to be too concise with props drilling.
 
-:::
+</ArticleWarning>
 
 ```tsx
 export const myAtomState = atom({
+
   key: 'myAtomState',
+
   default: 'default value',
+
 });
 
 export const MyComponent = () => {
+
   const [myAtom, setMyAtom] = useRecoilState(myAtomState);
 
   return (
+
     <div>
+
       <input
+
         value={myAtom}
+
         onChange={(e) => setMyAtom(e.target.value)}
+
       />
+
     </div>
+
   );
+
 }
 ```
 
@@ -83,55 +95,84 @@ If you feel like you need to add a `useEffect` in your root component, you shoul
 You can apply the same for data fetching logic, with Apollo hooks.
 
 ```tsx
-// ❌ Bad, will cause re-renders even if data is not changing, 
+// ❌ Bad, will cause re-renders even if data is not changing,
+
 //    because useEffect needs to be re-evaluated
+
 export const PageComponent = () => {
+
   const [data, setData] = useRecoilState(dataState);
+
   const [someDependency] = useRecoilState(someDependencyState);
 
   useEffect(() => {
+
     if(someDependency !== data) {
+
       setData(someDependency);
+
     }
+
   }, [someDependency]);
 
   return <div>{data}</div>;
+
 };
 
 export const App = () => (
+
   <RecoilRoot>
+
     <PageComponent />
+
   </RecoilRoot>
+
 );
 ```
 
 ```tsx
 // ✅ Good, will not cause re-renders if data is not changing, 
+
 //   because useEffect is re-evaluated in another sibling component
+
 export const PageComponent = () => {
+
   const [data, setData] = useRecoilState(dataState);
 
   return <div>{data}</div>;
+
 };
 
 export const PageData = () => {
+
   const [data, setData] = useRecoilState(dataState);
+
   const [someDependency] = useRecoilState(someDependencyState);
 
   useEffect(() => {
+
     if(someDependency !== data) {
+
       setData(someDependency);
+
     }
+
   }, [someDependency]);
 
   return <></>;
+
 };
 
 export const App = () => (
+
   <RecoilRoot>
+
     <PageData />
+
     <PageComponent />
+
   </RecoilRoot>
+
 );
 ```
 
@@ -174,13 +215,18 @@ Generic names in programming are not ideal because they lack specificity, leadin
 
 ```tsx
 // ❌ Bad, uses a generic name that doesn't communicate its
+
 //    purpose or content clearly
+
 const [value, setValue] = useState('');
+
 ```
 
 ```tsx
 // ✅ Good, uses a descriptive name
+
 const [email, setEmail] = useState('');
+
 ```
 
 #### Some words to avoid in variable names
@@ -193,15 +239,21 @@ Event handler names should start with `handle`, while `on` is a prefix used to n
 
 ```tsx
 // ❌ Bad
+
 const onEmailChange = (val: string) => {
+
   // ...
+
 };
 ```
 
 ```tsx
 // ✅ Good
+
 const handleEmailChange = (val: string) => {
+
   // ...
+
 };
 ```
 
@@ -215,12 +267,17 @@ Take the`EmailField` component defined below:
 
 ```tsx
 type EmailFieldProps = {
+
   value: string;
+
   disabled?: boolean;
+
 };
 
 const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
+
   <TextInput value={value} disabled={disabled} fullWidth />
+
 );
 ```
 
@@ -228,11 +285,13 @@ const EmailField = ({ value, disabled = false }: EmailFieldProps) => (
 
 ```tsx
 // ❌ Bad, passing in the same value as the default value adds no value
+
 const Form = () => <EmailField value="username@email.com" disabled={false} />;
 ```
 
 ```tsx
 // ✅ Good, assumes the default value
+
 const Form = () => <EmailField value="username@email.com" />;
 ```
 
@@ -246,14 +305,21 @@ The most common example for that is icon components:
 const SomeParentComponent = () => <MyComponent Icon={MyIcon} />;
 
 // In MyComponent
+
 const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
+
   const theme = useTheme();
 
   return (
+
     <div>
+
       <MyIcon size={theme.icon.size.md}>
+
     </div>
+
   )
+
 };
 ```
 
@@ -279,28 +345,42 @@ When importing, opt for the designated aliases rather than specifying complete o
 
 ```js
 {
+
   alias: {
+
     "~": path.resolve(__dirname, "src"),
+
     "@": path.resolve(__dirname, "src/modules"),
+
     "@testing": path.resolve(__dirname, "src/testing"),
+
   },
+
 }
 ```
 
 **Usage**
 ```tsx
 // ❌ Bad, specifies the entire relative path
+
 import {
+
   CatalogDecorator
+
 } from '../../../../../testing/decorators/CatalogDecorator';
+
 import {
+
   ComponentDecorator
+
 } from '../../../../../testing/decorators/ComponentDecorator';
 ```
 
 ```tsx
 // ✅ Good, utilises the designated aliases
+
 import { CatalogDecorator } from '~/testing/decorators/CatalogDecorator';
+
 import { ComponentDecorator } from 'twenty-ui';=
 ```
 
@@ -310,15 +390,25 @@ import { ComponentDecorator } from 'twenty-ui';=
 
 ```js
 const validationSchema = z
+
   .object({
+
     exist: z.boolean(),
+
     email: z
+
       .string()
+
       .email('Email must be a valid email'),
+
     password: z
+
       .string()
+
       .regex(PASSWORD_REGEX, 'Password must contain at least 8 characters'),
+
   })
+  
   .required();
 
 type Form = z.infer<typeof validationSchema>;

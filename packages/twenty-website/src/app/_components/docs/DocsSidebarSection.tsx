@@ -7,7 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 
 import { IconChevronDown, IconChevronRight } from '@/app/_components/ui/icons';
 import { Theme } from '@/app/_components/ui/theme/theme';
-import { UserGuideArticlesProps } from '@/content/user-guide/constants/getUserGuideArticles';
+import { DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
 import { groupArticlesByTopic } from '@/content/user-guide/constants/groupArticlesByTopic';
 
 const StyledContainer = styled.div`
@@ -105,14 +105,14 @@ interface TopicsState {
   [topic: string]: boolean;
 }
 
-const UserGuideSidebarSection = ({
-  userGuideIndex,
+const DocsSidebarSection = ({
+  docsIndex,
 }: {
-  userGuideIndex: UserGuideArticlesProps[];
+  docsIndex: DocsArticlesProps[];
 }) => {
   const pathname = usePathname();
   const router = useRouter();
-  const topics = groupArticlesByTopic(userGuideIndex);
+  const topics = groupArticlesByTopic(docsIndex);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const path = pathname.includes('user-guide') ? '/user-guide/' : '/docs/';
 
@@ -198,4 +198,4 @@ const UserGuideSidebarSection = ({
   );
 };
 
-export default UserGuideSidebarSection;
+export default DocsSidebarSection;

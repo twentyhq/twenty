@@ -88,7 +88,7 @@ interface HeadingType {
   level: number;
 }
 
-const UserGuideTableContents = () => {
+const DocsTableContents = () => {
   const [headings, setHeadings] = useState<HeadingType[]>([]);
   const pathname = usePathname();
   const { activeText } = useHeadsObserver(pathname);
@@ -146,4 +146,4 @@ const UserGuideTableContents = () => {
   );
 };
 
-export default UserGuideTableContents;
+export default DocsTableContents;

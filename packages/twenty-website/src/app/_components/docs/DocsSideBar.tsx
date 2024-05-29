@@ -4,15 +4,20 @@ import styled from '@emotion/styled';
 import {
   IconBook,
   IconCode,
+  IconComponents,
   IconGitPullRequest,
   IconTool,
 } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 
+import { AlgoliaDocSearch } from '@/app/_components/docs/AlgoliaDocSearch';
+import DocsSidebarSection from '@/app/_components/docs/DocsSidebarSection';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
-import UserGuideSidebarSection from '@/app/_components/user-guide/UserGuideSidebarSection';
-import { UserGuideArticlesProps } from '@/content/user-guide/constants/getUserGuideArticles';
+import { DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
+
+import '@docsearch/css';
+import '../../user-guide/algolia.css';
 
 const StyledContainer = styled.div`
   ${mq({
@@ -55,25 +60,21 @@ const StyledIconContainer = styled.div`
   padding: ${Theme.spacing(1)};
 `;
 
-const StyledHeadingText = styled.h2`
+const StyledHeadingText = styled.h1`
   cursor: pointer;
   font-size: ${Theme.font.size.sm};
   font-weight: ${Theme.font.weight.medium};
   color: ${Theme.text.color.secondary};
 `;
 
-const DocsSidebar = ({
-  userGuideIndex,
-}: {
-  userGuideIndex: UserGuideArticlesProps[];
-}) => {
+const DocsSidebar = ({ docsIndex }: { docsIndex: DocsArticlesProps[] }) => {
   const router = useRouter();
   const pathName = usePathname();
   const path = pathName.includes('user-guide') ? '/user-guide' : '/docs';
   const iconSize = Theme.icon.size.md;
 
   const sections = Array.from(
-    new Set(userGuideIndex.map((guide) => guide.section)),
+    new Set(docsIndex.map((guide) => guide.section)),
   ).map((section) => ({
     name: section,
     icon: section.includes('Started') ? (
@@ -82,10 +83,12 @@ const DocsSidebar = ({
       <IconGitPullRequest size={iconSize} />
     ) : section.includes('Extending') ? (
       <IconTool size={iconSize} />
+    ) : section.includes('Components') ? (
+      <IconComponents size={iconSize} />
     ) : (
       <IconBook size={iconSize} />
     ),
-    guides: userGuideIndex.filter(
+    guides: docsIndex.filter(
       (guide) =>
         guide.section === section &&
         !(guide.numberOfFiles > 1 && guide.topic === guide.title),
@@ -94,6 +97,7 @@ const DocsSidebar = ({
 
   return (
     <StyledContainer>
+      <AlgoliaDocSearch />
       {sections.map((section) => (
         <div key={section.name}>
           <StyledHeading>
@@ -101,14 +105,14 @@ const DocsSidebar = ({
             <StyledHeadingText
               onClick={() =>
                 router.push(
-                  section.name === 'User Guide' ? '/user-guide' : '/docs',
+                  section.name === 'User Guide' ? '/user-guide' : path,
                 )
               }
             >
               {section.name}
             </StyledHeadingText>
           </StyledHeading>
-          <UserGuideSidebarSection userGuideIndex={section.guides} />
+          <DocsSidebarSection docsIndex={section.guides} />
         </div>
       ))}
     </StyledContainer>

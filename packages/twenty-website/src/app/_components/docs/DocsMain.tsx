@@ -2,11 +2,11 @@
 import styled from '@emotion/styled';
 import { usePathname } from 'next/navigation';
 
+import DocsCard from '@/app/_components/docs/DocsCard';
 import { Breadcrumbs } from '@/app/_components/ui/layout/Breadcrumbs';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
-import UserGuideCard from '@/app/_components/user-guide/UserGuideCard';
-import { UserGuideArticlesProps } from '@/content/user-guide/constants/getUserGuideArticles';
+import { DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
 
 const StyledContainer = styled.div`
   ${mq({
@@ -112,20 +112,20 @@ const StyledContent = styled.div`
   }
 `;
 
-interface UserGuideProps {
-  userGuideArticleCards: UserGuideArticlesProps[];
+interface DocsProps {
+  docsArticleCards: DocsArticlesProps[];
   isSection?: boolean;
 }
 
 export default function DocsMain({
-  userGuideArticleCards,
+  docsArticleCards,
   isSection = false,
-}: UserGuideProps) {
-  const filterUserGuideIndex = (
-    userGuideIndex: UserGuideArticlesProps[],
+}: DocsProps) {
+  const filterDocsIndex = (
+    docsIndex: DocsArticlesProps[],
     sectionName: string,
-  ): UserGuideArticlesProps[] => {
-    return userGuideIndex.filter(
+  ): DocsArticlesProps[] => {
+    return docsIndex.filter(
       (guide) =>
         guide.section.includes(sectionName) &&
         guide.title.includes(guide.topic),
@@ -137,20 +137,19 @@ export default function DocsMain({
   if (isSection) {
     sections = [
       {
-        name: userGuideArticleCards[0].topic,
-        info: userGuideArticleCards[0].info,
+        name: docsArticleCards[0].topic,
+        info: docsArticleCards[0].sectionInfo,
       },
     ];
   } else {
     sections = Array.from(
-      new Map(
-        userGuideArticleCards.map((guide) => [guide.section, guide]),
-      ).values(),
+      new Map(docsArticleCards.map((guide) => [guide.section, guide])).values(),
     ).map((guide) => ({
       name: guide.section,
-      info: guide.info,
+      info: guide.sectionInfo,
     }));
   }
+  const limitedSections = sections.slice(0, 4);
   const pathname = usePathname();
   const uri = pathname.includes('user-guide') ? '/user-guide' : '/docs';
   const label = pathname.includes('user-guide') ? 'User Guide' : 'Developers';
@@ -173,21 +172,19 @@ export default function DocsMain({
         ) : (
           <StyledTitle>Developers</StyledTitle>
         )}
-        {sections.map((section) => {
+        {limitedSections.map((section, index) => {
           const filteredArticles = isSection
-            ? userGuideArticleCards
-            : filterUserGuideIndex(userGuideArticleCards, section.name);
+            ? docsArticleCards
+            : filterDocsIndex(docsArticleCards, section.name);
           return (
-            <StyledSection>
+            <StyledSection key={index}>
               <StyledHeader>
                 <StyledHeading>{section.name}</StyledHeading>
-                <StyledSubHeading>
-                  A brief guide to grasp the basics of Twenty
-                </StyledSubHeading>
+                <StyledSubHeading>{section.info}</StyledSubHeading>
               </StyledHeader>
               <StyledContent>
                 {filteredArticles.map((card) => (
-                  <UserGuideCard
+                  <DocsCard
                     key={card.title}
                     card={card}
                     isSection={isSection}

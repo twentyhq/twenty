@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { Theme } from '@/app/_components/ui/theme/theme';
-import { UserGuideArticlesProps } from '@/content/user-guide/constants/getUserGuideArticles';
+import { DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
 
 const StyledContainer = styled.div`
   color: ${Theme.border.color.plain};
@@ -46,15 +46,15 @@ const StyledSubHeading = styled.div`
 const StyledImage = styled.img`
   border-bottom: 1.5px solid #14141429;
   height: 160px;
-  border-top-right-radius: 8px;
-  border-top-left-radius: 8px;
+  border-top-right-radius: 6px;
+  border-top-left-radius: 6px;
 `;
 
-export default function UserGuideCard({
+export default function DocsCard({
   card,
   isSection = false,
 }: {
-  card: UserGuideArticlesProps;
+  card: DocsArticlesProps;
   isSection?: boolean;
 }) {
   const router = useRouter();

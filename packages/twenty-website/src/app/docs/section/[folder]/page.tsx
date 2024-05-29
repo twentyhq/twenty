@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 
 import DocsMain from '@/app/_components/docs/DocsMain';
-import { getUserGuideArticles } from '@/content/user-guide/constants/getUserGuideArticles';
+import { getDocsArticles } from '@/content/user-guide/constants/getDocsArticles';
 import { fetchArticleFromSlug } from '@/shared-utils/fetchArticleFromSlug';
 import { formatSlug } from '@/shared-utils/formatSlug';
 
@@ -27,12 +27,7 @@ export default async function DocsSlug({
   params: { folder: string };
 }) {
   const filePath = `src/content/docs/${params.folder}/`;
-  const userGuideArticleCards = getUserGuideArticles(filePath);
+  const docsArticleCards = getDocsArticles(filePath);
   const isSection = true;
-  return (
-    <DocsMain
-      userGuideArticleCards={userGuideArticleCards}
-      isSection={isSection}
-    />
-  );
+  return <DocsMain docsArticleCards={docsArticleCards} isSection={isSection} />;
 }

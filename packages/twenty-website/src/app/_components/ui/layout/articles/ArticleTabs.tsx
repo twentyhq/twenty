@@ -7,6 +7,7 @@ const StyledContainer = styled.div`
   cursor: pointer;
   margin-top: 32px;
   margin-bottom: 16px;
+  width: 80%;
 `;
 
 interface ArticleTabsProps {

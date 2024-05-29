@@ -1,4 +1,4 @@
-import { UserGuideArticlesProps } from '@/content/user-guide/constants/getUserGuideArticles';
+import { UserGuideArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
 
 export const groupArticlesByTopic = (
   items: UserGuideArticlesProps[],

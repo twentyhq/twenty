@@ -6,10 +6,12 @@ import gfm from 'remark-gfm';
 
 import ArticleEditContent from '@/app/_components/ui/layout/articles/ArticleEditContent';
 import ArticleLink from '@/app/_components/ui/layout/articles/ArticleLink';
+import ArticlePropsTable from '@/app/_components/ui/layout/articles/ArticlePropsTable';
 import ArticleTab from '@/app/_components/ui/layout/articles/ArticleTab';
 import ArticleTable from '@/app/_components/ui/layout/articles/ArticleTable';
 import ArticleTabs from '@/app/_components/ui/layout/articles/ArticleTabs';
 import ArticleWarning from '@/app/_components/ui/layout/articles/ArticleWarning';
+import SandpackEditor from '@/app/_components/ui/layout/articles/SandpackEditor';
 
 interface ItemInfo {
   title: string;
@@ -126,6 +128,12 @@ export async function compileMDXFile(filePath: string) {
       },
       ArticleTable(properties) {
         return <ArticleTable {...properties} />;
+      },
+      ArticlePropsTable(properties) {
+        return <ArticlePropsTable {...properties} />;
+      },
+      SandpackEditor(properties) {
+        return <SandpackEditor {...properties} />;
       },
     },
     options: {

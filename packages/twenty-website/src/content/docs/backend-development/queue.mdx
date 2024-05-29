@@ -23,26 +23,39 @@ Currently, queue supports two drivers which can be configurred by env variable `
 ### Example usage
 ```ts
 class Resolver {
-  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+
+ constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
 
   async onSomeAction() {
+
     //business logic
+
     await this.queue.add(someData);
+
   }
+
 }
 
 //async worker
+
 class CustomWorker {
-  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+
+ constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+
     this.initWorker();
+
   }
 
   async initWorker() {
-    await this.queue.work(async ({ id, data }) => {
-      //worker logic
-    });
-  }
-}
 
+    await this.queue.work(async ({ id, data }) => {
+
+      //worker logic
+
+    });
+
+  }
+
+}
 ```
 
