@@ -6,7 +6,7 @@ import { MessageQueue } from 'src/engine/integrations/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { GmailMessageListFetchCronJob } from 'src/modules/messaging/crons/jobs/gmail-message-list-fetch.cron.job';
 
-const GMAIL_PARTIAL_SYNC_CRON_PATTERN = '*/5 * * * *';
+const GMAIL_MESSAGE_LIST_FETCH_CRON_PATTERN = '*/5 * * * *';
 
 @Command({
   name: 'cron:messaging:gmail-message-list-fetch',
@@ -26,7 +26,7 @@ export class GmailMessageListFetchCronCommand extends CommandRunner {
       GmailMessageListFetchCronJob.name,
       undefined,
       {
-        repeat: { pattern: GMAIL_PARTIAL_SYNC_CRON_PATTERN },
+        repeat: { pattern: GMAIL_MESSAGE_LIST_FETCH_CRON_PATTERN },
       },
     );
   }
