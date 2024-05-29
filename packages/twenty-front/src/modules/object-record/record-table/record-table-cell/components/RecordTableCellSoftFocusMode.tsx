@@ -1,7 +1,7 @@
 import { ReactElement, useContext, useEffect, useRef } from 'react';
+import { IconLayoutSidebarRightExpand } from '@tabler/icons-react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { IconArrowUpRight } from 'twenty-ui';
 
 import { useClearField } from '@/object-record/record-field/hooks/useClearField';
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
@@ -117,9 +117,17 @@ export const RecordTableCellSoftFocusMode = ({
     }
   };
 
+  const handleButtonClick = () => {
+    if (!isFieldInputOnly) {
+      openTableCell(undefined, true);
+    }
+  };
+
   const isFirstColumn = columnIndex === 0;
   const customButtonIcon = useGetButtonIcon();
-  const buttonIcon = isFirstColumn ? IconArrowUpRight : customButtonIcon;
+  const buttonIcon = isFirstColumn
+    ? IconLayoutSidebarRightExpand
+    : customButtonIcon;
 
   const showButton =
     isDefined(buttonIcon) &&
@@ -136,7 +144,7 @@ export const RecordTableCellSoftFocusMode = ({
         {editModeContentOnly ? editModeContent : nonEditModeContent}
       </RecordTableCellDisplayContainer>
       {showButton && (
-        <RecordTableCellButton onClick={handleClick} Icon={buttonIcon} />
+        <RecordTableCellButton onClick={handleButtonClick} Icon={buttonIcon} />
       )}
     </>
   );

@@ -103,7 +103,6 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
 
         if (isFirstColumnCell && !isEmpty && isActionButtonClick) {
           leaveTableFocus();
-          // navigate(pathToShowPage);
           setViewableRecordId(entityId);
           setViewableRecordNameSingular(objectNameSingular);
           openRightDrawer(RightDrawerPages.ViewRecord);
