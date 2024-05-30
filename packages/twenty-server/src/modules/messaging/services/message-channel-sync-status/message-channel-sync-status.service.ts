@@ -53,12 +53,19 @@ export class MessageChannelSyncStatusService {
     );
   }
 
-  public async scheduleFullMessageListFetchAndFlushMessagesToImport(
+  public async resetAndScheduleFullMessageListFetch(
     messageChannelId: string,
     workspaceId: string,
   ) {
     await this.cacheStorage.setPop(
       `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
+    );
+
+    // TODO: remove nextPageToken from cache
+
+    await this.messageChannelRepository.resetSyncCursor(
+      messageChannelId,
+      workspaceId,
     );
 
     await this.scheduleFullMessageListFetch(messageChannelId, workspaceId);

@@ -143,12 +143,8 @@ export class GmailErrorHandlingService {
     this.logger.log(
       `404: ${error.message} for workspace ${workspaceId} and account ${messageChannel.connectedAccountId}.`,
     );
-    await this.messageChannelRepository.resetSyncCursor(
-      messageChannel.id,
-      workspaceId,
-    );
-    // remove nextPageToken from cache
-    await this.messageChannelSyncStatusService.scheduleFullMessageListFetchAndFlushMessagesToImport(
+
+    await this.messageChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
       messageChannel.id,
       workspaceId,
     );
