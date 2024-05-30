@@ -26,8 +26,14 @@ import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
-import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
-import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import {
+  EmailSyncStatus,
+  KeyValuePairService,
+  KeyValuePairsKeys,
+} from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 
 import { UserService } from './services/user.service';
 
@@ -45,6 +51,8 @@ export class UserResolver {
   constructor(
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
+    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
+    private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly keyValuePairService: KeyValuePairService,
     private readonly userService: UserService,
     private readonly environmentService: EnvironmentService,
@@ -63,16 +71,6 @@ export class UserResolver {
     assert(user, 'User not found');
 
     return user;
-  }
-
-  @ResolveField(() => [KeyValuePair], { nullable: true })
-  async keyValuePairs(
-    @Parent() user: User,
-  ): Promise<KeyValuePair[] | undefined> {
-    return await this.keyValuePairService.getMany(
-      user.id,
-      user.defaultWorkspaceId,
-    );
   }
 
   @ResolveField(() => WorkspaceMember, {
@@ -125,5 +123,25 @@ export class UserResolver {
   async deleteUser(@AuthUser() { id: userId }: User) {
     // Proceed with user deletion
     return this.userService.deleteUser(userId);
+  }
+
+  @ResolveField(() => Boolean, { nullable: true })
+  async skipSyncEmail(@AuthUser() user: User): Promise<boolean | null> {
+    const connectedAccounts =
+      await this.connectedAccountRepository.getAllByUserId(
+        user.id,
+        user.defaultWorkspaceId,
+      );
+
+    if (connectedAccounts?.length) {
+      return true;
+    }
+    const skipSyncEmail = await this.keyValuePairService.get(
+      user.id,
+      user.defaultWorkspaceId,
+      KeyValuePairsKeys.EMAIL_SYNC_ONBOARDING_STEP,
+    );
+
+    return skipSyncEmail && skipSyncEmail.value === EmailSyncStatus.SKIPPED;
   }
 }

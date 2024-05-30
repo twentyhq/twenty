@@ -10,6 +10,7 @@ export const GET_CURRENT_USER = gql`
       email
       canImpersonate
       supportUserHash
+      skipSyncEmail
       workspaceMember {
         id
         name {

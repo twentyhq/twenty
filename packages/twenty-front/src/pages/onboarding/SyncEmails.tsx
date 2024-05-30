@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useSetRecoilState } from 'recoil';
 import { IconGoogle } from 'twenty-ui';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { OnboardingSyncEmailsSettingsCard } from '@/onboarding/components/OnboardingSyncEmailsSettingsCard';
 import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
 import { AppPath } from '@/types/AppPath';
@@ -35,6 +37,7 @@ export const SyncEmails = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
+  const setIsCurrentUserLoaded = useSetRecoilState(isCurrentUserLoadedState);
   const [visibility, setVisibility] = useState<MessageChannelVisibility>(
     MessageChannelVisibility.ShareEverything,
   );
@@ -55,6 +58,7 @@ export const SyncEmails = () => {
 
   const continueWithoutSync = async () => {
     await skipSyncEmailMutation();
+    setIsCurrentUserLoaded(false);
     navigate(AppPath.Index);
   };
 

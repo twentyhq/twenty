@@ -62,6 +62,38 @@ export class ConnectedAccountRepository {
     return connectedAccounts;
   }
 
+  public async getAllByUserId(
+    userId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<ConnectedAccountWorkspaceEntity>[] | undefined> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    try {
+      const workspaceMember = (
+        await this.workspaceDataSourceService.executeRawQuery(
+          `SELECT * FROM ${dataSourceSchema}."workspaceMember" WHERE "userId" = $1`,
+          [userId],
+          workspaceId,
+          transactionManager,
+        )
+      )?.[0];
+
+      if (!workspaceMember) {
+        return;
+      }
+
+      return await this.getAllByWorkspaceMemberId(
+        workspaceMember.id,
+        workspaceId,
+        transactionManager,
+      );
+    } catch {
+      return;
+    }
+  }
+
   public async getAllByHandleAndWorkspaceMemberId(
     handle: string,
     workspaceMemberId: string,

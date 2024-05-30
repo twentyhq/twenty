@@ -260,13 +260,6 @@ export type InvalidatePassword = {
   success: Scalars['Boolean'];
 };
 
-export type KeyValuePair = {
-  __typename?: 'KeyValuePair';
-  id: Scalars['UUID'];
-  key: Scalars['String'];
-  value?: Maybe<Scalars['String']>;
-};
-
 export type KeyValuePairCreated = {
   __typename?: 'KeyValuePairCreated';
   /** Boolean that Key Value Pair has been created */
@@ -798,13 +791,13 @@ export type User = {
   emailVerified: Scalars['Boolean'];
   firstName: Scalars['String'];
   id: Scalars['UUID'];
-  keyValuePairs?: Maybe<Array<KeyValuePair>>;
   lastName: Scalars['String'];
   passwordHash?: Maybe<Scalars['String']>;
   /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
   passwordResetToken?: Maybe<Scalars['String']>;
   /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
   passwordResetTokenExpiresAt?: Maybe<Scalars['DateTime']>;
+  skipSyncEmail?: Maybe<Scalars['Boolean']>;
   supportUserHash?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   workspaceMember?: Maybe<WorkspaceMember>;
@@ -1233,7 +1226,7 @@ export type UploadProfilePictureMutation = { __typename?: 'Mutation', uploadProf
 export type GetCurrentUserQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, currentCacheVersion?: string | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: string, interval?: string | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null } | null }> } };
+export type GetCurrentUserQuery = { __typename?: 'Query', currentUser: { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, skipSyncEmail?: boolean | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, currentCacheVersion?: string | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: string, interval?: string | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null } | null }> } };
 
 export type AddUserToWorkspaceMutationVariables = Exact<{
   inviteHash: Scalars['String'];
@@ -2469,6 +2462,7 @@ export const GetCurrentUserDocument = gql`
     email
     canImpersonate
     supportUserHash
+    skipSyncEmail
     workspaceMember {
       id
       name {

@@ -101,7 +101,6 @@ export class User {
   })
   appTokens: Relation<AppToken[]>;
 
-  @Field(() => [KeyValuePair], { nullable: true })
   @OneToMany(() => KeyValuePair, (keyValuePair) => keyValuePair.user, {
     cascade: true,
   })
@@ -113,4 +112,7 @@ export class User {
   @Field(() => [UserWorkspace])
   @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.user)
   workspaces: Relation<UserWorkspace[]>;
+
+  @Field(() => Boolean, { nullable: true })
+  skipSyncEmail: boolean;
 }
