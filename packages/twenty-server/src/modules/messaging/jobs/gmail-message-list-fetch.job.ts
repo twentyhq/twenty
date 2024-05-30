@@ -65,7 +65,7 @@ export class GmailMessageListFetchJob
 
     if (!connectedAccount) {
       this.messagingTelemetryService.track({
-        eventName: 'message_list_fetch.connected_account_not_found',
+        eventName: 'message_list_fetch_job.error.connected_account_not_found',
         workspaceId,
         connectedAccountId,
       });
@@ -80,35 +80,45 @@ export class GmailMessageListFetchJob
       );
 
     if (!messageChannel) {
-      throw new Error(
-        `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
-      );
+      this.messagingTelemetryService.track({
+        eventName: 'message_list_fetch_job.error.message_channel_not_found',
+        workspaceId,
+        connectedAccountId,
+      });
+
+      return;
     }
 
     switch (messageChannel.syncSubStatus) {
       case MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING:
-        try {
-          await this.gmailPartialMessageListFetchV2Service.processMessageListFetch(
-            messageChannel,
-            connectedAccount,
-            workspaceId,
-          );
-        } catch (e) {
-          this.logger.error(e);
-        }
+        await this.gmailPartialMessageListFetchV2Service.processMessageListFetch(
+          messageChannel,
+          connectedAccount,
+          workspaceId,
+        );
+
+        this.messagingTelemetryService.track({
+          eventName: 'message_list_fetch_job.partial.completed',
+          workspaceId,
+          connectedAccountId,
+          messageChannelId: messageChannel.id,
+        });
 
         return;
 
       case MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING:
-        try {
-          await this.gmailFullMessageListFetchV2Service.processMessageListFetch(
-            messageChannel,
-            connectedAccount,
-            workspaceId,
-          );
-        } catch (e) {
-          this.logger.error(e);
-        }
+        await this.gmailFullMessageListFetchV2Service.processMessageListFetch(
+          messageChannel,
+          connectedAccount,
+          workspaceId,
+        );
+
+        this.messagingTelemetryService.track({
+          eventName: 'message_list_fetch_job.partial.completed',
+          workspaceId,
+          connectedAccountId,
+          messageChannelId: messageChannel.id,
+        });
 
         return;
 
