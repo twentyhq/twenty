@@ -153,6 +153,8 @@ export class GmailMessagesImportV2Service {
           messageChannel,
           workspaceId,
         );
+
+        return;
       }
 
       await this.messageChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
