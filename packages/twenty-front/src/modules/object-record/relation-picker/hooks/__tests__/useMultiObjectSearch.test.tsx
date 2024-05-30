@@ -11,7 +11,7 @@ import { FieldMetadataType } from '~/generated/graphql';
 const query = gql`
   query CombinedFindManyRecords(
     $filterNameSingular: NameSingularFilterInput
-    $orderByNameSingular: NameSingularOrderByInput
+    $orderByNameSingular: [NameSingularOrderByInput]
     $lastCursorNameSingular: String
     $limitNameSingular: Int
   ) {
