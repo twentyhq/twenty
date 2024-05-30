@@ -7,7 +7,7 @@ import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/works
 import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { FetchMessagesByBatchesModule } from 'src/modules/messaging/services/fetch-messages-by-batches/fetch-messages-by-batches.module';
-import { GmailErrorHandlingService } from 'src/modules/messaging/services/gmail-error-handling/gmail-error-handling.service';
+import { GmailErrorHandlingModule } from 'src/modules/messaging/services/gmail-error-handling/gmail-error-handling.module';
 import { GmailFullMessageListFetchV2Service } from 'src/modules/messaging/services/gmail-full-message-list-fetch/gmail-full-message-list-fetch-v2.service';
 import { GmailFullMessageListFetchService } from 'src/modules/messaging/services/gmail-full-message-list-fetch/gmail-full-message-list-fetch.service';
 import { SetMessageChannelSyncStatusModule } from 'src/modules/messaging/services/message-channel-sync-status/message-channel-sync-status.module';
@@ -19,6 +19,7 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-ob
   imports: [
     MessagingProvidersModule,
     FetchMessagesByBatchesModule,
+    GmailErrorHandlingModule,
     ObjectMetadataRepositoryModule.forFeature([
       ConnectedAccountWorkspaceEntity,
       MessageChannelWorkspaceEntity,
@@ -32,7 +33,6 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-ob
   providers: [
     GmailFullMessageListFetchService,
     GmailFullMessageListFetchV2Service,
-    GmailErrorHandlingService,
   ],
   exports: [
     GmailFullMessageListFetchService,

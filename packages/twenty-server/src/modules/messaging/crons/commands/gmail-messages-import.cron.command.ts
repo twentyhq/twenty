@@ -24,7 +24,7 @@ export class GmailMessagesImportCronCommand extends CommandRunner {
       undefined,
       {
         repeat: {
-          every: 1000,
+          every: 5000,
         },
       },
     );

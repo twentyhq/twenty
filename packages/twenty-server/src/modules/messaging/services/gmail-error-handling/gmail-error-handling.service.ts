@@ -5,6 +5,7 @@ import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metada
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/services/message-channel-sync-status/message-channel-sync-status.service';
+import { MessagingTelemetryService } from 'src/modules/messaging/services/telemetry/messaging-telemetry.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 
 type SyncType = 'full' | 'partial' | 'message-import';
@@ -22,6 +23,7 @@ export class GmailErrorHandlingService {
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
+    private readonly messagingTelemetryService: MessagingTelemetryService,
   ) {}
 
   public async handleGmailError(
@@ -37,6 +39,7 @@ export class GmailErrorHandlingService {
         if (reason === 'invalid_grant') {
           await this.handleInsufficientPermissions(
             error,
+            syncType,
             messageChannel,
             workspaceId,
           );
@@ -69,6 +72,7 @@ export class GmailErrorHandlingService {
         } else {
           await this.handleInsufficientPermissions(
             error,
+            syncType,
             messageChannel,
             workspaceId,
           );
@@ -78,6 +82,7 @@ export class GmailErrorHandlingService {
       case 401:
         await this.handleInsufficientPermissions(
           error,
+          syncType,
           messageChannel,
           workspaceId,
         );
@@ -98,11 +103,13 @@ export class GmailErrorHandlingService {
     messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
     workspaceId: string,
   ): Promise<void> {
-    this.logger.log(
-      `${error.code}: ${error.reason} for workspace ${workspaceId} and account ${messageChannel.connectedAccountId}, import will be retried later.`,
-    );
-
-    // Add throttle logic here
+    await this.messagingTelemetryService.track({
+      eventName: `sync.${syncType}.error.rate_limit_exceeded`,
+      workspaceId,
+      connectedAccountId: messageChannel.connectedAccountId,
+      messageChannelId: messageChannel.id,
+      message: `${error.code}: ${error.reason}`,
+    });
 
     switch (syncType) {
       case 'full':
@@ -133,16 +140,23 @@ export class GmailErrorHandlingService {
 
   public async handleInsufficientPermissions(
     error: GmailError,
+    syncType: SyncType,
     messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
     workspaceId: string,
   ): Promise<void> {
-    this.logger.error(
-      `${error.code}: ${error.reason} for workspace ${workspaceId} and account ${messageChannel.connectedAccountId}`,
-    );
+    await this.messagingTelemetryService.track({
+      eventName: `sync.${syncType}.error.insufficient_permissions`,
+      workspaceId,
+      connectedAccountId: messageChannel.connectedAccountId,
+      messageChannelId: messageChannel.id,
+      message: `${error.code}: ${error.reason}`,
+    });
+
     await this.messageChannelSyncStatusService.markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
       messageChannel.id,
       workspaceId,
     );
+
     await this.connectedAccountRepository.updateAuthFailedAt(
       messageChannel.connectedAccountId,
       workspaceId,
@@ -159,9 +173,13 @@ export class GmailErrorHandlingService {
       return;
     }
 
-    this.logger.log(
-      `404: ${error.reason} for workspace ${workspaceId} and account ${messageChannel.connectedAccountId}.`,
-    );
+    await this.messagingTelemetryService.track({
+      eventName: `sync.${syncType}.error.not_found`,
+      workspaceId,
+      connectedAccountId: messageChannel.connectedAccountId,
+      messageChannelId: messageChannel.id,
+      message: `404: ${error.reason}`,
+    });
 
     await this.messageChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
       messageChannel.id,

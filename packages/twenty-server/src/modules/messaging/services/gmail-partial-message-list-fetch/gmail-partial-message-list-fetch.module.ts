@@ -8,7 +8,6 @@ import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { FetchMessagesByBatchesModule } from 'src/modules/messaging/services/fetch-messages-by-batches/fetch-messages-by-batches.module';
 import { GmailErrorHandlingModule } from 'src/modules/messaging/services/gmail-error-handling/gmail-error-handling.module';
-import { GmailErrorHandlingService } from 'src/modules/messaging/services/gmail-error-handling/gmail-error-handling.service';
 import { GmailGetHistoryService } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-get-history.service';
 import { GmailPartialMessageListFetchV2Service } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-partial-message-list-fetch-v2.service';
 import { GmailPartialMessageListFetchService } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-partial-message-list-fetch.service';
@@ -35,7 +34,6 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-ob
   providers: [
     GmailPartialMessageListFetchService,
     GmailPartialMessageListFetchV2Service,
-    GmailErrorHandlingService,
     GmailGetHistoryService,
   ],
   exports: [

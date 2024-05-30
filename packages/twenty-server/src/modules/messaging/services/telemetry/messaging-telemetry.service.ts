@@ -8,6 +8,7 @@ type MessagingTelemetryTrackInput = {
   userId?: string;
   connectedAccountId?: string;
   messageChannelId?: string;
+  message?: string;
 };
 
 @Injectable()
@@ -20,6 +21,7 @@ export class MessagingTelemetryService {
     userId,
     connectedAccountId,
     messageChannelId,
+    message,
   }: MessagingTelemetryTrackInput): Promise<void> {
     await this.analyticsService.create(
       {
@@ -30,6 +32,7 @@ export class MessagingTelemetryService {
           userId,
           connectedAccountId,
           messageChannelId,
+          message,
         },
       },
       userId,
