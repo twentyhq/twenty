@@ -104,7 +104,7 @@ export const FooterDesktop = () => {
             <RightSideFooterLink href="/user-guide">
               User Guide
             </RightSideFooterLink>
-            <RightSideFooterLink href="/docs">Docs</RightSideFooterLink>
+            <RightSideFooterLink href="/docs">Developers</RightSideFooterLink>
           </RightSideFooterColumn>
           <RightSideFooterColumn>
             <RightSideFooterColumnTitle>Other</RightSideFooterColumnTitle>

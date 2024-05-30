@@ -5,6 +5,7 @@ import { TbApi, TbChevronLeft, TbLink } from 'react-icons/tb';
 import { usePathname, useRouter } from 'next/navigation';
 import { parseJson } from 'nx/src/utils/json';
 
+// @ts-expect-error Migration loader as text not passing warnings
 import tokenForm from '!css-loader!./token-form.css';
 
 export type SubDoc = 'core' | 'metadata';
@@ -13,8 +14,8 @@ export type TokenFormProps = {
   setToken?: (token: string) => void;
   setBaseUrl?: (baseUrl: string) => void;
   isTokenValid?: boolean;
-  setIsTokenValid?: (boolean) => void;
-  setLoadingState?: (boolean) => void;
+  setIsTokenValid?: (arg: boolean) => void;
+  setLoadingState?: (arg: boolean) => void;
   subDoc?: SubDoc;
 };
 
@@ -33,20 +34,23 @@ const TokenForm = ({
 
   const [isLoading, setIsLoading] = useState(false);
   const [locationSetting, setLocationSetting] = useState(
-    parseJson(localStorage.getItem('baseUrl') || '')?.locationSetting ??
+    parseJson?.(localStorage.getItem('baseUrl') || '')?.locationSetting ??
       'production',
   );
   const [baseUrl, setBaseUrl] = useState(
-    parseJson(localStorage.getItem('baseUrl') || '')?.baseUrl ??
+    parseJson?.(localStorage.getItem('baseUrl') || '')?.baseUrl ??
       'https://api.twenty.com',
   );
-  const token =
-    parseJson(localStorage.getItem('TryIt_securitySchemeValues'))?.bearerAuth ??
-    '';
 
-  const updateLoading = (loading: boolean) => {
+  const tokenLocal = localStorage?.getItem?.(
+    'TryIt_securitySchemeValues',
+  ) as string;
+
+  const token = parseJson?.(tokenLocal)?.bearerAuth ?? '';
+
+  const updateLoading = (loading = false) => {
     setIsLoading(loading);
-    setLoadingState(loading);
+    setLoadingState?.(!!loading);
   };
 
   const updateToken = async (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -80,8 +84,8 @@ const TokenForm = ({
     );
   };
 
-  const validateToken = (openApiJson) => {
-    setIsTokenValid(!!openApiJson.tags);
+  const validateToken = (openApiJson: any) => {
+    setIsTokenValid?.(!!openApiJson.tags);
   };
 
   const getJson = async (token: string) => {
@@ -99,11 +103,11 @@ const TokenForm = ({
       })
       .catch(() => {
         updateLoading(false);
-        setIsTokenValid(false);
+        setIsTokenValid?.(false);
       });
   };
 
-  const submitToken = async (token) => {
+  const submitToken = async (token: any) => {
     if (isLoading) return;
 
     const json = await getJson(token);

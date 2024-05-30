@@ -8,6 +8,10 @@ import DocsTableContents from '@/app/_components/docs/TableContent';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import { DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
+import {
+  isPlaygroundPage,
+  shouldShowEmptySidebar,
+} from '@/shared-utils/pathUtils';
 
 const StyledContainer = styled.div`
   width: 100%;
@@ -32,24 +36,12 @@ export const DocsMainLayout = ({
   docsIndex: DocsArticlesProps[];
 }) => {
   const pathname = usePathname();
-  const isPathnameSection =
-    pathname?.startsWith('/docs/section') ||
-    pathname?.startsWith('/user-guide/section');
-  const isDocsSection = isPathnameSection && pathname?.split('/').length === 4;
-
-  const isPlaygroundPage =
-    pathname?.startsWith('/docs/rest-api') ||
-    pathname?.startsWith('/docs/graphql-api');
 
   return (
     <StyledContainer>
-      {!isPlaygroundPage && <DocsSidebar docsIndex={docsIndex} />}
-
+      {!isPlaygroundPage(pathname) && <DocsSidebar docsIndex={docsIndex} />}
       {children}
-      {pathname === '/user-guide' ||
-      pathname === '/docs' ||
-      isDocsSection ||
-      isPlaygroundPage ? (
+      {shouldShowEmptySidebar(pathname) ? (
         <StyledEmptySideBar />
       ) : (
         <DocsTableContents />

@@ -9,6 +9,7 @@ import { IconChevronDown, IconChevronRight } from '@/app/_components/ui/icons';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import { DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
 import { groupArticlesByTopic } from '@/content/user-guide/constants/groupArticlesByTopic';
+import { getCardPath } from '@/shared-utils/getCardPath';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -155,14 +156,7 @@ const DocsSidebarSection = ({
                 const sectionName = card.topic
                   .toLowerCase()
                   .replace(/\s+/g, '-');
-                const STORYBOOK_LINK = 'https://storybook.twenty.com';
-                const twentyPath =
-                  card.numberOfFiles > 1
-                    ? `${path}/section/${sectionName}/${card.fileName}`
-                    : `${path}${card.fileName}`;
-                const routerPath =
-                  card.fileName === 'storybook' ? STORYBOOK_LINK : twentyPath;
-
+                const routerPath = getCardPath(card, path, false, sectionName);
                 return (
                   <StyledSubTopicItem
                     key={card.title}

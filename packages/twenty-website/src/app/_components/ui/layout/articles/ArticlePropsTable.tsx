@@ -3,8 +3,14 @@ import React from 'react';
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 
-const StyledTable = styled.table`
+const StyledTableContainer = styled.div`
   width: 100%;
+  overflow-x: auto;
+  margin-top: 32px;
+`;
+
+const StyledTable = styled.table`
+  width: fit-content;
   margin-top: 32px;
   border-collapse: collapse;
 `;
@@ -39,26 +45,28 @@ const OptionTable = ({ options }: ArticleTableProps) => {
     display = false;
   }
   return (
-    <StyledTable>
-      <thead>
-        <tr>
-          <StyledTableHeader>Props</StyledTableHeader>
-          <StyledTableHeader>Type</StyledTableHeader>
-          <StyledTableHeader>Description</StyledTableHeader>
-          {display ? <StyledTableHeader>Default</StyledTableHeader> : null}
-        </tr>
-      </thead>
-      <tbody>
-        {options.map(([props, type, description, defaultValue], index) => (
-          <tr key={index}>
-            <StyledVariable>{props}</StyledVariable>
-            <StyledVariable>{type}</StyledVariable>
-            <StyledDescription>{description}</StyledDescription>
-            {display ? <StyledVariable>{defaultValue}</StyledVariable> : null}
+    <StyledTableContainer>
+      <StyledTable>
+        <thead>
+          <tr>
+            <StyledTableHeader>Props</StyledTableHeader>
+            <StyledTableHeader>Type</StyledTableHeader>
+            <StyledTableHeader>Description</StyledTableHeader>
+            {display ? <StyledTableHeader>Default</StyledTableHeader> : null}
           </tr>
-        ))}
-      </tbody>
-    </StyledTable>
+        </thead>
+        <tbody>
+          {options.map(([props, type, description, defaultValue], index) => (
+            <tr key={index}>
+              <StyledVariable>{props}</StyledVariable>
+              <StyledVariable>{type}</StyledVariable>
+              <StyledDescription>{description}</StyledDescription>
+              {display ? <StyledVariable>{defaultValue}</StyledVariable> : null}
+            </tr>
+          ))}
+        </tbody>
+      </StyledTable>
+    </StyledTableContainer>
   );
 };
 

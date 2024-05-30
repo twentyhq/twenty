@@ -65,17 +65,19 @@ interface BreadcrumbsProps {
   }[];
   activePage: string;
   separator: string;
+  style?: boolean;
 }
 
 export const Breadcrumbs = ({
   items,
   activePage,
   separator,
+  style = false,
 }: BreadcrumbsProps) => {
   const lastItem = items[items.length - 1];
 
   return (
-    <div>
+    <div style={style ? { width: '340px' } : {}}>
       <StyledMobileContainer>
         <IconChevronLeft size={Theme.icon.size.md} />
         <InternalLinkItem href={lastItem.uri}>

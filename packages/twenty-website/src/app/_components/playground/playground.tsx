@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { TbLoader2 } from 'react-icons/tb';
 
-import TokenForm, { TokenFormProps } from '../components/token-form';
+import TokenForm, { TokenFormProps } from './token-form';
 
 const Playground = ({
   children,
@@ -41,7 +41,6 @@ const Playground = ({
             position: 'absolute',
             width: '100%',
             height: '100%',
-            top: '45px',
             display: 'flex',
             flexFlow: 'column',
             alignItems: 'center',

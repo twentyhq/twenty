@@ -7,6 +7,8 @@ import { Breadcrumbs } from '@/app/_components/ui/layout/Breadcrumbs';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import { DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
+import { constructSections } from '@/shared-utils/constructSections';
+import { filterDocsIndex } from '@/shared-utils/filterDocsIndex';
 
 const StyledContainer = styled.div`
   ${mq({
@@ -28,7 +30,8 @@ const StyledWrapper = styled.div`
 
   @media (max-width: 450px) {
     padding: ${Theme.spacing(10)} 30px ${Theme.spacing(20)};
-    align-items: center;
+    align-items: flex-start;
+    width: 340px;
   }
 
   @media (min-width: 450px) and (max-width: 800px) {
@@ -51,10 +54,19 @@ const StyledTitle = styled.div`
 
   @media (min-width: 450px) and (max-width: 800px) {
     width: 340px;
+    display: flex;
+    align-items: center;
   }
 `;
 
 const StyledSection = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  @media (min-width: 801px) {
+    align-items: flex-start;
+  }
   &:not(:last-child) {
     margin-bottom: 100px;
   }
@@ -71,6 +83,7 @@ const StyledHeader = styled.div`
   }
   @media (min-width: 450px) and (max-width: 800px) {
     margin-bottom: 24px;
+    width: 340px;
   }
 `;
 
@@ -121,35 +134,9 @@ export default function DocsMain({
   docsArticleCards,
   isSection = false,
 }: DocsProps) {
-  const filterDocsIndex = (
-    docsIndex: DocsArticlesProps[],
-    sectionName: string,
-  ): DocsArticlesProps[] => {
-    return docsIndex.filter(
-      (guide) =>
-        guide.section.includes(sectionName) &&
-        guide.title.includes(guide.topic),
-    );
-  };
-
-  let sections;
-
-  if (isSection) {
-    sections = [
-      {
-        name: docsArticleCards[0].topic,
-        info: docsArticleCards[0].sectionInfo,
-      },
-    ];
-  } else {
-    sections = Array.from(
-      new Map(docsArticleCards.map((guide) => [guide.section, guide])).values(),
-    ).map((guide) => ({
-      name: guide.section,
-      info: guide.sectionInfo,
-    }));
-  }
+  const sections = constructSections(docsArticleCards, isSection);
   const limitedSections = sections.slice(0, 4);
+
   const pathname = usePathname();
   const uri = pathname.includes('user-guide') ? '/user-guide' : '/docs';
   const label = pathname.includes('user-guide') ? 'User Guide' : 'Developers';
@@ -168,6 +155,7 @@ export default function DocsMain({
             items={BREADCRUMB_ITEMS}
             activePage={sections[0].name}
             separator="/"
+            style={true}
           />
         ) : (
           <StyledTitle>Developers</StyledTitle>

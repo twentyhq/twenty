@@ -52,7 +52,11 @@ export async function GET(request: Request) {
           <div style={container}>
             <div style={backgroundImage}></div>
             <div style={profileContainer}>
-              <img src={contributorAvatar} style={styledContributorAvatar} />
+              <img
+                src={contributorAvatar}
+                alt="contributor avatar"
+                style={styledContributorAvatar}
+              />
               <div style={profileInfoContainer}>
                 <h1 style={profileUsernameHeader}>@{username} x Twenty</h1>
                 <h2 style={profileContributionHeader}>

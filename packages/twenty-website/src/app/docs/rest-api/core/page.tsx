@@ -1,12 +1,14 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+// @ts-expect-error Migration loader as text not passing warnings
 import { API } from '@stoplight/elements';
 
-import Playground from '@/components/playground';
+import Playground from '@/app/_components/playground/playground';
 
+// @ts-expect-error Migration loader as text not passing warnings
 import spotlightTheme from '!css-loader!@stoplight/elements/styles.min.css';
 
-const RestApiComponent = ({ openApiJson }) => {
+const RestApiComponent = ({ openApiJson }: { openApiJson: any }) => {
   // We load spotlightTheme style using useEffect as it breaks remaining docs style
   useEffect(() => {
     const styleElement = document.createElement('style');

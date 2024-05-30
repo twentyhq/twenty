@@ -1,13 +1,6 @@
 'use client';
 
 import styled from '@emotion/styled';
-import {
-  IconBook,
-  IconCode,
-  IconComponents,
-  IconGitPullRequest,
-  IconTool,
-} from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { AlgoliaDocSearch } from '@/app/_components/docs/AlgoliaDocSearch';
@@ -15,6 +8,7 @@ import DocsSidebarSection from '@/app/_components/docs/DocsSidebarSection';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import { DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
+import { getSectionIcon } from '@/shared-utils/getSectionIcons';
 
 import '@docsearch/css';
 import '../../user-guide/algolia.css';
@@ -44,6 +38,7 @@ const StyledHeading = styled.div`
   gap: ${Theme.spacing(2)};
   font-size: ${Theme.font.size.sm};
   font-weight: ${Theme.font.weight.medium};
+  margin-bottom: 8px;
 `;
 
 const StyledIconContainer = styled.div`
@@ -71,23 +66,12 @@ const DocsSidebar = ({ docsIndex }: { docsIndex: DocsArticlesProps[] }) => {
   const router = useRouter();
   const pathName = usePathname();
   const path = pathName.includes('user-guide') ? '/user-guide' : '/docs';
-  const iconSize = Theme.icon.size.md;
 
   const sections = Array.from(
     new Set(docsIndex.map((guide) => guide.section)),
   ).map((section) => ({
     name: section,
-    icon: section.includes('Started') ? (
-      <IconCode size={iconSize} />
-    ) : section.includes('Contributing') ? (
-      <IconGitPullRequest size={iconSize} />
-    ) : section.includes('Extending') ? (
-      <IconTool size={iconSize} />
-    ) : section.includes('Components') ? (
-      <IconComponents size={iconSize} />
-    ) : (
-      <IconBook size={iconSize} />
-    ),
+    icon: getSectionIcon(section),
     guides: docsIndex.filter(
       (guide) =>
         guide.section === section &&

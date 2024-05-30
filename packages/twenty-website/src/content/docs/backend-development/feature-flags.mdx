@@ -14,9 +14,7 @@ In `FeatureFlagKey.ts` add the feature flag:
 
 ```ts
 type FeatureFlagKey =
-
   | 'IS_FEATURENAME_ENABLED'
-
   | ...;
 ```
 
@@ -24,11 +22,8 @@ Also add it to the enum in `feature-flag.entity.ts`:
 
 ```ts
 enum FeatureFlagKeys {
-
     IsFeatureNameEnabled = 'IS_FEATURENAME_ENABLED',
-
     ...
-
 }
 ```
 
@@ -38,9 +33,7 @@ To apply a feature flag on a **backend** feature use:
 
 ```ts
 @Gate({
-
   featureFlag: 'IS_FEATURENAME_ENABLED',
-
 })
 ```
 

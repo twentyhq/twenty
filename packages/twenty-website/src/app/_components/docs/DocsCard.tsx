@@ -4,6 +4,7 @@ import { usePathname, useRouter } from 'next/navigation';
 
 import { Theme } from '@/app/_components/ui/theme/theme';
 import { DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
+import { getCardPath } from '@/shared-utils/getCardPath';
 
 const StyledContainer = styled.div`
   color: ${Theme.border.color.plain};
@@ -59,10 +60,7 @@ export default function DocsCard({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const path =
-    card.numberOfFiles > 1 && !isSection
-      ? `${pathname}/section/${card.fileName}`
-      : `${pathname}/${card.fileName}`;
+  const path = getCardPath(card, pathname, isSection);
 
   return (
     <StyledContainer onClick={() => router.push(path)}>

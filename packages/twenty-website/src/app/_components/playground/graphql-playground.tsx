@@ -5,12 +5,9 @@ import { Theme, useTheme } from '@graphiql/react';
 import { createGraphiQLFetcher } from '@graphiql/toolkit';
 import { GraphiQL } from 'graphiql';
 
-import { SubDoc } from '@/components/token-form';
+import { SubDoc } from '@/app/_components/playground/token-form';
 
 import Playground from './playground';
-
-// import explorerCss from '!css-loader!@graphiql/plugin-explorer/dist/style.css';
-// import graphiqlCss from '!css-loader!graphiql/graphiql.css';
 
 const SubDocToPath = {
   core: 'graphql',
@@ -18,7 +15,7 @@ const SubDocToPath = {
 };
 
 // Docusaurus does SSR for custom pages, but we need to load GraphiQL in the browser
-const GraphQlComponent = ({ token, baseUrl, path }) => {
+const GraphQlComponent = ({ token, baseUrl, path }: any) => {
   const explorer = explorerPlugin({
     showAttribution: true,
   });
@@ -26,24 +23,6 @@ const GraphQlComponent = ({ token, baseUrl, path }) => {
   const fetcher = createGraphiQLFetcher({
     url: baseUrl + '/' + path,
   });
-
-  // We load graphiql style using useEffect as it breaks remaining docs style
-  useEffect(() => {
-    const createAndAppendStyle = (css) => {
-      const styleElement = document.createElement('style');
-      styleElement.innerHTML = css.toString();
-      document.head.append(styleElement);
-      return styleElement;
-    };
-
-    // const styleElement1 = createAndAppendStyle(graphiqlCss);
-    // const styleElement2 = createAndAppendStyle(explorerCss);
-
-    return () => {
-      // styleElement1.remove();
-      // styleElement2.remove();
-    };
-  }, []);
 
   if (!baseUrl || !token) {
     return <></>;
@@ -71,7 +50,7 @@ const GraphQlPlayground = ({ subDoc }: { subDoc: SubDoc }) => {
       window.localStorage.getItem('theme') || 'light',
     );
 
-    const handleThemeChange = (ev) => {
+    const handleThemeChange = (ev: any) => {
       if (ev.key === 'theme') {
         setTheme(ev.newValue as Theme);
       }
@@ -91,12 +70,14 @@ const GraphQlPlayground = ({ subDoc }: { subDoc: SubDoc }) => {
   );
 
   return (
-    <Playground
-      children={children}
-      setToken={setToken}
-      setBaseUrl={setBaseUrl}
-      subDoc={subDoc}
-    />
+    <div style={{ height: '100vh', width: '100vw' }}>
+      <Playground
+        children={children}
+        setToken={setToken}
+        setBaseUrl={setBaseUrl}
+        subDoc={subDoc}
+      />
+    </div>
   );
 };
 export default GraphQlPlayground;

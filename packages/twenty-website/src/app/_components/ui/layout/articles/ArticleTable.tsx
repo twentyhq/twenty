@@ -3,9 +3,14 @@ import React from 'react';
 import styled from '@emotion/styled';
 import PropTypes from 'prop-types';
 
-const StyledTable = styled.table`
+const StyledTableContainer = styled.div`
   width: 100%;
+  overflow-x: auto;
   margin-top: 32px;
+`;
+
+const StyledTable = styled.table`
+  width: fit-content;
 `;
 
 const StyledTableHeader = styled.th`
@@ -15,7 +20,7 @@ const StyledTableHeader = styled.th`
 const StyledDescription = styled.td`
   border-bottom: 1px solid #ddd;
   font-size: 12px;
-  padding: 20px 0px 20px 20px;
+  padding: 10px 0px 10px 20px;
   text-align: center;
 `;
 
@@ -40,24 +45,26 @@ interface ArticleTableProps {
 
 const OptionTable = ({ options }: ArticleTableProps) => {
   return (
-    <StyledTable>
-      <thead>
-        <tr>
-          <StyledTableHeader>Variable</StyledTableHeader>
-          <StyledTableHeader>Example</StyledTableHeader>
-          <StyledTableHeader>Description</StyledTableHeader>
-        </tr>
-      </thead>
-      <tbody>
-        {options.map(([variable, defaultValue, description], index) => (
-          <tr key={index}>
-            <StyledVariable>{variable}</StyledVariable>
-            <StyledExample>{defaultValue}</StyledExample>
-            <StyledDescription>{description}</StyledDescription>
+    <StyledTableContainer>
+      <StyledTable>
+        <thead>
+          <tr>
+            <StyledTableHeader>Variable</StyledTableHeader>
+            <StyledTableHeader>Example</StyledTableHeader>
+            <StyledTableHeader>Description</StyledTableHeader>
           </tr>
-        ))}
-      </tbody>
-    </StyledTable>
+        </thead>
+        <tbody>
+          {options.map(([variable, defaultValue, description], index) => (
+            <tr key={index}>
+              <StyledVariable>{variable}</StyledVariable>
+              <StyledExample>{defaultValue}</StyledExample>
+              <StyledDescription>{description}</StyledDescription>
+            </tr>
+          ))}
+        </tbody>
+      </StyledTable>
+    </StyledTableContainer>
   );
 };
 

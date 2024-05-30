@@ -8,6 +8,7 @@ const StyledContainer = styled.div`
   margin-top: 32px;
   margin-bottom: 16px;
   width: 80%;
+  overflow: none;
 `;
 
 interface ArticleTabsProps {
