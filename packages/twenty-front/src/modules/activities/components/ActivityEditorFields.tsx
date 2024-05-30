@@ -71,7 +71,7 @@ export const ActivityEditorFields = ({
     objectNameSingular: CoreObjectNameSingular.Activity,
     objectRecordId: activityId,
     fieldMetadataName: 'dueAt',
-    fieldPosition: 0,
+    fieldPosition: 1,
     clearable: true,
     customUseUpdateOneObjectHook: useUpsertOneActivityMutation,
   });
@@ -81,7 +81,7 @@ export const ActivityEditorFields = ({
       objectNameSingular: CoreObjectNameSingular.Activity,
       objectRecordId: activityId,
       fieldMetadataName: 'assignee',
-      fieldPosition: 1,
+      fieldPosition: 2,
       clearable: true,
       customUseUpdateOneObjectHook: useUpsertOneActivityMutation,
     });
@@ -91,7 +91,7 @@ export const ActivityEditorFields = ({
       objectNameSingular: CoreObjectNameSingular.Activity,
       objectRecordId: activityId,
       fieldMetadataName: 'activityTargets',
-      fieldPosition: 2,
+      fieldPosition: 3,
     });
 
   return (
