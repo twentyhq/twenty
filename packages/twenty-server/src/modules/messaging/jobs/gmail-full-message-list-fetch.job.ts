@@ -16,8 +16,8 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
-import { SetMessageChannelSyncStatusService } from 'src/modules/messaging/services/set-message-channel-sync-status/set-message-channel-sync-status.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/services/message-channel-sync-status/message-channel-sync-status.service';
 
 export type GmailFullMessageListFetchJobData = {
   workspaceId: string;
@@ -40,7 +40,7 @@ export class GmailFullMessageListFetchJob
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
-    private readonly setMessageChannelSyncStatusService: SetMessageChannelSyncStatusService,
+    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
   ) {}
 
   async handle(data: GmailFullMessageListFetchJobData): Promise<void> {
@@ -107,7 +107,7 @@ export class GmailFullMessageListFetchJob
           );
         }
 
-        await this.setMessageChannelSyncStatusService.setFailedInsufficientPermissionsStatus(
+        await this.messageChannelSyncStatusService.markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
           messageChannel.id,
           workspaceId,
         );

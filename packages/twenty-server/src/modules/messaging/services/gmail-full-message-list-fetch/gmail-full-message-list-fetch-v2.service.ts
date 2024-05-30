@@ -15,9 +15,9 @@ import { GmailClientProvider } from 'src/modules/messaging/services/providers/gm
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
-import { SetMessageChannelSyncStatusService } from 'src/modules/messaging/services/set-message-channel-sync-status/set-message-channel-sync-status.service';
 import { GmailError } from 'src/modules/messaging/types/gmail-error';
 import { GmailErrorHandlingService } from 'src/modules/messaging/services/gmail-error-handling/gmail-error-handling.service';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/services/message-channel-sync-status/message-channel-sync-status.service';
 
 @Injectable()
 export class GmailFullMessageListFetchV2Service {
@@ -33,7 +33,7 @@ export class GmailFullMessageListFetchV2Service {
       MessageChannelMessageAssociationWorkspaceEntity,
     )
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
-    private readonly setMessageChannelSyncStatusService: SetMessageChannelSyncStatusService,
+    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly gmailErrorHandlingService: GmailErrorHandlingService,
   ) {}
 
@@ -46,7 +46,7 @@ export class GmailFullMessageListFetchV2Service {
       `Fetching full message list for workspace ${workspaceId} and account ${connectedAccount.id}`,
     );
 
-    await this.setMessageChannelSyncStatusService.setMessageListFetchOnGoingStatus(
+    await this.messageChannelSyncStatusService.markAsMessagesListFetchOngoing(
       messageChannel.id,
       workspaceId,
     );
@@ -75,12 +75,12 @@ export class GmailFullMessageListFetchV2Service {
         return;
       }
 
-      await this.setMessageChannelSyncStatusService.setMessagesImportPendingStatus(
+      await this.messageChannelSyncStatusService.scheduleMessagesImport(
         messageChannel.id,
         workspaceId,
       );
     } catch (error) {
-      await this.setMessageChannelSyncStatusService.setFailedUnkownStatus(
+      await this.messageChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
         messageChannel.id,
         workspaceId,
       );

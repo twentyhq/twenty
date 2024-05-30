@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
+import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import {
@@ -9,13 +12,48 @@ import {
 } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
-export class SetMessageChannelSyncStatusService {
+export class MessageChannelSyncStatusService {
   constructor(
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
+    @InjectCacheStorage(CacheStorageNamespace.Messaging)
+    private readonly cacheStorage: CacheStorageService,
   ) {}
 
-  public async setMessageListFetchOnGoingStatus(
+  public async scheduleFullMessageListFetch(
+    messageChannelId: string,
+    workspaceId: string,
+  ) {
+    await this.messageChannelRepository.updateSyncSubStatus(
+      messageChannelId,
+      MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING,
+      workspaceId,
+    );
+  }
+
+  public async schedulePartialMessageListFetch(
+    messageChannelId: string,
+    workspaceId: string,
+  ) {
+    await this.messageChannelRepository.updateSyncSubStatus(
+      messageChannelId,
+      MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
+      workspaceId,
+    );
+  }
+
+  public async scheduleMessagesImport(
+    messageChannelId: string,
+    workspaceId: string,
+  ) {
+    await this.messageChannelRepository.updateSyncSubStatus(
+      messageChannelId,
+      MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING,
+      workspaceId,
+    );
+  }
+
+  public async markAsMessagesListFetchOngoing(
     messageChannelId: string,
     workspaceId: string,
   ) {
@@ -32,29 +70,7 @@ export class SetMessageChannelSyncStatusService {
     );
   }
 
-  public async setFullMessageListFetchPendingStatus(
-    messageChannelId: string,
-    workspaceId: string,
-  ) {
-    await this.messageChannelRepository.updateSyncSubStatus(
-      messageChannelId,
-      MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING,
-      workspaceId,
-    );
-  }
-
-  public async setPartialMessageListFetchPendingStatus(
-    messageChannelId: string,
-    workspaceId: string,
-  ) {
-    await this.messageChannelRepository.updateSyncSubStatus(
-      messageChannelId,
-      MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
-      workspaceId,
-    );
-  }
-
-  public async setCompletedStatus(
+  public async markAsCompletedAndAwaitNextPartialSync(
     messageChannelId: string,
     workspaceId: string,
   ) {
@@ -71,18 +87,7 @@ export class SetMessageChannelSyncStatusService {
     );
   }
 
-  public async setMessagesImportPendingStatus(
-    messageChannelId: string,
-    workspaceId: string,
-  ) {
-    await this.messageChannelRepository.updateSyncSubStatus(
-      messageChannelId,
-      MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING,
-      workspaceId,
-    );
-  }
-
-  public async setMessagesImportOnGoingStatus(
+  public async markAsMessagesImportOngoing(
     messageChannelId: string,
     workspaceId: string,
   ) {
@@ -93,10 +98,14 @@ export class SetMessageChannelSyncStatusService {
     );
   }
 
-  public async setFailedUnkownStatus(
+  public async markAsFailedUnknownAndFlushMessagesToImport(
     messageChannelId: string,
     workspaceId: string,
   ) {
+    await this.cacheStorage.setPop(
+      `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
+    );
+
     await this.messageChannelRepository.updateSyncSubStatus(
       messageChannelId,
       MessageChannelSyncSubStatus.FAILED,
@@ -110,10 +119,14 @@ export class SetMessageChannelSyncStatusService {
     );
   }
 
-  public async setFailedInsufficientPermissionsStatus(
+  public async markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
     messageChannelId: string,
     workspaceId: string,
   ) {
+    await this.cacheStorage.setPop(
+      `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
+    );
+
     await this.messageChannelRepository.updateSyncSubStatus(
       messageChannelId,
       MessageChannelSyncSubStatus.FAILED,
