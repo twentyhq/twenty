@@ -24,9 +24,23 @@ export const useMoveEditModeToTableCellPosition = (recordTableId?: string) => {
           false,
         );
 
+        document.dispatchEvent(
+          new CustomEvent(
+            `edit-mode-change-${currentTableCellInEditModePosition.row}:${currentTableCellInEditModePosition.column}`,
+            { detail: false },
+          ),
+        );
+
         set(currentTableCellInEditModePositionState, newPosition);
 
         set(isTableCellInEditModeFamilyState(newPosition), true);
+
+        document.dispatchEvent(
+          new CustomEvent(
+            `edit-mode-change-${newPosition.row}:${newPosition.column}`,
+            { detail: true },
+          ),
+        );
       };
     },
     [currentTableCellInEditModePositionState, isTableCellInEditModeFamilyState],

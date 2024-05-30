@@ -8,6 +8,8 @@ import { logError } from './logError';
 export const DEFAULT_DATE_LOCALE = 'en-EN';
 
 export const parseDate = (dateToParse: Date | string | number) => {
+  if (dateToParse === 'now') return DateTime.fromJSDate(new Date());
+
   let formattedDate: DateTime | null = null;
 
   if (!dateToParse) {

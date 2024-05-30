@@ -28,15 +28,15 @@ const StyledIconChevronRight = styled(IconChevronRight)`
 
 export const SettingsDevelopersWebhookTableRow = ({
   fieldItem,
-  onClick,
+  to,
 }: {
   fieldItem: Webhook;
-  onClick: () => void;
+  to: string;
 }) => {
   const theme = useTheme();
 
   return (
-    <StyledApisFieldTableRow onClick={onClick}>
+    <StyledApisFieldTableRow to={to}>
       <StyledUrlTableCell>{fieldItem.targetUrl}</StyledUrlTableCell>
       <StyledIconTableCell>
         <StyledIconChevronRight

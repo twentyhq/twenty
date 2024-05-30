@@ -28,7 +28,6 @@ export const SettingsDataModelFieldPreviewCard = ({
   fieldMetadataItem,
   objectMetadataItem,
   relationObjectMetadataItem,
-  selectOptions,
   shrink,
   withFieldLabel = true,
 }: SettingsDataModelFieldPreviewCardProps) => (
@@ -39,7 +38,6 @@ export const SettingsDataModelFieldPreviewCard = ({
         objectMetadataItem={objectMetadataItem}
         fieldMetadataItem={fieldMetadataItem}
         relationObjectMetadataItem={relationObjectMetadataItem}
-        selectOptions={selectOptions}
         shrink={shrink}
         withFieldLabel={withFieldLabel}
       />

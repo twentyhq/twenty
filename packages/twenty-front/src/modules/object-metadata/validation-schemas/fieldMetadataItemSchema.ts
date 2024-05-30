@@ -1,8 +1,8 @@
+import { themeColorSchema } from 'twenty-ui';
 import { z } from 'zod';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { metadataLabelSchema } from '@/object-metadata/validation-schemas/metadataLabelSchema';
-import { themeColorSchema } from '@/ui/theme/utils/themeColorSchema';
 import {
   FieldMetadataType,
   RelationDefinitionType,
@@ -51,10 +51,12 @@ export const fieldMetadataItemSchema = z.object({
         value: z.string().trim().min(1),
       }),
     )
+    .nullable()
     .optional(),
   relationDefinition: z
     .object({
       __typename: z.literal('RelationDefinition').optional(),
+      relationId: z.string().uuid(),
       direction: z.nativeEnum(RelationDefinitionType),
       sourceFieldMetadata: z.object({
         __typename: z.literal('field').optional(),

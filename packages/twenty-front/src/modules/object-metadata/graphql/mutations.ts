@@ -139,3 +139,11 @@ export const DELETE_ONE_FIELD_METADATA_ITEM = gql`
     }
   }
 `;
+
+export const DELETE_ONE_RELATION_METADATA_ITEM = gql`
+  mutation DeleteOneRelationMetadataItem($idToDelete: UUID!) {
+    deleteOneRelation(input: { id: $idToDelete }) {
+      id
+    }
+  }
+`;

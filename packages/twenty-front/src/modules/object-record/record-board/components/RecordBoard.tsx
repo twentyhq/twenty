@@ -16,6 +16,7 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useListenClickOutsideByClassName } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useScrollRestoration } from '~/hooks/useScrollRestoration';
 
 export type RecordBoardProps = {
   recordBoardId: string;
@@ -41,6 +42,11 @@ const StyledBoardHeader = styled.div`
   position: relative;
   z-index: 1;
 `;
+
+const RecordBoardScrollRestoreEffect = () => {
+  useScrollRestoration();
+  return null;
+};
 
 export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
   const { updateOneRecord, selectFieldMetadataItem } =
@@ -152,6 +158,7 @@ export const RecordBoard = ({ recordBoardId }: RecordBoardProps) => {
               ))}
             </DragDropContext>
           </StyledContainer>
+          <RecordBoardScrollRestoreEffect />
         </ScrollWrapper>
         <DragSelect
           dragSelectable={boardRef}

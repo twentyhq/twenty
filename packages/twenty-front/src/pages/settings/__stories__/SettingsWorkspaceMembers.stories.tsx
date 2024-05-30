@@ -5,6 +5,7 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
+import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/testing/sleep';
 
@@ -13,7 +14,7 @@ import { SettingsWorkspaceMembers } from '../SettingsWorkspaceMembers';
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/SettingsWorkspaceMembers',
   component: SettingsWorkspaceMembers,
-  decorators: [PageDecorator],
+  decorators: [PrefetchLoadingDecorator, PageDecorator],
   args: { routePath: '/settings/workspace-members' },
   parameters: {
     msw: graphqlMocks,

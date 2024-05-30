@@ -6,6 +6,7 @@ import {
   FieldDateTimeValue,
   FieldEmailValue,
   FieldFullNameValue,
+  FieldJsonValue,
   FieldLinksValue,
   FieldLinkValue,
   FieldMultiSelectValue,
@@ -47,6 +48,7 @@ export type FieldAddressDraftValue = {
   addressLat: number | null;
   addressLng: number | null;
 };
+export type FieldJsonDraftValue = string;
 
 export type FieldInputDraftValue<FieldValue> = FieldValue extends FieldTextValue
   ? FieldTextDraftValue
@@ -80,4 +82,6 @@ export type FieldInputDraftValue<FieldValue> = FieldValue extends FieldTextValue
                               ? FieldRelationDraftValue
                               : FieldValue extends FieldAddressValue
                                 ? FieldAddressDraftValue
-                                : never;
+                                : FieldValue extends FieldJsonValue
+                                  ? FieldJsonDraftValue
+                                  : never;

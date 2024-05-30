@@ -1,8 +1,7 @@
 import { MouseEventHandler, useMemo } from 'react';
-import styled from '@emotion/styled';
 
 import { FieldLinksValue } from '@/object-record/record-field/types/FieldMetadata';
-import { EllipsisDisplay } from '@/ui/field/display/components/EllipsisDisplay';
+import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { RoundedLink } from '@/ui/navigation/link/components/RoundedLink';
 import {
   LinkType,
@@ -13,16 +12,12 @@ import { isDefined } from '~/utils/isDefined';
 import { getAbsoluteUrl } from '~/utils/url/getAbsoluteUrl';
 import { getUrlHostName } from '~/utils/url/getUrlHostName';
 
-const StyledContainer = styled(EllipsisDisplay)`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
-
 type LinksDisplayProps = {
   value?: FieldLinksValue;
+  isFocused?: boolean;
 };
 
-export const LinksDisplay = ({ value }: LinksDisplayProps) => {
+export const LinksDisplay = ({ value, isFocused }: LinksDisplayProps) => {
   const links = useMemo(
     () =>
       [
@@ -49,7 +44,7 @@ export const LinksDisplay = ({ value }: LinksDisplayProps) => {
   const handleClick: MouseEventHandler = (event) => event.stopPropagation();
 
   return (
-    <StyledContainer>
+    <ExpandableList isChipCountDisplayed={isFocused}>
       {links.map(({ url, label, type }, index) =>
         type === LinkType.LinkedIn || type === LinkType.Twitter ? (
           <SocialLink key={index} href={url} onClick={handleClick} type={type}>
@@ -61,6 +56,6 @@ export const LinksDisplay = ({ value }: LinksDisplayProps) => {
           </RoundedLink>
         ),
       )}
-    </StyledContainer>
+    </ExpandableList>
   );
 };

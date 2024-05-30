@@ -1,4 +1,5 @@
 import { createDefaultButton } from '~/contentScript/createButton';
+import changeSidePanelUrl from '~/contentScript/utils/changeSidepanelUrl';
 import extractCompanyLinkedinLink from '~/contentScript/utils/extractCompanyLinkedinLink';
 import extractDomain from '~/contentScript/utils/extractDomain';
 import { createCompany, fetchCompany } from '~/db/company.db';
@@ -71,27 +72,19 @@ export const addCompany = async () => {
   const companyURL = extractCompanyLinkedinLink(activeTab.url);
   companyInputData.linkedinLink = { url: companyURL, label: companyURL };
 
-  const company = await createCompany(companyInputData);
-  return company;
+  const companyId = await createCompany(companyInputData);
+
+  if (isDefined(companyId)) {
+    await changeSidePanelUrl(
+      `${import.meta.env.VITE_FRONT_BASE_URL}/object/company/${companyId}`,
+    );
+  }
+
+  return companyId;
 };
 
 export const insertButtonForCompany = async () => {
-  const companyButtonDiv = createDefaultButton(
-    'twenty-company-btn',
-    async () => {
-      if (isDefined(companyButtonDiv)) {
-        const companyBtnSpan = companyButtonDiv.getElementsByTagName('span')[0];
-        companyBtnSpan.textContent = 'Saving...';
-        const company = await addCompany();
-        if (isDefined(company)) {
-          companyBtnSpan.textContent = 'Saved';
-          Object.assign(companyButtonDiv.style, { pointerEvents: 'none' });
-        } else {
-          companyBtnSpan.textContent = 'Try again';
-        }
-      }
-    },
-  );
+  const companyButtonDiv = createDefaultButton('twenty-company-btn');
 
   const parentDiv: HTMLDivElement | null = document.querySelector(
     '.org-top-card-primary-actions__inner',
@@ -105,13 +98,35 @@ export const insertButtonForCompany = async () => {
     parentDiv.prepend(companyButtonDiv);
   }
 
-  const companyBtnSpan = companyButtonDiv.getElementsByTagName('span')[0];
+  const companyButtonSpan = companyButtonDiv.getElementsByTagName('span')[0];
   const company = await checkIfCompanyExists();
 
+  const openCompanyOnSidePanel = (companyId: string) => {
+    companyButtonSpan.textContent = 'View in Twenty';
+    companyButtonDiv.onClickHandler(async () => {
+      await changeSidePanelUrl(
+        `${import.meta.env.VITE_FRONT_BASE_URL}/object/company/${companyId}`,
+      );
+      chrome.runtime.sendMessage({ action: 'openSidepanel' });
+    });
+  };
+
   if (isDefined(company)) {
-    companyBtnSpan.textContent = 'Saved';
-    Object.assign(companyButtonDiv.style, { pointerEvents: 'none' });
+    await changeSidePanelUrl(
+      `${import.meta.env.VITE_FRONT_BASE_URL}/object/company/${company.id}`,
+    );
+    if (isDefined(company.id)) openCompanyOnSidePanel(company.id);
   } else {
-    companyBtnSpan.textContent = 'Add to Twenty';
+    companyButtonSpan.textContent = 'Add to Twenty';
+
+    companyButtonDiv.onClickHandler(async () => {
+      companyButtonSpan.textContent = 'Saving...';
+      const companyId = await addCompany();
+      if (isDefined(companyId)) {
+        openCompanyOnSidePanel(companyId);
+      } else {
+        companyButtonSpan.textContent = 'Try again';
+      }
+    });
   }
 };

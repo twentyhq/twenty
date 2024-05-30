@@ -1,29 +1,21 @@
-import { useFormContext } from 'react-hook-form';
 import styled from '@emotion/styled';
 import omit from 'lodash.omit';
 import { z } from 'zod';
 
-import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import {
-  SettingsDataModelFieldBooleanForm,
-  settingsDataModelFieldBooleanFormSchema,
-} from '@/settings/data-model/components/SettingsDataModelDefaultValue';
 import { SettingsDataModelPreviewFormCard } from '@/settings/data-model/components/SettingsDataModelPreviewFormCard';
-import {
-  SettingsDataModelFieldCurrencyForm,
-  settingsDataModelFieldCurrencyFormSchema,
-} from '@/settings/data-model/components/SettingsObjectFieldCurrencyForm';
-import {
-  SettingsDataModelFieldRelationForm,
-  settingsDataModelFieldRelationFormSchema,
-} from '@/settings/data-model/components/SettingsObjectFieldRelationForm';
-import {
-  SettingsDataModelFieldSelectForm,
-  settingsDataModelFieldSelectFormSchema,
-} from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
-import { RELATION_TYPES } from '@/settings/data-model/constants/RelationTypes';
 import { SETTINGS_FIELD_TYPE_CONFIGS } from '@/settings/data-model/constants/SettingsFieldTypeConfigs';
+import { settingsDataModelFieldBooleanFormSchema } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanForm';
+import { SettingsDataModelFieldBooleanSettingsFormCard } from '@/settings/data-model/fields/forms/boolean/components/SettingsDataModelFieldBooleanSettingsFormCard';
+import { settingsDataModelFieldCurrencyFormSchema } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm';
+import { SettingsDataModelFieldCurrencySettingsFormCard } from '@/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencySettingsFormCard';
+import { settingsDataModelFieldRelationFormSchema } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationForm';
+import { SettingsDataModelFieldRelationSettingsFormCard } from '@/settings/data-model/fields/forms/relation/components/SettingsDataModelFieldRelationSettingsFormCard';
+import {
+  settingsDataModelFieldMultiSelectFormSchema,
+  settingsDataModelFieldSelectFormSchema,
+} from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm';
+import { SettingsDataModelFieldSelectSettingsFormCard } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectSettingsFormCard';
 import {
   SettingsDataModelFieldPreviewCard,
   SettingsDataModelFieldPreviewCardProps,
@@ -43,10 +35,12 @@ const relationFieldFormSchema = z
   .merge(settingsDataModelFieldRelationFormSchema);
 
 const selectFieldFormSchema = z
-  .object({
-    type: z.enum([FieldMetadataType.Select, FieldMetadataType.MultiSelect]),
-  })
+  .object({ type: z.literal(FieldMetadataType.Select) })
   .merge(settingsDataModelFieldSelectFormSchema);
+
+const multiSelectFieldFormSchema = z
+  .object({ type: z.literal(FieldMetadataType.MultiSelect) })
+  .merge(settingsDataModelFieldMultiSelectFormSchema);
 
 const otherFieldsFormSchema = z.object({
   type: z.enum(
@@ -69,19 +63,15 @@ export const settingsDataModelFieldSettingsFormSchema = z.discriminatedUnion(
     currencyFieldFormSchema,
     relationFieldFormSchema,
     selectFieldFormSchema,
+    multiSelectFieldFormSchema,
     otherFieldsFormSchema,
   ],
 );
-
-type SettingsDataModelFieldSettingsFormValues = z.infer<
-  typeof settingsDataModelFieldSettingsFormSchema
->;
 
 type SettingsDataModelFieldSettingsFormCardProps = {
   disableCurrencyForm?: boolean;
   fieldMetadataItem: Pick<FieldMetadataItem, 'icon' | 'label' | 'type'> &
     Partial<Omit<FieldMetadataItem, 'icon' | 'label' | 'type'>>;
-  relationFieldMetadataItem?: FieldMetadataItem;
 } & Pick<SettingsDataModelFieldPreviewCardProps, 'objectMetadataItem'>;
 
 const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
@@ -89,115 +79,79 @@ const StyledFieldPreviewCard = styled(SettingsDataModelFieldPreviewCard)`
   flex: 1 1 100%;
 `;
 
-const StyledPreviewContent = styled.div`
-  display: flex;
-  gap: 6px;
-`;
-
-const StyledRelationImage = styled.img<{ flip?: boolean }>`
-  transform: ${({ flip }) => (flip ? 'scaleX(-1)' : 'none')};
-  width: 54px;
-`;
-
 const previewableTypes = [
+  FieldMetadataType.Address,
   FieldMetadataType.Boolean,
   FieldMetadataType.Currency,
-  FieldMetadataType.DateTime,
   FieldMetadataType.Date,
-  FieldMetadataType.Select,
-  FieldMetadataType.MultiSelect,
+  FieldMetadataType.DateTime,
+  FieldMetadataType.FullName,
   FieldMetadataType.Link,
   FieldMetadataType.Links,
+  FieldMetadataType.MultiSelect,
   FieldMetadataType.Number,
-  FieldMetadataType.Rating,
-  FieldMetadataType.Relation,
-  FieldMetadataType.Text,
-  FieldMetadataType.Address,
-  FieldMetadataType.RawJson,
   FieldMetadataType.Phone,
+  FieldMetadataType.Rating,
+  FieldMetadataType.RawJson,
+  FieldMetadataType.Relation,
+  FieldMetadataType.Select,
+  FieldMetadataType.Text,
 ];
 
 export const SettingsDataModelFieldSettingsFormCard = ({
   disableCurrencyForm,
   fieldMetadataItem,
   objectMetadataItem,
-  relationFieldMetadataItem,
 }: SettingsDataModelFieldSettingsFormCardProps) => {
-  const { watch: watchFormValue } =
-    useFormContext<SettingsDataModelFieldSettingsFormValues>();
-  const { findObjectMetadataItemById } = useFilteredObjectMetadataItems();
-
   if (!previewableTypes.includes(fieldMetadataItem.type)) return null;
 
-  const relationObjectMetadataId = watchFormValue('relation.objectMetadataId');
-  const relationObjectMetadataItem = relationObjectMetadataId
-    ? findObjectMetadataItemById(relationObjectMetadataId)
-    : undefined;
+  if (fieldMetadataItem.type === FieldMetadataType.Boolean) {
+    return (
+      <SettingsDataModelFieldBooleanSettingsFormCard
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+      />
+    );
+  }
 
-  const relationType = watchFormValue('relation.type');
-  const relationTypeConfig = relationType
-    ? RELATION_TYPES[relationType]
-    : undefined;
+  if (fieldMetadataItem.type === FieldMetadataType.Currency) {
+    return (
+      <SettingsDataModelFieldCurrencySettingsFormCard
+        disabled={disableCurrencyForm}
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+      />
+    );
+  }
+
+  if (fieldMetadataItem.type === FieldMetadataType.Relation) {
+    return (
+      <SettingsDataModelFieldRelationSettingsFormCard
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+      />
+    );
+  }
+
+  if (
+    fieldMetadataItem.type === FieldMetadataType.Select ||
+    fieldMetadataItem.type === FieldMetadataType.MultiSelect
+  ) {
+    return (
+      <SettingsDataModelFieldSelectSettingsFormCard
+        fieldMetadataItem={fieldMetadataItem}
+        objectMetadataItem={objectMetadataItem}
+      />
+    );
+  }
 
   return (
     <SettingsDataModelPreviewFormCard
       preview={
-        <StyledPreviewContent>
-          <StyledFieldPreviewCard
-            fieldMetadataItem={fieldMetadataItem}
-            shrink={fieldMetadataItem.type === FieldMetadataType.Relation}
-            objectMetadataItem={objectMetadataItem}
-            relationObjectMetadataItem={relationObjectMetadataItem}
-            selectOptions={watchFormValue('options')}
-          />
-          {fieldMetadataItem.type === FieldMetadataType.Relation &&
-            !!relationObjectMetadataItem &&
-            !!relationTypeConfig && (
-              <>
-                <StyledRelationImage
-                  src={relationTypeConfig.imageSrc}
-                  flip={relationTypeConfig.isImageFlipped}
-                  alt={relationTypeConfig.label}
-                />
-                <StyledFieldPreviewCard
-                  fieldMetadataItem={{
-                    ...relationFieldMetadataItem,
-                    icon: watchFormValue('relation.field.icon'),
-                    label:
-                      watchFormValue('relation.field.label') || 'Field name',
-                    type: FieldMetadataType.Relation,
-                  }}
-                  shrink
-                  objectMetadataItem={relationObjectMetadataItem}
-                  relationObjectMetadataItem={objectMetadataItem}
-                />
-              </>
-            )}
-        </StyledPreviewContent>
-      }
-      form={
-        fieldMetadataItem.type === FieldMetadataType.Boolean ? (
-          <SettingsDataModelFieldBooleanForm
-            fieldMetadataItem={fieldMetadataItem}
-          />
-        ) : fieldMetadataItem.type === FieldMetadataType.Currency ? (
-          <SettingsDataModelFieldCurrencyForm
-            disabled={disableCurrencyForm}
-            fieldMetadataItem={fieldMetadataItem}
-          />
-        ) : fieldMetadataItem.type === FieldMetadataType.Relation ? (
-          <SettingsDataModelFieldRelationForm
-            fieldMetadataItem={fieldMetadataItem}
-          />
-        ) : fieldMetadataItem.type === FieldMetadataType.Select ||
-          fieldMetadataItem.type === FieldMetadataType.MultiSelect ? (
-          <SettingsDataModelFieldSelectForm
-            fieldMetadataItem={fieldMetadataItem}
-            isMultiSelect={
-              fieldMetadataItem.type === FieldMetadataType.MultiSelect
-            }
-          />
-        ) : undefined
+        <StyledFieldPreviewCard
+          fieldMetadataItem={fieldMetadataItem}
+          objectMetadataItem={objectMetadataItem}
+        />
       }
     />
   );

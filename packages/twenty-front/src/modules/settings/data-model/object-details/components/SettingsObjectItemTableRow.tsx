@@ -13,7 +13,7 @@ import { TableRow } from '@/ui/layout/table/components/TableRow';
 type SettingsObjectItemTableRowProps = {
   action: ReactNode;
   objectItem: ObjectMetadataItem;
-  onClick?: () => void;
+  to?: string;
 };
 
 export const StyledObjectTableRow = styled(TableRow)`
@@ -33,7 +33,7 @@ const StyledActionTableCell = styled(TableCell)`
 export const SettingsObjectItemTableRow = ({
   action,
   objectItem,
-  onClick,
+  to,
 }: SettingsObjectItemTableRowProps) => {
   const theme = useTheme();
 
@@ -45,7 +45,7 @@ export const SettingsObjectItemTableRow = ({
   const objectTypeLabel = getObjectTypeLabel(objectItem);
 
   return (
-    <StyledObjectTableRow key={objectItem.namePlural} onClick={onClick}>
+    <StyledObjectTableRow key={objectItem.namePlural} to={to}>
       <StyledNameTableCell>
         {!!Icon && (
           <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />

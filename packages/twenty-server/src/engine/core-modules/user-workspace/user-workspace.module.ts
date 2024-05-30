@@ -8,12 +8,13 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
+import { User } from 'src/engine/core-modules/user/user.entity';
 
 @Module({
   imports: [
     NestjsQueryGraphQLModule.forFeature({
       imports: [
-        NestjsQueryTypeOrmModule.forFeature([UserWorkspace], 'core'),
+        NestjsQueryTypeOrmModule.forFeature([User, UserWorkspace], 'core'),
         TypeORMModule,
         DataSourceModule,
         WorkspaceDataSourceModule,

@@ -5,7 +5,7 @@ import { Reference, useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import pick from 'lodash.pick';
-import { IconSettings } from 'twenty-ui';
+import { H2Title, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
@@ -25,7 +25,7 @@ import { SettingsDataModelFieldTypeSelect } from '@/settings/data-model/fields/f
 import { settingsFieldFormSchema } from '@/settings/data-model/fields/forms/validation-schemas/settingsFieldFormSchema';
 import { SettingsSupportedFieldType } from '@/settings/data-model/types/SettingsSupportedFieldType';
 import { AppPath } from '@/types/AppPath';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
@@ -33,6 +33,7 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { View } from '@/views/types/View';
 import { ViewType } from '@/views/types/ViewType';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 type SettingsDataModelNewFieldFormValues = z.infer<
@@ -112,11 +113,12 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   if (!activeObjectMetadataItem) return null;
 
-  const canSave = formConfig.formState.isValid;
+  const canSave =
+    formConfig.formState.isValid && !formConfig.formState.isSubmitting;
 
-  const handleSave = async () => {
-    const formValues = formConfig.getValues();
-
+  const handleSave = async (
+    formValues: SettingsDataModelNewFieldFormValues,
+  ) => {
     try {
       if (
         formValues.type === FieldMetadataType.Relation &&
@@ -210,16 +212,6 @@ export const SettingsObjectNewFieldStep2 = () => {
       } else {
         const createdMetadataField = await createMetadataField({
           ...formValues,
-          defaultValue:
-            formValues.type === FieldMetadataType.Currency &&
-            'defaultValue' in formValues
-              ? {
-                  ...formValues.defaultValue,
-                  amountMicros: null,
-                }
-              : 'defaultValue' in formValues
-                ? formValues.defaultValue
-                : undefined,
           objectMetadataId: activeObjectMetadataItem.id,
         });
 
@@ -258,20 +250,22 @@ export const SettingsObjectNewFieldStep2 = () => {
       navigate(`/settings/objects/${objectSlug}`);
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
-        variant: 'error',
+        variant: SnackBarVariant.Error,
       });
     }
   };
 
-  const excludedFieldTypes: SettingsSupportedFieldType[] = [
-    FieldMetadataType.Email,
-    FieldMetadataType.FullName,
-    FieldMetadataType.Link,
-    FieldMetadataType.Links,
-    FieldMetadataType.Numeric,
-    FieldMetadataType.Probability,
-    FieldMetadataType.Uuid,
-  ];
+  const excludedFieldTypes: SettingsSupportedFieldType[] = (
+    [
+      FieldMetadataType.Email,
+      FieldMetadataType.FullName,
+      FieldMetadataType.Link,
+      FieldMetadataType.Numeric,
+      FieldMetadataType.Probability,
+      FieldMetadataType.Uuid,
+      FieldMetadataType.Phone,
+    ] as const
+  ).filter(isDefined);
 
   return (
     // eslint-disable-next-line react/jsx-props-no-spreading
@@ -293,7 +287,7 @@ export const SettingsObjectNewFieldStep2 = () => {
               <SaveAndCancelButtons
                 isSaveDisabled={!canSave}
                 onCancel={() => navigate(`/settings/objects/${objectSlug}`)}
-                onSave={handleSave}
+                onSave={formConfig.handleSubmit(handleSave)}
               />
             )}
           </SettingsHeaderContainer>
