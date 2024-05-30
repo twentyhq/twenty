@@ -147,7 +147,7 @@ export class GmailMessagesImportV2Service {
         await this.gmailErrorHandlingService.handleGmailError(
           {
             code: error.code,
-            reason: error.reason,
+            reason: error.errors?.[0]?.reason,
           },
           'message-import',
           messageChannel,
