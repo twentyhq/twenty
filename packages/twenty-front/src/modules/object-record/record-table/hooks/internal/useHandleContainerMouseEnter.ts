@@ -33,14 +33,14 @@ export const useHandleContainerMouseEnter = ({
           tableScopeId,
         );
 
-        const isSoftFocusOnTableCellState = extractComponentFamilyState(
+        const isSoftFocusOnTableCellFamilyState = extractComponentFamilyState(
           isSoftFocusOnTableCellComponentFamilyState,
           tableScopeId,
         );
 
         const isSoftFocusOnTableCell = getSnapshotValue(
           snapshot,
-          isSoftFocusOnTableCellState(cellPosition),
+          isSoftFocusOnTableCellFamilyState(cellPosition),
         );
 
         const currentTableCellInEditModePosition = getSnapshotValue(
