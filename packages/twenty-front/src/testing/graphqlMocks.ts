@@ -343,3 +343,37 @@ export const graphqlMocks = {
     }),
   ],
 };
+
+export const userMetadataLoaderMocks = {
+  msw: {
+    handlers: [
+      graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
+        return HttpResponse.json({
+          data: {
+            currentUser: mockedUsersData[0],
+          },
+        });
+      }),
+      graphql.query(getOperationName(GET_CLIENT_CONFIG) ?? '', () => {
+        return HttpResponse.json({
+          data: {
+            clientConfig: mockedClientConfig,
+          },
+        });
+      }),
+      metadataGraphql.query(
+        getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? '',
+        () => {
+          return HttpResponse.json({
+            data: {
+              objects: {
+                // simulate no metadata items
+                edges: [],
+              },
+            },
+          });
+        },
+      ),
+    ],
+  },
+};

@@ -7,15 +7,13 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
-import { UserOrMetadataLoadingDecorator } from '~/testing/decorators/UserOrMetadataLoadingDecorator';
-import { graphqlMocks } from '~/testing/graphqlMocks';
+import { graphqlMocks, userMetadataLoaderMocks } from '~/testing/graphqlMocks';
 
 import { RecordIndexPage } from '../RecordIndexPage';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/ObjectRecord/RecordIndexPage',
   component: RecordIndexPage,
-  decorators: [PageDecorator],
   args: {
     routePath: '/objects/:objectNamePlural',
     routeParams: {
@@ -32,7 +30,9 @@ export default meta;
 export type Story = StoryObj<typeof RecordIndexPage>;
 
 export const Default: Story = {
-  decorators: [PrefetchLoadingDecorator],
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  decorators: [PageDecorator],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -45,6 +45,9 @@ export const Default: Story = {
 };
 
 export const PrefetchLoading: Story = {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  decorators: [PrefetchLoadingDecorator, PageDecorator],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -56,9 +59,10 @@ export const PrefetchLoading: Story = {
 };
 
 export const UserMetadataLoading: Story = {
+  parameters: userMetadataLoaderMocks,
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  decorators: [PageDecorator, UserOrMetadataLoadingDecorator],
+  decorators: [PageDecorator],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
