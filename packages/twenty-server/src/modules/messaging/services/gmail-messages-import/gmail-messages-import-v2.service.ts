@@ -149,7 +149,10 @@ export class GmailMessagesImportV2Service {
 
       if (error.code === 401 || error.code === 403 || error.code === 429) {
         await this.gmailErrorHandlingService.handleGmailError(
-          error,
+          {
+            code: error.code,
+            reason: error.reason,
+          },
           'message-import',
           messageChannel,
           workspaceId,

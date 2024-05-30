@@ -6,9 +6,13 @@ import { ConnectedAccountRepository } from 'src/modules/connected-account/reposi
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/services/message-channel-sync-status/message-channel-sync-status.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
-import { GmailError } from 'src/modules/messaging/types/gmail-error';
 
 type SyncType = 'full' | 'partial' | 'message-import';
+
+export type GmailError = {
+  code: number;
+  reason: string;
+};
 
 @Injectable()
 export class GmailErrorHandlingService {
@@ -21,14 +25,23 @@ export class GmailErrorHandlingService {
   ) {}
 
   public async handleGmailError(
-    error: GmailError | undefined,
+    error: GmailError,
     syncType: SyncType,
     messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
     workspaceId: string,
   ): Promise<void> {
-    const reason = error?.errors?.[0]?.reason;
+    const { code, reason } = error;
 
-    switch (error?.code) {
+    switch (code) {
+      case 400:
+        if (reason === 'invalid_grant') {
+          await this.handleInsufficientPermissions(
+            error,
+            messageChannel,
+            workspaceId,
+          );
+        }
+        break;
       case 404:
         await this.handleNotFound(error, syncType, messageChannel, workspaceId);
         break;
@@ -82,7 +95,7 @@ export class GmailErrorHandlingService {
     workspaceId: string,
   ): Promise<void> {
     this.logger.log(
-      `${error.code}: ${error.message} for workspace ${workspaceId} and account ${messageChannel.connectedAccountId}, import will be retried later.`,
+      `${error.code}: ${error.reason} for workspace ${workspaceId} and account ${messageChannel.connectedAccountId}, import will be retried later.`,
     );
 
     // Add throttle logic here
@@ -120,7 +133,7 @@ export class GmailErrorHandlingService {
     workspaceId: string,
   ): Promise<void> {
     this.logger.error(
-      `${error?.code}: ${error.message} for workspace ${workspaceId} and account ${messageChannel.connectedAccountId}`,
+      `${error.code}: ${error.reason} for workspace ${workspaceId} and account ${messageChannel.connectedAccountId}`,
     );
     await this.messageChannelSyncStatusService.markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
       messageChannel.id,
@@ -143,7 +156,7 @@ export class GmailErrorHandlingService {
     }
 
     this.logger.log(
-      `404: ${error.message} for workspace ${workspaceId} and account ${messageChannel.connectedAccountId}.`,
+      `404: ${error.reason} for workspace ${workspaceId} and account ${messageChannel.connectedAccountId}.`,
     );
 
     await this.messageChannelSyncStatusService.resetAndScheduleFullMessageListFetch(

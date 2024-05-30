@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 import { gmail_v1 } from 'googleapis';
+import { GaxiosResponse } from 'gaxios';
 
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
@@ -15,8 +16,10 @@ import { GmailClientProvider } from 'src/modules/messaging/services/providers/gm
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
-import { GmailError } from 'src/modules/messaging/types/gmail-error';
-import { GmailErrorHandlingService } from 'src/modules/messaging/services/gmail-error-handling/gmail-error-handling.service';
+import {
+  GmailError,
+  GmailErrorHandlingService,
+} from 'src/modules/messaging/services/gmail-error-handling/gmail-error-handling.service';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/services/message-channel-sync-status/message-channel-sync-status.service';
 
 @Injectable()
@@ -65,7 +68,7 @@ export class GmailFullMessageListFetchV2Service {
         );
 
       if (gmailError) {
-        this.logger.error(gmailError.code);
+        this.logger.error(JSON.stringify(gmailError));
         await this.gmailErrorHandlingService.handleGmailError(
           gmailError,
           'full',
@@ -102,72 +105,67 @@ export class GmailFullMessageListFetchV2Service {
     let hasMoreMessages = true;
     let messageIdsToFetch = 0;
     let firstMessageExternalId;
+    let response: GaxiosResponse<gmail_v1.Schema$ListMessagesResponse>;
 
     while (hasMoreMessages) {
       try {
-        const response = await gmailClient.users.messages.list({
+        response = await gmailClient.users.messages.list({
           userId: 'me',
           maxResults: GMAIL_USERS_MESSAGES_LIST_MAX_RESULT,
           pageToken,
         });
+      } catch (error) {
+        return {
+          error: {
+            code: error.response?.status,
+            reason: error.response?.data?.error,
+          },
+        };
+      }
 
-        if (response.data?.messages) {
-          const messageExternalIds = response.data.messages
-            .filter((message): message is { id: string } => message.id != null)
-            .map((message) => message.id);
+      if (response.data?.messages) {
+        const messageExternalIds = response.data.messages
+          .filter((message): message is { id: string } => message.id != null)
+          .map((message) => message.id);
 
-          if (!firstMessageExternalId) {
-            firstMessageExternalId = messageExternalIds[0];
-          }
+        if (!firstMessageExternalId) {
+          firstMessageExternalId = messageExternalIds[0];
+        }
 
-          const existingMessageChannelMessageAssociations =
-            await this.messageChannelMessageAssociationRepository.getByMessageExternalIdsAndMessageChannelId(
-              messageExternalIds,
-              messageChannelId,
-              workspaceId,
-              transactionManager,
-            );
-
-          const existingMessageChannelMessageAssociationsExternalIds =
-            existingMessageChannelMessageAssociations.map(
-              (messageChannelMessageAssociation) =>
-                messageChannelMessageAssociation.messageExternalId,
-            );
-
-          const messageIdsToImport = messageExternalIds.filter(
-            (messageExternalId) =>
-              !existingMessageChannelMessageAssociationsExternalIds.includes(
-                messageExternalId,
-              ),
+        const existingMessageChannelMessageAssociations =
+          await this.messageChannelMessageAssociationRepository.getByMessageExternalIdsAndMessageChannelId(
+            messageExternalIds,
+            messageChannelId,
+            workspaceId,
+            transactionManager,
           );
 
-          if (messageIdsToImport.length) {
-            await this.cacheStorage.setAdd(
-              `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
-              messageIdsToImport,
-            );
+        const existingMessageChannelMessageAssociationsExternalIds =
+          existingMessageChannelMessageAssociations.map(
+            (messageChannelMessageAssociation) =>
+              messageChannelMessageAssociation.messageExternalId,
+          );
 
-            messageIdsToFetch += messageIdsToImport.length;
-          }
-        }
-
-        pageToken = response.data.nextPageToken ?? undefined;
-        hasMoreMessages = !!pageToken;
-      } catch (error) {
-        const gmailError = error?.response?.data?.error;
-
-        if (gmailError) {
-          return {
-            error: gmailError,
-          };
-        }
-
-        throw new Error(
-          `Error fetching messages for messageChannel ${messageChannelId} in workspace ${workspaceId}: ${error.message}`,
+        const messageIdsToImport = messageExternalIds.filter(
+          (messageExternalId) =>
+            !existingMessageChannelMessageAssociationsExternalIds.includes(
+              messageExternalId,
+            ),
         );
-      }
-    }
 
+        if (messageIdsToImport.length) {
+          await this.cacheStorage.setAdd(
+            `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
+            messageIdsToImport,
+          );
+
+          messageIdsToFetch += messageIdsToImport.length;
+        }
+      }
+
+      pageToken = response.data.nextPageToken ?? undefined;
+      hasMoreMessages = !!pageToken;
+    }
     if (!messageIdsToFetch) {
       this.logger.log(
         `No messages found in Gmail for messageChannel ${messageChannelId} in workspace ${workspaceId}`,

@@ -15,7 +15,6 @@ import {
   MessageChannelSyncStatus,
 } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { GMAIL_USERS_HISTORY_MAX_RESULT } from 'src/modules/messaging/constants/gmail-users-history-max-result.constant';
-import { GmailError } from 'src/modules/messaging/types/gmail-error';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
@@ -293,7 +292,7 @@ export class GmailPartialMessageListFetchService {
   ): Promise<{
     history: gmail_v1.Schema$History[];
     historyId?: string | null;
-    error?: GmailError;
+    error?: any;
   }> {
     const fullHistory: gmail_v1.Schema$History[] = [];
     let pageToken: string | undefined;
