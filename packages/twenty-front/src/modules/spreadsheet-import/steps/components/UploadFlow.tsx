@@ -91,15 +91,15 @@ export const UploadFlow = ({ nextStep, prevStep }: UploadFlowProps) => {
     [enqueueSnackBar],
   );
 
-  const handleonBack = () => {
-    if (state.type === 'validateData') {
+  const onBack = useCallback(() => {
+    setState(previousState);
+
+    if (state.type === StepType.validateData) {
       setPreviousState(initialStepState || { type: StepType.upload });
-      setState(previousState);
-    } else {
-      setState(previousState);
     }
+
     prevStep();
-  };
+  }, [prevStep, previousState, initialStepState, state.type]);
 
   switch (state.type) {
     case StepType.upload:
@@ -152,6 +152,7 @@ export const UploadFlow = ({ nextStep, prevStep }: UploadFlowProps) => {
             } else {
               setState({ type: StepType.selectSheet, workbook });
             }
+            setPreviousState(state);
             nextStep();
           }}
         />
@@ -183,7 +184,7 @@ export const UploadFlow = ({ nextStep, prevStep }: UploadFlowProps) => {
               errorToast((e as Error).message);
             }
           }}
-          onBack={handleonBack}
+          onBack={onBack}
         />
       );
     case StepType.selectHeader:
@@ -206,7 +207,7 @@ export const UploadFlow = ({ nextStep, prevStep }: UploadFlowProps) => {
               errorToast((e as Error).message);
             }
           }}
-          onBack={handleonBack}
+          onBack={onBack}
         />
       );
     case StepType.matchColumns:
@@ -227,7 +228,7 @@ export const UploadFlow = ({ nextStep, prevStep }: UploadFlowProps) => {
               errorToast((e as Error).message);
             }
           }}
-          onBack={handleonBack}
+          onBack={onBack}
         />
       );
     case StepType.validateData:
@@ -243,7 +244,7 @@ export const UploadFlow = ({ nextStep, prevStep }: UploadFlowProps) => {
               type: StepType.loading,
             })
           }
-          onBack={handleonBack}
+          onBack={onBack}
         />
       );
     case StepType.loading:

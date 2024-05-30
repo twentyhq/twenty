@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { ContinueButton } from '@/spreadsheet-import/components/ContinueButton';
 import { Heading } from '@/spreadsheet-import/components/Heading';
+import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { Field, RawData } from '@/spreadsheet-import/types';
 import { findUnmatchedRequiredFields } from '@/spreadsheet-import/utils/findUnmatchedRequiredFields';
@@ -19,7 +19,6 @@ import { Modal } from '@/ui/layout/modal/components/Modal';
 import { ColumnGrid } from './components/ColumnGrid';
 import { TemplateColumn } from './components/TemplateColumn';
 import { UserTableColumn } from './components/UserTableColumn';
-import { BackButton } from '@/spreadsheet-import/components/BackButton';
 
 const StyledContent = styled(Modal.Content)`
   align-items: center;
@@ -287,12 +286,12 @@ export const MatchColumnsStep = <T extends string>({
           )}
         />
       </StyledContent>
-      <ContinueButton
+      <StepNavigationButton
+        onClick={handleOnContinue}
         isLoading={isLoading}
-        onContinue={handleOnContinue}
         title="Next"
       />
-      <BackButton onBack={onBack} title="Back" />
+      <StepNavigationButton onClick={onBack} title="Back" />
     </>
   );
 };

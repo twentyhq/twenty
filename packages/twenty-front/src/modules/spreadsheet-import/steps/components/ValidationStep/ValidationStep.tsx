@@ -4,8 +4,8 @@ import { RowsChangeData } from 'react-data-grid';
 import styled from '@emotion/styled';
 import { IconTrash } from 'twenty-ui';
 
-import { ContinueButton } from '@/spreadsheet-import/components/ContinueButton';
 import { Heading } from '@/spreadsheet-import/components/Heading';
+import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { Table } from '@/spreadsheet-import/components/Table';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { Data } from '@/spreadsheet-import/types';
@@ -18,7 +18,6 @@ import { isDefined } from '~/utils/isDefined';
 
 import { generateColumns } from './components/columns';
 import { Meta } from './types';
-import { BackButton } from '@/spreadsheet-import/components/BackButton';
 
 const StyledContent = styled(Modal.Content)`
   padding-left: ${({ theme }) => theme.spacing(6)};
@@ -241,8 +240,8 @@ export const ValidationStep = <T extends string>({
           />
         </StyledScrollContainer>
       </StyledContent>
-      <ContinueButton onContinue={onContinue} title="Confirm" />
-      <BackButton onBack={onBack} title="Back" />
+      <StepNavigationButton onClick={onContinue} title="Confirm" />
+      <StepNavigationButton onClick={onBack} title="Back" />
     </>
   );
 };

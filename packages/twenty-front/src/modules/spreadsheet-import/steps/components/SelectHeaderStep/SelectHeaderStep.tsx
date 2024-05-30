@@ -1,13 +1,12 @@
 import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { ContinueButton } from '@/spreadsheet-import/components/ContinueButton';
 import { Heading } from '@/spreadsheet-import/components/Heading';
+import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { RawData } from '@/spreadsheet-import/types';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
 import { SelectHeaderTable } from './components/SelectHeaderTable';
-import { BackButton } from '@/spreadsheet-import/components/BackButton';
 
 const StyledHeading = styled(Heading)`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
@@ -56,12 +55,12 @@ export const SelectHeaderStep = ({
           />
         </StyledTableContainer>
       </Modal.Content>
-      <ContinueButton
-        onContinue={handleContinue}
+      <StepNavigationButton
+        onClick={handleContinue}
         title="Next"
         isLoading={isLoading}
       />
-      <BackButton onBack={onBack} title="Back" />
+      <StepNavigationButton onClick={onBack} title="Back" />
     </>
   );
 };
