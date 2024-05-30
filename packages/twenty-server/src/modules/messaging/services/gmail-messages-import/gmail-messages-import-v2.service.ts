@@ -11,7 +11,6 @@ import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decora
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/constants/gmail-users-messages-get-batch-size.constant';
-import { GMAIL_ONGOING_SYNC_TIMEOUT } from 'src/modules/messaging/constants/gmail-ongoing-sync-timeout.constant';
 import { GmailMessagesImportService } from 'src/modules/messaging/services/gmail-messages-import/gmail-messages-import.service';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { SaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/services/gmail-messages-import/save-messages-and-enqueue-contact-creation.service';
@@ -143,31 +142,14 @@ export class GmailMessagesImportV2Service {
         messageIdsToFetch,
       );
 
-      if (error.code === 401 || error.code === 403 || error.code === 429) {
-        await this.gmailErrorHandlingService.handleGmailError(
-          {
-            code: error.code,
-            reason: error.errors?.[0]?.reason,
-          },
-          'message-import',
-          messageChannel,
-          workspaceId,
-        );
-
-        return;
-      }
-
-      await this.messageChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
-        messageChannel.id,
+      await this.gmailErrorHandlingService.handleGmailError(
+        {
+          code: error.code,
+          reason: error.errors?.[0]?.reason,
+        },
+        'message-import',
+        messageChannel,
         workspaceId,
-      );
-
-      this.logger.error(
-        `Error fetching messages for ${connectedAccount.id} in workspace ${workspaceId}: locking for ${GMAIL_ONGOING_SYNC_TIMEOUT}ms...`,
-      );
-
-      throw new Error(
-        `${error.code}: ${error.message} for ${connectedAccount.id} in workspace ${workspaceId}`,
       );
     }
   }
