@@ -65,9 +65,17 @@ export class ArgsStringFactory {
   ): string {
     // PgGraphql is expecting the orderBy argument to be an array of objects
     let argsString = '';
-    const orderByKeyValuePairs = keyValuePairArray.sort((_, b) =>
-      Object.hasOwnProperty.call(b, 'position') ? -1 : 0,
+    // if position argument is present we want to put it at the very last
+    const positionObj = keyValuePairArray.find((obj) =>
+      Object.hasOwnProperty.call(obj, 'position'),
     );
+
+    // we put filter only if positionObj is defined otherwise we loop through normal array
+    const orderByKeyValuePairs = positionObj
+      ? keyValuePairArray.filter(
+          (obj) => !Object.hasOwnProperty.call(obj, 'position'),
+        )
+      : keyValuePairArray;
 
     for (const obj of orderByKeyValuePairs) {
       for (const key in obj) {
@@ -75,9 +83,16 @@ export class ArgsStringFactory {
       }
     }
 
+    if (positionObj) {
+      for (const key in positionObj) {
+        argsString += `{${key}: ${positionObj[key]}}, `;
+      }
+    }
+
     if (argsString.endsWith(', ')) {
       argsString = argsString.slice(0, -2);
     }
+
     return `[${argsString}]`;
   }
 }
