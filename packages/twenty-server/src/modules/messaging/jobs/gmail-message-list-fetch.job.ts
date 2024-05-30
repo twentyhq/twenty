@@ -120,10 +120,6 @@ export class GmailMessageListFetchJob
         return;
 
       default:
-        this.logger.log(
-          `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} is locked, import will be retried later.`,
-        );
-
         return;
     }
   }
