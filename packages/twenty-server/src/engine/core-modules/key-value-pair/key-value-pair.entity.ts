@@ -4,11 +4,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   Relation,
+  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
@@ -19,14 +19,11 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'keyValuePair', schema: 'core' })
 @ObjectType('KeyValuePair')
-@Index(
-  'index_on_key_user_id_workspace_id_unique',
-  ['key', 'userId', 'workspaceId'],
-  {
-    unique: true,
-    where: '"deletedAt" IS NULL',
-  },
-)
+@Unique('index_on_key_user_id_workspace_id_unique', [
+  'key',
+  'userId',
+  'workspaceId',
+])
 export class KeyValuePair {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
