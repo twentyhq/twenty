@@ -6,6 +6,7 @@ import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repos
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { FetchMessagesByBatchesModule } from 'src/modules/messaging/services/fetch-messages-by-batches/fetch-messages-by-batches.module';
+import { GmailErrorHandlingModule } from 'src/modules/messaging/services/gmail-error-handling/gmail-error-handling.module';
 import { GmailMessagesImportV2Service } from 'src/modules/messaging/services/gmail-messages-import/gmail-messages-import-v2.service';
 import { GmailMessagesImportService } from 'src/modules/messaging/services/gmail-messages-import/gmail-messages-import.service';
 import { SaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/services/gmail-messages-import/save-messages-and-enqueue-contact-creation.service';
@@ -27,6 +28,7 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-ob
     MessageParticipantModule,
     SetMessageChannelSyncStatusModule,
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
+    GmailErrorHandlingModule,
   ],
   providers: [
     GmailMessagesImportService,

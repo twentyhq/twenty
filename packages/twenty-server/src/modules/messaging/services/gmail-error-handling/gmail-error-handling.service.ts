@@ -10,10 +10,8 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-ob
 import { GmailError } from 'src/modules/messaging/types/gmail-error';
 
 @Injectable()
-export class GmailMessageListFetchErrorHandlingService {
-  private readonly logger = new Logger(
-    GmailMessageListFetchErrorHandlingService.name,
-  );
+export class GmailErrorHandlingService {
+  private readonly logger = new Logger(GmailErrorHandlingService.name);
 
   constructor(
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)

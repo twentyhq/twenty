@@ -16,6 +16,7 @@ import { GmailMessagesImportService } from 'src/modules/messaging/services/gmail
 import { SetMessageChannelSyncStatusService } from 'src/modules/messaging/services/set-message-channel-sync-status/set-message-channel-sync-status.service';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { SaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/services/gmail-messages-import/save-messages-and-enqueue-contact-creation.service';
+import { GmailErrorHandlingService } from 'src/modules/messaging/services/gmail-error-handling/gmail-error-handling.service';
 
 @Injectable()
 export class GmailMessagesImportV2Service {
@@ -27,6 +28,7 @@ export class GmailMessagesImportV2Service {
     private readonly cacheStorage: CacheStorageService,
     private readonly setMessageChannelSyncStatusService: SetMessageChannelSyncStatusService,
     private readonly saveMessagesAndEnqueueContactCreationService: SaveMessagesAndEnqueueContactCreationService,
+    private readonly gmailErrorHandlingService: GmailErrorHandlingService,
   ) {}
 
   async processMessageBatchImport(
@@ -129,10 +131,13 @@ export class GmailMessagesImportV2Service {
         messageIdsToFetch,
       );
 
-      if (error.code === 429) {
-        // Implement throttling
-
-        return;
+      if (error.code === 401 || error.code === 403 || error.code === 429) {
+        await this.gmailErrorHandlingService.handleGmailError(
+          error,
+          'message-import',
+          messageChannel,
+          workspaceId,
+        );
       }
 
       await this.setMessageChannelSyncStatusService.setFailedUnkownStatus(

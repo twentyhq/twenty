@@ -17,7 +17,7 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-ob
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { SetMessageChannelSyncStatusService } from 'src/modules/messaging/services/set-message-channel-sync-status/set-message-channel-sync-status.service';
 import { GmailError } from 'src/modules/messaging/types/gmail-error';
-import { GmailMessageListFetchErrorHandlingService } from 'src/modules/messaging/services/gmail-message-list-fetch-error-handling/gmail-message-list-fetch-error-handling.service';
+import { GmailErrorHandlingService } from 'src/modules/messaging/services/gmail-error-handling/gmail-error-handling.service';
 
 @Injectable()
 export class GmailFullMessageListFetchV2Service {
@@ -34,7 +34,7 @@ export class GmailFullMessageListFetchV2Service {
     )
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
     private readonly setMessageChannelSyncStatusService: SetMessageChannelSyncStatusService,
-    private readonly gmailMessageListFetchErrorHandlingService: GmailMessageListFetchErrorHandlingService,
+    private readonly gmailErrorHandlingService: GmailErrorHandlingService,
   ) {}
 
   public async processMessageListFetch(
@@ -65,7 +65,7 @@ export class GmailFullMessageListFetchV2Service {
         );
 
       if (gmailError) {
-        await this.gmailMessageListFetchErrorHandlingService.handleGmailError(
+        await this.gmailErrorHandlingService.handleGmailError(
           gmailError,
           'full',
           messageChannel,

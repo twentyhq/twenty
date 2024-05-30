@@ -15,7 +15,7 @@ import { MessageChannelMessageAssociationRepository } from 'src/modules/messagin
 import { GmailGetHistoryService } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-get-history.service';
 import { SetMessageChannelSyncStatusService } from 'src/modules/messaging/services/set-message-channel-sync-status/set-message-channel-sync-status.service';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
-import { GmailMessageListFetchErrorHandlingService } from 'src/modules/messaging/services/gmail-message-list-fetch-error-handling/gmail-message-list-fetch-error-handling.service';
+import { GmailErrorHandlingService } from 'src/modules/messaging/services/gmail-error-handling/gmail-error-handling.service';
 
 @Injectable()
 export class GmailPartialMessageListFetchV2Service {
@@ -33,7 +33,7 @@ export class GmailPartialMessageListFetchV2Service {
       MessageChannelMessageAssociationWorkspaceEntity,
     )
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
-    private readonly gmailMessageListFetchErrorHandlingService: GmailMessageListFetchErrorHandlingService,
+    private readonly gmailErrorHandlingService: GmailErrorHandlingService,
     private readonly gmailGetHistoryService: GmailGetHistoryService,
     private readonly setMessageChannelSyncStatusService: SetMessageChannelSyncStatusService,
   ) {}
@@ -79,7 +79,7 @@ export class GmailPartialMessageListFetchV2Service {
       );
 
     if (error) {
-      await this.gmailMessageListFetchErrorHandlingService.handleGmailError(
+      await this.gmailErrorHandlingService.handleGmailError(
         error,
         'partial',
         messageChannel,
