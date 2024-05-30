@@ -1,4 +1,5 @@
 import { ChipGeneratorPerObjectPerField } from '@/object-metadata/context/PreComputedChipGeneratorsContext';
+import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getAvatarType } from '@/object-metadata/utils/getAvatarType';
 import { getAvatarUrl } from '@/object-metadata/utils/getAvatarUrl';
@@ -6,7 +7,10 @@ import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/get
 import { getLabelIdentifierFieldValue } from '@/object-metadata/utils/getLabelIdentifierFieldValue';
 import { getLinkToShowPage } from '@/object-metadata/utils/getLinkToShowPage';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
+import { isFieldFullName } from '@/object-record/record-field/types/guards/isFieldFullName';
+import { isFieldNumber } from '@/object-record/record-field/types/guards/isFieldNumber';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
+import { isFieldText } from '@/object-record/record-field/types/guards/isFieldText';
 import { RecordChipData } from '@/object-record/record-field/types/RecordChipData';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
@@ -18,6 +22,18 @@ export const getRecordChipGeneratorPerObjectPerField = (
   const recordChipGeneratorPerObjectPerField: ChipGeneratorPerObjectPerField =
     {};
 
+  const isFieldChipDisplay = (
+    objectMetadataItem: ObjectMetadataItem,
+    fieldMetadataItem: FieldMetadataItem,
+  ) =>
+    isLabelIdentifierField({
+      fieldMetadataItem: fieldMetadataItem,
+      objectMetadataItem,
+    }) &&
+    (isFieldText(fieldMetadataItem) ||
+      isFieldFullName(fieldMetadataItem) ||
+      isFieldNumber(fieldMetadataItem));
+
   for (const objectMetadataItem of objectMetadataItems) {
     const generatorPerField = Object.fromEntries<
       (record: ObjectRecord) => RecordChipData
@@ -28,7 +44,9 @@ export const getRecordChipGeneratorPerObjectPerField = (
             isLabelIdentifierField({
               fieldMetadataItem: fieldMetadataItem,
               objectMetadataItem,
-            }) || fieldMetadataItem.type === FieldMetadataType.Relation,
+            }) ||
+            fieldMetadataItem.type === FieldMetadataType.Relation ||
+            isFieldChipDisplay(objectMetadataItem, fieldMetadataItem),
         )
         .map((fieldMetadataItem) => {
           const objectNameSingularToFind = isLabelIdentifierField({
