@@ -72,12 +72,11 @@ export const Breadcrumbs = ({
   items,
   activePage,
   separator,
-  style = false,
 }: BreadcrumbsProps) => {
   const lastItem = items[items.length - 1];
 
   return (
-    <div style={style ? { width: '340px' } : {}}>
+    <div>
       <StyledMobileContainer>
         <IconChevronLeft size={Theme.icon.size.md} />
         <InternalLinkItem href={lastItem.uri}>

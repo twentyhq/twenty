@@ -58,6 +58,7 @@ const Dropdown = styled.div`
   padding-left: 16px;
   padding-right: 16px;
   position: relative;
+  cursor: pointer;
   &:hover {
     background-color: #f1f1f1;
   }

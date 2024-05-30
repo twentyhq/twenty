@@ -7,7 +7,14 @@ interface AlgoliaHit extends StoredDocSearchHit {
   };
 }
 
-export const AlgoliaDocSearch = () => {
+interface AlgoliaDocSearchProps {
+  pathname: string;
+}
+
+export const AlgoliaDocSearch = ({ pathname }: AlgoliaDocSearchProps) => {
+  const indexName = pathname.includes('user-guide')
+    ? 'user-guide'
+    : 'developer';
   return (
     <DocSearch
       hitComponent={({ hit }: { hit: AlgoliaHit }) => (
@@ -42,7 +49,7 @@ export const AlgoliaDocSearch = () => {
       )}
       appId={process.env.NEXT_PUBLIC_ALGOLIA_APP_ID as string}
       apiKey={process.env.NEXT_PUBLIC_ALGOLIA_API_KEY as string}
-      indexName="twenty-user-guide"
+      indexName={`twenty-${indexName}`}
     />
   );
 };

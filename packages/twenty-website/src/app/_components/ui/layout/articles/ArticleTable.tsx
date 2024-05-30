@@ -10,11 +10,13 @@ const StyledTableContainer = styled.div`
 `;
 
 const StyledTable = styled.table`
-  width: fit-content;
+  width: 100%;
+  border-collapse: collapse;
 `;
 
 const StyledTableHeader = styled.th`
   padding: 8px;
+  border-bottom: 1px solid #ddd;
 `;
 
 const StyledDescription = styled.td`
@@ -39,6 +41,10 @@ const StyledVariable = styled.td`
   color: #538ce9;
 `;
 
+const StyledTableRow = styled.tr<{ isEven: boolean }>`
+  background-color: ${(props) => (props.isEven ? '#f1f1f1' : 'transparent')};
+`;
+
 interface ArticleTableProps {
   options: [string, string, string][];
 }
@@ -56,11 +62,11 @@ const OptionTable = ({ options }: ArticleTableProps) => {
         </thead>
         <tbody>
           {options.map(([variable, defaultValue, description], index) => (
-            <tr key={index}>
+            <StyledTableRow key={index} isEven={index % 2 === 1}>
               <StyledVariable>{variable}</StyledVariable>
               <StyledExample>{defaultValue}</StyledExample>
               <StyledDescription>{description}</StyledDescription>
-            </tr>
+            </StyledTableRow>
           ))}
         </tbody>
       </StyledTable>

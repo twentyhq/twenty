@@ -81,7 +81,7 @@ const DocsSidebar = ({ docsIndex }: { docsIndex: DocsArticlesProps[] }) => {
 
   return (
     <StyledContainer>
-      <AlgoliaDocSearch />
+      <AlgoliaDocSearch pathname={pathName} />
       {sections.map((section) => (
         <div key={section.name}>
           <StyledHeading>

@@ -1,4 +1,3 @@
-// utils/pathUtils.ts
 export const isSectionPath = (pathname: string | undefined): boolean => {
   return !!(
     pathname &&

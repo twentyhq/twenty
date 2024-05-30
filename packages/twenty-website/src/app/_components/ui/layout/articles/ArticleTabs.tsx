@@ -11,6 +11,12 @@ const StyledContainer = styled.div`
   overflow: none;
 `;
 
+const StyledTab = styled.div<{ active: boolean }>`
+  padding: 10px 20px;
+  border-bottom: 2px solid ${(props) => (props.active ? '#000' : 'transparent')};
+  font-weight: ${(props) => (props.active ? 'bold' : 'normal')};
+`;
+
 interface ArticleTabsProps {
   children: any;
   label1: string;
@@ -28,19 +34,13 @@ const Tabs = ({ children, label1, label2, label3 }: ArticleTabsProps) => {
       <StyledContainer>
         {labels.map((label, index) => {
           return (
-            <div
+            <StyledTab
               onClick={() => setActiveTab(index)}
-              style={{
-                padding: '10px 20px',
-                borderBottom:
-                  activeTab === index
-                    ? '2px solid #000'
-                    : '2px solid transparent',
-                fontWeight: activeTab === index ? 'bold' : 'normal',
-              }}
+              key={label}
+              active={activeTab === index}
             >
               {label}
-            </div>
+            </StyledTab>
           );
         })}
       </StyledContainer>

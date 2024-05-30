@@ -19,6 +19,11 @@ const StyledTableHeader = styled.th`
   padding: 8px;
   border: 1px solid #ddd;
   border-collapse: collapse;
+  background-color: #f1f1f1;
+`;
+
+const StyledTableRow = styled.tr<{ isEven: boolean }>`
+  background-color: ${(props) => (props.isEven ? '#f1f1f1' : 'transparent')};
 `;
 
 const StyledDescription = styled.td`
@@ -57,12 +62,12 @@ const OptionTable = ({ options }: ArticleTableProps) => {
         </thead>
         <tbody>
           {options.map(([props, type, description, defaultValue], index) => (
-            <tr key={index}>
+            <StyledTableRow key={index} isEven={index % 2 === 1}>
               <StyledVariable>{props}</StyledVariable>
               <StyledVariable>{type}</StyledVariable>
               <StyledDescription>{description}</StyledDescription>
               {display ? <StyledVariable>{defaultValue}</StyledVariable> : null}
-            </tr>
+            </StyledTableRow>
           ))}
         </tbody>
       </StyledTable>

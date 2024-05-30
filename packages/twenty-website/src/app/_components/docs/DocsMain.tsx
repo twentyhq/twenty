@@ -36,7 +36,8 @@ const StyledWrapper = styled.div`
 
   @media (min-width: 450px) and (max-width: 800px) {
     padding: ${Theme.spacing(10)} 50px ${Theme.spacing(20)};
-    align-items: center;
+    align-items: flex-start;
+    width: 440px;
   }
 
   @media (min-width: 1500px) {
@@ -155,10 +156,9 @@ export default function DocsMain({
             items={BREADCRUMB_ITEMS}
             activePage={sections[0].name}
             separator="/"
-            style={true}
           />
         ) : (
-          <StyledTitle>Developers</StyledTitle>
+          <StyledTitle>{label}</StyledTitle>
         )}
         {limitedSections.map((section, index) => {
           const filteredArticles = isSection
