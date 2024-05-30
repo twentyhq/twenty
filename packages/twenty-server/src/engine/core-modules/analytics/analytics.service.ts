@@ -6,7 +6,6 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 
 type CreateEventInput = {
   type: string;
-  name: string;
   data: object;
 };
 

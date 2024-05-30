@@ -13,10 +13,9 @@ export class TelemetryListener {
     await this.analyticsService.create(
       {
         type: 'track',
-        name: payload.name,
-        data: JSON.parse(`{
-          "eventName": "${payload.name}"
-        }`),
+        data: {
+          eventName: payload.name,
+        },
       },
       payload.userId,
       payload.workspaceId,

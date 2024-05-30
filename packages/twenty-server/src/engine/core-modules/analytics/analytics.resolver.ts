@@ -27,7 +27,7 @@ export class AnalyticsResolver {
     @Context('req') request: Request,
   ) {
     return this.analyticsService.create(
-      { ...createAnalyticsInput, name: 'track' },
+      createAnalyticsInput,
       user?.id,
       workspace?.id,
       workspace?.displayName,

@@ -40,9 +40,11 @@ export class GmailMessageListFetchJob
   async handle(data: GmailMessageListFetchJobData): Promise<void> {
     const { workspaceId, connectedAccountId } = data;
 
-    this.logger.log(
-      `Fetch gmail message list for workspace ${workspaceId} and account ${connectedAccountId}`,
-    );
+    await this.messagingTelemetryService.track({
+      eventName: 'message_list_fetch_job.started',
+      workspaceId,
+      connectedAccountId,
+    });
 
     const connectedAccount = await this.connectedAccountRepository.getById(
       connectedAccountId,
@@ -50,7 +52,7 @@ export class GmailMessageListFetchJob
     );
 
     if (!connectedAccount) {
-      this.messagingTelemetryService.track({
+      await this.messagingTelemetryService.track({
         eventName: 'message_list_fetch_job.error.connected_account_not_found',
         workspaceId,
         connectedAccountId,
@@ -66,7 +68,7 @@ export class GmailMessageListFetchJob
       );
 
     if (!messageChannel) {
-      this.messagingTelemetryService.track({
+      await this.messagingTelemetryService.track({
         eventName: 'message_list_fetch_job.error.message_channel_not_found',
         workspaceId,
         connectedAccountId,
@@ -83,7 +85,7 @@ export class GmailMessageListFetchJob
           workspaceId,
         );
 
-        this.messagingTelemetryService.track({
+        await this.messagingTelemetryService.track({
           eventName: 'message_list_fetch_job.partial.completed',
           workspaceId,
           connectedAccountId,
@@ -99,7 +101,7 @@ export class GmailMessageListFetchJob
           workspaceId,
         );
 
-        this.messagingTelemetryService.track({
+        await this.messagingTelemetryService.track({
           eventName: 'message_list_fetch_job.partial.completed',
           workspaceId,
           connectedAccountId,

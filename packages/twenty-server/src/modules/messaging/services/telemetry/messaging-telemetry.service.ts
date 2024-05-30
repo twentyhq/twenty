@@ -24,8 +24,13 @@ export class MessagingTelemetryService {
     await this.analyticsService.create(
       {
         type: 'track',
-        name: `messaging.${eventName}`,
-        data: { workspaceId, userId, connectedAccountId, messageChannelId },
+        data: {
+          eventName: `messaging.${eventName}`,
+          workspaceId,
+          userId,
+          connectedAccountId,
+          messageChannelId,
+        },
       },
       userId,
       workspaceId,
