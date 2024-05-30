@@ -43,6 +43,17 @@ export class SetMessageChannelSyncStatusService {
     );
   }
 
+  public async setPartialMessageListFetchPendingStatus(
+    messageChannelId: string,
+    workspaceId: string,
+  ) {
+    await this.messageChannelRepository.updateSyncSubStatus(
+      messageChannelId,
+      MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
+      workspaceId,
+    );
+  }
+
   public async setCompletedStatus(
     messageChannelId: string,
     workspaceId: string,

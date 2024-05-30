@@ -5,11 +5,8 @@ import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metada
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
-import {
-  MessageChannelSyncStatus,
-  MessageChannelSyncSubStatus,
-  MessageChannelWorkspaceEntity,
-} from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
+import { SetMessageChannelSyncStatusService } from 'src/modules/messaging/services/set-message-channel-sync-status/set-message-channel-sync-status.service';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { GmailError } from 'src/modules/messaging/types/gmail-error';
 
 @Injectable()
@@ -23,6 +20,7 @@ export class GmailMessageListFetchErrorHandlingService {
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
+    private readonly setMessageChannelSyncStatusService: SetMessageChannelSyncStatusService,
   ) {}
 
   public async handleGmailError(
@@ -68,7 +66,6 @@ export class GmailMessageListFetchErrorHandlingService {
         break;
 
       case 401:
-        // refresh token
         break;
 
       default:
@@ -88,15 +85,31 @@ export class GmailMessageListFetchErrorHandlingService {
 
     // Add throttle logic here
 
-    await this.messageChannelRepository.updateSyncSubStatus(
-      messageChannel.id,
-      syncType === 'full'
-        ? MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING
-        : syncType === 'partial'
-          ? MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING
-          : MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING,
-      workspaceId,
-    );
+    switch (syncType) {
+      case 'full':
+        await this.setMessageChannelSyncStatusService.setFullMessageListFetchPendingStatus(
+          messageChannel.id,
+          workspaceId,
+        );
+        break;
+
+      case 'partial':
+        await this.setMessageChannelSyncStatusService.setPartialMessageListFetchPendingStatus(
+          messageChannel.id,
+          workspaceId,
+        );
+        break;
+
+      case 'message-import':
+        await this.setMessageChannelSyncStatusService.setMessagesImportPendingStatus(
+          messageChannel.id,
+          workspaceId,
+        );
+        break;
+
+      default:
+        break;
+    }
   }
 
   public async handleInsufficientPermissions(
@@ -107,14 +120,8 @@ export class GmailMessageListFetchErrorHandlingService {
     this.logger.error(
       `${error?.code}: ${error.message} for workspace ${workspaceId} and account ${messageChannel.connectedAccountId}`,
     );
-    await this.messageChannelRepository.updateSyncStatus(
+    await this.setMessageChannelSyncStatusService.setFailedInsufficientPermissionsStatus(
       messageChannel.id,
-      MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
-      workspaceId,
-    );
-    await this.messageChannelRepository.updateSyncSubStatus(
-      messageChannel.id,
-      MessageChannelSyncSubStatus.FAILED,
       workspaceId,
     );
     await this.connectedAccountRepository.updateAuthFailedAt(
@@ -136,9 +143,8 @@ export class GmailMessageListFetchErrorHandlingService {
       workspaceId,
     );
     // remove nextPageToken from cache
-    await this.messageChannelRepository.updateSyncSubStatus(
+    await this.setMessageChannelSyncStatusService.setFullMessageListFetchPendingStatus(
       messageChannel.id,
-      MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING,
       workspaceId,
     );
   }
