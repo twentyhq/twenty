@@ -16,23 +16,18 @@ import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
+export const isFieldChipDisplay = (
+  field: Pick<FieldMetadataItem, 'type'>,
+  isLabelIdentifier: boolean,
+) =>
+  isLabelIdentifier &&
+  (isFieldText(field) || isFieldFullName(field) || isFieldNumber(field));
+
 export const getRecordChipGeneratorPerObjectPerField = (
   objectMetadataItems: ObjectMetadataItem[],
 ) => {
   const recordChipGeneratorPerObjectPerField: ChipGeneratorPerObjectPerField =
     {};
-
-  const isFieldChipDisplay = (
-    objectMetadataItem: ObjectMetadataItem,
-    fieldMetadataItem: FieldMetadataItem,
-  ) =>
-    isLabelIdentifierField({
-      fieldMetadataItem: fieldMetadataItem,
-      objectMetadataItem,
-    }) &&
-    (isFieldText(fieldMetadataItem) ||
-      isFieldFullName(fieldMetadataItem) ||
-      isFieldNumber(fieldMetadataItem));
 
   for (const objectMetadataItem of objectMetadataItems) {
     const generatorPerField = Object.fromEntries<
@@ -46,7 +41,13 @@ export const getRecordChipGeneratorPerObjectPerField = (
               objectMetadataItem,
             }) ||
             fieldMetadataItem.type === FieldMetadataType.Relation ||
-            isFieldChipDisplay(objectMetadataItem, fieldMetadataItem),
+            isFieldChipDisplay(
+              fieldMetadataItem,
+              isLabelIdentifierField({
+                fieldMetadataItem: fieldMetadataItem,
+                objectMetadataItem,
+              }),
+            ),
         )
         .map((fieldMetadataItem) => {
           const objectNameSingularToFind = isLabelIdentifierField({
