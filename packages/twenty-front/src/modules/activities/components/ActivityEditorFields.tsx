@@ -57,6 +57,16 @@ export const ActivityEditorFields = ({
     return [upsertActivityMutation, { loading: false }];
   };
 
+  const { FieldContextProvider: ReminderAtFieldContextProvider } =
+    useFieldContext({
+      objectNameSingular: CoreObjectNameSingular.Activity,
+      objectRecordId: activityId,
+      fieldMetadataName: 'reminderAt',
+      fieldPosition: 0,
+      clearable: true,
+      customUseUpdateOneObjectHook: useUpsertOneActivityMutation,
+    });
+
   const { FieldContextProvider: DueAtFieldContextProvider } = useFieldContext({
     objectNameSingular: CoreObjectNameSingular.Activity,
     objectRecordId: activityId,
@@ -87,9 +97,13 @@ export const ActivityEditorFields = ({
   return (
     <StyledPropertyBox>
       {activity.type === 'Task' &&
+        ReminderAtFieldContextProvider &&
         DueAtFieldContextProvider &&
         AssigneeFieldContextProvider && (
           <>
+            <ReminderAtFieldContextProvider>
+              <RecordInlineCell />
+            </ReminderAtFieldContextProvider>
             <DueAtFieldContextProvider>
               <RecordInlineCell />
             </DueAtFieldContextProvider>
