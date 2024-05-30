@@ -17,6 +17,7 @@ import { MessagingCreateCompanyAndContactAfterSyncJob } from 'src/modules/messag
 import { GmailFullMessageListFetchModule } from 'src/modules/messaging/services/gmail-full-message-list-fetch/gmail-full-message-list-fetch.module';
 import { GmailPartialMessageListFetchModule } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-partial-message-list-fetch.module';
 import { SetMessageChannelSyncStatusModule } from 'src/modules/messaging/services/message-channel-sync-status/message-channel-sync-status.module';
+import { MessagingTelemetryModule } from 'src/modules/messaging/services/telemetry/messaging-telemetry.module';
 import { ThreadCleanerModule } from 'src/modules/messaging/services/thread-cleaner/thread-cleaner.module';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
@@ -31,6 +32,7 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/standar
       MessageChannelMessageAssociationWorkspaceEntity,
       BlocklistWorkspaceEntity,
     ]),
+    MessagingTelemetryModule,
     GmailFullMessageListFetchModule,
     GmailPartialMessageListFetchModule,
     ThreadCleanerModule,

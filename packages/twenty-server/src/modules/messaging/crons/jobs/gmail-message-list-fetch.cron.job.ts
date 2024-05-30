@@ -110,9 +110,6 @@ export class GmailMessageListFetchCronJob
               workspaceId,
               connectedAccountId: messageChannel.connectedAccountId,
             },
-            {
-              retryLimit: 2,
-            },
           );
         }
       }

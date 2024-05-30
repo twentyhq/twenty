@@ -13,6 +13,7 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
+import { MessagingTelemetryService } from 'src/modules/messaging/services/telemetry/messaging-telemetry.service';
 
 export type GmailMessageListFetchJobData = {
   workspaceId: string;
@@ -33,6 +34,7 @@ export class GmailMessageListFetchJob
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
+    private readonly messagingTelemetryService: MessagingTelemetryService,
   ) {}
 
   async handle(data: GmailMessageListFetchJobData): Promise<void> {
@@ -42,15 +44,33 @@ export class GmailMessageListFetchJob
       `Fetch gmail message list for workspace ${workspaceId} and account ${connectedAccountId}`,
     );
 
+    try {
+      await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
+        workspaceId,
+        connectedAccountId,
+      );
+    } catch (e) {
+      this.logger.error(
+        `Error refreshing access token for connected account ${connectedAccountId} in workspace ${workspaceId}`,
+        e,
+      );
+
+      return;
+    }
+
     const connectedAccount = await this.connectedAccountRepository.getById(
       connectedAccountId,
       workspaceId,
     );
 
     if (!connectedAccount) {
-      throw new Error(
-        `Connected account ${connectedAccountId} not found in workspace ${workspaceId}`,
-      );
+      this.messagingTelemetryService.track({
+        eventName: 'message_list_fetch.connected_account_not_found',
+        workspaceId,
+        connectedAccountId,
+      });
+
+      return;
     }
 
     const messageChannel =
