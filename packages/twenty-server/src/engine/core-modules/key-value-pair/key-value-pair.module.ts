@@ -6,6 +6,7 @@ import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { KeyValuePairResolver } from 'src/engine/core-modules/key-value-pair/key-value-pair.resolver';
 
 @Module({
   imports: [
@@ -17,6 +18,6 @@ import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-p
     }),
   ],
   exports: [KeyValuePairService],
-  providers: [KeyValuePairService],
+  providers: [KeyValuePairService, KeyValuePairResolver],
 })
 export class KeyValuePairModule {}

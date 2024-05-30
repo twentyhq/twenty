@@ -4,6 +4,7 @@ import { TypeOrmQueryService } from '@ptc-org/nestjs-query-typeorm';
 import { Repository } from 'typeorm';
 
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { KeyValuePairCreated } from 'src/engine/core-modules/key-value-pair/dtos/key-value-pair-created.entity';
 
 export enum EmailSyncStatus {
   SKIPPED = 'SKIPPED',
@@ -34,7 +35,7 @@ export class KeyValuePairService extends TypeOrmQueryService<KeyValuePair> {
     userId: string,
     workspaceId: string,
     keyValuePair: KeyValuePairType<KEY>,
-  ) {
+  ): Promise<KeyValuePairCreated> {
     await this.keyValuePairRepository.upsert(
       {
         userId,
@@ -44,6 +45,8 @@ export class KeyValuePairService extends TypeOrmQueryService<KeyValuePair> {
       },
       { conflictPaths: ['userId', 'workspaceId', 'key'] },
     );
+
+    return { success: true };
   }
 
   async getMany(userId: string, workspaceId: string) {
