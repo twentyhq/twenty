@@ -4,6 +4,8 @@ import { viewableRecordIdState } from '@/object-record/record-right-drawer/state
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 import { useRecordShowPage } from '@/object-record/record-show/hooks/useRecordShowPage';
+import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
+import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 
 export const RightDrawerRecord = () => {
   const viewableRecordNameSingular = useRecoilValue(
@@ -25,11 +27,14 @@ export const RightDrawerRecord = () => {
   );
 
   return (
-    <RecordShowContainer
-      objectNameSingular={objectNameSingular}
-      objectRecordId={objectRecordId}
-      loading={false}
-      isInRightDrawer={true}
-    />
+    <RecordFieldValueSelectorContextProvider>
+      <RecordValueSetterEffect recordId={objectRecordId} />
+      <RecordShowContainer
+        objectNameSingular={objectNameSingular}
+        objectRecordId={objectRecordId}
+        loading={false}
+        isInRightDrawer={true}
+      />
+    </RecordFieldValueSelectorContextProvider>
   );
 };
