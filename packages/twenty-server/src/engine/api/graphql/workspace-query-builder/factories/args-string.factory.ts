@@ -36,11 +36,16 @@ export class ArgsStringFactory {
         typeof computedArgs[key] === 'object' &&
         computedArgs[key] !== null
       ) {
-        // If it's an object (and not null), stringify it
-        argsString += `${key}: ${this.buildStringifiedObject(
-          key,
-          computedArgs[key],
-        )}, `;
+        if (key === 'orderBy') {
+          argsString += `${key}: ${this.buildStringifiedObjectFromArray(
+            computedArgs[key],
+          )}, `;
+        } else {
+          // If it's an object (and not null), stringify it
+          argsString += `${key}: ${stringifyWithoutKeyQuote(
+            computedArgs[key],
+          )}, `;
+        }
       } else {
         // For other types (number, boolean), add as is
         argsString += `${key}: ${computedArgs[key]}, `;
@@ -55,22 +60,24 @@ export class ArgsStringFactory {
     return argsString;
   }
 
-  private buildStringifiedObject(
-    key: string,
-    obj: Record<string, any>,
+  private buildStringifiedObjectFromArray(
+    keyValuePairArray: Array<Record<string, any>>,
   ): string {
     // PgGraphql is expecting the orderBy argument to be an array of objects
-    if (key === 'orderBy') {
-      const orderByString = Object.keys(obj)
-        .sort((_, b) => {
-          return b === 'position' ? -1 : 0;
-        })
-        .map((orderByKey) => `{${orderByKey}: ${obj[orderByKey]}}`)
-        .join(', ');
+    let argsString = '';
+    const orderByKeyValuePairs = keyValuePairArray.sort((_, b) =>
+      Object.hasOwnProperty.call(b, 'position') ? -1 : 0,
+    );
 
-      return `[${orderByString}]`;
+    for (const obj of orderByKeyValuePairs) {
+      for (const key in obj) {
+        argsString += `{${key}: ${obj[key]}}, `;
+      }
     }
 
-    return stringifyWithoutKeyQuote(obj);
+    if (argsString.endsWith(', ')) {
+      argsString = argsString.slice(0, -2);
+    }
+    return `[${argsString}]`;
   }
 }
