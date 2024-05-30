@@ -47,7 +47,7 @@ export const useRecordShowPage = (
   });
 
   useEffect(() => {
-    if (record) {
+    if (isDefined(record)) {
       setEntityFields(record);
     }
   }, [record, setEntityFields]);

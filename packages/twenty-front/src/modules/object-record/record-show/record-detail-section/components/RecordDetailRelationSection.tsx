@@ -6,6 +6,7 @@ import { IconForbid, IconPencil, IconPlus } from 'twenty-ui';
 import { v4 } from 'uuid';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -33,6 +34,7 @@ import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type RecordDetailRelationSectionProps = {
   loading: boolean;
@@ -78,7 +80,7 @@ export const RecordDetailRelationSection = ({
 
   const relationRecordIds = relationRecords.map(({ id }) => id);
 
-  const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}`;
+  const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}-${entityId}`;
 
   const { closeDropdown, isDropdownOpen } = useDropdown(dropdownId);
 
@@ -154,15 +156,32 @@ export const RecordDetailRelationSection = ({
     objectNameSingular: relationObjectMetadataNameSingular,
   });
 
-  const handleOnCreate = async () => {
-    const newRecordId = v4();
-    await createOneRecord({
-      id: newRecordId,
-    });
-    setViewableRecordId(newRecordId);
-    setViewableRecordNameSingular(relationObjectMetadataNameSingular);
-    openRightDrawer(RightDrawerPages.ViewRecord);
-  };
+  const handleOnCreate =
+    relationObjectMetadataNameSingular !== 'workspaceMember'
+      ? async (searchInput?: string) => {
+          const newRecordId = v4();
+          const labelIdentifierType = getLabelIdentifierFieldMetadataItem(
+            relationObjectMetadataItem,
+          )?.type;
+          const createRecordPayload: {
+            id: string;
+            name: string | { firstName: string | undefined };
+            [key: string]: any;
+          } =
+            labelIdentifierType === FieldMetadataType.FullName
+              ? { id: newRecordId, name: { firstName: searchInput } }
+              : { id: newRecordId, name: searchInput ?? '' };
+
+          createRecordPayload[
+            `${relationFieldMetadataItem?.relationDefinition?.sourceFieldMetadata.name}Id`
+          ] = entityId;
+          console.log(createRecordPayload);
+          await createOneRecord(createRecordPayload);
+          setViewableRecordId(newRecordId);
+          setViewableRecordNameSingular(relationObjectMetadataNameSingular);
+          openRightDrawer(RightDrawerPages.ViewRecord);
+        }
+      : undefined;
 
   return (
     <RecordDetailSection>

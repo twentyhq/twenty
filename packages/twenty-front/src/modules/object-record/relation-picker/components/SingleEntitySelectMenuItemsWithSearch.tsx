@@ -15,7 +15,7 @@ import { useEntitySelectSearch } from '../hooks/useEntitySelectSearch';
 
 export type SingleEntitySelectMenuItemsWithSearchProps = {
   excludedRelationRecordIds?: string[];
-  onCreate?: () => void;
+  onCreate?: ((searchInput?: string) => void) | (() => void);
   relationObjectNameSingular: string;
   relationPickerScopeId?: string;
   selectedRelationRecordIds: string[];
@@ -71,6 +71,18 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
     objectNameSingular: relationObjectNameSingular,
   });
 
+  const onCreateWithInput = isDefined(onCreate)
+    ? () => {
+        if (onCreate.length > 0) {
+          (onCreate as (searchInput?: string) => void)(
+            relationPickerSearchFilter,
+          );
+        } else {
+          (onCreate as () => void)();
+        }
+      }
+    : undefined;
+
   return (
     <>
       <ObjectMetadataItemsRelationPickerEffect
@@ -82,11 +94,11 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
         entitiesToSelect={entities.entitiesToSelect}
         loading={entities.loading}
         selectedEntity={selectedEntity ?? entities.selectedEntities[0]}
+        onCreate={onCreateWithInput}
         {...{
           EmptyIcon,
           emptyLabel,
           onCancel,
-          onCreate,
           onEntitySelected,
           showCreateButton,
         }}
