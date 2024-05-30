@@ -596,6 +596,7 @@ export type RemoteServer = {
   foreignDataWrapperOptions?: Maybe<Scalars['JSON']>;
   foreignDataWrapperType: Scalars['String'];
   id: Scalars['ID'];
+  label: Scalars['String'];
   schema?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   userMappingOptions?: Maybe<UserMappingOptionsUser>;
