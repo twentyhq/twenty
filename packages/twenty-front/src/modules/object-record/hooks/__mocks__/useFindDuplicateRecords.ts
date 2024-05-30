@@ -49,11 +49,11 @@ export const responseData = {
   personDuplicates: {
     edges: [
       {
-        node: { __typename: 'Person', ...mockedPeopleData[0], updatedAt: '' },
+        node: {  ...mockedPeopleData[0], updatedAt: '' },
         cursor: 'cursor1',
       },
       {
-        node: { __typename: 'Person', ...mockedPeopleData[1], updatedAt: '' },
+        node: { ...mockedPeopleData[1], updatedAt: '' },
         cursor: 'cursor2',
       },
     ],

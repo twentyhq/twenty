@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { CalendarEventRepository } from 'src/modules/calendar/repositories/calendar-event.repository';
-import { CalendarEventObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event.object-metadata';
+import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event.workspace-entity';
 import { deleteUsingPagination } from 'src/modules/messaging/services/thread-cleaner/utils/delete-using-pagination.util';
 
 @Injectable()
 export class CalendarEventCleanerService {
   constructor(
-    @InjectObjectMetadataRepository(CalendarEventObjectMetadata)
+    @InjectObjectMetadataRepository(CalendarEventWorkspaceEntity)
     private readonly calendarEventRepository: CalendarEventRepository,
   ) {}
 

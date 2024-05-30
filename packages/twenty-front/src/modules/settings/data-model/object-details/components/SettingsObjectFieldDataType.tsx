@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconComponent, IconTwentyStar } from 'twenty-ui';
@@ -7,13 +8,16 @@ import { getSettingsFieldTypeConfig } from '@/settings/data-model/utils/getSetti
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type SettingsObjectFieldDataTypeProps = {
-  onClick?: () => void;
+  to?: string;
   Icon?: IconComponent;
   label?: string;
   value: SettingsSupportedFieldType;
 };
 
-const StyledDataType = styled.div<{ value: SettingsSupportedFieldType }>`
+const StyledDataType = styled.div<{
+  value: SettingsSupportedFieldType;
+  to?: string;
+}>`
   align-items: center;
   border: 1px solid transparent;
   border-radius: ${({ theme }) => theme.border.radius.sm};
@@ -23,9 +27,10 @@ const StyledDataType = styled.div<{ value: SettingsSupportedFieldType }>`
   height: 20px;
   overflow: hidden;
   padding: 0 ${({ theme }) => theme.spacing(2)};
+  text-decoration: none;
 
-  ${({ onClick }) =>
-    onClick
+  ${({ to }) =>
+    to
       ? css`
           cursor: pointer;
         `
@@ -47,7 +52,7 @@ const StyledLabelContainer = styled.div`
 `;
 
 export const SettingsObjectFieldDataType = ({
-  onClick,
+  to,
   value,
   Icon: IconFromProps,
   label: labelFromProps,
@@ -64,7 +69,7 @@ export const SettingsObjectFieldDataType = ({
   `;
 
   return (
-    <StyledDataType onClick={onClick} value={value}>
+    <StyledDataType as={to ? Link : 'div'} to={to} value={value}>
       <StyledIcon size={theme.icon.size.sm} />
       <StyledLabelContainer>{label}</StyledLabelContainer>
     </StyledDataType>

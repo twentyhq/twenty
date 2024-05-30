@@ -5,8 +5,8 @@ import { MessageQueueJob } from 'src/engine/integrations/message-queue/interface
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
 import { CalendarEventParticipantRepository } from 'src/modules/calendar/repositories/calendar-event-participant.repository';
-import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
-import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
+import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
+import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
 import { CreateCompanyAndContactService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/services/create-company-and-contact.service';
 
 export type CalendarCreateCompanyAndContactAfterSyncJobData = {
@@ -23,9 +23,9 @@ export class CalendarCreateCompanyAndContactAfterSyncJob
   );
   constructor(
     private readonly createCompanyAndContactService: CreateCompanyAndContactService,
-    @InjectObjectMetadataRepository(CalendarChannelObjectMetadata)
+    @InjectObjectMetadataRepository(CalendarChannelWorkspaceEntity)
     private readonly calendarChannelService: CalendarChannelRepository,
-    @InjectObjectMetadataRepository(CalendarEventParticipantObjectMetadata)
+    @InjectObjectMetadataRepository(CalendarEventParticipantWorkspaceEntity)
     private readonly calendarEventParticipantRepository: CalendarEventParticipantRepository,
   ) {}
 

@@ -4,7 +4,7 @@ import { useRecoilState } from 'recoil';
 import { ProfilerWrapper } from '~/testing/profiling/components/ProfilerWrapper';
 import { ProfilingQueueEffect } from '~/testing/profiling/components/ProfilingQueueEffect';
 import { ProfilingReporter } from '~/testing/profiling/components/ProfilingReporter';
-import { currentProfilingRunIndexState } from '~/testing/profiling/states/currentProfilingRunState';
+import { currentProfilingRunIndexState } from '~/testing/profiling/states/currentProfilingRunIndexState';
 import { profilingSessionRunsState } from '~/testing/profiling/states/profilingSessionRunsState';
 import { profilingSessionStatusState } from '~/testing/profiling/states/profilingSessionStatusState';
 import { getTestArray } from '~/testing/profiling/utils/getTestArray';
@@ -12,6 +12,7 @@ import { getTestArray } from '~/testing/profiling/utils/getTestArray';
 export const ProfilerDecorator: Decorator = (Story, { id, parameters }) => {
   const numberOfTests = parameters.numberOfTests ?? 2;
   const numberOfRuns = parameters.numberOfRuns ?? 2;
+  const warmUpRounds = parameters.warmUpRounds ?? 5;
 
   const [currentProfilingRunIndex] = useRecoilState(
     currentProfilingRunIndexState,
@@ -31,6 +32,7 @@ export const ProfilerDecorator: Decorator = (Story, { id, parameters }) => {
       <ProfilingQueueEffect
         numberOfRuns={numberOfRuns}
         numberOfTestsPerRun={numberOfTests}
+        warmUpRounds={warmUpRounds}
         profilingId={id}
       />
       <div>

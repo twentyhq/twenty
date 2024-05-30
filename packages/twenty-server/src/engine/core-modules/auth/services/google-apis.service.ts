@@ -17,24 +17,24 @@ import {
 } from 'src/modules/calendar/jobs/google-calendar-sync.job';
 import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
 import {
-  CalendarChannelObjectMetadata,
+  CalendarChannelWorkspaceEntity,
   CalendarChannelVisibility,
-} from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
+} from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import {
-  ConnectedAccountObjectMetadata,
+  ConnectedAccountWorkspaceEntity,
   ConnectedAccountProvider,
-} from 'src/modules/connected-account/standard-objects/connected-account.object-metadata';
+} from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import {
-  MessageChannelObjectMetadata,
+  MessageChannelWorkspaceEntity,
   MessageChannelType,
   MessageChannelVisibility,
-} from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+} from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import {
-  GmailFullSyncJobData,
-  GmailFullSyncJob,
-} from 'src/modules/messaging/jobs/gmail-full-sync.job';
+  GmailFullMessageListFetchJobData,
+  GmailFullMessageListFetchJob,
+} from 'src/modules/messaging/jobs/gmail-full-message-list-fetch.job';
 
 @Injectable()
 export class GoogleAPIsService {
@@ -48,11 +48,11 @@ export class GoogleAPIsService {
     private readonly environmentService: EnvironmentService,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
-    @InjectObjectMetadataRepository(ConnectedAccountObjectMetadata)
+    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    @InjectObjectMetadataRepository(MessageChannelObjectMetadata)
+    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
-    @InjectObjectMetadataRepository(CalendarChannelObjectMetadata)
+    @InjectObjectMetadataRepository(CalendarChannelWorkspaceEntity)
     private readonly calendarChannelRepository: CalendarChannelRepository,
   ) {}
 
@@ -156,8 +156,8 @@ export class GoogleAPIsService {
     isCalendarEnabled: boolean,
   ) {
     if (this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED')) {
-      await this.messageQueueService.add<GmailFullSyncJobData>(
-        GmailFullSyncJob.name,
+      await this.messageQueueService.add<GmailFullMessageListFetchJobData>(
+        GmailFullMessageListFetchJob.name,
         {
           workspaceId,
           connectedAccountId,

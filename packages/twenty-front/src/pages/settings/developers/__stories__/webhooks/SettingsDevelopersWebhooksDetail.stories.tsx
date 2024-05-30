@@ -7,12 +7,13 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
+import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Developers/Webhooks/SettingsDevelopersWebhooksDetail',
   component: SettingsDevelopersWebhooksDetail,
-  decorators: [PageDecorator],
+  decorators: [PrefetchLoadingDecorator, PageDecorator],
   args: {
     routePath: '/settings/developers/webhooks/:webhookId',
     routeParams: { ':webhookId': '1234' },

@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
+import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel-message-association.workspace-entity';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class MessageChannelMessageAssociationRepository {
     messageChannelId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelMessageAssociationObjectMetadata>[]> {
+  ): Promise<ObjectRecord<MessageChannelMessageAssociationWorkspaceEntity>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -116,7 +116,7 @@ export class MessageChannelMessageAssociationRepository {
     messageChannelIds: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelMessageAssociationObjectMetadata>[]> {
+  ): Promise<ObjectRecord<MessageChannelMessageAssociationWorkspaceEntity>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -169,7 +169,7 @@ export class MessageChannelMessageAssociationRepository {
     messageThreadExternalIds: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelMessageAssociationObjectMetadata>[]> {
+  ): Promise<ObjectRecord<MessageChannelMessageAssociationWorkspaceEntity>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -186,7 +186,7 @@ export class MessageChannelMessageAssociationRepository {
     messageThreadExternalId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelMessageAssociationObjectMetadata> | null> {
+  ): Promise<ObjectRecord<MessageChannelMessageAssociationWorkspaceEntity> | null> {
     const existingMessageChannelMessageAssociations =
       await this.getByMessageThreadExternalIds(
         [messageThreadExternalId],
@@ -208,7 +208,7 @@ export class MessageChannelMessageAssociationRepository {
     messageIds: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelMessageAssociationObjectMetadata>[]> {
+  ): Promise<ObjectRecord<MessageChannelMessageAssociationWorkspaceEntity>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -225,7 +225,7 @@ export class MessageChannelMessageAssociationRepository {
     messageThreadId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<MessageChannelMessageAssociationObjectMetadata>[]> {
+  ): Promise<ObjectRecord<MessageChannelMessageAssociationWorkspaceEntity>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 

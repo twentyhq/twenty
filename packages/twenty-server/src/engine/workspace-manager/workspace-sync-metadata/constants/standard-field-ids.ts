@@ -206,6 +206,7 @@ export const MESSAGE_CHANNEL_STANDARD_FIELD_IDS = {
   syncCursor: '20202020-79d1-41cf-b738-bcf5ed61e256',
   syncedAt: '20202020-263d-4c6b-ad51-137ada56f7d4',
   syncStatus: '20202020-56a1-4f7e-9880-a8493bb899cc',
+  syncSubStatus: '20202020-7979-4b08-89fe-99cb5e698767',
   ongoingSyncStartedAt: '20202020-8c61-4a42-ae63-73c1c3c52e06',
 };
 

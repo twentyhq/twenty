@@ -9,29 +9,40 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
+import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedOnboardingUsersData } from '~/testing/mock-data/users';
 
 import { SignInUp } from '../SignInUp';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Auth/SignInUp',
   component: SignInUp,
-  decorators: [PageDecorator],
+  decorators: [PrefetchLoadingDecorator, PageDecorator],
   args: { routePath: AppPath.SignInUp },
   parameters: {
     msw: {
       handlers: [
         graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
           return HttpResponse.json({
-            data: {
-              currentUser: mockedOnboardingUsersData[0],
-            },
+            data: null,
+            errors: [
+              {
+                message: 'Unauthorized',
+                extensions: {
+                  code: 'UNAUTHENTICATED',
+                  response: {
+                    statusCode: 401,
+                    message: 'Unauthorized',
+                  },
+                },
+              },
+            ],
           });
         }),
         graphqlMocks.handlers,
       ],
     },
+    cookie: '',
   },
 };
 

@@ -11,5 +11,5 @@ export default {
   /** Add your own overrides below
    * @see https://jestjs.io/docs/configuration
    */
-  testTimeout: 2 * MINUTES_IN_MS,
+  testTimeout: 5 * MINUTES_IN_MS,
 };

@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -21,8 +20,6 @@ const StyledTableRow = styled(TableRow)`
 `;
 
 export const SettingsApiKeysTable = () => {
-  const navigate = useNavigate();
-
   const { records: apiKeys } = useFindManyRecords<ApiKey>({
     objectNameSingular: CoreObjectNameSingular.ApiKey,
     filter: { revokedAt: { is: 'NULL' } },
@@ -41,9 +38,7 @@ export const SettingsApiKeysTable = () => {
             <SettingsApiKeysFieldItemTableRow
               key={fieldItem.id}
               fieldItem={fieldItem as ApiFieldItem}
-              onClick={() => {
-                navigate(`/settings/developers/api-keys/${fieldItem.id}`);
-              }}
+              to={`/settings/developers/api-keys/${fieldItem.id}`}
             />
           ))}
         </StyledTableBody>

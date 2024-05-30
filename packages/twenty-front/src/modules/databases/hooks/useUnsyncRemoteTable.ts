@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { ApolloClient, useMutation } from '@apollo/client';
 
 import { UNSYNC_REMOTE_TABLE } from '@/databases/graphql/mutations/unsyncRemoteTable';
-import { GET_MANY_REMOTE_TABLES } from '@/databases/graphql/queries/findManyRemoteTables';
+import { modifyRemoteTableFromCache } from '@/databases/utils/modifyRemoteTableFromCache';
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
 import {
@@ -10,6 +10,7 @@ import {
   UnsyncRemoteTableMutation,
   UnsyncRemoteTableMutationVariables,
 } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 export const useUnsyncRemoteTable = () => {
   const apolloMetadataClient = useApolloMetadataClient();
@@ -29,17 +30,17 @@ export const useUnsyncRemoteTable = () => {
         variables: {
           input,
         },
-        awaitRefetchQueries: true,
-        refetchQueries: [
-          {
-            query: GET_MANY_REMOTE_TABLES,
-            variables: {
-              input: {
-                id: input.remoteServerId,
+        update: (cache, { data }) => {
+          if (isDefined(data)) {
+            modifyRemoteTableFromCache({
+              cache: cache,
+              remoteTableName: input.name,
+              fieldModifiers: {
+                status: () => data.unsyncRemoteTable.status,
               },
-            },
-          },
-        ],
+            });
+          }
+        },
       });
 
       await refetchObjectMetadataItems();

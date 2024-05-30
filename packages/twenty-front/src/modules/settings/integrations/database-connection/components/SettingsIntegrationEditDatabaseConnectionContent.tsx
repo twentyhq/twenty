@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Section } from '@react-email/components';
 import pick from 'lodash.pick';
+import { H2Title } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useUpdateOneDatabaseConnection } from '@/databases/hooks/useUpdateOneDatabaseConnection';
@@ -15,11 +16,10 @@ import {
   getFormDefaultValuesFromConnection,
 } from '@/settings/integrations/database-connection/utils/editDatabaseConnection';
 import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
-import { getConnectionDbName } from '@/settings/integrations/utils/getConnectionDbName';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Info } from '@/ui/display/info/components/Info';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import {
@@ -66,8 +66,6 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
     (table) => table?.status === RemoteTableStatus.Synced,
   );
 
-  const connectionName = getConnectionDbName({ integration, connection });
-
   const { isDirty, isValid } = formConfig.formState;
   const canSave = isDirty && isValid && !hasSyncedTables; // order matters here
 
@@ -91,7 +89,7 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
       );
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
-        variant: 'error',
+        variant: SnackBarVariant.Error,
       });
     }
   };
@@ -113,7 +111,7 @@ export const SettingsIntegrationEditDatabaseConnectionContent = ({
                 children: integration.text,
                 href: `${settingsIntegrationsPagePath}/${databaseKey}`,
               },
-              { children: connectionName },
+              { children: connection.label },
             ]}
           />
           <SaveAndCancelButtons

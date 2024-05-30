@@ -1,4 +1,5 @@
-import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
+import { ThemeColor } from 'twenty-ui';
+
 import {
   Field,
   Object as MetadataObject,
@@ -43,7 +44,7 @@ export type FieldMetadataItem = Omit<
       })
     | null;
   defaultValue?: any;
-  options?: FieldMetadataItemOption[];
+  options?: FieldMetadataItemOption[] | null;
   relationDefinition?: {
     relationId: RelationDefinition['relationId'];
     direction: RelationDefinitionType;

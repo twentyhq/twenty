@@ -1,5 +1,4 @@
 import * as React from 'react';
-import styled from '@emotion/styled';
 
 import { getDisplayValueByUrlType } from '~/utils/getDisplayValueByUrlType';
 
@@ -18,16 +17,6 @@ type SocialLinkProps = {
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
 };
 
-const StyledRawLink = styled(RoundedLink)`
-  overflow: hidden;
-
-  a {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-`;
-
 export const SocialLink = ({
   children,
   href,
@@ -38,8 +27,8 @@ export const SocialLink = ({
     getDisplayValueByUrlType({ type: type, href: href }) ?? children;
 
   return (
-    <StyledRawLink href={href} onClick={onClick}>
+    <RoundedLink href={href} onClick={onClick}>
       {displayValue}
-    </StyledRawLink>
+    </RoundedLink>
   );
 };
