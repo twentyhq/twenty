@@ -93,13 +93,8 @@ export const UploadFlow = ({ nextStep, prevStep }: UploadFlowProps) => {
 
   const onBack = useCallback(() => {
     setState(previousState);
-
-    if (state.type === StepType.validateData) {
-      setPreviousState(initialStepState || { type: StepType.upload });
-    }
-
     prevStep();
-  }, [prevStep, previousState, initialStepState, state.type]);
+  }, [prevStep, previousState]);
 
   switch (state.type) {
     case StepType.upload:
@@ -244,7 +239,10 @@ export const UploadFlow = ({ nextStep, prevStep }: UploadFlowProps) => {
               type: StepType.loading,
             })
           }
-          onBack={onBack}
+          onBack={() => {
+            onBack();
+            setPreviousState(initialStepState || { type: StepType.upload });
+          }}
         />
       );
     case StepType.loading:

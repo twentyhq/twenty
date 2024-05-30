@@ -25,7 +25,11 @@ export const Default = () => (
   <DialogManagerScope dialogManagerScopeId="dialog-manager">
     <Providers values={mockRsiValues}>
       <ModalWrapper isOpen={true} onClose={() => null}>
-        <ValidationStep initialData={editableTableInitialData} file={file} />
+        <ValidationStep
+          initialData={editableTableInitialData}
+          file={file}
+          onBack={() => Promise.resolve()}
+        />
       </ModalWrapper>
     </Providers>
   </DialogManagerScope>
