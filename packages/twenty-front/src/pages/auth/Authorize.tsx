@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { AppPath } from '@/types/AppPath';
 import { MainButton } from '@/ui/input/button/components/MainButton';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { useAuthorizeAppMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -115,9 +116,9 @@ export const Authorize = () => {
         </StyledAppsContainer>
         <StyledText>{app?.name} wants to access your account</StyledText>
         <StyledButtonContainer>
-          <Link to={AppPath.Index} style={{ textDecoration: 'none' }}>
+          <UndecoratedLink to={AppPath.Index}>
             <MainButton title="Cancel" variant="secondary" fullWidth />
-          </Link>
+          </UndecoratedLink>
           <MainButton title="Authorize" onClick={handleAuthorize} fullWidth />
         </StyledButtonContainer>
       </StyledCardWrapper>

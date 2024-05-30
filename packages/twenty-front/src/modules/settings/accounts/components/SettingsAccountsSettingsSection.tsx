@@ -6,6 +6,7 @@ import { SettingsNavigationCard } from '@/settings/components/SettingsNavigation
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Section } from '@/ui/layout/section/components/Section';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 
 const StyledCardsContainer = styled.div`
   display: flex;
@@ -21,14 +22,11 @@ export const SettingsAccountsSettingsSection = () => {
         description="Configure your emails and calendar settings."
       />
       <StyledCardsContainer>
-        <Link
-          to={getSettingsPagePath(SettingsPath.AccountsEmails)}
-          style={{ textDecoration: 'none' }}
-        >
+        <UndecoratedLink to={getSettingsPagePath(SettingsPath.AccountsEmails)}>
           <SettingsNavigationCard Icon={IconMailCog} title="Emails">
             Set email visibility, manage your blocklist and more.
           </SettingsNavigationCard>
-        </Link>
+        </UndecoratedLink>
         <Link to={getSettingsPagePath(SettingsPath.AccountsCalendars)}>
           <SettingsNavigationCard Icon={IconCalendarEvent} title="Calendar">
             Configure and customize your calendar preferences.

@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { H2Title, IconPlus, IconSettings } from 'twenty-ui';
 
@@ -31,6 +31,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -214,13 +215,12 @@ export const SettingsObjectDetail = () => {
           </Table>
           {shouldDisplayAddFieldButton && (
             <StyledDiv>
-              <Link
+              <UndecoratedLink
                 to={
                   deactivatedMetadataFields.length
                     ? './new-field/step-1'
                     : './new-field/step-2'
                 }
-                style={{ textDecoration: 'none' }}
               >
                 <Button
                   Icon={IconPlus}
@@ -228,7 +228,7 @@ export const SettingsObjectDetail = () => {
                   size="small"
                   variant="secondary"
                 />
-              </Link>
+              </UndecoratedLink>
             </StyledDiv>
           )}
         </Section>

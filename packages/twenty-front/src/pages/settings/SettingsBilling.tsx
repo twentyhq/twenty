@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import {
@@ -25,6 +24,7 @@ import { Button } from '@/ui/input/button/components/Button';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import {
   useBillingPortalSessionQuery,
   useUpdateBillingSubscriptionMutation,
@@ -153,22 +153,22 @@ export const SettingsBilling = () => {
           />
         )}
         {displaySubscriptionCanceledInfo && (
-          <Link to={AppPath.PlanRequired} style={{ textDecoration: 'none' }}>
+          <UndecoratedLink to={AppPath.PlanRequired}>
             <Info
               text={'Subscription canceled. Please start a new one'}
               buttonTitle={'Subscribe'}
               accent={'danger'}
             />
-          </Link>
+          </UndecoratedLink>
         )}
         {displaySubscribeInfo ? (
-          <Link to={AppPath.PlanRequired}>
+          <UndecoratedLink to={AppPath.PlanRequired}>
             <Info
               text={'Your workspace does not have an active subscription'}
               buttonTitle={'Subscribe'}
               accent={'danger'}
             />
-          </Link>
+          </UndecoratedLink>
         ) : (
           <>
             <Section>

@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
@@ -11,6 +10,7 @@ import {
   AnimatedPlaceholderErrorSubTitle,
   AnimatedPlaceholderErrorTitle,
 } from '@/ui/layout/animated-placeholder/components/ErrorPlaceholderStyled';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 
 const StyledBackDrop = styled.div`
@@ -49,9 +49,9 @@ export const NotFound = () => {
             </AnimatedPlaceholderErrorSubTitle>
           </AnimatedPlaceholderEmptyTextContainer>
           <StyledButtonContainer>
-            <Link to={AppPath.Index} style={{ textDecoration: 'none' }}>
+            <UndecoratedLink to={AppPath.Index}>
               <MainButton title="Back to content" fullWidth />
-            </Link>
+            </UndecoratedLink>
           </StyledButtonContainer>
         </AnimatedPlaceholderErrorContainer>
       </StyledBackDrop>

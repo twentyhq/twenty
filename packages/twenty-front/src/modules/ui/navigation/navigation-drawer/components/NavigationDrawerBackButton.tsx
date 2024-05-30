@@ -1,9 +1,9 @@
-import { Link } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 import { IconChevronLeft } from 'twenty-ui';
 
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 
 type NavigationDrawerBackButtonProps = {
@@ -40,11 +40,7 @@ export const NavigationDrawerBackButton = ({
 
   return (
     <StyledContainer>
-      <Link
-        to={navigationMemorizedUrl}
-        style={{ textDecoration: 'none' }}
-        replace
-      >
+      <UndecoratedLink to={navigationMemorizedUrl} replace>
         <StyledIconAndButtonContainer>
           <IconChevronLeft
             size={theme.icon.size.md}
@@ -52,7 +48,7 @@ export const NavigationDrawerBackButton = ({
           />
           <span>{title}</span>
         </StyledIconAndButtonContainer>
-      </Link>
+      </UndecoratedLink>
     </StyledContainer>
   );
 };

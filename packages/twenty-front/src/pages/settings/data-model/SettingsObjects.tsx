@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -29,6 +28,7 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -51,17 +51,14 @@ export const SettingsObjects = () => {
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <StyledH1Title title="Objects" />
-          <Link
-            to={getSettingsPagePath(SettingsPath.NewObject)}
-            style={{ textDecoration: 'none' }}
-          >
+          <UndecoratedLink to={getSettingsPagePath(SettingsPath.NewObject)}>
             <Button
               Icon={IconPlus}
               title="Add object"
               accent="blue"
               size="small"
             />
-          </Link>
+          </UndecoratedLink>
         </SettingsHeaderContainer>
         <div>
           <SettingsObjectCoverImage />

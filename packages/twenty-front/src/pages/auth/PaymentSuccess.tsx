@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconCheck, RGBA } from 'twenty-ui';
@@ -8,6 +7,7 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { AppPath } from '@/types/AppPath';
 import { MainButton } from '@/ui/input/button/components/MainButton';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { AnimatedEaseIn } from '@/ui/utilities/animation/components/AnimatedEaseIn';
 
 const StyledCheckContainer = styled.div`
@@ -41,9 +41,9 @@ export const PaymentSuccess = () => {
       <Title>All set!</Title>
       <SubTitle>Your account has been activated.</SubTitle>
       <StyledButtonContainer>
-        <Link to={AppPath.CreateWorkspace} style={{ textDecoration: 'none' }}>
+        <UndecoratedLink to={AppPath.CreateWorkspace}>
           <MainButton title="Start" width={200} />
-        </Link>
+        </UndecoratedLink>
       </StyledButtonContainer>
     </>
   );

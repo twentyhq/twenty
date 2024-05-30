@@ -1,6 +1,5 @@
 import { ComponentProps, ReactNode } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { Link } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
@@ -12,6 +11,7 @@ import {
 } from 'twenty-ui';
 
 import { IconButton } from '@/ui/input/button/components/IconButton';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
@@ -115,13 +115,13 @@ export const PageHeader = ({
           </StyledTopBarButtonContainer>
         )}
         {hasBackButton && (
-          <Link to={'-1'} style={{ textDecoration: 'none' }}>
+          <UndecoratedLink to={'-1'}>
             <IconButton
               Icon={IconChevronLeft}
               size="small"
               variant="tertiary"
             />
-          </Link>
+          </UndecoratedLink>
         )}
         {loading ? (
           <StyledSkeletonLoader />
