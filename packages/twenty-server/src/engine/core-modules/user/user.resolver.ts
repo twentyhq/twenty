@@ -1,10 +1,10 @@
 import {
-  Resolver,
-  Query,
   Args,
-  Parent,
-  ResolveField,
   Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
 } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -26,6 +26,8 @@ import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
+import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
+import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 
 import { UserService } from './services/user.service';
 
@@ -43,6 +45,7 @@ export class UserResolver {
   constructor(
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
+    private readonly keyValuePairService: KeyValuePairService,
     private readonly userService: UserService,
     private readonly environmentService: EnvironmentService,
     private readonly fileUploadService: FileUploadService,
@@ -60,6 +63,16 @@ export class UserResolver {
     assert(user, 'User not found');
 
     return user;
+  }
+
+  @ResolveField(() => [KeyValuePair], { nullable: true })
+  async keyValuePairs(
+    @Parent() user: User,
+  ): Promise<KeyValuePair[] | undefined> {
+    return await this.keyValuePairService.getMany(
+      user.id,
+      user.defaultWorkspaceId,
+    );
   }
 
   @ResolveField(() => WorkspaceMember, {

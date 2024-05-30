@@ -101,6 +101,7 @@ export class User {
   })
   appTokens: Relation<AppToken[]>;
 
+  @Field(() => [KeyValuePair], { nullable: true })
   @OneToMany(() => KeyValuePair, (keyValuePair) => keyValuePair.user, {
     cascade: true,
   })
