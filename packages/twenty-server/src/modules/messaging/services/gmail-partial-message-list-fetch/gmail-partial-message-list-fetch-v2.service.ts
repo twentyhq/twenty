@@ -59,7 +59,7 @@ export class GmailPartialMessageListFetchV2Service {
         `No lastSyncHistoryId for workspace ${workspaceId} and account ${connectedAccount.id}, falling back to full sync.`,
       );
 
-      await this.messageChannelSyncStatusService.scheduleFullMessageListFetch(
+      await this.messageChannelSyncStatusService.scheduleFullMessageListFetchAndFlushMessagesToImport(
         messageChannel.id,
         workspaceId,
       );

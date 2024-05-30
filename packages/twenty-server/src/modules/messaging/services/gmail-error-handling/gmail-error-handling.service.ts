@@ -9,6 +9,8 @@ import { MessageChannelSyncStatusService } from 'src/modules/messaging/services/
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { GmailError } from 'src/modules/messaging/types/gmail-error';
 
+type SyncType = 'full' | 'partial' | 'message-import';
+
 @Injectable()
 export class GmailErrorHandlingService {
   private readonly logger = new Logger(GmailErrorHandlingService.name);
@@ -23,7 +25,7 @@ export class GmailErrorHandlingService {
 
   public async handleGmailError(
     error: GmailError | undefined,
-    syncType: 'full' | 'partial' | 'message-import',
+    syncType: SyncType,
     messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
     workspaceId: string,
   ): Promise<void> {
@@ -31,7 +33,7 @@ export class GmailErrorHandlingService {
 
     switch (error?.code) {
       case 404:
-        await this.handleNotFound(error, messageChannel, workspaceId);
+        await this.handleNotFound(error, syncType, messageChannel, workspaceId);
         break;
 
       case 429:
@@ -73,7 +75,7 @@ export class GmailErrorHandlingService {
 
   public async handleRateLimitExceeded(
     error: GmailError,
-    syncType: 'full' | 'partial' | 'message-import',
+    syncType: SyncType,
     messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
     workspaceId: string,
   ): Promise<void> {
@@ -130,9 +132,14 @@ export class GmailErrorHandlingService {
 
   public async handleNotFound(
     error: GmailError,
+    syncType: SyncType,
     messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
     workspaceId: string,
   ): Promise<void> {
+    if (syncType === 'message-import') {
+      return;
+    }
+
     this.logger.log(
       `404: ${error.message} for workspace ${workspaceId} and account ${messageChannel.connectedAccountId}.`,
     );
@@ -141,7 +148,7 @@ export class GmailErrorHandlingService {
       workspaceId,
     );
     // remove nextPageToken from cache
-    await this.messageChannelSyncStatusService.scheduleFullMessageListFetch(
+    await this.messageChannelSyncStatusService.scheduleFullMessageListFetchAndFlushMessagesToImport(
       messageChannel.id,
       workspaceId,
     );
