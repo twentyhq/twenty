@@ -122,13 +122,6 @@ export class GmailMessageListFetchJob
 
         return;
 
-      case MessageChannelSyncSubStatus.FAILED:
-        this.logger.error(
-          `Messaging import for workspace ${workspaceId} and account ${connectedAccountId} is in a failed state.`,
-        );
-
-        return;
-
       default:
         return;
     }
