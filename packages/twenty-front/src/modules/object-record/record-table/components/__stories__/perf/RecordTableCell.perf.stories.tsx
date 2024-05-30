@@ -143,7 +143,7 @@ export const Default: Story = {};
 
 export const Performance = getProfilingStory({
   componentName: 'RecordTableCell',
-  averageThresholdInMs: 0.6,
+  averageThresholdInMs: 0.3,
   numberOfRuns: 50,
   numberOfTestsPerRun: 200,
   warmUpRounds: 20,
