@@ -260,6 +260,19 @@ export type InvalidatePassword = {
   success: Scalars['Boolean'];
 };
 
+export type KeyValuePair = {
+  __typename?: 'KeyValuePair';
+  id: Scalars['UUID'];
+  key: Scalars['String'];
+  value?: Maybe<Scalars['String']>;
+};
+
+export type KeyValuePairCreated = {
+  __typename?: 'KeyValuePairCreated';
+  /** Boolean that Key Value Pair has been created */
+  success: Scalars['Boolean'];
+};
+
 export type LinkMetadata = {
   __typename?: 'LinkMetadata';
   label: Scalars['String'];
@@ -298,6 +311,7 @@ export type Mutation = {
   impersonate: Verify;
   renewToken: AuthTokens;
   signUp: LoginToken;
+  skipSyncEmail: KeyValuePairCreated;
   track: Analytics;
   updateBillingSubscription: UpdateBillingEntity;
   updateOneObject: Object;
@@ -784,8 +798,8 @@ export type User = {
   emailVerified: Scalars['Boolean'];
   firstName: Scalars['String'];
   id: Scalars['UUID'];
+  keyValuePairs?: Maybe<Array<KeyValuePair>>;
   lastName: Scalars['String'];
-  onboardingStatus?: Maybe<Scalars['String']>;
   passwordHash?: Maybe<Scalars['String']>;
   /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
   passwordResetToken?: Maybe<Scalars['String']>;
@@ -1196,6 +1210,11 @@ export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, billingFreeTrialDurationInDays?: number | null }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null } } };
+
+export type SkipSyncEmailMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type SkipSyncEmailMutation = { __typename?: 'Mutation', skipSyncEmail: { __typename?: 'KeyValuePairCreated', success: boolean } };
 
 export type UserQueryFragmentFragment = { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, currentCacheVersion?: string | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: string, interval?: string | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> };
 
@@ -2346,6 +2365,38 @@ export function useGetClientConfigLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetClientConfigQueryHookResult = ReturnType<typeof useGetClientConfigQuery>;
 export type GetClientConfigLazyQueryHookResult = ReturnType<typeof useGetClientConfigLazyQuery>;
 export type GetClientConfigQueryResult = Apollo.QueryResult<GetClientConfigQuery, GetClientConfigQueryVariables>;
+export const SkipSyncEmailDocument = gql`
+    mutation SkipSyncEmail {
+  skipSyncEmail {
+    success
+  }
+}
+    `;
+export type SkipSyncEmailMutationFn = Apollo.MutationFunction<SkipSyncEmailMutation, SkipSyncEmailMutationVariables>;
+
+/**
+ * __useSkipSyncEmailMutation__
+ *
+ * To run a mutation, you first call `useSkipSyncEmailMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSkipSyncEmailMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [skipSyncEmailMutation, { data, loading, error }] = useSkipSyncEmailMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useSkipSyncEmailMutation(baseOptions?: Apollo.MutationHookOptions<SkipSyncEmailMutation, SkipSyncEmailMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SkipSyncEmailMutation, SkipSyncEmailMutationVariables>(SkipSyncEmailDocument, options);
+      }
+export type SkipSyncEmailMutationHookResult = ReturnType<typeof useSkipSyncEmailMutation>;
+export type SkipSyncEmailMutationResult = Apollo.MutationResult<SkipSyncEmailMutation>;
+export type SkipSyncEmailMutationOptions = Apollo.BaseMutationOptions<SkipSyncEmailMutation, SkipSyncEmailMutationVariables>;
 export const DeleteUserAccountDocument = gql`
     mutation DeleteUserAccount {
   deleteUser {

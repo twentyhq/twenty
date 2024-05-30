@@ -14,6 +14,7 @@ import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
+  useSkipSyncEmailMutation,
 } from '~/generated/graphql';
 
 const StyledSyncEmailsContainer = styled.div`
@@ -37,6 +38,7 @@ export const SyncEmails = () => {
   const [visibility, setVisibility] = useState<MessageChannelVisibility>(
     MessageChannelVisibility.ShareEverything,
   );
+  const [skipSyncEmailMutation] = useSkipSyncEmailMutation();
 
   const handleButtonClick = async () => {
     const calendarChannelVisibility =
@@ -51,7 +53,8 @@ export const SyncEmails = () => {
     );
   };
 
-  const continueWithoutSync = () => {
+  const continueWithoutSync = async () => {
+    await skipSyncEmailMutation();
     navigate(AppPath.Index);
   };
 
