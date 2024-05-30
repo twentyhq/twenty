@@ -7,7 +7,6 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
-import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/testing/sleep';
 
@@ -16,7 +15,7 @@ import { SettingsBilling } from '../SettingsBilling';
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/SettingsBilling',
   component: SettingsBilling,
-  decorators: [PrefetchLoadingDecorator, PageDecorator],
+  decorators: [PageDecorator],
   args: { routePath: getSettingsPagePath(SettingsPath.Billing) },
   parameters: {
     msw: graphqlMocks,
