@@ -53,6 +53,17 @@ export class MessageChannelSyncStatusService {
     );
   }
 
+  public async scheduleFullMessageListFetchAndFlushMessagesToImport(
+    messageChannelId: string,
+    workspaceId: string,
+  ) {
+    await this.cacheStorage.setPop(
+      `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
+    );
+
+    await this.scheduleFullMessageListFetch(messageChannelId, workspaceId);
+  }
+
   public async markAsMessagesListFetchOngoing(
     messageChannelId: string,
     workspaceId: string,
@@ -70,21 +81,17 @@ export class MessageChannelSyncStatusService {
     );
   }
 
-  public async markAsCompletedAndAwaitNextPartialSync(
+  public async markAsCompletedAndSchedulePartialMessageListFetch(
     messageChannelId: string,
     workspaceId: string,
   ) {
-    await this.messageChannelRepository.updateSyncSubStatus(
-      messageChannelId,
-      MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
-      workspaceId,
-    );
-
     await this.messageChannelRepository.updateSyncStatus(
       messageChannelId,
       MessageChannelSyncStatus.COMPLETED,
       workspaceId,
     );
+
+    await this.schedulePartialMessageListFetch(messageChannelId, workspaceId);
   }
 
   public async markAsMessagesImportOngoing(

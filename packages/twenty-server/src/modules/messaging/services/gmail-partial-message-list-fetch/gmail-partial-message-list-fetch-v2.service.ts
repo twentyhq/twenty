@@ -100,7 +100,7 @@ export class GmailPartialMessageListFetchV2Service {
         `Partial message list import done with history ${historyId} and nothing to update for workspace ${workspaceId} and account ${connectedAccount.id}`,
       );
 
-      await this.messageChannelSyncStatusService.markAsCompletedAndAwaitNextPartialSync(
+      await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
         messageChannel.id,
         workspaceId,
       );

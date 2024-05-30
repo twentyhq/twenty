@@ -67,7 +67,7 @@ export class GmailMessagesImportV2Service {
       )) ?? [];
 
     if (!messageIdsToFetch?.length) {
-      await this.messageChannelSyncStatusService.markAsCompletedAndAwaitNextPartialSync(
+      await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
         messageChannel.id,
         workspaceId,
       );
@@ -91,7 +91,7 @@ export class GmailMessagesImportV2Service {
         );
 
       if (!messagesToSave.length) {
-        await this.messageChannelSyncStatusService.markAsCompletedAndAwaitNextPartialSync(
+        await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
           messageChannel.id,
           workspaceId,
         );
@@ -107,7 +107,7 @@ export class GmailMessagesImportV2Service {
       );
 
       if (messageIdsToFetch.length < GMAIL_USERS_MESSAGES_GET_BATCH_SIZE) {
-        await this.messageChannelSyncStatusService.markAsCompletedAndAwaitNextPartialSync(
+        await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
           messageChannel.id,
           workspaceId,
         );
