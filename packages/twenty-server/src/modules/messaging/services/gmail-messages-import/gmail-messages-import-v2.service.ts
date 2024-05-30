@@ -48,19 +48,10 @@ export class GmailMessagesImportV2Service {
       return;
     }
 
-    try {
-      await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
-        workspaceId,
-        connectedAccount.id,
-      );
-    } catch (e) {
-      this.logger.error(
-        `Error refreshing access token for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
-        e,
-      );
-
-      return;
-    }
+    await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
+      workspaceId,
+      connectedAccount.id,
+    );
 
     await this.messageChannelSyncStatusService.markAsMessagesImportOngoing(
       messageChannel.id,

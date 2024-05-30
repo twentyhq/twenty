@@ -111,7 +111,7 @@ export class GoogleAPIRefreshAccessTokenService {
       );
 
       throw new Error(
-        `Error refreshing access token: ${error.code}: ${error.message}`,
+        `Error refreshing access token: ${error.code}: ${error.message} for connected account ${connectedAccountId} in workspace ${workspaceId}`,
       );
     }
   }
