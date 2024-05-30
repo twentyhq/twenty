@@ -13,7 +13,6 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
-import { SetMessageChannelSyncStatusService } from 'src/modules/messaging/services/set-message-channel-sync-status/set-message-channel-sync-status.service';
 
 export type GmailMessageListFetchJobData = {
   workspaceId: string;
@@ -34,7 +33,6 @@ export class GmailMessageListFetchJob
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
-    private readonly setMessageChannelSyncStatusService: SetMessageChannelSyncStatusService,
   ) {}
 
   async handle(data: GmailMessageListFetchJobData): Promise<void> {
