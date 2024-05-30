@@ -42,20 +42,6 @@ export class GmailMessageListFetchJob
       `Fetch gmail message list for workspace ${workspaceId} and account ${connectedAccountId}`,
     );
 
-    try {
-      await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
-        workspaceId,
-        connectedAccountId,
-      );
-    } catch (e) {
-      this.logger.error(
-        `Error refreshing access token for connected account ${connectedAccountId} in workspace ${workspaceId}`,
-        e,
-      );
-
-      return;
-    }
-
     const connectedAccount = await this.connectedAccountRepository.getById(
       connectedAccountId,
       workspaceId,

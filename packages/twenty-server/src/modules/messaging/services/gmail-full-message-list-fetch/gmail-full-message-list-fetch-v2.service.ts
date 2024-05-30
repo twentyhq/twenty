@@ -65,6 +65,7 @@ export class GmailFullMessageListFetchV2Service {
         );
 
       if (gmailError) {
+        this.logger.error(gmailError.code);
         await this.gmailErrorHandlingService.handleGmailError(
           gmailError,
           'full',
@@ -161,7 +162,9 @@ export class GmailFullMessageListFetchV2Service {
           };
         }
 
-        throw error;
+        throw new Error(
+          `Error fetching messages for messageChannel ${messageChannelId} in workspace ${workspaceId}: ${error.message}`,
+        );
       }
     }
 

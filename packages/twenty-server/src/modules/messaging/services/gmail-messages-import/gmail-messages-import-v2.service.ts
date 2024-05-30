@@ -17,6 +17,7 @@ import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metada
 import { SaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/services/gmail-messages-import/save-messages-and-enqueue-contact-creation.service';
 import { GmailErrorHandlingService } from 'src/modules/messaging/services/gmail-error-handling/gmail-error-handling.service';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/services/message-channel-sync-status/message-channel-sync-status.service';
+import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
 
 @Injectable()
 export class GmailMessagesImportV2Service {
@@ -29,6 +30,7 @@ export class GmailMessagesImportV2Service {
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly saveMessagesAndEnqueueContactCreationService: SaveMessagesAndEnqueueContactCreationService,
     private readonly gmailErrorHandlingService: GmailErrorHandlingService,
+    private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
   ) {}
 
   async processMessageBatchImport(
@@ -49,6 +51,20 @@ export class GmailMessagesImportV2Service {
       throw new Error(
         `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} is not pending.`,
       );
+    }
+
+    try {
+      await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
+        workspaceId,
+        connectedAccount.id,
+      );
+    } catch (e) {
+      this.logger.error(
+        `Error refreshing access token for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
+        e,
+      );
+
+      return;
     }
 
     await this.messageChannelSyncStatusService.markAsMessagesImportOngoing(
