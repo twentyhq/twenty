@@ -76,7 +76,7 @@ export class GmailMessageListFetchJob
     }
 
     switch (messageChannel.syncSubStatus) {
-      case MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING:
+      case MessageChannelSyncSubStatus.PARTIAL_MESSAGE_LIST_FETCH_PENDING:
         await this.gmailPartialMessageListFetchV2Service.processMessageListFetch(
           messageChannel,
           connectedAccount,
@@ -92,7 +92,7 @@ export class GmailMessageListFetchJob
 
         return;
 
-      case MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING:
+      case MessageChannelSyncSubStatus.FULL_MESSAGE_LIST_FETCH_PENDING:
         await this.gmailFullMessageListFetchV2Service.processMessageListFetch(
           messageChannel,
           connectedAccount,

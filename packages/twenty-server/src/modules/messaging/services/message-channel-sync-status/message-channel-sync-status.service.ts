@@ -26,7 +26,7 @@ export class MessageChannelSyncStatusService {
   ) {
     await this.messageChannelRepository.updateSyncSubStatus(
       messageChannelId,
-      MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING,
+      MessageChannelSyncSubStatus.FULL_MESSAGE_LIST_FETCH_PENDING,
       workspaceId,
     );
   }
@@ -37,7 +37,7 @@ export class MessageChannelSyncStatusService {
   ) {
     await this.messageChannelRepository.updateSyncSubStatus(
       messageChannelId,
-      MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
+      MessageChannelSyncSubStatus.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
       workspaceId,
     );
   }
@@ -77,7 +77,7 @@ export class MessageChannelSyncStatusService {
   ) {
     await this.messageChannelRepository.updateSyncSubStatus(
       messageChannelId,
-      MessageChannelSyncSubStatus.MESSAGES_LIST_FETCH_ONGOING,
+      MessageChannelSyncSubStatus.MESSAGE_LIST_FETCH_ONGOING,
       workspaceId,
     );
 
