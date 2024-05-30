@@ -1,5 +1,4 @@
 import { ReactElement, useContext, useEffect, useRef } from 'react';
-import isEmpty from 'lodash.isempty';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 import { IconArrowUpRight } from 'twenty-ui';
@@ -7,6 +6,7 @@ import { IconArrowUpRight } from 'twenty-ui';
 import { useClearField } from '@/object-record/record-field/hooks/useClearField';
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';
 import { useIsFieldClearable } from '@/object-record/record-field/hooks/useIsFieldClearable';
+import { useIsFieldEmpty } from '@/object-record/record-field/hooks/useIsFieldEmpty';
 import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFieldInputOnly';
 import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
@@ -16,6 +16,7 @@ import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/rec
 import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
+import { isDefined } from '~/utils/isDefined';
 
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
@@ -39,6 +40,8 @@ export const RecordTableCellSoftFocusMode = ({
   const editModeContentOnly = useIsFieldInputOnly();
 
   const isFieldInputOnly = useIsFieldInputOnly();
+
+  const isEmpty = useIsFieldEmpty();
 
   const isFieldClearable = useIsFieldClearable();
 
@@ -119,7 +122,7 @@ export const RecordTableCellSoftFocusMode = ({
   const buttonIcon = isFirstColumn ? IconArrowUpRight : customButtonIcon;
 
   const showButton =
-    !!buttonIcon &&
+    isDefined(buttonIcon) &&
     !editModeContentOnly &&
     (!isFirstColumn || !isEmpty) &&
     !isReadOnly;
