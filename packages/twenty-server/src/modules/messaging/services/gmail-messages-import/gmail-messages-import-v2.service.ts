@@ -39,18 +39,14 @@ export class GmailMessagesImportV2Service {
     workspaceId: string,
   ) {
     if (messageChannel.syncSubStatus === MessageChannelSyncSubStatus.FAILED) {
-      throw new Error(
-        `Connected account ${connectedAccount.id} in workspace ${workspaceId} is in a failed state. Skipping...`,
-      );
+      return;
     }
 
     if (
       messageChannel.syncSubStatus !==
       MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING
     ) {
-      throw new Error(
-        `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} is not pending.`,
-      );
+      return;
     }
 
     try {

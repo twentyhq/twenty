@@ -99,7 +99,7 @@ export class GmailMessagesImportCronJob implements MessageQueueJob<undefined> {
             workspaceId,
           );
         } catch (error) {
-          this.logger.log(error.message);
+          this.logger.error(error.message);
         }
       } else {
         await this.gmailFetchMessageContentFromCacheService.fetchMessageContentFromCache(
