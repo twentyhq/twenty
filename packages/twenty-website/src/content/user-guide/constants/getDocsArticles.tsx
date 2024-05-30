@@ -53,7 +53,6 @@ export function getDocsArticles(basePath: string, isSideBar = false) {
       if (isSideBar) {
         const nestedPath = findFileRecursively(basePath, `${fileName}.mdx`);
         const directPath = `${basePath}${fileName}.mdx`;
-        console.log(nestedPath);
         filePath = nestedPath || directPath;
       } else {
         filePath = `${basePath}${fileName}.mdx`;
