@@ -48,14 +48,14 @@ export const RecordTableWithWrappers = ({
 }: RecordTableWithWrappersProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  const { numberOfTableRowsState, isRecordTableInitialLoadingState } =
+  const { isRecordTableInitialLoadingState, tableRowIdsState } =
     useRecordTableStates(recordTableId);
-
-  const numberOfTableRows = useRecoilValue(numberOfTableRowsState);
 
   const isRecordTableInitialLoading = useRecoilValue(
     isRecordTableInitialLoadingState,
   );
+
+  const tableRowIds = useRecoilValue(tableRowIdsState);
 
   const { resetTableRowSelection, setRowSelected } = useRecordTable({
     recordTableId,
@@ -107,13 +107,15 @@ export const RecordTableWithWrappers = ({
                 recordTableId={recordTableId}
                 tableBodyRef={tableBodyRef}
               />
-              {!isRecordTableInitialLoading && numberOfTableRows === 0 && (
-                <RecordTableEmptyState
-                  objectLabel={objectLabel}
-                  createRecord={createRecord}
-                  isRemote={isRemote}
-                />
-              )}
+              {!isRecordTableInitialLoading &&
+                // we cannot rely on count states because this is not available for remote objects
+                tableRowIds.length === 0 && (
+                  <RecordTableEmptyState
+                    objectLabel={objectLabel}
+                    createRecord={createRecord}
+                    isRemote={isRemote}
+                  />
+                )}
             </StyledTableContainer>
           </StyledTableWithHeader>
         </RecordUpdateContext.Provider>
