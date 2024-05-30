@@ -4,7 +4,6 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/services/message-channel-sync-status/message-channel-sync-status.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { GmailError } from 'src/modules/messaging/types/gmail-error';
@@ -18,8 +17,6 @@ export class GmailErrorHandlingService {
   constructor(
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
-    private readonly messageChannelRepository: MessageChannelRepository,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
   ) {}
 
@@ -66,6 +63,11 @@ export class GmailErrorHandlingService {
         break;
 
       case 401:
+        await this.handleInsufficientPermissions(
+          error,
+          messageChannel,
+          workspaceId,
+        );
         break;
 
       default:
