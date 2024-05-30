@@ -28,7 +28,8 @@ export const useCreateOneDatabaseConnection = () => {
         input,
       },
       update: (cache, { data }) => {
-        if (!data?.createOneRemoteServer) return;
+        const createdRemoteServer = data?.createOneRemoteServer;
+        if (!createdRemoteServer) return;
 
         const getManyDatabaseConnectionsQuery = {
           query: GET_MANY_DATABASE_CONNECTIONS,
@@ -41,7 +42,7 @@ export const useCreateOneDatabaseConnection = () => {
           cache.updateQuery(getManyDatabaseConnectionsQuery, (cachedQuery) => ({
             findManyRemoteServersByType: [
               ...cachedQuery.findManyRemoteServersByType,
-              data.createOneRemoteServer,
+              createdRemoteServer,
             ],
           }));
 
