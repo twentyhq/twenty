@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
+import { isLoadingTokensFromExtensionState } from '@/chrome-extension-sidecar/states/isLoadingTokensFromExtensionState';
 import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionIdState';
-import { isLoadingTokensFromExtensionState } from '@/window-event/states/isLoadingTokensFromExtensionState';
 import { isDefined } from '~/utils/isDefined';
 import { isInFrame } from '~/utils/isInIframe';
 
@@ -28,9 +28,9 @@ const AppInaccessible = ({ message }: { message: string }) => {
   );
 };
 
-export const WindowEventProvider: React.FC<React.PropsWithChildren> = ({
-  children,
-}) => {
+export const ChromeExtensionSidecarProvider: React.FC<
+  React.PropsWithChildren
+> = ({ children }) => {
   const isLoadingTokensFromExtension = useRecoilValue(
     isLoadingTokensFromExtensionState,
   );

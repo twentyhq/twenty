@@ -13,6 +13,8 @@ import { useRecoilValue } from 'recoil';
 
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { VerifyEffect } from '@/auth/components/VerifyEffect';
+import { ChromeExtensionSidecarEffect } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarEffect';
+import { ChromeExtensionSidecarProvider } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
 import { billingState } from '@/client-config/states/billingState';
@@ -32,8 +34,6 @@ import { AppThemeProvider } from '@/ui/theme/components/AppThemeProvider';
 import { PageTitle } from '@/ui/utilities/page-title/PageTitle';
 import { UserProvider } from '@/users/components/UserProvider';
 import { UserProviderEffect } from '@/users/components/UserProviderEffect';
-import { WindowEventEffect } from '@/window-event/components/WindowEventEffect';
-import { WindowEventProvider } from '@/window-event/components/WindowEventProvider';
 import { CommandMenuEffect } from '~/effect-components/CommandMenuEffect';
 import { GotoHotkeysEffect } from '~/effect-components/GotoHotkeysEffect';
 import { PageChangeEffect } from '~/effect-components/PageChangeEffect';
@@ -91,8 +91,8 @@ const ProvidersThatNeedRouterContext = () => {
       <ApolloProvider>
         <ClientConfigProviderEffect />
         <ClientConfigProvider>
-          <WindowEventEffect />
-          <WindowEventProvider>
+          <ChromeExtensionSidecarEffect />
+          <ChromeExtensionSidecarProvider>
             <UserProviderEffect />
             <UserProvider>
               <ApolloMetadataClientProvider>
@@ -118,7 +118,7 @@ const ProvidersThatNeedRouterContext = () => {
                 </ObjectMetadataItemsProvider>
               </ApolloMetadataClientProvider>
             </UserProvider>
-          </WindowEventProvider>
+          </ChromeExtensionSidecarProvider>
         </ClientConfigProvider>
       </ApolloProvider>
     </>

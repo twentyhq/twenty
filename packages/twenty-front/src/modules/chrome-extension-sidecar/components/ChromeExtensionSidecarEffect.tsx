@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { isLoadingTokensFromExtensionState } from '@/chrome-extension-sidecar/states/isLoadingTokensFromExtensionState';
 import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionIdState';
-import { isLoadingTokensFromExtensionState } from '@/window-event/states/isLoadingTokensFromExtensionState';
 import { isDefined } from '~/utils/isDefined';
 import { isInFrame } from '~/utils/isInIframe';
 
-export const WindowEventEffect = () => {
+export const ChromeExtensionSidecarEffect = () => {
   const navigate = useNavigate();
   const setTokenPair = useSetRecoilState(tokenPairState);
   const chromeExtensionId = useRecoilValue(chromeExtensionIdState);
