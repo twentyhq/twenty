@@ -84,6 +84,10 @@ export class GmailErrorHandlingService {
         break;
 
       default:
+        await this.messageChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
+          messageChannel.id,
+          workspaceId,
+        );
         break;
     }
   }
