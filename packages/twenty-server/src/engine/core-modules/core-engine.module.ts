@@ -11,7 +11,6 @@ import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/ti
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
-import { KeyValuePairModule } from 'src/engine/core-modules/key-value-pair/key-value-pair.module';
 
 import { AnalyticsModule } from './analytics/analytics.module';
 import { FileModule } from './file/file.module';
@@ -31,7 +30,6 @@ import { ClientConfigModule } from './client-config/client-config.module';
     FileModule,
     OpenApiModule,
     AppTokenModule,
-    KeyValuePairModule,
     TimelineMessagingModule,
     TimelineCalendarEventModule,
     UserModule,

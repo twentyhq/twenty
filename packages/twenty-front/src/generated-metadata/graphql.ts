@@ -362,12 +362,6 @@ export type InvalidatePassword = {
   success: Scalars['Boolean']['output'];
 };
 
-export type KeyValuePairCreated = {
-  __typename?: 'KeyValuePairCreated';
-  /** Boolean that Key Value Pair has been created */
-  success: Scalars['Boolean']['output'];
-};
-
 export type LinkMetadata = {
   __typename?: 'LinkMetadata';
   label: Scalars['String']['output'];
@@ -412,7 +406,7 @@ export type Mutation = {
   impersonate: Verify;
   renewToken: AuthTokens;
   signUp: LoginToken;
-  skipSyncEmail: KeyValuePairCreated;
+  skipSyncEmail: SkipSyncEmail;
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
   track: Analytics;
@@ -880,6 +874,12 @@ export type Sentry = {
 export type SessionEntity = {
   __typename?: 'SessionEntity';
   url?: Maybe<Scalars['String']['output']>;
+};
+
+export type SkipSyncEmail = {
+  __typename?: 'SkipSyncEmail';
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean']['output'];
 };
 
 /** Sort Directions */

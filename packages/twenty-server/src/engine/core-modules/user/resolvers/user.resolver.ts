@@ -17,6 +17,7 @@ import { Repository } from 'typeorm';
 import { SupportDriver } from 'src/engine/integrations/environment/interfaces/support.interface';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -26,19 +27,10 @@ import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
-import {
-  EmailSyncStatus,
-  KeyValuePairService,
-  KeyValuePairsKeys,
-} from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserState } from 'src/engine/core-modules/user/dtos/user-state.dto';
-
-import { UserService } from './services/user.service';
+import { UserStateService } from 'src/engine/core-modules/user/services/user-state.service';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -54,9 +46,7 @@ export class UserResolver {
   constructor(
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
-    private readonly connectedAccountRepository: ConnectedAccountRepository,
-    private readonly keyValuePairService: KeyValuePairService,
+    private readonly userStateService: UserStateService,
     private readonly userService: UserService,
     private readonly environmentService: EnvironmentService,
     private readonly fileUploadService: FileUploadService,
@@ -133,32 +123,6 @@ export class UserResolver {
     @Parent() user: User,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<UserState> {
-    if (!user || !workspace) {
-      return {
-        skipSyncEmail: true,
-      };
-    }
-    const connectedAccounts =
-      await this.connectedAccountRepository.getAllByUserId(
-        user.id,
-        workspace.id,
-      );
-
-    if (connectedAccounts?.length) {
-      return {
-        skipSyncEmail: true,
-      };
-    }
-
-    const skipSyncEmail = await this.keyValuePairService.get(
-      user.id,
-      workspace.id,
-      KeyValuePairsKeys.EMAIL_SYNC_ONBOARDING_STEP,
-    );
-
-    return {
-      skipSyncEmail:
-        skipSyncEmail && skipSyncEmail.value === EmailSyncStatus.SKIPPED,
-    };
+    return this.userStateService.getUserState(user, workspace);
   }
 }

@@ -2486,11 +2486,6 @@ export type InvalidatePassword = {
   success: Scalars['Boolean'];
 };
 
-export type KeyValuePairCreated = {
-  /** Boolean that Key Value Pair has been created */
-  success: Scalars['Boolean'];
-};
-
 export type Link = {
   label?: Maybe<Scalars['String']>;
   url?: Maybe<Scalars['String']>;
@@ -3538,7 +3533,7 @@ export type Mutation = {
   impersonate: Verify;
   renewToken: AuthTokens;
   signUp: LoginToken;
-  skipSyncEmail: KeyValuePairCreated;
+  skipSyncEmail: SkipSyncEmail;
   track: Analytics;
   updateActivities?: Maybe<Array<Activity>>;
   updateActivity?: Maybe<Activity>;
@@ -6159,6 +6154,11 @@ export type Sentry = {
 
 export type SessionEntity = {
   url?: Maybe<Scalars['String']>;
+};
+
+export type SkipSyncEmail = {
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean'];
 };
 
 /** Sort Directions */

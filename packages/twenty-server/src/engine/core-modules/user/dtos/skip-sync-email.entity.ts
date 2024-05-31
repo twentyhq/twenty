@@ -1,9 +1,9 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class KeyValuePairCreated {
+export class SkipSyncEmail {
   @Field(() => Boolean, {
-    description: 'Boolean that Key Value Pair has been created',
+    description: 'Boolean that confirms query was dispatched',
   })
   success: boolean;
 }

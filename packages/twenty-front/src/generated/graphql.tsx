@@ -261,12 +261,6 @@ export type InvalidatePassword = {
   success: Scalars['Boolean'];
 };
 
-export type KeyValuePairCreated = {
-  __typename?: 'KeyValuePairCreated';
-  /** Boolean that Key Value Pair has been created */
-  success: Scalars['Boolean'];
-};
-
 export type LinkMetadata = {
   __typename?: 'LinkMetadata';
   label: Scalars['String'];
@@ -305,7 +299,7 @@ export type Mutation = {
   impersonate: Verify;
   renewToken: AuthTokens;
   signUp: LoginToken;
-  skipSyncEmail: KeyValuePairCreated;
+  skipSyncEmail: SkipSyncEmail;
   track: Analytics;
   updateBillingSubscription: UpdateBillingEntity;
   updateOneObject: Object;
@@ -635,6 +629,12 @@ export type Sentry = {
 export type SessionEntity = {
   __typename?: 'SessionEntity';
   url?: Maybe<Scalars['String']>;
+};
+
+export type SkipSyncEmail = {
+  __typename?: 'SkipSyncEmail';
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean'];
 };
 
 /** Sort Directions */
@@ -1213,7 +1213,7 @@ export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typ
 export type SkipSyncEmailMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type SkipSyncEmailMutation = { __typename?: 'Mutation', skipSyncEmail: { __typename?: 'KeyValuePairCreated', success: boolean } };
+export type SkipSyncEmailMutation = { __typename?: 'Mutation', skipSyncEmail: { __typename?: 'SkipSyncEmail', success: boolean } };
 
 export type UserQueryFragmentFragment = { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, state: { __typename?: 'UserState', skipSyncEmail?: boolean | null }, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, currentCacheVersion?: string | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: string, interval?: string | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> };
 
