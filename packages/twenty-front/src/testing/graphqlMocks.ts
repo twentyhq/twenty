@@ -22,7 +22,9 @@ import { mockedPeopleData } from './mock-data/people';
 import { mockedRemoteServers } from './mock-data/remote-servers';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 
-const metadataGraphql = graphql.link(`${REACT_APP_SERVER_BASE_URL}/metadata`);
+export const metadataGraphql = graphql.link(
+  `${REACT_APP_SERVER_BASE_URL}/metadata`,
+);
 
 export const graphqlMocks = {
   handlers: [
@@ -342,38 +344,4 @@ export const graphqlMocks = {
       );
     }),
   ],
-};
-
-export const userMetadataLoaderMocks = {
-  msw: {
-    handlers: [
-      graphql.query(getOperationName(GET_CURRENT_USER) ?? '', () => {
-        return HttpResponse.json({
-          data: {
-            currentUser: mockedUsersData[0],
-          },
-        });
-      }),
-      graphql.query(getOperationName(GET_CLIENT_CONFIG) ?? '', () => {
-        return HttpResponse.json({
-          data: {
-            clientConfig: mockedClientConfig,
-          },
-        });
-      }),
-      metadataGraphql.query(
-        getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? '',
-        () => {
-          return HttpResponse.json({
-            data: {
-              objects: {
-                // simulate no metadata items
-                edges: [],
-              },
-            },
-          });
-        },
-      ),
-    ],
-  },
 };
