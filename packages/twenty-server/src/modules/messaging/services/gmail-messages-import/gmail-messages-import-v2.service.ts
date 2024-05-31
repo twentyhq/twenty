@@ -18,10 +18,10 @@ import { MessageChannelSyncStatusService } from 'src/modules/messaging/services/
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
 import { GmailMessagesImportService } from 'src/modules/messaging/services/gmail-messages-import/gmail-messages-import.service';
 import { MessagingTelemetryService } from 'src/modules/messaging/services/telemetry/messaging-telemetry.service';
-import { filterOutBlocklistedMessages } from 'src/modules/messaging/services/utils/filter-out-blocklisted-messages.util';
 import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
+import { filterEmails } from 'src/modules/messaging/services/utils/filter-emails.util';
 
 @Injectable()
 export class GmailMessagesImportV2Service {
@@ -107,7 +107,7 @@ export class GmailMessagesImportV2Service {
         workspaceId,
       );
 
-      const messagesToSave = filterOutBlocklistedMessages(
+      const messagesToSave = filterEmails(
         allMessages,
         blocklist.map((blocklistItem) => blocklistItem.handle),
       );
