@@ -14,7 +14,6 @@ const SubDocToPath = {
   metadata: 'metadata',
 };
 
-// Docusaurus does SSR for custom pages, but we need to load GraphiQL in the browser
 const GraphQlComponent = ({ token, baseUrl, path }: any) => {
   const explorer = explorerPlugin({
     showAttribution: true,

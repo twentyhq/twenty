@@ -4038,9 +4038,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codesandbox/sandpack-react@npm:^2.13.10":
-  version: 2.13.10
-  resolution: "@codesandbox/sandpack-react@npm:2.13.10"
+"@codesandbox/sandpack-react@npm:^2.13.5":
+  version: 2.14.0
+  resolution: "@codesandbox/sandpack-react@npm:2.14.0"
   dependencies:
     "@codemirror/autocomplete": "npm:^6.4.0"
     "@codemirror/commands": "npm:^6.1.3"
@@ -4064,7 +4064,7 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17 || ^18
     react-dom: ^16.8.0 || ^17 || ^18
-  checksum: c707e5abfa9f19cf8a298656fe41a3245570ea26c3f0cdcb325bf670fd025c303091befdfe1c53d6e1d0bf972067970d6611d637e041cb6ae03eea44f3b6d352
+  checksum: d12217e5e3098679ddf483bf2dd32a29e0f18252d1bef3a47c5462ecddb64c503dde1b801dfbe6e3e729285828e06daea270a7e1caddffa84c52a552675866d5
   languageName: node
   linkType: hard
 
@@ -46827,7 +46827,7 @@ __metadata:
     "@blocknote/react": "npm:^0.12.2"
     "@chakra-ui/accordion": "npm:^2.3.0"
     "@chakra-ui/system": "npm:^2.6.0"
-    "@codesandbox/sandpack-react": "npm:^2.13.10"
+    "@codesandbox/sandpack-react": "npm:^2.13.5"
     "@crxjs/vite-plugin": "npm:^1.0.14"
     "@dagrejs/dagre": "npm:^1.1.2"
     "@docusaurus/core": "npm:^3.1.0"

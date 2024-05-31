@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { TbApi, TbChevronLeft, TbLink } from 'react-icons/tb';
 import { usePathname, useRouter } from 'next/navigation';
-import { parseJson } from 'nx/src/utils/json';
 
 // @ts-expect-error Migration loader as text not passing warnings
 import tokenForm from '!css-loader!./token-form.css';
@@ -34,19 +33,22 @@ const TokenForm = ({
 
   const [isLoading, setIsLoading] = useState(false);
   const [locationSetting, setLocationSetting] = useState(
-    parseJson?.(localStorage.getItem('baseUrl') || '')?.locationSetting ??
+    (window.localStorage.getItem('baseUrl') &&
+      JSON.parse(window.localStorage.getItem('baseUrl') ?? '')
+        ?.locationSetting) ??
       'production',
   );
   const [baseUrl, setBaseUrl] = useState(
-    parseJson?.(localStorage.getItem('baseUrl') || '')?.baseUrl ??
+    (window.localStorage.getItem('baseUrl') &&
+      JSON.parse(window.localStorage.getItem('baseUrl') ?? '')?.baseUrl) ??
       'https://api.twenty.com',
   );
 
-  const tokenLocal = localStorage?.getItem?.(
+  const tokenLocal = window.localStorage?.getItem?.(
     'TryIt_securitySchemeValues',
   ) as string;
 
-  const token = parseJson?.(tokenLocal)?.bearerAuth ?? '';
+  const token = JSON.parse(tokenLocal)?.bearerAuth ?? '';
 
   const updateLoading = (loading = false) => {
     setIsLoading(loading);
@@ -54,7 +56,7 @@ const TokenForm = ({
   };
 
   const updateToken = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    localStorage.setItem(
+    window.localStorage.setItem(
       'TryIt_securitySchemeValues',
       JSON.stringify({ bearerAuth: event.target.value }),
     );
@@ -78,7 +80,7 @@ const TokenForm = ({
     setBaseUrl(url);
     setLocationSetting(locationSetting);
     submitBaseUrl?.(url);
-    localStorage.setItem(
+    window.localStorage.setItem(
       'baseUrl',
       JSON.stringify({ baseUrl: url, locationSetting }),
     );

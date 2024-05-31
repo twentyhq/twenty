@@ -1,7 +1,6 @@
 export const DOCS_INDEX = {
   'Getting Started': {
     'Getting Started': [{ fileName: 'index' }],
-    'Managed Cloud': [{ fileName: 'cloud' }],
     'Local Setup': [{ fileName: 'local-setup' }],
     'Self-Hosting': [
       { fileName: 'self-hosting' },
@@ -10,6 +9,20 @@ export const DOCS_INDEX = {
       { fileName: 'cloud-providers' },
     ],
   },
+  Extending: {
+    'Rest APIs': [
+      { fileName: 'rest-apis' },
+      { fileName: 'core-api-rest' },
+      { fileName: 'metadata-api-rest' },
+    ],
+    'GraphQL APIs': [
+      { fileName: 'graphql-apis' },
+      { fileName: 'core-api-graphql' },
+      { fileName: 'metadata-api-graphql' },
+    ],
+    // Storybook: [{ fileName: 'storybook' }],
+  },
+
   Contributing: {
     'Bugs and Requests': [{ fileName: 'bug-and-requests' }],
     'Frontend Development': [
@@ -32,20 +45,14 @@ export const DOCS_INDEX = {
       { fileName: 'queue' },
     ],
   },
-  Extending: {
-    Storybook: [{ fileName: 'storybook' }],
-    'Rest APIs': [
-      { fileName: 'rest-apis' },
-      { fileName: 'core-api-rest' },
-      { fileName: 'metadata-api-rest' },
-    ],
-    'GraphQL APIs': [
-      { fileName: 'graphql-apis' },
-      { fileName: 'core-api-graphql' },
-      { fileName: 'metadata-api-graphql' },
+
+  'User Guide': {
+    'Getting Started': [
+      { fileName: 'getting-started' },
+      { fileName: 'get-section' },
     ],
   },
-  Components: {
+  /* Components: {
     Display: [
       { fileName: 'display' },
       { fileName: 'checkmark' },
@@ -77,11 +84,5 @@ export const DOCS_INDEX = {
       { fileName: 'navigation-bar' },
       { fileName: 'step-bar' },
     ],
-  },
-  'User Guide': {
-    'Getting Started': [
-      { fileName: 'getting-started' },
-      { fileName: 'get-section' },
-    ],
-  },
+  }, */
 };
