@@ -121,7 +121,7 @@ const DocsSidebarSection = ({
 
   const [unfolded, setUnfolded] = useState<TopicsState>(() =>
     Object.keys(topics).reduce((acc: TopicsState, topic: string) => {
-      acc[topic] = true;
+      acc[topic] = false;
       return acc;
     }, {}),
   );
@@ -152,7 +152,7 @@ const DocsSidebarSection = ({
               </StyledTitle>
             ) : null}
 
-            {unfolded[topic] &&
+            {(unfolded[topic] || !hasMultipleFiles) &&
               cards.map((card) => {
                 const isselected = pathname === `${path}${card.fileName}`;
                 const sectionName = card.topic

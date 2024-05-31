@@ -89,7 +89,11 @@ const DocsSidebar = ({ docsIndex }: { docsIndex: DocsArticlesProps[] }) => {
             <StyledHeadingText
               onClick={() =>
                 router.push(
-                  section.name === 'User Guide' ? '/user-guide' : path,
+                  section.name === 'User Guide'
+                    ? '/user-guide'
+                    : section.name === 'Developers'
+                      ? '/developers'
+                      : path,
                 )
               }
             >

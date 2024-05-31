@@ -1,6 +1,5 @@
 export const DOCS_INDEX = {
-  'Getting Started': {
-    'Getting Started': [{ fileName: 'index' }],
+  'Getting started': {
     'Local Setup': [{ fileName: 'local-setup' }],
     'Self-Hosting': [
       { fileName: 'self-hosting' },
@@ -45,13 +44,7 @@ export const DOCS_INDEX = {
       { fileName: 'queue' },
     ],
   },
-
-  'User Guide': {
-    'Getting Started': [
-      { fileName: 'getting-started' },
-      { fileName: 'get-section' },
-    ],
-  },
+  'User Guide': {},
   /* Components: {
     Display: [
       { fileName: 'display' },

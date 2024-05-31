@@ -29,4 +29,7 @@ export const USER_GUIDE_INDEX = {
       { fileName: 'github' },
     ],
   },
+  Developers: {
+    'Getting started': [{ fileName: 'getting-started' }],
+  },
 };
