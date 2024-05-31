@@ -138,7 +138,7 @@ export class WorkspaceMigrationEnumService {
       `SELECT id, "${oldColumnName}" FROM "${schemaName}"."${tableName}"`,
     );
 
-    values.map(async (value) => {
+    for (const value of values) {
       let val = value[oldColumnName];
 
       if (/^\{.*\}$/.test(val)) {
@@ -159,7 +159,7 @@ export class WorkspaceMigrationEnumService {
         SET "${columnDefinition.columnName}" = ${val}
         WHERE id='${value.id}'
       `);
-    });
+    }
   }
 
   private async dropOldEnumType(
