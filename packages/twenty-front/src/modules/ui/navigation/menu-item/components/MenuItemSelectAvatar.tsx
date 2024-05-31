@@ -47,7 +47,7 @@ export const MenuItemSelectAvatar = ({
           <OverflowingTextWithTooltip text={text} />
         </StyledMenuItemLabel>
       </StyledMenuItemLeftContent>
-      {selected && <IconCheck size={theme.icon.size.sm} />}
+      {selected && <IconCheck size={theme.icon.size.md} />}
     </StyledMenuItemSelect>
   );
 };
