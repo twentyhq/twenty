@@ -1,7 +1,9 @@
 import { InjectRepository } from '@nestjs/typeorm';
+import { Logger } from '@nestjs/common';
 
-import { Command, CommandRunner } from 'nest-commander';
+import { Command, CommandRunner, Option } from 'nest-commander';
 import { Repository } from 'typeorm';
+import chalk from 'chalk';
 
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -10,12 +12,19 @@ import { MessageChannelVisibility } from 'src/modules/messaging/standard-objects
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 
+interface UpdateMessageChannelVisibilityEnumCommandOptions {
+  workspaceId?: string;
+}
+
 @Command({
   name: 'migrate-0.20:update-message-channel-visibility-enum',
   description:
     'Change the messageChannel visibility type and update records.visibility',
 })
 export class UpdateMessageChannelVisibilityEnumCommand extends CommandRunner {
+  private readonly logger = new Logger(
+    UpdateMessageChannelVisibilityEnumCommand.name,
+  );
   constructor(
     @InjectRepository(Workspace, 'core')
     private readonly workspaceRepository: Repository<Workspace>,
@@ -28,13 +37,43 @@ export class UpdateMessageChannelVisibilityEnumCommand extends CommandRunner {
     super();
   }
 
-  async run(): Promise<void> {
-    const workspaces = await this.workspaceRepository.find();
+  @Option({
+    flags: '-w, --workspace-id [workspace_id]',
+    description: 'workspace id. Command runs on all workspaces if not provided',
+    required: false,
+  })
+  parseWorkspaceId(value: string): string {
+    return value;
+  }
 
-    for (const workspace of workspaces) {
+  async run(
+    _passedParam: string[],
+    options: UpdateMessageChannelVisibilityEnumCommandOptions,
+  ): Promise<void> {
+    let workspaceIds: string[] = [];
+
+    if (options.workspaceId) {
+      workspaceIds = [options.workspaceId];
+    } else {
+      workspaceIds = (await this.workspaceRepository.find()).map(
+        (workspace) => workspace.id,
+      );
+    }
+
+    if (!workspaceIds.length) {
+      this.logger.log(chalk.yellow('No workspace found'));
+
+      return;
+    } else {
+      this.logger.log(
+        chalk.green(`Running command on ${workspaceIds.length} workspaces`),
+      );
+    }
+
+    for (const workspaceId of workspaceIds) {
       const dataSourceMetadatas =
         await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
-          workspace.id,
+          workspaceId,
         );
 
       for (const dataSourceMetadata of dataSourceMetadatas) {
@@ -86,33 +125,42 @@ export class UpdateMessageChannelVisibilityEnumCommand extends CommandRunner {
             await queryRunner.commitTransaction();
           } catch (error) {
             await queryRunner.rollbackTransaction();
+            this.logger.log(
+              chalk.red(`Running command on workspace ${workspaceId} failed`),
+            );
             throw error;
           } finally {
             await queryRunner.release();
           }
         }
       }
-      await this.workspaceCacheVersionService.incrementVersion(workspace.id);
-    }
+      await this.workspaceCacheVersionService.incrementVersion(workspaceId);
 
-    const visibilityFieldsMetadata = await this.fieldMetadataRepository.find({
-      where: { name: 'visibility' },
-    });
-
-    for (const visibilityFieldMetadata of visibilityFieldsMetadata) {
-      const newOptions = visibilityFieldMetadata.options.map((option) => {
-        return { ...option, value: option.value.toUpperCase() };
+      const visibilityFieldsMetadata = await this.fieldMetadataRepository.find({
+        where: { name: 'visibility', workspaceId },
       });
 
-      const newDefaultValue =
-        typeof visibilityFieldMetadata.defaultValue === 'string'
-          ? visibilityFieldMetadata.defaultValue.toUpperCase()
-          : visibilityFieldMetadata.defaultValue;
+      for (const visibilityFieldMetadata of visibilityFieldsMetadata) {
+        const newOptions = visibilityFieldMetadata.options.map((option) => {
+          return { ...option, value: option.value.toUpperCase() };
+        });
 
-      await this.fieldMetadataRepository.update(visibilityFieldMetadata.id, {
-        defaultValue: newDefaultValue,
-        options: newOptions,
-      });
+        const newDefaultValue =
+          typeof visibilityFieldMetadata.defaultValue === 'string'
+            ? visibilityFieldMetadata.defaultValue.toUpperCase()
+            : visibilityFieldMetadata.defaultValue;
+
+        await this.fieldMetadataRepository.update(visibilityFieldMetadata.id, {
+          defaultValue: newDefaultValue,
+          options: newOptions,
+        });
+      }
+
+      this.logger.log(
+        chalk.green(`Running command on workspace ${workspaceId} done`),
+      );
     }
+
+    this.logger.log(chalk.green(`Command completed!`));
   }
 }
