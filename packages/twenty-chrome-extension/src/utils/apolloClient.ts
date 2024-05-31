@@ -1,37 +1,54 @@
 import { ApolloClient, from, HttpLink, InMemoryCache } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 
 import { isDefined } from '~/utils/isDefined';
 
-const clearStore = () => {
-  chrome.storage.local.remove('loginToken');
-
-  chrome.storage.local.remove('accessToken');
-
-  chrome.storage.local.remove('refreshToken');
-
+export const clearStore = () => {
+  chrome.storage.local.remove([
+    'loginToken',
+    'accessToken',
+    'refreshToken',
+    'sidepanelUrl',
+  ]);
   chrome.storage.local.set({ isAuthenticated: false });
 };
 
-const getApolloClient = async () => {
+export const getServerUrl = async () => {
   const store = await chrome.storage.local.get();
   const serverUrl = `${
     isDefined(store.serverBaseUrl)
       ? store.serverBaseUrl
       : import.meta.env.VITE_SERVER_BASE_URL
   }/graphql`;
+  return serverUrl;
+};
 
+const getAuthToken = async () => {
+  const store = await chrome.storage.local.get();
+  if (isDefined(store.accessToken)) return `Bearer ${store.accessToken.token}`;
+  else return '';
+};
+
+const getApolloClient = async () => {
+  const authLink = setContext(async (_, { headers }) => {
+    const token = await getAuthToken();
+    return {
+      headers: {
+        ...headers,
+        authorization: token,
+      },
+    };
+  });
   const errorLink = onError(({ graphQLErrors, networkError }) => {
     if (isDefined(graphQLErrors)) {
       for (const graphQLError of graphQLErrors) {
         if (graphQLError.message === 'Unauthorized') {
-          //TODO: replace this with renewToken mutation
           clearStore();
           return;
         }
         switch (graphQLError?.extensions?.code) {
           case 'UNAUTHENTICATED': {
-            //TODO: replace this with renewToken mutation
             clearStore();
             break;
           }
@@ -56,17 +73,12 @@ const getApolloClient = async () => {
   });
 
   const httpLink = new HttpLink({
-    uri: serverUrl,
-    headers: isDefined(store.accessToken)
-      ? {
-          Authorization: `Bearer ${store.accessToken.token}`,
-        }
-      : {},
+    uri: await getServerUrl(),
   });
 
   const client = new ApolloClient({
     cache: new InMemoryCache(),
-    link: from([errorLink, httpLink]),
+    link: from([errorLink, authLink, httpLink]),
   });
 
   return client;

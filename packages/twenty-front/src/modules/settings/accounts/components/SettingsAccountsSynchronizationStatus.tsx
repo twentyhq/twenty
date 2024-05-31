@@ -3,16 +3,22 @@ import { Status } from '@/ui/display/status/components/Status';
 
 export type SettingsAccountsSynchronizationStatusProps = {
   syncStatus: string;
+  isSyncEnabled?: boolean;
 };
 
 export const SettingsAccountsSynchronizationStatus = ({
   syncStatus,
+  isSyncEnabled,
 }: SettingsAccountsSynchronizationStatusProps) => {
   const syncStatusOptions = useGetSyncStatusOptions();
 
   const syncStatusOption = syncStatusOptions?.find(
     (option) => option.value === syncStatus,
   );
+
+  if (!isSyncEnabled) {
+    return <Status color="gray" text="Not synced" weight="medium" />;
+  }
 
   return (
     <Status

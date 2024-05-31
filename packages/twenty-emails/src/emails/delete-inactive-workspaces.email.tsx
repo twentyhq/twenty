@@ -1,4 +1,5 @@
 import { Column, Row, Section } from '@react-email/components';
+
 import { BaseEmail } from 'src/components/BaseEmail';
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';

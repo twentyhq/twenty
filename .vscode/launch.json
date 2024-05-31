@@ -33,6 +33,24 @@
       "internalConsoleOptions": "openOnSessionStart",
       "console": "internalConsole",
       "cwd": "${workspaceFolder}/packages/twenty-server/"
+    },
+    {
+      "name": "twenty-server - command debug example",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npx",
+      "runtimeVersion": "18",
+      "runtimeArgs": [
+        "nx",
+        "run",
+        "twenty-server:command",
+        "my-command",
+        "--my-parameter value",
+      ],
+      "outputCapture": "std",
+      "internalConsoleOptions": "openOnSessionStart",
+      "console": "internalConsole",
+      "cwd": "${workspaceFolder}/packages/twenty-server/"
     }
   ]
 }

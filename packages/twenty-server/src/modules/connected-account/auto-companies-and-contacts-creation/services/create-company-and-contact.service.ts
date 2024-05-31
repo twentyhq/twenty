@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { EntityManager, Repository } from 'typeorm';
-import compact from 'lodash/compact';
+import compact from 'lodash.compact';
 
 import { getDomainNameFromHandle } from 'src/modules/calendar-messaging-participant/utils/get-domain-name-from-handle.util';
 import { CreateCompanyService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/create-company/create-company.service';
@@ -11,27 +11,25 @@ import { PersonRepository } from 'src/modules/person/repositories/person.reposit
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { isWorkEmail } from 'src/utils/is-work-email';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { getUniqueContactsAndHandles } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/get-unique-contacts-and-handles.util';
 import { Contacts } from 'src/modules/connected-account/auto-companies-and-contacts-creation/types/contact.type';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { MessageParticipantService } from 'src/modules/messaging/services/message-participant/message-participant.service';
 import { CalendarEventParticipantService } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.service';
 import { filterOutContactsFromCompanyOrWorkspace } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/filter-out-contacts-from-company-or-workspace.util';
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 @Injectable()
 export class CreateCompanyAndContactService {
   constructor(
     private readonly createContactService: CreateContactService,
     private readonly createCompaniesService: CreateCompanyService,
-    @InjectObjectMetadataRepository(PersonObjectMetadata)
+    @InjectObjectMetadataRepository(PersonWorkspaceEntity)
     private readonly personRepository: PersonRepository,
-    @InjectObjectMetadataRepository(WorkspaceMemberObjectMetadata)
+    @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
     private readonly workspaceMemberRepository: WorkspaceMemberRepository,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly messageParticipantService: MessageParticipantService,
@@ -40,14 +38,14 @@ export class CreateCompanyAndContactService {
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
-  async createCompaniesAndContacts(
+  async createCompaniesAndPeople(
     connectedAccountHandle: string,
     contactsToCreate: Contacts,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ) {
+  ): Promise<ObjectRecord<PersonWorkspaceEntity>[]> {
     if (!contactsToCreate || contactsToCreate.length === 0) {
-      return;
+      return [];
     }
 
     // TODO: This is a feature that may be implemented in the future
@@ -71,7 +69,7 @@ export class CreateCompanyAndContactService {
     );
 
     if (uniqueHandles.length === 0) {
-      return;
+      return [];
     }
 
     const alreadyCreatedContacts = await this.personRepository.getByEmails(
@@ -123,7 +121,7 @@ export class CreateCompanyAndContactService {
             : undefined,
       }));
 
-    await this.createContactService.createContacts(
+    return await this.createContactService.createPeople(
       formattedContactsToCreate,
       workspaceId,
       transactionManager,
@@ -142,7 +140,7 @@ export class CreateCompanyAndContactService {
 
     await workspaceDataSource?.transaction(
       async (transactionManager: EntityManager) => {
-        await this.createCompaniesAndContacts(
+        const createdPeople = await this.createCompaniesAndPeople(
           connectedAccountHandle,
           contactsToCreate,
           workspaceId,
@@ -150,21 +148,13 @@ export class CreateCompanyAndContactService {
         );
 
         await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
+          createdPeople,
           workspaceId,
           transactionManager,
         );
 
-        const isCalendarEnabled = await this.featureFlagRepository.findOneBy({
-          workspaceId,
-          key: FeatureFlagKeys.IsCalendarEnabled,
-          value: true,
-        });
-
-        if (!isCalendarEnabled || !isCalendarEnabled.value) {
-          return;
-        }
-
         await this.calendarEventParticipantService.updateCalendarEventParticipantsAfterPeopleCreation(
+          createdPeople,
           workspaceId,
           transactionManager,
         );

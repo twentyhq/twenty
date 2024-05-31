@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { Column } from '@react-email/components';
 import { Row } from '@react-email/row';
 import { Text } from '@react-email/text';
+
 import { emailTheme } from 'src/common-style';
 
 const rowStyle = {

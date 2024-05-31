@@ -15,11 +15,14 @@ type EntitySchemaRelationMap = {
 @Injectable()
 export class EntitySchemaRelationFactory {
   create(
+    // eslint-disable-next-line @typescript-eslint/ban-types
+    target: Function,
     relationMetadataArgsCollection: WorkspaceRelationMetadataArgs[],
   ): EntitySchemaRelationMap {
     const entitySchemaRelationMap: EntitySchemaRelationMap = {};
 
     for (const relationMetadataArgs of relationMetadataArgsCollection) {
+      const objectName = convertClassNameToObjectMetadataName(target.name);
       const oppositeTarget = relationMetadataArgs.inverseSideTarget();
       const oppositeObjectName = convertClassNameToObjectMetadataName(
         oppositeTarget.name,
@@ -30,7 +33,7 @@ export class EntitySchemaRelationFactory {
       entitySchemaRelationMap[relationMetadataArgs.name] = {
         type: relationType,
         target: oppositeObjectName,
-        inverseSide: relationMetadataArgs.inverseSideFieldKey,
+        inverseSide: relationMetadataArgs.inverseSideFieldKey ?? objectName,
         joinColumn: relationMetadataArgs.joinColumn
           ? {
               name: relationMetadataArgs.joinColumn,

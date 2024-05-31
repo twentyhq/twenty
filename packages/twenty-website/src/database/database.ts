@@ -22,7 +22,10 @@ const findOne = (model: any, orderBy: any) => {
   return pgDb.select().from(model).orderBy(orderBy).limit(1).execute();
 };
 
-const findAll = (model: any) => {
+const findAll = (model: any, orderBy?: any) => {
+  if (orderBy) {
+    return pgDb.select().from(model).orderBy(orderBy).execute();
+  }
   return pgDb.select().from(model).execute();
 };
 

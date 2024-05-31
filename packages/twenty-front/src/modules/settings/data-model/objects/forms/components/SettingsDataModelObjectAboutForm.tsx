@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import { z } from 'zod';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
-import { validateMetadataLabel } from '@/object-metadata/utils/validateMetadataLabel';
 import { objectMetadataItemSchema } from '@/object-metadata/validation-schemas/objectMetadataItemSchema';
 import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -23,6 +22,7 @@ type SettingsDataModelObjectAboutFormValues = z.infer<
 
 type SettingsDataModelObjectAboutFormProps = {
   disabled?: boolean;
+  disableNameEdit?: boolean;
   objectMetadataItem?: ObjectMetadataItem;
 };
 
@@ -47,6 +47,7 @@ const StyledInputContainer = styled.div`
 
 export const SettingsDataModelObjectAboutForm = ({
   disabled,
+  disableNameEdit,
   objectMetadataItem,
 }: SettingsDataModelObjectAboutFormProps) => {
   const { control } = useFormContext<SettingsDataModelObjectAboutFormValues>();
@@ -93,12 +94,8 @@ export const SettingsDataModelObjectAboutForm = ({
                 label={label}
                 placeholder={placeholder}
                 value={value}
-                onChange={(value) => {
-                  if (!value || validateMetadataLabel(value)) {
-                    onChange?.(value);
-                  }
-                }}
-                disabled={disabled}
+                onChange={onChange}
+                disabled={disabled || disableNameEdit}
                 fullWidth
               />
             )}

@@ -4,6 +4,7 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
+import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { SettingsAccountsEmails } from '../SettingsAccountsEmails';
@@ -11,7 +12,7 @@ import { SettingsAccountsEmails } from '../SettingsAccountsEmails';
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Accounts/SettingsAccountsEmails',
   component: SettingsAccountsEmails,
-  decorators: [PageDecorator],
+  decorators: [PrefetchLoadingDecorator, PageDecorator],
   args: {
     routePath: '/settings/accounts/emails',
   },

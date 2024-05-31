@@ -11,6 +11,9 @@ import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { WorkspaceMigrationModule } from 'src/engine/metadata-modules/workspace-migration/workspace-migration.module';
 import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/workspace-migration-runner/workspace-migration-runner.module';
+import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
+import { RelationMetadataResolver } from 'src/engine/metadata-modules/relation-metadata/relation-metadata.resolver';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 import { RelationMetadataService } from './relation-metadata.service';
 import { RelationMetadataEntity } from './relation-metadata.entity';
@@ -23,13 +26,14 @@ import { RelationMetadataDTO } from './dtos/relation-metadata.dto';
     NestjsQueryGraphQLModule.forFeature({
       imports: [
         NestjsQueryTypeOrmModule.forFeature(
-          [RelationMetadataEntity],
+          [RelationMetadataEntity, FieldMetadataEntity],
           'metadata',
         ),
         ObjectMetadataModule,
         FieldMetadataModule,
         WorkspaceMigrationRunnerModule,
         WorkspaceMigrationModule,
+        WorkspaceCacheVersionModule,
       ],
       services: [RelationMetadataService],
       resolvers: [
@@ -41,13 +45,13 @@ import { RelationMetadataDTO } from './dtos/relation-metadata.dto';
           pagingStrategy: PagingStrategies.CURSOR,
           create: { many: { disabled: true } },
           update: { disabled: true },
-          delete: { many: { disabled: true } },
+          delete: { disabled: true },
           guards: [JwtAuthGuard],
         },
       ],
     }),
   ],
-  providers: [RelationMetadataService],
+  providers: [RelationMetadataService, RelationMetadataResolver],
   exports: [RelationMetadataService],
 })
 export class RelationMetadataModule {}

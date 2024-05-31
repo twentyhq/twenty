@@ -5,6 +5,7 @@ import { EntitySchema } from 'typeorm';
 import { EntitySchemaColumnFactory } from 'src/engine/twenty-orm/factories/entity-schema-column.factory';
 import { EntitySchemaRelationFactory } from 'src/engine/twenty-orm/factories/entity-schema-relation.factory';
 import { metadataArgsStorage } from 'src/engine/twenty-orm/storage/metadata-args.storage';
+import { ObjectLiteralStorage } from 'src/engine/twenty-orm/storage/object-literal.storage';
 
 @Injectable()
 export class EntitySchemaFactory {
@@ -14,10 +15,10 @@ export class EntitySchemaFactory {
   ) {}
 
   create<T>(target: Type<T>): EntitySchema {
-    const objectMetadataArgs = metadataArgsStorage.filterObjects(target);
+    const entityMetadataArgs = metadataArgsStorage.filterEntities(target);
 
-    if (!objectMetadataArgs) {
-      throw new Error('Object metadata args are missing on this target');
+    if (!entityMetadataArgs) {
+      throw new Error('Entity metadata args are missing on this target');
     }
 
     const fieldMetadataArgsCollection =
@@ -27,17 +28,23 @@ export class EntitySchemaFactory {
 
     const columns = this.entitySchemaColumnFactory.create(
       fieldMetadataArgsCollection,
-    );
-
-    const relations = this.entitySchemaRelationFactory.create(
       relationMetadataArgsCollection,
     );
 
-    return new EntitySchema({
-      name: objectMetadataArgs.nameSingular,
-      tableName: objectMetadataArgs.nameSingular,
+    const relations = this.entitySchemaRelationFactory.create(
+      target,
+      relationMetadataArgsCollection,
+    );
+
+    const entitySchema = new EntitySchema({
+      name: entityMetadataArgs.nameSingular,
+      tableName: entityMetadataArgs.nameSingular,
       columns,
       relations,
     });
+
+    ObjectLiteralStorage.setObjectLiteral(entitySchema, target);
+
+    return entitySchema;
   }
 }

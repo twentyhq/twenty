@@ -14,7 +14,7 @@ import {
   BlocklistReimportCalendarEventsJobData,
   BlocklistReimportCalendarEventsJob,
 } from 'src/modules/calendar/jobs/blocklist-reimport-calendar-events.job';
-import { BlocklistObjectMetadata } from 'src/modules/connected-account/standard-objects/blocklist.object-metadata';
+import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 
 @Injectable()
 export class CalendarBlocklistListener {
@@ -25,7 +25,7 @@ export class CalendarBlocklistListener {
 
   @OnEvent('blocklist.created')
   async handleCreatedEvent(
-    payload: ObjectRecordCreateEvent<BlocklistObjectMetadata>,
+    payload: ObjectRecordCreateEvent<BlocklistWorkspaceEntity>,
   ) {
     await this.messageQueueService.add<BlocklistItemDeleteCalendarEventsJobData>(
       BlocklistItemDeleteCalendarEventsJob.name,
@@ -38,7 +38,7 @@ export class CalendarBlocklistListener {
 
   @OnEvent('blocklist.deleted')
   async handleDeletedEvent(
-    payload: ObjectRecordDeleteEvent<BlocklistObjectMetadata>,
+    payload: ObjectRecordDeleteEvent<BlocklistWorkspaceEntity>,
   ) {
     await this.messageQueueService.add<BlocklistReimportCalendarEventsJobData>(
       BlocklistReimportCalendarEventsJob.name,
@@ -52,7 +52,7 @@ export class CalendarBlocklistListener {
 
   @OnEvent('blocklist.updated')
   async handleUpdatedEvent(
-    payload: ObjectRecordUpdateEvent<BlocklistObjectMetadata>,
+    payload: ObjectRecordUpdateEvent<BlocklistWorkspaceEntity>,
   ) {
     await this.messageQueueService.add<BlocklistItemDeleteCalendarEventsJobData>(
       BlocklistItemDeleteCalendarEventsJob.name,

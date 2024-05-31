@@ -8,6 +8,7 @@ import {
   ObjectLiteral,
 } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
+import { DeepPartial } from 'typeorm/common/DeepPartial';
 
 import { PartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 

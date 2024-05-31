@@ -21,11 +21,6 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKeys.IsCalendarEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
         key: FeatureFlagKeys.IsAirtableIntegrationEnabled,
         workspaceId: workspaceId,
         value: true,
@@ -41,7 +36,17 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKeys.IsMultiSelectEnabled,
+        key: FeatureFlagKeys.IsStripeIntegrationEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKeys.IsGmailSyncV2Enabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
+      {
+        key: FeatureFlagKeys.IsContactCreationForSentAndReceivedEmailsEnabled,
         workspaceId: workspaceId,
         value: true,
       },

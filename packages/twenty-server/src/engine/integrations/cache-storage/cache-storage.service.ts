@@ -63,6 +63,10 @@ export class CacheStorageService {
     });
   }
 
+  async flush() {
+    return this.cache.reset();
+  }
+
   private isRedisCache() {
     return (this.cache.store as any)?.name === 'redis';
   }

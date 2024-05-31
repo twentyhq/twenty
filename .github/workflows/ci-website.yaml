@@ -27,12 +27,8 @@ jobs:
           - 5432:5432
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18"
-      - name: Website / Install Dependencies
-        run: yarn
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/yarn-install
       - name: Website / Run migrations
         run: npx nx database:migrate twenty-website 
         env:

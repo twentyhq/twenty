@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { FieldMetadataType } from '~/generated/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const generateEmptyFieldValue = (
   fieldMetadataItem: FieldMetadataItem,
@@ -17,6 +17,9 @@ export const generateEmptyFieldValue = (
         label: '',
         url: '',
       };
+    }
+    case FieldMetadataType.Links: {
+      return { primaryLinkUrl: '', primaryLinkLabel: '', secondaryLinks: null };
     }
     case FieldMetadataType.FullName: {
       return {

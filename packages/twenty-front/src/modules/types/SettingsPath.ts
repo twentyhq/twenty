@@ -9,6 +9,7 @@ export enum SettingsPath {
   AccountsEmailsInboxSettings = 'accounts/emails/:accountUuid',
   Billing = 'billing',
   Objects = 'objects',
+  ObjectOverview = 'objects/overview',
   ObjectDetail = 'objects/:objectSlug',
   ObjectEdit = 'objects/:objectSlug/edit',
   ObjectNewFieldStep1 = 'objects/:objectSlug/new-field/step-1',
@@ -23,7 +24,9 @@ export enum SettingsPath {
   Integrations = 'integrations',
   IntegrationDatabase = 'integrations/:databaseKey',
   IntegrationDatabaseConnection = 'integrations/:databaseKey/:connectionId',
+  IntegrationEditDatabaseConnection = 'integrations/:databaseKey/:connectionId/edit',
   IntegrationNewDatabaseConnection = 'integrations/:databaseKey/new',
   DevelopersNewWebhook = 'webhooks/new',
   DevelopersNewWebhookDetail = 'webhooks/:webhookId',
+  Releases = 'releases',
 }

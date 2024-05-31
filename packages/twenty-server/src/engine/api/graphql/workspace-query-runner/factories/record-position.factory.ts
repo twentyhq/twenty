@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'class-validator';
+
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import {
   RecordPositionQueryFactory,
@@ -32,6 +34,8 @@ export class RecordPositionFactory {
       dataSourceSchema,
     );
 
+    // If the value was 'first', the first record will be the one with the lowest position
+    // If the value was 'last', the first record will be the one with the highest position
     const records = await this.workspaceDataSourceService.executeRawQuery(
       query,
       [],
@@ -39,10 +43,16 @@ export class RecordPositionFactory {
       undefined,
     );
 
-    return (
-      (value === 'first'
-        ? records[0]?.position / 2
-        : records[0]?.position + 1) || 1
-    );
+    if (
+      !isDefined(records) ||
+      records.length === 0 ||
+      !isDefined(records[0]?.position)
+    ) {
+      return 1;
+    }
+
+    return value === 'first'
+      ? records[0].position - 1
+      : records[0].position + 1;
   }
 }

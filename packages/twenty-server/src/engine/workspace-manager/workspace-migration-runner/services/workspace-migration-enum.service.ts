@@ -32,9 +32,9 @@ export class WorkspaceMigrationEnumService {
     }
 
     const columnDefinition = migrationColumn.alteredColumnDefinition;
-    const oldEnumTypeName =
-      `${tableName}_${migrationColumn.currentColumnDefinition.columnName}_enum`.toLowerCase();
+    const oldEnumTypeName = `${tableName}_${migrationColumn.currentColumnDefinition.columnName}_enum`;
     const tempEnumTypeName = `${oldEnumTypeName}_temp`;
+    const newEnumTypeName = `${tableName}_${columnDefinition.columnName}_enum`;
     const enumValues =
       columnDefinition.enum?.map((enumValue) => {
         if (typeof enumValue === 'string') {
@@ -76,6 +76,7 @@ export class WorkspaceMigrationEnumService {
         type: columnDefinition.columnType,
         default: columnDefinition.defaultValue,
         enum: enumValues,
+        enumName: newEnumTypeName,
         isArray: columnDefinition.isArray,
         isNullable: columnDefinition.isNullable,
       }),
@@ -137,7 +138,7 @@ export class WorkspaceMigrationEnumService {
       `SELECT id, "${oldColumnName}" FROM "${schemaName}"."${tableName}"`,
     );
 
-    values.map(async (value) => {
+    for (const value of values) {
       let val = value[oldColumnName];
 
       if (/^\{.*\}$/.test(val)) {
@@ -158,7 +159,7 @@ export class WorkspaceMigrationEnumService {
         SET "${columnDefinition.columnName}" = ${val}
         WHERE id='${value.id}'
       `);
-    });
+    }
   }
 
   private async dropOldEnumType(

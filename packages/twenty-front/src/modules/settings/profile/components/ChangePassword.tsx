@@ -1,7 +1,8 @@
 import { useRecoilValue } from 'recoil';
+import { H2Title } from 'twenty-ui';
 
 import { currentUserState } from '@/auth/states/currentUserState';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { Button } from '@/ui/input/button/components/Button';
 import { useEmailPasswordResetLinkMutation } from '~/generated/graphql';
@@ -16,7 +17,7 @@ export const ChangePassword = () => {
   const handlePasswordResetClick = async () => {
     if (!currentUser?.email) {
       enqueueSnackBar('Invalid email', {
-        variant: 'error',
+        variant: SnackBarVariant.Error,
       });
       return;
     }
@@ -29,16 +30,16 @@ export const ChangePassword = () => {
       });
       if (data?.emailPasswordResetLink?.success === true) {
         enqueueSnackBar('Password reset link has been sent to the email', {
-          variant: 'success',
+          variant: SnackBarVariant.Success,
         });
       } else {
         enqueueSnackBar('There was some issue', {
-          variant: 'error',
+          variant: SnackBarVariant.Error,
         });
       }
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
-        variant: 'error',
+        variant: SnackBarVariant.Error,
       });
     }
   };

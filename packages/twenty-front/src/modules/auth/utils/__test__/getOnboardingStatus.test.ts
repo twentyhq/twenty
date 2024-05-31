@@ -9,6 +9,7 @@ describe('getOnboardingStatus', () => {
       isLoggedIn: false,
       currentWorkspaceMember: null,
       currentWorkspace: null,
+      isBillingEnabled: false,
     });
 
     const ongoingWorkspaceActivation = getOnboardingStatus({
@@ -18,6 +19,7 @@ describe('getOnboardingStatus', () => {
         id: '1',
         activationStatus: 'inactive',
       } as CurrentWorkspace,
+      isBillingEnabled: false,
     });
 
     const ongoingProfileCreation = getOnboardingStatus({
@@ -30,6 +32,7 @@ describe('getOnboardingStatus', () => {
         id: '1',
         activationStatus: 'active',
       } as CurrentWorkspace,
+      isBillingEnabled: false,
     });
 
     const completed = getOnboardingStatus({
@@ -45,6 +48,7 @@ describe('getOnboardingStatus', () => {
         id: '1',
         activationStatus: 'active',
       } as CurrentWorkspace,
+      isBillingEnabled: false,
     });
 
     const incomplete = getOnboardingStatus({
@@ -78,6 +82,7 @@ describe('getOnboardingStatus', () => {
         activationStatus: 'active',
         subscriptionStatus: 'incomplete',
       } as CurrentWorkspace,
+      isBillingEnabled: false,
     });
 
     const canceled = getOnboardingStatus({

@@ -31,6 +31,7 @@ export enum FieldMetadataType {
   NUMERIC = 'NUMERIC',
   PROBABILITY = 'PROBABILITY',
   LINK = 'LINK',
+  LINKS = 'LINKS',
   CURRENCY = 'CURRENCY',
   FULL_NAME = 'FULL_NAME',
   RATING = 'RATING',

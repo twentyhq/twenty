@@ -17,7 +17,7 @@ import { WorkspaceMigrationEntity } from 'src/engine/metadata-modules/workspace-
 import { WorkspaceSyncStorage } from 'src/engine/workspace-manager/workspace-sync-metadata/storage/workspace-sync.storage';
 import { WorkspaceMigrationRelationFactory } from 'src/engine/workspace-manager/workspace-migration-builder/factories/workspace-migration-relation.factory';
 import { standardObjectMetadataDefinitions } from 'src/engine/workspace-manager/workspace-sync-metadata/standard-objects';
-import { CustomObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/custom-objects/custom.object-metadata';
+import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 
 @Injectable()
 export class WorkspaceSyncRelationMetadataService {
@@ -88,7 +88,7 @@ export class WorkspaceSyncRelationMetadataService {
       this.standardRelationFactory.create(
         customObjectMetadataCollection.map((objectMetadata) => ({
           object: objectMetadata,
-          metadata: CustomObjectMetadata,
+          metadata: CustomWorkspaceEntity,
         })),
         context,
         originalObjectMetadataMap,

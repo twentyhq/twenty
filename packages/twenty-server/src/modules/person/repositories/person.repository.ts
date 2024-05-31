@@ -4,7 +4,8 @@ import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
-import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/get-flattened-values-and-values-string-for-batch-raw-query.util';
 
 @Injectable()
 export class PersonRepository {
@@ -16,7 +17,7 @@ export class PersonRepository {
     emails: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<PersonObjectMetadata>[]> {
+  ): Promise<ObjectRecord<PersonWorkspaceEntity>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -26,6 +27,23 @@ export class PersonRepository {
       workspaceId,
       transactionManager,
     );
+  }
+
+  async getLastPersonPosition(
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<number> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const result = await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT MAX(position) FROM ${dataSourceSchema}.person`,
+      [],
+      workspaceId,
+      transactionManager,
+    );
+
+    return result[0].max ?? 0;
   }
 
   async createPeople(
@@ -38,30 +56,33 @@ export class PersonRepository {
     }[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<void> {
+  ): Promise<ObjectRecord<PersonWorkspaceEntity>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const valuesString = peopleToCreate
-      .map(
-        (_, index) =>
-          `($${index * 5 + 1}, $${index * 5 + 2}, $${index * 5 + 3}, $${
-            index * 5 + 4
-          }, $${index * 5 + 5})`,
-      )
-      .join(', ');
+    const lastPersonPosition = await this.getLastPersonPosition(
+      workspaceId,
+      transactionManager,
+    );
+
+    peopleToCreate = peopleToCreate.map((contact, index) => ({
+      ...contact,
+      position: lastPersonPosition + index + 1,
+    }));
+
+    const { flattenedValues, valuesString } =
+      getFlattenedValuesAndValuesStringForBatchRawQuery(peopleToCreate, {
+        id: 'uuid',
+        handle: 'text',
+        firstName: 'text',
+        lastName: 'text',
+        companyId: 'uuid',
+        position: 'double precision',
+      });
 
     return await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}.person (id, email, "nameFirstName", "nameLastName", "companyId") VALUES ${valuesString}`,
-      peopleToCreate
-        .map((contact) => [
-          contact.id,
-          contact.handle,
-          contact.firstName,
-          contact.lastName,
-          contact.companyId,
-        ])
-        .flat(),
+      `INSERT INTO ${dataSourceSchema}.person (id, email, "nameFirstName", "nameLastName", "companyId", "position") VALUES ${valuesString} RETURNING *`,
+      flattenedValues,
       workspaceId,
       transactionManager,
     );

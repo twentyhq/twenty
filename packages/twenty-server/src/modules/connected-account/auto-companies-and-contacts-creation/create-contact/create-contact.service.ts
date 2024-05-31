@@ -6,7 +6,8 @@ import { v4 } from 'uuid';
 import { PersonRepository } from 'src/modules/person/repositories/person.repository';
 import { getFirstNameAndLastNameFromHandleAndDisplayName } from 'src/modules/calendar-messaging-participant/utils/get-first-name-and-last-name-from-handle-and-display-name.util';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 type ContactToCreate = {
   handle: string;
@@ -25,7 +26,7 @@ type FormattedContactToCreate = {
 @Injectable()
 export class CreateContactService {
   constructor(
-    @InjectObjectMetadataRepository(PersonObjectMetadata)
+    @InjectObjectMetadataRepository(PersonWorkspaceEntity)
     private readonly personRepository: PersonRepository,
   ) {}
 
@@ -50,16 +51,16 @@ export class CreateContactService {
     });
   }
 
-  public async createContacts(
+  public async createPeople(
     contactsToCreate: ContactToCreate[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<void> {
-    if (contactsToCreate.length === 0) return;
+  ): Promise<ObjectRecord<PersonWorkspaceEntity>[]> {
+    if (contactsToCreate.length === 0) return [];
 
     const formattedContacts = this.formatContacts(contactsToCreate);
 
-    await this.personRepository.createPeople(
+    return await this.personRepository.createPeople(
       formattedContacts,
       workspaceId,
       transactionManager,

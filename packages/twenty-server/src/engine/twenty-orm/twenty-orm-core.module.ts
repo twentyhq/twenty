@@ -5,11 +5,15 @@ import {
   Module,
   OnApplicationShutdown,
   Provider,
+  Type,
 } from '@nestjs/common';
 import {
   ConfigurableModuleClass,
   MODULE_OPTIONS_TOKEN,
 } from '@nestjs/common/cache/cache.module-definition';
+
+import { importClassesFromDirectories } from 'typeorm/util/DirectoryExportedClassesLoader';
+import { Logger as TypeORMLogger } from 'typeorm/logger/Logger';
 
 import {
   TwentyORMModuleAsyncOptions,
@@ -18,45 +22,52 @@ import {
 
 import { entitySchemaFactories } from 'src/engine/twenty-orm/factories';
 import { TWENTY_ORM_WORKSPACE_DATASOURCE } from 'src/engine/twenty-orm/twenty-orm.constants';
-import { TwentyORMService } from 'src/engine/twenty-orm/twenty-orm.service';
-import { WorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/workspace-datasource.factory';
+import { TwentyORMManager } from 'src/engine/twenty-orm/twenty-orm.manager';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { EntitySchemaFactory } from 'src/engine/twenty-orm/factories/entity-schema.factory';
 import { DataSourceStorage } from 'src/engine/twenty-orm/storage/data-source.storage';
+import { ScopedWorkspaceDatasourceFactory } from 'src/engine/twenty-orm/factories/scoped-workspace-datasource.factory';
+import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
+import { splitClassesAndStrings } from 'src/engine/twenty-orm/utils/split-classes-and-strings.util';
+import { CustomWorkspaceEntity } from 'src/engine/twenty-orm/custom.workspace-entity';
 
 @Global()
 @Module({
   imports: [DataSourceModule],
-  providers: [...entitySchemaFactories, TwentyORMService],
-  exports: [EntitySchemaFactory, TwentyORMService],
+  providers: [...entitySchemaFactories, TwentyORMManager],
+  exports: [EntitySchemaFactory, TwentyORMManager],
 })
 export class TwentyORMCoreModule
   extends ConfigurableModuleClass
   implements OnApplicationShutdown
 {
-  private readonly logger = new Logger(TwentyORMCoreModule.name);
+  private static readonly logger = new Logger(TwentyORMCoreModule.name);
 
   static register(options: TwentyORMOptions): DynamicModule {
     const dynamicModule = super.register(options);
+
+    console.log('register', options);
     const providers: Provider[] = [
       {
         provide: TWENTY_ORM_WORKSPACE_DATASOURCE,
         useFactory: async (
           entitySchemaFactory: EntitySchemaFactory,
-          workspaceDatasourceFactory: WorkspaceDatasourceFactory,
+          scopedWorkspaceDatasourceFactory: ScopedWorkspaceDatasourceFactory,
         ) => {
-          const entities = options.objects.map((entityClass) =>
+          const workspaceEntities = await this.loadEntities(
+            options.workspaceEntities,
+          );
+
+          const entities = workspaceEntities.map((entityClass) =>
             entitySchemaFactory.create(entityClass),
           );
 
-          const dataSource =
-            await workspaceDatasourceFactory.createWorkspaceDatasource(
-              entities,
-            );
+          const scopedWorkspaceDataSource =
+            await scopedWorkspaceDatasourceFactory.create(entities);
 
-          return dataSource;
+          return scopedWorkspaceDataSource;
         },
-        inject: [EntitySchemaFactory, WorkspaceDatasourceFactory],
+        inject: [EntitySchemaFactory, ScopedWorkspaceDatasourceFactory],
       },
     ];
 
@@ -79,23 +90,25 @@ export class TwentyORMCoreModule
         provide: TWENTY_ORM_WORKSPACE_DATASOURCE,
         useFactory: async (
           entitySchemaFactory: EntitySchemaFactory,
-          workspaceDatasourceFactory: WorkspaceDatasourceFactory,
+          scopedWorkspaceDatasourceFactory: ScopedWorkspaceDatasourceFactory,
           options: TwentyORMOptions,
         ) => {
-          const entities = options.objects.map((entityClass) =>
+          const workspaceEntities = await this.loadEntities(
+            options.workspaceEntities,
+          );
+
+          const entities = workspaceEntities.map((entityClass) =>
             entitySchemaFactory.create(entityClass),
           );
 
-          const dataSource =
-            await workspaceDatasourceFactory.createWorkspaceDatasource(
-              entities,
-            );
+          const scopedWorkspaceDataSource =
+            await scopedWorkspaceDatasourceFactory.create(entities);
 
-          return dataSource;
+          return scopedWorkspaceDataSource;
         },
         inject: [
           EntitySchemaFactory,
-          WorkspaceDatasourceFactory,
+          ScopedWorkspaceDatasourceFactory,
           MODULE_OPTIONS_TOKEN,
         ],
       },
@@ -126,5 +139,30 @@ export class TwentyORMCoreModule
         this.logger.error(e?.message);
       }
     }
+  }
+
+  private static async loadEntities(
+    workspaceEntities: (Type<BaseWorkspaceEntity> | string)[],
+  ): Promise<Type<BaseWorkspaceEntity>[]> {
+    const [entityClassesOrSchemas, entityDirectories] = splitClassesAndStrings(
+      workspaceEntities || [],
+    );
+    const importedEntities = await importClassesFromDirectories(
+      // Only `log` function is used under importClassesFromDirectories function
+      this.logger as unknown as TypeORMLogger,
+      entityDirectories,
+    );
+    const entities = [
+      ...entityClassesOrSchemas,
+      ...(importedEntities as Type<BaseWorkspaceEntity>[]),
+    ];
+
+    return entities.filter(
+      (entity) =>
+        // Filter out CustomWorkspaceEntity as it's a partial entity handled separately
+        entity.name !== CustomWorkspaceEntity.name &&
+        // Filter out BaseWorkspaceEntity as it's a base entity and should not be included in the workspace entities
+        entity.name !== BaseWorkspaceEntity.name,
+    );
   }
 }

@@ -14,24 +14,28 @@ import { MessageThreadRepository } from 'src/modules/messaging/repositories/mess
 import { MessageRepository } from 'src/modules/messaging/repositories/message.repository';
 import { PersonRepository } from 'src/modules/person/repositories/person.repository';
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
+import { AttachmentRepository } from 'src/modules/attachment/repositories/attachment.repository';
+import { CommentRepository } from 'src/modules/activity/repositories/comment.repository';
 
 export const metadataToRepositoryMapping = {
-  AuditLogObjectMetadata: AuditLogRepository,
-  BlocklistObjectMetadata: BlocklistRepository,
-  CalendarChannelEventAssociationObjectMetadata:
+  AuditLogWorkspaceEntity: AuditLogRepository,
+  BlocklistWorkspaceEntity: BlocklistRepository,
+  CalendarChannelEventAssociationWorkspaceEntity:
     CalendarChannelEventAssociationRepository,
-  CalendarChannelObjectMetadata: CalendarChannelRepository,
-  CalendarEventParticipantObjectMetadata: CalendarEventParticipantRepository,
-  CalendarEventObjectMetadata: CalendarEventRepository,
-  CompanyObjectMetadata: CompanyRepository,
-  ConnectedAccountObjectMetadata: ConnectedAccountRepository,
-  MessageChannelMessageAssociationObjectMetadata:
+  CalendarChannelWorkspaceEntity: CalendarChannelRepository,
+  CalendarEventParticipantWorkspaceEntity: CalendarEventParticipantRepository,
+  CalendarEventWorkspaceEntity: CalendarEventRepository,
+  CompanyWorkspaceEntity: CompanyRepository,
+  ConnectedAccountWorkspaceEntity: ConnectedAccountRepository,
+  MessageChannelMessageAssociationWorkspaceEntity:
     MessageChannelMessageAssociationRepository,
-  MessageChannelObjectMetadata: MessageChannelRepository,
-  MessageObjectMetadata: MessageRepository,
-  MessageParticipantObjectMetadata: MessageParticipantRepository,
-  MessageThreadObjectMetadata: MessageThreadRepository,
-  PersonObjectMetadata: PersonRepository,
-  TimelineActivityObjectMetadata: TimelineActivityRepository,
-  WorkspaceMemberObjectMetadata: WorkspaceMemberRepository,
+  MessageChannelWorkspaceEntity: MessageChannelRepository,
+  MessageWorkspaceEntity: MessageRepository,
+  MessageParticipantWorkspaceEntity: MessageParticipantRepository,
+  MessageThreadWorkspaceEntity: MessageThreadRepository,
+  PersonWorkspaceEntity: PersonRepository,
+  TimelineActivityWorkspaceEntity: TimelineActivityRepository,
+  WorkspaceMemberWorkspaceEntity: WorkspaceMemberRepository,
+  AttachmentWorkspaceEntity: AttachmentRepository,
+  CommentWorkspaceEntity: CommentRepository,
 };

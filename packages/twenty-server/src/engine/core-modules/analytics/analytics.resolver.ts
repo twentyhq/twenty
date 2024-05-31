@@ -12,7 +12,7 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { AnalyticsService } from './analytics.service';
 import { Analytics } from './analytics.entity';
 
-import { CreateAnalyticsInput } from './dto/create-analytics.input';
+import { CreateAnalyticsInput } from './dtos/create-analytics.input';
 
 @UseGuards(OptionalJwtAuthGuard)
 @Resolver(() => Analytics)
@@ -28,9 +28,11 @@ export class AnalyticsResolver {
   ) {
     return this.analyticsService.create(
       createAnalyticsInput,
-      user,
-      workspace,
-      request,
+      user?.id,
+      workspace?.id,
+      workspace?.displayName,
+      workspace?.domainName,
+      request.hostname,
     );
   }
 }

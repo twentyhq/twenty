@@ -7,7 +7,4 @@ export class RemoteTableInput {
 
   @Field(() => String)
   name: string;
-
-  @Field(() => String)
-  schema?: string;
 }

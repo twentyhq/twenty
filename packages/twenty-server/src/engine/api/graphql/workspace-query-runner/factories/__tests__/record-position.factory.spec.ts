@@ -48,11 +48,11 @@ describe('RecordPositionFactory', () => {
 
       expect(result).toEqual(value);
     });
-    it('should return the existing position / 2 when value is first', async () => {
+    it('should return the existing position -1 when value is first', async () => {
       const value = 'first';
       const result = await factory.create(value, objectMetadata, workspaceId);
 
-      expect(result).toEqual(0.5);
+      expect(result).toEqual(0);
     });
     it('should return the existing position + 1 when value is last', async () => {
       const value = 'last';

@@ -4,7 +4,7 @@ import {
   ValidationArguments,
 } from 'class-validator';
 
-const graphQLEnumNameRegex = /^[_A-Za-z][_0-9A-Za-z]+$/;
+const graphQLEnumNameRegex = /^[_A-Za-z][_0-9A-Za-z]*$/;
 
 export function IsValidGraphQLEnumName(validationOptions?: ValidationOptions) {
   return function (object: object, propertyName: string) {

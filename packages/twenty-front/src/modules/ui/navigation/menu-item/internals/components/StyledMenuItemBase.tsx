@@ -1,7 +1,6 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-
-import { HOVER_BACKGROUND } from '@/ui/theme/constants/HoverBackground';
+import { HOVER_BACKGROUND } from 'twenty-ui';
 
 import { MenuItemAccent } from '../../types/MenuItemAccent';
 
@@ -10,7 +9,7 @@ export type MenuItemBaseProps = {
   isKeySelected?: boolean;
 };
 
-export const StyledMenuItemBase = styled.li<MenuItemBaseProps>`
+export const StyledMenuItemBase = styled.div<MenuItemBaseProps>`
   --horizontal-padding: ${({ theme }) => theme.spacing(1)};
   --vertical-padding: ${({ theme }) => theme.spacing(2)};
 
@@ -101,23 +100,26 @@ export const StyledMenuItemRightContent = styled.div`
 `;
 
 export const StyledHoverableMenuItemBase = styled(StyledMenuItemBase)<{
-  isMenuOpen: boolean;
   isIconDisplayedOnHoverOnly?: boolean;
 }>`
-  & .hoverable-buttons {
-    pointer-events: none;
-    position: fixed;
-    right: ${({ theme }) => theme.spacing(2)};
-    opacity: ${({ isIconDisplayedOnHoverOnly }) =>
-      isIconDisplayedOnHoverOnly ? 0 : 1};
-    transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
-  }
+  ${({ isIconDisplayedOnHoverOnly, theme }) =>
+    isIconDisplayedOnHoverOnly &&
+    css`
+      & .hoverable-buttons {
+        opacity: 0;
+        position: fixed;
+        right: ${theme.spacing(2)};
+      }
 
-  &:hover {
-    & .hoverable-buttons {
-      opacity: 1;
-      pointer-events: auto;
-      position: static;
-    }
+      &:hover {
+        & .hoverable-buttons {
+          opacity: 1;
+          position: static;
+        }
+      }
+    `};
+
+  & .hoverable-buttons {
+    transition: opacity ${({ theme }) => theme.animation.duration.instant}s ease;
   }
 `;

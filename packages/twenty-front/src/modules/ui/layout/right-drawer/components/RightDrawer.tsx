@@ -6,6 +6,7 @@ import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
 import { RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID } from '@/ui/layout/right-drawer/constants/RightDrawerClickOutsideListener';
+import { isRightDrawerAnimationCompletedState } from '@/ui/layout/right-drawer/states/isRightDrawerAnimationCompleted';
 import { rightDrawerCloseEventState } from '@/ui/layout/right-drawer/states/rightDrawerCloseEventsState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { useClickOutsideListener } from '@/ui/utilities/pointer-event/hooks/useClickOutsideListener';
@@ -46,6 +47,9 @@ export const RightDrawer = () => {
   );
 
   const isRightDrawerExpanded = useRecoilValue(isRightDrawerExpandedState);
+  const [, setIsRightDrawerAnimationCompleted] = useRecoilState(
+    isRightDrawerAnimationCompletedState,
+  );
 
   const rightDrawerPage = useRecoilValue(rightDrawerPageState);
 
@@ -112,6 +116,9 @@ export const RightDrawer = () => {
       x: '100%',
     },
   };
+  const handleAnimationComplete = () => {
+    setIsRightDrawerAnimationCompleted(isRightDrawerOpen);
+  };
 
   return (
     <StyledContainer
@@ -121,6 +128,7 @@ export const RightDrawer = () => {
       transition={{
         duration: theme.animation.duration.normal,
       }}
+      onAnimationComplete={handleAnimationComplete}
     >
       <StyledRightDrawer ref={rightDrawerRef}>
         {isRightDrawerOpen && <RightDrawerRouter />}

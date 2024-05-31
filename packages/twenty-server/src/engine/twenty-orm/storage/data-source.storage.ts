@@ -1,13 +1,19 @@
 import { DataSource } from 'typeorm';
 
-export class DataSourceStorage {
-  private static readonly dataSources: Map<string, DataSource> = new Map();
+import { WorkspaceDataSource } from 'src/engine/twenty-orm/datasource/workspace.datasource';
 
-  public static getDataSource(key: string): DataSource | undefined {
+export class DataSourceStorage {
+  private static readonly dataSources: Map<string, WorkspaceDataSource> =
+    new Map();
+
+  public static getDataSource(key: string): WorkspaceDataSource | undefined {
     return this.dataSources.get(key);
   }
 
-  public static setDataSource(key: string, dataSource: DataSource): void {
+  public static setDataSource(
+    key: string,
+    dataSource: WorkspaceDataSource,
+  ): void {
     this.dataSources.set(key, dataSource);
   }
 

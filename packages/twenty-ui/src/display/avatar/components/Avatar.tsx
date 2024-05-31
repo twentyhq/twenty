@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
-import styled from '@emotion/styled';
-import { isNonEmptyString } from '@sniptt/guards';
+import { useState } from 'react';
+import { isNonEmptyString, isUndefined } from '@sniptt/guards';
+import clsx from 'clsx';
 
 import { Nullable, stringToHslColor } from '@ui/utilities';
+
+import styles from './Avatar.module.css';
 
 export type AvatarType = 'squared' | 'rounded';
 
@@ -43,37 +45,8 @@ const propertiesBySize = {
   },
 };
 
-export const StyledAvatar = styled.div<
-  AvatarProps & { color: string; backgroundColor: string }
->`
-  align-items: center;
-  background-color: ${({ backgroundColor }) => backgroundColor};
-  ${({ avatarUrl }) =>
-    isNonEmptyString(avatarUrl) ? `background-image: url(${avatarUrl});` : ''}
-  background-position: center;
-  background-size: cover;
-  border-radius: ${(props) => (props.type === 'rounded' ? '50%' : '2px')};
-  color: ${({ color }) => color};
-  cursor: ${({ onClick }) => (onClick ? 'pointer' : 'default')};
-  display: flex;
-
-  flex-shrink: 0;
-  font-size: ${({ size = 'md' }) => propertiesBySize[size].fontSize};
-  font-weight: ${({ theme }) => theme.font.weight.medium};
-
-  height: ${({ size = 'md' }) => propertiesBySize[size].width};
-  justify-content: center;
-  width: ${({ size = 'md' }) => propertiesBySize[size].width};
-
-  &:hover {
-    box-shadow: ${({ theme, onClick }) =>
-      onClick ? '0 0 0 4px ' + theme.background.transparent.light : 'unset'};
-  }
-`;
-
 export const Avatar = ({
   avatarUrl,
-  className,
   size = 'md',
   placeholder,
   entityId = placeholder,
@@ -82,42 +55,50 @@ export const Avatar = ({
   color,
   backgroundColor,
 }: AvatarProps) => {
-  const noAvatarUrl = !isNonEmptyString(avatarUrl);
   const [isInvalidAvatarUrl, setIsInvalidAvatarUrl] = useState(false);
-  useEffect(() => {
-    if (isNonEmptyString(avatarUrl)) {
-      new Promise((resolve) => {
-        const img = new Image();
-        img.onload = () => resolve(false);
-        img.onerror = () => resolve(true);
-        img.src = avatarUrl;
-      }).then((res) => {
-        setIsInvalidAvatarUrl(res as boolean);
-      });
-    }
-  }, [avatarUrl]);
+
+  const noAvatarUrl = !isNonEmptyString(avatarUrl);
+
+  const placeholderChar = placeholder?.[0]?.toLocaleUpperCase();
+
+  const showPlaceholder = noAvatarUrl || isInvalidAvatarUrl;
+
+  const handleImageError = () => {
+    setIsInvalidAvatarUrl(true);
+  };
 
   const fixedColor = color ?? stringToHslColor(entityId ?? '', 75, 25);
   const fixedBackgroundColor =
-    backgroundColor ??
-    (!isNonEmptyString(avatarUrl)
-      ? stringToHslColor(entityId ?? '', 75, 85)
-      : 'none');
+    backgroundColor ?? stringToHslColor(entityId ?? '', 75, 85);
+
+  const showBackgroundColor = showPlaceholder;
 
   return (
-    <StyledAvatar
-      className={className}
-      avatarUrl={avatarUrl}
-      placeholder={placeholder}
-      size={size}
-      type={type}
-      entityId={entityId}
+    <div
+      className={clsx({
+        [styles.avatar]: true,
+        [styles.rounded]: type === 'rounded',
+        [styles.avatarOnClick]: !isUndefined(onClick),
+      })}
       onClick={onClick}
-      color={fixedColor}
-      backgroundColor={fixedBackgroundColor}
+      style={{
+        color: fixedColor,
+        backgroundColor: showBackgroundColor ? fixedBackgroundColor : 'none',
+        width: propertiesBySize[size].width,
+        height: propertiesBySize[size].width,
+        fontSize: propertiesBySize[size].fontSize,
+      }}
     >
-      {(noAvatarUrl || isInvalidAvatarUrl) &&
-        placeholder?.[0]?.toLocaleUpperCase()}
-    </StyledAvatar>
+      {showPlaceholder ? (
+        placeholderChar
+      ) : (
+        <img
+          src={avatarUrl}
+          className={styles.avatarImage}
+          onError={handleImageError}
+          alt=""
+        />
+      )}
+    </div>
   );
 };

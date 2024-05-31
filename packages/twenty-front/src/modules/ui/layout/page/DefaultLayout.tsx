@@ -1,12 +1,9 @@
-import { useMemo } from 'react';
 import { Outlet } from 'react-router-dom';
 import { css, Global, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion';
 
 import { AuthModal } from '@/auth/components/Modal';
-import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
-import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { CommandMenu } from '@/command-menu/components/CommandMenu';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { KeyboardShortcutMenu } from '@/keyboard-shortcut-menu/components/KeyboardShortcutMenu';
@@ -15,11 +12,10 @@ import { MobileNavigationBar } from '@/navigation/components/MobileNavigationBar
 import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { SignInBackgroundMockPage } from '@/sign-in-background-mock/components/SignInBackgroundMockPage';
-import { AppPath } from '@/types/AppPath';
+import { useShowAuthModal } from '@/ui/layout/hooks/useShowAuthModal';
 import { DESKTOP_NAV_DRAWER_WIDTHS } from '@/ui/navigation/navigation-drawer/constants/DesktopNavDrawerWidths';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useScreenSize } from '@/ui/utilities/screen-size/hooks/useScreenSize';
-import { useIsMatchingLocation } from '~/hooks/useIsMatchingLocation';
 
 const StyledLayout = styled.div`
   background: ${({ theme }) => theme.background.noisy};
@@ -64,27 +60,11 @@ const StyledMainContainer = styled.div`
 `;
 
 export const DefaultLayout = () => {
-  const onboardingStatus = useOnboardingStatus();
   const isMobile = useIsMobile();
   const isSettingsPage = useIsSettingsPage();
   const theme = useTheme();
-  const widowsWidth = useScreenSize().width;
-  const isMatchingLocation = useIsMatchingLocation();
-  const showAuthModal = useMemo(() => {
-    return (
-      (onboardingStatus &&
-        [
-          OnboardingStatus.Incomplete,
-          OnboardingStatus.OngoingUserCreation,
-          OnboardingStatus.OngoingProfileCreation,
-          OnboardingStatus.OngoingWorkspaceActivation,
-        ].includes(onboardingStatus)) ||
-      isMatchingLocation(AppPath.ResetPassword) ||
-      (isMatchingLocation(AppPath.PlanRequired) &&
-        (OnboardingStatus.CompletedWithoutSubscription ||
-          OnboardingStatus.Canceled))
-    );
-  }, [isMatchingLocation, onboardingStatus]);
+  const windowsWidth = useScreenSize().width;
+  const showAuthModal = useShowAuthModal();
 
   return (
     <>
@@ -103,7 +83,7 @@ export const DefaultLayout = () => {
           animate={{
             marginLeft:
               isSettingsPage && !isMobile
-                ? (widowsWidth -
+                ? (windowsWidth -
                     (OBJECT_SETTINGS_WIDTH +
                       DESKTOP_NAV_DRAWER_WIDTHS.menu +
                       64)) /

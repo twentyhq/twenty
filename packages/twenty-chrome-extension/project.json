@@ -1,0 +1,70 @@
+{
+  "name": "twenty-chrome-extension",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "tags": ["scope:frontend"],
+  "targets": {
+    "build": {
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "{projectRoot}/dist"
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "packages/twenty-chrome-extension",
+        "command": "VITE_MODE=development vite"
+      }
+    },
+    "preview": {
+      "executor": "@nx/vite:preview-server",
+      "options": {
+        "buildTarget": "twenty-chrome-extension:build",
+        "port": 3002,
+        "open": true
+      }
+    },
+    "reset:env": {
+      "executor": "nx:run-commands",
+      "inputs": ["{projectRoot}/.env.example"],
+      "outputs": ["{projectRoot}/.env"],
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "cp .env.example .env"
+      }
+    },
+    "typecheck": {},
+    "lint": {
+      "options": {
+        "lintFilePatterns": [
+          "{projectRoot}/src/**/*.{ts,tsx,json}",
+          "{projectRoot}/package.json"
+        ],
+        "maxWarnings": 0,
+        "reportUnusedDisableDirectives": "error"
+      },
+      "configurations": {
+        "ci": { "eslintConfig": "{projectRoot}/.eslintrc-ci.cjs" },
+        "fix": {}
+      }
+    },
+    "fmt": {
+      "options": {
+        "files": "src"
+      },
+      "configurations": {
+        "fix": {}
+      }
+    },
+    "graphql:generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "graphql-codegen"
+      }
+    }
+  }
+}

@@ -5,6 +5,7 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
+import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { SettingsObjectNewFieldStep1 } from '../../SettingsObjectNewField/SettingsObjectNewFieldStep1';
@@ -13,7 +14,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title:
     'Pages/Settings/DataModel/SettingsObjectNewField/SettingsObjectNewFieldStep1',
   component: SettingsObjectNewFieldStep1,
-  decorators: [PageDecorator],
+  decorators: [PrefetchLoadingDecorator, PageDecorator],
   args: {
     routePath: '/settings/objects/:objectSlug/new-field/step-1',
     routeParams: { ':objectSlug': 'companies' },
@@ -33,7 +34,7 @@ export const Default: Story = {
     await canvas.findByText('Settings');
     await canvas.findByText('Objects');
     await canvas.findByText('Companies');
-    await canvas.findByText('Check disabled fields');
+    await canvas.findByText('Check deactivated fields');
     await canvas.findByText('Add Custom Field');
   },
 };

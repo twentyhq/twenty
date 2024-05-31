@@ -13,10 +13,16 @@ import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 
 type ActivityTargetsInlineCellProps = {
   activity: Activity;
+  showLabel?: boolean;
+  maxWidth?: number;
+  readonly?: boolean;
 };
 
 export const ActivityTargetsInlineCell = ({
   activity,
+  showLabel = true,
+  maxWidth,
+  readonly,
 }: ActivityTargetsInlineCellProps) => {
   const { activityTargetObjectRecords } =
     useActivityTargetObjectRecords(activity);
@@ -37,8 +43,9 @@ export const ActivityTargetsInlineCell = ({
         customEditHotkeyScope={{
           scope: ActivityEditorHotkeyScope.ActivityTargets,
         }}
-        IconLabel={IconArrowUpRight}
-        showLabel={true}
+        IconLabel={showLabel ? IconArrowUpRight : undefined}
+        showLabel={showLabel}
+        readonly={readonly}
         editModeContent={
           <ActivityTargetInlineCellEditMode
             activity={activity}
@@ -49,6 +56,7 @@ export const ActivityTargetsInlineCell = ({
         displayModeContent={
           <ActivityTargetChips
             activityTargetObjectRecords={activityTargetObjectRecords}
+            maxWidth={maxWidth}
           />
         }
         isDisplayModeContentEmpty={activityTargetObjectRecords.length === 0}

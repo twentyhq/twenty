@@ -11,7 +11,6 @@ import { seedCoreSchema } from 'src/database/typeorm-seeds/core';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { WorkspaceSyncMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/workspace-sync-metadata.service';
-import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_TWENTY_WORKSPACE_ID,
@@ -28,6 +27,9 @@ import { seedCalendarChannels } from 'src/database/typeorm-seeds/workspace/calen
 import { seedCalendarChannelEventAssociations } from 'src/database/typeorm-seeds/workspace/calendar-channel-event-association';
 import { seedCalendarEventParticipants } from 'src/database/typeorm-seeds/workspace/calendar-event-participants';
 import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
+import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
+import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 
 // TODO: implement dry-run
 @Command({
@@ -39,12 +41,13 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
   workspaceIds = [SEED_APPLE_WORKSPACE_ID, SEED_TWENTY_WORKSPACE_ID];
 
   constructor(
-    private readonly environmentService: EnvironmentService,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly workspaceSyncMetadataService: WorkspaceSyncMetadataService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly objectMetadataService: ObjectMetadataService,
+    @InjectCacheStorage(CacheStorageNamespace.WorkspaceSchema)
+    private readonly workspaceSchemaCache: CacheStorageService,
   ) {
     super();
   }
@@ -52,6 +55,8 @@ export class DataSeedWorkspaceCommand extends CommandRunner {
   async run(): Promise<void> {
     try {
       for (const workspaceId of this.workspaceIds) {
+        await this.workspaceSchemaCache.flush();
+
         await rawDataSource.initialize();
 
         await seedCoreSchema(rawDataSource, workspaceId);

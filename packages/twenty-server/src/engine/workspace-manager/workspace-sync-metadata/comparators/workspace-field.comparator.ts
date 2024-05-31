@@ -7,7 +7,7 @@ import {
   FieldComparatorResult,
 } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/comparator.interface';
 import { ComputedPartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
-import { ComputedPartialObjectMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
+import { ComputedPartialWorkspaceEntity } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-object-metadata.interface';
 
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { transformMetadataForComparison } from 'src/engine/workspace-manager/workspace-sync-metadata/comparators/utils/transform-metadata-for-comparison.util';
@@ -23,6 +23,9 @@ const commonFieldPropertiesToIgnore = [
   'objectMetadataId',
   'isActive',
   'options',
+  'settings',
+  'joinColumn',
+  'gate',
 ];
 
 const fieldPropertiesToStringify = ['defaultValue'] as const;
@@ -33,7 +36,7 @@ export class WorkspaceFieldComparator {
 
   public compare(
     originalObjectMetadata: ObjectMetadataEntity,
-    standardObjectMetadata: ComputedPartialObjectMetadata,
+    standardObjectMetadata: ComputedPartialWorkspaceEntity,
   ): FieldComparatorResult[] {
     const result: FieldComparatorResult[] = [];
     const fieldPropertiesToUpdateMap: Record<
@@ -73,7 +76,7 @@ export class WorkspaceFieldComparator {
       standardObjectMetadata.fields,
       {
         shouldIgnoreProperty: (property, originalMetadata) => {
-          if (['options', 'gate'].includes(property)) {
+          if (commonFieldPropertiesToIgnore.includes(property)) {
             return true;
           }
 

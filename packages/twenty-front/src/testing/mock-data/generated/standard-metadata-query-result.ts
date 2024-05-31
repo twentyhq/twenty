@@ -1,4 +1,6 @@
+import { CurrencyCode } from '@/object-record/record-field/types/CurrencyCode';
 import {
+  FieldMetadataType,
   ObjectEdge,
   ObjectMetadataItemsQuery,
 } from '~/generated-metadata/graphql';
@@ -52,6 +54,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'ea83af89-be10-49af-a605-10c3392ae007',
                   type: 'RELATION',
                   name: 'viewFields',
@@ -65,9 +68,9 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
                     __typename: 'RelationDefinition',
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
                       __typename: 'object',
@@ -104,6 +107,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'viewField',
                       namePlural: 'viewFields',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -113,6 +117,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '5e054149-2d41-4591-b968-8fdf0afcbc79',
                   type: 'RELATION',
                   name: 'viewFilters',
@@ -126,9 +131,9 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
                     __typename: 'RelationDefinition',
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
                       __typename: 'object',
@@ -165,6 +170,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'viewFilter',
                       namePlural: 'viewFilters',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -174,6 +180,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'c5384d2a-9ec3-4e1b-b93f-86f53f122169',
                   type: 'UUID',
                   name: 'objectMetadataId',
@@ -187,7 +194,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -197,6 +203,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '405aa0c6-ce96-4597-8b61-2271020fde11',
                   type: 'RELATION',
                   name: 'viewSorts',
@@ -210,8 +217,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -249,6 +256,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'viewSort',
                       namePlural: 'viewSorts',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -258,6 +266,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'bb4d96be-e4d9-47a9-812d-fcdfb063ebf3',
                   type: 'POSITION',
                   name: 'position',
@@ -271,7 +280,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -281,6 +289,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'ae488050-d4b5-4439-8811-88a637fcf1ce',
                   type: 'TEXT',
                   name: 'icon',
@@ -294,7 +303,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -304,6 +312,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '497379ca-f058-44e3-a5fb-fcb0b2bfd281',
                   type: 'BOOLEAN',
                   name: 'isCompact',
@@ -317,7 +326,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: false,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -327,6 +335,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a57563df-2d34-4a14-b6c6-bbfd1f88717d',
                   type: 'TEXT',
                   name: 'kanbanFieldMetadataId',
@@ -340,7 +349,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -381,6 +389,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '76ba4ce0-3577-48b2-b526-89bb58ed8ee1',
                   type: 'TEXT',
                   name: 'type',
@@ -394,7 +403,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "'table'",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -404,6 +412,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'f20c68aa-3930-41c4-9f79-45dceda506df',
                   type: 'TEXT',
                   name: 'name',
@@ -417,7 +426,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -427,6 +435,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a3ef848d-660a-4aef-9cd4-5baf25ce36ed',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -440,7 +449,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -450,6 +458,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '92f3e27c-041d-45b2-b2bd-46db2b1aec3f',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -463,7 +472,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -473,6 +481,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '8d7987eb-99e8-4e54-a86c-86b3bd07d2be',
                   type: 'UUID',
                   name: 'id',
@@ -486,7 +495,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -530,6 +538,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '3ccc1495-a81f-4360-9759-ee148e1421b8',
                   type: 'UUID',
                   name: 'messageChannelId',
@@ -543,7 +552,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -553,6 +561,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '4d42264e-8baa-4299-8d6c-f0047bd92d56',
                   type: 'TEXT',
                   name: 'messageThreadExternalId',
@@ -566,7 +575,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -576,6 +584,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '49bbc13b-36e7-4347-9296-eed0a0d5a6a9',
                   type: 'TEXT',
                   name: 'messageExternalId',
@@ -589,7 +598,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -599,6 +607,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'd99cc1b4-4874-4c78-bcfe-0908c0a51466',
                   type: 'RELATION',
                   name: 'messageThread',
@@ -612,8 +621,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -651,6 +660,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'messageThread',
                       namePlural: 'messageThreads',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -660,6 +670,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '9c47a2d7-6893-4d15-9f8a-5dd684ca912f',
                   type: 'UUID',
                   name: 'messageId',
@@ -673,7 +684,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -683,6 +693,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'c42c20e7-beca-4b4b-8d40-c95072952aff',
                   type: 'UUID',
                   name: 'id',
@@ -696,7 +707,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -706,6 +716,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '3a173536-9956-4089-8753-a4be5b12c934',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -719,7 +730,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -729,6 +739,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'd4906a0e-8c1e-4dc5-81ee-09ca1c42e7c4',
                   type: 'UUID',
                   name: 'messageThreadId',
@@ -742,7 +753,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -752,6 +762,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '9eb31623-2733-4530-9b49-aaa879ad475d',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -765,7 +776,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -775,6 +785,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '29a3af93-a6b9-464f-bc83-84fd2abf2054',
                   type: 'RELATION',
                   name: 'message',
@@ -788,8 +799,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -827,6 +838,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'message',
                       namePlural: 'messages',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -836,6 +848,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '8b39502b-7400-480f-aff3-fa010bdbf50c',
                   type: 'RELATION',
                   name: 'messageChannel',
@@ -849,8 +862,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -888,6 +901,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'messageChannel',
                       namePlural: 'messageChannels',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -931,6 +945,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '0a1a9628-472f-4fc1-b5b7-2a6a76eb75f7',
                   type: 'UUID',
                   name: 'id',
@@ -944,7 +959,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -954,6 +968,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '3ed68d76-dc49-4437-a3da-c3f4fd106641',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -967,7 +982,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -977,6 +991,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '694deb5a-ff12-4a79-8588-de714da8c74b',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -990,7 +1005,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -1000,6 +1014,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '0b04e28c-a133-4844-b03c-bf811c00d101',
                   type: 'TEXT',
                   name: 'handle',
@@ -1013,7 +1028,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -1023,6 +1037,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'dad00e51-1012-4874-99bc-1c5d178d5df8',
                   type: 'UUID',
                   name: 'workspaceMemberId',
@@ -1036,7 +1051,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -1046,6 +1060,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '5d578b49-324e-43a3-a10a-512c5606d29b',
                   type: 'RELATION',
                   name: 'workspaceMember',
@@ -1059,8 +1074,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -1098,6 +1113,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'workspaceMember',
                       namePlural: 'workspaceMembers',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -1141,6 +1157,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'e863b224-08fc-4241-8b77-eb24e14844dc',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -1154,7 +1171,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -1164,6 +1180,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '372d5559-abc9-43c8-aa89-62d95e384c5a',
                   type: 'RELATION',
                   name: 'message',
@@ -1177,8 +1194,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -1216,6 +1233,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'message',
                       namePlural: 'messages',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -1225,6 +1243,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '1168f1f2-ae9a-4669-a517-d0f785102c5e',
                   type: 'TEXT',
                   name: 'displayName',
@@ -1238,7 +1257,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -1248,6 +1266,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '415de672-a5a6-4d11-b123-ce921849db37',
                   type: 'TEXT',
                   name: 'handle',
@@ -1261,7 +1280,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -1271,6 +1289,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '836f7097-cb64-452d-84a8-139972c9041d',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -1284,7 +1303,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -1294,6 +1312,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '66ff1cd4-a364-4ac0-ad58-72de0c425530',
                   type: 'UUID',
                   name: 'workspaceMemberId',
@@ -1307,7 +1326,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -1317,6 +1335,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '770b5c8f-8d05-4168-9355-8ac21f850175',
                   type: 'UUID',
                   name: 'messageId',
@@ -1330,7 +1349,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -1340,6 +1358,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '02b1656e-251d-4229-b86a-de621678bd96',
                   type: 'RELATION',
                   name: 'person',
@@ -1353,8 +1372,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -1392,6 +1411,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'person',
                       namePlural: 'people',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
@@ -1401,6 +1421,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '767c63d9-0e2b-4e27-b70b-98a5abac2af1',
                   type: 'UUID',
                   name: 'id',
@@ -1414,7 +1435,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -1476,6 +1496,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'd96db94f-cffa-494b-9551-4d639d47cee3',
                   type: 'RELATION',
                   name: 'workspaceMember',
@@ -1489,8 +1510,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -1528,6 +1549,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'workspaceMember',
                       namePlural: 'workspaceMembers',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -1537,6 +1559,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'fd4ac7e5-fc90-4760-8a47-44d084c850df',
                   type: 'UUID',
                   name: 'personId',
@@ -1550,7 +1573,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -1594,6 +1616,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '728b91ef-bda8-4d47-80a7-36e64f659ea7',
                   type: 'RELATION',
                   name: 'person',
@@ -1607,8 +1630,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -1646,6 +1669,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'person',
                       namePlural: 'people',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
@@ -1655,6 +1679,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '9d375ab4-b01f-48b0-af43-bd00c572a910',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -1668,7 +1693,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -1678,6 +1702,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '315ef974-9ed8-44ee-9e8d-c29cd58a44fb',
                   type: 'UUID',
                   name: 'listingId',
@@ -1691,7 +1716,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:51:28.716Z',
                   updatedAt: '2024-04-08T12:51:28.716Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -1701,6 +1725,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'bcfa8dd3-080a-43f1-ab82-7b6a5b81a64c',
                   type: 'RELATION',
                   name: 'opportunity',
@@ -1714,8 +1739,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -1753,6 +1778,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'opportunity',
                       namePlural: 'opportunities',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
@@ -1762,6 +1788,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'ec278a15-9720-4fee-b2f8-2dc0e7082fd9',
                   type: 'RAW_JSON',
                   name: 'properties',
@@ -1775,7 +1802,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -1785,6 +1811,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '5bbfcfa7-0680-448a-a9dd-a9e4ce18f8a6',
                   type: 'TEXT',
                   name: 'name',
@@ -1798,7 +1825,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -1808,6 +1834,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'fb7474da-3b2e-4c91-82e7-fd27cea92e46',
                   type: 'UUID',
                   name: 'id',
@@ -1821,7 +1848,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -1831,6 +1857,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '1d60077d-c9ce-4363-adf4-4772a1790799',
                   type: 'UUID',
                   name: 'workspaceMemberId',
@@ -1844,7 +1871,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -1854,6 +1880,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'e8998178-223e-42a8-9978-a72a4477c8d4',
                   type: 'RELATION',
                   name: 'workspaceMember',
@@ -1867,8 +1894,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -1906,6 +1933,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'workspaceMember',
                       namePlural: 'workspaceMembers',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -1915,6 +1943,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '0b949086-3424-4379-a60f-0d6c55edf26d',
                   type: 'UUID',
                   name: 'companyId',
@@ -1928,7 +1957,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -1938,6 +1966,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'ce52caf5-ead9-4cb7-bf6b-908df315c9d2',
                   type: 'UUID',
                   name: 'opportunityId',
@@ -1951,7 +1980,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -1961,6 +1989,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '1771a632-cc73-4706-8ee7-abe3fb67a5e6',
                   type: 'UUID',
                   name: 'personId',
@@ -1974,7 +2003,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -1984,6 +2012,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '889a2fbc-c966-4c79-a763-9b1f2c8ad467',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -1997,7 +2026,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -2007,6 +2035,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '439ddfe9-1a1d-4992-9bd0-3c7b965e05d5',
                   type: 'RELATION',
                   name: 'listing',
@@ -2020,8 +2049,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:51:28.716Z',
                   updatedAt: '2024-04-08T12:51:28.716Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -2059,6 +2088,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'listing',
                       namePlural: 'listings',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
@@ -2068,6 +2098,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '155c7d0c-1974-426a-a072-6cee0424d71c',
                   type: 'RELATION',
                   name: 'company',
@@ -2081,8 +2112,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -2120,6 +2151,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'company',
                       namePlural: 'companies',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
@@ -2163,6 +2195,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'd5f9207d-baf6-41e6-932d-b9d059cb94c6',
                   type: 'UUID',
                   name: 'viewId',
@@ -2176,7 +2209,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -2186,6 +2218,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '2dca6b6e-00a3-4271-b51f-145b3872e154',
                   type: 'TEXT',
                   name: 'operand',
@@ -2199,7 +2232,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "'Contains'",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -2209,6 +2241,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'fc0463f0-648a-44ae-9ebf-84289a8ce592',
                   type: 'TEXT',
                   name: 'displayValue',
@@ -2222,7 +2255,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -2232,6 +2264,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '7ab7e2cc-e863-4dcd-bf60-bcd3f7cf6d74',
                   type: 'UUID',
                   name: 'fieldMetadataId',
@@ -2245,7 +2278,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -2255,6 +2287,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '6ce40790-295a-4aac-a65e-9ae863ba1d90',
                   type: 'RELATION',
                   name: 'view',
@@ -2268,8 +2301,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -2307,6 +2340,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'view',
                       namePlural: 'views',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -2316,6 +2350,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'f02054a1-e29f-4130-a9c7-00e2dea3aa0c',
                   type: 'UUID',
                   name: 'id',
@@ -2329,7 +2364,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -2339,6 +2373,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '26bae21d-d3cd-43dc-969c-74c7a87a9a24',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -2352,7 +2387,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -2362,6 +2396,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a9d677ce-52c6-4b9e-a870-1bc4d86363be',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -2375,7 +2410,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -2385,6 +2419,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '2fcdf97c-d21c-4f3c-bffd-d6e8a2e4f67f',
                   type: 'TEXT',
                   name: 'value',
@@ -2398,7 +2433,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -2442,6 +2476,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '039886df-8b4f-4e1c-bd3d-c88d45d400dd',
                   type: 'NUMBER',
                   name: 'size',
@@ -2455,7 +2490,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 0,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -2465,6 +2499,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'c9607ed7-168d-4743-a56a-689ffcfffe98',
                   type: 'RELATION',
                   name: 'view',
@@ -2478,8 +2513,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -2517,6 +2552,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'view',
                       namePlural: 'views',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -2526,6 +2562,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '8dcae458-248e-4499-a09e-6c9d508b094b',
                   type: 'UUID',
                   name: 'viewId',
@@ -2539,7 +2576,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -2549,6 +2585,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'e0e588e2-f862-4aa4-8f72-9324addaf2f5',
                   type: 'NUMBER',
                   name: 'position',
@@ -2562,7 +2599,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 0,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -2572,6 +2608,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'cd92f36f-eb89-432e-bb64-65ef6196b9d5',
                   type: 'BOOLEAN',
                   name: 'isVisible',
@@ -2585,7 +2622,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: true,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -2595,6 +2631,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'f566a745-14e7-41d0-b408-943794b27ea6',
                   type: 'UUID',
                   name: 'id',
@@ -2608,7 +2645,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -2618,6 +2654,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '6fb24cf5-735a-458d-9f4e-f625f1139a7c',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -2631,7 +2668,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -2641,6 +2677,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '1daa9f85-7521-4d3d-bc6f-0bc627fdcb6e',
                   type: 'UUID',
                   name: 'fieldMetadataId',
@@ -2654,7 +2691,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -2664,6 +2700,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'fc206184-8ae3-4290-b148-863d107986ac',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -2677,7 +2714,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -2721,6 +2757,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'e32193cc-6104-47c8-b5dd-3a1409ca8415',
                   type: 'UUID',
                   name: 'connectedAccountId',
@@ -2734,7 +2771,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -2744,6 +2780,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'fefbe526-b75b-494e-a06a-e89d6790cc3b',
                   type: 'RELATION',
                   name: 'connectedAccount',
@@ -2757,8 +2794,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -2796,6 +2833,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'connectedAccount',
                       namePlural: 'connectedAccounts',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -2805,6 +2843,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'c5c6557d-0072-4498-a04a-1ec57b797bc8',
                   type: 'BOOLEAN',
                   name: 'isContactAutoCreationEnabled',
@@ -2818,7 +2857,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: true,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -2828,6 +2866,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '179ed906-cc28-4f7a-a9f3-387b4e3b6de6',
                   type: 'UUID',
                   name: 'id',
@@ -2841,7 +2880,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -2851,6 +2889,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '5823bb64-7653-4651-a185-4fbbe4d55a59',
                   type: 'BOOLEAN',
                   name: 'isSyncEnabled',
@@ -2864,7 +2903,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: true,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -2912,6 +2950,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'b763b528-15ab-4eea-9540-74349fa59c1d',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -2925,7 +2964,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -2935,6 +2973,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '60c518d0-c6ec-4b37-8bac-129e1442f390',
                   type: 'RELATION',
                   name: 'calendarChannelEventAssociations',
@@ -2948,8 +2987,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -2987,6 +3026,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'calendarChannelEventAssociation',
                       namePlural: 'calendarChannelEventAssociations',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -2996,6 +3036,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'b79c792c-1cd3-4586-89f6-52f0d7b2446a',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -3009,7 +3050,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -3019,6 +3059,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '4a9b4548-6477-4375-8e4b-ced5e4aae5a9',
                   type: 'TEXT',
                   name: 'handle',
@@ -3032,7 +3073,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -3042,6 +3082,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'c4bf0f31-65df-47f9-ab61-6bd699bc0a86',
                   type: 'TEXT',
                   name: 'syncCursor',
@@ -3056,7 +3097,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -3100,6 +3140,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'f5e39bd8-7978-4f65-9f2d-6ec224742451',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -3113,7 +3154,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -3123,6 +3163,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'b802682c-3f9d-4f86-856b-a8e91048ae02',
                   type: 'RELATION',
                   name: 'calendarEventParticipants',
@@ -3136,8 +3177,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -3175,6 +3216,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'calendarEventParticipant',
                       namePlural: 'calendarEventParticipants',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -3184,8 +3226,9 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '7ada51cb-58be-42cd-86df-16c3f2bb8b58',
-                  type: 'TEXT',
+                  type: FieldMetadataType.Phone,
                   name: 'phone',
                   label: 'Phone',
                   description: 'Contact’s phone number',
@@ -3197,7 +3240,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -3207,6 +3249,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '3eb1d6b2-e274-4f43-982f-5c93da72da4f',
                   type: 'TEXT',
                   name: 'avatarUrl',
@@ -3220,7 +3263,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -3230,6 +3272,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '483d8221-01cd-4d70-83f7-f3d1b60c5575',
                   type: 'RELATION',
                   name: 'activityTargets',
@@ -3243,8 +3286,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -3282,6 +3325,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'activityTarget',
                       namePlural: 'activityTargets',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -3291,6 +3335,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '429c071c-0fdf-4534-8122-0d0ca1a4fe58',
                   type: 'UUID',
                   name: 'id',
@@ -3304,7 +3349,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -3314,6 +3358,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '3124eb41-1cd9-485b-a188-8c5af3facb6d',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -3327,7 +3372,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -3337,6 +3381,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'c12b7c1d-3f56-4e40-8c7e-1b01b2c95022',
                   type: 'UUID',
                   name: 'companyId',
@@ -3350,7 +3395,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -3360,6 +3404,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '8bcf41c8-a6ff-4694-9141-9fc2035e5719',
                   type: 'POSITION',
                   name: 'position',
@@ -3373,7 +3418,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -3383,6 +3427,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'e1ef2ed4-082b-4347-93bd-9afabc57cdb6',
                   type: 'EMAIL',
                   name: 'email',
@@ -3396,7 +3441,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -3406,6 +3450,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '5bf9cc64-c0ba-43e0-b1f9-f7cd086c048b',
                   type: 'LINK',
                   name: 'xLink',
@@ -3422,7 +3467,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     url: "''",
                     label: "''",
                   },
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -3432,6 +3476,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'f3b72b3d-1243-4da3-9535-004f5fda3a3e',
                   type: 'TEXT',
                   name: 'city',
@@ -3445,7 +3490,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -3455,6 +3499,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '17a9cee7-7f68-42bb-abd0-50932466f901',
                   type: 'RELATION',
                   name: 'favorites',
@@ -3468,8 +3513,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -3507,6 +3552,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'favorite',
                       namePlural: 'favorites',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -3516,6 +3562,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'de45c3eb-6243-47ed-81d7-64b6e28255ce',
                   type: 'TEXT',
                   name: 'jobTitle',
@@ -3529,7 +3576,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -3539,6 +3585,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '776f05e8-fe39-47c7-861e-586361299462',
                   type: 'RELATION',
                   name: 'messageParticipants',
@@ -3552,8 +3599,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -3591,6 +3638,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'messageParticipant',
                       namePlural: 'messageParticipants',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -3600,6 +3648,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'fae2489f-7f59-4385-bec8-9d3f4044d1da',
                   type: 'RELATION',
                   name: 'attachments',
@@ -3613,8 +3662,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -3652,6 +3701,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'attachment',
                       namePlural: 'attachments',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -3661,6 +3711,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '62332d09-84c5-4959-af41-f1e9cc22ec8d',
                   type: 'RELATION',
                   name: 'events',
@@ -3674,8 +3725,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -3713,6 +3764,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'event',
                       namePlural: 'events',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -3722,6 +3774,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '0506894e-bbc5-4415-a979-c5296b53e4db',
                   type: 'FULL_NAME',
                   name: 'name',
@@ -3734,11 +3787,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   isNullable: true,
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
-                  defaultValue: {
-                    lastName: "''",
-                    firstName: "''",
-                  },
-                  options: null,
+                  defaultValue: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -3748,6 +3797,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'c624bade-5070-4155-bd0c-8704fb2cdf8b',
                   type: 'RELATION',
                   name: 'company',
@@ -3761,8 +3811,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -3800,6 +3850,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'company',
                       namePlural: 'companies',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
@@ -3809,6 +3860,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '867aefab-52f8-4109-886d-b0f2301f7749',
                   type: 'LINK',
                   name: 'linkedinLink',
@@ -3821,11 +3873,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   isNullable: true,
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
-                  defaultValue: {
-                    url: "''",
-                    label: "''",
-                  },
-                  options: null,
+                  defaultValue: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -3835,6 +3883,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'c2897c17-90a9-487b-a358-579c14cdd862',
                   type: 'RELATION',
                   name: 'pointOfContactForOpportunities',
@@ -3848,8 +3897,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -3887,6 +3936,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'opportunity',
                       namePlural: 'opportunities',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
@@ -3930,6 +3980,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'bfff2fe1-f45e-4cb4-bd9e-9d68dfe9af7e',
                   type: 'RELATION',
                   name: 'events',
@@ -3943,8 +3994,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:51:28.716Z',
                   updatedAt: '2024-04-08T12:51:28.716Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -3982,6 +4033,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'event',
                       namePlural: 'events',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -3991,6 +4043,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '98ca7ac0-c41a-4f39-a3ab-6b4fad98a73a',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -4004,7 +4057,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:51:28.705Z',
                   updatedAt: '2024-04-08T12:51:28.705Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -4014,6 +4066,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '8d619227-e268-435a-8a86-58db3f8e61e7',
                   type: 'UUID',
                   name: 'cId',
@@ -4027,7 +4080,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:54:56.499Z',
                   updatedAt: '2024-04-08T12:54:56.499Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -4037,6 +4089,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '2629a000-8bee-443d-9379-1c89a597df21',
                   type: 'RELATION',
                   name: 'activityTargets',
@@ -4050,8 +4103,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:51:28.722Z',
                   updatedAt: '2024-04-08T12:51:28.722Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -4089,6 +4142,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'activityTarget',
                       namePlural: 'activityTargets',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -4098,6 +4152,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '178e9a07-cd88-47c0-8faf-cbd3918ba8b0',
                   type: 'RELATION',
                   name: 'c',
@@ -4111,8 +4166,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:54:56.499Z',
                   updatedAt: '2024-04-08T12:54:56.499Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -4150,6 +4205,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'company',
                       namePlural: 'companies',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
@@ -4159,6 +4215,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '8691fd1b-ecdb-4c7e-b7fb-fc7069c69dbd',
                   type: 'POSITION',
                   name: 'position',
@@ -4172,7 +4229,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:51:28.705Z',
                   updatedAt: '2024-04-08T12:51:28.705Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -4182,6 +4238,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'ff20f9f0-f081-436b-8526-d7b2b3c80c92',
                   type: 'RELATION',
                   name: 'company',
@@ -4195,8 +4252,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:51:58.429Z',
                   updatedAt: '2024-04-08T12:51:58.429Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -4234,6 +4291,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'company',
                       namePlural: 'companies',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
@@ -4243,6 +4301,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '15ef13ed-8594-497e-9816-1cb89cf796af',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -4256,7 +4315,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:51:28.705Z',
                   updatedAt: '2024-04-08T12:51:28.705Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -4266,6 +4324,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '78ab1b0d-e6b7-4c45-ac46-decdcf913b23',
                   type: 'RELATION',
                   name: 'favorites',
@@ -4279,8 +4338,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:51:28.726Z',
                   updatedAt: '2024-04-08T12:51:28.726Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -4318,6 +4377,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'favorite',
                       namePlural: 'favorites',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -4327,6 +4387,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '2ff71d84-b6b4-4ab3-931a-ecf737cf575c',
                   type: 'UUID',
                   name: 'id',
@@ -4340,7 +4401,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:51:28.705Z',
                   updatedAt: '2024-04-08T12:51:28.705Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -4350,6 +4410,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a19d48b1-889e-4e6c-ad5a-a5707e92f8bf',
                   type: 'RELATION',
                   name: 'attachments',
@@ -4363,8 +4424,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:51:28.729Z',
                   updatedAt: '2024-04-08T12:51:28.729Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -4402,6 +4463,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'attachment',
                       namePlural: 'attachments',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -4411,6 +4473,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '60f1e1ad-f56e-4e07-97a6-281e89ff69fd',
                   type: 'TEXT',
                   name: 'name',
@@ -4424,7 +4487,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:51:28.705Z',
                   updatedAt: '2024-04-08T12:51:28.705Z',
                   defaultValue: "'Untitled'",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -4468,6 +4530,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'ee39abdc-26dd-47b8-b77f-210dda4676f8',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -4481,7 +4544,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -4491,6 +4553,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'c32baa1b-fe5f-403f-892c-06215a25e584',
                   type: 'UUID',
                   name: 'id',
@@ -4504,7 +4567,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -4514,6 +4576,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'b19f9212-e580-4325-b333-47306b3bf490',
                   type: 'DATE_TIME',
                   name: 'expiresAt',
@@ -4527,7 +4590,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -4537,6 +4599,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '4d650804-328d-411b-b241-88c68eed90bd',
                   type: 'TEXT',
                   name: 'name',
@@ -4550,7 +4613,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -4560,6 +4622,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'e3768e87-2024-4f2d-a279-d62f8093866f',
                   type: 'DATE_TIME',
                   name: 'revokedAt',
@@ -4573,7 +4636,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -4583,6 +4645,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '9be4be3b-6e20-43ad-9f46-aa79bb1650f2',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -4596,7 +4659,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -4640,6 +4702,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '77da807c-10c9-4084-b396-25bbfb371ef4',
                   type: 'RELATION',
                   name: 'messages',
@@ -4653,8 +4716,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -4692,6 +4755,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'message',
                       namePlural: 'messages',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -4701,6 +4765,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a12532cd-8ffa-4327-95c7-c3b9615d22b0',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -4714,7 +4779,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -4724,6 +4788,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '0cc7e3c1-50eb-44e9-a181-b8d3073bcc1c',
                   type: 'UUID',
                   name: 'id',
@@ -4737,7 +4802,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -4747,6 +4811,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'c9c6d79b-c7cf-44c5-8017-0eb0df6c9cb6',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -4760,7 +4825,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -4770,6 +4834,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '442b3224-f4c6-49b8-979e-693606a22875',
                   type: 'RELATION',
                   name: 'messageChannelMessageAssociations',
@@ -4783,8 +4848,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -4822,6 +4887,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'messageChannelMessageAssociation',
                       namePlural: 'messageChannelMessageAssociations',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -4865,6 +4931,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'ae9aa21a-40eb-44a7-b828-c6e67e4cfbe9',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -4878,7 +4945,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -4888,6 +4954,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a09fe05b-7443-45bd-8c67-6b90d78ea784',
                   type: 'UUID',
                   name: 'calendarChannelId',
@@ -4901,7 +4968,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -4911,6 +4977,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '9b6e136f-3c9e-4c4b-92f8-a50291eb21f8',
                   type: 'RELATION',
                   name: 'calendarChannel',
@@ -4924,8 +4991,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -4963,6 +5030,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'calendarChannel',
                       namePlural: 'calendarChannels',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -4972,6 +5040,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '2579cd08-ae11-4fa0-90a2-5f40cc7dd20d',
                   type: 'UUID',
                   name: 'calendarEventId',
@@ -4985,7 +5054,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -4995,6 +5063,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '2ef8a91a-8f4a-4d01-b365-a09132a281d7',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -5008,7 +5077,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -5018,6 +5086,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'e5080b5c-c264-48bb-9ff7-441127c6c331',
                   type: 'UUID',
                   name: 'id',
@@ -5031,7 +5100,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -5041,6 +5109,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '1c40e6e9-437b-47fc-84bf-57d4a8a0513d',
                   type: 'RELATION',
                   name: 'calendarEvent',
@@ -5054,8 +5123,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -5093,6 +5162,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'calendarEvent',
                       namePlural: 'calendarEvents',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -5102,6 +5172,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '1defb4a1-717b-4293-977e-c9db04c76063',
                   type: 'TEXT',
                   name: 'eventExternalId',
@@ -5115,7 +5186,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -5159,6 +5229,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'f19a61a4-aa63-4a68-a5b1-a1cb10183198',
                   type: 'DATE_TIME',
                   name: 'dueAt',
@@ -5172,7 +5243,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -5182,6 +5252,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'f54661da-2ada-4179-82aa-5dcbbfde553c',
                   type: 'RELATION',
                   name: 'author',
@@ -5195,8 +5266,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -5234,6 +5305,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'workspaceMember',
                       namePlural: 'workspaceMembers',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -5243,6 +5315,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'f650a683-4ce3-4c1f-bdc1-09b73d88d0df',
                   type: 'DATE_TIME',
                   name: 'completedAt',
@@ -5256,7 +5329,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -5266,6 +5338,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '66ae87fb-4cb8-4df7-bc5d-77d1a42e3726',
                   type: 'UUID',
                   name: 'assigneeId',
@@ -5279,7 +5352,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -5289,6 +5361,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '5f4ea983-40a2-4377-a9ec-4bdfc52b0941',
                   type: 'RELATION',
                   name: 'comments',
@@ -5302,8 +5375,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -5341,6 +5414,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'comment',
                       namePlural: 'comments',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -5350,6 +5424,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'cdd78500-4f06-4d15-9628-1690503e2b05',
                   type: 'UUID',
                   name: 'authorId',
@@ -5363,7 +5438,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -5373,6 +5447,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'c3509593-8b5d-4d3e-8d3d-93dfd4882864',
                   type: 'DATE_TIME',
                   name: 'reminderAt',
@@ -5386,7 +5461,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -5396,6 +5470,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '50b1c013-d292-4440-b95c-866156cb3e50',
                   type: 'RELATION',
                   name: 'attachments',
@@ -5409,8 +5484,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -5448,6 +5523,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'attachment',
                       namePlural: 'attachments',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -5457,6 +5533,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '3e4dbb96-f276-44b6-93f7-e1d2ddc23019',
                   type: 'TEXT',
                   name: 'type',
@@ -5470,7 +5547,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "'Note'",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -5480,6 +5556,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '946beaa4-8816-4019-bd33-28c8463bfeaa',
                   type: 'RELATION',
                   name: 'activityTargets',
@@ -5493,8 +5570,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -5532,6 +5609,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'activityTarget',
                       namePlural: 'activityTargets',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -5541,6 +5619,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'b859a716-03d6-4f01-ade2-26e8a97f2b13',
                   type: 'TEXT',
                   name: 'title',
@@ -5554,7 +5633,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -5564,6 +5642,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'fbba51f0-314f-4ddd-a0bb-50e0d6580a20',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -5577,7 +5656,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -5587,6 +5665,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'f116cefb-2fbe-426b-aaca-025447ff9eee',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -5600,7 +5679,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -5610,6 +5688,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'e06f97cc-af81-46ef-8f9a-081be9365ee8',
                   type: 'TEXT',
                   name: 'body',
@@ -5623,7 +5702,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -5633,6 +5711,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '928a0879-7a43-4161-a39a-1b439b4b1e25',
                   type: 'UUID',
                   name: 'id',
@@ -5646,7 +5725,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -5656,6 +5734,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '16e12150-bca4-4d81-b0d3-87fc7e5ef7a4',
                   type: 'RELATION',
                   name: 'assignee',
@@ -5669,8 +5748,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -5708,6 +5787,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'workspaceMember',
                       namePlural: 'workspaceMembers',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -5751,6 +5831,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '0c3b7acd-97c3-49d4-8b0e-cf307f81b74b',
                   type: 'TEXT',
                   name: 'locale',
@@ -5764,7 +5845,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "'en'",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -5774,6 +5854,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'fc3cfebb-722e-42dd-9646-e9f9f07dc152',
                   type: 'RELATION',
                   name: 'connectedAccounts',
@@ -5787,8 +5868,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -5826,6 +5907,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'connectedAccount',
                       namePlural: 'connectedAccounts',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -5835,6 +5917,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '505669cf-d7ed-47d9-90f4-516da3acdee8',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -5848,7 +5931,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -5858,6 +5940,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '04492087-5469-4052-982e-3de6c1528219',
                   type: 'TEXT',
                   name: 'userEmail',
@@ -5871,7 +5954,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -5881,6 +5963,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '79c3c3b7-b71c-47c0-a6ca-93ebf9842932',
                   type: 'RELATION',
                   name: 'authoredActivities',
@@ -5894,8 +5977,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -5933,6 +6016,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'activity',
                       namePlural: 'activities',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -5942,6 +6026,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'c1eeca93-2341-4685-8b72-68b8954c8120',
                   type: 'TEXT',
                   name: 'colorScheme',
@@ -5955,7 +6040,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "'Light'",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -5965,6 +6049,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'c779912d-8393-44fd-94cf-f8701daccad1',
                   type: 'UUID',
                   name: 'id',
@@ -5978,7 +6063,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -5988,6 +6072,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '25d15af0-e186-42d4-b245-f0a2d3c89d09',
                   type: 'FULL_NAME',
                   name: 'name',
@@ -6004,7 +6089,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     lastName: "''",
                     firstName: "''",
                   },
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -6014,6 +6098,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '20577261-01ca-43ae-a6c8-d558dce6c0ee',
                   type: 'RELATION',
                   name: 'accountOwnerForCompanies',
@@ -6027,8 +6112,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -6066,6 +6151,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'company',
                       namePlural: 'companies',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
@@ -6075,6 +6161,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '605cc521-9640-49bd-b2c2-c5aa6c588b90',
                   type: 'RELATION',
                   name: 'authoredAttachments',
@@ -6088,8 +6175,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -6127,6 +6214,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'attachment',
                       namePlural: 'attachments',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -6136,6 +6224,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '67044674-2477-44b4-a7a2-fba9add0e9ce',
                   type: 'RELATION',
                   name: 'messageParticipants',
@@ -6149,8 +6238,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -6188,6 +6277,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'messageParticipant',
                       namePlural: 'messageParticipants',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -6197,6 +6287,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '78b1e375-3ed2-49bc-8d3a-ca784ebe4013',
                   type: 'UUID',
                   name: 'userId',
@@ -6210,7 +6301,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -6220,6 +6310,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '59abd17e-faa3-4527-94ee-6aa54c1ebae0',
                   type: 'RELATION',
                   name: 'assignedActivities',
@@ -6233,8 +6324,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -6272,6 +6363,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'activity',
                       namePlural: 'activities',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -6281,6 +6373,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a06ac5ca-493e-413e-a305-0812deeaab85',
                   type: 'RELATION',
                   name: 'events',
@@ -6294,8 +6387,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -6333,6 +6426,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'event',
                       namePlural: 'events',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -6342,6 +6436,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'aee6daaa-a9e3-4f1a-a4dc-aa34c57cef7f',
                   type: 'RELATION',
                   name: 'calendarEventParticipants',
@@ -6355,8 +6450,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -6394,6 +6489,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'calendarEventParticipant',
                       namePlural: 'calendarEventParticipants',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -6403,6 +6499,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '25ce4b37-a597-4f1c-a2bc-72558170ddc5',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -6416,7 +6513,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -6426,6 +6522,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'ca7a26f0-84f3-4215-a3a1-6967961de3c4',
                   type: 'RELATION',
                   name: 'blocklist',
@@ -6439,8 +6536,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -6478,6 +6575,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'blocklist',
                       namePlural: 'blocklists',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -6487,6 +6585,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'b0c16f48-0752-46da-b5d8-59f35c7c1ea0',
                   type: 'TEXT',
                   name: 'avatarUrl',
@@ -6500,7 +6599,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -6510,6 +6608,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '28419ee0-5f10-4130-ad39-31fe4fc4ae62',
                   type: 'RELATION',
                   name: 'favorites',
@@ -6523,8 +6622,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -6562,6 +6661,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'favorite',
                       namePlural: 'favorites',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -6571,6 +6671,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '9ea86ae6-c26b-4ea0-b207-820b3ebf7110',
                   type: 'RELATION',
                   name: 'authoredComments',
@@ -6584,8 +6685,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -6623,6 +6724,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'comment',
                       namePlural: 'comments',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -6666,6 +6768,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '2d67b389-f431-4371-bf47-fc2bd8a1ed4d',
                   type: 'TEXT',
                   name: 'handle',
@@ -6679,7 +6782,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -6689,6 +6791,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'bfd8b430-a1d9-4fc7-82d7-a6ad2d62f1cc',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -6702,7 +6805,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -6712,6 +6814,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '1cbbd683-b426-4509-9557-54671e6f0447',
                   type: 'RELATION',
                   name: 'messageChannelMessageAssociations',
@@ -6725,8 +6828,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -6764,6 +6867,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'messageChannelMessageAssociation',
                       namePlural: 'messageChannelMessageAssociations',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -6773,6 +6877,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '83abe056-d8a7-42a8-a4a1-dbb9bc425a16',
                   type: 'UUID',
                   name: 'id',
@@ -6786,7 +6891,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -6796,6 +6900,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '24147b01-4394-4aee-92a4-5f6b5073704f',
                   type: 'DATE_TIME',
                   name: 'ongoingSyncStartedAt',
@@ -6809,7 +6914,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -6819,6 +6923,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'b914db46-eea0-496c-ba56-1209b3fd9537',
                   type: 'RELATION',
                   name: 'connectedAccount',
@@ -6832,8 +6937,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -6871,6 +6976,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'connectedAccount',
                       namePlural: 'connectedAccounts',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -6880,6 +6986,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'fac6ab3a-74f7-4689-9c87-ac59135abf68',
                   type: 'TEXT',
                   name: 'syncCursor',
@@ -6893,7 +7000,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -6903,6 +7009,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '49a08dc5-5a71-4ce2-ab74-928148673749',
                   type: 'UUID',
                   name: 'connectedAccountId',
@@ -6916,7 +7023,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -7009,6 +7115,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'bad2e356-4abb-4b01-8214-ebd721c5d971',
                   type: 'BOOLEAN',
                   name: 'isContactAutoCreationEnabled',
@@ -7022,7 +7129,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: true,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -7032,6 +7138,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '5375647b-8bf8-422f-b0b0-b6e0fa9b7843',
                   type: 'DATE_TIME',
                   name: 'syncedAt',
@@ -7045,7 +7152,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -7107,6 +7213,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'ee974a00-4aa5-497a-8219-fadd7578fbc5',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -7120,7 +7227,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -7164,6 +7270,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '80f9f757-fdf4-4c1a-ade8-4dcd8063eda0',
                   type: 'RELATION',
                   name: 'activity',
@@ -7177,8 +7284,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -7216,6 +7323,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'activity',
                       namePlural: 'activities',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -7225,6 +7333,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '4bc1a76e-0fec-433d-8a35-3b0297d395fb',
                   type: 'UUID',
                   name: 'opportunityId',
@@ -7238,7 +7347,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -7248,6 +7356,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '0181aae2-1683-453a-b858-fe5260bb19e6',
                   type: 'RELATION',
                   name: 'company',
@@ -7261,8 +7370,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -7300,6 +7409,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'company',
                       namePlural: 'companies',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
@@ -7309,6 +7419,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '97d60d26-b9d8-45f0-b585-daf7c7311722',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -7322,7 +7433,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -7332,6 +7442,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a2c48db3-f1e8-416a-bc89-ad4447735f83',
                   type: 'UUID',
                   name: 'companyId',
@@ -7345,7 +7456,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -7355,6 +7465,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '40770d58-2f91-47f7-8c1d-f5f83f1d29cf',
                   type: 'UUID',
                   name: 'personId',
@@ -7368,7 +7479,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -7378,6 +7488,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '21a2983c-799d-4a16-94d4-6f63946718c5',
                   type: 'UUID',
                   name: 'listingId',
@@ -7391,7 +7502,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:51:28.729Z',
                   updatedAt: '2024-04-08T12:51:28.729Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -7401,6 +7511,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '528427e3-e988-44b3-9b3f-fa47a9e64ca6',
                   type: 'RELATION',
                   name: 'opportunity',
@@ -7414,8 +7525,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -7453,6 +7564,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'opportunity',
                       namePlural: 'opportunities',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
@@ -7462,6 +7574,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'ef4c93f7-b0fb-40a5-932b-2db0f4fe2271',
                   type: 'RELATION',
                   name: 'person',
@@ -7475,8 +7588,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -7514,6 +7627,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'person',
                       namePlural: 'people',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
@@ -7523,6 +7637,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '7927cf69-7c79-46c2-b43a-5b1bb98b41c0',
                   type: 'TEXT',
                   name: 'fullPath',
@@ -7536,7 +7651,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -7546,6 +7660,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '31cbdd99-1496-4310-8d6f-ed0030947451',
                   type: 'UUID',
                   name: 'id',
@@ -7559,7 +7674,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -7569,6 +7683,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'f5108d93-497b-4605-ab69-1c214fb9bc48',
                   type: 'UUID',
                   name: 'authorId',
@@ -7582,7 +7697,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -7592,6 +7706,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '9f9fed5a-0015-4dea-9a93-e7cef9792ca3',
                   type: 'UUID',
                   name: 'activityId',
@@ -7605,7 +7720,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -7615,6 +7729,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '2b6bf6cd-0bab-4c21-b4e8-83a362f34cf3',
                   type: 'TEXT',
                   name: 'name',
@@ -7628,7 +7743,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -7638,6 +7752,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'ef938eb9-60ac-42f3-bd25-12cfc2ad2e99',
                   type: 'TEXT',
                   name: 'type',
@@ -7651,7 +7766,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -7661,6 +7775,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'd65234a9-f3a7-4985-93fb-52b1ee7517fb',
                   type: 'RELATION',
                   name: 'author',
@@ -7674,8 +7789,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -7713,6 +7828,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'workspaceMember',
                       namePlural: 'workspaceMembers',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -7722,6 +7838,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '7c18721a-75dd-419b-a9eb-73ea84a5be85',
                   type: 'RELATION',
                   name: 'listing',
@@ -7735,8 +7852,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:51:28.729Z',
                   updatedAt: '2024-04-08T12:51:28.729Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -7774,6 +7891,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'listing',
                       namePlural: 'listings',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
@@ -7783,6 +7901,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '7b7bdb38-ebc6-4e79-9024-bbb7a3a67c1b',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -7796,7 +7915,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -7840,6 +7958,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '4a6abf2d-56dd-44e4-a52f-048d05b8bee5',
                   type: 'RELATION',
                   name: 'pointOfContact',
@@ -7853,8 +7972,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -7892,6 +8011,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'person',
                       namePlural: 'people',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
@@ -7901,6 +8021,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '2c2077f0-2efc-4569-b2d9-44c8583a2a58',
                   type: 'RELATION',
                   name: 'attachments',
@@ -7914,8 +8035,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -7953,6 +8074,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'attachment',
                       namePlural: 'attachments',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -7962,6 +8084,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'fca33094-0d78-4e6d-8c5e-e970d98f1e1c',
                   type: 'UUID',
                   name: 'id',
@@ -7975,7 +8098,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -7985,6 +8107,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a16e97e2-2d9f-45f7-85bf-c6cc78de9175',
                   type: 'RELATION',
                   name: 'events',
@@ -7998,8 +8121,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -8037,6 +8160,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'event',
                       namePlural: 'events',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -8046,6 +8170,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'be148e1f-256c-4ea8-a016-c25cbd6ec841',
                   type: 'RELATION',
                   name: 'company',
@@ -8059,8 +8184,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -8098,6 +8223,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'company',
                       namePlural: 'companies',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
@@ -8107,6 +8233,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'f9223d20-5eed-41ff-8e31-f25e2df8151d',
                   type: 'TEXT',
                   name: 'probability',
@@ -8120,7 +8247,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "'0'",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8130,6 +8256,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'c2f4c761-c6e0-40e6-bd68-b9616ac1214c',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -8143,7 +8270,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8153,6 +8279,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'd61da288-7a71-47d5-ba6a-7700356e9a3a',
                   type: 'RELATION',
                   name: 'favorites',
@@ -8166,8 +8293,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -8205,6 +8332,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'favorite',
                       namePlural: 'favorites',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -8214,6 +8342,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '4d80df11-1191-467f-ada8-05f83468dae2',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -8227,7 +8356,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8237,6 +8365,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '4f09330e-1a85-4eb9-82df-c47e79d68c38',
                   type: 'UUID',
                   name: 'pointOfContactId',
@@ -8250,7 +8379,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8260,6 +8388,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a276b810-e620-48b8-9575-ceca50d6d825',
                   type: 'POSITION',
                   name: 'position',
@@ -8273,7 +8402,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8283,6 +8411,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '854e2f30-9004-4e6e-9169-ccb65e4dfd82',
                   type: 'CURRENCY',
                   name: 'amount',
@@ -8299,7 +8428,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     amountMicros: null,
                     currencyCode: "''",
                   },
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8368,6 +8496,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '6d85ad85-d707-4642-9fbd-b125d9458d26',
                   type: 'DATE_TIME',
                   name: 'closeDate',
@@ -8381,7 +8510,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8391,6 +8519,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '62f1371a-d4da-49b4-9e59-7d9d691ede83',
                   type: 'UUID',
                   name: 'companyId',
@@ -8404,7 +8533,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8414,6 +8542,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'c59e1a3c-3849-4210-a4ee-c09a5bebe434',
                   type: 'TEXT',
                   name: 'name',
@@ -8427,7 +8556,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8437,6 +8565,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'adc8f6dd-aee1-492f-a715-7dd02bdfb5f5',
                   type: 'RELATION',
                   name: 'activityTargets',
@@ -8450,8 +8579,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -8489,6 +8618,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'activityTarget',
                       namePlural: 'activityTargets',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -8532,6 +8662,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '51d90847-7bf8-4e66-af59-4dbee84c0953',
                   type: 'TEXT',
                   name: 'conferenceSolution',
@@ -8545,7 +8676,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8555,6 +8685,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a21b5983-a26c-42cf-a68f-322278eb3420',
                   type: 'TEXT',
                   name: 'description',
@@ -8568,7 +8699,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8578,6 +8708,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '98dd25a4-8912-4e5d-9373-0a896f7dfda1',
                   type: 'DATE_TIME',
                   name: 'externalUpdatedAt',
@@ -8591,7 +8722,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8601,6 +8731,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '2ae56492-083e-4ca9-8e7c-b6bc6548c830',
                   type: 'BOOLEAN',
                   name: 'isCanceled',
@@ -8614,7 +8745,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8624,6 +8754,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a5a16bf4-aff6-4008-bcca-e2441df71b96',
                   type: 'TEXT',
                   name: 'iCalUID',
@@ -8637,7 +8768,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8647,6 +8777,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '87b36790-10ac-40ce-b309-c8033c0aa083',
                   type: 'RELATION',
                   name: 'eventParticipants',
@@ -8660,8 +8791,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -8699,6 +8830,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'calendarEventParticipant',
                       namePlural: 'calendarEventParticipants',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -8708,6 +8840,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '44457302-ca60-438b-84b4-fa653cc606e2',
                   type: 'UUID',
                   name: 'id',
@@ -8721,7 +8854,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8731,6 +8863,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'cac6b5e3-ac9c-4df0-9e9a-767f38dc888b',
                   type: 'TEXT',
                   name: 'location',
@@ -8744,7 +8877,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8754,6 +8886,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '39e80598-42c1-453c-b204-ab0cfd52ba55',
                   type: 'DATE_TIME',
                   name: 'endsAt',
@@ -8767,7 +8900,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8777,6 +8909,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a719dc7c-aec9-4fa6-9957-c896953be324',
                   type: 'DATE_TIME',
                   name: 'startsAt',
@@ -8790,7 +8923,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8800,6 +8932,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a47b96ea-0416-49bd-94e8-55cdb2738bff',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -8813,7 +8946,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8823,6 +8955,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'b2be8cfa-97dc-4482-bad2-b8576b4090e7',
                   type: 'RELATION',
                   name: 'calendarChannelEventAssociations',
@@ -8836,8 +8969,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -8875,6 +9008,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'calendarChannelEventAssociation',
                       namePlural: 'calendarChannelEventAssociations',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -8884,6 +9018,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '64e1750a-0955-433d-8f7f-52d412d3a55b',
                   type: 'LINK',
                   name: 'conferenceLink',
@@ -8900,7 +9035,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     url: "''",
                     label: "''",
                   },
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8910,6 +9044,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '266b42df-7ea4-4198-aff1-7146a34a3ee7',
                   type: 'BOOLEAN',
                   name: 'isFullDay',
@@ -8923,7 +9058,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8933,6 +9067,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '12aa4ad3-45b7-4ca7-b87e-942e4a077aad',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -8946,7 +9081,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8956,6 +9090,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'ec811f9e-6539-41e8-8c23-296af37ea29e',
                   type: 'DATE_TIME',
                   name: 'externalCreatedAt',
@@ -8969,7 +9104,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -8979,6 +9113,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '74b99529-a709-4b2b-9be1-8e4eadfca14e',
                   type: 'TEXT',
                   name: 'title',
@@ -8992,7 +9127,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -9002,6 +9136,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a1824c60-e3a3-4be9-bd85-4d65e7369c6c',
                   type: 'TEXT',
                   name: 'recurringEventExternalId',
@@ -9015,7 +9150,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -9059,6 +9193,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'b1fcc37b-356f-425d-96aa-df8b7a3cf259',
                   type: 'UUID',
                   name: 'id',
@@ -9072,7 +9207,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -9082,6 +9216,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '2791a32e-f27b-417b-bad8-0957f20bfdfc',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -9095,7 +9230,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -9105,6 +9239,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a67941ca-05b8-47f3-a5f0-2376c68f970a',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -9118,7 +9253,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -9128,6 +9262,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '648c5a15-f21f-4b3f-abae-f87cf086289d',
                   type: 'TEXT',
                   name: 'operation',
@@ -9141,7 +9276,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -9151,6 +9285,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '8898b523-83ba-4d2c-bf67-39c43d9e806f',
                   type: 'TEXT',
                   name: 'targetUrl',
@@ -9164,7 +9299,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -9208,6 +9342,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '479f0660-1b6e-49a4-a46d-be58faea1c30',
                   type: 'DATE_TIME',
                   name: 'receivedAt',
@@ -9221,7 +9356,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -9231,6 +9365,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'ae82a0a0-d928-499a-a6b1-ad46006452b0',
                   type: 'RELATION',
                   name: 'messageChannelMessageAssociations',
@@ -9244,8 +9379,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -9283,6 +9418,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'messageChannelMessageAssociation',
                       namePlural: 'messageChannelMessageAssociations',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -9292,6 +9428,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '43be6d59-b5bb-465b-8771-f82457ff5dce',
                   type: 'UUID',
                   name: 'messageThreadId',
@@ -9305,7 +9442,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -9315,6 +9451,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'ee041833-e4c7-4766-b8e3-a7151c505b9d',
                   type: 'TEXT',
                   name: 'headerMessageId',
@@ -9328,7 +9465,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -9338,6 +9474,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'b8ff58c9-7414-450f-999e-a9f0867f30b1',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -9351,7 +9488,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -9361,6 +9497,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'b2c00ac2-ce04-4552-b71b-acfa8403af25',
                   type: 'UUID',
                   name: 'id',
@@ -9374,7 +9511,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -9384,6 +9520,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '12099cb8-ee26-4ce7-836c-73230c94c3e8',
                   type: 'RELATION',
                   name: 'messageParticipants',
@@ -9397,8 +9534,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -9436,6 +9573,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'messageParticipant',
                       namePlural: 'messageParticipants',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -9445,6 +9583,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '0baefb8e-1961-4aee-8d42-7040a94a18d6',
                   type: 'TEXT',
                   name: 'text',
@@ -9458,7 +9597,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -9468,6 +9606,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'c9807e13-e48b-4ccb-8f2f-2289a351a86b',
                   type: 'RELATION',
                   name: 'messageThread',
@@ -9481,8 +9620,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -9520,6 +9659,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'messageThread',
                       namePlural: 'messageThreads',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -9567,6 +9707,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '8b07a904-a985-4731-a1ae-1501540fa034',
                   type: 'TEXT',
                   name: 'subject',
@@ -9580,7 +9721,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -9590,6 +9730,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '70f601c1-ef84-416e-86cf-b625580d9951',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -9603,7 +9744,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -9647,6 +9787,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '25343509-ad60-4131-b880-28475e9b5806',
                   type: 'TEXT',
                   name: 'body',
@@ -9660,7 +9801,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -9670,6 +9810,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a847d0fb-330e-4cd1-b5cc-e41eb066f097',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -9683,7 +9824,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -9693,6 +9833,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '8cb54fbf-7d62-47af-8684-7d3300e88ff0',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -9706,7 +9847,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -9716,6 +9856,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '70073404-9690-4b2d-b2b7-e823ab279d74',
                   type: 'RELATION',
                   name: 'author',
@@ -9729,8 +9870,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -9768,6 +9909,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'workspaceMember',
                       namePlural: 'workspaceMembers',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -9777,6 +9919,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a1381a14-2de4-4bb4-935d-6f4282f8147a',
                   type: 'UUID',
                   name: 'activityId',
@@ -9790,7 +9933,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -9800,6 +9942,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '01b36d5d-a32b-43ad-99ed-ee385e8e9dbb',
                   type: 'UUID',
                   name: 'authorId',
@@ -9813,7 +9956,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -9823,6 +9965,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '30925f21-d244-4ada-86a5-1fdc21f3e6ee',
                   type: 'UUID',
                   name: 'id',
@@ -9836,7 +9979,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -9846,6 +9988,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '56919379-c98d-4a84-9f6a-accddd892620',
                   type: 'RELATION',
                   name: 'activity',
@@ -9859,8 +10002,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -9898,6 +10041,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'activity',
                       namePlural: 'activities',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -9941,6 +10085,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'efba6645-b939-4751-bd55-a2fa787997aa',
                   type: 'RELATION',
                   name: 'opportunities',
@@ -9954,8 +10099,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -9993,6 +10138,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'opportunity',
                       namePlural: 'opportunities',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
@@ -10002,6 +10148,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '770291d8-aa11-42e7-9b60-89d265d2f51d',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -10015,7 +10162,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -10025,6 +10171,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '3500a80f-b0a8-45b1-8ca7-3d6b1ed45d3c',
                   type: 'RELATION',
                   name: 'activityTargets',
@@ -10038,8 +10185,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -10077,6 +10224,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'activityTarget',
                       namePlural: 'activityTargets',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -10086,6 +10234,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a1be182c-810c-4319-955d-f1657692fdce',
                   type: 'UUID',
                   name: 'id',
@@ -10099,7 +10248,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -10109,6 +10257,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'd8e0f8b9-707d-4a18-b5fb-55a3a0513f00',
                   type: 'TEXT',
                   name: 'name',
@@ -10122,7 +10271,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -10132,6 +10280,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '6be4ff53-c65b-4955-9f86-935dd953154d',
                   type: 'RELATION',
                   name: 'people',
@@ -10145,8 +10294,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -10184,6 +10333,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'person',
                       namePlural: 'people',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
@@ -10193,6 +10343,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'af98447d-ed1e-407b-8e47-a9ef72bae4d0',
                   type: 'UUID',
                   name: 'listingId',
@@ -10206,7 +10357,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:51:58.429Z',
                   updatedAt: '2024-04-08T12:51:58.429Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -10216,6 +10366,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'f1bbe372-b283-4061-b7b4-5a5039196b8c',
                   type: 'RELATION',
                   name: 'accountOwner',
@@ -10230,8 +10381,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -10269,6 +10420,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'workspaceMember',
                       namePlural: 'workspaceMembers',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -10278,6 +10430,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '399c9e0a-8f95-4a10-b6e8-d95a682caefa',
                   type: 'POSITION',
                   name: 'position',
@@ -10291,7 +10444,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -10301,6 +10453,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '8f7912c8-8dc7-40ca-8625-b6d0ec2dc1f4',
                   type: 'RELATION',
                   name: 'attachments',
@@ -10314,8 +10467,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -10353,6 +10506,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'attachment',
                       namePlural: 'attachments',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -10362,6 +10516,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '086f49b1-d56b-4019-9153-c3db1d7978f4',
                   type: 'TEXT',
                   name: 'domainName',
@@ -10376,7 +10531,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -10386,6 +10540,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'ee339baa-56f3-4365-b8c6-8abbe7935636',
                   type: 'CURRENCY',
                   name: 'annualRecurringRevenue',
@@ -10401,9 +10556,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: {
                     amountMicros: null,
-                    currencyCode: "''",
+                    currencyCode: `'${CurrencyCode.USD}'`,
                   },
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -10413,6 +10567,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '5519bc53-4da8-4ca6-9de2-8c999dbf6f7e',
                   type: 'UUID',
                   name: 'accountOwnerId',
@@ -10427,7 +10582,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -10437,6 +10591,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'd828a7fb-10da-40e4-a63e-ab118822fac1',
                   type: 'TEXT',
                   name: 'address',
@@ -10450,7 +10605,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -10460,6 +10614,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'fc6a4a82-f80f-4aad-85e3-b2ae9b8fb26b',
                   type: 'RELATION',
                   name: 'listings',
@@ -10473,8 +10628,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:54:56.499Z',
                   updatedAt: '2024-04-08T12:54:56.499Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -10512,6 +10667,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'listing',
                       namePlural: 'listings',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
@@ -10521,6 +10677,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '29f251c2-fd6f-4fa7-a55b-80e6481f4ba9',
                   type: 'RELATION',
                   name: 'events',
@@ -10534,8 +10691,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -10573,6 +10730,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'event',
                       namePlural: 'events',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -10582,6 +10740,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '3a78ab26-7c4b-498a-b839-92b38223a3d5',
                   type: 'RELATION',
                   name: 'listing',
@@ -10595,8 +10754,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:51:58.429Z',
                   updatedAt: '2024-04-08T12:51:58.429Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -10634,6 +10793,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'listing',
                       namePlural: 'listings',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
@@ -10643,6 +10803,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '63523553-6b7b-4b0f-a877-45917e352e3d',
                   type: 'LINK',
                   name: 'linkedinLink',
@@ -10655,11 +10816,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   isNullable: true,
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
-                  defaultValue: {
-                    url: "''",
-                    label: "''",
-                  },
-                  options: null,
+                  defaultValue: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -10669,6 +10826,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '58c59bb5-ef51-400b-b95f-e536075e938c',
                   type: 'LINK',
                   name: 'xLink',
@@ -10685,7 +10843,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                     url: "''",
                     label: "''",
                   },
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -10695,6 +10852,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '0283509a-382f-4425-8a72-27c40ddc243d',
                   type: 'BOOLEAN',
                   name: 'idealCustomerProfile',
@@ -10709,7 +10867,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: false,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -10719,6 +10876,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '1579d027-2443-42a3-97e5-c3e6e81abe5c',
                   type: 'RELATION',
                   name: 'favorites',
@@ -10732,8 +10890,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -10771,6 +10929,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'favorite',
                       namePlural: 'favorites',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -10780,6 +10939,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '1ade9f1d-dcdc-4dfe-a619-a1a01da96bb3',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -10793,7 +10953,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -10803,6 +10962,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'd17926a3-ced6-43cf-a319-bcc0848b498e',
                   type: 'NUMBER',
                   name: 'employees',
@@ -10816,7 +10976,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -10860,6 +11019,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '88e1c2f8-a9cb-4ba3-9605-3671ffc6e103',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -10873,7 +11033,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -10883,6 +11042,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'c3af15a5-d15e-4d08-a165-512778470a62',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -10896,7 +11056,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -10906,6 +11065,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a88a4c97-8cb4-45d3-a617-1ea9838d3647',
                   type: 'TEXT',
                   name: 'lastSyncHistoryId',
@@ -10919,7 +11079,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -10929,6 +11088,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'd3f2a520-0274-4fb3-953f-258101f7b9f4',
                   type: 'TEXT',
                   name: 'accessToken',
@@ -10942,7 +11102,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -10952,6 +11111,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'e9edc1c6-8809-4369-8fb1-dbbd380df7a5',
                   type: 'UUID',
                   name: 'accountOwnerId',
@@ -10965,7 +11125,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -10975,6 +11134,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '98d8af99-e129-4ae8-8bfa-dd377718d87e',
                   type: 'DATE_TIME',
                   name: 'authFailedAt',
@@ -10988,7 +11148,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -10998,6 +11157,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'd4ab2ad6-b08e-48fb-9a38-df3eeb2d1a40',
                   type: 'TEXT',
                   name: 'handle',
@@ -11012,7 +11172,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -11022,6 +11181,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'e6bbac4f-c261-49e1-86f9-cb61f7ef6eb0',
                   type: 'TEXT',
                   name: 'provider',
@@ -11035,7 +11195,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -11045,6 +11204,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '01b85639-909a-4337-96f7-b93dfdb964fe',
                   type: 'UUID',
                   name: 'id',
@@ -11058,7 +11218,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -11068,6 +11227,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'cff5f362-1299-4e44-bcf5-49bb0d2d611b',
                   type: 'RELATION',
                   name: 'accountOwner',
@@ -11081,8 +11241,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -11120,6 +11280,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'workspaceMember',
                       namePlural: 'workspaceMembers',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -11129,6 +11290,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'fc92c00d-e5ff-4982-965e-514ee30bcf1c',
                   type: 'RELATION',
                   name: 'calendarChannels',
@@ -11142,8 +11304,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -11181,6 +11343,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'calendarChannel',
                       namePlural: 'calendarChannels',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -11190,6 +11353,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '085c8a6b-31b5-4bd9-a193-8dd5c73c426b',
                   type: 'TEXT',
                   name: 'refreshToken',
@@ -11203,7 +11367,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -11213,6 +11376,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'c68fb8af-ad36-439c-8c9d-799ba4cf4169',
                   type: 'RELATION',
                   name: 'messageChannels',
@@ -11226,8 +11390,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'ONE_TO_MANY',
                     sourceObjectMetadata: {
@@ -11265,6 +11429,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'messageChannel',
                       namePlural: 'messageChannels',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -11308,6 +11473,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '9a8d46c9-a957-4e75-8d00-12872b3fd29b',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -11321,7 +11487,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -11331,6 +11496,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a5aa1016-d4fb-4abc-bb0d-c65c8ef07751',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -11344,7 +11510,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -11354,6 +11519,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '472122e5-abad-41f9-baee-ded52b95f23a',
                   type: 'TEXT',
                   name: 'handle',
@@ -11367,7 +11533,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -11429,6 +11594,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '6f4e5661-277f-45a1-ac19-61fe082b6d59',
                   type: 'TEXT',
                   name: 'displayName',
@@ -11442,7 +11608,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "''",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -11452,6 +11617,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a3d589db-aada-4980-8589-1e6af13292c3',
                   type: 'BOOLEAN',
                   name: 'isOrganizer',
@@ -11465,7 +11631,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: false,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -11475,6 +11640,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'b6bc0ac1-a106-4ff6-9c6c-e79f1aea0de5',
                   type: 'UUID',
                   name: 'calendarEventId',
@@ -11488,7 +11654,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -11498,6 +11663,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'c0705e9a-d868-45ee-83b7-6055ca6ac1a8',
                   type: 'RELATION',
                   name: 'workspaceMember',
@@ -11511,8 +11677,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -11550,6 +11716,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'workspaceMember',
                       namePlural: 'workspaceMembers',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -11559,6 +11726,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'e9fb5ddb-4231-46c3-971f-0dfb321641b8',
                   type: 'RELATION',
                   name: 'person',
@@ -11572,8 +11740,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -11611,6 +11779,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'person',
                       namePlural: 'people',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
@@ -11620,6 +11789,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '1feb6de5-f8e7-449c-8f59-95130358c541',
                   type: 'UUID',
                   name: 'id',
@@ -11633,7 +11803,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -11643,6 +11812,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '58906c98-2b5a-41bf-bc22-0b4df50e24dd',
                   type: 'RELATION',
                   name: 'calendarEvent',
@@ -11656,8 +11826,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -11695,6 +11865,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'calendarEvent',
                       namePlural: 'calendarEvents',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -11704,6 +11875,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '03b22ba4-a27c-4bec-929d-c29cf5ed73a4',
                   type: 'UUID',
                   name: 'personId',
@@ -11717,7 +11889,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -11727,6 +11898,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '400c23b4-43c5-4f17-80eb-647a60761992',
                   type: 'UUID',
                   name: 'workspaceMemberId',
@@ -11740,7 +11912,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -11784,6 +11955,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '7ebcc78a-b65d-4a11-b38b-1d9d6a07b9b7',
                   type: 'UUID',
                   name: 'listingId',
@@ -11797,7 +11969,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:51:28.722Z',
                   updatedAt: '2024-04-08T12:51:28.722Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -11807,6 +11978,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'c2ba4efb-604d-4c2f-8a03-0b569b47b55d',
                   type: 'RELATION',
                   name: 'activity',
@@ -11820,8 +11992,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -11859,6 +12031,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'activity',
                       namePlural: 'activities',
+                      isRemote: false,
                       isSystem: true,
                     },
                   },
@@ -11868,6 +12041,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'c1fbf199-f736-41ee-8e09-63176fe2f980',
                   type: 'UUID',
                   name: 'activityId',
@@ -11881,7 +12055,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -11891,6 +12064,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '5bb6652c-6eba-4c1a-b6e5-aae3ca46b132',
                   type: 'RELATION',
                   name: 'person',
@@ -11904,8 +12078,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -11944,6 +12118,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       nameSingular: 'person',
                       namePlural: 'people',
                       isSystem: false,
+                      isRemote: false,
                     },
                   },
                 },
@@ -11952,6 +12127,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '01d640d1-a484-4e96-8816-43c07a76a747',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -11965,7 +12141,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -11975,6 +12150,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'ce67b1a5-9c8b-44d7-a052-9a6a88e36818',
                   type: 'UUID',
                   name: 'opportunityId',
@@ -11988,7 +12164,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -11998,6 +12173,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'b32cedef-1675-4106-b26a-1035807e2657',
                   type: 'UUID',
                   name: 'id',
@@ -12011,7 +12187,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -12021,6 +12196,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '038d194c-ba8c-4ff8-aeaa-846558e420c2',
                   type: 'RELATION',
                   name: 'company',
@@ -12034,8 +12210,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -12074,6 +12250,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       nameSingular: 'company',
                       namePlural: 'companies',
                       isSystem: false,
+                      isRemote: false,
                     },
                   },
                 },
@@ -12082,6 +12259,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '6f033aeb-02d4-4154-8684-390884c86405',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -12095,7 +12273,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -12105,6 +12282,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '48714e13-1203-424e-8bfa-0f2baff626e7',
                   type: 'RELATION',
                   name: 'opportunity',
@@ -12118,8 +12296,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -12158,6 +12336,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       nameSingular: 'opportunity',
                       namePlural: 'opportunities',
                       isSystem: false,
+                      isRemote: false,
                     },
                   },
                 },
@@ -12166,6 +12345,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'b407e872-8151-4bef-8277-0df5f638153d',
                   type: 'RELATION',
                   name: 'listing',
@@ -12179,8 +12359,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:51:28.722Z',
                   updatedAt: '2024-04-08T12:51:28.722Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -12219,6 +12399,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       nameSingular: 'listing',
                       namePlural: 'listings',
                       isSystem: false,
+                      isRemote: false,
                     },
                   },
                 },
@@ -12227,6 +12408,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '56061f3e-e05a-4a0c-8527-ef98ad052c59',
                   type: 'UUID',
                   name: 'companyId',
@@ -12240,7 +12422,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -12250,6 +12431,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '7949e7ad-a269-4b2e-85d3-6457765fa940',
                   type: 'UUID',
                   name: 'personId',
@@ -12263,7 +12445,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -12307,6 +12488,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '5ab02c12-acdd-4663-b913-78c25dd7f199',
                   type: 'RELATION',
                   name: 'view',
@@ -12320,8 +12502,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -12360,6 +12542,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       nameSingular: 'view',
                       namePlural: 'views',
                       isSystem: true,
+                      isRemote: false,
                     },
                   },
                 },
@@ -12368,6 +12551,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'a92bf297-dac9-434b-b14d-cd849d7fb81b',
                   type: 'UUID',
                   name: 'fieldMetadataId',
@@ -12381,7 +12565,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -12391,6 +12574,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '5df49403-402e-42f9-adac-ca9211bf1a38',
                   type: 'TEXT',
                   name: 'direction',
@@ -12404,7 +12588,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: "'asc'",
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -12414,6 +12597,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '7e724009-f914-4ae8-8cbb-8e2f8be1e783',
                   type: 'UUID',
                   name: 'viewId',
@@ -12427,7 +12611,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -12437,6 +12620,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '1096ea71-550a-4958-acbe-a6393edc9f81',
                   type: 'UUID',
                   name: 'id',
@@ -12450,7 +12634,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -12460,6 +12643,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '0c8deb2e-f832-4618-82ac-eaa108b1b5ec',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -12473,7 +12657,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -12483,6 +12666,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '00016b5d-1be6-4c9b-b02a-d372d2d6bc60',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -12496,7 +12680,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -12540,6 +12723,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'da9e2c6c-3a23-4c10-84f4-229b8c8eb125',
                   type: 'NUMBER',
                   name: 'position',
@@ -12553,7 +12737,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 0,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -12563,6 +12746,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'b5bae675-6ad6-4320-b0f7-a3e5e2ca5474',
                   type: 'UUID',
                   name: 'opportunityId',
@@ -12576,7 +12760,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -12586,6 +12769,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'd94f1f82-1aab-441c-b6ff-6ec2f561921d',
                   type: 'RELATION',
                   name: 'listing',
@@ -12599,8 +12783,8 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:51:28.726Z',
                   updatedAt: '2024-04-08T12:51:28.726Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -12638,6 +12822,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'listing',
                       namePlural: 'listings',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
@@ -12647,6 +12832,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'fbf23311-1077-4b1d-9687-def4fe52227a',
                   type: 'UUID',
                   name: 'companyId',
@@ -12660,7 +12846,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -12670,6 +12855,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '3ae40673-5d47-4c7c-9233-cfb141ad30d5',
                   type: 'UUID',
                   name: 'workspaceMemberId',
@@ -12683,7 +12869,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -12693,6 +12878,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'd737cd4a-4032-476d-a594-1952ba7883b2',
                   type: 'RELATION',
                   name: 'person',
@@ -12706,7 +12892,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: {
                     __typename: 'relation',
@@ -12719,10 +12904,12 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       dataSourceId: 'd36e6a2d-28bc-459d-afd5-fe18e4405729',
                       nameSingular: 'person',
                       namePlural: 'people',
+                      isRemote: false,
                       isSystem: false,
                     },
                   },
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -12754,6 +12941,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '93500808-3a1f-4b7d-ad07-edee6976016f',
                   type: 'UUID',
                   name: 'listingId',
@@ -12767,7 +12955,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:51:28.726Z',
                   updatedAt: '2024-04-08T12:51:28.726Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -12777,6 +12964,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '32ae5023-12c5-4a3a-8ec0-3f024eae8377',
                   type: 'RELATION',
                   name: 'opportunity',
@@ -12790,9 +12978,9 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   fromRelationMetadata: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -12830,6 +13018,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       nameSingular: 'opportunity',
                       namePlural: 'opportunities',
                       isSystem: false,
+                      isRemote: false,
                     },
                   },
                 },
@@ -12838,6 +13027,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'e00ceb17-446d-490d-b204-c90bfddf97bb',
                   type: 'DATE_TIME',
                   name: 'updatedAt',
@@ -12851,7 +13041,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -12861,6 +13050,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '8813fd75-e0d8-4a65-abd9-186dcbe9f1a7',
                   type: 'RELATION',
                   name: 'workspaceMember',
@@ -12874,9 +13064,9 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   fromRelationMetadata: null,
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {
@@ -12914,6 +13104,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       nameSingular: 'workspaceMember',
                       namePlural: 'workspaceMembers',
                       isSystem: true,
+                      isRemote: false,
                     },
                   },
                 },
@@ -12922,6 +13113,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '1e3d58ce-72d5-46c5-aa96-76ab49e614c1',
                   type: 'UUID',
                   name: 'id',
@@ -12935,7 +13127,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'uuid',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -12945,6 +13136,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '21f5674b-2893-46be-8789-690b2695da1c',
                   type: 'DATE_TIME',
                   name: 'createdAt',
@@ -12958,7 +13150,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: 'now',
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -12968,6 +13159,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: '0f2725f4-af46-4992-bf53-a91f298e5a26',
                   type: 'UUID',
                   name: 'personId',
@@ -12981,7 +13173,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   relationDefinition: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: null,
@@ -12991,6 +13182,7 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                 __typename: 'fieldEdge',
                 node: {
                   __typename: 'field',
+                  options: null,
                   id: 'dd203027-190c-471c-8e16-da0260b6274c',
                   type: 'RELATION',
                   name: 'company',
@@ -13004,7 +13196,6 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
                   defaultValue: null,
-                  options: null,
                   fromRelationMetadata: null,
                   toRelationMetadata: {
                     __typename: 'relation',
@@ -13018,9 +13209,11 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                       nameSingular: 'company',
                       namePlural: 'companies',
                       isSystem: false,
+                      isRemote: false,
                     },
                   },
                   relationDefinition: {
+                    relationId: '6a0aa90c-d7bb-458d-9364-12366fc8683b',
                     __typename: 'RelationDefinition',
                     direction: 'MANY_TO_ONE',
                     sourceObjectMetadata: {

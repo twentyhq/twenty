@@ -9,6 +9,8 @@ import {
   ValidationError,
   NotFoundError,
   ConflictError,
+  MethodNotAllowedError,
+  TimeoutError,
 } from 'src/engine/utils/graphql-errors.util';
 import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
 
@@ -17,6 +19,8 @@ const graphQLPredefinedExceptions = {
   401: AuthenticationError,
   403: ForbiddenError,
   404: NotFoundError,
+  405: MethodNotAllowedError,
+  408: TimeoutError,
   409: ConflictError,
 };
 
@@ -30,7 +34,7 @@ export const handleExceptionAndConvertToGraphQLError = (
   return convertExceptionToGraphQLError(exception);
 };
 
-export const filterException = (exception: Error): boolean => {
+export const shouldFilterException = (exception: Error): boolean => {
   if (exception instanceof HttpException && exception.getStatus() < 500) {
     return true;
   }
@@ -43,7 +47,7 @@ export const handleException = (
   exceptionHandlerService: ExceptionHandlerService,
   user?: ExceptionHandlerUser,
 ): void => {
-  if (filterException(exception)) {
+  if (shouldFilterException(exception)) {
     return;
   }
 

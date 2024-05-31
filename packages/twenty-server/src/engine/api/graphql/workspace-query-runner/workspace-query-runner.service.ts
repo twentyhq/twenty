@@ -3,6 +3,7 @@ import {
   Inject,
   Injectable,
   Logger,
+  RequestTimeoutException,
 } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
@@ -49,14 +50,18 @@ import { QueryRunnerArgsFactory } from 'src/engine/api/graphql/workspace-query-r
 import { QueryResultGettersFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/query-result-getters.factory';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
 import { STANDARD_OBJECT_IDS } from 'src/engine/workspace-manager/workspace-sync-metadata/constants/standard-object-ids';
-import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assertIsValidUuid.util';
+import { assertIsValidUuid } from 'src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util';
+import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
 
 import { WorkspaceQueryRunnerOptions } from './interfaces/query-runner-option.interface';
 import {
   PGGraphQLMutation,
   PGGraphQLResult,
 } from './interfaces/pg-graphql.interface';
-import { computePgGraphQLError } from './utils/compute-pg-graphql-error.util';
+import {
+  PgGraphQLConfig,
+  computePgGraphQLError,
+} from './utils/compute-pg-graphql-error.util';
 
 @Injectable()
 export class WorkspaceQueryRunnerService {
@@ -244,7 +249,7 @@ export class WorkspaceQueryRunnerService {
     assertMutationNotOnRemoteObject(objectMetadataItem);
 
     args.data.forEach((record) => {
-      if (record.id) {
+      if (record?.id) {
         assertIsValidUuid(record.id);
       }
     });
@@ -328,6 +333,14 @@ export class WorkspaceQueryRunnerService {
       options,
     );
 
+    await this.workspacePreQueryHookService.executePreHooks(
+      userId,
+      workspaceId,
+      objectMetadataItem.nameSingular,
+      'updateOne',
+      args,
+    );
+
     const result = await this.execute(query, workspaceId);
 
     const parsedResults = (
@@ -363,10 +376,10 @@ export class WorkspaceQueryRunnerService {
     args: UpdateManyResolverArgs<Record>,
     options: WorkspaceQueryRunnerOptions,
   ): Promise<Record[] | undefined> {
-    const { workspaceId, objectMetadataItem } = options;
+    const { userId, workspaceId, objectMetadataItem } = options;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
-    assertIsValidUuid(args.data.id);
+    args.filter?.id?.in?.forEach((id) => assertIsValidUuid(id));
 
     const maximumRecordAffected = this.environmentService.get(
       'MUTATION_MAXIMUM_RECORD_AFFECTED',
@@ -375,6 +388,14 @@ export class WorkspaceQueryRunnerService {
       ...options,
       atMost: maximumRecordAffected,
     });
+
+    await this.workspacePreQueryHookService.executePreHooks(
+      userId,
+      workspaceId,
+      objectMetadataItem.nameSingular,
+      'updateMany',
+      args,
+    );
 
     const result = await this.execute(query, workspaceId);
 
@@ -420,6 +441,14 @@ export class WorkspaceQueryRunnerService {
       atMost: maximumRecordAffected,
     });
 
+    await this.workspacePreQueryHookService.executePreHooks(
+      userId,
+      workspaceId,
+      objectMetadataItem.nameSingular,
+      'deleteMany',
+      args,
+    );
+
     const result = await this.execute(query, workspaceId);
 
     const parsedResults = (
@@ -459,6 +488,7 @@ export class WorkspaceQueryRunnerService {
     const { workspaceId, userId, objectMetadataItem } = options;
 
     assertMutationNotOnRemoteObject(objectMetadataItem);
+    assertIsValidUuid(args.id);
 
     const query = await this.workspaceQueryBuilderFactory.deleteOne(
       args,
@@ -478,6 +508,14 @@ export class WorkspaceQueryRunnerService {
       objectMetadataItem,
     );
     // TODO END
+
+    await this.workspacePreQueryHookService.executePreHooks(
+      userId,
+      workspaceId,
+      objectMetadataItem.nameSingular,
+      'deleteOne',
+      args,
+    );
 
     const result = await this.execute(query, workspaceId);
 
@@ -541,19 +579,30 @@ export class WorkspaceQueryRunnerService {
         workspaceId,
       );
 
-    await workspaceDataSource?.query(`
-        SET search_path TO ${this.workspaceDataSourceService.getSchemaName(
-          workspaceId,
-        )};
-      `);
+    try {
+      return await workspaceDataSource?.transaction(
+        async (transactionManager) => {
+          await transactionManager.query(`
+          SET search_path TO ${this.workspaceDataSourceService.getSchemaName(
+            workspaceId,
+          )};
+        `);
 
-    const results = await workspaceDataSource?.query<PGGraphQLResult>(`
-        SELECT graphql.resolve($$
-          ${query}
-        $$);
-      `);
+          const results = transactionManager.query<PGGraphQLResult>(
+            `SELECT graphql.resolve($1);`,
+            [query],
+          );
 
-    return results;
+          return results;
+        },
+      );
+    } catch (error) {
+      if (isQueryTimeoutError(error)) {
+        throw new RequestTimeoutException(error.message);
+      }
+
+      throw error;
+    }
   }
 
   private async parseResult<Result>(
@@ -566,13 +615,6 @@ export class WorkspaceQueryRunnerService {
     )}Collection`;
     const result = graphqlResult?.[0]?.resolve?.data?.[entityKey];
     const errors = graphqlResult?.[0]?.resolve?.errors;
-
-    if (!result) {
-      this.logger.log(
-        `No result found for ${entityKey}, graphqlResult: ` +
-          JSON.stringify(graphqlResult, null, 3),
-      );
-    }
 
     if (
       result &&
@@ -587,6 +629,11 @@ export class WorkspaceQueryRunnerService {
         command,
         objectMetadataItem.nameSingular,
         errors,
+        {
+          atMost: this.environmentService.get(
+            'MUTATION_MAXIMUM_RECORD_AFFECTED',
+          ),
+        } satisfies PgGraphQLConfig,
       );
 
       throw error;

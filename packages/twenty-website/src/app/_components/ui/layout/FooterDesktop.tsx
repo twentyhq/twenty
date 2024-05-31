@@ -77,7 +77,6 @@ export const FooterDesktop = () => {
       <div
         style={{
           width: '100%',
-          maxWidth: '1200px',
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'row',
@@ -126,7 +125,6 @@ export const FooterDesktop = () => {
       <div
         style={{
           width: '100%',
-          maxWidth: '1200px',
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'row',
