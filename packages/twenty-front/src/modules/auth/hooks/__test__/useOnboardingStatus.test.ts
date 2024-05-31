@@ -3,6 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import {
   CurrentWorkspace,
@@ -19,6 +20,13 @@ const tokenPair = {
 const billing = {
   billingUrl: 'testing.com',
   isBillingEnabled: true,
+};
+const currentUser = {
+  id: '1',
+  email: 'test@test',
+  supportUserHash: '1',
+  canImpersonate: false,
+  syncEmailSkipped: true,
 };
 const currentWorkspace = {
   activationStatus: 'active',
@@ -46,12 +54,14 @@ const renderHooks = () => {
       const setCurrentWorkspaceMember = useSetRecoilState(
         currentWorkspaceMemberState,
       );
+      const setCurrentUser = useSetRecoilState(currentUserState);
       const setTokenPair = useSetRecoilState(tokenPairState);
       const setVerifyPending = useSetRecoilState(isVerifyPendingState);
 
       return {
         onboardingStatus,
         setBilling,
+        setCurrentUser,
         setCurrentWorkspace,
         setCurrentWorkspaceMember,
         setTokenPair,
@@ -77,6 +87,7 @@ describe('useOnboardingStatus', () => {
     const {
       setTokenPair,
       setBilling,
+      setCurrentUser,
       setCurrentWorkspace,
       setCurrentWorkspaceMember,
     } = result.current;
@@ -84,6 +95,7 @@ describe('useOnboardingStatus', () => {
     act(() => {
       setTokenPair(tokenPair);
       setBilling(billing);
+      setCurrentUser(currentUser);
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'incomplete',
@@ -99,6 +111,7 @@ describe('useOnboardingStatus', () => {
     const {
       setTokenPair,
       setBilling,
+      setCurrentUser,
       setCurrentWorkspace,
       setCurrentWorkspaceMember,
     } = result.current;
@@ -106,6 +119,7 @@ describe('useOnboardingStatus', () => {
     act(() => {
       setTokenPair(tokenPair);
       setBilling(billing);
+      setCurrentUser({ ...currentUser, skipSyncEmail: true });
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'canceled',
@@ -124,11 +138,13 @@ describe('useOnboardingStatus', () => {
 
   it('should return "ongoing_workspace_activation"', async () => {
     const { result } = renderHooks();
-    const { setTokenPair, setBilling, setCurrentWorkspace } = result.current;
+    const { setTokenPair, setBilling, setCurrentUser, setCurrentWorkspace } =
+      result.current;
 
     act(() => {
       setTokenPair(tokenPair);
       setBilling(billing);
+      setCurrentUser(currentUser);
       setCurrentWorkspace({
         ...currentWorkspace,
         activationStatus: 'inactive',
@@ -146,6 +162,7 @@ describe('useOnboardingStatus', () => {
     const {
       setTokenPair,
       setBilling,
+      setCurrentUser,
       setCurrentWorkspace,
       setCurrentWorkspaceMember,
     } = result.current;
@@ -153,6 +170,7 @@ describe('useOnboardingStatus', () => {
     act(() => {
       setTokenPair(tokenPair);
       setBilling(billing);
+      setCurrentUser(currentUser);
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'active',
@@ -163,11 +181,12 @@ describe('useOnboardingStatus', () => {
     expect(result.current.onboardingStatus).toBe('ongoing_profile_creation');
   });
 
-  it('should return "completed"', async () => {
+  it('should return "ongoing_sync_email"', async () => {
     const { result } = renderHooks();
     const {
       setTokenPair,
       setBilling,
+      setCurrentUser,
       setCurrentWorkspace,
       setCurrentWorkspaceMember,
     } = result.current;
@@ -175,6 +194,37 @@ describe('useOnboardingStatus', () => {
     act(() => {
       setTokenPair(tokenPair);
       setBilling(billing);
+      setCurrentUser({ ...currentUser, skipSyncEmail: false });
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        subscriptionStatus: 'active',
+      } as CurrentWorkspace);
+      setCurrentWorkspaceMember({
+        ...currentWorkspaceMember,
+        name: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+      });
+    });
+
+    expect(result.current.onboardingStatus).toBe('ongoing_sync_email');
+  });
+
+  it('should return "completed"', async () => {
+    const { result } = renderHooks();
+    const {
+      setTokenPair,
+      setBilling,
+      setCurrentUser,
+      setCurrentWorkspace,
+      setCurrentWorkspaceMember,
+    } = result.current;
+
+    act(() => {
+      setTokenPair(tokenPair);
+      setBilling(billing);
+      setCurrentUser({ ...currentUser, skipSyncEmail: true });
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'active',
@@ -196,6 +246,7 @@ describe('useOnboardingStatus', () => {
     const {
       setTokenPair,
       setBilling,
+      setCurrentUser,
       setCurrentWorkspace,
       setCurrentWorkspaceMember,
     } = result.current;
@@ -203,6 +254,7 @@ describe('useOnboardingStatus', () => {
     act(() => {
       setTokenPair(tokenPair);
       setBilling(billing);
+      setCurrentUser({ ...currentUser, skipSyncEmail: true });
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'past_due',
@@ -224,6 +276,7 @@ describe('useOnboardingStatus', () => {
     const {
       setTokenPair,
       setBilling,
+      setCurrentUser,
       setCurrentWorkspace,
       setCurrentWorkspaceMember,
     } = result.current;
@@ -231,6 +284,7 @@ describe('useOnboardingStatus', () => {
     act(() => {
       setTokenPair(tokenPair);
       setBilling(billing);
+      setCurrentUser({ ...currentUser, skipSyncEmail: true });
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'unpaid',
@@ -252,6 +306,7 @@ describe('useOnboardingStatus', () => {
     const {
       setTokenPair,
       setBilling,
+      setCurrentUser,
       setCurrentWorkspace,
       setCurrentWorkspaceMember,
     } = result.current;
@@ -259,6 +314,7 @@ describe('useOnboardingStatus', () => {
     act(() => {
       setTokenPair(tokenPair);
       setBilling(billing);
+      setCurrentUser({ ...currentUser, skipSyncEmail: true });
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'trialing',
