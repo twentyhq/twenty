@@ -7,9 +7,9 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useSetRecordInStore } from '@/object-record/record-store/hooks/useSetRecordInStore';
 import {
-  formatToHumainReadableTime,
   formatToHumanReadableDay,
   formatToHumanReadableMonth,
+  formatToHumanReadableTime,
 } from '~/utils';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -104,6 +104,7 @@ export const EventCardCalendarEvent = ({
   }
 
   const startsAtDate = calendarEvent?.startsAt;
+  const endsAtDate = calendarEvent?.endsAt;
 
   if (isUndefinedOrNull(startsAtDate)) {
     throw new Error("Can't render a calendarEvent without a start date");
@@ -113,10 +114,8 @@ export const EventCardCalendarEvent = ({
 
   const startsAtDay = formatToHumanReadableDay(startsAtDate);
 
-  const startsAtHour = formatToHumainReadableTime(startsAtDate);
-  const endsAtHour = calendarEvent?.endsAt
-    ? formatToHumainReadableTime(startsAtDate)
-    : null;
+  const startsAtHour = formatToHumanReadableTime(startsAtDate);
+  const endsAtHour = endsAtDate ? formatToHumanReadableTime(endsAtDate) : null;
 
   return (
     <StyledEventCardCalendarEventContainer

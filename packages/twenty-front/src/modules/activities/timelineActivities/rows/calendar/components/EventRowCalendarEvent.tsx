@@ -44,7 +44,7 @@ export const EventRowCalendarEvent: React.FC<EventRowCalendarEventProps> = ({
         return <StyledItemAction>created an event</StyledItemAction>;
       }
       default:
-        throw new Error('Invalid event action for calentEvent event type.');
+        throw new Error('Invalid event action for calendarEvent event type.');
     }
   };
   return (

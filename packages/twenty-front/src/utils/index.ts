@@ -38,7 +38,7 @@ export const formatToHumanReadableDay = (date: Date | string) => {
   }).format(parsedJSDate);
 };
 
-export const formatToHumainReadableTime = (date: Date | string) => {
+export const formatToHumanReadableTime = (date: Date | string) => {
   const parsedJSDate = parseDate(date).toJSDate();
 
   return new Intl.DateTimeFormat(undefined, {

@@ -22,6 +22,10 @@ export const EventRowActivity: React.FC<EventRowActivityProps> = ({
 
   const openActivityRightDrawer = useOpenActivityRightDrawer();
 
+  if (!event.linkedRecordId) {
+    throw new Error('Could not find linked record id for event');
+  }
+
   return (
     <>
       <StyledItemAuthorText>{authorFullName}</StyledItemAuthorText>
