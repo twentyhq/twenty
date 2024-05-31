@@ -5,9 +5,9 @@ const config: CodegenConfig = {
     {
       [`${import.meta.env.VITE_SERVER_BASE_URL}/graphql`]: {
         // some of the mutations and queries require authorization (people or companies)
-        // so to regenrate the schema with types we need to pass a auth token
+        // so to regenerate the schema with types we need to pass an auth token
         headers: {
-          Authorization: 'YOUR-TOKEN-HERE',
+          Authorization: `Bearer ${import.meta.env.AUTH_TOKEN}`,
         },
       },
     },

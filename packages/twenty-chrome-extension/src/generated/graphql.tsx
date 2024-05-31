@@ -834,123 +834,6 @@ export type AuthorizeApp = {
   redirectUrl: Scalars['String'];
 };
 
-/** An event related to user behavior */
-export type BehavioralEvent = {
-  /** Json object to provide context (user, device, workspace, etc.) */
-  context?: Maybe<Scalars['RawJSONScalar']>;
-  /** Creation date */
-  createdAt?: Maybe<Scalars['DateTime']>;
-  /** Id */
-  id?: Maybe<Scalars['UUID']>;
-  /** Event name */
-  name?: Maybe<Scalars['String']>;
-  /** If the event is related to a particular object */
-  objectName?: Maybe<Scalars['String']>;
-  /** Json value for event details */
-  properties?: Maybe<Scalars['RawJSONScalar']>;
-  /** Event name/type */
-  recordId?: Maybe<Scalars['UUID']>;
-  /** Update date */
-  updatedAt?: Maybe<Scalars['DateTime']>;
-};
-
-/** An event related to user behavior */
-export type BehavioralEventConnection = {
-  edges?: Maybe<Array<BehavioralEventEdge>>;
-  pageInfo?: Maybe<PageInfo>;
-  /** Total number of records in the connection */
-  totalCount?: Maybe<Scalars['Int']>;
-};
-
-/** An event related to user behavior */
-export type BehavioralEventCreateInput = {
-  /** Json object to provide context (user, device, workspace, etc.) */
-  context?: InputMaybe<Scalars['RawJSONScalar']>;
-  /** Creation date */
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  /** Id */
-  id?: InputMaybe<Scalars['ID']>;
-  /** Event name */
-  name?: InputMaybe<Scalars['String']>;
-  /** If the event is related to a particular object */
-  objectName?: InputMaybe<Scalars['String']>;
-  /** Json value for event details */
-  properties?: InputMaybe<Scalars['RawJSONScalar']>;
-  /** Event name/type */
-  recordId?: InputMaybe<Scalars['UUID']>;
-  /** Update date */
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
-/** An event related to user behavior */
-export type BehavioralEventEdge = {
-  cursor?: Maybe<Scalars['Cursor']>;
-  node?: Maybe<BehavioralEvent>;
-};
-
-/** An event related to user behavior */
-export type BehavioralEventFilterInput = {
-  and?: InputMaybe<Array<InputMaybe<BehavioralEventFilterInput>>>;
-  /** Json object to provide context (user, device, workspace, etc.) */
-  context?: InputMaybe<RawJsonFilter>;
-  /** Creation date */
-  createdAt?: InputMaybe<DateFilter>;
-  /** Id */
-  id?: InputMaybe<IdFilter>;
-  /** Event name */
-  name?: InputMaybe<StringFilter>;
-  not?: InputMaybe<BehavioralEventFilterInput>;
-  /** If the event is related to a particular object */
-  objectName?: InputMaybe<StringFilter>;
-  or?: InputMaybe<Array<InputMaybe<BehavioralEventFilterInput>>>;
-  /** Json value for event details */
-  properties?: InputMaybe<RawJsonFilter>;
-  /** Event name/type */
-  recordId?: InputMaybe<IdFilter>;
-  /** Update date */
-  updatedAt?: InputMaybe<DateFilter>;
-};
-
-/** An event related to user behavior */
-export type BehavioralEventOrderByInput = {
-  /** Json object to provide context (user, device, workspace, etc.) */
-  context?: InputMaybe<OrderByDirection>;
-  /** Creation date */
-  createdAt?: InputMaybe<OrderByDirection>;
-  /** Id */
-  id?: InputMaybe<OrderByDirection>;
-  /** Event name */
-  name?: InputMaybe<OrderByDirection>;
-  /** If the event is related to a particular object */
-  objectName?: InputMaybe<OrderByDirection>;
-  /** Json value for event details */
-  properties?: InputMaybe<OrderByDirection>;
-  /** Event name/type */
-  recordId?: InputMaybe<OrderByDirection>;
-  /** Update date */
-  updatedAt?: InputMaybe<OrderByDirection>;
-};
-
-/** An event related to user behavior */
-export type BehavioralEventUpdateInput = {
-  /** Json object to provide context (user, device, workspace, etc.) */
-  context?: InputMaybe<Scalars['RawJSONScalar']>;
-  /** Creation date */
-  createdAt?: InputMaybe<Scalars['DateTime']>;
-  /** Id */
-  id?: InputMaybe<Scalars['ID']>;
-  /** Event name */
-  name?: InputMaybe<Scalars['String']>;
-  /** If the event is related to a particular object */
-  objectName?: InputMaybe<Scalars['String']>;
-  /** Json value for event details */
-  properties?: InputMaybe<Scalars['RawJSONScalar']>;
-  /** Event name/type */
-  recordId?: InputMaybe<Scalars['UUID']>;
-  /** Update date */
-  updatedAt?: InputMaybe<Scalars['DateTime']>;
-};
-
 export type BigFloatFilter = {
   eq?: InputMaybe<Scalars['BigFloat']>;
   gt?: InputMaybe<Scalars['BigFloat']>;
@@ -1755,6 +1638,7 @@ export type ClientConfig = {
   authProviders: AuthProviders;
   billing: Billing;
   captcha: Captcha;
+  chromeExtensionId?: Maybe<Scalars['String']>;
   debugMode: Scalars['Boolean'];
   sentry: Sentry;
   signInPrefilled: Scalars['Boolean'];
@@ -2599,6 +2483,11 @@ export type IdFilter = {
 
 export type InvalidatePassword = {
   /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean'];
+};
+
+export type KeyValuePairCreated = {
+  /** Boolean that Key Value Pair has been created */
   success: Scalars['Boolean'];
 };
 
@@ -3506,8 +3395,6 @@ export type Mutation = {
   createAttachments?: Maybe<Array<Attachment>>;
   createAuditLog?: Maybe<AuditLog>;
   createAuditLogs?: Maybe<Array<AuditLog>>;
-  createBehavioralEvent?: Maybe<BehavioralEvent>;
-  createBehavioralEvents?: Maybe<Array<BehavioralEvent>>;
   createBlocklist?: Maybe<Blocklist>;
   createBlocklists?: Maybe<Array<Blocklist>>;
   createCalendarChannel?: Maybe<CalendarChannel>;
@@ -3566,8 +3453,6 @@ export type Mutation = {
   deleteAttachments?: Maybe<Array<Attachment>>;
   deleteAuditLog?: Maybe<AuditLog>;
   deleteAuditLogs?: Maybe<Array<AuditLog>>;
-  deleteBehavioralEvent?: Maybe<BehavioralEvent>;
-  deleteBehavioralEvents?: Maybe<Array<BehavioralEvent>>;
   deleteBlocklist?: Maybe<Blocklist>;
   deleteBlocklists?: Maybe<Array<Blocklist>>;
   deleteCalendarChannel?: Maybe<CalendarChannel>;
@@ -3624,7 +3509,6 @@ export type Mutation = {
   executeQuickActionOnApiKey?: Maybe<ApiKey>;
   executeQuickActionOnAttachment?: Maybe<Attachment>;
   executeQuickActionOnAuditLog?: Maybe<AuditLog>;
-  executeQuickActionOnBehavioralEvent?: Maybe<BehavioralEvent>;
   executeQuickActionOnBlocklist?: Maybe<Blocklist>;
   executeQuickActionOnCalendarChannel?: Maybe<CalendarChannel>;
   executeQuickActionOnCalendarChannelEventAssociation?: Maybe<CalendarChannelEventAssociation>;
@@ -3654,6 +3538,7 @@ export type Mutation = {
   impersonate: Verify;
   renewToken: AuthTokens;
   signUp: LoginToken;
+  skipSyncEmail: KeyValuePairCreated;
   track: Analytics;
   updateActivities?: Maybe<Array<Activity>>;
   updateActivity?: Maybe<Activity>;
@@ -3665,8 +3550,6 @@ export type Mutation = {
   updateAttachments?: Maybe<Array<Attachment>>;
   updateAuditLog?: Maybe<AuditLog>;
   updateAuditLogs?: Maybe<Array<AuditLog>>;
-  updateBehavioralEvent?: Maybe<BehavioralEvent>;
-  updateBehavioralEvents?: Maybe<Array<BehavioralEvent>>;
   updateBillingSubscription: UpdateBillingEntity;
   updateBlocklist?: Maybe<Blocklist>;
   updateBlocklists?: Maybe<Array<Blocklist>>;
@@ -3802,16 +3685,6 @@ export type MutationCreateAuditLogArgs = {
 
 export type MutationCreateAuditLogsArgs = {
   data?: InputMaybe<Array<AuditLogCreateInput>>;
-};
-
-
-export type MutationCreateBehavioralEventArgs = {
-  data?: InputMaybe<BehavioralEventCreateInput>;
-};
-
-
-export type MutationCreateBehavioralEventsArgs = {
-  data?: InputMaybe<Array<BehavioralEventCreateInput>>;
 };
 
 
@@ -4095,16 +3968,6 @@ export type MutationDeleteAuditLogsArgs = {
 };
 
 
-export type MutationDeleteBehavioralEventArgs = {
-  id?: InputMaybe<Scalars['ID']>;
-};
-
-
-export type MutationDeleteBehavioralEventsArgs = {
-  filter?: InputMaybe<BehavioralEventFilterInput>;
-};
-
-
 export type MutationDeleteBlocklistArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
@@ -4377,11 +4240,6 @@ export type MutationExecuteQuickActionOnAuditLogArgs = {
 };
 
 
-export type MutationExecuteQuickActionOnBehavioralEventArgs = {
-  id?: InputMaybe<Scalars['ID']>;
-};
-
-
 export type MutationExecuteQuickActionOnBlocklistArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
@@ -4589,18 +4447,6 @@ export type MutationUpdateAuditLogArgs = {
 export type MutationUpdateAuditLogsArgs = {
   data?: InputMaybe<AuditLogUpdateInput>;
   filter?: InputMaybe<AuditLogFilterInput>;
-};
-
-
-export type MutationUpdateBehavioralEventArgs = {
-  data?: InputMaybe<BehavioralEventUpdateInput>;
-  id?: InputMaybe<Scalars['ID']>;
-};
-
-
-export type MutationUpdateBehavioralEventsArgs = {
-  data?: InputMaybe<BehavioralEventUpdateInput>;
-  filter?: InputMaybe<BehavioralEventFilterInput>;
 };
 
 
@@ -5482,9 +5328,6 @@ export type Query = {
   auditLog?: Maybe<AuditLog>;
   auditLogDuplicates?: Maybe<AuditLogConnection>;
   auditLogs?: Maybe<AuditLogConnection>;
-  behavioralEvent?: Maybe<BehavioralEvent>;
-  behavioralEventDuplicates?: Maybe<BehavioralEventConnection>;
-  behavioralEvents?: Maybe<BehavioralEventConnection>;
   billingPortalSession: SessionEntity;
   blocklist?: Maybe<Blocklist>;
   blocklistDuplicates?: Maybe<BlocklistConnection>;
@@ -5679,28 +5522,6 @@ export type QueryAuditLogsArgs = {
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<AuditLogOrderByInput>;
-};
-
-
-export type QueryBehavioralEventArgs = {
-  filter?: InputMaybe<BehavioralEventFilterInput>;
-};
-
-
-export type QueryBehavioralEventDuplicatesArgs = {
-  data?: InputMaybe<BehavioralEventCreateInput>;
-  id?: InputMaybe<Scalars['ID']>;
-};
-
-
-export type QueryBehavioralEventsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
-  filter?: InputMaybe<BehavioralEventFilterInput>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-  limit?: InputMaybe<Scalars['Int']>;
-  orderBy?: InputMaybe<BehavioralEventOrderByInput>;
 };
 
 
@@ -6681,6 +6502,7 @@ export type User = {
   passwordResetToken?: Maybe<Scalars['String']>;
   /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
   passwordResetTokenExpiresAt?: Maybe<Scalars['DateTime']>;
+  skipSyncEmail?: Maybe<Scalars['Boolean']>;
   supportUserHash?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   workspaceMember?: Maybe<WorkspaceMember>;
