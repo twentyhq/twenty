@@ -1,21 +1,16 @@
 import { useContext } from 'react';
 import styled from '@emotion/styled';
-import {
-  IconCirclePlus,
-  IconEditCircle,
-  IconFocusCentered,
-  useIcons,
-} from 'twenty-ui';
 
 import { useLinkedObject } from '@/activities/timeline/hooks/useLinkedObject';
-import { EventDescription } from '@/activities/timelineActivities/components/descriptions/components/EventDescription';
-import { eventDescriptionComponentMap } from '@/activities/timelineActivities/components/descriptions/types/EventDescriptionCommon';
 import { TimelineActivityContext } from '@/activities/timelineActivities/contexts/TimelineActivityContext';
+import {
+  EventIconDynamicComponent,
+  EventRowDynamicComponent,
+} from '@/activities/timelineActivities/rows/components/EventRowDynamicComponent';
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
-import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const StyledIconContainer = styled.div`
@@ -96,8 +91,6 @@ export const EventRow = ({
   event,
   mainObjectMetadataItem,
 }: EventRowProps) => {
-  const { getIcon } = useIcons();
-
   const { labelIdentifierValue } = useContext(TimelineActivityContext);
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(event.createdAt);
   const linkedObjectMetadataItem = useLinkedObject(
@@ -107,59 +100,28 @@ export const EventRow = ({
     ? `${event.workspaceMember?.name.firstName} ${event.workspaceMember?.name.lastName}`
     : 'Twenty';
 
-  const [eventName, eventAction] = event.name.split('.');
-
   if (isUndefinedOrNull(mainObjectMetadataItem)) {
     return null;
   }
-
-  const getEventIcon = () => {
-    if (isDefined(linkedObjectMetadataItem?.id)) {
-      return getIcon(linkedObjectMetadataItem?.icon);
-    }
-
-    if (eventAction === 'created') return IconCirclePlus;
-    if (eventAction === 'updated') return IconEditCircle;
-
-    return IconFocusCentered;
-  };
-
-  const EventIcon = getEventIcon();
-
-  const getEventDescriptionComponent = () => {
-    if (
-      isDefined(eventName) &&
-      isDefined(eventDescriptionComponentMap[eventName])
-    ) {
-      return eventDescriptionComponentMap[eventName];
-    }
-
-    if (eventName === mainObjectMetadataItem?.nameSingular) {
-      return EventDescription;
-    }
-
-    return null;
-  };
-
-  const EventDescriptionComponent = getEventDescriptionComponent();
 
   return (
     <>
       <StyledTimelineItemContainer>
         <StyledIconContainer>
-          <EventIcon />
+          <EventIconDynamicComponent
+            event={event}
+            linkedObjectMetadataItem={linkedObjectMetadataItem}
+          />
         </StyledIconContainer>
         <StyledItemContainer>
           <StyledSummary>
-            {EventDescriptionComponent && (
-              <EventDescriptionComponent
-                authorFullName={authorFullName}
-                labelIdentifierValue={labelIdentifierValue}
-                event={event}
-                mainObjectMetadataItem={mainObjectMetadataItem}
-                linkedObjectMetadataItem={linkedObjectMetadataItem}
-              />
-            )}
+            <EventRowDynamicComponent
+              authorFullName={authorFullName}
+              labelIdentifierValue={labelIdentifierValue}
+              event={event}
+              mainObjectMetadataItem={mainObjectMetadataItem}
+              linkedObjectMetadataItem={linkedObjectMetadataItem}
+            />
           </StyledSummary>
           <StyledItemTitleDate id={`id-${event.id}`}>
             {beautifiedCreatedAt}

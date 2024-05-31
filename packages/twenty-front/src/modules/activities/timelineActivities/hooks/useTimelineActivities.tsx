@@ -12,7 +12,11 @@ export const useTimelineActivities = (
     nameSingular: targetableObject.targetObjectNameSingular,
   });
 
-  const { records: TimelineActivities } = useFindManyRecords({
+  const {
+    records: TimelineActivities,
+    loading,
+    fetchMoreRecords,
+  } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.TimelineActivity,
     filter: {
       [targetableObjectFieldIdName]: {
@@ -23,6 +27,7 @@ export const useTimelineActivities = (
       createdAt: 'DescNullsFirst',
     },
     recordGqlFields: {
+      id: true,
       createdAt: true,
       linkedObjectMetadataId: true,
       linkedRecordCachedName: true,
@@ -37,5 +42,7 @@ export const useTimelineActivities = (
 
   return {
     timelineActivities: TimelineActivities as TimelineActivity[],
+    loading,
+    fetchMoreRecords,
   };
 };

@@ -7,6 +7,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel-message-association.workspace-entity';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
+import { CanAccessMessageThreadService } from 'src/modules/messaging/query-hooks/message/can-access-message-thread.service';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-ob
     ]),
   ],
   providers: [
+    CanAccessMessageThreadService,
     {
       provide: MessageFindOnePreQueryHook.name,
       useClass: MessageFindOnePreQueryHook,

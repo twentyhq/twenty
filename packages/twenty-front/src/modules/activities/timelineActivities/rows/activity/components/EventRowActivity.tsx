@@ -2,21 +2,22 @@ import styled from '@emotion/styled';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import {
-  EventDescriptionCommonProps,
+  EventRowDynamicComponentProps,
   StyledItemAction,
   StyledItemAuthorText,
-} from '@/activities/timelineActivities/components/descriptions/types/EventDescriptionCommon';
+} from '@/activities/timelineActivities/rows/components/EventRowDynamicComponent';
 
-type EventActivityDescriptionProps = EventDescriptionCommonProps;
+type EventRowActivityProps = EventRowDynamicComponentProps;
 
-const StyledLinkedObject = styled.span`
+const StyledLinkedActivity = styled.span`
   cursor: pointer;
   text-decoration: underline;
 `;
 
-export const EventActivityDescription: React.FC<
-  EventActivityDescriptionProps
-> = ({ event, authorFullName }: EventActivityDescriptionProps) => {
+export const EventRowActivity: React.FC<EventRowActivityProps> = ({
+  event,
+  authorFullName,
+}: EventRowActivityProps) => {
   const [, eventAction] = event.name.split('.');
 
   const openActivityRightDrawer = useOpenActivityRightDrawer();
@@ -25,11 +26,11 @@ export const EventActivityDescription: React.FC<
     <>
       <StyledItemAuthorText>{authorFullName}</StyledItemAuthorText>
       <StyledItemAction>{eventAction}</StyledItemAction>
-      <StyledLinkedObject
+      <StyledLinkedActivity
         onClick={() => openActivityRightDrawer(event.linkedRecordId)}
       >
         {event.linkedRecordCachedName}
-      </StyledLinkedObject>
+      </StyledLinkedActivity>
     </>
   );
 };

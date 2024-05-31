@@ -46,9 +46,11 @@ export const EmailThreadHeader = ({
       <Tag Icon={IconMail} color="gray" text="Email" onClick={() => {}} />
       <StyledHead>
         <StyledHeading>{subject}</StyledHeading>
-        <StyledContent>
-          Last message {beautifyPastDateRelativeToNow(lastMessageSentAt)}
-        </StyledContent>
+        {lastMessageSentAt && (
+          <StyledContent>
+            Last message {beautifyPastDateRelativeToNow(lastMessageSentAt)}
+          </StyledContent>
+        )}
       </StyledHead>
     </StyledContainer>
   );
