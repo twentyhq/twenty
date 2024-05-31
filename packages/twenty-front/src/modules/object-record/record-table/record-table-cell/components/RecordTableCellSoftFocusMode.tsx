@@ -1,5 +1,5 @@
 import { ReactElement, useContext, useEffect, useRef } from 'react';
-import { IconLayoutSidebarRightExpand } from '@tabler/icons-react';
+import { IconArrowUpRight } from '@tabler/icons-react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
 
@@ -118,15 +118,19 @@ export const RecordTableCellSoftFocusMode = ({
   };
 
   const handleButtonClick = () => {
+    handleClick();
+    /*
+    Disabling sidepanel access for now, TODO: launch
     if (!isFieldInputOnly) {
       openTableCell(undefined, true);
     }
+    */
   };
 
   const isFirstColumn = columnIndex === 0;
   const customButtonIcon = useGetButtonIcon();
   const buttonIcon = isFirstColumn
-    ? IconLayoutSidebarRightExpand
+    ? IconArrowUpRight // IconLayoutSidebarRightExpand - Disabling sidepanel access for now
     : customButtonIcon;
 
   const showButton =
