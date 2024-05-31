@@ -41,6 +41,7 @@ const createRemoteServerInputPostgresSchema =
         user: values.user,
       },
       schema: values.schema,
+      label: values.label,
     }),
   );
 
@@ -55,6 +56,7 @@ const createRemoteServerInputStripeSchema =
       foreignDataWrapperOptions: {
         api_key: values.api_key,
       },
+      label: values.label,
     }),
   );
 

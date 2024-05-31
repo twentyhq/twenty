@@ -10,6 +10,8 @@ import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadata
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { RecordShowContainer } from '@/object-record/record-show/components/RecordShowContainer';
 import { findOneRecordForShowPageOperationSignatureFactory } from '@/object-record/record-show/graphql/operations/factories/findOneRecordForShowPageOperationSignatureFactory';
+import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
+import { RecordFieldValueSelectorContextProvider } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { PageBody } from '@/ui/layout/page/PageBody';
 import { PageContainer } from '@/ui/layout/page/PageContainer';
@@ -65,7 +67,10 @@ export const RecordShowPage = () => {
   });
 
   useEffect(() => {
-    if (!record) return;
+    if (!record) {
+      return;
+    }
+
     setEntityFields(record);
   }, [record, setEntityFields]);
 
@@ -103,46 +108,49 @@ export const RecordShowPage = () => {
     : capitalize(objectNameSingular);
 
   return (
-    <PageContainer>
-      <PageTitle title={pageTitle} />
-      <PageHeader
-        title={pageName ?? ''}
-        hasBackButton
-        Icon={headerIcon}
-        loading={loading}
-      >
-        <>
-          <PageFavoriteButton
-            isFavorite={isFavorite}
-            onClick={handleFavoriteButtonClick}
-          />
-          <ShowPageAddButton
-            key="add"
-            activityTargetObject={{
-              id: record?.id ?? '0',
-              targetObjectNameSingular: objectMetadataItem?.nameSingular,
-            }}
-          />
-          <ShowPageMoreButton
-            key="more"
-            recordId={record?.id ?? '0'}
-            objectNameSingular={objectNameSingular}
-          />
-        </>
-      </PageHeader>
-      <PageBody>
-        <TimelineActivityContext.Provider
-          value={{
-            labelIdentifierValue: pageName,
-          }}
+    <RecordFieldValueSelectorContextProvider>
+      <RecordValueSetterEffect recordId={objectRecordId} />
+      <PageContainer>
+        <PageTitle title={pageTitle} />
+        <PageHeader
+          title={pageName ?? ''}
+          hasBackButton
+          Icon={headerIcon}
+          loading={loading}
         >
-          <RecordShowContainer
-            objectNameSingular={objectNameSingular}
-            objectRecordId={objectRecordId}
-            loading={loading}
-          />
-        </TimelineActivityContext.Provider>
-      </PageBody>
-    </PageContainer>
+          <>
+            <PageFavoriteButton
+              isFavorite={isFavorite}
+              onClick={handleFavoriteButtonClick}
+            />
+            <ShowPageAddButton
+              key="add"
+              activityTargetObject={{
+                id: record?.id ?? '0',
+                targetObjectNameSingular: objectMetadataItem?.nameSingular,
+              }}
+            />
+            <ShowPageMoreButton
+              key="more"
+              recordId={record?.id ?? '0'}
+              objectNameSingular={objectNameSingular}
+            />
+          </>
+        </PageHeader>
+        <PageBody>
+          <TimelineActivityContext.Provider
+            value={{
+              labelIdentifierValue: pageName,
+            }}
+          >
+            <RecordShowContainer
+              objectNameSingular={objectNameSingular}
+              objectRecordId={objectRecordId}
+              loading={loading}
+            />
+          </TimelineActivityContext.Provider>
+        </PageBody>
+      </PageContainer>
+    </RecordFieldValueSelectorContextProvider>
   );
 };

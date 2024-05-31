@@ -37,17 +37,7 @@ import { isFieldSelect } from '../types/guards/isFieldSelect';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldUuid } from '../types/guards/isFieldUuid';
 
-type FieldDisplayProps = {
-  isCellSoftFocused?: boolean;
-  cellElement?: HTMLElement;
-  fromTableCell?: boolean;
-};
-
-export const FieldDisplay = ({
-  isCellSoftFocused,
-  cellElement,
-  fromTableCell,
-}: FieldDisplayProps) => {
+export const FieldDisplay = () => {
   const { fieldDefinition, isLabelIdentifier } = useContext(FieldContext);
 
   const isChipDisplay =
@@ -78,10 +68,7 @@ export const FieldDisplay = ({
   ) : isFieldLink(fieldDefinition) ? (
     <LinkFieldDisplay />
   ) : isFieldLinks(fieldDefinition) ? (
-    <LinksFieldDisplay
-      isCellSoftFocused={isCellSoftFocused}
-      fromTableCell={fromTableCell}
-    />
+    <LinksFieldDisplay />
   ) : isFieldCurrency(fieldDefinition) ? (
     <CurrencyFieldDisplay />
   ) : isFieldFullName(fieldDefinition) ? (
@@ -89,11 +76,7 @@ export const FieldDisplay = ({
   ) : isFieldSelect(fieldDefinition) ? (
     <SelectFieldDisplay />
   ) : isFieldMultiSelect(fieldDefinition) ? (
-    <MultiSelectFieldDisplay
-      isCellSoftFocused={isCellSoftFocused}
-      cellElement={cellElement}
-      fromTableCell={fromTableCell}
-    />
+    <MultiSelectFieldDisplay />
   ) : isFieldAddress(fieldDefinition) ? (
     <AddressFieldDisplay />
   ) : isFieldRawJson(fieldDefinition) ? (

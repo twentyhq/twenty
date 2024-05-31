@@ -254,4 +254,22 @@ export class ConnectedAccountRepository {
       transactionManager,
     );
   }
+
+  public async getConnectedAccountOrThrow(
+    workspaceId: string,
+    connectedAccountId: string,
+  ): Promise<ObjectRecord<ConnectedAccountWorkspaceEntity>> {
+    const connectedAccount = await this.getById(
+      connectedAccountId,
+      workspaceId,
+    );
+
+    if (!connectedAccount) {
+      throw new Error(
+        `Connected account ${connectedAccountId} not found in workspace ${workspaceId}`,
+      );
+    }
+
+    return connectedAccount;
+  }
 }

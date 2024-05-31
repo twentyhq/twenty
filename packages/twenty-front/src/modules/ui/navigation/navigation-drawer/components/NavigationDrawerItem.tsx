@@ -4,10 +4,9 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useSetRecoilState } from 'recoil';
-import { IconComponent, Pill } from 'twenty-ui';
+import { IconComponent, MOBILE_VIEWPORT, Pill } from 'twenty-ui';
 
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { isDefined } from '~/utils/isDefined';
 

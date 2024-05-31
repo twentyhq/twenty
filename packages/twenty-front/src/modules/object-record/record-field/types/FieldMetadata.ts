@@ -1,6 +1,7 @@
+import { ThemeColor } from 'twenty-ui';
+
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
-import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
 
 import { CurrencyCode } from './CurrencyCode';
 

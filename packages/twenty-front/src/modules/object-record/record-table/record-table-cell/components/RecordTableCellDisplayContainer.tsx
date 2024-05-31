@@ -1,5 +1,7 @@
 import { Ref } from 'react';
-import styled from '@emotion/styled';
+import clsx from 'clsx';
+
+import styles from './RecordTableCellDisplayContainer.module.css';
 
 export type EditableCellDisplayContainerProps = {
   softFocus?: boolean;
@@ -8,48 +10,23 @@ export type EditableCellDisplayContainerProps = {
   isHovered?: boolean;
 };
 
-const StyledEditableCellDisplayModeOuterContainer = styled.div<
-  Pick<EditableCellDisplayContainerProps, 'softFocus' | 'isHovered'>
->`
-  align-items: center;
-  display: flex;
-  height: 100%;
-  overflow: hidden;
-  padding-left: ${({ theme }) => theme.spacing(2)};
-  padding-right: ${({ theme }) => theme.spacing(1)};
-  width: 100%;
-  ${(props) =>
-    props.softFocus
-      ? `background: ${props.theme.background.transparent.secondary};
-      border-radius: ${props.theme.border.radius.sm};
-      outline: 1px solid ${props.theme.font.color.extraLight};`
-      : ''}
-`;
-
-const StyledEditableCellDisplayModeInnerContainer = styled.div`
-  align-items: center;
-  display: flex;
-  height: 100%;
-  overflow: hidden;
-  width: 100%;
-`;
-
 export const RecordTableCellDisplayContainer = ({
   children,
   softFocus,
   onClick,
   scrollRef,
 }: React.PropsWithChildren<EditableCellDisplayContainerProps>) => (
-  <StyledEditableCellDisplayModeOuterContainer
+  <div
     data-testid={
       softFocus ? 'editable-cell-soft-focus-mode' : 'editable-cell-display-mode'
     }
     onClick={onClick}
-    softFocus={softFocus}
+    className={clsx({
+      [styles.cellDisplayOuterContainer]: true,
+      [styles.cellDisplayOuterContainerSoftFocus]: softFocus,
+    })}
     ref={scrollRef}
   >
-    <StyledEditableCellDisplayModeInnerContainer>
-      {children}
-    </StyledEditableCellDisplayModeInnerContainer>
-  </StyledEditableCellDisplayModeOuterContainer>
+    <div className={clsx(styles.cellDisplayInnerContainer)}>{children}</div>
+  </div>
 );

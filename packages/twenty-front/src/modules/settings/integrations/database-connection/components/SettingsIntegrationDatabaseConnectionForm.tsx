@@ -11,6 +11,7 @@ export const settingsIntegrationPostgreSQLConnectionFormSchema = z.object({
   user: z.string().min(1),
   password: z.string().min(1),
   schema: z.string().min(1),
+  label: z.string().min(1),
 });
 
 type SettingsIntegrationPostgreSQLConnectionFormValues = z.infer<
@@ -19,6 +20,7 @@ type SettingsIntegrationPostgreSQLConnectionFormValues = z.infer<
 
 export const settingsIntegrationStripeConnectionFormSchema = z.object({
   api_key: z.string().min(1),
+  label: z.string().min(1),
 });
 
 type SettingsIntegrationStripeConnectionFormValues = z.infer<
@@ -59,7 +61,8 @@ const getFormFields = (
         | 'user'
         | 'password'
         | 'schema'
-        | 'api_key';
+        | 'api_key'
+        | 'label';
       label: string;
       type?: string;
       placeholder: string;
@@ -87,10 +90,20 @@ const getFormFields = (
           placeholder: '••••••',
         },
         { name: 'schema' as const, label: 'Schema', placeholder: 'public' },
+        {
+          name: 'label' as const,
+          label: 'Label',
+          placeholder: 'My database',
+        },
       ];
     case 'stripe':
       return [
         { name: 'api_key' as const, label: 'API Key', placeholder: 'API key' },
+        {
+          name: 'label' as const,
+          label: 'Label',
+          placeholder: 'My database',
+        },
       ];
     default:
       return null;

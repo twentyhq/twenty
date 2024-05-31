@@ -7,6 +7,8 @@ import { IconHelpCircle } from 'twenty-ui';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { supportChatState } from '@/client-config/states/supportChatState';
+import { useIsPrefetchLoading } from '@/prefetch/hooks/useIsPrefetchLoading';
+import { SupportChatSkeletonLoader } from '@/support/components/SupportChatSkeletonLoader';
 import { Button } from '@/ui/input/button/components/Button';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { User } from '~/generated/graphql';
@@ -37,6 +39,7 @@ export const SupportChat = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const supportChat = useRecoilValue(supportChatState);
   const [isFrontChatLoaded, setIsFrontChatLoaded] = useState(false);
+  const loading = useIsPrefetchLoading();
 
   const configureFront = useCallback(
     (
@@ -97,6 +100,10 @@ export const SupportChat = () => {
     supportChat.supportFrontChatId,
     currentWorkspaceMember,
   ]);
+
+  if (loading) {
+    return <SupportChatSkeletonLoader />;
+  }
 
   return isFrontChatLoaded ? (
     <StyledButtonContainer>

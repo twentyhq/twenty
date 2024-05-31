@@ -17,6 +17,9 @@ export class CreateRemoteServerInput<T extends RemoteServerType> {
   @Field(() => GraphQLJSON)
   foreignDataWrapperOptions: ForeignDataWrapperOptions<T>;
 
+  @Field(() => String)
+  label: string;
+
   @IsOptional()
   @Field(() => UserMappingOptions, { nullable: true })
   userMappingOptions?: UserMappingOptions;
