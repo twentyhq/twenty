@@ -21,6 +21,7 @@ import {
   GmailErrorHandlingService,
 } from 'src/modules/messaging/services/gmail-error-handling/gmail-error-handling.service';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/services/message-channel-sync-status/message-channel-sync-status.service';
+import { gmailSearchFilter } from 'src/modules/messaging/utils/gmail-search-filter.util';
 
 @Injectable()
 export class GmailFullMessageListFetchV2Service {
@@ -97,6 +98,7 @@ export class GmailFullMessageListFetchV2Service {
           userId: 'me',
           maxResults: GMAIL_USERS_MESSAGES_LIST_MAX_RESULT,
           pageToken,
+          q: gmailSearchFilter,
         });
       } catch (error) {
         return {
