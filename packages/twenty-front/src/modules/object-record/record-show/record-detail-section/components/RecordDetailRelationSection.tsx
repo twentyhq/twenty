@@ -1,19 +1,14 @@
 import { useCallback, useContext } from 'react';
 import styled from '@emotion/styled';
 import qs from 'qs';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { IconForbid, IconPencil, IconPlus } from 'twenty-ui';
-import { v4 } from 'uuid';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
-import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { usePersistField } from '@/object-record/record-field/hooks/usePersistField';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
-import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
-import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
 import { RecordDetailRelationRecordsListEmptyState } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsListEmptyState';
 import { RecordDetailRelationSectionSkeletonLoader } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSectionSkeletonLoader';
@@ -22,6 +17,7 @@ import { RecordDetailSectionHeader } from '@/object-record/record-show/record-de
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { SingleEntitySelectMenuItemsWithSearch } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItemsWithSearch';
+import { useAddNewRecordAnOpenPanel } from '@/object-record/relation-picker/hooks/useAddNewRecordAnOpenPanel';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
@@ -30,11 +26,8 @@ import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
-import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
-import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
 import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type RecordDetailRelationSectionProps = {
   loading: boolean;
@@ -146,52 +139,12 @@ export const RecordDetailRelationSection = ({
     );
   };
 
-  const { openRightDrawer } = useRightDrawer();
-  const setViewableRecordId = useSetRecoilState(viewableRecordIdState);
-  const setViewableRecordNameSingular = useSetRecoilState(
-    viewableRecordNameSingularState,
-  );
-
-  const { createOneRecord } = useCreateOneRecord({
-    objectNameSingular: relationObjectMetadataNameSingular,
+  const { handleOnCreate } = useAddNewRecordAnOpenPanel({
+    relationObjectMetadataNameSingular,
+    relationObjectMetadataItem,
+    relationFieldMetadataItem,
+    entityId,
   });
-
-  const handleOnCreate =
-    relationObjectMetadataNameSingular !== 'workspaceMember'
-      ? async (searchInput?: string) => {
-          const newRecordId = v4();
-          const labelIdentifierType = getLabelIdentifierFieldMetadataItem(
-            relationObjectMetadataItem,
-          )?.type;
-          const createRecordPayload: {
-            id: string;
-            name:
-              | string
-              | { firstName: string | undefined; lastName: string | undefined };
-            [key: string]: any;
-          } =
-            labelIdentifierType === FieldMetadataType.FullName
-              ? {
-                  id: newRecordId,
-                  name:
-                    searchInput && searchInput.split(' ').length > 1
-                      ? {
-                          firstName: searchInput.split(' ')[0],
-                          lastName: searchInput.split(' ').slice(1).join(' '),
-                        }
-                      : { firstName: searchInput, lastName: '' },
-                }
-              : { id: newRecordId, name: searchInput ?? '' };
-
-          createRecordPayload[
-            `${relationFieldMetadataItem?.relationDefinition?.sourceFieldMetadata.name}Id`
-          ] = entityId;
-          await createOneRecord(createRecordPayload);
-          setViewableRecordId(newRecordId);
-          setViewableRecordNameSingular(relationObjectMetadataNameSingular);
-          openRightDrawer(RightDrawerPages.ViewRecord);
-        }
-      : undefined;
 
   return (
     <RecordDetailSection>

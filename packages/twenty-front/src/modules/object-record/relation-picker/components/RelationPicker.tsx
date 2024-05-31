@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
 import { IconForbid } from 'twenty-ui';
 
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
+import { useAddNewRecordAnOpenPanel } from '@/object-record/relation-picker/hooks/useAddNewRecordAnOpenPanel';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 
@@ -39,11 +41,30 @@ export const RelationPicker = ({
     selectedEntity: EntityForSelect | null | undefined,
   ) => onSubmit(selectedEntity ?? null);
 
+  const { objectMetadataItem: relationObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular:
+        fieldDefinition.metadata.relationObjectMetadataNameSingular,
+    });
+
+  const relationFieldMetadataItem = relationObjectMetadataItem.fields.find(
+    ({ id }) => id === fieldDefinition.metadata.relationFieldMetadataId,
+  );
+
+  const { handleOnCreate } = useAddNewRecordAnOpenPanel({
+    relationObjectMetadataNameSingular:
+      fieldDefinition.metadata.relationObjectMetadataNameSingular,
+    relationObjectMetadataItem,
+    relationFieldMetadataItem,
+    entityId: recordId,
+  });
+
   return (
     <SingleEntitySelect
       EmptyIcon={IconForbid}
       emptyLabel={'No ' + fieldDefinition.label}
       onCancel={onCancel}
+      onCreate={handleOnCreate}
       onEntitySelected={handleEntitySelected}
       width={width}
       relationObjectNameSingular={
