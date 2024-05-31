@@ -16,22 +16,22 @@ const StyledButton = styled(MainButton)`
   width: 200px;
 `;
 
-type ContinueButtonProps = {
-  onContinue: (val: any) => void;
+type StepNavigationButtonProps = {
+  onClick: () => void;
   title: string;
   isLoading?: boolean;
 };
 
-export const ContinueButton = ({
-  onContinue,
+export const StepNavigationButton = ({
+  onClick,
   title,
   isLoading,
-}: ContinueButtonProps) => (
+}: StepNavigationButtonProps) => (
   <StyledFooter>
     <StyledButton
       Icon={isLoading ? CircularProgressBar : undefined}
       title={title}
-      onClick={!isLoading ? onContinue : undefined}
+      onClick={!isLoading ? onClick : undefined}
     />
   </StyledFooter>
 );
