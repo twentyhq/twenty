@@ -112,18 +112,6 @@ export class GmailMessagesImportV2Service {
         blocklist.map((blocklistItem) => blocklistItem.handle),
       );
 
-      if (!messagesToSave.length) {
-        await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
-          messageChannel.id,
-          workspaceId,
-        );
-
-        return await this.trackMessageImportCompleted(
-          messageChannel,
-          workspaceId,
-        );
-      }
-
       await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreationJob(
         messagesToSave,
         messageChannel,
