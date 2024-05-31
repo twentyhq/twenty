@@ -24,9 +24,8 @@ export const useGetAvailableFieldsForKanban = () => {
   const navigate = useNavigate();
 
   const navigateToSelectSettings = useCallback(() => {
-    navigate(`/settings/objects/${objectMetadataItem?.namePlural}`);
-  }, [navigate, objectMetadataItem?.namePlural]);
-
+  navigate(`/settings/objects/${objectMetadataItem?.namePlural}/new-field/step-2`);
+}, [navigate, objectMetadataItem?.namePlural]);
   return {
     availableFieldsForKanban,
     navigateToSelectSettings,
