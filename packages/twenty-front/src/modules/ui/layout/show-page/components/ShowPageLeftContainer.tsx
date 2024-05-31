@@ -39,21 +39,21 @@ export const ShowPageLeftContainer = ({
   children,
 }: ShowPageLeftContainerProps) => {
   const isMobile = useIsMobile() || forceMobile;
-  return isMobile || forceMobile ? (
+  return (
     <StyledOuterContainer isMobile={isMobile}>
-      <StyledInnerContainer isMobile={isMobile}>
-        {children}
-      </StyledInnerContainer>
-    </StyledOuterContainer>
-  ) : (
-    <StyledOuterContainer isMobile={isMobile}>
-      <ScrollWrapper>
-        <StyledIntermediateContainer>
-          <StyledInnerContainer isMobile={isMobile}>
-            {children}
-          </StyledInnerContainer>
-        </StyledIntermediateContainer>
-      </ScrollWrapper>
+      {isMobile ? (
+        <StyledInnerContainer isMobile={isMobile}>
+          {children}
+        </StyledInnerContainer>
+      ) : (
+        <ScrollWrapper>
+          <StyledIntermediateContainer>
+            <StyledInnerContainer isMobile={isMobile}>
+              {children}
+            </StyledInnerContainer>
+          </StyledIntermediateContainer>
+        </ScrollWrapper>
+      )}
     </StyledOuterContainer>
   );
 };

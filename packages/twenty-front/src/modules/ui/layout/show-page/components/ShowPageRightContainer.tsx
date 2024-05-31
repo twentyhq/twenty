@@ -24,12 +24,12 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
-const StyledShowPageRightContainer = styled.div`
+const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex: 1 0 0;
   flex-direction: column;
   justify-content: start;
-  overflow: ${() => (useIsMobile() ? 'none' : 'hidden')};
+  overflow: ${(isMobile) => (isMobile ? 'none' : 'hidden')};
   width: calc(100% + 4px);
 `;
 
@@ -141,7 +141,7 @@ export const ShowPageRightContainer = ({
   ];
 
   return (
-    <StyledShowPageRightContainer>
+    <StyledShowPageRightContainer isMobile={isMobile}>
       <StyledTabListContainer>
         <TabList
           loading={loading}
