@@ -1,12 +1,12 @@
-import { useState } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilState } from 'recoil';
 
 import { DateTimeSettingsDateFormatSelect } from '@/settings/profile/components/DateTimeSettingsDateFormatSelect';
 import { DateTimeSettingsTimeFormatSelect } from '@/settings/profile/components/DateTimeSettingsTimeFormatSelect';
 import { DateTimeSettingsTimeZoneSelect } from '@/settings/profile/components/DateTimeSettingsTimeZoneSelect';
-import { detectDateFormat } from '@/workspace-member/utils/detectDateFormat';
-import { detectTimeFormat } from '@/workspace-member/utils/detectTimeFormat';
-import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
+import { dateFormatState } from '@/workspace-member/states/dateFormatState';
+import { timeFormatState } from '@/workspace-member/states/timeFormatState';
+import { timeZoneState } from '@/workspace-member/states/timezoneState';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -14,12 +14,12 @@ const StyledContainer = styled.div`
   gap: ${({ theme }) => theme.spacing(4)};
 `;
 
-export const SettingsAccountsCalendarDisplaySettings = () => {
-  const [timeZone, setTimeZone] = useState(detectTimeZone());
+export const DateTimeSettings = () => {
+  const [timeZone, setTimeZone] = useRecoilState(timeZoneState);
 
-  const [dateFormat, setDateFormat] = useState(detectDateFormat());
+  const [dateFormat, setDateFormat] = useRecoilState(dateFormatState);
 
-  const [timeFormat, setTimeFormat] = useState(detectTimeFormat());
+  const [timeFormat, setTimeFormat] = useRecoilState(timeFormatState);
 
   return (
     <StyledContainer>
