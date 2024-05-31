@@ -16,6 +16,7 @@ import { GmailGetHistoryService } from 'src/modules/messaging/services/gmail-par
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { GmailErrorHandlingService } from 'src/modules/messaging/services/gmail-error-handling/gmail-error-handling.service';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/services/message-channel-sync-status/message-channel-sync-status.service';
+import { GmailFetchMessageIdsToExcludeService } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-fetch-messages-ids-to-exclude.service';
 
 @Injectable()
 export class GmailPartialMessageListFetchV2Service {
@@ -36,6 +37,7 @@ export class GmailPartialMessageListFetchV2Service {
     private readonly gmailErrorHandlingService: GmailErrorHandlingService,
     private readonly gmailGetHistoryService: GmailGetHistoryService,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
+    private readonly gmailFetchMessageIdsToExcludeService: GmailFetchMessageIdsToExcludeService,
   ) {}
 
   public async processMessageListFetch(
@@ -94,13 +96,36 @@ export class GmailPartialMessageListFetchV2Service {
     const { messagesAdded, messagesDeleted } =
       await this.gmailGetHistoryService.getMessageIdsFromHistory(history);
 
+    let messageIdsToFilter: string[] = [];
+
+    try {
+      messageIdsToFilter =
+        await this.gmailFetchMessageIdsToExcludeService.fetchEmailIdsToExcludeOrThrow(
+          gmailClient,
+          lastSyncHistoryId,
+        );
+    } catch (error) {
+      await this.gmailErrorHandlingService.handleGmailError(
+        error,
+        'partial-message-list-fetch',
+        messageChannel,
+        workspaceId,
+      );
+
+      return;
+    }
+
+    const messagesAddedFiltered = messagesAdded.filter(
+      (messageId) => !messageIdsToFilter.includes(messageId),
+    );
+
     await this.cacheStorage.setAdd(
       `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
-      messagesAdded,
+      messagesAddedFiltered,
     );
 
     this.logger.log(
-      `Added ${messagesAdded.length} messages to import for workspace ${workspaceId} and account ${connectedAccount.id}`,
+      `Added ${messagesAddedFiltered.length} messages to import for workspace ${workspaceId} and account ${connectedAccount.id}`,
     );
 
     await this.messageChannelMessageAssociationRepository.deleteByMessageExternalIdsAndMessageChannelId(

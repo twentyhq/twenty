@@ -186,6 +186,8 @@ export class FetchMessagesByBatchesService {
     const bodyData = this.getBodyData(message);
     const text = bodyData ? Buffer.from(bodyData, 'base64').toString() : '';
 
+    const attachments = this.getAttachmentData(message);
+
     return {
       id,
       headerMessageId: messageId,
@@ -199,7 +201,7 @@ export class FetchMessagesByBatchesService {
       cc: rawCc ? addressparser(rawCc) : undefined,
       bcc: rawBcc ? addressparser(rawBcc) : undefined,
       text,
-      attachments: [],
+      attachments,
     };
   }
 
@@ -212,6 +214,19 @@ export class FetchMessagesByBatchesService {
 
     return firstPart?.parts?.find((part) => part.mimeType === 'text/plain')
       ?.body?.data;
+  }
+
+  private getAttachmentData(message: gmail_v1.Schema$Message) {
+    return (
+      message.payload?.parts
+        ?.filter((part) => part.filename && part.body?.attachmentId)
+        .map((part) => ({
+          filename: part.filename || '',
+          id: part.body?.attachmentId || '',
+          mimeType: part.mimeType || '',
+          size: part.body?.size || 0,
+        })) || []
+    );
   }
 
   private getPropertyFromHeaders(

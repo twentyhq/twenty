@@ -26,7 +26,8 @@ import {
   MessageChannelSyncStatus,
 } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { gmailSearchFilterEmailAdresses } from 'src/modules/messaging/utils/gmail-search-filter.util';
+import { computeGmailCategoryExcludeSearchFilter } from 'src/modules/messaging/utils/compute-gmail-category-excude-search-filter';
+import { GMAIL_EXCLUDED_CATEGORIES } from 'src/modules/messaging/constants/gmail-excluded-categories';
 
 @Injectable()
 export class GmailFullMessageListFetchService {
@@ -167,7 +168,7 @@ export class GmailFullMessageListFetchService {
         userId: 'me',
         maxResults: GMAIL_USERS_MESSAGES_LIST_MAX_RESULT,
         pageToken,
-        q: gmailSearchFilterEmailAdresses(includedEmails, blocklistedEmails),
+        q: computeGmailCategoryExcludeSearchFilter(GMAIL_EXCLUDED_CATEGORIES),
       });
 
       if (response.data?.messages) {
