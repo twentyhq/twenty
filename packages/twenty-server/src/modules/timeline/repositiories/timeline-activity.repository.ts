@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { EntityManager } from 'typeorm';
+
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { objectRecordDiffMerge } from 'src/engine/integrations/event-emitter/utils/object-record-diff-merge';
 
@@ -103,7 +105,7 @@ export class TimelineActivityRepository {
     );
   }
 
-  public async insertTimelineActivity(
+  private async insertTimelineActivity(
     dataSourceSchema: string,
     name: string,
     properties: Record<string, any>,
@@ -129,6 +131,50 @@ export class TimelineActivityRepository {
         linkedObjectMetadataId,
       ],
       workspaceId,
+    );
+  }
+
+  public async insertTimelineActivitiesForObject(
+    objectName: string,
+    activities: {
+      name: string;
+      properties: Record<string, any> | null;
+      workspaceMemberId: string | undefined;
+      recordId: string;
+      linkedRecordCachedName: string;
+      linkedRecordId: string | undefined;
+      linkedObjectMetadataId: string | undefined;
+    }[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return this.workspaceDataSourceService.executeRawQuery(
+      `INSERT INTO ${dataSourceSchema}."timelineActivity"
+    ("name", "properties", "workspaceMemberId", "${objectName}Id", "linkedRecordCachedName", "linkedRecordId", "linkedObjectMetadataId")
+    VALUES ${activities
+      .map(
+        (_, index) =>
+          `($${index * 7 + 1}, $${index * 7 + 2}, $${index * 7 + 3}, $${
+            index * 7 + 4
+          }, $${index * 7 + 5}, $${index * 7 + 6}, $${index * 7 + 7})`,
+      )
+      .join(',')}`,
+      activities
+        .map((activity) => [
+          activity.name,
+          activity.properties,
+          activity.workspaceMemberId,
+          activity.recordId,
+          activity.linkedRecordCachedName ?? '',
+          activity.linkedRecordId,
+          activity.linkedObjectMetadataId,
+        ])
+        .flat(),
+      workspaceId,
+      transactionManager,
     );
   }
 }

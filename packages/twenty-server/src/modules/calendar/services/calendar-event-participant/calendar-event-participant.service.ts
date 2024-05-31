@@ -28,14 +28,14 @@ export class CalendarEventParticipantService {
     createdPeople: ObjectRecord<PersonWorkspaceEntity>[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<void> {
+  ): Promise<ObjectRecord<CalendarEventParticipantWorkspaceEntity[]>> {
     const participants =
       await this.calendarEventParticipantRepository.getByHandles(
         createdPeople.map((person) => person.email),
         workspaceId,
       );
 
-    if (!participants) return;
+    if (!participants) return [];
 
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
@@ -57,7 +57,7 @@ export class CalendarEventParticipantService {
       }),
     );
 
-    if (calendarEventParticipantsToUpdate.length === 0) return;
+    if (calendarEventParticipantsToUpdate.length === 0) return [];
 
     const { flattenedValues, valuesString } =
       getFlattenedValuesAndValuesStringForBatchRawQuery(
@@ -68,10 +68,11 @@ export class CalendarEventParticipantService {
         },
       );
 
-    await this.workspaceDataSourceService.executeRawQuery(
+    return await this.workspaceDataSourceService.executeRawQuery(
       `UPDATE ${dataSourceSchema}."calendarEventParticipant" AS "calendarEventParticipant" SET "personId" = "data"."personId"
       FROM (VALUES ${valuesString}) AS "data"("id", "personId")
-      WHERE "calendarEventParticipant"."id" = "data"."id"`,
+      WHERE "calendarEventParticipant"."id" = "data"."id"
+      RETURNING *`,
       flattenedValues,
       workspaceId,
       transactionManager,
@@ -82,9 +83,9 @@ export class CalendarEventParticipantService {
     calendarEventParticipants: CalendarEventParticipant[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<void> {
+  ): Promise<ObjectRecord<CalendarEventParticipantWorkspaceEntity>[]> {
     if (calendarEventParticipants.length === 0) {
-      return;
+      return [];
     }
 
     const dataSourceSchema =
@@ -111,8 +112,9 @@ export class CalendarEventParticipantService {
         },
       );
 
-    await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}."calendarEventParticipant" ("calendarEventId", "handle", "displayName", "isOrganizer", "responseStatus", "personId", "workspaceMemberId") VALUES ${valuesString}`,
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `INSERT INTO ${dataSourceSchema}."calendarEventParticipant" ("calendarEventId", "handle", "displayName", "isOrganizer", "responseStatus", "personId", "workspaceMemberId") VALUES ${valuesString}
+      RETURNING *`,
       flattenedValues,
       workspaceId,
       transactionManager,

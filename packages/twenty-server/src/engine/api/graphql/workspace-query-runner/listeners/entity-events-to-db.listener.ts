@@ -48,9 +48,7 @@ export class EntityEventsToDbListener {
   // @OnEvent('*.restored') - TODO: implement when we soft delete has been implemented
   // ....
 
-  private async handle(
-    payload: ObjectRecordCreateEvent<any> | ObjectRecordUpdateEvent<any>,
-  ) {
+  private async handle(payload: ObjectRecordBaseEvent) {
     if (!payload.objectMetadata.isAuditLogged) {
       return;
     }

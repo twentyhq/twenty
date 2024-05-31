@@ -62,9 +62,9 @@ export class TimelineActivityService {
 
     switch (event.objectMetadata.nameSingular) {
       case 'activityTarget':
-        return await this.processActivityTarget(event, dataSourceSchema);
+        return this.processActivityTarget(event, dataSourceSchema);
       case 'activity':
-        return await this.processActivity(event, dataSourceSchema);
+        return this.processActivity(event, dataSourceSchema);
       default:
         return [];
     }

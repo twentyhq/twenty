@@ -29,6 +29,7 @@ import { AutoCompaniesAndContactsCreationJobModule } from 'src/modules/connected
 import { MessagingCronJobModule } from 'src/modules/messaging/crons/jobs/messaging-cron-job.module';
 import { MessagingJobModule } from 'src/modules/messaging/jobs/messaging-job.module';
 import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module';
+import { CalendarModule } from 'src/modules/calendar/calendar.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module
     CalendarEventParticipantModule,
     TimelineActivityModule,
     StripeModule,
+    CalendarModule,
     // JobsModules
     WorkspaceQueryRunnerJobModule,
     CalendarMessagingParticipantJobModule,
