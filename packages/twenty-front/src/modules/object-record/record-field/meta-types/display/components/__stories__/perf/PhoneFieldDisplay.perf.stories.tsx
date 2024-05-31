@@ -26,6 +26,19 @@ type Story = StoryObj<typeof PhoneFieldDisplay>;
 
 export const Default: Story = {};
 
+export const Elipsis: Story = {
+  parameters: {
+    container: { width: 50 },
+  },
+};
+
+export const WrongNumber: Story = {
+  parameters: {
+    container: { width: 50 },
+  },
+  decorators: [getFieldDecorator('person', 'phone', 'sdklaskdj')],
+};
+
 export const Performance = getProfilingStory({
   componentName: 'PhoneFieldDisplay',
   averageThresholdInMs: 0.5,
