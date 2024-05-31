@@ -93,7 +93,12 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
       <SingleEntitySelectMenuItems
         entitiesToSelect={entities.entitiesToSelect}
         loading={entities.loading}
-        selectedEntity={selectedEntity ?? entities.selectedEntities[0]}
+        selectedEntity={
+          selectedEntity ??
+          (entities.selectedEntities.length === 1
+            ? entities.selectedEntities[0]
+            : undefined)
+        }
         onCreate={onCreateWithInput}
         {...{
           EmptyIcon,
