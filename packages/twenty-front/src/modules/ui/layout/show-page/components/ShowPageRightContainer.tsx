@@ -54,7 +54,7 @@ type ShowPageRightContainerProps = {
   notes?: boolean;
   emails?: boolean;
   summary?: JSX.Element;
-  forceMobile?: boolean;
+  isRightDrawer?: boolean;
   loading: boolean;
 };
 
@@ -66,9 +66,11 @@ export const ShowPageRightContainer = ({
   emails,
   loading,
   summary,
-  forceMobile = false,
+  isRightDrawer = false,
 }: ShowPageRightContainerProps) => {
-  const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
+  const { activeTabIdState } = useTabList(
+    TAB_LIST_COMPONENT_ID + isRightDrawer,
+  );
   const activeTabId = useRecoilValue(activeTabIdState);
 
   const shouldDisplayCalendarTab =
@@ -84,7 +86,7 @@ export const ShowPageRightContainer = ({
         CoreObjectNameSingular.Company) ||
     targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Person;
 
-  const isMobile = useIsMobile() || forceMobile;
+  const isMobile = useIsMobile() || isRightDrawer;
 
   const TASK_TABS = [
     {
@@ -97,7 +99,7 @@ export const ShowPageRightContainer = ({
       id: 'timeline',
       title: 'Timeline',
       Icon: IconTimelineEvent,
-      hide: !timeline,
+      hide: !timeline || isRightDrawer,
     },
     {
       id: 'tasks',
@@ -143,7 +145,7 @@ export const ShowPageRightContainer = ({
       <StyledTabListContainer>
         <TabList
           loading={loading}
-          tabListId={TAB_LIST_COMPONENT_ID}
+          tabListId={TAB_LIST_COMPONENT_ID + isRightDrawer}
           tabs={TASK_TABS}
         />
       </StyledTabListContainer>

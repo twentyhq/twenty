@@ -255,7 +255,7 @@ export const RecordShowContainer = ({
             tasks
             notes
             emails
-            forceMobile={isInRightDrawer}
+            isRightDrawer={isInRightDrawer}
             summary={summary}
             loading={isPrefetchLoading || loading || recordLoading}
           />

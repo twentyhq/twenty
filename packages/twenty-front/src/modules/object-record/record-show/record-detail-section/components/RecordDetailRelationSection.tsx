@@ -175,7 +175,6 @@ export const RecordDetailRelationSection = ({
           createRecordPayload[
             `${relationFieldMetadataItem?.relationDefinition?.sourceFieldMetadata.name}Id`
           ] = entityId;
-          console.log(createRecordPayload);
           await createOneRecord(createRecordPayload);
           setViewableRecordId(newRecordId);
           setViewableRecordNameSingular(relationObjectMetadataNameSingular);
