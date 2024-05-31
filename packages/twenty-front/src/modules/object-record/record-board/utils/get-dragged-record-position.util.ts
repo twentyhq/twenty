@@ -6,11 +6,15 @@ export const getDraggedRecordPosition = (
 ): number => {
   if (isDefined(recordAfterPosition) && isDefined(recordBeforePosition)) {
     return (recordBeforePosition + recordAfterPosition) / 2;
-  } else if (isDefined(recordAfterPosition)) {
-    return recordAfterPosition - 1;
-  } else if (isDefined(recordBeforePosition)) {
-    return recordBeforePosition + 1;
-  } else {
-    return 1;
   }
+
+  if (isDefined(recordAfterPosition)) {
+    return recordAfterPosition - 1;
+  }
+
+  if (isDefined(recordBeforePosition)) {
+    return recordBeforePosition + 1;
+  }
+
+  return 1;
 };
