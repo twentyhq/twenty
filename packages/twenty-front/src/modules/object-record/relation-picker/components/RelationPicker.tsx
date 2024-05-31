@@ -6,7 +6,7 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
-import { useAddNewRecordAnOpenPanel } from '@/object-record/relation-picker/hooks/useAddNewRecordAnOpenPanel';
+import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/relation-picker/hooks/useAddNewRecordAndOpenRightDrawer';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 
@@ -54,7 +54,7 @@ export const RelationPicker = ({
 
   const { entityId } = useContext(FieldContext);
 
-  const { handleOnCreate } = useAddNewRecordAnOpenPanel({
+  const { handleOnCreate } = useAddNewRecordAndOpenRightDrawer({
     relationObjectMetadataNameSingular:
       fieldDefinition.metadata.relationObjectMetadataNameSingular,
     relationObjectMetadataItem,

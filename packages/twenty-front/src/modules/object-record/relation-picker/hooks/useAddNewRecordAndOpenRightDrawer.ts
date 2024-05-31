@@ -21,7 +21,7 @@ type RecordDetailRelationSectionProps = {
   relationFieldMetadataItem?: FieldMetadataItem;
   entityId: string;
 };
-export const useAddNewRecordAnOpenPanel = ({
+export const useAddNewRecordAndOpenRightDrawer = ({
   relationObjectMetadataNameSingular,
   relationObjectMetadataItem,
   relationFieldMetadataItem,
@@ -85,7 +85,7 @@ export const useAddNewRecordAnOpenPanel = ({
             relationFieldMetadataItem?.relationDefinition?.direction ===
             RelationDefinitionType.OneToMany
           ) {
-            updateOneRecord({
+            await updateOneRecord({
               idToUpdate: entityId,
               updateOneRecordInput: {
                 [`${relationFieldMetadataItem?.relationDefinition?.targetFieldMetadata.name}Id`]:

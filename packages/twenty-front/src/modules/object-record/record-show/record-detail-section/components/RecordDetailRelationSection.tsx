@@ -17,7 +17,7 @@ import { RecordDetailSectionHeader } from '@/object-record/record-show/record-de
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { SingleEntitySelectMenuItemsWithSearch } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItemsWithSearch';
-import { useAddNewRecordAnOpenPanel } from '@/object-record/relation-picker/hooks/useAddNewRecordAnOpenPanel';
+import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/relation-picker/hooks/useAddNewRecordAndOpenRightDrawer';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
@@ -139,7 +139,7 @@ export const RecordDetailRelationSection = ({
     );
   };
 
-  const { handleOnCreate } = useAddNewRecordAnOpenPanel({
+  const { handleOnCreate } = useAddNewRecordAndOpenRightDrawer({
     relationObjectMetadataNameSingular,
     relationObjectMetadataItem,
     relationFieldMetadataItem,
