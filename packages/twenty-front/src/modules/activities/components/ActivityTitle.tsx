@@ -40,7 +40,7 @@ const StyledEditableTitleInput = styled.input<{
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 
-  line-height: ${({ theme }) => theme.text.lineHeight.md};
+  line-height: ${({ theme }) => theme.text.lineHeight.sm};
   outline: none;
   text-decoration: ${({ completed }) => (completed ? 'line-through' : 'none')};
   &::placeholder {
@@ -54,6 +54,10 @@ const StyledContainer = styled.div`
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(2)};
   width: 100%;
+`;
+
+const StyledCheckbox = styled(Checkbox)`
+  padding: ${({ theme }) => theme.spacing(0.5)};
 `;
 
 type ActivityTitleProps = {
@@ -176,7 +180,7 @@ export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
   return (
     <StyledContainer>
       {activity.type === 'Task' && (
-        <Checkbox
+        <StyledCheckbox
           size={CheckboxSize.Large}
           shape={CheckboxShape.Rounded}
           checked={completed}
