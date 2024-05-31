@@ -49,15 +49,6 @@ export class KeyValuePairService extends TypeOrmQueryService<KeyValuePair> {
     return { success: true };
   }
 
-  async getMany(userId: string, workspaceId: string) {
-    return await this.keyValuePairRepository.find({
-      where: {
-        userId,
-        workspaceId,
-      },
-    });
-  }
-
   async get(
     userId: string,
     workspaceId: string,
