@@ -3,12 +3,12 @@ import { isEmailBlocklisted } from 'src/modules/calendar-messaging-participant/u
 
 export const filterEmails = (messages: GmailMessage[], blocklist: string[]) => {
   return filterOutBlocklistedMessages(
-    filterOutIcsAttachments(messages),
+    filterOutIcsAttachments(filterOutNonPersonalEmails(messages)),
     blocklist,
   );
 };
 
-export const filterOutBlocklistedMessages = (
+const filterOutBlocklistedMessages = (
   messages: GmailMessage[],
   blocklist: string[],
 ) => {
@@ -23,7 +23,7 @@ export const filterOutBlocklistedMessages = (
   });
 };
 
-export const filterOutIcsAttachments = (messages: GmailMessage[]) => {
+const filterOutIcsAttachments = (messages: GmailMessage[]) => {
   return messages.filter((message) => {
     if (!message.attachments) {
       return true;
@@ -31,6 +31,25 @@ export const filterOutIcsAttachments = (messages: GmailMessage[]) => {
 
     return message.attachments.every(
       (attachment) => !attachment.filename.endsWith('.ics'),
+    );
+  });
+};
+
+const isPersonEmail = (email: string): boolean => {
+  const nonPersonalPattern =
+    /noreply|no-reply|do_not_reply|no\.reply|^(info@|contact@|hello@|support@|feedback@|service@|help@)/;
+
+  return !nonPersonalPattern.test(email);
+};
+
+const filterOutNonPersonalEmails = (messages: GmailMessage[]) => {
+  return messages.filter((message) => {
+    if (!message.participants) {
+      return true;
+    }
+
+    return message.participants.every((participant) =>
+      isPersonEmail(participant.handle),
     );
   });
 };
