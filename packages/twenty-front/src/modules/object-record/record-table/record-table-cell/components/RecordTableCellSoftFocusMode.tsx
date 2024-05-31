@@ -1,7 +1,7 @@
 import { ReactElement, useContext, useEffect, useRef } from 'react';
-import { IconArrowUpRight } from '@tabler/icons-react';
 import { useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
+import { IconArrowUpRight } from 'twenty-ui';
 
 import { useClearField } from '@/object-record/record-field/hooks/useClearField';
 import { useGetButtonIcon } from '@/object-record/record-field/hooks/useGetButtonIcon';

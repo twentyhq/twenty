@@ -5,18 +5,21 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined';
+import {
+  FieldMetadataType,
+  RelationDefinitionType,
+} from '~/generated-metadata/graphql';
 
 type RecordDetailRelationSectionProps = {
   relationObjectMetadataNameSingular: string;
   relationObjectMetadataItem: ObjectMetadataItem;
   relationFieldMetadataItem?: FieldMetadataItem;
-  entityId?: string;
+  entityId: string;
 };
 export const useAddNewRecordAnOpenPanel = ({
   relationObjectMetadataNameSingular,
@@ -31,6 +34,11 @@ export const useAddNewRecordAnOpenPanel = ({
 
   const { createOneRecord } = useCreateOneRecord({
     objectNameSingular: relationObjectMetadataNameSingular,
+  });
+  const { updateOneRecord } = useUpdateOneRecord({
+    objectNameSingular:
+      relationFieldMetadataItem?.relationDefinition?.targetObjectMetadata
+        .nameSingular ?? '',
   });
 
   const { openRightDrawer } = useRightDrawer();
@@ -62,12 +70,30 @@ export const useAddNewRecordAnOpenPanel = ({
                 }
               : { id: newRecordId, name: searchInput ?? '' };
 
-          if (isDefined(entityId)) {
+          if (
+            relationFieldMetadataItem?.relationDefinition?.direction ===
+            RelationDefinitionType.ManyToOne
+          ) {
             createRecordPayload[
-              `${relationFieldMetadataItem?.relationDefinition?.sourceFieldMetadata.name}Id`
+              `${relationFieldMetadataItem?.relationDefinition?.targetFieldMetadata.name}Id`
             ] = entityId;
           }
+
           await createOneRecord(createRecordPayload);
+
+          if (
+            relationFieldMetadataItem?.relationDefinition?.direction ===
+            RelationDefinitionType.OneToMany
+          ) {
+            updateOneRecord({
+              idToUpdate: entityId,
+              updateOneRecordInput: {
+                [`${relationFieldMetadataItem?.relationDefinition?.targetFieldMetadata.name}Id`]:
+                  newRecordId,
+              },
+            });
+          }
+
           setViewableRecordId(newRecordId);
           setViewableRecordNameSingular(relationObjectMetadataNameSingular);
           openRightDrawer(RightDrawerPages.ViewRecord);

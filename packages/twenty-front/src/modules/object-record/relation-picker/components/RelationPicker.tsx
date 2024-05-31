@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import { IconForbid } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { FieldDefinition } from '@/object-record/record-field/types/FieldDefinition';
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { SingleEntitySelect } from '@/object-record/relation-picker/components/SingleEntitySelect';
@@ -51,12 +52,14 @@ export const RelationPicker = ({
     ({ id }) => id === fieldDefinition.metadata.relationFieldMetadataId,
   );
 
+  const { entityId } = useContext(FieldContext);
+
   const { handleOnCreate } = useAddNewRecordAnOpenPanel({
     relationObjectMetadataNameSingular:
       fieldDefinition.metadata.relationObjectMetadataNameSingular,
     relationObjectMetadataItem,
     relationFieldMetadataItem,
-    entityId: recordId,
+    entityId,
   });
 
   return (

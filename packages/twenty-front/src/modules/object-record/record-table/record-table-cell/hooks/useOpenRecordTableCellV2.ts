@@ -66,8 +66,6 @@ export const useOpenRecordTableCellV2 = (tableScopeId: string) => {
         initialValue,
         cellPosition,
         isReadOnly,
-        // temporary, while refactoring
-        // eslint-disable-next-line unused-imports/no-unused-vars
         pathToShowPage,
         objectNameSingular,
         customCellHotkeyScope,
