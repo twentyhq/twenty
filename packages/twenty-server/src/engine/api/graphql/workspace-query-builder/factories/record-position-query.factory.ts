@@ -1,54 +1,122 @@
 import { Injectable } from '@nestjs/common';
 
 export enum RecordPositionQueryType {
-  GET = 'GET',
-  UPDATE = 'UPDATE',
+  FIND_FIRST_RECORD = 'FIND_FIRST_RECORD',
+  FIND_LAST_RECORD = 'FIND_LAST_RECORD',
+  FIND_BY_POSITION = 'FIND_BY_POSITION',
+  UPDATE_POSITION = 'UPDATE_POSITION',
 }
+
+type FindByPositionQueryArgs = {
+  positionValue: number;
+  recordPositionQueryType: RecordPositionQueryType.FIND_BY_POSITION;
+};
+
+type FindFirstRecordQueryArgs = {
+  recordPositionQueryType: RecordPositionQueryType.FIND_FIRST_RECORD;
+};
+
+type FindLastRecordQueryArgs = {
+  recordPositionQueryType: RecordPositionQueryType.FIND_LAST_RECORD;
+};
+
+type UpdatePositionQueryArgs = {
+  recordId: string;
+  positionValue: number;
+  recordPositionQueryType: RecordPositionQueryType.UPDATE_POSITION;
+};
+
+type RecordPositionQuery = string;
+
+type RecordPositionQueryParams = any[];
+
+export type RecordPositionQueryArgs =
+  | FindByPositionQueryArgs
+  | FindFirstRecordQueryArgs
+  | FindLastRecordQueryArgs
+  | UpdatePositionQueryArgs;
 
 @Injectable()
 export class RecordPositionQueryFactory {
-  async create(
-    recordPositionQueryType: RecordPositionQueryType,
-    positionValue: 'first' | 'last' | number,
+  create(
+    recordPositonQueryArgs: RecordPositionQueryArgs,
     objectMetadata: { isCustom: boolean; nameSingular: string },
     dataSourceSchema: string,
-  ): Promise<string> {
+  ): [RecordPositionQuery, RecordPositionQueryParams] {
     const name =
       (objectMetadata.isCustom ? '_' : '') + objectMetadata.nameSingular;
 
-    switch (recordPositionQueryType) {
-      case RecordPositionQueryType.GET:
-        if (typeof positionValue === 'number') {
-          throw new Error(
-            'RecordPositionQueryType.GET requires positionValue to be a number',
-          );
-        }
-
-        return this.createForGet(positionValue, name, dataSourceSchema);
-      case RecordPositionQueryType.UPDATE:
-        return this.createForUpdate(name, dataSourceSchema);
+    switch (recordPositonQueryArgs.recordPositionQueryType) {
+      case RecordPositionQueryType.FIND_BY_POSITION:
+        return this.buildFindByPositionQuery(
+          recordPositonQueryArgs as FindByPositionQueryArgs,
+          name,
+          dataSourceSchema,
+        );
+      case RecordPositionQueryType.FIND_FIRST_RECORD:
+        return this.buildFindFirstRecordQuery(name, dataSourceSchema);
+      case RecordPositionQueryType.FIND_LAST_RECORD:
+        return this.buildFindLastRecordQuery(name, dataSourceSchema);
+      case RecordPositionQueryType.UPDATE_POSITION:
+        return this.buildUpdatePositionQuery(
+          recordPositonQueryArgs as UpdatePositionQueryArgs,
+          name,
+          dataSourceSchema,
+        );
       default:
         throw new Error('Invalid RecordPositionQueryType');
     }
   }
 
-  private async createForGet(
-    positionValue: 'first' | 'last',
+  private buildFindByPositionQuery(
+    { positionValue }: FindByPositionQueryArgs,
     name: string,
     dataSourceSchema: string,
-  ): Promise<string> {
-    const orderByDirection = positionValue === 'first' ? 'ASC' : 'DESC';
-
-    return `SELECT position FROM ${dataSourceSchema}."${name}"
-            WHERE "position" IS NOT NULL ORDER BY "position" ${orderByDirection} LIMIT 1`;
+  ): [RecordPositionQuery, RecordPositionQueryParams] {
+    return [
+      `SELECT * FROM ${dataSourceSchema}."${name}"
+            WHERE "position" = $1`,
+      [positionValue],
+    ];
   }
 
-  private async createForUpdate(
+  private buildFindFirstRecordQuery(
     name: string,
     dataSourceSchema: string,
-  ): Promise<string> {
-    return `UPDATE ${dataSourceSchema}."${name}"
+  ): [RecordPositionQuery, RecordPositionQueryParams] {
+    return this.buildFindRecordQuery(name, dataSourceSchema, 'ASC');
+  }
+
+  private buildFindLastRecordQuery(
+    name: string,
+    dataSourceSchema: string,
+  ): [RecordPositionQuery, RecordPositionQueryParams] {
+    return this.buildFindRecordQuery(name, dataSourceSchema, 'DESC');
+  }
+
+  private buildFindRecordQuery(
+    name: string,
+    dataSourceSchema: string,
+    orderBy: string,
+  ): [RecordPositionQuery, RecordPositionQueryParams] {
+    return [
+      `SELECT * FROM ${dataSourceSchema}."${name}"
+            ORDER BY "position" ${orderBy}
+            LIMIT 1`,
+      [],
+    ];
+  }
+
+  private buildUpdatePositionQuery(
+    { recordId, positionValue }: UpdatePositionQueryArgs,
+    name: string,
+    dataSourceSchema: string,
+  ): [RecordPositionQuery, RecordPositionQueryParams] {
+    return [
+      `UPDATE ${dataSourceSchema}."${name}"
             SET "position" = $1
-            WHERE "id" = $2`;
+            WHERE "id" = $2`,
+      [positionValue, recordId],
+    ];
   }
 }

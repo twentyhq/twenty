@@ -16,6 +16,11 @@ import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/fi
 
 import { RecordPositionFactory } from './record-position.factory';
 
+type ArgPositionBackfillInput = {
+  argIndex?: number;
+  shouldBackfillPosition: boolean;
+};
+
 @Injectable()
 export class QueryRunnerArgsFactory {
   constructor(private readonly recordPositionFactory: RecordPositionFactory) {}
@@ -39,8 +44,11 @@ export class QueryRunnerArgsFactory {
         return {
           ...args,
           data: await Promise.all(
-            (args as CreateManyResolverArgs).data.map((arg) =>
-              this.overrideDataByFieldMetadata(arg, options, fieldMetadataMap),
+            (args as CreateManyResolverArgs).data.map((arg, index) =>
+              this.overrideDataByFieldMetadata(arg, options, fieldMetadataMap, {
+                argIndex: index,
+                shouldBackfillPosition: true,
+              }),
             ),
           ),
         } satisfies CreateManyResolverArgs;
@@ -73,6 +81,7 @@ export class QueryRunnerArgsFactory {
             (args as FindDuplicatesResolverArgs).data,
             options,
             fieldMetadataMap,
+            { shouldBackfillPosition: false },
           ),
         };
       default:
@@ -84,10 +93,13 @@ export class QueryRunnerArgsFactory {
     data: Record<string, any> | undefined,
     options: WorkspaceQueryRunnerOptions,
     fieldMetadataMap: Map<string, FieldMetadataInterface>,
+    argPositionBackfillInput: ArgPositionBackfillInput,
   ) {
     if (!data) {
       return;
     }
+
+    let isFieldPositionPresent = false;
 
     const createArgPromiseByArgKey = Object.entries(data).map(
       async ([key, value]) => {
@@ -99,6 +111,8 @@ export class QueryRunnerArgsFactory {
 
         switch (fieldMetadata.type) {
           case FieldMetadataType.POSITION:
+            isFieldPositionPresent = true;
+
             return [
               key,
               await this.recordPositionFactory.create(
@@ -108,6 +122,7 @@ export class QueryRunnerArgsFactory {
                   nameSingular: options.objectMetadataItem.nameSingular,
                 },
                 options.workspaceId,
+                argPositionBackfillInput.argIndex,
               ),
             ];
           case FieldMetadataType.NUMBER:
@@ -119,6 +134,27 @@ export class QueryRunnerArgsFactory {
     );
 
     const newArgEntries = await Promise.all(createArgPromiseByArgKey);
+
+    if (
+      !isFieldPositionPresent &&
+      argPositionBackfillInput.shouldBackfillPosition
+    ) {
+      return Object.fromEntries([
+        ...newArgEntries,
+        [
+          'position',
+          await this.recordPositionFactory.create(
+            'first',
+            {
+              isCustom: options.objectMetadataItem.isCustom,
+              nameSingular: options.objectMetadataItem.nameSingular,
+            },
+            options.workspaceId,
+            argPositionBackfillInput.argIndex,
+          ),
+        ],
+      ]);
+    }
 
     return Object.fromEntries(newArgEntries);
   }

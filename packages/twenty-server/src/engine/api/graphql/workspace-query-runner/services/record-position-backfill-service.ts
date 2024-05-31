@@ -31,16 +31,19 @@ export class RecordPositionBackfillService {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    const query = await this.recordPositionQueryFactory.create(
-      RecordPositionQueryType.UPDATE,
-      position,
+    const [query, params] = await this.recordPositionQueryFactory.create(
+      {
+        recordPositionQueryType: RecordPositionQueryType.UPDATE_POSITION,
+        recordId,
+        positionValue: position,
+      },
       objectMetadata as ObjectMetadataInterface,
       dataSourceSchema,
     );
 
     this.workspaceDataSourceService.executeRawQuery(
       query,
-      [position, recordId],
+      params,
       workspaceId,
       undefined,
     );
