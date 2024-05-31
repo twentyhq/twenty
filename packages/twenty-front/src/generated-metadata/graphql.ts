@@ -145,6 +145,7 @@ export type ClientConfig = {
   authProviders: AuthProviders;
   billing: Billing;
   captcha: Captcha;
+  chromeExtensionId?: Maybe<Scalars['String']['output']>;
   debugMode: Scalars['Boolean']['output'];
   sentry: Sentry;
   signInPrefilled: Scalars['Boolean']['output'];
@@ -361,6 +362,12 @@ export type InvalidatePassword = {
   success: Scalars['Boolean']['output'];
 };
 
+export type KeyValuePairCreated = {
+  __typename?: 'KeyValuePairCreated';
+  /** Boolean that Key Value Pair has been created */
+  success: Scalars['Boolean']['output'];
+};
+
 export type LinkMetadata = {
   __typename?: 'LinkMetadata';
   label: Scalars['String']['output'];
@@ -405,6 +412,7 @@ export type Mutation = {
   impersonate: Verify;
   renewToken: AuthTokens;
   signUp: LoginToken;
+  skipSyncEmail: KeyValuePairCreated;
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
   track: Analytics;
@@ -1064,6 +1072,7 @@ export type User = {
   passwordResetToken?: Maybe<Scalars['String']['output']>;
   /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
   passwordResetTokenExpiresAt?: Maybe<Scalars['DateTime']['output']>;
+  state: UserState;
   supportUserHash?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
   workspaceMember?: Maybe<WorkspaceMember>;
@@ -1096,6 +1105,11 @@ export type UserMappingOptionsUpdateInput = {
 export type UserMappingOptionsUser = {
   __typename?: 'UserMappingOptionsUser';
   user?: Maybe<Scalars['String']['output']>;
+};
+
+export type UserState = {
+  __typename?: 'UserState';
+  skipSyncEmail?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type UserWorkspace = {

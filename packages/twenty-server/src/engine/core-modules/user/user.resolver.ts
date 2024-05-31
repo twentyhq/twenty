@@ -34,6 +34,9 @@ import {
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserState } from 'src/engine/core-modules/user/dtos/user-state.dto';
 
 import { UserService } from './services/user.service';
 
@@ -125,23 +128,37 @@ export class UserResolver {
     return this.userService.deleteUser(userId);
   }
 
-  @ResolveField(() => Boolean, { nullable: true })
-  async skipSyncEmail(@AuthUser() user: User): Promise<boolean | null> {
+  @ResolveField(() => UserState)
+  async state(
+    @Parent() user: User,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<UserState> {
+    if (!user || !workspace) {
+      return {
+        skipSyncEmail: true,
+      };
+    }
     const connectedAccounts =
       await this.connectedAccountRepository.getAllByUserId(
         user.id,
-        user.defaultWorkspaceId,
+        workspace.id,
       );
 
     if (connectedAccounts?.length) {
-      return true;
+      return {
+        skipSyncEmail: true,
+      };
     }
+
     const skipSyncEmail = await this.keyValuePairService.get(
       user.id,
-      user.defaultWorkspaceId,
+      workspace.id,
       KeyValuePairsKeys.EMAIL_SYNC_ONBOARDING_STEP,
     );
 
-    return skipSyncEmail && skipSyncEmail.value === EmailSyncStatus.SKIPPED;
+    return {
+      skipSyncEmail:
+        skipSyncEmail && skipSyncEmail.value === EmailSyncStatus.SKIPPED,
+    };
   }
 }

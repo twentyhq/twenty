@@ -59,7 +59,7 @@ export const getOnboardingStatus = ({
     return OnboardingStatus.OngoingProfileCreation;
   }
 
-  if (!currentUser.skipSyncEmail) {
+  if (!currentUser.state.skipSyncEmail) {
     return OnboardingStatus.OngoingSyncEmail;
   }
 

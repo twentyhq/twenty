@@ -8,6 +8,9 @@ export const USER_QUERY_FRAGMENT = gql`
     email
     canImpersonate
     supportUserHash
+    state {
+      skipSyncEmail
+    }
     workspaceMember {
       id
       name {

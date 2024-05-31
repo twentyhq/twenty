@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { RecoilRoot, useSetRecoilState } from 'recoil';
 
 import { useOnboardingStatus } from '@/auth/hooks/useOnboardingStatus';
-import { currentUserState } from '@/auth/states/currentUserState';
+import { CurrentUser, currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import {
   CurrentWorkspace,
@@ -26,8 +26,8 @@ const currentUser = {
   email: 'test@test',
   supportUserHash: '1',
   canImpersonate: false,
-  syncEmailSkipped: true,
-};
+  state: { syncEmailSkipped: true },
+} as CurrentUser;
 const currentWorkspace = {
   activationStatus: 'active',
   id: '1',
@@ -35,7 +35,7 @@ const currentWorkspace = {
   currentBillingSubscription: {
     status: 'trialing',
   },
-};
+} as CurrentWorkspace;
 const currentWorkspaceMember = {
   id: '1',
   locale: '',
@@ -99,7 +99,7 @@ describe('useOnboardingStatus', () => {
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'incomplete',
-      } as CurrentWorkspace);
+      });
       setCurrentWorkspaceMember(currentWorkspaceMember);
     });
 
@@ -119,11 +119,11 @@ describe('useOnboardingStatus', () => {
     act(() => {
       setTokenPair(tokenPair);
       setBilling(billing);
-      setCurrentUser({ ...currentUser, skipSyncEmail: true });
+      setCurrentUser(currentUser);
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'canceled',
-      } as CurrentWorkspace);
+      });
       setCurrentWorkspaceMember({
         ...currentWorkspaceMember,
         name: {
@@ -149,7 +149,7 @@ describe('useOnboardingStatus', () => {
         ...currentWorkspace,
         activationStatus: 'inactive',
         subscriptionStatus: 'active',
-      } as CurrentWorkspace);
+      });
     });
 
     expect(result.current.onboardingStatus).toBe(
@@ -174,7 +174,7 @@ describe('useOnboardingStatus', () => {
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'active',
-      } as CurrentWorkspace);
+      });
       setCurrentWorkspaceMember(currentWorkspaceMember);
     });
 
@@ -194,11 +194,11 @@ describe('useOnboardingStatus', () => {
     act(() => {
       setTokenPair(tokenPair);
       setBilling(billing);
-      setCurrentUser({ ...currentUser, skipSyncEmail: false });
+      setCurrentUser({ ...currentUser, state: { skipSyncEmail: false } });
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'active',
-      } as CurrentWorkspace);
+      });
       setCurrentWorkspaceMember({
         ...currentWorkspaceMember,
         name: {
@@ -224,11 +224,11 @@ describe('useOnboardingStatus', () => {
     act(() => {
       setTokenPair(tokenPair);
       setBilling(billing);
-      setCurrentUser({ ...currentUser, skipSyncEmail: true });
+      setCurrentUser(currentUser);
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'active',
-      } as CurrentWorkspace);
+      });
       setCurrentWorkspaceMember({
         ...currentWorkspaceMember,
         name: {
@@ -254,11 +254,11 @@ describe('useOnboardingStatus', () => {
     act(() => {
       setTokenPair(tokenPair);
       setBilling(billing);
-      setCurrentUser({ ...currentUser, skipSyncEmail: true });
+      setCurrentUser(currentUser);
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'past_due',
-      } as CurrentWorkspace);
+      });
       setCurrentWorkspaceMember({
         ...currentWorkspaceMember,
         name: {
@@ -284,11 +284,11 @@ describe('useOnboardingStatus', () => {
     act(() => {
       setTokenPair(tokenPair);
       setBilling(billing);
-      setCurrentUser({ ...currentUser, skipSyncEmail: true });
+      setCurrentUser(currentUser);
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'unpaid',
-      } as CurrentWorkspace);
+      });
       setCurrentWorkspaceMember({
         ...currentWorkspaceMember,
         name: {
@@ -314,7 +314,7 @@ describe('useOnboardingStatus', () => {
     act(() => {
       setTokenPair(tokenPair);
       setBilling(billing);
-      setCurrentUser({ ...currentUser, skipSyncEmail: true });
+      setCurrentUser(currentUser);
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'trialing',

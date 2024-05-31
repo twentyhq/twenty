@@ -2923,15 +2923,15 @@ export enum MessageChannelSyncSubStatusEnum {
   /** Failed */
   Failed = 'FAILED',
   /** Full messages list fetch pending */
-  FullMessagesListFetchPending = 'FULL_MESSAGES_LIST_FETCH_PENDING',
+  FullMessageListFetchPending = 'FULL_MESSAGE_LIST_FETCH_PENDING',
   /** Messages import ongoing */
   MessagesImportOngoing = 'MESSAGES_IMPORT_ONGOING',
   /** Messages import pending */
   MessagesImportPending = 'MESSAGES_IMPORT_PENDING',
   /** Messages list fetch ongoing */
-  MessagesListFetchOngoing = 'MESSAGES_LIST_FETCH_ONGOING',
+  MessageListFetchOngoing = 'MESSAGE_LIST_FETCH_ONGOING',
   /** Partial messages list fetch pending */
-  PartialMessagesListFetchPending = 'PARTIAL_MESSAGES_LIST_FETCH_PENDING'
+  PartialMessageListFetchPending = 'PARTIAL_MESSAGE_LIST_FETCH_PENDING'
 }
 
 export type MessageChannelSyncSubStatusEnumFilter = {
@@ -6502,7 +6502,7 @@ export type User = {
   passwordResetToken?: Maybe<Scalars['String']>;
   /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
   passwordResetTokenExpiresAt?: Maybe<Scalars['DateTime']>;
-  skipSyncEmail?: Maybe<Scalars['Boolean']>;
+  state: UserState;
   supportUserHash?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   workspaceMember?: Maybe<WorkspaceMember>;
@@ -6522,6 +6522,10 @@ export type UserExists = {
 
 export type UserMappingOptionsUser = {
   user?: Maybe<Scalars['String']>;
+};
+
+export type UserState = {
+  skipSyncEmail?: Maybe<Scalars['Boolean']>;
 };
 
 export type UserWorkspace = {

@@ -21,7 +21,7 @@ describe('getOnboardingStatus', () => {
         id: '1',
         activationStatus: 'inactive',
       } as CurrentWorkspace,
-      currentUser: { skipSyncEmail: true } as CurrentUser,
+      currentUser: { state: { skipSyncEmail: true } } as CurrentUser,
       isBillingEnabled: false,
     });
 
@@ -35,7 +35,7 @@ describe('getOnboardingStatus', () => {
         id: '1',
         activationStatus: 'active',
       } as CurrentWorkspace,
-      currentUser: { skipSyncEmail: true } as CurrentUser,
+      currentUser: { state: { skipSyncEmail: true } } as CurrentUser,
       isBillingEnabled: false,
     });
 
@@ -52,7 +52,7 @@ describe('getOnboardingStatus', () => {
         id: '1',
         activationStatus: 'active',
       } as CurrentWorkspace,
-      currentUser: { skipSyncEmail: false } as CurrentUser,
+      currentUser: { state: { skipSyncEmail: false } } as CurrentUser,
       isBillingEnabled: false,
     });
 
@@ -69,7 +69,7 @@ describe('getOnboardingStatus', () => {
         id: '1',
         activationStatus: 'active',
       } as CurrentWorkspace,
-      currentUser: { skipSyncEmail: true } as CurrentUser,
+      currentUser: { state: { skipSyncEmail: true } } as CurrentUser,
       isBillingEnabled: false,
     });
 
@@ -87,7 +87,7 @@ describe('getOnboardingStatus', () => {
         activationStatus: 'active',
         subscriptionStatus: 'incomplete',
       } as CurrentWorkspace,
-      currentUser: { skipSyncEmail: true } as CurrentUser,
+      currentUser: { state: { skipSyncEmail: true } } as CurrentUser,
       isBillingEnabled: true,
     });
 
@@ -105,7 +105,7 @@ describe('getOnboardingStatus', () => {
         activationStatus: 'active',
         subscriptionStatus: 'incomplete',
       } as CurrentWorkspace,
-      currentUser: { skipSyncEmail: true } as CurrentUser,
+      currentUser: { state: { skipSyncEmail: true } } as CurrentUser,
       isBillingEnabled: false,
     });
 
@@ -123,7 +123,7 @@ describe('getOnboardingStatus', () => {
         activationStatus: 'active',
         subscriptionStatus: 'canceled',
       } as CurrentWorkspace,
-      currentUser: { skipSyncEmail: true } as CurrentUser,
+      currentUser: { state: { skipSyncEmail: true } } as CurrentUser,
       isBillingEnabled: true,
     });
 
