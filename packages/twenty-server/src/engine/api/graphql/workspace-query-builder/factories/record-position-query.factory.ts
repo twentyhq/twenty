@@ -39,17 +39,17 @@ export type RecordPositionQueryArgs =
 @Injectable()
 export class RecordPositionQueryFactory {
   create(
-    recordPositonQueryArgs: RecordPositionQueryArgs,
+    recordPositionQueryArgs: RecordPositionQueryArgs,
     objectMetadata: { isCustom: boolean; nameSingular: string },
     dataSourceSchema: string,
   ): [RecordPositionQuery, RecordPositionQueryParams] {
     const name =
       (objectMetadata.isCustom ? '_' : '') + objectMetadata.nameSingular;
 
-    switch (recordPositonQueryArgs.recordPositionQueryType) {
+    switch (recordPositionQueryArgs.recordPositionQueryType) {
       case RecordPositionQueryType.FIND_BY_POSITION:
         return this.buildFindByPositionQuery(
-          recordPositonQueryArgs as FindByPositionQueryArgs,
+          recordPositionQueryArgs as FindByPositionQueryArgs,
           name,
           dataSourceSchema,
         );
@@ -59,7 +59,7 @@ export class RecordPositionQueryFactory {
         return this.buildFindLastRecordQuery(name, dataSourceSchema);
       case RecordPositionQueryType.UPDATE_POSITION:
         return this.buildUpdatePositionQuery(
-          recordPositonQueryArgs as UpdatePositionQueryArgs,
+          recordPositionQueryArgs as UpdatePositionQueryArgs,
           name,
           dataSourceSchema,
         );
