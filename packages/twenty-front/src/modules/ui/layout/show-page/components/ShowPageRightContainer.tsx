@@ -80,7 +80,7 @@ export const ShowPageRightContainer = ({
   const shouldDisplayLogTab = useIsFeatureEnabled('IS_EVENT_OBJECT_ENABLED');
   const shouldDisplayEmailsTab = emails && isCompanyOrPerson;
 
-  const TAB_LIST = [
+  const tabs = [
     {
       id: 'timeline',
       title: 'Timeline',
@@ -131,7 +131,7 @@ export const ShowPageRightContainer = ({
       case 'calendar':
         return <Calendar targetableObject={targetableObject} />;
       default:
-        return null;
+        return <></>;
     }
   };
 
@@ -141,7 +141,7 @@ export const ShowPageRightContainer = ({
         <TabList
           loading={loading}
           tabListId={TAB_LIST_COMPONENT_ID}
-          tabs={TAB_LIST}
+          tabs={tabs}
         />
       </StyledTabListContainer>
       {renderActiveTabContent()}

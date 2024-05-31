@@ -25,14 +25,10 @@ const StyledMainContainer = styled.div`
   height: 100%;
 
   justify-content: center;
-  padding: ${({ theme }) =>
-    theme.spacing(6) +
-    ' ' +
-    theme.spacing(6) +
-    ' ' +
-    theme.spacing(16) +
-    ' ' +
-    theme.spacing(6)};
+  padding-top: ${({ theme }) => theme.spacing(6)};
+  padding-right: ${({ theme }) => theme.spacing(6)};
+  padding-bottom: ${({ theme }) => theme.spacing(16)};
+  padding-left: ${({ theme }) => theme.spacing(6)};
   gap: ${({ theme }) => theme.spacing(4)};
 `;
 
