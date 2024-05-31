@@ -1,6 +1,7 @@
 import { GmailMessage } from 'src/modules/messaging/types/gmail-message';
 import { isEmailBlocklisted } from 'src/modules/calendar-messaging-participant/utils/is-email-blocklisted.util';
 
+// Todo: refactor this into several utils
 export const filterEmails = (messages: GmailMessage[], blocklist: string[]) => {
   return filterOutBlocklistedMessages(
     filterOutIcsAttachments(filterOutNonPersonalEmails(messages)),
