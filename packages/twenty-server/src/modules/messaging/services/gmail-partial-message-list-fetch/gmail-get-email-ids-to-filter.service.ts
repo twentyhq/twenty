@@ -11,7 +11,7 @@ export class GmailGetEmailIdsToFilterService {
     private readonly gmailGetHistoryService: GmailGetHistoryService,
   ) {}
 
-  public async fetchFilteredEmailIds(
+  public async fetchEmailIdsToFilter(
     gmailClient: gmail_v1.Gmail,
     lastSyncHistoryId: string,
   ): Promise<string[]> {
