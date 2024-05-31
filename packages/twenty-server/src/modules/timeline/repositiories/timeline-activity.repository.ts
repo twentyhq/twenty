@@ -74,17 +74,15 @@ export class TimelineActivityRepository {
     return this.workspaceDataSourceService.executeRawQuery(
       `SELECT * FROM ${dataSourceSchema}."timelineActivity"
       WHERE "${objectName}Id" = $1
-      AND ("name" = $2 OR "name" = $3)
-      AND "workspaceMemberId" = $4
-      AND "linkedRecordId" = $5
+      AND "name" = $2
+      AND "workspaceMemberId" = $3
+      AND ${
+        linkedRecordId ? `"linkedRecordId" = $4` : `"linkedRecordId" IS NULL`
+      }
       AND "createdAt" >= NOW() - interval '10 minutes'`,
-      [
-        recordId,
-        name,
-        name.replace(/\.updated$/, '.created'),
-        workspaceMemberId,
-        linkedRecordId,
-      ],
+      linkedRecordId
+        ? [recordId, name, workspaceMemberId, linkedRecordId]
+        : [recordId, name, workspaceMemberId],
       workspaceId,
     );
   }
@@ -105,7 +103,7 @@ export class TimelineActivityRepository {
     );
   }
 
-  private async insertTimelineActivity(
+  public async insertTimelineActivity(
     dataSourceSchema: string,
     name: string,
     properties: Record<string, any>,
