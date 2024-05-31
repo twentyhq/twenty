@@ -61,6 +61,9 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
       setLastRowVisible(false);
       setIsRecordTableInitialLoading(false);
     },
+    onError: () => {
+      setIsRecordTableInitialLoading(false);
+    },
   });
 
   return {
