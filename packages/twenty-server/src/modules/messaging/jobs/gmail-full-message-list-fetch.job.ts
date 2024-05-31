@@ -17,7 +17,7 @@ import { ConnectedAccountRepository } from 'src/modules/connected-account/reposi
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
-import { MessageChannelSyncStatusService } from 'src/modules/messaging/services/message-channel-sync-status/message-channel-sync-status.service';
+import { MessagingTelemetryService } from 'src/modules/messaging/services/telemetry/messaging-telemetry.service';
 
 export type GmailFullMessageListFetchJobData = {
   workspaceId: string;
@@ -40,7 +40,7 @@ export class GmailFullMessageListFetchJob
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
-    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
+    private readonly messagingTelemetryService: MessagingTelemetryService,
   ) {}
 
   async handle(data: GmailFullMessageListFetchJobData): Promise<void> {
@@ -74,6 +74,7 @@ export class GmailFullMessageListFetchJob
     const isGmailSyncV2Enabled = isGmailSyncV2EnabledFeatureFlag?.value;
 
     if (isGmailSyncV2Enabled) {
+      // Todo delete this code block after migration
       const connectedAccount = await this.connectedAccountRepository.getById(
         connectedAccountId,
         workspaceId,
@@ -97,31 +98,24 @@ export class GmailFullMessageListFetchJob
         );
       }
 
-      const refreshToken = connectedAccount.refreshToken;
-
-      if (!refreshToken) {
-        if (!connectedAccount.authFailedAt) {
-          await this.connectedAccountRepository.updateAuthFailedAt(
-            connectedAccountId,
-            workspaceId,
-          );
-        }
-
-        await this.messageChannelSyncStatusService.markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
-          messageChannel.id,
-          workspaceId,
-        );
-
-        throw new Error(
-          `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
-        );
-      }
+      await this.messagingTelemetryService.track({
+        eventName: 'full_message_list_fetch.started',
+        workspaceId,
+        connectedAccountId,
+      });
 
       await this.gmailFullMessageListFetchV2Service.processMessageListFetch(
         messageChannel,
         connectedAccount,
         workspaceId,
       );
+
+      await this.messagingTelemetryService.track({
+        eventName: 'full_message_list_fetch.completed',
+        workspaceId,
+        connectedAccountId,
+        messageChannelId: messageChannel.id,
+      });
     } else {
       await this.gmailFullMessageListFetchService.fetchConnectedAccountThreads(
         data.workspaceId,

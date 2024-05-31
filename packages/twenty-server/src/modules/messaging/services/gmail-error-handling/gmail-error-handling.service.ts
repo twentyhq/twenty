@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import snakeCase from 'lodash.snakecase';
+
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
@@ -8,7 +10,10 @@ import { MessageChannelSyncStatusService } from 'src/modules/messaging/services/
 import { MessagingTelemetryService } from 'src/modules/messaging/services/telemetry/messaging-telemetry.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 
-type SyncType = 'full' | 'partial' | 'message-import';
+type SyncStep =
+  | 'partial-message-list-fetch'
+  | 'full-message-list-fetch'
+  | 'messages-import';
 
 export type GmailError = {
   code: number;
@@ -26,7 +31,7 @@ export class GmailErrorHandlingService {
 
   public async handleGmailError(
     error: GmailError,
-    syncType: SyncType,
+    syncStep: SyncStep,
     messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
     workspaceId: string,
   ): Promise<void> {
@@ -37,20 +42,20 @@ export class GmailErrorHandlingService {
         if (reason === 'invalid_grant') {
           await this.handleInsufficientPermissions(
             error,
-            syncType,
+            syncStep,
             messageChannel,
             workspaceId,
           );
         }
         break;
       case 404:
-        await this.handleNotFound(error, syncType, messageChannel, workspaceId);
+        await this.handleNotFound(error, syncStep, messageChannel, workspaceId);
         break;
 
       case 429:
         await this.handleRateLimitExceeded(
           error,
-          syncType,
+          syncStep,
           messageChannel,
           workspaceId,
         );
@@ -63,14 +68,14 @@ export class GmailErrorHandlingService {
         ) {
           await this.handleRateLimitExceeded(
             error,
-            syncType,
+            syncStep,
             messageChannel,
             workspaceId,
           );
         } else {
           await this.handleInsufficientPermissions(
             error,
-            syncType,
+            syncStep,
             messageChannel,
             workspaceId,
           );
@@ -80,7 +85,7 @@ export class GmailErrorHandlingService {
       case 401:
         await this.handleInsufficientPermissions(
           error,
-          syncType,
+          syncStep,
           messageChannel,
           workspaceId,
         );
@@ -97,34 +102,34 @@ export class GmailErrorHandlingService {
 
   public async handleRateLimitExceeded(
     error: GmailError,
-    syncType: SyncType,
+    syncStep: SyncStep,
     messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
     workspaceId: string,
   ): Promise<void> {
     await this.messagingTelemetryService.track({
-      eventName: `sync.${syncType}.error.rate_limit_exceeded`,
+      eventName: `${snakeCase(syncStep)}.error.rate_limit_exceeded`,
       workspaceId,
       connectedAccountId: messageChannel.connectedAccountId,
       messageChannelId: messageChannel.id,
       message: `${error.code}: ${error.reason}`,
     });
 
-    switch (syncType) {
-      case 'full':
+    switch (syncStep) {
+      case 'full-message-list-fetch':
         await this.messageChannelSyncStatusService.scheduleFullMessageListFetch(
           messageChannel.id,
           workspaceId,
         );
         break;
 
-      case 'partial':
+      case 'partial-message-list-fetch':
         await this.messageChannelSyncStatusService.schedulePartialMessageListFetch(
           messageChannel.id,
           workspaceId,
         );
         break;
 
-      case 'message-import':
+      case 'messages-import':
         await this.messageChannelSyncStatusService.scheduleMessagesImport(
           messageChannel.id,
           workspaceId,
@@ -138,12 +143,12 @@ export class GmailErrorHandlingService {
 
   public async handleInsufficientPermissions(
     error: GmailError,
-    syncType: SyncType,
+    syncStep: SyncStep,
     messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
     workspaceId: string,
   ): Promise<void> {
     await this.messagingTelemetryService.track({
-      eventName: `sync.${syncType}.error.insufficient_permissions`,
+      eventName: `${snakeCase(syncStep)}.error.insufficient_permissions`,
       workspaceId,
       connectedAccountId: messageChannel.connectedAccountId,
       messageChannelId: messageChannel.id,
@@ -163,16 +168,16 @@ export class GmailErrorHandlingService {
 
   public async handleNotFound(
     error: GmailError,
-    syncType: SyncType,
+    syncStep: SyncStep,
     messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
     workspaceId: string,
   ): Promise<void> {
-    if (syncType === 'message-import') {
+    if (syncStep === 'messages-import') {
       return;
     }
 
     await this.messagingTelemetryService.track({
-      eventName: `sync.${syncType}.error.not_found`,
+      eventName: `${snakeCase(syncStep)}.error.not_found`,
       workspaceId,
       connectedAccountId: messageChannel.connectedAccountId,
       messageChannelId: messageChannel.id,

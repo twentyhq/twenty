@@ -43,29 +43,12 @@ export class GmailPartialMessageListFetchV2Service {
     connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
     workspaceId: string,
   ): Promise<void> {
-    this.logger.log(
-      `Fetching partial message list for workspace ${workspaceId} and account ${connectedAccount.id}`,
-    );
-
     await this.messageChannelSyncStatusService.markAsMessagesListFetchOngoing(
       messageChannel.id,
       workspaceId,
     );
 
     const lastSyncHistoryId = messageChannel.syncCursor;
-
-    if (!lastSyncHistoryId) {
-      this.logger.log(
-        `No lastSyncHistoryId for workspace ${workspaceId} and account ${connectedAccount.id}, falling back to full sync.`,
-      );
-
-      await this.messageChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
-        messageChannel.id,
-        workspaceId,
-      );
-
-      return;
-    }
 
     const gmailClient: gmail_v1.Gmail =
       await this.gmailClientProvider.getGmailClient(
@@ -81,7 +64,7 @@ export class GmailPartialMessageListFetchV2Service {
     if (error) {
       await this.gmailErrorHandlingService.handleGmailError(
         error,
-        'partial',
+        'partial-message-list-fetch',
         messageChannel,
         workspaceId,
       );
@@ -134,14 +117,6 @@ export class GmailPartialMessageListFetchV2Service {
       messageChannel.id,
       historyId,
       workspaceId,
-    );
-
-    this.logger.log(
-      `Updated lastSyncCursor to ${historyId} for workspace ${workspaceId} and account ${connectedAccount.id}`,
-    );
-
-    this.logger.log(
-      `Partial message list import done with history ${historyId} for workspace ${workspaceId} and account ${connectedAccount.id}`,
     );
 
     await this.messageChannelSyncStatusService.scheduleMessagesImport(

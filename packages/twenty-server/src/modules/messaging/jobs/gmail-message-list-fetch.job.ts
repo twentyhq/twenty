@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
-import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
 import { GmailPartialMessageListFetchV2Service } from 'src/modules/messaging/services/gmail-partial-message-list-fetch/gmail-partial-message-list-fetch-v2.service';
 import {
   MessageChannelSyncSubStatus,
@@ -27,7 +26,6 @@ export class GmailMessageListFetchJob
   private readonly logger = new Logger(GmailMessageListFetchJob.name);
 
   constructor(
-    private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
     private readonly gmailFullMessageListFetchV2Service: GmailFullMessageListFetchV2Service,
     private readonly gmailPartialMessageListFetchV2Service: GmailPartialMessageListFetchV2Service,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
@@ -41,7 +39,7 @@ export class GmailMessageListFetchJob
     const { workspaceId, connectedAccountId } = data;
 
     await this.messagingTelemetryService.track({
-      eventName: 'message_list_fetch_job.started',
+      eventName: 'message_list_fetch_job.triggered',
       workspaceId,
       connectedAccountId,
     });
@@ -79,6 +77,16 @@ export class GmailMessageListFetchJob
 
     switch (messageChannel.syncSubStatus) {
       case MessageChannelSyncSubStatus.PARTIAL_MESSAGE_LIST_FETCH_PENDING:
+        this.logger.log(
+          `Fetching partial message list for workspace ${workspaceId} and account ${connectedAccount.id}`,
+        );
+
+        await this.messagingTelemetryService.track({
+          eventName: 'partial_message_list_fetch.started',
+          workspaceId,
+          connectedAccountId,
+        });
+
         await this.gmailPartialMessageListFetchV2Service.processMessageListFetch(
           messageChannel,
           connectedAccount,
@@ -86,15 +94,25 @@ export class GmailMessageListFetchJob
         );
 
         await this.messagingTelemetryService.track({
-          eventName: 'message_list_fetch_job.partial.completed',
+          eventName: 'partial_message_list_fetch.completed',
           workspaceId,
           connectedAccountId,
           messageChannelId: messageChannel.id,
         });
 
-        return;
+        break;
 
       case MessageChannelSyncSubStatus.FULL_MESSAGE_LIST_FETCH_PENDING:
+        this.logger.log(
+          `Fetching full message list for workspace ${workspaceId} and account ${connectedAccount.id}`,
+        );
+
+        await this.messagingTelemetryService.track({
+          eventName: 'full_message_list_fetch.started',
+          workspaceId,
+          connectedAccountId,
+        });
+
         await this.gmailFullMessageListFetchV2Service.processMessageListFetch(
           messageChannel,
           connectedAccount,
@@ -102,16 +120,16 @@ export class GmailMessageListFetchJob
         );
 
         await this.messagingTelemetryService.track({
-          eventName: 'message_list_fetch_job.partial.completed',
+          eventName: 'full_message_list_fetch.completed',
           workspaceId,
           connectedAccountId,
           messageChannelId: messageChannel.id,
         });
 
-        return;
+        break;
 
       default:
-        return;
+        break;
     }
   }
 }

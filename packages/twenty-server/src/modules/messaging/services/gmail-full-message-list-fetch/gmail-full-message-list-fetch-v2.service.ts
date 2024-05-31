@@ -45,10 +45,6 @@ export class GmailFullMessageListFetchV2Service {
     connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
     workspaceId: string,
   ) {
-    this.logger.log(
-      `Fetching full message list for workspace ${workspaceId} and account ${connectedAccount.id}`,
-    );
-
     await this.messageChannelSyncStatusService.markAsMessagesListFetchOngoing(
       messageChannel.id,
       workspaceId,
@@ -59,40 +55,28 @@ export class GmailFullMessageListFetchV2Service {
         connectedAccount.refreshToken,
       );
 
-    try {
-      const { error: gmailError } =
-        await this.fetchAllMessageIdsFromGmailAndStoreInCache(
-          gmailClient,
-          messageChannel.id,
-          workspaceId,
-        );
-
-      if (gmailError) {
-        this.logger.error(JSON.stringify(gmailError));
-        await this.gmailErrorHandlingService.handleGmailError(
-          gmailError,
-          'full',
-          messageChannel,
-          workspaceId,
-        );
-
-        return;
-      }
-
-      await this.messageChannelSyncStatusService.scheduleMessagesImport(
-        messageChannel.id,
-        workspaceId,
-      );
-    } catch (error) {
-      await this.messageChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
+    const { error: gmailError } =
+      await this.fetchAllMessageIdsFromGmailAndStoreInCache(
+        gmailClient,
         messageChannel.id,
         workspaceId,
       );
 
-      throw new Error(
-        `Error fetching messages for ${connectedAccount.id} in workspace ${workspaceId}: ${error.message}`,
+    if (gmailError) {
+      await this.gmailErrorHandlingService.handleGmailError(
+        gmailError,
+        'full-message-list-fetch',
+        messageChannel,
+        workspaceId,
       );
+
+      return;
     }
+
+    await this.messageChannelSyncStatusService.scheduleMessagesImport(
+      messageChannel.id,
+      workspaceId,
+    );
   }
 
   private async fetchAllMessageIdsFromGmailAndStoreInCache(
@@ -102,9 +86,9 @@ export class GmailFullMessageListFetchV2Service {
     transactionManager?: EntityManager,
   ): Promise<{ error?: GmailError }> {
     let pageToken: string | undefined;
+    let fetchedMessageIdsCount = 0;
     let hasMoreMessages = true;
-    let messageIdsToFetch = 0;
-    let firstMessageExternalId;
+    let firstMessageExternalId: string | undefined;
     let response: GaxiosResponse<gmail_v1.Schema$ListMessagesResponse>;
 
     while (hasMoreMessages) {
@@ -158,25 +142,24 @@ export class GmailFullMessageListFetchV2Service {
             `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
             messageIdsToImport,
           );
-
-          messageIdsToFetch += messageIdsToImport.length;
         }
+
+        fetchedMessageIdsCount += messageExternalIds.length;
       }
 
       pageToken = response.data.nextPageToken ?? undefined;
       hasMoreMessages = !!pageToken;
     }
-    if (!messageIdsToFetch) {
-      this.logger.log(
-        `No messages found in Gmail for messageChannel ${messageChannelId} in workspace ${workspaceId}`,
-      );
-
-      return {};
-    }
 
     this.logger.log(
-      `Fetched all ${messageIdsToFetch} message ids from Gmail for messageChannel ${messageChannelId} in workspace ${workspaceId} and added to cache for import`,
+      `Added ${fetchedMessageIdsCount} messages ids from Gmail for messageChannel ${messageChannelId} in workspace ${workspaceId} and added to cache for import`,
     );
+
+    if (!firstMessageExternalId) {
+      throw new Error(
+        `No first message found for workspace ${workspaceId} and account ${messageChannelId}, can't update sync external id`,
+      );
+    }
 
     await this.updateLastSyncCursor(
       gmailClient,
@@ -196,12 +179,6 @@ export class GmailFullMessageListFetchV2Service {
     workspaceId: string,
     transactionManager?: EntityManager,
   ) {
-    if (!firstMessageExternalId) {
-      throw new Error(
-        `No first message found for workspace ${workspaceId} and account ${messageChannelId}, can't update sync external id`,
-      );
-    }
-
     const firstMessageContent = await gmailClient.users.messages.get({
       userId: 'me',
       id: firstMessageExternalId,
@@ -220,10 +197,6 @@ export class GmailFullMessageListFetchV2Service {
         `No historyId found for message ${firstMessageExternalId} in workspace ${workspaceId}`,
       );
     }
-
-    this.logger.log(
-      `Updating last sync cursor: ${historyId} for workspace ${workspaceId} and account ${messageChannelId} succeeded.`,
-    );
 
     await this.messageChannelRepository.updateLastSyncCursorIfHigher(
       messageChannelId,

@@ -70,7 +70,7 @@ export class GoogleAPIRefreshAccessTokenService {
           code: error.code,
           reason: error.response.data.error,
         },
-        'message-import',
+        'messages-import',
         messageChannel,
         workspaceId,
       );

@@ -14,6 +14,7 @@ import { SaveMessagesAndEnqueueContactCreationService } from 'src/modules/messag
 import { SetMessageChannelSyncStatusModule } from 'src/modules/messaging/services/message-channel-sync-status/message-channel-sync-status.module';
 import { MessageParticipantModule } from 'src/modules/messaging/services/message-participant/message-participant.module';
 import { MessageModule } from 'src/modules/messaging/services/message/message.module';
+import { MessagingTelemetryModule } from 'src/modules/messaging/services/telemetry/messaging-telemetry.module';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 
 @Module({
@@ -31,6 +32,7 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-ob
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     GmailErrorHandlingModule,
     GoogleAPIRefreshAccessTokenModule,
+    MessagingTelemetryModule,
   ],
   providers: [
     GmailMessagesImportService,

@@ -9,6 +9,7 @@ import { GmailMessagesImportCronJob } from 'src/modules/messaging/crons/jobs/gma
 import { GmailMessageListFetchCronJob } from 'src/modules/messaging/crons/jobs/gmail-message-list-fetch.cron.job';
 import { GmailMessagesImportModule } from 'src/modules/messaging/services/gmail-messages-import/gmail-messages-import.module';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
+import { MessagingTelemetryModule } from 'src/modules/messaging/services/telemetry/messaging-telemetry.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-ob
     TypeOrmModule.forFeature([DataSourceEntity], 'metadata'),
     ObjectMetadataRepositoryModule.forFeature([MessageChannelWorkspaceEntity]),
     GmailMessagesImportModule,
+    MessagingTelemetryModule,
   ],
   providers: [
     {
