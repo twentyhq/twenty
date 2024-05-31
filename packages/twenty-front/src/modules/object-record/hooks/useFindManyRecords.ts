@@ -33,6 +33,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
   orderBy,
   limit,
   onCompleted,
+  onError,
   skip,
   recordGqlFields,
   fetchPolicy,
@@ -45,6 +46,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         totalCount?: number;
       },
     ) => void;
+    onError?: (error?: Error) => void;
     skip?: boolean;
     recordGqlFields?: RecordGqlOperationGqlRecordFields;
     fetchPolicy?: WatchQueryFetchPolicy;
@@ -120,6 +122,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
             variant: SnackBarVariant.Error,
           },
         );
+        onError?.(error);
       },
     });
 

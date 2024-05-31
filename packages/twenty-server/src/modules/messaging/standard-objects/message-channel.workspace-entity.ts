@@ -32,9 +32,9 @@ export enum MessageChannelSyncStatus {
 }
 
 export enum MessageChannelSyncSubStatus {
-  FULL_MESSAGES_LIST_FETCH_PENDING = 'FULL_MESSAGES_LIST_FETCH_PENDING',
-  PARTIAL_MESSAGES_LIST_FETCH_PENDING = 'PARTIAL_MESSAGES_LIST_FETCH_PENDING',
-  MESSAGES_LIST_FETCH_ONGOING = 'MESSAGES_LIST_FETCH_ONGOING',
+  FULL_MESSAGE_LIST_FETCH_PENDING = 'FULL_MESSAGE_LIST_FETCH_PENDING',
+  PARTIAL_MESSAGE_LIST_FETCH_PENDING = 'PARTIAL_MESSAGE_LIST_FETCH_PENDING',
+  MESSAGE_LIST_FETCH_ONGOING = 'MESSAGE_LIST_FETCH_ONGOING',
   MESSAGES_IMPORT_PENDING = 'MESSAGES_IMPORT_PENDING',
   MESSAGES_IMPORT_ONGOING = 'MESSAGES_IMPORT_ONGOING',
   FAILED = 'FAILED',
@@ -234,19 +234,19 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconStatusChange',
     options: [
       {
-        value: MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING,
+        value: MessageChannelSyncSubStatus.FULL_MESSAGE_LIST_FETCH_PENDING,
         label: 'Full messages list fetch pending',
         position: 0,
         color: 'blue',
       },
       {
-        value: MessageChannelSyncSubStatus.PARTIAL_MESSAGES_LIST_FETCH_PENDING,
+        value: MessageChannelSyncSubStatus.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
         label: 'Partial messages list fetch pending',
         position: 1,
         color: 'blue',
       },
       {
-        value: MessageChannelSyncSubStatus.MESSAGES_LIST_FETCH_ONGOING,
+        value: MessageChannelSyncSubStatus.MESSAGE_LIST_FETCH_ONGOING,
         label: 'Messages list fetch ongoing',
         position: 2,
         color: 'orange',
@@ -270,7 +270,7 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
         color: 'red',
       },
     ],
-    defaultValue: `'${MessageChannelSyncSubStatus.FULL_MESSAGES_LIST_FETCH_PENDING}'`,
+    defaultValue: `'${MessageChannelSyncSubStatus.FULL_MESSAGE_LIST_FETCH_PENDING}'`,
   })
   syncSubStatus: MessageChannelSyncSubStatus;
 

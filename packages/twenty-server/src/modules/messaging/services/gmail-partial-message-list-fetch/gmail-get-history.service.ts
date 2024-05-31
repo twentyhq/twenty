@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { gmail_v1 } from 'googleapis';
+import { GaxiosResponse } from 'gaxios';
 
 import { GMAIL_USERS_HISTORY_MAX_RESULT } from 'src/modules/messaging/constants/gmail-users-history-max-result.constant';
-import { GmailError } from 'src/modules/messaging/types/gmail-error';
+import { GmailError } from 'src/modules/messaging/services/gmail-error-handling/gmail-error-handling.service';
 
 @Injectable()
 export class GmailGetHistoryService {
@@ -21,38 +22,36 @@ export class GmailGetHistoryService {
     let pageToken: string | undefined;
     let hasMoreMessages = true;
     let nextHistoryId: string | undefined;
+    let response: GaxiosResponse<gmail_v1.Schema$ListHistoryResponse>;
 
     while (hasMoreMessages) {
       try {
-        const response = await gmailClient.users.history.list({
+        response = await gmailClient.users.history.list({
           userId: 'me',
           maxResults: GMAIL_USERS_HISTORY_MAX_RESULT,
           pageToken,
           startHistoryId: lastSyncHistoryId,
           historyTypes: ['messageAdded', 'messageDeleted'],
         });
-
-        nextHistoryId = response?.data?.historyId ?? undefined;
-
-        if (response?.data?.history) {
-          fullHistory.push(...response.data.history);
-        }
-
-        pageToken = response?.data?.nextPageToken ?? undefined;
-        hasMoreMessages = !!pageToken;
       } catch (error) {
-        const errorData = error?.response?.data?.error;
-
-        if (errorData) {
-          return {
-            history: [],
-            error: errorData,
-            historyId: lastSyncHistoryId,
-          };
-        }
-
-        throw error;
+        return {
+          history: [],
+          error: {
+            code: error.response?.status,
+            reason: error.response?.data?.error,
+          },
+          historyId: lastSyncHistoryId,
+        };
       }
+
+      nextHistoryId = response?.data?.historyId ?? undefined;
+
+      if (response?.data?.history) {
+        fullHistory.push(...response.data.history);
+      }
+
+      pageToken = response?.data?.nextPageToken ?? undefined;
+      hasMoreMessages = !!pageToken;
     }
 
     return { history: fullHistory, historyId: nextHistoryId };
