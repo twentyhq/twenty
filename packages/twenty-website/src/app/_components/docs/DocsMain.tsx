@@ -69,7 +69,7 @@ const StyledSection = styled.div`
     align-items: flex-start;
   }
   &:not(:last-child) {
-    margin-bottom: 100px;
+    margin-bottom: 50px;
   }
 `;
 
