@@ -4,10 +4,7 @@ import {
   ObjectEdge,
   ObjectMetadataItemsQuery,
 } from '~/generated-metadata/graphql';
-import { MessageChannelVisibility } from "~/generated/graphql";
-import {
-  CalendarChannelVisibility
-} from "packages/twenty-server/src/modules/calendar/standard-objects/calendar-channel.workspace-entity";
+import { CalendarChannelVisibility, MessageChannelVisibility } from "~/generated/graphql";
 
 // This file is not designed to be manually edited.
 // It's an extract from the dev seeded environment metadata call
@@ -2928,20 +2925,20 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   isNullable: false,
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
-                  defaultValue: `'${CalendarChannelVisibility.SHARE_EVERYTHING}'`,
+                  defaultValue: `'${CalendarChannelVisibility.ShareEverything}'`,
                   options: [
                     {
                       id: 'b60eeb97-c67b-4d01-b647-1143d58ed49f',
                       color: 'green',
                       label: 'Metadata',
-                      value: CalendarChannelVisibility.METADATA,
+                      value: CalendarChannelVisibility.Metadata,
                       position: 0,
                     },
                     {
                       id: '7064c804-deb0-4f65-b7d6-3fe4df9a474c',
                       color: 'orange',
                       label: 'Share Everything',
-                      value: CalendarChannelVisibility.SHARE_EVERYTHING,
+                      value: CalendarChannelVisibility.ShareEverything,
                       position: 1,
                     },
                   ],
