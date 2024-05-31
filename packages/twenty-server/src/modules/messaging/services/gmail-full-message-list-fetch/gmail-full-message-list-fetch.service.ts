@@ -26,7 +26,7 @@ import {
   MessageChannelSyncStatus,
 } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { gmailSearchFilter } from 'src/modules/messaging/utils/gmail-search-filter.util';
+import { gmailSearchFilter } from 'src/modules/messaging/utils/compute-gmail-category-label-id';
 
 @Injectable()
 export class GmailFullMessageListFetchService {

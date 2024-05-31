@@ -21,7 +21,8 @@ import {
   GmailErrorHandlingService,
 } from 'src/modules/messaging/services/gmail-error-handling/gmail-error-handling.service';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/services/message-channel-sync-status/message-channel-sync-status.service';
-import { gmailSearchFilter } from 'src/modules/messaging/utils/gmail-search-filter.util';
+import { computeGmailCategoryExcludeSearchFilter } from 'src/modules/messaging/utils/compute-gmail-category-excude-search-filter';
+import { GMAIL_EXCLUDED_CATEGORIES } from 'src/modules/messaging/constants/gmail-excluded-categories';
 
 @Injectable()
 export class GmailFullMessageListFetchV2Service {
@@ -98,7 +99,7 @@ export class GmailFullMessageListFetchV2Service {
           userId: 'me',
           maxResults: GMAIL_USERS_MESSAGES_LIST_MAX_RESULT,
           pageToken,
-          q: gmailSearchFilter,
+          q: computeGmailCategoryExcludeSearchFilter(GMAIL_EXCLUDED_CATEGORIES),
         });
       } catch (error) {
         return {
