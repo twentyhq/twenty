@@ -21,7 +21,6 @@ export const DOCS_INDEX = {
     ],
     // Storybook: [{ fileName: 'storybook' }],
   },
-
   Contributing: {
     'Bugs and Requests': [{ fileName: 'bug-and-requests' }],
     'Frontend Development': [
@@ -44,7 +43,12 @@ export const DOCS_INDEX = {
       { fileName: 'queue' },
     ],
   },
-  'User Guide': {},
+  'User Guide': {
+    'Getting Started': [
+      { fileName: 'getting-started' },
+      { fileName: 'objects' },
+    ],
+  },
   /* Components: {
     Display: [
       { fileName: 'display' },

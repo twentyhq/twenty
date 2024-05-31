@@ -30,6 +30,9 @@ export const USER_GUIDE_INDEX = {
     ],
   },
   Developers: {
-    'Getting started': [{ fileName: 'getting-started' }],
+    'Getting started': [
+      { fileName: 'getting-started' },
+      { fileName: 'get-section' },
+    ],
   },
 };
