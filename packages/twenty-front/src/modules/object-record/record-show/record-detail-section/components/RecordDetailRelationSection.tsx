@@ -165,11 +165,22 @@ export const RecordDetailRelationSection = ({
           )?.type;
           const createRecordPayload: {
             id: string;
-            name: string | { firstName: string | undefined };
+            name:
+              | string
+              | { firstName: string | undefined; lastName: string | undefined };
             [key: string]: any;
           } =
             labelIdentifierType === FieldMetadataType.FullName
-              ? { id: newRecordId, name: { firstName: searchInput } }
+              ? {
+                  id: newRecordId,
+                  name:
+                    searchInput && searchInput.split(' ').length > 1
+                      ? {
+                          firstName: searchInput.split(' ')[0],
+                          lastName: searchInput.split(' ').slice(1).join(' '),
+                        }
+                      : { firstName: searchInput, lastName: '' },
+                }
               : { id: newRecordId, name: searchInput ?? '' };
 
           createRecordPayload[
