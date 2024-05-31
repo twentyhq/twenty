@@ -11,11 +11,13 @@ import { InjectCacheStorage } from 'src/engine/integrations/cache-storage/decora
 import { CacheStorageNamespace } from 'src/engine/integrations/cache-storage/types/cache-storage-namespace.enum';
 import { CacheStorageService } from 'src/engine/integrations/cache-storage/cache-storage.service';
 import { GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/constants/gmail-users-messages-get-batch-size.constant';
-import { GMAIL_ONGOING_SYNC_TIMEOUT } from 'src/modules/messaging/constants/gmail-ongoing-sync-timeout.constant';
-import { GmailMessagesImportService } from 'src/modules/messaging/services/gmail-messages-import/gmail-messages-import.service';
-import { SetMessageChannelSyncStatusService } from 'src/modules/messaging/services/set-message-channel-sync-status/set-message-channel-sync-status.service';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { SaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/services/gmail-messages-import/save-messages-and-enqueue-contact-creation.service';
+import { GmailErrorHandlingService } from 'src/modules/messaging/services/gmail-error-handling/gmail-error-handling.service';
+import { MessageChannelSyncStatusService } from 'src/modules/messaging/services/message-channel-sync-status/message-channel-sync-status.service';
+import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
+import { GmailMessagesImportService } from 'src/modules/messaging/services/gmail-messages-import/gmail-messages-import.service';
+import { MessagingTelemetryService } from 'src/modules/messaging/services/telemetry/messaging-telemetry.service';
 
 @Injectable()
 export class GmailMessagesImportV2Service {
@@ -25,8 +27,11 @@ export class GmailMessagesImportV2Service {
     private readonly fetchMessagesByBatchesService: FetchMessagesByBatchesService,
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
     private readonly cacheStorage: CacheStorageService,
-    private readonly setMessageChannelSyncStatusService: SetMessageChannelSyncStatusService,
+    private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly saveMessagesAndEnqueueContactCreationService: SaveMessagesAndEnqueueContactCreationService,
+    private readonly gmailErrorHandlingService: GmailErrorHandlingService,
+    private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
+    private readonly messagingTelemetryService: MessagingTelemetryService,
   ) {}
 
   async processMessageBatchImport(
@@ -34,28 +39,32 @@ export class GmailMessagesImportV2Service {
     connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
     workspaceId: string,
   ) {
-    if (messageChannel.syncSubStatus === MessageChannelSyncSubStatus.FAILED) {
-      throw new Error(
-        `Connected account ${connectedAccount.id} in workspace ${workspaceId} is in a failed state. Skipping...`,
-      );
-    }
-
     if (
       messageChannel.syncSubStatus !==
       MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING
     ) {
-      throw new Error(
-        `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} is not pending.`,
-      );
+      return;
     }
 
-    await this.setMessageChannelSyncStatusService.setMessagesImportOnGoingStatus(
+    await this.messagingTelemetryService.track({
+      eventName: 'messages_import.started',
+      workspaceId,
+      connectedAccountId: messageChannel.connectedAccountId,
+      messageChannelId: messageChannel.id,
+    });
+
+    this.logger.log(
+      `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} starting...`,
+    );
+
+    await this.messageChannelSyncStatusService.markAsMessagesImportOngoing(
       messageChannel.id,
       workspaceId,
     );
 
-    this.logger.log(
-      `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} starting...`,
+    await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
+      workspaceId,
+      connectedAccount.id,
     );
 
     const messageIdsToFetch =
@@ -65,16 +74,15 @@ export class GmailMessagesImportV2Service {
       )) ?? [];
 
     if (!messageIdsToFetch?.length) {
-      await this.setMessageChannelSyncStatusService.setCompletedStatus(
+      await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
         messageChannel.id,
         workspaceId,
       );
 
-      this.logger.log(
-        `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} done with nothing to import or delete.`,
+      return await this.trackMessageImportCompleted(
+        messageChannel,
+        workspaceId,
       );
-
-      return;
     }
 
     const messageQueries = createQueriesFromMessageIds(messageIdsToFetch);
@@ -89,12 +97,15 @@ export class GmailMessagesImportV2Service {
         );
 
       if (!messagesToSave.length) {
-        await this.setMessageChannelSyncStatusService.setCompletedStatus(
+        await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
           messageChannel.id,
           workspaceId,
         );
 
-        return [];
+        return await this.trackMessageImportCompleted(
+          messageChannel,
+          workspaceId,
+        );
       }
 
       await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreationJob(
@@ -105,42 +116,53 @@ export class GmailMessagesImportV2Service {
       );
 
       if (messageIdsToFetch.length < GMAIL_USERS_MESSAGES_GET_BATCH_SIZE) {
-        await this.setMessageChannelSyncStatusService.setCompletedStatus(
+        await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
           messageChannel.id,
           workspaceId,
-        );
-
-        this.logger.log(
-          `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} done with no more messages to import.`,
         );
       } else {
-        await this.setMessageChannelSyncStatusService.setMessagesImportPendingStatus(
+        await this.messageChannelSyncStatusService.scheduleMessagesImport(
           messageChannel.id,
           workspaceId,
         );
-
-        this.logger.log(
-          `Messaging import for workspace ${workspaceId} and account ${connectedAccount.id} done with more messages to import.`,
-        );
       }
+
+      return await this.trackMessageImportCompleted(
+        messageChannel,
+        workspaceId,
+      );
     } catch (error) {
       await this.cacheStorage.setAdd(
         `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
         messageIdsToFetch,
       );
 
-      await this.setMessageChannelSyncStatusService.setFailedUnkownStatus(
-        messageChannel.id,
+      await this.gmailErrorHandlingService.handleGmailError(
+        {
+          code: error.code,
+          reason: error.errors?.[0]?.reason,
+        },
+        'messages-import',
+        messageChannel,
         workspaceId,
       );
 
-      this.logger.error(
-        `Error fetching messages for ${connectedAccount.id} in workspace ${workspaceId}: locking for ${GMAIL_ONGOING_SYNC_TIMEOUT}ms...`,
-      );
-
-      throw new Error(
-        `Error fetching messages for ${connectedAccount.id} in workspace ${workspaceId}: ${error.message}`,
+      return await this.trackMessageImportCompleted(
+        messageChannel,
+        workspaceId,
       );
     }
+  }
+
+  private async trackMessageImportCompleted(
+    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    workspaceId: string,
+  ) {
+    await this.messagingTelemetryService.track({
+      eventName: 'messages_import.completed',
+      workspaceId,
+      connectedAccountId: messageChannel.connectedAccountId,
+      messageChannelId: messageChannel.id,
+    });
   }
 }

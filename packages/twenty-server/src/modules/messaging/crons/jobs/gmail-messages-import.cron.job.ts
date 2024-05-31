@@ -19,6 +19,7 @@ import {
 } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
+import { MessagingTelemetryService } from 'src/modules/messaging/services/telemetry/messaging-telemetry.service';
 
 @Injectable()
 export class GmailMessagesImportCronJob implements MessageQueueJob<undefined> {
@@ -38,6 +39,7 @@ export class GmailMessagesImportCronJob implements MessageQueueJob<undefined> {
     private readonly environmentService: EnvironmentService,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
+    private readonly messagingTelemetryService: MessagingTelemetryService,
   ) {}
 
   async handle(): Promise<void> {
@@ -86,21 +88,24 @@ export class GmailMessagesImportCronJob implements MessageQueueJob<undefined> {
       }
 
       if (isGmailSyncV2Enabled) {
-        try {
-          const connectedAccount =
-            await this.connectedAccountRepository.getConnectedAccountOrThrow(
-              workspaceId,
-              messageChannel.connectedAccountId,
-            );
+        await this.messagingTelemetryService.track({
+          eventName: 'messages_import.triggered',
+          workspaceId,
+          connectedAccountId: messageChannel.connectedAccountId,
+          messageChannelId: messageChannel.id,
+        });
 
-          await this.gmailFetchMessageContentFromCacheV2Service.processMessageBatchImport(
-            messageChannel,
-            connectedAccount,
+        const connectedAccount =
+          await this.connectedAccountRepository.getConnectedAccountOrThrow(
             workspaceId,
+            messageChannel.connectedAccountId,
           );
-        } catch (error) {
-          this.logger.log(error.message);
-        }
+
+        await this.gmailFetchMessageContentFromCacheV2Service.processMessageBatchImport(
+          messageChannel,
+          connectedAccount,
+          workspaceId,
+        );
       } else {
         await this.gmailFetchMessageContentFromCacheService.fetchMessageContentFromCache(
           workspaceId,

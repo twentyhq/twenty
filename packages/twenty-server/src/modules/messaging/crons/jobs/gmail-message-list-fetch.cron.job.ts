@@ -99,9 +99,6 @@ export class GmailMessageListFetchCronJob
               workspaceId,
               connectedAccountId: messageChannel.connectedAccountId,
             },
-            {
-              retryLimit: 2,
-            },
           );
         } else {
           await this.messageQueueService.add<GmailPartialMessageListFetchJobData>(
@@ -109,9 +106,6 @@ export class GmailMessageListFetchCronJob
             {
               workspaceId,
               connectedAccountId: messageChannel.connectedAccountId,
-            },
-            {
-              retryLimit: 2,
             },
           );
         }

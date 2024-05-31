@@ -270,14 +270,6 @@ export class ConnectedAccountRepository {
       );
     }
 
-    const refreshToken = connectedAccount.refreshToken;
-
-    if (!refreshToken) {
-      throw new Error(
-        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
-      );
-    }
-
     return connectedAccount;
   }
 }
