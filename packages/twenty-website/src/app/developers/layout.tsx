@@ -4,7 +4,7 @@ import { DocsMainLayout } from '@/app/_components/docs/DocsMainLayout';
 import { getDocsArticles } from '@/content/user-guide/constants/getDocsArticles';
 
 export default function DocsLayout({ children }: { children: ReactNode }) {
-  const filePath = 'src/content/docs/';
+  const filePath = 'src/content/developers/';
   const getAllArticles = true;
   const docsIndex = getDocsArticles(filePath, getAllArticles);
   return <DocsMainLayout docsIndex={docsIndex}>{children}</DocsMainLayout>;

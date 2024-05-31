@@ -66,7 +66,7 @@ export const HeaderMobile = ({ numberOfStars }: Props) => {
           <ListItem href="/pricing">Pricing</ListItem>
           <ListItem href="/releases">Releases</ListItem>
           <ListItem href="/user-guide">User Guide</ListItem>
-          <ListItem href="/docs">Developers</ListItem>
+          <ListItem href="/developers">Developers</ListItem>
           <ListItem href="https://github.com/twentyhq/twenty">
             <GithubIcon color="rgb(71,71,71)" />{' '}
             {formatNumberOfStars(numberOfStars)} <ExternalArrow />

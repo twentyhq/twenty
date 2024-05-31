@@ -95,8 +95,8 @@ export const FooterDesktop = () => {
           </RightSideFooterColumn>
           <RightSideFooterColumn>
             <RightSideFooterColumnTitle>Resources</RightSideFooterColumnTitle>
-            <RightSideFooterLink href="https://docs.twenty.com">
-              Documentation
+            <RightSideFooterLink href="/developers">
+              Developers
             </RightSideFooterLink>
             <RightSideFooterLink href="/releases">
               Changelog
@@ -104,7 +104,9 @@ export const FooterDesktop = () => {
             <RightSideFooterLink href="/user-guide">
               User Guide
             </RightSideFooterLink>
-            <RightSideFooterLink href="/docs">Developers</RightSideFooterLink>
+            <RightSideFooterLink href="/developers">
+              Developers
+            </RightSideFooterLink>
           </RightSideFooterColumn>
           <RightSideFooterColumn>
             <RightSideFooterColumnTitle>Other</RightSideFooterColumnTitle>

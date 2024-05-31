@@ -1,7 +1,7 @@
 export const isSectionPath = (pathname: string | undefined): boolean => {
   return !!(
     pathname &&
-    (pathname.startsWith('/docs/section') ||
+    (pathname.startsWith('/developers/section') ||
       pathname.startsWith('/user-guide/section'))
   );
 };
@@ -13,8 +13,8 @@ export const isDocsSection = (pathname: string | undefined): boolean => {
 export const isPlaygroundPage = (pathname: string | undefined): boolean => {
   return !!(
     pathname &&
-    (pathname.startsWith('/docs/rest-api') ||
-      pathname.startsWith('/docs/graphql'))
+    (pathname.startsWith('/developers/rest-api') ||
+      pathname.startsWith('/developers/graphql'))
   );
 };
 
@@ -23,7 +23,7 @@ export const shouldShowEmptySidebar = (
 ): boolean => {
   return (
     pathname === '/user-guide' ||
-    pathname === '/docs' ||
+    pathname === '/developers' ||
     isDocsSection(pathname) ||
     isPlaygroundPage(pathname)
   );

@@ -139,7 +139,7 @@ export default function DocsMain({
   const limitedSections = sections.slice(0, 4);
 
   const pathname = usePathname();
-  const uri = pathname.includes('user-guide') ? '/user-guide' : '/docs';
+  const uri = pathname.includes('user-guide') ? '/user-guide' : '/developers';
   const label = pathname.includes('user-guide') ? 'User Guide' : 'Developers';
   const BREADCRUMB_ITEMS = [
     {

@@ -65,7 +65,7 @@ const StyledHeadingText = styled.h1`
 const DocsSidebar = ({ docsIndex }: { docsIndex: DocsArticlesProps[] }) => {
   const router = useRouter();
   const pathName = usePathname();
-  const path = pathName.includes('user-guide') ? '/user-guide' : '/docs';
+  const path = pathName.includes('user-guide') ? '/user-guide' : '/developers';
 
   const sections = Array.from(
     new Set(docsIndex.map((guide) => guide.section)),

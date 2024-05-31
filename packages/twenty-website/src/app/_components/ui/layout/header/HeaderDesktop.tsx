@@ -140,7 +140,7 @@ export const HeaderDesktop = ({ numberOfStars }: Props) => {
               </StyledIconContainer>
               User Guide
             </DropdownItem>
-            <DropdownItem href="/docs">
+            <DropdownItem href="/developers">
               <StyledIconContainer>
                 <IconRobotFace size={Theme.icon.size.md} />
               </StyledIconContainer>

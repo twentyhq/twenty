@@ -2,7 +2,7 @@ import fs from 'fs';
 import matter from 'gray-matter';
 import path from 'path';
 
-import { DOCS_INDEX } from '@/content/docs/constants/DocsIndex';
+import { DOCS_INDEX } from '@/content/developers/constants/DocsIndex';
 import { USER_GUIDE_INDEX } from '@/content/user-guide/constants/UserGuideIndex';
 
 export interface DocsArticlesProps {
@@ -18,7 +18,7 @@ export interface DocsArticlesProps {
 
 export function getDocsArticles(basePath: string, isSideBar = false) {
   const guides: DocsArticlesProps[] = [];
-  const index = basePath.includes('docs') ? DOCS_INDEX : USER_GUIDE_INDEX;
+  const index = basePath.includes('developers') ? DOCS_INDEX : USER_GUIDE_INDEX;
 
   const findFileRecursively = (
     directory: string,

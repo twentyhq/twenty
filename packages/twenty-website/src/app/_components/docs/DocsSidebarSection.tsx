@@ -115,7 +115,9 @@ const DocsSidebarSection = ({
   const router = useRouter();
   const topics = groupArticlesByTopic(docsIndex);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
-  const path = pathname.includes('user-guide') ? '/user-guide/' : '/docs/';
+  const path = pathname.includes('user-guide')
+    ? '/user-guide/'
+    : '/developers/';
 
   const [unfolded, setUnfolded] = useState<TopicsState>(() =>
     Object.keys(topics).reduce((acc: TopicsState, topic: string) => {

@@ -116,7 +116,7 @@ const StyledImageContainer = styled.div`
 
 export default function DocsContent({ item }: { item: FileContent }) {
   const pathname = usePathname();
-  const uri = pathname.includes('user-guide') ? '/user-guide' : '/docs';
+  const uri = pathname.includes('user-guide') ? '/user-guide' : '/developers';
   const label = pathname.includes('user-guide') ? 'User Guide' : 'Developers';
   const BREADCRUMB_ITEMS = [
     {

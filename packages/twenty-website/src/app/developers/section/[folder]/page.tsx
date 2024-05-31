@@ -13,7 +13,7 @@ export async function generateMetadata({
   params: { folder: string };
 }): Promise<Metadata> {
   const formattedSlug = formatSlug(params.folder);
-  const basePath = '/src/content/docs';
+  const basePath = '/src/content/developers';
   const mainPost = await fetchArticleFromSlug(params.folder, basePath);
   return {
     title: 'Twenty - ' + formattedSlug,
@@ -26,7 +26,7 @@ export default async function DocsSlug({
 }: {
   params: { folder: string };
 }) {
-  const filePath = `src/content/docs/${params.folder}/`;
+  const filePath = `src/content/developers/${params.folder}/`;
   const docsArticleCards = getDocsArticles(filePath);
   const isSection = true;
   return <DocsMain docsArticleCards={docsArticleCards} isSection={isSection} />;

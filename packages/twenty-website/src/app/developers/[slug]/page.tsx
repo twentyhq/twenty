@@ -9,11 +9,11 @@ export const dynamic = 'force-dynamic';
 export async function generateMetadata({
   params,
 }: {
-  params: { folder: string; documentation: string };
+  params: { slug: string };
 }): Promise<Metadata> {
-  const basePath = `/src/content/docs/${params.folder}`;
-  const formattedSlug = formatSlug(params.documentation);
-  const mainPost = await fetchArticleFromSlug(params.documentation, basePath);
+  const formattedSlug = formatSlug(params.slug);
+  const basePath = '/src/content/developers';
+  const mainPost = await fetchArticleFromSlug(params.slug, basePath);
   return {
     title: 'Twenty - ' + formattedSlug,
     description: mainPost?.itemInfo?.info,
@@ -23,9 +23,9 @@ export async function generateMetadata({
 export default async function DocsSlug({
   params,
 }: {
-  params: { documentation: string; folder: string };
+  params: { slug: string };
 }) {
-  const basePath = `/src/content/docs/${params.folder}`;
-  const mainPost = await fetchArticleFromSlug(params.documentation, basePath);
+  const basePath = '/src/content/developers';
+  const mainPost = await fetchArticleFromSlug(params.slug, basePath);
   return mainPost && <DocsContent item={mainPost} />;
 }

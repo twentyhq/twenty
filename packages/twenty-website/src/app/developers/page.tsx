@@ -10,7 +10,7 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function DocsHome() {
-  const filePath = 'src/content/docs/';
+  const filePath = 'src/content/developers/';
   const docsArticleCards = getDocsArticles(filePath);
 
   return <DocsMain docsArticleCards={docsArticleCards} />;
