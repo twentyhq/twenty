@@ -13,7 +13,6 @@ import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataIt
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
 import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
@@ -166,6 +165,12 @@ export const SettingsObjectNewFieldStep2 = () => {
                 );
 
                 if (!edges) return viewFieldsRef;
+                const fieldExist = edges.some(
+                  (edge) =>
+                    readField('fieldMetadataId', edge.node) ===
+                    viewFieldToCreate.fieldMetadataId,
+                );
+                if (fieldExist) return viewFieldsRef;
 
                 return {
                   ...viewFieldsRef,
@@ -198,7 +203,12 @@ export const SettingsObjectNewFieldStep2 = () => {
                   );
 
                   if (!edges) return viewFieldsRef;
-
+                  const fieldExist = edges.some(
+                    (edge) =>
+                      readField('fieldMetadataId', edge.node) ===
+                      viewFieldToCreate.fieldMetadataId,
+                  );
+                  if (fieldExist) return viewFieldsRef;
                   return {
                     ...viewFieldsRef,
                     edges: [...edges, { node: viewFieldToCreate }],
@@ -228,16 +238,20 @@ export const SettingsObjectNewFieldStep2 = () => {
             objectMetadataItem: viewObjectMetadataItem,
             cache: cache,
             fieldModifiers: {
-              viewFields: (cachedViewFieldsConnection, { readField }) => {
-                const edges = readField<RecordGqlRefEdge[]>(
+              viewFields: (viewFieldsRef, { readField }) => {
+                const edges = readField<{ node: Reference }[]>(
                   'edges',
-                  cachedViewFieldsConnection,
+                  viewFieldsRef,
                 );
-
-                if (!edges) return cachedViewFieldsConnection;
-
+                if (!edges) return viewFieldsRef;
+                const fieldExist = edges.some(
+                  (edge) =>
+                    readField('fieldMetadataId', edge.node) ===
+                    viewFieldToCreate.fieldMetadataId,
+                );
+                if (fieldExist) return viewFieldsRef;
                 return {
-                  ...cachedViewFieldsConnection,
+                  ...viewFieldsRef,
                   edges: [...edges, { node: viewFieldToCreate }],
                 };
               },
