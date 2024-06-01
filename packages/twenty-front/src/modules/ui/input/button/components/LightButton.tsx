@@ -1,4 +1,4 @@
-import { MouseEvent } from 'react';
+import { MouseEvent, ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconComponent } from 'twenty-ui';
@@ -13,6 +13,7 @@ export type LightButtonProps = {
   active?: boolean;
   disabled?: boolean;
   focus?: boolean;
+  children?: ReactNode;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
 };
 
@@ -82,6 +83,7 @@ export const LightButton = ({
   accent = 'secondary',
   disabled = false,
   focus = false,
+  children,
   onClick,
 }: LightButtonProps) => {
   const theme = useTheme();
@@ -95,7 +97,8 @@ export const LightButton = ({
       className={className}
       active={active}
     >
-      {!!Icon && <Icon size={theme.icon.size.sm} />}
+      {children}
+      {!!Icon && <Icon size={theme.icon.size.md} />}
       {title}
     </StyledButton>
   );

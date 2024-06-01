@@ -1,4 +1,4 @@
-import { ComponentProps, MouseEvent } from 'react';
+import { ComponentProps, MouseEvent, ReactNode } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconComponent } from 'twenty-ui';
@@ -16,6 +16,7 @@ export type LightIconButtonProps = {
   active?: boolean;
   disabled?: boolean;
   focus?: boolean;
+  children?: ReactNode;
   onClick?: (event: MouseEvent<HTMLButtonElement>) => void;
 } & Pick<ComponentProps<'button'>, 'aria-label' | 'title'>;
 
@@ -56,13 +57,12 @@ const StyledButton = styled.button<
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ size }) => (size === 'small' ? '24px' : '32px')};
   justify-content: center;
-  padding: 0;
+  padding-left: 5px;
+  padding-right: 4px;
   transition: background 0.1s ease;
 
-  white-space: nowrap;
-
-  width: ${({ size }) => (size === 'small' ? '24px' : '32px')};
-  min-width: ${({ size }) => (size === 'small' ? '24px' : '32px')};
+  width: auto;
+  min-width: ${({ size }) => (size === 'small' ? '48px' : '64px')};
 
   &:hover {
     background: ${({ theme, disabled }) =>
@@ -91,6 +91,7 @@ export const LightIconButton = ({
   focus = false,
   onClick,
   title,
+  children,
 }: LightIconButtonProps) => {
   const theme = useTheme();
   return (
@@ -106,6 +107,7 @@ export const LightIconButton = ({
       active={active}
       title={title}
     >
+      {children}
       {Icon && <Icon size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />}
     </StyledButton>
   );
