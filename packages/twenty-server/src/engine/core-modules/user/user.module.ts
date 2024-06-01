@@ -14,6 +14,7 @@ import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.mod
 import { UserStateService } from 'src/engine/core-modules/user/services/user-state.service';
 import { UserStateResolver } from 'src/engine/core-modules/user/resolvers/user-state.resolver';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { KeyValuePairModule } from 'src/engine/core-modules/key-value-pair/key-value-pair.module';
 
 import { userAutoResolverOpts } from './user.auto-resolver-opts';
 
@@ -31,6 +32,7 @@ import { UserService } from './services/user.service';
     DataSourceModule,
     FileUploadModule,
     WorkspaceModule,
+    KeyValuePairModule,
   ],
   exports: [UserService, UserStateService],
   providers: [

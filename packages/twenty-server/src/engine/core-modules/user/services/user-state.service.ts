@@ -11,14 +11,12 @@ import { ConnectedAccountRepository } from 'src/modules/connected-account/reposi
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserState } from 'src/engine/core-modules/user/dtos/user-state.dto';
-
-export enum EmailSyncStatus {
-  SKIPPED = 'SKIPPED',
-}
-
-export enum UserStateKeys {
-  EMAIL_SYNC_ONBOARDING_STEP = 'EMAIL_SYNC_ONBOARDING_STEP',
-}
+import {
+  EmailSyncOnboardingStepValues,
+  KeyValuePairService,
+  KeyValueTypes,
+  UserStateKeys,
+} from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 
 @Injectable()
 export class UserStateService {
@@ -27,6 +25,7 @@ export class UserStateService {
     private readonly keyValuePairRepository: Repository<KeyValuePair>,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
+    private readonly keyValuePairService: KeyValuePairService<KeyValueTypes.USER_STATE>,
   ) {}
 
   async getUserState(user: User, workspace: Workspace): Promise<UserState> {
@@ -47,17 +46,16 @@ export class UserStateService {
       };
     }
 
-    const skipSyncEmail = await this.keyValuePairRepository.findOne({
-      where: {
-        userId: user.id,
-        workspaceId: workspace.id,
-        key: UserStateKeys.EMAIL_SYNC_ONBOARDING_STEP,
-      },
-    });
+    const skipSyncEmail = await this.keyValuePairService.get(
+      user.id,
+      workspace.id,
+      UserStateKeys.EMAIL_SYNC_ONBOARDING_STEP,
+    );
 
     return {
       skipSyncEmail:
-        !!skipSyncEmail && skipSyncEmail.value === EmailSyncStatus.SKIPPED,
+        !!skipSyncEmail &&
+        skipSyncEmail.value === EmailSyncOnboardingStepValues.SKIPPED,
     };
   }
 
@@ -65,14 +63,11 @@ export class UserStateService {
     userId: string,
     workspaceId: string,
   ): Promise<SkipSyncEmail> {
-    await this.keyValuePairRepository.upsert(
-      {
-        userId,
-        workspaceId,
-        key: UserStateKeys.EMAIL_SYNC_ONBOARDING_STEP,
-        value: EmailSyncStatus.SKIPPED,
-      },
-      { conflictPaths: ['userId', 'workspaceId', 'key'] },
+    await this.keyValuePairService.set(
+      userId,
+      workspaceId,
+      UserStateKeys.EMAIL_SYNC_ONBOARDING_STEP,
+      EmailSyncOnboardingStepValues.SKIPPED,
     );
 
     return { success: true };
