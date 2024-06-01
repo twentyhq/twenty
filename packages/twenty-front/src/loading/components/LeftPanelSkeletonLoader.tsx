@@ -26,7 +26,7 @@ const StyledItemsContainer = styled.div`
 const StyledSkeletonContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 32px;
+  gap: 12px;
 `;
 
 const StyledSkeletonTitleContainer = styled.div`
@@ -35,6 +35,12 @@ const StyledSkeletonTitleContainer = styled.div`
   gap: 6px;
   margin-left: 12px;
   margin-top: 8px;
+`;
+
+const MainNavigationDrawerContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
 `;
 
 export const LeftPanelSkeletonLoader = () => {
@@ -64,9 +70,11 @@ export const LeftPanelSkeletonLoader = () => {
               <Skeleton width={96} height={16} />
             </SkeletonTheme>
           </StyledSkeletonTitleContainer>
-          <MainNavigationDrawerItemsSkeletonLoader length={4} />
-          <MainNavigationDrawerItemsSkeletonLoader title length={2} />
-          <MainNavigationDrawerItemsSkeletonLoader title length={3} />
+          <MainNavigationDrawerContainer>
+            <MainNavigationDrawerItemsSkeletonLoader length={3} />
+            {/* <MainNavigationDrawerItemsSkeletonLoader title length={2} /> */}
+            <MainNavigationDrawerItemsSkeletonLoader title length={3} />
+          </MainNavigationDrawerContainer>
         </StyledSkeletonContainer>
       </StyledItemsContainer>
     </StyledAnimatedContainer>
