@@ -263,6 +263,22 @@ export class ConnectedAccountRepository {
     );
   }
 
+  public async updateAccessTokenNeedsRefresh(
+    connectedAccountId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."connectedAccount" SET "accessTokenNeedsRefresh" = true WHERE "id" = $1`,
+      [connectedAccountId],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async updateAuthFailedAt(
     connectedAccountId: string,
     workspaceId: string,

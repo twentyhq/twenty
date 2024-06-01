@@ -164,6 +164,11 @@ export class GmailErrorHandlingService {
       messageChannel.connectedAccountId,
       workspaceId,
     );
+
+    await this.connectedAccountRepository.updateAccessTokenNeedsRefresh(
+      messageChannel.connectedAccountId,
+      workspaceId,
+    );
   }
 
   public async handleNotFound(
