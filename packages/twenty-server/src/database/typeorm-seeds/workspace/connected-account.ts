@@ -26,6 +26,8 @@ export const seedConnectedAccount = async (
       'accountOwnerId',
       'refreshToken',
       'accessToken',
+      'accessTokenNeedsRefresh',
+      'accessTokenRefreshedAt',
       'provider',
       'handle',
     ])
