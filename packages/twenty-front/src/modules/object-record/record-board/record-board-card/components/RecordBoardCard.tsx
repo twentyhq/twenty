@@ -280,12 +280,10 @@ export const RecordBoardCard = () => {
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,
                   }}
                 >
-                  {inView ? (
+                  {inView || isDragSelectionStartEnabled() ? (
                     <RecordInlineCell />
-                  ) : !isDragSelectionStartEnabled() ? (
-                    <StyledRecordInlineCellPlaceholder />
                   ) : (
-                    <RecordInlineCell />
+                    <StyledRecordInlineCellPlaceholder />
                   )}
                 </FieldContext.Provider>
               </PreventSelectOnClickContainer>
