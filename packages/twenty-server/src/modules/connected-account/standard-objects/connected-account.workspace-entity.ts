@@ -76,7 +76,7 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Access token needs refresh',
     icon: 'IconKey',
   })
-  accessTokenNeedsRefresh: string;
+  accessTokenNeedsRefresh: boolean;
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accessTokenRefreshedAt,
@@ -85,7 +85,8 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
     description: 'Access token refreshed at',
     icon: 'IconX',
   })
-  accessTokenRefreshedAt: string;
+  @WorkspaceIsNullable()
+  accessTokenRefreshedAt: Date;
 
   @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.lastSyncHistoryId,
