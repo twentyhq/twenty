@@ -9,6 +9,7 @@ import { WorkspaceMigrationRunnerCommandsModule } from 'src/engine/workspace-man
 import { WorkspaceSyncMetadataCommandsModule } from 'src/engine/workspace-manager/workspace-sync-metadata/commands/workspace-sync-metadata-commands.module';
 import { MessagingCronCommandsModule } from 'src/modules/messaging/crons/commands/messaging-cron-commands.module';
 import { CalendarCommandsModule } from 'src/modules/calendar/commands/calendar-commands.module';
+import { RefreshAccessTokenCronCommandsModule } from 'src/modules/connected-account/crons/commands/refresh-access-token-cron-commands.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { CalendarCommandsModule } from 'src/modules/calendar/commands/calendar-c
     WorkspaceCleanerModule,
     WorkspaceHealthCommandModule,
     WorkspaceMigrationRunnerCommandsModule,
+    RefreshAccessTokenCronCommandsModule,
   ],
 })
 export class CommandModule {}

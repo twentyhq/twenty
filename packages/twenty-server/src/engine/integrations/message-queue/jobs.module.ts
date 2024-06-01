@@ -29,6 +29,7 @@ import { AutoCompaniesAndContactsCreationJobModule } from 'src/modules/connected
 import { MessagingCronJobModule } from 'src/modules/messaging/crons/jobs/messaging-cron-job.module';
 import { MessagingJobModule } from 'src/modules/messaging/jobs/messaging-job.module';
 import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module';
+import { RefreshAccessTokenJobModule } from 'src/modules/connected-account/crons/jobs/refresh-access-token-job.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module
     MessagingCronJobModule,
     MessagingJobModule,
     TimelineJobModule,
+    RefreshAccessTokenJobModule,
   ],
   providers: [
     {

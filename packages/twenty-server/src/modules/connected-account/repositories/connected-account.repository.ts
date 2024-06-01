@@ -82,6 +82,25 @@ export class ConnectedAccountRepository {
     return connectedAccounts;
   }
 
+  public async getAllThatNeedToRefereshAccessToken(
+    workspaceId: string,
+    tokenRefreshedMinutesAgo: number,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<ConnectedAccountWorkspaceEntity>[]> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const connectedAccounts =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT * FROM ${dataSourceSchema}."connectedAccount" WHERE "accessTokenNeedsRefresh" IS true OR "accessTokenRefreshedAt" <= NOW() - $1::INTERVAL`,
+        [`${tokenRefreshedMinutesAgo} minutes`],
+        workspaceId,
+        transactionManager,
+      );
+
+    return connectedAccounts;
+  }
+
   public async create(
     connectedAccount: Pick<
       ObjectRecord<ConnectedAccountWorkspaceEntity>,
@@ -99,7 +118,7 @@ export class ConnectedAccountRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     return await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}."connectedAccount" ("id", "handle", "provider", "accessToken", "refreshToken", "accountOwnerId") VALUES ($1, $2, $3, $4, $5, $6)`,
+      `INSERT INTO ${dataSourceSchema}."connectedAccount" ("id", "handle", "provider", "accessToken", "refreshToken", "accountOwnerId", "accessTokenNeedsRefresh") VALUES ($1, $2, $3, $4, $5, $6, false)`,
       [
         connectedAccount.id,
         connectedAccount.handle,
@@ -232,7 +251,12 @@ export class ConnectedAccountRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."connectedAccount" SET "accessToken" = $1, "authFailedAt" = NULL WHERE "id" = $2`,
+      `UPDATE ${dataSourceSchema}."connectedAccount"
+        SET "accessToken" = $1,
+            "authFailedAt" = NULL,
+            "accessTokenNeedsRefresh" = false,
+            "accessTokenRefreshedAt" = NOW()
+        WHERE "id" = $2`,
       [accessToken, connectedAccountId],
       workspaceId,
       transactionManager,
