@@ -29,8 +29,8 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { UserState } from 'src/engine/core-modules/user/dtos/user-state.dto';
-import { UserStateService } from 'src/engine/core-modules/user/services/user-state.service';
+import { UserState } from 'src/engine/core-modules/user-state/dtos/user-state.dto';
+import { UserStateService } from 'src/engine/core-modules/user-state/user-state.service';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;

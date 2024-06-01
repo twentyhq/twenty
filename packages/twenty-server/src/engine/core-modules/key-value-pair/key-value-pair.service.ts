@@ -3,22 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { UserStates } from 'src/engine/core-modules/user-state/enums/user-states.enum';
+import { UserStateEmailSyncValues } from 'src/engine/core-modules/user-state/enums/user-state-email-sync-values.enum';
 
 export enum KeyValueTypes {
   USER_STATE = 'USER_STATE',
 }
 
-export enum UserStateKeys {
-  EMAIL_SYNC_ONBOARDING_STEP = 'EMAIL_SYNC_ONBOARDING_STEP',
-}
-
-export enum EmailSyncOnboardingStepValues {
-  SKIPPED = 'SKIPPED',
-}
-
 type KeyValuePairs = {
   [KeyValueTypes.USER_STATE]: {
-    [UserStateKeys.EMAIL_SYNC_ONBOARDING_STEP]: EmailSyncOnboardingStepValues;
+    [UserStates.EMAIL_SYNC]: UserStateEmailSyncValues;
   };
 };
 

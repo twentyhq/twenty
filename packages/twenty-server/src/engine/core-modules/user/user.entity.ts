@@ -18,7 +18,7 @@ import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-mem
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import { UserState } from 'src/engine/core-modules/user/dtos/user-state.dto';
+import { UserState } from 'src/engine/core-modules/user-state/dtos/user-state.dto';
 
 @Entity({ name: 'user', schema: 'core' })
 @ObjectType('User')
