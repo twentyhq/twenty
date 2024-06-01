@@ -66,6 +66,14 @@ export class GmailPartialMessageListFetchService {
       return;
     }
 
+    if (connectedAccount.accessTokenNeedsRefresh) {
+      this.logger.log(
+        `Connected account ${connectedAccountId} in workspace ${workspaceId} need to refresh the access token first.`,
+      );
+
+      return;
+    }
+
     const refreshToken = connectedAccount.refreshToken;
 
     if (!refreshToken) {

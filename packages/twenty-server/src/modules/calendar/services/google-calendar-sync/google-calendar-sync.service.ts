@@ -76,7 +76,7 @@ export class GoogleCalendarSyncService {
       workspaceId,
     );
 
-    if (!connectedAccount) {
+    if (!connectedAccount || connectedAccount.accessTokenNeedsRefresh) {
       return;
     }
 

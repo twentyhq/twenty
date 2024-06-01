@@ -86,6 +86,14 @@ export class GmailFullMessageListFetchJob
         );
       }
 
+      if (connectedAccount.accessTokenNeedsRefresh) {
+        this.logger.log(
+          `Connected account ${connectedAccountId} in workspace ${workspaceId} need to refresh the access token first.`,
+        );
+
+        return;
+      }
+
       const messageChannel =
         await this.messageChannelRepository.getFirstByConnectedAccountId(
           connectedAccountId,

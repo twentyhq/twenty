@@ -75,6 +75,14 @@ export class GmailMessagesImportService {
       return;
     }
 
+    if (connectedAccount.accessTokenNeedsRefresh) {
+      this.logger.log(
+        `Connected account ${connectedAccountId} in workspace ${workspaceId} need to refresh the access token first.`,
+      );
+
+      return;
+    }
+
     const { accessToken, refreshToken, authFailedAt } = connectedAccount;
 
     if (authFailedAt) {
