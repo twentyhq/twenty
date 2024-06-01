@@ -6,6 +6,7 @@ import { EntityChipVariant, IconEye } from 'twenty-ui';
 
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import {
@@ -199,6 +200,7 @@ export const RecordBoardCard = () => {
   };
 
   const scrollWrapperRef = useContext(ScrollWrapperContext);
+  const { isDragSelectionStartEnabled } = useDragSelect();
 
   const { ref: cardRef, inView } = useInView({
     root: scrollWrapperRef.current,
@@ -280,8 +282,10 @@ export const RecordBoardCard = () => {
                 >
                   {inView ? (
                     <RecordInlineCell />
-                  ) : (
+                  ) : !isDragSelectionStartEnabled() ? (
                     <StyledRecordInlineCellPlaceholder />
+                  ) : (
+                    <RecordInlineCell />
                   )}
                 </FieldContext.Provider>
               </PreventSelectOnClickContainer>
