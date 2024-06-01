@@ -70,6 +70,24 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   refreshToken: string;
 
   @WorkspaceField({
+    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accessTokenNeedsRefresh,
+    type: FieldMetadataType.BOOLEAN,
+    label: 'Access token needs refresh',
+    description: 'Access token needs refresh',
+    icon: 'IconKey',
+  })
+  accessTokenNeedsRefresh: string;
+
+  @WorkspaceField({
+    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accessTokenRefreshedAt,
+    type: FieldMetadataType.DATE_TIME,
+    label: 'Access token refreshed at',
+    description: 'Access token refreshed at',
+    icon: 'IconX',
+  })
+  accessTokenRefreshedAt: string;
+
+  @WorkspaceField({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.lastSyncHistoryId,
     type: FieldMetadataType.TEXT,
     label: 'Last sync history ID',

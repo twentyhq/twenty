@@ -129,6 +129,8 @@ export const CONNECTED_ACCOUNT_STANDARD_FIELD_IDS = {
   handle: '20202020-c804-4a50-bb05-b3a9e24f1dec',
   provider: '20202020-ebb0-4516-befc-a9e95935efd5',
   accessToken: '20202020-707b-4a0a-8753-2ad42efe1e29',
+  accessTokenNeedsRefresh: '20202020-cf0c-4694-8eb3-84bf4ed54210',
+  accessTokenRefreshedAt: '20202020-b3d5-4ed1-b7a9-cf6498ffe39f',
   refreshToken: '20202020-532d-48bd-80a5-c4be6e7f6e49',
   accountOwner: '20202020-3517-4896-afac-b1d0aa362af6',
   lastSyncHistoryId: '20202020-115c-4a87-b50f-ac4367a971b9',
