@@ -5,7 +5,6 @@ import { IconChevronRight } from 'twenty-ui';
 import { SettingsListCard } from '@/settings/components/SettingsListCard';
 import { SettingsIntegrationDatabaseConnectionSyncStatus } from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionSyncStatus';
 import { SettingsIntegration } from '@/settings/integrations/types/SettingsIntegration';
-import { getConnectionDbName } from '@/settings/integrations/utils/getConnectionDbName';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { RemoteServer } from '~/generated-metadata/graphql';
 
@@ -55,9 +54,7 @@ export const SettingsIntegrationDatabaseConnectionsListCard = ({
         </StyledRowRightContainer>
       )}
       onRowClick={(connection) => navigate(`./${connection.id}`)}
-      getItemLabel={(connection) =>
-        getConnectionDbName({ integration, connection })
-      }
+      getItemLabel={(connection) => connection.label}
       hasFooter
       footerButtonLabel="Add connection"
       onFooterButtonClick={() => navigate('./new')}

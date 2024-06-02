@@ -16,13 +16,12 @@ export const deleteUsingPagination = async (
   ) => Promise<void>,
   transactionManager?: EntityManager,
 ) => {
-  let offset = 0;
   let hasMoreData = true;
 
   while (hasMoreData) {
     const idsToDelete = await getterPaginated(
       batchSize,
-      offset,
+      0,
       workspaceId,
       transactionManager,
     );
@@ -32,7 +31,5 @@ export const deleteUsingPagination = async (
     } else {
       hasMoreData = false;
     }
-
-    offset += batchSize;
   }
 };

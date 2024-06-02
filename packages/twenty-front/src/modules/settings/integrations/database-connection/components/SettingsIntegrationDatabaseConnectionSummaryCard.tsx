@@ -12,7 +12,7 @@ import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 type SettingsIntegrationDatabaseConnectionSummaryCardProps = {
   databaseLogoUrl: string;
   connectionId: string;
-  connectionName: string;
+  connectionLabel: string;
   onRemove: () => void;
   onEdit: () => void;
 };
@@ -32,7 +32,7 @@ const StyledDatabaseLogo = styled.img`
 export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
   databaseLogoUrl,
   connectionId,
-  connectionName,
+  connectionLabel,
   onRemove,
   onEdit,
 }: SettingsIntegrationDatabaseConnectionSummaryCardProps) => {
@@ -46,7 +46,7 @@ export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
           <StyledDatabaseLogoContainer>
             <StyledDatabaseLogo alt="" src={databaseLogoUrl} />
           </StyledDatabaseLogoContainer>
-          {connectionName}
+          {connectionLabel}
         </>
       }
       rightComponent={

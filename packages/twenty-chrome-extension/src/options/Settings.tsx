@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 
+import { MainButton } from '@/ui/input/button/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
+import { clearStore } from '~/utils/apolloClient';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledWrapper = styled.div`
@@ -34,33 +36,47 @@ const StyledActionContainer = styled.div`
 const Settings = () => {
   const [serverBaseUrl, setServerBaseUrl] = useState('');
   const [clientUrl, setClientUrl] = useState('');
+  const [currentClientUrl, setCurrentClientUrl] = useState('');
+  const [currentServerUrl, setCurrentServerUrl] = useState('');
 
   useEffect(() => {
     const getState = async () => {
-      const store = await chrome.storage.local.get();
+      const store = await chrome.storage.local.get([
+        'serverBaseUrl',
+        'clientUrl',
+      ]);
       if (isDefined(store.serverBaseUrl)) {
         setServerBaseUrl(store.serverBaseUrl);
+        setCurrentServerUrl(store.serverBaseUrl);
       } else {
         setServerBaseUrl(import.meta.env.VITE_SERVER_BASE_URL);
+        setCurrentServerUrl(import.meta.env.VITE_SERVER_BASE_URL);
       }
 
       if (isDefined(store.clientUrl)) {
         setClientUrl(store.clientUrl);
+        setCurrentClientUrl(store.clientUrl);
       } else {
         setClientUrl(import.meta.env.VITE_FRONT_BASE_URL);
+        setCurrentClientUrl(import.meta.env.VITE_FRONT_BASE_URL);
       }
     };
     void getState();
   }, []);
 
-  const handleBaseUrlChange = (value: string) => {
-    setServerBaseUrl(value);
-    chrome.storage.local.set({ serverBaseUrl: value });
+  const handleSettingsChange = () => {
+    chrome.storage.local.set({
+      serverBaseUrl,
+      clientUrl,
+      navigateSidepanel: 'sidepanel',
+    });
+    clearStore();
   };
 
-  const handleClientUrlChange = (value: string) => {
-    setClientUrl(value);
-    chrome.storage.local.set({ clientUrl: value });
+  const handleCloseSettings = () => {
+    chrome.storage.local.set({
+      navigateSidepanel: 'sidepanel',
+    });
   };
 
   return (
@@ -71,15 +87,31 @@ const Settings = () => {
           <TextInput
             label="Client URL"
             value={clientUrl}
-            onChange={handleClientUrlChange}
+            onChange={setClientUrl}
             placeholder="My client URL"
             fullWidth
           />
           <TextInput
             label="Server URL"
             value={serverBaseUrl}
-            onChange={handleBaseUrlChange}
+            onChange={setServerBaseUrl}
             placeholder="My server URL"
+            fullWidth
+          />
+          <MainButton
+            title="Done"
+            disabled={
+              currentClientUrl === clientUrl &&
+              currentServerUrl === serverBaseUrl
+            }
+            variant="primary"
+            onClick={handleSettingsChange}
+            fullWidth
+          />
+          <MainButton
+            title="Close"
+            variant="secondary"
+            onClick={handleCloseSettings}
             fullWidth
           />
         </StyledActionContainer>

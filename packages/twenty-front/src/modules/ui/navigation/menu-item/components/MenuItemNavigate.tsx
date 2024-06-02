@@ -27,7 +27,7 @@ export const MenuItemNavigate = ({
       <StyledMenuItemLeftContent>
         <MenuItemLeftContent LeftIcon={LeftIcon} text={text} />
       </StyledMenuItemLeftContent>
-      <IconChevronRight size={theme.icon.size.sm} />
+      <IconChevronRight size={theme.icon.size.md} />
     </StyledMenuItemBase>
   );
 };

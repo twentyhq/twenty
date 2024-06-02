@@ -11,7 +11,7 @@ import { GraphQLContext } from 'src/engine/api/graphql/graphql-config/interfaces
 import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
 import {
   convertExceptionToGraphQLError,
-  filterException,
+  shouldFilterException,
 } from 'src/engine/utils/global-exception-handler.util';
 
 export type ExceptionHandlerPluginOptions = {
@@ -69,7 +69,7 @@ export const useExceptionHandler = <PluginContext extends GraphQLContext>(
               }>(
                 (acc, err) => {
                   // Filter out exceptions that we don't want to be captured by exception handler
-                  if (filterException(err?.originalError ?? err)) {
+                  if (shouldFilterException(err?.originalError ?? err)) {
                     acc.filtered.push(err);
                   } else {
                     acc.unfiltered.push(err);

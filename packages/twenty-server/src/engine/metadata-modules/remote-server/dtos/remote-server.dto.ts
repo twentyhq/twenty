@@ -20,6 +20,9 @@ export class RemoteServerDTO<T extends RemoteServerType> {
   @Field(() => String)
   foreignDataWrapperType: T;
 
+  @Field(() => String)
+  label: string;
+
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   foreignDataWrapperOptions?: ForeignDataWrapperOptions<T>;

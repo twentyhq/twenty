@@ -13,6 +13,8 @@ import { useRecoilValue } from 'recoil';
 
 import { ApolloProvider } from '@/apollo/components/ApolloProvider';
 import { VerifyEffect } from '@/auth/components/VerifyEffect';
+import { ChromeExtensionSidecarEffect } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarEffect';
+import { ChromeExtensionSidecarProvider } from '@/chrome-extension-sidecar/components/ChromeExtensionSidecarProvider';
 import { ClientConfigProvider } from '@/client-config/components/ClientConfigProvider';
 import { ClientConfigProviderEffect } from '@/client-config/components/ClientConfigProviderEffect';
 import { billingState } from '@/client-config/states/billingState';
@@ -85,36 +87,41 @@ const ProvidersThatNeedRouterContext = () => {
   const pageTitle = getPageTitleFromPath(pathname);
 
   return (
-    <ApolloProvider>
-      <ClientConfigProviderEffect />
-      <ClientConfigProvider>
-        <UserProviderEffect />
-        <UserProvider>
-          <ApolloMetadataClientProvider>
-            <ObjectMetadataItemsProvider>
-              <PrefetchDataProvider>
-                <AppThemeProvider>
-                  <SnackBarProvider>
-                    <DialogManagerScope dialogManagerScopeId="dialog-manager">
-                      <DialogManager>
-                        <StrictMode>
-                          <PromiseRejectionEffect />
-                          <CommandMenuEffect />
-                          <GotoHotkeysEffect />
-                          <PageTitle title={pageTitle} />
-                          <Outlet />
-                        </StrictMode>
-                      </DialogManager>
-                    </DialogManagerScope>
-                  </SnackBarProvider>
-                </AppThemeProvider>
-              </PrefetchDataProvider>
-              <PageChangeEffect />
-            </ObjectMetadataItemsProvider>
-          </ApolloMetadataClientProvider>
-        </UserProvider>
-      </ClientConfigProvider>
-    </ApolloProvider>
+    <>
+      <ApolloProvider>
+        <ClientConfigProviderEffect />
+        <ClientConfigProvider>
+          <ChromeExtensionSidecarEffect />
+          <ChromeExtensionSidecarProvider>
+            <UserProviderEffect />
+            <UserProvider>
+              <ApolloMetadataClientProvider>
+                <ObjectMetadataItemsProvider>
+                  <PrefetchDataProvider>
+                    <AppThemeProvider>
+                      <SnackBarProvider>
+                        <DialogManagerScope dialogManagerScopeId="dialog-manager">
+                          <DialogManager>
+                            <StrictMode>
+                              <PromiseRejectionEffect />
+                              <CommandMenuEffect />
+                              <GotoHotkeysEffect />
+                              <PageTitle title={pageTitle} />
+                              <Outlet />
+                            </StrictMode>
+                          </DialogManager>
+                        </DialogManagerScope>
+                      </SnackBarProvider>
+                    </AppThemeProvider>
+                  </PrefetchDataProvider>
+                  <PageChangeEffect />
+                </ObjectMetadataItemsProvider>
+              </ApolloMetadataClientProvider>
+            </UserProvider>
+          </ChromeExtensionSidecarProvider>
+        </ClientConfigProvider>
+      </ApolloProvider>
+    </>
   );
 };
 

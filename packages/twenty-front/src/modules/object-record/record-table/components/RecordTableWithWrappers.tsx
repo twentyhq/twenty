@@ -1,23 +1,15 @@
 import { useRef } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilCallback, useRecoilValue } from 'recoil';
-import { IconPlus } from 'twenty-ui';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordTable } from '@/object-record/record-table/components/RecordTable';
+import { RecordTableEmptyState } from '@/object-record/record-table/components/RecordTableEmptyState';
 import { EntityDeleteContext } from '@/object-record/record-table/contexts/EntityDeleteHookContext';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { Button } from '@/ui/input/button/components/Button';
-import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
-import {
-  AnimatedPlaceholderEmptyContainer,
-  AnimatedPlaceholderEmptySubTitle,
-  AnimatedPlaceholderEmptyTextContainer,
-  AnimatedPlaceholderEmptyTitle,
-} from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useSaveCurrentViewFields } from '@/views/hooks/useSaveCurrentViewFields';
@@ -56,14 +48,14 @@ export const RecordTableWithWrappers = ({
 }: RecordTableWithWrappersProps) => {
   const tableBodyRef = useRef<HTMLDivElement>(null);
 
-  const { numberOfTableRowsState, isRecordTableInitialLoadingState } =
+  const { isRecordTableInitialLoadingState, tableRowIdsState } =
     useRecordTableStates(recordTableId);
-
-  const numberOfTableRows = useRecoilValue(numberOfTableRowsState);
 
   const isRecordTableInitialLoading = useRecoilValue(
     isRecordTableInitialLoadingState,
   );
+
+  const tableRowIds = useRecoilValue(tableRowIdsState);
 
   const { resetTableRowSelection, setRowSelected } = useRecordTable({
     recordTableId,
@@ -116,25 +108,13 @@ export const RecordTableWithWrappers = ({
                 tableBodyRef={tableBodyRef}
               />
               {!isRecordTableInitialLoading &&
-                numberOfTableRows === 0 &&
-                !isRemote && (
-                  <AnimatedPlaceholderEmptyContainer>
-                    <AnimatedPlaceholder type="noRecord" />
-                    <AnimatedPlaceholderEmptyTextContainer>
-                      <AnimatedPlaceholderEmptyTitle>
-                        Add your first {objectLabel}
-                      </AnimatedPlaceholderEmptyTitle>
-                      <AnimatedPlaceholderEmptySubTitle>
-                        Use our API or add your first {objectLabel} manually
-                      </AnimatedPlaceholderEmptySubTitle>
-                    </AnimatedPlaceholderEmptyTextContainer>
-                    <Button
-                      Icon={IconPlus}
-                      title={`Add a ${objectLabel}`}
-                      variant={'secondary'}
-                      onClick={createRecord}
-                    />
-                  </AnimatedPlaceholderEmptyContainer>
+                // we cannot rely on count states because this is not available for remote objects
+                tableRowIds.length === 0 && (
+                  <RecordTableEmptyState
+                    objectLabel={objectLabel}
+                    createRecord={createRecord}
+                    isRemote={isRemote}
+                  />
                 )}
             </StyledTableContainer>
           </StyledTableWithHeader>

@@ -30,17 +30,6 @@ chrome.runtime.onMessage.addListener((message, _, sendResponse) => {
       });
       break;
     }
-    case 'changeSidepanelUrl': {
-      chrome.tabs.query({ active: true, currentWindow: true }, ([tab]) => {
-        if (isDefined(tab) && isDefined(tab.id)) {
-          chrome.tabs.sendMessage(tab.id, {
-            action: 'changeSidepanelUrl',
-            message,
-          });
-        }
-      });
-      break;
-    }
     default:
       break;
   }
@@ -82,7 +71,15 @@ const setTokenStateFromCookie = (cookie: string) => {
 
 chrome.cookies.onChanged.addListener(async ({ cookie }) => {
   if (cookie.name === 'tokenPair') {
-    setTokenStateFromCookie(cookie.value);
+    const store = await chrome.storage.local.get(['clientUrl']);
+    const clientUrl = isDefined(store.clientUrl)
+      ? store.clientUrl
+      : import.meta.env.VITE_FRONT_BASE_URL;
+    chrome.cookies.get({ name: 'tokenPair', url: `${clientUrl}` }, (cookie) => {
+      if (isDefined(cookie)) {
+        setTokenStateFromCookie(cookie.value);
+      }
+    });
   }
 });
 
