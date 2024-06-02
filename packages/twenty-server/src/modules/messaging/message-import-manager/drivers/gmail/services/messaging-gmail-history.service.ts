@@ -3,11 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { gmail_v1 } from 'googleapis';
 import { GaxiosResponse } from 'gaxios';
 
-import { GmailError } from 'src/modules/messaging/message-import-manager/services/messaging-error-handling.service';
+import { GmailError } from 'src/modules/messaging/common/services/messaging-error-handling.service';
 import { MESSAGING_GMAIL_USERS_HISTORY_MAX_RESULT } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-history-max-result.constant';
 
 @Injectable()
-export class GmailGetHistoryService {
+export class MessagingGmailHistoryService {
   constructor() {}
 
   public async getHistory(

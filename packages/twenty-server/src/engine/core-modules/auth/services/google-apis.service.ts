@@ -23,16 +23,16 @@ import {
   ConnectedAccountWorkspaceEntity,
   ConnectedAccountProvider,
 } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
+import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import {
   MessageChannelWorkspaceEntity,
   MessageChannelType,
   MessageChannelVisibility,
-} from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
-  GmailMessageListFetchJob,
-  GmailMessageListFetchJobData,
-} from 'src/modules/messaging/jobs/messaging-message-list-fetch.job';
+  MessagingMessageListFetchJob,
+  MessagingMessageListFetchJobData,
+} from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 
 @Injectable()
 export class GoogleAPIsService {
@@ -152,8 +152,8 @@ export class GoogleAPIsService {
     isCalendarEnabled: boolean,
   ) {
     if (this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED')) {
-      await this.messageQueueService.add<GmailMessageListFetchJobData>(
-        GmailMessageListFetchJob.name,
+      await this.messageQueueService.add<MessagingMessageListFetchJobData>(
+        MessagingMessageListFetchJob.name,
         {
           workspaceId,
           connectedAccountId,

@@ -1,7 +1,7 @@
 import { EntityManager } from 'typeorm';
 
 import { DEV_SEED_CONNECTED_ACCOUNT_IDS } from 'src/database/typeorm-seeds/workspace/connected-account';
-import { MessageChannelSyncSubStatus } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
+import { MessageChannelSyncSubStatus } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 const tableName = 'messageChannel';
 

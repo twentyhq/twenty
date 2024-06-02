@@ -5,11 +5,11 @@ import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/t
 import { objectRecordChangedProperties } from 'src/engine/integrations/event-emitter/utils/object-record-changed-properties.util';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessagingCreateCompanyAndContactAfterSyncJobData,
   MessagingCreateCompanyAndContactAfterSyncJob,
-} from 'src/modules/messaging/jobs/messaging-create-company-and-contact-after-sync.job';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
+} from 'src/modules/messaging/message-participants-manager/jobs/messaging-create-company-and-contact-after-sync.job';
 
 @Injectable()
 export class MessagingMessageChannelListener {

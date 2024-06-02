@@ -12,11 +12,11 @@ import { MessageChannelMessageAssociationRepository } from 'src/modules/messagin
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { GmailGetHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-history.service';
-import { GmailErrorHandlingService } from 'src/modules/messaging/message-import-manager/services/messaging-error-handling.service';
 import { MessagingGmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/messaging-gmail-client.provider';
-import { MessagingChannelSyncStatusService } from 'src/modules/messaging/message-import-manager/services/messaging-channel-sync-status.service';
+import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 import { MessagingGmailFetchMessageIdsToExcludeService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-fetch-messages-ids-to-exclude.service';
+import { MessagingErrorHandlingService } from 'src/modules/messaging/common/services/messaging-error-handling.service';
+import { MessagingGmailHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-history.service';
 
 @Injectable()
 export class MessagingGmailPartialMessageListFetchService {
@@ -34,8 +34,8 @@ export class MessagingGmailPartialMessageListFetchService {
       MessageChannelMessageAssociationWorkspaceEntity,
     )
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
-    private readonly gmailErrorHandlingService: GmailErrorHandlingService,
-    private readonly gmailGetHistoryService: GmailGetHistoryService,
+    private readonly gmailErrorHandlingService: MessagingErrorHandlingService,
+    private readonly gmailGetHistoryService: MessagingGmailHistoryService,
     private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
     private readonly gmailFetchMessageIdsToExcludeService: MessagingGmailFetchMessageIdsToExcludeService,
   ) {}

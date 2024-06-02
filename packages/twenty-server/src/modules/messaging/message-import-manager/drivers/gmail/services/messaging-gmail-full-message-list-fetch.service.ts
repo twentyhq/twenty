@@ -15,11 +15,11 @@ import { MessageChannelRepository } from 'src/modules/messaging/common/repositor
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
-  GmailErrorHandlingService,
   GmailError,
-} from 'src/modules/messaging/message-import-manager/services/messaging-error-handling.service';
+  MessagingErrorHandlingService,
+} from 'src/modules/messaging/common/services/messaging-error-handling.service';
 import { computeGmailCategoryExcludeSearchFilter } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-gmail-category-excude-search-filter';
-import { MessagingChannelSyncStatusService } from 'src/modules/messaging/message-import-manager/services/messaging-channel-sync-status.service';
+import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 import { MessagingGmailClientProvider } from 'src/modules/messaging/message-import-manager/drivers/gmail/providers/messaging-gmail-client.provider';
 import { MESSAGING_GMAIL_USERS_MESSAGES_LIST_MAX_RESULT } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-list-max-result.constant';
 import { MESSAGING_GMAIL_EXCLUDED_CATEGORIES } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-excluded-categories';
@@ -41,7 +41,7 @@ export class MessagingGmailFullMessageListFetchService {
     )
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
     private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
-    private readonly gmailErrorHandlingService: GmailErrorHandlingService,
+    private readonly gmailErrorHandlingService: MessagingErrorHandlingService,
   ) {}
 
   public async processMessageListFetch(

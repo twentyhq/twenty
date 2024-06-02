@@ -8,16 +8,18 @@ import { gmail_v1 } from 'googleapis';
 import { assert, assertNotNull } from 'src/utils/assert';
 import { GmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
 import { MessageQuery } from 'src/modules/messaging/message-import-manager/types/message-or-thread-query';
-import { FetchByBatchesService } from 'src/modules/messaging/message-import-manager/services/messaging-fetch-by-batch.service';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
+import { MessagingFetchByBatchesService } from 'src/modules/messaging/common/services/messaging-fetch-by-batch.service';
 
 @Injectable()
-export class MessagingFetchMessagesByBatchesService {
+export class MessagingGmailFetchMessagesByBatchesService {
   private readonly logger = new Logger(
-    MessagingFetchMessagesByBatchesService.name,
+    MessagingGmailFetchMessagesByBatchesService.name,
   );
 
-  constructor(private readonly fetchByBatchesService: FetchByBatchesService) {}
+  constructor(
+    private readonly fetchByBatchesService: MessagingFetchByBatchesService,
+  ) {}
 
   async fetchAllMessages(
     queries: MessageQuery[],

@@ -16,7 +16,7 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/stan
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { GmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
-import { MessagingMessageThreadService } from 'src/modules/messaging/message-import-manager/services/messaging-message-thread.service';
+import { MessagingMessageThreadService } from 'src/modules/messaging/common/services/messaging-message-thread.service';
 
 @Injectable()
 export class MessagingMessageService {

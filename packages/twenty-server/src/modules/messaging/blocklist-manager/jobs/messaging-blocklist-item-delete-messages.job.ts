@@ -5,11 +5,11 @@ import { MessageQueueJob } from 'src/engine/integrations/message-queue/interface
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
 import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
-import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
-import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
-import { ThreadCleanerService } from 'src/modules/messaging/services/thread-cleaner/messaging-thread-cleaner.service';
-import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel-message-association.workspace-entity';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
+import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/common/repositories/message-channel-message-association.repository';
+import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
+import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 
 export type BlocklistItemDeleteMessagesJobData = {
   workspaceId: string;
@@ -31,7 +31,7 @@ export class BlocklistItemDeleteMessagesJob
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
-    private readonly threadCleanerService: ThreadCleanerService,
+    private readonly threadCleanerService: MessagingMessageCleanerService,
   ) {}
 
   async handle(data: BlocklistItemDeleteMessagesJobData): Promise<void> {

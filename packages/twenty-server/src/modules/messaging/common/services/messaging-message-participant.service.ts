@@ -13,6 +13,8 @@ import { MessageParticipantRepository } from 'src/modules/messaging/common/repos
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { ParticipantWithMessageId } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
 
+// Todo: this is not the right place for this file. The code needs to be refactored in term of business modules with a precise scope.
+// Putting it here to avoid circular dependencies for now.
 @Injectable()
 export class MessagingMessageParticipantService {
   constructor(

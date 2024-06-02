@@ -1,17 +1,17 @@
 import { Module } from '@nestjs/common';
 
-import { AnalyticsModule } from 'src/engine/core-modules/analytics/analytics.module';
-import { MessagingTelemetryService } from 'src/modules/messaging/common/services/messaging-telemetry.service';
+import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
+import { MessagingMessageListFetchCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-message-list-fetch.cron.command';
+import { MessagingMessagesImportCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-messages-import.cron.command';
+import { MessagingGmailDriverModule } from 'src/modules/messaging/message-import-manager/drivers/gmail/messaging-gmail-driver.module';
 import { MessagingMessageListFetchJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 import { MessagingMessagesImportJob } from 'src/modules/messaging/message-import-manager/jobs/messaging-messages-import.job';
-import { DeleteConnectedAccountAssociatedMessagingDataJob } from 'src/modules/messaging/message-participants-manager/jobs/messaging-connected-account-deletion-cleanup.job';
-import { MessagingCreateCompanyAndContactAfterSyncJob } from 'src/modules/messaging/message-participants-manager/jobs/messaging-create-company-and-contact-after-sync.job';
 
 @Module({
-  imports: [AnalyticsModule],
+  imports: [MessagingGmailDriverModule, MessagingCommonModule],
   providers: [
-    MessagingTelemetryService,
-
+    MessagingMessageListFetchCronCommand,
+    MessagingMessagesImportCronCommand,
     {
       provide: MessagingMessageListFetchJob.name,
       useClass: MessagingMessageListFetchJob,
@@ -20,15 +20,7 @@ import { MessagingCreateCompanyAndContactAfterSyncJob } from 'src/modules/messag
       provide: MessagingMessagesImportJob.name,
       useClass: MessagingMessagesImportJob,
     },
-    {
-      provide: DeleteConnectedAccountAssociatedMessagingDataJob.name,
-      useClass: DeleteConnectedAccountAssociatedMessagingDataJob,
-    },
-    {
-      provide: MessagingCreateCompanyAndContactAfterSyncJob.name,
-      useClass: MessagingCreateCompanyAndContactAfterSyncJob,
-    },
   ],
-  exports: [MessagingTelemetryService],
+  exports: [],
 })
-export class MessagingTelemetryModule {}
+export class MessagingImportManagerModule {}

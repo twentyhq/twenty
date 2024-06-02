@@ -3,12 +3,12 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
+import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import {
   MessageChannelWorkspaceEntity,
   MessageChannelSyncStatus,
   MessageChannelSyncSubStatus,
-} from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
-import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
 export class MessageChannelRepository {

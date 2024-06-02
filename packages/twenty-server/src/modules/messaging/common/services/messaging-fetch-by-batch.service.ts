@@ -7,7 +7,7 @@ import { GmailMessageParsedResponse } from 'src/modules/messaging/message-import
 import { BatchQueries } from 'src/modules/messaging/message-import-manager/types/batch-queries';
 
 @Injectable()
-export class FetchByBatchesService {
+export class MessagingFetchByBatchesService {
   constructor(private readonly httpService: HttpService) {}
 
   async fetchAllByBatches(

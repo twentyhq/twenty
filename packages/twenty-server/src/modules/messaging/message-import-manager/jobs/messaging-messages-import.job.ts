@@ -21,7 +21,7 @@ export class MessagingMessagesImportJob
   constructor(
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
-    private readonly gmailFetchMessageContentFromCacheV2Service: MessagingGmailMessagesImportService,
+    private readonly gmailFetchMessageContentFromCacheService: MessagingGmailMessagesImportService,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
     private readonly messagingTelemetryService: MessagingTelemetryService,
@@ -51,7 +51,7 @@ export class MessagingMessagesImportJob
           messageChannel.connectedAccountId,
         );
 
-      await this.gmailFetchMessageContentFromCacheV2Service.processMessageBatchImport(
+      await this.gmailFetchMessageContentFromCacheService.processMessageBatchImport(
         messageChannel,
         connectedAccount,
         workspaceId,

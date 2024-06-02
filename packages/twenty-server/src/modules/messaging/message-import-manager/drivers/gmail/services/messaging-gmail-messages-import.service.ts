@@ -14,12 +14,13 @@ import {
   MessageChannelWorkspaceEntity,
   MessageChannelSyncSubStatus,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { GmailErrorHandlingService } from 'src/modules/messaging/message-import-manager/services/messaging-error-handling.service';
 import { createQueriesFromMessageIds } from 'src/modules/messaging/message-import-manager/utils/create-queries-from-message-ids.util';
 import { filterEmails } from 'src/modules/messaging/message-import-manager/utils/filter-emails.util';
-import { MessagingChannelSyncStatusService } from 'src/modules/messaging/message-import-manager/services/messaging-channel-sync-status.service';
+import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messaging/message-import-manager/drivers/gmail/constants/messaging-gmail-users-messages-get-batch-size.constant';
-import { MessagingFetchMessagesByBatchesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-fetch-messages-by-batches.service';
+import { MessagingGmailFetchMessagesByBatchesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-fetch-messages-by-batches.service';
+import { MessagingErrorHandlingService } from 'src/modules/messaging/common/services/messaging-error-handling.service';
+import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/common/services/messaging-save-messages-and-enqueue-contact-creation.service';
 
 @Injectable()
 export class MessagingGmailMessagesImportService {
@@ -28,12 +29,12 @@ export class MessagingGmailMessagesImportService {
   );
 
   constructor(
-    private readonly fetchMessagesByBatchesService: MessagingFetchMessagesByBatchesService,
+    private readonly fetchMessagesByBatchesService: MessagingGmailFetchMessagesByBatchesService,
     @InjectCacheStorage(CacheStorageNamespace.Messaging)
     private readonly cacheStorage: CacheStorageService,
     private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
-    private readonly saveMessagesAndEnqueueContactCreationService: SaveMessagesAndEnqueueContactCreationService,
-    private readonly gmailErrorHandlingService: GmailErrorHandlingService,
+    private readonly saveMessagesAndEnqueueContactCreationService: MessagingSaveMessagesAndEnqueueContactCreationService,
+    private readonly gmailErrorHandlingService: MessagingErrorHandlingService,
     private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
     private readonly messagingTelemetryService: MessagingTelemetryService,
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)

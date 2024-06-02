@@ -4,18 +4,17 @@ import { MessageQueueJob } from 'src/engine/integrations/message-queue/interface
 
 import { MessagingMessageCleanerService } from 'src/modules/messaging/message-cleaner/services/messaging-message-cleaner.service';
 
-export type DeleteConnectedAccountAssociatedMessagingDataJobData = {
+export type MessagingConnectedAccountDeletionCleanupJobData = {
   workspaceId: string;
   connectedAccountId: string;
 };
 
 @Injectable()
-export class DeleteConnectedAccountAssociatedMessagingDataJob
-  implements
-    MessageQueueJob<DeleteConnectedAccountAssociatedMessagingDataJobData>
+export class MessagingConnectedAccountDeletionCleanupJob
+  implements MessageQueueJob<MessagingConnectedAccountDeletionCleanupJobData>
 {
   private readonly logger = new Logger(
-    DeleteConnectedAccountAssociatedMessagingDataJob.name,
+    MessagingConnectedAccountDeletionCleanupJob.name,
   );
 
   constructor(
@@ -23,7 +22,7 @@ export class DeleteConnectedAccountAssociatedMessagingDataJob
   ) {}
 
   async handle(
-    data: DeleteConnectedAccountAssociatedMessagingDataJobData,
+    data: MessagingConnectedAccountDeletionCleanupJobData,
   ): Promise<void> {
     this.logger.log(
       `Deleting connected account ${data.connectedAccountId} associated messaging data in workspace ${data.workspaceId}`,

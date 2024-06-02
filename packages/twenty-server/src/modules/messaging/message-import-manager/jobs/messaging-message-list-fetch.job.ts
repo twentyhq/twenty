@@ -26,7 +26,7 @@ export class MessagingMessageListFetchJob
   private readonly logger = new Logger(MessagingMessageListFetchJob.name);
 
   constructor(
-    private readonly gmailFullMessageListFetchV2Service: MessagingGmailFullMessageListFetchService,
+    private readonly gmailFullMessageListFetchService: MessagingGmailFullMessageListFetchService,
     private readonly gmailPartialMessageListFetchV2Service: MessagingGmailPartialMessageListFetchService,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
@@ -113,7 +113,7 @@ export class MessagingMessageListFetchJob
           connectedAccountId,
         });
 
-        await this.gmailFullMessageListFetchV2Service.processMessageListFetch(
+        await this.gmailFullMessageListFetchService.processMessageListFetch(
           messageChannel,
           connectedAccount,
           workspaceId,

@@ -10,9 +10,9 @@ import {
 } from 'src/modules/calendar/jobs/delete-connected-account-associated-calendar-data.job';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import {
-  DeleteConnectedAccountAssociatedMessagingDataJobData,
-  DeleteConnectedAccountAssociatedMessagingDataJob,
-} from 'src/modules/messaging/message-import-manager/jobs/messaging-connected-account-deletion-cleanup.job';
+  MessagingConnectedAccountDeletionCleanupJob,
+  MessagingConnectedAccountDeletionCleanupJobData,
+} from 'src/modules/messaging/message-cleaner/jobs/messaging-connected-account-deletion-cleanup.job';
 
 export class MessagingMessageCleanerConnectedAccountListener {
   constructor(
@@ -26,8 +26,8 @@ export class MessagingMessageCleanerConnectedAccountListener {
   async handleDeletedEvent(
     payload: ObjectRecordDeleteEvent<ConnectedAccountWorkspaceEntity>,
   ) {
-    await this.messageQueueService.add<DeleteConnectedAccountAssociatedMessagingDataJobData>(
-      DeleteConnectedAccountAssociatedMessagingDataJob.name,
+    await this.messageQueueService.add<MessagingConnectedAccountDeletionCleanupJobData>(
+      MessagingConnectedAccountDeletionCleanupJob.name,
       {
         workspaceId: payload.workspaceId,
         connectedAccountId: payload.recordId,
