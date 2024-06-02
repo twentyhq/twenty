@@ -24,17 +24,17 @@ export const DateTimeSettingsTimeFormatSelect = ({
         label: `24h (${formatInTimeZone(
           Date.now(),
           timeZone,
-          TimeFormat['24h'],
+          TimeFormat.Military,
         )})`,
-        value: TimeFormat['24h'],
+        value: TimeFormat.Military,
       },
       {
         label: `12h (${formatInTimeZone(
           Date.now(),
           timeZone,
-          TimeFormat['12h'],
+          TimeFormat.Standard,
         )})`,
-        value: TimeFormat['12h'],
+        value: TimeFormat.Standard,
       },
     ]}
     onChange={onChange}

@@ -1,12 +1,19 @@
+import { useCallback, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { useRecoilState } from 'recoil';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
+import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { DateTimeSettingsDateFormatSelect } from '@/settings/profile/components/DateTimeSettingsDateFormatSelect';
 import { DateTimeSettingsTimeFormatSelect } from '@/settings/profile/components/DateTimeSettingsTimeFormatSelect';
 import { DateTimeSettingsTimeZoneSelect } from '@/settings/profile/components/DateTimeSettingsTimeZoneSelect';
-import { dateFormatState } from '@/workspace-member/states/dateFormatState';
-import { timeFormatState } from '@/workspace-member/states/timeFormatState';
-import { timeZoneState } from '@/workspace-member/states/timezoneState';
+import { DateFormat } from '@/workspace-member/constants/DateFormat';
+import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
+import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
+import { isDefined } from '~/utils/isDefined';
+import { logError } from '~/utils/logError';
+import { isEmptyObject } from '~/utils/isEmptyObject';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -15,11 +22,75 @@ const StyledContainer = styled.div`
 `;
 
 export const DateTimeSettings = () => {
-  const [timeZone, setTimeZone] = useRecoilState(timeZoneState);
+  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
+    currentWorkspaceMemberState,
+  );
+  const [timeZone, setTimeZone] = useState(
+    currentWorkspaceMember?.timeZone ?? detectTimeZone(),
+  );
+  const [dateFormat, setDateFormat] = useState(
+    currentWorkspaceMember?.dateFormat ?? DateFormat.MonthFirst,
+  );
+  const [timeFormat, setTimeFormat] = useState(
+    currentWorkspaceMember?.timeFormat ?? TimeFormat.Military,
+  );
 
-  const [dateFormat, setDateFormat] = useRecoilState(dateFormatState);
+  const { updateOneRecord } = useUpdateOneRecord({
+    objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
+  });
 
-  const [timeFormat, setTimeFormat] = useRecoilState(timeFormatState);
+  const updateWorkspaceMember = useCallback(
+    async (changedFields: any) => {
+      if (!currentWorkspaceMember?.id) {
+        throw new Error('User is not logged in');
+      }
+
+      try {
+        await updateOneRecord({
+          idToUpdate: currentWorkspaceMember.id,
+          updateOneRecordInput: changedFields,
+        });
+      } catch (error) {
+        logError(error);
+      }
+    },
+    [currentWorkspaceMember, updateOneRecord],
+  );
+
+  useEffect(() => {
+    if (!isDefined(currentWorkspaceMember)) {
+      return;
+    }
+    const changedFields: any = {};
+
+    if (timeZone !== currentWorkspaceMember.timeZone) {
+      changedFields.timeZone = timeZone;
+    }
+    if (dateFormat !== currentWorkspaceMember.dateFormat) {
+      changedFields.dateFormat = dateFormat;
+    }
+    if (timeFormat !== currentWorkspaceMember.timeFormat) {
+      changedFields.timeFormat = timeFormat;
+    }
+
+    if (!isEmptyObject(changedFields)) {
+      setCurrentWorkspaceMember({
+        ...currentWorkspaceMember,
+        ...changedFields,
+      });
+
+      updateWorkspaceMember(changedFields);
+    }
+  }, [
+    currentWorkspaceMember,
+    timeZone,
+    dateFormat,
+    timeFormat,
+    updateWorkspaceMember,
+    setCurrentWorkspaceMember,
+  ]);
+
+  if (!isDefined(currentWorkspaceMember)) return;
 
   return (
     <StyledContainer>

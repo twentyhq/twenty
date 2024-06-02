@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { DateTimeSettingsDateFormatSelect } from '@/settings/profile/components/DateTimeSettingsDateFormatSelect';
 import { DateTimeSettingsTimeFormatSelect } from '@/settings/profile/components/DateTimeSettingsTimeFormatSelect';
 import { DateTimeSettingsTimeZoneSelect } from '@/settings/profile/components/DateTimeSettingsTimeZoneSelect';
-import { detectDateFormat } from '@/workspace-member/utils/detectDateFormat';
-import { detectTimeFormat } from '@/workspace-member/utils/detectTimeFormat';
+import { DateFormat } from '@/workspace-member/constants/DateFormat';
+import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
 import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
 
 const StyledContainer = styled.div`
@@ -15,11 +17,17 @@ const StyledContainer = styled.div`
 `;
 
 export const SettingsAccountsCalendarDisplaySettings = () => {
-  const [timeZone, setTimeZone] = useState(detectTimeZone());
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
-  const [dateFormat, setDateFormat] = useState(detectDateFormat());
-
-  const [timeFormat, setTimeFormat] = useState(detectTimeFormat());
+  const [timeZone, setTimeZone] = useState(
+    currentWorkspaceMember?.timeZone ?? detectTimeZone(),
+  );
+  const [dateFormat, setDateFormat] = useState(
+    currentWorkspaceMember?.dateFormat ?? DateFormat.MonthFirst,
+  );
+  const [timeFormat, setTimeFormat] = useState(
+    currentWorkspaceMember?.timeFormat ?? TimeFormat.Military,
+  );
 
   return (
     <StyledContainer>
