@@ -1,4 +1,4 @@
-import { formatAddressObjectAsParticipants } from 'src/modules/messaging/utils/format-address-object-as-participants.util';
+import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
 
 describe('formatAddressObjectAsParticipants', () => {
   it('should format address object as participants', () => {
