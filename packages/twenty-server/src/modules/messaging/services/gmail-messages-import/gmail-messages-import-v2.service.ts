@@ -18,6 +18,10 @@ import { MessageChannelSyncStatusService } from 'src/modules/messaging/services/
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/services/google-api-refresh-access-token/google-api-refresh-access-token.service';
 import { GmailMessagesImportService } from 'src/modules/messaging/services/gmail-messages-import/gmail-messages-import.service';
 import { MessagingTelemetryService } from 'src/modules/messaging/services/telemetry/messaging-telemetry.service';
+import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
+import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
+import { filterEmails } from 'src/modules/messaging/services/utils/filter-emails.util';
 
 @Injectable()
 export class GmailMessagesImportV2Service {
@@ -32,6 +36,8 @@ export class GmailMessagesImportV2Service {
     private readonly gmailErrorHandlingService: GmailErrorHandlingService,
     private readonly googleAPIsRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
     private readonly messagingTelemetryService: MessagingTelemetryService,
+    @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
+    private readonly blocklistRepository: BlocklistRepository,
   ) {}
 
   async processMessageBatchImport(
@@ -88,7 +94,7 @@ export class GmailMessagesImportV2Service {
     const messageQueries = createQueriesFromMessageIds(messageIdsToFetch);
 
     try {
-      const messagesToSave =
+      const allMessages =
         await this.fetchMessagesByBatchesService.fetchAllMessages(
           messageQueries,
           connectedAccount.accessToken,
@@ -96,17 +102,15 @@ export class GmailMessagesImportV2Service {
           connectedAccount.id,
         );
 
-      if (!messagesToSave.length) {
-        await this.messageChannelSyncStatusService.markAsCompletedAndSchedulePartialMessageListFetch(
-          messageChannel.id,
-          workspaceId,
-        );
+      const blocklist = await this.blocklistRepository.getByWorkspaceMemberId(
+        connectedAccount.accountOwnerId,
+        workspaceId,
+      );
 
-        return await this.trackMessageImportCompleted(
-          messageChannel,
-          workspaceId,
-        );
-      }
+      const messagesToSave = filterEmails(
+        allMessages,
+        blocklist.map((blocklistItem) => blocklistItem.handle),
+      );
 
       await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreationJob(
         messagesToSave,
