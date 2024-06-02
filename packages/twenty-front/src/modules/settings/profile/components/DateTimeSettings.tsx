@@ -12,8 +12,8 @@ import { DateFormat } from '@/workspace-member/constants/DateFormat';
 import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
 import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
 import { isDefined } from '~/utils/isDefined';
-import { logError } from '~/utils/logError';
 import { isEmptyObject } from '~/utils/isEmptyObject';
+import { logError } from '~/utils/logError';
 
 const StyledContainer = styled.div`
   display: flex;
