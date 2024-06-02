@@ -9,6 +9,9 @@ import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingStat
 import { workspacesState } from '@/auth/states/workspaces';
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
+import { formatDateLabel } from '@/workspace-member/utils/formatDateLabel';
+import { formatTimeLabel } from '@/workspace-member/utils/formatTimeLabel';
 import { User } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -49,6 +52,12 @@ export const UserProviderEffect = () => {
     if (isDefined(workspaceMember)) {
       setCurrentWorkspaceMember({
         ...workspaceMember,
+        timeZone:
+          workspaceMember.timeZone === 'system'
+            ? detectTimeZone()
+            : workspaceMember.timeZone,
+        dateFormat: formatDateLabel(workspaceMember.dateFormat),
+        timeFormat: formatTimeLabel(workspaceMember.timeFormat),
         colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'Light',
       });
     }

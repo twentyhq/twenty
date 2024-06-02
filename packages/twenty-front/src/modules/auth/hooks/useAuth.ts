@@ -23,6 +23,9 @@ import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilled
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { telemetryState } from '@/client-config/states/telemetryState';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
+import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
+import { formatDateLabel } from '@/workspace-member/utils/formatDateLabel';
+import { formatTimeLabel } from '@/workspace-member/utils/formatTimeLabel';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   useChallengeMutation,
@@ -101,6 +104,12 @@ export const useAuth = () => {
       if (isDefined(user.workspaceMember)) {
         workspaceMember = {
           ...user.workspaceMember,
+          timeZone:
+            user.workspaceMember.timeZone !== 'system'
+              ? user.workspaceMember.timeZone
+              : detectTimeZone(),
+          dateFormat: formatDateLabel(user.workspaceMember.dateFormat),
+          timeFormat: formatTimeLabel(user.workspaceMember.timeFormat),
           colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
         };
         setCurrentWorkspaceMember(workspaceMember);
