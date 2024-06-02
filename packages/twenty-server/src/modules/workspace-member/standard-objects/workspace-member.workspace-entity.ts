@@ -94,6 +94,49 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   })
   userId: string;
 
+  @WorkspaceField({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeZone,
+    type: FieldMetadataType.TEXT,
+    label: 'Time zone',
+    defaultValue: "'system'",
+    description: 'User time zone',
+    icon: 'IconTimezone',
+  })
+  timeZone: string;
+
+  @WorkspaceField({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.dateFormat,
+    // type: FieldMetadataType.SELECT,
+    type: FieldMetadataType.TEXT,
+    label: 'Date format',
+    description: "User's preferred date format",
+    icon: 'IconCalendarEvent',
+    // options: [
+    //   { value: 'system', label: 'system', position: 0, color: 'turquoise'  },
+    //   { value: 'MMM_d_yyyy', label: 'MonthFirst', position: 1, color: 'red' },
+    //   { value: 'd_MMM_yyyy', label: 'DayFirst', position: 2, color: 'purple' },
+    //   { value: 'yyyy_MMM_d', label: 'YearFirst', position: 3, color: 'sky' },
+    // ],
+    defaultValue: "'system'"
+  })
+  dateFormat: string;
+
+  @WorkspaceField({
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeFormat,
+    // type: FieldMetadataType.SELECT,
+    type: FieldMetadataType.TEXT,
+    label: 'Time format',
+    description: "User's preferred time format",
+    icon: 'IconClock2',
+    // options: [
+    //   { value: 'system', label: 'system', position: 0, color: 'sky' },
+    //   { value: 'HH_mm', label: 'Military', position: 1, color: 'red' },
+    //   { value: 'h_mm_aa', label: 'Standard', position: 2, color: 'purple' },
+    // ],
+    defaultValue: "'system'",
+  })
+  timeFormat: string;
+
   // Relations
   @WorkspaceRelation({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.authoredActivities,

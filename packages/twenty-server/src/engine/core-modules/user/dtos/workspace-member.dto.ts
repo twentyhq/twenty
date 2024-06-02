@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
@@ -29,4 +29,13 @@ export class WorkspaceMember {
 
   @Field({ nullable: false })
   locale: string;
+
+  @Field({ nullable: false, defaultValue: 'system' })
+  timeZone: string;
+
+  @Field({ nullable: false, defaultValue: 'system' })
+  dateFormat: string;
+
+  @Field({ nullable: false, defaultValue: 'system' })
+  timeFormat: string;
 }

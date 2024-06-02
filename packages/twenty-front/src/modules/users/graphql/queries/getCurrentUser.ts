@@ -19,6 +19,9 @@ export const GET_CURRENT_USER = gql`
         colorScheme
         avatarUrl
         locale
+        timeZone
+        dateFormat
+        timeFormat
       }
       defaultWorkspace {
         id
