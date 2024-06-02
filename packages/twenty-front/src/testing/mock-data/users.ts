@@ -1,3 +1,5 @@
+import { DateFormat } from '@/workspace-member/constants/DateFormat';
+import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { User, Workspace } from '~/generated/graphql';
 
@@ -76,6 +78,9 @@ export const mockedWorkspaceMemberData: WorkspaceMember = {
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
   userId: '2603c1f9-0172-4ea6-986c-eeaccdf7f4cf',
   userEmail: 'charles@test.com',
+  timeZone: 'system',
+  dateFormat: DateFormat.MonthFirst,
+  timeFormat: TimeFormat.Military,
 };
 
 export const mockedUsersData: Array<MockedUser> = [

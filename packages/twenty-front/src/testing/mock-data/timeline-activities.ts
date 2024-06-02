@@ -1,4 +1,6 @@
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
+import { DateFormat } from '@/workspace-member/constants/DateFormat';
+import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
 
 export const mockedTimelineActivities: Array<TimelineActivity> = [
   {
@@ -21,6 +23,9 @@ export const mockedTimelineActivities: Array<TimelineActivity> = [
         lastName: 'Apple',
       },
       colorScheme: 'Light',
+      timeZone: 'system',
+      dateFormat: DateFormat.MonthFirst,
+      timeFormat: TimeFormat.Military,
     },
     workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
     deletedAt: null,
@@ -47,6 +52,9 @@ export const mockedTimelineActivities: Array<TimelineActivity> = [
         lastName: 'Apple',
       },
       colorScheme: 'Light',
+      timeZone: 'system',
+      dateFormat: DateFormat.MonthFirst,
+      timeFormat: TimeFormat.Military,
     },
     workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
     deletedAt: null,
