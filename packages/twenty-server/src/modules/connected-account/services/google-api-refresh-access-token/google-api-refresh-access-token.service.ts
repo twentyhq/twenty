@@ -7,7 +7,7 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
-import { GmailErrorHandlingService } from 'src/modules/messaging/services/gmail-error-handling/gmail-error-handling.service';
+import { GmailErrorHandlingService } from 'src/modules/messaging/services/messaging-error-handling.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 
 @Injectable()

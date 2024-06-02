@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { CalendarEventParticipantService } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.service';
-import { MessageParticipantService } from 'src/modules/messaging/services/message-participant/message-participant.service';
+import { MessageParticipantService } from 'src/modules/messaging/services/message-participant.service';
 
 export type UnmatchParticipantJobData = {
   workspaceId: string;

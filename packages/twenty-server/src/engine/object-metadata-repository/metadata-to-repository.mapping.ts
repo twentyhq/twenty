@@ -9,7 +9,7 @@ import { AuditLogRepository } from 'src/modules/timeline/repositiories/audit-log
 import { TimelineActivityRepository } from 'src/modules/timeline/repositiories/timeline-activity.repository';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
-import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant.repository';
+import { MessageParticipantRepository } from 'src/modules/messaging/message-participant/repositories/message-participant.repository';
 import { MessageThreadRepository } from 'src/modules/messaging/repositories/message-thread.repository';
 import { MessageRepository } from 'src/modules/messaging/repositories/message.repository';
 import { PersonRepository } from 'src/modules/person/repositories/person.repository';

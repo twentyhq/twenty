@@ -1,1 +1,0 @@
-export const GMAIL_USERS_MESSAGES_GET_BATCH_SIZE = 20;
