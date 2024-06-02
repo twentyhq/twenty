@@ -65,18 +65,26 @@ const StyledHeadingText = styled.h1`
 const DocsSidebar = ({ docsIndex }: { docsIndex: DocsArticlesProps[] }) => {
   const router = useRouter();
   const pathName = usePathname();
-  const path = pathName.includes('user-guide') ? '/user-guide' : '/developers';
+  const path = pathName.includes('user-guide')
+    ? '/user-guide'
+    : pathName.includes('developers')
+      ? '/developers'
+      : '/twenty-ui';
 
   const sections = Array.from(
     new Set(docsIndex.map((guide) => guide.section)),
   ).map((section) => ({
     name: section,
     icon: getSectionIcon(section),
-    guides: docsIndex.filter(
-      (guide) =>
-        guide.section === section &&
-        !(guide.numberOfFiles > 1 && guide.topic === guide.title),
-    ),
+    guides: docsIndex.filter((guide) => {
+      const isInSection = guide.section === section;
+      const hasFiles = guide.numberOfFiles > 0;
+      const isNotSingleFileTopic = !(
+        guide.numberOfFiles > 1 && guide.topic === guide.title
+      );
+
+      return isInSection && hasFiles && isNotSingleFileTopic;
+    }),
   }));
 
   return (

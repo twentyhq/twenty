@@ -3,6 +3,7 @@ import matter from 'gray-matter';
 import path from 'path';
 
 import { DOCS_INDEX } from '@/content/developers/constants/DocsIndex';
+import { TWENTY_UI_INDEX } from '@/content/twenty-ui/constants/TwentyUiIndex';
 import { USER_GUIDE_INDEX } from '@/content/user-guide/constants/UserGuideIndex';
 
 export interface DocsArticlesProps {
@@ -18,7 +19,11 @@ export interface DocsArticlesProps {
 
 export function getDocsArticles(basePath: string, isSideBar = false) {
   const guides: DocsArticlesProps[] = [];
-  const index = basePath.includes('developers') ? DOCS_INDEX : USER_GUIDE_INDEX;
+  const index = basePath.includes('developers')
+    ? DOCS_INDEX
+    : basePath.includes('user-guide')
+      ? USER_GUIDE_INDEX
+      : TWENTY_UI_INDEX;
 
   const findFileRecursively = (
     directory: string,
@@ -48,6 +53,19 @@ export function getDocsArticles(basePath: string, isSideBar = false) {
     topic: string,
     files: { fileName: string }[],
   ): void => {
+    if (files.length === 0) {
+      guides.push({
+        title: '',
+        info: '',
+        image: '',
+        fileName: '',
+        topic: topic,
+        section: section,
+        sectionInfo: '',
+        numberOfFiles: 0,
+      });
+      return;
+    }
     files.forEach(({ fileName }) => {
       let filePath;
       if (isSideBar) {

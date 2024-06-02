@@ -8,6 +8,7 @@ import { Breadcrumbs } from '@/app/_components/ui/layout/Breadcrumbs';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import { FileContent } from '@/app/_server-utils/get-posts';
+import { getUriAndLabel } from '@/shared-utils/pathUtils';
 
 const StyledContainer = styled('div')`
   ${mq({
@@ -116,8 +117,8 @@ const StyledImageContainer = styled.div`
 
 export default function DocsContent({ item }: { item: FileContent }) {
   const pathname = usePathname();
-  const uri = pathname.includes('user-guide') ? '/user-guide' : '/developers';
-  const label = pathname.includes('user-guide') ? 'User Guide' : 'Developers';
+  const { uri, label } = getUriAndLabel(pathname);
+
   const BREADCRUMB_ITEMS = [
     {
       uri: uri,

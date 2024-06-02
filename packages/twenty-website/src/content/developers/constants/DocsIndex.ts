@@ -19,7 +19,11 @@ export const DOCS_INDEX = {
       { fileName: 'core-api-graphql' },
       { fileName: 'metadata-api-graphql' },
     ],
-    // Storybook: [{ fileName: 'storybook' }],
+    'UI Kit': [
+      { fileName: 'ui-kit' },
+      { fileName: 'storybook' },
+      { fileName: 'components' },
+    ],
   },
   Contributing: {
     'Bugs and Requests': [{ fileName: 'bug-and-requests' }],
@@ -43,43 +47,8 @@ export const DOCS_INDEX = {
       { fileName: 'queue' },
     ],
   },
+
   'User Guide': {
-    'Getting Started': [
-      { fileName: 'getting-started' },
-      { fileName: 'objects' },
-    ],
+    'Empty Section': [],
   },
-  /* Components: {
-    Display: [
-      { fileName: 'display' },
-      { fileName: 'checkmark' },
-      { fileName: 'chip' },
-      { fileName: 'icons' },
-      { fileName: 'soon-pill' },
-      { fileName: 'tag' },
-      { fileName: 'app-tooltip' },
-    ],
-    Feedback: [{ fileName: 'progress-bar' }],
-    Input: [
-      { fileName: 'input' },
-      { fileName: 'buttons' },
-      { fileName: 'color-scheme' },
-      { fileName: 'text' },
-      { fileName: 'checkbox' },
-      { fileName: 'icon-picker' },
-      { fileName: 'image-input' },
-      { fileName: 'radio' },
-      { fileName: 'select' },
-      { fileName: 'toggle' },
-      { fileName: 'block-editor' },
-    ],
-    Navigation: [
-      { fileName: 'navigation' },
-      { fileName: 'breadcrumb' },
-      { fileName: 'links' },
-      { fileName: 'menu-item' },
-      { fileName: 'navigation-bar' },
-      { fileName: 'step-bar' },
-    ],
-  }, */
 };

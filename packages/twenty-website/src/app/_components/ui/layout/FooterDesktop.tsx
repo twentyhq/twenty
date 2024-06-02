@@ -1,7 +1,6 @@
 'use client';
 
 import styled from '@emotion/styled';
-import { usePathname } from 'next/navigation';
 
 import {
   DiscordIcon,
@@ -67,11 +66,6 @@ const RightSideFooterColumnTitle = styled.div`
 `;
 
 export const FooterDesktop = () => {
-  const path = usePathname();
-  const isTwentyDev = path.includes('developers');
-
-  if (isTwentyDev) return;
-
   return (
     <FooterContainer>
       <div
@@ -103,9 +97,6 @@ export const FooterDesktop = () => {
             </RightSideFooterLink>
             <RightSideFooterLink href="/user-guide">
               User Guide
-            </RightSideFooterLink>
-            <RightSideFooterLink href="/developers">
-              Developers
             </RightSideFooterLink>
           </RightSideFooterColumn>
           <RightSideFooterColumn>

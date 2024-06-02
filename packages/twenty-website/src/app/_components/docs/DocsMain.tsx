@@ -9,6 +9,7 @@ import { Theme } from '@/app/_components/ui/theme/theme';
 import { DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
 import { constructSections } from '@/shared-utils/constructSections';
 import { filterDocsIndex } from '@/shared-utils/filterDocsIndex';
+import { getUriAndLabel } from '@/shared-utils/pathUtils';
 
 const StyledContainer = styled.div`
   ${mq({
@@ -136,11 +137,9 @@ export default function DocsMain({
   isSection = false,
 }: DocsProps) {
   const sections = constructSections(docsArticleCards, isSection);
-  const limitedSections = sections.slice(0, 4);
-
   const pathname = usePathname();
-  const uri = pathname.includes('user-guide') ? '/user-guide' : '/developers';
-  const label = pathname.includes('user-guide') ? 'User Guide' : 'Developers';
+  const { uri, label } = getUriAndLabel(pathname);
+
   const BREADCRUMB_ITEMS = [
     {
       uri: uri,
@@ -160,7 +159,7 @@ export default function DocsMain({
         ) : (
           <StyledTitle>{label}</StyledTitle>
         )}
-        {limitedSections.map((section, index) => {
+        {sections.map((section, index) => {
           const filteredArticles = isSection
             ? docsArticleCards
             : filterDocsIndex(docsArticleCards, section.name);

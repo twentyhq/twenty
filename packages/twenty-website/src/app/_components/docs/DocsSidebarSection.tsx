@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
 import { IconPoint } from '@tabler/icons-react';
 import { usePathname, useRouter } from 'next/navigation';
@@ -79,6 +79,7 @@ const StyledIcon = styled.div`
 `;
 
 const StyledIconContainer = styled.div`
+  margin-top: 3px;
   margin-left: -8px;
   color: ${Theme.color.gray30};
 `;
@@ -117,14 +118,30 @@ const DocsSidebarSection = ({
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const path = pathname.includes('user-guide')
     ? '/user-guide/'
-    : '/developers/';
+    : pathname.includes('developers')
+      ? '/developers/'
+      : '/twenty-ui';
 
-  const [unfolded, setUnfolded] = useState<TopicsState>(() =>
-    Object.keys(topics).reduce((acc: TopicsState, topic: string) => {
-      acc[topic] = false;
-      return acc;
-    }, {}),
+  const initializeUnfoldedState = () => {
+    const unfoldedState: TopicsState = {};
+    Object.keys(topics).forEach((topic) => {
+      const containsCurrentArticle = topics[topic].some((card) => {
+        const topicPath = card.topic.toLowerCase().replace(/\s+/g, '-');
+        return pathname.includes(topicPath);
+      });
+      unfoldedState[topic] = containsCurrentArticle;
+    });
+    return unfoldedState;
+  };
+
+  const [unfolded, setUnfolded] = useState<TopicsState>(
+    initializeUnfoldedState,
   );
+
+  useEffect(() => {
+    const newUnfoldedState = initializeUnfoldedState();
+    setUnfolded(newUnfoldedState);
+  }, [pathname]);
 
   const toggleFold = (topic: string) => {
     setUnfolded((prev: TopicsState) => ({ ...prev, [topic]: !prev[topic] }));

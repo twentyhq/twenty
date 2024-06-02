@@ -13,7 +13,11 @@ export const constructSections = (
     ];
   } else {
     return Array.from(
-      new Map(docsArticleCards.map((guide) => [guide.section, guide])).values(),
+      new Map(
+        docsArticleCards
+          .filter((guide) => guide.numberOfFiles > 0)
+          .map((guide) => [guide.section, guide]),
+      ).values(),
     ).map((guide) => ({
       name: guide.section,
       info: guide.sectionInfo,

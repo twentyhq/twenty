@@ -62,11 +62,13 @@ export default function DocsCard({
   const pathname = usePathname();
   const path = getCardPath(card, pathname, isSection);
 
-  return (
-    <StyledContainer onClick={() => router.push(path)}>
-      <StyledImage src={card.image} alt={card.title} />
-      <StyledHeading>{card.title}</StyledHeading>
-      <StyledSubHeading>{card.info}</StyledSubHeading>
-    </StyledContainer>
-  );
+  if (card.title) {
+    return (
+      <StyledContainer onClick={() => router.push(path)}>
+        <StyledImage src={card.image} alt={card.title} />
+        <StyledHeading>{card.title}</StyledHeading>
+        <StyledSubHeading>{card.info}</StyledSubHeading>
+      </StyledContainer>
+    );
+  }
 }

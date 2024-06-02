@@ -16,6 +16,8 @@ const StyledContent = styled.div`
     word-wrap: break-word;
     max-width: 100%;
     line-height: 1.8;
+    font-size: 13px;
+    color: black;
   }
 
   p {
