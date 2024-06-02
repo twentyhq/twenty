@@ -5,6 +5,6 @@ export const detectTimeFormat = () => {
   const isHour12 = Intl.DateTimeFormat(navigator.language, {
     hour: 'numeric',
   }).resolvedOptions().hour12;
-  if (isDefined(isHour12) && isHour12) return TimeFormat['12h'];
-  return TimeFormat['24h'];
+  if (isDefined(isHour12) && isHour12) return TimeFormat.Standard;
+  return TimeFormat.Military;
 };
