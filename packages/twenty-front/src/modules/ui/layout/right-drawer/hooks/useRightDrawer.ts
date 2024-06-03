@@ -49,9 +49,9 @@ export const useRightDrawer = () => {
   const maximizeRightDrawer = useRecoilCallback(
     ({ set }) =>
       () => {
+        set(isRightDrawerMinimizedState, false);
         set(isRightDrawerExpandedState, false);
         set(isRightDrawerOpenState, true);
-        set(isRightDrawerMinimizedState, false);
       },
     [],
   );

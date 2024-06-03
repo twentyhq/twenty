@@ -135,7 +135,13 @@ export const RightDrawer = () => {
 
   return (
     <StyledContainer
-      initial="closed"
+      initial={
+        isRightDrawerOpen
+          ? isRightDrawerMinimized
+            ? 'minimized'
+            : 'normal'
+          : 'closed'
+      }
       animate={
         isRightDrawerOpen
           ? isRightDrawerMinimized
