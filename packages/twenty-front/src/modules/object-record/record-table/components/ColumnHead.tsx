@@ -16,7 +16,7 @@ const StyledTitle = styled.div<{ hideTitle?: boolean }>`
   align-items: center;
   display: flex;
   flex-direction: row;
-  font-weight: ${({ theme }) => theme.font.weight.medium};
+  font-weight: ${({ theme }) => theme.font.weight.regular};
   gap: ${({ theme }) => theme.spacing(1)};
   height: ${({ theme }) => theme.spacing(8)};
   padding-left: ${({ theme }) => theme.spacing(2)};
