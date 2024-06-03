@@ -44,7 +44,7 @@ export class RecordPositionFactory {
     }
 
     if (value === 'first') {
-      const firstRecord = await this.findRecordPosition(
+      const recordWithMinPosition = await this.findRecordPosition(
         {
           recordPositionQueryType: RecordPositionQueryType.FIND_MIN_POSITION,
         },
@@ -53,12 +53,12 @@ export class RecordPositionFactory {
         workspaceId,
       );
 
-      return isDefined(firstRecord?.position)
-        ? firstRecord.position - index - 1
+      return isDefined(recordWithMinPosition?.position)
+        ? recordWithMinPosition.position - index - 1
         : 1;
     }
 
-    const lastRecord = await this.findRecordPosition(
+    const recordWithMaxPosition = await this.findRecordPosition(
       {
         recordPositionQueryType: RecordPositionQueryType.FIND_MAX_POSITION,
       },
@@ -67,8 +67,8 @@ export class RecordPositionFactory {
       workspaceId,
     );
 
-    return isDefined(lastRecord?.position)
-      ? lastRecord.position + index + 1
+    return isDefined(recordWithMaxPosition?.position)
+      ? recordWithMaxPosition.position + index + 1
       : 1;
   }
 
