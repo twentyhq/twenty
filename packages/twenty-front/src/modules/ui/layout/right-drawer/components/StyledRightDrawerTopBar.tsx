@@ -11,7 +11,8 @@ export const StyledRightDrawerTopBar = styled.div<{
   flex-direction: row;
   font-size: ${({ theme }) => theme.font.size.md};
   gap: ${({ theme }) => theme.spacing(1)};
-  height: 56px;
+  height: ${({ isRightDrawerMinimized }) =>
+    isRightDrawerMinimized ? '40px' : '56px'};
   justify-content: space-between;
   padding-left: ${({ theme }) => theme.spacing(2)};
 

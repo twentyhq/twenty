@@ -14,6 +14,7 @@ import {
   FieldMetadataType,
   RelationDefinitionType,
 } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 type RecordDetailRelationSectionProps = {
   relationObjectMetadataNameSingular: string;
@@ -35,6 +36,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
   const { createOneRecord } = useCreateOneRecord({
     objectNameSingular: relationObjectMetadataNameSingular,
   });
+
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular:
       relationFieldMetadataItem?.relationDefinition?.targetObjectMetadata
@@ -43,7 +45,13 @@ export const useAddNewRecordAndOpenRightDrawer = ({
 
   const { openRightDrawer } = useRightDrawer();
 
-  if (relationObjectMetadataNameSingular === 'workspaceMember') {
+  if (
+    relationObjectMetadataNameSingular === 'workspaceMember' ||
+    !isDefined(
+      relationFieldMetadataItem?.relationDefinition?.targetObjectMetadata
+        .nameSingular,
+    )
+  ) {
     return {
       createNewRecordAndOpenRightDrawer: undefined,
     };
