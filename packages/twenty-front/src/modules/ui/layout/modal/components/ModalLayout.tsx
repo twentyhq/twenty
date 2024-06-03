@@ -82,6 +82,7 @@ const StyledBackDrop = styled(motion.div)`
   top: 0;
   width: 100%;
   z-index: 9999;
+  user-select: none;
 `;
 
 /**
@@ -141,8 +142,15 @@ export const ModalLayout = ({
   modalRef,
   className,
 }: ModalLayoutProps) => {
+  const stopPropagation = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
   return (
-    <StyledBackDrop>
+    <StyledBackDrop
+      onMouseDown={stopPropagation}
+      onMouseUp={stopPropagation}
+      onMouseMove={stopPropagation}
+    >
       <StyledModalDiv
         // framer-motion seems to have typing problems with refs
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
