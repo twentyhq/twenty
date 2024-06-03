@@ -37,7 +37,10 @@ export const handleExceptionAndConvertToGraphQLError = (
 };
 
 export const shouldFilterException = (exception: Error): boolean => {
-  if (exception instanceof GraphQLError) {
+  if (
+    exception instanceof GraphQLError &&
+    (exception?.extensions?.http?.status ?? 500) < 500
+  ) {
     return true;
   }
   if (exception instanceof HttpException && exception.getStatus() < 500) {
