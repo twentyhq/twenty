@@ -23,6 +23,7 @@ import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
+import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
@@ -199,6 +200,7 @@ export const RecordBoardCard = () => {
   };
 
   const scrollWrapperRef = useContext(ScrollWrapperContext);
+  const { isDragSelectionStartEnabled } = useDragSelect();
 
   const { ref: cardRef, inView } = useInView({
     root: scrollWrapperRef.current,
@@ -278,7 +280,7 @@ export const RecordBoardCard = () => {
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,
                   }}
                 >
-                  {inView ? (
+                  {inView || isDragSelectionStartEnabled() ? (
                     <RecordInlineCell />
                   ) : (
                     <StyledRecordInlineCellPlaceholder />
