@@ -23,11 +23,6 @@ export class UserStateService {
   ) {}
 
   async getUserState(user: User, workspace: Workspace): Promise<UserState> {
-    if (!user || !workspace) {
-      return {
-        skipSyncEmail: true,
-      };
-    }
     const connectedAccounts =
       await this.connectedAccountRepository.getAllByUserId(
         user.id,
