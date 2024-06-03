@@ -3,7 +3,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { useSetRecoilState } from 'recoil';
 import { ComponentDecorator } from 'twenty-ui';
 
-import { viewableActivityIdState } from '@/activities/states/viewableActivityIdState';
+import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 
 import { ActivityActionBar } from '../../right-drawer/components/ActivityActionBar';
 import { Comment } from '../Comment';
@@ -11,11 +11,11 @@ import { Comment } from '../Comment';
 import { mockComment, mockCommentWithLongValues } from './mock-comment';
 
 const CommentSetterEffect = () => {
-  const setViewableActivity = useSetRecoilState(viewableActivityIdState);
+  const setViewableRecord = useSetRecoilState(viewableRecordIdState);
 
   useEffect(() => {
-    setViewableActivity('test-id');
-  }, [setViewableActivity]);
+    setViewableRecord('test-id');
+  }, [setViewableRecord]);
 
   return null;
 };

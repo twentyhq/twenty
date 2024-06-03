@@ -3,11 +3,11 @@ import { Meta, StoryObj } from '@storybook/react';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { RightDrawerActivityTopBar } from '../RightDrawerActivityTopBar';
+import { RightDrawerTopBar } from '../RightDrawerTopBar';
 
-const meta: Meta<typeof RightDrawerActivityTopBar> = {
+const meta: Meta<typeof RightDrawerTopBar> = {
   title: 'Modules/Activities/RightDrawer/RightDrawerActivityTopBar',
-  component: RightDrawerActivityTopBar,
+  component: RightDrawerTopBar,
   decorators: [
     (Story) => (
       <div style={{ width: '500px' }}>
@@ -22,6 +22,6 @@ const meta: Meta<typeof RightDrawerActivityTopBar> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof RightDrawerActivityTopBar>;
+type Story = StoryObj<typeof RightDrawerTopBar>;
 
 export const Default: Story = {};
