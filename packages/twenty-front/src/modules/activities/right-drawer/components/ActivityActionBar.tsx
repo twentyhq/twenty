@@ -1,16 +1,13 @@
 import styled from '@emotion/styled';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
-import { IconPlus, IconTrash } from 'twenty-ui';
+import { IconTrash } from 'twenty-ui';
 
-import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { useRefreshShowPageFindManyActivitiesQueries } from '@/activities/hooks/useRefreshShowPageFindManyActivitiesQueries';
 import { activityIdInDrawerState } from '@/activities/states/activityIdInDrawerState';
-import { activityTargetableEntityArrayState } from '@/activities/states/activityTargetableEntityArrayState';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
 import { temporaryActivityForEditorState } from '@/activities/states/temporaryActivityForEditorState';
-import { objectShowPageTargetableObjectState } from '@/activities/timeline/states/objectShowPageTargetableObjectIdState';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -33,9 +30,6 @@ export const ActivityActionBar = () => {
   const viewableRecordId = useRecoilValue(viewableRecordIdState);
   const activityIdInDrawer = useRecoilValue(activityIdInDrawerState);
 
-  const activityTargetableEntityArray = useRecoilValue(
-    activityTargetableEntityArrayState,
-  );
   const [, setIsRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
   const { deleteOneRecord: deleteOneActivity } = useDeleteOneRecord({
     objectNameSingular: CoreObjectNameSingular.Activity,
@@ -62,14 +56,8 @@ export const ActivityActionBar = () => {
     isUpsertingActivityInDBState,
   );
 
-  const objectShowPageTargetableObject = useRecoilValue(
-    objectShowPageTargetableObjectState,
-  );
-
   const { refreshShowPageFindManyActivitiesQueries } =
     useRefreshShowPageFindManyActivitiesQueries();
-
-  const openCreateActivity = useOpenCreateActivityDrawer();
 
   const deleteActivity = useRecoilCallback(
     ({ snapshot }) =>
@@ -129,32 +117,10 @@ export const ActivityActionBar = () => {
     ],
   );
 
-  const record = useRecoilValue(recordStoreFamilyState(viewableRecordId ?? ''));
-
-  const addActivity = () => {
-    setIsRightDrawerOpen(false);
-    if (isDefined(record) && isDefined(objectShowPageTargetableObject)) {
-      openCreateActivity({
-        type: record?.type,
-        customAssignee: record?.assignee,
-        targetableObjects: activityTargetableEntityArray,
-      });
-    }
-  };
-
   const actionsAreDisabled = isUpsertingActivityInDB;
-
-  const isCreateActionDisabled = isActivityInCreateMode;
 
   return (
     <StyledButtonContainer>
-      <IconButton
-        Icon={IconPlus}
-        onClick={addActivity}
-        size="medium"
-        variant="secondary"
-        disabled={actionsAreDisabled || isCreateActionDisabled}
-      />
       <IconButton
         Icon={IconTrash}
         onClick={deleteActivity}

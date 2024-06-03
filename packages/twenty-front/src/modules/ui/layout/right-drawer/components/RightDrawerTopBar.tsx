@@ -1,8 +1,11 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useRecoilState } from 'recoil';
-import { Chip, ChipAccent, ChipSize, ChipVariant, useIcons } from 'twenty-ui';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { Chip, ChipAccent, ChipSize, useIcons } from 'twenty-ui';
 
+import { ActivityActionBar } from '@/activities/right-drawer/components/ActivityActionBar';
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { RightDrawerTopBarCloseButton } from '@/ui/layout/right-drawer/components/RightDrawerTopBarCloseButton';
 import { RightDrawerTopBarExpandButton } from '@/ui/layout/right-drawer/components/RightDrawerTopBarExpandButton';
 import { RightDrawerTopBarMinimizeButton } from '@/ui/layout/right-drawer/components/RightDrawerTopBarMinimizeButton';
@@ -55,28 +58,48 @@ export const RightDrawerTopBar = ({ page }: { page: RightDrawerPages }) => {
 
   const PageIcon = getIcon(RIGHT_DRAWER_PAGE_ICONS[page]);
 
+  const viewableRecordNameSingular = useRecoilValue(
+    viewableRecordNameSingularState,
+  );
+
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular: viewableRecordNameSingular ?? 'company',
+  });
+
+  const ObjectIcon = getIcon(objectMetadataItem.icon);
+
+  const label =
+    page === RightDrawerPages.ViewRecord
+      ? objectMetadataItem.labelSingular
+      : RIGHT_DRAWER_PAGE_TITLES[page];
+
+  const Icon = page === RightDrawerPages.ViewRecord ? ObjectIcon : PageIcon;
+
   return (
     <StyledRightDrawerTopBar
       onClick={handleOnclick}
       isRightDrawerMinimized={isRightDrawerMinimized}
     >
-      {!isRightDrawerMinimized && (
-        <Chip
-          label={RIGHT_DRAWER_PAGE_TITLES[page]}
-          leftComponent={<PageIcon size={theme.icon.size.md} />}
-          size={ChipSize.Large}
-          accent={ChipAccent.TextSecondary}
-          variant={ChipVariant.Highlighted}
-        />
-      )}
+      {!isRightDrawerMinimized &&
+        (page === RightDrawerPages.EditActivity ||
+          page === RightDrawerPages.CreateActivity) && <ActivityActionBar />}
+      {!isRightDrawerMinimized &&
+        page !== RightDrawerPages.EditActivity &&
+        page !== RightDrawerPages.CreateActivity && (
+          <Chip
+            label={label}
+            leftComponent={<Icon size={theme.icon.size.md} />}
+            size={ChipSize.Large}
+            accent={ChipAccent.TextSecondary}
+            clickable={false}
+          />
+        )}
       {isRightDrawerMinimized && (
         <StyledMinimizeTopBarTitleContainer>
           <StyledMinimizeTopBarIcon>
-            <PageIcon size={theme.icon.size.md} />
+            <Icon size={theme.icon.size.md} />
           </StyledMinimizeTopBarIcon>
-          <StyledMinimizeTopBarTitle>
-            {RIGHT_DRAWER_PAGE_TITLES[page]}
-          </StyledMinimizeTopBarTitle>
+          <StyledMinimizeTopBarTitle>{label}</StyledMinimizeTopBarTitle>
         </StyledMinimizeTopBarTitleContainer>
       )}
       <StyledTopBarWrapper>
