@@ -105,7 +105,7 @@ export class MessagingErrorHandlingService {
     }
   }
 
-  public async handleRateLimitExceeded(
+  private async handleRateLimitExceeded(
     error: GmailError,
     syncStep: SyncStep,
     messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
@@ -159,7 +159,7 @@ export class MessagingErrorHandlingService {
     }
   }
 
-  public async handleInsufficientPermissions(
+  private async handleInsufficientPermissions(
     error: GmailError,
     syncStep: SyncStep,
     messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
@@ -184,7 +184,7 @@ export class MessagingErrorHandlingService {
     );
   }
 
-  public async handleNotFound(
+  private async handleNotFound(
     error: GmailError,
     syncStep: SyncStep,
     messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
@@ -208,7 +208,7 @@ export class MessagingErrorHandlingService {
     );
   }
 
-  public async throttle(
+  private async throttle(
     messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
     workspaceId: string,
   ): Promise<void> {
