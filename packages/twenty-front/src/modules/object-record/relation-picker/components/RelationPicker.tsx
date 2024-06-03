@@ -54,7 +54,7 @@ export const RelationPicker = ({
 
   const { entityId } = useContext(FieldContext);
 
-  const { createNewRecordAndOpenRightDrawer: handleOnCreate } =
+  const { createNewRecordAndOpenRightDrawer } =
     useAddNewRecordAndOpenRightDrawer({
       relationObjectMetadataNameSingular:
         fieldDefinition.metadata.relationObjectMetadataNameSingular,
@@ -68,7 +68,7 @@ export const RelationPicker = ({
       EmptyIcon={IconForbid}
       emptyLabel={'No ' + fieldDefinition.label}
       onCancel={onCancel}
-      onCreate={handleOnCreate}
+      onCreate={createNewRecordAndOpenRightDrawer}
       onEntitySelected={handleEntitySelected}
       width={width}
       relationObjectNameSingular={

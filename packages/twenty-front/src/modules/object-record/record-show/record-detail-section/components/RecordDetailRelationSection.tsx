@@ -139,12 +139,13 @@ export const RecordDetailRelationSection = ({
     );
   };
 
-  const { handleOnCreate } = useAddNewRecordAndOpenRightDrawer({
-    relationObjectMetadataNameSingular,
-    relationObjectMetadataItem,
-    relationFieldMetadataItem,
-    entityId,
-  });
+  const { createNewRecordAndOpenRightDrawer } =
+    useAddNewRecordAndOpenRightDrawer({
+      relationObjectMetadataNameSingular,
+      relationObjectMetadataItem,
+      relationFieldMetadataItem,
+      entityId,
+    });
 
   return (
     <RecordDetailSection>
@@ -182,7 +183,7 @@ export const RecordDetailRelationSection = ({
                       relationObjectMetadataNameSingular
                     }
                     relationPickerScopeId={dropdownId}
-                    onCreate={handleOnCreate}
+                    onCreate={createNewRecordAndOpenRightDrawer}
                   />
                 </RelationPickerScope>
               }
