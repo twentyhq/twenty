@@ -40,7 +40,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
   const { updateOneRecord } = useUpdateOneRecord({
     objectNameSingular:
       relationFieldMetadataItem?.relationDefinition?.targetObjectMetadata
-        .nameSingular ?? '',
+        .nameSingular ?? 'workspaceMember',
   });
 
   const { openRightDrawer } = useRightDrawer();
