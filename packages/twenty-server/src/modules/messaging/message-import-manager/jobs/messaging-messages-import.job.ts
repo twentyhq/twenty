@@ -38,19 +38,19 @@ export class MessagingMessagesImportJob
         continue;
       }
 
+      if (
+        messageChannel.throttlePauseUntil &&
+        messageChannel.throttlePauseUntil > new Date()
+      ) {
+        continue;
+      }
+
       await this.messagingTelemetryService.track({
         eventName: 'messages_import.triggered',
         workspaceId,
         connectedAccountId: messageChannel.connectedAccountId,
         messageChannelId: messageChannel.id,
       });
-
-      if (
-        messageChannel.throttlePauseUntil &&
-        messageChannel.throttlePauseUntil > new Date()
-      ) {
-        return;
-      }
 
       const connectedAccount =
         await this.connectedAccountRepository.getConnectedAccountOrThrow(
