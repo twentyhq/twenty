@@ -29,19 +29,19 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
 }) => {
   const objectMetadataItems = useRecoilValue(objectMetadataItemsState);
 
-  const nonSystemObjectMetadataItems = objectMetadataItems.filter(
-    ({ isSystem }) => !isSystem,
+  const selectableObjectMetadataItems = objectMetadataItems.filter(
+    ({ isSystem, isRemote }) => !isSystem && !isRemote,
   );
 
   const { searchFilterPerMetadataItemNameSingular } =
     useSearchFilterPerMetadataItem({
-      objectMetadataItems: nonSystemObjectMetadataItems,
+      objectMetadataItems: selectableObjectMetadataItems,
       searchFilterValue,
     });
 
   const objectRecordsToSelectAndMatchesSearchFilterTextFilterPerMetadataItem =
     Object.fromEntries(
-      nonSystemObjectMetadataItems
+      selectableObjectMetadataItems
         .map(({ nameSingular }) => {
           const selectedIds = selectedObjectRecordIds
             .filter(
@@ -74,16 +74,16 @@ export const useMultiObjectSearchMatchesSearchFilterAndToSelectQuery = ({
     );
 
   const { orderByFieldPerMetadataItem } = useOrderByFieldPerMetadataItem({
-    objectMetadataItems: nonSystemObjectMetadataItems,
+    objectMetadataItems: selectableObjectMetadataItems,
   });
 
   const { limitPerMetadataItem } = useLimitPerMetadataItem({
-    objectMetadataItems: nonSystemObjectMetadataItems,
+    objectMetadataItems: selectableObjectMetadataItems,
     limit,
   });
 
   const multiSelectQuery = useGenerateCombinedFindManyRecordsQuery({
-    operationSignatures: nonSystemObjectMetadataItems.map(
+    operationSignatures: selectableObjectMetadataItems.map(
       (objectMetadataItem) => ({
         objectNameSingular: objectMetadataItem.nameSingular,
         variables: {},

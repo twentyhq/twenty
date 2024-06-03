@@ -1,6 +1,6 @@
 import { CommandFactory } from 'nest-commander';
 
-import { filterException } from 'src/engine/utils/global-exception-handler.util';
+import { shouldFilterException } from 'src/engine/utils/global-exception-handler.util';
 import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
 import { LoggerService } from 'src/engine/integrations/logger/logger.service';
 
@@ -10,7 +10,7 @@ async function bootstrap() {
   const errorHandler = (err: Error) => {
     loggerService.error(err?.message, err?.name);
 
-    if (filterException(err)) {
+    if (shouldFilterException(err)) {
       return;
     }
 

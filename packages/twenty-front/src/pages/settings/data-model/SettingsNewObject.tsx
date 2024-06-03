@@ -1,7 +1,7 @@
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { IconSettings } from 'twenty-ui';
+import { H2Title, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useCreateOneObjectMetadataItem } from '@/object-metadata/hooks/useCreateOneObjectMetadataItem';
@@ -16,7 +16,7 @@ import {
 import { settingsCreateObjectInputSchema } from '@/settings/data-model/validation-schemas/settingsCreateObjectInputSchema';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
@@ -39,11 +39,12 @@ export const SettingsNewObject = () => {
     resolver: zodResolver(newObjectFormSchema),
   });
 
-  const canSave = formConfig.formState.isValid;
+  const canSave =
+    formConfig.formState.isValid && !formConfig.formState.isSubmitting;
 
-  const handleSave = async () => {
-    const formValues = formConfig.getValues();
-
+  const handleSave = async (
+    formValues: SettingsDataModelNewObjectFormValues,
+  ) => {
     try {
       const { data: response } = await createOneObjectMetadataItem(
         settingsCreateObjectInputSchema.parse(formValues),
@@ -58,7 +59,7 @@ export const SettingsNewObject = () => {
       );
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
-        variant: 'error',
+        variant: SnackBarVariant.Error,
       });
     }
   };
@@ -81,7 +82,7 @@ export const SettingsNewObject = () => {
             <SaveAndCancelButtons
               isSaveDisabled={!canSave}
               onCancel={() => navigate(settingsObjectsPagePath)}
-              onSave={handleSave}
+              onSave={formConfig.handleSubmit(handleSave)}
             />
           </SettingsHeaderContainer>
           <Section>

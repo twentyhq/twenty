@@ -1,3 +1,5 @@
+import pick from 'lodash.pick';
+
 import { getRecordsFromRecordConnection } from '@/object-record/cache/utils/getRecordsFromRecordConnection';
 import { RecordGqlNode } from '@/object-record/graphql/types/RecordGqlNode';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
@@ -12,15 +14,11 @@ export const getRecordFromRecordNode = <T extends ObjectRecord>({
   return {
     ...Object.fromEntries(
       Object.entries(recordNode).map(([fieldName, value]) => {
-        if (isUndefinedOrNull(value)) {
-          return [fieldName, value];
-        }
-
-        if (Array.isArray(value)) {
-          return [fieldName, value];
-        }
-
-        if (typeof value !== 'object') {
+        if (
+          isUndefinedOrNull(value) ||
+          Array.isArray(value) ||
+          typeof value !== 'object'
+        ) {
           return [fieldName, value];
         }
 
@@ -32,7 +30,10 @@ export const getRecordFromRecordNode = <T extends ObjectRecord>({
           : [fieldName, getRecordFromRecordNode<T>({ recordNode: value })];
       }),
     ),
-    id: recordNode.id,
-    __typename: recordNode.__typename,
+    // Only adds `id` and `__typename` if they exist.
+    // RawJson field value passes through this method and does not have `id` or `__typename`.
+    // This prevents adding an undefined `id` and `__typename` to the RawJson field value,
+    // which is invalid JSON.
+    ...pick(recordNode, ['id', '__typename'] as const),
   } as T;
 };

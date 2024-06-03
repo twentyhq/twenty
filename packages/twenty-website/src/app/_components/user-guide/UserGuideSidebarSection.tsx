@@ -31,7 +31,7 @@ const StyledTitle = styled.div`
   font-weight: 600;
 `;
 
-const StyledSubTopicItem = styled.div<{ isselected: boolean }>`
+const StyledSubTopicItem = styled.a<{ isselected: boolean }>`
   cursor: pointer;
   display: flex;
   flex-direction: row;
@@ -135,6 +135,7 @@ const UserGuideSidebarSection = ({
                 <StyledSubTopicItem
                   key={card.title}
                   isselected={isselected}
+                  href={`/user-guide/${card.fileName}`}
                   onClick={() => router.push(`/user-guide/${card.fileName}`)}
                   onMouseEnter={() => setHoveredItem(card.title)}
                   onMouseLeave={() => setHoveredItem(null)}

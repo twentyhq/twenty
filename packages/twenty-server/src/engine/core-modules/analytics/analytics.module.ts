@@ -11,5 +11,6 @@ import { AnalyticsResolver } from './analytics.resolver';
       baseURL: 'https://t.twenty.com/api/v1/s2s',
     }),
   ],
+  exports: [AnalyticsService],
 })
 export class AnalyticsModule {}

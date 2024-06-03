@@ -105,12 +105,12 @@ export class ConvertRecordPositionsToIntegers extends CommandRunner {
     transactionManager: any,
   ): Promise<void> {
     await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}.${tableName} SET position = subquery.position
+      `UPDATE ${dataSourceSchema}."${tableName}" SET position = subquery.position
       FROM (
         SELECT id, ROW_NUMBER() OVER (ORDER BY position) as position
-        FROM ${dataSourceSchema}.${tableName}
+        FROM ${dataSourceSchema}."${tableName}"
       ) as subquery
-      WHERE ${dataSourceSchema}.${tableName}.id = subquery.id`,
+      WHERE ${dataSourceSchema}."${tableName}".id = subquery.id`,
       [],
       workspaceId,
       transactionManager,

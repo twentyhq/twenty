@@ -6,21 +6,21 @@ import { v4 } from 'uuid';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
 import { MessageRepository } from 'src/modules/messaging/repositories/message.repository';
-import { MessageChannelMessageAssociationObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel-message-association.object-metadata';
-import { MessageThreadObjectMetadata } from 'src/modules/messaging/standard-objects/message-thread.object-metadata';
+import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel-message-association.workspace-entity';
+import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-thread.workspace-entity';
 import { MessageThreadRepository } from 'src/modules/messaging/repositories/message-thread.repository';
-import { MessageObjectMetadata } from 'src/modules/messaging/standard-objects/message.object-metadata';
+import { MessageWorkspaceEntity } from 'src/modules/messaging/standard-objects/message.workspace-entity';
 
 @Injectable()
 export class MessageThreadService {
   constructor(
     @InjectObjectMetadataRepository(
-      MessageChannelMessageAssociationObjectMetadata,
+      MessageChannelMessageAssociationWorkspaceEntity,
     )
     private readonly messageChannelMessageAssociationRepository: MessageChannelMessageAssociationRepository,
-    @InjectObjectMetadataRepository(MessageObjectMetadata)
+    @InjectObjectMetadataRepository(MessageWorkspaceEntity)
     private readonly messageRepository: MessageRepository,
-    @InjectObjectMetadataRepository(MessageThreadObjectMetadata)
+    @InjectObjectMetadataRepository(MessageThreadWorkspaceEntity)
     private readonly messageThreadRepository: MessageThreadRepository,
   ) {}
 

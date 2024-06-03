@@ -9,12 +9,13 @@ import {
   IconDoorEnter,
   IconHierarchy2,
   IconMail,
+  IconRocket,
   IconSettings,
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui';
 
-import { useSignOutAndRedirect } from '@/auth/hooks/useSignOutAndRedirect';
+import { useAuth } from '@/auth/hooks/useAuth';
 import { billingState } from '@/client-config/states/billingState';
 import { SettingsNavigationDrawerItem } from '@/settings/components/SettingsNavigationDrawerItem';
 import { SettingsPath } from '@/types/SettingsPath';
@@ -24,7 +25,7 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { NavigationDrawerSectionTitle } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerSectionTitle';
 
 export const SettingsNavigationDrawerItems = () => {
-  const handleLogout = useSignOutAndRedirect();
+  const { signOut } = useAuth();
 
   const billing = useRecoilValue(billingState);
 
@@ -105,9 +106,14 @@ export const SettingsNavigationDrawerItems = () => {
 
       <NavigationDrawerSection>
         <NavigationDrawerSectionTitle label="Other" />
+        <SettingsNavigationDrawerItem
+          label="Releases"
+          path={SettingsPath.Releases}
+          Icon={IconRocket}
+        />
         <NavigationDrawerItem
           label="Logout"
-          onClick={handleLogout}
+          onClick={signOut}
           Icon={IconDoorEnter}
         />
       </NavigationDrawerSection>

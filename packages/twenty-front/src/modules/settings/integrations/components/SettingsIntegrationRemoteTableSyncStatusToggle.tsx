@@ -4,10 +4,12 @@ import { Toggle } from '@/ui/input/components/Toggle';
 import { RemoteTableStatus } from '~/generated-metadata/graphql';
 
 export const SettingsIntegrationRemoteTableSyncStatusToggle = ({
-  table,
+  tableName,
+  tableStatus,
   onSyncUpdate,
 }: {
-  table: { id: string; name: string; status: RemoteTableStatus };
+  tableName: string;
+  tableStatus: RemoteTableStatus;
   onSyncUpdate: (value: boolean, tableName: string) => Promise<void>;
 }) => {
   const [isToggleLoading, setIsToggleLoading] = useState(false);
@@ -15,13 +17,13 @@ export const SettingsIntegrationRemoteTableSyncStatusToggle = ({
   const onChange = async (newValue: boolean) => {
     if (isToggleLoading) return;
     setIsToggleLoading(true);
-    await onSyncUpdate(newValue, table.name);
+    await onSyncUpdate(newValue, tableName);
     setIsToggleLoading(false);
   };
 
   return (
     <Toggle
-      value={table.status === RemoteTableStatus.Synced}
+      value={tableStatus === RemoteTableStatus.Synced}
       disabled={isToggleLoading}
       onChange={onChange}
     />

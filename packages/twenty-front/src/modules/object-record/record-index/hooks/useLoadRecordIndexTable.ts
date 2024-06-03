@@ -29,19 +29,16 @@ export const useFindManyParams = (
     objectMetadataItem?.fields ?? [],
   );
 
-  if (objectMetadataItem?.isRemote) {
-    return { objectNameSingular, filter };
-  }
-
-  const orderBy = turnSortsIntoOrderBy(
-    tableSorts,
-    objectMetadataItem?.fields ?? [],
-  );
+  const orderBy = turnSortsIntoOrderBy(objectMetadataItem, tableSorts);
 
   return { objectNameSingular, filter, orderBy };
 };
 
 export const useLoadRecordIndexTable = (objectNameSingular: string) => {
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+
   const { setRecordTableData, setIsRecordTableInitialLoading } =
     useRecordTable();
   const { tableLastRowVisibleState } = useRecordTableStates();
@@ -49,7 +46,7 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const params = useFindManyParams(objectNameSingular);
 
-  const recordGqlFields = useRecordTableRecordGqlFields();
+  const recordGqlFields = useRecordTableRecordGqlFields({ objectMetadataItem });
 
   const {
     records,
@@ -64,6 +61,9 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
       setLastRowVisible(false);
       setIsRecordTableInitialLoading(false);
     },
+    onError: () => {
+      setIsRecordTableInitialLoading(false);
+    },
   });
 
   return {
@@ -71,7 +71,7 @@ export const useLoadRecordIndexTable = (objectNameSingular: string) => {
       currentWorkspace?.activationStatus === 'active'
         ? records
         : SIGN_IN_BACKGROUND_MOCK_COMPANIES,
-    totalCount: totalCount || 0,
+    totalCount: totalCount,
     loading,
     fetchMoreRecords,
     queryStateIdentifier,

@@ -1,11 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { IconCalendarEvent, IconMailCog } from 'twenty-ui';
+import { H2Title, IconCalendarEvent, IconMailCog } from 'twenty-ui';
 
 import { SettingsNavigationCard } from '@/settings/components/SettingsNavigationCard';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Section } from '@/ui/layout/section/components/Section';
 
 const StyledCardsContainer = styled.div`

@@ -12,9 +12,10 @@ import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
-import { UserModule } from 'src/engine/core-modules/user/user.module';
 import { WorkspaceWorkspaceMemberListener } from 'src/engine/core-modules/workspace/workspace-workspace-member.listener';
 import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
+import { User } from 'src/engine/core-modules/user/user.entity';
+import { UserWorkspaceResolver } from 'src/engine/core-modules/user-workspace/user-workspace.resolver';
 
 import { workspaceAutoResolverOpts } from './workspace.auto-resolver-opts';
 import { Workspace } from './workspace.entity';
@@ -30,14 +31,13 @@ import { WorkspaceService } from './services/workspace.service';
         FileUploadModule,
         WorkspaceCacheVersionModule,
         NestjsQueryTypeOrmModule.forFeature(
-          [Workspace, UserWorkspace, FeatureFlagEntity],
+          [User, Workspace, UserWorkspace, FeatureFlagEntity],
           'core',
         ),
         UserWorkspaceModule,
         WorkspaceManagerModule,
         DataSourceModule,
         TypeORMModule,
-        UserModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,
@@ -47,6 +47,7 @@ import { WorkspaceService } from './services/workspace.service';
   providers: [
     WorkspaceResolver,
     WorkspaceService,
+    UserWorkspaceResolver,
     WorkspaceWorkspaceMemberListener,
   ],
 })

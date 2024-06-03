@@ -38,6 +38,11 @@ export class WorkspaceDatasourceFactory {
       logging: 'all',
       schema: dataSourceMetadata.schema,
       entities,
+      ssl: this.environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')
+        ? {
+            rejectUnauthorized: false,
+          }
+        : undefined,
     });
 
     await workspaceDataSource.initialize();

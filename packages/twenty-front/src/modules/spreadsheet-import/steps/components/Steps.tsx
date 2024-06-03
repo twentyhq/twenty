@@ -1,11 +1,11 @@
 import styled from '@emotion/styled';
+import { MOBILE_VIEWPORT } from 'twenty-ui';
 
 import { useSpreadsheetImportInitialStep } from '@/spreadsheet-import/hooks/useSpreadsheetImportInitialStep';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 import { StepBar } from '@/ui/navigation/step-bar/components/StepBar';
 import { useStepBar } from '@/ui/navigation/step-bar/hooks/useStepBar';
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 
 import { UploadFlow } from './UploadFlow';
 
@@ -35,7 +35,7 @@ export const Steps = () => {
     initialStepState?.type,
   );
 
-  const { nextStep, activeStep } = useStepBar({
+  const { nextStep, prevStep, activeStep } = useStepBar({
     initialStep,
   });
 
@@ -48,7 +48,7 @@ export const Steps = () => {
           ))}
         </StepBar>
       </StyledHeader>
-      <UploadFlow nextStep={nextStep} />
+      <UploadFlow nextStep={nextStep} prevStep={prevStep} />
     </>
   );
 };

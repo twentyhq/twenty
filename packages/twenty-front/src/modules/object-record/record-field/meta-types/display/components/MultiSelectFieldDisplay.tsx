@@ -1,30 +1,24 @@
-import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField';
-import { Tag } from '@/ui/display/tag/components/Tag';
-import {
-  ExpandableList,
-  ExpandableListProps,
-} from '@/ui/layout/expandable-list/components/ExpandableList';
+import { Tag } from 'twenty-ui';
 
-type MultiSelectFieldDisplayProps = ExpandableListProps;
-export const MultiSelectFieldDisplay = ({
-  isHovered,
-  reference,
-  withDropDownBorder,
-}: MultiSelectFieldDisplayProps) => {
+import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
+import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField';
+import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
+
+export const MultiSelectFieldDisplay = () => {
   const { fieldValues, fieldDefinition } = useMultiSelectField();
 
+  const { isFocused } = useFieldFocus();
+
   const selectedOptions = fieldValues
-    ? fieldDefinition.metadata.options.filter((option) =>
+    ? fieldDefinition.metadata.options?.filter((option) =>
         fieldValues.includes(option.value),
       )
     : [];
 
-  return selectedOptions ? (
-    <ExpandableList
-      isHovered={isHovered}
-      reference={reference}
-      withDropDownBorder={withDropDownBorder}
-    >
+  if (!selectedOptions) return null;
+
+  return (
+    <ExpandableList isChipCountDisplayed={isFocused}>
       {selectedOptions.map((selectedOption, index) => (
         <Tag
           key={index}
@@ -33,7 +27,5 @@ export const MultiSelectFieldDisplay = ({
         />
       ))}
     </ExpandableList>
-  ) : (
-    <></>
   );
 };

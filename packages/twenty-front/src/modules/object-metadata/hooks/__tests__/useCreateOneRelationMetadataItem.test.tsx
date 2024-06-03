@@ -4,8 +4,7 @@ import { act, renderHook } from '@testing-library/react';
 import { RecoilRoot } from 'recoil';
 
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
-import { FieldMetadataType } from '~/generated/graphql';
-import { RelationMetadataType } from '~/generated-metadata/graphql';
+import { RelationMetadataType } from '~/generated/graphql';
 
 import {
   query,
@@ -46,7 +45,6 @@ describe('useCreateOneRelationMetadataItem', () => {
         relationType: RelationMetadataType.OneToOne,
         field: {
           label: 'label',
-          type: FieldMetadataType.Relation,
         },
         objectMetadataId: 'objectMetadataId',
         connect: {

@@ -1,64 +1,12 @@
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { SettingsObjectFieldSelectFormValues } from '@/settings/data-model/components/SettingsObjectFieldSelectForm';
 import {
   mockedCompanyObjectMetadataItem,
-  mockedOpportunityObjectMetadataItem,
   mockedPersonObjectMetadataItem,
 } from '~/testing/mock-data/metadata';
 
 import { getFieldPreviewValueFromRecord } from '../getFieldPreviewValueFromRecord';
 
 describe('getFieldPreviewValueFromRecord', () => {
-  describe('SELECT field', () => {
-    it('returns the select option corresponding to the record field value', () => {
-      // Given
-      const record: ObjectRecord = {
-        id: '',
-        stage: 'MEETING',
-        __typename: 'Opportunity',
-      };
-      const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
-        ({ name }) => name === 'stage',
-      )!;
-      const selectOptions: SettingsObjectFieldSelectFormValues =
-        fieldMetadataItem.options ?? [];
-
-      // When
-      const result = getFieldPreviewValueFromRecord({
-        record,
-        fieldMetadataItem,
-        selectOptions,
-      });
-
-      // Then
-      expect(result).toEqual(selectOptions[2].value);
-    });
-
-    it('returns undefined if the select option was not found', () => {
-      // Given
-      const record: ObjectRecord = {
-        id: '',
-        industry: 'DOES_NOT_EXIST',
-        __typename: 'Opportunity',
-      };
-      const fieldMetadataItem = mockedOpportunityObjectMetadataItem.fields.find(
-        ({ name }) => name === 'stage',
-      )!;
-      const selectOptions: SettingsObjectFieldSelectFormValues =
-        fieldMetadataItem.options ?? [];
-
-      // When
-      const result = getFieldPreviewValueFromRecord({
-        record,
-        fieldMetadataItem,
-        selectOptions,
-      });
-
-      // Then
-      expect(result).toBeUndefined();
-    });
-  });
-
   describe('RELATION field', () => {
     it('returns the first relation record from a list of edges ("to many" relation)', () => {
       // Given

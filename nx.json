@@ -106,30 +106,46 @@
       "dependsOn": ["^build"]
     },
     "storybook:build": {
-      "executor": "@nx/storybook:build",
+      "executor": "nx:run-commands",
       "cache": true,
       "dependsOn": ["^build"],
       "inputs": ["^default", "excludeTests"],
-      "outputs": ["{options.outputDir}"],
+      "outputs": ["{projectRoot}/{options.output-dir}"],
       "options": {
-        "outputDir": "{projectRoot}/storybook-static",
-        "configDir": "{projectRoot}/.storybook"
+        "cwd": "{projectRoot}",
+        "command": "storybook build",
+        "output-dir": "storybook-static",
+        "config-dir": ".storybook"
+      },
+      "configurations": {
+        "test": {
+          "command": "storybook build --test"
+        }
       }
     },
     "storybook:dev": {
-      "executor": "@nx/storybook:storybook",
+      "executor": "nx:run-commands",
       "cache": true,
       "dependsOn": ["^build"],
       "options": {
-        "configDir": "{projectRoot}/.storybook"
+        "cwd": "{projectRoot}",
+        "command": "storybook dev",
+        "config-dir": ".storybook"
       }
     },
     "storybook:static": {
-      "executor": "@nx/web:file-server",
+      "executor": "nx:run-commands",
+      "dependsOn": ["storybook:build"],
       "options": {
-        "staticFilePath": "{projectRoot}/storybook-static",
-        "parallel": false,
-        "watch": false
+        "cwd": "{projectRoot}",
+        "command": "npx http-server {args.staticDir} -a={args.host} --port={args.port} --silent={args.silent}",
+        "staticDir": "storybook-static",
+        "host": "localhost",
+        "port": 6006,
+        "silent": true
+      },
+      "configurations": {
+        "test": {}
       }
     },
     "storybook:coverage": {
@@ -148,6 +164,9 @@
         "command": "npx nyc report --reporter={args.reporter} --reporter=text-summary -t {args.coverageDir} --report-dir {args.coverageDir} --check-coverage --cwd={projectRoot}",
         "coverageDir": "coverage/storybook",
         "reporter": "lcov"
+      },
+      "configurations": {
+        "text": { "reporter": "text" }
       }
     },
     "storybook:test": {
@@ -166,11 +185,31 @@
         "port": 6006
       }
     },
+    "storybook:test:nocoverage": {
+      "executor": "nx:run-commands",
+      "inputs": ["^default", "excludeTests"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "test-storybook --url http://localhost:{args.port} --maxWorkers=3"
+        ],
+        "port": 6006
+      }
+    },
     "storybook:static:test": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:static {projectName} --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port}'"
+          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:static {projectName} --port={args.port} --configuration=test' 'npx wait-on tcp:{args.port} && nx storybook:test {projectName} --port={args.port}'"
+        ],
+        "port": 6006
+      }
+    },
+    "storybook:performance:test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "npx concurrently --kill-others --success=first -n SB,TEST 'nx storybook:dev {projectName} --configuration=performance --port={args.port}' 'npx wait-on tcp:{args.port} && nx storybook:test:nocoverage {projectName} --port={args.port} --configuration=performance'"
         ],
         "port": 6006
       }
@@ -179,12 +218,18 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "command": "cross-var chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --build-script-name=build-storybook --exit-zero-on-changes={args.ci}",
-        "ci": false
+        "commands": [
+          {
+            "command": "nx storybook:build {projectName} --configuration=test",
+            "forwardAllArgs": false
+          },
+          "cross-var chromatic --project-token=$CHROMATIC_PROJECT_TOKEN --storybook-build-dir=storybook-static {args.ci}"
+        ],
+        "parallel": false
       },
       "configurations": {
         "ci": {
-          "ci": true
+          "ci": "--exit-zero-on-changes"
         }
       }
     },

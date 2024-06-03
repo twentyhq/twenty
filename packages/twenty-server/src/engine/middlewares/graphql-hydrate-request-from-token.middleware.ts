@@ -31,7 +31,11 @@ export class GraphQLHydrateRequestFromTokenMiddleware
       'Verify',
       'SignUp',
       'RenewToken',
+      'EmailPasswordResetLink',
+      'ValidatePasswordResetToken',
+      'UpdatePasswordViaResetToken',
       'IntrospectionQuery',
+      'ExchangeAuthorizationCode',
     ];
 
     if (

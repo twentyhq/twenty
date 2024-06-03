@@ -11,7 +11,6 @@ import {
 
 import { RemoteTableEntity } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table.entity';
 import { UserMappingOptions } from 'src/engine/metadata-modules/remote-server/types/user-mapping-options';
-import { DistantTables } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/types/distant-table';
 
 export enum RemoteServerType {
   POSTGRES_FDW = 'postgres_fdw',
@@ -47,6 +46,9 @@ export class RemoteServerEntity<T extends RemoteServerType> {
   @Column({ type: 'text', nullable: true })
   foreignDataWrapperType: T;
 
+  @Column({ type: 'text', nullable: true })
+  label: string;
+
   @Column({ nullable: true, type: 'jsonb' })
   foreignDataWrapperOptions: ForeignDataWrapperOptions<T>;
 
@@ -58,9 +60,6 @@ export class RemoteServerEntity<T extends RemoteServerType> {
 
   @Column({ nullable: false, type: 'uuid' })
   workspaceId: string;
-
-  @Column({ type: 'jsonb', nullable: true })
-  availableTables: DistantTables;
 
   @OneToMany(() => RemoteTableEntity, (table) => table.server, {
     cascade: true,

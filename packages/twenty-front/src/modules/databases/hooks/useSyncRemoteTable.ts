@@ -1,9 +1,8 @@
 import { useCallback } from 'react';
 import { ApolloClient, useApolloClient, useMutation } from '@apollo/client';
-import { getOperationName } from '@apollo/client/utilities';
 
 import { SYNC_REMOTE_TABLE } from '@/databases/graphql/mutations/syncRemoteTable';
-import { GET_MANY_REMOTE_TABLES } from '@/databases/graphql/queries/findManyRemoteTables';
+import { modifyRemoteTableFromCache } from '@/databases/utils/modifyRemoteTableFromCache';
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { useFindManyObjectMetadataItems } from '@/object-metadata/hooks/useFindManyObjectMetadataItems';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
@@ -13,6 +12,7 @@ import {
   SyncRemoteTableMutation,
   SyncRemoteTableMutationVariables,
 } from '~/generated-metadata/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 export const useSyncRemoteTable = () => {
   const apolloMetadataClient = useApolloMetadataClient();
@@ -24,7 +24,6 @@ export const useSyncRemoteTable = () => {
   const { findManyRecordsQuery: findManyViewsQuery } = useFindManyRecordsQuery({
     objectNameSingular: CoreObjectNameSingular.View,
   });
-
   const [mutate] = useMutation<
     SyncRemoteTableMutation,
     SyncRemoteTableMutationVariables
@@ -38,11 +37,19 @@ export const useSyncRemoteTable = () => {
         variables: {
           input,
         },
-        awaitRefetchQueries: true,
-        refetchQueries: [getOperationName(GET_MANY_REMOTE_TABLES) ?? ''],
+        update: (cache, { data }) => {
+          if (isDefined(data)) {
+            modifyRemoteTableFromCache({
+              cache: cache,
+              remoteTableName: input.name,
+              fieldModifiers: {
+                status: () => data.syncRemoteTable.status,
+              },
+            });
+          }
+        },
       });
 
-      // TODO: we should return the tables with the columns and store in cache instead of refetching
       await refetchObjectMetadataItems();
       await apolloClient.query({
         query: findManyViewsQuery,

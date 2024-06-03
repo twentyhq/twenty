@@ -48,7 +48,7 @@ const StyledAttendanceIndicator = styled.div<{ active?: boolean }>`
 const StyledLabels = styled.div`
   align-items: center;
   display: flex;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${({ theme }) => theme.font.color.primary};
   gap: ${({ theme }) => theme.spacing(2)};
   flex: 1 0 auto;
 `;
@@ -56,6 +56,7 @@ const StyledLabels = styled.div`
 const StyledTime = styled.div`
   align-items: center;
   display: flex;
+  color: ${({ theme }) => theme.font.color.tertiary};
   gap: ${({ theme }) => theme.spacing(1)};
   width: ${({ theme }) => theme.spacing(26)};
 `;

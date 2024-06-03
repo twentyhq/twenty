@@ -13,6 +13,7 @@ module.exports = {
     'func-style': ['error', 'declaration', { allowArrowFunctions: true }],
     'no-console': ['warn', { allow: ['group', 'groupCollapsed', 'groupEnd'] }],
     'no-control-regex': 0,
+    'no-debugger': 'error',
     'no-duplicate-imports': 'error',
     'no-undef': 'off',
     'no-unused-vars': 'off',

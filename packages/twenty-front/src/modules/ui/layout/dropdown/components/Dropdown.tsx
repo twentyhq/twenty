@@ -36,6 +36,7 @@ type DropdownProps = {
   dropdownPlacement?: Placement;
   dropdownMenuWidth?: `${string}px` | `${number}%` | 'auto' | number;
   dropdownOffset?: { x?: number; y?: number };
+  dropdownStrategy?: 'fixed' | 'absolute';
   disableBlur?: boolean;
   onClickOutside?: () => void;
   onClose?: () => void;
@@ -51,6 +52,7 @@ export const Dropdown = ({
   dropdownId,
   dropdownHotkeyScope,
   dropdownPlacement = 'bottom-end',
+  dropdownStrategy = 'absolute',
   dropdownOffset = { x: 0, y: 0 },
   disableBlur = false,
   onClickOutside,
@@ -75,6 +77,7 @@ export const Dropdown = ({
     placement: dropdownPlacement,
     middleware: [flip(), ...offsetMiddlewares],
     whileElementsMounted: autoUpdate,
+    strategy: dropdownStrategy,
   });
 
   const handleHotkeyTriggered = () => {

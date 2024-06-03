@@ -26,7 +26,7 @@
 
 We’ve spent thousands of hours grappling with traditional CRMs like Pipedrive and Salesforce to align them with our business needs, only to end up frustrated — customizations are complex and the closed ecosystems of these platforms can feel restrictive.
 
-We felt the need for a CRM platform that empowers rather than constrains. We believe the next great CRM will come from the open source community. And we’ve packed Twenty with powerful features to give you full control and help you run your business efficiently. 
+We felt the need for a CRM platform that empowers rather than constrains. We believe the next great CRM will come from the open-source community. We’ve packed Twenty with powerful features to give you full control and help you run your business efficiently. 
 
 <br>
 
@@ -61,13 +61,13 @@ Please feel free to flag any specific need you have need by creating an issue.
 
 Below are some features we have implemented to date:
 
-+ [Add, filter, sort, edit and track customers](#add-filter-sort-edit-and-track-customers)
++ [Add, filter, sort, edit, and track customers](#add-filter-sort-edit-and-track-customers)
 + [Create one or several opportunities for each company](#create-one-or-several-opportunities-for-each-company)
 + [See rich notes tasks displayed in a timeline](#see-rich-notes-tasks-displayed-in-a-timeline)
 + [Create tasks on records](#create-tasks-on-records)
 + [Navigate quickly through the app using keyboard shortcuts and search](#navigate-quickly-through-the-app-using-keyboard-shortcuts-and-search)
 
-## Add, filter, sort, edit and track customers:
+## Add, filter, sort, edit, and track customers:
 
 <p align="center">
     <picture>

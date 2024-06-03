@@ -1,10 +1,10 @@
-import { AddressObject } from 'mailparser';
+import addressparser from 'addressparser';
 
 import { Participant } from 'src/modules/messaging/types/gmail-message';
 
 const formatAddressObjectAsArray = (
-  addressObject: AddressObject | AddressObject[],
-): AddressObject[] => {
+  addressObject: addressparser.EmailAddress | addressparser.EmailAddress[],
+): addressparser.EmailAddress[] => {
   return Array.isArray(addressObject) ? addressObject : [addressObject];
 };
 
@@ -13,24 +13,23 @@ const removeSpacesAndLowerCase = (email: string): string => {
 };
 
 export const formatAddressObjectAsParticipants = (
-  addressObject: AddressObject | AddressObject[] | undefined,
+  addressObject:
+    | addressparser.EmailAddress
+    | addressparser.EmailAddress[]
+    | undefined,
   role: 'from' | 'to' | 'cc' | 'bcc',
 ): Participant[] => {
   if (!addressObject) return [];
   const addressObjects = formatAddressObjectAsArray(addressObject);
 
   const participants = addressObjects.map((addressObject) => {
-    const emailAdresses = addressObject.value;
+    const address = addressObject.address;
 
-    return emailAdresses.map((emailAddress) => {
-      const { name, address } = emailAddress;
-
-      return {
-        role,
-        handle: address ? removeSpacesAndLowerCase(address) : '',
-        displayName: name || '',
-      };
-    });
+    return {
+      role,
+      handle: address ? removeSpacesAndLowerCase(address) : '',
+      displayName: addressObject.name || '',
+    };
   });
 
   return participants.flat();

@@ -1,6 +1,7 @@
+import { ThemeColor } from 'twenty-ui';
+
 import { RATING_VALUES } from '@/object-record/record-field/meta-types/constants/RatingValues';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
-import { ThemeColor } from '@/ui/theme/constants/MainColorNames';
 
 import { CurrencyCode } from './CurrencyCode';
 
@@ -173,4 +174,8 @@ export type FieldSelectValue = string | null;
 export type FieldMultiSelectValue = string[] | null;
 
 export type FieldRelationValue = EntityForSelect | null;
-export type FieldJsonValue = string;
+
+// See https://zod.dev/?id=json-type
+type Literal = string | number | boolean | null;
+export type Json = Literal | { [key: string]: Json } | Json[];
+export type FieldJsonValue = Record<string, Json> | Json[] | null;

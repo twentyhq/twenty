@@ -8,6 +8,7 @@ import {
 
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 type CustomResolverQueryResult<
@@ -62,7 +63,7 @@ export const useCustomResolver = <
     variables: queryVariables,
     onError: (error) => {
       enqueueSnackBar(error.message || `Error loading ${objectName}`, {
-        variant: 'error',
+        variant: SnackBarVariant.Error,
       });
     },
   });

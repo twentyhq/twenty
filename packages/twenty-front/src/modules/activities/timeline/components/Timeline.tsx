@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { TimelineCreateButtonGroup } from '@/activities/timeline/components/TimelineCreateButtonGroup';
+import { TimelineSkeletonLoader } from '@/activities/timeline/components/TimelineSkeletonLoader';
 import { timelineActivitiesForGroupState } from '@/activities/timeline/states/timelineActivitiesForGroupState';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
@@ -29,12 +30,18 @@ const StyledMainContainer = styled.div`
 
 export const Timeline = ({
   targetableObject,
+  loading,
 }: {
   targetableObject: ActivityTargetableObject;
+  loading: boolean;
 }) => {
   const timelineActivitiesForGroup = useRecoilValue(
     timelineActivitiesForGroupState,
   );
+
+  if (loading) {
+    return <TimelineSkeletonLoader />;
+  }
 
   if (timelineActivitiesForGroup.length === 0) {
     return (

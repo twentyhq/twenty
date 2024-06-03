@@ -15,6 +15,7 @@ import { WorkspaceSyncObjectMetadataService } from 'src/engine/workspace-manager
 import { WorkspaceSyncRelationMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-relation-metadata.service';
 import { WorkspaceSyncFieldMetadataService } from 'src/engine/workspace-manager/workspace-sync-metadata/services/workspace-sync-field-metadata.service';
 import { WorkspaceMigrationBuilderModule } from 'src/engine/workspace-manager/workspace-migration-builder/workspace-migration-builder.module';
+import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { WorkspaceMigrationBuilderModule } from 'src/engine/workspace-manager/wo
       'metadata',
     ),
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
+    WorkspaceCacheVersionModule,
   ],
   providers: [
     ...workspaceSyncMetadataFactories,

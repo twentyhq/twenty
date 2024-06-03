@@ -1,16 +1,14 @@
 import { EntityManager } from 'typeorm';
 
 import { DEV_SEED_CONNECTED_ACCOUNT_IDS } from 'src/database/typeorm-seeds/workspace/connected-account';
+import { MessageChannelSyncSubStatus } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
 
 const tableName = 'messageChannel';
 
 export const DEV_SEED_MESSAGE_CHANNEL_IDS = {
-  TIM_INCOMING: '20202020-9b80-4c2c-a597-383db48de1d6',
-  TIM_OUTGOING: '20202020-09ed-4eb9-8b23-62aa4fd81d83',
-  JONY_INCOMING: '20202020-5ffe-4b32-814a-983d5e4911cd',
-  JONY_OUTGOING: '20202020-9dad-4329-8180-62647a2d7510',
-  PHIL_INCOMING: '20202020-e2f1-49b5-85d2-5d3a3386990c',
-  PHIL_OUTGOING: '20202020-fdff-438f-9132-7d5f216dfc4d',
+  TIM: '20202020-9b80-4c2c-a597-383db48de1d6',
+  JONY: '20202020-5ffe-4b32-814a-983d5e4911cd',
+  PHIL: '20202020-e2f1-49b5-85d2-5d3a3386990c',
 };
 
 export const seedMessageChannel = async (
@@ -30,74 +28,48 @@ export const seedMessageChannel = async (
       'connectedAccountId',
       'handle',
       'visibility',
+      'syncSubStatus',
     ])
     .orIgnore()
     .values([
       {
-        id: DEV_SEED_MESSAGE_CHANNEL_IDS.TIM_INCOMING,
+        id: DEV_SEED_MESSAGE_CHANNEL_IDS.TIM,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
         isContactAutoCreationEnabled: true,
         type: 'email',
         connectedAccountId: DEV_SEED_CONNECTED_ACCOUNT_IDS.TIM,
-        handle: 'outgoing',
+        handle: 'tim@apple.dev',
         visibility: 'share_everything',
+        syncSubStatus:
+          MessageChannelSyncSubStatus.FULL_MESSAGE_LIST_FETCH_PENDING,
       },
       {
-        id: DEV_SEED_MESSAGE_CHANNEL_IDS.TIM_OUTGOING,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
-        isContactAutoCreationEnabled: true,
-        type: 'email',
-        connectedAccountId: DEV_SEED_CONNECTED_ACCOUNT_IDS.TIM,
-        handle: 'incoming',
-        visibility: 'share_everything',
-      },
-      {
-        id: DEV_SEED_MESSAGE_CHANNEL_IDS.JONY_INCOMING,
+        id: DEV_SEED_MESSAGE_CHANNEL_IDS.JONY,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
         isContactAutoCreationEnabled: true,
         type: 'email',
         connectedAccountId: DEV_SEED_CONNECTED_ACCOUNT_IDS.JONY,
-        handle: 'outgoing',
+        handle: 'jony.ive@apple.dev',
         visibility: 'share_everything',
+        syncSubStatus:
+          MessageChannelSyncSubStatus.FULL_MESSAGE_LIST_FETCH_PENDING,
       },
       {
-        id: DEV_SEED_MESSAGE_CHANNEL_IDS.JONY_OUTGOING,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
-        isContactAutoCreationEnabled: true,
-        type: 'email',
-        connectedAccountId: DEV_SEED_CONNECTED_ACCOUNT_IDS.JONY,
-        handle: 'incoming',
-        visibility: 'share_everything',
-      },
-      {
-        id: DEV_SEED_MESSAGE_CHANNEL_IDS.PHIL_INCOMING,
+        id: DEV_SEED_MESSAGE_CHANNEL_IDS.PHIL,
         createdAt: new Date(),
         updatedAt: new Date(),
         deletedAt: null,
         isContactAutoCreationEnabled: true,
         type: 'email',
         connectedAccountId: DEV_SEED_CONNECTED_ACCOUNT_IDS.PHIL,
-        handle: 'outgoing',
+        handle: 'phil.schiler@apple.dev',
         visibility: 'share_everything',
-      },
-      {
-        id: DEV_SEED_MESSAGE_CHANNEL_IDS.PHIL_OUTGOING,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        deletedAt: null,
-        isContactAutoCreationEnabled: true,
-        type: 'email',
-        connectedAccountId: DEV_SEED_CONNECTED_ACCOUNT_IDS.PHIL,
-        handle: 'incoming',
-        visibility: 'share_everything',
+        syncSubStatus:
+          MessageChannelSyncSubStatus.FULL_MESSAGE_LIST_FETCH_PENDING,
       },
     ])
     .execute();

@@ -2,6 +2,7 @@ import styled from '@emotion/styled';
 
 import { ActivityEditor } from '@/activities/components/ActivityEditor';
 import { ActivityEditorEffect } from '@/activities/components/ActivityEditorEffect';
+import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 
 const StyledContainer = styled.div`
   box-sizing: border-box;
@@ -21,11 +22,12 @@ type RightDrawerActivityProps = {
 
 export const RightDrawerActivity = ({
   activityId,
-  showComment = true,
+  showComment = false,
   fillTitleFromBody = false,
 }: RightDrawerActivityProps) => {
   return (
     <StyledContainer>
+      <RecordValueSetterEffect recordId={activityId} />
       <ActivityEditorEffect activityId={activityId} />
       <ActivityEditor
         activityId={activityId}
