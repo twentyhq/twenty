@@ -7,10 +7,6 @@ import { MessageQueue } from 'src/engine/integrations/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { BlocklistWorkspaceEntity } from 'src/modules/connected-account/standard-objects/blocklist.workspace-entity';
 import {
-  BlocklistReimportMessagesJob,
-  BlocklistReimportMessagesJobData,
-} from 'src/modules/messaging/blocklist-manager/jobs/messaging-blocklist-reimport-messages.job';
-import {
   BlocklistItemDeleteMessagesJobData,
   BlocklistItemDeleteMessagesJob,
 } from 'src/modules/messaging/blocklist-manager/jobs/messaging-blocklist-item-delete-messages.job';
@@ -39,16 +35,7 @@ export class MessagingBlocklistListener {
   @OnEvent('blocklist.deleted')
   async handleDeletedEvent(
     payload: ObjectRecordDeleteEvent<BlocklistWorkspaceEntity>,
-  ) {
-    await this.messageQueueService.add<BlocklistReimportMessagesJobData>(
-      BlocklistReimportMessagesJob.name,
-      {
-        workspaceId: payload.workspaceId,
-        workspaceMemberId: payload.properties.before.workspaceMember.id,
-        handle: payload.properties.before.handle,
-      },
-    );
-  }
+  ) {}
 
   @OnEvent('blocklist.updated')
   async handleUpdatedEvent(
@@ -59,15 +46,6 @@ export class MessagingBlocklistListener {
       {
         workspaceId: payload.workspaceId,
         blocklistItemId: payload.recordId,
-      },
-    );
-
-    await this.messageQueueService.add<BlocklistReimportMessagesJobData>(
-      BlocklistReimportMessagesJob.name,
-      {
-        workspaceId: payload.workspaceId,
-        workspaceMemberId: payload.properties.after.workspaceMember.id,
-        handle: payload.properties.before.handle,
       },
     );
   }
