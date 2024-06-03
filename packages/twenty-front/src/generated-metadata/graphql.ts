@@ -406,7 +406,7 @@ export type Mutation = {
   impersonate: Verify;
   renewToken: AuthTokens;
   signUp: LoginToken;
-  skipSyncEmail: SkipSyncEmail;
+  skipSyncEmailOnboardingStep: SkipSyncEmailOnboardingStep;
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
   track: Analytics;
@@ -876,8 +876,8 @@ export type SessionEntity = {
   url?: Maybe<Scalars['String']['output']>;
 };
 
-export type SkipSyncEmail = {
-  __typename?: 'SkipSyncEmail';
+export type SkipSyncEmailOnboardingStep = {
+  __typename?: 'SkipSyncEmailOnboardingStep';
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean']['output'];
 };
@@ -1109,7 +1109,7 @@ export type UserMappingOptionsUser = {
 
 export type UserState = {
   __typename?: 'UserState';
-  skipSyncEmail?: Maybe<Scalars['Boolean']['output']>;
+  skipSyncEmailOnboardingStep?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type UserWorkspace = {

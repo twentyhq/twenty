@@ -8,18 +8,21 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { UserStateService } from 'src/engine/core-modules/user-state/user-state.service';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { SkipSyncEmail } from 'src/engine/core-modules/user-state/dtos/skip-sync-email.entity';
+import { SkipSyncEmailOnboardingStep } from 'src/engine/core-modules/user-state/dtos/skip-sync-email.entity-onboarding-step';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => UserState)
 export class UserStateResolver {
   constructor(private readonly userStateService: UserStateService) {}
 
-  @Mutation(() => SkipSyncEmail)
-  async skipSyncEmail(
+  @Mutation(() => SkipSyncEmailOnboardingStep)
+  async skipSyncEmailOnboardingStep(
     @AuthUser() user: User,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<SkipSyncEmail> {
-    return await this.userStateService.skipSyncEmail(user.id, workspace.id);
+  ): Promise<SkipSyncEmailOnboardingStep> {
+    return await this.userStateService.skipSyncEmailOnboardingStep(
+      user.id,
+      workspace.id,
+    );
   }
 }

@@ -26,7 +26,7 @@ const currentUser = {
   email: 'test@test',
   supportUserHash: '1',
   canImpersonate: false,
-  state: { skipSyncEmail: true },
+  state: { skipSyncEmailOnboardingStep: true },
 } as CurrentUser;
 const currentWorkspace = {
   activationStatus: 'active',
@@ -194,7 +194,10 @@ describe('useOnboardingStatus', () => {
     act(() => {
       setTokenPair(tokenPair);
       setBilling(billing);
-      setCurrentUser({ ...currentUser, state: { skipSyncEmail: false } });
+      setCurrentUser({
+        ...currentUser,
+        state: { skipSyncEmailOnboardingStep: false },
+      });
       setCurrentWorkspace({
         ...currentWorkspace,
         subscriptionStatus: 'active',

@@ -21,7 +21,9 @@ describe('getOnboardingStatus', () => {
         id: '1',
         activationStatus: 'inactive',
       } as CurrentWorkspace,
-      currentUser: { state: { skipSyncEmail: true } } as CurrentUser,
+      currentUser: {
+        state: { skipSyncEmailOnboardingStep: true },
+      } as CurrentUser,
       isBillingEnabled: false,
     });
 
@@ -35,7 +37,9 @@ describe('getOnboardingStatus', () => {
         id: '1',
         activationStatus: 'active',
       } as CurrentWorkspace,
-      currentUser: { state: { skipSyncEmail: true } } as CurrentUser,
+      currentUser: {
+        state: { skipSyncEmailOnboardingStep: true },
+      } as CurrentUser,
       isBillingEnabled: false,
     });
 
@@ -52,7 +56,9 @@ describe('getOnboardingStatus', () => {
         id: '1',
         activationStatus: 'active',
       } as CurrentWorkspace,
-      currentUser: { state: { skipSyncEmail: false } } as CurrentUser,
+      currentUser: {
+        state: { skipSyncEmailOnboardingStep: false },
+      } as CurrentUser,
       isBillingEnabled: false,
     });
 
@@ -69,7 +75,9 @@ describe('getOnboardingStatus', () => {
         id: '1',
         activationStatus: 'active',
       } as CurrentWorkspace,
-      currentUser: { state: { skipSyncEmail: true } } as CurrentUser,
+      currentUser: {
+        state: { skipSyncEmailOnboardingStep: true },
+      } as CurrentUser,
       isBillingEnabled: false,
     });
 
@@ -87,7 +95,9 @@ describe('getOnboardingStatus', () => {
         activationStatus: 'active',
         subscriptionStatus: 'incomplete',
       } as CurrentWorkspace,
-      currentUser: { state: { skipSyncEmail: true } } as CurrentUser,
+      currentUser: {
+        state: { skipSyncEmailOnboardingStep: true },
+      } as CurrentUser,
       isBillingEnabled: true,
     });
 
@@ -105,7 +115,9 @@ describe('getOnboardingStatus', () => {
         activationStatus: 'active',
         subscriptionStatus: 'incomplete',
       } as CurrentWorkspace,
-      currentUser: { state: { skipSyncEmail: true } } as CurrentUser,
+      currentUser: {
+        state: { skipSyncEmailOnboardingStep: true },
+      } as CurrentUser,
       isBillingEnabled: false,
     });
 
@@ -123,7 +135,9 @@ describe('getOnboardingStatus', () => {
         activationStatus: 'active',
         subscriptionStatus: 'canceled',
       } as CurrentWorkspace,
-      currentUser: { state: { skipSyncEmail: true } } as CurrentUser,
+      currentUser: {
+        state: { skipSyncEmailOnboardingStep: true },
+      } as CurrentUser,
       isBillingEnabled: true,
     });
 

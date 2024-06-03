@@ -992,6 +992,10 @@ export type CalendarChannel = {
   isSyncEnabled?: Maybe<Scalars['Boolean']>;
   /** Sync Cursor. Used for syncing events from the calendar provider */
   syncCursor?: Maybe<Scalars['String']>;
+  /** Throttle Failure Count */
+  throttleFailureCount?: Maybe<Scalars['Float']>;
+  /** Throttle Pause Until */
+  throttlePauseUntil?: Maybe<Scalars['DateTime']>;
   /** Update date */
   updatedAt?: Maybe<Scalars['DateTime']>;
   /** Visibility */
@@ -1034,6 +1038,10 @@ export type CalendarChannelCreateInput = {
   isSyncEnabled?: InputMaybe<Scalars['Boolean']>;
   /** Sync Cursor. Used for syncing events from the calendar provider */
   syncCursor?: InputMaybe<Scalars['String']>;
+  /** Throttle Failure Count */
+  throttleFailureCount?: InputMaybe<Scalars['Float']>;
+  /** Throttle Pause Until */
+  throttlePauseUntil?: InputMaybe<Scalars['DateTime']>;
   /** Update date */
   updatedAt?: InputMaybe<Scalars['DateTime']>;
   /** Visibility */
@@ -1166,6 +1174,10 @@ export type CalendarChannelFilterInput = {
   or?: InputMaybe<Array<InputMaybe<CalendarChannelFilterInput>>>;
   /** Sync Cursor. Used for syncing events from the calendar provider */
   syncCursor?: InputMaybe<StringFilter>;
+  /** Throttle Failure Count */
+  throttleFailureCount?: InputMaybe<FloatFilter>;
+  /** Throttle Pause Until */
+  throttlePauseUntil?: InputMaybe<DateFilter>;
   /** Update date */
   updatedAt?: InputMaybe<DateFilter>;
   /** Visibility */
@@ -1188,6 +1200,10 @@ export type CalendarChannelOrderByInput = {
   isSyncEnabled?: InputMaybe<OrderByDirection>;
   /** Sync Cursor. Used for syncing events from the calendar provider */
   syncCursor?: InputMaybe<OrderByDirection>;
+  /** Throttle Failure Count */
+  throttleFailureCount?: InputMaybe<OrderByDirection>;
+  /** Throttle Pause Until */
+  throttlePauseUntil?: InputMaybe<OrderByDirection>;
   /** Update date */
   updatedAt?: InputMaybe<OrderByDirection>;
   /** Visibility */
@@ -1210,6 +1226,10 @@ export type CalendarChannelUpdateInput = {
   isSyncEnabled?: InputMaybe<Scalars['Boolean']>;
   /** Sync Cursor. Used for syncing events from the calendar provider */
   syncCursor?: InputMaybe<Scalars['String']>;
+  /** Throttle Failure Count */
+  throttleFailureCount?: InputMaybe<Scalars['Float']>;
+  /** Throttle Pause Until */
+  throttlePauseUntil?: InputMaybe<Scalars['DateTime']>;
   /** Update date */
   updatedAt?: InputMaybe<Scalars['DateTime']>;
   /** Visibility */
@@ -2630,6 +2650,10 @@ export type MessageChannel = {
   syncSubStatus?: Maybe<MessageChannelSyncSubStatusEnum>;
   /** Last sync date */
   syncedAt?: Maybe<Scalars['DateTime']>;
+  /** Throttle Failure Count */
+  throttleFailureCount?: Maybe<Scalars['Float']>;
+  /** Throttle Pause Until */
+  throttlePauseUntil?: Maybe<Scalars['DateTime']>;
   /** Channel Type */
   type?: Maybe<MessageChannelTypeEnum>;
   /** Update date */
@@ -2682,6 +2706,10 @@ export type MessageChannelCreateInput = {
   syncSubStatus?: InputMaybe<MessageChannelSyncSubStatusEnum>;
   /** Last sync date */
   syncedAt?: InputMaybe<Scalars['DateTime']>;
+  /** Throttle Failure Count */
+  throttleFailureCount?: InputMaybe<Scalars['Float']>;
+  /** Throttle Pause Until */
+  throttlePauseUntil?: InputMaybe<Scalars['DateTime']>;
   /** Channel Type */
   type?: InputMaybe<MessageChannelTypeEnum>;
   /** Update date */
@@ -2723,6 +2751,10 @@ export type MessageChannelFilterInput = {
   syncSubStatus?: InputMaybe<MessageChannelSyncSubStatusEnumFilter>;
   /** Last sync date */
   syncedAt?: InputMaybe<DateFilter>;
+  /** Throttle Failure Count */
+  throttleFailureCount?: InputMaybe<FloatFilter>;
+  /** Throttle Pause Until */
+  throttlePauseUntil?: InputMaybe<DateFilter>;
   /** Channel Type */
   type?: InputMaybe<MessageChannelTypeEnumFilter>;
   /** Update date */
@@ -2878,6 +2910,10 @@ export type MessageChannelOrderByInput = {
   syncSubStatus?: InputMaybe<OrderByDirection>;
   /** Last sync date */
   syncedAt?: InputMaybe<OrderByDirection>;
+  /** Throttle Failure Count */
+  throttleFailureCount?: InputMaybe<OrderByDirection>;
+  /** Throttle Pause Until */
+  throttlePauseUntil?: InputMaybe<OrderByDirection>;
   /** Channel Type */
   type?: InputMaybe<OrderByDirection>;
   /** Update date */
@@ -2975,6 +3011,10 @@ export type MessageChannelUpdateInput = {
   syncSubStatus?: InputMaybe<MessageChannelSyncSubStatusEnum>;
   /** Last sync date */
   syncedAt?: InputMaybe<Scalars['DateTime']>;
+  /** Throttle Failure Count */
+  throttleFailureCount?: InputMaybe<Scalars['Float']>;
+  /** Throttle Pause Until */
+  throttlePauseUntil?: InputMaybe<Scalars['DateTime']>;
   /** Channel Type */
   type?: InputMaybe<MessageChannelTypeEnum>;
   /** Update date */
@@ -3533,7 +3573,7 @@ export type Mutation = {
   impersonate: Verify;
   renewToken: AuthTokens;
   signUp: LoginToken;
-  skipSyncEmail: SkipSyncEmail;
+  skipSyncEmailOnboardingStep: SkipSyncEmailOnboardingStep;
   track: Analytics;
   updateActivities?: Maybe<Array<Activity>>;
   updateActivity?: Maybe<Activity>;
@@ -6156,7 +6196,7 @@ export type SessionEntity = {
   url?: Maybe<Scalars['String']>;
 };
 
-export type SkipSyncEmail = {
+export type SkipSyncEmailOnboardingStep = {
   /** Boolean that confirms query was dispatched */
   success: Scalars['Boolean'];
 };
@@ -6525,7 +6565,7 @@ export type UserMappingOptionsUser = {
 };
 
 export type UserState = {
-  skipSyncEmail?: Maybe<Scalars['Boolean']>;
+  skipSyncEmailOnboardingStep?: Maybe<Scalars['Boolean']>;
 };
 
 export type UserWorkspace = {

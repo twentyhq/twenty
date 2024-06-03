@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { SkipSyncEmail } from 'src/engine/core-modules/user-state/dtos/skip-sync-email.entity';
+import { SkipSyncEmailOnboardingStep } from 'src/engine/core-modules/user-state/dtos/skip-sync-email.entity-onboarding-step';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
@@ -31,7 +31,7 @@ export class UserStateService {
 
     if (connectedAccounts?.length) {
       return {
-        skipSyncEmail: true,
+        skipSyncEmailOnboardingStep: true,
       };
     }
 
@@ -42,16 +42,16 @@ export class UserStateService {
     );
 
     return {
-      skipSyncEmail:
+      skipSyncEmailOnboardingStep:
         !!skipSyncEmail &&
         skipSyncEmail.value === UserStateEmailSyncValues.SKIPPED,
     };
   }
 
-  async skipSyncEmail(
+  async skipSyncEmailOnboardingStep(
     userId: string,
     workspaceId: string,
-  ): Promise<SkipSyncEmail> {
+  ): Promise<SkipSyncEmailOnboardingStep> {
     await this.keyValuePairService.set(
       userId,
       workspaceId,
