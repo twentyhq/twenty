@@ -66,7 +66,9 @@ const StyledButton = styled('button', {
               opacity: ${disabled ? 0.24 : 1};
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${
-                    !inverted ? theme.accent.tertiary : `${theme.color.blue}1A`
+                    !inverted
+                      ? theme.accent.tertiary
+                      : theme.background.transparent.medium
                   }`
                 : 'none'};
               color: ${!inverted
@@ -98,7 +100,9 @@ const StyledButton = styled('button', {
               border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${
-                    !inverted ? theme.accent.tertiary : `${theme.color.blue}1A`
+                    !inverted
+                      ? theme.accent.tertiary
+                      : theme.background.transparent.medium
                   }`
                 : 'none'};
               color: ${!inverted ? theme.grayScale.gray0 : theme.color.blue};
@@ -131,7 +135,9 @@ const StyledButton = styled('button', {
               border-width: 1px 1px !important;
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${
-                    !inverted ? theme.color.red10 : `${theme.color.blue}1A`
+                    !inverted
+                      ? theme.color.red10
+                      : theme.background.transparent.medium
                   }`
                 : 'none'};
               color: ${!inverted ? theme.background.primary : theme.color.red};
@@ -177,7 +183,9 @@ const StyledButton = styled('button', {
               border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${
-                    !inverted ? theme.accent.tertiary : `${theme.color.blue}1A`
+                    !inverted
+                      ? theme.accent.tertiary
+                      : theme.background.transparent.medium
                   }`
                 : 'none'};
               opacity: ${disabled ? 0.24 : 1};
@@ -222,7 +230,9 @@ const StyledButton = styled('button', {
               border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${
-                    !inverted ? theme.accent.tertiary : `${theme.color.blue}1A`
+                    !inverted
+                      ? theme.accent.tertiary
+                      : theme.background.transparent.medium
                   }`
                 : 'none'};
               opacity: ${disabled ? 0.24 : 1};
@@ -267,7 +277,9 @@ const StyledButton = styled('button', {
               border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
                 ? `0 0 0 3px ${
-                    !inverted ? theme.color.red10 : `${theme.color.blue}1A`
+                    !inverted
+                      ? theme.color.red10
+                      : theme.background.transparent.medium
                   }`
                 : 'none'};
               opacity: ${disabled ? 0.24 : 1};
