@@ -208,6 +208,8 @@ export const MESSAGE_CHANNEL_STANDARD_FIELD_IDS = {
   syncStatus: '20202020-56a1-4f7e-9880-a8493bb899cc',
   syncSubStatus: '20202020-7979-4b08-89fe-99cb5e698767',
   ongoingSyncStartedAt: '20202020-8c61-4a42-ae63-73c1c3c52e06',
+  throttlePauseUntil: '20202020-a8cb-475b-868c-b83538614df4',
+  throttleFailureCount: '20202020-0291-42be-9ad0-d578a51684ab',
 };
 
 export const MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS = {
