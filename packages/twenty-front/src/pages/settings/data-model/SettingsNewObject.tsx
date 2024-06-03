@@ -59,7 +59,6 @@ export const SettingsNewObject = () => {
           : settingsObjectsPagePath,
       );
 
-      // run the findManyRecordsQuery to update the cache - without blocking the UI
       await findManyRecordsCache();
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
