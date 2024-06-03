@@ -29,7 +29,7 @@ describe('deleteUsingPagination', () => {
     expect(getterPaginated).toHaveBeenNthCalledWith(
       2,
       batchSize,
-      batchSize,
+      0,
       workspaceId,
       transactionManager,
     );
