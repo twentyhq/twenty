@@ -149,85 +149,137 @@ const StyledButton = styled.button<
         switch (accent) {
           case 'default':
             return css`
-              background: ${focus
-                ? theme.background.transparent.primary
-                : 'transparent'};
-              border-color: ${variant === 'secondary'
-                ? !disabled && focus
-                  ? theme.color.blue
-                  : theme.background.transparent.medium
-                : focus
-                  ? theme.color.blue
-                  : 'transparent'};
-              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
+              background: transparent;
+              border-color: ${!inverted
+                ? variant === 'secondary'
+                  ? !disabled && focus
+                    ? theme.color.blue
+                    : theme.background.transparent.medium
+                  : focus
+                    ? theme.color.blue
+                    : 'transparent'
+                : variant === 'secondary'
+                  ? focus || disabled
+                    ? theme.grayScale.gray0
+                    : theme.background.transparent.primary
+                  : focus
+                    ? theme.grayScale.gray0
+                    : 'transparent'};
+              border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.accent.tertiary}`
+                ? `0 0 0 3px ${
+                    !inverted ? theme.accent.tertiary : `${theme.color.blue}1A`
+                  }`
                 : 'none'};
-              color: ${!disabled
-                ? theme.font.color.secondary
-                : theme.font.color.extraLight};
+              opacity: ${disabled ? 0.24 : 1};
+              color: ${!inverted
+                ? !disabled
+                  ? theme.font.color.secondary
+                  : theme.font.color.extraLight
+                : theme.font.color.inverted};
               &:hover {
-                background: ${!disabled
-                  ? theme.background.transparent.light
-                  : 'transparent'};
+                background: ${!inverted
+                  ? !disabled
+                    ? theme.background.transparent.light
+                    : 'transparent'
+                  : theme.background.transparent.light};
               }
               &:active {
-                background: ${!disabled
-                  ? theme.background.transparent.light
-                  : 'transparent'};
+                background: ${!inverted
+                  ? !disabled
+                    ? theme.background.transparent.light
+                    : 'transparent'
+                  : theme.background.transparent.medium};
               }
             `;
           case 'blue':
             return css`
-              background: ${focus
-                ? theme.background.transparent.primary
-                : 'transparent'};
-              border-color: ${variant === 'secondary'
-                ? focus
-                  ? theme.color.blue
-                  : theme.color.blue20
-                : focus
-                  ? theme.color.blue
-                  : 'transparent'};
-              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
+              background: transparent;
+              border-color: ${!inverted
+                ? variant === 'secondary'
+                  ? focus
+                    ? theme.color.blue
+                    : theme.color.blue20
+                  : focus
+                    ? theme.color.blue
+                    : 'transparent'
+                : variant === 'secondary'
+                  ? focus || disabled
+                    ? theme.grayScale.gray0
+                    : theme.background.transparent.primary
+                  : focus
+                    ? theme.grayScale.gray0
+                    : 'transparent'};
+              border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.accent.tertiary}`
+                ? `0 0 0 3px ${
+                    !inverted ? theme.accent.tertiary : `${theme.color.blue}1A`
+                  }`
                 : 'none'};
-              color: ${!disabled ? theme.color.blue : theme.accent.accent4060};
+              opacity: ${disabled ? 0.24 : 1};
+              color: ${!inverted
+                ? !disabled
+                  ? theme.color.blue
+                  : theme.accent.accent4060
+                : theme.font.color.inverted};
               &:hover {
-                background: ${!disabled
-                  ? theme.accent.tertiary
-                  : 'transparent'};
+                background: ${!inverted
+                  ? !disabled
+                    ? theme.accent.tertiary
+                    : 'transparent'
+                  : theme.background.transparent.light};
               }
               &:active {
-                background: ${!disabled
-                  ? theme.accent.secondary
-                  : 'transparent'};
+                background: ${!inverted
+                  ? !disabled
+                    ? theme.accent.secondary
+                    : 'transparent'
+                  : theme.background.transparent.medium};
               }
             `;
           case 'danger':
             return css`
-              border-color: ${variant === 'secondary'
-                ? focus
-                  ? theme.color.red
-                  : theme.border.color.danger
-                : focus
-                  ? theme.color.red
-                  : 'transparent'};
-              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
+              background: transparent;
+              border-color: ${!inverted
+                ? variant === 'secondary'
+                  ? focus
+                    ? theme.color.red
+                    : theme.border.color.danger
+                  : focus
+                    ? theme.color.red
+                    : 'transparent'
+                : variant === 'secondary'
+                  ? focus || disabled
+                    ? theme.grayScale.gray0
+                    : theme.background.transparent.primary
+                  : focus
+                    ? theme.grayScale.gray0
+                    : 'transparent'};
+              border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.color.red10}`
+                ? `0 0 0 3px ${
+                    !inverted ? theme.color.red10 : `${theme.color.blue}1A`
+                  }`
                 : 'none'};
-              color: ${!disabled ? theme.font.color.danger : theme.color.red20};
+              opacity: ${disabled ? 0.24 : 1};
+              color: ${!inverted
+                ? !disabled
+                  ? theme.font.color.danger
+                  : theme.color.red20
+                : theme.font.color.inverted};
               &:hover {
-                background: ${!disabled
-                  ? theme.background.danger
-                  : 'transparent'};
+                background: ${!inverted
+                  ? !disabled
+                    ? theme.background.danger
+                    : 'transparent'
+                  : theme.background.transparent.light};
               }
               &:active {
-                background: ${!disabled
-                  ? theme.background.danger
-                  : 'transparent'};
+                background: ${!inverted
+                  ? !disabled
+                    ? theme.background.danger
+                    : 'transparent'
+                  : theme.background.transparent.medium};
               }
             `;
         }
