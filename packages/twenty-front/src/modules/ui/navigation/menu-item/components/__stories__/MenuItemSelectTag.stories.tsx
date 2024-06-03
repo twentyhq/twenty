@@ -20,7 +20,11 @@ export default meta;
 type Story = StoryObj<typeof MenuItemSelectTag>;
 
 export const Default: Story = {
-  args: { selected: false, onClick: undefined },
+  args: {
+    selected: false,
+    onClick: undefined,
+    text: 'Item A',
+  },
   argTypes: {
     selected: {
       control: 'boolean',
@@ -34,6 +38,9 @@ export const Default: Story = {
 };
 
 export const Catalog: CatalogStory<Story, typeof MenuItemSelectTag> = {
+  args: {
+    text: 'Item A',
+  },
   parameters: {
     pseudo: {
       hover: ['.hover'],
