@@ -53,7 +53,7 @@ export class RecordPositionQueryFactory {
     switch (recordPositionQueryArgs.recordPositionQueryType) {
       case RecordPositionQueryType.FIND_BY_POSITION:
         return this.buildFindByPositionQuery(
-          recordPositionQueryArgs as FindByPositionQueryArgs,
+          recordPositionQueryArgs satisfies FindByPositionQueryArgs,
           name,
           dataSourceSchema,
         );
@@ -63,7 +63,7 @@ export class RecordPositionQueryFactory {
         return this.buildFindMaxPositionQuery(name, dataSourceSchema);
       case RecordPositionQueryType.UPDATE_POSITION:
         return this.buildUpdatePositionQuery(
-          recordPositionQueryArgs as UpdatePositionQueryArgs,
+          recordPositionQueryArgs satisfies UpdatePositionQueryArgs,
           name,
           dataSourceSchema,
         );
