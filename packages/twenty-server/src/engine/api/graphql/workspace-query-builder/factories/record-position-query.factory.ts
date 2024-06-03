@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
+import { computeTableName } from 'src/engine/utils/compute-table-name.util';
+
 export enum RecordPositionQueryType {
-  FIND_FIRST_RECORD = 'FIND_FIRST_RECORD',
-  FIND_LAST_RECORD = 'FIND_LAST_RECORD',
+  FIND_MIN_POSITION = 'FIND_MIN_POSITION',
+  FIND_MAX_POSITION = 'FIND_MAX_POSITION',
   FIND_BY_POSITION = 'FIND_BY_POSITION',
   UPDATE_POSITION = 'UPDATE_POSITION',
 }
@@ -12,12 +14,12 @@ type FindByPositionQueryArgs = {
   recordPositionQueryType: RecordPositionQueryType.FIND_BY_POSITION;
 };
 
-type FindFirstRecordQueryArgs = {
-  recordPositionQueryType: RecordPositionQueryType.FIND_FIRST_RECORD;
+type FindMinPositionQueryArgs = {
+  recordPositionQueryType: RecordPositionQueryType.FIND_MIN_POSITION;
 };
 
-type FindLastRecordQueryArgs = {
-  recordPositionQueryType: RecordPositionQueryType.FIND_LAST_RECORD;
+type FindMaxPositionQueryArgs = {
+  recordPositionQueryType: RecordPositionQueryType.FIND_MAX_POSITION;
 };
 
 type UpdatePositionQueryArgs = {
@@ -32,8 +34,8 @@ type RecordPositionQueryParams = any[];
 
 export type RecordPositionQueryArgs =
   | FindByPositionQueryArgs
-  | FindFirstRecordQueryArgs
-  | FindLastRecordQueryArgs
+  | FindMinPositionQueryArgs
+  | FindMaxPositionQueryArgs
   | UpdatePositionQueryArgs;
 
 @Injectable()
@@ -43,8 +45,10 @@ export class RecordPositionQueryFactory {
     objectMetadata: { isCustom: boolean; nameSingular: string },
     dataSourceSchema: string,
   ): [RecordPositionQuery, RecordPositionQueryParams] {
-    const name =
-      (objectMetadata.isCustom ? '_' : '') + objectMetadata.nameSingular;
+    const name = computeTableName(
+      objectMetadata.nameSingular,
+      objectMetadata.isCustom,
+    );
 
     switch (recordPositionQueryArgs.recordPositionQueryType) {
       case RecordPositionQueryType.FIND_BY_POSITION:
@@ -53,10 +57,10 @@ export class RecordPositionQueryFactory {
           name,
           dataSourceSchema,
         );
-      case RecordPositionQueryType.FIND_FIRST_RECORD:
-        return this.buildFindFirstRecordQuery(name, dataSourceSchema);
-      case RecordPositionQueryType.FIND_LAST_RECORD:
-        return this.buildFindLastRecordQuery(name, dataSourceSchema);
+      case RecordPositionQueryType.FIND_MIN_POSITION:
+        return this.buildFindMinPositionQuery(name, dataSourceSchema);
+      case RecordPositionQueryType.FIND_MAX_POSITION:
+        return this.buildFindMaxPositionQuery(name, dataSourceSchema);
       case RecordPositionQueryType.UPDATE_POSITION:
         return this.buildUpdatePositionQuery(
           recordPositionQueryArgs as UpdatePositionQueryArgs,
@@ -74,35 +78,28 @@ export class RecordPositionQueryFactory {
     dataSourceSchema: string,
   ): [RecordPositionQuery, RecordPositionQueryParams] {
     return [
-      `SELECT * FROM ${dataSourceSchema}."${name}"
+      `SELECT position FROM ${dataSourceSchema}."${name}"
             WHERE "position" = $1`,
       [positionValue],
     ];
   }
 
-  private buildFindFirstRecordQuery(
+  private buildFindMaxPositionQuery(
     name: string,
     dataSourceSchema: string,
-  ): [RecordPositionQuery, RecordPositionQueryParams] {
-    return this.buildFindRecordQuery(name, dataSourceSchema, 'ASC');
-  }
-
-  private buildFindLastRecordQuery(
-    name: string,
-    dataSourceSchema: string,
-  ): [RecordPositionQuery, RecordPositionQueryParams] {
-    return this.buildFindRecordQuery(name, dataSourceSchema, 'DESC');
-  }
-
-  private buildFindRecordQuery(
-    name: string,
-    dataSourceSchema: string,
-    orderBy: string,
   ): [RecordPositionQuery, RecordPositionQueryParams] {
     return [
-      `SELECT * FROM ${dataSourceSchema}."${name}"
-            ORDER BY "position" ${orderBy}
-            LIMIT 1`,
+      `SELECT MAX(position) as position FROM ${dataSourceSchema}."${name}"`,
+      [],
+    ];
+  }
+
+  private buildFindMinPositionQuery(
+    name: string,
+    dataSourceSchema: string,
+  ): [RecordPositionQuery, RecordPositionQueryParams] {
+    return [
+      `SELECT MIN(position) as position FROM ${dataSourceSchema}."${name}"`,
       [],
     ];
   }

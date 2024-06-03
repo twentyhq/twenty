@@ -26,7 +26,7 @@ export class RecordPositionFactory {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     if (typeof value === 'number') {
-      const recordWithSamePosition = await this.findRecord(
+      const recordWithSamePosition = await this.findRecordPosition(
         {
           recordPositionQueryType: RecordPositionQueryType.FIND_BY_POSITION,
           positionValue: value,
@@ -44,9 +44,9 @@ export class RecordPositionFactory {
     }
 
     if (value === 'first') {
-      const firstRecord = await this.findRecord(
+      const firstRecord = await this.findRecordPosition(
         {
-          recordPositionQueryType: RecordPositionQueryType.FIND_FIRST_RECORD,
+          recordPositionQueryType: RecordPositionQueryType.FIND_MIN_POSITION,
         },
         objectMetadata,
         dataSourceSchema,
@@ -58,9 +58,9 @@ export class RecordPositionFactory {
         : 1;
     }
 
-    const lastRecord = await this.findRecord(
+    const lastRecord = await this.findRecordPosition(
       {
-        recordPositionQueryType: RecordPositionQueryType.FIND_LAST_RECORD,
+        recordPositionQueryType: RecordPositionQueryType.FIND_MAX_POSITION,
       },
       objectMetadata,
       dataSourceSchema,
@@ -72,7 +72,7 @@ export class RecordPositionFactory {
       : 1;
   }
 
-  private async findRecord(
+  private async findRecordPosition(
     recordPositionQueryArgs: RecordPositionQueryArgs,
     objectMetadata: { isCustom: boolean; nameSingular: string },
     dataSourceSchema: string,

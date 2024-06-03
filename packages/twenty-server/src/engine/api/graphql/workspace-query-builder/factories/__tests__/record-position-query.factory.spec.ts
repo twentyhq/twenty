@@ -32,8 +32,8 @@ describe('RecordPositionQueryFactory', () => {
       expect(params).toEqual([positionValue]);
     });
 
-    it('should return query and params for FIND_FIRST_RECORD', async () => {
-      const queryType = RecordPositionQueryType.FIND_FIRST_RECORD;
+    it('should return query and params for FIND_MIN_POSITION', async () => {
+      const queryType = RecordPositionQueryType.FIND_MIN_POSITION;
       const [query, params] = await factory.create(
         { recordPositionQueryType: queryType },
         objectMetadataItem,
@@ -41,15 +41,13 @@ describe('RecordPositionQueryFactory', () => {
       );
 
       expect(query).toEqual(
-        `SELECT * FROM ${dataSourceSchema}."${objectMetadataItem.nameSingular}"
-            ORDER BY "position" ASC
-            LIMIT 1`,
+        `SELECT MIN(position) as position FROM ${dataSourceSchema}."${objectMetadataItem.nameSingular}`,
       );
       expect(params).toEqual([]);
     });
 
-    it('should return query and params for FIND_LAST_RECORD', async () => {
-      const queryType = RecordPositionQueryType.FIND_LAST_RECORD;
+    it('should return query and params for FIND_MAX_POSITION', async () => {
+      const queryType = RecordPositionQueryType.FIND_MAX_POSITION;
       const [query, params] = await factory.create(
         { recordPositionQueryType: queryType },
         objectMetadataItem,
@@ -57,9 +55,7 @@ describe('RecordPositionQueryFactory', () => {
       );
 
       expect(query).toEqual(
-        `SELECT * FROM ${dataSourceSchema}."${objectMetadataItem.nameSingular}"
-            ORDER BY "position" DESC
-            LIMIT 1`,
+        `SELECT MAX(position) as position FROM ${dataSourceSchema}."${objectMetadataItem.nameSingular}"`,
       );
       expect(params).toEqual([]);
     });
