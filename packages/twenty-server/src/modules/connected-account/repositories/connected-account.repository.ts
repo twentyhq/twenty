@@ -70,28 +70,24 @@ export class ConnectedAccountRepository {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    try {
-      const workspaceMember = (
-        await this.workspaceDataSourceService.executeRawQuery(
-          `SELECT * FROM ${dataSourceSchema}."workspaceMember" WHERE "userId" = $1`,
-          [userId],
-          workspaceId,
-          transactionManager,
-        )
-      )?.[0];
-
-      if (!workspaceMember) {
-        return;
-      }
-
-      return await this.getAllByWorkspaceMemberId(
-        workspaceMember.id,
+    const workspaceMember = (
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT * FROM ${dataSourceSchema}."workspaceMember" WHERE "userId" = $1`,
+        [userId],
         workspaceId,
         transactionManager,
-      );
-    } catch {
+      )
+    )?.[0];
+
+    if (!workspaceMember) {
       return;
     }
+
+    return await this.getAllByWorkspaceMemberId(
+      workspaceMember.id,
+      workspaceId,
+      transactionManager,
+    );
   }
 
   public async getAllByHandleAndWorkspaceMemberId(
