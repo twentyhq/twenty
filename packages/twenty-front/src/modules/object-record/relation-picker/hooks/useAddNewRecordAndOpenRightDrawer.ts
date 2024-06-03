@@ -43,62 +43,65 @@ export const useAddNewRecordAndOpenRightDrawer = ({
 
   const { openRightDrawer } = useRightDrawer();
 
-  const handleOnCreate =
-    relationObjectMetadataNameSingular !== 'workspaceMember'
-      ? async (searchInput?: string) => {
-          const newRecordId = v4();
-          const labelIdentifierType = getLabelIdentifierFieldMetadataItem(
-            relationObjectMetadataItem,
-          )?.type;
-          const createRecordPayload: {
-            id: string;
-            name:
-              | string
-              | { firstName: string | undefined; lastName: string | undefined };
-            [key: string]: any;
-          } =
-            labelIdentifierType === FieldMetadataType.FullName
-              ? {
-                  id: newRecordId,
-                  name:
-                    searchInput && searchInput.split(' ').length > 1
-                      ? {
-                          firstName: searchInput.split(' ')[0],
-                          lastName: searchInput.split(' ').slice(1).join(' '),
-                        }
-                      : { firstName: searchInput, lastName: '' },
-                }
-              : { id: newRecordId, name: searchInput ?? '' };
+  if (relationObjectMetadataNameSingular === 'workspaceMember') {
+    return {
+      createNewRecordAndOpenRightDrawer: undefined,
+    };
+  }
 
-          if (
-            relationFieldMetadataItem?.relationDefinition?.direction ===
-            RelationDefinitionType.ManyToOne
-          ) {
-            createRecordPayload[
-              `${relationFieldMetadataItem?.relationDefinition?.targetFieldMetadata.name}Id`
-            ] = entityId;
-          }
+  return {
+    createNewRecordAndOpenRightDrawer: async (searchInput?: string) => {
+      const newRecordId = v4();
+      const labelIdentifierType = getLabelIdentifierFieldMetadataItem(
+        relationObjectMetadataItem,
+      )?.type;
+      const createRecordPayload: {
+        id: string;
+        name:
+          | string
+          | { firstName: string | undefined; lastName: string | undefined };
+        [key: string]: any;
+      } =
+        labelIdentifierType === FieldMetadataType.FullName
+          ? {
+              id: newRecordId,
+              name:
+                searchInput && searchInput.split(' ').length > 1
+                  ? {
+                      firstName: searchInput.split(' ')[0],
+                      lastName: searchInput.split(' ').slice(1).join(' '),
+                    }
+                  : { firstName: searchInput, lastName: '' },
+            }
+          : { id: newRecordId, name: searchInput ?? '' };
 
-          await createOneRecord(createRecordPayload);
+      if (
+        relationFieldMetadataItem?.relationDefinition?.direction ===
+        RelationDefinitionType.ManyToOne
+      ) {
+        createRecordPayload[
+          `${relationFieldMetadataItem?.relationDefinition?.targetFieldMetadata.name}Id`
+        ] = entityId;
+      }
 
-          if (
-            relationFieldMetadataItem?.relationDefinition?.direction ===
-            RelationDefinitionType.OneToMany
-          ) {
-            await updateOneRecord({
-              idToUpdate: entityId,
-              updateOneRecordInput: {
-                [`${relationFieldMetadataItem?.relationDefinition?.targetFieldMetadata.name}Id`]:
-                  newRecordId,
-              },
-            });
-          }
+      await createOneRecord(createRecordPayload);
 
-          setViewableRecordId(newRecordId);
-          setViewableRecordNameSingular(relationObjectMetadataNameSingular);
-          openRightDrawer(RightDrawerPages.ViewRecord);
-        }
-      : undefined;
+      if (
+        relationFieldMetadataItem?.relationDefinition?.direction ===
+        RelationDefinitionType.OneToMany
+      ) {
+        await updateOneRecord({
+          idToUpdate: entityId,
+          updateOneRecordInput: {
+            [`${relationFieldMetadataItem?.relationDefinition?.targetFieldMetadata.name}Id`]:
+              newRecordId,
+          },
+        });
+      }
 
-  return { handleOnCreate };
+      setViewableRecordId(newRecordId);
+      setViewableRecordNameSingular(relationObjectMetadataNameSingular);
+      openRightDrawer(RightDrawerPages.ViewRecord);
+    },
+  };
 };

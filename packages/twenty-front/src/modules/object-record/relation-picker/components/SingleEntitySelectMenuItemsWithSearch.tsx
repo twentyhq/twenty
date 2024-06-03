@@ -70,17 +70,19 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
     objectNameSingular: relationObjectNameSingular,
   });
 
-  const onCreateWithInput = isDefined(onCreate)
-    ? () => {
-        if (onCreate.length > 0) {
-          (onCreate as (searchInput?: string) => void)(
-            relationPickerSearchFilter,
-          );
-        } else {
-          (onCreate as () => void)();
-        }
+  let onCreateWithInput = undefined;
+
+  if (isDefined(onCreate)) {
+    onCreateWithInput = () => {
+      if (onCreate.length > 0) {
+        (onCreate as (searchInput?: string) => void)(
+          relationPickerSearchFilter,
+        );
+      } else {
+        (onCreate as () => void)();
       }
-    : undefined;
+    };
+  }
 
   return (
     <>

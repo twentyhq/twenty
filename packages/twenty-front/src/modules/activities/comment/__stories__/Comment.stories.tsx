@@ -11,11 +11,11 @@ import { Comment } from '../Comment';
 import { mockComment, mockCommentWithLongValues } from './mock-comment';
 
 const CommentSetterEffect = () => {
-  const setViewableActivity = useSetRecoilState(viewableRecordIdState);
+  const setViewableRecord = useSetRecoilState(viewableRecordIdState);
 
   useEffect(() => {
-    setViewableActivity('test-id');
-  }, [setViewableActivity]);
+    setViewableRecord('test-id');
+  }, [setViewableRecord]);
 
   return null;
 };

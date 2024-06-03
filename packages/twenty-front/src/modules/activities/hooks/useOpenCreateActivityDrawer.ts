@@ -26,7 +26,7 @@ export const useOpenCreateActivityDrawer = () => {
   const setActivityTargetableEntityArray = useSetRecoilState(
     activityTargetableEntityArrayState,
   );
-  const setViewableActivityId = useSetRecoilState(viewableRecordIdState);
+  const setViewableRecordId = useSetRecoilState(viewableRecordIdState);
 
   const setIsCreatingActivity = useSetRecoilState(isActivityInCreateModeState);
 
@@ -59,7 +59,7 @@ export const useOpenCreateActivityDrawer = () => {
     setTemporaryActivityForEditor(createdActivityInCache);
     setIsCreatingActivity(true);
     setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
-    setViewableActivityId(createdActivityInCache.id);
+    setViewableRecordId(createdActivityInCache.id);
     setActivityTargetableEntityArray(targetableObjects ?? []);
     openRightDrawer(RightDrawerPages.CreateActivity);
     setIsUpsertingActivityInDB(false);

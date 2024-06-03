@@ -11,7 +11,11 @@ export const RightDrawerTopBarExpandButton = () => {
     useRightDrawer();
 
   const handleButtonClick = () => {
-    isRightDrawerExpanded ? downsizeRightDrawer() : expandRightDrawer();
+    if (isRightDrawerExpanded === true) {
+      downsizeRightDrawer();
+      return;
+    }
+    expandRightDrawer();
   };
 
   return (

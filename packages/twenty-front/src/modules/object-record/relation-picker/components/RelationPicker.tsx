@@ -54,13 +54,14 @@ export const RelationPicker = ({
 
   const { entityId } = useContext(FieldContext);
 
-  const { handleOnCreate } = useAddNewRecordAndOpenRightDrawer({
-    relationObjectMetadataNameSingular:
-      fieldDefinition.metadata.relationObjectMetadataNameSingular,
-    relationObjectMetadataItem,
-    relationFieldMetadataItem,
-    entityId,
-  });
+  const { createNewRecordAndOpenRightDrawer: handleOnCreate } =
+    useAddNewRecordAndOpenRightDrawer({
+      relationObjectMetadataNameSingular:
+        fieldDefinition.metadata.relationObjectMetadataNameSingular,
+      relationObjectMetadataItem,
+      relationFieldMetadataItem,
+      entityId,
+    });
 
   return (
     <SingleEntitySelect

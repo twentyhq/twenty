@@ -9,12 +9,12 @@ import { useSetHotkeyScope } from '@/ui/utilities/hotkey/hooks/useSetHotkeyScope
 export const useOpenCalendarEventRightDrawer = () => {
   const { openRightDrawer } = useRightDrawer();
   const setHotkeyScope = useSetHotkeyScope();
-  const setViewableCalendarEventId = useSetRecoilState(viewableRecordIdState);
+  const setViewableRecordId = useSetRecoilState(viewableRecordIdState);
 
   const openCalendarEventRightDrawer = (calendarEventId: string) => {
     setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
     openRightDrawer(RightDrawerPages.ViewCalendarEvent);
-    setViewableCalendarEventId(calendarEventId);
+    setViewableRecordId(calendarEventId);
   };
 
   return { openCalendarEventRightDrawer };
