@@ -38,7 +38,7 @@ export class UserStateService {
     const skipSyncEmail = await this.keyValuePairService.get(
       user.id,
       workspace.id,
-      UserStates.EMAIL_SYNC,
+      UserStates.SYNC_EMAIL_ONBOARDING_STEP,
     );
 
     return {
@@ -55,7 +55,7 @@ export class UserStateService {
     await this.keyValuePairService.set(
       userId,
       workspaceId,
-      UserStates.EMAIL_SYNC,
+      UserStates.SYNC_EMAIL_ONBOARDING_STEP,
       UserStateEmailSyncValues.SKIPPED,
     );
 

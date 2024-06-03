@@ -12,7 +12,7 @@ export enum KeyValueTypes {
 
 type KeyValuePairs = {
   [KeyValueTypes.USER_STATE]: {
-    [UserStates.EMAIL_SYNC]: UserStateEmailSyncValues;
+    [UserStates.SYNC_EMAIL_ONBOARDING_STEP]: UserStateEmailSyncValues;
   };
 };
 
