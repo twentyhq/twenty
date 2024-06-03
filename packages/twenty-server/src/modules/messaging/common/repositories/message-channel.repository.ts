@@ -240,4 +240,39 @@ export class MessageChannelRepository {
       transactionManager,
     );
   }
+
+  public async updateThrottlePauseUntilAndIncrementThrottleFailureCount(
+    id: string,
+    throttleDurationMs: number,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."messageChannel" SET "throttlePauseUntil" = NOW() + interval '${throttleDurationMs} milliseconds', "throttleFailureCount" = "throttleFailureCount" + 1
+      WHERE "id" = $1`,
+      [id],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async resetThrottlePauseUntilAndThrottleFailureCount(
+    id: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."messageChannel" SET "throttlePauseUntil" = NULL, "throttleFailureCount" = 0
+      WHERE "id" = $1`,
+      [id],
+      workspaceId,
+      transactionManager,
+    );
+  }
 }

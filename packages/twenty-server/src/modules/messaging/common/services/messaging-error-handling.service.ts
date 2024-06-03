@@ -9,6 +9,8 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { MessagingTelemetryService } from 'src/modules/messaging/common/services/messaging-telemetry.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
+import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
+import { MESSAGING_THROTTLE_DURATION } from 'src/modules/messaging/common/constants/messaging-throttle-duration';
 
 type SyncStep =
   | 'partial-message-list-fetch'
@@ -27,6 +29,8 @@ export class MessagingErrorHandlingService {
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
     private readonly messagingTelemetryService: MessagingTelemetryService,
+    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
+    private readonly messageChannelRepository: MessageChannelRepository,
   ) {}
 
   public async handleGmailError(
@@ -114,6 +118,8 @@ export class MessagingErrorHandlingService {
       message: `${error.code}: ${error.reason}`,
     });
 
+    await this.throttle(messageChannel, workspaceId);
+
     switch (syncStep) {
       case 'full-message-list-fetch':
         await this.messagingChannelSyncStatusService.scheduleFullMessageListFetch(
@@ -188,5 +194,28 @@ export class MessagingErrorHandlingService {
       messageChannel.id,
       workspaceId,
     );
+  }
+
+  public async throttle(
+    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    workspaceId: string,
+  ): Promise<void> {
+    const throttleDuration =
+      MESSAGING_THROTTLE_DURATION *
+      Math.pow(2, messageChannel.throttleFailureCount);
+
+    await this.messageChannelRepository.updateThrottlePauseUntilAndIncrementThrottleFailureCount(
+      messageChannel.id,
+      throttleDuration,
+      workspaceId,
+    );
+
+    await this.messagingTelemetryService.track({
+      eventName: 'message_channel.throttle',
+      workspaceId,
+      connectedAccountId: messageChannel.connectedAccountId,
+      messageChannelId: messageChannel.id,
+      message: `Throttling for ${throttleDuration}ms`,
+    });
   }
 }

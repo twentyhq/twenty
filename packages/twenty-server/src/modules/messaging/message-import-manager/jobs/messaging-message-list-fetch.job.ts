@@ -79,13 +79,6 @@ export class MessagingMessageListFetchJob
       messageChannel.throttlePauseUntil &&
       messageChannel.throttlePauseUntil > new Date()
     ) {
-      await this.messagingTelemetryService.track({
-        eventName: 'message_list_fetch_job.throttled',
-        workspaceId,
-        connectedAccountId,
-        messageChannelId: messageChannel.id,
-      });
-
       return;
     }
 

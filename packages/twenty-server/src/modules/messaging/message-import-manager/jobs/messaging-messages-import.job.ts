@@ -49,13 +49,6 @@ export class MessagingMessagesImportJob
         messageChannel.throttlePauseUntil &&
         messageChannel.throttlePauseUntil > new Date()
       ) {
-        await this.messagingTelemetryService.track({
-          eventName: 'messages_import.throttled',
-          workspaceId,
-          connectedAccountId: messageChannel.connectedAccountId,
-          messageChannelId: messageChannel.id,
-        });
-
         return;
       }
 
