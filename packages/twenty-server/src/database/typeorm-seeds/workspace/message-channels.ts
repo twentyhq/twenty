@@ -4,7 +4,7 @@ import { DEV_SEED_CONNECTED_ACCOUNT_IDS } from 'src/database/typeorm-seeds/works
 import {
   MessageChannelSyncSubStatus,
   MessageChannelVisibility,
-} from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 const tableName = 'messageChannel';
 

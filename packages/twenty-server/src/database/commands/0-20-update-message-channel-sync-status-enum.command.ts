@@ -12,7 +12,7 @@ import { TypeORMService } from 'src/database/typeorm/typeorm.service';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { MessageChannelSyncStatus } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
+import { MessageChannelSyncStatus } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 interface UpdateMessageChannelSyncStatusEnumCommandOptions {
   workspaceId?: string;

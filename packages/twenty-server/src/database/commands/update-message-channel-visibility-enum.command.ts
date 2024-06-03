@@ -8,7 +8,7 @@ import chalk from 'chalk';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { MessageChannelVisibility } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
+import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 

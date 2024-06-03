@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { TIMELINE_THREADS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/messaging/constants/messaging.constants';
 import { TimelineThreadsWithTotal } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { MessageChannelVisibility } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
+import { MessageChannelVisibility } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 type TimelineThreadParticipant = {
   personId: string;
