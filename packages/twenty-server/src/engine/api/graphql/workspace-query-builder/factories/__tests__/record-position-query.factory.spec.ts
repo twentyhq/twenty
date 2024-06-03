@@ -26,7 +26,7 @@ describe('RecordPositionQueryFactory', () => {
       );
 
       expect(query).toEqual(
-        `SELECT * FROM ${dataSourceSchema}."${objectMetadataItem.nameSingular}"
+        `SELECT position FROM ${dataSourceSchema}."${objectMetadataItem.nameSingular}"
             WHERE "position" = $1`,
       );
       expect(params).toEqual([positionValue]);
@@ -41,7 +41,7 @@ describe('RecordPositionQueryFactory', () => {
       );
 
       expect(query).toEqual(
-        `SELECT MIN(position) as position FROM ${dataSourceSchema}."${objectMetadataItem.nameSingular}`,
+        `SELECT MIN(position) as position FROM ${dataSourceSchema}."${objectMetadataItem.nameSingular}"`,
       );
       expect(params).toEqual([]);
     });
