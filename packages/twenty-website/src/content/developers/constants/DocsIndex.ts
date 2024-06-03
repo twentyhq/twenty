@@ -19,15 +19,12 @@ export const DOCS_INDEX = {
       { fileName: 'core-api-graphql' },
       { fileName: 'metadata-api-graphql' },
     ],
-    'UI Kit': [
-      { fileName: 'ui-kit' },
-      { fileName: 'storybook' },
-      { fileName: 'components' },
-    ],
   },
   Contributing: {
     'Bugs and Requests': [{ fileName: 'bug-and-requests' }],
     'Frontend Development': [
+      { fileName: 'storybook' },
+      { fileName: 'components' },
       { fileName: 'frontend-development' },
       { fileName: 'frontend-commands' },
       { fileName: 'work-with-figma' },
@@ -47,7 +44,6 @@ export const DOCS_INDEX = {
       { fileName: 'queue' },
     ],
   },
-
   'User Guide': {
     'Empty Section': [],
   },

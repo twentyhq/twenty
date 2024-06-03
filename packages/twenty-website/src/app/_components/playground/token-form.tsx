@@ -33,7 +33,8 @@ const TokenForm = ({
 
   const [isLoading, setIsLoading] = useState(false);
   const [locationSetting, setLocationSetting] = useState(
-    (window.localStorage.getItem('baseUrl') &&
+    (window &&
+      window.localStorage.getItem('baseUrl') &&
       JSON.parse(window.localStorage.getItem('baseUrl') ?? '')
         ?.locationSetting) ??
       'production',
@@ -44,7 +45,7 @@ const TokenForm = ({
       'https://api.twenty.com',
   );
 
-  const tokenLocal = window.localStorage?.getItem?.(
+  const tokenLocal = window?.localStorage?.getItem?.(
     'TryIt_securitySchemeValues',
   ) as string;
 
