@@ -64,8 +64,7 @@ export const LeftPanelSkeletonLoader = () => {
               <Skeleton width={96} height={16} />
             </SkeletonTheme>
           </StyledSkeletonTitleContainer>
-          <MainNavigationDrawerItemsSkeletonLoader length={4} />
-          <MainNavigationDrawerItemsSkeletonLoader title length={2} />
+          <MainNavigationDrawerItemsSkeletonLoader length={3} />
           <MainNavigationDrawerItemsSkeletonLoader title length={3} />
         </StyledSkeletonContainer>
       </StyledItemsContainer>

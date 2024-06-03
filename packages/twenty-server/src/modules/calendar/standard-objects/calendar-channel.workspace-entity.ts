@@ -15,6 +15,7 @@ import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is
 import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
+import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 
 export enum CalendarChannelVisibility {
   METADATA = 'METADATA',
@@ -95,6 +96,26 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconReload',
   })
   syncCursor: string;
+
+  @WorkspaceField({
+    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.throttlePauseUntil,
+    type: FieldMetadataType.DATE_TIME,
+    label: 'Throttle Pause Until',
+    description: 'Throttle Pause Until',
+    icon: 'IconPlayerPause',
+  })
+  @WorkspaceIsNullable()
+  throttlePauseUntil: Date;
+
+  @WorkspaceField({
+    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.throttleFailureCount,
+    type: FieldMetadataType.NUMBER,
+    label: 'Throttle Failure Count',
+    description: 'Throttle Failure Count',
+    icon: 'IconX',
+    defaultValue: 0,
+  })
+  throttleFailureCount: number;
 
   @WorkspaceRelation({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.connectedAccount,
