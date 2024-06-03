@@ -17,6 +17,7 @@ import { RecordDetailSectionHeader } from '@/object-record/record-show/record-de
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { SingleEntitySelectMenuItemsWithSearch } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItemsWithSearch';
+import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/relation-picker/hooks/useAddNewRecordAndOpenRightDrawer';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
@@ -72,7 +73,7 @@ export const RecordDetailRelationSection = ({
 
   const relationRecordIds = relationRecords.map(({ id }) => id);
 
-  const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}`;
+  const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}-${entityId}`;
 
   const { closeDropdown, isDropdownOpen } = useDropdown(dropdownId);
 
@@ -138,6 +139,14 @@ export const RecordDetailRelationSection = ({
     );
   };
 
+  const { createNewRecordAndOpenRightDrawer } =
+    useAddNewRecordAndOpenRightDrawer({
+      relationObjectMetadataNameSingular,
+      relationObjectMetadataItem,
+      relationFieldMetadataItem,
+      entityId,
+    });
+
   return (
     <RecordDetailSection>
       <RecordDetailSectionHeader
@@ -174,6 +183,7 @@ export const RecordDetailRelationSection = ({
                       relationObjectMetadataNameSingular
                     }
                     relationPickerScopeId={dropdownId}
+                    onCreate={createNewRecordAndOpenRightDrawer}
                   />
                 </RelationPickerScope>
               }

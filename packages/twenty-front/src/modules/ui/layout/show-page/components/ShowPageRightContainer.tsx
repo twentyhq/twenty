@@ -24,12 +24,12 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
-const StyledShowPageRightContainer = styled.div`
+const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex: 1 0 0;
   flex-direction: column;
   justify-content: start;
-  overflow: ${() => (useIsMobile() ? 'none' : 'hidden')};
+  overflow: ${(isMobile) => (isMobile ? 'none' : 'hidden')};
   width: calc(100% + 4px);
 `;
 
@@ -53,6 +53,8 @@ type ShowPageRightContainerProps = {
   tasks?: boolean;
   notes?: boolean;
   emails?: boolean;
+  summary?: JSX.Element;
+  isRightDrawer?: boolean;
   loading: boolean;
 };
 
@@ -63,8 +65,12 @@ export const ShowPageRightContainer = ({
   notes,
   emails,
   loading,
+  summary,
+  isRightDrawer = false,
 }: ShowPageRightContainerProps) => {
-  const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
+  const { activeTabIdState } = useTabList(
+    TAB_LIST_COMPONENT_ID + isRightDrawer,
+  );
   const activeTabId = useRecoilValue(activeTabIdState);
 
   const shouldDisplayCalendarTab =
@@ -80,12 +86,20 @@ export const ShowPageRightContainer = ({
         CoreObjectNameSingular.Company) ||
     targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Person;
 
+  const isMobile = useIsMobile() || isRightDrawer;
+
   const TASK_TABS = [
+    {
+      id: 'summary',
+      title: 'Summary',
+      Icon: IconCheckbox,
+      hide: !isMobile,
+    },
     {
       id: 'timeline',
       title: 'Timeline',
       Icon: IconTimelineEvent,
-      hide: !timeline,
+      hide: !timeline || isRightDrawer,
     },
     {
       id: 'tasks',
@@ -127,14 +141,15 @@ export const ShowPageRightContainer = ({
   ];
 
   return (
-    <StyledShowPageRightContainer>
+    <StyledShowPageRightContainer isMobile={isMobile}>
       <StyledTabListContainer>
         <TabList
           loading={loading}
-          tabListId={TAB_LIST_COMPONENT_ID}
+          tabListId={TAB_LIST_COMPONENT_ID + isRightDrawer}
           tabs={TASK_TABS}
         />
       </StyledTabListContainer>
+      {activeTabId === 'summary' && summary}
       {activeTabId === 'timeline' && (
         <>
           <TimelineQueryEffect targetableObject={targetableObject} />
@@ -157,6 +172,7 @@ export const ShowPageRightContainer = ({
       {activeTabId === 'logs' && (
         <TimelineActivities targetableObject={targetableObject} />
       )}
+      {}
     </StyledShowPageRightContainer>
   );
 };
