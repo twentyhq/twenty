@@ -19,11 +19,7 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
 @Entity({ name: 'keyValuePair', schema: 'core' })
 @ObjectType('KeyValuePair')
-@Unique('index_on_key_user_id_workspace_id_unique', [
-  'key',
-  'userId',
-  'workspaceId',
-])
+@Unique('IndexOnKeyUserIdWorkspaceIdUnique', ['key', 'userId', 'workspaceId'])
 export class KeyValuePair {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
