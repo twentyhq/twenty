@@ -6,7 +6,6 @@ import { EntityChipVariant, IconEye } from 'twenty-ui';
 
 import { RecordChip } from '@/object-record/components/RecordChip';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
-import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardCardContext } from '@/object-record/record-board/record-board-card/contexts/RecordBoardCardContext';
 import {
@@ -24,6 +23,7 @@ import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
+import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
