@@ -11,6 +11,7 @@ import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/stan
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MESSAGING_THROTTLE_DURATION } from 'src/modules/messaging/common/constants/messaging-throttle-duration';
+import { MESSAGING_THROTTLE_MAX_ATTEMPTS } from 'src/modules/messaging/common/constants/messaging-throttle-max-attempts';
 
 type SyncStep =
   | 'partial-message-list-fetch'
@@ -117,6 +118,17 @@ export class MessagingErrorHandlingService {
       messageChannelId: messageChannel.id,
       message: `${error.code}: ${error.reason}`,
     });
+
+    if (
+      messageChannel.throttleFailureCount >= MESSAGING_THROTTLE_MAX_ATTEMPTS
+    ) {
+      await this.messagingChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
+        messageChannel.id,
+        workspaceId,
+      );
+
+      return;
+    }
 
     await this.throttle(messageChannel, workspaceId);
 
