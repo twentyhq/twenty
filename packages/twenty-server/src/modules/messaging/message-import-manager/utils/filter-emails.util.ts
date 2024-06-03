@@ -38,7 +38,7 @@ const filterOutIcsAttachments = (messages: GmailMessage[]) => {
 
 const isPersonEmail = (email: string): boolean => {
   const nonPersonalPattern =
-    /noreply|no-reply|do_not_reply|no\.reply|^(info@|contact@|hello@|support@|feedback@|service@|help@|invites@|invite@|welcome@|alerts@|team@)/;
+    /noreply|no-reply|do_not_reply|no\.reply|^(info@|contact@|hello@|support@|feedback@|service@|help@|invites@|invite@|welcome@|alerts@|team@|notifications@|notification@|news@)/;
 
   return !nonPersonalPattern.test(email);
 };
