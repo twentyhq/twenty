@@ -84,7 +84,7 @@ const StyledItem = styled('div', {
 `;
 
 const StyledItemLabel = styled.div`
-  font-weight: ${({ theme }) => theme.font.weight.mediumForNavigation};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
