@@ -251,9 +251,9 @@ export class MessageChannelRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."messageChannel" SET "throttlePauseUntil" = NOW() + interval '${throttleDurationMs} milliseconds', "throttleFailureCount" = "throttleFailureCount" + 1
-      WHERE "id" = $1`,
-      [id],
+      `UPDATE ${dataSourceSchema}."messageChannel" SET "throttlePauseUntil" = NOW() + interval '$1 milliseconds', "throttleFailureCount" = "throttleFailureCount" + 1
+      WHERE "id" = $2`,
+      [throttleDurationMs, id],
       workspaceId,
       transactionManager,
     );
