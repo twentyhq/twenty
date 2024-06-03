@@ -26,7 +26,7 @@ const currentUser = {
   email: 'test@test',
   supportUserHash: '1',
   canImpersonate: false,
-  state: { syncEmailSkipped: true },
+  state: { skipSyncEmail: true },
 } as CurrentUser;
 const currentWorkspace = {
   activationStatus: 'active',
