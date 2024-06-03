@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { ContinueButton } from '@/spreadsheet-import/components/ContinueButton';
 import { Heading } from '@/spreadsheet-import/components/Heading';
+import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { Field, RawData } from '@/spreadsheet-import/types';
 import { findUnmatchedRequiredFields } from '@/spreadsheet-import/utils/findUnmatchedRequiredFields';
@@ -49,6 +49,7 @@ export type MatchColumnsStepProps<T extends string> = {
   data: RawData[];
   headerValues: RawData;
   onContinue: (data: any[], rawData: RawData[], columns: Columns<T>) => void;
+  onBack: () => void;
 };
 
 export enum ColumnType {
@@ -112,6 +113,7 @@ export const MatchColumnsStep = <T extends string>({
   data,
   headerValues,
   onContinue,
+  onBack,
 }: MatchColumnsStepProps<T>) => {
   const { enqueueDialog } = useDialogManager();
   const { enqueueSnackBar } = useSnackBar();
@@ -284,11 +286,12 @@ export const MatchColumnsStep = <T extends string>({
           )}
         />
       </StyledContent>
-      <ContinueButton
+      <StepNavigationButton
+        onClick={handleOnContinue}
         isLoading={isLoading}
-        onContinue={handleOnContinue}
         title="Next"
       />
+      <StepNavigationButton onClick={onBack} title="Back" />
     </>
   );
 };

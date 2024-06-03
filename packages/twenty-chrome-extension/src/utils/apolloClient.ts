@@ -1,32 +1,17 @@
-import {
-  ApolloClient,
-  from,
-  fromPromise,
-  HttpLink,
-  InMemoryCache,
-} from '@apollo/client';
+import { ApolloClient, from, HttpLink, InMemoryCache } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import { onError } from '@apollo/client/link/error';
 
-import { renewToken } from '~/db/token.db';
-import { Tokens } from '~/db/types/auth.types';
 import { isDefined } from '~/utils/isDefined';
 
-const clearStore = () => {
-  chrome.storage.local.remove(['loginToken', 'accessToken', 'refreshToken']);
+export const clearStore = () => {
+  chrome.storage.local.remove([
+    'loginToken',
+    'accessToken',
+    'refreshToken',
+    'sidepanelUrl',
+  ]);
   chrome.storage.local.set({ isAuthenticated: false });
-};
-
-const setStore = (tokens: Tokens) => {
-  if (isDefined(tokens.loginToken)) {
-    chrome.storage.local.set({
-      loginToken: tokens.loginToken,
-    });
-  }
-  chrome.storage.local.set({
-    accessToken: tokens.accessToken,
-    refreshToken: tokens.refreshToken,
-  });
 };
 
 export const getServerUrl = async () => {
@@ -46,8 +31,6 @@ const getAuthToken = async () => {
 };
 
 const getApolloClient = async () => {
-  const store = await chrome.storage.local.get();
-
   const authLink = setContext(async (_, { headers }) => {
     const token = await getAuthToken();
     return {
@@ -57,57 +40,37 @@ const getApolloClient = async () => {
       },
     };
   });
-  const errorLink = onError(
-    ({ graphQLErrors, networkError, forward, operation }) => {
-      if (isDefined(graphQLErrors)) {
-        for (const graphQLError of graphQLErrors) {
-          if (graphQLError.message === 'Unauthorized') {
-            return fromPromise(
-              renewToken(store.refreshToken.token)
-                .then((response) => {
-                  if (isDefined(response)) {
-                    setStore(response.renewToken.tokens);
-                  }
-                })
-                .catch(() => {
-                  clearStore();
-                }),
-            ).flatMap(() => forward(operation));
+  const errorLink = onError(({ graphQLErrors, networkError }) => {
+    if (isDefined(graphQLErrors)) {
+      for (const graphQLError of graphQLErrors) {
+        if (graphQLError.message === 'Unauthorized') {
+          clearStore();
+          return;
+        }
+        switch (graphQLError?.extensions?.code) {
+          case 'UNAUTHENTICATED': {
+            clearStore();
+            break;
           }
-          switch (graphQLError?.extensions?.code) {
-            case 'UNAUTHENTICATED': {
-              return fromPromise(
-                renewToken(store.refreshToken.token)
-                  .then((response) => {
-                    if (isDefined(response)) {
-                      setStore(response.renewToken.tokens);
-                    }
-                  })
-                  .catch(() => {
-                    clearStore();
-                  }),
-              ).flatMap(() => forward(operation));
-            }
-            default:
-              // eslint-disable-next-line no-console
-              console.error(
-                `[GraphQL error]: Message: ${graphQLError.message}, Location: ${
-                  graphQLError.locations
-                    ? JSON.stringify(graphQLError.locations)
-                    : graphQLError.locations
-                }, Path: ${graphQLError.path}`,
-              );
-              break;
-          }
+          default:
+            // eslint-disable-next-line no-console
+            console.error(
+              `[GraphQL error]: Message: ${graphQLError.message}, Location: ${
+                graphQLError.locations
+                  ? JSON.stringify(graphQLError.locations)
+                  : graphQLError.locations
+              }, Path: ${graphQLError.path}`,
+            );
+            break;
         }
       }
+    }
 
-      if (isDefined(networkError)) {
-        // eslint-disable-next-line no-console
-        console.error(`[Network error]: ${networkError}`);
-      }
-    },
-  );
+    if (isDefined(networkError)) {
+      // eslint-disable-next-line no-console
+      console.error(`[Network error]: ${networkError}`);
+    }
+  });
 
   const httpLink = new HttpLink({
     uri: await getServerUrl(),

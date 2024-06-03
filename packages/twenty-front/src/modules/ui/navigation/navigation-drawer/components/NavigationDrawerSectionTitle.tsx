@@ -20,9 +20,9 @@ export const NavigationDrawerSectionTitle = ({
   label,
 }: NavigationDrawerSectionTitleProps) => {
   const loading = useIsPrefetchLoading();
-  return loading ? (
-    <NavigationDrawerSectionTitleSkeletonLoader />
-  ) : (
-    <StyledTitle>{label}</StyledTitle>
-  );
+
+  if (loading) {
+    return <NavigationDrawerSectionTitleSkeletonLoader />;
+  }
+  return <StyledTitle>{label}</StyledTitle>;
 };
