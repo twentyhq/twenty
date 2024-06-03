@@ -34,12 +34,10 @@ const StyledTextArea = styled(TextareaAutosize)`
 `;
 
 const StyledTextAreaContainer = styled.div`
-  box-shadow: ${({ theme }) => theme.boxShadow.strong};
   border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   position: relative;
   width: 100%;
   padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(1)};
-  background-color: ${({ theme }) => theme.background.primary};
   border-radius: ${({ theme }) => theme.border.radius.sm};
 `;
 
