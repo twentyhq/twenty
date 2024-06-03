@@ -75,6 +75,20 @@ export class MessagingMessageListFetchJob
       return;
     }
 
+    if (
+      messageChannel.throttlePauseUntil &&
+      messageChannel.throttlePauseUntil > new Date()
+    ) {
+      await this.messagingTelemetryService.track({
+        eventName: 'message_list_fetch_job.throttled',
+        workspaceId,
+        connectedAccountId,
+        messageChannelId: messageChannel.id,
+      });
+
+      return;
+    }
+
     switch (messageChannel.syncSubStatus) {
       case MessageChannelSyncSubStatus.PARTIAL_MESSAGE_LIST_FETCH_PENDING:
         this.logger.log(
@@ -85,6 +99,7 @@ export class MessagingMessageListFetchJob
           eventName: 'partial_message_list_fetch.started',
           workspaceId,
           connectedAccountId,
+          messageChannelId: messageChannel.id,
         });
 
         await this.gmailPartialMessageListFetchV2Service.processMessageListFetch(
@@ -111,6 +126,7 @@ export class MessagingMessageListFetchJob
           eventName: 'full_message_list_fetch.started',
           workspaceId,
           connectedAccountId,
+          messageChannelId: messageChannel.id,
         });
 
         await this.gmailFullMessageListFetchService.processMessageListFetch(
