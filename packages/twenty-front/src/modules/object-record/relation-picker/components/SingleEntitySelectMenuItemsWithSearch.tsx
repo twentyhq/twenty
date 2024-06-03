@@ -54,8 +54,7 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
     relationPickerSearchFilterState,
   );
 
-  const showCreateButton =
-    isDefined(onCreate) && relationPickerSearchFilter !== '';
+  const showCreateButton = isDefined(onCreate);
 
   const entities = useFilteredSearchEntityQuery({
     filters: [
