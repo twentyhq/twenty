@@ -72,7 +72,7 @@ const StyledHeader = styled.div`
   align-items: center;
   color: ${({ theme }) => theme.font.color.primary};
   display: flex;
-  font-weight: ${({ theme }) => theme.font.weight.semiBold};
+  font-weight: ${({ theme }) => theme.font.weight.medium};
   gap: ${({ theme }) => theme.spacing(2)};
   height: ${({ theme }) => theme.spacing(6)};
   margin-bottom: ${({ theme }) => theme.spacing(1)};
@@ -187,16 +187,10 @@ export const SnackBar = ({
         {icon}
         {title}
         <StyledActions>
-          {!!onCancel && (
-            <LightButton title="Cancel" onClick={onCancel}>
-              Cancel
-            </LightButton>
-          )}
+          {!!onCancel && <LightButton title="Cancel" onClick={onCancel} />}
 
           {!!onClose && (
-            <LightIconButton title="Close" Icon={IconX} onClick={onClose}>
-              Cancel
-            </LightIconButton>
+            <LightIconButton title="Close" Icon={IconX} onClick={onClose} />
           )}
         </StyledActions>
       </StyledHeader>
