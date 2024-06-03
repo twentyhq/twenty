@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-import UserGuideContent from '@/app/_components/user-guide/UserGuideContent';
+import DocsContent from '@/app/_components/docs/DocsContent';
 import { fetchArticleFromSlug } from '@/shared-utils/fetchArticleFromSlug';
 import { formatSlug } from '@/shared-utils/formatSlug';
 
@@ -27,5 +27,5 @@ export default async function UserGuideSlug({
 }) {
   const basePath = '/src/content/user-guide';
   const mainPost = await fetchArticleFromSlug(params.slug, basePath);
-  return mainPost && <UserGuideContent item={mainPost} />;
+  return mainPost && <DocsContent item={mainPost} />;
 }

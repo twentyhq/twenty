@@ -12,12 +12,14 @@ describe('QueryRunnerArgsFactory', () => {
   const recordPositionFactory = {
     create: jest.fn().mockResolvedValue(2),
   };
+  const workspaceId = 'workspaceId';
   const options = {
     fieldMetadataCollection: [
       { name: 'position', type: FieldMetadataType.POSITION },
       { name: 'testNumber', type: FieldMetadataType.NUMBER },
     ] as FieldMetadataInterface[],
     objectMetadataItem: { isCustom: true, nameSingular: 'test' },
+    workspaceId,
   } as WorkspaceQueryRunnerOptions;
 
   let factory: QueryRunnerArgsFactory;
@@ -68,6 +70,36 @@ describe('QueryRunnerArgsFactory', () => {
         ResolverArgsType.CreateMany,
       );
 
+      expect(recordPositionFactory.create).toHaveBeenCalledWith(
+        'last',
+        { isCustom: true, nameSingular: 'test' },
+        workspaceId,
+        0,
+      );
+      expect(result).toEqual({
+        id: 'uuid',
+        data: [{ position: 2, testNumber: 1 }],
+      });
+    });
+
+    it('createMany type should override position if not present', async () => {
+      const args = {
+        id: 'uuid',
+        data: [{ testNumber: '1' }],
+      };
+
+      const result = await factory.create(
+        args,
+        options,
+        ResolverArgsType.CreateMany,
+      );
+
+      expect(recordPositionFactory.create).toHaveBeenCalledWith(
+        'first',
+        { isCustom: true, nameSingular: 'test' },
+        workspaceId,
+        0,
+      );
       expect(result).toEqual({
         id: 'uuid',
         data: [{ position: 2, testNumber: 1 }],

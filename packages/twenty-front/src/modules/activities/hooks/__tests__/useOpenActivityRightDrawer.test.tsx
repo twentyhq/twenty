@@ -5,7 +5,7 @@ import { RecoilRoot, useRecoilValue } from 'recoil';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { activityIdInDrawerState } from '@/activities/states/activityIdInDrawerState';
-import { viewableActivityIdState } from '@/activities/states/viewableActivityIdState';
+import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <RecoilRoot>
@@ -18,12 +18,12 @@ describe('useOpenActivityRightDrawer', () => {
     const { result } = renderHook(
       () => {
         const openActivityRightDrawer = useOpenActivityRightDrawer();
-        const viewableActivityId = useRecoilValue(viewableActivityIdState);
+        const viewableRecordId = useRecoilValue(viewableRecordIdState);
         const activityIdInDrawer = useRecoilValue(activityIdInDrawerState);
         return {
           openActivityRightDrawer,
           activityIdInDrawer,
-          viewableActivityId,
+          viewableRecordId,
         };
       },
       {
@@ -32,11 +32,11 @@ describe('useOpenActivityRightDrawer', () => {
     );
 
     expect(result.current.activityIdInDrawer).toBeNull();
-    expect(result.current.viewableActivityId).toBeNull();
+    expect(result.current.viewableRecordId).toBeNull();
     act(() => {
       result.current.openActivityRightDrawer('123');
     });
     expect(result.current.activityIdInDrawer).toBe('123');
-    expect(result.current.viewableActivityId).toBe('123');
+    expect(result.current.viewableRecordId).toBe('123');
   });
 });

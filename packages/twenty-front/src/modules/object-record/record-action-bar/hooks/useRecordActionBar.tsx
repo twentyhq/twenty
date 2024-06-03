@@ -90,8 +90,22 @@ export const useRecordActionBar = ({
 
   const handleDeleteClick = useCallback(async () => {
     callback?.();
+    selectedRecordIds.forEach((recordId) => {
+      const foundFavorite = favorites?.find(
+        (favorite) => favorite.recordId === recordId,
+      );
+      if (foundFavorite !== undefined) {
+        deleteFavorite(foundFavorite.id);
+      }
+    });
     await deleteManyRecords(selectedRecordIds);
-  }, [callback, deleteManyRecords, selectedRecordIds]);
+  }, [
+    callback,
+    deleteManyRecords,
+    selectedRecordIds,
+    favorites,
+    deleteFavorite,
+  ]);
 
   const handleExecuteQuickActionOnClick = useCallback(async () => {
     callback?.();

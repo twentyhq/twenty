@@ -1,5 +1,7 @@
 import { HttpException } from '@nestjs/common';
 
+import { GraphQLError } from 'graphql';
+
 import { ExceptionHandlerUser } from 'src/engine/integrations/exception-handler/interfaces/exception-handler-user.interface';
 
 import {
@@ -35,6 +37,12 @@ export const handleExceptionAndConvertToGraphQLError = (
 };
 
 export const shouldFilterException = (exception: Error): boolean => {
+  if (
+    exception instanceof GraphQLError &&
+    (exception?.extensions?.http?.status ?? 500) < 500
+  ) {
+    return true;
+  }
   if (exception instanceof HttpException && exception.getStatus() < 500) {
     return true;
   }

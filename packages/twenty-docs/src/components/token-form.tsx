@@ -29,8 +29,7 @@ const TokenForm = ({
   const location = useLocation();
   const [isLoading, setIsLoading] = useState(false);
   const [locationSetting, setLocationSetting] = useState(
-    parseJson(localStorage.getItem('baseUrl'))?.locationSetting ??
-      'production',
+    parseJson(localStorage.getItem('baseUrl'))?.locationSetting ?? 'production',
   );
   const [baseUrl, setBaseUrl] = useState(
     parseJson(localStorage.getItem('baseUrl'))?.baseUrl ??
@@ -63,14 +62,17 @@ const TokenForm = ({
       url = 'http://localhost:3000';
     } else {
       url = baseUrl?.endsWith('/')
-      ? baseUrl.substring(0, baseUrl.length - 1)
-      : baseUrl
+        ? baseUrl.substring(0, baseUrl.length - 1)
+        : baseUrl;
     }
-    
+
     setBaseUrl(url);
     setLocationSetting(locationSetting);
     submitBaseUrl?.(url);
-    localStorage.setItem('baseUrl', JSON.stringify({ baseUrl: url, locationSetting }));
+    localStorage.setItem(
+      'baseUrl',
+      JSON.stringify({ baseUrl: url, locationSetting }),
+    );
   };
 
   const validateToken = (openApiJson) => {
@@ -133,7 +135,7 @@ const TokenForm = ({
           <select
             className="select"
             onChange={(event) => {
-              updateBaseUrl(baseUrl, event.target.value)
+              updateBaseUrl(baseUrl, event.target.value);
             }}
             value={locationSetting}
           >
@@ -154,7 +156,9 @@ const TokenForm = ({
             disabled={locationSetting !== 'other'}
             placeholder="Base URL"
             value={baseUrl}
-            onChange={(event) => updateBaseUrl(event.target.value, locationSetting)}
+            onChange={(event) =>
+              updateBaseUrl(event.target.value, locationSetting)
+            }
             onBlur={() => submitToken(token)}
           />
         </div>
