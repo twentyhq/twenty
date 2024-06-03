@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import compact from 'lodash.compact';
 
 import { getDomainNameFromHandle } from 'src/modules/calendar-messaging-participant/utils/get-domain-name-from-handle.util';
@@ -16,11 +15,10 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 import { getUniqueContactsAndHandles } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/get-unique-contacts-and-handles.util';
 import { Contacts } from 'src/modules/connected-account/auto-companies-and-contacts-creation/types/contact.type';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { MessageParticipantService } from 'src/modules/messaging/services/message-participant/message-participant.service';
 import { CalendarEventParticipantService } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.service';
 import { filterOutContactsFromCompanyOrWorkspace } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/filter-out-contacts-from-company-or-workspace.util';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
+import { MessagingMessageParticipantService } from 'src/modules/messaging/common/services/messaging-message-participant.service';
 
 @Injectable()
 export class CreateCompanyAndContactService {
@@ -32,10 +30,8 @@ export class CreateCompanyAndContactService {
     @InjectObjectMetadataRepository(WorkspaceMemberWorkspaceEntity)
     private readonly workspaceMemberRepository: WorkspaceMemberRepository,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly messageParticipantService: MessageParticipantService,
+    private readonly messageParticipantService: MessagingMessageParticipantService,
     private readonly calendarEventParticipantService: CalendarEventParticipantService,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   async createCompaniesAndPeople(
