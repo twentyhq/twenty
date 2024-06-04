@@ -13,6 +13,7 @@ import {
 import { RecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { hasPositionField } from 'src/engine/metadata-modules/object-metadata/utils/has-position-field.util';
 
 import { RecordPositionFactory } from './record-position.factory';
 
@@ -39,6 +40,8 @@ export class QueryRunnerArgsFactory {
       ]),
     );
 
+    const shouldBackfillPosition = hasPositionField(options.objectMetadataItem);
+
     switch (resolverArgsType) {
       case ResolverArgsType.CreateMany:
         return {
@@ -47,7 +50,7 @@ export class QueryRunnerArgsFactory {
             (args as CreateManyResolverArgs).data.map((arg, index) =>
               this.overrideDataByFieldMetadata(arg, options, fieldMetadataMap, {
                 argIndex: index,
-                shouldBackfillPosition: true,
+                shouldBackfillPosition,
               }),
             ),
           ),

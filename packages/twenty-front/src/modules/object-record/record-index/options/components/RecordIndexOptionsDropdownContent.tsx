@@ -10,6 +10,7 @@ import {
   IconTag,
 } from 'twenty-ui';
 
+import { useObjectNamePluralFromSingular } from '@/object-metadata/hooks/useObjectNamePluralFromSingular';
 import { RECORD_INDEX_OPTIONS_DROPDOWN_ID } from '@/object-record/record-index/options/constants/RecordIndexOptionsDropdownId';
 import {
   displayedExportProgress,
@@ -27,6 +28,7 @@ import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownM
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
+import { MenuItemNavigate } from '@/ui/navigation/menu-item/components/MenuItemNavigate';
 import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemToggle';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFieldsVisibilityDropdownSection';
@@ -59,6 +61,14 @@ export const RecordIndexOptionsDropdownContent = ({
   const handleSelectMenu = (option: RecordIndexOptionsMenu) => {
     setCurrentMenu(option);
   };
+
+  const { objectNamePlural } = useObjectNamePluralFromSingular({
+    objectNameSingular: objectNameSingular,
+  });
+
+  const settingsUrl = getSettingsPagePath(SettingsPath.ObjectDetail, {
+    objectSlug: objectNamePlural,
+  });
 
   useScopedHotkeys(
     [Key.Escape],
@@ -140,7 +150,6 @@ export const RecordIndexOptionsDropdownContent = ({
           <DropdownMenuHeader StartIcon={IconChevronLeft} onClick={resetMenu}>
             Fields
           </DropdownMenuHeader>
-          <DropdownMenuSeparator />
           <ViewFieldsVisibilityDropdownSection
             title="Visible"
             fields={visibleRecordFields}
@@ -150,11 +159,13 @@ export const RecordIndexOptionsDropdownContent = ({
             showSubheader={false}
           />
           <DropdownMenuSeparator />
-          <MenuItem
-            onClick={() => handleSelectMenu('hiddenFields')}
-            LeftIcon={IconEyeOff}
-            text="Hidden Fields"
-          />
+          <DropdownMenuItemsContainer>
+            <MenuItemNavigate
+              onClick={() => handleSelectMenu('hiddenFields')}
+              LeftIcon={IconEyeOff}
+              text="Hidden Fields"
+            />
+          </DropdownMenuItemsContainer>
         </>
       )}
       {currentMenu === 'hiddenFields' && (
@@ -165,7 +176,6 @@ export const RecordIndexOptionsDropdownContent = ({
           >
             Hidden Fields
           </DropdownMenuHeader>
-          <DropdownMenuSeparator />
           {hiddenRecordFields.length > 0 && (
             <>
               <ViewFieldsVisibilityDropdownSection
@@ -178,8 +188,11 @@ export const RecordIndexOptionsDropdownContent = ({
             </>
           )}
           <DropdownMenuSeparator />
-          <UndecoratedLink to={getSettingsPagePath(SettingsPath.Objects)}>
-            <MenuItem LeftIcon={IconSettings} text="Edit Fields" />
+
+          <UndecoratedLink to={settingsUrl}>
+            <DropdownMenuItemsContainer>
+              <MenuItem LeftIcon={IconSettings} text="Edit Fields" />
+            </DropdownMenuItemsContainer>
           </UndecoratedLink>
         </>
       )}

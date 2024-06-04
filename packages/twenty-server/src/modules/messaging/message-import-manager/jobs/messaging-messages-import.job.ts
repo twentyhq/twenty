@@ -9,6 +9,7 @@ import { MessageChannelRepository } from 'src/modules/messaging/common/repositor
 import { MessagingTelemetryService } from 'src/modules/messaging/common/services/messaging-telemetry.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingGmailMessagesImportService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-messages-import.service';
+import { isThrottled } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-throttled';
 
 export type MessagingMessagesImportJobData = {
   workspaceId: string;
@@ -46,8 +47,10 @@ export class MessagingMessagesImportJob
       });
 
       if (
-        messageChannel.throttlePauseUntil &&
-        messageChannel.throttlePauseUntil > new Date()
+        isThrottled(
+          messageChannel.syncStageStartedAt,
+          messageChannel.throttleFailureCount,
+        )
       ) {
         continue;
       }
