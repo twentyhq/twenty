@@ -12,7 +12,7 @@ import { BlocklistRepository } from 'src/modules/connected-account/repositories/
 import { MessagingTelemetryService } from 'src/modules/messaging/common/services/messaging-telemetry.service';
 import {
   MessageChannelWorkspaceEntity,
-  MessageChannelSyncSubStatus,
+  MessageChannelSyncStage,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { createQueriesFromMessageIds } from 'src/modules/messaging/message-import-manager/utils/create-queries-from-message-ids.util';
 import { filterEmails } from 'src/modules/messaging/message-import-manager/utils/filter-emails.util';
@@ -21,6 +21,7 @@ import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messa
 import { MessagingGmailFetchMessagesByBatchesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-fetch-messages-by-batches.service';
 import { MessagingErrorHandlingService } from 'src/modules/messaging/common/services/messaging-error-handling.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/common/services/messaging-save-messages-and-enqueue-contact-creation.service';
+import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 
 @Injectable()
 export class MessagingGmailMessagesImportService {
@@ -39,6 +40,8 @@ export class MessagingGmailMessagesImportService {
     private readonly messagingTelemetryService: MessagingTelemetryService,
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
+    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
+    private readonly messageChannelRepository: MessageChannelRepository,
   ) {}
 
   async processMessageBatchImport(
@@ -47,8 +50,8 @@ export class MessagingGmailMessagesImportService {
     workspaceId: string,
   ) {
     if (
-      messageChannel.syncSubStatus !==
-      MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING
+      messageChannel.syncStage !==
+      MessageChannelSyncStage.MESSAGES_IMPORT_PENDING
     ) {
       return;
     }
@@ -133,6 +136,16 @@ export class MessagingGmailMessagesImportService {
           workspaceId,
         );
       }
+
+      await this.messageChannelRepository.resetThrottleFailureCount(
+        messageChannel.id,
+        workspaceId,
+      );
+
+      await this.messageChannelRepository.resetSyncStageStartedAt(
+        messageChannel.id,
+        workspaceId,
+      );
 
       return await this.trackMessageImportCompleted(
         messageChannel,

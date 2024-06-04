@@ -19,14 +19,14 @@ describe('RecordPositionQueryFactory', () => {
     it('should return query and params for FIND_BY_POSITION', async () => {
       const positionValue = 1;
       const queryType = RecordPositionQueryType.FIND_BY_POSITION;
-      const [query, params] = await factory.create(
+      const [query, params] = factory.create(
         { positionValue, recordPositionQueryType: queryType },
         objectMetadataItem,
         dataSourceSchema,
       );
 
       expect(query).toEqual(
-        `SELECT position FROM ${dataSourceSchema}."${objectMetadataItem.nameSingular}"
+        `SELECT id, position FROM ${dataSourceSchema}."${objectMetadataItem.nameSingular}"
             WHERE "position" = $1`,
       );
       expect(params).toEqual([positionValue]);
@@ -34,7 +34,7 @@ describe('RecordPositionQueryFactory', () => {
 
     it('should return query and params for FIND_MIN_POSITION', async () => {
       const queryType = RecordPositionQueryType.FIND_MIN_POSITION;
-      const [query, params] = await factory.create(
+      const [query, params] = factory.create(
         { recordPositionQueryType: queryType },
         objectMetadataItem,
         dataSourceSchema,
@@ -48,7 +48,7 @@ describe('RecordPositionQueryFactory', () => {
 
     it('should return query and params for FIND_MAX_POSITION', async () => {
       const queryType = RecordPositionQueryType.FIND_MAX_POSITION;
-      const [query, params] = await factory.create(
+      const [query, params] = factory.create(
         { recordPositionQueryType: queryType },
         objectMetadataItem,
         dataSourceSchema,
@@ -64,7 +64,7 @@ describe('RecordPositionQueryFactory', () => {
       const positionValue = 1;
       const recordId = '1';
       const queryType = RecordPositionQueryType.UPDATE_POSITION;
-      const [query, params] = await factory.create(
+      const [query, params] = factory.create(
         { positionValue, recordId, recordPositionQueryType: queryType },
         objectMetadataItem,
         dataSourceSchema,

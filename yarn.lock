@@ -4025,22 +4025,22 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@codesandbox/sandpack-client@npm:^2.13.2":
-  version: 2.13.2
-  resolution: "@codesandbox/sandpack-client@npm:2.13.2"
+"@codesandbox/sandpack-client@npm:^2.13.8":
+  version: 2.13.8
+  resolution: "@codesandbox/sandpack-client@npm:2.13.8"
   dependencies:
     "@codesandbox/nodebox": "npm:0.1.8"
     buffer: "npm:^6.0.3"
     dequal: "npm:^2.0.2"
     outvariant: "npm:1.4.0"
     static-browser-server: "npm:1.0.3"
-  checksum: e92126e1115b38eebd5e2b1b50bd84e0ecf6b3d0c721ef9c93981914b4963b2f21e61bff00df3f13f795857be62346424e4392c91acd909d6abc770d96d7362f
+  checksum: fc6fbfade722daeb2d5442c523d49f2713d391075a3a31a125c51f8d73112aab03ae2ff18a22ff192b2ab3a9ad94910c206af2effb53748e2d52fce4dc072d4e
   languageName: node
   linkType: hard
 
 "@codesandbox/sandpack-react@npm:^2.13.5":
-  version: 2.13.5
-  resolution: "@codesandbox/sandpack-react@npm:2.13.5"
+  version: 2.14.0
+  resolution: "@codesandbox/sandpack-react@npm:2.14.0"
   dependencies:
     "@codemirror/autocomplete": "npm:^6.4.0"
     "@codemirror/commands": "npm:^6.1.3"
@@ -4050,7 +4050,7 @@ __metadata:
     "@codemirror/language": "npm:^6.3.2"
     "@codemirror/state": "npm:^6.2.0"
     "@codemirror/view": "npm:^6.7.1"
-    "@codesandbox/sandpack-client": "npm:^2.13.2"
+    "@codesandbox/sandpack-client": "npm:^2.13.8"
     "@lezer/highlight": "npm:^1.1.3"
     "@react-hook/intersection-observer": "npm:^3.1.1"
     "@stitches/core": "npm:^1.2.6"
@@ -4064,7 +4064,7 @@ __metadata:
   peerDependencies:
     react: ^16.8.0 || ^17 || ^18
     react-dom: ^16.8.0 || ^17 || ^18
-  checksum: 214dec8ad50adb1ceefa36320d59b02303b16d238ccd8d50a39b03934d239bbfc68e2abd7a0f8505b6ff700140d9c27857da5e9f7895938d9bdc6af121a22781
+  checksum: d12217e5e3098679ddf483bf2dd32a29e0f18252d1bef3a47c5462ecddb64c503dde1b801dfbe6e3e729285828e06daea270a7e1caddffa84c52a552675866d5
   languageName: node
   linkType: hard
 

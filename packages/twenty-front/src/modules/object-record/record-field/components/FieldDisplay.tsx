@@ -1,6 +1,8 @@
 import { useContext } from 'react';
 
+import { BooleanFieldDisplay } from '@/object-record/record-field/meta-types/display/components/BooleanFieldDisplay';
 import { LinksFieldDisplay } from '@/object-record/record-field/meta-types/display/components/LinksFieldDisplay';
+import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
 import { isFieldDisplayedAsPhone } from '@/object-record/record-field/types/guards/isFieldDisplayedAsPhone';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 
@@ -81,5 +83,7 @@ export const FieldDisplay = () => {
     <AddressFieldDisplay />
   ) : isFieldRawJson(fieldDefinition) ? (
     <JsonFieldDisplay />
+  ) : isFieldBoolean(fieldDefinition) ? (
+    <BooleanFieldDisplay />
   ) : null;
 };

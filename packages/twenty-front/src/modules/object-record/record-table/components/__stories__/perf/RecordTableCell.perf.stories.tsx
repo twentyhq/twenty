@@ -79,6 +79,8 @@ const meta: Meta = {
             >
               <RecordTableRowContext.Provider
                 value={{
+                  objectNameSingular:
+                    mockPerformance.entityValue.__typename.toLocaleLowerCase(),
                   recordId: mockPerformance.entityId,
                   rowIndex: 0,
                   pathToShowPage:
