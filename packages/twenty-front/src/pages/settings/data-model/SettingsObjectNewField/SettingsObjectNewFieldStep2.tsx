@@ -11,9 +11,7 @@ import { z } from 'zod';
 import { useCreateOneRelationMetadataItem } from '@/object-metadata/hooks/useCreateOneRelationMetadataItem';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
@@ -50,13 +48,12 @@ export const SettingsObjectNewFieldStep2 = () => {
   const { objectSlug = '' } = useParams();
   const { enqueueSnackBar } = useSnackBar();
 
-  const { findActiveObjectMetadataItemBySlug, findObjectMetadataItemById } =
+  const { findActiveObjectMetadataItemBySlug } =
     useFilteredObjectMetadataItems();
 
   const activeObjectMetadataItem =
     findActiveObjectMetadataItemBySlug(objectSlug);
   const { createMetadataField } = useFieldMetadataItem();
-  const cache = useApolloClient().cache;
 
   const formConfig = useForm<SettingsDataModelNewFieldFormValues>({
     mode: 'onTouched',
@@ -69,17 +66,8 @@ export const SettingsObjectNewFieldStep2 = () => {
     }
   }, [activeObjectMetadataItem, navigate]);
 
-  const [objectViews, setObjectViews] = useState<View[]>([]);
-  const [relationObjectViews, setRelationObjectViews] = useState<View[]>([]);
-
-  const { objectMetadataItem: viewObjectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.View,
-  });
-
-  const { objectMetadataItem: viewFieldObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular: CoreObjectNameSingular.ViewField,
-    });
+  const [, setObjectViews] = useState<View[]>([]);
+  const [, setRelationObjectViews] = useState<View[]>([]);
 
   useFindManyRecords<View>({
     objectNameSingular: CoreObjectNameSingular.View,
@@ -114,10 +102,6 @@ export const SettingsObjectNewFieldStep2 = () => {
 
   const { createOneRelationMetadataItem: createOneRelationMetadata } =
     useCreateOneRelationMetadataItem();
-
-  const createOneViewFieldInCache = useCreateOneRecordInCache({
-    objectMetadataItem: viewFieldObjectMetadataItem,
-  });
 
   const apolloClient = useApolloClient();
 

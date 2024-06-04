@@ -14,11 +14,8 @@ export const useSaveCurrentViewFields = (viewBarComponentId?: string) => {
 
   const { getViewFromCache } = useGetViewFromCache();
 
-  const {
-    isPersistingViewFieldsState,
-    currentViewIdState,
-    availableFieldDefinitionsState,
-  } = useViewStates(viewBarComponentId);
+  const { isPersistingViewFieldsState, currentViewIdState } =
+    useViewStates(viewBarComponentId);
 
   const saveViewFields = useRecoilCallback(
     ({ set, snapshot }) =>
