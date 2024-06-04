@@ -23,11 +23,11 @@ const StyledClickableContainer = styled.div<{ readonly?: boolean }>`
 
 type RecordInlineCellValueProps = Pick<
   RecordInlineCellContainerProps,
-  | 'editModeContent'
   | 'displayModeContent'
   | 'customEditHotkeyScope'
-  | 'isDisplayModeContentEmpty'
+  | 'editModeContent'
   | 'editModeContentOnly'
+  | 'isDisplayModeContentEmpty'
   | 'isDisplayModeFixHeight'
   | 'disableHoverEffect'
   | 'readonly'

@@ -9,7 +9,6 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
-import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedOnboardingUsersData } from '~/testing/mock-data/users';
 
@@ -18,7 +17,7 @@ import { PaymentSuccess } from '../PaymentSuccess';
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Auth/PaymentSuccess',
   component: PaymentSuccess,
-  decorators: [PrefetchLoadingDecorator, PageDecorator],
+  decorators: [PageDecorator],
   args: { routePath: AppPath.PlanRequiredSuccess },
   parameters: {
     msw: {

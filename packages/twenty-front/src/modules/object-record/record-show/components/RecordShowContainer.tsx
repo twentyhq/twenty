@@ -168,6 +168,7 @@ export const RecordShowContainer = ({
                   },
                   useUpdateRecord: useUpdateOneObjectRecordMutation,
                   hotkeyScope: InlineCellHotkeyScope.InlineCell,
+                  isCentered: true,
                 }}
               >
                 <RecordInlineCell readonly={isReadOnly} />
