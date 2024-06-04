@@ -58,9 +58,7 @@ export const SettingsWorkspaceMembers = () => {
             title="Invite your team"
             description="Send an email invite:"
           />
-          <WorkspaceInviteTeam
-            inviteLink={`${window.location.origin}/invite/${currentWorkspace?.inviteHash}`}
-          />
+          <WorkspaceInviteTeam />
         </Section>
         {currentWorkspace?.inviteHash && (
           <Section>

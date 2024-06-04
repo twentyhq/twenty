@@ -1,6 +1,6 @@
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconCopy, IconSend } from 'twenty-ui';
+import { IconCopy, IconMail, IconSend } from 'twenty-ui';
 
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -18,12 +18,11 @@ const StyledLinkContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const WorkspaceInviteTeam = ({ inviteLink }: { inviteLink: string }) => {
+export const WorkspaceInviteTeam = () => {
   const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
   const handleOnClick = () => {
-    console.log('inviteLink', inviteLink);
-    enqueueSnackBar('Invite link sent to email adresses', {
+    enqueueSnackBar('Invite link sent to email addresses', {
       variant: SnackBarVariant.Success,
       icon: <IconCopy size={theme.icon.size.md} />,
       duration: 2000,
@@ -32,7 +31,11 @@ export const WorkspaceInviteTeam = ({ inviteLink }: { inviteLink: string }) => {
   return (
     <StyledContainer>
       <StyledLinkContainer>
-        <TextInput fullWidth />
+        <TextInput
+          placeholder="tim@apple.com, jony.ive@apple.dev"
+          fullWidth
+          LeftIcon={IconMail}
+        />
       </StyledLinkContainer>
       <Button
         Icon={IconSend}
