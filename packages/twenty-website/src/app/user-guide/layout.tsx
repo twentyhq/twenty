@@ -1,13 +1,11 @@
 import { ReactNode } from 'react';
 
-import { UserGuideMainLayout } from '@/app/_components/user-guide/UserGuideMainLayout';
-import { getUserGuideArticles } from '@/content/user-guide/constants/getUserGuideArticles';
+import { DocsMainLayout } from '@/app/_components/docs/DocsMainLayout';
+import { getDocsArticles } from '@/content/user-guide/constants/getDocsArticles';
 
 export default function UserGuideLayout({ children }: { children: ReactNode }) {
-  const userGuideIndex = getUserGuideArticles();
-  return (
-    <UserGuideMainLayout userGuideIndex={userGuideIndex}>
-      {children}
-    </UserGuideMainLayout>
-  );
+  const filePath = 'src/content/user-guide/';
+  const getAllArticles = true;
+  const docsIndex = getDocsArticles(filePath, getAllArticles);
+  return <DocsMainLayout docsIndex={docsIndex}>{children}</DocsMainLayout>;
 }

@@ -1,10 +1,13 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
 import {
   IconBaselineDensitySmall,
   IconChevronLeft,
+  IconEyeOff,
   IconFileExport,
   IconFileImport,
+  IconSettings,
   IconTag,
 } from 'twenty-ui';
 
@@ -17,6 +20,8 @@ import { useRecordIndexOptionsForBoard } from '@/object-record/record-index/opti
 import { useRecordIndexOptionsForTable } from '@/object-record/record-index/options/hooks/useRecordIndexOptionsForTable';
 import { TableOptionsHotkeyScope } from '@/object-record/record-table/types/TableOptionsHotkeyScope';
 import { useSpreadsheetRecordImport } from '@/object-record/spreadsheet-import/useSpreadsheetRecordImport';
+import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
+import { SettingsPath } from '@/types/SettingsPath';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
@@ -28,7 +33,7 @@ import { ViewFieldsVisibilityDropdownSection } from '@/views/components/ViewFiel
 import { useGetCurrentView } from '@/views/hooks/useGetCurrentView';
 import { ViewType } from '@/views/types/ViewType';
 
-type RecordIndexOptionsMenu = 'fields';
+type RecordIndexOptionsMenu = 'fields' | 'hiddenFields';
 
 type RecordIndexOptionsDropdownContentProps = {
   recordIndexId: string;
@@ -43,6 +48,8 @@ export const RecordIndexOptionsDropdownContent = ({
 }: RecordIndexOptionsDropdownContentProps) => {
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
+  const navigate = useNavigate();
+
   const { closeDropdown } = useDropdown(RECORD_INDEX_OPTIONS_DROPDOWN_ID);
 
   const [currentMenu, setCurrentMenu] = useState<
@@ -53,6 +60,10 @@ export const RecordIndexOptionsDropdownContent = ({
 
   const handleSelectMenu = (option: RecordIndexOptionsMenu) => {
     setCurrentMenu(option);
+  };
+
+  const handleEditClick = () => {
+    navigate(getSettingsPagePath(SettingsPath.Objects));
   };
 
   useScopedHotkeys(
@@ -142,20 +153,45 @@ export const RecordIndexOptionsDropdownContent = ({
             isDraggable
             onDragEnd={handleReorderFields}
             onVisibilityChange={handleChangeFieldVisibility}
+            showSubheader={false}
           />
+          <DropdownMenuSeparator />
+          <MenuItem
+            onClick={() => handleSelectMenu('hiddenFields')}
+            LeftIcon={IconEyeOff}
+            text="Hidden Fields"
+          />
+        </>
+      )}
+      {currentMenu === 'hiddenFields' && (
+        <>
+          <DropdownMenuHeader
+            StartIcon={IconChevronLeft}
+            onClick={() => setCurrentMenu('fields')}
+          >
+            Hidden Fields
+          </DropdownMenuHeader>
+          <DropdownMenuSeparator />
           {hiddenRecordFields.length > 0 && (
             <>
-              <DropdownMenuSeparator />
               <ViewFieldsVisibilityDropdownSection
                 title="Hidden"
                 fields={hiddenRecordFields}
                 isDraggable={false}
                 onVisibilityChange={handleChangeFieldVisibility}
+                showSubheader={false}
               />
             </>
           )}
+          <DropdownMenuSeparator />
+          <MenuItem
+            onClick={handleEditClick}
+            LeftIcon={IconSettings}
+            text="Edit Fields"
+          />
         </>
       )}
+
       {viewType === ViewType.Kanban && (
         <>
           <DropdownMenuSeparator />

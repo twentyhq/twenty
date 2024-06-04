@@ -10,6 +10,16 @@ const StyledContent = styled.div`
   flex: 1;
   max-width: 950px;
 
+  code {
+    overflow: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    max-width: 100%;
+    line-height: 1.8;
+    font-size: 13px;
+    color: black;
+  }
+
   p {
     color: ${Theme.text.color.secondary};
     font-family: ${Theme.font.family};

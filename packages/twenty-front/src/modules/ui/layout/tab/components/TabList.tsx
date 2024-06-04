@@ -35,7 +35,7 @@ const StyledContainer = styled.div`
 `;
 
 export const TabList = ({ tabs, tabListId, loading }: TabListProps) => {
-  const initialActiveTabId = tabs[0].id;
+  const initialActiveTabId = tabs.find((tab) => !tab.hide)?.id || '';
 
   const { activeTabIdState, setActiveTabId } = useTabList(tabListId);
 
