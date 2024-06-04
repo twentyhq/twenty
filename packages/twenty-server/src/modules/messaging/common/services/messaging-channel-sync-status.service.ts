@@ -68,6 +68,16 @@ export class MessagingChannelSyncStatusService {
       workspaceId,
     );
 
+    await this.messageChannelRepository.resetSyncStageStartedAt(
+      messageChannelId,
+      workspaceId,
+    );
+
+    await this.messageChannelRepository.resetThrottleFailureCount(
+      messageChannelId,
+      workspaceId,
+    );
+
     await this.scheduleFullMessageListFetch(messageChannelId, workspaceId);
   }
 
