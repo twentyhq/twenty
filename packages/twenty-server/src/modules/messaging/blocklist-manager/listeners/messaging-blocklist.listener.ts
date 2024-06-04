@@ -11,12 +11,15 @@ import {
   BlocklistItemDeleteMessagesJob,
 } from 'src/modules/messaging/blocklist-manager/jobs/messaging-blocklist-item-delete-messages.job';
 import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/types/object-record-update.event';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 
 @Injectable()
 export class MessagingBlocklistListener {
   constructor(
     @Inject(MessageQueue.messagingQueue)
     private readonly messageQueueService: MessageQueueService,
+    private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
   ) {}
 
   @OnEvent('blocklist.created')
@@ -35,7 +38,12 @@ export class MessagingBlocklistListener {
   @OnEvent('blocklist.deleted')
   async handleDeletedEvent(
     payload: ObjectRecordDeleteEvent<BlocklistWorkspaceEntity>,
-  ) {}
+  ) {
+    await this.messagingChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
+      MessageChannelWorkspaceEntity.name,
+      payload.workspaceId,
+    );
+  }
 
   @OnEvent('blocklist.updated')
   async handleUpdatedEvent(
