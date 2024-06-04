@@ -142,15 +142,12 @@ export const ModalLayout = ({
   modalRef,
   className,
 }: ModalLayoutProps) => {
-  const stopPropagation = (e: React.MouseEvent) => {
+  const stopEventPropagation = (e: React.MouseEvent) => {
     e.stopPropagation();
   };
+
   return (
-    <StyledBackDrop
-      onMouseDown={stopPropagation}
-      onMouseUp={stopPropagation}
-      onMouseMove={stopPropagation}
-    >
+    <StyledBackDrop onMouseDown={stopEventPropagation}>
       <StyledModalDiv
         // framer-motion seems to have typing problems with refs
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
