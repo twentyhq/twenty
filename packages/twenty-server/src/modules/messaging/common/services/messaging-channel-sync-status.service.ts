@@ -7,7 +7,7 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import {
   MessageChannelWorkspaceEntity,
-  MessageChannelSyncSubStatus,
+  MessageChannelSyncStage,
   MessageChannelSyncStatus,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
@@ -24,9 +24,9 @@ export class MessagingChannelSyncStatusService {
     messageChannelId: string,
     workspaceId: string,
   ) {
-    await this.messageChannelRepository.updateSyncSubStatus(
+    await this.messageChannelRepository.updatesyncStage(
       messageChannelId,
-      MessageChannelSyncSubStatus.FULL_MESSAGE_LIST_FETCH_PENDING,
+      MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
       workspaceId,
     );
   }
@@ -35,9 +35,9 @@ export class MessagingChannelSyncStatusService {
     messageChannelId: string,
     workspaceId: string,
   ) {
-    await this.messageChannelRepository.updateSyncSubStatus(
+    await this.messageChannelRepository.updatesyncStage(
       messageChannelId,
-      MessageChannelSyncSubStatus.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
+      MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
       workspaceId,
     );
   }
@@ -46,9 +46,9 @@ export class MessagingChannelSyncStatusService {
     messageChannelId: string,
     workspaceId: string,
   ) {
-    await this.messageChannelRepository.updateSyncSubStatus(
+    await this.messageChannelRepository.updatesyncStage(
       messageChannelId,
-      MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING,
+      MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
       workspaceId,
     );
   }
@@ -75,9 +75,9 @@ export class MessagingChannelSyncStatusService {
     messageChannelId: string,
     workspaceId: string,
   ) {
-    await this.messageChannelRepository.updateSyncSubStatus(
+    await this.messageChannelRepository.updatesyncStage(
       messageChannelId,
-      MessageChannelSyncSubStatus.MESSAGE_LIST_FETCH_ONGOING,
+      MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
       workspaceId,
     );
 
@@ -105,9 +105,9 @@ export class MessagingChannelSyncStatusService {
     messageChannelId: string,
     workspaceId: string,
   ) {
-    await this.messageChannelRepository.updateSyncSubStatus(
+    await this.messageChannelRepository.updatesyncStage(
       messageChannelId,
-      MessageChannelSyncSubStatus.MESSAGES_IMPORT_ONGOING,
+      MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
       workspaceId,
     );
   }
@@ -120,9 +120,9 @@ export class MessagingChannelSyncStatusService {
       `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
     );
 
-    await this.messageChannelRepository.updateSyncSubStatus(
+    await this.messageChannelRepository.updatesyncStage(
       messageChannelId,
-      MessageChannelSyncSubStatus.FAILED,
+      MessageChannelSyncStage.FAILED,
       workspaceId,
     );
 
@@ -141,9 +141,9 @@ export class MessagingChannelSyncStatusService {
       `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
     );
 
-    await this.messageChannelRepository.updateSyncSubStatus(
+    await this.messageChannelRepository.updatesyncStage(
       messageChannelId,
-      MessageChannelSyncSubStatus.FAILED,
+      MessageChannelSyncStage.FAILED,
       workspaceId,
     );
 

@@ -7,7 +7,7 @@ import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metada
 import {
   MessageChannelWorkspaceEntity,
   MessageChannelSyncStatus,
-  MessageChannelSyncSubStatus,
+  MessageChannelSyncStage,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
@@ -188,9 +188,9 @@ export class MessageChannelRepository {
     );
   }
 
-  public async updateSyncSubStatus(
+  public async updatesyncStage(
     id: string,
-    syncSubStatus: MessageChannelSyncSubStatus,
+    syncStage: MessageChannelSyncStage,
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<void> {
@@ -198,8 +198,8 @@ export class MessageChannelRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."messageChannel" SET "syncSubStatus" = $1 WHERE "id" = $2`,
-      [syncSubStatus, id],
+      `UPDATE ${dataSourceSchema}."messageChannel" SET "syncStage" = $1 WHERE "id" = $2`,
+      [syncStage, id],
       workspaceId,
       transactionManager,
     );

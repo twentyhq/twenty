@@ -8,7 +8,7 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessagingTelemetryService } from 'src/modules/messaging/common/services/messaging-telemetry.service';
 import {
-  MessageChannelSyncSubStatus,
+  MessageChannelSyncStage,
   MessageChannelWorkspaceEntity,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingGmailFullMessageListFetchService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-full-message-list-fetch.service';
@@ -82,8 +82,8 @@ export class MessagingMessageListFetchJob
       return;
     }
 
-    switch (messageChannel.syncSubStatus) {
-      case MessageChannelSyncSubStatus.PARTIAL_MESSAGE_LIST_FETCH_PENDING:
+    switch (messageChannel.syncStage) {
+      case MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING:
         this.logger.log(
           `Fetching partial message list for workspace ${workspaceId} and account ${connectedAccount.id}`,
         );
@@ -110,7 +110,7 @@ export class MessagingMessageListFetchJob
 
         break;
 
-      case MessageChannelSyncSubStatus.FULL_MESSAGE_LIST_FETCH_PENDING:
+      case MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING:
         this.logger.log(
           `Fetching full message list for workspace ${workspaceId} and account ${connectedAccount.id}`,
         );
