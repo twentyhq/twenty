@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'class-validator';
+
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import {
   RecordPositionQueryFactory,
@@ -53,7 +55,10 @@ export class RecordPositionBackfillService {
           workspaceId,
         );
 
-      if (recordsWithoutPosition.length === 0) {
+      if (
+        !isDefined(recordsWithoutPosition) ||
+        recordsWithoutPosition?.length === 0
+      ) {
         this.logger.log(
           `No records without position for ${objectMetadata.nameSingular}`,
         );
