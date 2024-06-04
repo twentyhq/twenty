@@ -10,6 +10,12 @@ export enum TooltipPosition {
   Bottom = 'bottom',
 }
 
+export enum TooltipDelay{
+  noDelay =  '0ms',
+  shortDelay = '300ms',
+  mediumDelay =  '500ms'
+}
+
 const StyledAppTooltip = styled(Tooltip)`
   backdrop-filter: ${({ theme }) => theme.blur.strong};
   background-color: ${({ theme }) => RGBA(theme.color.gray80, 0.8)};
@@ -41,6 +47,7 @@ export type AppTooltipProps = {
   noArrow?: boolean;
   isOpen?: boolean;
   place?: PlacesType;
+  delay?:TooltipDelay;
   positionStrategy?: PositionStrategy;
 };
 
@@ -52,6 +59,7 @@ export const AppTooltip = ({
   isOpen,
   noArrow,
   offset,
+  delay,
   place,
   positionStrategy,
   children,
@@ -61,6 +69,7 @@ export const AppTooltip = ({
       anchorSelect,
       className,
       content,
+      delay,
       delayHide,
       isOpen,
       noArrow,

@@ -6,7 +6,7 @@ import {
   ComponentDecorator,
 } from '@ui/testing';
 
-import { AppTooltip as Tooltip, TooltipPosition } from '../AppTooltip';
+import { AppTooltip as Tooltip, TooltipPosition, TooltipDelay } from '../AppTooltip';
 
 const meta: Meta<typeof Tooltip> = {
   title: 'UI/Display/Tooltip',
@@ -19,6 +19,7 @@ type Story = StoryObj<typeof Tooltip>;
 export const Default: Story = {
   args: {
     place: TooltipPosition.Bottom,
+    delay : TooltipDelay.mediumDelay,
     content: 'Tooltip Test',
     isOpen: true,
     anchorSelect: '#hover-text',
