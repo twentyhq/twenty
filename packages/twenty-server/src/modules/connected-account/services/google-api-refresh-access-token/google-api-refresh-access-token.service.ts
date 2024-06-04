@@ -6,9 +6,10 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
-import { GmailErrorHandlingService } from 'src/modules/messaging/services/gmail-error-handling/gmail-error-handling.service';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
+import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
+import { MessagingTelemetryService } from 'src/modules/messaging/common/services/messaging-telemetry.service';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 
 @Injectable()
 export class GoogleAPIRefreshAccessTokenService {
@@ -18,7 +19,8 @@ export class GoogleAPIRefreshAccessTokenService {
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
-    private readonly gmailErrorHandlingService: GmailErrorHandlingService,
+    private readonly messagingTelemetryService: MessagingTelemetryService,
+    private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
   ) {}
 
   async refreshAndSaveAccessToken(
@@ -65,13 +67,21 @@ export class GoogleAPIRefreshAccessTokenService {
         );
       }
 
-      await this.gmailErrorHandlingService.handleGmailError(
-        {
-          code: error.code,
-          reason: error.response.data.error,
-        },
-        'messages-import',
-        messageChannel,
+      await this.messagingTelemetryService.track({
+        eventName: `refresh_token.error.insufficient_permissions`,
+        workspaceId,
+        connectedAccountId: messageChannel.connectedAccountId,
+        messageChannelId: messageChannel.id,
+        message: `${error.code}: ${error.reason}`,
+      });
+
+      await this.messagingChannelSyncStatusService.markAsFailedInsufficientPermissionsAndFlushMessagesToImport(
+        messageChannel.id,
+        workspaceId,
+      );
+
+      await this.connectedAccountRepository.updateAuthFailedAt(
+        messageChannel.connectedAccountId,
         workspaceId,
       );
     }

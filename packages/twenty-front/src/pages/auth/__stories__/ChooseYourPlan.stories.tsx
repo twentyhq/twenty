@@ -9,7 +9,6 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
-import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedOnboardingUsersData } from '~/testing/mock-data/users';
 import { sleep } from '~/testing/sleep';
@@ -19,7 +18,7 @@ import { ChooseYourPlan } from '../ChooseYourPlan';
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Auth/ChooseYourPlan',
   component: ChooseYourPlan,
-  decorators: [PrefetchLoadingDecorator, PageDecorator],
+  decorators: [PageDecorator],
   args: { routePath: AppPath.PlanRequired },
   parameters: {
     msw: {

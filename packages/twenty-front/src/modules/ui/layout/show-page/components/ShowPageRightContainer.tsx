@@ -25,12 +25,12 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
-const StyledShowPageRightContainer = styled.div`
+const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex: 1 0 0;
   flex-direction: column;
   justify-content: start;
-  overflow: ${() => (useIsMobile() ? 'none' : 'hidden')};
+  overflow: ${(isMobile) => (isMobile ? 'none' : 'hidden')};
   width: calc(100% + 4px);
 `;
 
@@ -54,6 +54,8 @@ type ShowPageRightContainerProps = {
   tasks?: boolean;
   notes?: boolean;
   emails?: boolean;
+  summary?: JSX.Element;
+  isRightDrawer?: boolean;
   loading: boolean;
 };
 
@@ -64,8 +66,12 @@ export const ShowPageRightContainer = ({
   notes,
   emails,
   loading,
+  summary,
+  isRightDrawer = false,
 }: ShowPageRightContainerProps) => {
-  const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
+  const { activeTabIdState } = useTabList(
+    TAB_LIST_COMPONENT_ID + isRightDrawer,
+  );
   const activeTabId = useRecoilValue(activeTabIdState);
 
   const targetObjectNameSingular =
@@ -80,12 +86,20 @@ export const ShowPageRightContainer = ({
   const shouldDisplayLogTab = useIsFeatureEnabled('IS_EVENT_OBJECT_ENABLED');
   const shouldDisplayEmailsTab = emails && isCompanyOrPerson;
 
+  const isMobile = useIsMobile() || isRightDrawer;
+
   const tabs = [
+    {
+      id: 'summary',
+      title: 'Summary',
+      Icon: IconCheckbox,
+      hide: !isMobile,
+    },
     {
       id: 'timeline',
       title: 'Timeline',
       Icon: IconTimelineEvent,
-      hide: !timeline,
+      hide: !timeline || isRightDrawer,
     },
     { id: 'tasks', title: 'Tasks', Icon: IconCheckbox, hide: !tasks },
     { id: 'notes', title: 'Notes', Icon: IconNotes, hide: !notes },
@@ -120,6 +134,8 @@ export const ShowPageRightContainer = ({
             <Timeline loading={loading} targetableObject={targetableObject} />
           </>
         );
+      case 'summary':
+        return summary;
       case 'tasks':
         return <ObjectTasks targetableObject={targetableObject} />;
       case 'notes':
@@ -136,11 +152,11 @@ export const ShowPageRightContainer = ({
   };
 
   return (
-    <StyledShowPageRightContainer>
+    <StyledShowPageRightContainer isMobile={isMobile}>
       <StyledTabListContainer>
         <TabList
           loading={loading}
-          tabListId={TAB_LIST_COMPONENT_ID}
+          tabListId={TAB_LIST_COMPONENT_ID + isRightDrawer}
           tabs={tabs}
         />
       </StyledTabListContainer>

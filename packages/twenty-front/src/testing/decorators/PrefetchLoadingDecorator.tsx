@@ -12,8 +12,8 @@ export const PrefetchLoadingDecorator: Decorator = (Story) => {
     prefetchIsLoadedFamilyState(PrefetchKey.AllFavorites),
   );
 
-  setAreViewsPrefetched(true);
-  setAreFavoritesPrefetched(true);
+  setAreViewsPrefetched(false);
+  setAreFavoritesPrefetched(false);
 
   return <Story />;
 };
