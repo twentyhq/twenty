@@ -65,11 +65,6 @@ export const RecordTableHeader = ({
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
   const hiddenTableColumns = useRecoilValue(visibleTableColumnsSelector());
 
-  console.log({
-    visibleTableColumns,
-    hiddenTableColumns,
-  });
-
   const theme = useTheme();
 
   return (

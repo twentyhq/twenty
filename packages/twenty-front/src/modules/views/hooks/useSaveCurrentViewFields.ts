@@ -41,8 +41,6 @@ export const useSaveCurrentViewFields = (viewBarComponentId?: string) => {
 
         const currentViewFields = view.viewFields;
 
-        console.log({ currentViewFields });
-
         const viewFieldsToUpdate = viewFieldsToSave
           .map((viewFieldToSave) => {
             const existingField = currentViewFields.find(
@@ -84,12 +82,6 @@ export const useSaveCurrentViewFields = (viewBarComponentId?: string) => {
                 viewFieldToSave.fieldMetadataId,
             ),
         );
-
-        console.log({
-          view,
-          viewFieldsToUpdate,
-          viewFieldsToCreate,
-        });
 
         await Promise.all([
           createViewFieldRecords(viewFieldsToCreate, view),

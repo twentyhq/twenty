@@ -207,10 +207,6 @@ export const RecordTable = ({
 
   const visibleTableColumns = useRecoilValue(visibleTableColumnsSelector());
 
-  console.log({
-    visibleTableColumns,
-  });
-
   return (
     <RecordTableScope
       recordTableScopeId={scopeId}

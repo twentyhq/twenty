@@ -43,28 +43,16 @@ export const useTableColumns = (props?: useRecordTableProps) => {
     async (
       viewField: Omit<ColumnDefinition<FieldMetadata>, 'size' | 'position'>,
     ) => {
-      console.log('viewField', viewField);
-
       const shouldShowColumn = !visibleTableColumns.some(
         (visibleColumn) =>
           visibleColumn.fieldMetadataId === viewField.fieldMetadataId,
       );
 
-      console.log({ shouldShowColumn });
-
       const tableColumnPositions = [...tableColumns]
         .sort((a, b) => b.position - a.position)
         .map((column) => column.position);
 
-      console.log({
-        tableColumnPositions,
-      });
-
       const lastPosition = tableColumnPositions[0] ?? 0;
-
-      console.log({
-        lastPosition,
-      });
 
       if (shouldShowColumn) {
         const newColumn = availableTableColumns.find(
@@ -79,10 +67,6 @@ export const useTableColumns = (props?: useRecordTableProps) => {
           { ...newColumn, isVisible: true, position: lastPosition + 1 },
         ];
 
-        console.log('show', {
-          nextColumns,
-        });
-
         await handleColumnsChange(nextColumns);
       } else {
         const nextColumns = visibleTableColumns.map((previousColumn) =>
@@ -90,10 +74,6 @@ export const useTableColumns = (props?: useRecordTableProps) => {
             ? { ...previousColumn, isVisible: !viewField.isVisible }
             : previousColumn,
         );
-
-        console.log('hide', {
-          nextColumns,
-        });
 
         await handleColumnsChange(nextColumns);
       }
