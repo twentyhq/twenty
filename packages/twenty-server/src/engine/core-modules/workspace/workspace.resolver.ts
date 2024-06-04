@@ -129,7 +129,7 @@ export class WorkspaceResolver {
   async sendInviteLink(
     @Args() sendInviteLinkInput: SendInviteLinkInput,
     @AuthUser() user: User,
-    @Parent() workspace: Workspace,
+    @AuthWorkspace() workspace: Workspace,
   ): Promise<SendInviteLink> {
     return await this.workspaceService.sendInviteLink(
       sendInviteLinkInput.email,

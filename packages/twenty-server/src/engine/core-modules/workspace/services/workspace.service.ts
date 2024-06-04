@@ -128,7 +128,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         'EMAIL_FROM_NAME',
       )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
       to: email,
-      subject: 'Action Needed to Reset Password',
+      subject: 'Join your team on Twenty',
       text,
       html,
     });
