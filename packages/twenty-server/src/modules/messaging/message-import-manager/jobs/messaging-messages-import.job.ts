@@ -45,6 +45,13 @@ export class MessagingMessagesImportJob
         messageChannelId: messageChannel.id,
       });
 
+      if (
+        messageChannel.throttlePauseUntil &&
+        messageChannel.throttlePauseUntil > new Date()
+      ) {
+        continue;
+      }
+
       const connectedAccount =
         await this.connectedAccountRepository.getConnectedAccountOrThrow(
           workspaceId,
