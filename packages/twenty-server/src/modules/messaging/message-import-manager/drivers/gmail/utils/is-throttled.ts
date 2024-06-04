@@ -3,7 +3,7 @@ import { MESSAGING_THROTTLE_DURATION } from 'src/modules/messaging/common/consta
 export const isThrottled = (
   syncStageStartedAt: string | null,
   throttleFailureCount: number,
-) => {
+): boolean => {
   if (!syncStageStartedAt) {
     return false;
   }
