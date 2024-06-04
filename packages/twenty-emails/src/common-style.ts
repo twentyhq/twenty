@@ -27,17 +27,21 @@ export const emailTheme = {
     colors: {
       highlighted: grayScale.gray60,
       primary: grayScale.gray50,
-      tertiary: grayScale.gray40,
+      tertiary: grayScale.gray35,
       inverted: grayScale.gray0,
     },
+    family: 'Inter, sans-serif',
     weight: {
       regular: 400,
       bold: 600,
     },
     size: {
+      sm: '12px',
       md: '13px',
       lg: '16px',
+      xl: '24px',
     },
+    lineHeight: '20px',
   },
   background: {
     colors: { highlight: grayScale.gray15 },

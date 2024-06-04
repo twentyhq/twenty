@@ -2,8 +2,8 @@ import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
 import { Link } from 'src/components/Link';
 import { MainText } from 'src/components/MainText';
-import { SubTitle } from 'src/components/SubTitle';
 import { Title } from 'src/components/Title';
+import { WhatIsTwenty } from 'src/components/WhatIsTwenty';
 import { capitalize } from 'src/utils/capitalize';
 
 type SendInviteLinkEmailProps = {
@@ -21,20 +21,16 @@ export const SendInviteLinkEmail = ({
   sender,
 }: SendInviteLinkEmailProps) => {
   return (
-    <BaseEmail>
+    <BaseEmail width={333}>
       <Title value="Join your team on Twenty" />
       <MainText>
         {capitalize(sender.firstName)} (
         <Link href={sender.email} value={sender.email} />) has invited you to
         join a workspace called <b>{workspaceName}</b>
         <br />
-        <CallToAction href={link} value="Accept invite" />
       </MainText>
-      <SubTitle value="What is Twenty?" />
-      <MainText>
-        A software to help businesses manage their customer data and
-        relationships efficiently.
-      </MainText>
+      <CallToAction href={link} value="Accept invite" />
+      <WhatIsTwenty />
     </BaseEmail>
   );
 };
