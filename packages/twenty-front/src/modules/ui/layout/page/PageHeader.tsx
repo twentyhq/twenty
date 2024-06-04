@@ -115,7 +115,7 @@ export const PageHeader = ({
           </StyledTopBarButtonContainer>
         )}
         {hasBackButton && (
-          <UndecoratedLink to={'-1'}>
+          <UndecoratedLink to={-1}>
             <IconButton
               Icon={IconChevronLeft}
               size="small"

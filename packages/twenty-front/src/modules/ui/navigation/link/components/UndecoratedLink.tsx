@@ -7,7 +7,7 @@ const StyledUndecoratedLink = styled(Link)`
 `;
 
 type UndecoratedLinkProps = {
-  to: string;
+  to: string | number;
   children: React.ReactNode;
   replace?: boolean;
 };
@@ -18,7 +18,7 @@ export const UndecoratedLink = ({
   replace = false,
 }: UndecoratedLinkProps) => {
   return (
-    <StyledUndecoratedLink to={to} replace={replace}>
+    <StyledUndecoratedLink to={to as string} replace={replace}>
       {children}
     </StyledUndecoratedLink>
   );
