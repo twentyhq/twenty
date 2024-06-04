@@ -6,13 +6,12 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
-import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Developers/ApiKeys/SettingsDevelopersApiKeysNew',
   component: SettingsDevelopersApiKeysNew,
-  decorators: [PrefetchLoadingDecorator, PageDecorator],
+  decorators: [PageDecorator],
   args: { routePath: '/settings/developers/api-keys/new' },
   parameters: {
     msw: graphqlMocks,
