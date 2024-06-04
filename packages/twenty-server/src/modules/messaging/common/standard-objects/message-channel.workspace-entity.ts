@@ -285,16 +285,6 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   syncStageStartedAt: string;
 
   @WorkspaceField({
-    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.throttlePauseUntil,
-    type: FieldMetadataType.DATE_TIME,
-    label: 'Throttle Pause Until',
-    description: 'Throttle Pause Until',
-    icon: 'IconPlayerPause',
-  })
-  @WorkspaceIsNullable()
-  throttlePauseUntil: Date;
-
-  @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.throttleFailureCount,
     type: FieldMetadataType.NUMBER,
     label: 'Throttle Failure Count',
