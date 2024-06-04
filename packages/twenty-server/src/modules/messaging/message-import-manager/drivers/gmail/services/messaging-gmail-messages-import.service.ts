@@ -142,6 +142,11 @@ export class MessagingGmailMessagesImportService {
         workspaceId,
       );
 
+      await this.messageChannelRepository.resetSyncStageStartedAt(
+        messageChannel.id,
+        workspaceId,
+      );
+
       return await this.trackMessageImportCompleted(
         messageChannel,
         workspaceId,

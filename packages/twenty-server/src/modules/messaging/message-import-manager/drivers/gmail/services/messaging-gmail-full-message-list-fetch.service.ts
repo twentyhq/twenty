@@ -82,6 +82,11 @@ export class MessagingGmailFullMessageListFetchService {
       workspaceId,
     );
 
+    await this.messageChannelRepository.resetSyncStageStartedAt(
+      messageChannel.id,
+      workspaceId,
+    );
+
     await this.messagingChannelSyncStatusService.scheduleMessagesImport(
       messageChannel.id,
       workspaceId,

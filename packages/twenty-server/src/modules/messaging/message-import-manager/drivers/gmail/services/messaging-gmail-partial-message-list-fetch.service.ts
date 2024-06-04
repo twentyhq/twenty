@@ -79,6 +79,11 @@ export class MessagingGmailPartialMessageListFetchService {
       workspaceId,
     );
 
+    await this.messageChannelRepository.resetSyncStageStartedAt(
+      messageChannel.id,
+      workspaceId,
+    );
+
     if (!historyId) {
       throw new Error(
         `No historyId found for ${connectedAccount.id} in workspace ${workspaceId} in gmail history response.`,

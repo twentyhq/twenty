@@ -52,7 +52,7 @@ export class MessagingMessagesImportJob
           messageChannel.throttleFailureCount,
         )
       ) {
-        return;
+        continue;
       }
 
       const connectedAccount =

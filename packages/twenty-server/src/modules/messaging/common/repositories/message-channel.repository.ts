@@ -196,11 +196,25 @@ export class MessageChannelRepository {
 
     await this.workspaceDataSourceService.executeRawQuery(
       `UPDATE ${dataSourceSchema}."messageChannel" SET "syncStage" = $1 ${
-        needsToUpdateSyncStageStartedAt
-          ? `, "syncStageStartedAt" = NOW()`
-          : `, "syncStageStartedAt" = NULL`
+        needsToUpdateSyncStageStartedAt ? `, "syncStageStartedAt" = NOW()` : ''
       } WHERE "id" = $2`,
       [syncStage, id],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async resetSyncStageStartedAt(
+    id: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<void> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."messageChannel" SET "syncStageStartedAt" = NULL WHERE "id" = $1`,
+      [id],
       workspaceId,
       transactionManager,
     );

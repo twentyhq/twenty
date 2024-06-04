@@ -20,6 +20,6 @@ const computeThrottlePauseUntil = (
 ): Date => {
   return new Date(
     new Date(syncStageStartedAt).getTime() +
-      MESSAGING_THROTTLE_DURATION * Math.pow(2, throttleFailureCount),
+      MESSAGING_THROTTLE_DURATION * Math.pow(2, throttleFailureCount - 1),
   );
 };
