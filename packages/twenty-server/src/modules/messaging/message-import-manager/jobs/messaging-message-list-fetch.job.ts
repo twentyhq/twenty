@@ -13,6 +13,7 @@ import {
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingGmailFullMessageListFetchService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-full-message-list-fetch.service';
 import { MessagingGmailPartialMessageListFetchService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-partial-message-list-fetch.service';
+import { computeThrottlePauseUntil } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-throttle-pause-until';
 
 export type MessagingMessageListFetchJobData = {
   workspaceId: string;
@@ -75,10 +76,12 @@ export class MessagingMessageListFetchJob
       return;
     }
 
-    if (
-      messageChannel.throttlePauseUntil &&
-      messageChannel.throttlePauseUntil > new Date()
-    ) {
+    const throttlePauseUntil = computeThrottlePauseUntil(
+      messageChannel.syncStageStartedAt,
+      messageChannel.throttleFailureCount,
+    );
+
+    if (throttlePauseUntil > new Date()) {
       return;
     }
 

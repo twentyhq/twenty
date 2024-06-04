@@ -24,7 +24,7 @@ export class MessagingChannelSyncStatusService {
     messageChannelId: string,
     workspaceId: string,
   ) {
-    await this.messageChannelRepository.updatesyncStage(
+    await this.messageChannelRepository.updateSyncStage(
       messageChannelId,
       MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
       workspaceId,
@@ -35,7 +35,7 @@ export class MessagingChannelSyncStatusService {
     messageChannelId: string,
     workspaceId: string,
   ) {
-    await this.messageChannelRepository.updatesyncStage(
+    await this.messageChannelRepository.updateSyncStage(
       messageChannelId,
       MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
       workspaceId,
@@ -46,7 +46,7 @@ export class MessagingChannelSyncStatusService {
     messageChannelId: string,
     workspaceId: string,
   ) {
-    await this.messageChannelRepository.updatesyncStage(
+    await this.messageChannelRepository.updateSyncStage(
       messageChannelId,
       MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
       workspaceId,
@@ -75,7 +75,7 @@ export class MessagingChannelSyncStatusService {
     messageChannelId: string,
     workspaceId: string,
   ) {
-    await this.messageChannelRepository.updatesyncStage(
+    await this.messageChannelRepository.updateSyncStage(
       messageChannelId,
       MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
       workspaceId,
@@ -105,7 +105,7 @@ export class MessagingChannelSyncStatusService {
     messageChannelId: string,
     workspaceId: string,
   ) {
-    await this.messageChannelRepository.updatesyncStage(
+    await this.messageChannelRepository.updateSyncStage(
       messageChannelId,
       MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
       workspaceId,
@@ -120,7 +120,7 @@ export class MessagingChannelSyncStatusService {
       `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
     );
 
-    await this.messageChannelRepository.updatesyncStage(
+    await this.messageChannelRepository.updateSyncStage(
       messageChannelId,
       MessageChannelSyncStage.FAILED,
       workspaceId,
@@ -141,7 +141,7 @@ export class MessagingChannelSyncStatusService {
       `messages-to-import:${workspaceId}:gmail:${messageChannelId}`,
     );
 
-    await this.messageChannelRepository.updatesyncStage(
+    await this.messageChannelRepository.updateSyncStage(
       messageChannelId,
       MessageChannelSyncStage.FAILED,
       workspaceId,

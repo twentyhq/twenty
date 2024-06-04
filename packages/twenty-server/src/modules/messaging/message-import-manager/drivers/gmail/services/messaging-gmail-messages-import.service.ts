@@ -137,7 +137,7 @@ export class MessagingGmailMessagesImportService {
         );
       }
 
-      await this.messageChannelRepository.resetThrottlePauseUntilAndThrottleFailureCount(
+      await this.messageChannelRepository.resetThrottleFailureCount(
         messageChannel.id,
         workspaceId,
       );

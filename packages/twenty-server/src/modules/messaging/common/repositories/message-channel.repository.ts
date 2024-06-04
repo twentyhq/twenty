@@ -169,18 +169,11 @@ export class MessageChannelRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     const needsToUpdateSyncedAt =
-      syncStatus === MessageChannelSyncStatus.SUCCEEDED;
-
-    const needsToUpdateSyncStageStartedAt =
-      syncStatus === MessageChannelSyncStatus.ONGOING;
+      syncStatus === MessageChannelSyncStatus.COMPLETED;
 
     await this.workspaceDataSourceService.executeRawQuery(
       `UPDATE ${dataSourceSchema}."messageChannel" SET "syncStatus" = $1 ${
         needsToUpdateSyncedAt ? `, "syncedAt" = NOW()` : ''
-      } ${
-        needsToUpdateSyncStageStartedAt
-          ? `, "syncStageStartedAt" = NOW()`
-          : `, "syncStageStartedAt" = NULL`
       } WHERE "id" = $2`,
       [syncStatus, id],
       workspaceId,
@@ -188,7 +181,7 @@ export class MessageChannelRepository {
     );
   }
 
-  public async updatesyncStage(
+  public async updateSyncStage(
     id: string,
     syncStage: MessageChannelSyncStage,
     workspaceId: string,
@@ -197,8 +190,16 @@ export class MessageChannelRepository {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
+    const needsToUpdateSyncStageStartedAt =
+      syncStage === MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING ||
+      syncStage === MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING;
+
     await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."messageChannel" SET "syncStage" = $1 WHERE "id" = $2`,
+      `UPDATE ${dataSourceSchema}."messageChannel" SET "syncStage" = $1 ${
+        needsToUpdateSyncStageStartedAt
+          ? `, "syncStageStartedAt" = NOW()`
+          : `, "syncStageStartedAt" = NULL`
+      } WHERE "id" = $2`,
       [syncStage, id],
       workspaceId,
       transactionManager,
@@ -241,9 +242,8 @@ export class MessageChannelRepository {
     );
   }
 
-  public async updateThrottlePauseUntilAndIncrementThrottleFailureCount(
+  public async incrementThrottleFailureCount(
     id: string,
-    throttleDurationMs: number,
     workspaceId: string,
     transactionManager?: EntityManager,
   ) {
@@ -251,15 +251,15 @@ export class MessageChannelRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."messageChannel" SET "throttlePauseUntil" = NOW() + ($1 || ' milliseconds')::interval, "throttleFailureCount" = "throttleFailureCount" + 1
-      WHERE "id" = $2`,
-      [throttleDurationMs, id],
+      `UPDATE ${dataSourceSchema}."messageChannel" SET "throttleFailureCount" = "throttleFailureCount" + 1
+      WHERE "id" = $1`,
+      [id],
       workspaceId,
       transactionManager,
     );
   }
 
-  public async resetThrottlePauseUntilAndThrottleFailureCount(
+  public async resetThrottleFailureCount(
     id: string,
     workspaceId: string,
     transactionManager?: EntityManager,
@@ -268,7 +268,7 @@ export class MessageChannelRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."messageChannel" SET "throttlePauseUntil" = NULL, "throttleFailureCount" = 0
+      `UPDATE ${dataSourceSchema}."messageChannel" SET "throttleFailureCount" = 0
       WHERE "id" = $1`,
       [id],
       workspaceId,
