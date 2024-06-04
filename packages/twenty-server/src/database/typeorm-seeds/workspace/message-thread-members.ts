@@ -48,7 +48,7 @@ export const seedMessageThreadMember = async (
         updatedAt: new Date(),
         deletedAt: null,
         messageThreadId: DEV_SEED_MESSAGE_THREAD_IDS.MESSAGE_THREAD_1,
-        workspaceUserId: DEV_SEED_USER_IDS.PHIL,
+        workspaceMemberId: DEV_SEED_USER_IDS.PHIL,
       },
       {
         id: DEV_SEED_MESSAGE_THREAD_MEMBERS_IDS.MESSAGE_THREAD_MEMBER_2,
@@ -56,7 +56,7 @@ export const seedMessageThreadMember = async (
         updatedAt: new Date(),
         deletedAt: null,
         messageThreadId: DEV_SEED_MESSAGE_THREAD_IDS.MESSAGE_THREAD_1,
-        workspaceUserId: DEV_SEED_USER_IDS.JONY,
+        workspaceMemberId: DEV_SEED_USER_IDS.JONY,
       },
       {
         id: DEV_SEED_MESSAGE_THREAD_MEMBERS_IDS.MESSAGE_THREAD_MEMBER_3,
@@ -64,7 +64,7 @@ export const seedMessageThreadMember = async (
         updatedAt: new Date(),
         deletedAt: null,
         messageThreadId: DEV_SEED_MESSAGE_THREAD_IDS.MESSAGE_THREAD_2,
-        workspaceUserId: DEV_SEED_USER_IDS.TIM,
+        workspaceMemberId: DEV_SEED_USER_IDS.TIM,
       },
       {
         id: DEV_SEED_MESSAGE_THREAD_MEMBERS_IDS.MESSAGE_THREAD_MEMBER_4,
@@ -72,7 +72,7 @@ export const seedMessageThreadMember = async (
         updatedAt: new Date(),
         deletedAt: null,
         messageThreadId: DEV_SEED_MESSAGE_THREAD_IDS.MESSAGE_THREAD_3,
-        workspaceUserId: DEV_SEED_USER_IDS.JONY,
+        workspaceMemberId: DEV_SEED_USER_IDS.JONY,
       },
       {
         id: DEV_SEED_MESSAGE_THREAD_MEMBERS_IDS.MESSAGE_THREAD_MEMBER_5,
@@ -80,7 +80,7 @@ export const seedMessageThreadMember = async (
         updatedAt: new Date(),
         deletedAt: null,
         messageThreadId: DEV_SEED_MESSAGE_THREAD_IDS.MESSAGE_THREAD_4,
-        workspaceUserId: DEV_SEED_USER_IDS.TIM,
+        workspaceMemberId: DEV_SEED_USER_IDS.TIM,
       },
       {
         id: DEV_SEED_MESSAGE_THREAD_MEMBERS_IDS.MESSAGE_THREAD_MEMBER_6,
@@ -88,7 +88,7 @@ export const seedMessageThreadMember = async (
         updatedAt: new Date(),
         deletedAt: null,
         messageThreadId: DEV_SEED_MESSAGE_THREAD_IDS.MESSAGE_THREAD_4,
-        workspaceUserId: DEV_SEED_USER_IDS.PHIL,
+        workspaceMemberId: DEV_SEED_USER_IDS.PHIL,
       },
       {
         id: DEV_SEED_MESSAGE_THREAD_MEMBERS_IDS.MESSAGE_THREAD_MEMBER_7,
@@ -96,7 +96,7 @@ export const seedMessageThreadMember = async (
         updatedAt: new Date(),
         deletedAt: null,
         messageThreadId: DEV_SEED_MESSAGE_THREAD_IDS.MESSAGE_THREAD_4,
-        workspaceUserId: DEV_SEED_USER_IDS.JONY,
+        workspaceMemberId: DEV_SEED_USER_IDS.JONY,
       },
     ])
     .execute();

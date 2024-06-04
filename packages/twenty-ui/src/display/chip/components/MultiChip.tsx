@@ -38,14 +38,14 @@ export const MultiChip = ({
 }: MultiChipProps) => {
   const theme = useTheme();
 
-  let nAvatars = '';
+  let numberOfAvatars = '';
   if (names.length > N_AVATARS_THRESHOLD) {
-    nAvatars = '+' + (names.length - N_AVATARS_THRESHOLD).toString();
+    numberOfAvatars = '+' + (names.length - N_AVATARS_THRESHOLD).toString();
   }
 
   return (
     <Chip
-      label={nAvatars}
+      label={numberOfAvatars}
       variant={ChipVariant.Highlighted}
       leftComponent={
         LeftIcon ? (

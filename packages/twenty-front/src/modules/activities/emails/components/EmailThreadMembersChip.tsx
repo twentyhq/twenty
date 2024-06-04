@@ -12,20 +12,20 @@ export const EmailThreadMembersChip = ({
     }
     const isEveryone = messageThread?.everyone;
     const numberOfMessageThreadMembers =
-      messageThread?.messageThreadMember.length;
+      messageThread.messageThreadMember.length;
     switch (isEveryone) {
       case false:
         if (numberOfMessageThreadMembers === 1) {
           return (
             <SharedDropdownMenu
               label="Private"
-              messageThreadMembers={messageThread?.messageThreadMember}
+              messageThreadMembers={messageThread.messageThreadMember}
             />
           );
         } else {
           return (
             <SharedDropdownMenu
-              messageThreadMembers={messageThread?.messageThreadMember}
+              messageThreadMembers={messageThread.messageThreadMember}
             />
           );
         }
@@ -33,7 +33,7 @@ export const EmailThreadMembersChip = ({
         return (
           <SharedDropdownMenu
             label="Everyone"
-            messageThreadMembers={messageThread?.messageThreadMember}
+            messageThreadMembers={messageThread.messageThreadMember}
             everyone={true}
           />
         );

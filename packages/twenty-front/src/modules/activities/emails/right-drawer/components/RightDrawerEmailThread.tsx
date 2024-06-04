@@ -36,6 +36,8 @@ const getVisibleMessages = (messages: EmailThreadMessageType[]) =>
   });
 
 export const RightDrawerEmailThread = () => {
+  const setMessageThread = useSetRecoilState(messageThreadState);
+
   const { thread, messages, fetchMoreMessages, loading } =
     useRightDrawerEmailThread();
   useEffect(() => {
@@ -44,8 +46,6 @@ export const RightDrawerEmailThread = () => {
     }
     setMessageThread(visibleMessages[0]?.messageThread);
   });
-
-  const setMessageThread = useSetRecoilState(messageThreadState);
 
   const { useRegisterClickOutsideListenerCallback } = useClickOutsideListener(
     RIGHT_DRAWER_CLICK_OUTSIDE_LISTENER_ID,
