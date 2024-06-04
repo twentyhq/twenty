@@ -18,7 +18,7 @@ export const UndecoratedLink = ({
   replace = false,
 }: UndecoratedLinkProps) => {
   return (
-    <StyledUndecoratedLink to={String(to)} replace={replace}>
+    <StyledUndecoratedLink to={to as string} replace={replace}>
       {children}
     </StyledUndecoratedLink>
   );

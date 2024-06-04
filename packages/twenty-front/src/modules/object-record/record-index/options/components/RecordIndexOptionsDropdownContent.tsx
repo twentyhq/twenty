@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
 import {
   IconBaselineDensitySmall,
@@ -26,6 +25,7 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemToggle';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
@@ -48,8 +48,6 @@ export const RecordIndexOptionsDropdownContent = ({
 }: RecordIndexOptionsDropdownContentProps) => {
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
-  const navigate = useNavigate();
-
   const { closeDropdown } = useDropdown(RECORD_INDEX_OPTIONS_DROPDOWN_ID);
 
   const [currentMenu, setCurrentMenu] = useState<
@@ -60,10 +58,6 @@ export const RecordIndexOptionsDropdownContent = ({
 
   const handleSelectMenu = (option: RecordIndexOptionsMenu) => {
     setCurrentMenu(option);
-  };
-
-  const handleEditClick = () => {
-    navigate(getSettingsPagePath(SettingsPath.Objects));
   };
 
   useScopedHotkeys(
@@ -184,11 +178,9 @@ export const RecordIndexOptionsDropdownContent = ({
             </>
           )}
           <DropdownMenuSeparator />
-          <MenuItem
-            onClick={handleEditClick}
-            LeftIcon={IconSettings}
-            text="Edit Fields"
-          />
+          <UndecoratedLink to={getSettingsPagePath(SettingsPath.Objects)}>
+            <MenuItem LeftIcon={IconSettings} text="Edit Fields" />
+          </UndecoratedLink>
         </>
       )}
 
