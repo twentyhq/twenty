@@ -1,0 +1,233 @@
+---
+title: Local Setup
+icon: TbDeviceDesktop
+image: /images/user-guide/fields/field.png
+info: Mostly for contributors or curious developers
+---
+
+
+Follow this guide if you would like to setup the project locally to contribute.
+
+## Prerequisites
+
+<ArticleTabs label1="Linux and MacOS" label2="Windows (WSL)">
+<ArticleTab>
+
+Before you can install and use Twenty, make sure you install the following on your computer:
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Node v18](https://nodejs.org/en/download) 
+- [yarn v4](https://yarnpkg.com/getting-started/install)
+- [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+
+<ArticleWarning>
+`npm` won't work, you should use `yarn` instead. Yarn is now shipped with Node.js, so you don't need to install it separately.
+You only have to run `corepack enable` to enable Yarn if you haven't done it yet.
+</ArticleWarning>
+
+</ArticleTab>
+
+<ArticleTab>
+
+1. Install WSL
+Open PowerShell as Administrator and run: 
+```powershell
+wsl --install
+```
+You should now see a prompt to restart your computer. If not, restart it manually.
+
+Upon restart, a powershell window will open and install Ubuntu. This may take up some time.
+You'll see a prompt to create a username and password for your Ubuntu installation.
+
+2. Install and configure git
+
+```bash
+sudo apt-get install git
+
+git config --global user.name "Your Name"
+
+git config --global user.email "youremail@domain.com"
+```
+
+3. Install Node.js, nvm, yarn
+```bash
+sudo apt-get install curl
+
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
+
+corepack enable
+```
+Close and reopen your terminal to start using nvm. 
+
+</ArticleTab>
+</ArticleTabs>
+
+---
+
+## Step 1: Git Clone
+
+In your terminal, run the following command. 
+
+
+<ArticleTabs label1="SSH (Recommended)" label2="HTTPS">
+<ArticleTab>
+If you haven't already set up SSH keys, you can learn how to do so [here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/about-ssh). 
+```bash
+git clone git@github.com:twentyhq/twenty.git
+```
+</ArticleTab>
+<ArticleTab>
+
+```bash
+git clone https://github.com/twentyhq/twenty.git
+```
+
+</ArticleTab>
+</ArticleTabs>
+
+## Step 2: Position yourself at the root
+
+```bash
+cd twenty
+```
+
+You should run all commands in the following steps from the root of the project.
+
+## Step 3: Set up a PostgreSQL Database
+We rely on [pg_graphql](https://github.com/supabase/pg_graphql) and recommend you use the scripts below to provision a database with the right extensions.  
+You can access the database at [localhost:5432](localhost:5432), with user `twenty` and password `twenty` .
+
+<ArticleTabs label1="Linux" label2="Mac OS" label3="Windows (WSL)">
+  <ArticleTab>
+    <b>Option 1:</b> To provision your database locally:
+    ```bash
+    make postgres-on-linux
+    ```
+
+    <b>Option 2:</b> If you have docker installed:
+    ```bash
+    make postgres-on-docker
+    ```
+  </ArticleTab>
+  <ArticleTab>
+    <b>Option 1:</b> To provision your database locally with `brew`:
+    ```bash
+    make postgres-on-macos-intel #for intel architecture
+
+    make postgres-on-macos-arm #for M1/M2/M3 architecture
+    ```
+
+    <b>Option 2:</b> If you have docker installed:
+    ```bash
+    make postgres-on-docker
+    ```
+  </ArticleTab>
+  <ArticleTab>
+    <b>Option 1 :</b> To provision your database locally:
+    ```bash
+    make postgres-on-linux
+    ```
+
+    Note: you might need to run `sudo apt-get install build-essential` before running the above command if you don't have the build tools installed.
+
+    <b>Option 2:</b> If you have docker installed:  
+    Running Docker on WSL adds an extra layer of complexity.
+    Only use this option if you are comfortable with the extra steps involved, including turning on [Docker Desktop WSL2](https://docs.docker.com/desktop/wsl).
+    ```bash
+    make postgres-on-docker
+    ```
+  </ArticleTab>
+</ArticleTabs>
+
+
+## Step 4: Setup environment variables
+
+Use environment variables or `.env` files to configure your project.
+
+Copy the `.env.example` files in `/front` and `/server`:
+```bash
+cp ./packages/twenty-front/.env.example ./packages/twenty-front/.env
+
+cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
+```
+
+## Step 5: Installing dependencies
+
+<ArticleWarning>
+
+Use `nvm` to install the correct `node` version. The `.nvmrc` ensures all contributors use the same version.
+
+</ArticleWarning>
+
+To build Twenty server and seed some data into your database, run the following commands:
+```bash
+nvm install # installs recommended node version
+
+nvm use # use recommended node version
+
+yarn
+```
+
+## Step 6: Running the project
+
+Setup your database with the following command:
+```bash
+npx nx database:reset twenty-server
+```
+
+Start the server and the frontend:
+```bash
+npx nx start twenty-server
+
+npx nx start twenty-front
+```
+
+Alternatively, you can start both applications at once:
+```bash
+npx nx start
+```
+
+Twenty's server will be up and running at [http://localhost:3000/graphql](http://localhost:3000/graphql).
+Twenty's frontend will be running at [http://localhost:3001](http://localhost:3001). Just login using the seeded demo account: `tim@apple.dev` (password: `Applecar2025`) to start using Twenty.
+
+
+## Troubleshooting
+
+#### CR line breaks found [Windows]
+
+This is due to the line break characters of Windows and the git configuration. Try running:
+
+```
+git config --global core.autocrlf false
+```
+
+Then delete the repository and clone it again.
+
+#### Missing metadata schema
+
+During Twenty installation, you need to provision your postgres database with the right schemas, extensions, and users.
+If you're successful in running this provisioning, you should have `default` and `metadata` schemas in your database.
+If you don't, make sure you don't have more than one postgres instance running on your computer.
+
+#### Cannot find module 'twenty-emails' or its corresponding type declarations.
+
+You have to build the package `twenty-emails` before running the initialization of the database with `npx nx run twenty-emails:build`
+
+#### Missing twenty-x package
+
+Make sure to run yarn in the root directory and then run `npx nx server:dev twenty-server`. If this still doesn't work try building the missing package manually.
+
+#### Lint on Save not working
+
+This should work out of the box with the eslint extension installed. If this doens't work try adding this to your vscode setting (on the dev container scope):
+
+```
+"editor.codeActionsOnSave": {
+
+  "source.fixAll.eslint": "explicit"
+
+}
+```
+
+#### Docker container build
+
+To successfully build Docker images, ensure that your system has a minimum of 2GB of memory available. For users of Docker Desktop, please verify that you've allocated sufficient resources to Docker within the application's settings.

@@ -1,6 +1,7 @@
 'use client';
 
 import styled from '@emotion/styled';
+import Image from 'next/image';
 import Link from 'next/link';
 
 import MotionContainer from '@/app/_components/ui/layout/LoaderAnimation';
@@ -36,12 +37,6 @@ const AvatarItem = styled.div`
     box-shadow: -6px 6px 0px 1px rgba(0, 0, 0, 1);
   }
 
-  img {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-
   .username {
     position: absolute;
     bottom: 0;
@@ -74,7 +69,12 @@ const AvatarGrid = ({ users }: { users: User[] }) => {
         {users.map((user) => (
           <Link href={`/contributors/${user.id}`} key={`l_${user.id}`}>
             <AvatarItem key={user.id}>
-              <img src={user.avatarUrl} alt={user.id} />
+              <Image
+                src={user.avatarUrl}
+                alt={user.id}
+                layout="fill"
+                objectFit="cover"
+              />
               <span className="username">{user.id}</span>
             </AvatarItem>
           </Link>

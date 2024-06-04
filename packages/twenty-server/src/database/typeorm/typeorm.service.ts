@@ -38,6 +38,9 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
             rejectUnauthorized: false,
           }
         : undefined,
+      extra: {
+        query_timeout: 10000,
+      },
     });
   }
 

@@ -4,8 +4,8 @@ import { IconComponent } from 'twenty-ui';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
+import { PageBody } from './PageBody';
 import { PageHeader } from './PageHeader';
-import { RightDrawerContainer } from './RightDrawerContainer';
 
 type SubMenuTopBarContainerProps = {
   children: JSX.Element | JSX.Element[];
@@ -32,7 +32,7 @@ export const SubMenuTopBarContainer = ({
   return (
     <StyledContainer isMobile={isMobile} className={className}>
       {isMobile && <PageHeader title={title} Icon={Icon} />}
-      <RightDrawerContainer>{children}</RightDrawerContainer>
+      <PageBody>{children}</PageBody>
     </StyledContainer>
   );
 };

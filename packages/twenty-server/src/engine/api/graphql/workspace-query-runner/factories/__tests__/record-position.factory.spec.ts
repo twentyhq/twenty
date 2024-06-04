@@ -9,14 +9,15 @@ describe('RecordPositionFactory', () => {
     create: jest.fn().mockResolvedValue('query'),
   };
 
-  const workspaceDataSourceService = {
-    getSchemaName: jest.fn().mockReturnValue('schemaName'),
-    executeRawQuery: jest.fn().mockResolvedValue([{ position: 1 }]),
-  };
+  let workspaceDataSourceService;
 
   let factory: RecordPositionFactory;
 
   beforeEach(async () => {
+    workspaceDataSourceService = {
+      getSchemaName: jest.fn().mockReturnValue('schemaName'),
+      executeRawQuery: jest.fn().mockResolvedValue([{ position: 1 }]),
+    };
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         RecordPositionFactory,
@@ -44,15 +45,25 @@ describe('RecordPositionFactory', () => {
 
     it('should return the value when value is a number', async () => {
       const value = 1;
+
+      workspaceDataSourceService.executeRawQuery.mockResolvedValue([]);
+
       const result = await factory.create(value, objectMetadata, workspaceId);
 
       expect(result).toEqual(value);
     });
-    it('should return the existing position / 2 when value is first', async () => {
+    it('should throw an error when position is not unique', async () => {
+      const value = 1;
+
+      await expect(
+        factory.create(value, objectMetadata, workspaceId),
+      ).rejects.toThrow('Position is not unique');
+    });
+    it('should return the existing position -1 when value is first', async () => {
       const value = 'first';
       const result = await factory.create(value, objectMetadata, workspaceId);
 
-      expect(result).toEqual(0.5);
+      expect(result).toEqual(0);
     });
     it('should return the existing position + 1 when value is last', async () => {
       const value = 'last';
