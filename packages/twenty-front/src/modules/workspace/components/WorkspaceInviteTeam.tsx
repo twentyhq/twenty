@@ -1,6 +1,11 @@
+import { useEffect } from 'react';
+import { Controller, useForm } from 'react-hook-form';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Key } from 'ts-key-enum';
 import { IconCopy, IconMail, IconSend } from 'twenty-ui';
+import { z } from 'zod';
 
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -8,7 +13,6 @@ import { Button } from '@/ui/input/button/components/Button';
 import { TextInput } from '@/ui/input/components/TextInput';
 
 const StyledContainer = styled.div`
-  align-items: center;
   display: flex;
   flex-direction: row;
 `;
@@ -18,32 +22,106 @@ const StyledLinkContainer = styled.div`
   margin-right: ${({ theme }) => theme.spacing(2)};
 `;
 
+const emailValidationSchema = (email: string) =>
+  z.string().email(`Invalid email '${email}'`);
+
+const validationSchema = () =>
+  z
+    .object({
+      emails: z.string().superRefine((value, ctx) => {
+        if (!value.length) {
+          return;
+        }
+        const emails = value.split(',').map((email) => email.trim());
+        const invalidEmails: string[] = [];
+        for (const email of emails) {
+          const result = emailValidationSchema(email).safeParse(email);
+          if (!result.success) {
+            invalidEmails.push(email);
+          }
+        }
+        if (invalidEmails.length > 0) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.invalid_string,
+            message:
+              invalidEmails.length > 1
+                ? 'Emails "' + invalidEmails.join('", "') + '" are invalid'
+                : 'Email "' + invalidEmails.join('", "') + '" is invalid',
+            validation: 'email',
+          });
+        }
+      }),
+    })
+    .required();
+
+type FormInput = {
+  emails: string;
+};
+
 export const WorkspaceInviteTeam = () => {
   const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
-  const handleOnClick = () => {
+
+  const { reset, handleSubmit, control, formState } = useForm<FormInput>({
+    mode: 'onSubmit',
+    resolver: zodResolver(validationSchema()),
+    defaultValues: {
+      emails: '',
+    },
+  });
+
+  const submit = handleSubmit((data) => {
     enqueueSnackBar('Invite link sent to email addresses', {
       variant: SnackBarVariant.Success,
       icon: <IconCopy size={theme.icon.size.md} />,
       duration: 2000,
     });
+  });
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === Key.Enter) {
+      submit();
+    }
   };
+
+  const { isSubmitSuccessful } = formState;
+
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+    }
+  }, [isSubmitSuccessful, reset]);
+
   return (
-    <StyledContainer>
-      <StyledLinkContainer>
-        <TextInput
-          placeholder="tim@apple.com, jony.ive@apple.dev"
-          fullWidth
-          LeftIcon={IconMail}
+    <form onSubmit={submit}>
+      <StyledContainer>
+        <StyledLinkContainer>
+          <Controller
+            name="emails"
+            control={control}
+            render={({ field: { value, onChange }, fieldState: { error } }) => {
+              return (
+                <TextInput
+                  placeholder="tim@apple.com, jony.ive@apple.dev"
+                  LeftIcon={IconMail}
+                  value={value}
+                  onChange={onChange}
+                  error={error?.message}
+                  onKeyDown={handleKeyDown}
+                  fullWidth
+                />
+              );
+            }}
+          />
+        </StyledLinkContainer>
+        <Button
+          Icon={IconSend}
+          variant="primary"
+          accent="blue"
+          title="Invite"
+          type="submit"
         />
-      </StyledLinkContainer>
-      <Button
-        Icon={IconSend}
-        variant="primary"
-        accent="blue"
-        title="Invite"
-        onClick={handleOnClick}
-      />
-    </StyledContainer>
+      </StyledContainer>
+    </form>
   );
 };
