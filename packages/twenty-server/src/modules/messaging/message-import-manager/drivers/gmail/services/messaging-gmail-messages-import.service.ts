@@ -21,6 +21,7 @@ import { MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE } from 'src/modules/messa
 import { MessagingGmailFetchMessagesByBatchesService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/messaging-gmail-fetch-messages-by-batches.service';
 import { MessagingErrorHandlingService } from 'src/modules/messaging/common/services/messaging-error-handling.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/common/services/messaging-save-messages-and-enqueue-contact-creation.service';
+import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 
 @Injectable()
 export class MessagingGmailMessagesImportService {
@@ -39,6 +40,8 @@ export class MessagingGmailMessagesImportService {
     private readonly messagingTelemetryService: MessagingTelemetryService,
     @InjectObjectMetadataRepository(BlocklistWorkspaceEntity)
     private readonly blocklistRepository: BlocklistRepository,
+    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
+    private readonly messageChannelRepository: MessageChannelRepository,
   ) {}
 
   async processMessageBatchImport(
@@ -133,6 +136,11 @@ export class MessagingGmailMessagesImportService {
           workspaceId,
         );
       }
+
+      await this.messageChannelRepository.resetThrottlePauseUntilAndThrottleFailureCount(
+        messageChannel.id,
+        workspaceId,
+      );
 
       return await this.trackMessageImportCompleted(
         messageChannel,

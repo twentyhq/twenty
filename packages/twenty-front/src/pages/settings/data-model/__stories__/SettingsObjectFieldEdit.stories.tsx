@@ -4,7 +4,6 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
-import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { SettingsObjectFieldEdit } from '../SettingsObjectFieldEdit';
@@ -12,7 +11,7 @@ import { SettingsObjectFieldEdit } from '../SettingsObjectFieldEdit';
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/DataModel/SettingsObjectFieldEdit',
   component: SettingsObjectFieldEdit,
-  decorators: [PrefetchLoadingDecorator, PageDecorator],
+  decorators: [PageDecorator],
   args: {
     routePath: '/settings/objects/:objectSlug/:fieldSlug',
     routeParams: { ':objectSlug': 'companies', ':fieldSlug': 'name' },

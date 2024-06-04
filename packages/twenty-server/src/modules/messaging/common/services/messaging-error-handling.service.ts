@@ -9,6 +9,9 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { MessagingTelemetryService } from 'src/modules/messaging/common/services/messaging-telemetry.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
+import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
+import { MESSAGING_THROTTLE_DURATION } from 'src/modules/messaging/common/constants/messaging-throttle-duration';
+import { MESSAGING_THROTTLE_MAX_ATTEMPTS } from 'src/modules/messaging/common/constants/messaging-throttle-max-attempts';
 
 type SyncStep =
   | 'partial-message-list-fetch'
@@ -27,6 +30,8 @@ export class MessagingErrorHandlingService {
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly messagingChannelSyncStatusService: MessagingChannelSyncStatusService,
     private readonly messagingTelemetryService: MessagingTelemetryService,
+    @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
+    private readonly messageChannelRepository: MessageChannelRepository,
   ) {}
 
   public async handleGmailError(
@@ -100,7 +105,7 @@ export class MessagingErrorHandlingService {
     }
   }
 
-  public async handleRateLimitExceeded(
+  private async handleRateLimitExceeded(
     error: GmailError,
     syncStep: SyncStep,
     messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
@@ -113,6 +118,19 @@ export class MessagingErrorHandlingService {
       messageChannelId: messageChannel.id,
       message: `${error.code}: ${error.reason}`,
     });
+
+    if (
+      messageChannel.throttleFailureCount >= MESSAGING_THROTTLE_MAX_ATTEMPTS
+    ) {
+      await this.messagingChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
+        messageChannel.id,
+        workspaceId,
+      );
+
+      return;
+    }
+
+    await this.throttle(messageChannel, workspaceId);
 
     switch (syncStep) {
       case 'full-message-list-fetch':
@@ -141,7 +159,7 @@ export class MessagingErrorHandlingService {
     }
   }
 
-  public async handleInsufficientPermissions(
+  private async handleInsufficientPermissions(
     error: GmailError,
     syncStep: SyncStep,
     messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
@@ -166,7 +184,7 @@ export class MessagingErrorHandlingService {
     );
   }
 
-  public async handleNotFound(
+  private async handleNotFound(
     error: GmailError,
     syncStep: SyncStep,
     messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
@@ -188,5 +206,28 @@ export class MessagingErrorHandlingService {
       messageChannel.id,
       workspaceId,
     );
+  }
+
+  private async throttle(
+    messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
+    workspaceId: string,
+  ): Promise<void> {
+    const throttleDuration =
+      MESSAGING_THROTTLE_DURATION *
+      Math.pow(2, messageChannel.throttleFailureCount);
+
+    await this.messageChannelRepository.updateThrottlePauseUntilAndIncrementThrottleFailureCount(
+      messageChannel.id,
+      throttleDuration,
+      workspaceId,
+    );
+
+    await this.messagingTelemetryService.track({
+      eventName: 'message_channel.throttle',
+      workspaceId,
+      connectedAccountId: messageChannel.connectedAccountId,
+      messageChannelId: messageChannel.id,
+      message: `Throttling for ${throttleDuration}ms`,
+    });
   }
 }
