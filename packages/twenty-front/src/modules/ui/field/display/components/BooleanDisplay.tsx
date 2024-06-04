@@ -15,7 +15,6 @@ export const BooleanDisplay = ({ value }: BooleanDisplayProps) => {
 
   return (
     <>
-      {' '}
       {value ? (
         <IconCheck size={theme.icon.size.sm} />
       ) : (
