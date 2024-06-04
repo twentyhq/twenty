@@ -46,12 +46,14 @@ export class MessagingMessagesImportJob
         messageChannelId: messageChannel.id,
       });
 
-      const throttlePauseUntil = computeThrottlePauseUntil(
-        messageChannel.syncStageStartedAt,
-        messageChannel.throttleFailureCount,
-      );
+      const isThrottled =
+        messageChannel.syncStageStartedAt ||
+        computeThrottlePauseUntil(
+          messageChannel.syncStageStartedAt,
+          messageChannel.throttleFailureCount,
+        ) > new Date();
 
-      if (throttlePauseUntil > new Date()) {
+      if (isThrottled) {
         return;
       }
 

@@ -76,12 +76,14 @@ export class MessagingMessageListFetchJob
       return;
     }
 
-    const throttlePauseUntil = computeThrottlePauseUntil(
-      messageChannel.syncStageStartedAt,
-      messageChannel.throttleFailureCount,
-    );
+    const isThrottled =
+      messageChannel.syncStageStartedAt ||
+      computeThrottlePauseUntil(
+        messageChannel.syncStageStartedAt,
+        messageChannel.throttleFailureCount,
+      ) > new Date();
 
-    if (throttlePauseUntil > new Date()) {
+    if (isThrottled) {
       return;
     }
 
