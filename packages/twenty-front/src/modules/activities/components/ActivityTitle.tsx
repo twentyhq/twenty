@@ -56,10 +56,6 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-const StyledCheckbox = styled(Checkbox)`
-  padding: ${({ theme }) => theme.spacing(0)};
-`;
-
 type ActivityTitleProps = {
   activityId: string;
 };
@@ -180,7 +176,7 @@ export const ActivityTitle = ({ activityId }: ActivityTitleProps) => {
   return (
     <StyledContainer>
       {activity.type === 'Task' && (
-        <StyledCheckbox
+        <Checkbox
           size={CheckboxSize.Large}
           shape={CheckboxShape.Rounded}
           checked={completed}
