@@ -26,6 +26,7 @@ export const RecordTableHeaderPlusButtonContent = () => {
   const handleAddColumn = useCallback(
     (column: ColumnDefinition<FieldMetadata>) => {
       closeDropdown();
+      console.log('column', column);
       handleColumnVisibilityChange(column);
     },
     [handleColumnVisibilityChange, closeDropdown],

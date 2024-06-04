@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Reference, useApolloClient } from '@apollo/client';
+import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import pick from 'lodash.pick';
@@ -13,8 +13,7 @@ import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataIt
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
-import { RecordGqlRefEdge } from '@/object-record/cache/types/RecordGqlRefEdge';
-import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
+import { useCreateOneRecordInCache } from '@/object-record/cache/hooks/useCreateOneRecordInCache';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
@@ -77,6 +76,11 @@ export const SettingsObjectNewFieldStep2 = () => {
     objectNameSingular: CoreObjectNameSingular.View,
   });
 
+  const { objectMetadataItem: viewFieldObjectMetadataItem } =
+    useObjectMetadataItem({
+      objectNameSingular: CoreObjectNameSingular.ViewField,
+    });
+
   useFindManyRecords<View>({
     objectNameSingular: CoreObjectNameSingular.View,
     filter: {
@@ -111,6 +115,12 @@ export const SettingsObjectNewFieldStep2 = () => {
   const { createOneRelationMetadataItem: createOneRelationMetadata } =
     useCreateOneRelationMetadataItem();
 
+  const createOneViewFieldInCache = useCreateOneRecordInCache({
+    objectMetadataItem: viewFieldObjectMetadataItem,
+  });
+
+  const apolloClient = useApolloClient();
+
   if (!activeObjectMetadataItem) return null;
 
   const canSave =
@@ -126,7 +136,7 @@ export const SettingsObjectNewFieldStep2 = () => {
       ) {
         const { relation: relationFormValues, ...fieldFormValues } = formValues;
 
-        const createdRelation = await createOneRelationMetadata({
+        await createOneRelationMetadata({
           relationType: relationFormValues.type,
           field: pick(fieldFormValues, ['icon', 'label', 'description']),
           objectMetadataId: activeObjectMetadataItem.id,
@@ -139,111 +149,21 @@ export const SettingsObjectNewFieldStep2 = () => {
           },
         });
 
-        const relationObjectMetadataItem = findObjectMetadataItemById(
-          relationFormValues.objectMetadataId,
-        );
-
-        objectViews.map(async (view) => {
-          const viewFieldToCreate = {
-            viewId: view.id,
-            fieldMetadataId:
-              relationFormValues.type === 'MANY_TO_ONE'
-                ? createdRelation.data?.createOneRelation.toFieldMetadataId
-                : createdRelation.data?.createOneRelation.fromFieldMetadataId,
-            position: activeObjectMetadataItem.fields.length,
-            isVisible: true,
-            size: 100,
-          };
-
-          modifyRecordFromCache({
-            objectMetadataItem: viewObjectMetadataItem,
-            cache: cache,
-            fieldModifiers: {
-              viewFields: (viewFieldsRef, { readField }) => {
-                const edges = readField<{ node: Reference }[]>(
-                  'edges',
-                  viewFieldsRef,
-                );
-
-                if (!edges) return viewFieldsRef;
-
-                return {
-                  ...viewFieldsRef,
-                  edges: [...edges, { node: viewFieldToCreate }],
-                };
-              },
-            },
-            recordId: view.id,
-          });
-
-          relationObjectViews.map(async (view) => {
-            const viewFieldToCreate = {
-              viewId: view.id,
-              fieldMetadataId:
-                relationFormValues.type === 'MANY_TO_ONE'
-                  ? createdRelation.data?.createOneRelation.fromFieldMetadataId
-                  : createdRelation.data?.createOneRelation.toFieldMetadataId,
-              position: relationObjectMetadataItem?.fields.length,
-              isVisible: true,
-              size: 100,
-            };
-            modifyRecordFromCache({
-              objectMetadataItem: viewObjectMetadataItem,
-              cache: cache,
-              fieldModifiers: {
-                viewFields: (viewFieldsRef, { readField }) => {
-                  const edges = readField<{ node: Reference }[]>(
-                    'edges',
-                    viewFieldsRef,
-                  );
-
-                  if (!edges) return viewFieldsRef;
-
-                  return {
-                    ...viewFieldsRef,
-                    edges: [...edges, { node: viewFieldToCreate }],
-                  };
-                },
-              },
-              recordId: view.id,
-            });
-          });
+        // TODO: fix optimistic update logic
+        // Forcing a refetch for now but it's not ideal
+        await apolloClient.refetchQueries({
+          include: ['FindManyViews', 'CombinedFindManyRecords'],
         });
       } else {
-        const createdMetadataField = await createMetadataField({
+        await createMetadataField({
           ...formValues,
           objectMetadataId: activeObjectMetadataItem.id,
         });
 
-        objectViews.map(async (view) => {
-          const viewFieldToCreate = {
-            viewId: view.id,
-            fieldMetadataId: createdMetadataField.data?.createOneField.id,
-            position: activeObjectMetadataItem.fields.length,
-            isVisible: true,
-            size: 100,
-          };
-
-          modifyRecordFromCache({
-            objectMetadataItem: viewObjectMetadataItem,
-            cache: cache,
-            fieldModifiers: {
-              viewFields: (cachedViewFieldsConnection, { readField }) => {
-                const edges = readField<RecordGqlRefEdge[]>(
-                  'edges',
-                  cachedViewFieldsConnection,
-                );
-
-                if (!edges) return cachedViewFieldsConnection;
-
-                return {
-                  ...cachedViewFieldsConnection,
-                  edges: [...edges, { node: viewFieldToCreate }],
-                };
-              },
-            },
-            recordId: view.id,
-          });
+        // TODO: fix optimistic update logic
+        // Forcing a refetch for now but it's not ideal
+        await apolloClient.refetchQueries({
+          include: ['FindManyViews', 'CombinedFindManyRecords'],
         });
       }
 
