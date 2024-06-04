@@ -16,7 +16,7 @@ describe('RecordPositionBackfillService', () => {
 
   beforeEach(async () => {
     recordPositionQueryFactory = {
-      create: jest.fn().mockResolvedValue(['query', []]),
+      create: jest.fn().mockReturnValue(['query', []]),
     };
 
     recordPositionFactory = {

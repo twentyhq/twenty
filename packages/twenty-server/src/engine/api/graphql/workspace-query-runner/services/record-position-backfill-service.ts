@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
-
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import {
   RecordPositionQueryFactory,
@@ -9,6 +7,7 @@ import {
 } from 'src/engine/api/graphql/workspace-query-builder/factories/record-position-query.factory';
 import { RecordPositionFactory } from 'src/engine/api/graphql/workspace-query-runner/factories/record-position.factory';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
+import { hasPositionField } from 'src/engine/metadata-modules/object-metadata/utils/has-position-field.util';
 
 @Injectable()
 export class RecordPositionBackfillService {
@@ -21,6 +20,10 @@ export class RecordPositionBackfillService {
   ) {}
 
   async backfill(workspaceId: string, dryRun: boolean) {
+    this.logger.log(
+      `Starting backfilling record positions for workspace ${workspaceId}`,
+    );
+
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -34,7 +37,7 @@ export class RecordPositionBackfillService {
 
     for (const objectMetadata of objectMetadataWithPosition) {
       const [recordsWithoutPositionQuery, recordsWithoutPositionQueryParams] =
-        await this.recordPositionQueryFactory.create(
+        this.recordPositionQueryFactory.create(
           {
             recordPositionQueryType: RecordPositionQueryType.FIND_BY_POSITION,
             positionValue: null,
@@ -48,12 +51,21 @@ export class RecordPositionBackfillService {
           recordsWithoutPositionQuery,
           recordsWithoutPositionQueryParams,
           workspaceId,
-          undefined,
         );
+
+      if (recordsWithoutPosition.length === 0) {
+        this.logger.log(
+          `No records without position for ${objectMetadata.nameSingular}`,
+        );
+        continue;
+      }
 
       const position = await this.recordPositionFactory.create(
         'last',
-        objectMetadata as ObjectMetadataInterface,
+        {
+          isCustom: objectMetadata.isCustom,
+          nameSingular: objectMetadata.nameSingular,
+        },
         workspaceId,
       );
 
@@ -63,6 +75,14 @@ export class RecordPositionBackfillService {
         recordIndex++
       ) {
         const recordId = recordsWithoutPosition[recordIndex].id;
+
+        if (!recordId) {
+          this.logger.log(
+            `Fetched record without id for ${objectMetadata.nameSingular}`,
+          );
+          continue;
+        }
+
         const backfilledPosition = position + recordIndex;
 
         this.logger.log(
@@ -73,7 +93,7 @@ export class RecordPositionBackfillService {
           continue;
         }
 
-        const [query, params] = await this.recordPositionQueryFactory.create(
+        const [query, params] = this.recordPositionQueryFactory.create(
           {
             recordPositionQueryType: RecordPositionQueryType.UPDATE_POSITION,
             recordId: recordsWithoutPosition[recordIndex].id,
@@ -87,13 +107,8 @@ export class RecordPositionBackfillService {
           query,
           params,
           workspaceId,
-          undefined,
         );
       }
     }
   }
 }
-
-const hasPositionField = (objectMetadata: ObjectMetadataInterface) =>
-  ['company', 'opportunity', 'person'].includes(objectMetadata.nameSingular) ||
-  objectMetadata.isCustom;
