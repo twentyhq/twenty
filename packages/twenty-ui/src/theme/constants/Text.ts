@@ -1,8 +1,7 @@
 export const TEXT = {
   lineHeight: {
     lg: 1.5,
-    md: 1.2,
-    sm: 1.1,
+    md: 1.1,
   },
 
   iconSizeMedium: 16,

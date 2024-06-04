@@ -40,7 +40,7 @@ const StyledEditableTitleInput = styled.input<{
   font-size: ${({ theme }) => theme.font.size.xl};
   font-weight: ${({ theme }) => theme.font.weight.semiBold};
 
-  line-height: ${({ theme }) => theme.text.lineHeight.sm};
+  line-height: ${({ theme }) => theme.text.lineHeight.md};
   outline: none;
   text-decoration: ${({ completed }) => (completed ? 'line-through' : 'none')};
   &::placeholder {
@@ -57,7 +57,7 @@ const StyledContainer = styled.div`
 `;
 
 const StyledCheckbox = styled(Checkbox)`
-  padding: ${({ theme }) => theme.spacing(0.5)};
+  padding: ${({ theme }) => theme.spacing(0)};
 `;
 
 type ActivityTitleProps = {
