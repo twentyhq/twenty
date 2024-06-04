@@ -77,7 +77,12 @@ export class MessagingGmailFullMessageListFetchService {
       return;
     }
 
-    await this.messageChannelRepository.resetThrottlePauseUntilAndThrottleFailureCount(
+    await this.messageChannelRepository.resetThrottleFailureCount(
+      messageChannel.id,
+      workspaceId,
+    );
+
+    await this.messageChannelRepository.resetSyncStageStartedAt(
       messageChannel.id,
       workspaceId,
     );
