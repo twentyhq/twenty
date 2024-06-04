@@ -49,7 +49,7 @@ resource "kubernetes_deployment" "twentycrm_server" {
           }
           env {
             name  = "DEBUG_MODE"
-            value = true
+            value = false
           }
 
           env {

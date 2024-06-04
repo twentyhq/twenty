@@ -1,4 +1,3 @@
-### TwentyCRM 
 variable "twentycrm_token_accessToken" {
   type        = string
   description = "TwentyCRM access Token"
