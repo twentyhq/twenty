@@ -15,7 +15,7 @@ export type RecordPositionBackfillCommandOptions = {
 };
 
 @Command({
-  name: 'backfill-record-position',
+  name: 'migrate-0.20:backfill-record-position',
   description: 'Backfill record position',
 })
 export class RecordPositionBackfillCommand extends CommandRunner {
