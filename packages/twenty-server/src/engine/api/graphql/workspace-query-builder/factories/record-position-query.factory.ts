@@ -10,7 +10,7 @@ export enum RecordPositionQueryType {
 }
 
 type FindByPositionQueryArgs = {
-  positionValue: number;
+  positionValue: number | null;
   recordPositionQueryType: RecordPositionQueryType.FIND_BY_POSITION;
 };
 
@@ -77,10 +77,12 @@ export class RecordPositionQueryFactory {
     name: string,
     dataSourceSchema: string,
   ): [RecordPositionQuery, RecordPositionQueryParams] {
+    const positionStringParam = positionValue ? '= $1' : 'IS NULL';
+
     return [
-      `SELECT position FROM ${dataSourceSchema}."${name}"
-            WHERE "position" = $1`,
-      [positionValue],
+      `SELECT id, position FROM ${dataSourceSchema}."${name}"
+            WHERE "position" ${positionStringParam}`,
+      positionValue ? [positionValue] : [],
     ];
   }
 
