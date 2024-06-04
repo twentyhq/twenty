@@ -26,7 +26,7 @@ describe('RecordPositionQueryFactory', () => {
       );
 
       expect(query).toEqual(
-        `SELECT position FROM ${dataSourceSchema}."${objectMetadataItem.nameSingular}"
+        `SELECT id, position FROM ${dataSourceSchema}."${objectMetadataItem.nameSingular}"
             WHERE "position" = $1`,
       );
       expect(params).toEqual([positionValue]);
