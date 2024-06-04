@@ -275,14 +275,14 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   syncStage: MessageChannelSyncStage;
 
   @WorkspaceField({
-    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.ongoingSyncStartedAt,
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStageStartedAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Ongoing sync started at',
-    description: 'Ongoing sync started at',
+    label: 'Sync stage started at',
+    description: 'Sync stage started at',
     icon: 'IconHistory',
   })
   @WorkspaceIsNullable()
-  ongoingSyncStartedAt: string;
+  syncStageStartedAt: string;
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.throttlePauseUntil,

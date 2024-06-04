@@ -51,7 +51,7 @@ export class MessageChannelRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."messageChannel" SET "syncStatus" = NULL, "syncCursor" = '', "ongoingSyncStartedAt" = NULL
+      `UPDATE ${dataSourceSchema}."messageChannel" SET "syncStatus" = NULL, "syncCursor" = '', "syncStageStartedAt" = NULL
       WHERE "connectedAccountId" = $1`,
       [connectedAccountId],
       workspaceId,
@@ -171,16 +171,16 @@ export class MessageChannelRepository {
     const needsToUpdateSyncedAt =
       syncStatus === MessageChannelSyncStatus.SUCCEEDED;
 
-    const needsToUpdateOngoingSyncStartedAt =
+    const needsToUpdateSyncStageStartedAt =
       syncStatus === MessageChannelSyncStatus.ONGOING;
 
     await this.workspaceDataSourceService.executeRawQuery(
       `UPDATE ${dataSourceSchema}."messageChannel" SET "syncStatus" = $1 ${
         needsToUpdateSyncedAt ? `, "syncedAt" = NOW()` : ''
       } ${
-        needsToUpdateOngoingSyncStartedAt
-          ? `, "ongoingSyncStartedAt" = NOW()`
-          : `, "ongoingSyncStartedAt" = NULL`
+        needsToUpdateSyncStageStartedAt
+          ? `, "syncStageStartedAt" = NOW()`
+          : `, "syncStageStartedAt" = NULL`
       } WHERE "id" = $2`,
       [syncStatus, id],
       workspaceId,
