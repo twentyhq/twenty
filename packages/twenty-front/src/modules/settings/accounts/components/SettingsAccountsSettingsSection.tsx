@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { H2Title, IconCalendarEvent, IconMailCog } from 'twenty-ui';
 
@@ -6,6 +6,7 @@ import { SettingsNavigationCard } from '@/settings/components/SettingsNavigation
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
 import { Section } from '@/ui/layout/section/components/Section';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 
 const StyledCardsContainer = styled.div`
   display: flex;
@@ -14,8 +15,6 @@ const StyledCardsContainer = styled.div`
 `;
 
 export const SettingsAccountsSettingsSection = () => {
-  const navigate = useNavigate();
-
   return (
     <Section>
       <H2Title
@@ -23,24 +22,16 @@ export const SettingsAccountsSettingsSection = () => {
         description="Configure your emails and calendar settings."
       />
       <StyledCardsContainer>
-        <SettingsNavigationCard
-          Icon={IconMailCog}
-          title="Emails"
-          onClick={() =>
-            navigate(getSettingsPagePath(SettingsPath.AccountsEmails))
-          }
-        >
-          Set email visibility, manage your blocklist and more.
-        </SettingsNavigationCard>
-        <SettingsNavigationCard
-          Icon={IconCalendarEvent}
-          title="Calendar"
-          onClick={() =>
-            navigate(getSettingsPagePath(SettingsPath.AccountsCalendars))
-          }
-        >
-          Configure and customize your calendar preferences.
-        </SettingsNavigationCard>
+        <UndecoratedLink to={getSettingsPagePath(SettingsPath.AccountsEmails)}>
+          <SettingsNavigationCard Icon={IconMailCog} title="Emails">
+            Set email visibility, manage your blocklist and more.
+          </SettingsNavigationCard>
+        </UndecoratedLink>
+        <Link to={getSettingsPagePath(SettingsPath.AccountsCalendars)}>
+          <SettingsNavigationCard Icon={IconCalendarEvent} title="Calendar">
+            Configure and customize your calendar preferences.
+          </SettingsNavigationCard>
+        </Link>
       </StyledCardsContainer>
     </Section>
   );

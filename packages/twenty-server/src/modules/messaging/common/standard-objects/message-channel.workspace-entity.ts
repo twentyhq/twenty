@@ -31,7 +31,7 @@ export enum MessageChannelSyncStatus {
   FAILED_UNKNOWN = 'FAILED_UNKNOWN',
 }
 
-export enum MessageChannelSyncSubStatus {
+export enum MessageChannelSyncStage {
   FULL_MESSAGE_LIST_FETCH_PENDING = 'FULL_MESSAGE_LIST_FETCH_PENDING',
   PARTIAL_MESSAGE_LIST_FETCH_PENDING = 'PARTIAL_MESSAGE_LIST_FETCH_PENDING',
   MESSAGE_LIST_FETCH_ONGOING = 'MESSAGE_LIST_FETCH_ONGOING',
@@ -227,72 +227,62 @@ export class MessageChannelWorkspaceEntity extends BaseWorkspaceEntity {
   syncStatus: MessageChannelSyncStatus;
 
   @WorkspaceField({
-    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncSubStatus,
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStage,
     type: FieldMetadataType.SELECT,
-    label: 'Sync sub status',
-    description: 'Sync sub status',
+    label: 'Sync stage',
+    description: 'Sync stage',
     icon: 'IconStatusChange',
     options: [
       {
-        value: MessageChannelSyncSubStatus.FULL_MESSAGE_LIST_FETCH_PENDING,
+        value: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
         label: 'Full messages list fetch pending',
         position: 0,
         color: 'blue',
       },
       {
-        value: MessageChannelSyncSubStatus.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
+        value: MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING,
         label: 'Partial messages list fetch pending',
         position: 1,
         color: 'blue',
       },
       {
-        value: MessageChannelSyncSubStatus.MESSAGE_LIST_FETCH_ONGOING,
+        value: MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING,
         label: 'Messages list fetch ongoing',
         position: 2,
         color: 'orange',
       },
       {
-        value: MessageChannelSyncSubStatus.MESSAGES_IMPORT_PENDING,
+        value: MessageChannelSyncStage.MESSAGES_IMPORT_PENDING,
         label: 'Messages import pending',
         position: 3,
         color: 'blue',
       },
       {
-        value: MessageChannelSyncSubStatus.MESSAGES_IMPORT_ONGOING,
+        value: MessageChannelSyncStage.MESSAGES_IMPORT_ONGOING,
         label: 'Messages import ongoing',
         position: 4,
         color: 'orange',
       },
       {
-        value: MessageChannelSyncSubStatus.FAILED,
+        value: MessageChannelSyncStage.FAILED,
         label: 'Failed',
         position: 5,
         color: 'red',
       },
     ],
-    defaultValue: `'${MessageChannelSyncSubStatus.FULL_MESSAGE_LIST_FETCH_PENDING}'`,
+    defaultValue: `'${MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING}'`,
   })
-  syncSubStatus: MessageChannelSyncSubStatus;
+  syncStage: MessageChannelSyncStage;
 
   @WorkspaceField({
-    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.ongoingSyncStartedAt,
+    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.syncStageStartedAt,
     type: FieldMetadataType.DATE_TIME,
-    label: 'Ongoing sync started at',
-    description: 'Ongoing sync started at',
+    label: 'Sync stage started at',
+    description: 'Sync stage started at',
     icon: 'IconHistory',
   })
   @WorkspaceIsNullable()
-  ongoingSyncStartedAt: string;
-
-  @WorkspaceField({
-    standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.throttlePauseUntil,
-    type: FieldMetadataType.DATE_TIME,
-    label: 'Throttle Pause Until',
-    description: 'Throttle Pause Until',
-    icon: 'IconPlayerPause',
-  })
-  @WorkspaceIsNullable()
-  throttlePauseUntil: Date;
+  syncStageStartedAt: string;
 
   @WorkspaceField({
     standardId: MESSAGE_CHANNEL_STANDARD_FIELD_IDS.throttleFailureCount,
