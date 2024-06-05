@@ -22,6 +22,20 @@ describe('isEmailBlocklisted', () => {
 
     expect(result).toBe(false);
   });
+  it('should return true for subdomains', () => {
+    const email = 'hello@twenty.twenty.com';
+    const blocklist = ['@twenty.com'];
+    const result = isEmailBlocklisted(email, blocklist);
+
+    expect(result).toBe(true);
+  });
+  it('should return false for domains which end with blocklisted domain but are not subdomains', () => {
+    const email = 'hello@twentytwenty.com';
+    const blocklist = ['@twenty.com'];
+    const result = isEmailBlocklisted(email, blocklist);
+
+    expect(result).toBe(false);
+  });
   it('should return false if email is undefined', () => {
     const email = undefined;
     const blocklist = ['@example.com'];
