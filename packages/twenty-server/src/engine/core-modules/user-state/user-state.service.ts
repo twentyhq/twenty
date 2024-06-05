@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 
-import { SkipSyncEmailOnboardingStep } from 'src/engine/core-modules/user-state/dtos/skip-sync-email.entity-onboarding-step';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
@@ -13,6 +12,7 @@ import {
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 import { UserStates } from 'src/engine/core-modules/user-state/enums/user-states.enum';
 import { UserStateEmailSyncValues } from 'src/engine/core-modules/user-state/enums/user-state-email-sync-values.enum';
+import { SkipSyncEmailOnboardingStep } from 'src/engine/core-modules/user-state/dtos/skip-sync-email.entity-onboarding-step';
 
 @Injectable()
 export class UserStateService {
