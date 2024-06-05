@@ -86,11 +86,12 @@ export class MessageChannelMessageAssociationRepository {
       JOIN ${dataSourceSchema}."message" ON "messageChannelMessageAssociation"."messageId" = ${dataSourceSchema}."message"."id"
       JOIN ${dataSourceSchema}."messageParticipant" "messageParticipant" ON ${dataSourceSchema}."message"."id" = "messageParticipant"."messageId"
       WHERE "messageParticipant"."handle" ${
-        isHandleDomain ? 'ILIKE' : '='
+        isHandleDomain ? '~*' : '='
       } $1 AND "messageParticipant"."role" = ANY($2) AND "messageChannelMessageAssociation"."messageChannelId" = ANY($3)`,
         [
           isHandleDomain
-            ? `%${messageParticipantHandle}`
+            ? // eslint-disable-next-line no-useless-escape
+              `.+@(.+\.)?${messageParticipantHandle.slice(1)}`
             : messageParticipantHandle,
           rolesToDelete,
           messageChannelIds,
