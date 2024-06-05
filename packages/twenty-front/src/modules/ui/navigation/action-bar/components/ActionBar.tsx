@@ -1,6 +1,6 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import styled from '@emotion/styled';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { actionBarEntriesState } from '@/ui/navigation/action-bar/states/actionBarEntriesState';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
@@ -40,7 +40,15 @@ const StyledLabel = styled.div`
   padding-right: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const ActionBar = ({ selectedIds }: ActionBarProps) => {
+export const ActionBar = ({ selectedIds = [] }: ActionBarProps) => {
+  const setContextMenuOpenState = useSetRecoilState(contextMenuIsOpenState);
+
+  useEffect(() => {
+    if (selectedIds && selectedIds.length > 1) {
+      setContextMenuOpenState(false);
+    }
+  }, [selectedIds, setContextMenuOpenState]);
+
   const contextMenuIsOpen = useRecoilValue(contextMenuIsOpenState);
   const actionBarEntries = useRecoilValue(actionBarEntriesState);
   const wrapperRef = useRef<HTMLDivElement>(null);
