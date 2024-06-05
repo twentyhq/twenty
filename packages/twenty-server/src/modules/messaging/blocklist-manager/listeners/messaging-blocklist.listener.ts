@@ -76,12 +76,36 @@ export class MessagingBlocklistListener {
   async handleUpdatedEvent(
     payload: ObjectRecordUpdateEvent<BlocklistWorkspaceEntity>,
   ) {
+    const workspaceMemberId = payload.properties.before.workspaceMember.id;
+    const workspaceId = payload.workspaceId;
+
     await this.messageQueueService.add<BlocklistItemDeleteMessagesJobData>(
       BlocklistItemDeleteMessagesJob.name,
       {
-        workspaceId: payload.workspaceId,
+        workspaceId,
         blocklistItemId: payload.recordId,
       },
+    );
+
+    const connectedAccount =
+      await this.connectedAccountRepository.getAllByWorkspaceMemberId(
+        workspaceMemberId,
+        workspaceId,
+      );
+
+    if (!connectedAccount || connectedAccount.length === 0) {
+      return;
+    }
+
+    const messageChannel =
+      await this.messageChannelRepository.getByConnectedAccountId(
+        connectedAccount[0].id,
+        workspaceId,
+      );
+
+    await this.messagingChannelSyncStatusService.resetAndScheduleFullMessageListFetch(
+      messageChannel[0].id,
+      workspaceId,
     );
   }
 }
