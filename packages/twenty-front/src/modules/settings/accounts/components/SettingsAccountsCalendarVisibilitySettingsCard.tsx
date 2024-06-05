@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
-import { CalendarChannelVisibility } from '@/accounts/types/CalendarChannel';
 import { SettingsAccountsRadioSettingsCard } from '@/settings/accounts/components/SettingsAccountsRadioSettingsCard';
 import { SettingsAccountsVisibilitySettingCardMedia } from '@/settings/accounts/components/SettingsAccountsVisibilitySettingCardMedia';
+import { CalendarChannelVisibility } from '~/generated/graphql';
 
 type SettingsAccountsEventVisibilitySettingsCardProps = {
   onChange: (nextValue: CalendarChannelVisibility) => void;
@@ -17,7 +17,7 @@ const eventSettingsVisibilityOptions = [
   {
     title: 'Everything',
     description: 'The whole event details will be shared with your team.',
-    value: CalendarChannelVisibility.Everything,
+    value: CalendarChannelVisibility.ShareEverything,
     cardMedia: <StyledCardMedia subject="active" body="active" />,
   },
   {
@@ -30,7 +30,7 @@ const eventSettingsVisibilityOptions = [
 
 export const SettingsAccountsEventVisibilitySettingsCard = ({
   onChange,
-  value = CalendarChannelVisibility.Everything,
+  value = CalendarChannelVisibility.ShareEverything,
 }: SettingsAccountsEventVisibilitySettingsCardProps) => (
   <SettingsAccountsRadioSettingsCard
     options={eventSettingsVisibilityOptions}

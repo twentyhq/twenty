@@ -58,8 +58,16 @@ export class GoogleAPIsService {
     workspaceId: string;
     accessToken: string;
     refreshToken: string;
+    calendarVisibility: CalendarChannelVisibility | undefined;
+    messageVisibility: MessageChannelVisibility | undefined;
   }) {
-    const { handle, workspaceId, workspaceMemberId } = input;
+    const {
+      handle,
+      workspaceId,
+      workspaceMemberId,
+      calendarVisibility,
+      messageVisibility,
+    } = input;
 
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
@@ -104,7 +112,8 @@ export class GoogleAPIsService {
             connectedAccountId: newOrExistingConnectedAccountId,
             type: MessageChannelType.EMAIL,
             handle,
-            visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+            visibility:
+              messageVisibility || MessageChannelVisibility.SHARE_EVERYTHING,
           },
           workspaceId,
           manager,
@@ -116,7 +125,9 @@ export class GoogleAPIsService {
               id: v4(),
               connectedAccountId: newOrExistingConnectedAccountId,
               handle,
-              visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
+              visibility:
+                calendarVisibility ||
+                CalendarChannelVisibility.SHARE_EVERYTHING,
             },
             workspaceId,
             manager,

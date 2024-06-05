@@ -4,6 +4,7 @@ import {
   ObjectEdge,
   ObjectMetadataItemsQuery,
 } from '~/generated-metadata/graphql';
+import { CalendarChannelVisibility, MessageChannelVisibility } from "~/generated/graphql";
 
 // This file is not designed to be manually edited.
 // It's an extract from the dev seeded environment metadata call
@@ -2924,20 +2925,20 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   isNullable: false,
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
-                  defaultValue: "'SHARE_EVERYTHING'",
+                  defaultValue: `'${CalendarChannelVisibility.ShareEverything}'`,
                   options: [
                     {
                       id: 'b60eeb97-c67b-4d01-b647-1143d58ed49f',
                       color: 'green',
                       label: 'Metadata',
-                      value: 'METADATA',
+                      value: CalendarChannelVisibility.Metadata,
                       position: 0,
                     },
                     {
                       id: '7064c804-deb0-4f65-b7d6-3fe4df9a474c',
                       color: 'orange',
                       label: 'Share Everything',
-                      value: 'SHARE_EVERYTHING',
+                      value: CalendarChannelVisibility.ShareEverything,
                       position: 1,
                     },
                   ],
@@ -7044,27 +7045,27 @@ export const mockedStandardObjectMetadataQueryResult: ObjectMetadataItemsQuery =
                   isNullable: false,
                   createdAt: '2024-04-08T12:48:49.538Z',
                   updatedAt: '2024-04-08T12:48:49.538Z',
-                  defaultValue: "'share_everything'",
+                  defaultValue: `'${MessageChannelVisibility.ShareEverything}'`,
                   options: [
                     {
                       id: '112e7633-0451-4f7e-bc79-f988b78fabb8',
                       color: 'green',
                       label: 'Metadata',
-                      value: 'metadata',
+                      value: MessageChannelVisibility.Metadata,
                       position: 0,
                     },
                     {
                       id: '148143c4-882d-4c94-b8db-ead6f4581ab1',
                       color: 'blue',
                       label: 'Subject',
-                      value: 'subject',
+                      value: MessageChannelVisibility.Subject,
                       position: 1,
                     },
                     {
                       id: '9bf90844-93cf-4c0a-95e9-02f7d5fa397f',
                       color: 'orange',
                       label: 'Share Everything',
-                      value: 'share_everything',
+                      value: MessageChannelVisibility.ShareEverything,
                       position: 2,
                     },
                   ],

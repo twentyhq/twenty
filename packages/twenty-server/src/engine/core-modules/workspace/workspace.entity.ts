@@ -18,6 +18,7 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType('Workspace')
@@ -62,6 +63,11 @@ export class Workspace {
     cascade: true,
   })
   appTokens: Relation<AppToken[]>;
+
+  @OneToMany(() => KeyValuePair, (keyValuePair) => keyValuePair.workspace, {
+    cascade: true,
+  })
+  keyValuePairs: Relation<KeyValuePair[]>;
 
   @OneToMany(() => User, (user) => user.defaultWorkspace)
   users: Relation<User[]>;

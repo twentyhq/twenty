@@ -15,10 +15,11 @@ import { StopDataSeedDemoWorkspaceCronCommand } from 'src/database/commands/data
 import { WorkspaceAddTotalCountCommand } from 'src/database/commands/workspace-add-total-count.command';
 import { DataSeedDemoWorkspaceCommand } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace-command';
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
-import { UpdateMessageChannelSyncStatusEnumCommand } from 'src/database/commands/0-20-update-message-channel-sync-status-enum.command';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UpdateMessageChannelVisibilityEnumCommand } from 'src/database/commands/update-message-channel-visibility-enum.command';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
+import { UpdateMessageChannelSyncStatusEnumCommand } from 'src/database/commands/0-20-update-message-channel-sync-status-enum.command';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 @Module({
@@ -45,6 +46,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
     ConfirmationQuestion,
     StartDataSeedDemoWorkspaceCronCommand,
     StopDataSeedDemoWorkspaceCronCommand,
+    UpdateMessageChannelVisibilityEnumCommand,
     UpdateMessageChannelSyncStatusEnumCommand,
   ],
 })

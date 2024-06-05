@@ -36,7 +36,7 @@ export const SettingsAccountsToggleSettingCard = ({
   onToggle,
   title,
 }: SettingsAccountsToggleSettingCardProps) => (
-  <Card>
+  <Card rounded>
     <StyledCardContent onClick={() => onToggle(!value)}>
       {cardMedia}
       <StyledTitle>{title}</StyledTitle>
