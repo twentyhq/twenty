@@ -36,6 +36,13 @@ const validationSchema = () =>
           return;
         }
         const emails = extractEmailsList(value);
+        if (emails.length === 0) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.invalid_string,
+            message: 'Emails should not be empty',
+            validation: 'email',
+          });
+        }
         const invalidEmails: string[] = [];
         for (const email of emails) {
           const result = emailValidationSchema(email).safeParse(email);
