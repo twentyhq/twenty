@@ -139,6 +139,7 @@ export type ClientConfig = {
   authProviders: AuthProviders;
   billing: Billing;
   captcha: Captcha;
+  chromeExtensionId?: Maybe<Scalars['String']['output']>;
   debugMode: Scalars['Boolean']['output'];
   sentry: Sentry;
   signInPrefilled: Scalars['Boolean']['output'];
@@ -391,6 +392,7 @@ export type Mutation = {
   generateTransientToken: TransientToken;
   impersonate: Verify;
   renewToken: AuthTokens;
+  sendInviteLink: SendInviteLink;
   signUp: LoginToken;
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
@@ -515,6 +517,11 @@ export type MutationImpersonateArgs = {
 
 export type MutationRenewTokenArgs = {
   appToken: Scalars['String']['input'];
+};
+
+
+export type MutationSendInviteLinkArgs = {
+  emails: Array<Scalars['String']['input']>;
 };
 
 
@@ -848,6 +855,12 @@ export enum RemoteTableStatus {
   NotSynced = 'NOT_SYNCED',
   Synced = 'SYNCED'
 }
+
+export type SendInviteLink = {
+  __typename?: 'SendInviteLink';
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean']['output'];
+};
 
 export type Sentry = {
   __typename?: 'Sentry';
