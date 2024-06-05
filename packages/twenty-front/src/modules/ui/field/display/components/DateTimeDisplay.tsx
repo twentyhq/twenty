@@ -1,4 +1,4 @@
-import { formatISOStringToHumanReadableDate } from '~/utils/date-utils';
+import { formatISOStringToHumanReadableDateTime } from '~/utils/date-utils';
 
 import { EllipsisDisplay } from './EllipsisDisplay';
 
@@ -8,6 +8,6 @@ type DateTimeDisplayProps = {
 
 export const DateTimeDisplay = ({ value }: DateTimeDisplayProps) => (
   <EllipsisDisplay>
-    {value ? formatISOStringToHumanReadableDate(value) : ''}
+    {value ? formatISOStringToHumanReadableDateTime(value) : ''}
   </EllipsisDisplay>
 );

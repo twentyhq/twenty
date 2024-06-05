@@ -13,7 +13,7 @@ export const mockedCompaniesDataV2: Array<MockedCompanyV2> = [
     __typename: 'Company',
     domainName: 'paris.com',
     name: 'Test',
-    employees: null,
+    employees: 100,
     address: 'Paris  France',
     createdAt: '2024-05-27T11:23:05.954Z',
     id: 'd55c240e-e4e0-4248-b56d-8004d1218a9c',

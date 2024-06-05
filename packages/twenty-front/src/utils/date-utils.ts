@@ -153,7 +153,7 @@ const getMonthLabels = () => {
 
 const getMonthLabelsMemoized = moize(getMonthLabels);
 
-export const formatISOStringToHumanReadableDate = (date: string) => {
+export const formatISOStringToHumanReadableDateTime = (date: string) => {
   const monthLabels = getMonthLabelsMemoized();
 
   if (!isDefined(monthLabels)) {
@@ -169,6 +169,22 @@ export const formatISOStringToHumanReadableDate = (date: string) => {
   const jsDate = new Date(date);
 
   return `${day} ${monthLabel} ${year} - ${jsDate.getHours()}:${jsDate.getMinutes()}`;
+};
+
+export const formatISOStringToHumanReadableDate = (date: string) => {
+  const monthLabels = getMonthLabelsMemoized();
+
+  if (!isDefined(monthLabels)) {
+    return formatToHumanReadableDate(date);
+  }
+
+  const year = date.slice(0, 4);
+  const month = date.slice(5, 7);
+  const day = date.slice(8, 10);
+
+  const monthLabel = monthLabels[parseInt(month, 10) - 1];
+
+  return `${day} ${monthLabel} ${year}`;
 };
 
 export const formatToHumanReadableDate = (date: Date | string) => {

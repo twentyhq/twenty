@@ -1,12 +1,10 @@
-import { useFullNameField } from '@/object-record/record-field/meta-types/hooks/useFullNameField';
+import { useFullNameFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useFullNameFieldDisplay';
 import { TextDisplay } from '@/ui/field/display/components/TextDisplay';
 
 export const FullNameFieldDisplay = () => {
-  const { fieldValue } = useFullNameField();
+  const { fieldValue } = useFullNameFieldDisplay();
 
-  const content = [fieldValue.firstName, fieldValue.lastName]
-    .filter(Boolean)
-    .join(' ');
+  const content = `${fieldValue?.firstName} ${fieldValue?.lastName}`;
 
   return <TextDisplay text={content} />;
 };

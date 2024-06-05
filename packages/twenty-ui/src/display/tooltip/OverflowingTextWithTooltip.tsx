@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import clsx from 'clsx';
-import { v4 as uuidV4 } from 'uuid';
 
 import { AppTooltip } from './AppTooltip';
 
@@ -16,7 +15,7 @@ export const OverflowingTextWithTooltip = ({
   text: string | null | undefined;
   mutliline?: boolean;
 }) => {
-  const textElementId = `title-id-${uuidV4()}`;
+  const textElementId = `title-id-${+new Date()}`;
 
   const textRef = useRef<HTMLDivElement>(null);
 
