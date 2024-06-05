@@ -100,7 +100,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   }
 
   async sendInviteLink(
-    email: string,
+    emails: string[],
     workspace: Workspace,
     sender: User,
   ): Promise<SendInviteLink> {
@@ -109,29 +109,32 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
     const frontBaseURL = this.environmentService.get('FRONT_BASE_URL');
     const inviteLink = `${frontBaseURL}/invite/${workspace.inviteHash}`;
-    const emailData = {
-      link: inviteLink,
-      workspace: { name: workspace.displayName, logo: workspace.logo },
-      sender: { email: sender.email, firstName: sender.firstName },
-    };
-    const emailTemplate = SendInviteLinkEmail(emailData);
-    const html = render(emailTemplate, {
-      pretty: true,
-    });
 
-    const text = render(emailTemplate, {
-      plainText: true,
-    });
+    for (const email of emails) {
+      const emailData = {
+        link: inviteLink,
+        workspace: { name: workspace.displayName, logo: workspace.logo },
+        sender: { email: sender.email, firstName: sender.firstName },
+      };
+      const emailTemplate = SendInviteLinkEmail(emailData);
+      const html = render(emailTemplate, {
+        pretty: true,
+      });
 
-    await this.emailService.send({
-      from: `${this.environmentService.get(
-        'EMAIL_FROM_NAME',
-      )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
-      to: email,
-      subject: 'Join your team on Twenty',
-      text,
-      html,
-    });
+      const text = render(emailTemplate, {
+        plainText: true,
+      });
+
+      await this.emailService.send({
+        from: `${this.environmentService.get(
+          'EMAIL_FROM_NAME',
+        )} <${this.environmentService.get('EMAIL_FROM_ADDRESS')}>`,
+        to: email,
+        subject: 'Join your team on Twenty',
+        text,
+        html,
+      });
+    }
 
     return { success: true };
   }

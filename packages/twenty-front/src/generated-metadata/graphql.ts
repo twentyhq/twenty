@@ -521,7 +521,7 @@ export type MutationRenewTokenArgs = {
 
 
 export type MutationSendInviteLinkArgs = {
-  email: Scalars['String']['input'];
+  emails: Array<Scalars['String']['input']>;
 };
 
 

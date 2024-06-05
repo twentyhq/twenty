@@ -132,7 +132,7 @@ export class WorkspaceResolver {
     @AuthWorkspace() workspace: Workspace,
   ): Promise<SendInviteLink> {
     return await this.workspaceService.sendInviteLink(
-      sendInviteLinkInput.email,
+      sendInviteLinkInput.emails,
       workspace,
       user,
     );

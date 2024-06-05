@@ -369,7 +369,7 @@ export type MutationRenewTokenArgs = {
 
 
 export type MutationSendInviteLinkArgs = {
-  email: Scalars['String'];
+  emails: Array<Scalars['String']>;
 };
 
 
@@ -1239,6 +1239,13 @@ export type DeleteCurrentWorkspaceMutationVariables = Exact<{ [key: string]: nev
 
 
 export type DeleteCurrentWorkspaceMutation = { __typename?: 'Mutation', deleteCurrentWorkspace: { __typename?: 'Workspace', id: any } };
+
+export type SendInviteLinkMutationVariables = Exact<{
+  emails: Array<Scalars['String']> | Scalars['String'];
+}>;
+
+
+export type SendInviteLinkMutation = { __typename?: 'Mutation', sendInviteLink: { __typename?: 'SendInviteLink', success: boolean } };
 
 export type UpdateWorkspaceMutationVariables = Exact<{
   input: UpdateWorkspaceInput;
@@ -2592,6 +2599,39 @@ export function useDeleteCurrentWorkspaceMutation(baseOptions?: Apollo.MutationH
 export type DeleteCurrentWorkspaceMutationHookResult = ReturnType<typeof useDeleteCurrentWorkspaceMutation>;
 export type DeleteCurrentWorkspaceMutationResult = Apollo.MutationResult<DeleteCurrentWorkspaceMutation>;
 export type DeleteCurrentWorkspaceMutationOptions = Apollo.BaseMutationOptions<DeleteCurrentWorkspaceMutation, DeleteCurrentWorkspaceMutationVariables>;
+export const SendInviteLinkDocument = gql`
+    mutation SendInviteLink($emails: [String!]!) {
+  sendInviteLink(emails: $emails) {
+    success
+  }
+}
+    `;
+export type SendInviteLinkMutationFn = Apollo.MutationFunction<SendInviteLinkMutation, SendInviteLinkMutationVariables>;
+
+/**
+ * __useSendInviteLinkMutation__
+ *
+ * To run a mutation, you first call `useSendInviteLinkMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useSendInviteLinkMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [sendInviteLinkMutation, { data, loading, error }] = useSendInviteLinkMutation({
+ *   variables: {
+ *      emails: // value for 'emails'
+ *   },
+ * });
+ */
+export function useSendInviteLinkMutation(baseOptions?: Apollo.MutationHookOptions<SendInviteLinkMutation, SendInviteLinkMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<SendInviteLinkMutation, SendInviteLinkMutationVariables>(SendInviteLinkDocument, options);
+      }
+export type SendInviteLinkMutationHookResult = ReturnType<typeof useSendInviteLinkMutation>;
+export type SendInviteLinkMutationResult = Apollo.MutationResult<SendInviteLinkMutation>;
+export type SendInviteLinkMutationOptions = Apollo.BaseMutationOptions<SendInviteLinkMutation, SendInviteLinkMutationVariables>;
 export const UpdateWorkspaceDocument = gql`
     mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {
   updateWorkspace(data: $input) {
