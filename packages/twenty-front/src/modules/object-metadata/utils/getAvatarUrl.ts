@@ -5,6 +5,7 @@ import { getLogoUrlFromDomainName } from '~/utils';
 import { isDefined } from '~/utils/isDefined';
 
 import { getImageIdentifierFieldValue } from './getImageIdentifierFieldValue';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 export const getAvatarUrl = (
   objectNameSingular: string,
@@ -20,7 +21,7 @@ export const getAvatarUrl = (
   }
 
   if (objectNameSingular === CoreObjectNameSingular.Person) {
-    return record.avatarUrl ?? '';
+    return getImageAbsoluteURIOrBase64(record.avatarUrl) ?? '';
   }
 
   const imageIdentifierFieldValue = getImageIdentifierFieldValue(
