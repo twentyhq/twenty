@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 
 import {
   MessageQueueJobData,
-  MessageQueueJobNew,
+  MessageQueueJob,
 } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
@@ -12,7 +12,7 @@ import { MessageQueueDriver } from './interfaces/message-queue-driver.interface'
 export class SyncDriver implements MessageQueueDriver {
   private readonly logger = new Logger(SyncDriver.name);
   private workersMap: {
-    [queueName: string]: (job: MessageQueueJobNew<any>) => Promise<void> | void;
+    [queueName: string]: (job: MessageQueueJob<any>) => Promise<void> | void;
   } = {};
 
   constructor() {}
@@ -45,7 +45,7 @@ export class SyncDriver implements MessageQueueDriver {
 
   work<T extends MessageQueueJobData>(
     queueName: MessageQueue,
-    handler: (job: MessageQueueJobNew<T>) => Promise<void> | void,
+    handler: (job: MessageQueueJob<T>) => Promise<void> | void,
   ) {
     this.logger.log(`Registering handler for queue: ${queueName}`);
     this.workersMap[queueName] = handler;
@@ -53,7 +53,7 @@ export class SyncDriver implements MessageQueueDriver {
 
   async processJob<T extends MessageQueueJobData>(
     queueName: string,
-    job: MessageQueueJobNew<T>,
+    job: MessageQueueJob<T>,
   ) {
     const worker = this.workersMap[queueName];
 

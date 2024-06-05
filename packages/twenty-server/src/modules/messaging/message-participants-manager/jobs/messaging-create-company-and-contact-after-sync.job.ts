@@ -1,9 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
-
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
 import {
   FeatureFlagEntity,
@@ -15,16 +13,17 @@ import { MessageChannelRepository } from 'src/modules/messaging/common/repositor
 import { MessageParticipantRepository } from 'src/modules/messaging/common/repositories/message-participant.repository';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 
 export type MessagingCreateCompanyAndContactAfterSyncJobData = {
   workspaceId: string;
   messageChannelId: string;
 };
 
-@Injectable()
-export class MessagingCreateCompanyAndContactAfterSyncJob
-  implements MessageQueueJob<MessagingCreateCompanyAndContactAfterSyncJobData>
-{
+@Processor(MessageQueue.messagingQueue)
+export class MessagingCreateCompanyAndContactAfterSyncJob {
   private readonly logger = new Logger(
     MessagingCreateCompanyAndContactAfterSyncJob.name,
   );
@@ -38,6 +37,7 @@ export class MessagingCreateCompanyAndContactAfterSyncJob
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
+  @Process()
   async handle(
     data: MessagingCreateCompanyAndContactAfterSyncJobData,
   ): Promise<void> {

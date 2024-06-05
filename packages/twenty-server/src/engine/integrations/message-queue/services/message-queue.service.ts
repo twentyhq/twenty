@@ -1,4 +1,4 @@
-import { Inject, Injectable, OnModuleDestroy } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import {
   QueueCronJobOptions,
@@ -7,7 +7,7 @@ import {
 import { MessageQueueDriver } from 'src/engine/integrations/message-queue/drivers/interfaces/message-queue-driver.interface';
 import {
   MessageQueueJobData,
-  MessageQueueJobNew,
+  MessageQueueJob,
 } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 import { MessageQueueWorkerOptions } from 'src/engine/integrations/message-queue/interfaces/message-queue-worker-options.interface';
 
@@ -17,19 +17,13 @@ import {
 } from 'src/engine/integrations/message-queue/message-queue.constants';
 
 @Injectable()
-export class MessageQueueService implements OnModuleDestroy {
+export class MessageQueueService {
   constructor(
     @Inject(QUEUE_DRIVER) protected driver: MessageQueueDriver,
     protected queueName: MessageQueue,
   ) {
     if (typeof this.driver.register === 'function') {
       this.driver.register(queueName);
-    }
-  }
-
-  async onModuleDestroy() {
-    if (typeof this.driver.stop === 'function') {
-      await this.driver.stop();
     }
   }
 
@@ -54,7 +48,7 @@ export class MessageQueueService implements OnModuleDestroy {
   }
 
   work<T extends MessageQueueJobData>(
-    handler: (job: MessageQueueJobNew<T>) => Promise<void> | void,
+    handler: (job: MessageQueueJob<T>) => Promise<void> | void,
     options?: MessageQueueWorkerOptions,
   ) {
     return this.driver.work(this.queueName, handler, options);

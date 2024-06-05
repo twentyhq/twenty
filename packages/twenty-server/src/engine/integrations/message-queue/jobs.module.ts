@@ -25,7 +25,6 @@ import { CalendarJobModule } from 'src/modules/calendar/jobs/calendar-job.module
 import { AutoCompaniesAndContactsCreationJobModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/auto-companies-and-contacts-creation-job.module';
 import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module';
 import { MessagingModule } from 'src/modules/messaging/messaging.module';
-import { ShareContextTestModule } from 'src/engine/core-modules/share-context-test/share-context-test.module';
 
 @Module({
   imports: [
@@ -42,34 +41,19 @@ import { ShareContextTestModule } from 'src/engine/core-modules/share-context-te
     CalendarEventParticipantModule,
     TimelineActivityModule,
     StripeModule,
-    // JobsModules
     WorkspaceQueryRunnerJobModule,
     CalendarMessagingParticipantJobModule,
     CalendarCronJobModule,
     CalendarJobModule,
     AutoCompaniesAndContactsCreationJobModule,
     TimelineJobModule,
-    ShareContextTestModule,
   ],
   providers: [
-    {
-      provide: CleanInactiveWorkspaceJob.name,
-      useClass: CleanInactiveWorkspaceJob,
-    },
-    { provide: EmailSenderJob.name, useClass: EmailSenderJob },
-    {
-      provide: DataSeedDemoWorkspaceJob.name,
-      useClass: DataSeedDemoWorkspaceJob,
-    },
-    { provide: UpdateSubscriptionJob.name, useClass: UpdateSubscriptionJob },
-    {
-      provide: HandleWorkspaceMemberDeletedJob.name,
-      useClass: HandleWorkspaceMemberDeletedJob,
-    },
-    // {
-    //   provide: TestJob.name,
-    //   useClass: TestJob,
-    // },
+    CleanInactiveWorkspaceJob,
+    EmailSenderJob,
+    DataSeedDemoWorkspaceJob,
+    UpdateSubscriptionJob,
+    HandleWorkspaceMemberDeletedJob,
   ],
 })
 export class JobsModule {

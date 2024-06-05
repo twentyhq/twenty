@@ -1,7 +1,8 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Logger } from '@nestjs/common';
 
-import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
-
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
+import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
+import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -12,10 +13,8 @@ export type BlocklistReimportMessagesJobData = {
   handle: string;
 };
 
-@Injectable()
-export class BlocklistReimportMessagesJob
-  implements MessageQueueJob<BlocklistReimportMessagesJobData>
-{
+@Processor(MessageQueue.messagingQueue)
+export class BlocklistReimportMessagesJob {
   private readonly logger = new Logger(BlocklistReimportMessagesJob.name);
 
   constructor(
@@ -23,6 +22,7 @@ export class BlocklistReimportMessagesJob
     private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {}
 
+  @Process()
   async handle(data: BlocklistReimportMessagesJobData): Promise<void> {
     const { workspaceId, workspaceMemberId, handle } = data;
 

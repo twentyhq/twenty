@@ -26,6 +26,5 @@ export interface MessageQueueDriver {
     options?: QueueCronJobOptions,
   );
   removeCron(queueName: MessageQueue, jobName: string, pattern?: string);
-  stop?(): Promise<void>;
   register?(queueName: MessageQueue): void;
 }

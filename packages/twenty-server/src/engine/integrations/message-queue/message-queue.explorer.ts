@@ -42,6 +42,8 @@ export class MessageQueueExplorer implements OnModuleInit {
         ),
       );
 
+    console.log('PROCESSORS', processors);
+
     for (const wrapper of processors) {
       const { instance, metatype } = wrapper;
       const methodNames = this.metadataScanner.getAllMethodNames(instance);

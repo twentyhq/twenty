@@ -1,8 +1,4 @@
-export interface MessageQueueJob<T extends MessageQueueJobData | undefined> {
-  handle(data: T): Promise<void> | void;
-}
-
-export interface MessageQueueJobNew<T = any> {
+export interface MessageQueueJob<T = any> {
   id: string;
   name: string;
   data: T;
