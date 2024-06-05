@@ -1,4 +1,3 @@
-import { expect } from '@storybook/jest';
 import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 
@@ -6,7 +5,6 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
-import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { RecordIndexPage } from '../RecordIndexPage';
@@ -31,7 +29,6 @@ export default meta;
 export type Story = StoryObj<typeof RecordIndexPage>;
 
 export const Default: Story = {
-  decorators: [PrefetchLoadingDecorator],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -40,16 +37,5 @@ export const Default: Story = {
     await canvas.findByText('Opportunities');
     await canvas.findByText('Listings');
     await canvas.findByText('My Customs');
-  },
-};
-
-export const Loading: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    expect(canvas.queryByText('People')).toBeNull();
-    expect(canvas.queryByText('Opportunities')).toBeNull();
-    expect(canvas.queryByText('Listings')).toBeNull();
-    expect(canvas.queryByText('My Customs')).toBeNull();
   },
 };

@@ -8,10 +8,12 @@ const StyledDropdownMenu = styled.div<{
   backdrop-filter: ${({ theme, disableBlur }) =>
     disableBlur ? 'none' : theme.blur.medium};
 
+  color: ${({ theme }) => theme.font.color.secondary};
+
   background: ${({ theme, disableBlur }) =>
     disableBlur
       ? theme.background.primary
-      : theme.background.transparent.secondary};
+      : theme.background.transparent.primary};
 
   border: ${({ disableBorder, theme }) =>
     disableBorder ? 'none' : `1px solid ${theme.border.color.medium}`};

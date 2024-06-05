@@ -69,6 +69,7 @@ export const useFieldContext = ({
               isLabelIdentifier,
               fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
                 field: fieldMetadataItem,
+                showLabel: true,
                 position: fieldPosition,
                 objectMetadataItem,
               }),

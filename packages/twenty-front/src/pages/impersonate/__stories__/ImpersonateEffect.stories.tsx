@@ -5,7 +5,6 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
-import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/testing/sleep';
 
@@ -14,7 +13,7 @@ import { ImpersonateEffect } from '../ImpersonateEffect';
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Impersonate/Impersonate',
   component: ImpersonateEffect,
-  decorators: [PrefetchLoadingDecorator, PageDecorator],
+  decorators: [PageDecorator],
   args: {
     routePath: AppPath.Impersonate,
     routeParams: { ':userId': '1' },

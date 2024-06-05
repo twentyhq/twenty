@@ -5,9 +5,9 @@ import { RecoilRoot, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { activityIdInDrawerState } from '@/activities/states/activityIdInDrawerState';
-import { viewableActivityIdState } from '@/activities/states/viewableActivityIdState';
 import { objectMetadataItemsState } from '@/object-metadata/states/objectMetadataItemsState';
 import { getObjectMetadataItemsMock } from '@/object-metadata/utils/getObjectMetadataItemsMock';
+import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 
 const mockUUID = '37873e04-2f83-4468-9ab7-3f87da6cafad';
 
@@ -28,7 +28,7 @@ describe('useOpenCreateActivityDrawer', () => {
     const { result } = renderHook(
       () => {
         const openActivityRightDrawer = useOpenCreateActivityDrawer();
-        const viewableActivityId = useRecoilValue(viewableActivityIdState);
+        const viewableRecordId = useRecoilValue(viewableRecordIdState);
         const activityIdInDrawer = useRecoilValue(activityIdInDrawerState);
         const setObjectMetadataItems = useSetRecoilState(
           objectMetadataItemsState,
@@ -36,7 +36,7 @@ describe('useOpenCreateActivityDrawer', () => {
         return {
           openActivityRightDrawer,
           activityIdInDrawer,
-          viewableActivityId,
+          viewableRecordId,
           setObjectMetadataItems,
         };
       },
@@ -50,7 +50,7 @@ describe('useOpenCreateActivityDrawer', () => {
     });
 
     expect(result.current.activityIdInDrawer).toBeNull();
-    expect(result.current.viewableActivityId).toBeNull();
+    expect(result.current.viewableRecordId).toBeNull();
     await act(async () => {
       result.current.openActivityRightDrawer({
         type: 'Note',
@@ -58,6 +58,6 @@ describe('useOpenCreateActivityDrawer', () => {
       });
     });
     expect(result.current.activityIdInDrawer).toBe(mockUUID);
-    expect(result.current.viewableActivityId).toBe(mockUUID);
+    expect(result.current.viewableRecordId).toBe(mockUUID);
   });
 });

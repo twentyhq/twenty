@@ -99,7 +99,7 @@ export class ForeignTableService {
   public async updateForeignTable(
     foreignTableName: string,
     workspaceId: string,
-    columnsUpdates?: WorkspaceMigrationColumnAction[],
+    columnsUpdates: WorkspaceMigrationColumnAction[],
   ) {
     const workspaceMigration =
       await this.workspaceMigrationService.createCustomMigration(

@@ -31,6 +31,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 
 const StyledDiv = styled.div`
   display: flex;
@@ -214,19 +215,20 @@ export const SettingsObjectDetail = () => {
           </Table>
           {shouldDisplayAddFieldButton && (
             <StyledDiv>
-              <Button
-                Icon={IconPlus}
-                title="Add Field"
-                size="small"
-                variant="secondary"
-                onClick={() =>
-                  navigate(
-                    deactivatedMetadataFields.length
-                      ? './new-field/step-1'
-                      : './new-field/step-2',
-                  )
+              <UndecoratedLink
+                to={
+                  deactivatedMetadataFields.length
+                    ? './new-field/step-1'
+                    : './new-field/step-2'
                 }
-              />
+              >
+                <Button
+                  Icon={IconPlus}
+                  title="Add Field"
+                  size="small"
+                  variant="secondary"
+                />
+              </UndecoratedLink>
             </StyledDiv>
           )}
         </Section>

@@ -188,6 +188,7 @@ export const SnackBar = ({
         {title}
         <StyledActions>
           {!!onCancel && <LightButton title="Cancel" onClick={onCancel} />}
+
           {!!onClose && (
             <LightIconButton title="Close" Icon={IconX} onClick={onClose} />
           )}
