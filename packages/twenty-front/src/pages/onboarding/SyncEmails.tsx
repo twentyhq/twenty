@@ -67,7 +67,7 @@ export const SyncEmails = () => {
 
   return (
     <>
-      <Title withMarginTop={false}>Emails and Calendar</Title>
+      <Title noMarginTop>Emails and Calendar</Title>
       <SubTitle>
         Sync your Emails and Calendar with Twenty. Choose your privacy settings.
       </SubTitle>
