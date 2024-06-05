@@ -158,7 +158,7 @@ export class WorkspaceMigrationEnumService {
             .map((v: string) =>
               this.migrateEnumValue(v, renamedEnumValues, enumValues),
             )
-            .filter((v: string) => enumValues.includes(v)),
+            .filter((v: string | null) => isDefined(v)),
         );
       } else if (typeof val === 'string') {
         const migratedValue = this.migrateEnumValue(
