@@ -57,10 +57,10 @@ export const SelectHeaderStep = ({
       </Modal.Content>
       <StepNavigationButton
         onClick={handleContinue}
-        title="Next"
+        onBack={onBack}
+        title="Continue"
         isLoading={isLoading}
       />
-      <StepNavigationButton onClick={onBack} title="Back" />
     </>
   );
 };
