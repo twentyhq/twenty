@@ -30,7 +30,7 @@ export const emailTheme = {
       tertiary: grayScale.gray35,
       inverted: grayScale.gray0,
     },
-    family: 'Inter, sans-serif',
+    family: 'Trebuchet MS', // Google Inter not working, we need to use a web safe font, see https://templates.mailchimp.com/design/typography/
     weight: {
       regular: 400,
       bold: 600,
