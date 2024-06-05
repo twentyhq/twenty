@@ -1,6 +1,9 @@
+import { Img } from '@react-email/components';
+
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
 import { HighlightedContainer } from 'src/components/HighlightedContainer';
+import { HighlightedText } from 'src/components/HighlightedText';
 import { Link } from 'src/components/Link';
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
@@ -9,7 +12,7 @@ import { capitalize } from 'src/utils/capitalize';
 
 type SendInviteLinkEmailProps = {
   link: string;
-  workspaceName: string | undefined;
+  workspace: { name: string | undefined; logo: string | undefined };
   sender: {
     email: string;
     firstName: string;
@@ -18,7 +21,7 @@ type SendInviteLinkEmailProps = {
 
 export const SendInviteLinkEmail = ({
   link,
-  workspaceName,
+  workspace,
   sender,
 }: SendInviteLinkEmailProps) => {
   return (
@@ -27,10 +30,12 @@ export const SendInviteLinkEmail = ({
       <MainText>
         {capitalize(sender.firstName)} (
         <Link href={sender.email} value={sender.email} />) has invited you to
-        join a workspace called <b>{workspaceName}</b>
+        join a workspace called <b>{workspace.name}</b>
         <br />
       </MainText>
       <HighlightedContainer>
+        {workspace.logo && <Img src={workspace.logo} width={40} height={40} />}
+        {workspace.name && <HighlightedText value={workspace.name} />}
         <CallToAction href={link} value="Accept invite" />
       </HighlightedContainer>
       <WhatIsTwenty />

@@ -1,4 +1,4 @@
-import { PropsWithChildren } from 'react';
+import React, { PropsWithChildren } from 'react';
 import { Container } from '@react-email/components';
 
 import { emailTheme } from 'src/common-style';
@@ -16,8 +16,18 @@ const highlightedContainerStyle = {
   gap: '24px',
 };
 
+const divStyle = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+} as React.CSSProperties;
+
 export const HighlightedContainer = ({
   children,
 }: HighlightedContainerProps) => {
-  return <Container style={highlightedContainerStyle}>{children}</Container>;
+  return (
+    <Container style={highlightedContainerStyle}>
+      <div style={divStyle}>{children}</div>
+    </Container>
+  );
 };

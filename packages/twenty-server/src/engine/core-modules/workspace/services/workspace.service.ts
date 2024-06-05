@@ -111,7 +111,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     const inviteLink = `${frontBaseURL}/invite/${workspace.inviteHash}`;
     const emailData = {
       link: inviteLink,
-      workspaceName: workspace.displayName,
+      workspace: { name: workspace.displayName, logo: workspace.logo },
       sender: { email: sender.email, firstName: sender.firstName },
     };
     const emailTemplate = SendInviteLinkEmail(emailData);
