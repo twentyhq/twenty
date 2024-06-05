@@ -67,6 +67,13 @@ export class ConnectedAccountRepository {
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<ObjectRecord<ConnectedAccountWorkspaceEntity>[] | undefined> {
+    const schemaExists =
+      await this.workspaceDataSourceService.checkSchemaExists(workspaceId);
+
+    if (!schemaExists) {
+      return;
+    }
+
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
