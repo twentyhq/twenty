@@ -43,6 +43,10 @@ export const emailTheme = {
     },
     lineHeight: '20px',
   },
+  border: {
+    radius: { sm: '4px', md: '8px' },
+    color: { highlighted: grayScale.gray20 },
+  },
   background: {
     colors: { highlight: grayScale.gray15 },
     radialGradient: `radial-gradient(50% 62.62% at 50% 0%, #505050 0%, ${grayScale.gray60} 100%)`,

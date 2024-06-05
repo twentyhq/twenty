@@ -10,7 +10,7 @@ const rowStyle = {
 };
 
 const highlightedStyle = {
-  borderRadius: '4px',
+  borderRadius: emailTheme.border.radius.sm,
   background: emailTheme.background.colors.highlight,
   padding: '4px 8px',
   margin: 0,

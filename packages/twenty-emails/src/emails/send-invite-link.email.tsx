@@ -1,5 +1,6 @@
 import { BaseEmail } from 'src/components/BaseEmail';
 import { CallToAction } from 'src/components/CallToAction';
+import { HighlightedContainer } from 'src/components/HighlightedContainer';
 import { Link } from 'src/components/Link';
 import { MainText } from 'src/components/MainText';
 import { Title } from 'src/components/Title';
@@ -29,7 +30,9 @@ export const SendInviteLinkEmail = ({
         join a workspace called <b>{workspaceName}</b>
         <br />
       </MainText>
-      <CallToAction href={link} value="Accept invite" />
+      <HighlightedContainer>
+        <CallToAction href={link} value="Accept invite" />
+      </HighlightedContainer>
       <WhatIsTwenty />
     </BaseEmail>
   );
