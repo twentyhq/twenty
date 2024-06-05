@@ -405,6 +405,7 @@ export type Mutation = {
   generateTransientToken: TransientToken;
   impersonate: Verify;
   renewToken: AuthTokens;
+  sendInviteLink: SendInviteLink;
   signUp: LoginToken;
   skipSyncEmailOnboardingStep: SkipSyncEmailOnboardingStep;
   syncRemoteTable: RemoteTable;
@@ -530,6 +531,11 @@ export type MutationImpersonateArgs = {
 
 export type MutationRenewTokenArgs = {
   appToken: Scalars['String']['input'];
+};
+
+
+export type MutationSendInviteLinkArgs = {
+  emails: Array<Scalars['String']['input']>;
 };
 
 
@@ -863,6 +869,12 @@ export enum RemoteTableStatus {
   NotSynced = 'NOT_SYNCED',
   Synced = 'SYNCED'
 }
+
+export type SendInviteLink = {
+  __typename?: 'SendInviteLink';
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean']['output'];
+};
 
 export type Sentry = {
   __typename?: 'Sentry';

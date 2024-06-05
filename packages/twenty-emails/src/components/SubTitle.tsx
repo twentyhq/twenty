@@ -3,20 +3,20 @@ import { Heading } from '@react-email/components';
 
 import { emailTheme } from 'src/common-style';
 
-type TitleProps = {
+type SubTitleProps = {
   value: ReactNode;
 };
 
-const titleStyle = {
+const subTitleStyle = {
   fontFamily: emailTheme.font.family,
-  fontSize: emailTheme.font.size.xl,
+  fontSize: emailTheme.font.size.lg,
   fontWeight: emailTheme.font.weight.bold,
   color: emailTheme.font.colors.highlighted,
 };
 
-export const Title = ({ value }: TitleProps) => {
+export const SubTitle = ({ value }: SubTitleProps) => {
   return (
-    <Heading style={titleStyle} as="h1">
+    <Heading style={subTitleStyle} as="h3">
       {value}
     </Heading>
   );
