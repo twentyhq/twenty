@@ -3,9 +3,11 @@ import {
   mockedObjectMetadataItems,
   mockedPersonObjectMetadataItem,
 } from '~/testing/mock-data/metadata';
-import { mockedPeopleData } from '~/testing/mock-data/people';
+import { getPeopleMock } from '~/testing/mock-data/people';
 
 import { getRecordNodeFromRecord } from '../getRecordNodeFromRecord';
+
+const peopleMock = getPeopleMock();
 
 describe('getRecordNodeFromRecord', () => {
   it('computes relation records cache references by default', () => {
@@ -19,7 +21,7 @@ describe('getRecordNodeFromRecord', () => {
       name: true,
       company: true,
     };
-    const record = mockedPeopleData[0];
+    const record = peopleMock[0];
 
     // When
     const result = getRecordNodeFromRecord({
@@ -54,7 +56,7 @@ describe('getRecordNodeFromRecord', () => {
       name: true,
       company: true,
     };
-    const record = mockedPeopleData[0];
+    const record = peopleMock[0];
     const computeReferences = false;
 
     // When

@@ -8,10 +8,12 @@ import {
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedPeopleData } from '~/testing/mock-data/people';
+import { getPeopleMock } from '~/testing/mock-data/people';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
 
 import { RecordShowPage } from '../RecordShowPage';
+
+const peopleMock = getPeopleMock();
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/ObjectRecord/RecordShowPage',
@@ -29,7 +31,7 @@ const meta: Meta<PageDecoratorArgs> = {
         graphql.query('FindOnePerson', () => {
           return HttpResponse.json({
             data: {
-              person: mockedPeopleData[0],
+              person: peopleMock[0],
             },
           });
         }),

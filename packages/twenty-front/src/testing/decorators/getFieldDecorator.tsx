@@ -2,7 +2,6 @@ import { useEffect } from 'react';
 import { Decorator } from '@storybook/react';
 import { useRecoilCallback } from 'recoil';
 
-import { Company } from '@/companies/types/Company';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
@@ -12,18 +11,17 @@ import {
 } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { Person } from '@/people/types/Person';
-import { mockedCompaniesDataV2 } from '~/testing/mock-data/companiesV2';
+import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
-import { mockPeopleDataV2 } from '~/testing/mock-data/peopleV2';
+import { getPeopleMock } from '~/testing/mock-data/people';
 import { isDefined } from '~/utils/isDefined';
 
 const RecordMockSetterEffect = ({
   companies,
   people,
 }: {
-  companies: Company[];
-  people: Person[];
+  companies: ObjectRecord[];
+  people: ObjectRecord[];
 }) => {
   const setRecordValue = useSetRecordValue();
 
@@ -56,21 +54,25 @@ export const getFieldDecorator =
     fieldValue?: any,
   ): Decorator =>
   (Story) => {
+    const companiesMock = getCompaniesMock();
+
     const companies =
       objectNameSingular === 'company' && isDefined(fieldValue)
         ? [
-            { ...mockedCompaniesDataV2[0], [fieldName]: fieldValue },
-            ...mockedCompaniesDataV2.slice(1),
+            { ...companiesMock[0], [fieldName]: fieldValue },
+            ...companiesMock.slice(1),
           ]
-        : mockedCompaniesDataV2;
+        : companiesMock;
+
+    const peopleMock = getPeopleMock();
 
     const people =
       objectNameSingular === 'person' && isDefined(fieldValue)
         ? [
-            { ...mockPeopleDataV2[0], [fieldName]: fieldValue },
-            ...mockPeopleDataV2.slice(1),
+            { ...peopleMock[0], [fieldName]: fieldValue },
+            ...peopleMock.slice(1),
           ]
-        : mockPeopleDataV2;
+        : peopleMock;
 
     const record = objectNameSingular === 'company' ? companies[0] : people[0];
 

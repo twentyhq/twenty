@@ -1,15 +1,17 @@
 import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
-import { mockedCompaniesData } from '~/testing/mock-data/companies';
+import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { mockObjectMetadataItem } from '~/testing/mock-data/objectMetadataItems';
 
 import { isRecordMatchingFilter } from './isRecordMatchingFilter';
+
+const companiesMock = getCompaniesMock();
 
 describe('isRecordMatchingFilter', () => {
   describe('Empty Filters', () => {
     it('matches any record when no filter is provided', () => {
       const emptyFilter = {};
 
-      mockedCompaniesData.forEach((company) => {
+      companiesMock.forEach((company) => {
         expect(
           isRecordMatchingFilter({
             record: company,
@@ -26,7 +28,7 @@ describe('isRecordMatchingFilter', () => {
         employees: {},
       };
 
-      mockedCompaniesData.forEach((company) => {
+      companiesMock.forEach((company) => {
         expect(
           isRecordMatchingFilter({
             record: company,
@@ -40,7 +42,7 @@ describe('isRecordMatchingFilter', () => {
     it('matches any record with an empty and filter', () => {
       const filter = { and: [] };
 
-      mockedCompaniesData.forEach((company) => {
+      companiesMock.forEach((company) => {
         expect(
           isRecordMatchingFilter({
             record: company,
@@ -54,7 +56,7 @@ describe('isRecordMatchingFilter', () => {
     it('matches any record with an empty or filter', () => {
       const filter = { or: [] };
 
-      mockedCompaniesData.forEach((company) => {
+      companiesMock.forEach((company) => {
         expect(
           isRecordMatchingFilter({
             record: company,
@@ -68,7 +70,7 @@ describe('isRecordMatchingFilter', () => {
     it('matches any record with an empty not filter', () => {
       const filter = { not: {} };
 
-      mockedCompaniesData.forEach((company) => {
+      companiesMock.forEach((company) => {
         expect(
           isRecordMatchingFilter({
             record: company,
@@ -86,7 +88,7 @@ describe('isRecordMatchingFilter', () => {
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[0],
+          record: companiesMock[0],
           filter,
           objectMetadataItem: mockObjectMetadataItem,
         }),
@@ -94,7 +96,7 @@ describe('isRecordMatchingFilter', () => {
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[1],
+          record: companiesMock[1],
           filter,
           objectMetadataItem: mockObjectMetadataItem,
         }),
@@ -106,14 +108,14 @@ describe('isRecordMatchingFilter', () => {
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[0],
+          record: companiesMock[0],
           filter,
           objectMetadataItem: mockObjectMetadataItem,
         }),
       ).toBe(true);
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[1],
+          record: companiesMock[1],
           filter,
           objectMetadataItem: mockObjectMetadataItem,
         }),
@@ -125,14 +127,14 @@ describe('isRecordMatchingFilter', () => {
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[0],
+          record: companiesMock[0],
           filter,
           objectMetadataItem: mockObjectMetadataItem,
         }),
       ).toBe(true);
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[1],
+          record: companiesMock[1],
           filter,
           objectMetadataItem: mockObjectMetadataItem,
         }),
@@ -144,14 +146,14 @@ describe('isRecordMatchingFilter', () => {
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[0],
+          record: companiesMock[0],
           filter,
           objectMetadataItem: mockObjectMetadataItem,
         }),
       ).toBe(true);
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[4], // Assuming this record has idealCustomerProfile as false
+          record: companiesMock[4], // Assuming this record has idealCustomerProfile as false
           filter,
           objectMetadataItem: mockObjectMetadataItem,
         }),
@@ -175,7 +177,7 @@ describe('isRecordMatchingFilter', () => {
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[0], // Airbnb
+          record: companiesMock[0], // Airbnb
           filter,
           objectMetadataItem: mockObjectMetadataItem,
         }),
@@ -183,7 +185,7 @@ describe('isRecordMatchingFilter', () => {
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[1], // Aircall
+          record: companiesMock[1], // Aircall
           filter,
           objectMetadataItem: mockObjectMetadataItem,
         }),
@@ -202,7 +204,7 @@ describe('isRecordMatchingFilter', () => {
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[0], // Airbnb
+          record: companiesMock[0], // Airbnb
           filter,
           objectMetadataItem: mockObjectMetadataItem,
         }),
@@ -210,7 +212,7 @@ describe('isRecordMatchingFilter', () => {
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[3], // Apple
+          record: companiesMock[3], // Apple
           filter,
           objectMetadataItem: mockObjectMetadataItem,
         }),
@@ -229,7 +231,7 @@ describe('isRecordMatchingFilter', () => {
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[3], // Apple
+          record: companiesMock[3], // Apple
           filter,
           objectMetadataItem: mockObjectMetadataItem,
         }),
@@ -237,7 +239,7 @@ describe('isRecordMatchingFilter', () => {
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[4], // Qonto
+          record: companiesMock[4], // Qonto
           filter,
           objectMetadataItem: mockObjectMetadataItem,
         }),
@@ -254,7 +256,7 @@ describe('isRecordMatchingFilter', () => {
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[5], // Facebook
+          record: companiesMock[5], // Facebook
           filter,
           objectMetadataItem: mockObjectMetadataItem,
         }),
@@ -262,7 +264,7 @@ describe('isRecordMatchingFilter', () => {
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[0], // Airbnb
+          record: companiesMock[0], // Airbnb
           filter,
           objectMetadataItem: mockObjectMetadataItem,
         }),
@@ -276,7 +278,7 @@ describe('isRecordMatchingFilter', () => {
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[6], // Sequoia
+          record: companiesMock[6], // Sequoia
           filter,
           objectMetadataItem: mockObjectMetadataItem,
         }),
@@ -284,7 +286,7 @@ describe('isRecordMatchingFilter', () => {
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[1], // Aircall
+          record: companiesMock[1], // Aircall
           filter,
           objectMetadataItem: mockObjectMetadataItem,
         }),
@@ -301,7 +303,7 @@ describe('isRecordMatchingFilter', () => {
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[0], // Airbnb
+          record: companiesMock[0], // Airbnb
           filter,
           objectMetadataItem: mockObjectMetadataItem,
         }),
@@ -309,7 +311,7 @@ describe('isRecordMatchingFilter', () => {
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[1], // Aircall
+          record: companiesMock[1], // Aircall
           filter,
           objectMetadataItem: mockObjectMetadataItem,
         }),
@@ -326,7 +328,7 @@ describe('isRecordMatchingFilter', () => {
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[0], // Airbnb
+          record: companiesMock[0], // Airbnb
           filter,
           objectMetadataItem: mockObjectMetadataItem,
         }),
@@ -334,7 +336,7 @@ describe('isRecordMatchingFilter', () => {
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[2], // Algolia
+          record: companiesMock[2], // Algolia
           filter,
           objectMetadataItem: mockObjectMetadataItem,
         }),
