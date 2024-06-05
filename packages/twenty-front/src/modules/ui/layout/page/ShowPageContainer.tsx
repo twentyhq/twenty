@@ -1,10 +1,10 @@
 import { ReactElement } from 'react';
-import styled from '@emotion/styled';
+import emotionStyled from '@emotion/styled';
 
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
-const StyledOuterContainer = styled.div`
+const StyledOuterContainer = emotionStyled.div`
   display: flex;
 
   gap: ${({ theme }) => (useIsMobile() ? theme.spacing(3) : '0')};
@@ -13,13 +13,13 @@ const StyledOuterContainer = styled.div`
   width: 100%;
 `;
 
-const StyledInnerContainer = styled.div`
+const StyledInnerContainer = emotionStyled.div`
   display: flex;
   flex-direction: ${() => (useIsMobile() ? 'column' : 'row')};
   width: 100%;
 `;
 
-const StyledScrollWrapper = styled(ScrollWrapper)`
+const StyledScrollWrapper = emotionStyled(ScrollWrapper)`
   background-color: ${({ theme }) => theme.background.secondary};
   border-radius: ${({ theme }) => theme.border.radius.md};
 `;

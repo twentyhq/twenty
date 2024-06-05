@@ -1,4 +1,4 @@
-import styled from '@emotion/styled';
+import emotionStyled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { TimelineCreateButtonGroup } from '@/activities/timeline/components/TimelineCreateButtonGroup';
@@ -16,7 +16,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { TimelineItemsContainer } from './TimelineItemsContainer';
 
-const StyledMainContainer = styled.div`
+const StyledMainContainer = emotionStyled.div`
   align-items: flex-start;
   align-self: stretch;
   border-top: ${({ theme }) =>
