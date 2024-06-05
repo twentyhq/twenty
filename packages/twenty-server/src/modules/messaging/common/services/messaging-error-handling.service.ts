@@ -10,7 +10,6 @@ import { MessagingTelemetryService } from 'src/modules/messaging/common/services
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
-import { MESSAGING_THROTTLE_DURATION } from 'src/modules/messaging/common/constants/messaging-throttle-duration';
 import { MESSAGING_THROTTLE_MAX_ATTEMPTS } from 'src/modules/messaging/common/constants/messaging-throttle-max-attempts';
 
 type SyncStep =
@@ -212,13 +211,8 @@ export class MessagingErrorHandlingService {
     messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
     workspaceId: string,
   ): Promise<void> {
-    const throttleDuration =
-      MESSAGING_THROTTLE_DURATION *
-      Math.pow(2, messageChannel.throttleFailureCount);
-
-    await this.messageChannelRepository.updateThrottlePauseUntilAndIncrementThrottleFailureCount(
+    await this.messageChannelRepository.incrementThrottleFailureCount(
       messageChannel.id,
-      throttleDuration,
       workspaceId,
     );
 
@@ -227,7 +221,7 @@ export class MessagingErrorHandlingService {
       workspaceId,
       connectedAccountId: messageChannel.connectedAccountId,
       messageChannelId: messageChannel.id,
-      message: `Throttling for ${throttleDuration}ms`,
+      message: `Increment throttle failure count to ${messageChannel.throttleFailureCount}`,
     });
   }
 }

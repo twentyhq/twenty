@@ -6,8 +6,7 @@ import { RecordPositionBackfillService } from 'src/engine/api/graphql/workspace-
 
 export type RecordPositionBackfillJobData = {
   workspaceId: string;
-  objectMetadata: { nameSingular: string; isCustom: boolean };
-  recordId: string;
+  dryRun: boolean;
 };
 
 @Injectable()
@@ -19,10 +18,6 @@ export class RecordPositionBackfillJob
   ) {}
 
   async handle(data: RecordPositionBackfillJobData): Promise<void> {
-    this.recordPositionBackfillService.backfill(
-      data.workspaceId,
-      data.objectMetadata,
-      data.recordId,
-    );
+    this.recordPositionBackfillService.backfill(data.workspaceId, data.dryRun);
   }
 }

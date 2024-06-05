@@ -1,7 +1,7 @@
 import { EntityManager } from 'typeorm';
 
 import { DEV_SEED_CONNECTED_ACCOUNT_IDS } from 'src/database/typeorm-seeds/workspace/connected-account';
-import { MessageChannelSyncSubStatus } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessageChannelSyncStage } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 const tableName = 'messageChannel';
 
@@ -28,7 +28,7 @@ export const seedMessageChannel = async (
       'connectedAccountId',
       'handle',
       'visibility',
-      'syncSubStatus',
+      'syncStage',
     ])
     .orIgnore()
     .values([
@@ -42,8 +42,7 @@ export const seedMessageChannel = async (
         connectedAccountId: DEV_SEED_CONNECTED_ACCOUNT_IDS.TIM,
         handle: 'tim@apple.dev',
         visibility: 'share_everything',
-        syncSubStatus:
-          MessageChannelSyncSubStatus.FULL_MESSAGE_LIST_FETCH_PENDING,
+        syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
       },
       {
         id: DEV_SEED_MESSAGE_CHANNEL_IDS.JONY,
@@ -55,8 +54,7 @@ export const seedMessageChannel = async (
         connectedAccountId: DEV_SEED_CONNECTED_ACCOUNT_IDS.JONY,
         handle: 'jony.ive@apple.dev',
         visibility: 'share_everything',
-        syncSubStatus:
-          MessageChannelSyncSubStatus.FULL_MESSAGE_LIST_FETCH_PENDING,
+        syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
       },
       {
         id: DEV_SEED_MESSAGE_CHANNEL_IDS.PHIL,
@@ -68,8 +66,7 @@ export const seedMessageChannel = async (
         connectedAccountId: DEV_SEED_CONNECTED_ACCOUNT_IDS.PHIL,
         handle: 'phil.schiler@apple.dev',
         visibility: 'share_everything',
-        syncSubStatus:
-          MessageChannelSyncSubStatus.FULL_MESSAGE_LIST_FETCH_PENDING,
+        syncStage: MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING,
       },
     ])
     .execute();
