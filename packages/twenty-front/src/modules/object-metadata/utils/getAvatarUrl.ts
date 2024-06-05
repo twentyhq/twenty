@@ -2,10 +2,10 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getLogoUrlFromDomainName } from '~/utils';
+import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 import { isDefined } from '~/utils/isDefined';
 
 import { getImageIdentifierFieldValue } from './getImageIdentifierFieldValue';
-import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
 export const getAvatarUrl = (
   objectNameSingular: string,
