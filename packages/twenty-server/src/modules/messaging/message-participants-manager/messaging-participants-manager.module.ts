@@ -14,11 +14,6 @@ import { MessagingCreateCompanyAndContactAfterSyncJob } from 'src/modules/messag
     MessagingGmailDriverModule,
     AutoCompaniesAndContactsCreationModule,
   ],
-  providers: [
-    {
-      provide: MessagingCreateCompanyAndContactAfterSyncJob.name,
-      useClass: MessagingCreateCompanyAndContactAfterSyncJob,
-    },
-  ],
+  providers: [MessagingCreateCompanyAndContactAfterSyncJob],
 })
 export class MessaginParticipantsManagerModule {}
