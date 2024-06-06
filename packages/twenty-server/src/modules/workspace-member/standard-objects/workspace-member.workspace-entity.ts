@@ -27,6 +27,19 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 
+export enum DateFormat {
+  'SYSTEM' = 'system',
+  'MMM_D_YYYY' = 'MMM_d_yyyy',
+  'D_MMM_YYYY' = 'd_MMM_yyyy',
+  'YYYY_MMM_D' = 'yyyy_MMM_d',
+}
+
+export enum TimeFormat {
+  'SYSTEM' = 'system',
+  'HH_mm' = 'HH_mm',
+  'h_mm_aa' = 'h_mm_aa',
+}
+
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workspaceMember,
   namePlural: 'workspaceMembers',
@@ -106,34 +119,32 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.dateFormat,
-    // type: FieldMetadataType.SELECT,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.SELECT,
     label: 'Date format',
     description: "User's preferred date format",
     icon: 'IconCalendarEvent',
-    // options: [
-    //   { value: 'system', label: 'system', position: 0, color: 'turquoise'  },
-    //   { value: 'MMM_d_yyyy', label: 'MonthFirst', position: 1, color: 'red' },
-    //   { value: 'd_MMM_yyyy', label: 'DayFirst', position: 2, color: 'purple' },
-    //   { value: 'yyyy_MMM_d', label: 'YearFirst', position: 3, color: 'sky' },
-    // ],
-    defaultValue: "'system'"
+    options: [
+      { value: DateFormat['SYSTEM'], label: 'System', position: 0, color: 'turquoise'  },
+      { value: DateFormat['MMM_D_YYYY'], label: 'Month First', position: 1, color: 'red' },
+      { value: DateFormat['D_MMM_YYYY'], label: 'Day First', position: 2, color: 'purple' },
+      { value: DateFormat['YYYY_MMM_D'], label: 'Year First', position: 3, color: 'sky' },
+    ],
+    defaultValue: `'${DateFormat['SYSTEM']}'`,
   })
   dateFormat: string;
 
   @WorkspaceField({
     standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeFormat,
-    // type: FieldMetadataType.SELECT,
-    type: FieldMetadataType.TEXT,
+    type: FieldMetadataType.SELECT,
     label: 'Time format',
     description: "User's preferred time format",
     icon: 'IconClock2',
-    // options: [
-    //   { value: 'system', label: 'system', position: 0, color: 'sky' },
-    //   { value: 'HH_mm', label: 'Military', position: 1, color: 'red' },
-    //   { value: 'h_mm_aa', label: 'Standard', position: 2, color: 'purple' },
-    // ],
-    defaultValue: "'system'",
+    options: [
+      { value: TimeFormat['SYSTEM'], label: 'System', position: 0, color: 'sky' },
+      { value: TimeFormat['HH_mm'], label: 'Military', position: 1, color: 'red' },
+      { value: TimeFormat['h_mm_aa'], label: 'Standard', position: 2, color: 'purple' },
+    ],
+    defaultValue: `'${TimeFormat['SYSTEM']}'`,
   })
   timeFormat: string;
 

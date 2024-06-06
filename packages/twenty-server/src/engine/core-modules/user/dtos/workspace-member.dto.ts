@@ -1,8 +1,20 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
+import { IsEnum } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { DateFormat, TimeFormat } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+
+registerEnumType(DateFormat, {
+  name: 'DateFormat',
+  description: 'Defines date formats with Month First, Day First, Year First order or System.'
+});
+
+registerEnumType(TimeFormat, {
+  name: 'TimeFormat',
+  description: 'Defines time formats in Standard / Military or System.'
+});
 
 @ObjectType('FullName')
 export class FullName {
@@ -33,9 +45,11 @@ export class WorkspaceMember {
   @Field({ nullable: false, defaultValue: 'system' })
   timeZone: string;
 
-  @Field({ nullable: false, defaultValue: 'system' })
-  dateFormat: string;
+  @IsEnum(DateFormat)
+  @Field(() => DateFormat, { defaultValue: DateFormat['SYSTEM'] })
+  dateFormat: DateFormat;
 
-  @Field({ nullable: false, defaultValue: 'system' })
-  timeFormat: string;
+  @IsEnum(TimeFormat)
+  @Field(() => TimeFormat, { defaultValue: TimeFormat['SYSTEM'] })
+  timeFormat: TimeFormat;
 }
