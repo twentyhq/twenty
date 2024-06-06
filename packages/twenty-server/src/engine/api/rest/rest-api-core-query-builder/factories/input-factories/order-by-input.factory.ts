@@ -17,12 +17,12 @@ export class OrderByInputFactory {
     const orderByQuery = request.query.order_by;
 
     if (typeof orderByQuery !== 'string') {
-      return {};
+      return [{}];
     }
 
     //orderByQuery = field_1[AscNullsFirst],field_2[DescNullsLast],field_3
     const orderByItems = orderByQuery.split(',');
-    let result = {};
+    let result: Array<Record<string, OrderByDirection>> = [];
     let itemDirection = '';
     let itemFields = '';
 
@@ -52,20 +52,20 @@ export class OrderByInputFactory {
         itemFields = orderByItem;
       }
 
-      let fieldResult = {};
+      let fieldResult: any = [];
 
       itemFields
         .split('.')
         .reverse()
         .forEach((field) => {
-          if (Object.keys(fieldResult).length) {
-            fieldResult = { [field]: fieldResult };
+          if (fieldResult.length) {
+            fieldResult.push({ [field]: fieldResult });
           } else {
-            fieldResult[field] = itemDirection;
+            fieldResult.push({ [field]: itemDirection });
           }
         }, itemDirection);
 
-      result = { ...result, ...fieldResult };
+      result.push(fieldResult);
     }
 
     checkFields(objectMetadata.objectMetadataItem, Object.keys(result));
