@@ -4,7 +4,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Key } from 'ts-key-enum';
-import { IconCopy, IconMail, IconSend } from 'twenty-ui';
+import { IconMail, IconSend } from 'twenty-ui';
 import { z } from 'zod';
 
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -89,7 +89,6 @@ export const WorkspaceInviteTeam = () => {
     }
     enqueueSnackBar('Invite link sent to email addresses', {
       variant: SnackBarVariant.Success,
-      icon: <IconCopy size={theme.icon.size.md} />,
       duration: 2000,
     });
   });

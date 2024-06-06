@@ -1,11 +1,16 @@
-import { useEffect } from 'react';
-import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { useCallback, useEffect } from 'react';
+import {
+  Controller,
+  SubmitHandler,
+  useFieldArray,
+  useForm,
+} from 'react-hook-form';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRecoilValue } from 'recoil';
 import { IconCopy } from 'twenty-ui';
-import { string, z } from 'zod';
+import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
@@ -13,8 +18,10 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SeparatorLineText } from '@/ui/display/text/components/SeparatorLineText';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
+import { useSendInviteLinkMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledAnimatedInput = styled.div`
@@ -35,8 +42,7 @@ const StyledAnimatedInput = styled.div`
 const StyledAnimatedContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(8)} 0
-    ${({ theme }) => theme.spacing(4)} 0;
+  padding: ${({ theme }) => theme.spacing(8)} 0;
   gap: ${({ theme }) => theme.spacing(4)};
   overflow-y: scroll;
   overflow-x: hidden;
@@ -48,17 +54,31 @@ const StyledActionLinkContainer = styled.div`
   justify-content: center;
 `;
 
-const validationSchema = z
-  .object({ emails: z.array(z.object({ email: string().email() })) })
-  .required();
+const StyledButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 200px;
+`;
+
+const validationSchema = z.object({
+  emails: z.array(
+    z.object({ email: z.union([z.literal(''), z.string().email()]) }),
+  ),
+});
 
 type FormInput = z.infer<typeof validationSchema>;
 
 export const InviteTeam = () => {
   const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
+  const [sendInviteLink] = useSendInviteLinkMutation();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const { control, watch } = useForm<FormInput>({
+  const {
+    control,
+    handleSubmit,
+    watch,
+    formState: { isValid, isSubmitting },
+  } = useForm<FormInput>({
     mode: 'onChange',
     defaultValues: {
       emails: [{ email: '' }, { email: '' }, { email: '' }],
@@ -98,6 +118,23 @@ export const InviteTeam = () => {
     }
   };
 
+  const onSubmit: SubmitHandler<FormInput> = useCallback(
+    async (data) => {
+      const emails = data.emails
+        .map((emailData) => emailData.email.trim())
+        .filter((email) => email.length > 0);
+      const result = await sendInviteLink({ variables: { emails } });
+      if (isDefined(result.errors)) {
+        throw result.errors;
+      }
+      enqueueSnackBar('Invite link sent to email addresses', {
+        variant: SnackBarVariant.Success,
+        duration: 2000,
+      });
+    },
+    [enqueueSnackBar, sendInviteLink],
+  );
+
   useEffect(() => {
     const lastEmailIndex = emailValues.length - 1;
     if (emailValues[lastEmailIndex] !== '') {
@@ -119,14 +156,19 @@ export const InviteTeam = () => {
           <Controller
             name={`emails.${index}.email`}
             control={control}
-            render={({ field: { onChange, onBlur, value } }) => (
+            render={({
+              field: { onChange, onBlur, value },
+              fieldState: { error },
+            }) => (
               <StyledAnimatedInput>
                 <TextInputV2
                   type="email"
                   value={value}
                   placeholder={getPlaceholder(index)}
                   onBlur={onBlur}
+                  error={error?.message}
                   onChange={onChange}
+                  noErrorHelper
                   fullWidth
                 />
               </StyledAnimatedInput>
@@ -145,6 +187,14 @@ export const InviteTeam = () => {
           </>
         )}
       </StyledAnimatedContainer>
+      <StyledButtonContainer>
+        <MainButton
+          title="Finish"
+          disabled={!isValid || isSubmitting}
+          onClick={handleSubmit(onSubmit)}
+          fullWidth
+        />
+      </StyledButtonContainer>
     </>
   );
 };
