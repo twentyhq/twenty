@@ -15,7 +15,7 @@ export type CleanInactiveWorkspacesCommandOptions = {
 })
 export class CleanInactiveWorkspacesCommand extends CommandRunner {
   constructor(
-    @InjectMessageQueue(MessageQueue.taskAssignedQueue)
+    @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {
     super();

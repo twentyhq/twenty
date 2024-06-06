@@ -1,5 +1,6 @@
 import { OnModuleDestroy } from '@nestjs/common';
 
+import omitBy from 'lodash.omitby';
 import { JobsOptions, Queue, QueueOptions, Worker } from 'bullmq';
 
 import {
@@ -52,10 +53,13 @@ export class BullMQDriver implements MessageQueueDriver, OnModuleDestroy {
         // TODO: Correctly support for job.id
         await handler({ data: job.data, id: job.id ?? '', name: job.name });
       },
-      {
-        ...this.options,
-        concurrency: options?.concurrency,
-      },
+      omitBy(
+        {
+          ...this.options,
+          concurrency: options?.concurrency,
+        },
+        (value) => value === undefined,
+      ),
     );
 
     this.workerMap[queueName] = worker;

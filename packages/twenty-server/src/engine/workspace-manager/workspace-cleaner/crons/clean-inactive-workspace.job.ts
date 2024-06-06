@@ -29,8 +29,6 @@ type WorkspaceToDeleteData = {
   daysSinceInactive: number;
 };
 
-// TODO: Special case with two queues, is it working ?
-@Processor(MessageQueue.taskAssignedQueue)
 @Processor(MessageQueue.cronQueue)
 export class CleanInactiveWorkspaceJob {
   private readonly logger = new Logger(CleanInactiveWorkspaceJob.name);

@@ -12,9 +12,7 @@ export type CreateCompanyAndContactJobData = {
   }[];
 };
 
-// TODO: Was used on two queues previously, is it working ?
 @Processor(MessageQueue.messagingQueue)
-@Processor(MessageQueue.emailQueue)
 export class CreateCompanyAndContactJob {
   constructor(
     private readonly createCompanyAndContactService: CreateCompanyAndContactService,
