@@ -8198,19 +8198,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nestjs/schedule@npm:^4.0.2":
-  version: 4.0.2
-  resolution: "@nestjs/schedule@npm:4.0.2"
-  dependencies:
-    cron: "npm:3.1.7"
-    uuid: "npm:9.0.1"
-  peerDependencies:
-    "@nestjs/common": ^8.0.0 || ^9.0.0 || ^10.0.0
-    "@nestjs/core": ^8.0.0 || ^9.0.0 || ^10.0.0
-  checksum: 80af3715f881038abe027418c7e18f99d8ce9abe53373c74ca46e5990b3404896f4b723a86dd7e62e62d8fe2a41db8449e6846b91f38e70a7c35e58b9317bfb3
-  languageName: node
-  linkType: hard
-
 "@nestjs/schematics@npm:^10.0.1":
   version: 10.1.0
   resolution: "@nestjs/schematics@npm:10.1.0"
@@ -17162,13 +17149,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/luxon@npm:~3.4.0":
-  version: 3.4.2
-  resolution: "@types/luxon@npm:3.4.2"
-  checksum: d835467de3daf7e17ba78b50bb5a14efd94272439ca067990d71332a54b311544459c69623eddd243b511b28d70194c9591a9ee8cf9c038962c965f991affd7e
-  languageName: node
-  linkType: hard
-
 "@types/mdast@npm:^3.0.0":
   version: 3.0.15
   resolution: "@types/mdast@npm:3.0.15"
@@ -23877,16 +23857,6 @@ __metadata:
   dependencies:
     luxon: "npm:^3.2.1"
   checksum: 348622bdcd1a15695b61fc33af8a60133e5913a85cf99f6344367579e7002896514ba3b0a9d6bb569b02667d6b06836722bf2295fcd101b3de378f71d37bed0b
-  languageName: node
-  linkType: hard
-
-"cron@npm:3.1.7":
-  version: 3.1.7
-  resolution: "cron@npm:3.1.7"
-  dependencies:
-    "@types/luxon": "npm:~3.4.0"
-    luxon: "npm:~3.4.0"
-  checksum: c009c79714ae2916233c8cd2700cdda17c9e20d0e8e32eeb6c0d63b8e89bb7c38dbf9f0423f0f6da52d3f054f735aabb988cbe5b25bb55d9c6ca48ed4cfaaaec
   languageName: node
   linkType: hard
 
@@ -34648,7 +34618,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"luxon@npm:^3.2.1, luxon@npm:^3.3.0, luxon@npm:~3.4.0":
+"luxon@npm:^3.2.1, luxon@npm:^3.3.0":
   version: 3.4.4
   resolution: "luxon@npm:3.4.4"
   checksum: 02e26a0b039c11fd5b75e1d734c8f0332c95510f6a514a9a0991023e43fb233884da02d7f966823ffb230632a733fc86d4a4b1e63c3fbe00058b8ee0f8c728af
@@ -46761,7 +46731,6 @@ __metadata:
     "@nestjs/cli": "npm:10.3.0"
     "@nestjs/devtools-integration": "npm:^0.1.6"
     "@nestjs/graphql": "patch:@nestjs/graphql@12.1.1#./patches/@nestjs+graphql+12.1.1.patch"
-    "@nestjs/schedule": "npm:^4.0.2"
     "@nx/js": "npm:18.3.3"
     "@ptc-org/nestjs-query-graphql": "patch:@ptc-org/nestjs-query-graphql@4.2.0#./patches/@ptc-org+nestjs-query-graphql+4.2.0.patch"
     "@types/lodash.differencewith": "npm:^4.5.9"

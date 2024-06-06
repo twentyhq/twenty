@@ -7,7 +7,6 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { GraphQLModule } from '@nestjs/graphql';
-import { ScheduleModule } from '@nestjs/schedule';
 
 import { existsSync } from 'fs';
 import { join } from 'path';
@@ -37,7 +36,6 @@ import { CoreEngineModule } from './engine/core-modules/core-engine.module';
     //   }),
     //   inject: [EnvironmentService],
     // }),
-    ScheduleModule.forRoot(),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
