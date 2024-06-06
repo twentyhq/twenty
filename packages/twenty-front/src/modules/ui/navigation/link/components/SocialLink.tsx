@@ -1,7 +1,5 @@
 import * as React from 'react';
 
-import { getDisplayValueByUrlType } from '~/utils/getDisplayValueByUrlType';
-
 import { RoundedLink } from './RoundedLink';
 
 export enum LinkType {
@@ -11,24 +9,15 @@ export enum LinkType {
 }
 
 type SocialLinkProps = {
+  label: string;
   href: string;
-  children?: React.ReactNode;
   type: LinkType;
   onClick?: (event: React.MouseEvent<HTMLElement>) => void;
 };
 
-export const SocialLink = ({
-  children,
-  href,
-  onClick,
-  type,
-}: SocialLinkProps) => {
-  const displayValue =
-    getDisplayValueByUrlType({ type: type, href: href }) ?? children;
+export const SocialLink = ({ label, href, onClick, type }: SocialLinkProps) => {
+  // const displayValue =
+  //   getDisplayValueByUrlType({ type: type, href: href }) ?? label;
 
-  return (
-    <RoundedLink href={href} onClick={onClick}>
-      {displayValue}
-    </RoundedLink>
-  );
+  return <RoundedLink href={href} onClick={onClick} label={label} />;
 };

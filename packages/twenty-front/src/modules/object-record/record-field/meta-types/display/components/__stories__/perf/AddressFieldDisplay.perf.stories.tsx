@@ -2,6 +2,7 @@ import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
 import { AddressFieldDisplay } from '@/object-record/record-field/meta-types/display/components/AddressFieldDisplay';
+import { FieldAddressValue } from '@/object-record/record-field/types/FieldMetadata';
 import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
@@ -10,7 +11,7 @@ const meta: Meta = {
   title: 'UI/Data/Field/Display/AddressFieldDisplay',
   decorators: [
     MemoryRouterDecorator,
-    getFieldDecorator('person', 'address'),
+    getFieldDecorator('person', 'testAddress'),
     ComponentDecorator,
   ],
   component: AddressFieldDisplay,
@@ -31,17 +32,23 @@ export const Elipsis: Story = {
     container: { width: 100 },
   },
   decorators: [
-    getFieldDecorator(
-      'person',
-      'city',
-      'Lorem ipsum dolor sit amet consectetur adipisicing elit. Recusandae rerum fugiat veniam illum accusantium saepe, voluptate inventore libero doloribus doloremque distinctio blanditiis amet quis dolor a nulla? Placeat nam itaque rerum esse quidem animi, temporibus saepe debitis commodi quia eius eos minus inventore. Voluptates fugit optio sit ab consectetur ipsum, neque eius atque blanditiis. Ullam provident at porro minima, nobis vero dicta consequatur maxime laboriosam fugit repudiandae repellat tempore voluptas non voluptatibus neque aliquam ducimus doloribus ipsa? Sapiente suscipit unde modi commodi possimus doloribus eum voluptatibus, architecto laudantium, magnam, eos numquam exercitationem est maxime explicabo odio nemo qui distinctio temporibus.',
-    ),
+    getFieldDecorator('person', 'testAddress', {
+      addressCity:
+        'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam',
+      addressCountry: 'United States',
+      addressStreet1: '1234 Elm Street',
+      addressStreet2: 'Apt 1234',
+      addressLat: 0,
+      addressLng: 0,
+      addressPostcode: '12345',
+      addressState: 'CA',
+    } as FieldAddressValue),
   ],
 };
 
 export const Performance = getProfilingStory({
   componentName: 'AddressFieldDisplay',
-  averageThresholdInMs: 0.5,
+  averageThresholdInMs: 0.15,
   numberOfRuns: 50,
   numberOfTestsPerRun: 100,
 });

@@ -1,10 +1,38 @@
 import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import clsx from 'clsx';
+import { styled } from '@linaria/react';
+
+import { THEME_COMMON } from '@ui/theme';
 
 import { AppTooltip } from './AppTooltip';
 
-import styles from './OverflowingTextWithTooltip.module.css';
+const spacing4 = THEME_COMMON.spacing(4);
+
+const StyledOverflowingText = styled.div<{
+  cursorPointer: boolean;
+  size: 'large' | 'small';
+}>`
+  cursor: ${({ cursorPointer }) => (cursorPointer ? 'pointer' : 'inherit')};
+  font-family: inherit;
+  font-size: inherit;
+
+  font-weight: inherit;
+  max-width: 100%;
+  overflow: hidden;
+  text-decoration: inherit;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  height: ${({ size }) => (size === 'large' ? spacing4 : 'auto')};
+
+  & :hover {
+    text-overflow: ${({ cursorPointer }) =>
+      cursorPointer ? 'clip' : 'ellipsis'};
+    white-space: ${({ cursorPointer }) =>
+      cursorPointer ? 'normal' : 'nowrap'};
+  }
+`;
 
 export const OverflowingTextWithTooltip = ({
   size = 'small',
@@ -42,20 +70,17 @@ export const OverflowingTextWithTooltip = ({
 
   return (
     <>
-      <div
+      <StyledOverflowingText
         data-testid="tooltip"
-        className={clsx({
-          [styles.main]: true,
-          [styles.cursor]: isTitleOverflowing,
-          [styles.large]: size === 'large',
-        })}
+        cursorPointer={isTitleOverflowing}
+        size={size}
         ref={textRef}
         id={textElementId}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
       >
         {text}
-      </div>
+      </StyledOverflowingText>
       {isTitleOverflowing &&
         createPortal(
           <div onClick={handleTooltipClick}>

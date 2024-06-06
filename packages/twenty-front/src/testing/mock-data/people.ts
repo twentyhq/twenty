@@ -68,7 +68,7 @@ export const peopleQueryResult = {
           },
           testLinks: {
             __typename: 'Links',
-            primaryLinkUrl: 'https://google.fr',
+            primaryLinkUrl: 'https://www.linkedin.com/in/charlesbochet/',
             primaryLinkLabel: '',
             secondaryLinks: [
               {
@@ -76,15 +76,11 @@ export const peopleQueryResult = {
                 label: '',
               },
               {
-                url: 'https://microsoft.com',
+                url: 'https://msn.com',
                 label: '',
               },
               {
-                url: 'https://facebook.com',
-                label: '',
-              },
-              {
-                url: 'https://linkedin.com',
+                url: 'https://msn.com',
                 label: '',
               },
             ],
