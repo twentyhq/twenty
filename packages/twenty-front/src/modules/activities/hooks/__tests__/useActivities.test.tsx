@@ -142,7 +142,7 @@ const mocks: MockedResponse[] = [
       variables: {
         filter: { id: { in: ['234'] } },
         limit: undefined,
-        orderBy: {},
+        orderBy: [{}],
       },
     },
     result: jest.fn(() => ({
