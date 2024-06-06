@@ -7,12 +7,12 @@ import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenuHeader';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
+import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
+import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { SORT_DIRECTIONS } from '../types/SortDirection';
-import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
-import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
 
 export type ObjectSortDropdownButtonProps = {
   sortDropdownId: string;
@@ -34,7 +34,7 @@ export const ObjectSortDropdownButton = ({
     handleAddSort,
   } = useObjectSortDropdown();
 
-  const {isDropdownOpen} = useDropdown(OBJECT_SORT_DROPDOWN_ID);
+  const { isDropdownOpen } = useDropdown(OBJECT_SORT_DROPDOWN_ID);
 
   const handleButtonClick = () => {
     toggleSortDropdown();
