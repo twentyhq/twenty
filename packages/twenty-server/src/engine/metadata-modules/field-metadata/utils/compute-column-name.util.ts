@@ -36,18 +36,37 @@ export function computeColumnName<T extends FieldMetadataType | 'default'>(
 
   return generateName(fieldMetadataOrFieldName.name);
 }
-
-export const computeCompositeColumnName = <
+export function computeCompositeColumnName(
+  fieldName: string,
+  compositeProperty: CompositeProperty,
+): string;
+export function computeCompositeColumnName<
   T extends FieldMetadataType | 'default',
 >(
   fieldMetadata: FieldMetadataInterface<T>,
   compositeProperty: CompositeProperty,
-): string => {
-  if (!isCompositeFieldMetadataType(fieldMetadata.type)) {
+): string;
+export function computeCompositeColumnName<
+  T extends FieldMetadataType | 'default',
+>(
+  fieldMetadataOrFieldName: FieldMetadataInterface<T> | string,
+  compositeProperty: CompositeProperty,
+): string {
+  const generateName = (name: string) => {
+    return `${name}${pascalCase(compositeProperty.name)}`;
+  };
+
+  if (typeof fieldMetadataOrFieldName === 'string') {
+    return generateName(fieldMetadataOrFieldName);
+  }
+
+  if (!isCompositeFieldMetadataType(fieldMetadataOrFieldName.type)) {
     throw new Error(
-      `Cannot compute composite column name for non-composite field metadata type: ${fieldMetadata.type}`,
+      `Cannot compute composite column name for non-composite field metadata type: ${fieldMetadataOrFieldName.type}`,
     );
   }
 
-  return `${fieldMetadata.name}${pascalCase(compositeProperty.name)}`;
-};
+  return `${fieldMetadataOrFieldName.name}${pascalCase(
+    compositeProperty.name,
+  )}`;
+}

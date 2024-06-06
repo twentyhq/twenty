@@ -3,8 +3,10 @@ import { useRecoilValue } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
 import { Favorite } from '@/favorites/types/Favorite';
-import { useFindManyRecordsForMultipleMetadataItems } from '@/object-record/multiple-objects/hooks/useFindManyRecordsForMultipleMetadataItems';
+import { useCombinedFindManyRecords } from '@/object-record/multiple-objects/hooks/useCombinedFindManyRecords';
 import { usePrefetchRunQuery } from '@/prefetch/hooks/internal/usePrefetchRunQuery';
+import { FIND_ALL_FAVORITES_OPERATION_SIGNATURE } from '@/prefetch/query-keys/FindAllFavoritesOperationSignature';
+import { FIND_ALL_VIEWS_OPERATION_SIGNATURE } from '@/prefetch/query-keys/FindAllViewsOperationSignature';
 import { PrefetchKey } from '@/prefetch/types/PrefetchKey';
 import { View } from '@/views/types/View';
 import { isDefined } from '~/utils/isDefined';
@@ -12,24 +14,22 @@ import { isDefined } from '~/utils/isDefined';
 export const PrefetchRunQueriesEffect = () => {
   const currentUser = useRecoilValue(currentUserState);
 
-  const {
-    objectMetadataItem: objectMetadataItemView,
-    upsertRecordsInCache: upsertViewsInCache,
-  } = usePrefetchRunQuery<View>({
-    prefetchKey: PrefetchKey.AllViews,
-  });
+  const { upsertRecordsInCache: upsertViewsInCache } =
+    usePrefetchRunQuery<View>({
+      prefetchKey: PrefetchKey.AllViews,
+    });
 
-  const {
-    objectMetadataItem: objectMetadataItemFavorite,
-    upsertRecordsInCache: upsertFavoritesInCache,
-  } = usePrefetchRunQuery<Favorite>({
-    prefetchKey: PrefetchKey.AllFavorites,
-  });
+  const { upsertRecordsInCache: upsertFavoritesInCache } =
+    usePrefetchRunQuery<Favorite>({
+      prefetchKey: PrefetchKey.AllFavorites,
+    });
 
-  const { result } = useFindManyRecordsForMultipleMetadataItems({
-    objectMetadataItems: [objectMetadataItemView, objectMetadataItemFavorite],
+  const { result } = useCombinedFindManyRecords({
+    operationSignatures: [
+      FIND_ALL_VIEWS_OPERATION_SIGNATURE,
+      FIND_ALL_FAVORITES_OPERATION_SIGNATURE,
+    ],
     skip: !currentUser,
-    depth: 1,
   });
 
   useEffect(() => {

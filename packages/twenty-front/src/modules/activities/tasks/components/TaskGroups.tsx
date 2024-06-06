@@ -40,7 +40,6 @@ export const TaskGroups = ({
     upcomingTasks,
     unscheduledTasks,
     completedTasks,
-    initialized,
   } = useTasks({
     filterDropdownId: filterDropdownId,
     targetableObjects: targetableObjects ?? [],
@@ -50,10 +49,6 @@ export const TaskGroups = ({
 
   const { activeTabIdState } = useTabList(TASKS_TAB_LIST_COMPONENT_ID);
   const activeTabId = useRecoilValue(activeTabIdState);
-
-  if (!initialized) {
-    return <></>;
-  }
 
   if (
     (activeTabId !== 'done' &&

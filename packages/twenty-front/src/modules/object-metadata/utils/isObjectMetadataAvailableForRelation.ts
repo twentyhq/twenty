@@ -2,10 +2,15 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
 export const isObjectMetadataAvailableForRelation = (
-  objectMetadataItem: Pick<ObjectMetadataItem, 'isSystem' | 'nameSingular'>,
+  objectMetadataItem: Pick<
+    ObjectMetadataItem,
+    'isSystem' | 'nameSingular' | 'isRemote'
+  >,
 ) => {
   return (
-    !objectMetadataItem.isSystem ||
-    objectMetadataItem.nameSingular === CoreObjectNameSingular.WorkspaceMember
+    (!objectMetadataItem.isSystem ||
+      objectMetadataItem.nameSingular ===
+        CoreObjectNameSingular.WorkspaceMember) &&
+    !objectMetadataItem.isRemote
   );
 };

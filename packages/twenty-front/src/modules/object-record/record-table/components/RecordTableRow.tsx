@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { getBasePathToShowPage } from '@/object-metadata/utils/getBasePathToShowPage';
+import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { RecordTableCellFieldContextWrapper } from '@/object-record/record-table/components/RecordTableCellFieldContextWrapper';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -16,13 +17,18 @@ import { CheckboxCell } from './CheckboxCell';
 type RecordTableRowProps = {
   recordId: string;
   rowIndex: number;
+  isPendingRow?: boolean;
 };
 
 const StyledTd = styled.td`
   background-color: ${({ theme }) => theme.background.primary};
 `;
 
-export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
+export const RecordTableRow = ({
+  recordId,
+  rowIndex,
+  isPendingRow,
+}: RecordTableRowProps) => {
   const { visibleTableColumnsSelector, isRowSelectedFamilyState } =
     useRecordTableStates();
   const currentRowSelected = useRecoilValue(isRowSelectedFamilyState(recordId));
@@ -48,10 +54,13 @@ export const RecordTableRow = ({ recordId, rowIndex }: RecordTableRowProps) => {
           getBasePathToShowPage({
             objectNameSingular: objectMetadataItem.nameSingular,
           }) + recordId,
+        objectNameSingular: objectMetadataItem.nameSingular,
         isSelected: currentRowSelected,
         isReadOnly: objectMetadataItem.isRemote ?? false,
+        isPendingRow,
       }}
     >
+      <RecordValueSetterEffect recordId={recordId} />
       <tr
         ref={elementRef}
         data-testid={`row-id-${recordId}`}

@@ -142,10 +142,26 @@ export class NotFoundError extends BaseGraphQLError {
   }
 }
 
+export class MethodNotAllowedError extends BaseGraphQLError {
+  constructor(message: string, extensions?: Record<string, any>) {
+    super(message, 'METHOD_NOT_ALLOWED', extensions);
+
+    Object.defineProperty(this, 'name', { value: 'MethodNotAllowedError' });
+  }
+}
+
 export class ConflictError extends BaseGraphQLError {
   constructor(message: string, extensions?: Record<string, any>) {
     super(message, 'CONFLICT', extensions);
 
     Object.defineProperty(this, 'name', { value: 'ConflictError' });
+  }
+}
+
+export class TimeoutError extends BaseGraphQLError {
+  constructor(message: string, extensions?: Record<string, any>) {
+    super(message, 'TIMEOUT', extensions);
+
+    Object.defineProperty(this, 'name', { value: 'TimeoutError' });
   }
 }

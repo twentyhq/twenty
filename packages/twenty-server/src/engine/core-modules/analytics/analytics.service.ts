@@ -1,27 +1,30 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-
-import { Request } from 'express';
 
 import { anonymize } from 'src/utils/anonymize';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { User } from 'src/engine/core-modules/user/user.entity';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 
-import { CreateAnalyticsInput } from './dto/create-analytics.input';
+type CreateEventInput = {
+  type: string;
+  data: object;
+};
 
 @Injectable()
 export class AnalyticsService {
+  private readonly logger = new Logger(AnalyticsService.name);
+
   constructor(
     private readonly environmentService: EnvironmentService,
     private readonly httpService: HttpService,
   ) {}
 
   async create(
-    createEventInput: CreateAnalyticsInput,
-    user: User | undefined,
-    workspace: Workspace | undefined,
-    request: Request,
+    createEventInput: CreateEventInput,
+    userId: string | undefined,
+    workspaceId: string | undefined,
+    workspaceDisplayName: string | undefined,
+    workspaceDomainName: string | undefined,
+    hostName: string | undefined,
   ) {
     if (!this.environmentService.get('TELEMETRY_ENABLED')) {
       return { success: true };
@@ -34,26 +37,25 @@ export class AnalyticsService {
     const data = {
       type: createEventInput.type,
       data: {
-        hostname: request.hostname,
-        userUUID: user
-          ? anonymizationEnabled
-            ? anonymize(user.id)
-            : user.id
-          : undefined,
-        workspaceUUID: workspace
-          ? anonymizationEnabled
-            ? anonymize(workspace.id)
-            : workspace.id
-          : undefined,
-        workspaceDisplayName: workspace ? workspace.displayName : undefined,
-        workspaceDomainName: workspace ? workspace.domainName : undefined,
+        hostname: hostName,
+        userUUID: anonymizationEnabled && userId ? anonymize(userId) : userId,
+        workspaceUUID:
+          anonymizationEnabled && workspaceId
+            ? anonymize(workspaceId)
+            : workspaceId,
+        workspaceDisplayName: workspaceDisplayName,
+        workspaceDomainName: workspaceDomainName,
         ...createEventInput.data,
       },
     };
 
     try {
       await this.httpService.axiosRef.post('/v1', data);
-    } catch {}
+    } catch {
+      this.logger.error('Failed to send analytics event');
+
+      return { success: false };
+    }
 
     return { success: true };
   }

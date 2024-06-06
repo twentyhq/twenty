@@ -22,7 +22,7 @@ const BooleanFieldValueSetterEffect = ({
   const setField = useSetRecoilState(recordStoreFamilyState(entityId));
 
   useEffect(() => {
-    setField({ id: entityId, Boolean: value });
+    setField({ id: entityId, Boolean: value, __typename: 'Person' });
   }, [entityId, setField, value]);
 
   return <></>;

@@ -23,7 +23,7 @@ export class SyncDriver implements MessageQueueDriver {
     const jobClassName = getJobClassName(jobName);
     const job: MessageQueueJob<MessageQueueJobData> = this.jobsModuleRef.get(
       jobClassName,
-      { strict: true },
+      { strict: false },
     );
 
     await job.handle(data);

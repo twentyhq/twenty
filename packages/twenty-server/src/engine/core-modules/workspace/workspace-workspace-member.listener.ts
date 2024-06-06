@@ -3,7 +3,7 @@ import { OnEvent } from '@nestjs/event-emitter';
 
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
-import { WorkspaceMemberObjectMetadata } from 'src/modules/workspace-member/standard-objects/workspace-member.object-metadata';
+import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { ObjectRecordDeleteEvent } from 'src/engine/integrations/event-emitter/types/object-record-delete.event';
 import {
   HandleWorkspaceMemberDeletedJob,
@@ -19,9 +19,9 @@ export class WorkspaceWorkspaceMemberListener {
 
   @OnEvent('workspaceMember.deleted')
   async handleDeleteEvent(
-    payload: ObjectRecordDeleteEvent<WorkspaceMemberObjectMetadata>,
+    payload: ObjectRecordDeleteEvent<WorkspaceMemberWorkspaceEntity>,
   ) {
-    const userId = payload.details.before.userId;
+    const userId = payload.properties.before.userId;
 
     if (!userId) {
       return;

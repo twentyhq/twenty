@@ -276,7 +276,7 @@ export class FieldMetadataHealthService {
       !validateDefaultValueForType(
         fieldMetadata.type,
         fieldMetadata.defaultValue,
-      )
+      ).isValid
     ) {
       issues.push({
         type: WorkspaceHealthIssueType.COLUMN_DEFAULT_VALUE_NOT_VALID,

@@ -11,6 +11,7 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
 import { BillingSubscription } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
@@ -29,10 +30,19 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         Workspace,
         UserWorkspace,
         AppToken,
+        KeyValuePair,
         FeatureFlagEntity,
         BillingSubscription,
         BillingSubscriptionItem,
       ],
+      ssl: environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')
+        ? {
+            rejectUnauthorized: false,
+          }
+        : undefined,
+      extra: {
+        query_timeout: 10000,
+      },
     });
   }
 
@@ -84,6 +94,11 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         ? ['query', 'error']
         : ['error'],
       schema,
+      ssl: this.environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')
+        ? {
+            rejectUnauthorized: false,
+          }
+        : undefined,
     });
 
     await workspaceDataSource.initialize();

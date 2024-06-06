@@ -41,7 +41,7 @@ export const seedConnectedAccount = async (
         refreshToken: 'exampleRefreshToken',
         accessToken: 'exampleAccessToken',
         provider: 'google',
-        handle: 'incoming',
+        handle: 'tim@apple.dev',
       },
       {
         id: DEV_SEED_CONNECTED_ACCOUNT_IDS.JONY,
@@ -53,7 +53,7 @@ export const seedConnectedAccount = async (
         refreshToken: 'exampleRefreshToken',
         accessToken: 'exampleAccessToken',
         provider: 'google',
-        handle: 'incoming',
+        handle: 'jony.ive@apple.dev',
       },
       {
         id: DEV_SEED_CONNECTED_ACCOUNT_IDS.PHIL,
@@ -65,7 +65,7 @@ export const seedConnectedAccount = async (
         refreshToken: 'exampleRefreshToken',
         accessToken: 'exampleAccessToken',
         provider: 'google',
-        handle: 'incoming',
+        handle: 'phil.schiler@apple.dev',
       },
     ])
     .execute();

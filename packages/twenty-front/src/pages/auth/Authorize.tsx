@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 
 import { AppPath } from '@/types/AppPath';
 import { MainButton } from '@/ui/input/button/components/MainButton';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { useAuthorizeAppMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -52,7 +53,7 @@ const StyledButtonContainer = styled.div`
   gap: 10px;
   width: 100%;
 `;
-const Authorize = () => {
+export const Authorize = () => {
   const navigate = useNavigate();
   const [searchParam] = useSearchParams();
   //TODO: Replace with db call for registered third party apps
@@ -66,6 +67,7 @@ const Authorize = () => {
   const [app, setApp] = useState<App>();
   const clientId = searchParam.get('clientId');
   const codeChallenge = searchParam.get('codeChallenge');
+  const redirectUrl = searchParam.get('redirectUrl');
 
   useEffect(() => {
     const app = apps.find((app) => app.id === clientId);
@@ -76,17 +78,19 @@ const Authorize = () => {
 
   const [authorizeApp] = useAuthorizeAppMutation();
   const handleAuthorize = async () => {
-    if (isDefined(clientId) && isDefined(codeChallenge)) {
+    if (
+      isDefined(clientId) &&
+      isDefined(codeChallenge) &&
+      isDefined(redirectUrl)
+    ) {
       await authorizeApp({
         variables: {
           clientId,
           codeChallenge,
+          redirectUrl,
         },
         onCompleted: (data) => {
           window.location.href = data.authorizeApp.redirectUrl;
-        },
-        onError: (error) => {
-          throw Error(error.message);
         },
       });
     }
@@ -112,17 +116,12 @@ const Authorize = () => {
         </StyledAppsContainer>
         <StyledText>{app?.name} wants to access your account</StyledText>
         <StyledButtonContainer>
-          <MainButton
-            title="Cancel"
-            variant="secondary"
-            onClick={() => navigate(AppPath.Index)}
-            fullWidth
-          />
+          <UndecoratedLink to={AppPath.Index}>
+            <MainButton title="Cancel" variant="secondary" fullWidth />
+          </UndecoratedLink>
           <MainButton title="Authorize" onClick={handleAuthorize} fullWidth />
         </StyledButtonContainer>
       </StyledCardWrapper>
     </StyledContainer>
   );
 };
-
-export default Authorize;

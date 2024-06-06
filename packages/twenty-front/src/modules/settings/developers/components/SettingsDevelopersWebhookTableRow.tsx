@@ -3,7 +3,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconChevronRight } from 'twenty-ui';
 
-import { WebhookFieldItem } from '@/settings/developers/types/webhook/WebhookFieldItem';
+import { Webhook } from '@/settings/developers/types/webhook/Webhook';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
@@ -28,15 +28,15 @@ const StyledIconChevronRight = styled(IconChevronRight)`
 
 export const SettingsDevelopersWebhookTableRow = ({
   fieldItem,
-  onClick,
+  to,
 }: {
-  fieldItem: WebhookFieldItem;
-  onClick: () => void;
+  fieldItem: Webhook;
+  to: string;
 }) => {
   const theme = useTheme();
 
   return (
-    <StyledApisFieldTableRow onClick={onClick}>
+    <StyledApisFieldTableRow to={to}>
       <StyledUrlTableCell>{fieldItem.targetUrl}</StyledUrlTableCell>
       <StyledIconTableCell>
         <StyledIconChevronRight

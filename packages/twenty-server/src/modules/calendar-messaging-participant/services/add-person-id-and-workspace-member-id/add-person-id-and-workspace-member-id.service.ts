@@ -5,13 +5,13 @@ import { EntityManager } from 'typeorm';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { PersonRepository } from 'src/modules/person/repositories/person.repository';
-import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @Injectable()
 export class AddPersonIdAndWorkspaceMemberIdService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    @InjectObjectMetadataRepository(PersonObjectMetadata)
+    @InjectObjectMetadataRepository(PersonWorkspaceEntity)
     private readonly personRepository: PersonRepository,
   ) {}
 

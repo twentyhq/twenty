@@ -1,3 +1,4 @@
+import { CurrentUser } from '@/auth/states/currentUserState';
 import { CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
@@ -9,6 +10,7 @@ export enum OnboardingStatus {
   OngoingUserCreation = 'ongoing_user_creation',
   OngoingWorkspaceActivation = 'ongoing_workspace_activation',
   OngoingProfileCreation = 'ongoing_profile_creation',
+  OngoingSyncEmail = 'ongoing_sync_email',
   Completed = 'completed',
   CompletedWithoutSubscription = 'completed_without_subscription',
 }
@@ -17,6 +19,7 @@ export const getOnboardingStatus = ({
   isLoggedIn,
   currentWorkspaceMember,
   currentWorkspace,
+  currentUser,
   isBillingEnabled,
 }: {
   isLoggedIn: boolean;
@@ -25,7 +28,8 @@ export const getOnboardingStatus = ({
     'createdAt' | 'updatedAt' | 'userId' | 'userEmail' | '__typename'
   > | null;
   currentWorkspace: CurrentWorkspace | null;
-  isBillingEnabled?: boolean;
+  currentUser: CurrentUser | null;
+  isBillingEnabled: boolean;
 }) => {
   if (!isLoggedIn) {
     return OnboardingStatus.OngoingUserCreation;
@@ -33,12 +37,12 @@ export const getOnboardingStatus = ({
 
   // After SignInUp, the user should have a current workspace assigned.
   // If not, it indicates that the data is still being requested.
-  if (!currentWorkspace) {
+  if (!currentWorkspace || !currentUser) {
     return undefined;
   }
 
   if (
-    isBillingEnabled === true &&
+    isBillingEnabled &&
     currentWorkspace.subscriptionStatus === 'incomplete'
   ) {
     return OnboardingStatus.Incomplete;
@@ -55,31 +59,23 @@ export const getOnboardingStatus = ({
     return OnboardingStatus.OngoingProfileCreation;
   }
 
-  if (
-    isBillingEnabled === true &&
-    currentWorkspace.subscriptionStatus === 'canceled'
-  ) {
+  if (!currentUser.state.skipSyncEmailOnboardingStep) {
+    return OnboardingStatus.OngoingSyncEmail;
+  }
+
+  if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'canceled') {
     return OnboardingStatus.Canceled;
   }
 
-  if (
-    isBillingEnabled === true &&
-    currentWorkspace.subscriptionStatus === 'past_due'
-  ) {
+  if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'past_due') {
     return OnboardingStatus.PastDue;
   }
 
-  if (
-    isBillingEnabled === true &&
-    currentWorkspace.subscriptionStatus === 'unpaid'
-  ) {
+  if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'unpaid') {
     return OnboardingStatus.Unpaid;
   }
 
-  if (
-    isBillingEnabled === true &&
-    !currentWorkspace.currentBillingSubscription
-  ) {
+  if (isBillingEnabled && !currentWorkspace.currentBillingSubscription) {
     return OnboardingStatus.CompletedWithoutSubscription;
   }
 

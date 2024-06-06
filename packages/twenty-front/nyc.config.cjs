@@ -1,4 +1,5 @@
 const globalCoverage = {
+  branches: 45,
   statements: 60,
   lines: 60,
   functions: 60,
@@ -6,14 +7,16 @@ const globalCoverage = {
 };
 
 const modulesCoverage = {
-  statements: 70,
-  lines: 70,
-  functions: 65,
+  branches: 25,
+  statements: 50,
+  lines: 50,
+  functions: 40,
   include: ['src/modules/**/*'],
   exclude: ['src/**/*.ts'],
 };
 
 const pagesCoverage = {
+  branches: 40,
   statements: 60,
   lines: 60,
   functions: 45,

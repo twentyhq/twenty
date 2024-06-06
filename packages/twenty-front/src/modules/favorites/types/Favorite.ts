@@ -9,4 +9,5 @@ export type Favorite = {
   avatarType: AvatarType;
   link: string;
   recordId: string;
+  __typename: 'Favorite';
 };

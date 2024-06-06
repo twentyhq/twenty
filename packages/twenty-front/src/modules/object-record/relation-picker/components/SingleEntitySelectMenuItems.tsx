@@ -122,7 +122,7 @@ export const SingleEntitySelectMenuItems = ({
               selectedEntity={selectedEntity}
             />
           ))}
-          {showCreateButton && !loading && (
+          {showCreateButton && (
             <>
               {entitiesToSelect.length > 0 && <DropdownMenuSeparator />}
               <CreateNewButton

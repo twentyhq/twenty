@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 import {
   IconCalendarEvent,
   IconCheckbox,
+  IconHome,
   IconMail,
   IconNotes,
   IconPaperclip,
@@ -11,12 +12,12 @@ import {
 
 import { Calendar } from '@/activities/calendar/components/Calendar';
 import { EmailThreads } from '@/activities/emails/components/EmailThreads';
-import { Events } from '@/activities/events/components/Events';
 import { Attachments } from '@/activities/files/components/Attachments';
 import { Notes } from '@/activities/notes/components/Notes';
 import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { Timeline } from '@/activities/timeline/components/Timeline';
 import { TimelineQueryEffect } from '@/activities/timeline/components/TimelineQueryEffect';
+import { TimelineActivities } from '@/activities/timelineActivities/components/TimelineActivities';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { TabList } from '@/ui/layout/tab/components/TabList';
@@ -24,12 +25,12 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
-const StyledShowPageRightContainer = styled.div`
+const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex: 1 0 0;
   flex-direction: column;
   justify-content: start;
-  overflow: ${() => (useIsMobile() ? 'none' : 'hidden')};
+  overflow: ${(isMobile) => (isMobile ? 'none' : 'hidden')};
   width: calc(100% + 4px);
 `;
 
@@ -53,6 +54,9 @@ type ShowPageRightContainerProps = {
   tasks?: boolean;
   notes?: boolean;
   emails?: boolean;
+  summary?: JSX.Element;
+  isRightDrawer?: boolean;
+  loading: boolean;
 };
 
 export const ShowPageRightContainer = ({
@@ -61,11 +65,20 @@ export const ShowPageRightContainer = ({
   tasks,
   notes,
   emails,
+  loading,
+  summary,
+  isRightDrawer = false,
 }: ShowPageRightContainerProps) => {
-  const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
+  const { activeTabIdState } = useTabList(
+    TAB_LIST_COMPONENT_ID + isRightDrawer,
+  );
   const activeTabId = useRecoilValue(activeTabIdState);
 
-  const shouldDisplayCalendarTab = useIsFeatureEnabled('IS_CALENDAR_ENABLED');
+  const shouldDisplayCalendarTab =
+    targetableObject.targetObjectNameSingular ===
+      CoreObjectNameSingular.Company ||
+    targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Person;
+
   const shouldDisplayLogTab = useIsFeatureEnabled('IS_EVENT_OBJECT_ENABLED');
 
   const shouldDisplayEmailsTab =
@@ -74,12 +87,20 @@ export const ShowPageRightContainer = ({
         CoreObjectNameSingular.Company) ||
     targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Person;
 
+  const isMobile = useIsMobile() || isRightDrawer;
+
   const TASK_TABS = [
+    {
+      id: 'summary',
+      title: 'Summary',
+      Icon: IconHome,
+      hide: !isMobile,
+    },
     {
       id: 'timeline',
       title: 'Timeline',
       Icon: IconTimelineEvent,
-      hide: !timeline,
+      hide: !timeline || isRightDrawer,
     },
     {
       id: 'tasks',
@@ -121,14 +142,19 @@ export const ShowPageRightContainer = ({
   ];
 
   return (
-    <StyledShowPageRightContainer>
+    <StyledShowPageRightContainer isMobile={isMobile}>
       <StyledTabListContainer>
-        <TabList tabListId={TAB_LIST_COMPONENT_ID} tabs={TASK_TABS} />
+        <TabList
+          loading={loading}
+          tabListId={TAB_LIST_COMPONENT_ID + isRightDrawer}
+          tabs={TASK_TABS}
+        />
       </StyledTabListContainer>
+      {activeTabId === 'summary' && summary}
       {activeTabId === 'timeline' && (
         <>
           <TimelineQueryEffect targetableObject={targetableObject} />
-          <Timeline targetableObject={targetableObject} />
+          <Timeline loading={loading} targetableObject={targetableObject} />
         </>
       )}
       {activeTabId === 'tasks' && (
@@ -144,7 +170,10 @@ export const ShowPageRightContainer = ({
       {activeTabId === 'calendar' && (
         <Calendar targetableObject={targetableObject} />
       )}
-      {activeTabId === 'logs' && <Events targetableObject={targetableObject} />}
+      {activeTabId === 'logs' && (
+        <TimelineActivities targetableObject={targetableObject} />
+      )}
+      {}
     </StyledShowPageRightContainer>
   );
 };

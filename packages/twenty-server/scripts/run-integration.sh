@@ -4,5 +4,5 @@
 DIR="$(cd "$(dirname "$0")" && pwd)"
 source $DIR/set-env-test.sh
 
-yarn nx database:reset
-yarn nx jest --config ./test/jest-e2e.json
+npx nx database:reset
+npx nx jest --config ./test/jest-e2e.json

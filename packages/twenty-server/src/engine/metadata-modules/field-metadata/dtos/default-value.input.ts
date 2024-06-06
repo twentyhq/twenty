@@ -2,10 +2,10 @@ import {
   IsArray,
   IsBoolean,
   IsDate,
-  IsJSON,
   IsNotEmpty,
   IsNumber,
   IsNumberString,
+  IsObject,
   IsString,
   Matches,
   ValidateIf,
@@ -28,9 +28,9 @@ export class FieldMetadataDefaultValueString {
 }
 
 export class FieldMetadataDefaultValueRawJson {
-  @ValidateIf((object, value) => value !== null)
-  @IsJSON()
-  value: JSON | null;
+  @ValidateIf((_object, value) => value !== null)
+  @IsObject()
+  value: object | null;
 }
 
 export class FieldMetadataDefaultValueNumber {
@@ -137,4 +137,18 @@ export class FieldMetadataDefaultValueAddress {
   @ValidateIf((_object, value) => value !== null)
   @IsNumber()
   addressLng: number | null;
+}
+
+export class FieldMetadataDefaultValueLinks {
+  @ValidateIf((_object, value) => value !== null)
+  @IsQuotedString()
+  primaryLinkLabel: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsQuotedString()
+  primaryLinkUrl: string | null;
+
+  @ValidateIf((_object, value) => value !== null)
+  @IsObject()
+  secondaryLinks: object | null;
 }

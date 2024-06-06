@@ -1,4 +1,4 @@
-import { MouseEvent } from 'react';
+import { FunctionComponent, MouseEvent, ReactElement } from 'react';
 import styled from '@emotion/styled';
 import { IconComponent } from 'twenty-ui';
 
@@ -14,7 +14,9 @@ export type LightIconButtonGroupProps = Pick<
   'className' | 'size'
 > & {
   iconButtons: {
+    Wrapper?: FunctionComponent<{ iconButton: ReactElement }>;
     Icon: IconComponent;
+    accent?: LightIconButtonProps['accent'];
     onClick?: (event: MouseEvent<any>) => void;
     disabled?: boolean;
   }[];
@@ -26,15 +28,25 @@ export const LightIconButtonGroup = ({
   className,
 }: LightIconButtonGroupProps) => (
   <StyledLightIconButtonGroupContainer className={className}>
-    {iconButtons.map(({ Icon, onClick }, index) => {
-      return (
+    {iconButtons.map(({ Wrapper, Icon, accent, onClick }, index) => {
+      const iconButton = (
         <LightIconButton
           key={`light-icon-button-${index}`}
           Icon={Icon}
+          accent={accent}
           disabled={!onClick}
           onClick={onClick}
           size={size}
         />
+      );
+
+      return Wrapper ? (
+        <Wrapper
+          key={`light-icon-button-wrapper-${index}`}
+          iconButton={iconButton}
+        />
+      ) : (
+        iconButton
       );
     })}
   </StyledLightIconButtonGroupContainer>

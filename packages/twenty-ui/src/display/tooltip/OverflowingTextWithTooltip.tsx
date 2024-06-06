@@ -1,31 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import styled from '@emotion/styled';
+import clsx from 'clsx';
 import { v4 as uuidV4 } from 'uuid';
 
 import { AppTooltip } from './AppTooltip';
 
-const StyledOverflowingText = styled.div<{ cursorPointer: boolean }>`
-  cursor: ${({ cursorPointer }) => (cursorPointer ? 'pointer' : 'inherit')};
-  font-family: inherit;
-  font-size: inherit;
-
-  font-weight: inherit;
-  max-width: 100%;
-  overflow: hidden;
-  text-decoration: inherit;
-
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
+import styles from './OverflowingTextWithTooltip.module.css';
 
 export const OverflowingTextWithTooltip = ({
+  size = 'small',
   text,
-  className,
   mutliline,
 }: {
+  size?: 'large' | 'small';
   text: string | null | undefined;
-  className?: string;
   mutliline?: boolean;
 }) => {
   const textElementId = `title-id-${uuidV4()}`;
@@ -34,17 +22,19 @@ export const OverflowingTextWithTooltip = ({
 
   const [isTitleOverflowing, setIsTitleOverflowing] = useState(false);
 
-  useEffect(() => {
+  const handleMouseEnter = () => {
     const isOverflowing =
       (text?.length ?? 0) > 0 && textRef.current
         ? textRef.current?.scrollHeight > textRef.current?.clientHeight ||
           textRef.current.scrollWidth > textRef.current.clientWidth
         : false;
 
-    if (isTitleOverflowing !== isOverflowing) {
-      setIsTitleOverflowing(isOverflowing);
-    }
-  }, [isTitleOverflowing, text]);
+    setIsTitleOverflowing(isOverflowing);
+  };
+
+  const handleMouseLeave = () => {
+    setIsTitleOverflowing(false);
+  };
 
   const handleTooltipClick = (event: React.MouseEvent<HTMLDivElement>) => {
     event.stopPropagation();
@@ -53,23 +43,29 @@ export const OverflowingTextWithTooltip = ({
 
   return (
     <>
-      <StyledOverflowingText
+      <div
         data-testid="tooltip"
-        className={className}
+        className={clsx({
+          [styles.main]: true,
+          [styles.cursor]: isTitleOverflowing,
+          [styles.large]: size === 'large',
+        })}
         ref={textRef}
         id={textElementId}
-        cursorPointer={isTitleOverflowing}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
         {text}
-      </StyledOverflowingText>
+      </div>
       {isTitleOverflowing &&
         createPortal(
           <div onClick={handleTooltipClick}>
             <AppTooltip
               anchorSelect={`#${textElementId}`}
               content={mutliline ? undefined : text ?? ''}
-              delayHide={0}
+              delayHide={1}
               offset={5}
+              isOpen
               noArrow
               place="bottom"
               positionStrategy="absolute"

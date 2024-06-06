@@ -1,8 +1,10 @@
 import console from 'console';
 
-import { camelToSnakeCase, connectionSource, performQuery } from './utils';
+import { rawDataSource } from 'src/database/typeorm/raw/raw.datasource';
 
-connectionSource
+import { camelToSnakeCase, performQuery } from './utils';
+
+rawDataSource
   .initialize()
   .then(async () => {
     await performQuery(

@@ -2,7 +2,7 @@ import { ReactNode } from 'react';
 import { MockedProvider, MockedResponse } from '@apollo/client/testing';
 import { act, renderHook } from '@testing-library/react';
 import gql from 'graphql-tag';
-import pick from 'lodash/pick';
+import pick from 'lodash.pick';
 import { RecoilRoot } from 'recoil';
 
 import { useCreateActivityInDB } from '@/activities/hooks/useCreateActivityInDB';
@@ -82,7 +82,10 @@ describe('useCreateActivityInDB', () => {
     });
 
     await act(async () => {
-      await result.current.createActivityInDB(mockedActivity);
+      await result.current.createActivityInDB({
+        ...mockedActivity,
+        __typename: 'Activity',
+      });
     });
 
     expect(mocks[0].result).toHaveBeenCalled();

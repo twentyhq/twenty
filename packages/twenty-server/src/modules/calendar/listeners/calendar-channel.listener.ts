@@ -9,25 +9,25 @@ import {
   CalendarCreateCompanyAndContactAfterSyncJobData,
   CalendarCreateCompanyAndContactAfterSyncJob,
 } from 'src/modules/calendar/jobs/calendar-create-company-and-contact-after-sync.job';
-import { MessageChannelObjectMetadata } from 'src/modules/messaging/standard-objects/message-channel.object-metadata';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
 export class CalendarChannelListener {
   constructor(
-    @Inject(MessageQueue.messagingQueue)
+    @Inject(MessageQueue.calendarQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
   @OnEvent('calendarChannel.updated')
   async handleUpdatedEvent(
-    payload: ObjectRecordUpdateEvent<MessageChannelObjectMetadata>,
+    payload: ObjectRecordUpdateEvent<MessageChannelWorkspaceEntity>,
   ) {
     if (
       objectRecordChangedProperties(
-        payload.details.before,
-        payload.details.after,
+        payload.properties.before,
+        payload.properties.after,
       ).includes('isContactAutoCreationEnabled') &&
-      payload.details.after.isContactAutoCreationEnabled
+      payload.properties.after.isContactAutoCreationEnabled
     ) {
       await this.messageQueueService.add<CalendarCreateCompanyAndContactAfterSyncJobData>(
         CalendarCreateCompanyAndContactAfterSyncJob.name,

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTheme } from '@emotion/react';
+import { css, useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconComponent } from 'twenty-ui';
 
@@ -30,7 +30,8 @@ const StyledButton = styled.button<
   >
 >`
   align-items: center;
-  backdrop-filter: ${({ applyBlur }) => (applyBlur ? 'blur(20px)' : 'none')};
+  backdrop-filter: ${({ theme, applyBlur }) =>
+    applyBlur ? theme.blur.medium : 'none'};
   background: ${({ theme, isActive }) =>
     isActive ? theme.background.transparent.medium : theme.background.primary};
   border: ${({ focus, theme }) =>
@@ -87,10 +88,13 @@ const StyledButton = styled.button<
     `;
   }}
 
-  &:hover {
-    background: ${({ theme, isActive }) =>
-      !!isActive ?? theme.background.transparent.lighter};
-  }
+  ${({ theme, isActive }) =>
+    isActive &&
+    css`
+      &:hover {
+        background: ${theme.background.transparent.lighter};
+      }
+    `}
 
   &:active {
     background: ${({ theme, disabled }) =>

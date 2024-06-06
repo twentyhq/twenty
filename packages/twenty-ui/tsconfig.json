@@ -8,7 +8,7 @@
     "esModuleInterop": true,
     "noEmit": true,
     "types": ["node"],
-    "outDir": "../../dist/out-tsc",
+    "outDir": "../../.cache/tsc",
     "paths": {
       "@ui/*": ["packages/twenty-ui/src/*"]
     }

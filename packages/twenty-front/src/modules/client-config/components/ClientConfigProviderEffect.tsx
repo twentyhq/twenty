@@ -3,6 +3,8 @@ import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { billingState } from '@/client-config/states/billingState';
+import { captchaProviderState } from '@/client-config/states/captchaProviderState';
+import { chromeExtensionIdState } from '@/client-config/states/chromeExtensionIdState';
 import { isClientConfigLoadedState } from '@/client-config/states/isClientConfigLoadedState';
 import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
@@ -29,6 +31,10 @@ export const ClientConfigProviderEffect = () => {
     isClientConfigLoadedState,
   );
 
+  const setCaptchaProvider = useSetRecoilState(captchaProviderState);
+
+  const setChromeExtensionId = useSetRecoilState(chromeExtensionIdState);
+
   const { data, loading } = useGetClientConfigQuery({
     skip: isClientConfigLoaded,
   });
@@ -38,6 +44,7 @@ export const ClientConfigProviderEffect = () => {
       setIsClientConfigLoaded(true);
       setAuthProviders({
         google: data?.clientConfig.authProviders.google,
+        microsoft: data?.clientConfig.authProviders.microsoft,
         password: data?.clientConfig.authProviders.password,
         magicLink: false,
       });
@@ -54,6 +61,13 @@ export const ClientConfigProviderEffect = () => {
         release: data?.clientConfig?.sentry?.release,
         environment: data?.clientConfig?.sentry?.environment,
       });
+
+      setCaptchaProvider({
+        provider: data?.clientConfig?.captcha?.provider,
+        siteKey: data?.clientConfig?.captcha?.siteKey,
+      });
+
+      setChromeExtensionId(data?.clientConfig?.chromeExtensionId);
     }
   }, [
     data,
@@ -67,6 +81,8 @@ export const ClientConfigProviderEffect = () => {
     setSentryConfig,
     loading,
     setIsClientConfigLoaded,
+    setCaptchaProvider,
+    setChromeExtensionId,
   ]);
 
   return <></>;

@@ -1,0 +1,27 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1707921820164,
+      "tag": "0000_absent_giant_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1713792223113,
+      "tag": "0001_marvelous_eddie_brock",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1714375499735,
+      "tag": "0002_demonic_matthew_murdock",
+      "breakpoints": true
+    }
+  ]
+}

@@ -1,0 +1,146 @@
+.form-container {
+    height: 45px;
+    overflow: hidden;
+    border-bottom: 1px solid var(--ifm-color-secondary-light);
+    position: sticky;
+    top: var(--ifm-navbar-height) + 10;
+    padding: 0px 8px;
+    background: var(--ifm-color-secondary-contrast-background);
+    z-index: 2;
+    display: flex;
+}
+
+.form {
+    display: flex;
+    height: 45px;
+    gap: 10px;
+    width: 50%;
+    margin-left: auto;
+    flex: 0.7;
+}
+
+.link {
+    color: white;
+    text-decoration: underline;
+    position: relative;
+    font-weight: bold;
+    transition: color 0.3s ease;
+
+    &:hover {
+        color: #ddd;
+    }
+}
+
+.input {
+    padding: 6px;
+    margin: 5px 0 5px 0;
+    max-width: 460px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #f3f3f3;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding-left:30px;
+    height: 32px;
+}
+
+.input[disabled] {
+    color: rgb(153, 153, 153)
+}
+
+[data-theme='dark'] .input {
+    background-color: #16233f;
+}
+
+.inputWrapper {
+    display: flex;
+    align-items: center;
+    flex: 1;
+    position: relative;
+}
+
+.inputIcon {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    height: 100%;
+    padding: 5px;
+    color: #B3B3B3;
+}
+
+[data-theme='dark'] .inputIcon {
+    color: white;
+}
+
+.select {
+    padding: 6px;
+    margin: 5px 0 5px 0;
+    max-width: 460px;
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #f3f3f3;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    height: 32px;
+    flex: 1;
+}
+
+[data-theme='dark'] .select {
+    background-color: #16233f;
+}
+
+
+.invalid {
+    border: 1px solid #f83e3e;
+}
+
+.token-invalid {
+    color: #f83e3e;
+    font-size: 12px;
+}
+
+.not-visible {
+    visibility: hidden;
+}
+
+.loader {
+    color: #16233f;
+    font-size: 2rem;
+    animation: animate 2s infinite;
+}
+
+[data-theme='dark'] .loader {
+    color: #a3c0f8;
+}
+
+@keyframes animate {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(720deg);
+    }
+}
+
+.loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+}
+
+
+.backButton {
+    position: absolute;
+    display: flex;
+    left: 8px;
+    height: 100%;
+    align-items: center;
+    cursor: pointer;  
+    color: #999999; 
+
+    &:hover {
+        color: #16233f;
+    }
+}

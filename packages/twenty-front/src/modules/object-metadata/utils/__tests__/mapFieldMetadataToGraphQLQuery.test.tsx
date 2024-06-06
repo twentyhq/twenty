@@ -37,21 +37,10 @@ describe('mapFieldMetadataToGraphQLQuery', () => {
   lastName
 }`);
   });
-  it('should not return relation if depth is < 1', async () => {
-    const res = mapFieldMetadataToGraphQLQuery({
-      objectMetadataItems: mockObjectMetadataItems,
-      depth: 0,
-      field: personObjectMetadataItem.fields.find(
-        (field) => field.name === 'company',
-      )!,
-    });
-    expect(formatGQLString(res)).toEqual('');
-  });
 
-  it('should return relation if it matches depth', async () => {
+  it('should return non relation subFields if relation', async () => {
     const res = mapFieldMetadataToGraphQLQuery({
       objectMetadataItems: mockObjectMetadataItems,
-      depth: 1,
       field: personObjectMetadataItem.fields.find(
         (field) => field.name === 'company',
       )!,
@@ -85,166 +74,12 @@ id
 idealCustomerProfile
 }`);
   });
-  it('should return relation with all sub relations if it matches depth', async () => {
-    const res = mapFieldMetadataToGraphQLQuery({
-      objectMetadataItems: mockObjectMetadataItems,
-      depth: 2,
-      field: personObjectMetadataItem.fields.find(
-        (field) => field.name === 'company',
-      )!,
-    });
-    expect(formatGQLString(res)).toEqual(`company
-{
-__typename
-xLink
-{
-  label
-  url
-}
-accountOwner
-{
-__typename
-colorScheme
-name
-{
-  firstName
-  lastName
-}
-locale
-userId
-avatarUrl
-createdAt
-updatedAt
-id
-}
-linkedinLink
-{
-  label
-  url
-}
-attachments
-{
-  edges {
-    node {
-__typename
-updatedAt
-createdAt
-name
-personId
-activityId
-companyId
-id
-authorId
-type
-fullPath
-}
-  }
-}
-domainName
-opportunities
-{
-  edges {
-    node {
-__typename
-personId
-pointOfContactId
-updatedAt
-companyId
-probability
-closeDate
-amount
-{
-  amountMicros
-  currencyCode
-}
-id
-createdAt
-}
-  }
-}
-annualRecurringRevenue
-{
-  amountMicros
-  currencyCode
-}
-createdAt
-address
-updatedAt
-activityTargets
-{
-  edges {
-    node {
-__typename
-updatedAt
-createdAt
-personId
-activityId
-companyId
-id
-}
-  }
-}
-favorites
-{
-  edges {
-    node {
-__typename
-id
-companyId
-createdAt
-personId
-position
-workspaceMemberId
-updatedAt
-}
-  }
-}
-people
-{
-  edges {
-    node {
-__typename
-xLink
-{
-  label
-  url
-}
-id
-createdAt
-city
-email
-jobTitle
-name
-{
-  firstName
-  lastName
-}
-phone
-linkedinLink
-{
-  label
-  url
-}
-updatedAt
-avatarUrl
-companyId
-}
-  }
-}
-name
-accountOwnerId
-employees
-id
-idealCustomerProfile
-}`);
-  });
 
-  it('should return GraphQL fields based on queryFields', async () => {
+  it('should return only return relation subFields that are in recordGqlFields', async () => {
     const res = mapFieldMetadataToGraphQLQuery({
       objectMetadataItems: mockObjectMetadataItems,
-      depth: 2,
-      queryFields: {
-        accountOwner: true,
+      relationrecordFields: {
+        accountOwner: { id: true, name: true },
         people: true,
         xLink: true,
         linkedinLink: true,
@@ -274,17 +109,11 @@ xLink
 accountOwner
 {
 __typename
-colorScheme
 name
 {
   firstName
   lastName
 }
-locale
-userId
-avatarUrl
-createdAt
-updatedAt
 id
 }
 linkedinLink

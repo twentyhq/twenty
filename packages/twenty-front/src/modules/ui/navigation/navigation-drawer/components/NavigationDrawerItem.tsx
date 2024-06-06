@@ -1,12 +1,12 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import isPropValid from '@emotion/is-prop-valid';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useSetRecoilState } from 'recoil';
-import { IconComponent, Pill } from 'twenty-ui';
+import { IconComponent, MOBILE_VIEWPORT, Pill } from 'twenty-ui';
 
 import { isNavigationDrawerOpenState } from '@/ui/navigation/states/isNavigationDrawerOpenState';
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { isDefined } from '~/utils/isDefined';
 
@@ -29,14 +29,19 @@ type StyledItemProps = {
   danger?: boolean;
   level: 1 | 2;
   soon?: boolean;
+  to?: string;
 };
 
-const StyledItem = styled.div<StyledItemProps>`
+const StyledItem = styled('div', {
+  shouldForwardProp: (prop) =>
+    !['active', 'danger', 'soon'].includes(prop) && isPropValid(prop),
+})<StyledItemProps>`
   align-items: center;
   background: ${(props) =>
     props.active ? props.theme.background.transparent.light : 'inherit'};
   border: none;
   border-radius: ${({ theme }) => theme.border.radius.sm};
+  text-decoration: none;
   color: ${(props) => {
     if (props.active === true) {
       return props.theme.font.color.primary;
@@ -153,6 +158,8 @@ export const NavigationDrawerItem = ({
       aria-selected={active}
       danger={danger}
       soon={soon}
+      as={to ? Link : 'div'}
+      to={to ? to : undefined}
     >
       {Icon && <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.md} />}
       <StyledItemLabel>{label}</StyledItemLabel>

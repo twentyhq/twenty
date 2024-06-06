@@ -23,8 +23,8 @@ VERSION=x.y.z BRANCH=branch-name bash <(curl -sL https://git.new/20)
 ## Manual installation
 
 1. Copy the [.env.example](https://github.com/twentyhq/twenty/blob/main/packages/twenty-docker/.env.example) into a `.env` in the same directory where your `docker-compose.yml` file will be
-2. Run the command `openssl rand -base64 32` three times, make note of the string for each
-3. In your .env file, replace the three "replace_me_with_a_random_string_access" with the three random strings you just generated.
+2. Run the command `openssl rand -base64 32` four times, make note of the string for each
+3. In your .env file, replace the three "replace_me_with_a_random_string_access" with the four random strings you just generated.
 
 ```
 ACCESS_TOKEN_SECRET=replace_me_with_a_random_string_access
@@ -44,7 +44,7 @@ FILE_TOKEN_SECRET=replace_me_with_a_random_string_refresh
 If you encounter errors, (not able to log into the application after inputting an email) after the inital setup, try running the following commands and see if that solves your issue.
 ```
 docker exec -it twenty-server-1 yarn
-docker exec -it twenty-server-1 yarn nx database:reset
+docker exec -it twenty-server-1 npx nx database:reset
 ```
 
 ### Cannot connect to server, running behind a reverse proxy

@@ -30,6 +30,16 @@ const StyledEditor = styled.div`
     color: ${({ theme }) => theme.font.color.tertiary};
     font-style: normal !important;
   }
+  & .editor .bn-inline-content:has(> .ProseMirror-trailingBreak):before {
+    font-style: normal;
+  }
+  & .mantine-ActionIcon-icon {
+    width: 20px;
+  }
+  & .bn-container .bn-drag-handle {
+    width: 20px;
+    height: 20px;
+  }
 `;
 
 export const BlockEditor = ({

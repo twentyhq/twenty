@@ -2,12 +2,13 @@ import { useRecoilCallback } from 'recoil';
 
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getSnapshotValue } from '@/ui/utilities/recoil-scope/utils/getSnapshotValue';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type useSetRecordTableDataProps = {
   recordTableId?: string;
-  onEntityCountChange: (entityCount: number) => void;
+  onEntityCountChange: (entityCount?: number) => void;
 };
 
 export const useSetRecordTableData = ({
@@ -23,7 +24,7 @@ export const useSetRecordTableData = ({
 
   return useRecoilCallback(
     ({ set, snapshot }) =>
-      <T extends { id: string }>(newEntityArray: T[], totalCount: number) => {
+      <T extends ObjectRecord>(newEntityArray: T[], totalCount?: number) => {
         for (const entity of newEntityArray) {
           // TODO: refactor with scoped state later
           const currentEntity = snapshot
@@ -53,7 +54,7 @@ export const useSetRecordTableData = ({
           }
         }
 
-        set(numberOfTableRowsState, totalCount);
+        set(numberOfTableRowsState, totalCount ?? 0);
         onEntityCountChange(totalCount);
       },
     [

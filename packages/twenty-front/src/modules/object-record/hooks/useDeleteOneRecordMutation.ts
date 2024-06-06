@@ -26,7 +26,7 @@ export const useDeleteOneRecordMutation = ({
   );
 
   const deleteOneRecordMutation = gql`
-    mutation DeleteOne${capitalizedObjectName}($idToDelete: UUID!)  {
+    mutation DeleteOne${capitalizedObjectName}($idToDelete: ID!)  {
       ${mutationResponseField}(id: $idToDelete) {
         id
       }

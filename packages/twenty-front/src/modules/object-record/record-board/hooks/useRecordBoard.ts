@@ -11,8 +11,8 @@ export const useRecordBoard = (recordBoardId?: string) => {
     objectSingularNameState,
     selectedRecordIdsSelector,
     isCompactModeActiveState,
-    onFetchMoreVisibilityChangeState,
     kanbanFieldMetadataNameState,
+    shouldFetchMoreSelector,
   } = useRecordBoardStates(recordBoardId);
 
   const { setColumns } = useSetRecordBoardColumns(recordBoardId);
@@ -32,6 +32,6 @@ export const useRecordBoard = (recordBoardId?: string) => {
     setKanbanFieldMetadataName,
     selectedRecordIdsSelector,
     isCompactModeActiveState,
-    onFetchMoreVisibilityChangeState,
+    shouldFetchMoreSelector,
   };
 };

@@ -1,31 +1,36 @@
 import { OperationVariables } from '@apollo/client';
-import { isUndefined } from '@sniptt/guards';
 import { DocumentNode } from 'graphql';
 
 import getApolloClient from '~/utils/apolloClient';
+import { isDefined } from '~/utils/isDefined';
 
 export const callQuery = async <T>(
   query: DocumentNode,
   variables?: OperationVariables,
 ): Promise<T | null> => {
-  const client = await getApolloClient();
+  try {
+    const client = await getApolloClient();
+    const { data } = await client.query<T>({ query, variables });
 
-  const { data, error } = await client.query<T>({ query, variables });
-
-  if (!isUndefined(error)) throw new Error(error.message);
-
-  return data ?? null;
+    if (isDefined(data)) return data;
+    else return null;
+  } catch (error) {
+    return null;
+  }
 };
 
 export const callMutation = async <T>(
   mutation: DocumentNode,
   variables?: OperationVariables,
 ): Promise<T | null> => {
-  const client = await getApolloClient();
+  try {
+    const client = await getApolloClient();
 
-  const { data, errors } = await client.mutate<T>({ mutation, variables });
+    const { data } = await client.mutate<T>({ mutation, variables });
 
-  if (!isUndefined(errors)) throw new Error(errors[0].message);
-
-  return data ?? null;
+    if (isDefined(data)) return data;
+    else return null;
+  } catch (error) {
+    return null;
+  }
 };

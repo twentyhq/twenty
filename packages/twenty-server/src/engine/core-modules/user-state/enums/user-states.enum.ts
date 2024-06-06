@@ -1,0 +1,3 @@
+export enum UserStates {
+  SYNC_EMAIL_ONBOARDING_STEP = 'SYNC_EMAIL_ONBOARDING_STEP',
+}

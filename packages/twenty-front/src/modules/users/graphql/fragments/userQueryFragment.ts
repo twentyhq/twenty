@@ -8,6 +8,9 @@ export const USER_QUERY_FRAGMENT = gql`
     email
     canImpersonate
     supportUserHash
+    state {
+      skipSyncEmailOnboardingStep
+    }
     workspaceMember {
       id
       name {
@@ -32,6 +35,12 @@ export const USER_QUERY_FRAGMENT = gql`
         key
         value
         workspaceId
+      }
+      currentCacheVersion
+      currentBillingSubscription {
+        id
+        status
+        interval
       }
     }
     workspaces {

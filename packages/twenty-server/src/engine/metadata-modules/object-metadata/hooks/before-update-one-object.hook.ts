@@ -12,12 +12,12 @@ import {
 import { Equal, In, Repository } from 'typeorm';
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { UpdateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
+import { UpdateObjectPayload } from 'src/engine/metadata-modules/object-metadata/dtos/update-object.input';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 @Injectable()
-export class BeforeUpdateOneObject<T extends UpdateObjectInput>
+export class BeforeUpdateOneObject<T extends UpdateObjectPayload>
   implements BeforeUpdateOneHook<T, any>
 {
   constructor(
@@ -30,10 +30,8 @@ export class BeforeUpdateOneObject<T extends UpdateObjectInput>
   // TODO: this logic could be moved to a policy guard
   async run(
     instance: UpdateOneInputType<T>,
-    context: any,
+    workspaceId: string,
   ): Promise<UpdateOneInputType<T>> {
-    const workspaceId = context?.req?.user?.workspace?.id;
-
     if (!workspaceId) {
       throw new UnauthorizedException();
     }
@@ -52,6 +50,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectInput>
     if (!objectMetadata.isCustom) {
       if (
         Object.keys(instance.update).length === 1 &&
+        // eslint-disable-next-line no-prototype-builtins
         instance.update.hasOwnProperty('isActive') &&
         instance.update.isActive !== undefined
       ) {
@@ -107,7 +106,7 @@ export class BeforeUpdateOneObject<T extends UpdateObjectInput>
 
   // This is temporary until we properly use the MigrationRunner to update column names
   private checkIfFieldIsEditable(
-    update: UpdateObjectInput,
+    update: UpdateObjectPayload,
     objectMetadata: ObjectMetadataEntity,
   ) {
     if (

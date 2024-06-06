@@ -1,7 +1,8 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import { Radio } from '@/ui/input/components/Radio.tsx';
+import { Radio } from '@/ui/input/components/Radio';
+
 const StyledSubscriptionCardContainer = styled.button`
   background-color: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};

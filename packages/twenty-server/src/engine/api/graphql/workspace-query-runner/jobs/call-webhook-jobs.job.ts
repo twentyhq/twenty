@@ -4,7 +4,6 @@ import { MessageQueueJob } from 'src/engine/integrations/message-queue/interface
 import { ObjectMetadataInterface } from 'src/engine/metadata-modules/field-metadata/interfaces/object-metadata.interface';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
@@ -34,7 +33,6 @@ export class CallWebhookJobsJob
 
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    private readonly objectMetadataService: ObjectMetadataService,
     private readonly dataSourceService: DataSourceService,
     @Inject(MessageQueue.webhookQueue)
     private readonly messageQueueService: MessageQueueService,

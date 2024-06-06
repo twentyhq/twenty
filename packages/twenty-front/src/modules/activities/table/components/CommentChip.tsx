@@ -9,7 +9,7 @@ export type CommentChipProps = {
 
 const StyledChip = styled.div`
   align-items: center;
-  backdrop-filter: blur(6px);
+  backdrop-filter: ${({ theme }) => theme.blur.medium};
 
   background: ${({ theme }) => theme.background.transparent.primary};
   border-radius: ${({ theme }) => theme.border.radius.md};

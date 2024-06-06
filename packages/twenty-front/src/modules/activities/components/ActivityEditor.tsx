@@ -4,9 +4,9 @@ import styled from '@emotion/styled';
 import { ActivityBodyEditor } from '@/activities/components/ActivityBodyEditor';
 import { ActivityBodyEffect } from '@/activities/components/ActivityBodyEffect';
 import { ActivityComments } from '@/activities/components/ActivityComments';
+import { ActivityCreationDate } from '@/activities/components/ActivityCreationDate';
 import { ActivityEditorFields } from '@/activities/components/ActivityEditorFields';
 import { ActivityTitleEffect } from '@/activities/components/ActivityTitleEffect';
-import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { ActivityTitle } from './ActivityTitle';
@@ -29,6 +29,13 @@ const StyledUpperPartContainer = styled.div`
   flex-direction: column;
 
   justify-content: flex-start;
+`;
+
+const StyledTitleContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTopContainer = styled.div`
@@ -60,9 +67,11 @@ export const ActivityEditor = ({
     <StyledContainer ref={containerRef}>
       <StyledUpperPartContainer>
         <StyledTopContainer>
-          <ActivityTypeDropdown activityId={activityId} />
           <ActivityTitleEffect activityId={activityId} />
-          <ActivityTitle activityId={activityId} />
+          <StyledTitleContainer>
+            <ActivityTitle activityId={activityId} />
+            <ActivityCreationDate activityId={activityId} />
+          </StyledTitleContainer>
           <ActivityEditorFields activityId={activityId} />
         </StyledTopContainer>
       </StyledUpperPartContainer>

@@ -5,6 +5,7 @@ on:
   # see: https://securitylab.github.com/research/github-actions-preventing-pwn-requests/
   # and: https://github.com/facebook/react-native/pull/34370/files
   pull_request_target:
+    types: [opened, synchronize, reopened, closed]
 permissions:
   actions: write
   checks: write
@@ -19,15 +20,24 @@ concurrency:
 jobs:
   danger-js:
     runs-on: ubuntu-latest
+    if: github.event.action != 'closed'
     steps:
       - uses: actions/checkout@v4
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18"
-      - name: Utils / Install Dependencies
-        run: yarn
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/yarn-install
       - name: Utils / Run Danger.js
-        run: cd packages/twenty-utils && yarn nx danger:ci
+        run: cd packages/twenty-utils && npx nx danger:ci
         env:
           DANGER_GITHUB_API_TOKEN: ${{ github.token }}
+  
+  congratulate:
+    runs-on: ubuntu-latest
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install dependencies
+        uses: ./.github/workflows/actions/yarn-install
+      - name: Run congratulate-dangerfile.js
+        run: cd packages/twenty-utils && npx nx danger:congratulate
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}

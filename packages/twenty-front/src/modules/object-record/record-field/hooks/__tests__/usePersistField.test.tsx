@@ -21,7 +21,7 @@ import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata'
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 
 const query = gql`
-  mutation UpdateOnePerson($idToUpdate: UUID!, $input: PersonUpdateInput!) {
+  mutation UpdateOnePerson($idToUpdate: ID!, $input: PersonUpdateInput!) {
     updatePerson(id: $idToUpdate, data: $input) {
       __typename
       xLink {

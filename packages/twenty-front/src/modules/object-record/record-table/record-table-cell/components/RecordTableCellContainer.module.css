@@ -1,0 +1,32 @@
+.td-in-edit-mode {
+  z-index: 4 !important;
+}
+
+.td-not-in-edit-mode {
+  z-index: 3;
+}
+
+.td-is-selected {
+  background: var(--twentycrm-accent-quaternary);
+}
+
+.td-is-not-selected {
+  background: var(--twentycrm-background-primary);
+}
+
+.cell-base-container {
+  align-items: center;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  height: 32px;
+  position: relative;
+  user-select: none;
+}
+
+.cell-base-container-soft-focus {
+  background: var(--twentycrm-background-transparent-secondary);
+  border-radius: var(--twentycrm-border-radius-sm);
+  outline: 1px solid var(--twentycrm-font-color-extra-light);
+}
+
