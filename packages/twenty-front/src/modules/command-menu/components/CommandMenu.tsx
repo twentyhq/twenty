@@ -39,15 +39,15 @@ export const StyledDialog = styled.div`
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-shadow: ${({ theme }) => theme.boxShadow.superHeavy};
   font-family: ${({ theme }) => theme.font.family};
-  left: 50%;
+  left: ${() => (useIsMobile() ? '0%' : '50%')};
   max-width: 640px;
   overflow: hidden;
   padding: 0;
   position: fixed;
-  top: 30%;
-  transform: ${() =>
-    useIsMobile() ? 'translateX(-49.5%)' : 'translateX(-50%)'};
-  width: ${() => (useIsMobile() ? 'calc(100% - 40px)' : '100%')};
+  top: ${() => (useIsMobile() ? '0%' : '30%')};
+  transform: ${() => (useIsMobile() ? 'none' : 'translateX(-50%)')};
+  width: ${() => (useIsMobile() ? 'calc(100%)' : '100%')};
+  height: ${() => (useIsMobile() ? 'calc(100%)' : 'auto')};
   z-index: 1000;
 `;
 
@@ -80,8 +80,8 @@ const StyledCancelText = styled.span`
 
 export const StyledList = styled.div`
   background: ${({ theme }) => theme.background.secondary};
-  height: 400px;
-  max-height: 400px;
+  height: ${() => (useIsMobile() ? 'calc(100% - 60px)' : '400px')};
+  max-height: ${() => (useIsMobile() ? 'calc(100% - 60px)' : '400px')};
   overscroll-behavior: contain;
   transition: 100ms ease;
   transition-property: height;
