@@ -11,8 +11,8 @@ import {
   KeyValueTypes,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 import { UserStates } from 'src/engine/core-modules/user-state/enums/user-states.enum';
-import { UserStateEmailSyncValues } from 'src/engine/core-modules/user-state/enums/user-state-email-sync-values.enum';
-import { SkipSyncEmailOnboardingStep } from 'src/engine/core-modules/user-state/dtos/skip-sync-email.entity-onboarding-step';
+import { UserStateEmailSyncValues } from 'src/engine/core-modules/user-state/enums/values/user-state-email-sync-values.enum';
+import { UserStateResult } from 'src/engine/core-modules/user-state/dtos/user-state-result';
 
 @Injectable()
 export class UserStateService {
@@ -35,11 +35,11 @@ export class UserStateService {
       };
     }
 
-    const skipSyncEmail = await this.keyValuePairService.get(
-      user.id,
-      workspace.id,
-      UserStates.SYNC_EMAIL_ONBOARDING_STEP,
-    );
+    const skipSyncEmail = await this.keyValuePairService.get({
+      userId: user.id,
+      workspaceId: workspace.id,
+      key: UserStates.SYNC_EMAIL_ONBOARDING_STEP,
+    });
 
     return {
       skipSyncEmailOnboardingStep:
@@ -51,13 +51,13 @@ export class UserStateService {
   async skipSyncEmailOnboardingStep(
     userId: string,
     workspaceId: string,
-  ): Promise<SkipSyncEmailOnboardingStep> {
-    await this.keyValuePairService.set(
+  ): Promise<UserStateResult> {
+    await this.keyValuePairService.set({
       userId,
       workspaceId,
-      UserStates.SYNC_EMAIL_ONBOARDING_STEP,
-      UserStateEmailSyncValues.SKIPPED,
-    );
+      key: UserStates.SYNC_EMAIL_ONBOARDING_STEP,
+      value: UserStateEmailSyncValues.SKIPPED,
+    });
 
     return { success: true };
   }

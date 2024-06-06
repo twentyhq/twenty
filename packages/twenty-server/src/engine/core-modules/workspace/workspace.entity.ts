@@ -19,6 +19,7 @@ import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-works
 import { AppToken } from 'src/engine/core-modules/app-token/app-token.entity';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { WorkspaceState } from 'src/engine/core-modules/workspace-state/dtos/workspace-state.dto';
 
 @Entity({ name: 'workspace', schema: 'core' })
 @ObjectType('Workspace')
@@ -99,4 +100,7 @@ export class Workspace {
     (billingSubscription) => billingSubscription.workspace,
   )
   billingSubscriptions: Relation<BillingSubscription[]>;
+
+  @Field(() => WorkspaceState, { nullable: false })
+  state: WorkspaceState;
 }

@@ -8,13 +8,14 @@ import {
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { IconCopy } from 'twenty-ui';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { SeparatorLineText } from '@/ui/display/text/components/SeparatorLineText';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -73,6 +74,7 @@ export const InviteTeam = () => {
   const { enqueueSnackBar } = useSnackBar();
   const [sendInviteLink] = useSendInviteLinkMutation();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const setIsCurrentUserLoaded = useSetRecoilState(isCurrentUserLoadedState);
   const {
     control,
     handleSubmit,
@@ -124,15 +126,18 @@ export const InviteTeam = () => {
         .map((emailData) => emailData.email.trim())
         .filter((email) => email.length > 0);
       const result = await sendInviteLink({ variables: { emails } });
+      setIsCurrentUserLoaded(false);
       if (isDefined(result.errors)) {
         throw result.errors;
       }
-      enqueueSnackBar('Invite link sent to email addresses', {
-        variant: SnackBarVariant.Success,
-        duration: 2000,
-      });
+      if (emails.length > 0) {
+        enqueueSnackBar('Invite link sent to email addresses', {
+          variant: SnackBarVariant.Success,
+          duration: 2000,
+        });
+      }
     },
-    [enqueueSnackBar, sendInviteLink],
+    [enqueueSnackBar, sendInviteLink, setIsCurrentUserLoaded],
   );
 
   useEffect(() => {

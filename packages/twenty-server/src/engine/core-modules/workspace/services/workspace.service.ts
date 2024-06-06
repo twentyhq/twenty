@@ -18,6 +18,7 @@ import { BillingService } from 'src/engine/core-modules/billing/billing.service'
 import { SendInviteLink } from 'src/engine/core-modules/workspace/dtos/send-invite-link.entity';
 import { EmailService } from 'src/engine/integrations/email/email.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { WorkspaceStateService } from 'src/engine/core-modules/workspace-state/workspace-state.service';
 
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
@@ -32,6 +33,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly billingService: BillingService,
     private readonly environmentService: EnvironmentService,
     private readonly emailService: EmailService,
+    private readonly workspaceStateService: WorkspaceStateService,
   ) {
     super(workspaceRepository);
   }
@@ -109,6 +111,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     }
     const frontBaseURL = this.environmentService.get('FRONT_BASE_URL');
     const inviteLink = `${frontBaseURL}/invite/${workspace.inviteHash}`;
+
+    await this.workspaceStateService.skipInviteEmailOnboardingStep(
+      workspace.id,
+    );
 
     for (const email of emails) {
       const emailData = {

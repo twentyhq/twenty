@@ -11,6 +11,7 @@ export enum OnboardingStatus {
   OngoingWorkspaceActivation = 'ongoing_workspace_activation',
   OngoingProfileCreation = 'ongoing_profile_creation',
   OngoingSyncEmail = 'ongoing_sync_email',
+  OngoingInviteTeam = 'ongoing_invite_team',
   Completed = 'completed',
   CompletedWithoutSubscription = 'completed_without_subscription',
 }
@@ -61,6 +62,10 @@ export const getOnboardingStatus = ({
 
   if (!currentUser.state.skipSyncEmailOnboardingStep) {
     return OnboardingStatus.OngoingSyncEmail;
+  }
+
+  if (!currentWorkspace.state.skipInviteTeamOnboardingStep) {
+    return OnboardingStatus.OngoingInviteTeam;
   }
 
   if (isBillingEnabled && currentWorkspace.subscriptionStatus === 'canceled') {

@@ -27,6 +27,9 @@ import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { SendInviteLink } from 'src/engine/core-modules/workspace/dtos/send-invite-link.entity';
 import { SendInviteLinkInput } from 'src/engine/core-modules/workspace/dtos/send-invite-link.input';
+import { WorkspaceState } from 'src/engine/core-modules/workspace-state/dtos/workspace-state.dto';
+import { DEFAULT_WORKSPACE_STATE } from 'src/engine/core-modules/workspace-state/constants/default-workspace-state';
+import { WorkspaceStateService } from 'src/engine/core-modules/workspace-state/workspace-state.service';
 
 import { Workspace } from './workspace.entity';
 
@@ -40,6 +43,7 @@ export class WorkspaceResolver {
     private readonly workspaceCacheVersionService: WorkspaceCacheVersionService,
     private readonly fileUploadService: FileUploadService,
     private readonly billingService: BillingService,
+    private readonly workspaceStateService: WorkspaceStateService,
   ) {}
 
   @Query(() => Workspace)
@@ -136,5 +140,14 @@ export class WorkspaceResolver {
       workspace,
       user,
     );
+  }
+
+  @ResolveField(() => WorkspaceState)
+  async state(@Parent() workspace: Workspace): Promise<WorkspaceState> {
+    if (!workspace) {
+      return DEFAULT_WORKSPACE_STATE;
+    }
+
+    return this.workspaceStateService.getWorkspaceState(workspace);
   }
 }
