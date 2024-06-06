@@ -61,14 +61,26 @@ export class KeyValuePairService<TYPE extends keyof KeyValuePairs> {
     if (!userId && !workspaceId) {
       throw new BadRequestException('userId and workspaceId are undefined');
     }
-    await this.keyValuePairRepository.upsert(
-      {
-        userId,
-        workspaceId,
-        key: key as string,
-        value: value as string,
-      },
-      { conflictPaths: ['userId', 'workspaceId', 'key'] },
+    const upsertData = {
+      userId,
+      workspaceId,
+      key: key as string,
+      value: value as string,
+    };
+
+    const conflictPaths = Object.keys(upsertData).filter(
+      (key) => key !== 'value' && upsertData[key] !== undefined,
     );
+
+    const indexPredicate = !userId
+      ? '"userId" is NULL'
+      : !workspaceId
+        ? '"workspaceId" is NULL'
+        : undefined;
+
+    await this.keyValuePairRepository.upsert(upsertData, {
+      conflictPaths,
+      indexPredicate,
+    });
   }
 }
