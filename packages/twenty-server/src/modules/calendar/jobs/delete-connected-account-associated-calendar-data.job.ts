@@ -20,7 +20,7 @@ export class DeleteConnectedAccountAssociatedCalendarDataJob {
     private readonly calendarEventCleanerService: CalendarEventCleanerService,
   ) {}
 
-  @Process()
+  @Process(DeleteConnectedAccountAssociatedCalendarDataJob.name)
   async handle(
     data: DeleteConnectedAccountAssociatedCalendarDataJobData,
   ): Promise<void> {

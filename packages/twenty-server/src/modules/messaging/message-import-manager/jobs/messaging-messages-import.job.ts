@@ -29,7 +29,7 @@ export class MessagingMessagesImportJob {
     private readonly messagingTelemetryService: MessagingTelemetryService,
   ) {}
 
-  @Process()
+  @Process(MessagingMessagesImportJob.name)
   async handle(data: MessagingMessagesImportJobData): Promise<void> {
     const { messageChannelId, workspaceId } = data;
 

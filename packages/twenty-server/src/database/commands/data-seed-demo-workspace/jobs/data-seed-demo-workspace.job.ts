@@ -9,7 +9,7 @@ export class DataSeedDemoWorkspaceJob {
     private readonly dataSeedDemoWorkspaceService: DataSeedDemoWorkspaceService,
   ) {}
 
-  @Process()
+  @Process(DataSeedDemoWorkspaceJob.name)
   async handle(): Promise<void> {
     await this.dataSeedDemoWorkspaceService.seedDemo();
   }

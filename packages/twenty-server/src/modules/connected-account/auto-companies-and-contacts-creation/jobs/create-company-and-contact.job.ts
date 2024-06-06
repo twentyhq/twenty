@@ -18,7 +18,7 @@ export class CreateCompanyAndContactJob {
     private readonly createCompanyAndContactService: CreateCompanyAndContactService,
   ) {}
 
-  @Process()
+  @Process(CreateCompanyAndContactJob.name)
   async handle(data: CreateCompanyAndContactJobData): Promise<void> {
     const { workspaceId, connectedAccountHandle, contactsToCreate } = data;
 

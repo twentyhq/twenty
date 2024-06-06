@@ -24,7 +24,7 @@ export class BlocklistReimportCalendarEventsJob {
     private readonly googleCalendarSyncService: GoogleCalendarSyncService,
   ) {}
 
-  @Process()
+  @Process(BlocklistReimportCalendarEventsJob.name)
   async handle(data: BlocklistReimportCalendarEventsJobData): Promise<void> {
     const { workspaceId, workspaceMemberId, handle } = data;
 

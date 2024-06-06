@@ -35,7 +35,7 @@ export class BlocklistItemDeleteCalendarEventsJob {
     private readonly calendarEventCleanerService: CalendarEventCleanerService,
   ) {}
 
-  @Process()
+  @Process(BlocklistItemDeleteCalendarEventsJob.name)
   async handle(data: BlocklistItemDeleteCalendarEventsJobData): Promise<void> {
     const { workspaceId, blocklistItemId } = data;
 

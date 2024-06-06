@@ -33,7 +33,7 @@ export class BlocklistItemDeleteMessagesJob {
     private readonly threadCleanerService: MessagingMessageCleanerService,
   ) {}
 
-  @Process()
+  @Process(BlocklistItemDeleteMessagesJob.name)
   async handle(data: BlocklistItemDeleteMessagesJobData): Promise<void> {
     const { workspaceId, blocklistItemId } = data;
 

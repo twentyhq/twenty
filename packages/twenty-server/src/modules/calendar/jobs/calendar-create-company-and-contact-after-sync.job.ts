@@ -28,7 +28,7 @@ export class CalendarCreateCompanyAndContactAfterSyncJob {
     private readonly calendarEventParticipantRepository: CalendarEventParticipantRepository,
   ) {}
 
-  @Process()
+  @Process(CalendarCreateCompanyAndContactAfterSyncJob.name)
   async handle(
     data: CalendarCreateCompanyAndContactAfterSyncJobData,
   ): Promise<void> {

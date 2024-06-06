@@ -18,7 +18,7 @@ export class UpdateSubscriptionJob {
     private readonly stripeService: StripeService,
   ) {}
 
-  @Process()
+  @Process(UpdateSubscriptionJob.name)
   async handle(data: UpdateSubscriptionJobData): Promise<void> {
     const workspaceMembersCount =
       await this.userWorkspaceService.getWorkspaceMemberCount(data.workspaceId);

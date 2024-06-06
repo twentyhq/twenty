@@ -21,7 +21,7 @@ export class GoogleCalendarSyncCronJob {
     private readonly environmentService: EnvironmentService,
   ) {}
 
-  @Process()
+  @Process(GoogleCalendarSyncCronJob.name)
   async handle(): Promise<void> {
     const workspaceIds = (
       await this.workspaceRepository.find({

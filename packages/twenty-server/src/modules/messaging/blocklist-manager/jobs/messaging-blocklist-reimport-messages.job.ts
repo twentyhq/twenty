@@ -22,7 +22,7 @@ export class BlocklistReimportMessagesJob {
     private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {}
 
-  @Process()
+  @Process(BlocklistReimportMessagesJob.name)
   async handle(data: BlocklistReimportMessagesJobData): Promise<void> {
     const { workspaceId, workspaceMemberId, handle } = data;
 

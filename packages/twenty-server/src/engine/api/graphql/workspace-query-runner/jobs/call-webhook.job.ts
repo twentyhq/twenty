@@ -21,7 +21,7 @@ export class CallWebhookJob {
 
   constructor(private readonly httpService: HttpService) {}
 
-  @Process()
+  @Process(CallWebhookJob.name)
   async handle(data: CallWebhookJobData): Promise<void> {
     try {
       await this.httpService.axiosRef.post(data.targetUrl, data);

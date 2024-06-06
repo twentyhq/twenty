@@ -18,7 +18,7 @@ export class UnmatchParticipantJob {
     private readonly calendarEventParticipantService: CalendarEventParticipantService,
   ) {}
 
-  @Process()
+  @Process(UnmatchParticipantJob.name)
   async handle(data: UnmatchParticipantJobData): Promise<void> {
     const { workspaceId, email, personId, workspaceMemberId } = data;
 

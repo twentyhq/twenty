@@ -9,7 +9,7 @@ import { Process } from 'src/engine/integrations/message-queue/decorators/proces
 export class EmailSenderJob {
   constructor(private readonly emailSenderService: EmailSenderService) {}
 
-  @Process()
+  @Process(EmailSenderJob.name)
   async handle(data: SendMailOptions): Promise<void> {
     await this.emailSenderService.send(data);
   }

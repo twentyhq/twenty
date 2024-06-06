@@ -38,7 +38,7 @@ export class MessagingMessageListFetchCronJob {
     private readonly environmentService: EnvironmentService,
   ) {}
 
-  @Process()
+  @Process(MessagingMessageListFetchCronJob.name)
   async handle(): Promise<void> {
     const workspaceIds = (
       await this.workspaceRepository.find({

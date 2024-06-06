@@ -35,7 +35,7 @@ export class MessagingMessageListFetchJob {
     private readonly messagingTelemetryService: MessagingTelemetryService,
   ) {}
 
-  @Process()
+  @Process(MessagingMessageListFetchJob.name)
   async handle(data: MessagingMessageListFetchJobData): Promise<void> {
     const { messageChannelId, workspaceId } = data;
 

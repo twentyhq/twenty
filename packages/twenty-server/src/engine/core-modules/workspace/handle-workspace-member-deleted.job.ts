@@ -12,7 +12,7 @@ export type HandleWorkspaceMemberDeletedJobData = {
 export class HandleWorkspaceMemberDeletedJob {
   constructor(private readonly workspaceService: WorkspaceService) {}
 
-  @Process()
+  @Process(HandleWorkspaceMemberDeletedJob.name)
   async handle(data: HandleWorkspaceMemberDeletedJobData): Promise<void> {
     const { workspaceId, userId } = data;
 

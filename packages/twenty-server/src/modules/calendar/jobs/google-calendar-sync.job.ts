@@ -20,7 +20,7 @@ export class GoogleCalendarSyncJob {
     private readonly googleCalendarSyncService: GoogleCalendarSyncService,
   ) {}
 
-  @Process()
+  @Process(GoogleCalendarSyncJob.name)
   async handle(data: GoogleCalendarSyncJobData): Promise<void> {
     this.logger.log(
       `google calendar sync for workspace ${data.workspaceId} and account ${data.connectedAccountId}`,

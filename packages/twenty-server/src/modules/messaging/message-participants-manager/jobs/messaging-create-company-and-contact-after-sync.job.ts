@@ -37,7 +37,7 @@ export class MessagingCreateCompanyAndContactAfterSyncJob {
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
-  @Process()
+  @Process(MessagingCreateCompanyAndContactAfterSyncJob.name)
   async handle(
     data: MessagingCreateCompanyAndContactAfterSyncJobData,
   ): Promise<void> {

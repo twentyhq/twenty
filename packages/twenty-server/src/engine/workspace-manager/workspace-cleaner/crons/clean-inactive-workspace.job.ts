@@ -192,7 +192,7 @@ export class CleanInactiveWorkspaceJob {
     });
   }
 
-  @Process()
+  @Process(CleanInactiveWorkspaceJob.name)
   async handle(data: CleanInactiveWorkspacesCommandOptions): Promise<void> {
     const isDryRun = data.dryRun || false;
 

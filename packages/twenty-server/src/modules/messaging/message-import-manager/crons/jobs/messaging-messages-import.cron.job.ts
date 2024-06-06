@@ -38,7 +38,7 @@ export class MessagingMessagesImportCronJob {
     private readonly messageChannelRepository: MessageChannelRepository,
   ) {}
 
-  @Process()
+  @Process(MessagingMessagesImportCronJob.name)
   async handle(): Promise<void> {
     const workspaceIds = (
       await this.workspaceRepository.find({

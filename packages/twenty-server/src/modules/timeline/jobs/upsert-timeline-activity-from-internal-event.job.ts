@@ -15,7 +15,7 @@ export class UpsertTimelineActivityFromInternalEvent {
     private readonly timelineActivityService: TimelineActivityService,
   ) {}
 
-  @Process()
+  @Process(UpsertTimelineActivityFromInternalEvent.name)
   async handle(data: ObjectRecordBaseEvent): Promise<void> {
     if (data.userId) {
       const workspaceMember = await this.workspaceMemberService.getByIdOrFail(

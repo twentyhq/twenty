@@ -38,7 +38,7 @@ export class CallWebhookJobsJob {
     private readonly messageQueueService: MessageQueueService,
   ) {}
 
-  @Process()
+  @Process(CallWebhookJobsJob.name)
   async handle(data: CallWebhookJobsJobData): Promise<void> {
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(

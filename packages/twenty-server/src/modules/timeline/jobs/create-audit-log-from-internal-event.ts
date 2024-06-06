@@ -17,7 +17,7 @@ export class CreateAuditLogFromInternalEvent {
     private readonly auditLogRepository: AuditLogRepository,
   ) {}
 
-  @Process()
+  @Process(CreateAuditLogFromInternalEvent.name)
   async handle(data: ObjectRecordBaseEvent): Promise<void> {
     let workspaceMemberId: string | null = null;
 

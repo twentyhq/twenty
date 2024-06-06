@@ -20,7 +20,7 @@ export class MessagingConnectedAccountDeletionCleanupJob {
     private readonly messageCleanerService: MessagingMessageCleanerService,
   ) {}
 
-  @Process()
+  @Process(MessagingConnectedAccountDeletionCleanupJob.name)
   async handle(
     data: MessagingConnectedAccountDeletionCleanupJobData,
   ): Promise<void> {

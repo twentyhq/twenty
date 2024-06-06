@@ -18,7 +18,7 @@ export class MatchParticipantJob {
     private readonly calendarEventParticipantService: CalendarEventParticipantService,
   ) {}
 
-  @Process()
+  @Process(MatchParticipantJob.name)
   async handle(data: MatchParticipantJobData): Promise<void> {
     const { workspaceId, email, personId, workspaceMemberId } = data;
 
