@@ -37,7 +37,7 @@ export class ArgsStringFactory {
         computedArgs[key] !== null
       ) {
         if (key === 'orderBy') {
-          argsString += `${key}: ${this.buildStringifiedObjectFromArray(
+          argsString += `${key}: ${this.buildStringifiedOrderBy(
             computedArgs[key],
           )}, `;
         } else {
@@ -60,39 +60,22 @@ export class ArgsStringFactory {
     return argsString;
   }
 
-  private buildStringifiedObjectFromArray(
+  private buildStringifiedOrderBy(
     keyValuePairArray: Array<Record<string, any>>,
   ): string {
-    // PgGraphql is expecting the orderBy argument to be an array of objects
-    let argsString = '';
     // if position argument is present we want to put it at the very last
-    const positionObj = keyValuePairArray.find((obj) =>
+    let orderByString = keyValuePairArray.sort((obj) =>
       Object.hasOwnProperty.call(obj, 'position'),
-    );
+    ).map((obj) => {
+      const key = Object.keys(obj)[0];
+      const value = obj[key];
+      return `{${key}: ${value}}`
+    }).join(", ")
 
-    // we put filter only if positionObj is defined otherwise we loop through normal array
-    const orderByKeyValuePairs = positionObj
-      ? keyValuePairArray.filter(
-          (obj) => !Object.hasOwnProperty.call(obj, 'position'),
-        )
-      : keyValuePairArray;
-
-    for (const obj of orderByKeyValuePairs) {
-      for (const key in obj) {
-        argsString += `{${key}: ${obj[key]}}, `;
-      }
+    if (orderByString.endsWith(', ')) {
+      orderByString = orderByString.slice(0, -2);
     }
 
-    if (positionObj) {
-      for (const key in positionObj) {
-        argsString += `{${key}: ${positionObj[key]}}, `;
-      }
-    }
-
-    if (argsString.endsWith(', ')) {
-      argsString = argsString.slice(0, -2);
-    }
-
-    return `[${argsString}]`;
+    return `[${orderByString}]`;
   }
 }

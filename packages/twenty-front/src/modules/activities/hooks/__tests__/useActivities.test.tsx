@@ -178,7 +178,7 @@ describe('useActivities', () => {
         useActivities({
           targetableObjects: [],
           activitiesFilters: {},
-          activitiesOrderByVariables: {},
+          activitiesOrderByVariables: [{}],
           skip: false,
         }),
       { wrapper: Wrapper },
@@ -202,7 +202,7 @@ describe('useActivities', () => {
             { targetObjectNameSingular: 'company', id: '123' },
           ],
           activitiesFilters: {},
-          activitiesOrderByVariables: {},
+          activitiesOrderByVariables: [{}],
           skip: false,
         });
         return { activities, setCurrentWorkspaceMember };

@@ -19,9 +19,11 @@ export const useTimelineActivities = (
         eq: targetableObject.id,
       },
     },
-    orderBy: {
-      createdAt: 'DescNullsFirst',
-    },
+    orderBy: [
+      {
+        createdAt: 'DescNullsFirst',
+      },
+    ],
     fetchPolicy: 'network-only',
   });
 

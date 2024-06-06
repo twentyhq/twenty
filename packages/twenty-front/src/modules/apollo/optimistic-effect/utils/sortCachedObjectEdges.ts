@@ -16,7 +16,8 @@ export const sortCachedObjectEdges = ({
   orderBy: RecordGqlOperationOrderBy;
   readCacheField: ReadFieldFunction;
 }) => {
-  const [orderByFieldName, orderByFieldValue] = Object.entries(orderBy)[0];
+  console.log(orderBy);
+  const [orderByFieldName, orderByFieldValue] = Object.entries(orderBy[0])[0];
   const [orderBySubFieldName, orderBySubFieldValue] =
     typeof orderByFieldValue === 'string'
       ? []
