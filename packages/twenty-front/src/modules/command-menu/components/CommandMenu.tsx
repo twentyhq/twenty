@@ -258,22 +258,9 @@ export const CommandMenu = () => {
     .concat(companies.map((company) => company.id))
     .concat(activities.map((activity) => activity.id));
 
-  /*   const { data, loading, error } = useQuery<QueryGetTextToSqlArgs>(
-    gql`
-      query GetTextToSQL($text: String!) {
-        getTextToSQL(text: $text) {
-          tableJson
-        }
-      }
-    `,
-    {
-      variables: { text: 'test123' },
-    },
-  );
- */
-
   const { data, loading, error } = useGetTextToSqlQuery({
-    variables: { text: 'test234' },
+    variables: { text: 'How many employees does Stripe have?' },
+    // skip: !commandMenuSearch || textToSqlInFlight,
   });
 
   return (

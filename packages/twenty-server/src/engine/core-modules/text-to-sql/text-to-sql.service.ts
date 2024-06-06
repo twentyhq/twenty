@@ -1,5 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
+import { ChatOpenAI } from '@langchain/openai';
+import { SqlDatabase } from 'langchain/sql_db';
+import { PromptTemplate } from '@langchain/core/prompts';
+import {
+  RunnablePassthrough,
+  RunnableSequence,
+} from '@langchain/core/runnables';
+import { StringOutputParser } from '@langchain/core/output_parsers';
+
 import { TextToSQLQueryResult } from 'src/engine/core-modules/text-to-sql/dtos/text-to-sql-query-result.dto';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
@@ -7,35 +16,62 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 export class TextToSQLService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    /*     private readonly dataSourceService: DataSourceService,
+    private readonly typeormService: TypeORMService, */
   ) {}
 
   async query(
     workspaceId: string,
     text: string,
   ): Promise<TextToSQLQueryResult> {
-    const dataSourceSchema =
+    const workspaceSchemaName =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    /* const totalNumberOfThreads =
-      await this.workspaceDataSourceService.executeRawQuery(
-        `
-      SELECT COUNT(DISTINCT message."messageThreadId")
-      FROM
-          ${dataSourceSchema}."message" message 
-      LEFT JOIN
-          ${dataSourceSchema}."messageParticipant" "messageParticipant" ON "messageParticipant"."messageId" = message.id
-      WHERE
-          "messageParticipant"."personId" = ANY($1)
-      AND EXISTS (
-          SELECT 1
-          FROM ${dataSourceSchema}."messageChannelMessageAssociation" mcma
-          WHERE mcma."messageId" = message.id
-      )
-      `,
-        [text],
+    const workspaceDataSource =
+      await this.workspaceDataSourceService.connectToWorkspaceDataSource(
         workspaceId,
-      ); */
+      );
 
-    return { tableJson: '{ "test123": "test123" }' };
+    // Does this have unintended side effects?
+    workspaceDataSource.setOptions({ schema: workspaceSchemaName });
+
+    const db = await SqlDatabase.fromDataSourceParams({
+      appDataSource: workspaceDataSource,
+    });
+
+    const prompt =
+      PromptTemplate.fromTemplate(`Based on the table schema below, write an SQL query that would answer the user's question:
+      {schema}
+      
+      Question: {question}
+      SQL Query:`);
+
+    const model = new ChatOpenAI();
+
+    const sqlQueryGeneratorChain = RunnableSequence.from([
+      RunnablePassthrough.assign({
+        schema: async () => db.getTableInfo(),
+      }),
+      prompt,
+      model.bind({ stop: ['\nSQLResult:'] }),
+      new StringOutputParser(),
+    ]);
+
+    const sqlQuery = await sqlQueryGeneratorChain.invoke({
+      question: text,
+    });
+
+    const sqlQueryResult =
+      await this.workspaceDataSourceService.executeRawQuery(
+        sqlQuery,
+        undefined,
+        workspaceId,
+      );
+
+    const res = {
+      tableJson: `${sqlQuery} \n\n ${JSON.stringify(sqlQueryResult)}`,
+    };
+
+    return res;
   }
 }
