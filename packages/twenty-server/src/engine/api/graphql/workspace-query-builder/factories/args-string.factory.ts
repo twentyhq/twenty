@@ -64,13 +64,15 @@ export class ArgsStringFactory {
     keyValuePairArray: Array<Record<string, any>>,
   ): string {
     // if position argument is present we want to put it at the very last
-    let orderByString = keyValuePairArray.sort((obj) =>
-      Object.hasOwnProperty.call(obj, 'position'),
-    ).map((obj) => {
-      const key = Object.keys(obj)[0];
-      const value = obj[key];
-      return `{${key}: ${value}}`
-    }).join(", ")
+    let orderByString = keyValuePairArray
+      .sort((_, obj) => (Object.hasOwnProperty.call(obj, 'position') ? -1 : 0))
+      .map((obj) => {
+        const [key] = Object.keys(obj);
+        const value = obj[key];
+
+        return `{${key}: ${value}}`;
+      })
+      .join(', ');
 
     if (orderByString.endsWith(', ')) {
       orderByString = orderByString.slice(0, -2);
