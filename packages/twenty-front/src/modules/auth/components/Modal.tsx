@@ -6,6 +6,12 @@ import { ModalLayout } from '@/ui/layout/modal/components/ModalLayout';
 const StyledContent = styled(ModalLayout.Content)`
   align-items: center;
   width: calc(400px - ${({ theme }) => theme.spacing(10 * 2)});
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto;
 `;
 
 type AuthModalProps = { children: React.ReactNode };

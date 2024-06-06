@@ -42,6 +42,18 @@ const StyledModalDiv = styled(motion.div)<{
         return 'auto';
     }
   }};
+
+  @media (max-width: 768px) {
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    padding: ${({ theme }) => theme.spacing(2)};
+    border-radius: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+  }
 `;
 
 const StyledHeader = styled.div`
