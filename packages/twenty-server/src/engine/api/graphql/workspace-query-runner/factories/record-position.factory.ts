@@ -26,20 +26,6 @@ export class RecordPositionFactory {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     if (typeof value === 'number') {
-      const recordWithSamePosition = await this.findRecordPosition(
-        {
-          recordPositionQueryType: RecordPositionQueryType.FIND_BY_POSITION,
-          positionValue: value,
-        },
-        objectMetadata,
-        dataSourceSchema,
-        workspaceId,
-      );
-
-      if (recordWithSamePosition) {
-        throw new Error('Position is not unique');
-      }
-
       return value;
     }
 
