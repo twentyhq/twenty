@@ -28,6 +28,20 @@ export class WorkspaceMemberRepository {
     return result;
   }
 
+  public async find(workspaceMemberId: string, workspaceId: string) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const workspaceMembers =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT * FROM ${dataSourceSchema}."workspaceMember" WHERE "id" = $1`,
+        [workspaceMemberId],
+        workspaceId,
+      );
+
+    return workspaceMembers?.[0];
+  }
+
   public async getByIdOrFail(
     userId: string,
     workspaceId: string,

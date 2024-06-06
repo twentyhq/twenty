@@ -38,15 +38,18 @@ export const useCreateOneObjectMetadataItem = () => {
       refetchQueries: [getOperationName(FIND_MANY_OBJECT_METADATA_ITEMS) ?? ''],
     });
 
+    return createdObjectMetadata;
+  };
+
+  const findManyRecordsCache = async () => {
     await apolloClient.query({
       query: findManyRecordsQuery,
       fetchPolicy: 'network-only',
     });
-
-    return createdObjectMetadata;
   };
 
   return {
     createOneObjectMetadataItem,
+    findManyRecordsCache,
   };
 };

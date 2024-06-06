@@ -6,8 +6,8 @@ import { activityTargetableEntityArrayState } from '@/activities/states/activity
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
 import { temporaryActivityForEditorState } from '@/activities/states/temporaryActivityForEditorState';
-import { viewableActivityIdState } from '@/activities/states/viewableActivityIdState';
 import { ActivityType } from '@/activities/types/Activity';
+import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { useRightDrawer } from '@/ui/layout/right-drawer/hooks/useRightDrawer';
 import { RightDrawerHotkeyScope } from '@/ui/layout/right-drawer/types/RightDrawerHotkeyScope';
 import { RightDrawerPages } from '@/ui/layout/right-drawer/types/RightDrawerPages';
@@ -26,7 +26,7 @@ export const useOpenCreateActivityDrawer = () => {
   const setActivityTargetableEntityArray = useSetRecoilState(
     activityTargetableEntityArrayState,
   );
-  const setViewableActivityId = useSetRecoilState(viewableActivityIdState);
+  const setViewableRecordId = useSetRecoilState(viewableRecordIdState);
 
   const setIsCreatingActivity = useSetRecoilState(isActivityInCreateModeState);
 
@@ -59,7 +59,7 @@ export const useOpenCreateActivityDrawer = () => {
     setTemporaryActivityForEditor(createdActivityInCache);
     setIsCreatingActivity(true);
     setHotkeyScope(RightDrawerHotkeyScope.RightDrawer, { goto: false });
-    setViewableActivityId(createdActivityInCache.id);
+    setViewableRecordId(createdActivityInCache.id);
     setActivityTargetableEntityArray(targetableObjects ?? []);
     openRightDrawer(RightDrawerPages.CreateActivity);
     setIsUpsertingActivityInDB(false);

@@ -1,23 +1,20 @@
 import styled from '@emotion/styled';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilState, useRecoilValue } from 'recoil';
-import { IconPlus, IconTrash } from 'twenty-ui';
+import { IconTrash } from 'twenty-ui';
 
-import { useOpenCreateActivityDrawer } from '@/activities/hooks/useOpenCreateActivityDrawer';
 import { useRefreshShowPageFindManyActivitiesQueries } from '@/activities/hooks/useRefreshShowPageFindManyActivitiesQueries';
 import { activityIdInDrawerState } from '@/activities/states/activityIdInDrawerState';
-import { activityTargetableEntityArrayState } from '@/activities/states/activityTargetableEntityArrayState';
 import { isActivityInCreateModeState } from '@/activities/states/isActivityInCreateModeState';
 import { isUpsertingActivityInDBState } from '@/activities/states/isCreatingActivityInDBState';
 import { temporaryActivityForEditorState } from '@/activities/states/temporaryActivityForEditorState';
-import { viewableActivityIdState } from '@/activities/states/viewableActivityIdState';
-import { objectShowPageTargetableObjectState } from '@/activities/timeline/states/objectShowPageTargetableObjectIdState';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTarget } from '@/activities/types/ActivityTarget';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useDeleteRecordFromCache } from '@/object-record/cache/hooks/useDeleteRecordFromCache';
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
+import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { mapToRecordId } from '@/object-record/utils/mapToObjectId';
 import { IconButton } from '@/ui/input/button/components/IconButton';
@@ -30,12 +27,9 @@ const StyledButtonContainer = styled.div`
 `;
 
 export const ActivityActionBar = () => {
-  const viewableActivityId = useRecoilValue(viewableActivityIdState);
+  const viewableRecordId = useRecoilValue(viewableRecordIdState);
   const activityIdInDrawer = useRecoilValue(activityIdInDrawerState);
 
-  const activityTargetableEntityArray = useRecoilValue(
-    activityTargetableEntityArrayState,
-  );
   const [, setIsRightDrawerOpen] = useRecoilState(isRightDrawerOpenState);
   const { deleteOneRecord: deleteOneActivity } = useDeleteOneRecord({
     objectNameSingular: CoreObjectNameSingular.Activity,
@@ -62,14 +56,8 @@ export const ActivityActionBar = () => {
     isUpsertingActivityInDBState,
   );
 
-  const objectShowPageTargetableObject = useRecoilValue(
-    objectShowPageTargetableObjectState,
-  );
-
   const { refreshShowPageFindManyActivitiesQueries } =
     useRefreshShowPageFindManyActivitiesQueries();
-
-  const openCreateActivity = useOpenCreateActivityDrawer();
 
   const deleteActivity = useRecoilCallback(
     ({ snapshot }) =>
@@ -86,7 +74,7 @@ export const ActivityActionBar = () => {
 
         setIsRightDrawerOpen(false);
 
-        if (!isNonEmptyString(viewableActivityId)) {
+        if (!isNonEmptyString(viewableRecordId)) {
           return;
         }
 
@@ -111,13 +99,13 @@ export const ActivityActionBar = () => {
             await deleteManyActivityTargets(activityTargetIdsToDelete);
           }
 
-          await deleteOneActivity?.(viewableActivityId);
+          await deleteOneActivity?.(viewableRecordId);
         }
       },
     [
       activityIdInDrawer,
       setIsRightDrawerOpen,
-      viewableActivityId,
+      viewableRecordId,
       isActivityInCreateMode,
       temporaryActivityForEditor,
       deleteActivityFromCache,
@@ -129,34 +117,10 @@ export const ActivityActionBar = () => {
     ],
   );
 
-  const record = useRecoilValue(
-    recordStoreFamilyState(viewableActivityId ?? ''),
-  );
-
-  const addActivity = () => {
-    setIsRightDrawerOpen(false);
-    if (isDefined(record) && isDefined(objectShowPageTargetableObject)) {
-      openCreateActivity({
-        type: record?.type,
-        customAssignee: record?.assignee,
-        targetableObjects: activityTargetableEntityArray,
-      });
-    }
-  };
-
   const actionsAreDisabled = isUpsertingActivityInDB;
-
-  const isCreateActionDisabled = isActivityInCreateMode;
 
   return (
     <StyledButtonContainer>
-      <IconButton
-        Icon={IconPlus}
-        onClick={addActivity}
-        size="medium"
-        variant="secondary"
-        disabled={actionsAreDisabled || isCreateActionDisabled}
-      />
       <IconButton
         Icon={IconTrash}
         onClick={deleteActivity}

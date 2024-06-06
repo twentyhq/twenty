@@ -9,7 +9,7 @@ import {
   CalendarCreateCompanyAndContactAfterSyncJobData,
   CalendarCreateCompanyAndContactAfterSyncJob,
 } from 'src/modules/calendar/jobs/calendar-create-company-and-contact-after-sync.job';
-import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
+import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 
 @Injectable()
 export class CalendarChannelListener {

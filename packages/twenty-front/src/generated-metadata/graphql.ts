@@ -123,6 +123,12 @@ export type BooleanFieldComparison = {
   isNot?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
+/** Visibility of the calendar channel */
+export enum CalendarChannelVisibility {
+  Metadata = 'METADATA',
+  ShareEverything = 'SHARE_EVERYTHING'
+}
+
 export type Captcha = {
   __typename?: 'Captcha';
   provider?: Maybe<CaptchaDriverType>;
@@ -139,6 +145,7 @@ export type ClientConfig = {
   authProviders: AuthProviders;
   billing: Billing;
   captcha: Captcha;
+  chromeExtensionId?: Maybe<Scalars['String']['output']>;
   debugMode: Scalars['Boolean']['output'];
   sentry: Sentry;
   signInPrefilled: Scalars['Boolean']['output'];
@@ -366,6 +373,13 @@ export type LoginToken = {
   loginToken: AuthToken;
 };
 
+/** Visibility of the message channel */
+export enum MessageChannelVisibility {
+  Metadata = 'METADATA',
+  ShareEverything = 'SHARE_EVERYTHING',
+  Subject = 'SUBJECT'
+}
+
 export type Mutation = {
   __typename?: 'Mutation';
   activateWorkspace: Workspace;
@@ -391,7 +405,9 @@ export type Mutation = {
   generateTransientToken: TransientToken;
   impersonate: Verify;
   renewToken: AuthTokens;
+  sendInviteLink: SendInviteLink;
   signUp: LoginToken;
+  skipSyncEmailOnboardingStep: SkipSyncEmailOnboardingStep;
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
   track: Analytics;
@@ -515,6 +531,11 @@ export type MutationImpersonateArgs = {
 
 export type MutationRenewTokenArgs = {
   appToken: Scalars['String']['input'];
+};
+
+
+export type MutationSendInviteLinkArgs = {
+  emails: Array<Scalars['String']['input']>;
 };
 
 
@@ -849,6 +870,12 @@ export enum RemoteTableStatus {
   Synced = 'SYNCED'
 }
 
+export type SendInviteLink = {
+  __typename?: 'SendInviteLink';
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean']['output'];
+};
+
 export type Sentry = {
   __typename?: 'Sentry';
   dsn?: Maybe<Scalars['String']['output']>;
@@ -859,6 +886,12 @@ export type Sentry = {
 export type SessionEntity = {
   __typename?: 'SessionEntity';
   url?: Maybe<Scalars['String']['output']>;
+};
+
+export type SkipSyncEmailOnboardingStep = {
+  __typename?: 'SkipSyncEmailOnboardingStep';
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean']['output'];
 };
 
 /** Sort Directions */
@@ -898,7 +931,7 @@ export type TimelineCalendarEvent = {
   participants: Array<TimelineCalendarEventParticipant>;
   startsAt: Scalars['DateTime']['output'];
   title: Scalars['String']['output'];
-  visibility: TimelineCalendarEventVisibility;
+  visibility: CalendarChannelVisibility;
 };
 
 export type TimelineCalendarEventParticipant = {
@@ -911,12 +944,6 @@ export type TimelineCalendarEventParticipant = {
   personId?: Maybe<Scalars['UUID']['output']>;
   workspaceMemberId?: Maybe<Scalars['UUID']['output']>;
 };
-
-/** Visibility of the calendar event */
-export enum TimelineCalendarEventVisibility {
-  Metadata = 'METADATA',
-  ShareEverything = 'SHARE_EVERYTHING'
-}
 
 export type TimelineCalendarEventsWithTotal = {
   __typename?: 'TimelineCalendarEventsWithTotal';
@@ -935,7 +962,7 @@ export type TimelineThread = {
   participantCount: Scalars['Float']['output'];
   read: Scalars['Boolean']['output'];
   subject: Scalars['String']['output'];
-  visibility: Scalars['String']['output'];
+  visibility: MessageChannelVisibility;
 };
 
 export type TimelineThreadParticipant = {
@@ -1057,6 +1084,7 @@ export type User = {
   passwordResetToken?: Maybe<Scalars['String']['output']>;
   /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
   passwordResetTokenExpiresAt?: Maybe<Scalars['DateTime']['output']>;
+  state: UserState;
   supportUserHash?: Maybe<Scalars['String']['output']>;
   updatedAt: Scalars['DateTime']['output'];
   workspaceMember?: Maybe<WorkspaceMember>;
@@ -1089,6 +1117,11 @@ export type UserMappingOptionsUpdateInput = {
 export type UserMappingOptionsUser = {
   __typename?: 'UserMappingOptionsUser';
   user?: Maybe<Scalars['String']['output']>;
+};
+
+export type UserState = {
+  __typename?: 'UserState';
+  skipSyncEmailOnboardingStep?: Maybe<Scalars['Boolean']['output']>;
 };
 
 export type UserWorkspace = {

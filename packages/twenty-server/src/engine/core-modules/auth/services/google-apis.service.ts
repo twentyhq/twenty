@@ -1,11 +1,9 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository, EntityManager } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { TypeORMService } from 'src/database/typeorm/typeorm.service';
-import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
@@ -25,16 +23,16 @@ import {
   ConnectedAccountWorkspaceEntity,
   ConnectedAccountProvider,
 } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
+import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import {
   MessageChannelWorkspaceEntity,
   MessageChannelType,
   MessageChannelVisibility,
-} from 'src/modules/messaging/standard-objects/message-channel.workspace-entity';
+} from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
-  GmailFullMessageListFetchJobData,
-  GmailFullMessageListFetchJob,
-} from 'src/modules/messaging/jobs/gmail-full-message-list-fetch.job';
+  MessagingMessageListFetchJob,
+  MessagingMessageListFetchJobData,
+} from 'src/modules/messaging/message-import-manager/jobs/messaging-message-list-fetch.job';
 
 @Injectable()
 export class GoogleAPIsService {
@@ -46,8 +44,6 @@ export class GoogleAPIsService {
     @Inject(MessageQueue.calendarQueue)
     private readonly calendarQueueService: MessageQueueService,
     private readonly environmentService: EnvironmentService,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
@@ -62,8 +58,16 @@ export class GoogleAPIsService {
     workspaceId: string;
     accessToken: string;
     refreshToken: string;
+    calendarVisibility: CalendarChannelVisibility | undefined;
+    messageVisibility: MessageChannelVisibility | undefined;
   }) {
-    const { handle, workspaceId, workspaceMemberId } = input;
+    const {
+      handle,
+      workspaceId,
+      workspaceMemberId,
+      calendarVisibility,
+      messageVisibility,
+    } = input;
 
     const dataSourceMetadata =
       await this.dataSourceService.getLastDataSourceMetadataFromWorkspaceIdOrFail(
@@ -108,7 +112,8 @@ export class GoogleAPIsService {
             connectedAccountId: newOrExistingConnectedAccountId,
             type: MessageChannelType.EMAIL,
             handle,
-            visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+            visibility:
+              messageVisibility || MessageChannelVisibility.SHARE_EVERYTHING,
           },
           workspaceId,
           manager,
@@ -120,7 +125,9 @@ export class GoogleAPIsService {
               id: v4(),
               connectedAccountId: newOrExistingConnectedAccountId,
               handle,
-              visibility: CalendarChannelVisibility.SHARE_EVERYTHING,
+              visibility:
+                calendarVisibility ||
+                CalendarChannelVisibility.SHARE_EVERYTHING,
             },
             workspaceId,
             manager,
@@ -156,8 +163,8 @@ export class GoogleAPIsService {
     isCalendarEnabled: boolean,
   ) {
     if (this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED')) {
-      await this.messageQueueService.add<GmailFullMessageListFetchJobData>(
-        GmailFullMessageListFetchJob.name,
+      await this.messageQueueService.add<MessagingMessageListFetchJobData>(
+        MessagingMessageListFetchJob.name,
         {
           workspaceId,
           connectedAccountId,

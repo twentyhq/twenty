@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useQuery } from '@apollo/client';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -7,12 +6,11 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { workspacesState } from '@/auth/states/workspaces';
-import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
 import { formatDateLabel } from '@/workspace-member/utils/formatDateLabel';
 import { formatTimeLabel } from '@/workspace-member/utils/formatTimeLabel';
-import { User } from '~/generated/graphql';
+import { useGetCurrentUserQuery } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 export const UserProviderEffect = () => {
@@ -29,9 +27,7 @@ export const UserProviderEffect = () => {
     currentWorkspaceMemberState,
   );
 
-  const { loading: queryLoading, data: queryData } = useQuery<{
-    currentUser: User;
-  }>(GET_CURRENT_USER, {
+  const { loading: queryLoading, data: queryData } = useGetCurrentUserQuery({
     skip: isCurrentUserLoaded,
   });
 

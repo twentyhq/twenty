@@ -1,10 +1,10 @@
 import {
-  Resolver,
-  Query,
   Args,
-  Parent,
-  ResolveField,
   Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
 } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -17,6 +17,7 @@ import { Repository } from 'typeorm';
 import { SupportDriver } from 'src/engine/integrations/environment/interfaces/support.interface';
 import { FileFolder } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 
+import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -26,8 +27,11 @@ import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
-
-import { UserService } from './services/user.service';
+import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserState } from 'src/engine/core-modules/user-state/dtos/user-state.dto';
+import { UserStateService } from 'src/engine/core-modules/user-state/user-state.service';
+import { DEFAULT_USER_STATE } from 'src/engine/core-modules/user-state/constants/default-user-state';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -43,6 +47,7 @@ export class UserResolver {
   constructor(
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
+    private readonly userStateService: UserStateService,
     private readonly userService: UserService,
     private readonly environmentService: EnvironmentService,
     private readonly fileUploadService: FileUploadService,
@@ -112,5 +117,17 @@ export class UserResolver {
   async deleteUser(@AuthUser() { id: userId }: User) {
     // Proceed with user deletion
     return this.userService.deleteUser(userId);
+  }
+
+  @ResolveField(() => UserState)
+  async state(
+    @Parent() user: User,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<UserState> {
+    if (!user || !workspace) {
+      return DEFAULT_USER_STATE;
+    }
+
+    return this.userStateService.getUserState(user, workspace);
   }
 }

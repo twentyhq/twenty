@@ -2,18 +2,18 @@ import { Meta, StoryObj } from '@storybook/react';
 import { within } from '@storybook/test';
 import { graphql, HttpResponse } from 'msw';
 
+import { MessageChannelVisibility } from '~/generated/graphql';
 import { SettingsAccountsEmailsInboxSettings } from '~/pages/settings/accounts/SettingsAccountsEmailsInboxSettings';
 import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
-import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Accounts/SettingsAccountsEmailsInboxSettings',
   component: SettingsAccountsEmailsInboxSettings,
-  decorators: [PrefetchLoadingDecorator, PageDecorator],
+  decorators: [PageDecorator],
   args: {
     routePath: '/settings/accounts/emails/:accountUuid',
     routeParams: { ':accountUuid': '123' },
@@ -27,7 +27,7 @@ const meta: Meta<PageDecoratorArgs> = {
             data: {
               messageChannel: {
                 id: '1',
-                visibility: 'share_everything',
+                visibility: MessageChannelVisibility.ShareEverything,
                 messageThreads: { edges: [] },
                 createdAt: '2021-08-27T12:00:00Z',
                 type: 'email',

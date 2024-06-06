@@ -4,10 +4,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { H2Title, IconRefresh, IconSettings, IconUser } from 'twenty-ui';
 
-import {
-  CalendarChannel,
-  CalendarChannelVisibility,
-} from '@/accounts/types/CalendarChannel';
+import { CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -21,6 +18,7 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { CalendarChannelVisibility } from '~/generated/graphql';
 
 const StyledCardMedia = styled(SettingsAccountsCardMedia)`
   height: ${({ theme }) => theme.spacing(6)};
