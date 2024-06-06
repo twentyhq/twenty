@@ -6,6 +6,7 @@ import { string, z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
+import { SeparatorLineText } from '@/ui/display/text/components/SeparatorLineText';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 
 const StyledAnimatedInput = styled.div`
@@ -104,6 +105,7 @@ export const InviteTeam = () => {
             )}
           />
         ))}
+        <SeparatorLineText>Or</SeparatorLineText>
       </StyledAnimatedContainer>
     </>
   );
