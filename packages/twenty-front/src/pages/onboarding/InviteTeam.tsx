@@ -1,13 +1,21 @@
 import { useEffect } from 'react';
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
+import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRecoilValue } from 'recoil';
+import { IconCopy } from 'twenty-ui';
 import { string, z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SeparatorLineText } from '@/ui/display/text/components/SeparatorLineText';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
+import { isDefined } from '~/utils/isDefined';
 
 const StyledAnimatedInput = styled.div`
   @keyframes fadeIn {
@@ -27,12 +35,17 @@ const StyledAnimatedInput = styled.div`
 const StyledAnimatedContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: ${({ theme }) => theme.spacing(8)} ${({ theme }) => theme.spacing(4)}
-    0;
+  padding: ${({ theme }) => theme.spacing(8)} 0
+    ${({ theme }) => theme.spacing(4)} 0;
   gap: ${({ theme }) => theme.spacing(4)};
-  max-height: 100%;
-  overflow: scroll;
+  overflow-y: scroll;
+  overflow-x: hidden;
   width: 100%;
+`;
+
+const StyledActionLinkContainer = styled.div`
+  display: flex;
+  justify-content: center;
 `;
 
 const validationSchema = z
@@ -42,6 +55,9 @@ const validationSchema = z
 type FormInput = z.infer<typeof validationSchema>;
 
 export const InviteTeam = () => {
+  const theme = useTheme();
+  const { enqueueSnackBar } = useSnackBar();
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const { control, watch } = useForm<FormInput>({
     mode: 'onChange',
     defaultValues: {
@@ -68,6 +84,18 @@ export const InviteTeam = () => {
       return 'mike@apple.dev';
     }
     return 'phil@apple.dev';
+  };
+
+  const copyInviteLink = () => {
+    if (isDefined(currentWorkspace?.inviteHash)) {
+      const inviteLink = `${window.location.origin}/invite/${currentWorkspace?.inviteHash}`;
+      navigator.clipboard.writeText(inviteLink);
+      enqueueSnackBar('Link copied to clipboard', {
+        variant: SnackBarVariant.Success,
+        icon: <IconCopy size={theme.icon.size.md} />,
+        duration: 2000,
+      });
+    }
   };
 
   useEffect(() => {
@@ -105,7 +133,17 @@ export const InviteTeam = () => {
             )}
           />
         ))}
-        <SeparatorLineText>Or</SeparatorLineText>
+        {isDefined(currentWorkspace?.inviteHash) && (
+          <>
+            <SeparatorLineText>Or</SeparatorLineText>
+            <StyledActionLinkContainer>
+              <ActionLink enhanced onClick={copyInviteLink}>
+                <IconCopy size={14} />
+                Copy invitation link
+              </ActionLink>
+            </StyledActionLinkContainer>
+          </>
+        )}
       </StyledAnimatedContainer>
     </>
   );
