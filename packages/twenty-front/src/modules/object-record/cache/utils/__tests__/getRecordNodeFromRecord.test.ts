@@ -35,12 +35,12 @@ describe('getRecordNodeFromRecord', () => {
     expect(result).toEqual({
       __typename: 'Person',
       company: {
-        __ref: 'Company:5c21e19e-e049-4393-8c09-3e3f8fb09ecb',
+        __ref: `Company:${record.company.id}`,
       },
       name: {
         __typename: 'FullName',
-        firstName: 'Alexandre',
-        lastName: 'Prot',
+        firstName: record.name.firstName,
+        lastName: record.name.lastName,
       },
     });
   });
@@ -74,8 +74,8 @@ describe('getRecordNodeFromRecord', () => {
       company: record.company,
       name: {
         __typename: 'FullName',
-        firstName: 'Alexandre',
-        lastName: 'Prot',
+        firstName: record.name.firstName,
+        lastName: record.name.lastName,
       },
     });
   });
