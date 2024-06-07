@@ -1,4 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
+import { BadRequestException } from '@nestjs/common';
 
 import { randomBytes } from 'crypto';
 
@@ -28,6 +29,19 @@ export class PostgresCredentialsService {
 
     const key = this.environmentService.get('LOGIN_TOKEN_SECRET');
     const passwordHash = encryptText(password, key);
+
+    const existingCredentials =
+      await this.postgresCredentialsRepository.findOne({
+        where: {
+          workspaceId,
+        },
+      });
+
+    if (existingCredentials) {
+      throw new BadRequestException(
+        'Postgres credentials already exist for this workspace',
+      );
+    }
 
     const postgresCredentials = await this.postgresCredentialsRepository.create(
       {
