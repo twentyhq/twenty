@@ -4,4 +4,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 export class UserState {
   @Field(() => Boolean, { nullable: true })
   skipSyncEmailOnboardingStep: boolean | null;
+
+  @Field(() => Boolean, { nullable: true })
+  skipInviteTeamOnboardingStep: boolean | null;
 }

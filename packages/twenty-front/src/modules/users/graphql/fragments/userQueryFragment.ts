@@ -10,6 +10,7 @@ export const USER_QUERY_FRAGMENT = gql`
     supportUserHash
     state {
       skipSyncEmailOnboardingStep
+      skipInviteTeamOnboardingStep
     }
     workspaceMember {
       id
@@ -30,9 +31,6 @@ export const USER_QUERY_FRAGMENT = gql`
       allowImpersonation
       subscriptionStatus
       activationStatus
-      state {
-        skipInviteTeamOnboardingStep
-      }
       featureFlags {
         id
         key

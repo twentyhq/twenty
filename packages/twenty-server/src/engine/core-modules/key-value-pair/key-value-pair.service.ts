@@ -6,20 +6,16 @@ import { Repository } from 'typeorm';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { UserStates } from 'src/engine/core-modules/user-state/enums/user-states.enum';
 import { UserStateEmailSyncValues } from 'src/engine/core-modules/user-state/enums/values/user-state-email-sync-values.enum';
-import { WorkspaceStates } from 'src/engine/core-modules/workspace-state/enums/workspace-states.enum';
-import { WorkspaceStateInviteTeamValues } from 'src/engine/core-modules/workspace-state/enums/values/workspace-state-invite-team-values.enum';
+import { UserStateInviteTeamValues } from 'src/engine/core-modules/user-state/enums/values/user-state-invite-team-values.enum';
 
 export enum KeyValueTypes {
   USER_STATE = 'USER_STATE',
-  WORKSPACE_STATE = 'WORKSPACE_STATE',
 }
 
 type KeyValuePairs = {
   [KeyValueTypes.USER_STATE]: {
     [UserStates.SYNC_EMAIL_ONBOARDING_STEP]: UserStateEmailSyncValues;
-  };
-  [KeyValueTypes.WORKSPACE_STATE]: {
-    [WorkspaceStates.INVITE_TEAM_ONBOARDING_STEP]: WorkspaceStateInviteTeamValues;
+    [UserStates.INVITE_TEAM_ONBOARDING_STEP]: UserStateInviteTeamValues;
   };
 };
 

@@ -1,3 +1,0 @@
-export enum WorkspaceStates {
-  INVITE_TEAM_ONBOARDING_STEP = 'INVITE_TEAM_ONBOARDING_STEP',
-}

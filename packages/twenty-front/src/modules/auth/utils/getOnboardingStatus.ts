@@ -64,7 +64,7 @@ export const getOnboardingStatus = ({
     return OnboardingStatus.OngoingSyncEmail;
   }
 
-  if (!currentWorkspace.state.skipInviteTeamOnboardingStep) {
+  if (!currentUser.state.skipInviteTeamOnboardingStep) {
     return OnboardingStatus.OngoingInviteTeam;
   }
 

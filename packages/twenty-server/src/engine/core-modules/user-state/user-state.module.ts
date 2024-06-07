@@ -4,9 +4,10 @@ import { UserStateService } from 'src/engine/core-modules/user-state/user-state.
 import { UserStateResolver } from 'src/engine/core-modules/user-state/user-state.resolver';
 import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { KeyValuePairModule } from 'src/engine/core-modules/key-value-pair/key-value-pair.module';
+import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 
 @Module({
-  imports: [DataSourceModule, KeyValuePairModule],
+  imports: [DataSourceModule, UserWorkspaceModule, KeyValuePairModule],
   exports: [UserStateService],
   providers: [UserStateService, UserStateResolver],
 })

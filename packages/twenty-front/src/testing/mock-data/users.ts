@@ -32,9 +32,6 @@ export const mockDefaultWorkspace: Workspace = {
   allowImpersonation: true,
   subscriptionStatus: 'active',
   activationStatus: 'active',
-  state: {
-    skipInviteTeamOnboardingStep: true,
-  },
   featureFlags: [
     {
       id: '1492de61-5018-4368-8923-4f1eeaf988c4',
@@ -98,6 +95,7 @@ export const mockedUsersData: Array<MockedUser> = [
     workspaces: [{ workspace: mockDefaultWorkspace }],
     state: {
       skipSyncEmailOnboardingStep: true,
+      skipInviteTeamOnboardingStep: true,
     },
   },
   {
@@ -123,6 +121,7 @@ export const mockedUsersData: Array<MockedUser> = [
     workspaces: [{ workspace: mockDefaultWorkspace }],
     state: {
       skipSyncEmailOnboardingStep: true,
+      skipInviteTeamOnboardingStep: true,
     },
   },
 ];
@@ -152,6 +151,7 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
     workspaces: [{ workspace: mockDefaultWorkspace }],
     state: {
       skipSyncEmailOnboardingStep: true,
+      skipInviteTeamOnboardingStep: true,
     },
   },
   {
@@ -170,6 +170,7 @@ export const mockedOnboardingUsersData: Array<MockedUser> = [
     workspaces: [{ workspace: mockDefaultWorkspace }],
     state: {
       skipSyncEmailOnboardingStep: true,
+      skipInviteTeamOnboardingStep: true,
     },
   },
 ];

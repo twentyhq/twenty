@@ -2,4 +2,5 @@ import { UserState } from 'src/engine/core-modules/user-state/dtos/user-state.dt
 
 export const DEFAULT_USER_STATE: UserState = {
   skipSyncEmailOnboardingStep: true,
+  skipInviteTeamOnboardingStep: true,
 };
