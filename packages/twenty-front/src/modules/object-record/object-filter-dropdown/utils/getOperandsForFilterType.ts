@@ -10,6 +10,8 @@ export const getOperandsForFilterType = (
     ViewFilterOperand.IsNotEmpty,
   ];
 
+  const objectOperands = [ViewFilterOperand.Is, ViewFilterOperand.IsNot];
+
   switch (filterType) {
     case 'TEXT':
     case 'EMAIL':
@@ -35,8 +37,9 @@ export const getOperandsForFilterType = (
         ...defaultOperands,
       ];
     case 'RELATION':
+      return [...objectOperands, ...defaultOperands];
     case 'SELECT':
-      return [ViewFilterOperand.Is, ViewFilterOperand.IsNot];
+      return [...objectOperands];
     default:
       return defaultOperands;
   }

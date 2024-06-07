@@ -28,7 +28,14 @@ const applyEmptyFilters = (
   operand: ViewFilterOperand,
   correspondingField: Pick<Field, 'id' | 'name'>,
   objectRecordFilters: RecordGqlOperationFilter[],
-  filterType: 'URL' | 'Address' | 'String' | 'Number' | 'Date' = 'String',
+  filterType:
+    | 'URL'
+    | 'Address'
+    | 'String'
+    | 'Number'
+    | 'Date'
+    | 'Relation'
+    | 'CompositeString' = 'String',
 ) => {
   let emptyRecordFilter: RecordGqlOperationFilter = {};
 
@@ -39,6 +46,19 @@ const applyEmptyFilters = (
           { [correspondingField.name]: { ilike: '' } as StringFilter },
           { [correspondingField.name]: { is: 'NULL' } as StringFilter },
         ],
+      };
+      break;
+    case 'CompositeString':
+      // eslint-disable-next-line no-case-declarations
+      const fullNameFilters = generateILikeFiltersForCompositeFields(
+        '',
+        correspondingField.name,
+        ['firstName', 'lastName'],
+      );
+      emptyRecordFilter = {
+        not: {
+          or: fullNameFilters,
+        },
       };
       break;
     case 'URL':
@@ -95,6 +115,21 @@ const applyEmptyFilters = (
         ],
       };
       break;
+    case 'Date':
+      emptyRecordFilter = {
+        or: [
+          { [correspondingField.name]: { eq: '' } as DateFilter },
+          { [correspondingField.name]: { is: 'NULL' } as DateFilter },
+        ],
+      };
+      break;
+    case 'Relation':
+      emptyRecordFilter = {
+        [correspondingField.name + 'Id']: { is: 'NULL' } as UUIDFilter,
+      };
+      break;
+    default:
+      throw new Error(`Unknown filter type ${filterType}`);
   }
 
   switch (operand) {
@@ -264,6 +299,15 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
                 });
               }
               break;
+            case ViewFilterOperand.IsEmpty:
+            case ViewFilterOperand.IsNotEmpty:
+              applyEmptyFilters(
+                rawUIFilter.operand,
+                correspondingField,
+                objectRecordFilters,
+                'Relation',
+              );
+              break;
             default:
               throw new Error(
                 `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
@@ -395,6 +439,7 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               rawUIFilter.operand,
               correspondingField,
               objectRecordFilters,
+              'CompositeString',
             );
             break;
           default:
