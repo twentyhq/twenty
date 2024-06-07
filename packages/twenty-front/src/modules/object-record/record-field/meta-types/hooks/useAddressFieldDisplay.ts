@@ -6,7 +6,7 @@ import { FieldContext } from '../../contexts/FieldContext';
 import { FieldAddressValue } from '../../types/FieldMetadata';
 
 export const useAddressFieldDisplay = () => {
-  const { entityId, fieldDefinition, hotkeyScope } = useContext(FieldContext);
+  const { entityId, fieldDefinition } = useContext(FieldContext);
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
