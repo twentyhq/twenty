@@ -32,11 +32,11 @@ export const RecordTableEmptyState = ({
         'Go to Settings',
       ]
     : [
-        `Add your first ${objectLabel}`,
-        `Use our API or add your first ${objectLabel} manually`,
+        `No ${objectLabel} Found`,
+        `No records matching the filter criteria were found`,
         IconPlus,
         createRecord,
-        `Add a ${objectLabel}`,
+        `Create a ${objectLabel}`,
       ];
 
   return (
