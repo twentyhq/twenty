@@ -11,7 +11,7 @@ const meta: Meta<typeof SocialLink> = {
   decorators: [ComponentWithRouterDecorator],
   args: {
     href: '/test',
-    children: 'Social Link',
+    label: 'Social Link',
   },
 };
 
@@ -25,7 +25,7 @@ const twitter: LinkType = LinkType.Twitter;
 export const LinkedIn: Story = {
   args: {
     href: '/LinkedIn',
-    children: 'LinkedIn',
+    label: 'LinkedIn',
     onClick: clickJestFn,
     type: linkedin,
   },
