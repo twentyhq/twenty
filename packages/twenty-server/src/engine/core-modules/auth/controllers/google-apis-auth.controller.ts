@@ -81,17 +81,6 @@ export class GoogleAPIsAuthController {
       messageVisibility,
     });
 
-    const userId = (
-      await this.workspaceMemberService.find(workspaceMemberId, workspaceId)
-    )?.userId;
-
-    if (userId) {
-      await this.userStateService.skipSyncEmailOnboardingStep(
-        userId,
-        workspaceId,
-      );
-    }
-
     return res.redirect(
       `${this.environmentService.get('FRONT_BASE_URL')}${
         redirectLocation || '/settings/accounts'

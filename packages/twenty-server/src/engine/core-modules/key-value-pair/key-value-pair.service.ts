@@ -5,8 +5,7 @@ import { Repository } from 'typeorm';
 
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { UserStates } from 'src/engine/core-modules/user-state/enums/user-states.enum';
-import { UserStateEmailSyncValues } from 'src/engine/core-modules/user-state/enums/values/user-state-email-sync-values.enum';
-import { UserStateInviteTeamValues } from 'src/engine/core-modules/user-state/enums/values/user-state-invite-team-values.enum';
+import { UserStateOnboardingStepValues } from 'src/engine/core-modules/user-state/enums/values/user-state-onboarding-step-values.enum';
 
 export enum KeyValueTypes {
   USER_STATE = 'USER_STATE',
@@ -14,8 +13,7 @@ export enum KeyValueTypes {
 
 type KeyValuePairs = {
   [KeyValueTypes.USER_STATE]: {
-    [UserStates.SYNC_EMAIL_ONBOARDING_STEP]: UserStateEmailSyncValues;
-    [UserStates.INVITE_TEAM_ONBOARDING_STEP]: UserStateInviteTeamValues;
+    [UserStates.ONBOARDING_STEP]: UserStateOnboardingStepValues;
   };
 };
 
@@ -83,6 +81,26 @@ export class KeyValuePairService<TYPE extends keyof KeyValuePairs> {
     await this.keyValuePairRepository.upsert(upsertData, {
       conflictPaths,
       indexPredicate,
+    });
+  }
+
+  async delete<K extends keyof KeyValuePairs[TYPE]>({
+    userId,
+    workspaceId,
+    key,
+  }: {
+    userId?: string;
+    workspaceId?: string;
+    key: K;
+  }) {
+    if (!userId && !workspaceId) {
+      throw new BadRequestException('userId and workspaceId are undefined');
+    }
+
+    await this.keyValuePairRepository.delete({
+      userId,
+      workspaceId,
+      key: key as string,
     });
   }
 }

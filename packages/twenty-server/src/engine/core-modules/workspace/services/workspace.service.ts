@@ -50,6 +50,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       user.defaultWorkspace.id,
       user,
     );
+    await this.userStateService.initOnboardingStep(
+      user.id,
+      user.defaultWorkspaceId,
+    );
 
     return user.defaultWorkspace;
   }
@@ -109,10 +113,9 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     if (!workspace?.inviteHash) {
       return { success: false };
     }
+
     const frontBaseURL = this.environmentService.get('FRONT_BASE_URL');
     const inviteLink = `${frontBaseURL}/invite/${workspace.inviteHash}`;
-
-    await this.userStateService.skipInviteEmailOnboardingStep(workspace.id);
 
     for (const email of emails) {
       const emailData = {
@@ -139,6 +142,11 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         html,
       });
     }
+
+    await this.userStateService.skipInviteTeamOnboardingStep(
+      sender.id,
+      workspace.id,
+    );
 
     return { success: true };
   }
