@@ -2,6 +2,7 @@ import { useRecoilValue } from 'recoil';
 import { v4 } from 'uuid';
 
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
+import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
@@ -35,8 +36,24 @@ export const ObjectFilterDropdownOperandSelect = () => {
   );
 
   const handleOperangeChange = (newOperand: ViewFilterOperand) => {
+    const isEmptyOperand = [
+      ViewFilterOperand.IsEmpty,
+      ViewFilterOperand.IsNotEmpty,
+    ].includes(newOperand);
+
     setSelectedOperandInDropdown(newOperand);
     setIsObjectFilterDropdownOperandSelectUnfolded(false);
+
+    if (isEmptyOperand) {
+      selectFilter?.({
+        fieldMetadataId: filterDefinitionUsedInDropdown?.fieldMetadataId ?? '',
+        displayValue: '',
+        operand: newOperand,
+        value: '',
+        definition: filterDefinitionUsedInDropdown as FilterDefinition,
+      });
+      return;
+    }
 
     if (
       isDefined(filterDefinitionUsedInDropdown) &&

@@ -33,14 +33,16 @@ export const getOperandLabelShort = (
   switch (operand) {
     case ViewFilterOperand.Is:
     case ViewFilterOperand.Contains:
-    case ViewFilterOperand.IsEmpty:
       return ': ';
     case ViewFilterOperand.IsNot:
     case ViewFilterOperand.DoesNotContain:
       return ': Not';
     case ViewFilterOperand.IsNotNull:
-    case ViewFilterOperand.IsNotEmpty:
       return ': NotNull';
+    case ViewFilterOperand.IsNotEmpty:
+      return ': NotEmpty';
+    case ViewFilterOperand.IsEmpty:
+      return ': Empty';
     case ViewFilterOperand.GreaterThan:
       return '\u00A0> ';
     case ViewFilterOperand.LessThan:

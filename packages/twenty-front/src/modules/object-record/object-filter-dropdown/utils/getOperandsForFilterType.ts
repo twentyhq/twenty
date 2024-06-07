@@ -36,11 +36,7 @@ export const getOperandsForFilterType = (
       ];
     case 'RELATION':
     case 'SELECT':
-      return [
-        ViewFilterOperand.Is,
-        ViewFilterOperand.IsNot,
-        ...defaultOperands,
-      ];
+      return [ViewFilterOperand.Is, ViewFilterOperand.IsNot];
     default:
       return defaultOperands;
   }

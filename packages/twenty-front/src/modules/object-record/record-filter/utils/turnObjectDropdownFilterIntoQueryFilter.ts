@@ -24,6 +24,93 @@ export type ObjectDropdownFilter = Omit<Filter, 'definition'> & {
   };
 };
 
+const applyEmptyFilters = (
+  operand: ViewFilterOperand,
+  correspondingField: Pick<Field, 'id' | 'name'>,
+  objectRecordFilters: RecordGqlOperationFilter[],
+  filterType: 'URL' | 'Address' | 'String' | 'Number' | 'Date' = 'String',
+) => {
+  let emptyRecordFilter: RecordGqlOperationFilter = {};
+
+  switch (filterType) {
+    case 'String':
+      emptyRecordFilter = {
+        or: [
+          { [correspondingField.name]: { ilike: '' } as StringFilter },
+          { [correspondingField.name]: { is: 'NULL' } as StringFilter },
+        ],
+      };
+      break;
+    case 'URL':
+      emptyRecordFilter = {
+        or: [
+          { [correspondingField.name]: { url: { ilike: '' } } as URLFilter },
+          {
+            [correspondingField.name]: { url: { is: 'NULL' } } as URLFilter,
+          },
+        ],
+      };
+      break;
+    case 'Address':
+      emptyRecordFilter = {
+        or: [
+          {
+            [correspondingField.name]: {
+              addressStreet1: { ilike: '' },
+            } as AddressFilter,
+          },
+          {
+            [correspondingField.name]: {
+              addressStreet2: { ilike: '' },
+            } as AddressFilter,
+          },
+          {
+            [correspondingField.name]: {
+              addressCity: { ilike: '' },
+            } as AddressFilter,
+          },
+          {
+            [correspondingField.name]: {
+              addressStreet1: { is: 'NULL' },
+            } as AddressFilter,
+          },
+          {
+            [correspondingField.name]: {
+              addressStreet2: { is: 'NULL' },
+            } as AddressFilter,
+          },
+          {
+            [correspondingField.name]: {
+              addressCity: { is: 'NULL' },
+            } as AddressFilter,
+          },
+        ],
+      };
+      break;
+    case 'Number':
+      emptyRecordFilter = {
+        or: [
+          { [correspondingField.name]: { eq: 0 } as FloatFilter },
+          { [correspondingField.name]: { is: 'NULL' } as FloatFilter },
+        ],
+      };
+      break;
+  }
+
+  switch (operand) {
+    case ViewFilterOperand.IsEmpty:
+      objectRecordFilters.push(emptyRecordFilter);
+      break;
+    case ViewFilterOperand.IsNotEmpty:
+      objectRecordFilters.push({
+        not: emptyRecordFilter,
+      });
+      break;
+    default:
+      throw new Error(`Unknown operand ${operand} for ${filterType} filter`);
+  }
+};
+
 export const turnObjectDropdownFilterIntoQueryFilter = (
   rawUIFilters: ObjectDropdownFilter[],
   fields: Pick<Field, 'id' | 'name'>[],
@@ -39,8 +126,14 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
       continue;
     }
 
-    if (!isDefined(rawUIFilter.value) || rawUIFilter.value === '') {
-      continue;
+    if (
+      ![ViewFilterOperand.IsEmpty, ViewFilterOperand.IsNotEmpty].includes(
+        rawUIFilter.operand,
+      )
+    ) {
+      if (!isDefined(rawUIFilter.value) || rawUIFilter.value === '') {
+        continue;
+      }
     }
 
     switch (rawUIFilter.definition.type) {
@@ -64,6 +157,14 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               },
             });
             break;
+          case ViewFilterOperand.IsEmpty:
+          case ViewFilterOperand.IsNotEmpty:
+            applyEmptyFilters(
+              rawUIFilter.operand,
+              correspondingField,
+              objectRecordFilters,
+            );
+            break;
           default:
             throw new Error(
               `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
@@ -86,6 +187,15 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               } as DateFilter,
             });
             break;
+          case ViewFilterOperand.IsEmpty:
+          case ViewFilterOperand.IsNotEmpty:
+            applyEmptyFilters(
+              rawUIFilter.operand,
+              correspondingField,
+              objectRecordFilters,
+              'Date',
+            );
+            break;
           default:
             throw new Error(
               `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
@@ -107,6 +217,15 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
                 lte: parseFloat(rawUIFilter.value),
               } as FloatFilter,
             });
+            break;
+          case ViewFilterOperand.IsEmpty:
+          case ViewFilterOperand.IsNotEmpty:
+            applyEmptyFilters(
+              rawUIFilter.operand,
+              correspondingField,
+              objectRecordFilters,
+              'Number',
+            );
             break;
           default:
             throw new Error(
@@ -169,6 +288,14 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
               } as CurrencyFilter,
             });
             break;
+          case ViewFilterOperand.IsEmpty:
+          case ViewFilterOperand.IsNotEmpty:
+            applyEmptyFilters(
+              rawUIFilter.operand,
+              correspondingField,
+              objectRecordFilters,
+            );
+            break;
           default:
             throw new Error(
               `Unknown operand ${rawUIFilter.operand} for ${rawUIFilter.definition.type} filter`,
@@ -196,6 +323,15 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
                 } as URLFilter,
               },
             });
+            break;
+          case ViewFilterOperand.IsEmpty:
+          case ViewFilterOperand.IsNotEmpty:
+            applyEmptyFilters(
+              rawUIFilter.operand,
+              correspondingField,
+              objectRecordFilters,
+              'URL',
+            );
             break;
           default:
             throw new Error(
@@ -252,6 +388,14 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
                 };
               }),
             });
+            break;
+          case ViewFilterOperand.IsEmpty:
+          case ViewFilterOperand.IsNotEmpty:
+            applyEmptyFilters(
+              rawUIFilter.operand,
+              correspondingField,
+              objectRecordFilters,
+            );
             break;
           default:
             throw new Error(
@@ -321,6 +465,15 @@ export const turnObjectDropdownFilterIntoQueryFilter = (
                 },
               ],
             });
+            break;
+          case ViewFilterOperand.IsEmpty:
+          case ViewFilterOperand.IsNotEmpty:
+            applyEmptyFilters(
+              rawUIFilter.operand,
+              correspondingField,
+              objectRecordFilters,
+              'Address',
+            );
             break;
           default:
             throw new Error(
