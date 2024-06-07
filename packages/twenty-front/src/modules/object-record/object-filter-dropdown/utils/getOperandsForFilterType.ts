@@ -5,12 +5,12 @@ import { FilterType } from '../types/FilterType';
 export const getOperandsForFilterType = (
   filterType: FilterType | null | undefined,
 ): ViewFilterOperand[] => {
-  const defaultOperands = [
+  const emptyOperands = [
     ViewFilterOperand.IsEmpty,
     ViewFilterOperand.IsNotEmpty,
   ];
 
-  const objectOperands = [ViewFilterOperand.Is, ViewFilterOperand.IsNot];
+  const relationOperands = [ViewFilterOperand.Is, ViewFilterOperand.IsNot];
 
   switch (filterType) {
     case 'TEXT':
@@ -22,7 +22,7 @@ export const getOperandsForFilterType = (
       return [
         ViewFilterOperand.Contains,
         ViewFilterOperand.DoesNotContain,
-        ...defaultOperands,
+        ...emptyOperands,
       ];
     case 'LINKS':
       return [ViewFilterOperand.Contains, ViewFilterOperand.DoesNotContain];
@@ -34,13 +34,13 @@ export const getOperandsForFilterType = (
       return [
         ViewFilterOperand.GreaterThan,
         ViewFilterOperand.LessThan,
-        ...defaultOperands,
+        ...emptyOperands,
       ];
     case 'RELATION':
-      return [...objectOperands, ...defaultOperands];
+      return [...relationOperands, ...emptyOperands];
     case 'SELECT':
-      return [...objectOperands];
+      return [...relationOperands];
     default:
-      return defaultOperands;
+      return emptyOperands;
   }
 };
