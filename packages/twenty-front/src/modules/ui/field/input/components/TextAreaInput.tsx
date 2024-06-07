@@ -34,12 +34,9 @@ const StyledTextArea = styled(TextareaAutosize)`
 `;
 
 const StyledTextAreaContainer = styled.div`
-  background-color: white;
-  border: ${({ theme }) => `1px solid ${theme.border.color.danger}`};
+  border: ${({ theme }) => `1px solid ${theme.border.color.light}`};
   position: relative;
   width: 100%;
-  max-height: 400px;
-  overflow-y: auto;
   padding: ${({ theme }) => theme.spacing(2)} ${({ theme }) => theme.spacing(1)};
   border-radius: ${({ theme }) => theme.border.radius.sm};
 `;
