@@ -4,12 +4,12 @@ import { Any } from 'typeorm';
 import omit from 'lodash.omit';
 
 import { TIMELINE_CALENDAR_EVENTS_DEFAULT_PAGE_SIZE } from 'src/engine/core-modules/calendar/constants/calendar.constants';
-import { TimelineCalendarEventVisibility } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-event.dto';
 import { TimelineCalendarEventsWithTotal } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-events-with-total.dto';
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { CalendarChannelVisibility } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 
 @Injectable()
 export class TimelineCalendarEventService {
@@ -107,8 +107,8 @@ export class TimelineCalendarEventService {
       const visibility = event.calendarChannelEventAssociations.some(
         (association) => association.calendarChannel.visibility === 'METADATA',
       )
-        ? TimelineCalendarEventVisibility.METADATA
-        : TimelineCalendarEventVisibility.SHARE_EVERYTHING;
+        ? CalendarChannelVisibility.METADATA
+        : CalendarChannelVisibility.SHARE_EVERYTHING;
 
       return {
         ...omit(event, [

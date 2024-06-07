@@ -117,9 +117,21 @@ export const RecordTableCellSoftFocusMode = ({
     }
   };
 
+  const handleButtonClick = () => {
+    handleClick();
+    /*
+    Disabling sidepanel access for now, TODO: launch
+    if (!isFieldInputOnly) {
+      openTableCell(undefined, true);
+    }
+    */
+  };
+
   const isFirstColumn = columnIndex === 0;
   const customButtonIcon = useGetButtonIcon();
-  const buttonIcon = isFirstColumn ? IconArrowUpRight : customButtonIcon;
+  const buttonIcon = isFirstColumn
+    ? IconArrowUpRight // IconLayoutSidebarRightExpand - Disabling sidepanel access for now
+    : customButtonIcon;
 
   const showButton =
     isDefined(buttonIcon) &&
@@ -136,7 +148,7 @@ export const RecordTableCellSoftFocusMode = ({
         {editModeContentOnly ? editModeContent : nonEditModeContent}
       </RecordTableCellDisplayContainer>
       {showButton && (
-        <RecordTableCellButton onClick={handleClick} Icon={buttonIcon} />
+        <RecordTableCellButton onClick={handleButtonClick} Icon={buttonIcon} />
       )}
     </>
   );

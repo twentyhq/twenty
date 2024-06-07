@@ -1,22 +1,17 @@
 import { SettingsAccountsRadioSettingsCard } from '@/settings/accounts/components/SettingsAccountsRadioSettingsCard';
 import { SettingsAccountsVisibilitySettingCardMedia } from '@/settings/accounts/components/SettingsAccountsVisibilitySettingCardMedia';
-
-export enum InboxSettingsVisibilityValue {
-  Everything = 'share_everything',
-  SubjectMetadata = 'subject',
-  Metadata = 'metadata',
-}
+import { MessageChannelVisibility } from '~/generated/graphql';
 
 type SettingsAccountsInboxVisibilitySettingsCardProps = {
-  onChange: (nextValue: InboxSettingsVisibilityValue) => void;
-  value?: InboxSettingsVisibilityValue;
+  onChange: (nextValue: MessageChannelVisibility) => void;
+  value?: MessageChannelVisibility;
 };
 
 const inboxSettingsVisibilityOptions = [
   {
     title: 'Everything',
     description: 'Subject, body and attachments will be shared with your team.',
-    value: InboxSettingsVisibilityValue.Everything,
+    value: MessageChannelVisibility.ShareEverything,
     cardMedia: (
       <SettingsAccountsVisibilitySettingCardMedia
         metadata="active"
@@ -28,7 +23,7 @@ const inboxSettingsVisibilityOptions = [
   {
     title: 'Subject and metadata',
     description: 'Subject and metadata will be shared with your team.',
-    value: InboxSettingsVisibilityValue.SubjectMetadata,
+    value: MessageChannelVisibility.Subject,
     cardMedia: (
       <SettingsAccountsVisibilitySettingCardMedia
         metadata="active"
@@ -40,7 +35,7 @@ const inboxSettingsVisibilityOptions = [
   {
     title: 'Metadata',
     description: 'Timestamp and participants will be shared with your team.',
-    value: InboxSettingsVisibilityValue.Metadata,
+    value: MessageChannelVisibility.Metadata,
     cardMedia: (
       <SettingsAccountsVisibilitySettingCardMedia
         metadata="active"
@@ -53,7 +48,7 @@ const inboxSettingsVisibilityOptions = [
 
 export const SettingsAccountsInboxVisibilitySettingsCard = ({
   onChange,
-  value = InboxSettingsVisibilityValue.Everything,
+  value = MessageChannelVisibility.ShareEverything,
 }: SettingsAccountsInboxVisibilitySettingsCardProps) => (
   <SettingsAccountsRadioSettingsCard
     options={inboxSettingsVisibilityOptions}

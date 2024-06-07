@@ -19,7 +19,7 @@ export const useSaveCurrentViewFields = (viewBarComponentId?: string) => {
 
   const saveViewFields = useRecoilCallback(
     ({ set, snapshot }) =>
-      async (fields: ViewField[]) => {
+      async (viewFieldsToSave: ViewField[]) => {
         const currentViewId = snapshot
           .getLoadable(currentViewIdState)
           .getValue();
@@ -29,21 +29,27 @@ export const useSaveCurrentViewFields = (viewBarComponentId?: string) => {
         }
 
         set(isPersistingViewFieldsState, true);
+
         const view = await getViewFromCache(currentViewId);
 
         if (isUndefinedOrNull(view)) {
           return;
         }
 
-        const viewFieldsToUpdate = fields
-          .map((field) => {
-            const existingField = view.viewFields.find(
-              (viewField) => viewField.id === field.id,
+        const currentViewFields = view.viewFields;
+
+        const viewFieldsToUpdate = viewFieldsToSave
+          .map((viewFieldToSave) => {
+            const existingField = currentViewFields.find(
+              (currentViewField) =>
+                currentViewField.fieldMetadataId ===
+                viewFieldToSave.fieldMetadataId,
             );
 
             if (isUndefinedOrNull(existingField)) {
               return undefined;
             }
+
             if (
               isDeeplyEqual(
                 {
@@ -52,24 +58,33 @@ export const useSaveCurrentViewFields = (viewBarComponentId?: string) => {
                   isVisible: existingField.isVisible,
                 },
                 {
-                  position: field.position,
-                  size: field.size,
-                  isVisible: field.isVisible,
+                  position: viewFieldToSave.position,
+                  size: viewFieldToSave.size,
+                  isVisible: viewFieldToSave.isVisible,
                 },
               )
             ) {
               return undefined;
             }
-            return field;
+
+            return { ...viewFieldToSave, id: existingField.id };
           })
           .filter(isDefined);
 
-        const viewFieldsToCreate = fields.filter((field) => !field.id);
+        const viewFieldsToCreate = viewFieldsToSave.filter(
+          (viewFieldToSave) =>
+            !currentViewFields.some(
+              (currentViewField) =>
+                currentViewField.fieldMetadataId ===
+                viewFieldToSave.fieldMetadataId,
+            ),
+        );
 
         await Promise.all([
           createViewFieldRecords(viewFieldsToCreate, view),
           updateViewFieldRecords(viewFieldsToUpdate),
         ]);
+
         set(isPersistingViewFieldsState, false);
       },
     [

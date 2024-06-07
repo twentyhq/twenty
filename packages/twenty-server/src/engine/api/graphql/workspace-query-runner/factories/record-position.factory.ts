@@ -4,6 +4,7 @@ import { isDefined } from 'class-validator';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import {
+  RecordPositionQueryArgs,
   RecordPositionQueryFactory,
   RecordPositionQueryType,
 } from 'src/engine/api/graphql/workspace-query-builder/factories/record-position-query.factory';
@@ -19,40 +20,62 @@ export class RecordPositionFactory {
     value: number | 'first' | 'last',
     objectMetadata: { isCustom: boolean; nameSingular: string },
     workspaceId: string,
+    index = 0,
   ): Promise<number> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
     if (typeof value === 'number') {
       return value;
     }
 
-    const dataSourceSchema =
-      this.workspaceDataSourceService.getSchemaName(workspaceId);
+    if (value === 'first') {
+      const recordWithMinPosition = await this.findRecordPosition(
+        {
+          recordPositionQueryType: RecordPositionQueryType.FIND_MIN_POSITION,
+        },
+        objectMetadata,
+        dataSourceSchema,
+        workspaceId,
+      );
 
-    const query = await this.recordPositionQueryFactory.create(
-      RecordPositionQueryType.GET,
-      value,
+      return isDefined(recordWithMinPosition?.position)
+        ? recordWithMinPosition.position - index - 1
+        : 1;
+    }
+
+    const recordWithMaxPosition = await this.findRecordPosition(
+      {
+        recordPositionQueryType: RecordPositionQueryType.FIND_MAX_POSITION,
+      },
+      objectMetadata,
+      dataSourceSchema,
+      workspaceId,
+    );
+
+    return isDefined(recordWithMaxPosition?.position)
+      ? recordWithMaxPosition.position + index + 1
+      : 1;
+  }
+
+  private async findRecordPosition(
+    recordPositionQueryArgs: RecordPositionQueryArgs,
+    objectMetadata: { isCustom: boolean; nameSingular: string },
+    dataSourceSchema: string,
+    workspaceId: string,
+  ) {
+    const [query, params] = await this.recordPositionQueryFactory.create(
+      recordPositionQueryArgs,
       objectMetadata,
       dataSourceSchema,
     );
 
-    // If the value was 'first', the first record will be the one with the lowest position
-    // If the value was 'last', the first record will be the one with the highest position
     const records = await this.workspaceDataSourceService.executeRawQuery(
       query,
-      [],
+      params,
       workspaceId,
-      undefined,
     );
 
-    if (
-      !isDefined(records) ||
-      records.length === 0 ||
-      !isDefined(records[0]?.position)
-    ) {
-      return 1;
-    }
-
-    return value === 'first'
-      ? records[0].position - 1
-      : records[0].position + 1;
+    return records?.[0];
   }
 }

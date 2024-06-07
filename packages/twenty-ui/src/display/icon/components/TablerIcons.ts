@@ -90,6 +90,7 @@ export {
   IconHeartOff,
   IconHelpCircle,
   IconHierarchy2,
+  IconHome,
   IconInbox,
   IconInfoCircle,
   IconJson,

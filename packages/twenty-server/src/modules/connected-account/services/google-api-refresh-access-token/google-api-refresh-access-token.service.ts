@@ -68,7 +68,7 @@ export class GoogleAPIRefreshAccessTokenService {
       }
 
       await this.messagingTelemetryService.track({
-        eventName: `refresh-token.error.insufficient_permissions`,
+        eventName: `refresh_token.error.insufficient_permissions`,
         workspaceId,
         connectedAccountId: messageChannel.connectedAccountId,
         messageChannelId: messageChannel.id,

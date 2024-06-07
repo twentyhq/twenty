@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useApolloClient } from '@apollo/client';
 import { v4 } from 'uuid';
 
@@ -28,6 +29,7 @@ export const useCreateOneRecord = <
   skipPostOptmisticEffect = false,
 }: useCreateOneRecordProps) => {
   const apolloClient = useApolloClient();
+  const [loading, setLoading] = useState(false);
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
@@ -50,6 +52,8 @@ export const useCreateOneRecord = <
   const { objectMetadataItems } = useObjectMetadataItems();
 
   const createOneRecord = async (input: Partial<CreatedObjectRecord>) => {
+    setLoading(true);
+
     const idForCreation = input.id ?? v4();
 
     const sanitizedInput = {
@@ -94,6 +98,7 @@ export const useCreateOneRecord = <
           recordsToCreate: [record],
           objectMetadataItems,
         });
+        setLoading(false);
       },
     });
 
@@ -102,5 +107,6 @@ export const useCreateOneRecord = <
 
   return {
     createOneRecord,
+    loading,
   };
 };
