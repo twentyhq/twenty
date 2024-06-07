@@ -50,7 +50,7 @@ export const SettingsAccountsRadioSettingsCard = <
   options,
   value,
 }: SettingsAccountsRadioSettingsCardProps<Option>) => (
-  <Card>
+  <Card rounded>
     {options.map((option, index) => (
       <StyledCardContent
         key={option.value}

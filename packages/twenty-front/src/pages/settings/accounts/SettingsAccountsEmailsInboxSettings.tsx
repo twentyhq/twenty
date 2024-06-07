@@ -8,16 +8,14 @@ import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSi
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsAccountsCardMedia } from '@/settings/accounts/components/SettingsAccountsCardMedia';
-import {
-  InboxSettingsVisibilityValue,
-  SettingsAccountsInboxVisibilitySettingsCard,
-} from '@/settings/accounts/components/SettingsAccountsInboxVisibilitySettingsCard';
+import { SettingsAccountsInboxVisibilitySettingsCard } from '@/settings/accounts/components/SettingsAccountsInboxVisibilitySettingsCard';
 import { SettingsAccountsToggleSettingCard } from '@/settings/accounts/components/SettingsAccountsToggleSettingCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { AppPath } from '@/types/AppPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { MessageChannelVisibility } from '~/generated/graphql';
 
 export const SettingsAccountsEmailsInboxSettings = () => {
   const theme = useTheme();
@@ -33,7 +31,7 @@ export const SettingsAccountsEmailsInboxSettings = () => {
     objectNameSingular: CoreObjectNameSingular.MessageChannel,
   });
 
-  const handleVisibilityChange = (value: InboxSettingsVisibilityValue) => {
+  const handleVisibilityChange = (value: MessageChannelVisibility) => {
     updateOneRecord({
       idToUpdate: messageChannelId,
       updateOneRecordInput: {
