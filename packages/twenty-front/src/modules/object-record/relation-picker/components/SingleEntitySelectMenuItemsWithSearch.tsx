@@ -1,12 +1,9 @@
-import { useRecoilValue } from 'recoil';
-
 import { ObjectMetadataItemsRelationPickerEffect } from '@/object-metadata/components/ObjectMetadataItemsRelationPickerEffect';
 import {
   SingleEntitySelectMenuItems,
   SingleEntitySelectMenuItemsProps,
 } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItems';
-import { useRelationPickerScopedStates } from '@/object-record/relation-picker/hooks/internal/useRelationPickerScopedStates';
-import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
+import { useRelationEntities } from '@/object-record/relation-picker/hooks/useRelationEntities';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { isDefined } from '~/utils/isDefined';
@@ -44,31 +41,14 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
     relationPickerScopeId,
   });
 
-  const { searchQueryState, relationPickerSearchFilterState } =
-    useRelationPickerScopedStates({
-      relationPickerScopedId: relationPickerScopeId,
-    });
-
-  const searchQuery = useRecoilValue(searchQueryState);
-  const relationPickerSearchFilter = useRecoilValue(
-    relationPickerSearchFilterState,
-  );
+  const { entities, relationPickerSearchFilter } = useRelationEntities({
+    relationObjectNameSingular,
+    relationPickerScopeId,
+    selectedRelationRecordIds,
+    excludedRelationRecordIds,
+  });
 
   const showCreateButton = isDefined(onCreate);
-
-  const entities = useFilteredSearchEntityQuery({
-    filters: [
-      {
-        fieldNames:
-          searchQuery?.computeFilterFields?.(relationObjectNameSingular) ?? [],
-        filter: relationPickerSearchFilter,
-      },
-    ],
-    orderByField: 'createdAt',
-    selectedIds: selectedRelationRecordIds,
-    excludeEntityIds: excludedRelationRecordIds,
-    objectNameSingular: relationObjectNameSingular,
-  });
 
   let onCreateWithInput = undefined;
 
