@@ -30,6 +30,8 @@ export class UserStateService {
       );
 
     if (connectedAccounts?.length) {
+      await this.skipSyncEmailOnboardingStep(user.id, workspace.id);
+
       return {
         skipSyncEmailOnboardingStep: true,
       };

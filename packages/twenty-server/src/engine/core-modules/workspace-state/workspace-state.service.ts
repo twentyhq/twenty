@@ -9,14 +9,25 @@ import { WorkspaceStateInviteTeamValues } from 'src/engine/core-modules/workspac
 import { WorkspaceStateResult } from 'src/engine/core-modules/workspace-state/dtos/workspace-state-result';
 import { WorkspaceState } from 'src/engine/core-modules/workspace-state/dtos/workspace-state.dto';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 
 @Injectable()
 export class WorkspaceStateService {
   constructor(
+    private readonly userWorkspaceService: UserWorkspaceService,
     private readonly keyValuePairService: KeyValuePairService<KeyValueTypes.WORKSPACE_STATE>,
   ) {}
 
   async getWorkspaceState(workspace: Workspace): Promise<WorkspaceState> {
+    const workspaceMemberCount =
+      await this.userWorkspaceService.getWorkspaceMemberCount(workspace.id);
+
+    if (workspaceMemberCount && workspaceMemberCount > 1) {
+      await this.skipInviteEmailOnboardingStep(workspace.id);
+
+      return { skipInviteTeamOnboardingStep: true };
+    }
+
     const skipInviteTeam = await this.keyValuePairService.get({
       workspaceId: workspace.id,
       key: WorkspaceStates.INVITE_TEAM_ONBOARDING_STEP,
