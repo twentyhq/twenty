@@ -23,8 +23,6 @@ export class TextToSQLResolver {
     @AuthWorkspace() { id: workspaceId }: Workspace,
     @Args() { text }: GetTextToSQLArgs,
   ) {
-    const textToSQL = await this.textToSQLService.query(workspaceId, text);
-
-    return textToSQL;
+    return this.textToSQLService.query(workspaceId, text);
   }
 }

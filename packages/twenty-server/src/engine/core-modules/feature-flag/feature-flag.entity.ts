@@ -22,6 +22,7 @@ export enum FeatureFlagKeys {
   IsPostgreSQLIntegrationEnabled = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
   IsStripeIntegrationEnabled = 'IS_STRIPE_INTEGRATION_ENABLED',
   IsContactCreationForSentAndReceivedEmailsEnabled = 'IS_CONTACT_CREATION_FOR_SENT_AND_RECEIVED_EMAILS_ENABLED',
+  IsAskAIEnabled = 'IS_ASK_AI_ENABLED',
 }
 
 @Entity({ name: 'featureFlag', schema: 'core' })
