@@ -138,6 +138,22 @@ export class MessageChannelRepository {
     );
   }
 
+  public async getById(
+    id: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<MessageChannelWorkspaceEntity>> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT * FROM ${dataSourceSchema}."messageChannel" WHERE "id" = $1`,
+      [id],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async getIdsByWorkspaceMemberId(
     workspaceMemberId: string,
     workspaceId: string,
