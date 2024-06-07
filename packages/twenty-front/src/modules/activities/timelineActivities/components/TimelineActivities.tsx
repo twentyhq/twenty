@@ -1,4 +1,4 @@
-import emotionStyled from '@emotion/styled';
+import styled from '@emotion/styled';
 import { isNonEmptyArray } from '@sniptt/guards';
 
 import { TimelineCreateButtonGroup } from '@/activities/timeline/components/TimelineCreateButtonGroup';
@@ -14,7 +14,7 @@ import {
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
-const StyledMainContainer = emotionStyled.div`
+const StyledMainContainer = styled.div`
   align-items: flex-start;
   align-self: stretch;
   border-top: ${({ theme }) =>
