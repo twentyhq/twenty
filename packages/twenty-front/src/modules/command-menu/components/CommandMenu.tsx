@@ -33,22 +33,18 @@ import { Command, CommandType } from '../types/Command';
 import { CommandGroup } from './CommandGroup';
 import { CommandMenuItem } from './CommandMenuItem';
 
-export const StyledDialog = styled.div<{ isMobile: boolean }>`
+export const StyledDialog = styled.div`
   background: ${({ theme }) => theme.background.secondary};
-  border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme, isMobile }) =>
-    isMobile ? '0px' : theme.border.radius.md};
-  box-shadow: ${({ theme }) => theme.boxShadow.superHeavy};
+  border-left: 1px solid ${({ theme }) => theme.border.color.medium};
+  box-shadow: ${({ theme }) => theme.boxShadow.strong};
   font-family: ${({ theme }) => theme.font.family};
-  left: ${(isMobile) => (isMobile ? '0%' : '50%')};
-  max-width: ${(isMobile) => (isMobile ? 'none' : '640px')};
+  height: 100%;
   overflow: hidden;
   padding: 0;
   position: fixed;
-  top: ${(isMobile) => (isMobile ? '0%' : '30%')};
-  transform: ${(isMobile) => (isMobile ? 'none' : 'translateX(-50%)')};
-  width: ${(isMobile) => (isMobile ? 'calc(100%)' : '100%')};
-  height: ${(isMobile) => (isMobile ? 'calc(100%)' : 'auto')};
+  right: 0%;
+  top: 0%;
+  width: ${() => (useIsMobile() ? '100%' : '500px')};
   z-index: 1000;
 `;
 
@@ -61,7 +57,8 @@ export const StyledInput = styled.input`
   font-size: ${({ theme }) => theme.font.size.lg};
   margin: 0;
   outline: none;
-  padding: ${({ theme }) => theme.spacing(5)};
+  height: 24px;
+  padding: ${({ theme }) => theme.spacing(4)};
   width: ${({ theme }) => `calc(100% - ${theme.spacing(10)})`};
 
   &::placeholder {
@@ -79,10 +76,8 @@ const StyledCancelText = styled.span`
   top: 0;
 `;
 
-export const StyledList = styled.div<{ isMobile: boolean }>`
+export const StyledList = styled.div`
   background: ${({ theme }) => theme.background.secondary};
-  height: ${(isMobile) => (isMobile ? 'calc(100% - 60px)' : '400px')};
-  max-height: ${(isMobile) => (isMobile ? 'calc(100% - 60px)' : '400px')};
   overscroll-behavior: contain;
   transition: 100ms ease;
   transition-property: height;
@@ -263,7 +258,7 @@ export const CommandMenu = () => {
   return (
     <>
       {isCommandMenuOpened && (
-        <StyledDialog ref={commandMenuRef} isMobile={isMobile}>
+        <StyledDialog ref={commandMenuRef}>
           <StyledInput
             autoFocus
             value={commandMenuSearch}
@@ -271,7 +266,7 @@ export const CommandMenu = () => {
             onChange={handleSearchChange}
           />
           {!isMobile && <StyledCancelText>Esc to cancel</StyledCancelText>}
-          <StyledList isMobile={isMobile}>
+          <StyledList>
             <ScrollWrapper>
               <StyledInnerList>
                 <SelectableList
