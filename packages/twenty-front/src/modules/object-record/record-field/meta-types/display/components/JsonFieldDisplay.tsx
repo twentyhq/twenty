@@ -9,13 +9,7 @@ export const JsonFieldDisplay = () => {
     return <></>;
   }
 
-  let value = '';
-
-  try {
-    value = JSON.stringify(fieldValue);
-  } catch (e) {
-    //
-  }
+  const value = JSON.stringify(fieldValue);
 
   return <JsonDisplay text={value} maxWidth={maxWidth} />;
 };

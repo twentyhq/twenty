@@ -1,6 +1,7 @@
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { useAddressFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useAddressFieldDisplay';
 import { TextDisplay } from '@/ui/field/display/components/TextDisplay';
-import { isDefined } from '~/utils/isDefined';
 
 export const AddressFieldDisplay = () => {
   const { fieldValue } = useAddressFieldDisplay();
@@ -11,7 +12,7 @@ export const AddressFieldDisplay = () => {
     fieldValue?.addressCity,
     fieldValue?.addressCountry,
   ]
-    .filter(isDefined)
+    .filter(isNonEmptyString)
     .join(', ');
 
   return <TextDisplay text={content} />;

@@ -45,7 +45,7 @@ export const companiesQueryResult = {
         node: {
           __typename: 'Company',
           id: '20202020-3ec3-4fe3-8997-b76aa0bfa408',
-          employees: null,
+          employees: 100,
           createdAt: '2024-06-05T09:00:20.412Z',
           name: 'Linkedin',
           accountOwner: null,

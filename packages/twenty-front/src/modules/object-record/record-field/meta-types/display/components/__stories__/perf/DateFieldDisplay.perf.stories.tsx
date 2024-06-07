@@ -10,7 +10,7 @@ const meta: Meta = {
   title: 'UI/Data/Field/Display/DateFieldDisplay',
   decorators: [
     MemoryRouterDecorator,
-    getFieldDecorator('person', 'testDate'),
+    getFieldDecorator('person', 'createdAt'),
     ComponentDecorator,
   ],
   component: DateFieldDisplay,

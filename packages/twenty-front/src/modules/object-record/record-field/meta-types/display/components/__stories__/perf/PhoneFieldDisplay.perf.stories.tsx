@@ -33,9 +33,6 @@ export const Elipsis: Story = {
 };
 
 export const WrongNumber: Story = {
-  parameters: {
-    container: { width: 50 },
-  },
   decorators: [getFieldDecorator('person', 'phone', 'sdklaskdj')],
 };
 

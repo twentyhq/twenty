@@ -5,12 +5,12 @@ import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus'
 import { useMultiSelectFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useMultiSelectFieldDisplay';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 
-const themeSpacing = THEME_COMMON.spacingMultiplicator;
+const spacing1 = THEME_COMMON.spacing(1);
 
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;
-  gap: ${themeSpacing * 1}px;
+  gap: ${spacing1};
   justify-content: flex-start;
 
   max-width: 100%;

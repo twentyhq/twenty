@@ -10,7 +10,7 @@ import { SnackBarDecorator } from '~/testing/decorators/SnackBarDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getCompaniesMock } from '~/testing/mock-data/companies';
 import { mockedCompanyObjectMetadataItem } from '~/testing/mock-data/metadata';
-import { getPeopleMock } from '~/testing/mock-data/peopleV3';
+import { getPeopleMock } from '~/testing/mock-data/people';
 
 import { RecordDetailRelationSection } from '../RecordDetailRelationSection';
 
