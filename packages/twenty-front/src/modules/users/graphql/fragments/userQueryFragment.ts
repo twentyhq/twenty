@@ -9,8 +9,7 @@ export const USER_QUERY_FRAGMENT = gql`
     canImpersonate
     supportUserHash
     state {
-      skipSyncEmailOnboardingStep
-      skipInviteTeamOnboardingStep
+      onboardingStep
     }
     workspaceMember {
       id

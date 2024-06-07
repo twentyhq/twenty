@@ -9,6 +9,7 @@ import { UserStateService } from 'src/engine/core-modules/user-state/user-state.
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserStateResult } from 'src/engine/core-modules/user-state/dtos/user-state-result';
+import { UserStateOnboardingStepValues } from 'src/engine/core-modules/user-state/enums/values/user-state-onboarding-step-values.enum';
 
 @UseGuards(JwtAuthGuard)
 @Resolver(() => UserState)
@@ -20,9 +21,12 @@ export class UserStateResolver {
     @AuthUser() user: User,
     @AuthWorkspace() workspace: Workspace,
   ): Promise<UserStateResult> {
-    return await this.userStateService.skipSyncEmailOnboardingStep(
+    await this.userStateService.skipOnboardingStep(
       user.id,
       workspace.id,
+      UserStateOnboardingStepValues.SYNC_EMAIL,
     );
+
+    return { success: true };
   }
 }

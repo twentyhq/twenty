@@ -19,6 +19,7 @@ import { SendInviteLink } from 'src/engine/core-modules/workspace/dtos/send-invi
 import { EmailService } from 'src/engine/integrations/email/email.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 import { UserStateService } from 'src/engine/core-modules/user-state/user-state.service';
+import { UserStateOnboardingStepValues } from 'src/engine/core-modules/user-state/enums/values/user-state-onboarding-step-values.enum';
 
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
@@ -143,9 +144,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       });
     }
 
-    await this.userStateService.skipInviteTeamOnboardingStep(
+    await this.userStateService.skipOnboardingStep(
       sender.id,
       workspace.id,
+      UserStateOnboardingStepValues.INVITE_TEAM,
     );
 
     return { success: true };

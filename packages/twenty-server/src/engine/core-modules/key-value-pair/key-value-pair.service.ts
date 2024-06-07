@@ -35,7 +35,7 @@ export class KeyValuePairService<TYPE extends keyof KeyValuePairs> {
     userId?: string;
     workspaceId?: string;
     key: K;
-  }): Promise<KeyValueType<TYPE, K>> {
+  }): Promise<KeyValueType<TYPE, K> | undefined> {
     return (
       await this.keyValuePairRepository.findOne({
         where: {
@@ -44,7 +44,7 @@ export class KeyValuePairService<TYPE extends keyof KeyValuePairs> {
           key: key as string,
         },
       })
-    )?.value as KeyValueType<TYPE, K>;
+    )?.value as KeyValueType<TYPE, K> | undefined;
   }
 
   async set<K extends keyof KeyValuePairs[TYPE]>({

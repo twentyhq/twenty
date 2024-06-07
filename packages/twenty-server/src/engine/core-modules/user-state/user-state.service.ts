@@ -11,7 +11,6 @@ import {
   KeyValueTypes,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 import { UserStates } from 'src/engine/core-modules/user-state/enums/user-states.enum';
-import { UserStateResult } from 'src/engine/core-modules/user-state/dtos/user-state-result';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserStateOnboardingStepValues } from 'src/engine/core-modules/user-state/enums/values/user-state-onboarding-step-values.enum';
 
@@ -35,50 +34,51 @@ export class UserStateService {
   ) {}
 
   async getUserState(user: User, workspace: Workspace): Promise<UserState> {
-    let skipSyncEmailOnboardingStep = true;
-    let skipInviteTeamOnboardingStep = true;
-
-    const workspaceMemberCount =
-      await this.userWorkspaceService.getWorkspaceMemberCount(workspace.id);
-
-    if (workspaceMemberCount && workspaceMemberCount > 1) {
-      await this.skipInviteTeamOnboardingStep(user.id, workspace.id);
-    } else {
-      const onboardingStep = await this.keyValuePairService.get({
+    await this.updateOnboardingStep(user.id, workspace.id);
+    const onboardingStep =
+      (await this.keyValuePairService.get({
         userId: user.id,
         workspaceId: workspace.id,
         key: UserStates.ONBOARDING_STEP,
-      });
+      })) || null;
 
-      if (onboardingStep === UserStateOnboardingStepValues.INVITE_TEAM) {
-        skipInviteTeamOnboardingStep = false;
-      }
+    return {
+      onboardingStep,
+    };
+  }
+
+  private async updateOnboardingStep(userId: string, workspaceId: string) {
+    const onboardingStep = await this.keyValuePairService.get({
+      userId,
+      workspaceId,
+      key: UserStates.ONBOARDING_STEP,
+    });
+
+    if (!onboardingStep) {
+      return;
+    }
+
+    const workspaceMemberCount =
+      await this.userWorkspaceService.getWorkspaceMemberCount(workspaceId);
+
+    if (workspaceMemberCount && workspaceMemberCount > 1) {
+      await this.skipOnboardingStep(
+        userId,
+        workspaceId,
+        UserStateOnboardingStepValues.INVITE_TEAM,
+      );
     }
 
     const connectedAccounts =
-      await this.connectedAccountRepository.getAllByUserId(
-        user.id,
-        workspace.id,
-      );
+      await this.connectedAccountRepository.getAllByUserId(userId, workspaceId);
 
     if (connectedAccounts?.length) {
-      await this.skipSyncEmailOnboardingStep(user.id, workspace.id);
-    } else {
-      const onboardingStep = await this.keyValuePairService.get({
-        userId: user.id,
-        workspaceId: workspace.id,
-        key: UserStates.ONBOARDING_STEP,
-      });
-
-      if (onboardingStep === UserStateOnboardingStepValues.SYNC_EMAIL) {
-        skipSyncEmailOnboardingStep = false;
-      }
+      await this.skipOnboardingStep(
+        userId,
+        workspaceId,
+        UserStateOnboardingStepValues.SYNC_EMAIL,
+      );
     }
-
-    return {
-      skipSyncEmailOnboardingStep,
-      skipInviteTeamOnboardingStep,
-    };
   }
 
   async initOnboardingStep(userId: string, workspaceId: string) {
@@ -90,7 +90,7 @@ export class UserStateService {
     });
   }
 
-  private async updateOnboardingStep(
+  async skipOnboardingStep(
     userId: string,
     workspaceId: string,
     onboardingStep: UserStateOnboardingStepValues,
@@ -111,31 +111,5 @@ export class UserStateService {
         value: nextStep,
       });
     }
-  }
-
-  async skipSyncEmailOnboardingStep(
-    userId: string,
-    workspaceId: string,
-  ): Promise<UserStateResult> {
-    await this.updateOnboardingStep(
-      userId,
-      workspaceId,
-      UserStateOnboardingStepValues.SYNC_EMAIL,
-    );
-
-    return { success: true };
-  }
-
-  async skipInviteTeamOnboardingStep(
-    userId: string,
-    workspaceId: string,
-  ): Promise<UserStateResult> {
-    await this.updateOnboardingStep(
-      userId,
-      workspaceId,
-      UserStateOnboardingStepValues.INVITE_TEAM,
-    );
-
-    return { success: true };
   }
 }
