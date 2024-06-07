@@ -12,6 +12,8 @@ import { MessageQueueWorkerOptions } from 'src/engine/integrations/message-queue
 
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/integrations/message-queue/utils/get-queue-token.util';
+import { ExceptionHandlerService } from 'src/engine/integrations/exception-handler/exception-handler.service';
+import { shouldFilterException } from 'src/engine/utils/global-exception-handler.util';
 
 import { MessageQueueMetadataAccessor } from './message-queue-metadata.accessor';
 
@@ -25,6 +27,7 @@ export class MessageQueueExplorer implements OnModuleInit {
     private readonly discoveryService: DiscoveryService,
     private readonly metadataAccessor: MessageQueueMetadataAccessor,
     private readonly metadataScanner: MetadataScanner,
+    private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   onModuleInit() {
@@ -147,7 +150,14 @@ export class MessageQueueExplorer implements OnModuleInit {
 
         for (const [methodName, metadata] of processMetadataCollection) {
           if (job.name === metadata?.jobName || !metadata?.jobName) {
-            await contextInstance[methodName].call(contextInstance, job);
+            try {
+              await contextInstance[methodName].call(contextInstance, job);
+            } catch (err) {
+              if (!shouldFilterException(err)) {
+                this.exceptionHandlerService.captureExceptions([err]);
+              }
+              throw err;
+            }
           }
         }
       }, options);
@@ -155,7 +165,14 @@ export class MessageQueueExplorer implements OnModuleInit {
       queue.work(async (job) => {
         for (const [methodName, metadata] of processMetadataCollection) {
           if (job.name === metadata?.jobName || !metadata?.jobName) {
-            await instance[methodName].call(instance, job);
+            try {
+              await instance[methodName].call(instance, job);
+            } catch (err) {
+              if (!shouldFilterException(err)) {
+                this.exceptionHandlerService.captureExceptions([err]);
+              }
+              throw err;
+            }
           }
         }
       }, options);
