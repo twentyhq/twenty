@@ -21,7 +21,7 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-/* import { useGetTextToSqlLazyQuery } from '~/generated/graphql'; */
+import { useGetTextToSqlLazyQuery } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 import { isDefined } from '~/utils/isDefined';
@@ -251,16 +251,32 @@ export const CommandMenu = () => {
     callback: closeCommandMenu,
   });
 
-  const selectableItemIds = matchingCreateCommand
-    .map((cmd) => cmd.id)
+  // TODO: Move to constants/CommandMenuCommands
+  const askAiCommand: Command = {
+    id: 'ask-ai',
+    to: '', // TODO
+    label: 'Ask AI',
+    type: CommandType.Navigate,
+    onCommandClick: async () => {
+      const queryResult = await getTextToSql({
+        variables: { text: commandMenuSearch },
+      });
+      console.log('queryResult', queryResult);
+      alert(JSON.stringify(queryResult.data?.getTextToSQL, undefined, 2));
+      // TODO: Call openActivityRightDrawer
+    },
+  };
+
+  const selectableItemIds = [askAiCommand.id]
+    .concat(matchingCreateCommand.map((cmd) => cmd.id))
     .concat(matchingNavigateCommand.map((cmd) => cmd.id))
     .concat(people.map((person) => person.id))
     .concat(companies.map((company) => company.id))
     .concat(activities.map((activity) => activity.id));
 
-  /*   const [getTextToSql, { data, loading, error }] = useGetTextToSqlLazyQuery({
+  const [getTextToSql, { data, loading, error }] = useGetTextToSqlLazyQuery({
     variables: { text: 'How many employees does Stripe have?' },
-  }); */
+  });
 
   return (
     <>
@@ -299,36 +315,17 @@ export const CommandMenu = () => {
                     !activities.length && (
                       <StyledEmpty>No results found</StyledEmpty>
                     )}
-                  <CommandGroup heading="Ask AI">
-                    <SelectableItem
-                      itemId="ask-ai"
-                      key="ask-ai-command-menu-item"
-                    >
+                  <CommandGroup heading={askAiCommand.label}>
+                    <SelectableItem itemId={askAiCommand.id}>
                       <CommandMenuItem
-                        id="ask-ai-command-menu-item"
-                        to="IconNotes"
-                        key="ask-ai-command-menu-item"
+                        id={askAiCommand.id}
                         Icon={IconNotes}
-                        label={`Ask AI ${
+                        label={`${askAiCommand.label} ${
                           commandMenuSearch.length > 2
                             ? `"${commandMenuSearch}"`
                             : ''
                         }`}
-                        onClick={async () => {
-                          /* const queryResult = await getTextToSql({
-                            variables: { text: commandMenuSearch },
-                          });
-                          console.log('queryResult', queryResult);
-                          alert(
-                            JSON.stringify(
-                              queryResult.data?,
-                              undefined,
-                              2,
-                            ),
-                          ); */
-                        }}
-                        /* firstHotKey={cmd.firstHotKey}
-                        secondHotKey={cmd.secondHotKey} */
+                        onClick={askAiCommand.onCommandClick}
                       />
                     </SelectableItem>
                   </CommandGroup>
