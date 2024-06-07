@@ -22,6 +22,7 @@ import { GraphQLConfigService } from 'src/engine/api/graphql/graphql-config/grap
 import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
 import { MessageQueueModule } from 'src/engine/integrations/message-queue/message-queue.module';
+import { MessageQueueDriverType } from 'src/engine/integrations/message-queue/interfaces';
 
 import { IntegrationsModule } from './engine/integrations/integrations.module';
 import { CoreEngineModule } from './engine/core-modules/core-engine.module';
@@ -76,7 +77,7 @@ export class AppModule {
     // Messaque Queue explorer only for sync driver
     // Maybe we don't need to conditionaly register the explorer, because we're creating a jobs module
     // that will expose classes that are only used in the queue worker
-    if (process.env.MESSAGE_QUEUE_TYPE === 'sync') {
+    if (process.env.MESSAGE_QUEUE_TYPE === MessageQueueDriverType.Sync) {
       modules.push(MessageQueueModule.registerExplorer());
     }
 
