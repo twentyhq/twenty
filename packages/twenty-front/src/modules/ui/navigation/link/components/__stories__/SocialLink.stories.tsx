@@ -34,7 +34,7 @@ export const LinkedIn: Story = {
 export const Twitter: Story = {
   args: {
     href: '/Twitter',
-    children: 'Twitter',
+    label: 'Twitter',
     onClick: clickJestFn,
     type: twitter,
   },
