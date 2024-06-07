@@ -33,22 +33,22 @@ import { Command, CommandType } from '../types/Command';
 import { CommandGroup } from './CommandGroup';
 import { CommandMenuItem } from './CommandMenuItem';
 
-export const StyledDialog = styled.div`
+export const StyledDialog = styled.div<{ isMobile: boolean }>`
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) =>
-    useIsMobile() ? '0px' : theme.border.radius.md};
+  border-radius: ${({ theme, isMobile }) =>
+    isMobile ? '0px' : theme.border.radius.md};
   box-shadow: ${({ theme }) => theme.boxShadow.superHeavy};
   font-family: ${({ theme }) => theme.font.family};
-  left: ${() => (useIsMobile() ? '0%' : '50%')};
-  max-width: ${() => (useIsMobile() ? 'none' : '640px')};
+  left: ${(isMobile) => (isMobile ? '0%' : '50%')};
+  max-width: ${(isMobile) => (isMobile ? 'none' : '640px')};
   overflow: hidden;
   padding: 0;
   position: fixed;
-  top: ${() => (useIsMobile() ? '0%' : '30%')};
-  transform: ${() => (useIsMobile() ? 'none' : 'translateX(-50%)')};
-  width: ${() => (useIsMobile() ? 'calc(100%)' : '100%')};
-  height: ${() => (useIsMobile() ? 'calc(100%)' : 'auto')};
+  top: ${(isMobile) => (isMobile ? '0%' : '30%')};
+  transform: ${(isMobile) => (isMobile ? 'none' : 'translateX(-50%)')};
+  width: ${(isMobile) => (isMobile ? 'calc(100%)' : '100%')};
+  height: ${(isMobile) => (isMobile ? 'calc(100%)' : 'auto')};
   z-index: 1000;
 `;
 
@@ -79,10 +79,10 @@ const StyledCancelText = styled.span`
   top: 0;
 `;
 
-export const StyledList = styled.div`
+export const StyledList = styled.div<{ isMobile: boolean }>`
   background: ${({ theme }) => theme.background.secondary};
-  height: ${() => (useIsMobile() ? 'calc(100% - 60px)' : '400px')};
-  max-height: ${() => (useIsMobile() ? 'calc(100% - 60px)' : '400px')};
+  height: ${(isMobile) => (isMobile ? 'calc(100% - 60px)' : '400px')};
+  max-height: ${(isMobile) => (isMobile ? 'calc(100% - 60px)' : '400px')};
   overscroll-behavior: contain;
   transition: 100ms ease;
   transition-property: height;
@@ -119,6 +119,8 @@ export const CommandMenu = () => {
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setCommandMenuSearch(event.target.value);
   };
+
+  const isMobile = useIsMobile();
 
   useScopedHotkeys(
     'ctrl+k,meta+k',
@@ -261,15 +263,15 @@ export const CommandMenu = () => {
   return (
     <>
       {isCommandMenuOpened && (
-        <StyledDialog ref={commandMenuRef}>
+        <StyledDialog ref={commandMenuRef} isMobile={isMobile}>
           <StyledInput
             autoFocus
             value={commandMenuSearch}
             placeholder="Search"
             onChange={handleSearchChange}
           />
-          <StyledCancelText>Esc to cancel</StyledCancelText>
-          <StyledList>
+          {!isMobile && <StyledCancelText>Esc to cancel</StyledCancelText>}
+          <StyledList isMobile={isMobile}>
             <ScrollWrapper>
               <StyledInnerList>
                 <SelectableList
