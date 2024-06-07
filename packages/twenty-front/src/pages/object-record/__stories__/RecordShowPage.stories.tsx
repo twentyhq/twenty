@@ -89,7 +89,9 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await canvas.findAllByText(peopleMock[0].name.firstName);
+    await canvas.findAllByText(
+      peopleMock[0].name.firstName + ' ' + peopleMock[0].name.lastName,
+    );
     await canvas.findByText('Add your first Activity');
   },
 };
@@ -101,7 +103,11 @@ export const Loading: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    expect(canvas.queryByText(peopleMock[0].name.firstName)).toBeNull();
+    expect(
+      canvas.queryByText(
+        peopleMock[0].name.firstName + ' ' + peopleMock[0].name.lastName,
+      ),
+    ).toBeNull();
     expect(canvas.queryByText('Add your first Activity')).toBeNull();
   },
 };
