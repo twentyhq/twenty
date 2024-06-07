@@ -26,7 +26,6 @@ export const UserProviderEffect = () => {
 
   const { loading: queryLoading, data: queryData } = useGetCurrentUserQuery({
     skip: isCurrentUserLoaded,
-    fetchPolicy: 'network-only',
   });
 
   useEffect(() => {

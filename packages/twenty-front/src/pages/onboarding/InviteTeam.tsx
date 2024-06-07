@@ -14,8 +14,10 @@ import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
+import { useSetOnboardingStep } from '@/onboarding/hooks/useSetOnboardingStep';
 import { SeparatorLineText } from '@/ui/display/text/components/SeparatorLineText';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -73,6 +75,8 @@ export const InviteTeam = () => {
   const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
   const [sendInviteLink] = useSendInviteLinkMutation();
+  const setCurrentUser = useSetRecoilState(currentUserState);
+  const setOnboardingStep = useSetOnboardingStep();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const setIsCurrentUserLoaded = useSetRecoilState(isCurrentUserLoadedState);
   const {
@@ -130,7 +134,9 @@ export const InviteTeam = () => {
         ),
       );
       const result = await sendInviteLink({ variables: { emails } });
-      setIsCurrentUserLoaded(false);
+
+      setOnboardingStep(null);
+
       if (isDefined(result.errors)) {
         throw result.errors;
       }
@@ -141,7 +147,7 @@ export const InviteTeam = () => {
         });
       }
     },
-    [enqueueSnackBar, sendInviteLink, setIsCurrentUserLoaded],
+    [enqueueSnackBar, sendInviteLink, setIsCurrentUserLoaded, setCurrentUser],
   );
 
   useEffect(() => {

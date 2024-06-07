@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useSetRecoilState } from 'recoil';
 import { IconGoogle } from 'twenty-ui';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { OnboardingSyncEmailsSettingsCard } from '@/onboarding/components/OnboardingSyncEmailsSettingsCard';
+import { useSetOnboardingStep } from '@/onboarding/hooks/useSetOnboardingStep';
 import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
 import { AppPath } from '@/types/AppPath';
 import { MainButton } from '@/ui/input/button/components/MainButton';
@@ -15,6 +14,7 @@ import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
+  UserStateOnboardingStepValues,
   useSkipSyncEmailOnboardingStepMutation,
 } from '~/generated/graphql';
 
@@ -35,7 +35,7 @@ const StyledActionLinkContainer = styled.div`
 export const SyncEmails = () => {
   const theme = useTheme();
   const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
-  const setIsCurrentUserLoaded = useSetRecoilState(isCurrentUserLoadedState);
+  const setOnboardingStep = useSetOnboardingStep();
   const [visibility, setVisibility] = useState<MessageChannelVisibility>(
     MessageChannelVisibility.ShareEverything,
   );
@@ -57,7 +57,7 @@ export const SyncEmails = () => {
 
   const continueWithoutSync = async () => {
     await skipSyncEmailOnboardingStepMutation();
-    setIsCurrentUserLoaded(false);
+    setOnboardingStep(UserStateOnboardingStepValues.InviteTeam);
   };
 
   return (
