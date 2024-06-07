@@ -36,11 +36,12 @@ import { CommandMenuItem } from './CommandMenuItem';
 export const StyledDialog = styled.div`
   background: ${({ theme }) => theme.background.secondary};
   border: 1px solid ${({ theme }) => theme.border.color.medium};
-  border-radius: ${({ theme }) => theme.border.radius.md};
+  border-radius: ${({ theme }) =>
+    useIsMobile() ? '0px' : theme.border.radius.md};
   box-shadow: ${({ theme }) => theme.boxShadow.superHeavy};
   font-family: ${({ theme }) => theme.font.family};
   left: ${() => (useIsMobile() ? '0%' : '50%')};
-  max-width: 640px;
+  max-width: ${() => (useIsMobile() ? 'none' : '640px')};
   overflow: hidden;
   padding: 0;
   position: fixed;
