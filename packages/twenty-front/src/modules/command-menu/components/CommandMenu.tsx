@@ -21,7 +21,7 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
-import { useGetTextToSqlQuery } from '~/generated/graphql';
+/* import { useGetTextToSqlLazyQuery } from '~/generated/graphql'; */
 import { getLogoUrlFromDomainName } from '~/utils';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 import { isDefined } from '~/utils/isDefined';
@@ -258,10 +258,9 @@ export const CommandMenu = () => {
     .concat(companies.map((company) => company.id))
     .concat(activities.map((activity) => activity.id));
 
-  const { data, loading, error } = useGetTextToSqlQuery({
+  /*   const [getTextToSql, { data, loading, error }] = useGetTextToSqlLazyQuery({
     variables: { text: 'How many employees does Stripe have?' },
-    // skip: !commandMenuSearch || textToSqlInFlight,
-  });
+  }); */
 
   return (
     <>
@@ -274,10 +273,6 @@ export const CommandMenu = () => {
             onChange={handleSearchChange}
           />
           <StyledCancelText>Esc to cancel</StyledCancelText>
-          <div style={{ userSelect: 'text' }}>
-            Test: {JSON.stringify(data)} {JSON.stringify(loading)}{' '}
-            {JSON.stringify(error)}
-          </div>
           <StyledList>
             <ScrollWrapper>
               <StyledInnerList>
@@ -304,6 +299,39 @@ export const CommandMenu = () => {
                     !activities.length && (
                       <StyledEmpty>No results found</StyledEmpty>
                     )}
+                  <CommandGroup heading="Ask AI">
+                    <SelectableItem
+                      itemId="ask-ai"
+                      key="ask-ai-command-menu-item"
+                    >
+                      <CommandMenuItem
+                        id="ask-ai-command-menu-item"
+                        to="IconNotes"
+                        key="ask-ai-command-menu-item"
+                        Icon={IconNotes}
+                        label={`Ask AI ${
+                          commandMenuSearch.length > 2
+                            ? `"${commandMenuSearch}"`
+                            : ''
+                        }`}
+                        onClick={async () => {
+                          /* const queryResult = await getTextToSql({
+                            variables: { text: commandMenuSearch },
+                          });
+                          console.log('queryResult', queryResult);
+                          alert(
+                            JSON.stringify(
+                              queryResult.data?,
+                              undefined,
+                              2,
+                            ),
+                          ); */
+                        }}
+                        /* firstHotKey={cmd.firstHotKey}
+                        secondHotKey={cmd.secondHotKey} */
+                      />
+                    </SelectableItem>
+                  </CommandGroup>
                   <CommandGroup heading="Create">
                     {matchingCreateCommand.map((cmd) => (
                       <SelectableItem itemId={cmd.id} key={cmd.id}>

@@ -16,8 +16,6 @@ import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/work
 export class TextToSQLService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    /*     private readonly dataSourceService: DataSourceService,
-    private readonly typeormService: TypeORMService, */
   ) {}
 
   async query(
@@ -32,7 +30,7 @@ export class TextToSQLService {
         workspaceId,
       );
 
-    // Does this have unintended side effects?
+    // Does this have unintended side effects? It sets the schema of LangChain's SqlDatabase instance.
     workspaceDataSource.setOptions({ schema: workspaceSchemaName });
 
     const db = await SqlDatabase.fromDataSourceParams({
@@ -68,10 +66,9 @@ export class TextToSQLService {
         workspaceId,
       );
 
-    const res = {
-      tableJson: `${sqlQuery} \n\n ${JSON.stringify(sqlQueryResult)}`,
+    return {
+      sqlQuery,
+      sqlQueryResult: JSON.stringify(sqlQueryResult),
     };
-
-    return res;
   }
 }
