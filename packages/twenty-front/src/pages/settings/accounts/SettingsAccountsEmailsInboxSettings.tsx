@@ -1,24 +1,21 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
-import { IconRefresh, IconSettings, IconUser } from 'twenty-ui';
+import { H2Title, IconRefresh, IconSettings, IconUser } from 'twenty-ui';
 
 import { MessageChannel } from '@/accounts/types/MessageChannel';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { SettingsAccountsCardMedia } from '@/settings/accounts/components/SettingsAccountsCardMedia';
-import {
-  InboxSettingsVisibilityValue,
-  SettingsAccountsInboxVisibilitySettingsCard,
-} from '@/settings/accounts/components/SettingsAccountsInboxVisibilitySettingsCard';
+import { SettingsAccountsInboxVisibilitySettingsCard } from '@/settings/accounts/components/SettingsAccountsInboxVisibilitySettingsCard';
 import { SettingsAccountsToggleSettingCard } from '@/settings/accounts/components/SettingsAccountsToggleSettingCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { AppPath } from '@/types/AppPath';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
+import { MessageChannelVisibility } from '~/generated/graphql';
 
 export const SettingsAccountsEmailsInboxSettings = () => {
   const theme = useTheme();
@@ -34,7 +31,7 @@ export const SettingsAccountsEmailsInboxSettings = () => {
     objectNameSingular: CoreObjectNameSingular.MessageChannel,
   });
 
-  const handleVisibilityChange = (value: InboxSettingsVisibilityValue) => {
+  const handleVisibilityChange = (value: MessageChannelVisibility) => {
     updateOneRecord({
       idToUpdate: messageChannelId,
       updateOneRecordInput: {

@@ -3,7 +3,7 @@
   "resolveSourceMapLocations": ["${workspaceFolder}/**", "!**/node_modules/**"],
   "configurations": [
     {
-      "name": "twenty-server - dev debug",
+      "name": "twenty-server - start debug",
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "yarn",
@@ -12,6 +12,40 @@
         "nx",
         "run",
         "twenty-server:start",
+      ],
+      "outputCapture": "std",
+      "internalConsoleOptions": "openOnSessionStart",
+      "console": "internalConsole",
+      "cwd": "${workspaceFolder}/packages/twenty-server/"
+    },
+    {
+      "name": "twenty-server - worker debug",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "yarn",
+      "runtimeVersion": "18",
+      "runtimeArgs": [
+        "nx",
+        "run",
+        "twenty-server:worker",
+      ],
+      "outputCapture": "std",
+      "internalConsoleOptions": "openOnSessionStart",
+      "console": "internalConsole",
+      "cwd": "${workspaceFolder}/packages/twenty-server/"
+    },
+    {
+      "name": "twenty-server - command debug example",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npx",
+      "runtimeVersion": "18",
+      "runtimeArgs": [
+        "nx",
+        "run",
+        "twenty-server:command",
+        "my-command",
+        "--my-parameter value",
       ],
       "outputCapture": "std",
       "internalConsoleOptions": "openOnSessionStart",

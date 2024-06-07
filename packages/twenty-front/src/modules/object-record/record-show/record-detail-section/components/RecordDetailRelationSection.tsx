@@ -11,11 +11,13 @@ import { usePersistField } from '@/object-record/record-field/hooks/usePersistFi
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
 import { RecordDetailRelationRecordsListEmptyState } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsListEmptyState';
+import { RecordDetailRelationSectionSkeletonLoader } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSectionSkeletonLoader';
 import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';
 import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { SingleEntitySelectMenuItemsWithSearch } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItemsWithSearch';
+import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/relation-picker/hooks/useAddNewRecordAndOpenRightDrawer';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
@@ -27,11 +29,17 @@ import { DropdownScope } from '@/ui/layout/dropdown/scopes/DropdownScope';
 import { FilterQueryParams } from '@/views/hooks/internal/useViewFromQueryParams';
 import { ViewFilterOperand } from '@/views/types/ViewFilterOperand';
 
+type RecordDetailRelationSectionProps = {
+  loading: boolean;
+};
+
 const StyledAddDropdown = styled(Dropdown)`
   margin-left: auto;
 `;
 
-export const RecordDetailRelationSection = () => {
+export const RecordDetailRelationSection = ({
+  loading,
+}: RecordDetailRelationSectionProps) => {
   const { entityId, fieldDefinition } = useContext(FieldContext);
   const {
     fieldName,
@@ -65,7 +73,7 @@ export const RecordDetailRelationSection = () => {
 
   const relationRecordIds = relationRecords.map(({ id }) => id);
 
-  const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}`;
+  const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}-${entityId}`;
 
   const { closeDropdown, isDropdownOpen } = useDropdown(dropdownId);
 
@@ -113,6 +121,32 @@ export const RecordDetailRelationSection = () => {
     relationObjectMetadataItem.namePlural
   }?${qs.stringify(filterQueryParams)}`;
 
+  const showContent = () => {
+    if (loading) {
+      return (
+        <RecordDetailRelationSectionSkeletonLoader
+          numSkeletons={fieldName === 'people' ? 2 : 1}
+        />
+      );
+    }
+
+    return relationRecords.length ? (
+      <RecordDetailRelationRecordsList relationRecords={relationRecords} />
+    ) : (
+      <RecordDetailRelationRecordsListEmptyState
+        relationObjectMetadataItem={relationObjectMetadataItem}
+      />
+    );
+  };
+
+  const { createNewRecordAndOpenRightDrawer } =
+    useAddNewRecordAndOpenRightDrawer({
+      relationObjectMetadataNameSingular,
+      relationObjectMetadataItem,
+      relationFieldMetadataItem,
+      entityId,
+    });
+
   return (
     <RecordDetailSection>
       <RecordDetailSectionHeader
@@ -149,6 +183,7 @@ export const RecordDetailRelationSection = () => {
                       relationObjectMetadataNameSingular
                     }
                     relationPickerScopeId={dropdownId}
+                    onCreate={createNewRecordAndOpenRightDrawer}
                   />
                 </RelationPickerScope>
               }
@@ -159,13 +194,7 @@ export const RecordDetailRelationSection = () => {
           </DropdownScope>
         }
       />
-      {relationRecords.length ? (
-        <RecordDetailRelationRecordsList relationRecords={relationRecords} />
-      ) : (
-        <RecordDetailRelationRecordsListEmptyState
-          relationObjectMetadataItem={relationObjectMetadataItem}
-        />
-      )}
+      {showContent()}
     </RecordDetailSection>
   );
 };

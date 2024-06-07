@@ -1,7 +1,6 @@
 'use client';
 
 import styled from '@emotion/styled';
-import { usePathname } from 'next/navigation';
 
 import {
   DiscordIcon,
@@ -67,17 +66,11 @@ const RightSideFooterColumnTitle = styled.div`
 `;
 
 export const FooterDesktop = () => {
-  const path = usePathname();
-  const isTwentyDev = path.includes('developers');
-
-  if (isTwentyDev) return;
-
   return (
     <FooterContainer>
       <div
         style={{
           width: '100%',
-          maxWidth: '1200px',
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'row',
@@ -96,11 +89,14 @@ export const FooterDesktop = () => {
           </RightSideFooterColumn>
           <RightSideFooterColumn>
             <RightSideFooterColumnTitle>Resources</RightSideFooterColumnTitle>
-            <RightSideFooterLink href="https://docs.twenty.com">
-              Documentation
+            <RightSideFooterLink href="/developers">
+              Developers
             </RightSideFooterLink>
             <RightSideFooterLink href="/releases">
               Changelog
+            </RightSideFooterLink>
+            <RightSideFooterLink href="/user-guide">
+              User Guide
             </RightSideFooterLink>
           </RightSideFooterColumn>
           <RightSideFooterColumn>
@@ -123,7 +119,6 @@ export const FooterDesktop = () => {
       <div
         style={{
           width: '100%',
-          maxWidth: '1200px',
           margin: '0 auto',
           display: 'flex',
           flexDirection: 'row',

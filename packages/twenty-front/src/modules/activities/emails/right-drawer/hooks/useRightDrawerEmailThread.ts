@@ -3,17 +3,17 @@ import { useApolloClient } from '@apollo/client';
 import gql from 'graphql-tag';
 import { useRecoilValue } from 'recoil';
 
-import { viewableEmailThreadIdState } from '@/activities/emails/states/viewableEmailThreadIdState';
+import { fetchAllThreadMessagesOperationSignatureFactory } from '@/activities/emails/graphql/operation-signatures/factories/fetchAllThreadMessagesOperationSignatureFactory';
 import { EmailThreadMessage as EmailThreadMessageType } from '@/activities/emails/types/EmailThreadMessage';
-import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 
 export const useRightDrawerEmailThread = () => {
-  const viewableEmailThreadId = useRecoilValue(viewableEmailThreadIdState);
+  const viewableRecordId = useRecoilValue(viewableRecordIdState);
 
   const apolloClient = useApolloClient();
   const thread = apolloClient.readFragment({
-    id: `TimelineThread:${viewableEmailThreadId}`,
+    id: `TimelineThread:${viewableRecordId}`,
     fragment: gql`
       fragment timelineThread on TimelineThread {
         id
@@ -23,23 +23,23 @@ export const useRightDrawerEmailThread = () => {
     `,
   });
 
+  const FETCH_ALL_MESSAGES_OPERATION_SIGNATURE =
+    fetchAllThreadMessagesOperationSignatureFactory({
+      messageThreadId: viewableRecordId,
+    });
+
   const {
     records: messages,
     loading,
     fetchMoreRecords,
   } = useFindManyRecords<EmailThreadMessageType>({
-    depth: 3,
-    limit: 10,
-    filter: {
-      messageThreadId: {
-        eq: viewableEmailThreadId || '',
-      },
-    },
-    objectNameSingular: CoreObjectNameSingular.Message,
-    orderBy: {
-      receivedAt: 'AscNullsLast',
-    },
-    skip: !viewableEmailThreadId,
+    limit: FETCH_ALL_MESSAGES_OPERATION_SIGNATURE.variables.limit,
+    filter: FETCH_ALL_MESSAGES_OPERATION_SIGNATURE.variables.filter,
+    objectNameSingular:
+      FETCH_ALL_MESSAGES_OPERATION_SIGNATURE.objectNameSingular,
+    orderBy: FETCH_ALL_MESSAGES_OPERATION_SIGNATURE.variables.orderBy,
+    recordGqlFields: FETCH_ALL_MESSAGES_OPERATION_SIGNATURE.fields,
+    skip: !viewableRecordId,
   });
 
   const fetchMoreMessages = useCallback(() => {

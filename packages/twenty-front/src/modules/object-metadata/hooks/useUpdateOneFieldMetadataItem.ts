@@ -28,7 +28,13 @@ export const useUpdateOneFieldMetadataItem = () => {
     fieldMetadataIdToUpdate: UpdateOneFieldMetadataItemMutationVariables['idToUpdate'];
     updatePayload: Pick<
       UpdateOneFieldMetadataItemMutationVariables['updatePayload'],
-      'description' | 'icon' | 'isActive' | 'label' | 'name'
+      | 'description'
+      | 'icon'
+      | 'isActive'
+      | 'label'
+      | 'name'
+      | 'defaultValue'
+      | 'options'
     >;
   }) => {
     return await mutate({

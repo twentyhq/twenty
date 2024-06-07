@@ -13,14 +13,17 @@ import {
   RecordUpdateHook,
   RecordUpdateHookParams,
 } from '@/object-record/record-field/contexts/FieldContext';
+import { getFieldButtonIcon } from '@/object-record/record-field/utils/getFieldButtonIcon';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { InlineCellHotkeyScope } from '@/object-record/record-inline-cell/types/InlineCellHotkeyScope';
+import { RecordValueSetterEffect } from '@/object-record/record-store/components/RecordValueSetterEffect';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Checkbox, CheckboxVariant } from '@/ui/input/components/Checkbox';
 import { contextMenuIsOpenState } from '@/ui/navigation/context-menu/states/contextMenuIsOpenState';
 import { contextMenuPositionState } from '@/ui/navigation/context-menu/states/contextMenuPositionState';
 import { AnimatedEaseInOut } from '@/ui/utilities/animation/components/AnimatedEaseInOut';
+import { useDragSelect } from '@/ui/utilities/drag-select/hooks/useDragSelect';
 import { ScrollWrapperContext } from '@/ui/utilities/scroll/components/ScrollWrapper';
 
 const StyledBoardCard = styled.div<{ selected: boolean }>`
@@ -197,6 +200,7 @@ export const RecordBoardCard = () => {
   };
 
   const scrollWrapperRef = useContext(ScrollWrapperContext);
+  const { isDragSelectionStartEnabled } = useDragSelect();
 
   const { ref: cardRef, inView } = useInView({
     root: scrollWrapperRef.current,
@@ -209,6 +213,7 @@ export const RecordBoardCard = () => {
 
   return (
     <StyledBoardCardWrapper onContextMenu={handleContextMenu}>
+      <RecordValueSetterEffect recordId={recordId} />
       <StyledBoardCard
         ref={cardRef}
         selected={isCurrentCardSelected}
@@ -266,12 +271,16 @@ export const RecordBoardCard = () => {
                       type: fieldDefinition.type,
                       metadata: fieldDefinition.metadata,
                       defaultValue: fieldDefinition.defaultValue,
+                      editButtonIcon: getFieldButtonIcon({
+                        metadata: fieldDefinition.metadata,
+                        type: fieldDefinition.type,
+                      }),
                     },
                     useUpdateRecord: useUpdateOneRecordHook,
                     hotkeyScope: InlineCellHotkeyScope.InlineCell,
                   }}
                 >
-                  {inView ? (
+                  {inView || isDragSelectionStartEnabled() ? (
                     <RecordInlineCell />
                   ) : (
                     <StyledRecordInlineCellPlaceholder />

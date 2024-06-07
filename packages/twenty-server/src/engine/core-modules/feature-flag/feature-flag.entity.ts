@@ -17,12 +17,11 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 
 export enum FeatureFlagKeys {
   IsBlocklistEnabled = 'IS_BLOCKLIST_ENABLED',
-  IsCalendarEnabled = 'IS_CALENDAR_ENABLED',
   IsEventObjectEnabled = 'IS_EVENT_OBJECT_ENABLED',
   IsAirtableIntegrationEnabled = 'IS_AIRTABLE_INTEGRATION_ENABLED',
   IsPostgreSQLIntegrationEnabled = 'IS_POSTGRESQL_INTEGRATION_ENABLED',
-  IsMultiSelectEnabled = 'IS_MULTI_SELECT_ENABLED',
-  IsRelationForRemoteObjectsEnabled = 'IS_RELATION_FOR_REMOTE_OBJECTS_ENABLED',
+  IsStripeIntegrationEnabled = 'IS_STRIPE_INTEGRATION_ENABLED',
+  IsContactCreationForSentAndReceivedEmailsEnabled = 'IS_CONTACT_CREATION_FOR_SENT_AND_RECEIVED_EMAILS_ENABLED',
 }
 
 @Entity({ name: 'featureFlag', schema: 'core' })

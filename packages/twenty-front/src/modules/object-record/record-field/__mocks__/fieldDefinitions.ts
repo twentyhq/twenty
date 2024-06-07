@@ -9,11 +9,11 @@ import {
 } from '@/object-record/record-field/types/FieldMetadata';
 import { type } from 'os';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { mockedCompanyObjectMetadataItem, mockedPersonObjectMetadataItem } from '~/testing/mock-data/metadata';
-;
-
+import {
+  mockedCompanyObjectMetadataItem,
+  mockedPersonObjectMetadataItem,
+} from '~/testing/mock-data/metadata';
 export const fieldMetadataId = 'fieldMetadataId';
-
 
 export const textfieldDefinition: FieldDefinition<FieldTextMetadata> = {
   fieldMetadataId,
@@ -64,7 +64,7 @@ export const linkFieldDefinition: FieldDefinition<FieldLinkMetadata> = {
   label: 'LinkedIn URL',
   iconName: 'url',
   type: FieldMetadataType.Link,
-  defaultValue: { label: '', url: ''},
+  defaultValue: { label: '', url: '' },
   metadata: {
     fieldName: 'linkedInURL',
     placeHolder: 'https://linkedin.com/user',

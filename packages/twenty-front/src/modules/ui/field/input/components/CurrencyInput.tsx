@@ -2,12 +2,11 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { IMaskInput, IMaskInputProps } from 'react-imask';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconComponent } from 'twenty-ui';
+import { IconComponent, TEXT_INPUT_STYLE } from 'twenty-ui';
 
 import { useRegisterInputEvents } from '@/object-record/record-field/meta-types/input/hooks/useRegisterInputEvents';
 import { SETTINGS_FIELD_CURRENCY_CODES } from '@/settings/data-model/constants/SettingsFieldCurrencyCodes';
 import { CurrencyPickerDropdownButton } from '@/ui/input/components/internal/currency/components/CurrencyPickerDropdownButton';
-import { TEXT_INPUT_STYLE } from '@/ui/theme/constants/TextInputStyle';
 
 type StyledInputProps = React.ComponentProps<'input'> &
   IMaskInputProps<HTMLInputElement>;

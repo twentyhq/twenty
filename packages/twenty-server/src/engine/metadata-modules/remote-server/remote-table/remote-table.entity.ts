@@ -31,7 +31,7 @@ export class RemoteTableEntity {
   @Column({ nullable: false, type: 'uuid' })
   remoteServerId: string;
 
-  @ManyToOne(() => RemoteServerEntity, (server) => server.tables, {
+  @ManyToOne(() => RemoteServerEntity, (server) => server.syncedTables, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'remoteServerId' })

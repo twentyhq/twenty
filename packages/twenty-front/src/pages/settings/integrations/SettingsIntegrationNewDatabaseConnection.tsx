@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { IconSettings } from 'twenty-ui';
+import { H2Title, IconSettings } from 'twenty-ui';
 import { z } from 'zod';
 
 import { useCreateOneDatabaseConnection } from '@/databases/hooks/useCreateOneDatabaseConnection';
@@ -11,43 +11,62 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
-  SettingsIntegrationPostgreSQLConnectionForm,
+  SettingsIntegrationDatabaseConnectionForm,
   settingsIntegrationPostgreSQLConnectionFormSchema,
-} from '@/settings/integrations/components/SettingsIntegrationDatabaseConnectionForm';
+  settingsIntegrationStripeConnectionFormSchema,
+} from '@/settings/integrations/database-connection/components/SettingsIntegrationDatabaseConnectionForm';
+import { useIsSettingsIntegrationEnabled } from '@/settings/integrations/hooks/useIsSettingsIntegrationEnabled';
 import { useSettingsIntegrationCategories } from '@/settings/integrations/hooks/useSettingsIntegrationCategories';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { AppPath } from '@/types/AppPath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { CreateRemoteServerInput } from '~/generated-metadata/graphql';
 
-const newConnectionSchema = settingsIntegrationPostgreSQLConnectionFormSchema;
+const createRemoteServerInputPostgresSchema =
+  settingsIntegrationPostgreSQLConnectionFormSchema.transform<CreateRemoteServerInput>(
+    (values) => ({
+      foreignDataWrapperType: 'postgres_fdw',
+      foreignDataWrapperOptions: {
+        dbname: values.dbname,
+        host: values.host,
+        port: values.port,
+      },
+      userMappingOptions: {
+        password: values.password,
+        user: values.user,
+      },
+      schema: values.schema,
+      label: values.label,
+    }),
+  );
 
-const createRemoteServerInputSchema = newConnectionSchema
-  .extend({
-    foreignDataWrapperType: z.string().min(1),
-  })
-  .transform<CreateRemoteServerInput>((values) => ({
-    foreignDataWrapperType: values.foreignDataWrapperType,
-    foreignDataWrapperOptions: {
-      dbname: values.dbname,
-      host: values.host,
-      port: values.port,
-    },
-    userMappingOptions: {
-      password: values.password,
-      username: values.username,
-    },
-  }));
-
-type SettingsIntegrationNewConnectionFormValues = z.infer<
-  typeof newConnectionSchema
+type SettingsIntegrationNewConnectionPostgresFormValues = z.infer<
+  typeof createRemoteServerInputPostgresSchema
 >;
+
+const createRemoteServerInputStripeSchema =
+  settingsIntegrationStripeConnectionFormSchema.transform<CreateRemoteServerInput>(
+    (values) => ({
+      foreignDataWrapperType: 'stripe_fdw',
+      foreignDataWrapperOptions: {
+        api_key: values.api_key,
+      },
+      label: values.label,
+    }),
+  );
+
+type SettingsIntegrationNewConnectionStripeFormValues = z.infer<
+  typeof createRemoteServerInputStripeSchema
+>;
+
+type SettingsIntegrationNewConnectionFormValues =
+  | SettingsIntegrationNewConnectionPostgresFormValues
+  | SettingsIntegrationNewConnectionStripeFormValues;
 
 export const SettingsIntegrationNewDatabaseConnection = () => {
   const { databaseKey = '' } = useParams();
@@ -61,22 +80,20 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
   const { createOneDatabaseConnection } = useCreateOneDatabaseConnection();
   const { enqueueSnackBar } = useSnackBar();
 
-  const isAirtableIntegrationEnabled = useIsFeatureEnabled(
-    'IS_AIRTABLE_INTEGRATION_ENABLED',
-  );
-  const isPostgresqlIntegrationEnabled = useIsFeatureEnabled(
-    'IS_POSTGRESQL_INTEGRATION_ENABLED',
-  );
-  const isIntegrationAvailable =
-    !!integration &&
-    ((databaseKey === 'airtable' && isAirtableIntegrationEnabled) ||
-      (databaseKey === 'postgresql' && isPostgresqlIntegrationEnabled));
+  const isIntegrationEnabled = useIsSettingsIntegrationEnabled(databaseKey);
+
+  const isIntegrationAvailable = !!integration && isIntegrationEnabled;
 
   useEffect(() => {
     if (!isIntegrationAvailable) {
       navigate(AppPath.NotFound);
     }
   }, [integration, databaseKey, navigate, isIntegrationAvailable]);
+
+  const newConnectionSchema =
+    databaseKey === 'postgresql'
+      ? createRemoteServerInputPostgresSchema
+      : createRemoteServerInputStripeSchema;
 
   const formConfig = useForm<SettingsIntegrationNewConnectionFormValues>({
     mode: 'onTouched',
@@ -96,7 +113,7 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
 
     try {
       const createdConnection = await createOneDatabaseConnection(
-        createRemoteServerInputSchema.parse({
+        newConnectionSchema.parse({
           ...formValues,
           foreignDataWrapperType: getForeignDataWrapperType(databaseKey),
         }),
@@ -109,16 +126,18 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
       );
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
-        variant: 'error',
+        variant: SnackBarVariant.Error,
       });
     }
   };
 
   return (
-    // eslint-disable-next-line react/jsx-props-no-spreading
-    <FormProvider {...formConfig}>
-      <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
-        <SettingsPageContainer>
+    <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
+      <SettingsPageContainer>
+        <FormProvider
+          // eslint-disable-next-line react/jsx-props-no-spreading
+          {...formConfig}
+        >
           <SettingsHeaderContainer>
             <Breadcrumb
               links={[
@@ -141,17 +160,17 @@ export const SettingsIntegrationNewDatabaseConnection = () => {
               onSave={handleSave}
             />
           </SettingsHeaderContainer>
-          {databaseKey === 'postgresql' ? (
-            <Section>
-              <H2Title
-                title="Connect a new database"
-                description="Provide the information to connect your PostgreSQL database"
-              />
-              <SettingsIntegrationPostgreSQLConnectionForm />
-            </Section>
-          ) : null}
-        </SettingsPageContainer>
-      </SubMenuTopBarContainer>
-    </FormProvider>
+          <Section>
+            <H2Title
+              title="Connect a new database"
+              description="Provide the information to connect your database"
+            />
+            <SettingsIntegrationDatabaseConnectionForm
+              databaseKey={databaseKey}
+            />
+          </Section>
+        </FormProvider>
+      </SettingsPageContainer>
+    </SubMenuTopBarContainer>
   );
 };

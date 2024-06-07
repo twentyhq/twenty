@@ -32,10 +32,7 @@ export type SettingsFieldTypeConfig = {
   defaultValue?: unknown;
 };
 
-export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
-  SettingsSupportedFieldType,
-  SettingsFieldTypeConfig
-> = {
+export const SETTINGS_FIELD_TYPE_CONFIGS = {
   [FieldMetadataType.Uuid]: {
     label: 'Unique ID',
     Icon: IconKey,
@@ -61,6 +58,11 @@ export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
     label: 'Link',
     Icon: IconLink,
     defaultValue: { url: 'www.twenty.com', label: '' },
+  },
+  [FieldMetadataType.Links]: {
+    label: 'Links',
+    Icon: IconLink,
+    defaultValue: { primaryLinkUrl: 'twenty.com', primaryLinkLabel: '' },
   },
   [FieldMetadataType.Boolean]: {
     label: 'True/False',
@@ -95,7 +97,11 @@ export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
     Icon: IconRelationManyToMany,
   },
   [FieldMetadataType.Email]: { label: 'Email', Icon: IconMail },
-  [FieldMetadataType.Phone]: { label: 'Phone', Icon: IconPhone },
+  [FieldMetadataType.Phone]: {
+    label: 'Phone',
+    Icon: IconPhone,
+    defaultValue: '+1234-567-890',
+  },
   [FieldMetadataType.Probability]: {
     label: 'Rating',
     Icon: IconTwentyStar,
@@ -128,6 +134,9 @@ export const SETTINGS_FIELD_TYPE_CONFIGS: Record<
   [FieldMetadataType.RawJson]: {
     label: 'JSON',
     Icon: IconJson,
-    defaultValue: `{ "key": "value" }`,
+    defaultValue: { key: 'value' },
   },
-};
+} as const satisfies Record<
+  SettingsSupportedFieldType,
+  SettingsFieldTypeConfig
+>;

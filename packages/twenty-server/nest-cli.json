@@ -3,7 +3,7 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-      "builder": "swc",
-      "typeCheck": true
+    "builder": "swc",
+    "typeCheck": true
   }
 }

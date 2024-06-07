@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { CalendarChannelObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-channel.object-metadata';
+import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class CalendarChannelRepository {
   public async getAll(
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<CalendarChannelObjectMetadata>[]> {
+  ): Promise<ObjectRecord<CalendarChannelWorkspaceEntity>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -29,7 +29,7 @@ export class CalendarChannelRepository {
 
   public async create(
     calendarChannel: Pick<
-      ObjectRecord<CalendarChannelObjectMetadata>,
+      ObjectRecord<CalendarChannelWorkspaceEntity>,
       'id' | 'connectedAccountId' | 'handle' | 'visibility'
     >,
     workspaceId: string,
@@ -55,7 +55,7 @@ export class CalendarChannelRepository {
     connectedAccountId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<CalendarChannelObjectMetadata>[]> {
+  ): Promise<ObjectRecord<CalendarChannelWorkspaceEntity>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -70,7 +70,7 @@ export class CalendarChannelRepository {
   public async getFirstByConnectedAccountId(
     connectedAccountId: string,
     workspaceId: string,
-  ): Promise<ObjectRecord<CalendarChannelObjectMetadata> | undefined> {
+  ): Promise<ObjectRecord<CalendarChannelWorkspaceEntity> | undefined> {
     const calendarChannels = await this.getByConnectedAccountId(
       connectedAccountId,
       workspaceId,
@@ -83,7 +83,7 @@ export class CalendarChannelRepository {
     ids: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<CalendarChannelObjectMetadata>[]> {
+  ): Promise<ObjectRecord<CalendarChannelWorkspaceEntity>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -95,8 +95,29 @@ export class CalendarChannelRepository {
     );
   }
 
+  public async getIdsByWorkspaceMemberId(
+    workspaceMemberId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<CalendarChannelWorkspaceEntity>[]> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const calendarChannelIds =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT "calendarChannel".id FROM ${dataSourceSchema}."calendarChannel" "calendarChannel"
+        JOIN ${dataSourceSchema}."connectedAccount" ON "calendarChannel"."connectedAccountId" = ${dataSourceSchema}."connectedAccount"."id"
+        WHERE ${dataSourceSchema}."connectedAccount"."accountOwnerId" = $1`,
+        [workspaceMemberId],
+        workspaceId,
+        transactionManager,
+      );
+
+    return calendarChannelIds;
+  }
+
   public async updateSyncCursor(
-    syncCursor: string,
+    syncCursor: string | null,
     calendarChannelId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
@@ -106,7 +127,7 @@ export class CalendarChannelRepository {
 
     await this.workspaceDataSourceService.executeRawQuery(
       `UPDATE ${dataSourceSchema}."calendarChannel" SET "syncCursor" = $1 WHERE "id" = $2`,
-      [syncCursor, calendarChannelId],
+      [syncCursor || '', calendarChannelId],
       workspaceId,
       transactionManager,
     );

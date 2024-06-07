@@ -1,6 +1,5 @@
 /* eslint-disable @nx/workspace-no-hardcoded-colors */
 import { ANIMATION } from './Animation';
-import { BLUR } from './Blur';
 import { COLOR } from './Colors';
 import { GRAY_SCALE } from './GrayScale';
 import { ICON } from './Icon';
@@ -13,22 +12,7 @@ export const THEME_COMMON = {
   icon: ICON,
   modal: MODAL,
   text: TEXT,
-  blur: BLUR,
   animation: ANIMATION,
-  snackBar: {
-    success: {
-      background: '#16A26B',
-      color: '#D0F8E9',
-    },
-    error: {
-      background: '#B43232',
-      color: '#FED8D8',
-    },
-    info: {
-      background: COLOR.gray80,
-      color: GRAY_SCALE.gray0,
-    },
-  },
   spacingMultiplicator: 4,
   spacing: (...args: number[]) =>
     args.map((multiplicator) => `${multiplicator * 4}px`).join(' '),

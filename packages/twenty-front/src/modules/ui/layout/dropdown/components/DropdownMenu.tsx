@@ -5,15 +5,15 @@ const StyledDropdownMenu = styled.div<{
   disableBorder?: boolean;
   width?: `${string}px` | `${number}%` | 'auto' | number;
 }>`
-  backdrop-filter: ${({ disableBlur }) =>
-    disableBlur
-      ? 'none'
-      : 'blur(12px) saturate(200%) contrast(50%) brightness(130%)'};
+  backdrop-filter: ${({ theme, disableBlur }) =>
+    disableBlur ? 'none' : theme.blur.medium};
+
+  color: ${({ theme }) => theme.font.color.secondary};
 
   background: ${({ theme, disableBlur }) =>
     disableBlur
       ? theme.background.primary
-      : theme.background.transparent.secondary};
+      : theme.background.transparent.primary};
 
   border: ${({ disableBorder, theme }) =>
     disableBorder ? 'none' : `1px solid ${theme.border.color.medium}`};
@@ -25,8 +25,8 @@ const StyledDropdownMenu = styled.div<{
 
   flex-direction: column;
   z-index: 1;
-  width: ${({ width }) =>
-    width ? `${typeof width === 'number' ? `${width}px` : width}` : '160px'};
+  width: ${({ width = 160 }) =>
+    typeof width === 'number' ? `${width}px` : width};
 `;
 
 export const DropdownMenu = StyledDropdownMenu;

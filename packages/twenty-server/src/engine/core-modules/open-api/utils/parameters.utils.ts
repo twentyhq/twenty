@@ -2,10 +2,10 @@ import { OpenAPIV3_1 } from 'openapi-types';
 
 import { OrderByDirection } from 'src/engine/api/graphql/workspace-query-builder/interfaces/record.interface';
 
-import { FilterComparators } from 'src/engine/api/rest/api-rest-query-builder/factories/input-factories/filter-utils/parse-base-filter.utils';
-import { Conjunctions } from 'src/engine/api/rest/api-rest-query-builder/factories/input-factories/filter-utils/parse-filter.utils';
-import { DEFAULT_ORDER_DIRECTION } from 'src/engine/api/rest/api-rest-query-builder/factories/input-factories/order-by-input.factory';
-import { DEFAULT_CONJUNCTION } from 'src/engine/api/rest/api-rest-query-builder/factories/input-factories/filter-utils/add-default-conjunction.utils';
+import { FilterComparators } from 'src/engine/api/rest/rest-api-core-query-builder/factories/input-factories/filter-utils/parse-base-filter.utils';
+import { Conjunctions } from 'src/engine/api/rest/rest-api-core-query-builder/factories/input-factories/filter-utils/parse-filter.utils';
+import { DEFAULT_ORDER_DIRECTION } from 'src/engine/api/rest/rest-api-core-query-builder/factories/input-factories/order-by-input.factory';
+import { DEFAULT_CONJUNCTION } from 'src/engine/api/rest/rest-api-core-query-builder/factories/input-factories/filter-utils/add-default-conjunction.utils';
 
 export const computeLimitParameters = (): OpenAPIV3_1.ParameterObject => {
   return {

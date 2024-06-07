@@ -100,9 +100,6 @@ export class WorkspaceMigrationRunnerService {
       );
     }
 
-    // Increment workspace cache version
-    await this.workspaceCacheVersionService.incrementVersion(workspaceId);
-
     return flattenedPendingMigrations;
   }
 
@@ -156,6 +153,14 @@ export class WorkspaceMigrationRunnerService {
       case 'drop_foreign_table':
         await queryRunner.query(
           `DROP FOREIGN TABLE ${schemaName}."${tableMigration.name}"`,
+        );
+        break;
+      case WorkspaceMigrationTableActionType.ALTER_FOREIGN_TABLE:
+        await this.alterForeignTable(
+          queryRunner,
+          schemaName,
+          tableMigration.name,
+          tableMigration.columns,
         );
         break;
       default:
@@ -307,6 +312,8 @@ export class WorkspaceMigrationRunnerService {
       return;
     }
 
+    const enumName = `${tableName}_${migrationColumn.columnName}_enum`;
+
     await queryRunner.addColumn(
       `${schemaName}.${tableName}`,
       new TableColumn({
@@ -316,6 +323,7 @@ export class WorkspaceMigrationRunnerService {
         enum: migrationColumn.enum?.filter(
           (value): value is string => typeof value === 'string',
         ),
+        enumName: enumName,
         isArray: migrationColumn.isArray,
         isNullable: migrationColumn.isNullable,
       }),
@@ -489,15 +497,47 @@ export class WorkspaceMigrationRunnerService {
     }
 
     const foreignTableColumns = foreignTable.columns
-      .map((column) => `"${column.columnName}" ${column.columnType}`)
+      .map(
+        (column) =>
+          `"${column.columnName}" ${column.columnType} OPTIONS (column_name '${column.distantColumnName}')`,
+      )
+      .join(', ');
+
+    const serverOptions = Object.entries(foreignTable.referencedTable)
+      .map(([key, value]) => `${key} '${value}'`)
       .join(', ');
 
     await queryRunner.query(
-      `CREATE FOREIGN TABLE ${schemaName}."${name}" (${foreignTableColumns}) SERVER "${foreignTable.foreignDataWrapperId}" OPTIONS (schema_name '${foreignTable.referencedTableSchema}', table_name '${foreignTable.referencedTableName}')`,
+      `CREATE FOREIGN TABLE ${schemaName}."${name}" (${foreignTableColumns}) SERVER "${foreignTable.foreignDataWrapperId}" OPTIONS (${serverOptions})`,
     );
 
     await queryRunner.query(`
       COMMENT ON FOREIGN TABLE "${schemaName}"."${name}" IS '@graphql({"primary_key_columns": ["id"], "totalCount": {"enabled": true}})';
     `);
+  }
+
+  private async alterForeignTable(
+    queryRunner: QueryRunner,
+    schemaName: string,
+    name: string,
+    columns: WorkspaceMigrationColumnAction[] | undefined,
+  ) {
+    const columnUpdatesQuery = columns
+      ?.map((column) => {
+        switch (column.action) {
+          case WorkspaceMigrationColumnActionType.DROP:
+            return `DROP COLUMN "${column.columnName}"`;
+          case WorkspaceMigrationColumnActionType.CREATE:
+            return `ADD COLUMN "${column.columnName}" ${column.columnType}`;
+          default:
+            return '';
+        }
+      })
+      .filter(Boolean)
+      .join(', ');
+
+    await queryRunner.query(
+      `ALTER FOREIGN TABLE ${schemaName}."${name}" ${columnUpdatesQuery};`,
+    );
   }
 }

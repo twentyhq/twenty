@@ -14,7 +14,7 @@ import {
   UnmatchParticipantJobData,
   UnmatchParticipantJob,
 } from 'src/modules/calendar-messaging-participant/jobs/unmatch-participant.job';
-import { PersonObjectMetadata } from 'src/modules/person/standard-objects/person.object-metadata';
+import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 @Injectable()
 export class ParticipantPersonListener {
@@ -25,9 +25,9 @@ export class ParticipantPersonListener {
 
   @OnEvent('person.created')
   async handleCreatedEvent(
-    payload: ObjectRecordCreateEvent<PersonObjectMetadata>,
+    payload: ObjectRecordCreateEvent<PersonWorkspaceEntity>,
   ) {
-    if (payload.details.after.email === null) {
+    if (payload.properties.after.email === null) {
       return;
     }
 
@@ -35,7 +35,7 @@ export class ParticipantPersonListener {
       MatchParticipantJob.name,
       {
         workspaceId: payload.workspaceId,
-        email: payload.details.after.email,
+        email: payload.properties.after.email,
         personId: payload.recordId,
       },
     );
@@ -43,19 +43,19 @@ export class ParticipantPersonListener {
 
   @OnEvent('person.updated')
   async handleUpdatedEvent(
-    payload: ObjectRecordUpdateEvent<PersonObjectMetadata>,
+    payload: ObjectRecordUpdateEvent<PersonWorkspaceEntity>,
   ) {
     if (
       objectRecordUpdateEventChangedProperties(
-        payload.details.before,
-        payload.details.after,
+        payload.properties.before,
+        payload.properties.after,
       ).includes('email')
     ) {
       await this.messageQueueService.add<UnmatchParticipantJobData>(
         UnmatchParticipantJob.name,
         {
           workspaceId: payload.workspaceId,
-          email: payload.details.before.email,
+          email: payload.properties.before.email,
           personId: payload.recordId,
         },
       );
@@ -64,7 +64,7 @@ export class ParticipantPersonListener {
         MatchParticipantJob.name,
         {
           workspaceId: payload.workspaceId,
-          email: payload.details.after.email,
+          email: payload.properties.after.email,
           personId: payload.recordId,
         },
       );

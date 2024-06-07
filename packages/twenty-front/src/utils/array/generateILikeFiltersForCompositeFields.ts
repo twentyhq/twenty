@@ -1,4 +1,4 @@
-import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
+import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 
 export const generateILikeFiltersForCompositeFields = (
   filterString: string,
@@ -7,7 +7,7 @@ export const generateILikeFiltersForCompositeFields = (
 ) => {
   return filterString
     .split(' ')
-    .reduce((previousValue: ObjectRecordQueryFilter[], currentValue) => {
+    .reduce((previousValue: RecordGqlOperationFilter[], currentValue) => {
       return [
         ...previousValue,
         ...subFields.map((subField) => {

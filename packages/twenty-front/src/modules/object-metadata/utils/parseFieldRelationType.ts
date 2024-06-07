@@ -23,6 +23,10 @@ export const parseFieldRelationType = (
       from: 'FROM_MANY_OBJECTS',
       to: 'TO_ONE_OBJECT',
     },
+    [RelationMetadataType.ManyToOne]: {
+      from: 'TO_ONE_OBJECT',
+      to: 'FROM_MANY_OBJECTS',
+    },
     [RelationMetadataType.OneToOne]: {
       from: 'FROM_ONE_OBJECT',
       to: 'TO_ONE_OBJECT',

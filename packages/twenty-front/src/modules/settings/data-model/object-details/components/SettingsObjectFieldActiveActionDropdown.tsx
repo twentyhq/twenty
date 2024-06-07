@@ -51,7 +51,11 @@ export const SettingsObjectFieldActiveActionDropdown = ({
     <Dropdown
       dropdownId={dropdownId}
       clickableComponent={
-        <LightIconButton Icon={IconDotsVertical} accent="tertiary" />
+        <LightIconButton
+          aria-label="Active Field Options"
+          Icon={IconDotsVertical}
+          accent="tertiary"
+        />
       }
       dropdownComponents={
         <DropdownMenu width="160px">

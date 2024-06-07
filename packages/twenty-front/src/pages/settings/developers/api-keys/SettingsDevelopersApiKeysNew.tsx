@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DateTime } from 'luxon';
-import { IconSettings } from 'twenty-ui';
+import { H2Title, IconSettings } from 'twenty-ui';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
@@ -11,7 +11,6 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { EXPIRATION_DATES } from '@/settings/developers/constants/ExpirationDates';
 import { useGeneratedApiKeys } from '@/settings/developers/hooks/useGeneratedApiKeys';
 import { ApiKey } from '@/settings/developers/types/api-key/ApiKey';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
@@ -28,7 +27,7 @@ export const SettingsDevelopersApiKeysNew = () => {
     name: string;
     expirationDate: number | null;
   }>({
-    expirationDate: EXPIRATION_DATES[0].value,
+    expirationDate: EXPIRATION_DATES[5].value,
     name: '',
   });
 

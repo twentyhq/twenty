@@ -1,5 +1,4 @@
 import { useEffect, useMemo } from 'react';
-import { isNonEmptyArray } from '@sniptt/guards';
 import { DateTime } from 'luxon';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
@@ -9,8 +8,8 @@ import { currentIncompleteTaskQueryVariablesState } from '@/activities/tasks/sta
 import { FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY } from '@/activities/timeline/constants/FindManyTimelineActivitiesOrderBy';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
+import { RecordGqlOperationVariables } from '@/object-record/graphql/types/RecordGqlOperationVariables';
 import { useFilterDropdown } from '@/object-record/object-filter-dropdown/hooks/useFilterDropdown';
-import { ObjectRecordQueryVariables } from '@/object-record/types/ObjectRecordQueryVariables';
 import { parseDate } from '~/utils/date-utils';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
@@ -41,8 +40,6 @@ export const useTasks = ({
     [selectedFilter],
   );
 
-  const skipActivityTargets = !isNonEmptyArray(targetableObjects);
-
   const completedQueryVariables = useMemo(
     () =>
       ({
@@ -52,7 +49,7 @@ export const useTasks = ({
           ...assigneeIdFilter,
         },
         orderBy: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
-      }) as ObjectRecordQueryVariables,
+      }) as RecordGqlOperationVariables,
     [assigneeIdFilter],
   );
 
@@ -65,7 +62,7 @@ export const useTasks = ({
           ...assigneeIdFilter,
         },
         orderBy: FIND_MANY_TIMELINE_ACTIVITIES_ORDER_BY,
-      }) as ObjectRecordQueryVariables,
+      }) as RecordGqlOperationVariables,
     [assigneeIdFilter],
   );
 
@@ -110,24 +107,16 @@ export const useTasks = ({
     setCurrentIncompleteTaskQueryVariables,
   ]);
 
-  const {
-    activities: completeTasksData,
-    initialized: initializedCompleteTasks,
-  } = useActivities({
+  const { activities: completeTasksData } = useActivities({
     targetableObjects,
     activitiesFilters: completedQueryVariables.filter ?? {},
     activitiesOrderByVariables: completedQueryVariables.orderBy ?? {},
-    skipActivityTargets,
   });
 
-  const {
-    activities: incompleteTaskData,
-    initialized: initializedIncompleteTasks,
-  } = useActivities({
+  const { activities: incompleteTaskData } = useActivities({
     targetableObjects,
     activitiesFilters: incompleteQueryVariables.filter ?? {},
     activitiesOrderByVariables: incompleteQueryVariables.orderBy ?? {},
-    skipActivityTargets,
   });
 
   const todayOrPreviousTasks = incompleteTaskData?.filter((task) => {
@@ -159,6 +148,5 @@ export const useTasks = ({
     upcomingTasks: (upcomingTasks ?? []) as Activity[],
     unscheduledTasks: (unscheduledTasks ?? []) as Activity[],
     completedTasks: (completedTasks ?? []) as Activity[],
-    initialized: initializedCompleteTasks && initializedIncompleteTasks,
   };
 };

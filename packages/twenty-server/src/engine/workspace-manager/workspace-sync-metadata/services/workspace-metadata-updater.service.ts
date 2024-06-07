@@ -8,6 +8,7 @@ import {
   ObjectLiteral,
 } from 'typeorm';
 import { v4 as uuidV4 } from 'uuid';
+import { DeepPartial } from 'typeorm/common/DeepPartial';
 
 import { PartialFieldMetadata } from 'src/engine/workspace-manager/workspace-sync-metadata/interfaces/partial-field-metadata.interface';
 
@@ -140,7 +141,7 @@ export class WorkspaceMetadataUpdaterService {
      */
     const updatedFieldMetadataCollection = await this.updateEntities<
       FieldMetadataEntity<'default'>
-    >(manager, FieldMetadataEntity, storage.objectMetadataUpdateCollection, [
+    >(manager, FieldMetadataEntity, storage.fieldMetadataUpdateCollection, [
       'objectMetadataId',
       'workspaceId',
     ]);
@@ -241,7 +242,9 @@ export class WorkspaceMetadataUpdaterService {
     manager: EntityManager,
     entityClass: EntityTarget<Entity>,
     updateCollection: Array<
-      DeepPartial<Omit<Entity, 'fields'>> & { id: string }
+      DeepPartial<Omit<Entity, 'fields' | 'options' | 'settings'>> & {
+        id: string;
+      }
     >,
     keysToOmit: (keyof Entity)[] = [],
   ): Promise<{ current: Entity; altered: Entity }[]> {

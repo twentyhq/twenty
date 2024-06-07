@@ -14,6 +14,7 @@ import { hasCalendarEventEnded } from '@/activities/calendar/utils/hasCalendarEv
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { Card } from '@/ui/layout/card/components/Card';
 import { CardContent } from '@/ui/layout/card/components/CardContent';
+import { CalendarChannelVisibility } from '~/generated/graphql';
 import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
 import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 import { isDefined } from '~/utils/isDefined';
@@ -48,7 +49,7 @@ const StyledAttendanceIndicator = styled.div<{ active?: boolean }>`
 const StyledLabels = styled.div`
   align-items: center;
   display: flex;
-  color: ${({ theme }) => theme.font.color.tertiary};
+  color: ${({ theme }) => theme.font.color.primary};
   gap: ${({ theme }) => theme.spacing(2)};
   flex: 1 0 auto;
 `;
@@ -56,6 +57,7 @@ const StyledLabels = styled.div`
 const StyledTime = styled.div`
   align-items: center;
   display: flex;
+  color: ${({ theme }) => theme.font.color.tertiary};
   gap: ${({ theme }) => theme.spacing(1)};
   width: ${({ theme }) => theme.spacing(26)};
 `;
@@ -117,7 +119,8 @@ export const CalendarEventRow = ({
   const isCurrentWorkspaceMemberAttending = calendarEvent.participants?.some(
     ({ workspaceMemberId }) => workspaceMemberId === currentWorkspaceMember?.id,
   );
-  const showTitle = calendarEvent.visibility === 'SHARE_EVERYTHING';
+  const showTitle =
+    calendarEvent.visibility === CalendarChannelVisibility.ShareEverything;
 
   return (
     <StyledContainer

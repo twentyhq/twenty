@@ -14,6 +14,7 @@ import {
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
+import { isRightDrawerAnimationCompletedState } from '@/ui/layout/right-drawer/states/isRightDrawerAnimationCompleted';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledPropertyBox = styled(PropertyBox)`
@@ -26,6 +27,10 @@ export const ActivityEditorFields = ({
   activityId: string;
 }) => {
   const { upsertActivity } = useUpsertActivity();
+
+  const isRightDrawerAnimationCompleted = useRecoilValue(
+    isRightDrawerAnimationCompletedState,
+  );
 
   const getRecordFromCache = useGetRecordFromCache({
     objectNameSingular: CoreObjectNameSingular.Activity,
@@ -52,11 +57,21 @@ export const ActivityEditorFields = ({
     return [upsertActivityMutation, { loading: false }];
   };
 
+  const { FieldContextProvider: ReminderAtFieldContextProvider } =
+    useFieldContext({
+      objectNameSingular: CoreObjectNameSingular.Activity,
+      objectRecordId: activityId,
+      fieldMetadataName: 'reminderAt',
+      fieldPosition: 0,
+      clearable: true,
+      customUseUpdateOneObjectHook: useUpsertOneActivityMutation,
+    });
+
   const { FieldContextProvider: DueAtFieldContextProvider } = useFieldContext({
     objectNameSingular: CoreObjectNameSingular.Activity,
     objectRecordId: activityId,
     fieldMetadataName: 'dueAt',
-    fieldPosition: 0,
+    fieldPosition: 1,
     clearable: true,
     customUseUpdateOneObjectHook: useUpsertOneActivityMutation,
   });
@@ -66,7 +81,7 @@ export const ActivityEditorFields = ({
       objectNameSingular: CoreObjectNameSingular.Activity,
       objectRecordId: activityId,
       fieldMetadataName: 'assignee',
-      fieldPosition: 1,
+      fieldPosition: 2,
       clearable: true,
       customUseUpdateOneObjectHook: useUpsertOneActivityMutation,
     });
@@ -76,15 +91,19 @@ export const ActivityEditorFields = ({
       objectNameSingular: CoreObjectNameSingular.Activity,
       objectRecordId: activityId,
       fieldMetadataName: 'activityTargets',
-      fieldPosition: 2,
+      fieldPosition: 3,
     });
 
   return (
     <StyledPropertyBox>
       {activity.type === 'Task' &&
+        ReminderAtFieldContextProvider &&
         DueAtFieldContextProvider &&
         AssigneeFieldContextProvider && (
           <>
+            <ReminderAtFieldContextProvider>
+              <RecordInlineCell />
+            </ReminderAtFieldContextProvider>
             <DueAtFieldContextProvider>
               <RecordInlineCell />
             </DueAtFieldContextProvider>
@@ -93,11 +112,16 @@ export const ActivityEditorFields = ({
             </AssigneeFieldContextProvider>
           </>
         )}
-      {ActivityTargetsContextProvider && isDefined(activityFromCache) && (
-        <ActivityTargetsContextProvider>
-          <ActivityTargetsInlineCell activity={activityFromCache} />
-        </ActivityTargetsContextProvider>
-      )}
+      {ActivityTargetsContextProvider &&
+        isDefined(activityFromCache) &&
+        isRightDrawerAnimationCompleted && (
+          <ActivityTargetsContextProvider>
+            <ActivityTargetsInlineCell
+              activity={activityFromCache}
+              maxWidth={340}
+            />
+          </ActivityTargetsContextProvider>
+        )}
     </StyledPropertyBox>
   );
 };

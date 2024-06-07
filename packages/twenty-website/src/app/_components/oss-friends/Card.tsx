@@ -3,6 +3,8 @@
 import styled from '@emotion/styled';
 import { Gabarito } from 'next/font/google';
 
+import { Theme } from '@/app/_components/ui/theme/theme';
+
 export interface OssData {
   name: string;
   description: string;
@@ -22,7 +24,7 @@ const Container = styled.div`
   border-radius: 8px;
   cursor: pointer;
   transition: 200ms;
-
+  max-width: 400px;
   &:hover {
     -webkit-box-shadow: -3px 3px 2px 0px rgba(0, 0, 0, 1);
     -moz-box-shadow: -3px 3px 2px 0px rgba(0, 0, 0, 1);
@@ -31,24 +33,36 @@ const Container = styled.div`
 
   @media (max-width: 1200px) {
     width: 45%;
-    min-width: 350px;
   }
 
   @media (max-width: 810px) {
-    width: 95%;
+    width: 100%;
   }
+`;
+
+const StyledContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-content: flex-start;
 `;
 
 const Title = styled.p`
   font-size: 32px;
-  font-weight: 500;
-  color: black;
+  font-weight: 700;
+  color: ${Theme.text.color.secondary};
+  margin: 16px 0px;
+  @media (max-width: 1200px) {
+    font-size: 24px;
+  }
 `;
 
 const Description = styled.p`
   font-size: 16px;
   font-weight: 500;
   color: #b3b3b3;
+  line-height: ${Theme.text.lineHeight.lg};
+  margin: 0;
 `;
 
 const Button = styled.a`
@@ -64,6 +78,10 @@ const Button = styled.a`
   text-decoration: none;
   position: relative;
   height: 60px;
+
+  @media (max-width: 800px) {
+    font-size: 18px;
+  }
 
   &:after {
     content: 'Visit Website';
@@ -94,9 +112,9 @@ const gabarito = Gabarito({
 });
 
 const Icon = styled.img`
-  position: absolute;
   height: 24px;
   width: 24px;
+  border-radius: 4px;
 `;
 
 // remove the protocol from the url
@@ -105,11 +123,11 @@ const removeProtocol = (url: string) => url.replace(/(^\w+:|^)\/\//, '');
 export const Card = ({ data }: { data: OssData }) => {
   return (
     <Container>
-      <div>
+      <StyledContent>
         <Icon src={`https://favicon.twenty.com/${removeProtocol(data.href)}`} />
         <Title>{data.name}</Title>
         <Description>{data.description}</Description>
-      </div>
+      </StyledContent>
 
       <Button href={data.href} className={gabarito.className}></Button>
     </Container>

@@ -1,11 +1,55 @@
-import { useParams } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
-import { useGetWorkspaceFromInviteHashQuery } from '~/generated/graphql.tsx';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { AppPath } from '@/types/AppPath';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { isDefaultLayoutAuthModalVisibleState } from '@/ui/layout/states/isDefaultLayoutAuthModalVisibleState';
+import { useGetWorkspaceFromInviteHashQuery } from '~/generated/graphql';
+import { isDefined } from '~/utils/isDefined';
 
 export const useWorkspaceFromInviteHash = () => {
+  const { enqueueSnackBar } = useSnackBar();
+  const navigate = useNavigate();
   const workspaceInviteHash = useParams().workspaceInviteHash;
-  const { data: workspaceFromInviteHash } = useGetWorkspaceFromInviteHashQuery({
-    variables: { inviteHash: workspaceInviteHash || '' },
-  });
-  return workspaceFromInviteHash?.findWorkspaceFromInviteHash;
+  const currentWorkspace = useRecoilValue(currentWorkspaceState);
+  const [initiallyLoggedIn] = useState(isDefined(currentWorkspace));
+  const setIsDefaultLayoutAuthModalVisible = useSetRecoilState(
+    isDefaultLayoutAuthModalVisibleState,
+  );
+  const { data: workspaceFromInviteHash, loading } =
+    useGetWorkspaceFromInviteHashQuery({
+      variables: { inviteHash: workspaceInviteHash || '' },
+      onError: () => {
+        enqueueSnackBar('workspace does not exist', {
+          variant: SnackBarVariant.Error,
+        });
+        navigate(AppPath.Index);
+      },
+      onCompleted: (data) => {
+        if (
+          isDefined(currentWorkspace) &&
+          data?.findWorkspaceFromInviteHash &&
+          currentWorkspace.id === data.findWorkspaceFromInviteHash.id
+        ) {
+          initiallyLoggedIn &&
+            enqueueSnackBar(
+              `You already belong to ${data?.findWorkspaceFromInviteHash?.displayName} workspace`,
+              {
+                variant: SnackBarVariant.Info,
+              },
+            );
+          navigate(AppPath.Index);
+        } else {
+          setIsDefaultLayoutAuthModalVisible(true);
+        }
+      },
+    });
+  return {
+    workspace: workspaceFromInviteHash?.findWorkspaceFromInviteHash,
+    workspaceInviteHash,
+    loading,
+  };
 };

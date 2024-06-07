@@ -1,5 +1,7 @@
+import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { OrderBy } from '@/object-metadata/types/OrderBy';
-import { OrderByField } from '@/object-metadata/types/OrderByField';
+import { hasPositionField } from '@/object-metadata/utils/hasPositionField';
+import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
 import { Field } from '~/generated/graphql';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';
 import { isDefined } from '~/utils/isDefined';
@@ -8,9 +10,10 @@ import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 import { Sort } from '../types/Sort';
 
 export const turnSortsIntoOrderBy = (
+  objectMetadataItem: ObjectMetadataItem,
   sorts: Sort[],
-  fields: Pick<Field, 'id' | 'name'>[],
-): OrderByField => {
+): RecordGqlOperationOrderBy => {
+  const fields: Pick<Field, 'id' | 'name'>[] = objectMetadataItem?.fields ?? [];
   const fieldsById = mapArrayToObject(fields, ({ id }) => id);
   const sortsOrderBy = Object.fromEntries(
     sorts
@@ -29,8 +32,12 @@ export const turnSortsIntoOrderBy = (
       .filter(isDefined),
   );
 
-  return {
-    ...sortsOrderBy,
-    position: 'AscNullsFirst',
-  };
+  if (hasPositionField(objectMetadataItem)) {
+    return {
+      ...sortsOrderBy,
+      position: 'AscNullsFirst',
+    };
+  }
+
+  return sortsOrderBy;
 };

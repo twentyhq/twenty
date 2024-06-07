@@ -3,6 +3,7 @@ import BrowserOnly from '@docusaurus/BrowserOnly';
 import { explorerPlugin } from '@graphiql/plugin-explorer';
 import { Theme, useTheme } from '@graphiql/react';
 import { createGraphiQLFetcher } from '@graphiql/toolkit';
+import { SubDoc } from '@site/src/components/token-form';
 import Layout from '@theme/Layout';
 import { GraphiQL } from 'graphiql';
 
@@ -21,9 +22,6 @@ const GraphQlComponent = ({ token, baseUrl, path }) => {
   const explorer = explorerPlugin({
     showAttribution: true,
   });
-  if (!baseUrl || !token) {
-    return <></>;
-  }
 
   const fetcher = createGraphiQLFetcher({
     url: baseUrl + '/' + path,
@@ -47,6 +45,10 @@ const GraphQlComponent = ({ token, baseUrl, path }) => {
     };
   }, []);
 
+  if (!baseUrl || !token) {
+    return <></>;
+  }
+
   return (
     <div className="fullHeightPlayground">
       <GraphiQL
@@ -58,9 +60,9 @@ const GraphQlComponent = ({ token, baseUrl, path }) => {
   );
 };
 
-const GraphQlPlayground = ({ subDoc }: { subDoc: 'core' | 'metadata' }) => {
-  const [token, setToken] = useState();
-  const [baseUrl, setBaseUrl] = useState();
+const GraphQlPlayground = ({ subDoc }: { subDoc: SubDoc }) => {
+  const [token, setToken] = useState<string>();
+  const [baseUrl, setBaseUrl] = useState<string>();
   const { setTheme } = useTheme();
 
   useEffect(() => {
@@ -99,7 +101,7 @@ const GraphQlPlayground = ({ subDoc }: { subDoc: 'core' | 'metadata' }) => {
             children={children}
             setToken={setToken}
             setBaseUrl={setBaseUrl}
-            subdocName={subDoc}
+            subDoc={subDoc}
           />
         )}
       </BrowserOnly>

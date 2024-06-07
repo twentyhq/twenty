@@ -9,9 +9,11 @@ const Playground = ({
   setToken,
   setBaseUrl,
   subDoc,
-}: Partial<React.PropsWithChildren | TokenFormProps> & {
-  subDoc: string;
-}) => {
+}: Partial<React.PropsWithChildren> &
+  Omit<
+    TokenFormProps,
+    'isTokenValid' | 'setIsTokenValid' | 'setLoadingState'
+  >) => {
   const [isTokenValid, setIsTokenValid] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   return (

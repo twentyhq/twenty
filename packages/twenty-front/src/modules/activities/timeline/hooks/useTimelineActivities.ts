@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { useRecoilCallback, useRecoilState } from 'recoil';
 
@@ -28,15 +28,10 @@ export const useTimelineActivities = ({
     }
   }, [targetableObject, setObjectShowPageTargetableObject]);
 
-  const {
-    activityTargets,
-    loadingActivityTargets,
-    initialized: initializedActivityTargets,
-  } = useActivityTargetsForTargetableObject({
-    targetableObject,
-  });
-
-  const [initialized, setInitialized] = useState(false);
+  const { activityTargets, loadingActivityTargets } =
+    useActivityTargetsForTargetableObject({
+      targetableObject,
+    });
 
   const activityIds = Array.from(
     new Set(
@@ -65,33 +60,18 @@ export const useTimelineActivities = ({
       onCompleted: useRecoilCallback(
         ({ set }) =>
           (activities) => {
-            if (!initialized) {
-              setInitialized(true);
-            }
-
             for (const activity of activities) {
               set(recordStoreFamilyState(activity.id), activity);
             }
           },
-        [initialized],
+        [],
       ),
-      depth: 3,
     });
-
-  const noActivityTargets =
-    initializedActivityTargets && !isNonEmptyArray(activityTargets);
-
-  useEffect(() => {
-    if (noActivityTargets) {
-      setInitialized(true);
-    }
-  }, [noActivityTargets]);
 
   const loading = loadingActivities || loadingActivityTargets;
 
   return {
     activities,
     loading,
-    initialized,
   };
 };

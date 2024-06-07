@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
-import { ObjectRecordQueryFilter } from '@/object-record/record-filter/types/ObjectRecordQueryFilter';
+import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
 import { makeOrFilterVariables } from '@/object-record/utils/makeOrFilterVariables';
 import { FieldMetadataType } from '~/generated/graphql';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
@@ -16,7 +16,7 @@ export const useSearchFilterPerMetadataItem = ({
   searchFilterValue: string;
 }) => {
   const searchFilterPerMetadataItemNameSingular =
-    Object.fromEntries<ObjectRecordQueryFilter>(
+    Object.fromEntries<RecordGqlOperationFilter>(
       objectMetadataItems
         .map((objectMetadataItem) => {
           if (searchFilterValue === '') return null;
@@ -24,7 +24,7 @@ export const useSearchFilterPerMetadataItem = ({
           const labelIdentifierFieldMetadataItem =
             getLabelIdentifierFieldMetadataItem(objectMetadataItem);
 
-          let searchFilter: ObjectRecordQueryFilter = {};
+          let searchFilter: RecordGqlOperationFilter = {};
 
           if (isDefined(labelIdentifierFieldMetadataItem)) {
             switch (labelIdentifierFieldMetadataItem.type) {

@@ -1,1 +1,0 @@
-export const MAX_QUERY_DEPTH_FOR_CACHE_INJECTION = 1;

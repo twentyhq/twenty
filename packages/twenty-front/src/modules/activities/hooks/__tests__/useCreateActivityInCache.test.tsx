@@ -16,7 +16,7 @@ const mocks: MockedResponse[] = [
   {
     request: {
       query: gql`
-        query FindOneWorkspaceMember($objectRecordId: UUID!) {
+        query FindOneWorkspaceMember($objectRecordId: ID!) {
           workspaceMember(filter: { id: { eq: $objectRecordId } }) {
             __typename
             colorScheme

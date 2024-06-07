@@ -69,7 +69,9 @@ export class CompositeInputTypeDefinitionFactory {
         options,
         {
           nullable: !property.isRequired,
-          isArray: property.type === FieldMetadataType.MULTI_SELECT,
+          isArray:
+            property.type === FieldMetadataType.MULTI_SELECT ||
+            property.isArray,
         },
       );
 

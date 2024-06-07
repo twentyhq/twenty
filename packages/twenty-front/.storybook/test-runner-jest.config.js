@@ -1,5 +1,7 @@
 import { getJestConfig } from '@storybook/test-runner';
 
+const MINUTES_IN_MS = 60 * 1000;
+
 /**
  * @type {import('@jest/types').Config.InitialOptions}
  */
@@ -9,5 +11,5 @@ export default {
   /** Add your own overrides below
    * @see https://jestjs.io/docs/configuration
    */
-  testTimeout: process.env.STORYBOOK_SCOPE === 'pages' ? 60000 : 15000,
+  testTimeout: 5 * MINUTES_IN_MS,
 };

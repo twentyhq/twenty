@@ -19,6 +19,7 @@ const ChipFieldValueSetterEffect = () => {
         firstName: 'Henry',
         lastName: 'Cavill',
       },
+      __typename: 'Person',
     });
   }, [setEntityFields]);
 

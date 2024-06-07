@@ -2,7 +2,8 @@ import styled from '@emotion/styled';
 import { useRecoilValue } from 'recoil';
 
 import { TimelineCreateButtonGroup } from '@/activities/timeline/components/TimelineCreateButtonGroup';
-import { timelineActivitiesNetworkingState } from '@/activities/timeline/states/timelineActivitiesNetworkingState';
+import { TimelineSkeletonLoader } from '@/activities/timeline/components/TimelineSkeletonLoader';
+import { timelineActivitiesForGroupState } from '@/activities/timeline/states/timelineActivitiesForGroupState';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
@@ -29,23 +30,20 @@ const StyledMainContainer = styled.div`
 
 export const Timeline = ({
   targetableObject,
+  loading,
 }: {
   targetableObject: ActivityTargetableObject;
+  loading: boolean;
 }) => {
-  const { initialized, noActivities } = useRecoilValue(
-    timelineActivitiesNetworkingState,
+  const timelineActivitiesForGroup = useRecoilValue(
+    timelineActivitiesForGroupState,
   );
 
-  const showEmptyState = noActivities;
-
-  const showLoadingState = !initialized;
-
-  if (showLoadingState) {
-    // TODO: Display a beautiful loading page
-    return <></>;
+  if (loading) {
+    return <TimelineSkeletonLoader />;
   }
 
-  if (showEmptyState) {
+  if (timelineActivitiesForGroup.length === 0) {
     return (
       <AnimatedPlaceholderEmptyContainer>
         <AnimatedPlaceholder type="emptyTimeline" />

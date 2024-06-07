@@ -1,16 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { MessageQueueJob } from 'src/engine/integrations/message-queue/interfaces/message-queue-job.interface';
 
-import {
-  FeatureFlagEntity,
-  FeatureFlagKeys,
-} from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { CalendarEventParticipantService } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.service';
-import { MessageParticipantService } from 'src/modules/messaging/services/message-participant/message-participant.service';
+import { MessagingMessageParticipantService } from 'src/modules/messaging/common/services/messaging-message-participant.service';
 
 export type UnmatchParticipantJobData = {
   workspaceId: string;
@@ -24,10 +17,8 @@ export class UnmatchParticipantJob
   implements MessageQueueJob<UnmatchParticipantJobData>
 {
   constructor(
-    private readonly messageParticipantService: MessageParticipantService,
+    private readonly messageParticipantService: MessagingMessageParticipantService,
     private readonly calendarEventParticipantService: CalendarEventParticipantService,
-    @InjectRepository(FeatureFlagEntity, 'core')
-    private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
   async handle(data: UnmatchParticipantJobData): Promise<void> {
@@ -39,16 +30,6 @@ export class UnmatchParticipantJob
       personId,
       workspaceMemberId,
     );
-
-    const isCalendarEnabled = await this.featureFlagRepository.findOneBy({
-      workspaceId,
-      key: FeatureFlagKeys.IsCalendarEnabled,
-      value: true,
-    });
-
-    if (!isCalendarEnabled || !isCalendarEnabled.value) {
-      return;
-    }
 
     await this.calendarEventParticipantService.unmatchCalendarEventParticipants(
       workspaceId,

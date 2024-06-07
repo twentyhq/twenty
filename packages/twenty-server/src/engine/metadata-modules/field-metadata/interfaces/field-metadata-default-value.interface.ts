@@ -10,6 +10,7 @@ import {
   FieldMetadataDefaultValueString,
   FieldMetadataDefaultValueUuidFunction,
   FieldMetadataDefaultValueNowFunction,
+  FieldMetadataDefaultValueLinks,
 } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
@@ -36,6 +37,7 @@ type FieldMetadataDefaultValueMapping = {
   [FieldMetadataType.NUMERIC]: FieldMetadataDefaultValueString;
   [FieldMetadataType.PROBABILITY]: FieldMetadataDefaultValueNumber;
   [FieldMetadataType.LINK]: FieldMetadataDefaultValueLink;
+  [FieldMetadataType.LINKS]: FieldMetadataDefaultValueLinks;
   [FieldMetadataType.CURRENCY]: FieldMetadataDefaultValueCurrency;
   [FieldMetadataType.FULL_NAME]: FieldMetadataDefaultValueFullName;
   [FieldMetadataType.ADDRESS]: FieldMetadataDefaultValueAddress;

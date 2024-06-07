@@ -1,23 +1,24 @@
-import styled from '@emotion/styled';
+import { Tag } from 'twenty-ui';
 
+import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { useMultiSelectField } from '@/object-record/record-field/meta-types/hooks/useMultiSelectField';
-import { Tag } from '@/ui/display/tag/components/Tag';
+import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 
-const StyledTagContainer = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
-`;
 export const MultiSelectFieldDisplay = () => {
   const { fieldValues, fieldDefinition } = useMultiSelectField();
 
+  const { isFocused } = useFieldFocus();
+
   const selectedOptions = fieldValues
-    ? fieldDefinition.metadata.options.filter((option) =>
+    ? fieldDefinition.metadata.options?.filter((option) =>
         fieldValues.includes(option.value),
       )
     : [];
 
-  return selectedOptions ? (
-    <StyledTagContainer>
+  if (!selectedOptions) return null;
+
+  return (
+    <ExpandableList isChipCountDisplayed={isFocused}>
       {selectedOptions.map((selectedOption, index) => (
         <Tag
           key={index}
@@ -25,8 +26,6 @@ export const MultiSelectFieldDisplay = () => {
           text={selectedOption.label}
         />
       ))}
-    </StyledTagContainer>
-  ) : (
-    <></>
+    </ExpandableList>
   );
 };

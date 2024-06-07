@@ -1,6 +1,6 @@
 import { addMinutes, endOfDay, min, startOfDay } from 'date-fns';
 import { useRecoilValue } from 'recoil';
-import { IconSettings } from 'twenty-ui';
+import { H2Title, IconSettings } from 'twenty-ui';
 
 import { CalendarChannel } from '@/accounts/types/CalendarChannel';
 import { ConnectedAccount } from '@/accounts/types/ConnectedAccount';
@@ -14,16 +14,14 @@ import { SettingsAccountsCalendarDisplaySettings } from '@/settings/accounts/com
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { getSettingsPagePath } from '@/settings/utils/getSettingsPagePath';
 import { SettingsPath } from '@/types/SettingsPath';
-import { H2Title } from '@/ui/display/typography/components/H2Title';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import {
-  TimelineCalendarEvent,
-  TimelineCalendarEventVisibility,
-} from '~/generated-metadata/graphql';
+import { CalendarChannelVisibility } from '~/generated/graphql';
+import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
 
 export const SettingsAccountsCalendars = () => {
+  const calendarSettingsEnabled = false;
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
   const { records: accounts } = useFindManyRecords<ConnectedAccount>({
     objectNameSingular: CoreObjectNameSingular.ConnectedAccount,
@@ -63,6 +61,8 @@ export const SettingsAccountsCalendars = () => {
           : '',
         avatarUrl: currentWorkspaceMember?.avatarUrl || '',
         handle: '',
+        personId: '',
+        workspaceMemberId: currentWorkspaceMember?.id || '',
       },
     ],
     endsAt: exampleEndDate.toISOString(),
@@ -77,7 +77,7 @@ export const SettingsAccountsCalendars = () => {
     isCanceled: false,
     location: '',
     title: 'Onboarding call',
-    visibility: TimelineCalendarEventVisibility.ShareEverything,
+    visibility: CalendarChannelVisibility.ShareEverything,
   };
 
   return (
@@ -99,7 +99,7 @@ export const SettingsAccountsCalendars = () => {
           />
           <SettingsAccountsCalendarChannelsListCard />
         </Section>
-        {!!calendarChannels.length && (
+        {!!calendarChannels.length && calendarSettingsEnabled && (
           <>
             <Section>
               <H2Title

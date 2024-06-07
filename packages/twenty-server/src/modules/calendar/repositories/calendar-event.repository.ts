@@ -4,10 +4,10 @@ import { EntityManager } from 'typeorm';
 
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
-import { CalendarEventObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event.object-metadata';
-import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/getFlattenedValuesAndValuesStringForBatchRawQuery.util';
+import { CalendarEventWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event.workspace-entity';
+import { getFlattenedValuesAndValuesStringForBatchRawQuery } from 'src/modules/calendar/utils/get-flattened-values-and-values-string-for-batch-raw-query.util';
 import { CalendarEvent } from 'src/modules/calendar/types/calendar-event';
-import { CalendarEventParticipantObjectMetadata } from 'src/modules/calendar/standard-objects/calendar-event-participant.object-metadata';
+import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
 
 @Injectable()
 export class CalendarEventRepository {
@@ -19,7 +19,7 @@ export class CalendarEventRepository {
     calendarEventIds: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<CalendarEventObjectMetadata>[]> {
+  ): Promise<ObjectRecord<CalendarEventWorkspaceEntity>[]> {
     if (calendarEventIds.length === 0) {
       return [];
     }
@@ -30,6 +30,26 @@ export class CalendarEventRepository {
     return await this.workspaceDataSourceService.executeRawQuery(
       `SELECT * FROM ${dataSourceSchema}."calendarEvent" WHERE "id" = ANY($1)`,
       [calendarEventIds],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
+  public async getByICalUIDs(
+    iCalUIDs: string[],
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<CalendarEventWorkspaceEntity>[]> {
+    if (iCalUIDs.length === 0) {
+      return [];
+    }
+
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `SELECT * FROM ${dataSourceSchema}."calendarEvent" WHERE "iCalUID" = ANY($1)`,
+      [iCalUIDs],
       workspaceId,
       transactionManager,
     );
@@ -60,7 +80,7 @@ export class CalendarEventRepository {
     offset: number,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<CalendarEventParticipantObjectMetadata>[]> {
+  ): Promise<ObjectRecord<CalendarEventParticipantWorkspaceEntity>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
@@ -80,11 +100,11 @@ export class CalendarEventRepository {
   }
 
   public async getICalUIDCalendarEventIdMap(
-    calendarEventIds: string[],
+    iCalUIDs: string[],
     workspaceId: string,
     transactionManager?: EntityManager,
   ): Promise<Map<string, string>> {
-    if (calendarEventIds.length === 0) {
+    if (iCalUIDs.length === 0) {
       return new Map();
     }
 
@@ -97,8 +117,8 @@ export class CalendarEventRepository {
           iCalUID: string;
         }[]
       | undefined = await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT id, "iCalUID" FROM ${dataSourceSchema}."calendarEvent" WHERE "id" = ANY($1)`,
-      [calendarEventIds],
+      `SELECT id, "iCalUID" FROM ${dataSourceSchema}."calendarEvent" WHERE "iCalUID" = ANY($1)`,
+      [iCalUIDs],
       workspaceId,
       transactionManager,
     );

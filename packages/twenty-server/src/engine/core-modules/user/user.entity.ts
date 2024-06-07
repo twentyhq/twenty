@@ -17,6 +17,8 @@ import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { UserState } from 'src/engine/core-modules/user-state/dtos/user-state.dto';
 
 @Entity({ name: 'user', schema: 'core' })
 @ObjectType('User')
@@ -71,7 +73,7 @@ export class User {
 
   @Field(() => Workspace, { nullable: false })
   @ManyToOne(() => Workspace, (workspace) => workspace.users, {
-    onDelete: 'SET NULL',
+    onDelete: 'RESTRICT',
   })
   defaultWorkspace: Relation<Workspace>;
 
@@ -79,11 +81,19 @@ export class User {
   @Column()
   defaultWorkspaceId: string;
 
-  @Field({ nullable: true })
+  @Field({
+    nullable: true,
+    deprecationReason:
+      'field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021',
+  })
   @Column({ nullable: true })
   passwordResetToken: string;
 
-  @Field({ nullable: true })
+  @Field({
+    nullable: true,
+    deprecationReason:
+      'field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021',
+  })
   @Column({ nullable: true, type: 'timestamptz' })
   passwordResetTokenExpiresAt: Date;
 
@@ -92,10 +102,18 @@ export class User {
   })
   appTokens: Relation<AppToken[]>;
 
+  @OneToMany(() => KeyValuePair, (keyValuePair) => keyValuePair.user, {
+    cascade: true,
+  })
+  keyValuePairs: Relation<KeyValuePair[]>;
+
   @Field(() => WorkspaceMember, { nullable: true })
   workspaceMember: Relation<WorkspaceMember>;
 
   @Field(() => [UserWorkspace])
   @OneToMany(() => UserWorkspace, (userWorkspace) => userWorkspace.user)
   workspaces: Relation<UserWorkspace[]>;
+
+  @Field(() => UserState, { nullable: false })
+  state: UserState;
 }

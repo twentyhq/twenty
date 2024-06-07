@@ -33,18 +33,19 @@ export class MessageQueueModule {
           const config = await options.useFactory(...args);
 
           switch (config.type) {
-            case MessageQueueDriverType.PgBoss:
+            case MessageQueueDriverType.PgBoss: {
               const boss = new PgBossDriver(config.options);
 
               await boss.init();
 
               return boss;
-
-            case MessageQueueDriverType.BullMQ:
+            }
+            case MessageQueueDriverType.BullMQ: {
               return new BullMQDriver(config.options);
-
-            default:
+            }
+            default: {
               return new SyncDriver(JobsModule.moduleRef);
+            }
           }
         },
         inject: options.inject || [],

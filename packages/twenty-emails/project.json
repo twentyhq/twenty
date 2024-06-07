@@ -1,0 +1,35 @@
+{
+  "name": "twenty-emails",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "library",
+  "tags": ["scope:backend"],
+  "targets": {
+    "build": {
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "{projectRoot}/dist"
+      }
+    },
+    "typecheck": {},
+    "lint": {
+      "options": {
+        "lintFilePatterns": [
+          "{projectRoot}/src/**/*.{ts,tsx,json}",
+          "{projectRoot}/package.json"
+        ],
+        "reportUnusedDisableDirectives": "error"
+      },
+      "configurations": {
+        "fix": {}
+      }
+    },
+    "fmt": {
+      "options": {
+        "files": "src"
+      },
+      "configurations": {
+        "fix": {}
+      }
+    }
+  }
+}

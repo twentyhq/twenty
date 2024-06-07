@@ -24,6 +24,7 @@ import { isRelationFieldMetadataType } from 'src/engine/utils/is-relation-field-
 import { isFunctionDefaultValue } from 'src/engine/metadata-modules/field-metadata/utils/is-function-default-value.util';
 import { FieldMetadataDefaultValueFunctionNames } from 'src/engine/metadata-modules/field-metadata/dtos/default-value.input';
 import { compositeTypeDefintions } from 'src/engine/metadata-modules/field-metadata/composite-types';
+import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 
 @Injectable()
 export class DatabaseStructureService {
@@ -74,9 +75,13 @@ export class DatabaseStructureService {
           c.table_schema AS "tableSchema",
           c.table_name AS "tableName",
           c.column_name AS "columnName",
-          CASE 
-            WHEN (c.data_type = 'USER-DEFINED') THEN c.udt_name 
-            ELSE data_type
+          CASE
+            WHEN c.data_type = 'ARRAY' THEN
+              (SELECT typname FROM pg_type WHERE oid = t.typelem)
+            WHEN c.data_type = 'USER-DEFINED' THEN
+              c.udt_name
+            ELSE
+              c.data_type
           END AS "dataType",
           c.is_nullable AS "isNullable",
           c.column_default AS "columnDefault",
@@ -92,10 +97,15 @@ export class DatabaseStructureService {
             WHEN uc.column_name IS NOT NULL THEN 'TRUE'
             ELSE 'FALSE'
           END AS "isUnique",
+          CASE
+            WHEN c.data_type = 'ARRAY' THEN 'TRUE'
+            ELSE 'FALSE'
+          END AS "isArray",
           rc.update_rule AS "onUpdateAction",
           rc.delete_rule AS "onDeleteAction"
         FROM
           information_schema.columns AS c
+        LEFT JOIN pg_type t ON t.typname = c.udt_name
         LEFT JOIN
           information_schema.constraint_column_usage AS ccu
           ON c.column_name = ccu.column_name
@@ -132,10 +142,12 @@ export class DatabaseStructureService {
 
     return results.map((item) => ({
       ...item,
+      dataType: item.isArray === 'TRUE' ? `${item.dataType}[]` : item.dataType,
       isNullable: item.isNullable === 'YES',
       isPrimaryKey: item.isPrimaryKey === 'TRUE',
       isForeignKey: item.isForeignKey === 'TRUE',
       isUnique: item.isUnique === 'TRUE',
+      isArray: item.isArray === 'TRUE',
     }));
   }
 
@@ -160,15 +172,18 @@ export class DatabaseStructureService {
   getPostgresDataTypes(fieldMetadata: FieldMetadataEntity): string[] {
     const mainDataSource = this.typeORMService.getMainDataSource();
 
-    const normalizer = (type: FieldMetadataType, columnName: string) => {
+    const normalizer = (
+      type: FieldMetadataType,
+      isArray: boolean | undefined,
+      columnName: string,
+    ) => {
       const typeORMType = fieldMetadataTypeToColumnType(type);
 
       // Compute enum name to compare data type properly
       if (typeORMType === 'enum') {
-        const objectName = fieldMetadata.object?.nameSingular;
-        const prefix = fieldMetadata.isCustom ? '_' : '';
+        const objectName = computeObjectTargetTable(fieldMetadata.object);
 
-        return `${objectName}_${prefix}${columnName}_enum`;
+        return `${objectName}_${columnName}_enum${isArray ? '[]' : ''}`;
       }
 
       return mainDataSource.driver.normalizeType({
@@ -186,11 +201,21 @@ export class DatabaseStructureService {
       }
 
       return compositeType.properties.map((compositeProperty) =>
-        normalizer(compositeProperty.type, compositeProperty.name),
+        normalizer(
+          compositeProperty.type,
+          compositeProperty.isArray,
+          compositeProperty.name,
+        ),
       );
     }
 
-    return [normalizer(fieldMetadata.type, fieldMetadata.name)];
+    return [
+      normalizer(
+        fieldMetadata.type,
+        fieldMetadata.type === FieldMetadataType.MULTI_SELECT,
+        fieldMetadata.name,
+      ),
+    ];
   }
 
   getFieldMetadataTypeFromPostgresDataType(

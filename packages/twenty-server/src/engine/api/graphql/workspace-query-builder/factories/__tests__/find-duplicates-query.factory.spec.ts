@@ -84,7 +84,7 @@ describe('FindDuplicatesQueryFactory', () => {
       });
 
       expect(query.trim()).toEqual(`query {
-        personCollection(filter: {or:[{nameFirstName:{eq:\"John\"},nameLastName:{eq:\"Doe\"}}]}) {
+        personCollection(filter: {or:[{nameFirstName:{eq:"John"},nameLastName:{eq:"Doe"}}]}) {
           fieldsString
         }
       }`);
@@ -171,7 +171,7 @@ describe('FindDuplicatesQueryFactory', () => {
       );
 
       expect(query.trim()).toEqual(`query {
-        personCollection(filter: {id:{neq:\"uuid\"},or:[{nameFirstName:{eq:\"Peter\"},nameLastName:{eq:\"Parker\"}}]}) {
+        personCollection(filter: {id:{neq:"uuid"},or:[{nameFirstName:{eq:"Peter"},nameLastName:{eq:"Parker"}}]}) {
           fieldsString
         }
       }`);
@@ -189,7 +189,7 @@ describe('FindDuplicatesQueryFactory', () => {
       });
 
       expect(query.trim()).toEqual(`query {
-        personCollection(filter: { id: { eq: \"uuid\" }}){
+        personCollection(filter: { id: { eq: "uuid" }}){
           edges {
             node {
               __typename
