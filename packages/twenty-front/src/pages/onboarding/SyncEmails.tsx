@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useSetRecoilState } from 'recoil';
@@ -35,7 +34,6 @@ const StyledActionLinkContainer = styled.div`
 
 export const SyncEmails = () => {
   const theme = useTheme();
-  const navigate = useNavigate();
   const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
   const setIsCurrentUserLoaded = useSetRecoilState(isCurrentUserLoadedState);
   const [visibility, setVisibility] = useState<MessageChannelVisibility>(
@@ -60,10 +58,7 @@ export const SyncEmails = () => {
   const continueWithoutSync = async () => {
     await skipSyncEmailOnboardingStepMutation();
     setIsCurrentUserLoaded(false);
-    navigate(AppPath.Index);
   };
-
-  const isSubmitting = false;
 
   return (
     <>
@@ -82,7 +77,6 @@ export const SyncEmails = () => {
         onClick={handleButtonClick}
         width={200}
         Icon={() => <IconGoogle size={theme.icon.size.sm} />}
-        disabled={isSubmitting}
       />
       <StyledActionLinkContainer>
         <ActionLink onClick={continueWithoutSync}>
