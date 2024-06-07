@@ -21,6 +21,7 @@ import { AppHotkeyScope } from '@/ui/utilities/hotkey/types/AppHotkeyScope';
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useGetTextToSqlLazyQuery } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
@@ -251,7 +252,8 @@ export const CommandMenu = () => {
     callback: closeCommandMenu,
   });
 
-  // TODO: Move to constants/CommandMenuCommands
+  const isAskAIEnabled = useIsFeatureEnabled('IS_ASK_AI_ENABLED');
+
   const askAiCommand: Command = {
     id: 'ask-ai',
     to: '', // TODO
@@ -267,7 +269,9 @@ export const CommandMenu = () => {
     },
   };
 
-  const selectableItemIds = [askAiCommand.id]
+  const askAiCommandIds: string[] = isAskAIEnabled ? [askAiCommand.id] : [];
+
+  const selectableItemIds = askAiCommandIds
     .concat(matchingCreateCommand.map((cmd) => cmd.id))
     .concat(matchingNavigateCommand.map((cmd) => cmd.id))
     .concat(people.map((person) => person.id))
@@ -315,20 +319,22 @@ export const CommandMenu = () => {
                     !activities.length && (
                       <StyledEmpty>No results found</StyledEmpty>
                     )}
-                  <CommandGroup heading={askAiCommand.label}>
-                    <SelectableItem itemId={askAiCommand.id}>
-                      <CommandMenuItem
-                        id={askAiCommand.id}
-                        Icon={IconNotes}
-                        label={`${askAiCommand.label} ${
-                          commandMenuSearch.length > 2
-                            ? `"${commandMenuSearch}"`
-                            : ''
-                        }`}
-                        onClick={askAiCommand.onCommandClick}
-                      />
-                    </SelectableItem>
-                  </CommandGroup>
+                  {isAskAIEnabled && (
+                    <CommandGroup heading={askAiCommand.label}>
+                      <SelectableItem itemId={askAiCommand.id}>
+                        <CommandMenuItem
+                          id={askAiCommand.id}
+                          Icon={IconNotes}
+                          label={`${askAiCommand.label} ${
+                            commandMenuSearch.length > 2
+                              ? `"${commandMenuSearch}"`
+                              : ''
+                          }`}
+                          onClick={askAiCommand.onCommandClick}
+                        />
+                      </SelectableItem>
+                    </CommandGroup>
+                  )}
                   <CommandGroup heading="Create">
                     {matchingCreateCommand.map((cmd) => (
                       <SelectableItem itemId={cmd.id} key={cmd.id}>
