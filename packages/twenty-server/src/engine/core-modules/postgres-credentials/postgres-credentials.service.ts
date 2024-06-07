@@ -13,11 +13,13 @@ import { EnvironmentService } from 'src/engine/integrations/environment/environm
 import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { NotFoundError } from 'src/engine/utils/graphql-errors.util';
 import { PostgresCredentialsDTO } from 'src/engine/core-modules/postgres-credentials/dtos/postgres-credentials.dto';
+import { ProxyDatabaseService } from 'src/engine/core-modules/postgres-credentials/proxy-database/proxy-database.service';
 
 export class PostgresCredentialsService {
   constructor(
     @InjectRepository(PostgresCredentials, 'core')
     private readonly postgresCredentialsRepository: Repository<PostgresCredentials>,
+    private readonly proxyDatabaseService: ProxyDatabaseService,
     private readonly environmentService: EnvironmentService,
   ) {}
 
@@ -53,6 +55,12 @@ export class PostgresCredentialsService {
 
     await this.postgresCredentialsRepository.save(postgresCredentials);
 
+    await this.proxyDatabaseService.initializeProxyDatabase(
+      user,
+      password,
+      workspaceId,
+    );
+
     return {
       id: postgresCredentials.id,
       user,
@@ -76,6 +84,11 @@ export class PostgresCredentialsService {
         'No valid Postgres credentials not found for this workspace',
       );
     }
+
+    await this.proxyDatabaseService.deleteProxyDatabaseAndUser(
+      postgresCredentials.user,
+      workspaceId,
+    );
 
     await this.postgresCredentialsRepository.delete({
       id: postgresCredentials.id,

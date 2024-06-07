@@ -3,9 +3,8 @@ import {
   Injectable,
   RequestTimeoutException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { EntityManager, Repository } from 'typeorm';
+import { EntityManager } from 'typeorm';
 import { v4 } from 'uuid';
 
 import {
@@ -22,10 +21,6 @@ import { isQueryTimeoutError } from 'src/engine/utils/query-timeout.util';
 export class DistantTableService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    @InjectRepository(RemoteServerEntity, 'metadata')
-    private readonly remoteServerRepository: Repository<
-      RemoteServerEntity<RemoteServerType>
-    >,
   ) {}
 
   public async fetchDistantTables(

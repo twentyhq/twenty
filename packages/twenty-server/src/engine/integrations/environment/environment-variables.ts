@@ -381,6 +381,20 @@ export class EnvironmentVariables {
   AUTH_GOOGLE_APIS_CALLBACK_URL: string;
 
   CHROME_EXTENSION_ID: string;
+
+  @IsString()
+  PG_PROXY_DATABASE_HOST = 'localhost';
+
+  PG_PROXY_DATABASE_PORT = 5433;
+
+  @IsString()
+  PG_PROXY_DATABASE_USER = 'twenty';
+
+  @IsString()
+  PG_PROXY_DATABASE_PASSWORD = 'twenty';
+
+  @IsString()
+  PG_PROXY_DATABASE_NAME = 'default';
 }
 
 export const validate = (
