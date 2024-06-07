@@ -45,8 +45,7 @@ export class UserStateService {
 
     return {
       skipSyncEmailOnboardingStep:
-        !!skipSyncEmail &&
-        skipSyncEmail.value === UserStateEmailSyncValues.SKIPPED,
+        !!skipSyncEmail && skipSyncEmail === UserStateEmailSyncValues.SKIPPED,
     };
   }
 

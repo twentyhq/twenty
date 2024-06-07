@@ -36,7 +36,7 @@ export class WorkspaceStateService {
     return {
       skipInviteTeamOnboardingStep:
         !!skipInviteTeam &&
-        skipInviteTeam.value === WorkspaceStateInviteTeamValues.SKIPPED,
+        skipInviteTeam === WorkspaceStateInviteTeamValues.SKIPPED,
     };
   }
 

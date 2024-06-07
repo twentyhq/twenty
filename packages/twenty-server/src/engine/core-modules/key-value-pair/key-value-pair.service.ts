@@ -23,6 +23,10 @@ type KeyValuePairs = {
   };
 };
 
+type KeyValueType<
+  TYPE extends keyof KeyValuePairs,
+  K extends keyof KeyValuePairs[TYPE],
+> = KeyValuePairs[TYPE][K];
 export class KeyValuePairService<TYPE extends keyof KeyValuePairs> {
   constructor(
     @InjectRepository(KeyValuePair, 'core')
@@ -37,14 +41,16 @@ export class KeyValuePairService<TYPE extends keyof KeyValuePairs> {
     userId?: string;
     workspaceId?: string;
     key: K;
-  }) {
-    return await this.keyValuePairRepository.findOne({
-      where: {
-        userId,
-        workspaceId,
-        key: key as string,
-      },
-    });
+  }): Promise<KeyValueType<TYPE, K>> {
+    return (
+      await this.keyValuePairRepository.findOne({
+        where: {
+          userId,
+          workspaceId,
+          key: key as string,
+        },
+      })
+    )?.value as KeyValueType<TYPE, K>;
   }
 
   async set<K extends keyof KeyValuePairs[TYPE]>({
