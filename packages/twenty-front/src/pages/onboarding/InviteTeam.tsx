@@ -122,9 +122,13 @@ export const InviteTeam = () => {
 
   const onSubmit: SubmitHandler<FormInput> = useCallback(
     async (data) => {
-      const emails = data.emails
-        .map((emailData) => emailData.email.trim())
-        .filter((email) => email.length > 0);
+      const emails = Array.from(
+        new Set(
+          data.emails
+            .map((emailData) => emailData.email.trim())
+            .filter((email) => email.length > 0),
+        ),
+      );
       const result = await sendInviteLink({ variables: { emails } });
       setIsCurrentUserLoaded(false);
       if (isDefined(result.errors)) {
