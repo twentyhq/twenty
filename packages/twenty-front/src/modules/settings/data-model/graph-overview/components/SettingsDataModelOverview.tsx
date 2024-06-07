@@ -36,34 +36,6 @@ const NodeTypes = {
 };
 const StyledContainer = styled.div`
   height: 100%;
-  .has-many-edge {
-    &.selected path.react-flow__edge-path {
-      marker-end: url(#hasManySelected);
-      stroke-width: 1.5;
-    }
-  }
-  .has-many-edge--highlighted {
-    path.react-flow__edge-path,
-    path.react-flow__edge-interaction,
-    path.react-flow__connection-path {
-      stroke: ${({ theme }) => theme.tag.background.blue} !important;
-      stroke-width: 1.5px;
-    }
-  }
-  .has-many-edge-reversed {
-    &.selected path.react-flow__edge-path {
-      marker-end: url(#hasManyReversedSelected);
-      stroke-width: 1.5;
-    }
-  }
-  .has-many-edge-reversed--highlighted {
-    path.react-flow__edge-path,
-    path.react-flow__edge-interaction,
-    path.react-flow__connection-path {
-      stroke: ${({ theme }) => theme.tag.background.blue} !important;
-      stroke-width: 1.5px;
-    }
-  }
   .react-flow__handle {
     border: 0 !important;
     background: transparent !important;
@@ -82,16 +54,6 @@ const StyledContainer = styled.div`
     right: 0;
     top: 50%;
     transform: translateX(50%) translateY(-50%);
-  }
-  .top-handle {
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%);
-  }
-  .bottom-handle {
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%) translateY(50%);
   }
   .react-flow__node {
     z-index: -1 !important;
