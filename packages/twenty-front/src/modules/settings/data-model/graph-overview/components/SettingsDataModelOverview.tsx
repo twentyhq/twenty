@@ -93,9 +93,6 @@ const StyledContainer = styled.div`
     left: 50%;
     transform: translateX(-50%) translateY(50%);
   }
-  .react-flow__controls {
-    box-shadow: unset;
-  }
   .react-flow__node {
     z-index: -1 !important;
   }
