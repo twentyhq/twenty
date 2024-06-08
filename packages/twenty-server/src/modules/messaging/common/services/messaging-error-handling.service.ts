@@ -100,7 +100,9 @@ export class MessagingErrorHandlingService {
           messageChannel.id,
           workspaceId,
         );
-        break;
+        throw new Error(
+          `Unhandled Gmail error code ${code} with reason ${reason}`,
+        );
     }
   }
 
