@@ -28,6 +28,7 @@ import {
   MessageChannelWorkspaceEntity,
   MessageChannelType,
   MessageChannelVisibility,
+  MessageChannelSyncStatus,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessagingMessageListFetchJob,
@@ -114,6 +115,7 @@ export class GoogleAPIsService {
             handle,
             visibility:
               messageVisibility || MessageChannelVisibility.SHARE_EVERYTHING,
+            syncStatus: MessageChannelSyncStatus.ONGOING,
           },
           workspaceId,
           manager,

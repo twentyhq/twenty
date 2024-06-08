@@ -19,7 +19,12 @@ export class MessageChannelRepository {
   public async create(
     messageChannel: Pick<
       ObjectRecord<MessageChannelWorkspaceEntity>,
-      'id' | 'connectedAccountId' | 'type' | 'handle' | 'visibility'
+      | 'id'
+      | 'connectedAccountId'
+      | 'type'
+      | 'handle'
+      | 'visibility'
+      | 'syncStatus'
     >,
     workspaceId: string,
     transactionManager?: EntityManager,
@@ -28,14 +33,15 @@ export class MessageChannelRepository {
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
     await this.workspaceDataSourceService.executeRawQuery(
-      `INSERT INTO ${dataSourceSchema}."messageChannel" ("id", "connectedAccountId", "type", "handle", "visibility")
-      VALUES ($1, $2, $3, $4, $5)`,
+      `INSERT INTO ${dataSourceSchema}."messageChannel" ("id", "connectedAccountId", "type", "handle", "visibility", "syncStatus")
+      VALUES ($1, $2, $3, $4, $5, $6)`,
       [
         messageChannel.id,
         messageChannel.connectedAccountId,
         messageChannel.type,
         messageChannel.handle,
         messageChannel.visibility,
+        messageChannel.syncStatus,
       ],
       workspaceId,
       transactionManager,
@@ -146,12 +152,15 @@ export class MessageChannelRepository {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
-    return await this.workspaceDataSourceService.executeRawQuery(
-      `SELECT * FROM ${dataSourceSchema}."messageChannel" WHERE "id" = $1`,
-      [id],
-      workspaceId,
-      transactionManager,
-    );
+    const messageChannels =
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT * FROM ${dataSourceSchema}."messageChannel" WHERE "id" = $1`,
+        [id],
+        workspaceId,
+        transactionManager,
+      );
+
+    return messageChannels[0];
   }
 
   public async getIdsByWorkspaceMemberId(
