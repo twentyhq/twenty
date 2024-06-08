@@ -67,9 +67,11 @@ export class MessagingMessageListFetchCronJob
 
       for (const messageChannel of messageChannels) {
         if (
-          messageChannel.isSyncEnabled &&
+          (messageChannel.isSyncEnabled &&
+            messageChannel.syncStage ===
+              MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING) ||
           messageChannel.syncStage ===
-            MessageChannelSyncStage.MESSAGES_IMPORT_PENDING
+            MessageChannelSyncStage.FULL_MESSAGE_LIST_FETCH_PENDING
         ) {
           await this.messageQueueService.add<MessagingMessageListFetchJobData>(
             MessagingMessageListFetchJob.name,

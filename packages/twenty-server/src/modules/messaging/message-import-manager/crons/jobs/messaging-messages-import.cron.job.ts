@@ -67,7 +67,7 @@ export class MessagingMessagesImportCronJob
         if (
           messageChannel.isSyncEnabled &&
           messageChannel.syncStage ===
-            MessageChannelSyncStage.MESSAGE_LIST_FETCH_ONGOING
+            MessageChannelSyncStage.MESSAGES_IMPORT_PENDING
         ) {
           await this.messageQueueService.add<MessagingMessagesImportJobData>(
             MessagingMessagesImportJob.name,
