@@ -114,6 +114,14 @@ export class MessagingGmailFetchMessagesByBatchesService {
           return null;
         }
 
+        if (!headerMessageId) {
+          this.logger.log(
+            `Header Message ID is missing while importing message in workspace ${workspaceId} and account ${connectedAccountId}`,
+          );
+
+          return null;
+        }
+
         const participants = [
           ...formatAddressObjectAsParticipants(from, 'from'),
           ...formatAddressObjectAsParticipants(to ?? deliveredTo, 'to'),
@@ -182,10 +190,6 @@ export class MessagingGmailFetchMessagesByBatchesService {
     const internalDate = message.internalDate;
 
     assert(id, 'ID is missing');
-    assert(
-      messageId,
-      'Message-ID is missing: ' + JSON.stringify(message.payload?.headers),
-    );
     assert(threadId, 'Thread-ID is missing');
     assert(historyId, 'History-ID is missing');
     assert(internalDate, 'Internal date is missing');

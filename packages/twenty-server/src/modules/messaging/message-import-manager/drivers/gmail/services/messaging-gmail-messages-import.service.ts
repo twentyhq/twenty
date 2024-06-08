@@ -158,6 +158,7 @@ export class MessagingGmailMessagesImportService {
       );
 
       if (error.code === undefined) {
+        // This should never happen as all errors must be known
         throw error;
       }
 
