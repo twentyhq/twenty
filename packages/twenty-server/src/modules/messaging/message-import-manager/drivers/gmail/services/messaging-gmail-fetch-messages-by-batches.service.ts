@@ -181,11 +181,14 @@ export class MessagingGmailFetchMessagesByBatchesService {
     const historyId = message.historyId;
     const internalDate = message.internalDate;
 
-    assert(id);
-    assert(messageId);
-    assert(threadId);
-    assert(historyId);
-    assert(internalDate);
+    assert(id, 'ID is missing');
+    assert(
+      messageId,
+      'Message-ID is missing: ' + JSON.stringify(message.payload?.headers),
+    );
+    assert(threadId, 'Thread-ID is missing');
+    assert(historyId, 'History-ID is missing');
+    assert(internalDate, 'Internal date is missing');
 
     const bodyData = this.getBodyData(message);
     const text = bodyData ? Buffer.from(bodyData, 'base64').toString() : '';
