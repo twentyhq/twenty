@@ -28,6 +28,7 @@ import {
   MessageChannelWorkspaceEntity,
   MessageChannelType,
   MessageChannelVisibility,
+  MessageChannelSyncStatus,
 } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   MessagingMessageListFetchJob,
@@ -114,6 +115,7 @@ export class GoogleAPIsService {
             handle,
             visibility:
               messageVisibility || MessageChannelVisibility.SHARE_EVERYTHING,
+            syncStatus: MessageChannelSyncStatus.ONGOING,
           },
           workspaceId,
           manager,
@@ -150,26 +152,22 @@ export class GoogleAPIsService {
       }
     });
 
-    await this.enqueueSyncJobs(
-      newOrExistingConnectedAccountId,
-      workspaceId,
-      isCalendarEnabled,
-    );
-  }
-
-  private async enqueueSyncJobs(
-    connectedAccountId: string,
-    workspaceId: string,
-    isCalendarEnabled: boolean,
-  ) {
     if (this.environmentService.get('MESSAGING_PROVIDER_GMAIL_ENABLED')) {
-      await this.messageQueueService.add<MessagingMessageListFetchJobData>(
-        MessagingMessageListFetchJob.name,
-        {
+      const messageChannels =
+        await this.messageChannelRepository.getByConnectedAccountId(
+          newOrExistingConnectedAccountId,
           workspaceId,
-          connectedAccountId,
-        },
-      );
+        );
+
+      for (const messageChannel of messageChannels) {
+        await this.messageQueueService.add<MessagingMessageListFetchJobData>(
+          MessagingMessageListFetchJob.name,
+          {
+            workspaceId,
+            messageChannelId: messageChannel.id,
+          },
+        );
+      }
     }
 
     if (
@@ -180,7 +178,7 @@ export class GoogleAPIsService {
         GoogleCalendarSyncJob.name,
         {
           workspaceId,
-          connectedAccountId,
+          connectedAccountId: newOrExistingConnectedAccountId,
         },
         {
           retryLimit: 2,
