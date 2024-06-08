@@ -11,11 +11,14 @@ import { useIsFieldInputOnly } from '@/object-record/record-field/hooks/useIsFie
 import { useToggleEditOnlyInput } from '@/object-record/record-field/hooks/useToggleEditOnlyInput';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { useCloseCurrentTableCellInEditMode } from '@/object-record/record-table/hooks/internal/useCloseCurrentTableCellInEditMode';
 import { RecordTableCellButton } from '@/object-record/record-table/record-table-cell/components/RecordTableCellButton';
+import { useCurrentTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useCurrentCellPosition';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { isSoftFocusUsingMouseState } from '@/object-record/record-table/states/isSoftFocusUsingMouseState';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
+import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { isDefined } from '~/utils/isDefined';
 
 import { TableHotkeyScope } from '../../types/TableHotkeyScope';
@@ -32,7 +35,7 @@ export const RecordTableCellSoftFocusMode = ({
   nonEditModeContent,
 }: RecordTableCellSoftFocusModeProps) => {
   const { columnIndex } = useContext(RecordTableCellContext);
-
+  const closeCurrentTableCell = useCloseCurrentTableCellInEditMode();
   const { isReadOnly } = useContext(RecordTableRowContext);
 
   const { openTableCell } = useOpenRecordTableCellFromCell();
@@ -126,6 +129,18 @@ export const RecordTableCellSoftFocusMode = ({
     }
     */
   };
+
+  const { column, row } = useCurrentTableCellPosition();
+
+  useListenClickOutside({
+    refs: [scrollRef],
+    callback: () => {
+      closeCurrentTableCell();
+      document.dispatchEvent(
+        new CustomEvent(`soft-focus-move-${row}:${column}`, { detail: false }),
+      );
+    },
+  });
 
   const isFirstColumn = columnIndex === 0;
   const customButtonIcon = useGetButtonIcon();
