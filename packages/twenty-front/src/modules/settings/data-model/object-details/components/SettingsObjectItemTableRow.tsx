@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, useEffect } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useIcons } from 'twenty-ui';
@@ -6,14 +6,22 @@ import { useIcons } from 'twenty-ui';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SettingsDataModelObjectTypeTag } from '@/settings/data-model/objects/SettingsDataModelObjectTypeTag';
-import { getObjectTypeLabel } from '@/settings/data-model/utils/getObjectTypeLabel';
+import {
+  getObjectTypeLabel,
+  ObjectTypeLabel,
+} from '@/settings/data-model/utils/getObjectTypeLabel';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
-type SettingsObjectItemTableRowProps = {
+export type SettingsObjectItemTableRowProps = {
   action: ReactNode;
-  objectItem: ObjectMetadataItem;
+  objectItem: ObjectMetadataItem & {
+    objectTypeLabelText: ObjectTypeLabel['labelText'];
+    fieldsCount: number;
+    instancesCount: number;
+  };
   to?: string;
+  updateInstanceCount: (id: string, instanceCount: number) => void;
 };
 
 export const StyledObjectTableRow = styled(TableRow)`
@@ -34,12 +42,18 @@ export const SettingsObjectItemTableRow = ({
   action,
   objectItem,
   to,
+  updateInstanceCount,
 }: SettingsObjectItemTableRowProps) => {
   const theme = useTheme();
 
   const { totalCount } = useFindManyRecords({
     objectNameSingular: objectItem.nameSingular,
   });
+  useEffect(() => {
+    //Hoist instance count to parent component state to determine sort order
+    updateInstanceCount(objectItem.id, totalCount || 0);
+  }, [objectItem.id, totalCount, updateInstanceCount]);
+
   const { getIcon } = useIcons();
   const Icon = getIcon(objectItem.icon);
   const objectTypeLabel = getObjectTypeLabel(objectItem);
@@ -55,9 +69,7 @@ export const SettingsObjectItemTableRow = ({
       <TableCell>
         <SettingsDataModelObjectTypeTag objectTypeLabel={objectTypeLabel} />
       </TableCell>
-      <TableCell align="right">
-        {objectItem.fields.filter((field) => !field.isSystem).length}
-      </TableCell>
+      <TableCell align="right">{objectItem.fieldsCount}</TableCell>
       <TableCell align="right">{totalCount}</TableCell>
       <StyledActionTableCell>{action}</StyledActionTableCell>
     </StyledObjectTableRow>

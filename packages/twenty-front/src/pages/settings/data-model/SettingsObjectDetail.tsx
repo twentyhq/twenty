@@ -1,7 +1,13 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styled from '@emotion/styled';
-import { H2Title, IconPlus, IconSettings } from 'twenty-ui';
+import {
+  H2Title,
+  IconArrowDown,
+  IconArrowUp,
+  IconPlus,
+  IconSettings,
+} from 'twenty-ui';
 
 import { LABEL_IDENTIFIER_FIELD_METADATA_TYPES } from '@/object-metadata/constants/LabelIdentifierFieldMetadataTypes';
 import { useFieldMetadataItem } from '@/object-metadata/hooks/useFieldMetadataItem';
@@ -32,12 +38,28 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
+import { useTableSort } from '~/hooks/useTableSort';
 
 const StyledDiv = styled.div`
   display: flex;
   justify-content: flex-end;
   padding-top: ${({ theme }) => theme.spacing(2)};
 `;
+enum SortKeys {
+  label = 'label',
+  fieldType = 'fieldType',
+  dataType = 'dataType',
+}
+type MetadataFieldRowType = FieldMetadataItem & {
+  fieldType: string | boolean;
+  dataType?: string;
+};
+type DataTypesType = { [key: string]: string | undefined };
+
+type TableHeading = {
+  label: string;
+  sortKey: SortKeys;
+}[];
 
 export const SettingsObjectDetail = () => {
   const navigate = useNavigate();
@@ -59,15 +81,77 @@ export const SettingsObjectDetail = () => {
     deactivateMetadataField,
     deleteMetadataField,
   } = useFieldMetadataItem();
+  const [dataTypes, setDataTypes] = useState<DataTypesType>({});
+  let activeMetadataFieldsRows: MetadataFieldRowType[] = [];
+  let deactivatedMetadataFieldRows: MetadataFieldRowType[] = [];
+
+  if (activeObjectMetadataItem !== undefined) {
+    const getMetadataFieldsRows = (MetadataFields: FieldMetadataItem[]) => {
+      return MetadataFields.map((fieldMetadataItem) => {
+        const getFieldType = () => {
+          const variant = activeObjectMetadataItem.isCustom
+            ? 'identifier'
+            : 'field-type';
+          const identifierType = getFieldIdentifierType(
+            fieldMetadataItem,
+            activeObjectMetadataItem,
+          );
+          if (variant === 'field-type') {
+            return activeObjectMetadataItem.isRemote
+              ? 'Remote'
+              : fieldMetadataItem.isCustom
+                ? 'Custom'
+                : 'Standard';
+          } else {
+            return (
+              !!identifierType &&
+              (identifierType === 'label' ? 'Record text' : 'Record image')
+            );
+          }
+        };
+
+        return {
+          ...fieldMetadataItem,
+          [SortKeys.fieldType]: getFieldType(),
+          [SortKeys.dataType]: dataTypes[fieldMetadataItem.id],
+        };
+      });
+    };
+
+    const activeMetadataFields = getActiveFieldMetadataItems(
+      activeObjectMetadataItem,
+    );
+    const deactivatedMetadataFields = getDisabledFieldMetadataItems(
+      activeObjectMetadataItem,
+    );
+    activeMetadataFieldsRows = getMetadataFieldsRows(activeMetadataFields);
+    deactivatedMetadataFieldRows = getMetadataFieldsRows(
+      deactivatedMetadataFields,
+    );
+  }
+
+  const [sortedActiveMetadataFieldsRows, handleActiveSort, sortConfig] =
+    useTableSort<MetadataFieldRowType>(
+      SortKeys.label,
+      activeMetadataFieldsRows,
+    );
+
+  const [sortedDeactivatedMetadataFieldsRows, handleDeactivatedSort] =
+    useTableSort<MetadataFieldRowType>(
+      SortKeys.label,
+      deactivatedMetadataFieldRows,
+    );
+
+  const handleSort = (key: keyof MetadataFieldRowType) => {
+    handleActiveSort(key);
+    handleDeactivatedSort(key);
+  };
+
+  const updateDataTypes = useCallback((id: string, label?: string) => {
+    setDataTypes((prevState: DataTypesType) => ({ ...prevState, [id]: label }));
+  }, []);
 
   if (!activeObjectMetadataItem) return null;
-
-  const activeMetadataFields = getActiveFieldMetadataItems(
-    activeObjectMetadataItem,
-  );
-  const deactivatedMetadataFields = getDisabledFieldMetadataItems(
-    activeObjectMetadataItem,
-  );
 
   const handleDisableObject = async () => {
     await updateOneObjectMetadataItem({
@@ -92,7 +176,25 @@ export const SettingsObjectDetail = () => {
     });
 
   const shouldDisplayAddFieldButton = !activeObjectMetadataItem.isRemote;
-
+  const tableHeadings: TableHeading = [
+    { label: 'Name', sortKey: SortKeys.label },
+    {
+      label: activeObjectMetadataItem.isCustom ? 'Identifier' : 'Field type',
+      sortKey: SortKeys.fieldType,
+    },
+    {
+      label: 'Data type',
+      sortKey: SortKeys.dataType,
+    },
+  ];
+  const SortIcon = ({ sortKey }: { sortKey: SortKeys }) => {
+    if (sortKey !== sortConfig.sortByColumnKey) return null;
+    return sortConfig.sortOrder === 'ascending' ? (
+      <IconArrowUp size="14" />
+    ) : (
+      <IconArrowDown size="14" />
+    );
+  };
   return (
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
@@ -119,18 +221,23 @@ export const SettingsObjectDetail = () => {
           />
           <Table>
             <StyledObjectFieldTableRow>
-              <TableHeader>Name</TableHeader>
-              <TableHeader>
-                {activeObjectMetadataItem.isCustom
-                  ? 'Identifier'
-                  : 'Field type'}
-              </TableHeader>
-              <TableHeader>Data type</TableHeader>
+              {tableHeadings.map((item) => (
+                <TableHeader
+                  key={item.label}
+                  onClick={() => handleSort(item.sortKey)}
+                >
+                  {item.label}
+                  {sortConfig.sortByColumnKey === item.sortKey && (
+                    <SortIcon sortKey={item.sortKey} />
+                  )}
+                </TableHeader>
+              ))}
+
               <TableHeader></TableHeader>
             </StyledObjectFieldTableRow>
-            {!!activeMetadataFields.length && (
+            {!!sortedActiveMetadataFieldsRows.length && (
               <TableSection title="Active">
-                {activeMetadataFields.map((activeMetadataField) => {
+                {sortedActiveMetadataFieldsRows.map((activeMetadataField) => {
                   const isLabelIdentifier = isLabelIdentifierField({
                     fieldMetadataItem: activeMetadataField,
                     objectMetadataItem: activeObjectMetadataItem,
@@ -144,16 +251,8 @@ export const SettingsObjectDetail = () => {
 
                   return (
                     <SettingsObjectFieldItemTableRow
+                      updateDataTypes={updateDataTypes}
                       key={activeMetadataField.id}
-                      identifierType={getFieldIdentifierType(
-                        activeMetadataField,
-                        activeObjectMetadataItem,
-                      )}
-                      variant={
-                        activeObjectMetadataItem.isCustom
-                          ? 'identifier'
-                          : 'field-type'
-                      }
                       fieldMetadataItem={activeMetadataField}
                       isRemoteObjectField={activeObjectMetadataItem.isRemote}
                       // to={`./${getFieldSlug(activeMetadataField)}`}
@@ -184,32 +283,35 @@ export const SettingsObjectDetail = () => {
                 })}
               </TableSection>
             )}
-            {!!deactivatedMetadataFields.length && (
+            {!!sortedDeactivatedMetadataFieldsRows.length && (
               <TableSection isInitiallyExpanded={false} title="Inactive">
-                {deactivatedMetadataFields.map((deactivatedMetadataField) => (
-                  <SettingsObjectFieldItemTableRow
-                    key={deactivatedMetadataField.id}
-                    variant={
-                      activeObjectMetadataItem.isCustom
-                        ? 'identifier'
-                        : 'field-type'
-                    }
-                    fieldMetadataItem={deactivatedMetadataField}
-                    ActionIcon={
-                      <SettingsObjectFieldInactiveActionDropdown
-                        isCustomField={!!deactivatedMetadataField.isCustom}
-                        fieldType={deactivatedMetadataField.type}
-                        scopeKey={deactivatedMetadataField.id}
-                        onActivate={() =>
-                          activateMetadataField(deactivatedMetadataField)
-                        }
-                        onDelete={() =>
-                          deleteMetadataField(deactivatedMetadataField)
-                        }
-                      />
-                    }
-                  />
-                ))}
+                {sortedDeactivatedMetadataFieldsRows.map(
+                  (deactivatedMetadataField) => (
+                    <SettingsObjectFieldItemTableRow
+                      updateDataTypes={updateDataTypes}
+                      key={deactivatedMetadataField.id}
+                      variant={
+                        activeObjectMetadataItem.isCustom
+                          ? 'identifier'
+                          : 'field-type'
+                      }
+                      fieldMetadataItem={deactivatedMetadataField}
+                      ActionIcon={
+                        <SettingsObjectFieldInactiveActionDropdown
+                          isCustomField={!!deactivatedMetadataField.isCustom}
+                          fieldType={deactivatedMetadataField.type}
+                          scopeKey={deactivatedMetadataField.id}
+                          onActivate={() =>
+                            activateMetadataField(deactivatedMetadataField)
+                          }
+                          onDelete={() =>
+                            deleteMetadataField(deactivatedMetadataField)
+                          }
+                        />
+                      }
+                    />
+                  ),
+                )}
               </TableSection>
             )}
           </Table>
@@ -217,7 +319,7 @@ export const SettingsObjectDetail = () => {
             <StyledDiv>
               <UndecoratedLink
                 to={
-                  deactivatedMetadataFields.length
+                  sortedDeactivatedMetadataFieldsRows.length
                     ? './new-field/step-1'
                     : './new-field/step-2'
                 }
