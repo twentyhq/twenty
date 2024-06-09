@@ -3,7 +3,7 @@ import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { Key } from 'ts-key-enum';
-import { Avatar, IconNotes } from 'twenty-ui';
+import { Avatar, IconNotes, IconSparkles } from 'twenty-ui';
 
 import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { Activity } from '@/activities/types/Activity';
@@ -257,6 +257,7 @@ export const CommandMenu = () => {
   const askAiCommand: Command = {
     id: 'ask-ai',
     to: '', // TODO
+    Icon: IconSparkles,
     label: 'Ask AI',
     type: CommandType.Navigate,
     onCommandClick: async () => {
@@ -324,7 +325,7 @@ export const CommandMenu = () => {
                       <SelectableItem itemId={askAiCommand.id}>
                         <CommandMenuItem
                           id={askAiCommand.id}
-                          Icon={IconNotes}
+                          Icon={askAiCommand.Icon}
                           label={`${askAiCommand.label} ${
                             commandMenuSearch.length > 2
                               ? `"${commandMenuSearch}"`

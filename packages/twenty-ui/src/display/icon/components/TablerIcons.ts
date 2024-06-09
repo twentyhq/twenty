@@ -135,6 +135,7 @@ export {
   IconSend,
   IconSettings,
   IconSortDescending,
+  IconSparkles,
   IconSquareRoundedCheck,
   IconTable,
   IconTag,
