@@ -94,6 +94,24 @@ export class MessagingErrorHandlingService {
           workspaceId,
         );
         break;
+      case 500:
+        if (reason === 'backendError') {
+          await this.handleRateLimitExceeded(
+            error,
+            syncStep,
+            messageChannel,
+            workspaceId,
+          );
+        } else {
+          await this.messagingChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
+            messageChannel.id,
+            workspaceId,
+          );
+          throw new Error(
+            `Unhandled Gmail error code ${code} with reason ${reason}`,
+          );
+        }
+        break;
       case 'ECONNRESET':
       case 'ENOTFOUND':
       case 'ECONNABORTED':
