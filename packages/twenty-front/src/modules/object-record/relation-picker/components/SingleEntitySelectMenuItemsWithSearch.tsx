@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { ObjectMetadataItemsRelationPickerEffect } from '@/object-metadata/components/ObjectMetadataItemsRelationPickerEffect';
@@ -70,6 +71,21 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
     objectNameSingular: relationObjectNameSingular,
   });
 
+  const entitiesToSelect = useMemo(() => {
+    const index = entities.entitiesToSelect.findIndex(
+      (person) =>
+        person.name.toLocaleLowerCase() ===
+        relationPickerSearchFilter.toLocaleLowerCase(),
+    );
+
+    return index < 0
+      ? entities.entitiesToSelect
+      : [
+          ...entities.entitiesToSelect.splice(index, 1),
+          ...entities.entitiesToSelect,
+        ];
+  }, [relationPickerSearchFilter, entities.entitiesToSelect]);
+
   let onCreateWithInput = undefined;
 
   if (isDefined(onCreate)) {
@@ -92,7 +108,7 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
       <DropdownMenuSearchInput onChange={handleSearchFilterChange} autoFocus />
       <DropdownMenuSeparator />
       <SingleEntitySelectMenuItems
-        entitiesToSelect={entities.entitiesToSelect}
+        entitiesToSelect={entitiesToSelect}
         loading={entities.loading}
         selectedEntity={
           selectedEntity ??
