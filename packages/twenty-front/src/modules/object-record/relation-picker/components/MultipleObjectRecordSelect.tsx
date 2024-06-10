@@ -25,7 +25,7 @@ export const MultipleObjectRecordSelect = ({
   onSubmit?: (objectRecordsForSelect: ObjectRecordForSelect[]) => void;
   selectedObjectRecordIds: SelectedObjectRecordId[];
 }) => {
-  const [searchFilter, setSearchFilter] = useState<string>(''); // Put in recoil state?
+  const [searchFilter, setSearchFilter] = useState<string>('');
 
   const {
     filteredSelectedObjectRecords,

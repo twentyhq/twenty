@@ -2,14 +2,12 @@ import { useMemo } from 'react';
 
 import { ObjectMetadataItemsRelationPickerEffect } from '@/object-metadata/components/ObjectMetadataItemsRelationPickerEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
+import { useUpdateRelationManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationManyFieldInput';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { MultiRecordSelect } from '@/object-record/relation-picker/components/MultiRecordSelect';
-import { ObjectRecordForSelect } from '@/object-record/relation-picker/hooks/useMultiObjectSearch';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { useRelationPickerEntitiesOptions } from '@/object-record/relation-picker/hooks/useRelationPickerEntitiesOptions';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
-import { isDefined } from '~/utils/isDefined';
 
 import { useRelationField } from '../../hooks/useRelationField';
 
@@ -18,78 +16,34 @@ export const RelationManyFieldInput = ({
 }: {
   relationPickerScopeId?: string;
 }) => {
-  const { fieldDefinition, fieldValue, entityId, setFieldValue } =
-    useRelationField<EntityForSelect[]>();
-
   const { closeInlineCell: closeEditableField } = useInlineCell();
 
-  const { setRelationPickerSearchFilter } = useRelationPicker({
-    relationPickerScopeId,
-  });
-
+  const { fieldDefinition, fieldValue } = useRelationField<EntityForSelect[]>();
   const { entities, relationPickerSearchFilter } =
     useRelationPickerEntitiesOptions({
       relationObjectNameSingular:
         fieldDefinition.metadata.relationObjectMetadataNameSingular,
       relationPickerScopeId,
     });
-  const { updateOneRecord } = useUpdateOneRecord({
-    objectNameSingular:
-      fieldDefinition.metadata.relationObjectMetadataNameSingular,
+
+  const { setRelationPickerSearchFilter } = useRelationPicker({
+    relationPickerScopeId,
   });
 
-  if (!fieldDefinition.metadata.targetFieldMetadataName) {
-    throw new Error('Missing target field');
-  }
+  const { handleChange } = useUpdateRelationManyFieldInput({ entities });
 
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular:
       fieldDefinition.metadata.relationObjectMetadataNameSingular,
   });
-
-  const fieldName = fieldDefinition.metadata.targetFieldMetadataName;
-
-  const handleChange = (
-    objectRecord: ObjectRecordForSelect | null,
-    isSelected: boolean,
-  ) => {
-    const entityToAddOrRemove = entities.entitiesToSelect.find(
-      (entity) => entity.id === objectRecord?.recordIdentifier.id,
-    );
-
-    const updatedFieldValue = isSelected
-      ? [...(fieldValue ?? []), entityToAddOrRemove]
-      : (fieldValue ?? []).filter(
-          (value) => value.id !== objectRecord?.recordIdentifier.id,
-        );
-    setFieldValue(
-      updatedFieldValue.filter((value) =>
-        isDefined(value),
-      ) as EntityForSelect[],
-    );
-    if (isDefined(objectRecord)) {
-      updateOneRecord({
-        idToUpdate: objectRecord.record?.id,
-        updateOneRecordInput: {
-          [`${fieldName}Id`]: isSelected ? entityId : null,
-        },
-      });
-    }
-  };
-
   const allRecords = useMemo(
     () => [
       ...entities.entitiesToSelect.map((entity) => {
+        const { record, ...recordIdentifier } = entity;
         return {
           objectMetadataItem: objectMetadataItem,
-          record: entity.record,
-          recordIdentifier: {
-            id: entity.id,
-            name: entity.name,
-            avatarUrl: entity.avatarUrl,
-            avatarType: entity.avatarType,
-            linkToShowPage: entity.linkToShowPage,
-          },
+          record: record,
+          recordIdentifier: recordIdentifier,
         };
       }),
     ],

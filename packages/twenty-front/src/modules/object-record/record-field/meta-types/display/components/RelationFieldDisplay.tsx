@@ -16,13 +16,13 @@ const RelationFromManyFieldDisplay = ({
   const { isFocused } = useFieldFocus();
   const { generateRecordChipData } = useRelationFieldDisplay();
 
-  const recordChipsDataAndId = fieldValue.map((fieldValueItem) =>
+  const recordChipsData = fieldValue.map((fieldValueItem) =>
     generateRecordChipData(fieldValueItem),
   );
 
   return (
     <ExpandableList isChipCountDisplayed={isFocused}>
-      {recordChipsDataAndId.map((record) => {
+      {recordChipsData.map((record) => {
         return (
           <EntityChip
             key={record.id}
