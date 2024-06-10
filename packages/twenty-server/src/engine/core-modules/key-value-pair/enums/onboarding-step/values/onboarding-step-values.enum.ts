@@ -1,3 +1,3 @@
-export enum OnboardingStateValues {
+export enum OnboardingStepValues {
   SKIPPED = 'SKIPPED',
 }

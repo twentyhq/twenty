@@ -10,7 +10,7 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { KeyValueTypes } from 'src/engine/core-modules/key-value-pair/enums/key-value-types.enum';
 import { OnboardingStepKeys } from 'src/engine/core-modules/key-value-pair/enums/onboarding-step/onboarding-step-keys.enum';
-import { OnboardingStateValues } from 'src/engine/core-modules/key-value-pair/enums/onboarding-step/values/onboarding-step-values.enum';
+import { OnboardingStepValues } from 'src/engine/core-modules/key-value-pair/enums/onboarding-step/values/onboarding-step-values.enum';
 
 @Injectable()
 export class OnboardingService {
@@ -27,7 +27,7 @@ export class OnboardingService {
       workspaceId: workspace.id,
       key: OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP,
     });
-    const isSyncEmailSkipped = syncEmailValue === OnboardingStateValues.SKIPPED;
+    const isSyncEmailSkipped = syncEmailValue === OnboardingStepValues.SKIPPED;
     const connectedAccounts =
       await this.connectedAccountRepository.getAllByUserId(
         user.id,
@@ -43,7 +43,7 @@ export class OnboardingService {
       key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
     });
     const isInviteTeamSkipped =
-      inviteTeamValue === OnboardingStateValues.SKIPPED;
+      inviteTeamValue === OnboardingStepValues.SKIPPED;
     const workspaceMemberCount =
       await this.userWorkspaceService.getWorkspaceMemberCount(workspace.id);
 
@@ -53,7 +53,7 @@ export class OnboardingService {
     );
   }
 
-  async getOnboardingState(
+  async getOnboardingStep(
     user: User,
     workspace: Workspace,
   ): Promise<OnboardingStep | null> {
@@ -72,7 +72,7 @@ export class OnboardingService {
     await this.keyValuePairService.set({
       workspaceId,
       key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
-      value: OnboardingStateValues.SKIPPED,
+      value: OnboardingStepValues.SKIPPED,
     });
   }
 
@@ -81,7 +81,7 @@ export class OnboardingService {
       userId,
       workspaceId,
       key: OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP,
-      value: OnboardingStateValues.SKIPPED,
+      value: OnboardingStepValues.SKIPPED,
     });
   }
 }

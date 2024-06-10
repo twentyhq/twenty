@@ -6,7 +6,7 @@ import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { OnboardingStep } from '~/generated/graphql';
 
-const getNextOnboardingState = (
+const getNextOnboardingStep = (
   currentOnboardingStep: OnboardingStep,
   workspaceMembers: WorkspaceMember[],
 ) => {
@@ -29,7 +29,7 @@ export const useSetNextOnboardingStep = () => {
         (current) =>
           ({
             ...current,
-            onboardingStep: getNextOnboardingState(
+            onboardingStep: getNextOnboardingStep(
               currentOnboardingStep,
               workspaceMembers,
             ),
