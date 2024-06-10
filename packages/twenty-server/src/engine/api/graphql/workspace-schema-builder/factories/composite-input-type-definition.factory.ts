@@ -62,6 +62,14 @@ export class CompositeInputTypeDefinitionFactory {
         continue;
       }
 
+      // Skip secondaryLinks property for LINKS type in Filter input type
+      if (
+        kind === InputTypeDefinitionKind.Filter &&
+        property.name === 'secondaryLinks'
+      ) {
+        continue;
+      }
+
       const type = this.inputTypeFactory.create(
         property.name,
         property.type,
