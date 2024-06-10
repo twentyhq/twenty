@@ -521,7 +521,7 @@ export class GoogleCalendarSyncService {
           CreateCompanyAndContactJob.name,
           {
             workspaceId,
-            connectedAccountHandle: connectedAccount.handle,
+            connectedAccount,
             contactsToCreate: participantsToSave,
           },
         );

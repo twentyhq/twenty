@@ -37,22 +37,11 @@ export const EventRowMessage: React.FC<EventRowMessageProps> = ({
 
   const renderRow = () => {
     switch (eventAction) {
-      case 'sent': {
-        return (
-          <>
-            <StyledItemLabelIdentifier>
-              {labelIdentifierValue}
-            </StyledItemLabelIdentifier>
-            <StyledItemAction>received an email from</StyledItemAction>
-            <StyledItemAuthorText>{authorFullName}</StyledItemAuthorText>
-          </>
-        );
-      }
-      case 'received': {
+      case 'participated': {
         return (
           <>
             <StyledItemAuthorText>{authorFullName}</StyledItemAuthorText>
-            <StyledItemAction>sent an email to</StyledItemAction>
+            <StyledItemAction>linked an email to</StyledItemAction>
             <StyledItemLabelIdentifier>
               {labelIdentifierValue}
             </StyledItemLabelIdentifier>

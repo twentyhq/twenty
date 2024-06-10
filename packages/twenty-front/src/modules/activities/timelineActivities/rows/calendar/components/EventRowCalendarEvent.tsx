@@ -29,19 +29,19 @@ const StyledRowContainer = styled.div`
 export const EventRowCalendarEvent: React.FC<EventRowCalendarEventProps> = ({
   event,
   authorFullName,
+  labelIdentifierValue,
 }: EventRowCalendarEventProps) => {
   const [, eventAction] = event.name.split('.');
   const [isOpen, setIsOpen] = useState(false);
 
   const renderRow = () => {
     switch (eventAction) {
-      case 'sent': {
+      case 'participated': {
         return (
-          <StyledItemAction>has been invited to an event</StyledItemAction>
+          <StyledItemAction>
+            linked a calendar event with {labelIdentifierValue}
+          </StyledItemAction>
         );
-      }
-      case 'received': {
-        return <StyledItemAction>created an event</StyledItemAction>;
       }
       default:
         throw new Error('Invalid event action for calendarEvent event type.');

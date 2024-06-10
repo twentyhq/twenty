@@ -134,7 +134,7 @@ export class WorkspaceDataSourceService {
       return await workspaceDataSource.query(query, parameters);
     } catch (error) {
       throw new Error(
-        `Error executing raw query for workspace ${workspaceId}: ${error.message}`,
+        `Error executing raw query for workspace ${workspaceId}: ${error.message} with query ${query} and parameters ${parameters}`,
       );
     }
   }

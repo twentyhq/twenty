@@ -7,13 +7,13 @@ import { Repository } from 'typeorm';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositiories/timeline-activity.repository';
 import { TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
+import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 
 @Injectable()
-export class CalendarEventParticipantListener {
+export class MessageParticipantListener {
   constructor(
     @InjectObjectMetadataRepository(TimelineActivityWorkspaceEntity)
     private readonly timelineActivityRepository: TimelineActivityRepository,
@@ -22,13 +22,13 @@ export class CalendarEventParticipantListener {
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
   ) {}
 
-  @OnEvent('calendarEventParticipant.matched')
-  public async handleCalendarEventParticipantMatchedEvent(payload: {
+  @OnEvent('messageParticipant.matched')
+  public async handleMessageParticipantMatched(payload: {
     workspaceId: string;
     userId: string;
-    calendarEventParticipants: ObjectRecord<CalendarEventParticipantWorkspaceEntity>[];
+    messageParticipants: ObjectRecord<MessageParticipantWorkspaceEntity>[];
   }): Promise<void> {
-    const calendarEventParticipants = payload.calendarEventParticipants ?? [];
+    const messageParticipants = payload.messageParticipants ?? [];
 
     // TODO: move to a job?
 
@@ -36,33 +36,34 @@ export class CalendarEventParticipantListener {
       payload.workspaceId,
     );
 
-    const calendarEventObjectMetadata =
+    const messageObjectMetadata =
       await this.objectMetadataRepository.findOneOrFail({
         where: {
-          nameSingular: 'calendarEvent',
+          nameSingular: 'message',
           workspaceId: payload.workspaceId,
         },
       });
 
-    const calendarEventParticipantsWithPersonId =
-      calendarEventParticipants.filter((participant) => participant.personId);
+    const messageParticipantsWithPersonId = messageParticipants.filter(
+      (participant) => participant.personId,
+    );
 
-    if (calendarEventParticipantsWithPersonId.length === 0) {
+    if (messageParticipantsWithPersonId.length === 0) {
       return;
     }
 
     await this.timelineActivityRepository.insertTimelineActivitiesForObject(
       'person',
-      calendarEventParticipantsWithPersonId.map((participant) => ({
+      messageParticipantsWithPersonId.map((participant) => ({
         dataSourceSchema,
-        name: 'calendarEvent.participated',
+        name: 'message.participated',
         properties: null,
-        objectName: 'calendarEvent',
+        objectName: 'message',
         recordId: participant.personId,
         workspaceMemberId: payload.userId,
         workspaceId: payload.workspaceId,
-        linkedObjectMetadataId: calendarEventObjectMetadata.id,
-        linkedRecordId: participant.calendarEventId,
+        linkedObjectMetadataId: messageObjectMetadata.id,
+        linkedRecordId: participant.messageId,
         linkedRecordCachedName: '',
       })),
       payload.workspaceId,

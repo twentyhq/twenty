@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 
 import { useLinkedObject } from '@/activities/timeline/hooks/useLinkedObject';
 import { TimelineActivityContext } from '@/activities/timelineActivities/contexts/TimelineActivityContext';
@@ -8,9 +9,14 @@ import {
   EventRowDynamicComponent,
 } from '@/activities/timelineActivities/rows/components/EventRowDynamicComponent';
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
+import {
+  CurrentWorkspaceMemberState,
+  currentWorkspaceMemberState,
+} from '@/auth/states/currentWorkspaceMemberState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const StyledIconContainer = styled.div`
@@ -86,19 +92,36 @@ type EventRowProps = {
   event: TimelineActivity;
 };
 
+const getAuthorFullName = (
+  event: TimelineActivity,
+  currentWorkspaceMember: CurrentWorkspaceMemberState,
+) => {
+  if (isDefined(event.workspaceMember)) {
+    return currentWorkspaceMember.id === event.workspaceMember.id
+      ? 'You'
+      : `${event.workspaceMember?.name.firstName} ${event.workspaceMember?.name.lastName}`;
+  }
+  return 'Twenty';
+};
+
 export const EventRow = ({
   isLastEvent,
   event,
   mainObjectMetadataItem,
 }: EventRowProps) => {
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
   const { labelIdentifierValue } = useContext(TimelineActivityContext);
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(event.createdAt);
   const linkedObjectMetadataItem = useLinkedObject(
     event.linkedObjectMetadataId,
   );
-  const authorFullName = event.workspaceMember
-    ? `${event.workspaceMember?.name.firstName} ${event.workspaceMember?.name.lastName}`
-    : 'Twenty';
+
+  if (isUndefinedOrNull(currentWorkspaceMember)) {
+    return null;
+  }
+
+  const authorFullName = getAuthorFullName(event, currentWorkspaceMember);
 
   if (isUndefinedOrNull(mainObjectMetadataItem)) {
     return null;

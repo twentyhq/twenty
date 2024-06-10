@@ -28,7 +28,7 @@ export class CalendarEventParticipantService {
     createdPeople: ObjectRecord<PersonWorkspaceEntity>[],
     workspaceId: string,
     transactionManager?: EntityManager,
-  ): Promise<ObjectRecord<CalendarEventParticipantWorkspaceEntity[]>> {
+  ): Promise<ObjectRecord<CalendarEventParticipantWorkspaceEntity>[]> {
     const participants =
       await this.calendarEventParticipantRepository.getByHandles(
         createdPeople.map((person) => person.email),

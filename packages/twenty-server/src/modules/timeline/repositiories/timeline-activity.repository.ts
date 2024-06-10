@@ -148,6 +148,10 @@ export class TimelineActivityRepository {
     workspaceId: string,
     transactionManager?: EntityManager,
   ) {
+    if (activities.length === 0) {
+      return;
+    }
+
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
