@@ -8,15 +8,13 @@ import {
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { IconCopy } from 'twenty-ui';
 import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
-import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { useSetNextOnboardingStep } from '@/onboarding/hooks/useSetNextOnboardingStep';
 import { SeparatorLineText } from '@/ui/display/text/components/SeparatorLineText';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
@@ -75,10 +73,8 @@ export const InviteTeam = () => {
   const theme = useTheme();
   const { enqueueSnackBar } = useSnackBar();
   const [sendInviteLink] = useSendInviteLinkMutation();
-  const setCurrentUser = useSetRecoilState(currentUserState);
   const setNextOnboardingStep = useSetNextOnboardingStep();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
-  const setIsCurrentUserLoaded = useSetRecoilState(isCurrentUserLoadedState);
   const {
     control,
     handleSubmit,
@@ -147,7 +143,7 @@ export const InviteTeam = () => {
         });
       }
     },
-    [enqueueSnackBar, sendInviteLink, setIsCurrentUserLoaded, setCurrentUser],
+    [enqueueSnackBar, sendInviteLink, setNextOnboardingStep],
   );
 
   useEffect(() => {
