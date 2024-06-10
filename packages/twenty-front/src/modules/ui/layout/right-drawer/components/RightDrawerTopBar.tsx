@@ -4,6 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { Chip, ChipAccent, ChipSize, useIcons } from 'twenty-ui';
 
 import { ActivityActionBar } from '@/activities/right-drawer/components/ActivityActionBar';
+import { MessageThreadMembersBar } from '@/activities/right-drawer/components/MessageThreadMembersBar';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { viewableRecordNameSingularState } from '@/object-record/record-right-drawer/states/viewableRecordNameSingularState';
 import { RightDrawerTopBarCloseButton } from '@/ui/layout/right-drawer/components/RightDrawerTopBarCloseButton';
@@ -103,6 +104,9 @@ export const RightDrawerTopBar = ({ page }: { page: RightDrawerPages }) => {
         </StyledMinimizeTopBarTitleContainer>
       )}
       <StyledTopBarWrapper>
+        {page === RightDrawerPages.ViewEmailThread && (
+          <MessageThreadMembersBar />
+        )}
         {!isMobile && !isRightDrawerMinimized && (
           <RightDrawerTopBarMinimizeButton />
         )}

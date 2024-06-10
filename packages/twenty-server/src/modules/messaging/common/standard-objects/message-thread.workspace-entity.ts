@@ -16,7 +16,7 @@ import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/mes
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { FieldMetadataType } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
-import { MessageThreadMemberWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-thread-members.workspace-entity';
+import { MessageThreadMemberWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread-members.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.messageThread,

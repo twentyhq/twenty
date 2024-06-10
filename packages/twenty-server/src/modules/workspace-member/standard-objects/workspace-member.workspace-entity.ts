@@ -26,7 +26,7 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
-import { MessageThreadMemberWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-thread-members.workspace-entity';
+import { MessageThreadMemberWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread-members.workspace-entity';
 
 @WorkspaceEntity({
   standardId: STANDARD_OBJECT_IDS.workspaceMember,

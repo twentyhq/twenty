@@ -10,8 +10,8 @@ import { MessageRepository } from 'src/modules/messaging/common/repositories/mes
 import { MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
-import { MessageThreadMemberRepository } from 'src/modules/messaging/repositories/message-thread-member.repository';
-import { MessageThreadMemberWorkspaceEntity } from 'src/modules/messaging/standard-objects/message-thread-members.workspace-entity';
+import { MessageThreadMemberRepository } from 'src/modules/messaging/common/repositories/message-thread-member.repository';
+import { MessageThreadMemberWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread-members.workspace-entity';
 
 @Injectable()
 export class MessagingMessageThreadService {

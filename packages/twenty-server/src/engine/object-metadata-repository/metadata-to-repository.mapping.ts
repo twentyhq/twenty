@@ -3,20 +3,14 @@ import { BlocklistRepository } from 'src/modules/connected-account/repositories/
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { AuditLogRepository } from 'src/modules/timeline/repositiories/audit-log.repository';
 import { TimelineActivityRepository } from 'src/modules/timeline/repositiories/timeline-activity.repository';
-import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/repositories/message-channel-message-association.repository';
-import { MessageChannelRepository } from 'src/modules/messaging/repositories/message-channel.repository';
-import { MessageParticipantRepository } from 'src/modules/messaging/repositories/message-participant.repository';
-import { MessageThreadRepository } from 'src/modules/messaging/repositories/message-thread.repository';
-import { MessageThreadMemberRepository } from 'src/modules/messaging/repositories/message-thread-member.repository';
-import { MessageRepository } from 'src/modules/messaging/repositories/message.repository';
-import { PersonRepository } from 'src/modules/person/repositories/person.repository';
-import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { MessageChannelMessageAssociationRepository } from 'src/modules/messaging/common/repositories/message-channel-message-association.repository';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
 import { MessageParticipantRepository } from 'src/modules/messaging/common/repositories/message-participant.repository';
 import { MessageThreadRepository } from 'src/modules/messaging/common/repositories/message-thread.repository';
+import { MessageThreadMemberRepository } from 'src/modules/messaging/common/repositories/message-thread-member.repository';
 import { MessageRepository } from 'src/modules/messaging/common/repositories/message.repository';
 import { PersonRepository } from 'src/modules/person/repositories/person.repository';
+import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 
 export const metadataToRepositoryMapping = {
   AuditLogWorkspaceEntity: AuditLogRepository,

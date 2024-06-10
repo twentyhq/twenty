@@ -19,6 +19,7 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/
 import { MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { MessageThreadMemberWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread-members.workspace-entity';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
       MessageParticipantWorkspaceEntity,
       MessageWorkspaceEntity,
       MessageThreadWorkspaceEntity,
+      MessageThreadMemberWorkspaceEntity,
     ]),
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
     AddPersonIdAndWorkspaceMemberIdModule,
