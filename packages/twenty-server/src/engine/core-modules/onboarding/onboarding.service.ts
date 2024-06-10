@@ -9,8 +9,8 @@ import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repos
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { KeyValueTypes } from 'src/engine/core-modules/key-value-pair/enums/key-value-types.enum';
-import { OnboardingStepKeys } from 'src/engine/core-modules/key-value-pair/enums/keys/onboarding-step-keys.enum';
-import { OnboardingStateValues } from 'src/engine/core-modules/key-value-pair/enums/values/onboarding-step-values.enum';
+import { OnboardingStepKeys } from 'src/engine/core-modules/key-value-pair/enums/onboarding-step/onboarding-step-keys.enum';
+import { OnboardingStateValues } from 'src/engine/core-modules/key-value-pair/enums/onboarding-step/values/onboarding-step-values.enum';
 
 @Injectable()
 export class OnboardingService {

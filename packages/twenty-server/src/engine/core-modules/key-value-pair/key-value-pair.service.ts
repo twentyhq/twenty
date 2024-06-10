@@ -5,8 +5,8 @@ import { Repository } from 'typeorm';
 
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { KeyValueTypes } from 'src/engine/core-modules/key-value-pair/enums/key-value-types.enum';
-import { OnboardingStepKeys } from 'src/engine/core-modules/key-value-pair/enums/keys/onboarding-step-keys.enum';
-import { OnboardingStateValues } from 'src/engine/core-modules/key-value-pair/enums/values/onboarding-step-values.enum';
+import { OnboardingStepKeys } from 'src/engine/core-modules/key-value-pair/enums/onboarding-step/onboarding-step-keys.enum';
+import { OnboardingStateValues } from 'src/engine/core-modules/key-value-pair/enums/onboarding-step/values/onboarding-step-values.enum';
 
 type KeyValuePairs = {
   [KeyValueTypes.ONBOARDING]: {
