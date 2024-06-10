@@ -35,6 +35,7 @@ export class TextToSQLService {
 
     const db = await SqlDatabase.fromDataSourceParams({
       appDataSource: workspaceDataSource,
+      sampleRowsInTableInfo: 0,
     });
 
     const prompt =
