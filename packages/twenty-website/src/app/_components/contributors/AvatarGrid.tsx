@@ -67,7 +67,11 @@ const AvatarGrid = ({ users }: { users: User[] }) => {
     <MotionContainer>
       <AvatarGridContainer>
         {users.map((user) => (
-          <Link href={`/contributors/${user.id}`} key={`l_${user.id}`}>
+          <Link
+            href={`/contributors/${user.id}`}
+            key={`l_${user.id}`}
+            prefetch={false}
+          >
             <AvatarItem key={user.id}>
               <Image
                 src={user.avatarUrl}

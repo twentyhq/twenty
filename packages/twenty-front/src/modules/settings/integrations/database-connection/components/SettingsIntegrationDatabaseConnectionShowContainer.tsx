@@ -27,10 +27,6 @@ export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
     navigate(`${settingsIntegrationsPagePath}/${databaseKey}`);
   };
 
-  const onEdit = () => {
-    navigate('./edit');
-  };
-
   const settingsIntegrationsPagePath = getSettingsPagePath(
     SettingsPath.Integrations,
   );
@@ -57,7 +53,6 @@ export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
           connectionId={connection.id}
           connectionLabel={connection.label}
           onRemove={deleteConnection}
-          onEdit={onEdit}
         />
       </Section>
       <Section>

@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useApolloClient } from '@apollo/client';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import omit from 'lodash.omit';
@@ -16,6 +17,7 @@ import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { formatFieldMetadataItemInput } from '@/object-metadata/utils/formatFieldMetadataItemInput';
 import { getFieldSlug } from '@/object-metadata/utils/getFieldSlug';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
+import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsHeaderContainer } from '@/settings/components/SettingsHeaderContainer';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -72,6 +74,20 @@ export const SettingsObjectFieldEdit = () => {
 
   const getRelationMetadata = useGetRelationMetadata();
   const { updateOneFieldMetadataItem } = useUpdateOneFieldMetadataItem();
+
+  const apolloClient = useApolloClient();
+
+  const { findManyRecordsQuery } = useFindManyRecordsQuery({
+    objectNameSingular: activeObjectMetadataItem?.nameSingular || '',
+  });
+
+  const refetchRecords = async () => {
+    if (!activeObjectMetadataItem) return;
+    await apolloClient.query({
+      query: findManyRecordsQuery,
+      fetchPolicy: 'network-only',
+    });
+  };
 
   const formConfig = useForm<SettingsDataModelFieldEditFormValues>({
     mode: 'onTouched',
@@ -135,6 +151,8 @@ export const SettingsObjectFieldEdit = () => {
       }
 
       navigate(`/settings/objects/${objectSlug}`);
+
+      refetchRecords();
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,

@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 import {
   IconCalendarEvent,
   IconCheckbox,
+  IconHome,
   IconMail,
   IconNotes,
   IconPaperclip,
@@ -92,7 +93,7 @@ export const ShowPageRightContainer = ({
     {
       id: 'summary',
       title: 'Summary',
-      Icon: IconCheckbox,
+      Icon: IconHome,
       hide: !isMobile,
     },
     {

@@ -25,6 +25,8 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
 import { BillingService } from 'src/engine/core-modules/billing/billing.service';
 import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
+import { SendInviteLink } from 'src/engine/core-modules/workspace/dtos/send-invite-link.entity';
+import { SendInviteLinkInput } from 'src/engine/core-modules/workspace/dtos/send-invite-link.input';
 
 import { Workspace } from './workspace.entity';
 
@@ -121,5 +123,18 @@ export class WorkspaceResolver {
     return this.billingService.getCurrentBillingSubscription({
       workspaceId: workspace.id,
     });
+  }
+
+  @Mutation(() => SendInviteLink)
+  async sendInviteLink(
+    @Args() sendInviteLinkInput: SendInviteLinkInput,
+    @AuthUser() user: User,
+    @AuthWorkspace() workspace: Workspace,
+  ): Promise<SendInviteLink> {
+    return await this.workspaceService.sendInviteLink(
+      sendInviteLinkInput.emails,
+      workspace,
+      user,
+    );
   }
 }

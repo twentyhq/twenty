@@ -35,7 +35,7 @@ const StyledTitleContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTopContainer = styled.div`

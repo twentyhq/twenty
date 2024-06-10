@@ -14,6 +14,7 @@ import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModa
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { WorkspaceInviteLink } from '@/workspace/components/WorkspaceInviteLink';
+import { WorkspaceInviteTeam } from '@/workspace/components/WorkspaceInviteTeam';
 import { WorkspaceMemberCard } from '@/workspace/components/WorkspaceMemberCard';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 
@@ -52,11 +53,18 @@ export const SettingsWorkspaceMembers = () => {
     <SubMenuTopBarContainer Icon={IconSettings} title="Settings">
       <SettingsPageContainer>
         <StyledH1Title title="Members" />
+        <Section>
+          <H2Title
+            title="Invite by email"
+            description="Send an invite email to your team"
+          />
+          <WorkspaceInviteTeam />
+        </Section>
         {currentWorkspace?.inviteHash && (
           <Section>
             <H2Title
-              title="Invite"
-              description="Send an invitation to use Twenty"
+              title="Or send an invite link"
+              description="Copy and send an invite link directly"
             />
             <WorkspaceInviteLink
               inviteLink={`${window.location.origin}/invite/${currentWorkspace?.inviteHash}`}

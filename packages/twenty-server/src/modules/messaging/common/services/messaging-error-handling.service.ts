@@ -10,7 +10,6 @@ import { MessagingTelemetryService } from 'src/modules/messaging/common/services
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
-import { MESSAGING_THROTTLE_DURATION } from 'src/modules/messaging/common/constants/messaging-throttle-duration';
 import { MESSAGING_THROTTLE_MAX_ATTEMPTS } from 'src/modules/messaging/common/constants/messaging-throttle-max-attempts';
 
 type SyncStep =
@@ -19,7 +18,7 @@ type SyncStep =
   | 'messages-import';
 
 export type GmailError = {
-  code: number;
+  code: number | string;
   reason: string;
 };
 
@@ -95,13 +94,47 @@ export class MessagingErrorHandlingService {
           workspaceId,
         );
         break;
+      case 500:
+        if (reason === 'backendError') {
+          await this.handleRateLimitExceeded(
+            error,
+            syncStep,
+            messageChannel,
+            workspaceId,
+          );
+        } else {
+          await this.messagingChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
+            messageChannel.id,
+            workspaceId,
+          );
+          throw new Error(
+            `Unhandled Gmail error code ${code} with reason ${reason}`,
+          );
+        }
+        break;
+      case 'ECONNRESET':
+      case 'ENOTFOUND':
+      case 'ECONNABORTED':
+      case 'ETIMEDOUT':
+      case 'ERR_NETWORK':
+        // We are currently mixing up Gmail Error code (HTTP status) and axios error code (ECONNRESET)
 
+        // In case of a network error, we should retry the request
+        await this.handleRateLimitExceeded(
+          error,
+          syncStep,
+          messageChannel,
+          workspaceId,
+        );
+        break;
       default:
         await this.messagingChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
           messageChannel.id,
           workspaceId,
         );
-        break;
+        throw new Error(
+          `Unhandled Gmail error code ${code} with reason ${reason}`,
+        );
     }
   }
 
@@ -212,13 +245,8 @@ export class MessagingErrorHandlingService {
     messageChannel: ObjectRecord<MessageChannelWorkspaceEntity>,
     workspaceId: string,
   ): Promise<void> {
-    const throttleDuration =
-      MESSAGING_THROTTLE_DURATION *
-      Math.pow(2, messageChannel.throttleFailureCount);
-
-    await this.messageChannelRepository.updateThrottlePauseUntilAndIncrementThrottleFailureCount(
+    await this.messageChannelRepository.incrementThrottleFailureCount(
       messageChannel.id,
-      throttleDuration,
       workspaceId,
     );
 
@@ -227,7 +255,7 @@ export class MessagingErrorHandlingService {
       workspaceId,
       connectedAccountId: messageChannel.connectedAccountId,
       messageChannelId: messageChannel.id,
-      message: `Throttling for ${throttleDuration}ms`,
+      message: `Increment throttle failure count to ${messageChannel.throttleFailureCount}`,
     });
   }
 }
