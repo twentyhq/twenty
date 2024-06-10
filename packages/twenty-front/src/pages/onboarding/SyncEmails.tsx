@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
+import { useRecoilValue } from 'recoil';
 import { IconGoogle } from 'twenty-ui';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { OnboardingSyncEmailsSettingsCard } from '@/onboarding/components/OnboardingSyncEmailsSettingsCard';
 import { useSetNextOnboardingStep } from '@/onboarding/hooks/useSetNextOnboardingStep';
 import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
@@ -36,6 +38,7 @@ export const SyncEmails = () => {
   const theme = useTheme();
   const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
   const setNextOnboardingStep = useSetNextOnboardingStep();
+  const currentUser = useRecoilValue(currentUserState);
   const [visibility, setVisibility] = useState<MessageChannelVisibility>(
     MessageChannelVisibility.ShareEverything,
   );
@@ -59,6 +62,10 @@ export const SyncEmails = () => {
     await skipSyncEmailOnboardingStepMutation();
     setNextOnboardingStep(OnboardingStep.SyncEmail);
   };
+
+  if (currentUser?.onboardingStep !== OnboardingStep.SyncEmail) {
+    return <></>;
+  }
 
   return (
     <>

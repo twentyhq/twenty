@@ -14,6 +14,7 @@ import { z } from 'zod';
 
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
+import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useSetNextOnboardingStep } from '@/onboarding/hooks/useSetNextOnboardingStep';
 import { SeparatorLineText } from '@/ui/display/text/components/SeparatorLineText';
@@ -74,6 +75,7 @@ export const InviteTeam = () => {
   const { enqueueSnackBar } = useSnackBar();
   const [sendInviteLink] = useSendInviteLinkMutation();
   const setNextOnboardingStep = useSetNextOnboardingStep();
+  const currentUser = useRecoilValue(currentUserState);
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const {
     control,
@@ -155,6 +157,10 @@ export const InviteTeam = () => {
       remove(emailValues.length - 1);
     }
   }, [emailValues, append, remove]);
+
+  if (currentUser?.onboardingStep !== OnboardingStep.InviteTeam) {
+    return <></>;
+  }
 
   return (
     <>
