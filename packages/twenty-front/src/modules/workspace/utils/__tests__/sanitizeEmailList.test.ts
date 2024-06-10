@@ -7,7 +7,7 @@ describe('sanitizeEmailList', () => {
       'toto2@toto.com',
     ]);
   });
-  it('should remove trim spaces', () => {
+  it('should trim spaces', () => {
     expect(sanitizeEmailList([' toto@toto.com ', '  toto2@toto.com'])).toEqual([
       'toto@toto.com',
       'toto2@toto.com',

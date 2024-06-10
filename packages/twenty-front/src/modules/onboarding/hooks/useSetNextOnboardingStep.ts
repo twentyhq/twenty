@@ -11,7 +11,9 @@ const getNextOnboardingState = (
   workspaceMembers: WorkspaceMember[],
 ) => {
   if (currentOnboardingStep === OnboardingStep.SyncEmail) {
-    return workspaceMembers.length === 1 ? OnboardingStep.InviteTeam : null;
+    return workspaceMembers && workspaceMembers.length > 1
+      ? null
+      : OnboardingStep.InviteTeam;
   }
   return null;
 };
