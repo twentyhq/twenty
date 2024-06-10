@@ -30,11 +30,6 @@ export class OnboardingService {
       workspaceId: workspace.id,
       key: OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP,
     });
-    const inviteTeamValue = await this.keyValuePairService.get({
-      userId: user.id,
-      workspaceId: workspace.id,
-      key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
-    });
     const isSyncEmailSkipped = syncEmailValue === OnboardingStateValues.SKIPPED;
     const connectedAccounts =
       await this.connectedAccountRepository.getAllByUserId(
@@ -46,6 +41,10 @@ export class OnboardingService {
       return OnboardingStep.SYNC_EMAIL;
     }
 
+    const inviteTeamValue = await this.keyValuePairService.get({
+      workspaceId: workspace.id,
+      key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
+    });
     const isInviteTeamSkipped =
       inviteTeamValue === OnboardingStateValues.SKIPPED;
     const workspaceMemberCount =
@@ -61,15 +60,19 @@ export class OnboardingService {
     return null;
   }
 
-  async skipOnboardingStep(
-    userId: string,
-    workspaceId: string,
-    onboardingStepKey: OnboardingStepKeys,
-  ) {
+  async skipInviteTeamOnboardingStep(workspaceId: string) {
+    await this.keyValuePairService.set({
+      workspaceId,
+      key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
+      value: OnboardingStateValues.SKIPPED,
+    });
+  }
+
+  async skipSyncEmailOnboardingStep(userId: string, workspaceId: string) {
     await this.keyValuePairService.set({
       userId,
       workspaceId,
-      key: onboardingStepKey,
+      key: OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP,
       value: OnboardingStateValues.SKIPPED,
     });
   }

@@ -19,7 +19,6 @@ import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding
 import { WorkspaceMemberRepository } from 'src/modules/workspace-member/repositories/workspace-member.repository';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { OnboardingStepKeys } from 'src/engine/core-modules/key-value-pair/enums/keys/onboarding-step-keys.enum';
 
 @Controller('auth/google-apis')
 export class GoogleAPIsAuthController {
@@ -87,10 +86,9 @@ export class GoogleAPIsAuthController {
     )?.userId;
 
     if (userId) {
-      await this.onboardingService.skipOnboardingStep(
+      await this.onboardingService.skipSyncEmailOnboardingStep(
         userId,
         workspaceId,
-        OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP,
       );
     }
 
