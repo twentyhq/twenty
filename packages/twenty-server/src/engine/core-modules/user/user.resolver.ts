@@ -29,9 +29,8 @@ import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
-import { UserState } from 'src/engine/core-modules/user-state/dtos/user-state.dto';
-import { UserStateService } from 'src/engine/core-modules/user-state/user-state.service';
-import { DEFAULT_USER_STATE } from 'src/engine/core-modules/user-state/constants/default-user-state';
+import { OnboardingStep } from 'src/engine/core-modules/onboarding/enums/onboarding-step.enum';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 
 const getHMACKey = (email?: string, key?: string | null) => {
   if (!email || !key) return null;
@@ -47,10 +46,10 @@ export class UserResolver {
   constructor(
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
-    private readonly userStateService: UserStateService,
     private readonly userService: UserService,
     private readonly environmentService: EnvironmentService,
     private readonly fileUploadService: FileUploadService,
+    private readonly onboardingService: OnboardingService,
   ) {}
 
   @Query(() => User)
@@ -119,15 +118,15 @@ export class UserResolver {
     return this.userService.deleteUser(userId);
   }
 
-  @ResolveField(() => UserState)
-  async state(
+  @ResolveField(() => OnboardingStep)
+  async onboardingStep(
     @Parent() user: User,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<UserState> {
+  ): Promise<OnboardingStep | null> {
     if (!user || !workspace) {
-      return DEFAULT_USER_STATE;
+      return null;
     }
 
-    return this.userStateService.getUserState(user, workspace);
+    return this.onboardingService.getOnboardingState(user, workspace);
   }
 }

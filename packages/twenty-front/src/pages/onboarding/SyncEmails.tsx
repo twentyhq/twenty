@@ -14,7 +14,7 @@ import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
 import {
   CalendarChannelVisibility,
   MessageChannelVisibility,
-  UserStateOnboardingStepValues,
+  OnboardingStep,
   useSkipSyncEmailOnboardingStepMutation,
 } from '~/generated/graphql';
 
@@ -57,7 +57,7 @@ export const SyncEmails = () => {
 
   const continueWithoutSync = async () => {
     await skipSyncEmailOnboardingStepMutation();
-    setOnboardingStep(UserStateOnboardingStepValues.InviteTeam);
+    setOnboardingStep(OnboardingStep.InviteTeam);
   };
 
   return (

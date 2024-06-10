@@ -12,6 +12,7 @@ import {
 import { isVerifyPendingState } from '@/auth/states/isVerifyPendingState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { billingState } from '@/client-config/states/billingState';
+import { OnboardingStep } from '~/generated/graphql';
 
 const tokenPair = {
   accessToken: { token: 'accessToken', expiresAt: 'expiresAt' },
@@ -26,7 +27,7 @@ const currentUser = {
   email: 'test@test',
   supportUserHash: '1',
   canImpersonate: false,
-  state: { skipSyncEmailOnboardingStep: true },
+  onboardingStep: null,
 } as CurrentUser;
 const currentWorkspace = {
   activationStatus: 'active',
@@ -196,7 +197,7 @@ describe('useOnboardingStatus', () => {
       setBilling(billing);
       setCurrentUser({
         ...currentUser,
-        state: { skipSyncEmailOnboardingStep: false },
+        onboardingStep: OnboardingStep.SyncEmail,
       });
       setCurrentWorkspace({
         ...currentWorkspace,

@@ -1,7 +1,7 @@
 import { CurrentUser } from '@/auth/states/currentUserState';
 import { CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
-import { UserStateOnboardingStepValues } from '~/generated/graphql';
+import { OnboardingStep } from '~/generated/graphql';
 
 export enum OnboardingStatus {
   Incomplete = 'incomplete',
@@ -61,16 +61,11 @@ export const getOnboardingStatus = ({
     return OnboardingStatus.OngoingProfileCreation;
   }
 
-  if (
-    currentUser.state.onboardingStep === UserStateOnboardingStepValues.SyncEmail
-  ) {
+  if (currentUser.onboardingStep === OnboardingStep.SyncEmail) {
     return OnboardingStatus.OngoingSyncEmail;
   }
 
-  if (
-    currentUser.state.onboardingStep ===
-    UserStateOnboardingStepValues.InviteTeam
-  ) {
+  if (currentUser.onboardingStep === OnboardingStep.InviteTeam) {
     return OnboardingStatus.OngoingInviteTeam;
   }
 

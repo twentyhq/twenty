@@ -4,16 +4,14 @@ import { BadRequestException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import { UserStates } from 'src/engine/core-modules/user-state/enums/user-states.enum';
-import { UserStateOnboardingStepValues } from 'src/engine/core-modules/user-state/enums/values/user-state-onboarding-step-values.enum';
-
-export enum KeyValueTypes {
-  USER_STATE = 'USER_STATE',
-}
+import { KeyValueTypes } from 'src/engine/core-modules/key-value-pair/enums/key-value-types.enum';
+import { OnboardingStepKeys } from 'src/engine/core-modules/key-value-pair/enums/keys/onboarding-step-keys.enum';
+import { OnboardingStateValues } from 'src/engine/core-modules/key-value-pair/enums/values/onboarding-step-values.enum';
 
 type KeyValuePairs = {
-  [KeyValueTypes.USER_STATE]: {
-    [UserStates.ONBOARDING_STEP]: UserStateOnboardingStepValues;
+  [KeyValueTypes.ONBOARDING]: {
+    [OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP]: OnboardingStateValues;
+    [OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP]: OnboardingStateValues;
   };
 };
 

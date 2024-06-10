@@ -8,9 +8,7 @@ export const USER_QUERY_FRAGMENT = gql`
     email
     canImpersonate
     supportUserHash
-    state {
-      onboardingStep
-    }
+    onboardingStep
     workspaceMember {
       id
       name {

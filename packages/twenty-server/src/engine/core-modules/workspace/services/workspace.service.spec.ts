@@ -10,7 +10,6 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { EmailService } from 'src/engine/integrations/email/email.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { UserStateService } from 'src/engine/core-modules/user-state/user-state.service';
 
 import { WorkspaceService } from './workspace.service';
 
@@ -55,10 +54,6 @@ describe('WorkspaceService', () => {
         },
         {
           provide: EmailService,
-          useValue: {},
-        },
-        {
-          provide: UserStateService,
           useValue: {},
         },
       ],

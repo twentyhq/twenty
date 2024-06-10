@@ -834,6 +834,123 @@ export type AuthorizeApp = {
   redirectUrl: Scalars['String'];
 };
 
+/** An event related to user behavior */
+export type BehavioralEvent = {
+  /** Json object to provide context (user, device, workspace, etc.) */
+  context?: Maybe<Scalars['RawJSONScalar']>;
+  /** Creation date */
+  createdAt?: Maybe<Scalars['DateTime']>;
+  /** Id */
+  id?: Maybe<Scalars['UUID']>;
+  /** Event name */
+  name?: Maybe<Scalars['String']>;
+  /** If the event is related to a particular object */
+  objectName?: Maybe<Scalars['String']>;
+  /** Json value for event details */
+  properties?: Maybe<Scalars['RawJSONScalar']>;
+  /** Event name/type */
+  recordId?: Maybe<Scalars['UUID']>;
+  /** Update date */
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+/** An event related to user behavior */
+export type BehavioralEventConnection = {
+  edges?: Maybe<Array<BehavioralEventEdge>>;
+  pageInfo?: Maybe<PageInfo>;
+  /** Total number of records in the connection */
+  totalCount?: Maybe<Scalars['Int']>;
+};
+
+/** An event related to user behavior */
+export type BehavioralEventCreateInput = {
+  /** Json object to provide context (user, device, workspace, etc.) */
+  context?: InputMaybe<Scalars['RawJSONScalar']>;
+  /** Creation date */
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  /** Id */
+  id?: InputMaybe<Scalars['ID']>;
+  /** Event name */
+  name?: InputMaybe<Scalars['String']>;
+  /** If the event is related to a particular object */
+  objectName?: InputMaybe<Scalars['String']>;
+  /** Json value for event details */
+  properties?: InputMaybe<Scalars['RawJSONScalar']>;
+  /** Event name/type */
+  recordId?: InputMaybe<Scalars['UUID']>;
+  /** Update date */
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
+/** An event related to user behavior */
+export type BehavioralEventEdge = {
+  cursor?: Maybe<Scalars['Cursor']>;
+  node?: Maybe<BehavioralEvent>;
+};
+
+/** An event related to user behavior */
+export type BehavioralEventFilterInput = {
+  and?: InputMaybe<Array<InputMaybe<BehavioralEventFilterInput>>>;
+  /** Json object to provide context (user, device, workspace, etc.) */
+  context?: InputMaybe<RawJsonFilter>;
+  /** Creation date */
+  createdAt?: InputMaybe<DateFilter>;
+  /** Id */
+  id?: InputMaybe<IdFilter>;
+  /** Event name */
+  name?: InputMaybe<StringFilter>;
+  not?: InputMaybe<BehavioralEventFilterInput>;
+  /** If the event is related to a particular object */
+  objectName?: InputMaybe<StringFilter>;
+  or?: InputMaybe<Array<InputMaybe<BehavioralEventFilterInput>>>;
+  /** Json value for event details */
+  properties?: InputMaybe<RawJsonFilter>;
+  /** Event name/type */
+  recordId?: InputMaybe<IdFilter>;
+  /** Update date */
+  updatedAt?: InputMaybe<DateFilter>;
+};
+
+/** An event related to user behavior */
+export type BehavioralEventOrderByInput = {
+  /** Json object to provide context (user, device, workspace, etc.) */
+  context?: InputMaybe<OrderByDirection>;
+  /** Creation date */
+  createdAt?: InputMaybe<OrderByDirection>;
+  /** Id */
+  id?: InputMaybe<OrderByDirection>;
+  /** Event name */
+  name?: InputMaybe<OrderByDirection>;
+  /** If the event is related to a particular object */
+  objectName?: InputMaybe<OrderByDirection>;
+  /** Json value for event details */
+  properties?: InputMaybe<OrderByDirection>;
+  /** Event name/type */
+  recordId?: InputMaybe<OrderByDirection>;
+  /** Update date */
+  updatedAt?: InputMaybe<OrderByDirection>;
+};
+
+/** An event related to user behavior */
+export type BehavioralEventUpdateInput = {
+  /** Json object to provide context (user, device, workspace, etc.) */
+  context?: InputMaybe<Scalars['RawJSONScalar']>;
+  /** Creation date */
+  createdAt?: InputMaybe<Scalars['DateTime']>;
+  /** Id */
+  id?: InputMaybe<Scalars['ID']>;
+  /** Event name */
+  name?: InputMaybe<Scalars['String']>;
+  /** If the event is related to a particular object */
+  objectName?: InputMaybe<Scalars['String']>;
+  /** Json value for event details */
+  properties?: InputMaybe<Scalars['RawJSONScalar']>;
+  /** Event name/type */
+  recordId?: InputMaybe<Scalars['UUID']>;
+  /** Update date */
+  updatedAt?: InputMaybe<Scalars['DateTime']>;
+};
+
 export type BigFloatFilter = {
   eq?: InputMaybe<Scalars['BigFloat']>;
   gt?: InputMaybe<Scalars['BigFloat']>;
@@ -994,8 +1111,6 @@ export type CalendarChannel = {
   syncCursor?: Maybe<Scalars['String']>;
   /** Throttle Failure Count */
   throttleFailureCount?: Maybe<Scalars['Float']>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: Maybe<Scalars['DateTime']>;
   /** Update date */
   updatedAt?: Maybe<Scalars['DateTime']>;
   /** Visibility */
@@ -1040,8 +1155,6 @@ export type CalendarChannelCreateInput = {
   syncCursor?: InputMaybe<Scalars['String']>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<Scalars['Float']>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<Scalars['DateTime']>;
   /** Update date */
   updatedAt?: InputMaybe<Scalars['DateTime']>;
   /** Visibility */
@@ -1176,8 +1289,6 @@ export type CalendarChannelFilterInput = {
   syncCursor?: InputMaybe<StringFilter>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<FloatFilter>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<DateFilter>;
   /** Update date */
   updatedAt?: InputMaybe<DateFilter>;
   /** Visibility */
@@ -1202,8 +1313,6 @@ export type CalendarChannelOrderByInput = {
   syncCursor?: InputMaybe<OrderByDirection>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<OrderByDirection>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<OrderByDirection>;
   /** Update date */
   updatedAt?: InputMaybe<OrderByDirection>;
   /** Visibility */
@@ -1228,8 +1337,6 @@ export type CalendarChannelUpdateInput = {
   syncCursor?: InputMaybe<Scalars['String']>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<Scalars['Float']>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<Scalars['DateTime']>;
   /** Update date */
   updatedAt?: InputMaybe<Scalars['DateTime']>;
   /** Visibility */
@@ -2640,20 +2747,18 @@ export type MessageChannel = {
   isSyncEnabled?: Maybe<Scalars['Boolean']>;
   /** Messages from the channel. */
   messageChannelMessageAssociations?: Maybe<MessageChannelMessageAssociationConnection>;
-  /** Ongoing sync started at */
-  ongoingSyncStartedAt?: Maybe<Scalars['DateTime']>;
   /** Last sync cursor */
   syncCursor?: Maybe<Scalars['String']>;
+  /** Sync stage */
+  syncStage?: Maybe<MessageChannelSyncStageEnum>;
+  /** Sync stage started at */
+  syncStageStartedAt?: Maybe<Scalars['DateTime']>;
   /** Sync status */
   syncStatus?: Maybe<MessageChannelSyncStatusEnum>;
-  /** Sync sub status */
-  syncSubStatus?: Maybe<MessageChannelSyncSubStatusEnum>;
   /** Last sync date */
   syncedAt?: Maybe<Scalars['DateTime']>;
   /** Throttle Failure Count */
   throttleFailureCount?: Maybe<Scalars['Float']>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: Maybe<Scalars['DateTime']>;
   /** Channel Type */
   type?: Maybe<MessageChannelTypeEnum>;
   /** Update date */
@@ -2696,20 +2801,18 @@ export type MessageChannelCreateInput = {
   isContactAutoCreationEnabled?: InputMaybe<Scalars['Boolean']>;
   /** Is Sync Enabled */
   isSyncEnabled?: InputMaybe<Scalars['Boolean']>;
-  /** Ongoing sync started at */
-  ongoingSyncStartedAt?: InputMaybe<Scalars['DateTime']>;
   /** Last sync cursor */
   syncCursor?: InputMaybe<Scalars['String']>;
+  /** Sync stage */
+  syncStage?: InputMaybe<MessageChannelSyncStageEnum>;
+  /** Sync stage started at */
+  syncStageStartedAt?: InputMaybe<Scalars['DateTime']>;
   /** Sync status */
   syncStatus?: InputMaybe<MessageChannelSyncStatusEnum>;
-  /** Sync sub status */
-  syncSubStatus?: InputMaybe<MessageChannelSyncSubStatusEnum>;
   /** Last sync date */
   syncedAt?: InputMaybe<Scalars['DateTime']>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<Scalars['Float']>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<Scalars['DateTime']>;
   /** Channel Type */
   type?: InputMaybe<MessageChannelTypeEnum>;
   /** Update date */
@@ -2740,21 +2843,19 @@ export type MessageChannelFilterInput = {
   /** Is Sync Enabled */
   isSyncEnabled?: InputMaybe<BooleanFilter>;
   not?: InputMaybe<MessageChannelFilterInput>;
-  /** Ongoing sync started at */
-  ongoingSyncStartedAt?: InputMaybe<DateFilter>;
   or?: InputMaybe<Array<InputMaybe<MessageChannelFilterInput>>>;
   /** Last sync cursor */
   syncCursor?: InputMaybe<StringFilter>;
+  /** Sync stage */
+  syncStage?: InputMaybe<MessageChannelSyncStageEnumFilter>;
+  /** Sync stage started at */
+  syncStageStartedAt?: InputMaybe<DateFilter>;
   /** Sync status */
   syncStatus?: InputMaybe<MessageChannelSyncStatusEnumFilter>;
-  /** Sync sub status */
-  syncSubStatus?: InputMaybe<MessageChannelSyncSubStatusEnumFilter>;
   /** Last sync date */
   syncedAt?: InputMaybe<DateFilter>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<FloatFilter>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<DateFilter>;
   /** Channel Type */
   type?: InputMaybe<MessageChannelTypeEnumFilter>;
   /** Update date */
@@ -2900,26 +3001,47 @@ export type MessageChannelOrderByInput = {
   isContactAutoCreationEnabled?: InputMaybe<OrderByDirection>;
   /** Is Sync Enabled */
   isSyncEnabled?: InputMaybe<OrderByDirection>;
-  /** Ongoing sync started at */
-  ongoingSyncStartedAt?: InputMaybe<OrderByDirection>;
   /** Last sync cursor */
   syncCursor?: InputMaybe<OrderByDirection>;
+  /** Sync stage */
+  syncStage?: InputMaybe<OrderByDirection>;
+  /** Sync stage started at */
+  syncStageStartedAt?: InputMaybe<OrderByDirection>;
   /** Sync status */
   syncStatus?: InputMaybe<OrderByDirection>;
-  /** Sync sub status */
-  syncSubStatus?: InputMaybe<OrderByDirection>;
   /** Last sync date */
   syncedAt?: InputMaybe<OrderByDirection>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<OrderByDirection>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<OrderByDirection>;
   /** Channel Type */
   type?: InputMaybe<OrderByDirection>;
   /** Update date */
   updatedAt?: InputMaybe<OrderByDirection>;
   /** Visibility */
   visibility?: InputMaybe<OrderByDirection>;
+};
+
+/** Sync stage */
+export enum MessageChannelSyncStageEnum {
+  /** Failed */
+  Failed = 'FAILED',
+  /** Full messages list fetch pending */
+  FullMessageListFetchPending = 'FULL_MESSAGE_LIST_FETCH_PENDING',
+  /** Messages import ongoing */
+  MessagesImportOngoing = 'MESSAGES_IMPORT_ONGOING',
+  /** Messages import pending */
+  MessagesImportPending = 'MESSAGES_IMPORT_PENDING',
+  /** Messages list fetch ongoing */
+  MessageListFetchOngoing = 'MESSAGE_LIST_FETCH_ONGOING',
+  /** Partial messages list fetch pending */
+  PartialMessageListFetchPending = 'PARTIAL_MESSAGE_LIST_FETCH_PENDING'
+}
+
+export type MessageChannelSyncStageEnumFilter = {
+  eq?: InputMaybe<MessageChannelSyncStageEnum>;
+  in?: InputMaybe<Array<InputMaybe<MessageChannelSyncStageEnum>>>;
+  is?: InputMaybe<FilterIs>;
+  neq?: InputMaybe<MessageChannelSyncStageEnum>;
 };
 
 /** Sync status */
@@ -2947,29 +3069,6 @@ export type MessageChannelSyncStatusEnumFilter = {
   in?: InputMaybe<Array<InputMaybe<MessageChannelSyncStatusEnum>>>;
   is?: InputMaybe<FilterIs>;
   neq?: InputMaybe<MessageChannelSyncStatusEnum>;
-};
-
-/** Sync sub status */
-export enum MessageChannelSyncSubStatusEnum {
-  /** Failed */
-  Failed = 'FAILED',
-  /** Full messages list fetch pending */
-  FullMessageListFetchPending = 'FULL_MESSAGE_LIST_FETCH_PENDING',
-  /** Messages import ongoing */
-  MessagesImportOngoing = 'MESSAGES_IMPORT_ONGOING',
-  /** Messages import pending */
-  MessagesImportPending = 'MESSAGES_IMPORT_PENDING',
-  /** Messages list fetch ongoing */
-  MessageListFetchOngoing = 'MESSAGE_LIST_FETCH_ONGOING',
-  /** Partial messages list fetch pending */
-  PartialMessageListFetchPending = 'PARTIAL_MESSAGE_LIST_FETCH_PENDING'
-}
-
-export type MessageChannelSyncSubStatusEnumFilter = {
-  eq?: InputMaybe<MessageChannelSyncSubStatusEnum>;
-  in?: InputMaybe<Array<InputMaybe<MessageChannelSyncSubStatusEnum>>>;
-  is?: InputMaybe<FilterIs>;
-  neq?: InputMaybe<MessageChannelSyncSubStatusEnum>;
 };
 
 /** Channel Type */
@@ -3001,20 +3100,18 @@ export type MessageChannelUpdateInput = {
   isContactAutoCreationEnabled?: InputMaybe<Scalars['Boolean']>;
   /** Is Sync Enabled */
   isSyncEnabled?: InputMaybe<Scalars['Boolean']>;
-  /** Ongoing sync started at */
-  ongoingSyncStartedAt?: InputMaybe<Scalars['DateTime']>;
   /** Last sync cursor */
   syncCursor?: InputMaybe<Scalars['String']>;
+  /** Sync stage */
+  syncStage?: InputMaybe<MessageChannelSyncStageEnum>;
+  /** Sync stage started at */
+  syncStageStartedAt?: InputMaybe<Scalars['DateTime']>;
   /** Sync status */
   syncStatus?: InputMaybe<MessageChannelSyncStatusEnum>;
-  /** Sync sub status */
-  syncSubStatus?: InputMaybe<MessageChannelSyncSubStatusEnum>;
   /** Last sync date */
   syncedAt?: InputMaybe<Scalars['DateTime']>;
   /** Throttle Failure Count */
   throttleFailureCount?: InputMaybe<Scalars['Float']>;
-  /** Throttle Pause Until */
-  throttlePauseUntil?: InputMaybe<Scalars['DateTime']>;
   /** Channel Type */
   type?: InputMaybe<MessageChannelTypeEnum>;
   /** Update date */
@@ -3430,6 +3527,8 @@ export type Mutation = {
   createAttachments?: Maybe<Array<Attachment>>;
   createAuditLog?: Maybe<AuditLog>;
   createAuditLogs?: Maybe<Array<AuditLog>>;
+  createBehavioralEvent?: Maybe<BehavioralEvent>;
+  createBehavioralEvents?: Maybe<Array<BehavioralEvent>>;
   createBlocklist?: Maybe<Blocklist>;
   createBlocklists?: Maybe<Array<Blocklist>>;
   createCalendarChannel?: Maybe<CalendarChannel>;
@@ -3488,6 +3587,8 @@ export type Mutation = {
   deleteAttachments?: Maybe<Array<Attachment>>;
   deleteAuditLog?: Maybe<AuditLog>;
   deleteAuditLogs?: Maybe<Array<AuditLog>>;
+  deleteBehavioralEvent?: Maybe<BehavioralEvent>;
+  deleteBehavioralEvents?: Maybe<Array<BehavioralEvent>>;
   deleteBlocklist?: Maybe<Blocklist>;
   deleteBlocklists?: Maybe<Array<Blocklist>>;
   deleteCalendarChannel?: Maybe<CalendarChannel>;
@@ -3544,6 +3645,7 @@ export type Mutation = {
   executeQuickActionOnApiKey?: Maybe<ApiKey>;
   executeQuickActionOnAttachment?: Maybe<Attachment>;
   executeQuickActionOnAuditLog?: Maybe<AuditLog>;
+  executeQuickActionOnBehavioralEvent?: Maybe<BehavioralEvent>;
   executeQuickActionOnBlocklist?: Maybe<Blocklist>;
   executeQuickActionOnCalendarChannel?: Maybe<CalendarChannel>;
   executeQuickActionOnCalendarChannelEventAssociation?: Maybe<CalendarChannelEventAssociation>;
@@ -3572,8 +3674,9 @@ export type Mutation = {
   generateTransientToken: TransientToken;
   impersonate: Verify;
   renewToken: AuthTokens;
+  sendInviteLink: SendInviteLink;
   signUp: LoginToken;
-  skipSyncEmailOnboardingStep: SkipSyncEmailOnboardingStep;
+  skipSyncEmailOnboardingStep: OnboardingResult;
   track: Analytics;
   updateActivities?: Maybe<Array<Activity>>;
   updateActivity?: Maybe<Activity>;
@@ -3585,6 +3688,8 @@ export type Mutation = {
   updateAttachments?: Maybe<Array<Attachment>>;
   updateAuditLog?: Maybe<AuditLog>;
   updateAuditLogs?: Maybe<Array<AuditLog>>;
+  updateBehavioralEvent?: Maybe<BehavioralEvent>;
+  updateBehavioralEvents?: Maybe<Array<BehavioralEvent>>;
   updateBillingSubscription: UpdateBillingEntity;
   updateBlocklist?: Maybe<Blocklist>;
   updateBlocklists?: Maybe<Array<Blocklist>>;
@@ -3720,6 +3825,16 @@ export type MutationCreateAuditLogArgs = {
 
 export type MutationCreateAuditLogsArgs = {
   data?: InputMaybe<Array<AuditLogCreateInput>>;
+};
+
+
+export type MutationCreateBehavioralEventArgs = {
+  data?: InputMaybe<BehavioralEventCreateInput>;
+};
+
+
+export type MutationCreateBehavioralEventsArgs = {
+  data?: InputMaybe<Array<BehavioralEventCreateInput>>;
 };
 
 
@@ -4003,6 +4118,16 @@ export type MutationDeleteAuditLogsArgs = {
 };
 
 
+export type MutationDeleteBehavioralEventArgs = {
+  id?: InputMaybe<Scalars['ID']>;
+};
+
+
+export type MutationDeleteBehavioralEventsArgs = {
+  filter?: InputMaybe<BehavioralEventFilterInput>;
+};
+
+
 export type MutationDeleteBlocklistArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
@@ -4275,6 +4400,11 @@ export type MutationExecuteQuickActionOnAuditLogArgs = {
 };
 
 
+export type MutationExecuteQuickActionOnBehavioralEventArgs = {
+  id?: InputMaybe<Scalars['ID']>;
+};
+
+
 export type MutationExecuteQuickActionOnBlocklistArgs = {
   id?: InputMaybe<Scalars['ID']>;
 };
@@ -4411,6 +4541,11 @@ export type MutationRenewTokenArgs = {
 };
 
 
+export type MutationSendInviteLinkArgs = {
+  emails: Array<Scalars['String']>;
+};
+
+
 export type MutationSignUpArgs = {
   captchaToken?: InputMaybe<Scalars['String']>;
   email: Scalars['String'];
@@ -4482,6 +4617,18 @@ export type MutationUpdateAuditLogArgs = {
 export type MutationUpdateAuditLogsArgs = {
   data?: InputMaybe<AuditLogUpdateInput>;
   filter?: InputMaybe<AuditLogFilterInput>;
+};
+
+
+export type MutationUpdateBehavioralEventArgs = {
+  data?: InputMaybe<BehavioralEventUpdateInput>;
+  id?: InputMaybe<Scalars['ID']>;
+};
+
+
+export type MutationUpdateBehavioralEventsArgs = {
+  data?: InputMaybe<BehavioralEventUpdateInput>;
+  filter?: InputMaybe<BehavioralEventFilterInput>;
 };
 
 
@@ -4816,6 +4963,17 @@ export type ObjectFieldsConnection = {
   /** Paging information */
   pageInfo: PageInfo;
 };
+
+export type OnboardingResult = {
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean'];
+};
+
+/** Onboarding step */
+export enum OnboardingStep {
+  InviteTeam = 'INVITE_TEAM',
+  SyncEmail = 'SYNC_EMAIL'
+}
 
 /** An opportunity */
 export type Opportunity = {
@@ -5363,6 +5521,9 @@ export type Query = {
   auditLog?: Maybe<AuditLog>;
   auditLogDuplicates?: Maybe<AuditLogConnection>;
   auditLogs?: Maybe<AuditLogConnection>;
+  behavioralEvent?: Maybe<BehavioralEvent>;
+  behavioralEventDuplicates?: Maybe<BehavioralEventConnection>;
+  behavioralEvents?: Maybe<BehavioralEventConnection>;
   billingPortalSession: SessionEntity;
   blocklist?: Maybe<Blocklist>;
   blocklistDuplicates?: Maybe<BlocklistConnection>;
@@ -5557,6 +5718,28 @@ export type QueryAuditLogsArgs = {
   last?: InputMaybe<Scalars['Int']>;
   limit?: InputMaybe<Scalars['Int']>;
   orderBy?: InputMaybe<AuditLogOrderByInput>;
+};
+
+
+export type QueryBehavioralEventArgs = {
+  filter?: InputMaybe<BehavioralEventFilterInput>;
+};
+
+
+export type QueryBehavioralEventDuplicatesArgs = {
+  data?: InputMaybe<BehavioralEventCreateInput>;
+  id?: InputMaybe<Scalars['ID']>;
+};
+
+
+export type QueryBehavioralEventsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
+  filter?: InputMaybe<BehavioralEventFilterInput>;
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
+  limit?: InputMaybe<Scalars['Int']>;
+  orderBy?: InputMaybe<BehavioralEventOrderByInput>;
 };
 
 
@@ -6186,6 +6369,11 @@ export enum RemoteTableStatus {
   Synced = 'SYNCED'
 }
 
+export type SendInviteLink = {
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean'];
+};
+
 export type Sentry = {
   dsn?: Maybe<Scalars['String']>;
   environment?: Maybe<Scalars['String']>;
@@ -6194,11 +6382,6 @@ export type Sentry = {
 
 export type SessionEntity = {
   url?: Maybe<Scalars['String']>;
-};
-
-export type SkipSyncEmailOnboardingStep = {
-  /** Boolean that confirms query was dispatched */
-  success: Scalars['Boolean'];
 };
 
 /** Sort Directions */
@@ -6537,12 +6720,12 @@ export type User = {
   firstName: Scalars['String'];
   id: Scalars['UUID'];
   lastName: Scalars['String'];
+  onboardingStep?: Maybe<OnboardingStep>;
   passwordHash?: Maybe<Scalars['String']>;
   /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
   passwordResetToken?: Maybe<Scalars['String']>;
   /** @deprecated field migrated into the AppTokens Table ref: https://github.com/twentyhq/twenty/issues/5021 */
   passwordResetTokenExpiresAt?: Maybe<Scalars['DateTime']>;
-  state: UserState;
   supportUserHash?: Maybe<Scalars['String']>;
   updatedAt: Scalars['DateTime'];
   workspaceMember?: Maybe<WorkspaceMember>;
@@ -6562,10 +6745,6 @@ export type UserExists = {
 
 export type UserMappingOptionsUser = {
   user?: Maybe<Scalars['String']>;
-};
-
-export type UserState = {
-  skipSyncEmailOnboardingStep?: Maybe<Scalars['Boolean']>;
 };
 
 export type UserWorkspace = {

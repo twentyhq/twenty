@@ -18,8 +18,8 @@ import { BillingService } from 'src/engine/core-modules/billing/billing.service'
 import { SendInviteLink } from 'src/engine/core-modules/workspace/dtos/send-invite-link.entity';
 import { EmailService } from 'src/engine/integrations/email/email.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
-import { UserStateService } from 'src/engine/core-modules/user-state/user-state.service';
-import { UserStateOnboardingStepValues } from 'src/engine/core-modules/user-state/enums/values/user-state-onboarding-step-values.enum';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
+import { OnboardingStepKeys } from 'src/engine/core-modules/key-value-pair/enums/keys/onboarding-step-keys.enum';
 
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
@@ -34,7 +34,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly billingService: BillingService,
     private readonly environmentService: EnvironmentService,
     private readonly emailService: EmailService,
-    private readonly userStateService: UserStateService,
+    private readonly onboardingService: OnboardingService,
   ) {
     super(workspaceRepository);
   }
@@ -50,10 +50,6 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     await this.userWorkspaceService.createWorkspaceMember(
       user.defaultWorkspace.id,
       user,
-    );
-    await this.userStateService.initOnboardingStep(
-      user.id,
-      user.defaultWorkspaceId,
     );
 
     return user.defaultWorkspace;
@@ -144,10 +140,10 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       });
     }
 
-    await this.userStateService.skipOnboardingStep(
+    await this.onboardingService.skipOnboardingStep(
       sender.id,
       workspace.id,
-      UserStateOnboardingStepValues.INVITE_TEAM,
+      OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
     );
 
     return { success: true };
