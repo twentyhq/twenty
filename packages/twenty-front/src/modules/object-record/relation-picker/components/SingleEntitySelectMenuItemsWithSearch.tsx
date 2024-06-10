@@ -3,7 +3,7 @@ import {
   SingleEntitySelectMenuItems,
   SingleEntitySelectMenuItemsProps,
 } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItems';
-import { useRelationEntities } from '@/object-record/relation-picker/hooks/useRelationEntities';
+import { useRelationPickerEntitiesOptions } from '@/object-record/relation-picker/hooks/useRelationPickerEntitiesOptions';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { isDefined } from '~/utils/isDefined';
@@ -41,12 +41,13 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
     relationPickerScopeId,
   });
 
-  const { entities, relationPickerSearchFilter } = useRelationEntities({
-    relationObjectNameSingular,
-    relationPickerScopeId,
-    selectedRelationRecordIds,
-    excludedRelationRecordIds,
-  });
+  const { entities, relationPickerSearchFilter } =
+    useRelationPickerEntitiesOptions({
+      relationObjectNameSingular,
+      relationPickerScopeId,
+      selectedRelationRecordIds,
+      excludedRelationRecordIds,
+    });
 
   const showCreateButton = isDefined(onCreate);
 

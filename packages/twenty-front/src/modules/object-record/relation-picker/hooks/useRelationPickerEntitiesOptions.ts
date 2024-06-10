@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { useRelationPickerScopedStates } from '@/object-record/relation-picker/hooks/internal/useRelationPickerScopedStates';
 import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
 
-export const useRelationEntities = ({
+export const useRelationPickerEntitiesOptions = ({
   relationObjectNameSingular,
   relationPickerScopeId = 'relation-picker',
   selectedRelationRecordIds = [],
