@@ -21,10 +21,7 @@ export class OnboardingService {
     private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {}
 
-  async getOnboardingState(
-    user: User,
-    workspace: Workspace,
-  ): Promise<OnboardingStep | null> {
+  private async isSyncEmailOnboardingStep(user: User, workspace: Workspace) {
     const syncEmailValue = await this.keyValuePairService.get({
       userId: user.id,
       workspaceId: workspace.id,
@@ -37,10 +34,10 @@ export class OnboardingService {
         workspace.id,
       );
 
-    if (!isSyncEmailSkipped && !connectedAccounts?.length) {
-      return OnboardingStep.SYNC_EMAIL;
-    }
+    return !isSyncEmailSkipped && !connectedAccounts?.length;
+  }
 
+  private async isInviteTeamOnboardingStep(workspace: Workspace) {
     const inviteTeamValue = await this.keyValuePairService.get({
       workspaceId: workspace.id,
       key: OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP,
@@ -50,10 +47,21 @@ export class OnboardingService {
     const workspaceMemberCount =
       await this.userWorkspaceService.getWorkspaceMemberCount(workspace.id);
 
-    if (
+    return (
       !isInviteTeamSkipped &&
       (!workspaceMemberCount || workspaceMemberCount <= 1)
-    ) {
+    );
+  }
+
+  async getOnboardingState(
+    user: User,
+    workspace: Workspace,
+  ): Promise<OnboardingStep | null> {
+    if (await this.isSyncEmailOnboardingStep(user, workspace)) {
+      return OnboardingStep.SYNC_EMAIL;
+    }
+
+    if (await this.isInviteTeamOnboardingStep(workspace)) {
       return OnboardingStep.INVITE_TEAM;
     }
 
