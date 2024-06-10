@@ -120,7 +120,7 @@ const DocsSidebarSection = ({
     ? '/user-guide/'
     : pathname.includes('developers')
       ? '/developers/'
-      : '/twenty-ui';
+      : '/twenty-ui/';
 
   const initializeUnfoldedState = () => {
     const unfoldedState: TopicsState = {};
@@ -171,11 +171,11 @@ const DocsSidebarSection = ({
 
             {(unfolded[topic] || !hasMultipleFiles) &&
               cards.map((card) => {
-                const isselected = pathname === `${path}${card.fileName}`;
                 const sectionName = card.topic
                   .toLowerCase()
                   .replace(/\s+/g, '-');
                 const routerPath = getCardPath(card, path, false, sectionName);
+                const isselected = pathname === routerPath;
                 return (
                   <StyledSubTopicItem
                     key={card.title}

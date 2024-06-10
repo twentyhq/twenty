@@ -9,7 +9,7 @@
 <h2 align="center" >The #1 Open-Source CRM </h3>
 <p align="center">Tailored to your unique business needs</p>
 
-<p align="center"><a href="https://twenty.com">🌐 Website</a> · <a href="https://docs.twenty.com">📚 Documentation</a> ·  <a href="https://discord.gg/cx5n4Jzs57"><img src="./packages/twenty-docs/static/img/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty"><img src="./packages/twenty-docs/static/img/figma-icon.png"  width="12" height="12"/>  Figma</a><p>
+<p align="center"><a href="https://twenty.com">🌐 Website</a> · <a href="https://twenty.com/developers">📚 Documentation</a> ·  <a href="https://discord.gg/cx5n4Jzs57"><img src="./packages/twenty-docs/static/img/discord-icon.svg" width="12" height="12"/> Discord</a> · <a href="https://www.figma.com/file/xt8O9mFeLl46C5InWwoMrN/Twenty"><img src="./packages/twenty-docs/static/img/figma-icon.png"  width="12" height="12"/>  Figma</a><p>
 <br />
 
 
@@ -38,8 +38,8 @@ password: Applecar2025
 ```
 
 See also:  
-🚀 [Self-hosting](https://docs.twenty.com/start/self-hosting/)  
-🖥️ [Local Setup](https://docs.twenty.com/start/local-setup)  
+🚀 [Self-hosting](https://twenty.com/developers/section/self-hosting)  
+🖥️ [Local Setup](https://twenty.com/developers/local-setup)  
 
 # Why Choose Twenty?
 We understand that the CRM landscape is vast. So why should you choose us?

@@ -24,7 +24,7 @@ export const getCardPath = (
   } else {
     if (sectionName) {
       return card.numberOfFiles > 1
-        ? `${basePath}/section/${sectionName}/${card.fileName}`
+        ? `${basePath}section/${sectionName}/${card.fileName}`
         : `${basePath}${card.fileName}`;
     } else {
       return card.numberOfFiles > 1 && !isSection
