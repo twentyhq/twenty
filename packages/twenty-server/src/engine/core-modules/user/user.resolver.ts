@@ -27,8 +27,6 @@ import { DemoEnvGuard } from 'src/engine/guards/demo.env.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceMember } from 'src/engine/core-modules/user/dtos/workspace-member.dto';
-import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { OnboardingStep } from 'src/engine/core-modules/onboarding/enums/onboarding-step.enum';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 
@@ -119,14 +117,14 @@ export class UserResolver {
   }
 
   @ResolveField(() => OnboardingStep)
-  async onboardingStep(
-    @Parent() user: User,
-    @AuthWorkspace() workspace: Workspace,
-  ): Promise<OnboardingStep | null> {
-    if (!user || !workspace) {
+  async onboardingStep(@Parent() user: User): Promise<OnboardingStep | null> {
+    if (!user) {
       return null;
     }
 
-    return this.onboardingService.getOnboardingState(user, workspace);
+    return this.onboardingService.getOnboardingState(
+      user,
+      user.defaultWorkspace,
+    );
   }
 }

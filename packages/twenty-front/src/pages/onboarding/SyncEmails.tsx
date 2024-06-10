@@ -6,7 +6,7 @@ import { IconGoogle } from 'twenty-ui';
 import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { OnboardingSyncEmailsSettingsCard } from '@/onboarding/components/OnboardingSyncEmailsSettingsCard';
-import { useSetOnboardingStep } from '@/onboarding/hooks/useSetOnboardingStep';
+import { useSetNextOnboardingStep } from '@/onboarding/hooks/useSetNextOnboardingStep';
 import { useTriggerGoogleApisOAuth } from '@/settings/accounts/hooks/useTriggerGoogleApisOAuth';
 import { AppPath } from '@/types/AppPath';
 import { MainButton } from '@/ui/input/button/components/MainButton';
@@ -35,7 +35,7 @@ const StyledActionLinkContainer = styled.div`
 export const SyncEmails = () => {
   const theme = useTheme();
   const { triggerGoogleApisOAuth } = useTriggerGoogleApisOAuth();
-  const setOnboardingStep = useSetOnboardingStep();
+  const setNextOnboardingStep = useSetNextOnboardingStep();
   const [visibility, setVisibility] = useState<MessageChannelVisibility>(
     MessageChannelVisibility.ShareEverything,
   );
@@ -57,7 +57,7 @@ export const SyncEmails = () => {
 
   const continueWithoutSync = async () => {
     await skipSyncEmailOnboardingStepMutation();
-    setOnboardingStep(OnboardingStep.InviteTeam);
+    setNextOnboardingStep(OnboardingStep.SyncEmail);
   };
 
   return (

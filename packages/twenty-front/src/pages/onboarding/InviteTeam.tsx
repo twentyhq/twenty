@@ -17,14 +17,14 @@ import { Title } from '@/auth/components/Title';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
-import { useSetOnboardingStep } from '@/onboarding/hooks/useSetOnboardingStep';
+import { useSetNextOnboardingStep } from '@/onboarding/hooks/useSetNextOnboardingStep';
 import { SeparatorLineText } from '@/ui/display/text/components/SeparatorLineText';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
 import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
-import { useSendInviteLinkMutation } from '~/generated/graphql';
+import { OnboardingStep, useSendInviteLinkMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledAnimatedInput = styled.div`
@@ -76,7 +76,7 @@ export const InviteTeam = () => {
   const { enqueueSnackBar } = useSnackBar();
   const [sendInviteLink] = useSendInviteLinkMutation();
   const setCurrentUser = useSetRecoilState(currentUserState);
-  const setOnboardingStep = useSetOnboardingStep();
+  const setNextOnboardingStep = useSetNextOnboardingStep();
   const currentWorkspace = useRecoilValue(currentWorkspaceState);
   const setIsCurrentUserLoaded = useSetRecoilState(isCurrentUserLoadedState);
   const {
@@ -135,7 +135,7 @@ export const InviteTeam = () => {
       );
       const result = await sendInviteLink({ variables: { emails } });
 
-      setOnboardingStep(null);
+      setNextOnboardingStep(OnboardingStep.InviteTeam);
 
       if (isDefined(result.errors)) {
         throw result.errors;
