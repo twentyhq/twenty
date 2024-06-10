@@ -1,4 +1,4 @@
-name: Release Twenty
+name: "Release: create"
 on:
   workflow_dispatch:
     inputs:
@@ -28,32 +28,17 @@ jobs:
           echo version=$(echo ${{ github.event.inputs.version }} | sed 's/^v//') >> $GITHUB_OUTPUT
 
       - name: Update versions
-        working-directory: packages
         run: |
-          for dir in twenty-docs twenty-emails twenty-front twenty-server twenty-ui twenty-website
-          do
-            cd $dir
-            yarn version ${{ steps.sanitize.outputs.version }}
-            cd ..
-          done
+          echo ${{ steps.sanitize.outputs.version }} > version.txt
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v6
         with:
             branch: release/${{ steps.sanitize.outputs.version }}
-            commit_message: "chore: release v${{ steps.sanitize.outputs.version }}"
+            commit-message: "chore: release v${{ steps.sanitize.outputs.version }}"
             committer: Github Action Deploy <github-action-deploy@twenty.com>
             author: Github Action Deploy <github-action-deploy@twenty.com>
-            labels: release
-
-  release:
-    runs-on: ubuntu-latest
-    needs: create_pr
-    if: contains(github.event.pull_request.labels.*.name, 'release') && github.event.pull_request.merged == true
-    steps:
-      - name: Debug
-        run: |
-          echo "Merged PR: ${{ github.event.pull_request.number }}"
-      # - uses: release-drafter/release-drafter@v5
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            title: Release v${{ steps.sanitize.outputs.version }}
+            labels: |
+              release
+              ${{ github.event.inputs.create_release == true && 'create_release' || '' }}
