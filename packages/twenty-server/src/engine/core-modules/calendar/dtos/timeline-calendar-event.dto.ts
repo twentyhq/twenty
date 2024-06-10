@@ -2,15 +2,11 @@ import { ObjectType, Field, registerEnumType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { TimelineCalendarEventParticipant } from 'src/engine/core-modules/calendar/dtos/timeline-calendar-event-participant.dto';
+import { CalendarChannelVisibility } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 
-export enum TimelineCalendarEventVisibility {
-  METADATA = 'METADATA',
-  SHARE_EVERYTHING = 'SHARE_EVERYTHING',
-}
-
-registerEnumType(TimelineCalendarEventVisibility, {
-  name: 'TimelineCalendarEventVisibility',
-  description: 'Visibility of the calendar event',
+registerEnumType(CalendarChannelVisibility, {
+  name: 'CalendarChannelVisibility',
+  description: 'Visibility of the calendar channel',
 });
 
 @ObjectType('LinkMetadata')
@@ -57,6 +53,6 @@ export class TimelineCalendarEvent {
   @Field(() => [TimelineCalendarEventParticipant])
   participants: TimelineCalendarEventParticipant[];
 
-  @Field(() => TimelineCalendarEventVisibility)
-  visibility: TimelineCalendarEventVisibility;
+  @Field(() => CalendarChannelVisibility)
+  visibility: CalendarChannelVisibility;
 }

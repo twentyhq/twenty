@@ -1,7 +1,4 @@
-export enum CalendarChannelVisibility {
-  Everything = 'SHARE_EVERYTHING',
-  Metadata = 'METADATA',
-}
+import { CalendarChannelVisibility } from '~/generated/graphql';
 
 export type CalendarChannel = {
   id: string;

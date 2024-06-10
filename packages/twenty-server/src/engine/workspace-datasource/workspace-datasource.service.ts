@@ -29,6 +29,15 @@ export class WorkspaceDataSourceService {
     return dataSource;
   }
 
+  public async checkSchemaExists(workspaceId: string) {
+    const dataSource =
+      await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
+        workspaceId,
+      );
+
+    return dataSource.length > 0;
+  }
+
   public async connectedToWorkspaceDataSourceAndReturnMetadata(
     workspaceId: string,
   ): Promise<{ dataSource: DataSource; dataSourceMetadata: DataSourceEntity }> {

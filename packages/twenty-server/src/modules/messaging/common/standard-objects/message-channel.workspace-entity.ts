@@ -41,9 +41,9 @@ export enum MessageChannelSyncStage {
 }
 
 export enum MessageChannelVisibility {
-  METADATA = 'metadata',
-  SUBJECT = 'subject',
-  SHARE_EVERYTHING = 'share_everything',
+  METADATA = 'METADATA',
+  SUBJECT = 'SUBJECT',
+  SHARE_EVERYTHING = 'SHARE_EVERYTHING',
 }
 
 export enum MessageChannelType {

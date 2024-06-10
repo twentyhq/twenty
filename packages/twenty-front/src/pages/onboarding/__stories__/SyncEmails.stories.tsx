@@ -1,10 +1,11 @@
 import { getOperationName } from '@apollo/client/utilities';
 import { Meta, StoryObj } from '@storybook/react';
-import { within } from '@storybook/testing-library';
+import { within } from '@storybook/test';
 import { graphql, HttpResponse } from 'msw';
 
-import { AppPath } from '@/types/AppPath';
-import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
+import { AppPath } from '~/modules/types/AppPath';
+import { GET_CURRENT_USER } from '~/modules/users/graphql/queries/getCurrentUser';
+import { SyncEmails } from '~/pages/onboarding/SyncEmails';
 import {
   PageDecorator,
   PageDecoratorArgs,
@@ -12,13 +13,11 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedOnboardingUsersData } from '~/testing/mock-data/users';
 
-import { PaymentSuccess } from '../PaymentSuccess';
-
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Auth/PaymentSuccess',
-  component: PaymentSuccess,
+  title: 'Pages/Onboarding/SyncEmails',
+  component: SyncEmails,
   decorators: [PageDecorator],
-  args: { routePath: AppPath.PlanRequiredSuccess },
+  args: { routePath: AppPath.SyncEmails },
   parameters: {
     msw: {
       handlers: [
@@ -37,12 +36,11 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof PaymentSuccess>;
+export type Story = StoryObj<typeof SyncEmails>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-
-    await canvas.findByText('Start');
+    await canvas.findByText('Emails and Calendar');
   },
 };

@@ -157,6 +157,11 @@ export class MessagingGmailMessagesImportService {
         messageIdsToFetch,
       );
 
+      if (error.code === undefined) {
+        // This should never happen as all errors must be known
+        throw error;
+      }
+
       await this.gmailErrorHandlingService.handleGmailError(
         {
           code: error.code,

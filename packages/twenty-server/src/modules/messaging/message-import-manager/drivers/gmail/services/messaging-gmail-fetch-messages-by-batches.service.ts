@@ -100,7 +100,7 @@ export class MessagingGmailFetchMessagesByBatchesService {
 
         if (!from) {
           this.logger.log(
-            `From value is missing while importing message in workspace ${workspaceId} and account ${connectedAccountId}`,
+            `From value is missing while importing message #${id} in workspace ${workspaceId} and account ${connectedAccountId}`,
           );
 
           return null;
@@ -108,7 +108,23 @@ export class MessagingGmailFetchMessagesByBatchesService {
 
         if (!to && !deliveredTo && !bcc && !cc) {
           this.logger.log(
-            `To, Delivered-To, Bcc or Cc value is missing while importing message in workspace ${workspaceId} and account ${connectedAccountId}`,
+            `To, Delivered-To, Bcc or Cc value is missing while importing message #${id} in workspace ${workspaceId} and account ${connectedAccountId}`,
+          );
+
+          return null;
+        }
+
+        if (!headerMessageId) {
+          this.logger.log(
+            `Message-ID is missing while importing message #${id} in workspace ${workspaceId} and account ${connectedAccountId}`,
+          );
+
+          return null;
+        }
+
+        if (!threadId) {
+          this.logger.log(
+            `Thread Id is missing while importing message #${id} in workspace ${workspaceId} and account ${connectedAccountId}`,
           );
 
           return null;
@@ -181,11 +197,9 @@ export class MessagingGmailFetchMessagesByBatchesService {
     const historyId = message.historyId;
     const internalDate = message.internalDate;
 
-    assert(id);
-    assert(messageId);
-    assert(threadId);
-    assert(historyId);
-    assert(internalDate);
+    assert(id, 'ID is missing');
+    assert(historyId, 'History-ID is missing');
+    assert(internalDate, 'Internal date is missing');
 
     const bodyData = this.getBodyData(message);
     const text = bodyData ? Buffer.from(bodyData, 'base64').toString() : '';

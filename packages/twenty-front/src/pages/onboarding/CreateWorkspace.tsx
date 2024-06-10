@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSetRecoilState } from 'recoil';
@@ -16,7 +15,6 @@ import { OnboardingStatus } from '@/auth/utils/getOnboardingStatus';
 import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { useApolloMetadataClient } from '@/object-metadata/hooks/useApolloMetadataClient';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
-import { AppPath } from '@/types/AppPath';
 import { Loader } from '@/ui/feedback/loader/components/Loader';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -47,8 +45,6 @@ const validationSchema = z
 type Form = z.infer<typeof validationSchema>;
 
 export const CreateWorkspace = () => {
-  const navigate = useNavigate();
-
   const { enqueueSnackBar } = useSnackBar();
   const onboardingStatus = useOnboardingStatus();
 
@@ -88,10 +84,6 @@ export const CreateWorkspace = () => {
         if (isDefined(result.errors)) {
           throw result.errors ?? new Error('Unknown error');
         }
-
-        setTimeout(() => {
-          navigate(AppPath.CreateProfile);
-        }, 20);
       } catch (error: any) {
         enqueueSnackBar(error?.message, {
           variant: SnackBarVariant.Error,
@@ -102,7 +94,6 @@ export const CreateWorkspace = () => {
       activateWorkspace,
       setIsCurrentUserLoaded,
       apolloMetadataClient,
-      navigate,
       enqueueSnackBar,
     ],
   );
