@@ -8,9 +8,13 @@ on:
       ref:
         default: main
         description: Ref to start the release from (e.g. main, sha)
+      create_release:
+        type: boolean
+        default: true
+        description: Create a release after merging the PR
 
 jobs:
-  release:
+  create_pr:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -33,20 +37,23 @@ jobs:
             cd ..
           done
 
-      # Make sure we have the latest changes before committing
-      - name: Pull changes
-        run: git pull
-
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
         with:
-          branch: ${{ github.event.inputs.ref }}
-          commit_message: "chore: release v${{ steps.sanitize.outputs.version }}"
-          tagging_message: v${{ steps.sanitize.outputs.version }}
+            branch: release/${{ steps.sanitize.outputs.version }}
+            commit_message: "chore: release v${{ steps.sanitize.outputs.version }}"
+            committer: Github Action Deploy <github-action-deploy@twenty.com>
+            author: Github Action Deploy <github-action-deploy@twenty.com>
+            labels: release
 
-          commit_user_name: Github Action Deploy
-          commit_user_email: github-action-deploy@twenty.com
-          commit_author: Github Action Deploy <github-action-deploy@twenty.com>
-
-      - uses: release-drafter/release-drafter@v5
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  release:
+    runs-on: ubuntu-latest
+    needs: create_pr
+    if: github.event.pull_request.labels.*.name contains 'release' && github.event.pull_request.merged == true
+    steps:
+      - name: Debug
+        run: |
+          echo "Merged PR: ${{ github.event.pull_request.number }}"
+      # - uses: release-drafter/release-drafter@v5
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
