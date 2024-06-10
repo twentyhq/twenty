@@ -81,24 +81,4 @@ export class KeyValuePairService<TYPE extends keyof KeyValuePairs> {
       indexPredicate,
     });
   }
-
-  async delete<K extends keyof KeyValuePairs[TYPE]>({
-    userId,
-    workspaceId,
-    key,
-  }: {
-    userId?: string;
-    workspaceId?: string;
-    key: K;
-  }) {
-    if (!userId && !workspaceId) {
-      throw new BadRequestException('userId and workspaceId are undefined');
-    }
-
-    await this.keyValuePairRepository.delete({
-      userId,
-      workspaceId,
-      key: key as string,
-    });
-  }
 }
