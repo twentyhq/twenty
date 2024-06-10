@@ -1,10 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-type SeparatorLineTextProps = {
-  text: string;
-};
-
 const StyledContainer = styled.div`
   display: flex;
   align-items: center;
