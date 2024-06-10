@@ -215,6 +215,39 @@ describe('useOnboardingStatus', () => {
     expect(result.current.onboardingStatus).toBe('ongoing_sync_email');
   });
 
+  it('should return "ongoing_invite_team"', async () => {
+    const { result } = renderHooks();
+    const {
+      setTokenPair,
+      setBilling,
+      setCurrentUser,
+      setCurrentWorkspace,
+      setCurrentWorkspaceMember,
+    } = result.current;
+
+    act(() => {
+      setTokenPair(tokenPair);
+      setBilling(billing);
+      setCurrentUser({
+        ...currentUser,
+        onboardingStep: OnboardingStep.InviteTeam,
+      });
+      setCurrentWorkspace({
+        ...currentWorkspace,
+        subscriptionStatus: 'active',
+      });
+      setCurrentWorkspaceMember({
+        ...currentWorkspaceMember,
+        name: {
+          firstName: 'John',
+          lastName: 'Doe',
+        },
+      });
+    });
+
+    expect(result.current.onboardingStatus).toBe('ongoing_invite_team');
+  });
+
   it('should return "completed"', async () => {
     const { result } = renderHooks();
     const {
