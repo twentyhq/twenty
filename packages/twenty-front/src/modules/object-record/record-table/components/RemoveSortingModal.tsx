@@ -34,15 +34,8 @@ export const RemoveSortingModal = ({
       <ConfirmationModal
         isOpen={isRemoveSortingModalOpen[0]}
         setIsOpen={isRemoveSortingModalOpen[1]}
-        title={'Sorting removal'}
-        subtitle={
-          <>
-            Would you like to remove all sorting?
-            <br />
-            <br />
-            This action will enable manual row reordering.
-          </>
-        }
+        title={'Remove sorting?'}
+        subtitle={<>This is required to enable manual row reordering.</>}
         onConfirmClick={() => handleRemoveClick()}
         deleteButtonText={'Remove Sorting'}
       />
