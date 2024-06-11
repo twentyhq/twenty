@@ -2,10 +2,10 @@ import { useContext, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { GRAY_SCALE } from 'twenty-ui';
 
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
-import { GRAY_SCALE } from '@/ui/theme/constants/GrayScale';
 
 const StyledText = styled.div`
   align-items: center;
@@ -23,15 +23,15 @@ export const RecordBoardColumnFetchMoreLoader = () => {
     useRecordBoardStates();
   const isFetchingRecord = useRecoilValue(isFetchingRecordState);
 
-  const shouldFetchMore = useSetRecoilState(
+  const setShouldFetchMore = useSetRecoilState(
     shouldFetchMoreInColumnFamilyState(columnDefinition.id),
   );
 
   const { ref, inView } = useInView();
 
   useEffect(() => {
-    shouldFetchMore(inView);
-  }, [shouldFetchMore, inView]);
+    setShouldFetchMore(inView);
+  }, [setShouldFetchMore, inView]);
 
   return (
     <div ref={ref}>

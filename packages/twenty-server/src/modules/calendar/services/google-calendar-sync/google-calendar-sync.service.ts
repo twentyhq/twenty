@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Repository } from 'typeorm';
 import { calendar_v3 as calendarV3 } from 'googleapis';
+import { GaxiosError } from 'gaxios';
 
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { BlocklistRepository } from 'src/modules/connected-account/repositories/blocklist.repository';
@@ -320,14 +321,38 @@ export class GoogleCalendarSyncService {
     let hasMoreEvents = true;
 
     while (hasMoreEvents) {
-      const googleCalendarEvents = await googleCalendarClient.events.list({
-        calendarId: 'primary',
-        maxResults: 500,
-        syncToken: emailOrDomainToReimport ? undefined : syncToken,
-        pageToken: nextPageToken,
-        q: emailOrDomainToReimport,
-        showDeleted: true,
-      });
+      const googleCalendarEvents = await googleCalendarClient.events
+        .list({
+          calendarId: 'primary',
+          maxResults: 500,
+          syncToken: emailOrDomainToReimport ? undefined : syncToken,
+          pageToken: nextPageToken,
+          q: emailOrDomainToReimport,
+          showDeleted: true,
+        })
+        .catch(async (error: GaxiosError) => {
+          if (error.response?.status !== 410) {
+            throw error;
+          }
+
+          await this.calendarChannelRepository.updateSyncCursor(
+            null,
+            connectedAccountId,
+            workspaceId,
+          );
+
+          this.logger.log(
+            `Sync token is no longer valid for connected account ${connectedAccountId} in workspace ${workspaceId}, resetting sync cursor.`,
+          );
+
+          return {
+            data: {
+              items: [],
+              nextSyncToken: undefined,
+              nextPageToken: undefined,
+            },
+          };
+        });
 
       nextSyncToken = googleCalendarEvents.data.nextSyncToken;
       nextPageToken = googleCalendarEvents.data.nextPageToken || undefined;

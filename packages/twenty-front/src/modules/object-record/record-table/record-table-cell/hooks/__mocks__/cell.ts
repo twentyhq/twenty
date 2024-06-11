@@ -8,6 +8,7 @@ export const recordTableRow: RecordTableRowContextProps = {
   isSelected: false,
   recordId: 'recordId',
   pathToShowPage: '/',
+  objectNameSingular: 'objectNameSingular',
   isReadOnly: false,
 };
 

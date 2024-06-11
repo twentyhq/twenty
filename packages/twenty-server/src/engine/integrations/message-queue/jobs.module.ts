@@ -17,18 +17,14 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { CleanInactiveWorkspaceJob } from 'src/engine/workspace-manager/workspace-cleaner/crons/clean-inactive-workspace.job';
 import { CalendarEventParticipantModule } from 'src/modules/calendar/services/calendar-event-participant/calendar-event-participant.module';
-import { GmailFetchMessageContentFromCacheModule } from 'src/modules/messaging/services/gmail-fetch-message-content-from-cache/gmail-fetch-message-content-from-cache.module';
-import { GmailFullSyncModule } from 'src/modules/messaging/services/gmail-full-sync/gmail-full-sync.module';
-import { GmailPartialSyncModule } from 'src/modules/messaging/services/gmail-partial-sync/gmail-partial-sync.module';
 import { TimelineActivityModule } from 'src/modules/timeline/timeline-activity.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { CalendarMessagingParticipantJobModule } from 'src/modules/calendar-messaging-participant/jobs/calendar-messaging-participant-job.module';
 import { CalendarCronJobModule } from 'src/modules/calendar/crons/jobs/calendar-cron-job.module';
 import { CalendarJobModule } from 'src/modules/calendar/jobs/calendar-job.module';
 import { AutoCompaniesAndContactsCreationJobModule } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/auto-companies-and-contacts-creation-job.module';
-import { MessagingCronJobModule } from 'src/modules/messaging/crons/jobs/messaging-cron-job.module';
-import { MessagingJobModule } from 'src/modules/messaging/jobs/messaging-job.module';
 import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module';
+import { MessagingModule } from 'src/modules/messaging/messaging.module';
 
 @Module({
   imports: [
@@ -41,9 +37,7 @@ import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module
     BillingModule,
     UserWorkspaceModule,
     WorkspaceModule,
-    GmailFullSyncModule,
-    GmailFetchMessageContentFromCacheModule,
-    GmailPartialSyncModule,
+    MessagingModule,
     CalendarEventParticipantModule,
     TimelineActivityModule,
     StripeModule,
@@ -53,8 +47,6 @@ import { TimelineJobModule } from 'src/modules/timeline/jobs/timeline-job.module
     CalendarCronJobModule,
     CalendarJobModule,
     AutoCompaniesAndContactsCreationJobModule,
-    MessagingCronJobModule,
-    MessagingJobModule,
     TimelineJobModule,
   ],
   providers: [

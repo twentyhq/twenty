@@ -1,0 +1,81 @@
+---
+title: Frontend Commands
+icon: TbTerminal2
+image: /images/user-guide/create-workspace/workspace-cover.png
+---
+
+## Useful commands
+
+### Starting the app
+
+```bash
+ nx start twenty-front
+ ```
+
+### Regenerate graphql schema based on API graphql schema
+
+```bash
+nx graphql:generate twenty-front
+```
+
+### Lint
+
+```bash
+nx lint twenty-front
+```
+
+### Test
+
+```bash
+nx test twenty-front# run jest tests
+nx storybook:dev twenty-front# run storybook
+nx storybook:test twenty-front# run tests # (needs yarn storybook:dev to be running)
+nx storybook:coverage twenty-front # (needs yarn storybook:dev to be running)
+```
+
+## Tech Stack
+
+The project has a clean and simple stack, with minimal boilerplate code.
+
+**App**
+
+- [React](https://react.dev/)
+- [Apollo](https://www.apollographql.com/docs/)
+- [GraphQL Codegen](https://the-guild.dev/graphql/codegen)
+- [Recoil](https://recoiljs.org/docs/introduction/core-concepts)
+- [TypeScript](https://www.typescriptlang.org/)
+
+**Testing**
+
+- [Jest](https://jestjs.io/)
+- [Storybook](https://storybook.js.org/)
+
+**Tooling**
+
+- [Yarn](https://yarnpkg.com/)
+- [Craco](https://craco.js.org/docs/)
+- [ESLint](https://eslint.org/)
+
+## Architecture
+
+### Routing
+
+[React Router](https://reactrouter.com/) handles the routing. 
+
+To avoid unnecessary [re-renders](/contributor/frontend/best-practices#managing-re-renders) all the routing logic is in a `useEffect` in `PageChangeEffect`.
+
+### State Management
+
+[Recoil](https://recoiljs.org/docs/introduction/core-concepts) handles state management.
+
+See [best practices](/contributor/frontend/best-practices#state-management) for more information on state management.
+
+## Testing
+
+[Jest](https://jestjs.io/) serves as the tool for unit testing while [Storybook](https://storybook.js.org/) is for component testing.
+
+Jest is mainly for testing utility functions, and not components themselves.
+
+Storybook is for testing the behavior of isolated components, as well as displaying the design system.
+
+<ArticleEditContent></ArticleEditContent>

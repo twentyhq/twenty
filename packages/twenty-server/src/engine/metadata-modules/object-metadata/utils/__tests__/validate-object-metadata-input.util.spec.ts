@@ -60,4 +60,26 @@ describe('validateObjectName', () => {
       validateObjectMetadataInputOrThrow(invalidObjectInput),
     ).toThrow();
   });
+
+  it('should throw if nameSingular is not camelCased', async () => {
+    const invalidObjectInput = {
+      ...validObjectInput,
+      nameSingular: 'notACamelCase1a',
+    };
+
+    expect(() =>
+      validateObjectMetadataInputOrThrow(invalidObjectInput),
+    ).toThrow();
+  });
+
+  it('should throw if namePlural is a not camelCased', async () => {
+    const invalidObjectInput = {
+      ...validObjectInput,
+      namePlural: 'notACamelCase1b',
+    };
+
+    expect(() =>
+      validateObjectMetadataInputOrThrow(invalidObjectInput),
+    ).toThrow();
+  });
 });

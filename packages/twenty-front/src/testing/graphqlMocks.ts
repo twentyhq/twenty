@@ -22,7 +22,9 @@ import { mockedPeopleData } from './mock-data/people';
 import { mockedRemoteServers } from './mock-data/remote-servers';
 import { mockedViewFieldsData } from './mock-data/view-fields';
 
-const metadataGraphql = graphql.link(`${REACT_APP_SERVER_BASE_URL}/metadata`);
+export const metadataGraphql = graphql.link(
+  `${REACT_APP_SERVER_BASE_URL}/metadata`,
+);
 
 export const graphqlMocks = {
   handlers: [
@@ -327,7 +329,7 @@ export const graphqlMocks = {
     graphql.query('GetManyRemoteTables', () => {
       return HttpResponse.json({
         data: {
-          findAvailableRemoteTablesByServerId: mockedRemoteTables,
+          findDistantTablesWithStatus: mockedRemoteTables,
         },
       });
     }),

@@ -16,74 +16,66 @@ describe('RecordPositionQueryFactory', () => {
   });
 
   describe('create', () => {
-    describe('createForGet', () => {
-      it('should return a string with the position when positionValue is first', async () => {
-        const positionValue = 'first';
-
-        const result = await factory.create(
-          RecordPositionQueryType.GET,
-          positionValue,
-          objectMetadataItem,
-          dataSourceSchema,
-        );
-
-        expect(result).toEqual(
-          `SELECT position FROM workspace_test."company"
-            WHERE "position" IS NOT NULL ORDER BY "position" ASC LIMIT 1`,
-        );
-      });
-
-      it('should return a string with the position when positionValue is last', async () => {
-        const positionValue = 'last';
-
-        const result = await factory.create(
-          RecordPositionQueryType.GET,
-          positionValue,
-          objectMetadataItem,
-          dataSourceSchema,
-        );
-
-        expect(result).toEqual(
-          `SELECT position FROM workspace_test."company"
-            WHERE "position" IS NOT NULL ORDER BY "position" DESC LIMIT 1`,
-        );
-      });
-    });
-
-    it('should return a string with the position when positionValue is a number', async () => {
+    it('should return query and params for FIND_BY_POSITION', async () => {
       const positionValue = 1;
-
-      try {
-        await factory.create(
-          RecordPositionQueryType.GET,
-          positionValue,
-          objectMetadataItem,
-          dataSourceSchema,
-        );
-      } catch (error) {
-        expect(error.message).toEqual(
-          'RecordPositionQueryType.GET requires positionValue to be a number',
-        );
-      }
-    });
-  });
-
-  describe('createForUpdate', () => {
-    it('should return a string when RecordPositionQueryType is UPDATE', async () => {
-      const positionValue = 1;
-
-      const result = await factory.create(
-        RecordPositionQueryType.UPDATE,
-        positionValue,
+      const queryType = RecordPositionQueryType.FIND_BY_POSITION;
+      const [query, params] = factory.create(
+        { positionValue, recordPositionQueryType: queryType },
         objectMetadataItem,
         dataSourceSchema,
       );
 
-      expect(result).toEqual(
-        `UPDATE workspace_test."company"
+      expect(query).toEqual(
+        `SELECT id, position FROM ${dataSourceSchema}."${objectMetadataItem.nameSingular}"
+            WHERE "position" = $1`,
+      );
+      expect(params).toEqual([positionValue]);
+    });
+
+    it('should return query and params for FIND_MIN_POSITION', async () => {
+      const queryType = RecordPositionQueryType.FIND_MIN_POSITION;
+      const [query, params] = factory.create(
+        { recordPositionQueryType: queryType },
+        objectMetadataItem,
+        dataSourceSchema,
+      );
+
+      expect(query).toEqual(
+        `SELECT MIN(position) as position FROM ${dataSourceSchema}."${objectMetadataItem.nameSingular}"`,
+      );
+      expect(params).toEqual([]);
+    });
+
+    it('should return query and params for FIND_MAX_POSITION', async () => {
+      const queryType = RecordPositionQueryType.FIND_MAX_POSITION;
+      const [query, params] = factory.create(
+        { recordPositionQueryType: queryType },
+        objectMetadataItem,
+        dataSourceSchema,
+      );
+
+      expect(query).toEqual(
+        `SELECT MAX(position) as position FROM ${dataSourceSchema}."${objectMetadataItem.nameSingular}"`,
+      );
+      expect(params).toEqual([]);
+    });
+
+    it('should return query and params for UPDATE_POSITION', async () => {
+      const positionValue = 1;
+      const recordId = '1';
+      const queryType = RecordPositionQueryType.UPDATE_POSITION;
+      const [query, params] = factory.create(
+        { positionValue, recordId, recordPositionQueryType: queryType },
+        objectMetadataItem,
+        dataSourceSchema,
+      );
+
+      expect(query).toEqual(
+        `UPDATE ${dataSourceSchema}."${objectMetadataItem.nameSingular}"
             SET "position" = $1
             WHERE "id" = $2`,
       );
+      expect(params).toEqual([positionValue, recordId]);
     });
   });
 });

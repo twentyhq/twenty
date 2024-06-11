@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from '@emotion/styled';
+import { MOBILE_VIEWPORT } from 'twenty-ui';
 
-import { MOBILE_VIEWPORT } from '@/ui/theme/constants/MobileViewport';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { Step, StepProps } from './Step';

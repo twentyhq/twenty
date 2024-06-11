@@ -1,9 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { Loader } from '@/ui/display/loader/components/Loader';
 import { MainButton } from '@/ui/input/button/MainButton';
-import { TextInput } from '@/ui/input/components/TextInput';
 import { isDefined } from '~/utils/isDefined';
 
 const StyledIframe = styled.iframe`
@@ -41,126 +39,132 @@ const StyledActionContainer = styled.div`
 `;
 
 const Sidepanel = () => {
-  const [isAuthenticating, setIsAuthenticating] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [iframeSrc, setIframeSrc] = useState(
+  const [clientUrl, setClientUrl] = useState(
     import.meta.env.VITE_FRONT_BASE_URL,
   );
-  const [error, setError] = useState('');
-  const [serverBaseUrl, setServerBaseUrl] = useState('');
-  const authenticate = () => {
-    setIsAuthenticating(true);
-    setError('');
-    chrome.runtime.sendMessage(
-      { action: 'launchOAuth' },
-      ({ status, message }) => {
-        if (status === true) {
-          setIsAuthenticated(true);
-          setIsAuthenticating(false);
-          chrome.storage.local.set({ isAuthenticated: true });
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  const setIframeState = useCallback(async () => {
+    const store = await chrome.storage.local.get([
+      'isAuthenticated',
+      'sidepanelUrl',
+      'clientUrl',
+      'accessToken',
+      'refreshToken',
+    ]);
+
+    if (
+      store.isAuthenticated === true &&
+      isDefined(store.accessToken) &&
+      isDefined(store.refreshToken) &&
+      new Date(store.accessToken.expiresAt).getTime() >= Date.now()
+    ) {
+      setIsAuthenticated(true);
+      if (isDefined(store.sidepanelUrl)) {
+        if (isDefined(store.clientUrl)) {
+          setClientUrl(`${store.clientUrl}${store.sidepanelUrl}`);
         } else {
-          setError(message);
-          setIsAuthenticating(false);
+          setClientUrl(
+            `${import.meta.env.VITE_FRONT_BASE_URL}${store.sidepanelUrl}`,
+          );
         }
-      },
-    );
-  };
+      }
+    } else {
+      chrome.storage.local.set({ isAuthenticated: false });
+      if (isDefined(store.clientUrl)) {
+        setClientUrl(store.clientUrl);
+      }
+    }
+  }, [setClientUrl]);
 
   useEffect(() => {
-    const getState = async () => {
-      const store = await chrome.storage.local.get();
-      if (isDefined(store.serverBaseUrl)) {
-        setServerBaseUrl(store.serverBaseUrl);
-      } else {
-        setServerBaseUrl(import.meta.env.VITE_SERVER_BASE_URL);
-      }
+    void setIframeState();
+  }, [setIframeState]);
 
-      if (store.isAuthenticated === true) setIsAuthenticated(true);
-      const { tab: activeTab } = await chrome.runtime.sendMessage({
-        action: 'getActiveTab',
-      });
+  useEffect(() => {
+    window.addEventListener('message', async (event) => {
+      const store = await chrome.storage.local.get([
+        'clientUrl',
+        'accessToken',
+        'refreshToken',
+      ]);
+      const clientUrl = isDefined(store.clientUrl)
+        ? store.clientUrl
+        : import.meta.env.VITE_FRONT_BASE_URL;
 
       if (
-        isDefined(activeTab) &&
-        isDefined(store[`sidepanelUrl_${activeTab.id}`])
+        isDefined(store.accessToken) &&
+        isDefined(store.refreshToken) &&
+        event.origin === clientUrl &&
+        event.data === 'loaded'
       ) {
-        const url = store[`sidepanelUrl_${activeTab.id}`];
-        setIframeSrc(url);
+        event.source?.postMessage(
+          {
+            type: 'tokens',
+            value: {
+              accessToken: {
+                token: store.accessToken.token,
+                expiresAt: store.accessToken.expiresAt,
+              },
+              refreshToken: {
+                token: store.refreshToken.token,
+                expiresAt: store.refreshToken.expiresAt,
+              },
+            },
+          },
+          clientUrl,
+        );
       }
-    };
-    void getState();
+    });
   }, []);
 
   useEffect(() => {
-    const handleBrowserEvents = ({ action }: { action: string }) => {
-      if (action === 'changeSidepanelUrl') {
-        setIframeSrc('');
+    chrome.storage.local.onChanged.addListener(async (updatedStore) => {
+      if (isDefined(updatedStore.isAuthenticated)) {
+        if (updatedStore.isAuthenticated.newValue === true) {
+          setIframeState();
+        }
       }
-    };
-    chrome.runtime.onMessage.addListener(handleBrowserEvents);
 
-    return () => {
-      chrome.runtime.onMessage.removeListener(handleBrowserEvents);
-    };
-  }, []);
+      if (isDefined(updatedStore.sidepanelUrl)) {
+        if (isDefined(updatedStore.sidepanelUrl.newValue)) {
+          const store = await chrome.storage.local.get(['clientUrl']);
+          const clientUrl = isDefined(store.clientUrl)
+            ? store.clientUrl
+            : import.meta.env.VITE_FRONT_BASE_URL;
 
-  useEffect(() => {
-    const getIframeState = async () => {
-      const store = await chrome.storage.local.get();
-      const { tab: activeTab } = await chrome.runtime.sendMessage({
-        action: 'getActiveTab',
-      });
-
-      if (
-        isDefined(activeTab) &&
-        isDefined(store[`sidepanelUrl_${activeTab.id}`])
-      ) {
-        const url = store[`sidepanelUrl_${activeTab.id}`];
-        setIframeSrc(url);
+          iframeRef.current?.contentWindow?.postMessage(
+            {
+              type: 'navigate',
+              value: updatedStore.sidepanelUrl.newValue,
+            },
+            clientUrl,
+          );
+        }
       }
-    };
-    void getIframeState();
-  }, [iframeSrc]);
-
-  const handleBaseUrlChange = (value: string) => {
-    setServerBaseUrl(value);
-    setError('');
-    chrome.storage.local.set({ serverBaseUrl: value });
-  };
+    });
+  }, [setIframeState]);
 
   return isAuthenticated ? (
-    <StyledIframe title="twenty-website" src={iframeSrc}></StyledIframe>
+    <StyledIframe
+      ref={iframeRef}
+      title="twenty-website"
+      src={clientUrl}
+    ></StyledIframe>
   ) : (
     <StyledWrapper>
       <StyledContainer>
         <img src="/logo/32-32.svg" alt="twenty-logo" height={40} width={40} />
-        {isAuthenticating ? (
-          <Loader />
-        ) : (
-          <StyledActionContainer>
-            <TextInput
-              label="Server URL"
-              value={serverBaseUrl}
-              onChange={handleBaseUrlChange}
-              placeholder="My base server URL"
-              error={error}
-              fullWidth
-            />
-            <MainButton
-              title="Connect your account"
-              onClick={() => authenticate()}
-              fullWidth
-            />
-            <MainButton
-              title="Sign up"
-              variant="secondary"
-              onClick={() =>
-                window.open(`${import.meta.env.VITE_FRONT_BASE_URL}`, '_blank')
-              }
-              fullWidth
-            />
-          </StyledActionContainer>
-        )}
+        <StyledActionContainer>
+          <MainButton
+            title="Connect your account"
+            fullWidth
+            onClick={() => {
+              window.open(clientUrl, '_blank');
+            }}
+          />
+        </StyledActionContainer>
       </StyledContainer>
     </StyledWrapper>
   );

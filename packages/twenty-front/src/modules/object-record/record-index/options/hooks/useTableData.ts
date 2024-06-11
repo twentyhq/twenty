@@ -26,7 +26,7 @@ export type UseTableDataOptions = {
   callback: (
     rows: ObjectRecord[],
     columns: ColumnDefinition<FieldMetadata>[],
-  ) => void;
+  ) => void | Promise<void>;
 };
 
 type ExportProgress = {
@@ -49,7 +49,6 @@ export const useTableData = ({
   const [progress, setProgress] = useState<ExportProgress>({
     displayType: 'number',
   });
-  const [hasNextPage, setHasNextPage] = useState(true);
   const [previousRecordCount, setPreviousRecordCount] = useState(0);
 
   const {
@@ -92,9 +91,6 @@ export const useTableData = ({
     useLazyFindManyRecords({
       ...usedFindManyParams,
       limit: pageSize,
-      onCompleted: (_data, options) => {
-        setHasNextPage(options?.pageInfo?.hasNextPage ?? false);
-      },
     });
 
   useEffect(() => {
@@ -116,24 +112,36 @@ export const useTableData = ({
       setInflight(false);
     };
 
-    if (!isDownloading || inflight) {
+    if (!isDownloading || inflight || loading) {
       return;
     }
 
-    if (!loading) {
-      if (
-        pageCount >= MAXIMUM_REQUESTS ||
-        records.length === previousRecordCount
-      ) {
-        callback(records, columns);
+    if (
+      pageCount >= MAXIMUM_REQUESTS ||
+      records.length === previousRecordCount
+    ) {
+      setPageCount(0);
+
+      const complete = () => {
+        setIsDownloading(false);
+        setProgress({
+          displayType: 'number',
+        });
+      };
+
+      const res = callback(records, columns);
+
+      if (res instanceof Promise) {
+        res.then(complete);
       } else {
-        fetchNextPage();
+        complete();
       }
+    } else {
+      fetchNextPage();
     }
   }, [
     delayMs,
     fetchMoreRecords,
-    hasNextPage,
     inflight,
     isDownloading,
     pageCount,
@@ -149,8 +157,10 @@ export const useTableData = ({
 
   return {
     progress,
-    download: () => {
+    isDownloading,
+    getTableData: () => {
       setPageCount(0);
+      setPreviousRecordCount(0);
       setIsDownloading(true);
       findManyRecords?.();
     },

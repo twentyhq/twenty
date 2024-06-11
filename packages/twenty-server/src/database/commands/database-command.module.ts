@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
 import { WorkspaceManagerModule } from 'src/engine/workspace-manager/workspace-manager.module';
@@ -14,17 +15,29 @@ import { StopDataSeedDemoWorkspaceCronCommand } from 'src/database/commands/data
 import { WorkspaceAddTotalCountCommand } from 'src/database/commands/workspace-add-total-count.command';
 import { DataSeedDemoWorkspaceCommand } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace-command';
 import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-demo-workspace/data-seed-demo-workspace.module';
+import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { UpdateMessageChannelVisibilityEnumCommand } from 'src/database/commands/update-message-channel-visibility-enum.command';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
+import { WorkspaceCacheVersionModule } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.module';
+import { UpdateMessageChannelSyncStatusEnumCommand } from 'src/database/commands/0-20-update-message-channel-sync-status-enum.command';
+import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 @Module({
   imports: [
     WorkspaceManagerModule,
     DataSourceModule,
     TypeORMModule,
+    TypeOrmModule.forFeature([Workspace], 'core'),
+    TypeOrmModule.forFeature(
+      [FieldMetadataEntity, ObjectMetadataEntity],
+      'metadata',
+    ),
     WorkspaceModule,
     WorkspaceDataSourceModule,
     WorkspaceSyncMetadataModule,
     ObjectMetadataModule,
     DataSeedDemoWorkspaceModule,
+    WorkspaceCacheVersionModule,
   ],
   providers: [
     DataSeedWorkspaceCommand,
@@ -33,6 +46,8 @@ import { DataSeedDemoWorkspaceModule } from 'src/database/commands/data-seed-dem
     ConfirmationQuestion,
     StartDataSeedDemoWorkspaceCronCommand,
     StopDataSeedDemoWorkspaceCronCommand,
+    UpdateMessageChannelVisibilityEnumCommand,
+    UpdateMessageChannelSyncStatusEnumCommand,
   ],
 })
 export class DatabaseCommandModule {}

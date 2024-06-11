@@ -89,7 +89,7 @@ export const ProfileCard = ({
   return (
     <ProfileContainer>
       <Avatar>
-        <img src={avatarUrl} alt={username} />
+        <img src={avatarUrl} alt={username} width={100} height={100} />
       </Avatar>
       <Details>
         <h3 className="username">

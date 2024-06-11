@@ -1,6 +1,4 @@
 import { useCallback, useContext } from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import qs from 'qs';
 import { useRecoilValue } from 'recoil';
@@ -13,11 +11,13 @@ import { usePersistField } from '@/object-record/record-field/hooks/usePersistFi
 import { FieldRelationMetadata } from '@/object-record/record-field/types/FieldMetadata';
 import { RecordDetailRelationRecordsList } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsList';
 import { RecordDetailRelationRecordsListEmptyState } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationRecordsListEmptyState';
+import { RecordDetailRelationSectionSkeletonLoader } from '@/object-record/record-show/record-detail-section/components/RecordDetailRelationSectionSkeletonLoader';
 import { RecordDetailSection } from '@/object-record/record-show/record-detail-section/components/RecordDetailSection';
 import { RecordDetailSectionHeader } from '@/object-record/record-show/record-detail-section/components/RecordDetailSectionHeader';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { SingleEntitySelectMenuItemsWithSearch } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItemsWithSearch';
+import { useAddNewRecordAndOpenRightDrawer } from '@/object-record/relation-picker/hooks/useAddNewRecordAndOpenRightDrawer';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { RelationPickerScope } from '@/object-record/relation-picker/scopes/RelationPickerScope';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
@@ -36,25 +36,6 @@ type RecordDetailRelationSectionProps = {
 const StyledAddDropdown = styled(Dropdown)`
   margin-left: auto;
 `;
-
-const StyledSkeletonDiv = styled.div`
-  height: 40px;
-`;
-
-const StyledRecordDetailRelationSectionSkeletonLoader = () => {
-  const theme = useTheme();
-  return (
-    <SkeletonTheme
-      baseColor={theme.background.tertiary}
-      highlightColor={theme.background.transparent.lighter}
-      borderRadius={4}
-    >
-      <StyledSkeletonDiv>
-        <Skeleton width={129} height={16} />
-      </StyledSkeletonDiv>
-    </SkeletonTheme>
-  );
-};
 
 export const RecordDetailRelationSection = ({
   loading,
@@ -92,7 +73,7 @@ export const RecordDetailRelationSection = ({
 
   const relationRecordIds = relationRecords.map(({ id }) => id);
 
-  const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}`;
+  const dropdownId = `record-field-card-relation-picker-${fieldDefinition.label}-${entityId}`;
 
   const { closeDropdown, isDropdownOpen } = useDropdown(dropdownId);
 
@@ -142,7 +123,11 @@ export const RecordDetailRelationSection = ({
 
   const showContent = () => {
     if (loading) {
-      return <StyledRecordDetailRelationSectionSkeletonLoader />;
+      return (
+        <RecordDetailRelationSectionSkeletonLoader
+          numSkeletons={fieldName === 'people' ? 2 : 1}
+        />
+      );
     }
 
     return relationRecords.length ? (
@@ -153,6 +138,14 @@ export const RecordDetailRelationSection = ({
       />
     );
   };
+
+  const { createNewRecordAndOpenRightDrawer } =
+    useAddNewRecordAndOpenRightDrawer({
+      relationObjectMetadataNameSingular,
+      relationObjectMetadataItem,
+      relationFieldMetadataItem,
+      entityId,
+    });
 
   return (
     <RecordDetailSection>
@@ -190,6 +183,7 @@ export const RecordDetailRelationSection = ({
                       relationObjectMetadataNameSingular
                     }
                     relationPickerScopeId={dropdownId}
+                    onCreate={createNewRecordAndOpenRightDrawer}
                   />
                 </RelationPickerScope>
               }

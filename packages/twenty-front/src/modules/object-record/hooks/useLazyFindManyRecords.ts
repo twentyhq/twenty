@@ -9,6 +9,7 @@ import { UseFindManyRecordsParams } from '@/object-record/hooks/useFindManyRecor
 import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useFindManyRecordsState } from '@/object-record/utils/useFindManyRecordsUtils';
+import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { isDefined } from '~/utils/isDefined';
 import { logError } from '~/utils/logError';
@@ -76,7 +77,7 @@ export const useLazyFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
         enqueueSnackBar(
           `Error during useFindManyRecords for "${objectMetadataItem.namePlural}", ${error.message}`,
           {
-            variant: 'error',
+            variant: SnackBarVariant.Error,
           },
         );
       },

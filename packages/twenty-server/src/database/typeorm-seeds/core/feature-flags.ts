@@ -41,12 +41,7 @@ export const seedFeatureFlags = async (
         value: true,
       },
       {
-        key: FeatureFlagKeys.IsGmailSyncV2Enabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKeys.IsLinksFieldEnabled,
+        key: FeatureFlagKeys.IsContactCreationForSentAndReceivedEmailsEnabled,
         workspaceId: workspaceId,
         value: true,
       },

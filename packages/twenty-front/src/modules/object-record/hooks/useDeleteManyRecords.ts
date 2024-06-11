@@ -86,7 +86,6 @@ export const useDeleteManyRecords = ({
               objectMetadataItems,
             });
           },
-      // refetchQueries: [getOperationName(findManyRecordsQuery) ?? ''],
     });
 
     return deletedRecords.data?.[mutationResponseField] ?? null;
@@ -98,17 +97,10 @@ export const useDeleteManyRecords = ({
     chunkSize = 30,
   ) => {
     const chunkedIds = chunkArray(idsToDelete, chunkSize);
-    console.log('debug:', { chunkedIds });
     return Promise.all(
-      // chunkedIds.map((ids) => deleteRecordsWithIds(ids, options)),
-      [
-        new Promise((resolve) =>
-          setTimeout(() => resolve([] as string[]), 1000),
-        ),
-      ],
+      chunkedIds.map((ids) => deleteRecordsWithIds(ids, options)),
     );
   };
-  // refetch?
 
   return { deleteManyRecords };
 };

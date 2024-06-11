@@ -4,6 +4,7 @@ import {
   IconCurrencyDollar,
   IconCurrencyEuro,
   IconCurrencyFrank,
+  IconCurrencyKroneCzech,
   IconCurrencyKroneSwedish,
   IconCurrencyPound,
   IconCurrencyRiyal,
@@ -44,6 +45,10 @@ export const SETTINGS_FIELD_CURRENCY_CODES: Record<
   CNY: {
     label: 'Chinese yuan',
     Icon: IconCurrencyYuan,
+  },
+  CZK: {
+    label: 'Czech koruna',
+    Icon: IconCurrencyKroneCzech,
   },
   HKD: {
     label: 'Hong Kong dollar',

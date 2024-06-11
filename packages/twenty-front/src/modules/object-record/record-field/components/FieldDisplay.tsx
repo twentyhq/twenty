@@ -1,6 +1,8 @@
 import { useContext } from 'react';
 
+import { BooleanFieldDisplay } from '@/object-record/record-field/meta-types/display/components/BooleanFieldDisplay';
 import { LinksFieldDisplay } from '@/object-record/record-field/meta-types/display/components/LinksFieldDisplay';
+import { isFieldBoolean } from '@/object-record/record-field/types/guards/isFieldBoolean';
 import { isFieldDisplayedAsPhone } from '@/object-record/record-field/types/guards/isFieldDisplayedAsPhone';
 import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldLinks';
 
@@ -37,17 +39,7 @@ import { isFieldSelect } from '../types/guards/isFieldSelect';
 import { isFieldText } from '../types/guards/isFieldText';
 import { isFieldUuid } from '../types/guards/isFieldUuid';
 
-type FieldDisplayProps = {
-  isCellSoftFocused?: boolean;
-  cellElement?: HTMLElement;
-  fromTableCell?: boolean;
-};
-
-export const FieldDisplay = ({
-  isCellSoftFocused,
-  cellElement,
-  fromTableCell,
-}: FieldDisplayProps) => {
+export const FieldDisplay = () => {
   const { fieldDefinition, isLabelIdentifier } = useContext(FieldContext);
 
   const isChipDisplay =
@@ -78,11 +70,7 @@ export const FieldDisplay = ({
   ) : isFieldLink(fieldDefinition) ? (
     <LinkFieldDisplay />
   ) : isFieldLinks(fieldDefinition) ? (
-    <LinksFieldDisplay
-      isCellSoftFocused={isCellSoftFocused}
-      cellElement={cellElement}
-      fromTableCell={fromTableCell}
-    />
+    <LinksFieldDisplay />
   ) : isFieldCurrency(fieldDefinition) ? (
     <CurrencyFieldDisplay />
   ) : isFieldFullName(fieldDefinition) ? (
@@ -90,14 +78,12 @@ export const FieldDisplay = ({
   ) : isFieldSelect(fieldDefinition) ? (
     <SelectFieldDisplay />
   ) : isFieldMultiSelect(fieldDefinition) ? (
-    <MultiSelectFieldDisplay
-      isCellSoftFocused={isCellSoftFocused}
-      cellElement={cellElement}
-      fromTableCell={fromTableCell}
-    />
+    <MultiSelectFieldDisplay />
   ) : isFieldAddress(fieldDefinition) ? (
     <AddressFieldDisplay />
   ) : isFieldRawJson(fieldDefinition) ? (
     <JsonFieldDisplay />
+  ) : isFieldBoolean(fieldDefinition) ? (
+    <BooleanFieldDisplay />
   ) : null;
 };

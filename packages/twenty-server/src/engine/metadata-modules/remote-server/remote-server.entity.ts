@@ -46,6 +46,9 @@ export class RemoteServerEntity<T extends RemoteServerType> {
   @Column({ type: 'text', nullable: true })
   foreignDataWrapperType: T;
 
+  @Column({ type: 'text', nullable: true })
+  label: string;
+
   @Column({ nullable: true, type: 'jsonb' })
   foreignDataWrapperOptions: ForeignDataWrapperOptions<T>;
 

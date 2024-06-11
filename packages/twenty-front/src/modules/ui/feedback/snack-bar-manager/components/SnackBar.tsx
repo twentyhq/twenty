@@ -7,6 +7,7 @@ import {
   IconInfoCircle,
   IconSquareRoundedCheck,
   IconX,
+  MOBILE_VIEWPORT,
 } from 'twenty-ui';
 
 import { ProgressBar } from '@/ui/feedback/progress-bar/components/ProgressBar';
@@ -39,7 +40,7 @@ export type SnackBarProps = Pick<
 };
 
 const StyledContainer = styled.div`
-  backdrop-filter: ${({ theme }) => theme.blur.light};
+  backdrop-filter: ${({ theme }) => theme.blur.medium};
   background-color: ${({ theme }) => theme.background.transparent.primary};
   border-radius: ${({ theme }) => theme.border.radius.md};
   box-shadow: ${({ theme }) => theme.boxShadow.strong};
@@ -49,6 +50,12 @@ const StyledContainer = styled.div`
   padding: ${({ theme }) => theme.spacing(2)};
   position: relative;
   width: 296px;
+  margin-top: ${({ theme }) => theme.spacing(2)};
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    border-radius: 0;
+    width: 100%;
+  }
 `;
 
 const StyledProgressBar = styled(ProgressBar)`
@@ -181,6 +188,7 @@ export const SnackBar = ({
         {title}
         <StyledActions>
           {!!onCancel && <LightButton title="Cancel" onClick={onCancel} />}
+
           {!!onClose && (
             <LightIconButton title="Close" Icon={IconX} onClick={onClose} />
           )}

@@ -2,6 +2,7 @@ import { act, renderHook } from '@testing-library/react';
 
 import { useCalendarEvents } from '@/activities/calendar/hooks/useCalendarEvents';
 import { CalendarEvent } from '@/activities/calendar/types/CalendarEvent';
+import { CalendarChannelVisibility } from '~/generated/graphql';
 
 const calendarEvents: CalendarEvent[] = [
   {
@@ -9,7 +10,7 @@ const calendarEvents: CalendarEvent[] = [
     externalCreatedAt: '2024-02-17T20:45:43.854Z',
     isFullDay: false,
     startsAt: '2024-02-17T21:45:27.822Z',
-    visibility: 'METADATA',
+    visibility: CalendarChannelVisibility.Metadata,
     __typename: 'CalendarEvent',
   },
   {
@@ -17,7 +18,7 @@ const calendarEvents: CalendarEvent[] = [
     externalCreatedAt: '2024-02-18T19:43:37.854Z',
     isFullDay: false,
     startsAt: '2024-02-18T21:43:27.754Z',
-    visibility: 'SHARE_EVERYTHING',
+    visibility: CalendarChannelVisibility.ShareEverything,
     __typename: 'CalendarEvent',
   },
   {
@@ -25,7 +26,7 @@ const calendarEvents: CalendarEvent[] = [
     externalCreatedAt: '2024-02-19T20:45:20.854Z',
     isFullDay: true,
     startsAt: '2024-02-19T22:05:27.653Z',
-    visibility: 'METADATA',
+    visibility: CalendarChannelVisibility.Metadata,
     __typename: 'CalendarEvent',
   },
   {
@@ -33,7 +34,7 @@ const calendarEvents: CalendarEvent[] = [
     externalCreatedAt: '2024-02-20T20:45:12.854Z',
     isFullDay: true,
     startsAt: '2024-02-20T23:15:23.150Z',
-    visibility: 'SHARE_EVERYTHING',
+    visibility: CalendarChannelVisibility.ShareEverything,
     __typename: 'CalendarEvent',
   },
 ];

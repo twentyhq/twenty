@@ -62,6 +62,41 @@ export class ConnectedAccountRepository {
     return connectedAccounts;
   }
 
+  public async getAllByUserId(
+    userId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<ConnectedAccountWorkspaceEntity>[] | undefined> {
+    const schemaExists =
+      await this.workspaceDataSourceService.checkSchemaExists(workspaceId);
+
+    if (!schemaExists) {
+      return;
+    }
+
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const workspaceMember = (
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT * FROM ${dataSourceSchema}."workspaceMember" WHERE "userId" = $1`,
+        [userId],
+        workspaceId,
+        transactionManager,
+      )
+    )?.[0];
+
+    if (!workspaceMember) {
+      return;
+    }
+
+    return await this.getAllByWorkspaceMemberId(
+      workspaceMember.id,
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async getAllByHandleAndWorkspaceMemberId(
     handle: string,
     workspaceMemberId: string,
@@ -253,5 +288,23 @@ export class ConnectedAccountRepository {
       workspaceId,
       transactionManager,
     );
+  }
+
+  public async getConnectedAccountOrThrow(
+    workspaceId: string,
+    connectedAccountId: string,
+  ): Promise<ObjectRecord<ConnectedAccountWorkspaceEntity>> {
+    const connectedAccount = await this.getById(
+      connectedAccountId,
+      workspaceId,
+    );
+
+    if (!connectedAccount) {
+      throw new Error(
+        `Connected account ${connectedAccountId} not found in workspace ${workspaceId}`,
+      );
+    }
+
+    return connectedAccount;
   }
 }

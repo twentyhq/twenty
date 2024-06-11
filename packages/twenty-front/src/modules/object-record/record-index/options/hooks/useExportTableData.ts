@@ -132,7 +132,7 @@ export const useExportTableData = ({
     [filename],
   );
 
-  return useTableData({
+  const { getTableData: download, progress } = useTableData({
     delayMs,
     maximumRequests,
     objectNameSingular,
@@ -140,4 +140,6 @@ export const useExportTableData = ({
     recordIndexId,
     callback: downloadCsv,
   });
+
+  return { progress, download };
 };

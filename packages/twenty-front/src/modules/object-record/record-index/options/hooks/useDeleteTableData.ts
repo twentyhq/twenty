@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback } from 'react';
 
 import { useDeleteManyRecords } from '@/object-record/hooks/useDeleteManyRecords';
 import { FieldMetadata } from '@/object-record/record-field/types/FieldMetadata';
@@ -6,12 +6,11 @@ import {
   useTableData,
   UseTableDataOptions,
 } from '@/object-record/record-index/options/hooks/useTableData';
+import { useRecordTable } from '@/object-record/record-table/hooks/useRecordTable';
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 
-type UseDeleteTableDataOptions = Omit<UseTableDataOptions, 'callback'> & {
-  callback?: () => void;
-};
+type UseDeleteTableDataOptions = Omit<UseTableDataOptions, 'callback'>;
 
 export const useDeleteTableData = ({
   delayMs,
@@ -19,21 +18,27 @@ export const useDeleteTableData = ({
   objectNameSingular,
   pageSize = 30,
   recordIndexId,
-  callback,
 }: UseDeleteTableDataOptions) => {
+  const { resetTableRowSelection } = useRecordTable({
+    recordTableId: recordIndexId,
+  });
+
   const { deleteManyRecords } = useDeleteManyRecords({ objectNameSingular });
 
-  const deleteRecords = useMemo(
-    () =>
-      (rows: ObjectRecord[], _columns: ColumnDefinition<FieldMetadata>[]) => {
-        const recordIds = rows.map((record) => record.id);
-        deleteManyRecords(recordIds);
-        callback?.();
-      },
-    [callback, deleteManyRecords],
+  const deleteRecords = useCallback(
+    async (
+      rows: ObjectRecord[],
+      _columns: ColumnDefinition<FieldMetadata>[],
+    ) => {
+      const recordIds = rows.map((record) => record.id);
+
+      await deleteManyRecords(recordIds);
+      resetTableRowSelection();
+    },
+    [deleteManyRecords, resetTableRowSelection],
   );
 
-  const { progress, download: deleteTableData } = useTableData({
+  const { getTableData: deleteTableData } = useTableData({
     delayMs,
     maximumRequests,
     objectNameSingular,
@@ -42,8 +47,5 @@ export const useDeleteTableData = ({
     callback: deleteRecords,
   });
 
-  return {
-    progress,
-    deleteTableData,
-  };
+  return { deleteTableData };
 };

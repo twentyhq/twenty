@@ -1,7 +1,6 @@
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-
-import { HOVER_BACKGROUND } from '@/ui/theme/constants/HoverBackground';
+import { HOVER_BACKGROUND } from 'twenty-ui';
 
 import { MenuItemAccent } from '../../types/MenuItemAccent';
 

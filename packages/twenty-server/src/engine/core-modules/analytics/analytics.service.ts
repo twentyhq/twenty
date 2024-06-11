@@ -4,7 +4,10 @@ import { HttpService } from '@nestjs/axios';
 import { anonymize } from 'src/utils/anonymize';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
 
-import { CreateAnalyticsInput } from './dto/create-analytics.input';
+type CreateEventInput = {
+  type: string;
+  data: object;
+};
 
 @Injectable()
 export class AnalyticsService {
@@ -16,7 +19,7 @@ export class AnalyticsService {
   ) {}
 
   async create(
-    createEventInput: CreateAnalyticsInput,
+    createEventInput: CreateEventInput,
     userId: string | undefined,
     workspaceId: string | undefined,
     workspaceDisplayName: string | undefined,

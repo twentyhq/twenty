@@ -1,4 +1,5 @@
 import { Meta, StoryObj } from '@storybook/react';
+import { within } from '@storybook/test';
 
 import {
   PageDecorator,
@@ -27,4 +28,14 @@ export default meta;
 
 export type Story = StoryObj<typeof RecordIndexPage>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await canvas.findByText('People');
+    await canvas.findAllByText('Companies');
+    await canvas.findByText('Opportunities');
+    await canvas.findByText('Listings');
+    await canvas.findByText('My Customs');
+  },
+};

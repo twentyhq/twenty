@@ -92,14 +92,19 @@ export const useRecordActionBar = ({
     recordIndexId: objectMetadataItem.namePlural,
   };
 
-  const { deleteTableData } = useDeleteTableData({
-    ...baseTableDataParams,
-    callback,
-  });
+  const { deleteTableData } = useDeleteTableData(baseTableDataParams);
 
   const handleDeleteClick = useCallback(async () => {
+    selectedRecordIds.forEach((recordId) => {
+      const foundFavorite = favorites?.find(
+        (favorite) => favorite.recordId === recordId,
+      );
+      if (foundFavorite !== undefined) {
+        deleteFavorite(foundFavorite.id);
+      }
+    });
     deleteTableData();
-  }, [deleteTableData]);
+  }, [deleteFavorite, deleteTableData, favorites, selectedRecordIds]);
 
   const handleExecuteQuickActionOnClick = useCallback(async () => {
     callback?.();

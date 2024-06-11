@@ -4,8 +4,8 @@ import { RowsChangeData } from 'react-data-grid';
 import styled from '@emotion/styled';
 import { IconTrash } from 'twenty-ui';
 
-import { ContinueButton } from '@/spreadsheet-import/components/ContinueButton';
 import { Heading } from '@/spreadsheet-import/components/Heading';
+import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { Table } from '@/spreadsheet-import/components/Table';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
 import { Data } from '@/spreadsheet-import/types';
@@ -64,12 +64,14 @@ type ValidationStepProps<T extends string> = {
   initialData: Data<T>[];
   file: File;
   onSubmitStart?: () => void;
+  onBack: () => void;
 };
 
 export const ValidationStep = <T extends string>({
   initialData,
   file,
   onSubmitStart,
+  onBack,
 }: ValidationStepProps<T>) => {
   const { enqueueDialog } = useDialogManager();
   const { fields, onClose, onSubmit, rowHook, tableHook } =
@@ -238,7 +240,11 @@ export const ValidationStep = <T extends string>({
           />
         </StyledScrollContainer>
       </StyledContent>
-      <ContinueButton onContinue={onContinue} title="Confirm" />
+      <StepNavigationButton
+        onClick={onContinue}
+        onBack={onBack}
+        title="Confirm"
+      />
     </>
   );
 };

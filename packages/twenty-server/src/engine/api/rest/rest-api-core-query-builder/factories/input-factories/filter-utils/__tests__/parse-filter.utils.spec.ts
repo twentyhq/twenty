@@ -51,25 +51,25 @@ describe('parseFilter', () => {
   it('should parse string filter test 4', () => {
     expect(
       parseFilter(
-        'and(fieldString[gt]:"val,ue",or(fieldNumber[is]:NOT_NULL,not(fieldString[startsWith]:"val"),and(fieldNumber[eq]:6,fieldString[ilike]:"%val%")),or(fieldNumber[eq]:4,fieldString[is]:NULL))',
+        'and(fieldText[gt]:"val,ue",or(fieldNumber[is]:NOT_NULL,not(fieldText[startsWith]:"val"),and(fieldNumber[eq]:6,fieldText[ilike]:"%val%")),or(fieldNumber[eq]:4,fieldText[is]:NULL))',
         objectMetadataItemMock,
       ),
     ).toEqual({
       and: [
-        { fieldString: { gt: 'val,ue' } },
+        { fieldText: { gt: 'val,ue' } },
         {
           or: [
             { fieldNumber: { is: 'NOT_NULL' } },
-            { not: { fieldString: { startsWith: 'val' } } },
+            { not: { fieldText: { startsWith: 'val' } } },
             {
               and: [
                 { fieldNumber: { eq: 6 } },
-                { fieldString: { ilike: '%val%' } },
+                { fieldText: { ilike: '%val%' } },
               ],
             },
           ],
         },
-        { or: [{ fieldNumber: { eq: 4 } }, { fieldString: { is: 'NULL' } }] },
+        { or: [{ fieldNumber: { eq: 4 } }, { fieldText: { is: 'NULL' } }] },
       ],
     });
   });

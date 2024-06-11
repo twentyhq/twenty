@@ -1,6 +1,6 @@
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { OrderBy } from '@/object-metadata/types/OrderBy';
-import { hasPositionField } from '@/object-metadata/utils/hasPositionColumn';
+import { hasPositionField } from '@/object-metadata/utils/hasPositionField';
 import { RecordGqlOperationOrderBy } from '@/object-record/graphql/types/RecordGqlOperationOrderBy';
 import { Field } from '~/generated/graphql';
 import { mapArrayToObject } from '~/utils/array/mapArrayToObject';

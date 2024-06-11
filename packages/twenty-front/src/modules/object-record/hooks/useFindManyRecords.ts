@@ -1,4 +1,5 @@
 import { useQuery, WatchQueryFetchPolicy } from '@apollo/client';
+import { onError } from '@apollo/client/link/error';
 import { useRecoilValue } from 'recoil';
 
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -26,6 +27,7 @@ export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
         totalCount?: number;
       },
     ) => void;
+    onError?: (error?: Error) => void;
     skip?: boolean;
     recordGqlFields?: RecordGqlOperationGqlRecordFields;
     fetchPolicy?: WatchQueryFetchPolicy;
@@ -92,6 +94,7 @@ export const useFindManyRecords = <T extends ObjectRecord = ObjectRecord>({
             variant: SnackBarVariant.Error,
           },
         );
+        onError?.(error);
       },
     });
 
