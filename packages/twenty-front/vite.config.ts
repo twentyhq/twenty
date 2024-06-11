@@ -50,18 +50,7 @@ export default defineConfig(({ command, mode }) => {
       svgr(),
       checker(checkers),
       wyw({
-        include: [ 
-          '**/CurrencyDisplay.tsx',
-          '**/EllipsisDisplay.tsx',
-          '**/ContactLink.tsx',
-          '**/BooleanDisplay.tsx',
-          '**/LinksDisplay.tsx',
-          '**/RoundedLink.tsx',
-          '**/OverflowingTextWithTooltip.tsx',
-          '**/Chip.tsx',
-          '**/Tag.tsx',
-          '**/MultiSelectFieldDisplay.tsx',
-        ],
+        include: ['**/EllipsisDisplay.tsx', '**/ContactLink.tsx'],
         babelOptions: {
           presets: ['@babel/preset-typescript', '@babel/preset-react'],
         },
