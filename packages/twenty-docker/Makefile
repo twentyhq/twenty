@@ -23,12 +23,6 @@ dev-postgres-build:
 	@docker volume rm twenty_db_data || true
 	@docker compose -f dev/docker-compose.yml up --build postgres -d
 
-prod-docs-build:
-	@cd ../.. && docker build -f ./packages/twenty-docker/twenty-docs/Dockerfile --tag twenty-docs . && cd -
-
-prod-docs-run:
-	@docker run -d -p 3000:3000 --name twenty-docs twenty-docs
-
 prod-build:
 	@cd ../.. && docker build -f ./packages/twenty-docker/twenty/Dockerfile --tag twenty . && cd -
 
@@ -46,14 +40,6 @@ prod-website-build:
 
 prod-website-run:
 	@docker run -d -p 3000:3000 --name twenty-website twenty-website
-
-release-docs:
-	@cd ../.. && docker buildx build \
-		--push \
-		--no-cache \
-		--platform linux/amd64,linux/arm64 \
-		-f ./packages/twenty-docker/twenty-docs/Dockerfile -t twentycrm/twenty-docs:$(version) -t twentycrm/twenty-docs:latest . \
-		&& cd -
 
 release-postgres:
 	@cd ../.. && docker buildx build \
