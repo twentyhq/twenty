@@ -4,7 +4,7 @@ import { DateTime } from 'luxon';
 import { useSetRecoilState } from 'recoil';
 
 import { ActivityActionBar } from '@/activities/right-drawer/components/ActivityActionBar';
-import { viewableActivityIdState } from '@/activities/states/viewableActivityIdState';
+import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { avatarUrl } from '~/testing/mock-data/users';
 
@@ -13,11 +13,11 @@ import { CommentHeader } from '../CommentHeader';
 import { mockComment, mockCommentWithLongValues } from './mock-comment';
 
 const CommentHeaderSetterEffect = () => {
-  const setViewableActivity = useSetRecoilState(viewableActivityIdState);
+  const setViewableRecord = useSetRecoilState(viewableRecordIdState);
 
   useEffect(() => {
-    setViewableActivity('test-id');
-  }, [setViewableActivity]);
+    setViewableRecord('test-id');
+  }, [setViewableRecord]);
 
   return null;
 };

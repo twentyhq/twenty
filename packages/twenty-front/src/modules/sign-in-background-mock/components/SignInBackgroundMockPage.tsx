@@ -20,7 +20,7 @@ const StyledTableContainer = styled.div`
 export const SignInBackgroundMockPage = () => {
   return (
     <PageContainer>
-      <PageHeader title="Objects" Icon={IconBuildingSkyscraper}>
+      <PageHeader title="Companies" Icon={IconBuildingSkyscraper}>
         <PageHotkeysEffect onAddButtonClick={() => {}} />
         <PageAddButton onClick={() => {}} />
       </PageHeader>

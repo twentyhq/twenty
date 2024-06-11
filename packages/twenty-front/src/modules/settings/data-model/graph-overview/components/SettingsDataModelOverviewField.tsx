@@ -15,10 +15,14 @@ type ObjectFieldRowProps = {
 const StyledRow = styled.div`
   align-items: center;
   display: flex;
-  gap: ${({ theme }) => theme.spacing(1)};
+  gap: ${({ theme }) => theme.spacing(2)};
   position: relative;
   width: 100%;
   padding: 0 ${({ theme }) => theme.spacing(2)};
+`;
+
+const StyledFieldName = styled.div`
+  color: ${({ theme }) => theme.font.color.primary};
 `;
 
 export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
@@ -37,7 +41,9 @@ export const ObjectFieldRow = ({ field }: ObjectFieldRowProps) => {
   return (
     <StyledRow>
       {Icon && <Icon size={theme.icon.size.md} />}
-      {capitalize(relatedObject?.namePlural ?? '')}
+      <StyledFieldName>
+        {capitalize(relatedObject?.namePlural ?? '')}
+      </StyledFieldName>
       <Handle
         type={field.toRelationMetadata ? 'source' : 'target'}
         position={Position.Right}

@@ -6,7 +6,6 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
-import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { sleep } from '~/testing/sleep';
 
@@ -14,7 +13,7 @@ const meta: Meta<PageDecoratorArgs> = {
   title:
     'Pages/Settings/Integrations/SettingsIntegrationEditDatabaseConnection',
   component: SettingsIntegrationEditDatabaseConnection,
-  decorators: [PrefetchLoadingDecorator, PageDecorator],
+  decorators: [PageDecorator],
   args: {
     routePath: '/settings/integrations/:databaseKey/edit',
     routeParams: {

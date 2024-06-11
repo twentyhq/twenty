@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { ContinueButton } from '@/spreadsheet-import/components/ContinueButton';
 import { Heading } from '@/spreadsheet-import/components/Heading';
+import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { Radio } from '@/ui/input/components/Radio';
 import { RadioGroup } from '@/ui/input/components/RadioGroup';
 import { Modal } from '@/ui/layout/modal/components/Modal';
@@ -27,11 +27,13 @@ const StyledRadioContainer = styled.div`
 type SelectSheetStepProps = {
   sheetNames: string[];
   onContinue: (sheetName: string) => Promise<void>;
+  onBack: () => void;
 };
 
 export const SelectSheetStep = ({
   sheetNames,
   onContinue,
+  onBack,
 }: SelectSheetStepProps) => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -53,15 +55,16 @@ export const SelectSheetStep = ({
         <StyledRadioContainer>
           <RadioGroup onValueChange={(value) => setValue(value)} value={value}>
             {sheetNames.map((sheetName) => (
-              <Radio value={sheetName} key={sheetName} />
+              <Radio value={sheetName} key={sheetName} label={sheetName} />
             ))}
           </RadioGroup>
         </StyledRadioContainer>
       </StyledContent>
-      <ContinueButton
+      <StepNavigationButton
+        onClick={() => handleOnContinue(value)}
+        onBack={onBack}
         isLoading={isLoading}
-        onContinue={() => handleOnContinue(value)}
-        title="Next"
+        title="Continue"
       />
     </>
   );

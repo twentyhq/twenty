@@ -7,14 +7,14 @@ import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownMenu } from '@/ui/layout/dropdown/components/DropdownMenu';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 
 type SettingsIntegrationDatabaseConnectionSummaryCardProps = {
   databaseLogoUrl: string;
   connectionId: string;
-  connectionName: string;
+  connectionLabel: string;
   onRemove: () => void;
-  onEdit: () => void;
 };
 
 const StyledDatabaseLogoContainer = styled.div`
@@ -32,9 +32,8 @@ const StyledDatabaseLogo = styled.img`
 export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
   databaseLogoUrl,
   connectionId,
-  connectionName,
+  connectionLabel,
   onRemove,
-  onEdit,
 }: SettingsIntegrationDatabaseConnectionSummaryCardProps) => {
   const dropdownId =
     'settings-integration-database-connection-summary-card-dropdown';
@@ -46,7 +45,7 @@ export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
           <StyledDatabaseLogoContainer>
             <StyledDatabaseLogo alt="" src={databaseLogoUrl} />
           </StyledDatabaseLogoContainer>
-          {connectionName}
+          {connectionLabel}
         </>
       }
       rightComponent={
@@ -69,11 +68,9 @@ export const SettingsIntegrationDatabaseConnectionSummaryCard = ({
                     text="Remove"
                     onClick={onRemove}
                   />
-                  <MenuItem
-                    LeftIcon={IconPencil}
-                    text="Edit"
-                    onClick={onEdit}
-                  />
+                  <UndecoratedLink to="./edit">
+                    <MenuItem LeftIcon={IconPencil} text="Edit" />
+                  </UndecoratedLink>
                 </DropdownMenuItemsContainer>
               </DropdownMenu>
             }

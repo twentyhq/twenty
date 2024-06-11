@@ -7,7 +7,6 @@ import { ActivityComments } from '@/activities/components/ActivityComments';
 import { ActivityCreationDate } from '@/activities/components/ActivityCreationDate';
 import { ActivityEditorFields } from '@/activities/components/ActivityEditorFields';
 import { ActivityTitleEffect } from '@/activities/components/ActivityTitleEffect';
-import { ActivityTypeDropdown } from '@/activities/components/ActivityTypeDropdown';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 
 import { ActivityTitle } from './ActivityTitle';
@@ -36,7 +35,7 @@ const StyledTitleContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: ${({ theme }) => theme.spacing(3)};
+  gap: ${({ theme }) => theme.spacing(2)};
 `;
 
 const StyledTopContainer = styled.div`
@@ -68,7 +67,6 @@ export const ActivityEditor = ({
     <StyledContainer ref={containerRef}>
       <StyledUpperPartContainer>
         <StyledTopContainer>
-          <ActivityTypeDropdown activityId={activityId} />
           <ActivityTitleEffect activityId={activityId} />
           <StyledTitleContainer>
             <ActivityTitle activityId={activityId} />

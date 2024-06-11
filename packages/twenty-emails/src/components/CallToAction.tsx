@@ -6,7 +6,7 @@ import { emailTheme } from 'src/common-style';
 const callToActionStyle = {
   display: 'flex',
   padding: '8px 32px',
-  borderRadius: '8px',
+  borderRadius: emailTheme.border.radius.md,
   border: `1px solid ${emailTheme.background.transparent.light}`,
   background: emailTheme.background.radialGradient,
   boxShadow: `0px 2px 4px 0px ${emailTheme.background.transparent.light}, 0px 0px 4px 0px ${emailTheme.background.transparent.medium}`,

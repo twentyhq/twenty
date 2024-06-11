@@ -6,6 +6,7 @@ import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus'
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { useCurrentTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useCurrentCellPosition';
+import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 import { CellHotkeyScopeContext } from '../../contexts/CellHotkeyScopeContext';
@@ -37,6 +38,7 @@ export const RecordTableCellContainer = ({
   editHotkeyScope,
 }: RecordTableCellContainerProps) => {
   const { setIsFocused } = useFieldFocus();
+  const { openTableCell } = useOpenRecordTableCellFromCell();
 
   const { isSelected, recordId, isPendingRow } = useContext(
     RecordTableRowContext,
@@ -69,6 +71,12 @@ export const RecordTableCellContainer = ({
 
   const handleContainerMouseLeave = () => {
     setIsHovered(false);
+  };
+
+  const handleContainerClick = () => {
+    if (!hasSoftFocus) {
+      openTableCell();
+    }
   };
 
   useEffect(() => {
@@ -129,6 +137,7 @@ export const RecordTableCellContainer = ({
           onMouseEnter={handleContainerMouseEnter}
           onMouseLeave={handleContainerMouseLeave}
           onMouseMove={handleContainerMouseEnter}
+          onClick={handleContainerClick}
           className={clsx({
             [styles.cellBaseContainer]: true,
             [styles.cellBaseContainerSoftFocus]: hasSoftFocus,

@@ -20,6 +20,7 @@ export const RecordIndexOptionsDropdown = ({
     <Dropdown
       dropdownId={RECORD_INDEX_OPTIONS_DROPDOWN_ID}
       clickableComponent={<RecordIndexOptionsDropdownButton />}
+      dropdownMenuWidth={'200px'}
       dropdownHotkeyScope={{ scope: TableOptionsHotkeyScope.Dropdown }}
       dropdownOffset={{ y: 8 }}
       dropdownComponents={

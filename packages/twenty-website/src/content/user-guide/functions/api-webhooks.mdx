@@ -1,0 +1,87 @@
+---
+title: API and Webhooks
+info: Learn how to manage API keys and Webhooks in Twenty.
+icon: IconApi
+image: /images/user-guide/api/api.png
+sectionInfo: Learn how to connect Twenty to your other tools.
+---
+
+## API Keys
+
+API keys allow automated access to your CRM data, synchronize data with other systems, and create custom integrations or solutions. 
+
+For example, you can use them to retrieve details of a specific `Person` or `Company` record, such as their name or address.
+
+### Generate an API key
+
+1. Go to Settings in the sidebar on the left.
+2. Under Workspace, go to Developers. Here, you'll see a list of active keys that you or your team have created.
+3. To generate a new key, click on `+ Create key` at the top right. 
+4. Give your API key a name, an expiration date, and a logo.
+5. Hit save to see your API key. 
+6. Since the key is only visible once, make sure you store it somewhere safe. 
+
+<ArticleWarning>
+Since your API key gives access to sensitive information, you shouldn't share it with services you don't fully trust. If leaked, someone can use it maliciously. If your API key's security is compromised, immediately disable it and generate a new one.
+</ArticleWarning>
+<div style={{padding:'70.59% 0 0 0', position:'relative', margin: '32px 0px 0px' }}>
+  <iframe 
+    src="https://player.vimeo.com/video/928786722?autoplay=1&loop=1&autopause=0&background=1&amp;app_id=58479" 
+    frameBorder="0" 
+    allow="autoplay; fullscreen; picture-in-picture; clipboard-write" 
+    style={{
+      position:'absolute',
+      top:0,
+      left:0,
+      width:'100%',
+      height:'100%',
+      borderRadius: '16px', 
+      border:'2px solid black'
+    }}
+    title="Export data"
+  ></iframe>
+</div>
+<script src="https://player.vimeo.com/api/player.js"></script>
+
+
+### Regenerating an API key
+
+To regenerate an API key, click on the key you want to regenerate. You'll then be able to see a button to regenerate the API key.
+
+## Webhooks
+
+Webhooks allow for immediate updates to your specified URL about changes or events related to your customer data.
+
+For instance, a webhook can alert your system in real-time when someone creates a new person record or updates an existing note.
+
+### Creating Webhooks
+
+1. From Settings -> Developers, click `+` Create webhook.
+2. Enter your URL.
+3. Click Save.
+
+<div style={{padding:'70.59% 0 0 0', position:'relative', margin: '32px 0px 0px'}}>
+  <iframe 
+    src="https://player.vimeo.com/video/928786708?autoplay=1&loop=1&autopause=0&background=1&amp;app_id=58479" 
+    frameBorder="0" 
+    allow="autoplay; fullscreen; picture-in-picture; clipboard-write" 
+    style={{
+      position:'absolute',
+      top:0,
+      left:0,
+      width:'100%',
+      height:'100%',
+      borderRadius: '16px', 
+      border:'2px solid black'
+    }}
+    title="Export data"
+  ></iframe>
+</div>
+<script src="https://player.vimeo.com/api/player.js"></script>
+
+### Deleting Webhooks
+
+1. In Developers, find your webhook.
+2. Click on your webhook and press **Delete** to remove it. A confirmation popup will appear to confirm.
+
+<ArticleEditContent></ArticleEditContent>
