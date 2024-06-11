@@ -8,7 +8,7 @@ import {
   RunnableSequence,
 } from '@langchain/core/runnables';
 import { StringOutputParser } from '@langchain/core/output_parsers';
-import { CallbackHandler } from 'langfuse-langchain';
+import { CallbackHandler, Langfuse } from 'langfuse-langchain';
 
 import { TextToSQLQueryResult } from 'src/engine/core-modules/text-to-sql/dtos/text-to-sql-query-result.dto';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
@@ -39,12 +39,15 @@ export class TextToSQLService {
       sampleRowsInTableInfo: 0,
     });
 
-    const prompt =
-      PromptTemplate.fromTemplate(`Based on the table schema below, write an SQL query that would answer the user's question:
-      {schema}
-      
-      Question: {question}
-      SQL Query:`);
+    const langfuse = new Langfuse();
+
+    if (!process.env.LANGFUSE_ASK_AI_PROMPT_NAME) throw new Error();
+
+    const promptTemplate = PromptTemplate.fromTemplate(
+      (
+        await langfuse.getPrompt(process.env.LANGFUSE_ASK_AI_PROMPT_NAME)
+      ).getLangchainPrompt(),
+    );
 
     const model = new ChatOpenAI();
 
@@ -52,7 +55,7 @@ export class TextToSQLService {
       RunnablePassthrough.assign({
         schema: async () => db.getTableInfo(),
       }),
-      prompt,
+      promptTemplate,
       model.bind({ stop: ['\nSQLResult:'] }),
       new StringOutputParser(),
     ]);
