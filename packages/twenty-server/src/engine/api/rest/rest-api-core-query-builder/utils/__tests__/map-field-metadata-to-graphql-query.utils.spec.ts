@@ -14,7 +14,7 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
     ).toEqual('fieldNumber');
     expect(
       mapFieldMetadataToGraphqlQuery(objectMetadataItemMock, fieldTextMock),
-    ).toEqual('fieldString');
+    ).toEqual('fieldText');
     expect(
       mapFieldMetadataToGraphqlQuery(objectMetadataItemMock, fieldLinkMock),
     ).toEqual(`
