@@ -65,12 +65,13 @@ export const SelectFieldInput = ({
   useScopedHotkeys(
     Key.Enter,
     () => {
-      const selectedOption = optionsInDropDown.find(
-        (option) =>
-          option.value !== fieldValue &&
-          option.label.toLowerCase().includes(searchFilter.toLowerCase()),
+      const selectedOption = optionsInDropDown.find((option) =>
+        option.label.toLowerCase().includes(searchFilter.toLowerCase()),
       );
-      selectedOption && onSubmit?.(() => persistField(selectedOption.value));
+
+      if (isDefined(selectedOption)) {
+        onSubmit?.(() => persistField(selectedOption.value));
+      }
     },
     hotkeyScope,
   );
