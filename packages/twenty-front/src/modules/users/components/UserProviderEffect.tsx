@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import { currentUserState } from '@/auth/states/currentUserState';
@@ -6,6 +6,8 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCurrentUserLoadedState } from '@/auth/states/isCurrentUserLoadingState';
 import { workspacesState } from '@/auth/states/workspaces';
+import { DateFormat } from '@/workspace-member/constants/DateFormat';
+import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
 import { formatDateLabel } from '@/workspace-member/utils/formatDateLabel';
@@ -48,12 +50,16 @@ export const UserProviderEffect = () => {
     if (isDefined(workspaceMember)) {
       setCurrentWorkspaceMember({
         ...workspaceMember,
-        timeZone:
-          workspaceMember.timeZone === 'system'
+        preferredTimeZone:
+          workspaceMember.preferredTimeZone === 'system'
             ? detectTimeZone()
-            : workspaceMember.timeZone,
-        dateFormat: formatDateLabel(workspaceMember.dateFormat),
-        timeFormat: formatTimeLabel(workspaceMember.timeFormat),
+            : workspaceMember.preferredTimeZone,
+        preferredDateFormat: formatDateLabel(
+          workspaceMember.preferredDateFormat,
+        ) as DateFormat,
+        preferredTimeFormat: formatTimeLabel(
+          workspaceMember.preferredTimeFormat,
+        ) as TimeFormat,
         colorScheme: (workspaceMember.colorScheme as ColorScheme) ?? 'Light',
       });
     }

@@ -12,9 +12,9 @@ export type WorkspaceMember = {
   };
   avatarUrl?: string | null;
   locale: string;
-  timeZone: string;
-  dateFormat: DateFormat;
-  timeFormat: TimeFormat;
+  preferredTimeZone: string;
+  preferredDateFormat: DateFormat;
+  preferredTimeFormat: TimeFormat;
   colorScheme?: ColorScheme;
   createdAt: string;
   updatedAt: string;

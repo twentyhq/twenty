@@ -12,12 +12,12 @@ export const detectDateFormat = () => {
   });
   switch (dateString.charAt(0)) {
     case '1':
-      return DateFormat.MonthFirst;
+      return DateFormat.MONTH_FIRST;
     case '9':
-      return DateFormat.DayFirst;
+      return DateFormat.DAY_FIRST;
     case '2':
-      return DateFormat.YearFirst;
+      return DateFormat.YEAR_FIRST;
     default:
-      return DateFormat.MonthFirst;
+      return DateFormat.MONTH_FIRST;
   }
 };

@@ -1,5 +1,5 @@
 export enum DateFormat {
-  MonthFirst = 'MMM	d, yyyy',
-  DayFirst = 'd MMM, yyyy',
-  YearFirst = 'yyyy MMM d',
+  MONTH_FIRST = 'MMM	d, yyyy',
+  DAY_FIRST = 'd MMM, yyyy',
+  YEAR_FIRST = 'yyyy MMM d',
 }

@@ -61,9 +61,9 @@ const workspaceMember: WorkspaceMember = {
   userId: 'e2409670-1088-46b4-858e-f20a598d9d0f',
   userEmail: 'charles@test.com',
   colorScheme: 'Light',
-  timeZone: 'system',
-  dateFormat: DateFormat.MonthFirst,
-  timeFormat: TimeFormat.Military,
+  preferredTimeZone: 'system',
+  preferredDateFormat: DateFormat.MONTH_FIRST,
+  preferredTimeFormat: TimeFormat.MILITARY,
 };
 
 export const mockedTasks: Array<MockedActivity> = [

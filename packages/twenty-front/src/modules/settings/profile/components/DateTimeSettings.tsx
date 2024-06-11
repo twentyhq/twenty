@@ -26,13 +26,13 @@ export const DateTimeSettings = () => {
     currentWorkspaceMemberState,
   );
   const [timeZone, setTimeZone] = useState(
-    currentWorkspaceMember?.timeZone ?? detectTimeZone(),
+    currentWorkspaceMember?.preferredTimeZone ?? detectTimeZone(),
   );
   const [dateFormat, setDateFormat] = useState(
-    currentWorkspaceMember?.dateFormat ?? DateFormat.MonthFirst,
+    currentWorkspaceMember?.preferredDateFormat ?? DateFormat.MONTH_FIRST,
   );
   const [timeFormat, setTimeFormat] = useState(
-    currentWorkspaceMember?.timeFormat ?? TimeFormat.Military,
+    currentWorkspaceMember?.preferredTimeFormat ?? TimeFormat.MILITARY,
   );
 
   const { updateOneRecord } = useUpdateOneRecord({
@@ -63,14 +63,14 @@ export const DateTimeSettings = () => {
     }
     const changedFields: any = {};
 
-    if (timeZone !== currentWorkspaceMember.timeZone) {
-      changedFields.timeZone = timeZone;
+    if (timeZone !== currentWorkspaceMember.preferredTimeZone) {
+      changedFields.preferredTimeZone = timeZone;
     }
-    if (dateFormat !== currentWorkspaceMember.dateFormat) {
-      changedFields.dateFormat = dateFormat;
+    if (dateFormat !== currentWorkspaceMember.preferredDateFormat) {
+      changedFields.preferredDateFormat = dateFormat;
     }
-    if (timeFormat !== currentWorkspaceMember.timeFormat) {
-      changedFields.timeFormat = timeFormat;
+    if (timeFormat !== currentWorkspaceMember.preferredTimeFormat) {
+      changedFields.preferredTimeFormat = timeFormat;
     }
 
     if (!isEmptyObject(changedFields)) {

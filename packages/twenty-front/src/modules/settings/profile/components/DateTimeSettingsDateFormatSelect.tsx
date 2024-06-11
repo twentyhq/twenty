@@ -21,16 +21,16 @@ export const DateTimeSettingsDateFormatSelect = ({
     value={value}
     options={[
       {
-        label: formatInTimeZone(Date.now(), timeZone, DateFormat.MonthFirst),
-        value: DateFormat.MonthFirst,
+        label: formatInTimeZone(Date.now(), timeZone, DateFormat.MONTH_FIRST),
+        value: DateFormat.MONTH_FIRST,
       },
       {
-        label: formatInTimeZone(Date.now(), timeZone, DateFormat.DayFirst),
-        value: DateFormat.DayFirst,
+        label: formatInTimeZone(Date.now(), timeZone, DateFormat.DAY_FIRST),
+        value: DateFormat.DAY_FIRST,
       },
       {
-        label: formatInTimeZone(Date.now(), timeZone, DateFormat.YearFirst),
-        value: DateFormat.YearFirst,
+        label: formatInTimeZone(Date.now(), timeZone, DateFormat.YEAR_FIRST),
+        value: DateFormat.YEAR_FIRST,
       },
     ]}
     onChange={onChange}

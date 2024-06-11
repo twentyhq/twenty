@@ -22,6 +22,8 @@ import { isDebugModeState } from '@/client-config/states/isDebugModeState';
 import { isSignInPrefilledState } from '@/client-config/states/isSignInPrefilledState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { telemetryState } from '@/client-config/states/telemetryState';
+import { DateFormat } from '@/workspace-member/constants/DateFormat';
+import { TimeFormat } from '@/workspace-member/constants/TimeFormat';
 import { ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { detectTimeZone } from '@/workspace-member/utils/detectTimeZone';
 import { formatDateLabel } from '@/workspace-member/utils/formatDateLabel';
@@ -104,12 +106,16 @@ export const useAuth = () => {
       if (isDefined(user.workspaceMember)) {
         workspaceMember = {
           ...user.workspaceMember,
-          timeZone:
-            user.workspaceMember.timeZone !== 'system'
-              ? user.workspaceMember.timeZone
+          preferredTimeZone:
+            user.workspaceMember.preferredTimeZone !== 'system'
+              ? user.workspaceMember.preferredTimeZone
               : detectTimeZone(),
-          dateFormat: formatDateLabel(user.workspaceMember.dateFormat),
-          timeFormat: formatTimeLabel(user.workspaceMember.timeFormat),
+          preferredDateFormat: formatDateLabel(
+            user.workspaceMember.preferredDateFormat,
+          ) as DateFormat,
+          preferredTimeFormat: formatTimeLabel(
+            user.workspaceMember.preferredTimeFormat,
+          ) as TimeFormat,
           colorScheme: user.workspaceMember?.colorScheme as ColorScheme,
         };
         setCurrentWorkspaceMember(workspaceMember);

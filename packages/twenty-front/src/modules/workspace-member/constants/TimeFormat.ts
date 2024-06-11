@@ -1,4 +1,4 @@
 export enum TimeFormat {
-  'Military' = 'HH:mm',
-  'Standard' = 'h:mm aa',
+  MILITARY = 'HH:mm',
+  STANDARD = 'h:mm aa',
 }

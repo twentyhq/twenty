@@ -20,13 +20,13 @@ export const SettingsAccountsCalendarDisplaySettings = () => {
   const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
 
   const [timeZone, setTimeZone] = useState(
-    currentWorkspaceMember?.timeZone ?? detectTimeZone(),
+    currentWorkspaceMember?.preferredTimeZone ?? detectTimeZone(),
   );
   const [dateFormat, setDateFormat] = useState(
-    currentWorkspaceMember?.dateFormat ?? DateFormat.MonthFirst,
+    currentWorkspaceMember?.preferredDateFormat ?? DateFormat.MONTH_FIRST,
   );
   const [timeFormat, setTimeFormat] = useState(
-    currentWorkspaceMember?.timeFormat ?? TimeFormat.Military,
+    currentWorkspaceMember?.preferredTimeFormat ?? TimeFormat.MILITARY,
   );
 
   return (

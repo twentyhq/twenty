@@ -28,16 +28,16 @@ import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-re
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 
 export enum DateFormat {
-  'SYSTEM' = 'system',
-  'MMM_D_YYYY' = 'MMM_d_yyyy',
-  'D_MMM_YYYY' = 'd_MMM_yyyy',
-  'YYYY_MMM_D' = 'yyyy_MMM_d',
+  SYSTEM = 'system',
+  MONTH_FIRST = 'MMM_d_yyyy',
+  DAY_FIRST = 'd_MMM_yyyy',
+  YEAR_FIRST = 'yyyy_MMM_d',
 }
 
 export enum TimeFormat {
-  'SYSTEM' = 'system',
-  'HH_mm' = 'HH_mm',
-  'h_mm_aa' = 'h_mm_aa',
+  SYSTEM = 'system',
+  MILITARY = 'HH_mm',
+  STANDARD = 'h_mm_aa',
 }
 
 @WorkspaceEntity({
@@ -108,45 +108,45 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   userId: string;
 
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeZone,
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.preferredTimeZone,
     type: FieldMetadataType.TEXT,
     label: 'Time zone',
     defaultValue: "'system'",
     description: 'User time zone',
     icon: 'IconTimezone',
   })
-  timeZone: string;
+  preferredTimeZone: string;
 
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.dateFormat,
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.preferredDateFormat,
     type: FieldMetadataType.SELECT,
     label: 'Date format',
     description: "User's preferred date format",
     icon: 'IconCalendarEvent',
     options: [
-      { value: DateFormat['SYSTEM'], label: 'System', position: 0, color: 'turquoise'  },
-      { value: DateFormat['MMM_D_YYYY'], label: 'Month First', position: 1, color: 'red' },
-      { value: DateFormat['D_MMM_YYYY'], label: 'Day First', position: 2, color: 'purple' },
-      { value: DateFormat['YYYY_MMM_D'], label: 'Year First', position: 3, color: 'sky' },
+      { value: DateFormat.SYSTEM, label: 'System', position: 0, color: 'turquoise' },
+      { value: DateFormat.MONTH_FIRST, label: 'Month First', position: 1, color: 'red' },
+      { value: DateFormat.DAY_FIRST, label: 'Day First', position: 2, color: 'purple' },
+      { value: DateFormat.YEAR_FIRST, label: 'Year First', position: 3, color: 'sky' },
     ],
-    defaultValue: `'${DateFormat['SYSTEM']}'`,
+    defaultValue: `'${DateFormat.SYSTEM}'`,
   })
-  dateFormat: string;
+  preferredDateFormat: string;
 
   @WorkspaceField({
-    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.timeFormat,
+    standardId: WORKSPACE_MEMBER_STANDARD_FIELD_IDS.preferredTimeFormat,
     type: FieldMetadataType.SELECT,
     label: 'Time format',
     description: "User's preferred time format",
     icon: 'IconClock2',
     options: [
-      { value: TimeFormat['SYSTEM'], label: 'System', position: 0, color: 'sky' },
-      { value: TimeFormat['HH_mm'], label: 'Military', position: 1, color: 'red' },
-      { value: TimeFormat['h_mm_aa'], label: 'Standard', position: 2, color: 'purple' },
+      { value: TimeFormat.SYSTEM, label: 'System', position: 0, color: 'sky' },
+      { value: TimeFormat.MILITARY, label: 'Military', position: 1, color: 'red' },
+      { value: TimeFormat.STANDARD, label: 'Standard', position: 2, color: 'purple' },
     ],
-    defaultValue: `'${TimeFormat['SYSTEM']}'`,
+    defaultValue: `'${TimeFormat.SYSTEM}'`,
   })
-  timeFormat: string;
+  preferredTimeFormat: string;
 
   // Relations
   @WorkspaceRelation({
