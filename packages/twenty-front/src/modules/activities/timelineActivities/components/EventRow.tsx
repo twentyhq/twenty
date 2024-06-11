@@ -30,6 +30,7 @@ const StyledIconContainer = styled.div`
   user-select: none;
   text-decoration-line: underline;
   z-index: 2;
+  align-self: normal;
 `;
 
 const StyledItemContainer = styled.div`
