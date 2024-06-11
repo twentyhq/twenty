@@ -70,7 +70,7 @@ export const EventRowMainObjectUpdated = ({
   const diff: Record<string, { before: any; after: any }> =
     event.properties?.diff;
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
 
   const fieldMetadataItemMap: Record<string, FieldMetadataItem> =
     mainObjectMetadataItem.fields.reduce(
