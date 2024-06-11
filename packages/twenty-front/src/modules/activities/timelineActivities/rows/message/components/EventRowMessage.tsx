@@ -41,7 +41,7 @@ export const EventRowMessage: React.FC<EventRowMessageProps> = ({
         return (
           <>
             <StyledItemAuthorText>{authorFullName}</StyledItemAuthorText>
-            <StyledItemAction>linked an email to</StyledItemAction>
+            <StyledItemAction>linked an email with</StyledItemAction>
             <StyledItemLabelIdentifier>
               {labelIdentifierValue}
             </StyledItemLabelIdentifier>
