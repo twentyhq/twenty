@@ -82,7 +82,7 @@ export class MessageChannelMessageAssociationRepository {
     const messageChannels =
       await this.workspaceDataSourceService.executeRawQuery(
         `SELECT * FROM ${dataSourceSchema}."messageChannel"
-    WHERE "id" = ANY($1)`,
+        WHERE "id" = ANY($1)`,
         [messageChannelIds],
         workspaceId,
         transactionManager,
