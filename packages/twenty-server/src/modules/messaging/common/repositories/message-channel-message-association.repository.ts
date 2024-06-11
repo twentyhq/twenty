@@ -67,9 +67,9 @@ export class MessageChannelMessageAssociationRepository {
     );
   }
 
-  public async deleteByMessageParticipantHandleAndMessageChannelIdsAndRoles(
+  public async deleteByMessageParticipantHandleAndMessageChannelIdAndRoles(
     messageParticipantHandle: string,
-    messageChannelIds: string[],
+    messageChannelId: string,
     rolesToDelete: ('from' | 'to' | 'cc' | 'bcc')[],
     workspaceId: string,
     transactionManager?: EntityManager,
@@ -79,18 +79,16 @@ export class MessageChannelMessageAssociationRepository {
 
     const isHandleDomain = messageParticipantHandle.startsWith('@');
 
-    const messageChannels =
+    const messageChannel =
       await this.workspaceDataSourceService.executeRawQuery(
         `SELECT * FROM ${dataSourceSchema}."messageChannel"
-        WHERE "id" = ANY($1)`,
-        [messageChannelIds],
+        WHERE "id" = $1`,
+        [messageChannelId],
         workspaceId,
         transactionManager,
       );
 
-    const messageChannelHandles = messageChannels.map(
-      (messageChannel: { handle: string }) => messageChannel.handle,
-    );
+    const messageChannelHandle = messageChannel[0].handle;
 
     const messageChannelMessageAssociationIdsToDelete =
       await this.workspaceDataSourceService.executeRawQuery(
@@ -98,18 +96,18 @@ export class MessageChannelMessageAssociationRepository {
       FROM ${dataSourceSchema}."messageChannelMessageAssociation" "messageChannelMessageAssociation"
       JOIN ${dataSourceSchema}."message" ON "messageChannelMessageAssociation"."messageId" = ${dataSourceSchema}."message"."id"
       JOIN ${dataSourceSchema}."messageParticipant" "messageParticipant" ON ${dataSourceSchema}."message"."id" = "messageParticipant"."messageId"
-      WHERE "messageParticipant"."handle" != ALL($1)
+      WHERE "messageParticipant"."handle" != $1
       AND "messageParticipant"."handle" ${isHandleDomain ? '~*' : '='} $2
       AND "messageParticipant"."role" = ANY($3)
-      AND "messageChannelMessageAssociation"."messageChannelId" = ANY($4)`,
+      AND "messageChannelMessageAssociation"."messageChannelId" = $4`,
         [
-          messageChannelHandles,
+          messageChannelHandle,
           isHandleDomain
             ? // eslint-disable-next-line no-useless-escape
               `.+@(.+\.)?${messageParticipantHandle.slice(1)}`
             : messageParticipantHandle,
           rolesToDelete,
-          messageChannelIds,
+          messageChannelId,
         ],
         workspaceId,
         transactionManager,
