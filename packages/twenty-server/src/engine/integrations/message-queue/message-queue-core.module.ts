@@ -1,4 +1,10 @@
-import { DynamicModule, Global, Module, Provider } from '@nestjs/common';
+import {
+  DynamicModule,
+  Global,
+  Logger,
+  Module,
+  Provider,
+} from '@nestjs/common';
 
 import { MessageQueueDriver } from 'src/engine/integrations/message-queue/drivers/interfaces/message-queue-driver.interface';
 
@@ -21,6 +27,8 @@ import {
 @Global()
 @Module({})
 export class MessageQueueCoreModule extends ConfigurableModuleClass {
+  private static readonly logger = new Logger(MessageQueueCoreModule.name);
+
   static register(options: typeof OPTIONS_TYPE): DynamicModule {
     const dynamicModule = super.register(options);
 
@@ -88,7 +96,14 @@ export class MessageQueueCoreModule extends ConfigurableModuleClass {
       case MessageQueueDriverType.BullMQ: {
         return new BullMQDriver(options);
       }
+      case MessageQueueDriverType.Sync: {
+        return new SyncDriver();
+      }
       default: {
+        this.logger.warn(
+          `Unsupported message queue driver type: ${type}. Using SyncDriver by default.`,
+        );
+
         return new SyncDriver();
       }
     }
