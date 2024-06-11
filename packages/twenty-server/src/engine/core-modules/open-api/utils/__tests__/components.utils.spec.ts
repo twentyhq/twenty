@@ -102,12 +102,6 @@ describe('computeSchemaComponents', () => {
             type: 'string',
             enum: ['OPTION_1', 'OPTION_2'],
           },
-          fieldRelation: {
-            type: 'array',
-            items: {
-              $ref: '#/components/schemas/ToObjectMetadataName',
-            },
-          },
           fieldPosition: {
             type: 'number',
           },
@@ -151,7 +145,14 @@ describe('computeSchemaComponents', () => {
             $ref: '#/components/schemas/ObjectName',
           },
           {
-            properties: {},
+            properties: {
+              fieldRelation: {
+                type: 'array',
+                items: {
+                  $ref: '#/components/schemas/ToObjectMetadataName',
+                },
+              },
+            },
             type: 'object',
           },
         ],
