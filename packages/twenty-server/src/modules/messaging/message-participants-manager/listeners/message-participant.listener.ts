@@ -56,7 +56,7 @@ export class MessageParticipantListener {
       'person',
       messageParticipantsWithPersonId.map((participant) => ({
         dataSourceSchema,
-        name: 'message.participated',
+        name: 'message.matched',
         properties: null,
         objectName: 'message',
         recordId: participant.personId,

@@ -55,7 +55,7 @@ export class CalendarEventParticipantListener {
       'person',
       calendarEventParticipantsWithPersonId.map((participant) => ({
         dataSourceSchema,
-        name: 'calendarEvent.participated',
+        name: 'calendarEvent.matched',
         properties: null,
         objectName: 'calendarEvent',
         recordId: participant.personId,

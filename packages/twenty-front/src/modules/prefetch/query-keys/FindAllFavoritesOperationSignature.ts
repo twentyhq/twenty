@@ -5,9 +5,4 @@ export const FIND_ALL_FAVORITES_OPERATION_SIGNATURE: RecordGqlOperationSignature
   {
     objectNameSingular: CoreObjectNameSingular.Favorite,
     variables: {},
-    fields: {
-      id: true,
-      objectName: true,
-      objectId: true,
-    },
   };
