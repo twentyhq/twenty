@@ -1,0 +1,454 @@
+---
+title: Menu Item
+icon: TbMenu
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+A versatile menu item designed to be used in a menu or navigation list. 
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { IconBell } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { MenuItem } from "@/ui/navigation/menu-item/components/MenuItem";
+
+export const MyComponent = () => {
+  const handleMenuItemClick = (event) => {
+    console.log("Menu item clicked!", event);
+  };
+
+  const handleButtonClick = (event) => {
+    console.log("Icon button clicked!", event);
+  };
+
+  return (
+    <MenuItem
+      LeftIcon={IconBell}
+      accent="default"
+      text="Menu item text"
+      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+      isTooltipOpen={true}
+      testId="menu-item-1"
+      onClick={handleMenuItemClick}
+      className
+    />
+  );
+};`} />
+
+
+</ArticleTab>
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['LeftIcon', 'IconComponent', 'An optional left icon displayed before the text in the menu item', ''],
+  ['accent', 'string', 'Specifies the accent color of the menu item. Options include: `default`, `danger`, and `placeholder`', 'default'],
+  ['text', 'string', 'The text content of the menu item', ''],
+  ['iconButtons', 'array', 'An array of objects representing additional icon buttons associated with the menu item', ''],
+  ['isTooltipOpen', 'boolean', 'Controls the visibility of the tooltip associated with the menu item', ''],
+  ['testId', 'string', 'The data-testid attribute for testing purposes', ''],
+  ['onClick', 'function', 'Callback function triggered when the menu item is clicked', ''],
+  ['className', 'string', 'Optional name for additional styling', '']
+]} />
+
+
+</ArticleTab>
+</ArticleTabs>
+
+
+## Variants 
+
+The different variants of the menu item component include the following: 
+
+### Command 
+
+A command-style menu item within a menu to indicate keyboard shortcuts.
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { IconBell } from "@tabler/icons-react";
+import { MenuItemCommand } from "@/ui/navigation/menu-item/components/MenuItemCommand";
+
+export const MyComponent = () => {
+  const handleCommandClick = () => {
+    console.log("Command clicked!");
+  };
+
+  return (
+    <MenuItemCommand
+      LeftIcon={IconBell}
+      text="First Option"
+      firstHotKey="⌘"
+      secondHotKey="1"
+      isSelected={true}
+      onClick={handleCommandClick}
+      className
+    />
+  );
+};`} />
+
+
+</ArticleTab>
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['LeftIcon', 'IconComponent', 'An optional left icon displayed before the text in the menu item'],
+  ['text', 'string', 'The text content of the menu item'],
+  ['firstHotKey', 'string', 'The first keyboard shortcut associated with the command'],
+  ['secondHotKey', 'string', 'The second keyboard shortcut associated with the command'],
+  ['isSelected', 'boolean', 'Indicates whether the menu item is selected or highlighted'],
+  ['onClick', 'function', 'Callback function triggered when the menu item is clicked'],
+  ['className', 'string', 'Optional name for additional styling']
+]} />
+
+</ArticleTab>
+</ArticleTabs>
+
+### Draggable 
+
+A draggable menu item component designed to be used in a menu or list where items can be dragged, and additional actions can be performed through icon buttons.
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { IconBell } from "@tabler/icons-react";
+import { IconAlertCircle } from "@tabler/icons-react";
+import { MenuItemDraggable } from "@/ui/navigation/menu-item/components/MenuItemDraggable";
+
+export const MyComponent = () => {
+  const handleMenuItemClick = (event) => {
+    console.log("Menu item clicked!", event);
+  };
+
+  return (
+    <MenuItemDraggable
+      LeftIcon={IconBell}
+      accent="default"
+      iconButtons={[{ Icon: IconAlertCircle, onClick: handleButtonClick }]}
+      isTooltipOpen={false}
+      onClick={handleMenuItemClick}
+      text="Menu item draggable"
+      isDragDisabled={false}
+      className
+    />
+  );
+};`} />
+
+</ArticleTab>
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['LeftIcon', 'IconComponent', 'An optional left icon displayed before the text in the menu item', ''],
+  ['accent', 'string', 'The accent color of the menu item. It can either be `default`, `placeholder`, and `danger`', 'default'],
+  ['iconButtons', 'array', 'An array of objects representing additional icon buttons associated with the menu item', ''],
+  ['isTooltipOpen', 'boolean', 'Controls the visibility of the tooltip associated with the menu item', ''],
+  ['onClick', 'function', 'Callback function to be triggered when the link is clicked', ''],
+  ['text', 'string', 'The text content of the menu item', ''],
+  ['isDragDisabled', 'boolean', 'Indicates whether dragging is disabled', '`false`'],
+  ['className', 'string', 'Optional name for additional styling', '']
+]} />
+
+
+</ArticleTab>
+</ArticleTabs>
+
+
+### Multi Select
+
+Provides a way to implement multi-select functionality with an associated checkbox.
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { IconBell } from "@tabler/icons-react";
+import { MenuItemMultiSelect } from "@/ui/navigation/menu-item/components/MenuItemMultiSelect";
+
+export const MyComponent = () => {
+
+  return (
+    <MenuItemMultiSelect
+      LeftIcon={IconBell}
+      text="First Option"
+      selected={false}
+      className
+    />
+  );
+};`} />
+
+</ArticleTab>
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['LeftIcon', 'IconComponent', 'An optional left icon displayed before the text in the menu item'],
+  ['text', 'string', 'The text content of the menu item'],
+  ['selected', 'boolean', 'Indicates whether the menu item is selected (checked)'],
+  ['onSelectChange', 'function', 'Callback function triggered when the checkbox state changes'],
+  ['className', 'string', 'Optional name for additional styling']
+]} />
+
+
+</ArticleTab>
+</ArticleTabs>
+
+
+### Multi Select Avatar 
+
+A multi-select menu item with an avatar, a checkbox for selection, and textual content.
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { MenuItemMultiSelectAvatar } from "@/ui/navigation/menu-item/components/MenuItemMultiSelectAvatar";
+
+export const MyComponent = () => {
+  const imageUrl =
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+  return (
+    <MenuItemMultiSelectAvatar
+      avatar={<img src={imageUrl} alt="Avatar" />}
+      text="First Option"
+      selected={false}
+      className
+    />
+  );
+};`} />
+
+</ArticleTab>
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['avatar', '`ReactNode`', 'The avatar or icon to be displayed on the left side of the menu item'],
+  ['text', 'string', 'The text content of the menu item'],
+  ['selected', 'boolean', 'Indicates whether the menu item is selected (checked)'],
+  ['onSelectChange', 'function', 'Callback function triggered when the checkbox state changes'],
+  ['className', 'string', 'Optional name for additional styling']
+]} />
+
+
+</ArticleTab>
+</ArticleTabs>
+
+
+### Navigate 
+
+A menu item featuring an optional left icon, textual content, and a right-chevron icon.
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { IconBell } from "@tabler/icons-react";
+import { MenuItemNavigate } from "@/ui/navigation/menu-item/components/MenuItemNavigate";
+
+export const MyComponent = () => {
+  const handleNavigation = () => {
+    console.log("Navigate to another page");
+  };
+
+  return (
+    <MenuItemNavigate
+      LeftIcon={IconBell}
+      text="First Option"
+      onClick={handleNavigation}
+      className
+    />
+  );
+};`} />
+
+</ArticleTab>
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['LeftIcon', 'IconComponent', 'An optional left icon displayed before the text in the menu item'],
+  ['text', 'string', 'The text content of the menu item'],
+  ['onClick', 'function', 'Callback function to be triggered when the menu item is clicked'],
+  ['className', 'string', 'Optional name for additional styling']
+]} />
+
+
+</ArticleTab>
+</ArticleTabs>
+
+
+### Select 
+
+A selectable menu item, featuring optional left content (icon and text) and an indicator (check icon) for the selected state.
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { IconBell } from "@tabler/icons-react";
+import { MenuItemSelect } from "@/ui/navigation/menu-item/components/MenuItemSelect";
+
+export const MyComponent = () => {
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelect
+      LeftIcon={IconBell}
+      text="First Option"
+      selected={true}
+      disabled={false}
+      hovered={false}
+      onClick={handleSelection}
+      className
+    />
+  );
+};`} />
+
+</ArticleTab>
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['LeftIcon', 'IconComponent', 'An optional left icon displayed before the text in the menu item'],
+  ['text', 'string', 'The text content of the menu item'],
+  ['selected', 'boolean', 'Indicates whether the menu item is selected (checked)'],
+  ['disabled', 'boolean', 'Indicates whether the menu item is disabled'],
+  ['hovered', 'boolean', 'Indicates whether the menu item is currently being hovered over'],
+  ['onClick', 'function', 'Callback function to be triggered when the menu item is clicked'],
+  ['className', 'string', 'Optional name for additional styling']
+]} />
+
+
+</ArticleTab>
+</ArticleTabs>
+
+### Select Avatar 
+
+A selectable menu item with an avatar, featuring optional left content (avatar and text) and an indicator (check icon) for the selected state.
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { MenuItemSelectAvatar } from "@/ui/navigation/menu-item/components/MenuItemSelectAvatar";
+
+export const MyComponent = () => {
+  const imageUrl =
+    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelectAvatar
+      avatar={<img src={imageUrl} alt="Avatar" />}
+      text="First Option"
+      selected={true}
+      disabled={false}
+      hovered={false}
+      testId="menu-item-test"
+      onClick={handleSelection}
+      className
+    />
+  );
+};
+`} />
+
+</ArticleTab>
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['avatar', '`ReactNode`', 'The avatar or icon to be displayed on the left side of the menu item'],
+  ['text', 'string', 'The text content of the menu item'],
+  ['selected', 'boolean', 'Indicates whether the menu item is selected (checked)'],
+  ['disabled', 'boolean', 'Indicates whether the menu item is disabled'],
+  ['hovered', 'boolean', 'Indicates whether the menu item is currently being hovered over'],
+  ['testId', 'string', 'The data-testid attribute for testing purposes'],
+  ['onClick', 'function', 'Callback function to be triggered when the menu item is clicked'],
+  ['className', 'string', 'Optional name for additional styling']
+]} />
+
+
+</ArticleTab>
+</ArticleTabs>
+
+
+### Select Color 
+
+A selectable menu item with a color sample for scenarios where you want users to choose a color from a menu.
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { MenuItemSelectColor } from "@/ui/navigation/menu-item/components/MenuItemSelectColor";
+
+export const MyComponent = () => {
+  const handleSelection = () => {
+    console.log("Menu item selected");
+  };
+
+  return (
+    <MenuItemSelectColor
+      color="green"
+      selected={true}
+      disabled={false}
+      hovered={true}
+      variant="default"
+      onClick={handleSelection}
+      className
+    />
+  );
+};`} />
+
+</ArticleTab>
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['color', 'string', 'The theme color to be displayed as a sample in the menu item. Options include: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow`, and `gray`', ''],
+  ['selected', 'boolean', 'Indicates whether the menu item is selected (checked)', ''],
+  ['disabled', 'boolean', 'Indicates whether the menu item is disabled', ''],
+  ['hovered', 'boolean', 'Indicates whether the menu item is currently being hovered over', ''],
+  ['variant', 'string', 'The variant of the color sample. It can either be `default` or `pipeline`', 'default'],
+  ['onClick', 'function', 'Callback function to be triggered when the menu item is clicked', ''],
+  ['className', 'string', 'Optional name for additional styling', '']
+]} />
+
+
+</ArticleTab>
+</ArticleTabs>
+
+### Toggle 
+
+A menu item with an associated toggle switch to allow users to enable or disable a specific feature
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { IconBell } from '@tabler/icons-react';
+
+import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemToggle';
+
+export const MyComponent = () => {
+
+  return (
+    <MenuItemToggle
+      LeftIcon={IconBell}
+      text="First Option"
+      toggled={true}
+      toggleSize="small"
+      className
+    />
+  );
+};`} />
+
+</ArticleTab>
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['LeftIcon', 'IconComponent', 'An optional left icon displayed before the text in the menu item'],
+  ['text', 'string', 'The text content of the menu item'],
+  ['toggled', 'boolean', 'Indicates whether the toggle switch is in the "on" or "off" state'],
+  ['onToggleChange', 'function', 'Callback function triggered when the toggle switch state changes'],
+  ['toggleSize', 'string', 'The size of the toggle switch. It can be either \'small\' or \'medium\''],
+  ['className', 'string', 'Optional name for additional styling']
+]} />
+
+
+</ArticleTab>
+</ArticleTabs>
+
+<ArticleEditContent></ArticleEditContent>

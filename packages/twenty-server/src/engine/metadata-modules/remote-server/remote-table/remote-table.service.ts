@@ -14,15 +14,14 @@ import {
   RemoteTableStatus,
 } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table.dto';
 import {
-  mapUdtNameToFieldType,
   mapUdtNameToFieldSettings,
+  mapUdtNameToFieldType,
 } from 'src/engine/metadata-modules/remote-server/remote-table/utils/udt-name-mapper.util';
 import { RemoteTableInput } from 'src/engine/metadata-modules/remote-server/remote-table/dtos/remote-table-input';
 import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { FieldMetadataService } from 'src/engine/metadata-modules/field-metadata/field-metadata.service';
-import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
 import { WorkspaceCacheVersionService } from 'src/engine/metadata-modules/workspace-cache-version/workspace-cache-version.service';
 import { camelCase } from 'src/utils/camel-case';
 import { camelToTitleCase } from 'src/utils/camel-to-title-case';
@@ -35,6 +34,12 @@ import { fetchTableColumns } from 'src/engine/metadata-modules/remote-server/rem
 import { ForeignTableService } from 'src/engine/metadata-modules/remote-server/remote-table/foreign-table/foreign-table.service';
 import { RemoteTableSchemaUpdateService } from 'src/engine/metadata-modules/remote-server/remote-table/remote-table-schema-update/remote-table-schema-update.service';
 import { sortDistantTables } from 'src/engine/metadata-modules/remote-server/remote-table/distant-table/utils/sort-distant-tables.util';
+import {
+  WorkspaceMigrationColumnAction,
+  WorkspaceMigrationColumnActionType,
+} from 'src/engine/metadata-modules/workspace-migration/workspace-migration.entity';
+import { CreateFieldInput } from 'src/engine/metadata-modules/field-metadata/dtos/create-field.input';
+import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 export class RemoteTableService {
   private readonly logger = new Logger(RemoteTableService.name);
@@ -353,7 +358,7 @@ export class RemoteTableService {
       };
     }
 
-    const updatedTable = await this.foreignTableService.updateForeignTable(
+    const updatedTable = await this.updateForeignTableAndFieldsMetadata(
       remoteTable.localTableName,
       workspaceId,
       columnsUpdates,
@@ -436,18 +441,12 @@ export class RemoteTableService {
 
       // TODO: return error to the user when a column cannot be managed
       try {
-        const field = await this.fieldMetadataService.createOne({
-          name: columnName,
-          label: camelToTitleCase(columnName),
-          description: 'Field of remote',
-          type: mapUdtNameToFieldType(column.udtName),
-          workspaceId: workspaceId,
-          objectMetadataId: objectMetadata.id,
-          isRemoteCreation: true,
-          isNullable: true,
-          icon: 'IconPlug',
-          settings: mapUdtNameToFieldSettings(column.udtName),
-        } satisfies CreateFieldInput);
+        const field = await this.createFieldMetadataForForeignTableColumn(
+          workspaceId,
+          columnName,
+          column.udtName,
+          objectMetadata.id,
+        );
 
         if (columnName === 'id') {
           await this.objectMetadataService.updateOne(objectMetadata.id, {
@@ -488,5 +487,92 @@ export class RemoteTableService {
       }));
 
     return [...distantTablesWithUpdates, ...deletedTables];
+  }
+
+  private async updateForeignTableAndFieldsMetadata(
+    foreignTableName: string,
+    workspaceId: string,
+    columnsUpdates: WorkspaceMigrationColumnAction[],
+  ) {
+    const updatedForeignTable =
+      await this.foreignTableService.updateForeignTable(
+        foreignTableName,
+        workspaceId,
+        columnsUpdates,
+      );
+
+    const objectMetadata =
+      await this.objectMetadataService.findOneWithinWorkspace(workspaceId, {
+        where: { nameSingular: foreignTableName },
+      });
+
+    if (!objectMetadata) {
+      throw new NotFoundException(
+        `Cannot find associated object for table ${foreignTableName}`,
+      );
+    }
+    for (const columnUpdate of columnsUpdates) {
+      this.updateFieldMetadataFromColumnUpdate(
+        columnUpdate,
+        workspaceId,
+        objectMetadata.id,
+      );
+    }
+
+    return updatedForeignTable;
+  }
+
+  private async updateFieldMetadataFromColumnUpdate(
+    columnUpdate: WorkspaceMigrationColumnAction,
+    workspaceId: string,
+    objectMetadataId: string,
+  ) {
+    if (columnUpdate.action === WorkspaceMigrationColumnActionType.CREATE) {
+      await this.createFieldMetadataForForeignTableColumn(
+        workspaceId,
+        columnUpdate.columnName,
+        columnUpdate.columnType,
+        objectMetadataId,
+      );
+    }
+    if (columnUpdate.action === WorkspaceMigrationColumnActionType.DROP) {
+      const columnName = columnUpdate.columnName;
+
+      const fieldMetadataToDelete =
+        await this.fieldMetadataService.findOneWithinWorkspace(workspaceId, {
+          where: {
+            objectMetadataId: objectMetadataId,
+            name: columnName,
+          },
+        });
+
+      if (!fieldMetadataToDelete) {
+        throw new NotFoundException(
+          `Cannot find associated field metadata for column ${columnName}`,
+        );
+      }
+
+      await this.fieldMetadataService.deleteOne(fieldMetadataToDelete.id);
+    }
+  }
+
+  private async createFieldMetadataForForeignTableColumn(
+    workspaceId: string,
+    columnName: string,
+    columnType: string,
+    objectMetadataId: string,
+  ): Promise<FieldMetadataEntity<'default'>> {
+    return this.fieldMetadataService.createOne({
+      name: columnName,
+      label: camelToTitleCase(columnName),
+      description: 'Field of remote',
+      type: mapUdtNameToFieldType(columnType),
+      workspaceId: workspaceId,
+      objectMetadataId: objectMetadataId,
+      isRemoteCreation: true,
+      isNullable: true,
+      icon: 'IconPlug',
+      settings: mapUdtNameToFieldSettings(columnType),
+    } satisfies CreateFieldInput);
   }
 }

@@ -43,21 +43,23 @@ export const useTableColumns = (props?: useRecordTableProps) => {
     async (
       viewField: Omit<ColumnDefinition<FieldMetadata>, 'size' | 'position'>,
     ) => {
-      const isNewColumn = !tableColumns.some(
-        (tableColumns) =>
-          tableColumns.fieldMetadataId === viewField.fieldMetadataId,
+      const shouldShowColumn = !visibleTableColumns.some(
+        (visibleColumn) =>
+          visibleColumn.fieldMetadataId === viewField.fieldMetadataId,
       );
-      const lastTableColumnPosition = [...tableColumns]
+
+      const tableColumnPositions = [...tableColumns]
         .sort((a, b) => b.position - a.position)
         .map((column) => column.position);
 
-      const lastPosition = lastTableColumnPosition[0] ?? 0;
+      const lastPosition = tableColumnPositions[0] ?? 0;
 
-      if (isNewColumn) {
+      if (shouldShowColumn) {
         const newColumn = availableTableColumns.find(
           (availableTableColumn) =>
             availableTableColumn.fieldMetadataId === viewField.fieldMetadataId,
         );
+
         if (!newColumn) return;
 
         const nextColumns = [
@@ -67,7 +69,7 @@ export const useTableColumns = (props?: useRecordTableProps) => {
 
         await handleColumnsChange(nextColumns);
       } else {
-        const nextColumns = tableColumns.map((previousColumn) =>
+        const nextColumns = visibleTableColumns.map((previousColumn) =>
           previousColumn.fieldMetadataId === viewField.fieldMetadataId
             ? { ...previousColumn, isVisible: !viewField.isVisible }
             : previousColumn,
@@ -76,7 +78,12 @@ export const useTableColumns = (props?: useRecordTableProps) => {
         await handleColumnsChange(nextColumns);
       }
     },
-    [tableColumns, availableTableColumns, handleColumnsChange],
+    [
+      tableColumns,
+      availableTableColumns,
+      handleColumnsChange,
+      visibleTableColumns,
+    ],
   );
 
   const handleMoveTableColumn = useCallback(

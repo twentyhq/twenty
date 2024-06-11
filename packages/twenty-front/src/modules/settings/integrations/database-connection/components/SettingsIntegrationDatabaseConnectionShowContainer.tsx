@@ -13,7 +13,7 @@ import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
 export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
   const navigate = useNavigate();
   const { connection, integration, databaseKey, tables } =
-    useDatabaseConnection();
+    useDatabaseConnection({ fetchPolicy: 'network-only' });
 
   const { deleteOneDatabaseConnection } = useDeleteOneDatabaseConnection();
 
@@ -25,10 +25,6 @@ export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
     await deleteOneDatabaseConnection({ id: connection.id });
 
     navigate(`${settingsIntegrationsPagePath}/${databaseKey}`);
-  };
-
-  const onEdit = () => {
-    navigate('./edit');
   };
 
   const settingsIntegrationsPagePath = getSettingsPagePath(
@@ -57,7 +53,6 @@ export const SettingsIntegrationDatabaseConnectionShowContainer = () => {
           connectionId={connection.id}
           connectionLabel={connection.label}
           onRemove={deleteConnection}
-          onEdit={onEdit}
         />
       </Section>
       <Section>

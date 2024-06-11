@@ -5,7 +5,6 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
-import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { SettingsNewObject } from '../SettingsNewObject';
@@ -13,7 +12,7 @@ import { SettingsNewObject } from '../SettingsNewObject';
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/DataModel/SettingsNewObject',
   component: SettingsNewObject,
-  decorators: [PrefetchLoadingDecorator, PageDecorator],
+  decorators: [PageDecorator],
   args: {
     routePath: '/settings/objects/new',
   },

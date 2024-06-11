@@ -7,7 +7,6 @@ import {
   PageDecorator,
   PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
-import { PrefetchLoadingDecorator } from '~/testing/decorators/PrefetchLoadingDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedPeopleData } from '~/testing/mock-data/people';
 import { mockedWorkspaceMemberData } from '~/testing/mock-data/users';
@@ -84,7 +83,7 @@ export type Story = StoryObj<typeof RecordShowPage>;
 export const Default: Story = {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  decorators: [PrefetchLoadingDecorator, PageDecorator],
+  decorators: [PageDecorator],
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

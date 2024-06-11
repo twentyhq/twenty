@@ -10,6 +10,15 @@ export interface User {
   avatarUrl: string;
 }
 
+const StyledImg = styled.img`
+  width: 100%; // Adjust width as needed
+  height: 100%; // Adjust height as needed
+  object-fit: cover; // Keeps the aspect ratio and covers the area
+  position: absolute; // Similar to layout="fill" in Next Image
+  top: 0;
+  left: 0;
+`;
+
 const AvatarGridContainer = styled.div`
   margin: 0 auto;
   max-width: 1024px;
@@ -34,12 +43,6 @@ const AvatarItem = styled.div`
     -webkit-box-shadow: -6px 6px 0px 1px rgba(0, 0, 0, 1);
     -moz-box-shadow: -6px 6px 0px 1px rgba(0, 0, 0, 1);
     box-shadow: -6px 6px 0px 1px rgba(0, 0, 0, 1);
-  }
-
-  img {
-    width: 100%;
-    height: auto;
-    display: block;
   }
 
   .username {
@@ -72,9 +75,13 @@ const AvatarGrid = ({ users }: { users: User[] }) => {
     <MotionContainer>
       <AvatarGridContainer>
         {users.map((user) => (
-          <Link href={`/contributors/${user.id}`} key={`l_${user.id}`}>
+          <Link
+            href={`/contributors/${user.id}`}
+            key={`l_${user.id}`}
+            prefetch={false}
+          >
             <AvatarItem key={user.id}>
-              <img src={user.avatarUrl} alt={user.id} />
+              <StyledImg src={user.avatarUrl} alt={user.id} />
               <span className="username">{user.id}</span>
             </AvatarItem>
           </Link>

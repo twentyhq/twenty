@@ -1,0 +1,472 @@
+---
+title: Buttons
+image: /images/user-guide/views/filter.png
+---
+
+A list of buttons and button groups used throughout the app. 
+
+## Button
+
+<ArticleTabs label1="Usage" label2="Props">
+
+<ArticleTab>
+
+<SandpackEditor content={`import { Button } from "@/ui/input/button/components/Button";
+
+export const MyComponent = () => {
+  return (
+    <Button
+      className
+      Icon={null}
+      title="Title"
+      fullWidth={false}
+      variant="primary"
+      size="medium"
+      position="standalone"
+      accent="default"
+      soon={false}
+      disabled={false}
+      focus={true}
+      onClick={() => console.log("click")}
+    />
+  );
+};`} />
+</ArticleTab>
+
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['className', 'string', 'Optional class name for additional styling', ''],
+  ['Icon', '`React.ComponentType`', "An optional icon component that's displayed within the button", ''],
+  ['title', 'string', 'The text content of the button', ''],
+  ['fullWidth', 'boolean', 'Defines whether the button should span the whole width of its container', '`false`'],
+  ['variant', 'string', 'The visual style variant of the button. Options include `primary`, `secondary`, and `tertiary`', 'primary'],
+  ['size', 'string', 'The size of the button. Has two options: `small` and `medium`', 'medium'],
+  ['position', 'string', 'The position of the button in relation to its siblings. Options include: `standalone`, `left`, `right`, and `middle`', 'standalone'],
+  ['accent', 'string', 'The accent color of the button. Options include: `default`, `blue`, and `danger`', 'default'],
+  ['soon', 'boolean', 'Indicates if the button is marked as "soon" (such as for upcoming features)', '`false`'],
+  ['disabled', 'boolean', 'Specifies whether the button is disabled or not', '`false`'],
+  ['focus', 'boolean', 'Determines if the button has focus', '`false`'],
+  ['onClick', 'function', 'A callback function that triggers when the user clicks on the button', '']
+]} />
+
+
+</ArticleTab>
+
+</ArticleTabs>
+
+## Button Group
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+<SandpackEditor content={`import { Button } from "@/ui/input/button/components/Button";
+import { ButtonGroup } from "@/ui/input/button/components/ButtonGroup";
+
+export const MyComponent = () => {
+  return (
+    <ButtonGroup variant="primary" size="large" accent="blue" className>
+      <Button
+        className
+        Icon={null}
+        title="Button 1"
+        fullWidth={false}
+        variant="primary"
+        size="medium"
+        position="standalone"
+        accent="blue"
+        soon={false}
+        disabled={false}
+        focus={false}
+        onClick={() => console.log("click")}
+      />
+      <Button
+        className
+        Icon={null}
+        title="Button 2"
+        fullWidth={false}
+        variant="secondary"
+        size="medium"
+        position="left"
+        accent="blue"
+        soon={false}
+        disabled={false}
+        focus={false}
+        onClick={() => console.log("click")}
+      />
+      <Button
+        className
+        Icon={null}
+        title="Button 3"
+        fullWidth={false}
+        variant="tertiary"
+        size="medium"
+        position="right"
+        accent="blue"
+        soon={false}
+        disabled={false}
+        focus={false}
+        onClick={() => console.log("click")}
+      />
+    </ButtonGroup>
+  );
+};
+`} />
+</ArticleTab>
+
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['variant', 'string', 'The visual style variant of the buttons within the group. Options include `primary`, `secondary`, and `tertiary`'],
+  ['size', 'string', 'The size of the buttons within the group. Has two options: `medium` and `small`'],
+  ['accent', 'string', 'The accent color of the buttons within the group. Options include `default`, `blue` and `danger`'],
+  ['className', 'string', 'Optional class name for additional styling'],
+  ['children', 'ReactNode', 'An array of React elements representing the individual buttons within the group']
+]} />
+
+</ArticleTab>
+</ArticleTabs>
+
+
+## Floating Button 
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
+import { IconSearch } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return (
+    <FloatingButton
+      className
+      Icon={IconSearch}
+      title="Title"
+      size="medium"
+      position="standalone"
+      applyShadow={true}
+      applyBlur={true}
+      disabled={false}
+      focus={true}
+    />
+  );
+};`} />
+
+</ArticleTab>
+
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['className', 'string', 'Optional name for additional styling', ''],
+  ['Icon', '`React.ComponentType`', "An optional icon component that's displayed within the button", ''],
+  ['title', 'string', 'The text content of the button', ''],
+  ['size', 'string', 'The size of the button. Has two options: `small` and `medium`', 'small'],
+  ['position', 'string', 'The position of the button in relation to its siblings. Options include: `standalone`, `left`, `middle`, `right`', ''],
+  ['applyShadow', 'boolean', 'Determines whether to apply shadow to a button', '`true`'],
+  ['applyBlur', 'boolean', 'Determines whether to apply a blur effect to the button', '`true`'],
+  ['disabled', 'boolean', 'Determines whether the button is disabled', '`false`'],
+  ['focus', 'boolean', 'Indicates if the button has focus', '`false`']
+]} />
+
+</ArticleTab>
+</ArticleTabs>
+
+## Floating Button Group
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
+import { FloatingButtonGroup } from "@/ui/input/button/components/FloatingButtonGroup";
+import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return (
+    <FloatingButtonGroup size="small">
+      <FloatingButton
+        className
+        Icon={IconClipboardText}
+        title
+        size="small"
+        position="standalone"
+        applyShadow={true}
+        applyBlur={true}
+        disabled={false}
+        focus={true}
+      />
+      <FloatingButton
+        className
+        Icon={IconCheckbox}
+        title
+        size="small"
+        position="standalone"
+        applyShadow={true}
+        applyBlur={true}
+        disabled={false}
+      />
+    </FloatingButtonGroup>
+  );
+};`} />
+
+</ArticleTab>
+
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['size', 'string', 'The size of the button. Has two options: `small` and `medium`', 'small'],
+  ['children', 'ReactNode', 'An array of React elements representing the individual buttons within the group', '']
+]} />
+
+</ArticleTab>
+
+</ArticleTabs>
+
+## Floating Icon Button
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { FloatingIconButton } from "@/ui/input/button/components/FloatingIconButton";
+import { IconSearch } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return (
+    <FloatingIconButton
+      className
+      Icon={IconSearch}
+      size="small"
+      position="standalone"
+      applyShadow={true}
+      applyBlur={true}
+      disabled={false}
+      focus={false}
+      onClick={() => console.log("click")}
+      isActive={true}
+    />
+  );
+};`} />
+
+</ArticleTab>
+
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['className', 'string', 'Optional name for additional styling', ''],
+  ['Icon', '`React.ComponentType`', "An optional icon component that's displayed within the button", ''],
+  ['size', 'string', 'The size of the button. Has two options: `small` and `medium`', 'small'],
+  ['position', 'string', 'The position of the button in relation to its siblings. Options include: `standalone`, `left`, `right`, and `middle`', 'standalone'],
+  ['applyShadow', 'boolean', 'Determines whether to apply shadow to a button', '`true`'],
+  ['applyBlur', 'boolean', 'Determines whether to apply a blur effect to the button', '`true`'],
+  ['disabled', 'boolean', 'Determines whether the button is disabled', '`false`'],
+  ['focus', 'boolean', 'Indicates if the button has focus', '`false`'],
+  ['onClick', 'function', 'A callback function that triggers when the user clicks on the button', ''],
+  ['isActive', 'boolean', 'Determines if the button is in an active state', '']
+]} />
+
+</ArticleTab>
+
+</ArticleTabs>
+
+## Floating Icon Button Group
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { FloatingIconButtonGroup } from "@/ui/input/button/components/FloatingIconButtonGroup";
+import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  const iconButtons = [
+    {
+      Icon: IconClipboardText,
+      onClick: () => console.log("Button 1 clicked"),
+      isActive: true,
+    },
+    {
+      Icon: IconCheckbox,
+      onClick: () => console.log("Button 2 clicked"),
+      isActive: true,
+    },
+  ];
+
+  return (
+    <FloatingIconButtonGroup 
+    className 
+    size="small" 
+    iconButtons={iconButtons} />
+  );
+};
+`} />
+
+</ArticleTab>
+
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['className', 'string', 'Optional name for additional styling'],
+  ['size', 'string', 'The size of the button. Has two options: `small` and `medium`'],
+  ['iconButtons', 'array', 'An array of objects, each representing an icon button in the group. Each object should include the icon component you want to display in the button, the function you want to call when a user clicks on the button, and whether the button should be active or not.']
+]} />
+
+</ArticleTab>
+
+</ArticleTabs>
+
+## Light Button
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { LightButton } from "@/ui/input/button/components/LightButton";
+
+export const MyComponent = () => {
+  return <LightButton
+  className
+  icon={null}
+  title="Title"
+  accent="secondary"
+  active={false}
+  disabled={false}
+  focus={true}
+  onClick={()=>console.log('click')} 
+  />;
+};`} />
+
+
+</ArticleTab>
+
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['className', 'string', 'Optional name for additional styling', ''],
+  ['icon', '`React.ReactNode`', 'The icon you want to display in the button', ''],
+  ['title', 'string', 'The text content of the button', ''],
+  ['accent', 'string', 'The accent color of the button. Options include: `secondary` and `tertiary`', 'secondary'],
+  ['active', 'boolean', 'Determines if the button is in an active state', '`false`'],
+  ['disabled', 'boolean', 'Determines whether the button is disabled', '`false`'],
+  ['focus', 'boolean', 'Indicates if the button has focus', '`false`'],
+  ['onClick', 'function', 'A callback function that triggers when the user clicks on the button', '']
+]} />
+
+
+</ArticleTab>
+
+</ArticleTabs>
+
+
+## Light Icon Button
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { LightIconButton } from "@/ui/input/button/components/LightIconButton";
+import { IconSearch } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return (
+    <LightIconButton
+      className
+      testId="test1"
+      Icon={IconSearch}
+      title="Title"
+      size="small"
+      accent="secondary"
+      active={true}
+      disabled={false}
+      focus={true}
+      onClick={() => console.log("click")}
+    />
+  );
+};`} />
+
+
+</ArticleTab>
+
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['className', 'string', 'Optional name for additional styling', ''],
+  ['testId', 'string', 'Test identifier for the button', ''],
+  ['Icon', '`React.ComponentType`', "An optional icon component that's displayed within the button", ''],
+  ['title', 'string', 'The text content of the button', ''],
+  ['size', 'string', 'The size of the button. Has two options: `small` and `medium`', 'small'],
+  ['accent', 'string', 'The accent color of the button. Options include: `secondary` and `tertiary`', 'secondary'],
+  ['active', 'boolean', 'Determines if the button is in an active state', '`false`'],
+  ['disabled', 'boolean', 'Determines whether the button is disabled', '`false`'],
+  ['focus', 'boolean', 'Indicates if the button has focus', '`false`'],
+  ['onClick', 'function', 'A callback function that triggers when the user clicks on the button', '']
+]} />
+
+</ArticleTab>
+
+</ArticleTabs>
+
+## Main Button
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { MainButton } from "@/ui/input/button/components/MainButton";
+import { IconCheckbox } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return (
+    <MainButton
+      title="Checkbox"
+      fullWidth={false}
+      variant="primary"
+      soon={false}
+      Icon={IconCheckbox}
+    />
+  );
+};`} />
+
+
+</ArticleTab>
+
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['title', 'string', 'The text content of the button', ''],
+  ['fullWidth', 'boolean', 'Defines whether the button should span the whole width of its container', '`false`'],
+  ['variant', 'string', 'The visual style variant of the button. Options include `primary` and `secondary`', 'primary'],
+  ['soon', 'boolean', 'Indicates if the button is marked as "soon" (such as for upcoming features)', '`false`'],
+  ['Icon', '`React.ComponentType`', "An optional icon component that's displayed within the button", ''],
+  ['React `button` props', '`React.ComponentProps<\'button\'>`', "Additional props from React's `button` element", '']
+]} />
+
+
+</ArticleTab>
+
+</ArticleTabs>
+
+## Rounded Icon Button
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { RoundedIconButton } from "@/ui/input/button/components/RoundedIconButton";
+import { IconSearch } from "@tabler/icons-react";
+
+export const MyComponent = () => {
+  return (
+    <RoundedIconButton
+      Icon={IconSearch}
+    />
+  );
+};`} />
+
+
+</ArticleTab>
+
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['Icon', '`React.ComponentType`', "An optional icon component that's displayed within the button"],
+  ['React `button` props', '`React.ButtonHTMLAttributes<HTMLButtonElement>`', "Additional props from React's `button` element"]
+]} />
+
+</ArticleTab>
+
+</ArticleTabs>
+
+<ArticleEditContent></ArticleEditContent>

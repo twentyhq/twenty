@@ -1,16 +1,16 @@
 import { useRecoilValue } from 'recoil';
 
-import { viewableActivityIdState } from '@/activities/states/viewableActivityIdState';
+import { viewableRecordIdState } from '@/object-record/record-right-drawer/states/viewableRecordIdState';
 
 import { RightDrawerActivity } from '../RightDrawerActivity';
 
 export const RightDrawerEditActivity = () => {
-  const viewableActivityId = useRecoilValue(viewableActivityIdState);
+  const viewableRecordId = useRecoilValue(viewableRecordIdState);
 
   return (
     <>
-      {viewableActivityId && (
-        <RightDrawerActivity activityId={viewableActivityId} />
+      {viewableRecordId && (
+        <RightDrawerActivity activityId={viewableRecordId} />
       )}
     </>
   );

@@ -26,6 +26,7 @@ export const Default = () => (
         <SelectHeaderStep
           data={headerSelectionTableFields}
           onContinue={() => Promise.resolve()}
+          onBack={() => Promise.resolve()}
         />
       </ModalWrapper>
     </Providers>

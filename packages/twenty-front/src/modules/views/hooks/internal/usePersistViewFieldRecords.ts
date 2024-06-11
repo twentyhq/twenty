@@ -78,6 +78,7 @@ export const usePersistViewFieldRecords = () => {
   const updateViewFieldRecords = useCallback(
     (viewFieldsToUpdate: ViewField[]) => {
       if (!viewFieldsToUpdate.length) return;
+
       return Promise.all(
         viewFieldsToUpdate.map((viewField) =>
           apolloClient.mutate({

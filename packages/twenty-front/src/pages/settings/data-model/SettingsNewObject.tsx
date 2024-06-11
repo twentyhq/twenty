@@ -30,7 +30,8 @@ export const SettingsNewObject = () => {
   const navigate = useNavigate();
   const { enqueueSnackBar } = useSnackBar();
 
-  const { createOneObjectMetadataItem } = useCreateOneObjectMetadataItem();
+  const { createOneObjectMetadataItem, findManyRecordsCache } =
+    useCreateOneObjectMetadataItem();
 
   const settingsObjectsPagePath = getSettingsPagePath(SettingsPath.Objects);
 
@@ -57,6 +58,8 @@ export const SettingsNewObject = () => {
             )}`
           : settingsObjectsPagePath,
       );
+
+      await findManyRecordsCache();
     } catch (error) {
       enqueueSnackBar((error as Error).message, {
         variant: SnackBarVariant.Error,

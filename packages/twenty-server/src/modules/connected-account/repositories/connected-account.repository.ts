@@ -62,6 +62,41 @@ export class ConnectedAccountRepository {
     return connectedAccounts;
   }
 
+  public async getAllByUserId(
+    userId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<ConnectedAccountWorkspaceEntity>[] | undefined> {
+    const schemaExists =
+      await this.workspaceDataSourceService.checkSchemaExists(workspaceId);
+
+    if (!schemaExists) {
+      return;
+    }
+
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    const workspaceMember = (
+      await this.workspaceDataSourceService.executeRawQuery(
+        `SELECT * FROM ${dataSourceSchema}."workspaceMember" WHERE "userId" = $1`,
+        [userId],
+        workspaceId,
+        transactionManager,
+      )
+    )?.[0];
+
+    if (!workspaceMember) {
+      return;
+    }
+
+    return await this.getAllByWorkspaceMemberId(
+      workspaceMember.id,
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async getAllByHandleAndWorkspaceMemberId(
     handle: string,
     workspaceMemberId: string,
@@ -267,14 +302,6 @@ export class ConnectedAccountRepository {
     if (!connectedAccount) {
       throw new Error(
         `Connected account ${connectedAccountId} not found in workspace ${workspaceId}`,
-      );
-    }
-
-    const refreshToken = connectedAccount.refreshToken;
-
-    if (!refreshToken) {
-      throw new Error(
-        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
       );
     }
 

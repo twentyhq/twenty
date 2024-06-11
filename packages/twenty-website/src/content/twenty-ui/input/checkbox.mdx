@@ -1,0 +1,44 @@
+---
+title: Checkbox
+icon: TbCheckbox
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+Used when a user needs to select multiple values from several options.
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { Checkbox } from "@/ui/input/components/Checkbox";
+
+export const MyComponent = () => {
+  return (
+    <Checkbox
+      checked={true}
+      indeterminate={false}
+      onChange={() => console.log("onChange function fired")}
+      onCheckedChange={() => console.log("onCheckedChange function fired")}
+      variant="primary"
+      size="small"
+      shape="squared"
+    />
+  );
+};`} />
+
+</ArticleTab>
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['checked', 'boolean', 'Indicates whether the checkbox is checked', ''],
+  ['indeterminate', 'boolean', 'Indicates whether the checkbox is in an indeterminate state (neither checked nor unchecked)', ''],
+  ['onChange', 'function', 'The callback function you want to trigger when the checkbox state changes', ''],
+  ['onCheckedChange', 'function', 'The callback function you want to trigger when the `checked` state changes', ''],
+  ['variant', 'string', 'The visual style variant of the box. Options include: `primary`, `secondary`, and `tertiary`', 'primary'],
+  ['size', 'string', 'The size of the checkbox. Has two options: `small` and `large`', 'small'],
+  ['shape', 'string', 'The shape of the checkbox. Has two options: `squared` and `rounded`', 'squared']
+]} />
+
+</ArticleTab>
+</ArticleTabs>
+
+<ArticleEditContent></ArticleEditContent>

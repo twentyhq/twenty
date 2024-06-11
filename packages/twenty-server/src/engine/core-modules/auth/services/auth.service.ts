@@ -203,7 +203,9 @@ export class AuthService {
           this.environmentService.get('NODE_ENV') ===
           NodeEnvironment.development
             ? authorizeAppInput.redirectUrl
-            : `${this.environmentService.get('CHROME_EXTENSION_REDIRECT_URL')}`,
+            : `https://${this.environmentService.get(
+                'CHROME_EXTENSION_ID',
+              )}.chromiumapp.org/`,
       },
     ];
 

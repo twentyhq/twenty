@@ -1,0 +1,165 @@
+---
+title: Links
+icon: TbLink
+image: /images/user-guide/what-is-twenty/20.png
+---
+
+## Contact Link
+
+A stylized link component for displaying contact information.
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { BrowserRouter as Router } from 'react-router-dom';
+
+import { ContactLink } from '@/ui/navigation/link/components/ContactLink';
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log('Contact link clicked!', event);
+  };
+
+  return (
+    <Router>
+      <ContactLink
+        className
+        href="mailto:example@example.com"
+        onClick={handleLinkClick}
+      >
+        example@example.com
+      </ContactLink>
+    </Router>
+  );
+};`} />
+
+
+</ArticleTab>
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['className', 'string', 'Optional name for additional styling'],
+  ['href', 'string', 'The target URL or path for the link'],
+  ['onClick', 'function', 'Callback function to be triggered when the link is clicked'],
+  ['children', '`React.ReactNode`', 'The content to be displayed inside the link']
+]} />
+
+
+</ArticleTab>
+
+</ArticleTabs>
+
+## Raw Link
+
+A stylized link component for displaying links. 
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { RawLink } from "@/ui/navigation/link/components/RawLink";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
+
+  return (
+    <Router>
+      <RawLink className href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RawLink>
+    </Router>
+  );
+};
+`} />
+
+
+</ArticleTab>
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['className', 'string', 'Optional name for additional styling'],
+  ['href', 'string', 'The target URL or path for the link'],
+  ['onClick', 'function', 'Callback function to be triggered when the link is clicked'],
+  ['children', '`React.ReactNode`', 'The content to be displayed inside the link']
+]} />
+
+
+</ArticleTab>
+</ArticleTabs>
+
+
+## Rounded Link
+
+A rounded-styled link with a Chip component for links.
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { RoundedLink } from "@/ui/navigation/link/components/RoundedLink";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  const handleLinkClick = (event) => {
+    console.log("Contact link clicked!", event);
+  };
+
+  return (
+    <Router>
+      <RoundedLink href="/contact" onClick={handleLinkClick}>
+        Contact Us
+      </RoundedLink>
+    </Router>
+  );
+};`} />
+
+</ArticleTab>
+
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['href', 'string', 'The target URL or path for the link'],
+  ['children', '`React.ReactNode`', 'The content to be displayed inside the link'],
+  ['onClick', 'function', 'Callback function to be triggered when the link is clicked']
+]} />
+
+</ArticleTab>
+</ArticleTabs>
+
+## Social Link
+
+Stylized social links, with support for various social link types, such as URLs, LinkedIn, and X (or Twitter).  
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { SocialLink } from "@/ui/navigation/link/components/SocialLink";
+import { BrowserRouter as Router } from "react-router-dom";
+
+export const MyComponent = () => {
+  return (
+    <Router>
+      <SocialLink
+        type="twitter"
+        href="https://twitter.com/twentycrm"
+      ></SocialLink>
+    </Router>
+  );
+};`} />
+
+</ArticleTab>
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['href', 'string', 'The target URL or path for the link'],
+  ['children', '`React.ReactNode`', 'The content to be displayed inside the link'],
+  ['type', 'string', 'The type of social links. Options include: `url`, `LinkedIn`, and `Twitter`'],
+  ['onClick', 'function', 'Callback function to be triggered when the link is clicked']
+]} />
+
+
+</ArticleTab>
+</ArticleTabs>
+
+<ArticleEditContent></ArticleEditContent>

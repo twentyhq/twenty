@@ -96,6 +96,16 @@ export class CalendarChannelWorkspaceEntity extends BaseWorkspaceEntity {
   })
   syncCursor: string;
 
+  @WorkspaceField({
+    standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.throttleFailureCount,
+    type: FieldMetadataType.NUMBER,
+    label: 'Throttle Failure Count',
+    description: 'Throttle Failure Count',
+    icon: 'IconX',
+    defaultValue: 0,
+  })
+  throttleFailureCount: number;
+
   @WorkspaceRelation({
     standardId: CALENDAR_CHANNEL_STANDARD_FIELD_IDS.connectedAccount,
     type: RelationMetadataType.MANY_TO_ONE,

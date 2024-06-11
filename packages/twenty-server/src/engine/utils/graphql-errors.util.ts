@@ -157,3 +157,11 @@ export class ConflictError extends BaseGraphQLError {
     Object.defineProperty(this, 'name', { value: 'ConflictError' });
   }
 }
+
+export class TimeoutError extends BaseGraphQLError {
+  constructor(message: string, extensions?: Record<string, any>) {
+    super(message, 'TIMEOUT', extensions);
+
+    Object.defineProperty(this, 'name', { value: 'TimeoutError' });
+  }
+}

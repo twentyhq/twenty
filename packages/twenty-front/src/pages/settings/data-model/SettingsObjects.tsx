@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import {
@@ -29,6 +28,7 @@ import { Section } from '@/ui/layout/section/components/Section';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableSection } from '@/ui/layout/table/components/TableSection';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 
 const StyledIconChevronRight = styled(IconChevronRight)`
   color: ${({ theme }) => theme.font.color.tertiary};
@@ -40,7 +40,6 @@ const StyledH1Title = styled(H1Title)`
 
 export const SettingsObjects = () => {
   const theme = useTheme();
-  const navigate = useNavigate();
 
   const { activeObjectMetadataItems, inactiveObjectMetadataItems } =
     useFilteredObjectMetadataItems();
@@ -52,15 +51,14 @@ export const SettingsObjects = () => {
       <SettingsPageContainer>
         <SettingsHeaderContainer>
           <StyledH1Title title="Objects" />
-          <Button
-            Icon={IconPlus}
-            title="Add object"
-            accent="blue"
-            size="small"
-            onClick={() =>
-              navigate(getSettingsPagePath(SettingsPath.NewObject))
-            }
-          />
+          <UndecoratedLink to={getSettingsPagePath(SettingsPath.NewObject)}>
+            <Button
+              Icon={IconPlus}
+              title="Add object"
+              accent="blue"
+              size="small"
+            />
+          </UndecoratedLink>
         </SettingsHeaderContainer>
         <div>
           <SettingsObjectCoverImage />
