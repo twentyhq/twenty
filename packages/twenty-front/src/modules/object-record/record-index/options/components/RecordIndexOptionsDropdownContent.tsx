@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
 import {
   IconBaselineDensitySmall,
@@ -27,6 +26,7 @@ import { DropdownMenuHeader } from '@/ui/layout/dropdown/components/DropdownMenu
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { useDropdown } from '@/ui/layout/dropdown/hooks/useDropdown';
+import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink';
 import { MenuItem } from '@/ui/navigation/menu-item/components/MenuItem';
 import { MenuItemNavigate } from '@/ui/navigation/menu-item/components/MenuItemNavigate';
 import { MenuItemToggle } from '@/ui/navigation/menu-item/components/MenuItemToggle';
@@ -50,8 +50,6 @@ export const RecordIndexOptionsDropdownContent = ({
 }: RecordIndexOptionsDropdownContentProps) => {
   const { currentViewWithCombinedFiltersAndSorts } = useGetCurrentView();
 
-  const navigate = useNavigate();
-
   const { closeDropdown } = useDropdown(RECORD_INDEX_OPTIONS_DROPDOWN_ID);
 
   const [currentMenu, setCurrentMenu] = useState<
@@ -68,13 +66,9 @@ export const RecordIndexOptionsDropdownContent = ({
     objectNameSingular: objectNameSingular,
   });
 
-  const handleEditClick = () => {
-    navigate(
-      getSettingsPagePath(SettingsPath.ObjectDetail, {
-        objectSlug: objectNamePlural,
-      }),
-    );
-  };
+  const settingsUrl = getSettingsPagePath(SettingsPath.ObjectDetail, {
+    objectSlug: objectNamePlural,
+  });
 
   useScopedHotkeys(
     [Key.Escape],
@@ -194,13 +188,12 @@ export const RecordIndexOptionsDropdownContent = ({
             </>
           )}
           <DropdownMenuSeparator />
-          <DropdownMenuItemsContainer>
-            <MenuItem
-              onClick={handleEditClick}
-              LeftIcon={IconSettings}
-              text="Edit Fields"
-            />
-          </DropdownMenuItemsContainer>
+
+          <UndecoratedLink to={settingsUrl}>
+            <DropdownMenuItemsContainer>
+              <MenuItem LeftIcon={IconSettings} text="Edit Fields" />
+            </DropdownMenuItemsContainer>
+          </UndecoratedLink>
         </>
       )}
 

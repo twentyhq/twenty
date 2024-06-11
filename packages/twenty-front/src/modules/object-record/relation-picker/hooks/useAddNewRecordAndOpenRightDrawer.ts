@@ -88,7 +88,7 @@ export const useAddNewRecordAndOpenRightDrawer = ({
         RelationDefinitionType.ManyToOne
       ) {
         createRecordPayload[
-          `${relationFieldMetadataItem?.relationDefinition?.targetFieldMetadata.name}Id`
+          `${relationFieldMetadataItem?.relationDefinition?.sourceFieldMetadata.name}Id`
         ] = entityId;
       }
 

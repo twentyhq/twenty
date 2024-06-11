@@ -2,7 +2,6 @@
 
 import styled from '@emotion/styled';
 import { format } from 'date-fns';
-import Image from 'next/image';
 
 import { GithubIcon } from '@/app/_components/ui/icons/SvgIcons';
 
@@ -90,7 +89,7 @@ export const ProfileCard = ({
   return (
     <ProfileContainer>
       <Avatar>
-        <Image src={avatarUrl} alt={username} width={100} height={100} />
+        <img src={avatarUrl} alt={username} width={100} height={100} />
       </Avatar>
       <Details>
         <h3 className="username">

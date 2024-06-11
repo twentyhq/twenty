@@ -6,6 +6,7 @@ import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTa
 import { ActivityTargetInlineCellEditMode } from '@/activities/inline-cell/components/ActivityTargetInlineCellEditMode';
 import { Activity } from '@/activities/types/Activity';
 import { ActivityEditorHotkeyScope } from '@/activities/types/ActivityEditorHotkeyScope';
+import { FieldFocusContextProvider } from '@/object-record/record-field/contexts/FieldFocusContextProvider';
 import { RecordFieldInputScope } from '@/object-record/record-field/scopes/RecordFieldInputScope';
 import { RecordInlineCellContainer } from '@/object-record/record-inline-cell/components/RecordInlineCellContainer';
 import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
@@ -38,29 +39,31 @@ export const ActivityTargetsInlineCell = ({
 
   return (
     <RecordFieldInputScope recordFieldInputScopeId={activity?.id ?? ''}>
-      <RecordInlineCellContainer
-        buttonIcon={IconPencil}
-        customEditHotkeyScope={{
-          scope: ActivityEditorHotkeyScope.ActivityTargets,
-        }}
-        IconLabel={showLabel ? IconArrowUpRight : undefined}
-        showLabel={showLabel}
-        readonly={readonly}
-        editModeContent={
-          <ActivityTargetInlineCellEditMode
-            activity={activity}
-            activityTargetWithTargetRecords={activityTargetObjectRecords}
-          />
-        }
-        label="Relations"
-        displayModeContent={
-          <ActivityTargetChips
-            activityTargetObjectRecords={activityTargetObjectRecords}
-            maxWidth={maxWidth}
-          />
-        }
-        isDisplayModeContentEmpty={activityTargetObjectRecords.length === 0}
-      />
+      <FieldFocusContextProvider>
+        <RecordInlineCellContainer
+          buttonIcon={IconPencil}
+          customEditHotkeyScope={{
+            scope: ActivityEditorHotkeyScope.ActivityTargets,
+          }}
+          IconLabel={showLabel ? IconArrowUpRight : undefined}
+          showLabel={showLabel}
+          readonly={readonly}
+          editModeContent={
+            <ActivityTargetInlineCellEditMode
+              activity={activity}
+              activityTargetWithTargetRecords={activityTargetObjectRecords}
+            />
+          }
+          label="Relations"
+          displayModeContent={
+            <ActivityTargetChips
+              activityTargetObjectRecords={activityTargetObjectRecords}
+              maxWidth={maxWidth}
+            />
+          }
+          isDisplayModeContentEmpty={activityTargetObjectRecords.length === 0}
+        />
+      </FieldFocusContextProvider>
     </RecordFieldInputScope>
   );
 };

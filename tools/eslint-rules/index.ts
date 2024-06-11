@@ -23,6 +23,10 @@ import {
   RULE_NAME as noHardcodedColorsName,
 } from './rules/no-hardcoded-colors';
 import {
+  rule as noNavigatePreferLink,
+  RULE_NAME as noNavigatePreferLinkName,
+} from './rules/no-navigate-prefer-link';
+import {
   rule as noStateUseref,
   RULE_NAME as noStateUserefName,
 } from './rules/no-state-useref';
@@ -83,5 +87,6 @@ module.exports = {
     [maxConstsPerFileName]: maxConstsPerFile,
     [useRecoilCallbackHasDependencyArrayName]:
       useRecoilCallbackHasDependencyArray,
+    [noNavigatePreferLinkName]: noNavigatePreferLink,
   },
 };

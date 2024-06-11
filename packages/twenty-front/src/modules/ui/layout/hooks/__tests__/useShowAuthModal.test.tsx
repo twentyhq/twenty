@@ -46,6 +46,7 @@ const testCases = [
   { loc: AppPath.Verify, status: OnboardingStatus.OngoingUserCreation, res: false },
   { loc: AppPath.Verify, status: OnboardingStatus.OngoingWorkspaceActivation, res: false },
   { loc: AppPath.Verify, status: OnboardingStatus.OngoingProfileCreation, res: false },
+  { loc: AppPath.Verify, status: OnboardingStatus.OngoingSyncEmail, res: false },
   { loc: AppPath.Verify, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.Verify, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
@@ -56,6 +57,7 @@ const testCases = [
   { loc: AppPath.SignInUp, status: OnboardingStatus.OngoingUserCreation, res: true },
   { loc: AppPath.SignInUp, status: OnboardingStatus.OngoingWorkspaceActivation, res: true },
   { loc: AppPath.SignInUp, status: OnboardingStatus.OngoingProfileCreation, res: true },
+  { loc: AppPath.SignInUp, status: OnboardingStatus.OngoingSyncEmail, res: true },
   { loc: AppPath.SignInUp, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.SignInUp, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
@@ -66,6 +68,7 @@ const testCases = [
   { loc: AppPath.Invite, status: OnboardingStatus.OngoingUserCreation, res: true },
   { loc: AppPath.Invite, status: OnboardingStatus.OngoingWorkspaceActivation, res: true },
   { loc: AppPath.Invite, status: OnboardingStatus.OngoingProfileCreation, res: true },
+  { loc: AppPath.Invite, status: OnboardingStatus.OngoingSyncEmail, res: true },
   { loc: AppPath.Invite, status: OnboardingStatus.Completed, res: true },
   { loc: AppPath.Invite, status: OnboardingStatus.CompletedWithoutSubscription, res: true },
 
@@ -76,6 +79,7 @@ const testCases = [
   { loc: AppPath.ResetPassword, status: OnboardingStatus.OngoingUserCreation, res: true },
   { loc: AppPath.ResetPassword, status: OnboardingStatus.OngoingWorkspaceActivation, res: true },
   { loc: AppPath.ResetPassword, status: OnboardingStatus.OngoingProfileCreation, res: true },
+  { loc: AppPath.ResetPassword, status: OnboardingStatus.OngoingSyncEmail, res: true },
   { loc: AppPath.ResetPassword, status: OnboardingStatus.Completed, res: true },
   { loc: AppPath.ResetPassword, status: OnboardingStatus.CompletedWithoutSubscription, res: true },
 
@@ -86,6 +90,7 @@ const testCases = [
   { loc: AppPath.CreateWorkspace, status: OnboardingStatus.OngoingUserCreation, res: true },
   { loc: AppPath.CreateWorkspace, status: OnboardingStatus.OngoingWorkspaceActivation, res: true },
   { loc: AppPath.CreateWorkspace, status: OnboardingStatus.OngoingProfileCreation, res: true },
+  { loc: AppPath.CreateWorkspace, status: OnboardingStatus.OngoingSyncEmail, res: true },
   { loc: AppPath.CreateWorkspace, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.CreateWorkspace, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
@@ -96,8 +101,20 @@ const testCases = [
   { loc: AppPath.CreateProfile, status: OnboardingStatus.OngoingUserCreation, res: true },
   { loc: AppPath.CreateProfile, status: OnboardingStatus.OngoingWorkspaceActivation, res: true },
   { loc: AppPath.CreateProfile, status: OnboardingStatus.OngoingProfileCreation, res: true },
+  { loc: AppPath.CreateProfile, status: OnboardingStatus.OngoingSyncEmail, res: true },
   { loc: AppPath.CreateProfile, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.CreateProfile, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
+
+  { loc: AppPath.SyncEmails, status: OnboardingStatus.Incomplete, res: true },
+  { loc: AppPath.SyncEmails, status: OnboardingStatus.Canceled, res: false },
+  { loc: AppPath.SyncEmails, status: OnboardingStatus.Unpaid, res: false },
+  { loc: AppPath.SyncEmails, status: OnboardingStatus.PastDue, res: false },
+  { loc: AppPath.SyncEmails, status: OnboardingStatus.OngoingUserCreation, res: true },
+  { loc: AppPath.SyncEmails, status: OnboardingStatus.OngoingWorkspaceActivation, res: true },
+  { loc: AppPath.SyncEmails, status: OnboardingStatus.OngoingProfileCreation, res: true },
+  { loc: AppPath.SyncEmails, status: OnboardingStatus.OngoingSyncEmail, res: true },
+  { loc: AppPath.SyncEmails, status: OnboardingStatus.Completed, res: false },
+  { loc: AppPath.SyncEmails, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
   { loc: AppPath.PlanRequired, status: OnboardingStatus.Incomplete, res: true },
   { loc: AppPath.PlanRequired, status: OnboardingStatus.Canceled, res: true },
@@ -106,6 +123,7 @@ const testCases = [
   { loc: AppPath.PlanRequired, status: OnboardingStatus.OngoingUserCreation, res: true },
   { loc: AppPath.PlanRequired, status: OnboardingStatus.OngoingWorkspaceActivation, res: true },
   { loc: AppPath.PlanRequired, status: OnboardingStatus.OngoingProfileCreation, res: true },
+  { loc: AppPath.PlanRequired, status: OnboardingStatus.OngoingSyncEmail, res: true },
   { loc: AppPath.PlanRequired, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.PlanRequired, status: OnboardingStatus.CompletedWithoutSubscription, res: true },
 
@@ -116,6 +134,7 @@ const testCases = [
   { loc: AppPath.PlanRequiredSuccess, status: OnboardingStatus.OngoingUserCreation, res: true },
   { loc: AppPath.PlanRequiredSuccess, status: OnboardingStatus.OngoingWorkspaceActivation, res: true },
   { loc: AppPath.PlanRequiredSuccess, status: OnboardingStatus.OngoingProfileCreation, res: true },
+  { loc: AppPath.PlanRequiredSuccess, status: OnboardingStatus.OngoingSyncEmail, res: true },
   { loc: AppPath.PlanRequiredSuccess, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.PlanRequiredSuccess, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
@@ -126,6 +145,7 @@ const testCases = [
   { loc: AppPath.Index, status: OnboardingStatus.OngoingUserCreation, res: true },
   { loc: AppPath.Index, status: OnboardingStatus.OngoingWorkspaceActivation, res: true },
   { loc: AppPath.Index, status: OnboardingStatus.OngoingProfileCreation, res: true },
+  { loc: AppPath.Index, status: OnboardingStatus.OngoingSyncEmail, res: true },
   { loc: AppPath.Index, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.Index, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
@@ -136,6 +156,7 @@ const testCases = [
   { loc: AppPath.TasksPage, status: OnboardingStatus.OngoingUserCreation, res: true },
   { loc: AppPath.TasksPage, status: OnboardingStatus.OngoingWorkspaceActivation, res: true },
   { loc: AppPath.TasksPage, status: OnboardingStatus.OngoingProfileCreation, res: true },
+  { loc: AppPath.TasksPage, status: OnboardingStatus.OngoingSyncEmail, res: true },
   { loc: AppPath.TasksPage, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.TasksPage, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
@@ -146,6 +167,7 @@ const testCases = [
   { loc: AppPath.OpportunitiesPage, status: OnboardingStatus.OngoingUserCreation, res: true },
   { loc: AppPath.OpportunitiesPage, status: OnboardingStatus.OngoingWorkspaceActivation, res: true },
   { loc: AppPath.OpportunitiesPage, status: OnboardingStatus.OngoingProfileCreation, res: true },
+  { loc: AppPath.OpportunitiesPage, status: OnboardingStatus.OngoingSyncEmail, res: true },
   { loc: AppPath.OpportunitiesPage, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.OpportunitiesPage, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
@@ -156,6 +178,7 @@ const testCases = [
   { loc: AppPath.RecordIndexPage, status: OnboardingStatus.OngoingUserCreation, res: true },
   { loc: AppPath.RecordIndexPage, status: OnboardingStatus.OngoingWorkspaceActivation, res: true },
   { loc: AppPath.RecordIndexPage, status: OnboardingStatus.OngoingProfileCreation, res: true },
+  { loc: AppPath.RecordIndexPage, status: OnboardingStatus.OngoingSyncEmail, res: true },
   { loc: AppPath.RecordIndexPage, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.RecordIndexPage, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
@@ -166,6 +189,7 @@ const testCases = [
   { loc: AppPath.RecordShowPage, status: OnboardingStatus.OngoingUserCreation, res: true },
   { loc: AppPath.RecordShowPage, status: OnboardingStatus.OngoingWorkspaceActivation, res: true },
   { loc: AppPath.RecordShowPage, status: OnboardingStatus.OngoingProfileCreation, res: true },
+  { loc: AppPath.RecordShowPage, status: OnboardingStatus.OngoingSyncEmail, res: true },
   { loc: AppPath.RecordShowPage, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.RecordShowPage, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
@@ -176,6 +200,7 @@ const testCases = [
   { loc: AppPath.SettingsCatchAll, status: OnboardingStatus.OngoingUserCreation, res: true },
   { loc: AppPath.SettingsCatchAll, status: OnboardingStatus.OngoingWorkspaceActivation, res: true },
   { loc: AppPath.SettingsCatchAll, status: OnboardingStatus.OngoingProfileCreation, res: true },
+  { loc: AppPath.SettingsCatchAll, status: OnboardingStatus.OngoingSyncEmail, res: true },
   { loc: AppPath.SettingsCatchAll, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.SettingsCatchAll, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
@@ -186,6 +211,7 @@ const testCases = [
   { loc: AppPath.DevelopersCatchAll, status: OnboardingStatus.OngoingUserCreation, res: true },
   { loc: AppPath.DevelopersCatchAll, status: OnboardingStatus.OngoingWorkspaceActivation, res: true },
   { loc: AppPath.DevelopersCatchAll, status: OnboardingStatus.OngoingProfileCreation, res: true },
+  { loc: AppPath.DevelopersCatchAll, status: OnboardingStatus.OngoingSyncEmail, res: true },
   { loc: AppPath.DevelopersCatchAll, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.DevelopersCatchAll, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
@@ -196,6 +222,7 @@ const testCases = [
   { loc: AppPath.Impersonate, status: OnboardingStatus.OngoingUserCreation, res: true },
   { loc: AppPath.Impersonate, status: OnboardingStatus.OngoingWorkspaceActivation, res: true },
   { loc: AppPath.Impersonate, status: OnboardingStatus.OngoingProfileCreation, res: true },
+  { loc: AppPath.Impersonate, status: OnboardingStatus.OngoingSyncEmail, res: true },
   { loc: AppPath.Impersonate, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.Impersonate, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
@@ -206,6 +233,7 @@ const testCases = [
   { loc: AppPath.Authorize, status: OnboardingStatus.OngoingUserCreation, res: true },
   { loc: AppPath.Authorize, status: OnboardingStatus.OngoingWorkspaceActivation, res: true },
   { loc: AppPath.Authorize, status: OnboardingStatus.OngoingProfileCreation, res: true },
+  { loc: AppPath.Authorize, status: OnboardingStatus.OngoingSyncEmail, res: true },
   { loc: AppPath.Authorize, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.Authorize, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
@@ -216,6 +244,7 @@ const testCases = [
   { loc: AppPath.NotFoundWildcard, status: OnboardingStatus.OngoingUserCreation, res: true },
   { loc: AppPath.NotFoundWildcard, status: OnboardingStatus.OngoingWorkspaceActivation, res: true },
   { loc: AppPath.NotFoundWildcard, status: OnboardingStatus.OngoingProfileCreation, res: true },
+  { loc: AppPath.NotFoundWildcard, status: OnboardingStatus.OngoingSyncEmail, res: true },
   { loc: AppPath.NotFoundWildcard, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.NotFoundWildcard, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 
@@ -226,6 +255,7 @@ const testCases = [
   { loc: AppPath.NotFound, status: OnboardingStatus.OngoingUserCreation, res: true },
   { loc: AppPath.NotFound, status: OnboardingStatus.OngoingWorkspaceActivation, res: true },
   { loc: AppPath.NotFound, status: OnboardingStatus.OngoingProfileCreation, res: true },
+  { loc: AppPath.NotFound, status: OnboardingStatus.OngoingSyncEmail, res: true },
   { loc: AppPath.NotFound, status: OnboardingStatus.Completed, res: false },
   { loc: AppPath.NotFound, status: OnboardingStatus.CompletedWithoutSubscription, res: false },
 ];

@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 import DocsMain from '@/app/_components/docs/DocsMain';
 import { getDocsArticles } from '@/content/user-guide/constants/getDocsArticles';
@@ -29,5 +30,11 @@ export default async function TwentyUISlug({
   const filePath = `src/content/twenty-ui/${params.folder}/`;
   const docsArticleCards = getDocsArticles(filePath);
   const isSection = true;
+  const hasOnlyEmptySections = docsArticleCards.every(
+    (article) => article.topic === 'Empty Section',
+  );
+  if (!docsArticleCards || hasOnlyEmptySections) {
+    notFound();
+  }
   return <DocsMain docsArticleCards={docsArticleCards} isSection={isSection} />;
 }
