@@ -12,7 +12,6 @@ import { AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objec
 import { CommentWorkspaceEntity } from 'src/modules/activity/standard-objects/comment.workspace-entity';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { WorkspaceEntity } from 'src/engine/twenty-orm/decorators/workspace-entity.decorator';
-import { WorkspaceIsNotAuditLogged } from 'src/engine/twenty-orm/decorators/workspace-is-not-audit-logged.decorator';
 import { WorkspaceIsSystem } from 'src/engine/twenty-orm/decorators/workspace-is-system.decorator';
 import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field.decorator';
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
@@ -27,7 +26,6 @@ import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity
   description: 'An activity',
   icon: 'IconCheckbox',
 })
-@WorkspaceIsNotAuditLogged()
 @WorkspaceIsSystem()
 export class ActivityWorkspaceEntity extends BaseWorkspaceEntity {
   @WorkspaceField({
