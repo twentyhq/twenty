@@ -24,7 +24,7 @@ export const RelationFieldInput = ({
   onCancel,
 }: RelationFieldInputProps) => {
   const { fieldDefinition, initialSearchValue, fieldValue } =
-    useRelationField();
+    useRelationField<EntityForSelect>();
 
   const persistField = usePersistField();
 

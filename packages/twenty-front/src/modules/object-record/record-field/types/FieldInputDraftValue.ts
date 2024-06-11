@@ -18,6 +18,7 @@ import {
   FieldTextValue,
   FieldUUidValue,
 } from '@/object-record/record-field/types/FieldMetadata';
+import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
 
 export type FieldTextDraftValue = string;
 export type FieldNumberDraftValue = string;
@@ -78,7 +79,9 @@ export type FieldInputDraftValue<FieldValue> = FieldValue extends FieldTextValue
                           ? FieldSelectDraftValue
                           : FieldValue extends FieldMultiSelectValue
                             ? FieldMultiSelectDraftValue
-                            : FieldValue extends FieldRelationValue
+                            : FieldValue extends
+                                  | FieldRelationValue<EntityForSelect>
+                                  | FieldRelationValue<EntityForSelect[]>
                               ? FieldRelationDraftValue
                               : FieldValue extends FieldAddressValue
                                 ? FieldAddressDraftValue
