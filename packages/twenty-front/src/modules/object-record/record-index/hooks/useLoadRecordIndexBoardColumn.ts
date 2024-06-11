@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
@@ -62,6 +63,7 @@ export const useLoadRecordIndexBoardColumn = ({
       filter,
       orderBy,
       recordGqlFields,
+      limit: DEFAULT_SEARCH_REQUEST_LIMIT,
     });
 
   useEffect(() => {
