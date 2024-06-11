@@ -32,13 +32,13 @@ describe('OrderByInputFactory', () => {
     it('should create order by parser properly', () => {
       const request: any = {
         query: {
-          order_by: 'fieldNumber[AscNullsFirst],fieldString[DescNullsLast]',
+          order_by: 'fieldNumber[AscNullsFirst],fieldText[DescNullsLast]',
         },
       };
 
       expect(service.create(request, objectMetadata)).toEqual({
         fieldNumber: OrderByDirection.AscNullsFirst,
-        fieldString: OrderByDirection.DescNullsLast,
+        fieldText: OrderByDirection.DescNullsLast,
       });
     });
 
@@ -95,7 +95,7 @@ describe('OrderByInputFactory', () => {
     it('should throw if direction invalid', () => {
       const request: any = {
         query: {
-          order_by: 'fieldString[invalid]',
+          order_by: 'fieldText[invalid]',
         },
       };
 

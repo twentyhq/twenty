@@ -19,6 +19,34 @@ type Properties = {
   [name: string]: Property;
 };
 
+const getFieldProperties = (type: FieldMetadataType): Property => {
+  switch (type) {
+    case FieldMetadataType.UUID:
+      return { type: 'string', format: 'uuid' };
+    case FieldMetadataType.TEXT:
+    case FieldMetadataType.PHONE:
+      return { type: 'string' };
+    case FieldMetadataType.EMAIL:
+      return { type: 'string', format: 'email' };
+    case FieldMetadataType.DATE_TIME:
+    case FieldMetadataType.DATE:
+      return { type: 'string', format: 'date' };
+    case FieldMetadataType.NUMBER:
+      return { type: 'integer' };
+    case FieldMetadataType.NUMERIC:
+    case FieldMetadataType.PROBABILITY:
+    case FieldMetadataType.RATING:
+    case FieldMetadataType.POSITION:
+      return { type: 'number' };
+    case FieldMetadataType.BOOLEAN:
+      return { type: 'boolean' };
+    case FieldMetadataType.RAW_JSON:
+      return { type: 'object' };
+    default:
+      return { type: 'string' };
+  }
+};
+
 const getSchemaComponentsProperties = (
   item: ObjectMetadataEntity,
 ): Properties => {
@@ -26,23 +54,12 @@ const getSchemaComponentsProperties = (
     let itemProperty = {} as Property;
 
     switch (field.type) {
-      case FieldMetadataType.UUID:
-      case FieldMetadataType.TEXT:
-      case FieldMetadataType.PHONE:
-      case FieldMetadataType.EMAIL:
-      case FieldMetadataType.DATE_TIME:
-      case FieldMetadataType.DATE:
-        itemProperty.type = 'string';
-        break;
-      case FieldMetadataType.NUMBER:
-      case FieldMetadataType.NUMERIC:
-      case FieldMetadataType.PROBABILITY:
-      case FieldMetadataType.RATING:
-      case FieldMetadataType.POSITION:
-        itemProperty.type = 'number';
-        break;
-      case FieldMetadataType.BOOLEAN:
-        itemProperty.type = 'boolean';
+      case FieldMetadataType.SELECT:
+      case FieldMetadataType.MULTI_SELECT:
+        itemProperty = {
+          type: 'string',
+          enum: field.options.map((option: { value: string }) => option.value),
+        };
         break;
       case FieldMetadataType.RELATION:
         if (field.fromRelationMetadata?.toObjectMetadata.nameSingular) {
@@ -66,18 +83,14 @@ const getSchemaComponentsProperties = (
           properties: compositeTypeDefintions
             .get(field.type)
             ?.properties?.reduce((properties, property) => {
-              // TODO: This should not be statically typed, instead we should do someting recursive
-              properties[property.name] = { type: 'string' };
+              properties[property.name] = getFieldProperties(property.type);
 
               return properties;
             }, {} as Properties),
         };
         break;
-      case FieldMetadataType.RAW_JSON:
-        itemProperty.type = 'object';
-        break;
       default:
-        itemProperty.type = 'string';
+        itemProperty = getFieldProperties(field.type);
         break;
     }
 
