@@ -1,6 +1,5 @@
 import { FilterDefinition } from '@/object-record/object-filter-dropdown/types/FilterDefinition';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
-import { isDefined } from '~/utils/isDefined';
 
 import { ObjectMetadataItem } from '../types/ObjectMetadataItem';
 
@@ -34,12 +33,6 @@ export const formatFieldMetadataItemsAsFilterDefinitions = ({
       return acc;
     }
 
-    if (field.type === FieldMetadataType.Relation) {
-      if (isDefined(field.fromRelationMetadata)) {
-        return acc;
-      }
-    }
-
     return [...acc, formatFieldMetadataItemAsFilterDefinition({ field })];
   }, [] as FilterDefinition[]);
 
@@ -52,8 +45,10 @@ export const formatFieldMetadataItemAsFilterDefinition = ({
   label: field.label,
   iconName: field.icon ?? 'Icon123',
   relationObjectMetadataNamePlural:
-    field.toRelationMetadata?.fromObjectMetadata.namePlural,
+    field.toRelationMetadata?.fromObjectMetadata.namePlural ??
+    field.fromRelationMetadata?.toObjectMetadata.namePlural,
   relationObjectMetadataNameSingular:
+    field.toRelationMetadata?.fromObjectMetadata.nameSingular ??
     field.toRelationMetadata?.fromObjectMetadata.nameSingular,
   type: getFilterTypeFromFieldType(field.type),
 });

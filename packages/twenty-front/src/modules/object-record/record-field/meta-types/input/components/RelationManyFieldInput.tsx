@@ -3,21 +3,21 @@ import { useMemo } from 'react';
 import { ObjectMetadataItemsRelationPickerEffect } from '@/object-metadata/components/ObjectMetadataItemsRelationPickerEffect';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useUpdateRelationManyFieldInput } from '@/object-record/record-field/meta-types/input/hooks/useUpdateRelationManyFieldInput';
-import { useInlineCell } from '@/object-record/record-inline-cell/hooks/useInlineCell';
 import { MultiRecordSelect } from '@/object-record/relation-picker/components/MultiRecordSelect';
 import { useRelationPicker } from '@/object-record/relation-picker/hooks/useRelationPicker';
 import { useRelationPickerEntitiesOptions } from '@/object-record/relation-picker/hooks/useRelationPickerEntitiesOptions';
 import { EntityForSelect } from '@/object-record/relation-picker/types/EntityForSelect';
+import { isDefined } from '~/utils/isDefined';
 
 import { useRelationField } from '../../hooks/useRelationField';
 
 export const RelationManyFieldInput = ({
   relationPickerScopeId = 'relation-picker',
+  onCancel,
 }: {
   relationPickerScopeId?: string;
+  onCancel?: () => void;
 }) => {
-  const { closeInlineCell: closeEditableField } = useInlineCell();
-
   const { fieldDefinition, fieldValue } = useRelationField<EntityForSelect[]>();
   const { entities, relationPickerSearchFilter } =
     useRelationPickerEntitiesOptions({
@@ -73,7 +73,9 @@ export const RelationManyFieldInput = ({
         searchFilter={relationPickerSearchFilter}
         setSearchFilter={setRelationPickerSearchFilter}
         onSubmit={() => {
-          closeEditableField();
+          if (isDefined(onCancel)) {
+            onCancel();
+          }
         }}
         onChange={handleChange}
       />

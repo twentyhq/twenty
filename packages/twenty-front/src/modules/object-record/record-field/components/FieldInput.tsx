@@ -78,6 +78,7 @@ export const FieldInput = ({
             relationPickerScopeId={getScopeIdFromComponentId(
               `relation-picker-${fieldDefinition.fieldMetadataId}`,
             )}
+            onCancel={onCancel}
           />
         ) : (
           <RelationFieldInput onSubmit={onSubmit} onCancel={onCancel} />
