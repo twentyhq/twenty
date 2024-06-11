@@ -102,12 +102,6 @@ describe('computeSchemaComponents', () => {
             type: 'string',
             enum: ['OPTION_1', 'OPTION_2'],
           },
-          fieldRelation: {
-            type: 'array',
-            items: {
-              $ref: '#/components/schemas/ToObjectMetadataName',
-            },
-          },
           fieldPosition: {
             type: 'number',
           },
@@ -145,16 +139,28 @@ describe('computeSchemaComponents', () => {
           },
         },
       },
-      ObjectsName: {
-        description: 'A list of objectsName',
+      'ObjectName with Relations': {
+        allOf: [
+          {
+            $ref: '#/components/schemas/ObjectName',
+          },
+          {
+            properties: {
+              fieldRelation: {
+                type: 'array',
+                items: {
+                  $ref: '#/components/schemas/ToObjectMetadataName',
+                },
+              },
+            },
+            type: 'object',
+          },
+        ],
+        description: undefined,
         example: {
           fieldNumber: '',
         },
-        items: {
-          $ref: '#/components/schemas/ObjectName',
-        },
         required: ['fieldNumber'],
-        type: 'array',
       },
     });
   });

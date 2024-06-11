@@ -51,6 +51,10 @@ const getSchemaComponentsProperties = (
   item: ObjectMetadataEntity,
 ): Properties => {
   return item.fields.reduce((node, field) => {
+    if (field.type == FieldMetadataType.RELATION) {
+      return node;
+    }
+
     let itemProperty = {} as Property;
 
     switch (field.type) {
@@ -60,18 +64,6 @@ const getSchemaComponentsProperties = (
           type: 'string',
           enum: field.options.map((option: { value: string }) => option.value),
         };
-        break;
-      case FieldMetadataType.RELATION:
-        if (field.fromRelationMetadata?.toObjectMetadata.nameSingular) {
-          itemProperty = {
-            type: 'array',
-            items: {
-              $ref: `#/components/schemas/${capitalize(
-                field.fromRelationMetadata?.toObjectMetadata.nameSingular || '',
-              )}`,
-            },
-          };
-        }
         break;
       case FieldMetadataType.LINK:
       case FieldMetadataType.LINKS:
@@ -106,6 +98,37 @@ const getSchemaComponentsProperties = (
   }, {} as Properties);
 };
 
+const getSchemaComponentsRelationProperties = (
+  item: ObjectMetadataEntity,
+): Properties => {
+  return item.fields.reduce((node, field) => {
+    let itemProperty = {} as Property;
+
+    if (field.type == FieldMetadataType.RELATION) {
+      if (field.fromRelationMetadata?.toObjectMetadata.nameSingular) {
+        itemProperty = {
+          type: 'array',
+          items: {
+            $ref: `#/components/schemas/${capitalize(
+              field.fromRelationMetadata?.toObjectMetadata.nameSingular || '',
+            )}`,
+          },
+        };
+      }
+    }
+
+    if (field.description) {
+      itemProperty.description = field.description;
+    }
+
+    if (Object.keys(itemProperty).length) {
+      node[field.name] = itemProperty;
+    }
+
+    return node;
+  }, {} as Properties);
+};
+
 const getRequiredFields = (item: ObjectMetadataEntity): string[] => {
   return item.fields.reduce((required, field) => {
     if (!field.isNullable && field.defaultValue === null) {
@@ -116,33 +139,6 @@ const getRequiredFields = (item: ObjectMetadataEntity): string[] => {
 
     return required;
   }, [] as string[]);
-};
-
-const computeBatchSchemaComponent = (
-  item: ObjectMetadataEntity,
-): OpenAPIV3_1.SchemaObject => {
-  const result = {
-    type: 'array',
-    description: `A list of ${item.namePlural}`,
-    items: { $ref: `#/components/schemas/${capitalize(item.nameSingular)}` },
-    example: [{}],
-  } as OpenAPIV3_1.SchemaObject;
-
-  const requiredFields = getRequiredFields(item);
-
-  if (requiredFields?.length) {
-    result.required = requiredFields;
-    result.example = requiredFields.reduce(
-      (example, requiredField) => {
-        example[requiredField] = '';
-
-        return example;
-      },
-      {} as Record<string, string>,
-    );
-  }
-
-  return result;
 };
 
 const computeSchemaComponent = (
@@ -172,13 +168,48 @@ const computeSchemaComponent = (
   return result;
 };
 
+const computeRelationSchemaComponent = (
+  item: ObjectMetadataEntity,
+): OpenAPIV3_1.SchemaObject => {
+  const result = {
+    description: item.description,
+    allOf: [
+      {
+        $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+      },
+      {
+        type: 'object',
+        properties: getSchemaComponentsRelationProperties(item),
+      },
+    ],
+    example: {},
+  } as OpenAPIV3_1.SchemaObject;
+
+  const requiredFields = getRequiredFields(item);
+
+  if (requiredFields?.length) {
+    result.required = requiredFields;
+    result.example = requiredFields.reduce(
+      (example, requiredField) => {
+        example[requiredField] = '';
+
+        return example;
+      },
+      {} as Record<string, string>,
+    );
+  }
+
+  return result;
+};
+
 export const computeSchemaComponents = (
   objectMetadataItems: ObjectMetadataEntity[],
 ): Record<string, OpenAPIV3_1.SchemaObject> => {
   return objectMetadataItems.reduce(
     (schemas, item) => {
       schemas[capitalize(item.nameSingular)] = computeSchemaComponent(item);
-      schemas[capitalize(item.namePlural)] = computeBatchSchemaComponent(item);
+      schemas[capitalize(item.nameSingular) + ' with Relations'] =
+        computeRelationSchemaComponent(item);
 
       return schemas;
     },
