@@ -1,72 +1,68 @@
 import { useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useRecordActionBar } from '@/object-record/record-action-bar/hooks/useRecordActionBar';
 import { useRecordBoard } from '@/object-record/record-board/hooks/useRecordBoard';
 import { useRecordBoardSelection } from '@/object-record/record-board/hooks/useRecordBoardSelection';
-import { useLoadRecordIndexBoard } from '@/object-record/record-index/hooks/useLoadRecordIndexBoard';
 import { recordIndexFieldDefinitionsState } from '@/object-record/record-index/states/recordIndexFieldDefinitionsState';
+import { recordIndexIsCompactModeActiveState } from '@/object-record/record-index/states/recordIndexIsCompactModeActiveState';
 import { recordIndexKanbanFieldMetadataIdState } from '@/object-record/record-index/states/recordIndexKanbanFieldMetadataIdState';
 import { computeRecordBoardColumnDefinitionsFromObjectMetadata } from '@/object-record/utils/computeRecordBoardColumnDefinitionsFromObjectMetadata';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
 
-type RecordIndexBoardContainerEffectProps = {
+type RecordIndexBoardDataLoaderEffectProps = {
   objectNameSingular: string;
   recordBoardId: string;
-  viewBarId: string;
 };
 
-export const RecordIndexBoardContainerEffect = ({
+export const RecordIndexBoardDataLoaderEffect = ({
   objectNameSingular,
   recordBoardId,
-  viewBarId,
-}: RecordIndexBoardContainerEffectProps) => {
+}: RecordIndexBoardDataLoaderEffectProps) => {
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
+
+  const recordIndexFieldDefinitions = useRecoilValue(
+    recordIndexFieldDefinitionsState,
+  );
+
+  const recordIndexKanbanFieldMetadataId = useRecoilValue(
+    recordIndexKanbanFieldMetadataIdState,
+  );
+
+  const recordIndexIsCompactModeActive = useRecoilValue(
+    recordIndexIsCompactModeActiveState,
+  );
+
+  const { isCompactModeActiveState } = useRecordBoard(recordBoardId);
+
+  const setIsCompactModeActive = useSetRecoilState(isCompactModeActiveState);
+
+  useEffect(() => {
+    setIsCompactModeActive(recordIndexIsCompactModeActive);
+  }, [recordIndexIsCompactModeActive, setIsCompactModeActive]);
 
   const {
     setColumns,
     setObjectSingularName,
     selectedRecordIdsSelector,
     setFieldDefinitions,
-    shouldFetchMoreSelector,
     setKanbanFieldMetadataName,
   } = useRecordBoard(recordBoardId);
 
-  const { fetchMoreRecords, loading } = useLoadRecordIndexBoard({
-    objectNameSingular,
-    recordBoardId,
-    viewBarId,
-  });
-
-  const recordIndexKanbanFieldMetadataId = useRecoilValue(
-    recordIndexKanbanFieldMetadataIdState,
-  );
+  useEffect(() => {
+    setFieldDefinitions(recordIndexFieldDefinitions);
+  }, [recordIndexFieldDefinitions, setFieldDefinitions]);
 
   const navigate = useNavigate();
 
   const navigateToSelectSettings = useCallback(() => {
     navigate(`/settings/objects/${objectMetadataItem.namePlural}`);
   }, [navigate, objectMetadataItem.namePlural]);
-
-  const columnDefinitions =
-    computeRecordBoardColumnDefinitionsFromObjectMetadata(
-      objectMetadataItem,
-      recordIndexKanbanFieldMetadataId ?? '',
-      navigateToSelectSettings,
-    );
-
-  const shouldFetchMore = useRecoilValue(shouldFetchMoreSelector());
-
-  useEffect(() => {
-    if (!loading && shouldFetchMore) {
-      fetchMoreRecords?.();
-    }
-  }, [columnDefinitions, fetchMoreRecords, loading, shouldFetchMore]);
 
   const { resetRecordSelection } = useRecordBoardSelection(recordBoardId);
 
@@ -89,10 +85,6 @@ export const RecordIndexBoardContainerEffect = ({
     recordIndexKanbanFieldMetadataId,
     setColumns,
   ]);
-
-  const recordIndexFieldDefinitions = useRecoilValue(
-    recordIndexFieldDefinitionsState,
-  );
 
   useEffect(() => {
     setFieldDefinitions(recordIndexFieldDefinitions);
