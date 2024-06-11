@@ -120,7 +120,7 @@ export const usePersistField = () => {
           isFieldRawJsonValue(valueToPersist);
 
         const isValuePersistable =
-          fieldIsRelation ||
+          (fieldIsRelation && !fieldIsRelationFromManyObjects) ||
           fieldIsText ||
           fieldIsBoolean ||
           fieldIsEmail ||
@@ -145,21 +145,17 @@ export const usePersistField = () => {
             valueToPersist,
           );
 
-          if (fieldIsRelation) {
-            if (fieldIsRelationFromManyObjects) {
-              throw new Error('Cannot update this relation.');
-            } else {
-              const value = valueToPersist as EntityForSelect;
-              updateRecord?.({
-                variables: {
-                  where: { id: entityId },
-                  updateOneRecordInput: {
-                    [fieldName]: value,
-                    [`${fieldName}Id`]: value?.id ?? null,
-                  },
+          if (fieldIsRelation && !fieldIsRelationFromManyObjects) {
+            const value = valueToPersist as EntityForSelect;
+            updateRecord?.({
+              variables: {
+                where: { id: entityId },
+                updateOneRecordInput: {
+                  [fieldName]: value,
+                  [`${fieldName}Id`]: value?.id ?? null,
                 },
-              });
-            }
+              },
+            });
             return;
           }
 

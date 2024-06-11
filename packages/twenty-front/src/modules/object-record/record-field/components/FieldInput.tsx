@@ -75,7 +75,9 @@ export const FieldInput = ({
       {isFieldRelation(fieldDefinition) ? (
         isFieldRelationFromManyObjects(fieldDefinition) ? (
           <RelationManyFieldInput
-            relationPickerScopeId={`relation-picker-${fieldDefinition.metadata.fieldName}`}
+            relationPickerScopeId={getScopeIdFromComponentId(
+              `relation-picker-${fieldDefinition.fieldMetadataId}`,
+            )}
           />
         ) : (
           <RelationFieldInput onSubmit={onSubmit} onCancel={onCancel} />
