@@ -1,6 +1,7 @@
 import { useSetRecoilState } from 'recoil';
 
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
+import { useSetRecordBoardColumnRecordIds } from '@/object-record/record-board/hooks/internal/useSetRecordBoardColumnRecordIds';
 import { useSetRecordBoardColumns } from '@/object-record/record-board/hooks/internal/useSetRecordBoardColumns';
 import { useSetRecordBoardRecordIds } from '@/object-record/record-board/hooks/internal/useSetRecordBoardRecordIds';
 
@@ -17,6 +18,9 @@ export const useRecordBoard = (recordBoardId?: string) => {
 
   const { setColumns } = useSetRecordBoardColumns(recordBoardId);
   const { setRecordIds } = useSetRecordBoardRecordIds(recordBoardId);
+  const { setRecordIdsForColumn } =
+    useSetRecordBoardColumnRecordIds(recordBoardId);
+
   const setFieldDefinitions = useSetRecoilState(fieldDefinitionsState);
   const setObjectSingularName = useSetRecoilState(objectSingularNameState);
   const setKanbanFieldMetadataName = useSetRecoilState(
@@ -33,5 +37,6 @@ export const useRecordBoard = (recordBoardId?: string) => {
     selectedRecordIdsSelector,
     isCompactModeActiveState,
     shouldFetchMoreSelector,
+    setRecordIdsForColumn,
   };
 };

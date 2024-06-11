@@ -23,15 +23,15 @@ export const RecordBoardColumnFetchMoreLoader = () => {
     useRecordBoardStates();
   const isFetchingRecord = useRecoilValue(isFetchingRecordState);
 
-  const shouldFetchMore = useSetRecoilState(
+  const setShouldFetchMore = useSetRecoilState(
     shouldFetchMoreInColumnFamilyState(columnDefinition.id),
   );
 
   const { ref, inView } = useInView();
 
   useEffect(() => {
-    shouldFetchMore(inView);
-  }, [shouldFetchMore, inView]);
+    setShouldFetchMore(inView);
+  }, [setShouldFetchMore, inView]);
 
   return (
     <div ref={ref}>
