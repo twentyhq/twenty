@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { isLabelIdentifierField } from '@/object-metadata/utils/isLabelIdentifierField';
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { isFieldRelation } from '@/object-record/record-field/types/guards/isFieldRelation';
+import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { RecordUpdateContext } from '@/object-record/record-table/contexts/EntityUpdateMutationHookContext';
 import { RecordTableCellContext } from '@/object-record/record-table/contexts/RecordTableCellContext';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
@@ -10,6 +11,7 @@ import { RecordTableRowContext } from '@/object-record/record-table/contexts/Rec
 import { RecordTableCell } from '@/object-record/record-table/record-table-cell/components/RecordTableCell';
 import { TableHotkeyScope } from '@/object-record/record-table/types/TableHotkeyScope';
 import { RelationPickerHotkeyScope } from '@/object-record/relation-picker/types/RelationPickerHotkeyScope';
+import { SelectFieldHotkeyScope } from '@/object-record/select/types/SelectFieldHotkeyScope';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 export const RecordTableCellFieldContextWrapper = () => {
@@ -25,7 +27,9 @@ export const RecordTableCellFieldContextWrapper = () => {
 
   const customHotkeyScope = isFieldRelation(columnDefinition)
     ? RelationPickerHotkeyScope.RelationPicker
-    : TableHotkeyScope.CellEditMode;
+    : isFieldSelect(columnDefinition)
+      ? SelectFieldHotkeyScope.SelectField
+      : TableHotkeyScope.CellEditMode;
 
   return (
     <FieldContext.Provider
