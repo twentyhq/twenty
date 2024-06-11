@@ -12,6 +12,7 @@ import { DESKTOP_NAV_DRAWER_WIDTHS } from '../constants/DesktopNavDrawerWidths';
 
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 
 export type NavigationDrawerProps = {
   children: ReactNode;
@@ -69,6 +70,7 @@ export const NavigationDrawer = ({
   const isMobile = useIsMobile();
   const theme = useTheme();
   const isNavigationDrawerOpen = useRecoilValue(isNavigationDrawerOpenState);
+  const isSettingsPage = useIsSettingsPage();
 
   const handleHover = () => {
     setIsHovered(true);
@@ -90,7 +92,7 @@ export const NavigationDrawer = ({
       initial={false}
       animate={{
         width: isMobile ? mobileWidth : desktopWidth,
-        opacity: isNavigationDrawerOpen ? 1 : 0,
+        opacity: isNavigationDrawerOpen || isSettingsPage ? 1 : 0,
       }}
       transition={{
         duration: theme.animation.duration.normal,
