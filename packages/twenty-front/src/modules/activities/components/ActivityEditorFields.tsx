@@ -119,7 +119,6 @@ export const ActivityEditorFields = ({
             <ActivityTargetsInlineCell
               activity={activityFromCache}
               maxWidth={340}
-              labelWidth={90}
             />
           </ActivityTargetsContextProvider>
         )}
