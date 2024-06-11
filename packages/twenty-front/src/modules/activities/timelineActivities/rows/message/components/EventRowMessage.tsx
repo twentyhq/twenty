@@ -37,7 +37,7 @@ export const EventRowMessage: React.FC<EventRowMessageProps> = ({
 
   const renderRow = () => {
     switch (eventAction) {
-      case 'matched': {
+      case 'linked': {
         return (
           <>
             <StyledItemAuthorText>{authorFullName}</StyledItemAuthorText>

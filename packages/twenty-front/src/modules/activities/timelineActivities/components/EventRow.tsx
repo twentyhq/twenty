@@ -10,7 +10,7 @@ import {
 } from '@/activities/timelineActivities/rows/components/EventRowDynamicComponent';
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
 import {
-  CurrentWorkspaceMemberState,
+  CurrentWorkspaceMember,
   currentWorkspaceMemberState,
 } from '@/auth/states/currentWorkspaceMemberState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -94,7 +94,7 @@ type EventRowProps = {
 
 const getAuthorFullName = (
   event: TimelineActivity,
-  currentWorkspaceMember: CurrentWorkspaceMemberState,
+  currentWorkspaceMember: CurrentWorkspaceMember,
 ) => {
   if (isDefined(event.workspaceMember)) {
     return currentWorkspaceMember.id === event.workspaceMember.id

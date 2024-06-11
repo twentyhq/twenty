@@ -146,7 +146,7 @@ export class CalendarEventParticipantService {
           workspaceId,
         );
 
-      this.eventEmitter.emit(`calendarEvent.matched`, {
+      this.eventEmitter.emit(`calendarEventParticipant.matched`, {
         workspaceId,
         userId: null,
         calendarEventParticipants: updatedCalendarEventParticipants,

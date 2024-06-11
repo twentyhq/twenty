@@ -8,7 +8,7 @@ export const mockedTimelineActivities: Array<TimelineActivity> = [
     linkedObjectMetadataId: '1ad72a42-6ab4-4474-a62a-a57cae3c0298',
     linkedRecordCachedName: '',
     linkedRecordId: 'ce40eca0-8f4b-4bba-ba91-5cbd870c64d3',
-    name: 'calendarEvent.matched',
+    name: 'calendarEvent.linked',
     createdAt: '2023-04-26T10:12:42.33625+00:00',
     workspaceMember: {
       __typename: 'WorkspaceMember',
@@ -33,7 +33,7 @@ export const mockedTimelineActivities: Array<TimelineActivity> = [
     linkedObjectMetadataId: '1ad72a42-6ab4-4474-a62a-a57cae3c0298',
     linkedRecordCachedName: '',
     linkedRecordId: 'ce40eca0-8f4b-4bba-ba91-5cbd870c64d5',
-    name: 'message.matched',
+    name: 'message.linked',
     createdAt: '2023-04-26T10:12:42.33625+00:00',
     workspaceMember: {
       __typename: 'WorkspaceMember',
@@ -94,17 +94,17 @@ export const mockedTimelineActivities: Array<TimelineActivity> = [
     createdAt: '2023-04-26T10:12:42.33625+00:00',
     workspaceMember: {
       __typename: 'WorkspaceMember',
-      id: '20202020-0687-4c41-b707-ed1bfca972a7',
+      id: '20202020-1553-45c6-a028-5a9064cce07f',
       avatarUrl: '',
       locale: 'en',
       name: {
         __typename: 'FullName',
-        firstName: 'Tim',
-        lastName: 'Apple',
+        firstName: 'Jane',
+        lastName: 'Doe',
       },
       colorScheme: 'Light',
     },
-    workspaceMemberId: '20202020-0687-4c41-b707-ed1bfca972a7',
+    workspaceMemberId: '20202020-1553-45c6-a028-5a9064cce07f',
     deletedAt: null,
     __typename: 'TimelineActivity',
   },
@@ -117,7 +117,7 @@ export const mockedTimelineActivities: Array<TimelineActivity> = [
     linkedObjectMetadataId: '1ad72a42-6ab4-4474-a62a-a57cae3c0298',
     linkedRecordCachedName: 'Test',
     linkedRecordId: 'ce40eca0-8f4b-4bba-ba91-5cbd870c64d0',
-    createdAt: '2023-05-26T10:12:42.33625+00:00',
+    createdAt: '2022-05-26T10:12:42.33625+00:00',
     workspaceMember: {
       __typename: 'WorkspaceMember',
       id: '20202020-0687-4c41-b707-ed1bfca972a7',

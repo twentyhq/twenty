@@ -145,7 +145,7 @@ export class MessagingMessageParticipantService {
           workspaceId,
         );
 
-      this.eventEmitter.emit(`message.matched`, {
+      this.eventEmitter.emit(`messageParticipant.matched`, {
         workspaceId,
         userId: null,
         messageParticipants: updatedMessageParticipants,

@@ -36,7 +36,7 @@ export const EventRowCalendarEvent: React.FC<EventRowCalendarEventProps> = ({
 
   const renderRow = () => {
     switch (eventAction) {
-      case 'matched': {
+      case 'linked': {
         return (
           <StyledItemAction>
             linked a calendar event with {labelIdentifierValue}
