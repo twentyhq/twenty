@@ -11,3 +11,19 @@ export const getRequestBody = (name: string) => {
     },
   };
 };
+
+export const getArrayRequestBody = (name: string) => {
+  return {
+    required: true,
+    content: {
+      'application/json': {
+        schema: {
+          type: 'array',
+          items: {
+            $ref: `#/components/schemas/${name}`,
+          },
+        },
+      },
+    },
+  };
+};

@@ -19,7 +19,7 @@ export const getFindManyResponse200 = (
                   items: {
                     $ref: `#/components/schemas/${capitalize(
                       item.nameSingular,
-                    )}`,
+                    )} with Relations`,
                   },
                 },
               },
@@ -54,7 +54,9 @@ export const getFindOneResponse200 = (
               type: 'object',
               properties: {
                 [item.nameSingular]: {
-                  $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+                  $ref: `#/components/schemas/${capitalize(
+                    item.nameSingular,
+                  )} with Relations`,
                 },
               },
             },
