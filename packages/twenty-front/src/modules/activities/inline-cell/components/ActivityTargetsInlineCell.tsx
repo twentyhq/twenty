@@ -17,6 +17,7 @@ type ActivityTargetsInlineCellProps = {
   showLabel?: boolean;
   maxWidth?: number;
   readonly?: boolean;
+  labelWidth?: number;
 };
 
 export const ActivityTargetsInlineCell = ({
@@ -24,6 +25,7 @@ export const ActivityTargetsInlineCell = ({
   showLabel = true,
   maxWidth,
   readonly,
+  labelWidth,
 }: ActivityTargetsInlineCellProps) => {
   const { activityTargetObjectRecords } =
     useActivityTargetObjectRecords(activity);
@@ -48,6 +50,7 @@ export const ActivityTargetsInlineCell = ({
           IconLabel={showLabel ? IconArrowUpRight : undefined}
           showLabel={showLabel}
           readonly={readonly}
+          labelWidth={labelWidth}
           editModeContent={
             <ActivityTargetInlineCellEditMode
               activity={activity}
