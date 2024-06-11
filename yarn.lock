@@ -34104,6 +34104,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"langfuse-core@npm:^3.11.2":
+  version: 3.11.2
+  resolution: "langfuse-core@npm:3.11.2"
+  dependencies:
+    mustache: "npm:^4.2.0"
+  checksum: 341cddedf16cf0c4b980989c4ee4daa6be0dad7a37349d86ff7b3fcf4e2e35e25318fb9ec6e4c9d27023031c7e780d50d75493f7cf9911938b6581ee2c1728c6
+  languageName: node
+  linkType: hard
+
+"langfuse-langchain@npm:^3.11.2":
+  version: 3.11.2
+  resolution: "langfuse-langchain@npm:3.11.2"
+  dependencies:
+    langfuse: "npm:^3.11.2"
+    langfuse-core: "npm:^3.11.2"
+  peerDependencies:
+    langchain: ">=0.0.157 <0.3.0"
+  checksum: ec57481128b4b738ee4e146b0f0c42e94d0f75d5a525a031407d7ecd8ffcd50dc9730f580901ed2432694555e544459e032e9181af9d853a156aef42c3ef9b41
+  languageName: node
+  linkType: hard
+
+"langfuse@npm:^3.11.2":
+  version: 3.11.2
+  resolution: "langfuse@npm:3.11.2"
+  dependencies:
+    langfuse-core: "npm:^3.11.2"
+  checksum: e74053aa5bb3e62a91d3c7a5f95c86f9808342ca9a0dcda5c5a33bf8abf8ace70357f84db7fae36e93d722e9aa383b55ced785e6d6cbf23d47d0252b1fef57b0
+  languageName: node
+  linkType: hard
+
 "langsmith@npm:~0.1.30":
   version: 0.1.30
   resolution: "langsmith@npm:0.1.30"
@@ -47147,6 +47177,7 @@ __metadata:
     graphql-middleware: "npm:^6.1.35"
     jsdom: "npm:~22.1.0"
     jwt-decode: "npm:^4.0.0"
+    langfuse-langchain: "npm:^3.11.2"
     lodash.differencewith: "npm:^4.5.0"
     lodash.uniq: "npm:^4.5.0"
     lodash.uniqby: "npm:^4.7.0"

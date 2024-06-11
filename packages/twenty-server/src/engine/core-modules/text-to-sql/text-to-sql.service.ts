@@ -8,6 +8,7 @@ import {
   RunnableSequence,
 } from '@langchain/core/runnables';
 import { StringOutputParser } from '@langchain/core/output_parsers';
+import { CallbackHandler } from 'langfuse-langchain';
 
 import { TextToSQLQueryResult } from 'src/engine/core-modules/text-to-sql/dtos/text-to-sql-query-result.dto';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
@@ -56,9 +57,20 @@ export class TextToSQLService {
       new StringOutputParser(),
     ]);
 
-    const sqlQuery = await sqlQueryGeneratorChain.invoke({
-      question: text,
+    const langfuseHandler = new CallbackHandler({
+      secretKey: process.env.LANGFUSE_SECRET_KEY,
+      publicKey: process.env.LANGFUSE_PUBLIC_KEY,
+      baseUrl: 'https://cloud.langfuse.com',
     });
+
+    const sqlQuery = await sqlQueryGeneratorChain.invoke(
+      {
+        question: text,
+      },
+      {
+        callbacks: [langfuseHandler],
+      },
+    );
 
     const sqlQueryResult =
       await this.workspaceDataSourceService.executeRawQuery(
