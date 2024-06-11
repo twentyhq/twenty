@@ -1,8 +1,10 @@
 'use client';
 import { useEffect, useState } from 'react';
 import styled from '@emotion/styled';
+import { motion } from 'framer-motion';
 import { usePathname } from 'next/navigation';
 
+import ClientOnly from '@/app/_components/docs/ClientOnly';
 import mq from '@/app/_components/ui/theme/mq';
 import { Theme } from '@/app/_components/ui/theme/theme';
 import { useHeadsObserver } from '@/app/user-guide/hooks/useHeadsObserver';
@@ -13,7 +15,6 @@ const StyledContainer = styled.div`
     flexDirection: 'column',
     background: `${Theme.background.secondary}`,
     borderLeft: `1px solid ${Theme.background.transparent.medium}`,
-    borderBottom: `1px solid ${Theme.background.transparent.medium}`,
     padding: `0px ${Theme.spacing(6)}`,
   })};
   width: 300px;
@@ -96,7 +97,8 @@ const DocsTableContents = () => {
   useEffect(() => {
     const nodes: HTMLElement[] = Array.from(
       document.querySelectorAll('h2, h3, h4, h5'),
-    );
+    ).filter((elem) => (elem as HTMLElement).id !== 'edit') as HTMLElement[];
+
     const elements: HeadingType[] = nodes.map(
       (elem): HeadingType => ({
         id: elem.id,
@@ -106,41 +108,52 @@ const DocsTableContents = () => {
         level: Number(elem.nodeName.charAt(1)),
       }),
     );
-
     setHeadings(elements);
-  }, [pathname]);
+  }, []);
 
   return (
     <StyledContainer>
       <StyledNav>
         <StyledHeadingText>Table of Content</StyledHeadingText>
-        <StyledUnorderedList>
-          {headings.map((heading) => (
-            <StyledList
-              key={heading.text}
-              style={getStyledHeading(heading.level)}
-            >
-              <StyledLink
-                href={`#${heading.text}`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  const yOffset = -70;
-                  const y =
-                    heading.elem.getBoundingClientRect().top +
-                    window.scrollY +
-                    yOffset;
 
-                  window.scrollTo({ top: y, behavior: 'smooth' });
-                }}
-                style={{
-                  fontWeight: activeText === heading.text ? 'bold' : 'normal',
-                }}
-              >
-                {heading.text}
-              </StyledLink>
-            </StyledList>
-          ))}
-        </StyledUnorderedList>
+        <ClientOnly>
+          {!!headings?.length && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.2 }}
+            >
+              <StyledUnorderedList>
+                {headings.map((heading) => (
+                  <StyledList
+                    key={heading.text}
+                    style={getStyledHeading(heading.level)}
+                  >
+                    <StyledLink
+                      href={`#${heading.text}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        const yOffset = -70;
+                        const y =
+                          heading.elem.getBoundingClientRect().top +
+                          window.scrollY +
+                          yOffset;
+
+                        window.scrollTo({ top: y, behavior: 'smooth' });
+                      }}
+                      style={{
+                        fontWeight:
+                          activeText === heading.text ? 'bold' : 'normal',
+                      }}
+                    >
+                      {heading.text}
+                    </StyledLink>
+                  </StyledList>
+                ))}
+              </StyledUnorderedList>
+            </motion.div>
+          )}
+        </ClientOnly>
       </StyledNav>
     </StyledContainer>
   );

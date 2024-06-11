@@ -19,7 +19,6 @@ const StyledContainer = styled.div`
     flexDirection: 'column',
     background: `${Theme.background.secondary}`,
     borderRight: `1px solid ${Theme.background.transparent.medium}`,
-    borderBottom: `1px solid ${Theme.background.transparent.medium}`,
     padding: `${Theme.spacing(10)} ${Theme.spacing(4)}`,
     gap: `${Theme.spacing(6)}`,
   })}
