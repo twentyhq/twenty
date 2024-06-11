@@ -171,6 +171,14 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
           workspaceId: objectMetadataInput.workspaceId,
         },
         {
+          nameSingular: objectMetadataInput.namePlural,
+          workspaceId: objectMetadataInput.workspaceId,
+        },
+        {
+          namePlural: objectMetadataInput.nameSingular,
+          workspaceId: objectMetadataInput.workspaceId,
+        },
+        {
           namePlural: objectMetadataInput.namePlural,
           workspaceId: objectMetadataInput.workspaceId,
         },

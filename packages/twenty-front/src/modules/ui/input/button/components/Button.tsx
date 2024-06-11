@@ -16,6 +16,7 @@ export type ButtonProps = {
   title?: string;
   fullWidth?: boolean;
   variant?: ButtonVariant;
+  inverted?: boolean;
   size?: ButtonSize;
   position?: ButtonPosition;
   accent?: ButtonAccent;
@@ -36,6 +37,7 @@ const StyledButton = styled('button', {
     ButtonProps,
     | 'fullWidth'
     | 'variant'
+    | 'inverted'
     | 'size'
     | 'position'
     | 'accent'
@@ -46,83 +48,112 @@ const StyledButton = styled('button', {
   >
 >`
   align-items: center;
-  ${({ theme, variant, accent, disabled, focus }) => {
+  ${({ theme, variant, inverted, accent, disabled, focus }) => {
     switch (variant) {
       case 'primary':
         switch (accent) {
           case 'default':
             return css`
-              background: ${theme.background.secondary};
-              border-color: ${!disabled
+              background: ${!inverted
+                ? theme.background.secondary
+                : theme.background.primary};
+              border-color: ${!inverted
                 ? focus
                   ? theme.color.blue
                   : theme.background.transparent.light
-                : 'transparent'};
-              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
+                : theme.background.transparent.light};
+              border-width: 1px 1px 1px 1px !important;
+              opacity: ${disabled ? 0.24 : 1};
               box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.accent.tertiary}`
+                ? `0 0 0 3px ${
+                    !inverted
+                      ? theme.accent.tertiary
+                      : theme.background.transparent.medium
+                  }`
                 : 'none'};
-              color: ${!disabled
-                ? theme.font.color.secondary
-                : theme.font.color.extraLight};
+              color: ${!inverted
+                ? !disabled
+                  ? theme.font.color.secondary
+                  : theme.font.color.extraLight
+                : theme.font.color.secondary};
               &:hover {
-                background: ${!disabled
+                background: ${!inverted
                   ? theme.background.tertiary
                   : theme.background.secondary};
               }
               &:active {
-                background: ${!disabled
+                background: ${!inverted
                   ? theme.background.quaternary
-                  : theme.background.secondary};
+                  : theme.background.tertiary};
               }
             `;
           case 'blue':
             return css`
-              background: ${theme.color.blue};
-              border-color: ${!disabled
+              background: ${!inverted
+                ? theme.color.blue
+                : theme.background.primary};
+              border-color: ${!inverted
                 ? focus
                   ? theme.color.blue
                   : theme.background.transparent.light
-                : 'transparent'};
-              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
+                : theme.background.transparent.light};
+              border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.accent.tertiary}`
+                ? `0 0 0 3px ${
+                    !inverted
+                      ? theme.accent.tertiary
+                      : theme.background.transparent.medium
+                  }`
                 : 'none'};
-              color: ${theme.grayScale.gray0};
+              color: ${!inverted ? theme.grayScale.gray0 : theme.color.blue};
               opacity: ${disabled ? 0.24 : 1};
-
               ${disabled
                 ? ''
                 : css`
                     &:hover {
-                      background: ${theme.color.blue50};
+                      background: ${!inverted
+                        ? theme.color.blue50
+                        : theme.background.secondary};
                     }
                     &:active {
-                      background: ${theme.color.blue60};
+                      background: ${!inverted
+                        ? theme.color.blue60
+                        : theme.background.tertiary};
                     }
                   `}
             `;
           case 'danger':
             return css`
-              background: ${theme.color.red};
-              border-color: ${!disabled
+              background: ${!inverted
+                ? theme.color.red
+                : theme.background.primary};
+              border-color: ${!inverted
                 ? focus
                   ? theme.color.red
                   : theme.background.transparent.light
-                : 'transparent'};
-              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
+                : theme.background.transparent.light};
+              border-width: 1px 1px !important;
               box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.color.red10}`
+                ? `0 0 0 3px ${
+                    !inverted
+                      ? theme.color.red10
+                      : theme.background.transparent.medium
+                  }`
                 : 'none'};
-              color: ${theme.grayScale.gray0};
+              color: ${!inverted ? theme.background.primary : theme.color.red};
               opacity: ${disabled ? 0.24 : 1};
-
               ${disabled
                 ? ''
                 : css`
-                    &:hover,
+                    &:hover {
+                      background: ${!inverted
+                        ? theme.color.red40
+                        : theme.background.secondary};
+                    }
                     &:active {
-                      background: ${theme.color.red50};
+                      background: ${!inverted
+                        ? theme.color.red50
+                        : theme.background.tertiary};
                     }
                   `}
             `;
@@ -133,88 +164,143 @@ const StyledButton = styled('button', {
         switch (accent) {
           case 'default':
             return css`
-              background: ${focus
-                ? theme.background.transparent.primary
-                : 'transparent'};
-              border-color: ${variant === 'secondary'
-                ? !disabled && focus
-                  ? theme.color.blue
-                  : theme.background.transparent.medium
-                : focus
-                  ? theme.color.blue
-                  : 'transparent'};
-              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
+              background: transparent;
+              border-color: ${!inverted
+                ? variant === 'secondary'
+                  ? !disabled && focus
+                    ? theme.color.blue
+                    : theme.background.transparent.medium
+                  : focus
+                    ? theme.color.blue
+                    : 'transparent'
+                : variant === 'secondary'
+                  ? focus || disabled
+                    ? theme.grayScale.gray0
+                    : theme.background.transparent.primary
+                  : focus
+                    ? theme.grayScale.gray0
+                    : 'transparent'};
+              border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.accent.tertiary}`
+                ? `0 0 0 3px ${
+                    !inverted
+                      ? theme.accent.tertiary
+                      : theme.background.transparent.medium
+                  }`
                 : 'none'};
-              color: ${!disabled
-                ? theme.font.color.secondary
-                : theme.font.color.extraLight};
+              opacity: ${disabled ? 0.24 : 1};
+              color: ${!inverted
+                ? !disabled
+                  ? theme.font.color.secondary
+                  : theme.font.color.extraLight
+                : theme.font.color.inverted};
               &:hover {
-                background: ${!disabled
-                  ? theme.background.transparent.light
-                  : 'transparent'};
+                background: ${!inverted
+                  ? !disabled
+                    ? theme.background.transparent.light
+                    : 'transparent'
+                  : theme.background.transparent.light};
               }
               &:active {
-                background: ${!disabled
-                  ? theme.background.transparent.light
-                  : 'transparent'};
+                background: ${!inverted
+                  ? !disabled
+                    ? theme.background.transparent.light
+                    : 'transparent'
+                  : theme.background.transparent.medium};
               }
             `;
           case 'blue':
             return css`
-              background: ${focus
-                ? theme.background.transparent.primary
-                : 'transparent'};
-              border-color: ${variant === 'secondary'
-                ? focus
-                  ? theme.color.blue
-                  : theme.accent.primary
-                : focus
-                  ? theme.color.blue
-                  : 'transparent'};
-              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
+              background: transparent;
+              border-color: ${!inverted
+                ? variant === 'secondary'
+                  ? focus
+                    ? theme.color.blue
+                    : theme.accent.primary
+                  : focus
+                    ? theme.color.blue
+                    : 'transparent'
+                : variant === 'secondary'
+                  ? focus || disabled
+                    ? theme.grayScale.gray0
+                    : theme.background.transparent.primary
+                  : focus
+                    ? theme.grayScale.gray0
+                    : 'transparent'};
+              border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.accent.tertiary}`
+                ? `0 0 0 3px ${
+                    !inverted
+                      ? theme.accent.tertiary
+                      : theme.background.transparent.medium
+                  }`
                 : 'none'};
-              color: ${!disabled ? theme.color.blue : theme.accent.accent4060};
+              opacity: ${disabled ? 0.24 : 1};
+              color: ${!inverted
+                ? !disabled
+                  ? theme.color.blue
+                  : theme.accent.accent4060
+                : theme.font.color.inverted};
               &:hover {
-                background: ${!disabled
-                  ? theme.accent.tertiary
-                  : 'transparent'};
+                background: ${!inverted
+                  ? !disabled
+                    ? theme.accent.tertiary
+                    : 'transparent'
+                  : theme.background.transparent.light};
               }
               &:active {
-                background: ${!disabled
-                  ? theme.accent.secondary
-                  : 'transparent'};
+                background: ${!inverted
+                  ? !disabled
+                    ? theme.accent.secondary
+                    : 'transparent'
+                  : theme.background.transparent.medium};
               }
             `;
           case 'danger':
             return css`
               background: transparent;
-              border-color: ${variant === 'secondary'
-                ? focus
-                  ? theme.color.red
-                  : theme.border.color.danger
-                : focus
-                  ? theme.color.red
-                  : 'transparent'};
-              border-width: ${!disabled && focus ? '1px 1px !important' : 0};
+              border-color: ${!inverted
+                ? variant === 'secondary'
+                  ? focus
+                    ? theme.color.red
+                    : theme.border.color.danger
+                  : focus
+                    ? theme.color.red
+                    : 'transparent'
+                : variant === 'secondary'
+                  ? focus || disabled
+                    ? theme.grayScale.gray0
+                    : theme.background.transparent.primary
+                  : focus
+                    ? theme.grayScale.gray0
+                    : 'transparent'};
+              border-width: 1px 1px 1px 1px !important;
               box-shadow: ${!disabled && focus
-                ? `0 0 0 3px ${theme.color.red10}`
+                ? `0 0 0 3px ${
+                    !inverted
+                      ? theme.color.red10
+                      : theme.background.transparent.medium
+                  }`
                 : 'none'};
-              color: ${!disabled
-                ? theme.font.color.danger
-                : theme.border.color.danger};
+              opacity: ${disabled ? 0.24 : 1};
+              color: ${!inverted
+                ? !disabled
+                  ? theme.font.color.danger
+                  : theme.color.red20
+                : theme.font.color.inverted};
               &:hover {
-                background: ${!disabled
-                  ? theme.background.danger
-                  : 'transparent'};
+                background: ${!inverted
+                  ? !disabled
+                    ? theme.background.danger
+                    : 'transparent'
+                  : theme.background.transparent.light};
               }
               &:active {
-                background: ${!disabled
-                  ? theme.background.danger
-                  : 'transparent'};
+                background: ${!inverted
+                  ? !disabled
+                    ? theme.background.danger
+                    : 'transparent'
+                  : theme.background.transparent.medium};
               }
             `;
         }
@@ -277,6 +363,7 @@ export const Button = ({
   title,
   fullWidth = false,
   variant = 'primary',
+  inverted = false,
   size = 'medium',
   accent = 'default',
   position = 'standalone',
@@ -294,6 +381,7 @@ export const Button = ({
     <StyledButton
       fullWidth={fullWidth}
       variant={variant}
+      inverted={inverted}
       size={size}
       position={position}
       disabled={soon || disabled}

@@ -16,7 +16,6 @@ const StyledContent = styled.div`
     word-wrap: break-word;
     max-width: 100%;
     line-height: 1.8;
-    font-size: 13px;
     color: black;
   }
 
@@ -28,6 +27,9 @@ const StyledContent = styled.div`
     font-weight: ${Theme.font.weight.regular};
     margin: 32px 0px 0px;
     text-align: justify;
+    code {
+      font-size: 13px;
+    }
   }
 
   h1,
@@ -41,6 +43,10 @@ const StyledContent = styled.div`
     a {
       text-decoration: none;
       color: ${Theme.text.color.primary};
+    }
+
+    code {
+      font-size: 24px;
     }
   }
 

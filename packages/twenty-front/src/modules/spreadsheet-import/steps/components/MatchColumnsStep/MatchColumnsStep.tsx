@@ -287,11 +287,11 @@ export const MatchColumnsStep = <T extends string>({
         />
       </StyledContent>
       <StepNavigationButton
+        onBack={onBack}
         onClick={handleOnContinue}
         isLoading={isLoading}
-        title="Next"
+        title="Continue"
       />
-      <StepNavigationButton onClick={onBack} title="Back" />
     </>
   );
 };

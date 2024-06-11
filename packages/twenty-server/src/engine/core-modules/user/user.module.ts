@@ -11,6 +11,7 @@ import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-s
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { FileUploadModule } from 'src/engine/core-modules/file/file-upload/file-upload.module';
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
+import { UserStateModule } from 'src/engine/core-modules/user-state/user-state.module';
 
 import { userAutoResolverOpts } from './user.auto-resolver-opts';
 
@@ -27,6 +28,7 @@ import { UserService } from './services/user.service';
     }),
     DataSourceModule,
     FileUploadModule,
+    UserStateModule,
     WorkspaceModule,
   ],
   exports: [UserService],
