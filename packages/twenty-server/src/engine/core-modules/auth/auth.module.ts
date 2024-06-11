@@ -27,6 +27,7 @@ import { ObjectMetadataRepositoryModule } from 'src/engine/object-metadata-repos
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { UserStateModule } from 'src/engine/core-modules/user-state/user-state.module';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -63,6 +64,7 @@ const jwtModule = JwtModule.registerAsync({
     ]),
     HttpModule,
     UserWorkspaceModule,
+    UserStateModule,
   ],
   controllers: [
     GoogleAuthController,

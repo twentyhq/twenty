@@ -3,13 +3,13 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { IconComponent } from 'twenty-ui';
 
-type Variant = 'primary' | 'secondary';
+export type MainButtonVariant = 'primary' | 'secondary';
 
 type Props = {
   title: string;
   fullWidth?: boolean;
   width?: number;
-  variant?: Variant;
+  variant?: MainButtonVariant;
   soon?: boolean;
 } & React.ComponentProps<'button'>;
 

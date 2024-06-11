@@ -240,8 +240,11 @@ export const ValidationStep = <T extends string>({
           />
         </StyledScrollContainer>
       </StyledContent>
-      <StepNavigationButton onClick={onContinue} title="Confirm" />
-      <StepNavigationButton onClick={onBack} title="Back" />
+      <StepNavigationButton
+        onClick={onContinue}
+        onBack={onBack}
+        title="Confirm"
+      />
     </>
   );
 };
