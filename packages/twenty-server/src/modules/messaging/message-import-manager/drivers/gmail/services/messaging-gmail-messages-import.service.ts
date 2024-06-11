@@ -112,6 +112,7 @@ export class MessagingGmailMessagesImportService {
       );
 
       const messagesToSave = filterEmails(
+        messageChannel.handle,
         allMessages,
         blocklist.map((blocklistItem) => blocklistItem.handle),
       );
