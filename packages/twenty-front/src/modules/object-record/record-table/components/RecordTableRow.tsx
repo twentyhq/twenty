@@ -30,7 +30,6 @@ const StyledTd = styled.td`
 
 const StyledTr = styled.tr<{ isDragging: boolean }>`
   border: 1px solid transparent;
-  border-left: 3px solid transparent;
   transition: border-left-color 0.2s ease-in-out;
 
   td:nth-of-type(-n + 2) {
@@ -111,11 +110,10 @@ export const RecordTableRow = ({
             style={{
               ...draggableProvided.draggableProps.style,
               background: draggableSnapshot.isDragging
-                ? theme.background.transparent.primary
+                ? theme.background.transparent.light
                 : 'none',
-              paddingLeft: draggableSnapshot.isDragging ? '34px' : '0px',
               borderColor: draggableSnapshot.isDragging
-                ? `${theme.border.color.strong}`
+                ? `${theme.border.color.medium}`
                 : 'transparent',
             }}
             isDragging={draggableSnapshot.isDragging}
@@ -127,7 +125,7 @@ export const RecordTableRow = ({
               {...draggableProvided.dragHandleProps}
               data-select-disable
             >
-              {!draggableSnapshot.isDragging && <GripCell />}
+              <GripCell isDragging={draggableSnapshot.isDragging} />
             </StyledTd>
             <StyledTd>
               {!draggableSnapshot.isDragging && <CheckboxCell />}

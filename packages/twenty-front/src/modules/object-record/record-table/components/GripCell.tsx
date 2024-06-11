@@ -3,7 +3,6 @@ import styled from '@emotion/styled';
 import { IconListViewGrip } from '@/ui/input/components/IconListViewGrip';
 
 const StyledContainer = styled.div`
-  background-color: ${({ theme }) => theme.background.primary};
   cursor: grab;
   width: 16px;
   height: 32px;
@@ -14,15 +13,15 @@ const StyledContainer = styled.div`
   }
 `;
 
-const StyledIconWrapper = styled.div`
-  opacity: 0;
+const StyledIconWrapper = styled.div<{ isDragging: boolean }>`
+  opacity: ${({ isDragging }) => (isDragging ? 1 : 0)};
   transition: opacity 0.1s;
 `;
 
-export const GripCell = () => {
+export const GripCell = ({ isDragging }: { isDragging: boolean }) => {
   return (
     <StyledContainer>
-      <StyledIconWrapper className="icon">
+      <StyledIconWrapper className="icon" isDragging={isDragging}>
         <IconListViewGrip />
       </StyledIconWrapper>
     </StyledContainer>
