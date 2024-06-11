@@ -14,6 +14,7 @@ export const useRecordBoard = (recordBoardId?: string) => {
     isCompactModeActiveState,
     kanbanFieldMetadataNameState,
     shouldFetchMoreSelector,
+    isFetchingRecordsByColumnState,
   } = useRecordBoardStates(recordBoardId);
 
   const { setColumns } = useSetRecordBoardColumns(recordBoardId);
@@ -37,5 +38,6 @@ export const useRecordBoard = (recordBoardId?: string) => {
     isCompactModeActiveState,
     shouldFetchMoreSelector,
     setRecordIdsForColumn,
+    isFetchingRecordsByColumnState,
   };
 };
