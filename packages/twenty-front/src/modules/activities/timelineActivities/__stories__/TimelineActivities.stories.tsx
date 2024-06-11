@@ -51,7 +51,7 @@ const meta: Meta<typeof TimelineActivities> = {
             },
           });
         }),
-        graphql.query('FindManyTimelineActivities', ({ variables }) => {
+        graphql.query('FindManyTimelineActivities', () => {
           return HttpResponse.json({
             data: {
               timelineActivities: {

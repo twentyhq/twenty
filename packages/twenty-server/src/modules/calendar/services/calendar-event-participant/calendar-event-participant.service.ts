@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { EntityManager } from 'typeorm';
 
@@ -22,6 +23,7 @@ export class CalendarEventParticipantService {
     @InjectObjectMetadataRepository(PersonWorkspaceEntity)
     private readonly personRepository: PersonRepository,
     private readonly addPersonIdAndWorkspaceMemberIdService: AddPersonIdAndWorkspaceMemberIdService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   public async updateCalendarEventParticipantsAfterPeopleCreation(
@@ -137,11 +139,18 @@ export class CalendarEventParticipantService {
       calendarEventParticipantsToUpdate.map((participant) => participant.id);
 
     if (personId) {
-      await this.calendarEventParticipantRepository.updateParticipantsPersonId(
-        calendarEventParticipantIdsToUpdate,
-        personId,
+      const updatedCalendarEventParticipants =
+        await this.calendarEventParticipantRepository.updateParticipantsPersonIdAndReturn(
+          calendarEventParticipantIdsToUpdate,
+          personId,
+          workspaceId,
+        );
+
+      this.eventEmitter.emit(`calendarEvent.matched`, {
         workspaceId,
-      );
+        userId: null,
+        calendarEventParticipants: updatedCalendarEventParticipants,
+      });
     }
     if (workspaceMemberId) {
       await this.calendarEventParticipantRepository.updateParticipantsWorkspaceMemberId(

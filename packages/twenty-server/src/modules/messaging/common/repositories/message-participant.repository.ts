@@ -46,6 +46,23 @@ export class MessageParticipantRepository {
     );
   }
 
+  public async updateParticipantsPersonIdAndReturn(
+    participantIds: string[],
+    personId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ) {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."messageParticipant" SET "personId" = $1 WHERE "id" = ANY($2) RETURNING *`,
+      [personId, participantIds],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async updateParticipantsWorkspaceMemberId(
     participantIds: string[],
     workspaceMemberId: string,

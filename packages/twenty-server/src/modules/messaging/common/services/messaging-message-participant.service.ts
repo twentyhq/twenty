@@ -138,11 +138,18 @@ export class MessagingMessageParticipantService {
     );
 
     if (personId) {
-      await this.messageParticipantRepository.updateParticipantsPersonId(
-        messageParticipantIdsToUpdate,
-        personId,
+      const updatedMessageParticipants =
+        await this.messageParticipantRepository.updateParticipantsPersonIdAndReturn(
+          messageParticipantIdsToUpdate,
+          personId,
+          workspaceId,
+        );
+
+      this.eventEmitter.emit(`message.matched`, {
         workspaceId,
-      );
+        userId: null,
+        messageParticipants: updatedMessageParticipants,
+      });
     }
     if (workspaceMemberId) {
       await this.messageParticipantRepository.updateParticipantsWorkspaceMemberId(
