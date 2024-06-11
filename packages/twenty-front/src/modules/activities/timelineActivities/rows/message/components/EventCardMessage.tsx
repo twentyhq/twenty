@@ -79,13 +79,19 @@ export const EventCardMessage = ({
 
   if (isDefined(error)) {
     const shouldHideMessageContent = error.graphQLErrors.some(
-      (e) =>
-        e.extensions?.code === 'NOT_FOUND' ||
-        e.extensions?.code === 'FORBIDDEN',
+      (e) => e.extensions?.code === 'FORBIDDEN',
     );
 
     if (shouldHideMessageContent) {
       return <EventCardMessageNotShared sharedByFullName={authorFullName} />;
+    }
+
+    const shouldHandleNotFound = error.graphQLErrors.some(
+      (e) => e.extensions?.code === 'NOT_FOUND',
+    );
+
+    if (shouldHandleNotFound) {
+      return <div>Message not found</div>;
     }
 
     return <div>Error loading message</div>;

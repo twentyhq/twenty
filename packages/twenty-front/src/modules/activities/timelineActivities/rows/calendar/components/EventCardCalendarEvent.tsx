@@ -11,6 +11,7 @@ import {
   formatToHumanReadableMonth,
   formatToHumanReadableTime,
 } from '~/utils';
+import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const StyledEventCardCalendarEventContainer = styled.div`
@@ -83,7 +84,11 @@ export const EventCardCalendarEvent = ({
 }) => {
   const { setRecords } = useSetRecordInStore();
 
-  const { record: calendarEvent, loading } = useFindOneRecord<CalendarEvent>({
+  const {
+    record: calendarEvent,
+    loading,
+    error,
+  } = useFindOneRecord<CalendarEvent>({
     objectNameSingular: CoreObjectNameSingular.CalendarEvent,
     objectRecordId: calendarEventId,
     recordGqlFields: {
@@ -98,6 +103,26 @@ export const EventCardCalendarEvent = ({
   });
 
   const { openCalendarEventRightDrawer } = useOpenCalendarEventRightDrawer();
+
+  if (isDefined(error)) {
+    const shouldHideMessageContent = error.graphQLErrors.some(
+      (e) => e.extensions?.code === 'FORBIDDEN',
+    );
+
+    if (shouldHideMessageContent) {
+      return <div>Calendar event not shared</div>;
+    }
+
+    const shouldHandleNotFound = error.graphQLErrors.some(
+      (e) => e.extensions?.code === 'NOT_FOUND',
+    );
+
+    if (shouldHandleNotFound) {
+      return <div>Calendar event not found</div>;
+    }
+
+    return <div>Error loading message</div>;
+  }
 
   if (loading || isUndefined(calendarEvent)) {
     return <div>Loading...</div>;
