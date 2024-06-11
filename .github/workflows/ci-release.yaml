@@ -26,7 +26,7 @@ jobs:
       - name: Update versions
         working-directory: packages
         run: |
-          for dir in twenty-docs twenty-emails twenty-front twenty-server twenty-ui twenty-website
+          for dir in twenty-emails twenty-front twenty-server twenty-ui twenty-website
           do
             cd $dir
             yarn version ${{ steps.sanitize.outputs.version }}

@@ -40,7 +40,7 @@ const requestDb = async (
   endpoint = 'graphql',
 ) => {
   const options = {
-    url: `${process.env.SERVER_BASE_URL}/${endpoint}`,
+    url: `${bundle.authData.apiUrl || process.env.SERVER_BASE_URL}/${endpoint}`,
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -81,7 +81,9 @@ export const requestDbViaRestApi = (
   objectNamePlural: string,
 ) => {
   const options = {
-    url: `${process.env.SERVER_BASE_URL}/rest/${objectNamePlural}?limit:3`,
+    url: `${
+      bundle.authData.apiUrl || process.env.SERVER_BASE_URL
+    }/rest/${objectNamePlural}?limit:3`,
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',

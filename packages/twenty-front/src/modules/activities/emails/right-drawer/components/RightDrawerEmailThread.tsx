@@ -43,11 +43,14 @@ export const RightDrawerEmailThread = () => {
 
   useRegisterClickOutsideListenerCallback({
     callbackId:
-      'EmailThreadClickOutsideCallBack-' + (thread.id ?? 'no-thread-id'),
+      'EmailThreadClickOutsideCallBack-' + (thread?.id ?? 'no-thread-id'),
     callbackFunction: useRecoilCallback(
       ({ set }) =>
         () => {
-          set(emailThreadIdWhenEmailThreadWasClosedState, thread.id);
+          set(
+            emailThreadIdWhenEmailThreadWasClosedState,
+            thread?.id ?? 'no-thread-id',
+          );
         },
       [thread],
     ),
@@ -71,14 +74,14 @@ export const RightDrawerEmailThread = () => {
 
   return (
     <StyledContainer>
-      <EmailThreadHeader
-        subject={thread.subject}
-        lastMessageSentAt={thread.lastMessageReceivedAt}
-      />
       {loading ? (
         <EmailLoader loadingText="Loading thread" />
       ) : (
         <>
+          <EmailThreadHeader
+            subject={thread.subject}
+            lastMessageSentAt={lastMessage.receivedAt}
+          />
           {firstMessages.map((message) => (
             <EmailThreadMessage
               key={message.id}

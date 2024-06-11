@@ -12,7 +12,11 @@ export const useTimelineActivities = (
     nameSingular: targetableObject.targetObjectNameSingular,
   });
 
-  const { records: TimelineActivities } = useFindManyRecords({
+  const {
+    records: TimelineActivities,
+    loading,
+    fetchMoreRecords,
+  } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.TimelineActivity,
     filter: {
       [targetableObjectFieldIdName]: {
@@ -22,10 +26,23 @@ export const useTimelineActivities = (
     orderBy: {
       createdAt: 'DescNullsFirst',
     },
-    fetchPolicy: 'network-only',
+    recordGqlFields: {
+      id: true,
+      createdAt: true,
+      linkedObjectMetadataId: true,
+      linkedRecordCachedName: true,
+      linkedRecordId: true,
+      name: true,
+      properties: true,
+      happensAt: true,
+      workspaceMember: true,
+      person: true,
+    },
   });
 
   return {
     timelineActivities: TimelineActivities as TimelineActivity[],
+    loading,
+    fetchMoreRecords,
   };
 };

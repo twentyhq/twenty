@@ -1,8 +1,16 @@
 'use client';
 
 import styled from '@emotion/styled';
+import { Gabarito } from 'next/font/google';
 
 import mq from '@/app/_components/ui/theme/mq';
+
+const gabarito = Gabarito({
+  weight: ['400', '500'],
+  subsets: ['latin'],
+  display: 'swap',
+  adjustFontFallback: false,
+});
 
 export const DesktopNav = styled.nav`
   display: flex;
@@ -18,6 +26,7 @@ export const DesktopNav = styled.nav`
   z-index: 4;
   transform-origin: 50% 50% 0px;
   border-bottom: 1px solid rgba(20, 20, 20, 0.08);
+  font-family: ${gabarito.style.fontFamily};
 
   @media (max-width: 809px) {
     display: none;

@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 import DocsContent from '@/app/_components/docs/DocsContent';
 import { fetchArticleFromSlug } from '@/shared-utils/fetchArticleFromSlug';
@@ -27,5 +28,8 @@ export default async function TwentyUISlug({
 }) {
   const basePath = '/src/content/twenty-ui';
   const mainPost = await fetchArticleFromSlug(params.slug, basePath);
+  if (!mainPost) {
+    notFound();
+  }
   return mainPost && <DocsContent item={mainPost} />;
 }

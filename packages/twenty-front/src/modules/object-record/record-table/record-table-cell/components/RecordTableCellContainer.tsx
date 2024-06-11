@@ -5,6 +5,7 @@ import { FieldContext } from '@/object-record/record-field/contexts/FieldContext
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { RecordTableCellSoftFocusMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellSoftFocusMode';
 import { useCurrentTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useCurrentCellPosition';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
 import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
@@ -14,7 +15,6 @@ import { TableHotkeyScope } from '../../types/TableHotkeyScope';
 
 import { RecordTableCellDisplayMode } from './RecordTableCellDisplayMode';
 import { RecordTableCellEditMode } from './RecordTableCellEditMode';
-import { RecordTableCellSoftFocusMode } from './RecordTableCellSoftFocusMode';
 
 import styles from './RecordTableCellContainer.module.css';
 
@@ -49,7 +49,6 @@ export const RecordTableCellContainer = ({
   const shouldBeInitiallyInEditMode =
     isPendingRow === true && isLabelIdentifier;
 
-  const [isHovered, setIsHovered] = useState(false);
   const [hasSoftFocus, setHasSoftFocus] = useState(false);
   const [isInEditMode, setIsInEditMode] = useState(shouldBeInitiallyInEditMode);
 
@@ -59,18 +58,25 @@ export const RecordTableCellContainer = ({
     onContextMenu(event, recordId);
   };
 
+  const handleContainerMouseMove = () => {
+    if (!hasSoftFocus) {
+      onCellMouseEnter({
+        cellPosition,
+      });
+    }
+  };
+
   const handleContainerMouseEnter = () => {
     if (!hasSoftFocus) {
       onCellMouseEnter({
         cellPosition,
-        isHovered,
-        setIsHovered,
       });
     }
   };
 
   const handleContainerMouseLeave = () => {
-    setIsHovered(false);
+    setHasSoftFocus(false);
+    setIsFocused(false);
   };
 
   const handleContainerClick = () => {
@@ -81,6 +87,8 @@ export const RecordTableCellContainer = ({
 
   useEffect(() => {
     const customEventListener = (event: any) => {
+      event.stopPropagation();
+
       const newHasSoftFocus = event.detail;
 
       setHasSoftFocus(newHasSoftFocus);
@@ -136,7 +144,7 @@ export const RecordTableCellContainer = ({
         <div
           onMouseEnter={handleContainerMouseEnter}
           onMouseLeave={handleContainerMouseLeave}
-          onMouseMove={handleContainerMouseEnter}
+          onMouseMove={handleContainerMouseMove}
           onClick={handleContainerClick}
           className={clsx({
             [styles.cellBaseContainer]: true,

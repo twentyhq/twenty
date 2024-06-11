@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { EntityManager } from 'typeorm';
 import compact from 'lodash.compact';
@@ -19,6 +20,9 @@ import { CalendarEventParticipantService } from 'src/modules/calendar/services/c
 import { filterOutContactsFromCompanyOrWorkspace } from 'src/modules/connected-account/auto-companies-and-contacts-creation/utils/filter-out-contacts-from-company-or-workspace.util';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/common/services/messaging-message-participant.service';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
+import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
 
 @Injectable()
 export class CreateCompanyAndContactService {
@@ -32,6 +36,7 @@ export class CreateCompanyAndContactService {
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
     private readonly messageParticipantService: MessagingMessageParticipantService,
     private readonly calendarEventParticipantService: CalendarEventParticipantService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async createCompaniesAndPeople(
@@ -125,7 +130,7 @@ export class CreateCompanyAndContactService {
   }
 
   async createCompaniesAndContactsAndUpdateParticipants(
-    connectedAccountHandle: string,
+    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
     contactsToCreate: Contacts,
     workspaceId: string,
   ) {
@@ -134,27 +139,46 @@ export class CreateCompanyAndContactService {
         workspaceId,
       );
 
+    let updatedMessageParticipants: ObjectRecord<MessageParticipantWorkspaceEntity>[] =
+      [];
+    let updatedCalendarEventParticipants: ObjectRecord<CalendarEventParticipantWorkspaceEntity>[] =
+      [];
+
     await workspaceDataSource?.transaction(
       async (transactionManager: EntityManager) => {
         const createdPeople = await this.createCompaniesAndPeople(
-          connectedAccountHandle,
+          connectedAccount.handle,
           contactsToCreate,
           workspaceId,
           transactionManager,
         );
 
-        await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
-          createdPeople,
-          workspaceId,
-          transactionManager,
-        );
+        updatedMessageParticipants =
+          await this.messageParticipantService.updateMessageParticipantsAfterPeopleCreation(
+            createdPeople,
+            workspaceId,
+            transactionManager,
+          );
 
-        await this.calendarEventParticipantService.updateCalendarEventParticipantsAfterPeopleCreation(
-          createdPeople,
-          workspaceId,
-          transactionManager,
-        );
+        updatedCalendarEventParticipants =
+          await this.calendarEventParticipantService.updateCalendarEventParticipantsAfterPeopleCreation(
+            createdPeople,
+            workspaceId,
+            transactionManager,
+          );
       },
     );
+
+    this.eventEmitter.emit(`messageParticipant.matched`, {
+      workspaceId,
+      userId: connectedAccount.accountOwnerId,
+      messageParticipants: updatedMessageParticipants,
+    });
+
+    this.eventEmitter.emit(`calendarEventParticipant.matched`, {
+      workspaceId,
+      userId: connectedAccount.accountOwnerId,
+      calendarEventParticipants: updatedCalendarEventParticipants,
+    });
   }
 }

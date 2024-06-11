@@ -15,6 +15,8 @@ import { MessageChannelRepository } from 'src/modules/messaging/common/repositor
 import { MessageParticipantRepository } from 'src/modules/messaging/common/repositories/message-participant.repository';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 
 export type MessagingCreateCompanyAndContactAfterSyncJobData = {
   workspaceId: string;
@@ -36,6 +38,8 @@ export class MessagingCreateCompanyAndContactAfterSyncJob
     private readonly messageParticipantRepository: MessageParticipantRepository,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
+    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
+    private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {}
 
   async handle(
@@ -51,10 +55,22 @@ export class MessagingCreateCompanyAndContactAfterSyncJob
       workspaceId,
     );
 
-    const { handle, isContactAutoCreationEnabled } = messageChannel[0];
+    const { isContactAutoCreationEnabled, connectedAccountId } =
+      messageChannel[0];
 
     if (!isContactAutoCreationEnabled) {
       return;
+    }
+
+    const connectedAccount = await this.connectedAccountRepository.getById(
+      connectedAccountId,
+      workspaceId,
+    );
+
+    if (!connectedAccount) {
+      throw new Error(
+        `Connected account with id ${connectedAccountId} not found in workspace ${workspaceId}`,
+      );
     }
 
     const isContactCreationForSentAndReceivedEmailsEnabledFeatureFlag =
@@ -78,7 +94,7 @@ export class MessagingCreateCompanyAndContactAfterSyncJob
         );
 
     await this.createCompanyAndContactService.createCompaniesAndContactsAndUpdateParticipants(
-      handle,
+      connectedAccount,
       contactsToCreate,
       workspaceId,
     );
