@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import styled from '@emotion/styled';
 import { H2Title, IconCalendarEvent, IconMailCog } from 'twenty-ui';
 
@@ -27,11 +26,13 @@ export const SettingsAccountsSettingsSection = () => {
             Set email visibility, manage your blocklist and more.
           </SettingsNavigationCard>
         </UndecoratedLink>
-        <Link to={getSettingsPagePath(SettingsPath.AccountsCalendars)}>
+        <UndecoratedLink
+          to={getSettingsPagePath(SettingsPath.AccountsCalendars)}
+        >
           <SettingsNavigationCard Icon={IconCalendarEvent} title="Calendar">
             Configure and customize your calendar preferences.
           </SettingsNavigationCard>
-        </Link>
+        </UndecoratedLink>
       </StyledCardsContainer>
     </Section>
   );
