@@ -81,7 +81,7 @@ export const RecordBoardColumnCardsContainer = ({
               key={`${columnDefinition.id}-${index}`}
             >
               <RecordBoardColumnCardContainerSkeletonLoader
-                skeletonWidth={isCompactModeActive ? 72 : 54}
+                titleSkeletonWidth={isCompactModeActive ? 72 : 54}
                 isCompactModeActive={isCompactModeActive}
               />
             </StyledSkeletonCardContainer>
