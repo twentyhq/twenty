@@ -1,16 +1,15 @@
 import { Logger } from '@nestjs/common';
 
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
+import { IsNull } from 'typeorm';
+
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
-import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
-import { CalendarChannelRepository } from 'src/modules/calendar/repositories/calendar-channel.repository';
-import { CalendarEventParticipantRepository } from 'src/modules/calendar/repositories/calendar-event-participant.repository';
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
 import { CreateCompanyAndContactService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/services/create-company-and-contact.service';
-import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
-import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
+import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 export type CalendarCreateCompanyAndContactAfterSyncJobData = {
   workspaceId: string;
@@ -24,10 +23,10 @@ export class CalendarCreateCompanyAndContactAfterSyncJob {
   );
   constructor(
     private readonly createCompanyAndContactService: CreateCompanyAndContactService,
-    @InjectObjectMetadataRepository(CalendarChannelWorkspaceEntity)
-    private readonly calendarChannelService: CalendarChannelRepository,
-    @InjectObjectMetadataRepository(CalendarEventParticipantWorkspaceEntity)
-    private readonly calendarEventParticipantRepository: CalendarEventParticipantRepository,
+    @InjectWorkspaceRepository(CalendarChannelWorkspaceEntity)
+    private readonly calendarChannelRepository: WorkspaceRepository<CalendarChannelWorkspaceEntity>,
+    @InjectWorkspaceRepository(CalendarEventParticipantWorkspaceEntity)
+    private readonly calendarEventParticipantRepository: WorkspaceRepository<CalendarEventParticipantWorkspaceEntity>,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {}
@@ -41,19 +40,17 @@ export class CalendarCreateCompanyAndContactAfterSyncJob {
     );
     const { workspaceId, calendarChannelId } = data;
 
-    const calendarChannels = await this.calendarChannelService.getByIds(
-      [calendarChannelId],
-      workspaceId,
-    );
+    const calendarChannel = await this.calendarChannelRepository.findOneBy({
+      id: calendarChannelId,
+    });
 
-    if (calendarChannels.length === 0) {
+    if (!calendarChannel) {
       throw new Error(
         `Calendar channel with id ${calendarChannelId} not found in workspace ${workspaceId}`,
       );
     }
 
-    const { handle, isContactAutoCreationEnabled, connectedAccountId } =
-      calendarChannels[0];
+    const { handle, isContactAutoCreationEnabled, connectedAccountId } = calendarChannel;
 
     if (!isContactAutoCreationEnabled || !handle) {
       return;
@@ -71,10 +68,23 @@ export class CalendarCreateCompanyAndContactAfterSyncJob {
     }
 
     const calendarEventParticipantsWithoutPersonIdAndWorkspaceMemberId =
-      await this.calendarEventParticipantRepository.getByCalendarChannelIdWithoutPersonIdAndWorkspaceMemberId(
-        calendarChannelId,
-        workspaceId,
-      );
+      await this.calendarEventParticipantRepository.find({
+        where: {
+          calendarEvent: {
+            calendarChannelEventAssociations: {
+              calendarChannelId,
+            },
+            calendarEventParticipants: {
+              personId: IsNull(),
+              workspaceMemberId: IsNull(),
+            },
+          },
+        },
+        relations: [
+          'calendarEvent.calendarChannelEventAssociations',
+          'calendarEvent.calendarEventParticipants',
+        ],
+      });
 
     await this.createCompanyAndContactService.createCompaniesAndContactsAndUpdateParticipants(
       connectedAccount,

@@ -13,6 +13,8 @@ import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/t
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { assert } from 'src/utils/assert';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
+import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
+import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
   constructor(
@@ -20,6 +22,8 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     private readonly userWorkspaceRepository: Repository<UserWorkspace>,
     @InjectRepository(User, 'core')
     private readonly userRepository: Repository<User>,
+    @InjectWorkspaceRepository(WorkspaceMemberWorkspaceEntity)
+    private readonly workspaceMemberRepository: WorkspaceRepository<WorkspaceMemberWorkspaceEntity>,
     private readonly dataSourceService: DataSourceService,
     private readonly typeORMService: TypeORMService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
@@ -99,23 +103,10 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
     });
   }
 
-  public async getWorkspaceMemberCount(
-    workspaceId: string,
-  ): Promise<number | undefined> {
-    try {
-      const dataSourceSchema =
-        this.workspaceDataSourceService.getSchemaName(workspaceId);
+  public async getWorkspaceMemberCount(): Promise<number | undefined> {
+    const workspaceMemberCount = await this.workspaceMemberRepository.count();
 
-      return (
-        await this.workspaceDataSourceService.executeRawQuery(
-          `SELECT * FROM ${dataSourceSchema}."workspaceMember"`,
-          [],
-          workspaceId,
-        )
-      ).length;
-    } catch {
-      return undefined;
-    }
+    return workspaceMemberCount;
   }
 
   async checkUserWorkspaceExists(

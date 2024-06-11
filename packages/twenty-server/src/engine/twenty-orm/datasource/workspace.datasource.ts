@@ -6,7 +6,6 @@ import {
   QueryRunner,
 } from 'typeorm';
 
-import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
 import { WorkspaceEntityManager } from 'src/engine/twenty-orm/entity-manager/entity.manager';
 
 export class WorkspaceDataSource extends DataSource {
@@ -14,7 +13,7 @@ export class WorkspaceDataSource extends DataSource {
 
   override getRepository<Entity extends ObjectLiteral>(
     target: EntityTarget<Entity>,
-  ): WorkspaceRepository<Entity> {
+  ) {
     return this.manager.getRepository(target);
   }
 
