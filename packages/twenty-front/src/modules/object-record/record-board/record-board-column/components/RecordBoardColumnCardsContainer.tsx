@@ -1,14 +1,18 @@
 import React, { useContext } from 'react';
 import styled from '@emotion/styled';
 import { Draggable, DroppableProvided } from '@hello-pangea/dnd';
+import { useRecoilValue } from 'recoil';
 
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
+import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
+import { RecordBoardColumnCardContainerSkeletonLoader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardContainerSkeletonLoader';
 import { RecordBoardColumnCardsMemo } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnCardsMemo';
 import { RecordBoardColumnFetchMoreLoader } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnFetchMoreLoader';
 import { RecordBoardColumnNewButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewButton';
 import { RecordBoardColumnNewOpportunityButton } from '@/object-record/record-board/record-board-column/components/RecordBoardColumnNewOpportunityButton';
 import { RecordBoardColumnContext } from '@/object-record/record-board/record-board-column/contexts/RecordBoardColumnContext';
+import { isRecordIndexLoadingFamilyState } from '@/object-record/states/isRecordIndexLoadingFamilyState';
 
 const StyledColumnCardsContainer = styled.div`
   display: flex;
@@ -18,6 +22,17 @@ const StyledColumnCardsContainer = styled.div`
 
 const StyledNewButtonContainer = styled.div`
   padding-bottom: ${({ theme }) => theme.spacing(4)};
+`;
+
+const StyledSkeletonCardContainer = styled.div`
+  background-color: ${({ theme }) => theme.background.secondary};
+  border: 1px solid ${({ theme }) => theme.background.quaternary};
+  border-radius: ${({ theme }) => theme.border.radius.md};
+  box-shadow:
+    0px 4px 8px 0px rgba(0, 0, 0, 0.08),
+    0px 0px 4px 0px rgba(0, 0, 0, 0.08);
+  color: ${({ theme }) => theme.font.color.primary};
+  margin-bottom: ${({ theme }) => theme.spacing(2)};
 `;
 
 type RecordBoardColumnCardsContainerProps = {
@@ -32,13 +47,49 @@ export const RecordBoardColumnCardsContainer = ({
   const { columnDefinition } = useContext(RecordBoardColumnContext);
   const { objectMetadataItem } = useContext(RecordBoardContext);
 
+  const isRecordIndexLoading = useRecoilValue(
+    isRecordIndexLoadingFamilyState(objectMetadataItem.nameSingular),
+  );
+
+  const { isCompactModeActiveState } = useRecordBoardStates();
+
+  const isCompactModeActive = useRecoilValue(isCompactModeActiveState);
+
+  const getNumberOfSkeletons = (position: number): number => {
+    const skeletonCounts: Record<number, number> = {
+      0: 2,
+      1: 1,
+      2: 3,
+      3: 0,
+      4: 1,
+    };
+
+    return skeletonCounts[position] || 0;
+  };
+
   return (
     <StyledColumnCardsContainer
       ref={droppableProvided?.innerRef}
       // eslint-disable-next-line react/jsx-props-no-spreading
       {...droppableProvided?.droppableProps}
     >
-      <RecordBoardColumnCardsMemo recordIds={recordIds} />
+      {isRecordIndexLoading ? (
+        Array.from(
+          { length: getNumberOfSkeletons(columnDefinition.position) },
+          (_, index) => (
+            <StyledSkeletonCardContainer
+              key={`${columnDefinition.id}-${index}`}
+            >
+              <RecordBoardColumnCardContainerSkeletonLoader
+                skeletonWidth={isCompactModeActive ? 72 : 54}
+                isCompactModeActive={isCompactModeActive}
+              />
+            </StyledSkeletonCardContainer>
+          ),
+        )
+      ) : (
+        <RecordBoardColumnCardsMemo recordIds={recordIds} />
+      )}
       <RecordBoardColumnFetchMoreLoader />
       <Draggable
         draggableId={`new-${columnDefinition.id}`}

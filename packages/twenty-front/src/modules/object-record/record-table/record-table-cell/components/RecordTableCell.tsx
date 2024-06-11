@@ -12,8 +12,10 @@ import { HotkeyScope } from '@/ui/utilities/hotkey/types/HotkeyScope';
 
 export const RecordTableCell = ({
   customHotkeyScope,
+  skeletonWidth,
 }: {
   customHotkeyScope: HotkeyScope;
+  skeletonWidth?: number;
 }) => {
   const { onUpsertRecord, onMoveFocus, onCloseTableCell } =
     useContext(RecordTableContext);
@@ -105,6 +107,7 @@ export const RecordTableCell = ({
           />
         }
         nonEditModeContent={<FieldDisplay />}
+        skeletonWidth={skeletonWidth}
       />
     </FieldFocusContextProvider>
   );

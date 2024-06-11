@@ -67,7 +67,7 @@ const StyledBoardCardWrapper = styled.div`
   width: 100%;
 `;
 
-const StyledBoardCardHeader = styled.div<{
+export const StyledBoardCardHeader = styled.div<{
   showCompactView: boolean;
 }>`
   align-items: center;
@@ -90,7 +90,7 @@ const StyledBoardCardHeader = styled.div<{
   }
 `;
 
-const StyledBoardCardBody = styled.div`
+export const StyledBoardCardBody = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(0.5)};

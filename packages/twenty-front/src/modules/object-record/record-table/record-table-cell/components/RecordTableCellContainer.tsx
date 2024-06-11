@@ -1,10 +1,15 @@
 import React, { ReactElement, useContext, useEffect, useState } from 'react';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { useTheme } from '@emotion/react';
+import styled from '@emotion/styled';
 import { clsx } from 'clsx';
+import { useRecoilValue } from 'recoil';
 
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { RecordTableContext } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContext } from '@/object-record/record-table/contexts/RecordTableRowContext';
+import { useRecordTableStates } from '@/object-record/record-table/hooks/internal/useRecordTableStates';
 import { RecordTableCellSoftFocusMode } from '@/object-record/record-table/record-table-cell/components/RecordTableCellSoftFocusMode';
 import { useCurrentTableCellPosition } from '@/object-record/record-table/record-table-cell/hooks/useCurrentCellPosition';
 import { useOpenRecordTableCellFromCell } from '@/object-record/record-table/record-table-cell/hooks/useOpenRecordTableCellFromCell';
@@ -18,6 +23,28 @@ import { RecordTableCellEditMode } from './RecordTableCellEditMode';
 
 import styles from './RecordTableCellContainer.module.css';
 
+const StyledSkeletonContainer = styled.div`
+  padding-left: ${({ theme }) => theme.spacing(2)};
+  padding-right: ${({ theme }) => theme.spacing(1)};
+`;
+
+const StyledRecordTableCellContainerLoader = ({
+  skeletonWidth = 132,
+}: {
+  skeletonWidth?: number;
+}) => {
+  const theme = useTheme();
+  return (
+    <SkeletonTheme
+      baseColor={theme.background.tertiary}
+      highlightColor={theme.background.transparent.lighter}
+      borderRadius={4}
+    >
+      <Skeleton width={skeletonWidth} height={16} />
+    </SkeletonTheme>
+  );
+};
+
 export type RecordTableCellContainerProps = {
   editModeContent: ReactElement;
   nonEditModeContent: ReactElement;
@@ -26,6 +53,7 @@ export type RecordTableCellContainerProps = {
   maxContentWidth?: number;
   onSubmit?: () => void;
   onCancel?: () => void;
+  skeletonWidth?: number;
 };
 
 const DEFAULT_CELL_SCOPE: HotkeyScope = {
@@ -36,9 +64,11 @@ export const RecordTableCellContainer = ({
   editModeContent,
   nonEditModeContent,
   editHotkeyScope,
+  skeletonWidth,
 }: RecordTableCellContainerProps) => {
   const { setIsFocused } = useFieldFocus();
   const { openTableCell } = useOpenRecordTableCellFromCell();
+  const { isRecordTableInitialLoadingState } = useRecordTableStates();
 
   const { isSelected, recordId, isPendingRow } = useContext(
     RecordTableRowContext,
@@ -53,7 +83,9 @@ export const RecordTableCellContainer = ({
   const [isInEditMode, setIsInEditMode] = useState(shouldBeInitiallyInEditMode);
 
   const cellPosition = useCurrentTableCellPosition();
-
+  const isRecordTableInitialLoading = useRecoilValue(
+    isRecordTableInitialLoadingState,
+  );
   const handleContextMenu = (event: React.MouseEvent) => {
     onContextMenu(event, recordId);
   };
@@ -151,7 +183,13 @@ export const RecordTableCellContainer = ({
             [styles.cellBaseContainerSoftFocus]: hasSoftFocus,
           })}
         >
-          {isInEditMode ? (
+          {isRecordTableInitialLoading ? (
+            <StyledSkeletonContainer>
+              <StyledRecordTableCellContainerLoader
+                skeletonWidth={skeletonWidth}
+              />
+            </StyledSkeletonContainer>
+          ) : isInEditMode ? (
             <RecordTableCellEditMode>{editModeContent}</RecordTableCellEditMode>
           ) : hasSoftFocus ? (
             <>
