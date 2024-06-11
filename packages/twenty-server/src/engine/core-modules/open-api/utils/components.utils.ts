@@ -19,29 +19,31 @@ type Properties = {
   [name: string]: Property;
 };
 
-const getFieldType = (
-  type: FieldMetadataType,
-): OpenAPIV3_1.NonArraySchemaObjectType => {
+const getFieldProperties = (type: FieldMetadataType): Property => {
   switch (type) {
     case FieldMetadataType.UUID:
+      return { type: 'string', format: 'uuid' };
     case FieldMetadataType.TEXT:
     case FieldMetadataType.PHONE:
+      return { type: 'string' };
     case FieldMetadataType.EMAIL:
+      return { type: 'string', format: 'email' };
     case FieldMetadataType.DATE_TIME:
     case FieldMetadataType.DATE:
-      return 'string';
+      return { type: 'string', format: 'date' };
     case FieldMetadataType.NUMBER:
+      return { type: 'integer' };
     case FieldMetadataType.NUMERIC:
     case FieldMetadataType.PROBABILITY:
     case FieldMetadataType.RATING:
     case FieldMetadataType.POSITION:
-      return 'number';
+      return { type: 'number' };
     case FieldMetadataType.BOOLEAN:
-      return 'boolean';
+      return { type: 'boolean' };
     case FieldMetadataType.RAW_JSON:
-      return 'object';
+      return { type: 'object' };
     default:
-      return 'string';
+      return { type: 'string' };
   }
 };
 
@@ -52,6 +54,13 @@ const getSchemaComponentsProperties = (
     let itemProperty = {} as Property;
 
     switch (field.type) {
+      case FieldMetadataType.SELECT:
+      case FieldMetadataType.MULTI_SELECT:
+        itemProperty = {
+          type: 'string',
+          enum: field.options.map((option: { value: string }) => option.value),
+        };
+        break;
       case FieldMetadataType.RELATION:
         if (field.fromRelationMetadata?.toObjectMetadata.nameSingular) {
           itemProperty = {
@@ -74,16 +83,14 @@ const getSchemaComponentsProperties = (
           properties: compositeTypeDefintions
             .get(field.type)
             ?.properties?.reduce((properties, property) => {
-              properties[property.name] = {
-                type: getFieldType(property.type),
-              };
+              properties[property.name] = getFieldProperties(property.type);
 
               return properties;
             }, {} as Properties),
         };
         break;
       default:
-        itemProperty.type = getFieldType(field.type);
+        itemProperty = getFieldProperties(field.type);
         break;
     }
 
