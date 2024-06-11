@@ -56,13 +56,19 @@ export const useLoadRecordIndexBoardColumn = ({
     },
   };
 
-  const { records, loading, fetchMoreRecords, queryStateIdentifier } =
-    useFindManyRecords({
-      objectNameSingular,
-      filter,
-      orderBy,
-      recordGqlFields,
-    });
+  const {
+    records,
+    loading,
+    fetchMoreRecords,
+    queryStateIdentifier,
+    hasNextPage,
+  } = useFindManyRecords({
+    objectNameSingular,
+    filter,
+    orderBy,
+    recordGqlFields,
+    limit: 10,
+  });
 
   useEffect(() => {
     setRecordIdsForColumn(columnId, records);
@@ -77,5 +83,6 @@ export const useLoadRecordIndexBoardColumn = ({
     loading,
     fetchMoreRecords,
     queryStateIdentifier,
+    hasNextPage,
   };
 };
