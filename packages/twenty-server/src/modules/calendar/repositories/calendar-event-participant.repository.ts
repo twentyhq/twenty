@@ -51,6 +51,23 @@ export class CalendarEventParticipantRepository {
     );
   }
 
+  public async updateParticipantsPersonIdAndReturn(
+    participantIds: string[],
+    personId: string,
+    workspaceId: string,
+    transactionManager?: EntityManager,
+  ): Promise<ObjectRecord<CalendarEventParticipantWorkspaceEntity>[]> {
+    const dataSourceSchema =
+      this.workspaceDataSourceService.getSchemaName(workspaceId);
+
+    return await this.workspaceDataSourceService.executeRawQuery(
+      `UPDATE ${dataSourceSchema}."calendarEventParticipant" SET "personId" = $1 WHERE "id" = ANY($2) RETURNING *`,
+      [personId, participantIds],
+      workspaceId,
+      transactionManager,
+    );
+  }
+
   public async updateParticipantsWorkspaceMemberId(
     participantIds: string[],
     workspaceMemberId: string,
