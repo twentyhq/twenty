@@ -1,9 +1,9 @@
 import { useSetRecoilState } from 'recoil';
 
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
-import { useSetRecordBoardColumnRecordIds } from '@/object-record/record-board/hooks/internal/useSetRecordBoardColumnRecordIds';
 import { useSetRecordBoardColumns } from '@/object-record/record-board/hooks/internal/useSetRecordBoardColumns';
 import { useSetRecordBoardRecordIds } from '@/object-record/record-board/hooks/internal/useSetRecordBoardRecordIds';
+import { useSetRecordIdsForColumn } from '@/object-record/record-board/hooks/internal/useSetRecordIdsForColumn';
 
 export const useRecordBoard = (recordBoardId?: string) => {
   const {
@@ -18,8 +18,7 @@ export const useRecordBoard = (recordBoardId?: string) => {
 
   const { setColumns } = useSetRecordBoardColumns(recordBoardId);
   const { setRecordIds } = useSetRecordBoardRecordIds(recordBoardId);
-  const { setRecordIdsForColumn } =
-    useSetRecordBoardColumnRecordIds(recordBoardId);
+  const { setRecordIdsForColumn } = useSetRecordIdsForColumn(recordBoardId);
 
   const setFieldDefinitions = useSetRecoilState(fieldDefinitionsState);
   const setObjectSingularName = useSetRecoilState(objectSingularNameState);

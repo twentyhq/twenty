@@ -2,6 +2,7 @@ import { useRecoilCallback } from 'recoil';
 
 import { useRecordBoardStates } from '@/object-record/record-board/hooks/internal/useRecordBoardStates';
 import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { sortRecordsByPosition } from '@/object-record/utils/sortRecordsByPosition';
 import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
@@ -59,22 +60,4 @@ export const useSetRecordBoardRecordIds = (recordBoardId?: string) => {
     scopeId,
     setRecordIds,
   };
-};
-
-const sortRecordsByPosition = (
-  record1: ObjectRecord,
-  record2: ObjectRecord,
-) => {
-  if (
-    typeof record1.position == 'number' &&
-    typeof record2.position == 'number'
-  ) {
-    return record1.position - record2.position;
-  } else if (record1.position === 'first' || record2.position === 'last') {
-    return -1;
-  } else if (record2.position === 'first' || record1.position === 'last') {
-    return 1;
-  } else {
-    return 0;
-  }
 };
