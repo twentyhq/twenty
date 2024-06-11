@@ -22,6 +22,15 @@ export const fieldLinkMock = {
   defaultValue: { label: '', url: '' },
 };
 
+export const fieldLinksMock = {
+  name: 'fieldLinks',
+  type: FieldMetadataType.LINKS,
+  isNullable: false,
+  defaultValue: [
+    { primaryLinkLabel: '', primaryLinkUrl: '', secondaryLinks: {} },
+  ],
+};
+
 export const fieldCurrencyMock = {
   name: 'fieldCurrency',
   type: FieldMetadataType.CURRENCY,
@@ -62,5 +71,6 @@ export const objectMetadataItemMock = {
     fieldLinkMock,
     fieldCurrencyMock,
     fieldSelectMock,
+    fieldLinksMock,
   ],
 } as ObjectMetadataEntity;

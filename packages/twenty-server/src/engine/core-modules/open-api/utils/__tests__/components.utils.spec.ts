@@ -29,6 +29,14 @@ describe('computeSchemaComponents', () => {
             },
             type: 'object',
           },
+          fieldLinks: {
+            properties: {
+              primaryLinkLabel: { type: 'string' },
+              primaryLinkUrl: { type: 'string' },
+              secondaryLinks: { type: 'object' },
+            },
+            type: 'object',
+          },
           fieldNumber: {
             type: 'number',
           },
