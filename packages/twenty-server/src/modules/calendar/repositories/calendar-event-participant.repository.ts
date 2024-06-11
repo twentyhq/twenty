@@ -56,7 +56,7 @@ export class CalendarEventParticipantRepository {
     personId: string,
     workspaceId: string,
     transactionManager?: EntityManager,
-  ) {
+  ): Promise<ObjectRecord<CalendarEventParticipantWorkspaceEntity>[]> {
     const dataSourceSchema =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 

@@ -178,7 +178,7 @@ export class CreateCompanyAndContactService {
     this.eventEmitter.emit(`calendarEventParticipant.matched`, {
       workspaceId,
       userId: connectedAccount.accountOwnerId,
-      messageParticipants: updatedCalendarEventParticipants,
+      calendarEventParticipants: updatedCalendarEventParticipants,
     });
   }
 }

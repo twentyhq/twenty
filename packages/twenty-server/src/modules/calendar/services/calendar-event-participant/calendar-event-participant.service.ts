@@ -70,15 +70,17 @@ export class CalendarEventParticipantService {
         },
       );
 
-    return await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."calendarEventParticipant" AS "calendarEventParticipant" SET "personId" = "data"."personId"
+    return (
+      await this.workspaceDataSourceService.executeRawQuery(
+        `UPDATE ${dataSourceSchema}."calendarEventParticipant" AS "calendarEventParticipant" SET "personId" = "data"."personId"
       FROM (VALUES ${valuesString}) AS "data"("id", "personId")
       WHERE "calendarEventParticipant"."id" = "data"."id"
       RETURNING *`,
-      flattenedValues,
-      workspaceId,
-      transactionManager,
-    );
+        flattenedValues,
+        workspaceId,
+        transactionManager,
+      )
+    ).flat();
   }
 
   public async saveCalendarEventParticipants(

@@ -70,15 +70,17 @@ export class MessagingMessageParticipantService {
         },
       );
 
-    return await this.workspaceDataSourceService.executeRawQuery(
-      `UPDATE ${dataSourceSchema}."messageParticipant" AS "messageParticipant" SET "personId" = "data"."personId"
+    return (
+      await this.workspaceDataSourceService.executeRawQuery(
+        `UPDATE ${dataSourceSchema}."messageParticipant" AS "messageParticipant" SET "personId" = "data"."personId"
       FROM (VALUES ${valuesString}) AS "data"("id", "personId")
       WHERE "messageParticipant"."id" = "data"."id"
       RETURNING *`,
-      flattenedValues,
-      workspaceId,
-      transactionManager,
-    );
+        flattenedValues,
+        workspaceId,
+        transactionManager,
+      )
+    ).flat();
   }
 
   public async saveMessageParticipants(
