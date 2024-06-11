@@ -19,6 +19,32 @@ type Properties = {
   [name: string]: Property;
 };
 
+const getFieldType = (
+  type: FieldMetadataType,
+): OpenAPIV3_1.NonArraySchemaObjectType => {
+  switch (type) {
+    case FieldMetadataType.UUID:
+    case FieldMetadataType.TEXT:
+    case FieldMetadataType.PHONE:
+    case FieldMetadataType.EMAIL:
+    case FieldMetadataType.DATE_TIME:
+    case FieldMetadataType.DATE:
+      return 'string';
+    case FieldMetadataType.NUMBER:
+    case FieldMetadataType.NUMERIC:
+    case FieldMetadataType.PROBABILITY:
+    case FieldMetadataType.RATING:
+    case FieldMetadataType.POSITION:
+      return 'number';
+    case FieldMetadataType.BOOLEAN:
+      return 'boolean';
+    case FieldMetadataType.RAW_JSON:
+      return 'object';
+    default:
+      return 'string';
+  }
+};
+
 const getSchemaComponentsProperties = (
   item: ObjectMetadataEntity,
 ): Properties => {
@@ -26,24 +52,6 @@ const getSchemaComponentsProperties = (
     let itemProperty = {} as Property;
 
     switch (field.type) {
-      case FieldMetadataType.UUID:
-      case FieldMetadataType.TEXT:
-      case FieldMetadataType.PHONE:
-      case FieldMetadataType.EMAIL:
-      case FieldMetadataType.DATE_TIME:
-      case FieldMetadataType.DATE:
-        itemProperty.type = 'string';
-        break;
-      case FieldMetadataType.NUMBER:
-      case FieldMetadataType.NUMERIC:
-      case FieldMetadataType.PROBABILITY:
-      case FieldMetadataType.RATING:
-      case FieldMetadataType.POSITION:
-        itemProperty.type = 'number';
-        break;
-      case FieldMetadataType.BOOLEAN:
-        itemProperty.type = 'boolean';
-        break;
       case FieldMetadataType.RELATION:
         if (field.fromRelationMetadata?.toObjectMetadata.nameSingular) {
           itemProperty = {
@@ -66,18 +74,16 @@ const getSchemaComponentsProperties = (
           properties: compositeTypeDefintions
             .get(field.type)
             ?.properties?.reduce((properties, property) => {
-              // TODO: This should not be statically typed, instead we should do someting recursive
-              properties[property.name] = { type: 'string' };
+              properties[property.name] = {
+                type: getFieldType(property.type),
+              };
 
               return properties;
             }, {} as Properties),
         };
         break;
-      case FieldMetadataType.RAW_JSON:
-        itemProperty.type = 'object';
-        break;
       default:
-        itemProperty.type = 'string';
+        itemProperty.type = getFieldType(field.type);
         break;
     }
 

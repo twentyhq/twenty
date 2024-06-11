@@ -17,7 +17,7 @@ describe('computeSchemaComponents', () => {
         properties: {
           fieldCurrency: {
             properties: {
-              amountMicros: { type: 'string' },
+              amountMicros: { type: 'number' },
               currencyCode: { type: 'string' },
             },
             type: 'object',
