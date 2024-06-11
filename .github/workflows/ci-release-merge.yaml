@@ -26,6 +26,10 @@ jobs:
         id: extract_version
         run: |
           VERSION=$(echo "${{ github.event.pull_request.title }}" | sed -n 's/.*Release v\([0-9.]*\).*/\1/p')
+          if [ -z "$VERSION" ]; then
+            echo "No valid version found in PR title. Exiting."
+            exit 1
+          fi
           echo "VERSION=$VERSION" >> $GITHUB_ENV
 
       - name: Push new tag
