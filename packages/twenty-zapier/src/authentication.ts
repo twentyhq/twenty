@@ -29,8 +29,9 @@ export default {
       required: false,
       label: 'Api Url',
       type: 'string',
+      placeholder: 'https://api.twenty.com',
       helpText:
-        'Leave blank if you use app.twenty.com. If you self-host Twenty, please set your Twenty server url (same as variable REACT_APP_SERVER_BASE_URL in https://docs.twenty.com/start/self-hosting/).',
+        'Set this only if you self-host Twenty. Use the same value as `REACT_APP_SERVER_BASE_URL` in https://docs.twenty.com/start/self-hosting/',
     },
   ],
   connectionLabel: '{{data.currentWorkspace.displayName}}',
