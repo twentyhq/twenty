@@ -1,6 +1,8 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import { createContext, useContextSelector } from 'use-context-selector';
 
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
+
 export type RecordFieldValue = {
   [recordId: string]: {
     [fieldName: string]: any;
@@ -31,16 +33,19 @@ export const useRecordValue = (recordId: string) => {
     (value) => value[0],
   );
 
-  return tableValue?.[recordId];
+  return tableValue?.[recordId] as ObjectRecord | undefined;
 };
 
-export const useRecordFieldValue = (recordId: string, fieldName: string) => {
+export const useRecordFieldValue = <T,>(
+  recordId: string,
+  fieldName: string,
+) => {
   const recordFieldValues = useContextSelector(
     RecordFieldValueSelectorContext,
     (value) => value[0],
   );
 
-  return recordFieldValues?.[recordId]?.[fieldName];
+  return recordFieldValues?.[recordId]?.[fieldName] as T;
 };
 
 export const useSetRecordFieldValue = () => {

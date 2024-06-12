@@ -41,14 +41,14 @@ describe('parseFilterContent', () => {
   });
 
   it('should parse query filter with comma in value ', () => {
-    expect(parseFilterContent('and(fieldString[eq]:"val,ue")')).toEqual([
-      'fieldString[eq]:"val,ue"',
+    expect(parseFilterContent('and(fieldText[eq]:"val,ue")')).toEqual([
+      'fieldText[eq]:"val,ue"',
     ]);
   });
 
   it('should parse query filter with comma in value ', () => {
-    expect(parseFilterContent("and(fieldString[eq]:'val,ue')")).toEqual([
-      "fieldString[eq]:'val,ue'",
+    expect(parseFilterContent("and(fieldText[eq]:'val,ue')")).toEqual([
+      "fieldText[eq]:'val,ue'",
     ]);
   });
 });

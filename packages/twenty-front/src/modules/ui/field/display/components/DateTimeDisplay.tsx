@@ -1,13 +1,13 @@
-import { formatToHumanReadableDateTime } from '~/utils';
+import { formatISOStringToHumanReadableDateTime } from '~/utils/date-utils';
 
 import { EllipsisDisplay } from './EllipsisDisplay';
 
 type DateTimeDisplayProps = {
-  value: Date | string | null | undefined;
+  value: string | null | undefined;
 };
 
 export const DateTimeDisplay = ({ value }: DateTimeDisplayProps) => (
   <EllipsisDisplay>
-    {value && formatToHumanReadableDateTime(value)}
+    {value ? formatISOStringToHumanReadableDateTime(value) : ''}
   </EllipsisDisplay>
 );
