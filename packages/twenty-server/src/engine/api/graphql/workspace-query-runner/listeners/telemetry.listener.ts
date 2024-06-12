@@ -15,7 +15,6 @@ export class TelemetryListener {
         type: 'track',
         data: {
           eventName: payload.name,
-          recordId: payload.recordId,
         },
       },
       payload.userId,
@@ -33,7 +32,6 @@ export class TelemetryListener {
         type: 'track',
         data: {
           eventName: 'user.signup',
-          recordId: payload.recordId,
         },
       },
       payload.userId,
