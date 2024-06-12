@@ -17,7 +17,7 @@ import {
   mockDefaultWorkspace,
   mockedWorkspaceMemberData,
 } from '~/testing/mock-data/users';
-import { sleep } from '~/testing/sleep';
+import { sleep } from '~/utils/sleep';
 
 import { CommandMenu } from '../CommandMenu';
 

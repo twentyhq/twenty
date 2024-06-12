@@ -8,11 +8,9 @@ import { useRecordTableStates } from '@/object-record/record-table/hooks/interna
 import { ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
+import { sleep } from '~/utils/sleep';
 
 import { useFindManyParams } from '../../hooks/useLoadRecordIndexTable';
-
-export const sleep = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
 
 export const download = (blob: Blob, filename: string) => {
   const url = URL.createObjectURL(blob);

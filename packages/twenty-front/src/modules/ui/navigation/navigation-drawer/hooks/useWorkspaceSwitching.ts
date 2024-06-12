@@ -4,8 +4,8 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { AppPath } from '@/types/AppPath';
 import { useGenerateJwtMutation } from '~/generated/graphql';
-import { sleep } from '~/testing/sleep';
 import { isDefined } from '~/utils/isDefined';
+import { sleep } from '~/utils/sleep';
 
 export const useWorkspaceSwitching = () => {
   const setTokenPair = useSetRecoilState(tokenPairState);
