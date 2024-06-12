@@ -121,7 +121,7 @@ export const EventCardCalendarEvent = ({
       return <div>Calendar event not found</div>;
     }
 
-    return <div>Error loading message</div>;
+    return <div>Error loading calendar event</div>;
   }
 
   if (loading || isUndefined(calendarEvent)) {
