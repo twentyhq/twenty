@@ -407,7 +407,7 @@ export type Mutation = {
   renewToken: AuthTokens;
   sendInviteLink: SendInviteLink;
   signUp: LoginToken;
-  skipSyncEmailOnboardingStep: OnboardingResult;
+  skipSyncEmailOnboardingStep: OnboardingStepSuccess;
   syncRemoteTable: RemoteTable;
   syncRemoteTableSchemaChanges: RemoteTable;
   track: Analytics;
@@ -636,17 +636,17 @@ export type ObjectFieldsConnection = {
   pageInfo: PageInfo;
 };
 
-export type OnboardingResult = {
-  __typename?: 'OnboardingResult';
-  /** Boolean that confirms query was dispatched */
-  success: Scalars['Boolean']['output'];
-};
-
 /** Onboarding step */
 export enum OnboardingStep {
   InviteTeam = 'INVITE_TEAM',
   SyncEmail = 'SYNC_EMAIL'
 }
+
+export type OnboardingStepSuccess = {
+  __typename?: 'OnboardingStepSuccess';
+  /** Boolean that confirms query was dispatched */
+  success: Scalars['Boolean']['output'];
+};
 
 export type PageInfo = {
   __typename?: 'PageInfo';

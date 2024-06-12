@@ -2,7 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Mutation, Resolver } from '@nestjs/graphql';
 
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
-import { OnboardingResult } from 'src/engine/core-modules/onboarding/dtos/onboarding-result.dto';
+import { OnboardingStepSuccess } from 'src/engine/core-modules/onboarding/dtos/onboarding-step-success.dto';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { User } from 'src/engine/core-modules/user/user.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -14,11 +14,11 @@ import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding
 export class OnboardingResolver {
   constructor(private readonly onboardingService: OnboardingService) {}
 
-  @Mutation(() => OnboardingResult)
+  @Mutation(() => OnboardingStepSuccess)
   async skipSyncEmailOnboardingStep(
     @AuthUser() user: User,
     @AuthWorkspace() workspace: Workspace,
-  ): Promise<OnboardingResult> {
+  ): Promise<OnboardingStepSuccess> {
     await this.onboardingService.skipSyncEmailOnboardingStep(
       user.id,
       workspace.id,
