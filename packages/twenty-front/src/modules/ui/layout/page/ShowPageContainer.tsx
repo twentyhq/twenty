@@ -16,7 +16,8 @@ const StyledOuterContainer = styled.div`
 const StyledInnerContainer = styled.div`
   display: flex;
   flex-direction: ${() => (useIsMobile() ? 'column' : 'row')};
-  width: 100%;
+  max-width: 100%;
+  overflow-x: ${() => (useIsMobile() ? 'hidden' : 'auto')};
 `;
 
 const StyledScrollWrapper = styled(ScrollWrapper)`
