@@ -1,0 +1,31 @@
+{
+  "id": "contributor/frontend/best-practices",
+  "title": "Best Practices",
+  "description": "This document outlines the best practices you should follow when working on the frontend.",
+  "source": "@site/docs/contributor/frontend/best-practices.mdx",
+  "sourceDirName": "contributor/frontend",
+  "slug": "/contributor/frontend/best-practices",
+  "permalink": "/contributor/frontend/best-practices",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/contributor/frontend/best-practices.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 3,
+  "frontMatter": {
+    "title": "Best Practices",
+    "sidebar_position": 3,
+    "sidebar_custom_props": {
+      "icon": "TbChecklist"
+    }
+  },
+  "sidebar": "docsSidebar",
+  "previous": {
+    "title": "Work with Figma",
+    "permalink": "/contributor/frontend/work-with-figma"
+  },
+  "next": {
+    "title": "Style Guide",
+    "permalink": "/contributor/frontend/style-guide"
+  }
+}

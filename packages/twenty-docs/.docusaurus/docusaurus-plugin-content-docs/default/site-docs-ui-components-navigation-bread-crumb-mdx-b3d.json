@@ -1,0 +1,31 @@
+{
+  "id": "ui-components/navigation/bread-crumb",
+  "title": "Breadcrumb",
+  "description": "Renders a breadcrumb navigation bar.",
+  "source": "@site/docs/ui-components/navigation/bread-crumb.mdx",
+  "sourceDirName": "ui-components/navigation",
+  "slug": "/ui-components/navigation/bread-crumb",
+  "permalink": "/ui-components/navigation/bread-crumb",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/navigation/bread-crumb.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "title": "Breadcrumb",
+    "sidebar_position": 1,
+    "sidebar_custom_props": {
+      "icon": "TbSquareChevronsRight"
+    }
+  },
+  "sidebar": "uiDocsSidebar",
+  "previous": {
+    "title": "Block Editor",
+    "permalink": "/ui-components/input/block-editor"
+  },
+  "next": {
+    "title": "Links",
+    "permalink": "/ui-components/navigation/link"
+  }
+}

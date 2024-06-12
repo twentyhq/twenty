@@ -1,0 +1,32 @@
+{
+  "id": "start/local-setup/troubleshooting",
+  "title": "Troubleshooting",
+  "description": "Common problems & their solutions.",
+  "source": "@site/docs/start/local-setup/troubleshooting.mdx",
+  "sourceDirName": "start/local-setup",
+  "slug": "/start/local-setup/troubleshooting",
+  "permalink": "/start/local-setup/troubleshooting",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/start/local-setup/troubleshooting.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 5,
+  "frontMatter": {
+    "title": "Troubleshooting",
+    "sidebar_position": 5,
+    "description": "Common problems & their solutions.",
+    "sidebar_custom_props": {
+      "icon": "TbExclamationCircle"
+    }
+  },
+  "sidebar": "docsSidebar",
+  "previous": {
+    "title": "IDE Setup",
+    "permalink": "/start/local-setup/ide-setup"
+  },
+  "next": {
+    "title": "Bugs and Requests",
+    "permalink": "/contributor/bug-and-requests"
+  }
+}

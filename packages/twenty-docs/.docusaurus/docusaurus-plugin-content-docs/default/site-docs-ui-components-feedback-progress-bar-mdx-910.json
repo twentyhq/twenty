@@ -1,0 +1,31 @@
+{
+  "id": "ui-components/feedback/progress-bar",
+  "title": "Progress Bar",
+  "description": "Indicates progress or countdown and moves from right to left.",
+  "source": "@site/docs/ui-components/feedback/progress-bar.mdx",
+  "sourceDirName": "ui-components/feedback",
+  "slug": "/ui-components/feedback/progress-bar",
+  "permalink": "/ui-components/feedback/progress-bar",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/feedback/progress-bar.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "title": "Progress Bar",
+    "sidebar_position": 1,
+    "sidebar_custom_props": {
+      "icon": "TbLoader2"
+    }
+  },
+  "sidebar": "uiDocsSidebar",
+  "previous": {
+    "title": "App Tooltip",
+    "permalink": "/ui-components/display/app-tooltip"
+  },
+  "next": {
+    "title": "Buttons",
+    "permalink": "/ui-components/input/button"
+  }
+}

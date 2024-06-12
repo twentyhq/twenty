@@ -1,0 +1,31 @@
+{
+  "id": "ui-components/display/chip",
+  "title": "Chip",
+  "description": "A visual element that you can use as a clickable or non-clickable container with a label, optional left and right components, and various styling options to display labels and tags.",
+  "source": "@site/docs/ui-components/display/chip.mdx",
+  "sourceDirName": "ui-components/display",
+  "slug": "/ui-components/display/chip",
+  "permalink": "/ui-components/display/chip",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/display/chip.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 2,
+  "frontMatter": {
+    "title": "Chip",
+    "sidebar_position": 2,
+    "sidebar_custom_props": {
+      "icon": "TbLayoutList"
+    }
+  },
+  "sidebar": "uiDocsSidebar",
+  "previous": {
+    "title": "Checkmark",
+    "permalink": "/ui-components/display/checkmark"
+  },
+  "next": {
+    "title": "Icons",
+    "permalink": "/ui-components/display/icons"
+  }
+}

@@ -2,11 +2,10 @@ import styled from '@emotion/styled';
 
 import {
   EventRowDynamicComponentProps,
-  StyledItemAction,
-  StyledItemAuthorText,
-  StyledItemLabelIdentifier,
+  StyledEventRowItemAction,
+  StyledEventRowItemColumn,
 } from '@/activities/timelineActivities/rows/components/EventRowDynamicComponent';
-import { EventRowMainObjectUpdated } from '@/activities/timelineActivities/rows/mainObject/components/EventRowMainObjectUpdated';
+import { EventRowMainObjectUpdated } from '@/activities/timelineActivities/rows/main-object/components/EventRowMainObjectUpdated';
 
 type EventRowMainObjectProps = EventRowDynamicComponentProps;
 
@@ -28,11 +27,11 @@ export const EventRowMainObject = ({
     case 'created': {
       return (
         <StyledMainContainer>
-          <StyledItemLabelIdentifier>
+          <StyledEventRowItemColumn>
             {labelIdentifierValue}
-          </StyledItemLabelIdentifier>
-          <StyledItemAction>was created by</StyledItemAction>
-          <StyledItemAuthorText>{authorFullName}</StyledItemAuthorText>
+          </StyledEventRowItemColumn>
+          <StyledEventRowItemAction>was created by</StyledEventRowItemAction>
+          <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
         </StyledMainContainer>
       );
     }

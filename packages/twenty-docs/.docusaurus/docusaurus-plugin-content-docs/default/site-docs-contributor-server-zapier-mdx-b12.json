@@ -1,0 +1,31 @@
+{
+  "id": "contributor/server/zapier",
+  "title": "Zapier App",
+  "description": "Effortlessly sync Twenty with 3000+ apps using Zapier. Automate tasks, boost productivity, and supercharge your customer relationships!",
+  "source": "@site/docs/contributor/server/zapier.mdx",
+  "sourceDirName": "contributor/server",
+  "slug": "/contributor/server/zapier",
+  "permalink": "/contributor/server/zapier",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/contributor/server/zapier.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 2,
+  "frontMatter": {
+    "title": "Zapier App",
+    "sidebar_position": 2,
+    "sidebar_custom_props": {
+      "icon": "TbBrandZapier"
+    }
+  },
+  "sidebar": "docsSidebar",
+  "previous": {
+    "title": "Folder Architecture",
+    "permalink": "/contributor/server/folder-architecture"
+  },
+  "next": {
+    "title": "Best Practices",
+    "permalink": "/contributor/server/best-practices"
+  }
+}

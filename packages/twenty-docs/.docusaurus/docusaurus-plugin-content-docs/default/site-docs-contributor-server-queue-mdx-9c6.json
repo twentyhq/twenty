@@ -1,0 +1,27 @@
+{
+  "id": "contributor/server/queue",
+  "title": "Message Queue",
+  "description": "Queues facilitate async operations to be performed. They can be used for performing background tasks such as sending a welcome email on register.",
+  "source": "@site/docs/contributor/server/queue.mdx",
+  "sourceDirName": "contributor/server",
+  "slug": "/contributor/server/queue",
+  "permalink": "/contributor/server/queue",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/contributor/server/queue.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 5,
+  "frontMatter": {
+    "title": "Message Queue",
+    "sidebar_position": 5,
+    "sidebar_custom_props": {
+      "icon": "TbSchema"
+    }
+  },
+  "sidebar": "docsSidebar",
+  "previous": {
+    "title": "Custom Objects",
+    "permalink": "/contributor/server/custom-objects"
+  }
+}

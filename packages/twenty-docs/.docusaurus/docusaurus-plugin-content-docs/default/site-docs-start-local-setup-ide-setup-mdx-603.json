@@ -1,0 +1,32 @@
+{
+  "id": "start/local-setup/ide-setup",
+  "title": "IDE Setup",
+  "description": "Get the best developer UX with VSCode",
+  "source": "@site/docs/start/local-setup/ide-setup.mdx",
+  "sourceDirName": "start/local-setup",
+  "slug": "/start/local-setup/ide-setup",
+  "permalink": "/start/local-setup/ide-setup",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/start/local-setup/ide-setup.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 4,
+  "frontMatter": {
+    "title": "IDE Setup",
+    "sidebar_position": 4,
+    "description": "Get the best developer UX with VSCode",
+    "sidebar_custom_props": {
+      "icon": "TbBrandVscode"
+    }
+  },
+  "sidebar": "docsSidebar",
+  "previous": {
+    "title": "Yarn Setup",
+    "permalink": "/start/local-setup/yarn-setup"
+  },
+  "next": {
+    "title": "Troubleshooting",
+    "permalink": "/start/local-setup/troubleshooting"
+  }
+}

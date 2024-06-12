@@ -1,0 +1,31 @@
+{
+  "id": "ui-components/input/color-scheme",
+  "title": "Color Scheme",
+  "description": "Color Scheme Card",
+  "source": "@site/docs/ui-components/input/color-scheme.mdx",
+  "sourceDirName": "ui-components/input",
+  "slug": "/ui-components/input/color-scheme",
+  "permalink": "/ui-components/input/color-scheme",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/input/color-scheme.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 2,
+  "frontMatter": {
+    "title": "Color Scheme",
+    "sidebar_position": 2,
+    "sidebar_custom_props": {
+      "icon": "TbColorFilter"
+    }
+  },
+  "sidebar": "uiDocsSidebar",
+  "previous": {
+    "title": "Buttons",
+    "permalink": "/ui-components/input/button"
+  },
+  "next": {
+    "title": "Text",
+    "permalink": "/ui-components/input/text"
+  }
+}

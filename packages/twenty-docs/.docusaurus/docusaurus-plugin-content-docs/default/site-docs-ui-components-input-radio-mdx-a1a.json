@@ -1,0 +1,31 @@
+{
+  "id": "ui-components/input/radio",
+  "title": "Radio",
+  "description": "Used when users may only choose one option from a series of options.",
+  "source": "@site/docs/ui-components/input/radio.mdx",
+  "sourceDirName": "ui-components/input",
+  "slug": "/ui-components/input/radio",
+  "permalink": "/ui-components/input/radio",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/input/radio.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 7,
+  "frontMatter": {
+    "title": "Radio",
+    "sidebar_position": 7,
+    "sidebar_custom_props": {
+      "icon": "TbCircleDot"
+    }
+  },
+  "sidebar": "uiDocsSidebar",
+  "previous": {
+    "title": "Image Input",
+    "permalink": "/ui-components/input/image-input"
+  },
+  "next": {
+    "title": "Select",
+    "permalink": "/ui-components/input/select"
+  }
+}

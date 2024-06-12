@@ -1,0 +1,2017 @@
+{
+  "docusaurus-plugin-content-docs": {
+    "default": {
+      "loadedVersions": [
+        {
+          "versionName": "current",
+          "label": "Next",
+          "banner": null,
+          "badge": false,
+          "noIndex": false,
+          "className": "docs-version-current",
+          "path": "/",
+          "tagsPath": "/tags",
+          "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs",
+          "editUrlLocalized": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/i18n/en/docusaurus-plugin-content-docs/current",
+          "isLast": true,
+          "routePriority": -1,
+          "sidebarFilePath": "/Users/weiko/Projects/twenty/packages/twenty-docs/sidebars.js",
+          "contentPath": "/Users/weiko/Projects/twenty/packages/twenty-docs/docs",
+          "contentPathLocalized": "/Users/weiko/Projects/twenty/packages/twenty-docs/i18n/en/docusaurus-plugin-content-docs/current",
+          "docs": [
+            {
+              "id": "contributor/bug-and-requests",
+              "title": "Bugs and Requests",
+              "description": "Reporting Bugs",
+              "source": "@site/docs/contributor/bug-and-requests.mdx",
+              "sourceDirName": "contributor",
+              "slug": "/contributor/bug-and-requests",
+              "permalink": "/contributor/bug-and-requests",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/contributor/bug-and-requests.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 3,
+              "frontMatter": {
+                "title": "Bugs and Requests",
+                "sidebar_position": 3,
+                "sidebar_custom_props": {
+                  "icon": "TbBug"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "Troubleshooting",
+                "permalink": "/start/local-setup/troubleshooting"
+              },
+              "next": {
+                "title": "Frontend Development",
+                "permalink": "/contributor/frontend/"
+              }
+            },
+            {
+              "id": "contributor/frontend/best-practices",
+              "title": "Best Practices",
+              "description": "This document outlines the best practices you should follow when working on the frontend.",
+              "source": "@site/docs/contributor/frontend/best-practices.mdx",
+              "sourceDirName": "contributor/frontend",
+              "slug": "/contributor/frontend/best-practices",
+              "permalink": "/contributor/frontend/best-practices",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/contributor/frontend/best-practices.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 3,
+              "frontMatter": {
+                "title": "Best Practices",
+                "sidebar_position": 3,
+                "sidebar_custom_props": {
+                  "icon": "TbChecklist"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "Work with Figma",
+                "permalink": "/contributor/frontend/work-with-figma"
+              },
+              "next": {
+                "title": "Style Guide",
+                "permalink": "/contributor/frontend/style-guide"
+              }
+            },
+            {
+              "id": "contributor/frontend/folder-architecture",
+              "title": "Folder Architecture",
+              "description": "A detailed look into our folder architecture",
+              "source": "@site/docs/contributor/frontend/folder-architecture.mdx",
+              "sourceDirName": "contributor/frontend",
+              "slug": "/contributor/frontend/folder-architecture",
+              "permalink": "/contributor/frontend/folder-architecture",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/contributor/frontend/folder-architecture.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 5,
+              "frontMatter": {
+                "title": "Folder Architecture",
+                "sidebar_position": 5,
+                "description": "A detailed look into our folder architecture",
+                "sidebar_custom_props": {
+                  "icon": "TbFolder"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "Style Guide",
+                "permalink": "/contributor/frontend/style-guide"
+              },
+              "next": {
+                "title": "Hotkeys",
+                "permalink": "/contributor/frontend/hotkeys"
+              }
+            },
+            {
+              "id": "contributor/frontend/frontend",
+              "title": "Frontend Development",
+              "description": "Useful commands",
+              "source": "@site/docs/contributor/frontend/frontend.mdx",
+              "sourceDirName": "contributor/frontend",
+              "slug": "/contributor/frontend/",
+              "permalink": "/contributor/frontend/",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/contributor/frontend/frontend.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 0,
+              "frontMatter": {
+                "id": "frontend",
+                "title": "Frontend Development",
+                "sidebar_position": 0,
+                "sidebar_custom_props": {
+                  "icon": "TbTerminal2"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "Bugs and Requests",
+                "permalink": "/contributor/bug-and-requests"
+              },
+              "next": {
+                "title": "Work with Figma",
+                "permalink": "/contributor/frontend/work-with-figma"
+              }
+            },
+            {
+              "id": "contributor/frontend/hotkeys",
+              "title": "Hotkeys",
+              "description": "You can intercept any hotkey combination and execute a custom action.",
+              "source": "@site/docs/contributor/frontend/hotkeys.mdx",
+              "sourceDirName": "contributor/frontend",
+              "slug": "/contributor/frontend/hotkeys",
+              "permalink": "/contributor/frontend/hotkeys",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/contributor/frontend/hotkeys.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 11,
+              "frontMatter": {
+                "title": "Hotkeys",
+                "sidebar_position": 11,
+                "sidebar_custom_props": {
+                  "icon": "TbKeyboard"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "Folder Architecture",
+                "permalink": "/contributor/frontend/folder-architecture"
+              },
+              "next": {
+                "title": "Backend Development",
+                "permalink": "/contributor/server/"
+              }
+            },
+            {
+              "id": "contributor/frontend/style-guide",
+              "title": "Style Guide",
+              "description": "This document includes the rules to follow when writing code.",
+              "source": "@site/docs/contributor/frontend/style-guide.mdx",
+              "sourceDirName": "contributor/frontend",
+              "slug": "/contributor/frontend/style-guide",
+              "permalink": "/contributor/frontend/style-guide",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/contributor/frontend/style-guide.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 4,
+              "frontMatter": {
+                "title": "Style Guide",
+                "sidebar_position": 4,
+                "sidebar_custom_props": {
+                  "icon": "TbPencil"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "Best Practices",
+                "permalink": "/contributor/frontend/best-practices"
+              },
+              "next": {
+                "title": "Folder Architecture",
+                "permalink": "/contributor/frontend/folder-architecture"
+              }
+            },
+            {
+              "id": "contributor/frontend/work-with-figma",
+              "title": "Work with Figma",
+              "description": "Learn how you can collaborate with Twenty's Figma",
+              "source": "@site/docs/contributor/frontend/work-with-figma.mdx",
+              "sourceDirName": "contributor/frontend",
+              "slug": "/contributor/frontend/work-with-figma",
+              "permalink": "/contributor/frontend/work-with-figma",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/contributor/frontend/work-with-figma.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 2,
+              "frontMatter": {
+                "title": "Work with Figma",
+                "description": "Learn how you can collaborate with Twenty's Figma",
+                "sidebar_position": 2,
+                "sidebar_custom_props": {
+                  "icon": "TbBrandFigma"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "Frontend Development",
+                "permalink": "/contributor/frontend/"
+              },
+              "next": {
+                "title": "Best Practices",
+                "permalink": "/contributor/frontend/best-practices"
+              }
+            },
+            {
+              "id": "contributor/server/best-practices",
+              "title": "Best Practices",
+              "description": "This document outlines the best practices you should follow when working on the backend.",
+              "source": "@site/docs/contributor/server/best-practices.mdx",
+              "sourceDirName": "contributor/server",
+              "slug": "/contributor/server/best-practices",
+              "permalink": "/contributor/server/best-practices",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/contributor/server/best-practices.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 3,
+              "frontMatter": {
+                "title": "Best Practices",
+                "sidebar_position": 3,
+                "sidebar_custom_props": {
+                  "icon": "TbChecklist"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "Zapier App",
+                "permalink": "/contributor/server/zapier"
+              },
+              "next": {
+                "title": "Custom Objects",
+                "permalink": "/contributor/server/custom-objects"
+              }
+            },
+            {
+              "id": "contributor/server/custom-objects",
+              "title": "Custom Objects",
+              "description": "Objects are structures that allow you to store data (records, attributes, and values) specific to an organization. Twenty provides both standard and custom objects.",
+              "source": "@site/docs/contributor/server/custom-objects.mdx",
+              "sourceDirName": "contributor/server",
+              "slug": "/contributor/server/custom-objects",
+              "permalink": "/contributor/server/custom-objects",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/contributor/server/custom-objects.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 4,
+              "frontMatter": {
+                "title": "Custom Objects",
+                "sidebar_position": 4,
+                "sidebar_custom_props": {
+                  "icon": "TbAugmentedReality"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "Best Practices",
+                "permalink": "/contributor/server/best-practices"
+              },
+              "next": {
+                "title": "Message Queue",
+                "permalink": "/contributor/server/queue"
+              }
+            },
+            {
+              "id": "contributor/server/feature-flags",
+              "title": "Feature Flags",
+              "description": "Feature flags are used to hide experimental features. For twenty they are set on workspace level and not on a user level.",
+              "source": "@site/docs/contributor/server/feature-flags.mdx",
+              "sourceDirName": "contributor/server",
+              "slug": "/contributor/server/feature-flags",
+              "permalink": "/contributor/server/feature-flags",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/contributor/server/feature-flags.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 1,
+              "frontMatter": {
+                "title": "Feature Flags",
+                "sidebar_position": 1,
+                "sidebar_custom_props": {
+                  "icon": "TbFlag"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "Backend Development",
+                "permalink": "/contributor/server/"
+              },
+              "next": {
+                "title": "Folder Architecture",
+                "permalink": "/contributor/server/folder-architecture"
+              }
+            },
+            {
+              "id": "contributor/server/folder-architecture",
+              "title": "Folder Architecture",
+              "description": "A detailed look into our server folder architecture",
+              "source": "@site/docs/contributor/server/folder-architecture.mdx",
+              "sourceDirName": "contributor/server",
+              "slug": "/contributor/server/folder-architecture",
+              "permalink": "/contributor/server/folder-architecture",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/contributor/server/folder-architecture.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 2,
+              "frontMatter": {
+                "title": "Folder Architecture",
+                "sidebar_position": 2,
+                "description": "A detailed look into our server folder architecture",
+                "sidebar_custom_props": {
+                  "icon": "TbFolder"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "Feature Flags",
+                "permalink": "/contributor/server/feature-flags"
+              },
+              "next": {
+                "title": "Zapier App",
+                "permalink": "/contributor/server/zapier"
+              }
+            },
+            {
+              "id": "contributor/server/queue",
+              "title": "Message Queue",
+              "description": "Queues facilitate async operations to be performed. They can be used for performing background tasks such as sending a welcome email on register.",
+              "source": "@site/docs/contributor/server/queue.mdx",
+              "sourceDirName": "contributor/server",
+              "slug": "/contributor/server/queue",
+              "permalink": "/contributor/server/queue",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/contributor/server/queue.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 5,
+              "frontMatter": {
+                "title": "Message Queue",
+                "sidebar_position": 5,
+                "sidebar_custom_props": {
+                  "icon": "TbSchema"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "Custom Objects",
+                "permalink": "/contributor/server/custom-objects"
+              }
+            },
+            {
+              "id": "contributor/server/server",
+              "title": "Backend Development",
+              "description": "Useful commands",
+              "source": "@site/docs/contributor/server/server.mdx",
+              "sourceDirName": "contributor/server",
+              "slug": "/contributor/server/",
+              "permalink": "/contributor/server/",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/contributor/server/server.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 0,
+              "frontMatter": {
+                "title": "Backend Development",
+                "sidebar_position": 0,
+                "sidebar_custom_props": {
+                  "icon": "TbTerminal"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "Hotkeys",
+                "permalink": "/contributor/frontend/hotkeys"
+              },
+              "next": {
+                "title": "Feature Flags",
+                "permalink": "/contributor/server/feature-flags"
+              }
+            },
+            {
+              "id": "contributor/server/zapier",
+              "title": "Zapier App",
+              "description": "Effortlessly sync Twenty with 3000+ apps using Zapier. Automate tasks, boost productivity, and supercharge your customer relationships!",
+              "source": "@site/docs/contributor/server/zapier.mdx",
+              "sourceDirName": "contributor/server",
+              "slug": "/contributor/server/zapier",
+              "permalink": "/contributor/server/zapier",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/contributor/server/zapier.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 2,
+              "frontMatter": {
+                "title": "Zapier App",
+                "sidebar_position": 2,
+                "sidebar_custom_props": {
+                  "icon": "TbBrandZapier"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "Folder Architecture",
+                "permalink": "/contributor/server/folder-architecture"
+              },
+              "next": {
+                "title": "Best Practices",
+                "permalink": "/contributor/server/best-practices"
+              }
+            },
+            {
+              "id": "homepage",
+              "title": "Welcome",
+              "description": "Twenty is a CRM designed to fit your unique business needs.",
+              "source": "@site/docs/index.mdx",
+              "sourceDirName": ".",
+              "slug": "/",
+              "permalink": "/",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": null,
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 0,
+              "frontMatter": {
+                "id": "homepage",
+                "sidebar_position": 0,
+                "sidebar_class_name": "display-none",
+                "title": "Welcome",
+                "hide_title": true,
+                "hide_table_of_contents": true,
+                "custom_edit_url": null,
+                "pagination_next": null
+              },
+              "sidebar": "docsSidebar"
+            },
+            {
+              "id": "start/cloud",
+              "title": "Managed Cloud",
+              "description": "The easiest way to try the app is to sign up on app.twenty.com.",
+              "source": "@site/docs/start/cloud.mdx",
+              "sourceDirName": "start",
+              "slug": "/start/cloud",
+              "permalink": "/start/cloud",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/start/cloud.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 1,
+              "frontMatter": {
+                "title": "Managed Cloud",
+                "sidebar_position": 1,
+                "sidebar_custom_props": {
+                  "icon": "TbRocket"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "Welcome",
+                "permalink": "/"
+              },
+              "next": {
+                "title": "Self-Hosting",
+                "permalink": "/start/self-hosting/"
+              }
+            },
+            {
+              "id": "start/local-setup/ide-setup",
+              "title": "IDE Setup",
+              "description": "Get the best developer UX with VSCode",
+              "source": "@site/docs/start/local-setup/ide-setup.mdx",
+              "sourceDirName": "start/local-setup",
+              "slug": "/start/local-setup/ide-setup",
+              "permalink": "/start/local-setup/ide-setup",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/start/local-setup/ide-setup.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 4,
+              "frontMatter": {
+                "title": "IDE Setup",
+                "sidebar_position": 4,
+                "description": "Get the best developer UX with VSCode",
+                "sidebar_custom_props": {
+                  "icon": "TbBrandVscode"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "Yarn Setup",
+                "permalink": "/start/local-setup/yarn-setup"
+              },
+              "next": {
+                "title": "Troubleshooting",
+                "permalink": "/start/local-setup/troubleshooting"
+              }
+            },
+            {
+              "id": "start/local-setup/local-setup",
+              "title": "Local Setup",
+              "description": "Twenty aims for developer-friendliness, and your local installation should be up and running in just a bit.",
+              "source": "@site/docs/start/local-setup/local-setup.mdx",
+              "sourceDirName": "start/local-setup",
+              "slug": "/start/local-setup/",
+              "permalink": "/start/local-setup/",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/start/local-setup/local-setup.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 0,
+              "frontMatter": {
+                "title": "Local Setup",
+                "sidebar_position": 0,
+                "sidebar_custom_props": {
+                  "icon": "TbDeviceDesktop"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "Upgrade guide",
+                "permalink": "/start/self-hosting/upgrade-guide"
+              },
+              "next": {
+                "title": "Yarn Setup",
+                "permalink": "/start/local-setup/yarn-setup"
+              }
+            },
+            {
+              "id": "start/local-setup/troubleshooting",
+              "title": "Troubleshooting",
+              "description": "Common problems & their solutions.",
+              "source": "@site/docs/start/local-setup/troubleshooting.mdx",
+              "sourceDirName": "start/local-setup",
+              "slug": "/start/local-setup/troubleshooting",
+              "permalink": "/start/local-setup/troubleshooting",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/start/local-setup/troubleshooting.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 5,
+              "frontMatter": {
+                "title": "Troubleshooting",
+                "sidebar_position": 5,
+                "description": "Common problems & their solutions.",
+                "sidebar_custom_props": {
+                  "icon": "TbExclamationCircle"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "IDE Setup",
+                "permalink": "/start/local-setup/ide-setup"
+              },
+              "next": {
+                "title": "Bugs and Requests",
+                "permalink": "/contributor/bug-and-requests"
+              }
+            },
+            {
+              "id": "start/local-setup/yarn-setup",
+              "title": "Yarn Setup",
+              "description": "Set up the project with Yarn\n",
+              "source": "@site/docs/start/local-setup/yarn-setup.mdx",
+              "sourceDirName": "start/local-setup",
+              "slug": "/start/local-setup/yarn-setup",
+              "permalink": "/start/local-setup/yarn-setup",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/start/local-setup/yarn-setup.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 1,
+              "frontMatter": {
+                "title": "Yarn Setup",
+                "sidebar_position": 1,
+                "description": "Set up the project with Yarn\n",
+                "sidebar_custom_props": {
+                  "icon": "TbScript"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "Local Setup",
+                "permalink": "/start/local-setup/"
+              },
+              "next": {
+                "title": "IDE Setup",
+                "permalink": "/start/local-setup/ide-setup"
+              }
+            },
+            {
+              "id": "start/self-hosting/cloud-providers",
+              "title": "Vendor-specific instructions",
+              "description": "This document is maintained by the community. It might contain issues.",
+              "source": "@site/docs/start/self-hosting/cloud-providers.mdx",
+              "sourceDirName": "start/self-hosting",
+              "slug": "/start/self-hosting/cloud-providers",
+              "permalink": "/start/self-hosting/cloud-providers",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/start/self-hosting/cloud-providers.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 3,
+              "frontMatter": {
+                "title": "Vendor-specific instructions",
+                "sidebar_position": 3,
+                "sidebar_custom_props": {
+                  "icon": "TbCloud"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "Docker Compose (easy)",
+                "permalink": "/start/self-hosting/docker-compose"
+              },
+              "next": {
+                "title": "Upgrade guide",
+                "permalink": "/start/self-hosting/upgrade-guide"
+              }
+            },
+            {
+              "id": "start/self-hosting/docker-compose",
+              "title": "Docker Compose (easy)",
+              "description": "One command installation",
+              "source": "@site/docs/start/self-hosting/docker-compose.mdx",
+              "sourceDirName": "start/self-hosting",
+              "slug": "/start/self-hosting/docker-compose",
+              "permalink": "/start/self-hosting/docker-compose",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/start/self-hosting/docker-compose.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 2,
+              "frontMatter": {
+                "title": "Docker Compose (easy)",
+                "sidebar_position": 2,
+                "sidebar_custom_props": {
+                  "icon": "TbBrandDocker"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "Self-Hosting",
+                "permalink": "/start/self-hosting/"
+              },
+              "next": {
+                "title": "Vendor-specific instructions",
+                "permalink": "/start/self-hosting/cloud-providers"
+              }
+            },
+            {
+              "id": "start/self-hosting/self-hosting",
+              "title": "Self-Hosting",
+              "description": "Frontend",
+              "source": "@site/docs/start/self-hosting/self-hosting.mdx",
+              "sourceDirName": "start/self-hosting",
+              "slug": "/start/self-hosting/",
+              "permalink": "/start/self-hosting/",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/start/self-hosting/self-hosting.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 1,
+              "frontMatter": {
+                "title": "Self-Hosting",
+                "sidebar_position": 1,
+                "sidebar_custom_props": {
+                  "icon": "TbServer"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "Managed Cloud",
+                "permalink": "/start/cloud"
+              },
+              "next": {
+                "title": "Docker Compose (easy)",
+                "permalink": "/start/self-hosting/docker-compose"
+              }
+            },
+            {
+              "id": "start/self-hosting/upgrade-guide",
+              "title": "Upgrade guide",
+              "description": "",
+              "source": "@site/docs/start/self-hosting/upgrade-guide.mdx",
+              "sourceDirName": "start/self-hosting",
+              "slug": "/start/self-hosting/upgrade-guide",
+              "permalink": "/start/self-hosting/upgrade-guide",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/start/self-hosting/upgrade-guide.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 4,
+              "frontMatter": {
+                "title": "Upgrade guide",
+                "sidebar_position": 4,
+                "sidebar_class_name": "coming-soon",
+                "sidebar_custom_props": {
+                  "icon": "TbServer"
+                }
+              },
+              "sidebar": "docsSidebar",
+              "previous": {
+                "title": "Vendor-specific instructions",
+                "permalink": "/start/self-hosting/cloud-providers"
+              },
+              "next": {
+                "title": "Local Setup",
+                "permalink": "/start/local-setup/"
+              }
+            },
+            {
+              "id": "ui-components/display/app-tooltip",
+              "title": "App Tooltip",
+              "description": "A brief message that displays additional information when a user interacts with an element.",
+              "source": "@site/docs/ui-components/display/app-tooltip.mdx",
+              "sourceDirName": "ui-components/display",
+              "slug": "/ui-components/display/app-tooltip",
+              "permalink": "/ui-components/display/app-tooltip",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/display/app-tooltip.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 6,
+              "frontMatter": {
+                "title": "App Tooltip",
+                "sidebar_position": 6,
+                "sidebar_custom_props": {
+                  "icon": "TbTooltip"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "previous": {
+                "title": "Tag",
+                "permalink": "/ui-components/display/tag"
+              },
+              "next": {
+                "title": "Progress Bar",
+                "permalink": "/ui-components/feedback/progress-bar"
+              }
+            },
+            {
+              "id": "ui-components/display/checkmark",
+              "title": "Checkmark",
+              "description": "Represents a successful or completed action.",
+              "source": "@site/docs/ui-components/display/checkmark.mdx",
+              "sourceDirName": "ui-components/display",
+              "slug": "/ui-components/display/checkmark",
+              "permalink": "/ui-components/display/checkmark",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/display/checkmark.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 1,
+              "frontMatter": {
+                "title": "Checkmark",
+                "sidebar_position": 1,
+                "sidebar_custom_props": {
+                  "icon": "TbCheck"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "previous": {
+                "title": "UI Components",
+                "permalink": "/ui-components/"
+              },
+              "next": {
+                "title": "Chip",
+                "permalink": "/ui-components/display/chip"
+              }
+            },
+            {
+              "id": "ui-components/display/chip",
+              "title": "Chip",
+              "description": "A visual element that you can use as a clickable or non-clickable container with a label, optional left and right components, and various styling options to display labels and tags.",
+              "source": "@site/docs/ui-components/display/chip.mdx",
+              "sourceDirName": "ui-components/display",
+              "slug": "/ui-components/display/chip",
+              "permalink": "/ui-components/display/chip",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/display/chip.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 2,
+              "frontMatter": {
+                "title": "Chip",
+                "sidebar_position": 2,
+                "sidebar_custom_props": {
+                  "icon": "TbLayoutList"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "previous": {
+                "title": "Checkmark",
+                "permalink": "/ui-components/display/checkmark"
+              },
+              "next": {
+                "title": "Icons",
+                "permalink": "/ui-components/display/icons"
+              }
+            },
+            {
+              "id": "ui-components/display/icons",
+              "title": "Icons",
+              "description": "A list of icons used throughout our app.",
+              "source": "@site/docs/ui-components/display/icons.mdx",
+              "sourceDirName": "ui-components/display",
+              "slug": "/ui-components/display/icons",
+              "permalink": "/ui-components/display/icons",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/display/icons.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 3,
+              "frontMatter": {
+                "title": "Icons",
+                "sidebar_position": 3,
+                "sidebar_custom_props": {
+                  "icon": "TbIcons"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "previous": {
+                "title": "Chip",
+                "permalink": "/ui-components/display/chip"
+              },
+              "next": {
+                "title": "Soon Pill",
+                "permalink": "/ui-components/display/soon-pill"
+              }
+            },
+            {
+              "id": "ui-components/display/soon-pill",
+              "title": "Soon Pill",
+              "description": "A small badge or \"pill\" to indicate something is coming soon.",
+              "source": "@site/docs/ui-components/display/soon-pill.mdx",
+              "sourceDirName": "ui-components/display",
+              "slug": "/ui-components/display/soon-pill",
+              "permalink": "/ui-components/display/soon-pill",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/display/soon-pill.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 4,
+              "frontMatter": {
+                "title": "Soon Pill",
+                "sidebar_position": 4,
+                "sidebar_custom_props": {
+                  "icon": "TbPill"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "previous": {
+                "title": "Icons",
+                "permalink": "/ui-components/display/icons"
+              },
+              "next": {
+                "title": "Tag",
+                "permalink": "/ui-components/display/tag"
+              }
+            },
+            {
+              "id": "ui-components/display/tag",
+              "title": "Tag",
+              "description": "Component to visually categorize or label content.",
+              "source": "@site/docs/ui-components/display/tag.mdx",
+              "sourceDirName": "ui-components/display",
+              "slug": "/ui-components/display/tag",
+              "permalink": "/ui-components/display/tag",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/display/tag.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 5,
+              "frontMatter": {
+                "title": "Tag",
+                "sidebar_position": 5,
+                "sidebar_custom_props": {
+                  "icon": "TbTag"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "previous": {
+                "title": "Soon Pill",
+                "permalink": "/ui-components/display/soon-pill"
+              },
+              "next": {
+                "title": "App Tooltip",
+                "permalink": "/ui-components/display/app-tooltip"
+              }
+            },
+            {
+              "id": "ui-components/feedback/progress-bar",
+              "title": "Progress Bar",
+              "description": "Indicates progress or countdown and moves from right to left.",
+              "source": "@site/docs/ui-components/feedback/progress-bar.mdx",
+              "sourceDirName": "ui-components/feedback",
+              "slug": "/ui-components/feedback/progress-bar",
+              "permalink": "/ui-components/feedback/progress-bar",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/feedback/progress-bar.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 1,
+              "frontMatter": {
+                "title": "Progress Bar",
+                "sidebar_position": 1,
+                "sidebar_custom_props": {
+                  "icon": "TbLoader2"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "previous": {
+                "title": "App Tooltip",
+                "permalink": "/ui-components/display/app-tooltip"
+              },
+              "next": {
+                "title": "Buttons",
+                "permalink": "/ui-components/input/button"
+              }
+            },
+            {
+              "id": "ui-components/input/block-editor",
+              "title": "Block Editor",
+              "description": "Uses a block-based rich text editor from BlockNote to allow users to edit and view blocks of content.",
+              "source": "@site/docs/ui-components/input/block-editor.mdx",
+              "sourceDirName": "ui-components/input",
+              "slug": "/ui-components/input/block-editor",
+              "permalink": "/ui-components/input/block-editor",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/input/block-editor.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 11,
+              "frontMatter": {
+                "title": "Block Editor",
+                "sidebar_position": 11,
+                "sidebar_custom_props": {
+                  "icon": "TbTemplate"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "previous": {
+                "title": "Toggle",
+                "permalink": "/ui-components/input/toggle"
+              },
+              "next": {
+                "title": "Breadcrumb",
+                "permalink": "/ui-components/navigation/bread-crumb"
+              }
+            },
+            {
+              "id": "ui-components/input/button",
+              "title": "Buttons",
+              "description": "A list of buttons and button groups used throughout the app.",
+              "source": "@site/docs/ui-components/input/button.mdx",
+              "sourceDirName": "ui-components/input",
+              "slug": "/ui-components/input/button",
+              "permalink": "/ui-components/input/button",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/input/button.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 1,
+              "frontMatter": {
+                "title": "Buttons",
+                "sidebar_position": 1,
+                "sidebar_custom_props": {
+                  "icon": "TbSquareRoundedPlusFilled"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "previous": {
+                "title": "Progress Bar",
+                "permalink": "/ui-components/feedback/progress-bar"
+              },
+              "next": {
+                "title": "Color Scheme",
+                "permalink": "/ui-components/input/color-scheme"
+              }
+            },
+            {
+              "id": "ui-components/input/checkbox",
+              "title": "Checkbox",
+              "description": "Used when a user needs to select multiple values from several options.",
+              "source": "@site/docs/ui-components/input/checkbox.mdx",
+              "sourceDirName": "ui-components/input",
+              "slug": "/ui-components/input/checkbox",
+              "permalink": "/ui-components/input/checkbox",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/input/checkbox.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 4,
+              "frontMatter": {
+                "title": "Checkbox",
+                "sidebar_position": 4,
+                "sidebar_custom_props": {
+                  "icon": "TbCheckbox"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "previous": {
+                "title": "Text",
+                "permalink": "/ui-components/input/text"
+              },
+              "next": {
+                "title": "Icon Picker",
+                "permalink": "/ui-components/input/icon-picker"
+              }
+            },
+            {
+              "id": "ui-components/input/color-scheme",
+              "title": "Color Scheme",
+              "description": "Color Scheme Card",
+              "source": "@site/docs/ui-components/input/color-scheme.mdx",
+              "sourceDirName": "ui-components/input",
+              "slug": "/ui-components/input/color-scheme",
+              "permalink": "/ui-components/input/color-scheme",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/input/color-scheme.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 2,
+              "frontMatter": {
+                "title": "Color Scheme",
+                "sidebar_position": 2,
+                "sidebar_custom_props": {
+                  "icon": "TbColorFilter"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "previous": {
+                "title": "Buttons",
+                "permalink": "/ui-components/input/button"
+              },
+              "next": {
+                "title": "Text",
+                "permalink": "/ui-components/input/text"
+              }
+            },
+            {
+              "id": "ui-components/input/icon-picker",
+              "title": "Icon Picker",
+              "description": "A dropdown-based icon picker that allows users to select an icon from a list.",
+              "source": "@site/docs/ui-components/input/icon-picker.mdx",
+              "sourceDirName": "ui-components/input",
+              "slug": "/ui-components/input/icon-picker",
+              "permalink": "/ui-components/input/icon-picker",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/input/icon-picker.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 5,
+              "frontMatter": {
+                "title": "Icon Picker",
+                "sidebar_position": 5,
+                "sidebar_custom_props": {
+                  "icon": "TbColorPicker"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "previous": {
+                "title": "Checkbox",
+                "permalink": "/ui-components/input/checkbox"
+              },
+              "next": {
+                "title": "Image Input",
+                "permalink": "/ui-components/input/image-input"
+              }
+            },
+            {
+              "id": "ui-components/input/image-input",
+              "title": "Image Input",
+              "description": "Allows users to upload and remove an image.",
+              "source": "@site/docs/ui-components/input/image-input.mdx",
+              "sourceDirName": "ui-components/input",
+              "slug": "/ui-components/input/image-input",
+              "permalink": "/ui-components/input/image-input",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/input/image-input.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 6,
+              "frontMatter": {
+                "title": "Image Input",
+                "sidebar_position": 6,
+                "sidebar_custom_props": {
+                  "icon": "TbUpload"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "previous": {
+                "title": "Icon Picker",
+                "permalink": "/ui-components/input/icon-picker"
+              },
+              "next": {
+                "title": "Radio",
+                "permalink": "/ui-components/input/radio"
+              }
+            },
+            {
+              "id": "ui-components/input/radio",
+              "title": "Radio",
+              "description": "Used when users may only choose one option from a series of options.",
+              "source": "@site/docs/ui-components/input/radio.mdx",
+              "sourceDirName": "ui-components/input",
+              "slug": "/ui-components/input/radio",
+              "permalink": "/ui-components/input/radio",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/input/radio.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 7,
+              "frontMatter": {
+                "title": "Radio",
+                "sidebar_position": 7,
+                "sidebar_custom_props": {
+                  "icon": "TbCircleDot"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "previous": {
+                "title": "Image Input",
+                "permalink": "/ui-components/input/image-input"
+              },
+              "next": {
+                "title": "Select",
+                "permalink": "/ui-components/input/select"
+              }
+            },
+            {
+              "id": "ui-components/input/select",
+              "title": "Select",
+              "description": "Allows users to pick a value from a list of predefined options.",
+              "source": "@site/docs/ui-components/input/select.mdx",
+              "sourceDirName": "ui-components/input",
+              "slug": "/ui-components/input/select",
+              "permalink": "/ui-components/input/select",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/input/select.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 8,
+              "frontMatter": {
+                "title": "Select",
+                "sidebar_position": 8,
+                "sidebar_custom_props": {
+                  "icon": "TbSelect"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "previous": {
+                "title": "Radio",
+                "permalink": "/ui-components/input/radio"
+              },
+              "next": {
+                "title": "Toggle",
+                "permalink": "/ui-components/input/toggle"
+              }
+            },
+            {
+              "id": "ui-components/input/text",
+              "title": "Text",
+              "description": "Text Input",
+              "source": "@site/docs/ui-components/input/text.mdx",
+              "sourceDirName": "ui-components/input",
+              "slug": "/ui-components/input/text",
+              "permalink": "/ui-components/input/text",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/input/text.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 3,
+              "frontMatter": {
+                "title": "Text",
+                "sidebar_position": 3,
+                "sidebar_custom_props": {
+                  "icon": "TbTextSize"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "previous": {
+                "title": "Color Scheme",
+                "permalink": "/ui-components/input/color-scheme"
+              },
+              "next": {
+                "title": "Checkbox",
+                "permalink": "/ui-components/input/checkbox"
+              }
+            },
+            {
+              "id": "ui-components/input/toggle",
+              "title": "Toggle",
+              "description": "<SandpackEditor",
+              "source": "@site/docs/ui-components/input/toggle.mdx",
+              "sourceDirName": "ui-components/input",
+              "slug": "/ui-components/input/toggle",
+              "permalink": "/ui-components/input/toggle",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/input/toggle.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 10,
+              "frontMatter": {
+                "title": "Toggle",
+                "sidebar_position": 10,
+                "sidebar_custom_props": {
+                  "icon": "TbToggleRight"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "previous": {
+                "title": "Select",
+                "permalink": "/ui-components/input/select"
+              },
+              "next": {
+                "title": "Block Editor",
+                "permalink": "/ui-components/input/block-editor"
+              }
+            },
+            {
+              "id": "ui-components/navigation/bread-crumb",
+              "title": "Breadcrumb",
+              "description": "Renders a breadcrumb navigation bar.",
+              "source": "@site/docs/ui-components/navigation/bread-crumb.mdx",
+              "sourceDirName": "ui-components/navigation",
+              "slug": "/ui-components/navigation/bread-crumb",
+              "permalink": "/ui-components/navigation/bread-crumb",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/navigation/bread-crumb.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 1,
+              "frontMatter": {
+                "title": "Breadcrumb",
+                "sidebar_position": 1,
+                "sidebar_custom_props": {
+                  "icon": "TbSquareChevronsRight"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "previous": {
+                "title": "Block Editor",
+                "permalink": "/ui-components/input/block-editor"
+              },
+              "next": {
+                "title": "Links",
+                "permalink": "/ui-components/navigation/link"
+              }
+            },
+            {
+              "id": "ui-components/navigation/link",
+              "title": "Links",
+              "description": "Contact Link",
+              "source": "@site/docs/ui-components/navigation/link.mdx",
+              "sourceDirName": "ui-components/navigation",
+              "slug": "/ui-components/navigation/link",
+              "permalink": "/ui-components/navigation/link",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/navigation/link.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 2,
+              "frontMatter": {
+                "title": "Links",
+                "sidebar_position": 2,
+                "sidebar_custom_props": {
+                  "icon": "TbLink"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "previous": {
+                "title": "Breadcrumb",
+                "permalink": "/ui-components/navigation/bread-crumb"
+              },
+              "next": {
+                "title": "Menu Item",
+                "permalink": "/ui-components/navigation/menu-item"
+              }
+            },
+            {
+              "id": "ui-components/navigation/menu-item",
+              "title": "Menu Item",
+              "description": "A versatile menu item designed to be used in a menu or navigation list.",
+              "source": "@site/docs/ui-components/navigation/menu-item.mdx",
+              "sourceDirName": "ui-components/navigation",
+              "slug": "/ui-components/navigation/menu-item",
+              "permalink": "/ui-components/navigation/menu-item",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/navigation/menu-item.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 3,
+              "frontMatter": {
+                "title": "Menu Item",
+                "sidebar_position": 3,
+                "sidebar_custom_props": {
+                  "icon": "TbMenu"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "previous": {
+                "title": "Links",
+                "permalink": "/ui-components/navigation/link"
+              },
+              "next": {
+                "title": "Navigation Bar",
+                "permalink": "/ui-components/navigation/navigation-bar"
+              }
+            },
+            {
+              "id": "ui-components/navigation/navigation-bar",
+              "title": "Navigation Bar",
+              "description": "Renders a navigation bar that contains multiple NavigationBarItem components.",
+              "source": "@site/docs/ui-components/navigation/navigation-bar.mdx",
+              "sourceDirName": "ui-components/navigation",
+              "slug": "/ui-components/navigation/navigation-bar",
+              "permalink": "/ui-components/navigation/navigation-bar",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/navigation/navigation-bar.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 4,
+              "frontMatter": {
+                "title": "Navigation Bar",
+                "sidebar_position": 4,
+                "sidebar_custom_props": {
+                  "icon": "TbRectangle"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "previous": {
+                "title": "Menu Item",
+                "permalink": "/ui-components/navigation/menu-item"
+              },
+              "next": {
+                "title": "Step Bar",
+                "permalink": "/ui-components/navigation/step-bar"
+              }
+            },
+            {
+              "id": "ui-components/navigation/step-bar",
+              "title": "Step Bar",
+              "description": "Displays progress through a sequence of numbered steps by highlighting the active step. It renders a container with steps, each represented by the Step component.",
+              "source": "@site/docs/ui-components/navigation/step-bar.mdx",
+              "sourceDirName": "ui-components/navigation",
+              "slug": "/ui-components/navigation/step-bar",
+              "permalink": "/ui-components/navigation/step-bar",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/navigation/step-bar.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 5,
+              "frontMatter": {
+                "title": "Step Bar",
+                "sidebar_position": 5,
+                "sidebar_custom_props": {
+                  "icon": "TbCircleCheckFilled"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "previous": {
+                "title": "Navigation Bar",
+                "permalink": "/ui-components/navigation/navigation-bar"
+              }
+            },
+            {
+              "id": "ui-components/ui-components",
+              "title": "UI Components",
+              "description": "",
+              "source": "@site/docs/ui-components/ui-components.mdx",
+              "sourceDirName": "ui-components",
+              "slug": "/ui-components/",
+              "permalink": "/ui-components/",
+              "draft": false,
+              "unlisted": false,
+              "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/ui-components.mdx",
+              "tags": [],
+              "version": "current",
+              "sidebarPosition": 0,
+              "frontMatter": {
+                "title": "UI Components",
+                "sidebar_position": 0,
+                "displayed_sidebar": "uiDocsSidebar",
+                "sidebar_custom_props": {
+                  "isSidebarRoot": true,
+                  "icon": "TbLayoutGrid"
+                }
+              },
+              "sidebar": "uiDocsSidebar",
+              "next": {
+                "title": "Checkmark",
+                "permalink": "/ui-components/display/checkmark"
+              }
+            }
+          ],
+          "drafts": [],
+          "sidebars": {
+            "docsSidebar": [
+              {
+                "type": "doc",
+                "id": "homepage",
+                "customProps": {
+                  "type": "search-bar",
+                  "props": {
+                    "name": "Hello World",
+                    "age": 42
+                  }
+                }
+              },
+              {
+                "type": "doc",
+                "id": "homepage",
+                "className": "display-none"
+              },
+              {
+                "type": "category",
+                "label": "Getting Started",
+                "collapsible": false,
+                "collapsed": false,
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "start/cloud",
+                    "customProps": {
+                      "icon": "TbRocket"
+                    }
+                  },
+                  {
+                    "type": "category",
+                    "label": "Self-Hosting",
+                    "collapsible": true,
+                    "collapsed": true,
+                    "customProps": {
+                      "icon": "TbServer"
+                    },
+                    "items": [
+                      {
+                        "type": "doc",
+                        "id": "start/self-hosting/docker-compose",
+                        "customProps": {
+                          "icon": "TbBrandDocker"
+                        }
+                      },
+                      {
+                        "type": "doc",
+                        "id": "start/self-hosting/cloud-providers",
+                        "customProps": {
+                          "icon": "TbCloud"
+                        }
+                      },
+                      {
+                        "type": "doc",
+                        "id": "start/self-hosting/upgrade-guide",
+                        "className": "coming-soon",
+                        "customProps": {
+                          "icon": "TbServer"
+                        }
+                      }
+                    ],
+                    "link": {
+                      "type": "doc",
+                      "id": "start/self-hosting/self-hosting"
+                    }
+                  },
+                  {
+                    "type": "category",
+                    "label": "Local setup",
+                    "collapsible": true,
+                    "collapsed": true,
+                    "customProps": {
+                      "icon": "TbDeviceDesktop"
+                    },
+                    "items": [
+                      {
+                        "type": "doc",
+                        "id": "start/local-setup/yarn-setup",
+                        "customProps": {
+                          "icon": "TbScript"
+                        }
+                      },
+                      {
+                        "type": "doc",
+                        "id": "start/local-setup/ide-setup",
+                        "customProps": {
+                          "icon": "TbBrandVscode"
+                        }
+                      },
+                      {
+                        "type": "doc",
+                        "id": "start/local-setup/troubleshooting",
+                        "customProps": {
+                          "icon": "TbExclamationCircle"
+                        }
+                      }
+                    ],
+                    "link": {
+                      "type": "doc",
+                      "id": "start/local-setup/local-setup"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "category",
+                "label": "Contributing",
+                "collapsible": false,
+                "collapsed": false,
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "contributor/bug-and-requests",
+                    "customProps": {
+                      "icon": "TbBug"
+                    }
+                  },
+                  {
+                    "type": "category",
+                    "label": "Frontend Development",
+                    "collapsible": true,
+                    "collapsed": true,
+                    "customProps": {
+                      "icon": "TbTerminal2"
+                    },
+                    "items": [
+                      {
+                        "type": "doc",
+                        "id": "contributor/frontend/work-with-figma",
+                        "customProps": {
+                          "icon": "TbBrandFigma"
+                        }
+                      },
+                      {
+                        "type": "doc",
+                        "id": "contributor/frontend/best-practices",
+                        "customProps": {
+                          "icon": "TbChecklist"
+                        }
+                      },
+                      {
+                        "type": "doc",
+                        "id": "contributor/frontend/style-guide",
+                        "customProps": {
+                          "icon": "TbPencil"
+                        }
+                      },
+                      {
+                        "type": "doc",
+                        "id": "contributor/frontend/folder-architecture",
+                        "customProps": {
+                          "icon": "TbFolder"
+                        }
+                      },
+                      {
+                        "type": "doc",
+                        "id": "contributor/frontend/hotkeys",
+                        "customProps": {
+                          "icon": "TbKeyboard"
+                        }
+                      }
+                    ],
+                    "link": {
+                      "type": "doc",
+                      "id": "contributor/frontend/frontend"
+                    }
+                  },
+                  {
+                    "type": "category",
+                    "label": "Backend Development",
+                    "collapsible": true,
+                    "collapsed": true,
+                    "customProps": {
+                      "icon": "TbTerminal"
+                    },
+                    "items": [
+                      {
+                        "type": "doc",
+                        "id": "contributor/server/feature-flags",
+                        "customProps": {
+                          "icon": "TbFlag"
+                        }
+                      },
+                      {
+                        "type": "doc",
+                        "id": "contributor/server/folder-architecture",
+                        "customProps": {
+                          "icon": "TbFolder"
+                        }
+                      },
+                      {
+                        "type": "doc",
+                        "id": "contributor/server/zapier",
+                        "customProps": {
+                          "icon": "TbBrandZapier"
+                        }
+                      },
+                      {
+                        "type": "doc",
+                        "id": "contributor/server/best-practices",
+                        "customProps": {
+                          "icon": "TbChecklist"
+                        }
+                      },
+                      {
+                        "type": "doc",
+                        "id": "contributor/server/custom-objects",
+                        "customProps": {
+                          "icon": "TbAugmentedReality"
+                        }
+                      },
+                      {
+                        "type": "doc",
+                        "id": "contributor/server/queue",
+                        "customProps": {
+                          "icon": "TbSchema"
+                        }
+                      }
+                    ],
+                    "link": {
+                      "type": "doc",
+                      "id": "contributor/server/server"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "category",
+                "label": "Extending",
+                "items": [
+                  {
+                    "type": "category",
+                    "label": "Rest APIs",
+                    "collapsible": true,
+                    "collapsed": true,
+                    "customProps": {
+                      "icon": "TbApi"
+                    },
+                    "items": [
+                      {
+                        "type": "link",
+                        "label": "Core API",
+                        "href": "/rest-api/core"
+                      },
+                      {
+                        "type": "link",
+                        "label": "Metadata API",
+                        "href": "/rest-api/metadata"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "category",
+                    "label": "GraphQL APIs",
+                    "collapsible": true,
+                    "collapsed": true,
+                    "customProps": {
+                      "icon": "TbBrandGraphql"
+                    },
+                    "items": [
+                      {
+                        "type": "link",
+                        "label": "Core API",
+                        "href": "/graphql/core"
+                      },
+                      {
+                        "type": "link",
+                        "label": "Metadata API",
+                        "href": "/graphql/metadata"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "category",
+                    "label": "UI Kit",
+                    "collapsible": true,
+                    "collapsed": true,
+                    "customProps": {
+                      "icon": "TbComponents"
+                    },
+                    "items": [
+                      {
+                        "type": "link",
+                        "label": "Storybook",
+                        "href": "https://storybook.twenty.com"
+                      },
+                      {
+                        "type": "link",
+                        "label": "Components",
+                        "href": "/ui-components/"
+                      }
+                    ]
+                  }
+                ],
+                "collapsed": false,
+                "collapsible": false
+              }
+            ],
+            "uiDocsSidebar": [
+              {
+                "type": "doc",
+                "id": "ui-components/ui-components",
+                "customProps": {
+                  "isSidebarRoot": true,
+                  "icon": "TbLayoutGrid"
+                }
+              },
+              {
+                "type": "category",
+                "label": "Display",
+                "collapsible": true,
+                "collapsed": false,
+                "customProps": {
+                  "icon": "TbAppWindow"
+                },
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "ui-components/display/checkmark",
+                    "customProps": {
+                      "icon": "TbCheck"
+                    }
+                  },
+                  {
+                    "type": "doc",
+                    "id": "ui-components/display/chip",
+                    "customProps": {
+                      "icon": "TbLayoutList"
+                    }
+                  },
+                  {
+                    "type": "doc",
+                    "id": "ui-components/display/icons",
+                    "customProps": {
+                      "icon": "TbIcons"
+                    }
+                  },
+                  {
+                    "type": "doc",
+                    "id": "ui-components/display/soon-pill",
+                    "customProps": {
+                      "icon": "TbPill"
+                    }
+                  },
+                  {
+                    "type": "doc",
+                    "id": "ui-components/display/tag",
+                    "customProps": {
+                      "icon": "TbTag"
+                    }
+                  },
+                  {
+                    "type": "doc",
+                    "id": "ui-components/display/app-tooltip",
+                    "customProps": {
+                      "icon": "TbTooltip"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "category",
+                "label": "Feedback",
+                "collapsible": true,
+                "collapsed": false,
+                "customProps": {
+                  "icon": "TbForms"
+                },
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "ui-components/feedback/progress-bar",
+                    "customProps": {
+                      "icon": "TbLoader2"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "category",
+                "label": "Input",
+                "collapsible": true,
+                "collapsed": false,
+                "customProps": {
+                  "icon": "TbInputSearch"
+                },
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "ui-components/input/button",
+                    "customProps": {
+                      "icon": "TbSquareRoundedPlusFilled"
+                    }
+                  },
+                  {
+                    "type": "doc",
+                    "id": "ui-components/input/color-scheme",
+                    "customProps": {
+                      "icon": "TbColorFilter"
+                    }
+                  },
+                  {
+                    "type": "doc",
+                    "id": "ui-components/input/text",
+                    "customProps": {
+                      "icon": "TbTextSize"
+                    }
+                  },
+                  {
+                    "type": "doc",
+                    "id": "ui-components/input/checkbox",
+                    "customProps": {
+                      "icon": "TbCheckbox"
+                    }
+                  },
+                  {
+                    "type": "doc",
+                    "id": "ui-components/input/icon-picker",
+                    "customProps": {
+                      "icon": "TbColorPicker"
+                    }
+                  },
+                  {
+                    "type": "doc",
+                    "id": "ui-components/input/image-input",
+                    "customProps": {
+                      "icon": "TbUpload"
+                    }
+                  },
+                  {
+                    "type": "doc",
+                    "id": "ui-components/input/radio",
+                    "customProps": {
+                      "icon": "TbCircleDot"
+                    }
+                  },
+                  {
+                    "type": "doc",
+                    "id": "ui-components/input/select",
+                    "customProps": {
+                      "icon": "TbSelect"
+                    }
+                  },
+                  {
+                    "type": "doc",
+                    "id": "ui-components/input/toggle",
+                    "customProps": {
+                      "icon": "TbToggleRight"
+                    }
+                  },
+                  {
+                    "type": "doc",
+                    "id": "ui-components/input/block-editor",
+                    "customProps": {
+                      "icon": "TbTemplate"
+                    }
+                  }
+                ]
+              },
+              {
+                "type": "category",
+                "label": "Navigation",
+                "collapsible": true,
+                "collapsed": false,
+                "customProps": {
+                  "icon": "TbNavigation"
+                },
+                "items": [
+                  {
+                    "type": "doc",
+                    "id": "ui-components/navigation/bread-crumb",
+                    "customProps": {
+                      "icon": "TbSquareChevronsRight"
+                    }
+                  },
+                  {
+                    "type": "doc",
+                    "id": "ui-components/navigation/link",
+                    "customProps": {
+                      "icon": "TbLink"
+                    }
+                  },
+                  {
+                    "type": "doc",
+                    "id": "ui-components/navigation/menu-item",
+                    "customProps": {
+                      "icon": "TbMenu"
+                    }
+                  },
+                  {
+                    "type": "doc",
+                    "id": "ui-components/navigation/navigation-bar",
+                    "customProps": {
+                      "icon": "TbRectangle"
+                    }
+                  },
+                  {
+                    "type": "doc",
+                    "id": "ui-components/navigation/step-bar",
+                    "customProps": {
+                      "icon": "TbCircleCheckFilled"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "docusaurus-plugin-content-pages": {
+    "default": [
+      {
+        "type": "jsx",
+        "permalink": "/graphql/core",
+        "source": "@site/src/pages/graphql/core.tsx"
+      },
+      {
+        "type": "jsx",
+        "permalink": "/graphql/metadata",
+        "source": "@site/src/pages/graphql/metadata.tsx"
+      },
+      {
+        "type": "jsx",
+        "permalink": "/rest-api/core",
+        "source": "@site/src/pages/rest-api/core.tsx"
+      },
+      {
+        "type": "jsx",
+        "permalink": "/rest-api/metadata",
+        "source": "@site/src/pages/rest-api/metadata.tsx"
+      }
+    ]
+  },
+  "docusaurus-plugin-debug": {},
+  "docusaurus-theme-classic": {},
+  "docusaurus-theme-search-algolia": {},
+  "docusaurus-node-polyfills": {},
+  "docusaurus-bootstrap-plugin": {},
+  "docusaurus-mdx-fallback-plugin": {}
+}

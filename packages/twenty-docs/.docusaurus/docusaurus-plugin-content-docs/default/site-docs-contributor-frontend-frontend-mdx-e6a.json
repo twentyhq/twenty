@@ -1,0 +1,32 @@
+{
+  "id": "contributor/frontend/frontend",
+  "title": "Frontend Development",
+  "description": "Useful commands",
+  "source": "@site/docs/contributor/frontend/frontend.mdx",
+  "sourceDirName": "contributor/frontend",
+  "slug": "/contributor/frontend/",
+  "permalink": "/contributor/frontend/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/contributor/frontend/frontend.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 0,
+  "frontMatter": {
+    "id": "frontend",
+    "title": "Frontend Development",
+    "sidebar_position": 0,
+    "sidebar_custom_props": {
+      "icon": "TbTerminal2"
+    }
+  },
+  "sidebar": "docsSidebar",
+  "previous": {
+    "title": "Bugs and Requests",
+    "permalink": "/contributor/bug-and-requests"
+  },
+  "next": {
+    "title": "Work with Figma",
+    "permalink": "/contributor/frontend/work-with-figma"
+  }
+}

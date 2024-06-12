@@ -1,0 +1,32 @@
+{
+  "id": "start/self-hosting/upgrade-guide",
+  "title": "Upgrade guide",
+  "description": "",
+  "source": "@site/docs/start/self-hosting/upgrade-guide.mdx",
+  "sourceDirName": "start/self-hosting",
+  "slug": "/start/self-hosting/upgrade-guide",
+  "permalink": "/start/self-hosting/upgrade-guide",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/start/self-hosting/upgrade-guide.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 4,
+  "frontMatter": {
+    "title": "Upgrade guide",
+    "sidebar_position": 4,
+    "sidebar_class_name": "coming-soon",
+    "sidebar_custom_props": {
+      "icon": "TbServer"
+    }
+  },
+  "sidebar": "docsSidebar",
+  "previous": {
+    "title": "Vendor-specific instructions",
+    "permalink": "/start/self-hosting/cloud-providers"
+  },
+  "next": {
+    "title": "Local Setup",
+    "permalink": "/start/local-setup/"
+  }
+}

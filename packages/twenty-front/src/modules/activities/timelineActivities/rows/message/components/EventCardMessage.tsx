@@ -101,7 +101,7 @@ export const EventCardMessage = ({
     return <div>Loading...</div>;
   }
 
-  const messageParticipantHandles = message?.messageParticipants
+  const messageParticipantHandles = message.messageParticipants
     .map((participant) => participant.handle)
     .join(', ');
 

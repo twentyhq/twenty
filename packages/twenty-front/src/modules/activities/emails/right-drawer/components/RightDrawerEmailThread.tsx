@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useRecoilCallback } from 'recoil';
 
-import { FetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
+import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { EmailLoader } from '@/activities/emails/components/EmailLoader';
 import { EmailThreadHeader } from '@/activities/emails/components/EmailThreadHeader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
@@ -98,7 +98,7 @@ export const RightDrawerEmailThread = () => {
             sentAt={lastMessage.receivedAt}
             isExpanded
           />
-          <FetchMoreLoader
+          <CustomResolverFetchMoreLoader
             loading={loading}
             onLastRowVisible={fetchMoreMessages}
           />

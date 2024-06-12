@@ -1,0 +1,31 @@
+{
+  "id": "ui-components/display/soon-pill",
+  "title": "Soon Pill",
+  "description": "A small badge or \"pill\" to indicate something is coming soon.",
+  "source": "@site/docs/ui-components/display/soon-pill.mdx",
+  "sourceDirName": "ui-components/display",
+  "slug": "/ui-components/display/soon-pill",
+  "permalink": "/ui-components/display/soon-pill",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/display/soon-pill.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 4,
+  "frontMatter": {
+    "title": "Soon Pill",
+    "sidebar_position": 4,
+    "sidebar_custom_props": {
+      "icon": "TbPill"
+    }
+  },
+  "sidebar": "uiDocsSidebar",
+  "previous": {
+    "title": "Icons",
+    "permalink": "/ui-components/display/icons"
+  },
+  "next": {
+    "title": "Tag",
+    "permalink": "/ui-components/display/tag"
+  }
+}

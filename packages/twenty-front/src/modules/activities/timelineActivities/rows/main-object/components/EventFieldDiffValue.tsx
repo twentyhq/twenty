@@ -7,7 +7,7 @@ import { FieldDisplay } from '@/object-record/record-field/components/FieldDispl
 import { FieldContext } from '@/object-record/record-field/contexts/FieldContext';
 
 type EventFieldDiffValueProps = {
-  forgedRecordId: string;
+  diffArtificialRecordStoreId: string;
   mainObjectMetadataItem: ObjectMetadataItem;
   fieldMetadataItem: FieldMetadataItem;
 };
@@ -18,7 +18,7 @@ const StyledEventFieldDiffValue = styled.div`
 `;
 
 export const EventFieldDiffValue = ({
-  forgedRecordId,
+  diffArtificialRecordStoreId,
   mainObjectMetadataItem,
   fieldMetadataItem,
 }: EventFieldDiffValueProps) => {
@@ -26,7 +26,7 @@ export const EventFieldDiffValue = ({
     <StyledEventFieldDiffValue>
       <FieldContext.Provider
         value={{
-          entityId: forgedRecordId,
+          entityId: diffArtificialRecordStoreId,
           isLabelIdentifier: isLabelIdentifierField({
             fieldMetadataItem,
             objectMetadataItem: mainObjectMetadataItem,

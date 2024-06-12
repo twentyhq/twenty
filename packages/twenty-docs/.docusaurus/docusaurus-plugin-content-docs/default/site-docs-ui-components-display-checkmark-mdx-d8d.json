@@ -1,0 +1,31 @@
+{
+  "id": "ui-components/display/checkmark",
+  "title": "Checkmark",
+  "description": "Represents a successful or completed action.",
+  "source": "@site/docs/ui-components/display/checkmark.mdx",
+  "sourceDirName": "ui-components/display",
+  "slug": "/ui-components/display/checkmark",
+  "permalink": "/ui-components/display/checkmark",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/display/checkmark.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "title": "Checkmark",
+    "sidebar_position": 1,
+    "sidebar_custom_props": {
+      "icon": "TbCheck"
+    }
+  },
+  "sidebar": "uiDocsSidebar",
+  "previous": {
+    "title": "UI Components",
+    "permalink": "/ui-components/"
+  },
+  "next": {
+    "title": "Chip",
+    "permalink": "/ui-components/display/chip"
+  }
+}

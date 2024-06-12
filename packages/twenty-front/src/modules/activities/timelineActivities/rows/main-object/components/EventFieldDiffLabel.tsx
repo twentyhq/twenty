@@ -22,8 +22,6 @@ const StyledUpdatedFieldIconContainer = styled.div`
   width: 14px;
 `;
 
-const StyledUpdatedFieldLabel = styled.div``;
-
 export const EventFieldDiffLabel = ({
   fieldMetadataItem,
 }: EventFieldDiffLabelProps) => {
@@ -38,9 +36,7 @@ export const EventFieldDiffLabel = ({
       <StyledUpdatedFieldIconContainer>
         <IconComponent />
       </StyledUpdatedFieldIconContainer>
-      <StyledUpdatedFieldLabel>
-        {fieldMetadataItem.label}
-      </StyledUpdatedFieldLabel>
+      {fieldMetadataItem.label}
     </StyledUpdatedFieldContainer>
   );
 };

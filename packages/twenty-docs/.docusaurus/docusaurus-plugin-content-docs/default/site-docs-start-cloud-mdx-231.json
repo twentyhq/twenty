@@ -1,0 +1,31 @@
+{
+  "id": "start/cloud",
+  "title": "Managed Cloud",
+  "description": "The easiest way to try the app is to sign up on app.twenty.com.",
+  "source": "@site/docs/start/cloud.mdx",
+  "sourceDirName": "start",
+  "slug": "/start/cloud",
+  "permalink": "/start/cloud",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/start/cloud.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 1,
+  "frontMatter": {
+    "title": "Managed Cloud",
+    "sidebar_position": 1,
+    "sidebar_custom_props": {
+      "icon": "TbRocket"
+    }
+  },
+  "sidebar": "docsSidebar",
+  "previous": {
+    "title": "Welcome",
+    "permalink": "/"
+  },
+  "next": {
+    "title": "Self-Hosting",
+    "permalink": "/start/self-hosting/"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "id": "start/local-setup/local-setup",
+  "title": "Local Setup",
+  "description": "Twenty aims for developer-friendliness, and your local installation should be up and running in just a bit.",
+  "source": "@site/docs/start/local-setup/local-setup.mdx",
+  "sourceDirName": "start/local-setup",
+  "slug": "/start/local-setup/",
+  "permalink": "/start/local-setup/",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/start/local-setup/local-setup.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 0,
+  "frontMatter": {
+    "title": "Local Setup",
+    "sidebar_position": 0,
+    "sidebar_custom_props": {
+      "icon": "TbDeviceDesktop"
+    }
+  },
+  "sidebar": "docsSidebar",
+  "previous": {
+    "title": "Upgrade guide",
+    "permalink": "/start/self-hosting/upgrade-guide"
+  },
+  "next": {
+    "title": "Yarn Setup",
+    "permalink": "/start/local-setup/yarn-setup"
+  }
+}

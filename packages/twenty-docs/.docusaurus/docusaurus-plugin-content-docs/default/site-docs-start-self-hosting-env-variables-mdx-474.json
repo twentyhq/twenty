@@ -1,0 +1,31 @@
+{
+  "id": "start/self-hosting/env-variables",
+  "title": "Environment Variables",
+  "description": "Setup Environment Variables",
+  "source": "@site/docs/start/self-hosting/env-variables.mdx",
+  "sourceDirName": "start/self-hosting",
+  "slug": "/start/self-hosting/env-variables",
+  "permalink": "/start/self-hosting/env-variables",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/start/self-hosting/env-variables.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 2,
+  "frontMatter": {
+    "title": "Environment Variables",
+    "sidebar_position": 2,
+    "sidebar_custom_props": {
+      "icon": "TbVariable"
+    }
+  },
+  "sidebar": "docsSidebar",
+  "previous": {
+    "title": "Docker Compose (easy)",
+    "permalink": "/start/self-hosting/docker-compose"
+  },
+  "next": {
+    "title": "Vendor-specific instructions",
+    "permalink": "/start/self-hosting/cloud-providers"
+  }
+}

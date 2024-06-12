@@ -1,0 +1,31 @@
+{
+  "id": "ui-components/input/block-editor",
+  "title": "Block Editor",
+  "description": "Uses a block-based rich text editor from BlockNote to allow users to edit and view blocks of content.",
+  "source": "@site/docs/ui-components/input/block-editor.mdx",
+  "sourceDirName": "ui-components/input",
+  "slug": "/ui-components/input/block-editor",
+  "permalink": "/ui-components/input/block-editor",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/input/block-editor.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 11,
+  "frontMatter": {
+    "title": "Block Editor",
+    "sidebar_position": 11,
+    "sidebar_custom_props": {
+      "icon": "TbTemplate"
+    }
+  },
+  "sidebar": "uiDocsSidebar",
+  "previous": {
+    "title": "Toggle",
+    "permalink": "/ui-components/input/toggle"
+  },
+  "next": {
+    "title": "Breadcrumb",
+    "permalink": "/ui-components/navigation/bread-crumb"
+  }
+}

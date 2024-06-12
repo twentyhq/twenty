@@ -1,0 +1,31 @@
+{
+  "id": "contributor/frontend/style-guide",
+  "title": "Style Guide",
+  "description": "This document includes the rules to follow when writing code.",
+  "source": "@site/docs/contributor/frontend/style-guide.mdx",
+  "sourceDirName": "contributor/frontend",
+  "slug": "/contributor/frontend/style-guide",
+  "permalink": "/contributor/frontend/style-guide",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/contributor/frontend/style-guide.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 4,
+  "frontMatter": {
+    "title": "Style Guide",
+    "sidebar_position": 4,
+    "sidebar_custom_props": {
+      "icon": "TbPencil"
+    }
+  },
+  "sidebar": "docsSidebar",
+  "previous": {
+    "title": "Best Practices",
+    "permalink": "/contributor/frontend/best-practices"
+  },
+  "next": {
+    "title": "Folder Architecture",
+    "permalink": "/contributor/frontend/folder-architecture"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "start/self-hosting/variables",
+  "title": "variables",
+  "description": "",
+  "source": "@site/docs/start/self-hosting/variables.mdx",
+  "sourceDirName": "start/self-hosting",
+  "slug": "/start/self-hosting/variables",
+  "permalink": "/start/self-hosting/variables",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/start/self-hosting/variables.mdx",
+  "tags": [],
+  "version": "current",
+  "frontMatter": {},
+  "sidebar": "docsSidebar",
+  "previous": {
+    "title": "Upgrade guide",
+    "permalink": "/start/self-hosting/upgrade-guide"
+  },
+  "next": {
+    "title": "Local Setup",
+    "permalink": "/start/local-setup/"
+  }
+}

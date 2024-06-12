@@ -1,0 +1,31 @@
+{
+  "id": "ui-components/input/image-input",
+  "title": "Image Input",
+  "description": "Allows users to upload and remove an image.",
+  "source": "@site/docs/ui-components/input/image-input.mdx",
+  "sourceDirName": "ui-components/input",
+  "slug": "/ui-components/input/image-input",
+  "permalink": "/ui-components/input/image-input",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/input/image-input.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 6,
+  "frontMatter": {
+    "title": "Image Input",
+    "sidebar_position": 6,
+    "sidebar_custom_props": {
+      "icon": "TbUpload"
+    }
+  },
+  "sidebar": "uiDocsSidebar",
+  "previous": {
+    "title": "Icon Picker",
+    "permalink": "/ui-components/input/icon-picker"
+  },
+  "next": {
+    "title": "Radio",
+    "permalink": "/ui-components/input/radio"
+  }
+}

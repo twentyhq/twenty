@@ -1,15 +1,13 @@
 import { useState } from 'react';
 import styled from '@emotion/styled';
 
+import { EventCard } from '@/activities/timelineActivities/rows/components/EventCard';
+import { EventCardToggleButton } from '@/activities/timelineActivities/rows/components/EventCardToggleButton';
 import {
-  EventCard,
-  EventCardToggleButton,
-} from '@/activities/timelineActivities/rows/components/EventCard';
-import {
-  StyledItemAction,
-  StyledItemAuthorText,
+  StyledEventRowItemAction,
+  StyledEventRowItemColumn,
 } from '@/activities/timelineActivities/rows/components/EventRowDynamicComponent';
-import { EventFieldDiff } from '@/activities/timelineActivities/rows/mainObject/components/EventFieldDiff';
+import { EventFieldDiffContainer } from '@/activities/timelineActivities/rows/main-object/components/EventFieldDiffContainer';
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
@@ -32,34 +30,6 @@ const StyledEventRowMainObjectUpdatedContainer = styled.div`
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing(1)};
 `;
-
-const renderUpdateDescription = (
-  mainObjectMetadataItem: ObjectMetadataItem,
-  diffKey: string,
-  diffValue: any,
-  eventId: string,
-  fieldMetadataItemMap: Record<string, FieldMetadataItem>,
-) => {
-  const fieldMetadataItem = fieldMetadataItemMap[diffKey];
-
-  if (!fieldMetadataItem) {
-    throw new Error(
-      `Cannot find field metadata item for field name ${diffKey} on object ${mainObjectMetadataItem.nameSingular}`,
-    );
-  }
-
-  const forgedRecordId = eventId + '--' + fieldMetadataItem.id;
-
-  return (
-    <EventFieldDiff
-      key={forgedRecordId}
-      diffRecord={diffValue}
-      fieldMetadataItem={fieldMetadataItem}
-      mainObjectMetadataItem={mainObjectMetadataItem}
-      forgedRecordId={forgedRecordId}
-    />
-  );
-};
 
 export const EventRowMainObjectUpdated = ({
   authorFullName,
@@ -86,17 +56,18 @@ export const EventRowMainObjectUpdated = ({
   return (
     <StyledEventRowMainObjectUpdatedContainer>
       <StyledRowContainer>
-        <StyledItemAuthorText>{authorFullName}</StyledItemAuthorText>
-        <StyledItemAction>
+        <StyledEventRowItemColumn>{authorFullName}</StyledEventRowItemColumn>
+        <StyledEventRowItemAction>
           updated
-          {diffEntries.length === 1 &&
-            renderUpdateDescription(
-              mainObjectMetadataItem,
-              diffEntries[0][0],
-              diffEntries[0][1].after,
-              event.id,
-              fieldMetadataItemMap,
-            )}
+          {diffEntries.length === 1 && (
+            <EventFieldDiffContainer
+              mainObjectMetadataItem={mainObjectMetadataItem}
+              diffKey={diffEntries[0][0]}
+              diffValue={diffEntries[0][1].after}
+              eventId={event.id}
+              fieldMetadataItemMap={fieldMetadataItemMap}
+            />
+          )}
           {diffEntries.length > 1 && (
             <>
               <span>
@@ -105,19 +76,20 @@ export const EventRowMainObjectUpdated = ({
               <EventCardToggleButton isOpen={isOpen} setIsOpen={setIsOpen} />
             </>
           )}
-        </StyledItemAction>
+        </StyledEventRowItemAction>
       </StyledRowContainer>
       {diffEntries.length > 1 && (
         <EventCard isOpen={isOpen}>
-          {diffEntries.map(([diffKey, diffValue]) =>
-            renderUpdateDescription(
-              mainObjectMetadataItem,
-              diffKey,
-              diffValue.after,
-              event.id,
-              fieldMetadataItemMap,
-            ),
-          )}
+          {diffEntries.map(([diffKey, diffValue]) => (
+            <EventFieldDiffContainer
+              key={diffKey}
+              mainObjectMetadataItem={mainObjectMetadataItem}
+              diffKey={diffKey}
+              diffValue={diffValue.after}
+              eventId={event.id}
+              fieldMetadataItemMap={fieldMetadataItemMap}
+            />
+          ))}
         </EventCard>
       )}
     </StyledEventRowMainObjectUpdatedContainer>

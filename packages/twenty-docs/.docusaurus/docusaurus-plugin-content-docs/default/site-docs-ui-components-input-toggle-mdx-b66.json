@@ -1,0 +1,31 @@
+{
+  "id": "ui-components/input/toggle",
+  "title": "Toggle",
+  "description": "<SandpackEditor",
+  "source": "@site/docs/ui-components/input/toggle.mdx",
+  "sourceDirName": "ui-components/input",
+  "slug": "/ui-components/input/toggle",
+  "permalink": "/ui-components/input/toggle",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/input/toggle.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 10,
+  "frontMatter": {
+    "title": "Toggle",
+    "sidebar_position": 10,
+    "sidebar_custom_props": {
+      "icon": "TbToggleRight"
+    }
+  },
+  "sidebar": "uiDocsSidebar",
+  "previous": {
+    "title": "Select",
+    "permalink": "/ui-components/input/select"
+  },
+  "next": {
+    "title": "Block Editor",
+    "permalink": "/ui-components/input/block-editor"
+  }
+}

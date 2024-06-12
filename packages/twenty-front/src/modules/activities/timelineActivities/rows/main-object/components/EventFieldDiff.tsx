@@ -1,8 +1,8 @@
 import styled from '@emotion/styled';
 
-import { EventFieldDiffLabel } from '@/activities/timelineActivities/rows/mainObject/components/EventFieldDiffLabel';
-import { EventFieldDiffValue } from '@/activities/timelineActivities/rows/mainObject/components/EventFieldDiffValue';
-import { EventFieldDiffValueEffect } from '@/activities/timelineActivities/rows/mainObject/components/EventFieldDiffValueEffect';
+import { EventFieldDiffLabel } from '@/activities/timelineActivities/rows/main-object/components/EventFieldDiffLabel';
+import { EventFieldDiffValue } from '@/activities/timelineActivities/rows/main-object/components/EventFieldDiffValue';
+import { EventFieldDiffValueEffect } from '@/activities/timelineActivities/rows/main-object/components/EventFieldDiffValueEffect';
 import { FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 
@@ -10,7 +10,7 @@ type EventFieldDiffProps = {
   diffRecord: Record<string, any>;
   mainObjectMetadataItem: ObjectMetadataItem;
   fieldMetadataItem: FieldMetadataItem | undefined;
-  forgedRecordId: string;
+  diffArtificialRecordStoreId: string;
 };
 
 const StyledEventFieldDiffContainer = styled.div`
@@ -26,23 +26,23 @@ export const EventFieldDiff = ({
   diffRecord,
   mainObjectMetadataItem,
   fieldMetadataItem,
-  forgedRecordId,
+  diffArtificialRecordStoreId,
 }: EventFieldDiffProps) => {
   if (!fieldMetadataItem) {
-    return null;
+    throw new Error('fieldMetadataItem is required');
   }
 
   return (
     <StyledEventFieldDiffContainer>
       <EventFieldDiffLabel fieldMetadataItem={fieldMetadataItem} />→
       <EventFieldDiffValueEffect
-        forgedRecordId={forgedRecordId}
+        diffArtificialRecordStoreId={diffArtificialRecordStoreId}
         mainObjectMetadataItem={mainObjectMetadataItem}
         fieldMetadataItem={fieldMetadataItem}
         diffRecord={diffRecord}
       />
       <EventFieldDiffValue
-        forgedRecordId={forgedRecordId}
+        diffArtificialRecordStoreId={diffArtificialRecordStoreId}
         mainObjectMetadataItem={mainObjectMetadataItem}
         fieldMetadataItem={fieldMetadataItem}
       />

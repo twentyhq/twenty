@@ -1,0 +1,31 @@
+{
+  "id": "start/self-hosting/cloud-providers",
+  "title": "Vendor-specific instructions",
+  "description": "This document is maintained by the community. It might contain issues.",
+  "source": "@site/docs/start/self-hosting/cloud-providers.mdx",
+  "sourceDirName": "start/self-hosting",
+  "slug": "/start/self-hosting/cloud-providers",
+  "permalink": "/start/self-hosting/cloud-providers",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/start/self-hosting/cloud-providers.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 3,
+  "frontMatter": {
+    "title": "Vendor-specific instructions",
+    "sidebar_position": 3,
+    "sidebar_custom_props": {
+      "icon": "TbCloud"
+    }
+  },
+  "sidebar": "docsSidebar",
+  "previous": {
+    "title": "Docker Compose (easy)",
+    "permalink": "/start/self-hosting/docker-compose"
+  },
+  "next": {
+    "title": "Upgrade guide",
+    "permalink": "/start/self-hosting/upgrade-guide"
+  }
+}

@@ -1,0 +1,923 @@
+{
+  "pluginId": "default",
+  "version": "current",
+  "label": "Next",
+  "banner": null,
+  "badge": false,
+  "noIndex": false,
+  "className": "docs-version-current",
+  "isLast": true,
+  "docsSidebars": {
+    "docsSidebar": [
+      {
+        "type": "link",
+        "label": "Welcome",
+        "href": "/",
+        "customProps": {
+          "type": "search-bar",
+          "props": {
+            "name": "Hello World",
+            "age": 42
+          }
+        },
+        "docId": "homepage",
+        "unlisted": false
+      },
+      {
+        "type": "link",
+        "label": "Welcome",
+        "href": "/",
+        "className": "display-none",
+        "docId": "homepage",
+        "unlisted": false
+      },
+      {
+        "type": "category",
+        "label": "Getting Started",
+        "collapsible": false,
+        "collapsed": false,
+        "items": [
+          {
+            "type": "link",
+            "label": "Managed Cloud",
+            "href": "/start/cloud",
+            "customProps": {
+              "icon": "TbRocket"
+            },
+            "docId": "start/cloud",
+            "unlisted": false
+          },
+          {
+            "type": "category",
+            "label": "Self-Hosting",
+            "collapsible": true,
+            "collapsed": true,
+            "customProps": {
+              "icon": "TbServer"
+            },
+            "items": [
+              {
+                "type": "link",
+                "label": "Docker Compose (easy)",
+                "href": "/start/self-hosting/docker-compose",
+                "customProps": {
+                  "icon": "TbBrandDocker"
+                },
+                "docId": "start/self-hosting/docker-compose",
+                "unlisted": false
+              },
+              {
+                "type": "link",
+                "label": "Vendor-specific instructions",
+                "href": "/start/self-hosting/cloud-providers",
+                "customProps": {
+                  "icon": "TbCloud"
+                },
+                "docId": "start/self-hosting/cloud-providers",
+                "unlisted": false
+              },
+              {
+                "type": "link",
+                "label": "Upgrade guide",
+                "href": "/start/self-hosting/upgrade-guide",
+                "className": "coming-soon",
+                "customProps": {
+                  "icon": "TbServer"
+                },
+                "docId": "start/self-hosting/upgrade-guide",
+                "unlisted": false
+              }
+            ],
+            "href": "/start/self-hosting/"
+          },
+          {
+            "type": "category",
+            "label": "Local setup",
+            "collapsible": true,
+            "collapsed": true,
+            "customProps": {
+              "icon": "TbDeviceDesktop"
+            },
+            "items": [
+              {
+                "type": "link",
+                "label": "Yarn Setup",
+                "href": "/start/local-setup/yarn-setup",
+                "customProps": {
+                  "icon": "TbScript"
+                },
+                "docId": "start/local-setup/yarn-setup",
+                "unlisted": false
+              },
+              {
+                "type": "link",
+                "label": "IDE Setup",
+                "href": "/start/local-setup/ide-setup",
+                "customProps": {
+                  "icon": "TbBrandVscode"
+                },
+                "docId": "start/local-setup/ide-setup",
+                "unlisted": false
+              },
+              {
+                "type": "link",
+                "label": "Troubleshooting",
+                "href": "/start/local-setup/troubleshooting",
+                "customProps": {
+                  "icon": "TbExclamationCircle"
+                },
+                "docId": "start/local-setup/troubleshooting",
+                "unlisted": false
+              }
+            ],
+            "href": "/start/local-setup/"
+          }
+        ]
+      },
+      {
+        "type": "category",
+        "label": "Contributing",
+        "collapsible": false,
+        "collapsed": false,
+        "items": [
+          {
+            "type": "link",
+            "label": "Bugs and Requests",
+            "href": "/contributor/bug-and-requests",
+            "customProps": {
+              "icon": "TbBug"
+            },
+            "docId": "contributor/bug-and-requests",
+            "unlisted": false
+          },
+          {
+            "type": "category",
+            "label": "Frontend Development",
+            "collapsible": true,
+            "collapsed": true,
+            "customProps": {
+              "icon": "TbTerminal2"
+            },
+            "items": [
+              {
+                "type": "link",
+                "label": "Work with Figma",
+                "href": "/contributor/frontend/work-with-figma",
+                "customProps": {
+                  "icon": "TbBrandFigma"
+                },
+                "docId": "contributor/frontend/work-with-figma",
+                "unlisted": false
+              },
+              {
+                "type": "link",
+                "label": "Best Practices",
+                "href": "/contributor/frontend/best-practices",
+                "customProps": {
+                  "icon": "TbChecklist"
+                },
+                "docId": "contributor/frontend/best-practices",
+                "unlisted": false
+              },
+              {
+                "type": "link",
+                "label": "Style Guide",
+                "href": "/contributor/frontend/style-guide",
+                "customProps": {
+                  "icon": "TbPencil"
+                },
+                "docId": "contributor/frontend/style-guide",
+                "unlisted": false
+              },
+              {
+                "type": "link",
+                "label": "Folder Architecture",
+                "href": "/contributor/frontend/folder-architecture",
+                "customProps": {
+                  "icon": "TbFolder"
+                },
+                "docId": "contributor/frontend/folder-architecture",
+                "unlisted": false
+              },
+              {
+                "type": "link",
+                "label": "Hotkeys",
+                "href": "/contributor/frontend/hotkeys",
+                "customProps": {
+                  "icon": "TbKeyboard"
+                },
+                "docId": "contributor/frontend/hotkeys",
+                "unlisted": false
+              }
+            ],
+            "href": "/contributor/frontend/"
+          },
+          {
+            "type": "category",
+            "label": "Backend Development",
+            "collapsible": true,
+            "collapsed": true,
+            "customProps": {
+              "icon": "TbTerminal"
+            },
+            "items": [
+              {
+                "type": "link",
+                "label": "Feature Flags",
+                "href": "/contributor/server/feature-flags",
+                "customProps": {
+                  "icon": "TbFlag"
+                },
+                "docId": "contributor/server/feature-flags",
+                "unlisted": false
+              },
+              {
+                "type": "link",
+                "label": "Folder Architecture",
+                "href": "/contributor/server/folder-architecture",
+                "customProps": {
+                  "icon": "TbFolder"
+                },
+                "docId": "contributor/server/folder-architecture",
+                "unlisted": false
+              },
+              {
+                "type": "link",
+                "label": "Zapier App",
+                "href": "/contributor/server/zapier",
+                "customProps": {
+                  "icon": "TbBrandZapier"
+                },
+                "docId": "contributor/server/zapier",
+                "unlisted": false
+              },
+              {
+                "type": "link",
+                "label": "Best Practices",
+                "href": "/contributor/server/best-practices",
+                "customProps": {
+                  "icon": "TbChecklist"
+                },
+                "docId": "contributor/server/best-practices",
+                "unlisted": false
+              },
+              {
+                "type": "link",
+                "label": "Custom Objects",
+                "href": "/contributor/server/custom-objects",
+                "customProps": {
+                  "icon": "TbAugmentedReality"
+                },
+                "docId": "contributor/server/custom-objects",
+                "unlisted": false
+              },
+              {
+                "type": "link",
+                "label": "Message Queue",
+                "href": "/contributor/server/queue",
+                "customProps": {
+                  "icon": "TbSchema"
+                },
+                "docId": "contributor/server/queue",
+                "unlisted": false
+              }
+            ],
+            "href": "/contributor/server/"
+          }
+        ]
+      },
+      {
+        "type": "category",
+        "label": "Extending",
+        "items": [
+          {
+            "type": "category",
+            "label": "Rest APIs",
+            "collapsible": true,
+            "collapsed": true,
+            "customProps": {
+              "icon": "TbApi"
+            },
+            "items": [
+              {
+                "type": "link",
+                "label": "Core API",
+                "href": "/rest-api/core"
+              },
+              {
+                "type": "link",
+                "label": "Metadata API",
+                "href": "/rest-api/metadata"
+              }
+            ]
+          },
+          {
+            "type": "category",
+            "label": "GraphQL APIs",
+            "collapsible": true,
+            "collapsed": true,
+            "customProps": {
+              "icon": "TbBrandGraphql"
+            },
+            "items": [
+              {
+                "type": "link",
+                "label": "Core API",
+                "href": "/graphql/core"
+              },
+              {
+                "type": "link",
+                "label": "Metadata API",
+                "href": "/graphql/metadata"
+              }
+            ]
+          },
+          {
+            "type": "category",
+            "label": "UI Kit",
+            "collapsible": true,
+            "collapsed": true,
+            "customProps": {
+              "icon": "TbComponents"
+            },
+            "items": [
+              {
+                "type": "link",
+                "label": "Storybook",
+                "href": "https://storybook.twenty.com"
+              },
+              {
+                "type": "link",
+                "label": "Components",
+                "href": "/ui-components/"
+              }
+            ]
+          }
+        ],
+        "collapsed": false,
+        "collapsible": false
+      }
+    ],
+    "uiDocsSidebar": [
+      {
+        "type": "link",
+        "label": "UI Components",
+        "href": "/ui-components/",
+        "customProps": {
+          "isSidebarRoot": true,
+          "icon": "TbLayoutGrid"
+        },
+        "docId": "ui-components/ui-components",
+        "unlisted": false
+      },
+      {
+        "type": "category",
+        "label": "Display",
+        "collapsible": true,
+        "collapsed": false,
+        "customProps": {
+          "icon": "TbAppWindow"
+        },
+        "items": [
+          {
+            "type": "link",
+            "label": "Checkmark",
+            "href": "/ui-components/display/checkmark",
+            "customProps": {
+              "icon": "TbCheck"
+            },
+            "docId": "ui-components/display/checkmark",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "Chip",
+            "href": "/ui-components/display/chip",
+            "customProps": {
+              "icon": "TbLayoutList"
+            },
+            "docId": "ui-components/display/chip",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "Icons",
+            "href": "/ui-components/display/icons",
+            "customProps": {
+              "icon": "TbIcons"
+            },
+            "docId": "ui-components/display/icons",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "Soon Pill",
+            "href": "/ui-components/display/soon-pill",
+            "customProps": {
+              "icon": "TbPill"
+            },
+            "docId": "ui-components/display/soon-pill",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "Tag",
+            "href": "/ui-components/display/tag",
+            "customProps": {
+              "icon": "TbTag"
+            },
+            "docId": "ui-components/display/tag",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "App Tooltip",
+            "href": "/ui-components/display/app-tooltip",
+            "customProps": {
+              "icon": "TbTooltip"
+            },
+            "docId": "ui-components/display/app-tooltip",
+            "unlisted": false
+          }
+        ]
+      },
+      {
+        "type": "category",
+        "label": "Feedback",
+        "collapsible": true,
+        "collapsed": false,
+        "customProps": {
+          "icon": "TbForms"
+        },
+        "items": [
+          {
+            "type": "link",
+            "label": "Progress Bar",
+            "href": "/ui-components/feedback/progress-bar",
+            "customProps": {
+              "icon": "TbLoader2"
+            },
+            "docId": "ui-components/feedback/progress-bar",
+            "unlisted": false
+          }
+        ]
+      },
+      {
+        "type": "category",
+        "label": "Input",
+        "collapsible": true,
+        "collapsed": false,
+        "customProps": {
+          "icon": "TbInputSearch"
+        },
+        "items": [
+          {
+            "type": "link",
+            "label": "Buttons",
+            "href": "/ui-components/input/button",
+            "customProps": {
+              "icon": "TbSquareRoundedPlusFilled"
+            },
+            "docId": "ui-components/input/button",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "Color Scheme",
+            "href": "/ui-components/input/color-scheme",
+            "customProps": {
+              "icon": "TbColorFilter"
+            },
+            "docId": "ui-components/input/color-scheme",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "Text",
+            "href": "/ui-components/input/text",
+            "customProps": {
+              "icon": "TbTextSize"
+            },
+            "docId": "ui-components/input/text",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "Checkbox",
+            "href": "/ui-components/input/checkbox",
+            "customProps": {
+              "icon": "TbCheckbox"
+            },
+            "docId": "ui-components/input/checkbox",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "Icon Picker",
+            "href": "/ui-components/input/icon-picker",
+            "customProps": {
+              "icon": "TbColorPicker"
+            },
+            "docId": "ui-components/input/icon-picker",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "Image Input",
+            "href": "/ui-components/input/image-input",
+            "customProps": {
+              "icon": "TbUpload"
+            },
+            "docId": "ui-components/input/image-input",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "Radio",
+            "href": "/ui-components/input/radio",
+            "customProps": {
+              "icon": "TbCircleDot"
+            },
+            "docId": "ui-components/input/radio",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "Select",
+            "href": "/ui-components/input/select",
+            "customProps": {
+              "icon": "TbSelect"
+            },
+            "docId": "ui-components/input/select",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "Toggle",
+            "href": "/ui-components/input/toggle",
+            "customProps": {
+              "icon": "TbToggleRight"
+            },
+            "docId": "ui-components/input/toggle",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "Block Editor",
+            "href": "/ui-components/input/block-editor",
+            "customProps": {
+              "icon": "TbTemplate"
+            },
+            "docId": "ui-components/input/block-editor",
+            "unlisted": false
+          }
+        ]
+      },
+      {
+        "type": "category",
+        "label": "Navigation",
+        "collapsible": true,
+        "collapsed": false,
+        "customProps": {
+          "icon": "TbNavigation"
+        },
+        "items": [
+          {
+            "type": "link",
+            "label": "Breadcrumb",
+            "href": "/ui-components/navigation/bread-crumb",
+            "customProps": {
+              "icon": "TbSquareChevronsRight"
+            },
+            "docId": "ui-components/navigation/bread-crumb",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "Links",
+            "href": "/ui-components/navigation/link",
+            "customProps": {
+              "icon": "TbLink"
+            },
+            "docId": "ui-components/navigation/link",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "Menu Item",
+            "href": "/ui-components/navigation/menu-item",
+            "customProps": {
+              "icon": "TbMenu"
+            },
+            "docId": "ui-components/navigation/menu-item",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "Navigation Bar",
+            "href": "/ui-components/navigation/navigation-bar",
+            "customProps": {
+              "icon": "TbRectangle"
+            },
+            "docId": "ui-components/navigation/navigation-bar",
+            "unlisted": false
+          },
+          {
+            "type": "link",
+            "label": "Step Bar",
+            "href": "/ui-components/navigation/step-bar",
+            "customProps": {
+              "icon": "TbCircleCheckFilled"
+            },
+            "docId": "ui-components/navigation/step-bar",
+            "unlisted": false
+          }
+        ]
+      }
+    ]
+  },
+  "docs": {
+    "contributor/bug-and-requests": {
+      "id": "contributor/bug-and-requests",
+      "title": "Bugs and Requests",
+      "description": "Reporting Bugs",
+      "sidebar": "docsSidebar"
+    },
+    "contributor/frontend/best-practices": {
+      "id": "contributor/frontend/best-practices",
+      "title": "Best Practices",
+      "description": "This document outlines the best practices you should follow when working on the frontend.",
+      "sidebar": "docsSidebar"
+    },
+    "contributor/frontend/folder-architecture": {
+      "id": "contributor/frontend/folder-architecture",
+      "title": "Folder Architecture",
+      "description": "A detailed look into our folder architecture",
+      "sidebar": "docsSidebar"
+    },
+    "contributor/frontend/frontend": {
+      "id": "contributor/frontend/frontend",
+      "title": "Frontend Development",
+      "description": "Useful commands",
+      "sidebar": "docsSidebar"
+    },
+    "contributor/frontend/hotkeys": {
+      "id": "contributor/frontend/hotkeys",
+      "title": "Hotkeys",
+      "description": "You can intercept any hotkey combination and execute a custom action.",
+      "sidebar": "docsSidebar"
+    },
+    "contributor/frontend/style-guide": {
+      "id": "contributor/frontend/style-guide",
+      "title": "Style Guide",
+      "description": "This document includes the rules to follow when writing code.",
+      "sidebar": "docsSidebar"
+    },
+    "contributor/frontend/work-with-figma": {
+      "id": "contributor/frontend/work-with-figma",
+      "title": "Work with Figma",
+      "description": "Learn how you can collaborate with Twenty's Figma",
+      "sidebar": "docsSidebar"
+    },
+    "contributor/server/best-practices": {
+      "id": "contributor/server/best-practices",
+      "title": "Best Practices",
+      "description": "This document outlines the best practices you should follow when working on the backend.",
+      "sidebar": "docsSidebar"
+    },
+    "contributor/server/custom-objects": {
+      "id": "contributor/server/custom-objects",
+      "title": "Custom Objects",
+      "description": "Objects are structures that allow you to store data (records, attributes, and values) specific to an organization. Twenty provides both standard and custom objects.",
+      "sidebar": "docsSidebar"
+    },
+    "contributor/server/feature-flags": {
+      "id": "contributor/server/feature-flags",
+      "title": "Feature Flags",
+      "description": "Feature flags are used to hide experimental features. For twenty they are set on workspace level and not on a user level.",
+      "sidebar": "docsSidebar"
+    },
+    "contributor/server/folder-architecture": {
+      "id": "contributor/server/folder-architecture",
+      "title": "Folder Architecture",
+      "description": "A detailed look into our server folder architecture",
+      "sidebar": "docsSidebar"
+    },
+    "contributor/server/queue": {
+      "id": "contributor/server/queue",
+      "title": "Message Queue",
+      "description": "Queues facilitate async operations to be performed. They can be used for performing background tasks such as sending a welcome email on register.",
+      "sidebar": "docsSidebar"
+    },
+    "contributor/server/server": {
+      "id": "contributor/server/server",
+      "title": "Backend Development",
+      "description": "Useful commands",
+      "sidebar": "docsSidebar"
+    },
+    "contributor/server/zapier": {
+      "id": "contributor/server/zapier",
+      "title": "Zapier App",
+      "description": "Effortlessly sync Twenty with 3000+ apps using Zapier. Automate tasks, boost productivity, and supercharge your customer relationships!",
+      "sidebar": "docsSidebar"
+    },
+    "homepage": {
+      "id": "homepage",
+      "title": "Welcome",
+      "description": "Twenty is a CRM designed to fit your unique business needs.",
+      "sidebar": "docsSidebar"
+    },
+    "start/cloud": {
+      "id": "start/cloud",
+      "title": "Managed Cloud",
+      "description": "The easiest way to try the app is to sign up on app.twenty.com.",
+      "sidebar": "docsSidebar"
+    },
+    "start/local-setup/ide-setup": {
+      "id": "start/local-setup/ide-setup",
+      "title": "IDE Setup",
+      "description": "Get the best developer UX with VSCode",
+      "sidebar": "docsSidebar"
+    },
+    "start/local-setup/local-setup": {
+      "id": "start/local-setup/local-setup",
+      "title": "Local Setup",
+      "description": "Twenty aims for developer-friendliness, and your local installation should be up and running in just a bit.",
+      "sidebar": "docsSidebar"
+    },
+    "start/local-setup/troubleshooting": {
+      "id": "start/local-setup/troubleshooting",
+      "title": "Troubleshooting",
+      "description": "Common problems & their solutions.",
+      "sidebar": "docsSidebar"
+    },
+    "start/local-setup/yarn-setup": {
+      "id": "start/local-setup/yarn-setup",
+      "title": "Yarn Setup",
+      "description": "Set up the project with Yarn\n",
+      "sidebar": "docsSidebar"
+    },
+    "start/self-hosting/cloud-providers": {
+      "id": "start/self-hosting/cloud-providers",
+      "title": "Vendor-specific instructions",
+      "description": "This document is maintained by the community. It might contain issues.",
+      "sidebar": "docsSidebar"
+    },
+    "start/self-hosting/docker-compose": {
+      "id": "start/self-hosting/docker-compose",
+      "title": "Docker Compose (easy)",
+      "description": "One command installation",
+      "sidebar": "docsSidebar"
+    },
+    "start/self-hosting/self-hosting": {
+      "id": "start/self-hosting/self-hosting",
+      "title": "Self-Hosting",
+      "description": "Frontend",
+      "sidebar": "docsSidebar"
+    },
+    "start/self-hosting/upgrade-guide": {
+      "id": "start/self-hosting/upgrade-guide",
+      "title": "Upgrade guide",
+      "description": "",
+      "sidebar": "docsSidebar"
+    },
+    "ui-components/display/app-tooltip": {
+      "id": "ui-components/display/app-tooltip",
+      "title": "App Tooltip",
+      "description": "A brief message that displays additional information when a user interacts with an element.",
+      "sidebar": "uiDocsSidebar"
+    },
+    "ui-components/display/checkmark": {
+      "id": "ui-components/display/checkmark",
+      "title": "Checkmark",
+      "description": "Represents a successful or completed action.",
+      "sidebar": "uiDocsSidebar"
+    },
+    "ui-components/display/chip": {
+      "id": "ui-components/display/chip",
+      "title": "Chip",
+      "description": "A visual element that you can use as a clickable or non-clickable container with a label, optional left and right components, and various styling options to display labels and tags.",
+      "sidebar": "uiDocsSidebar"
+    },
+    "ui-components/display/icons": {
+      "id": "ui-components/display/icons",
+      "title": "Icons",
+      "description": "A list of icons used throughout our app.",
+      "sidebar": "uiDocsSidebar"
+    },
+    "ui-components/display/soon-pill": {
+      "id": "ui-components/display/soon-pill",
+      "title": "Soon Pill",
+      "description": "A small badge or \"pill\" to indicate something is coming soon.",
+      "sidebar": "uiDocsSidebar"
+    },
+    "ui-components/display/tag": {
+      "id": "ui-components/display/tag",
+      "title": "Tag",
+      "description": "Component to visually categorize or label content.",
+      "sidebar": "uiDocsSidebar"
+    },
+    "ui-components/feedback/progress-bar": {
+      "id": "ui-components/feedback/progress-bar",
+      "title": "Progress Bar",
+      "description": "Indicates progress or countdown and moves from right to left.",
+      "sidebar": "uiDocsSidebar"
+    },
+    "ui-components/input/block-editor": {
+      "id": "ui-components/input/block-editor",
+      "title": "Block Editor",
+      "description": "Uses a block-based rich text editor from BlockNote to allow users to edit and view blocks of content.",
+      "sidebar": "uiDocsSidebar"
+    },
+    "ui-components/input/button": {
+      "id": "ui-components/input/button",
+      "title": "Buttons",
+      "description": "A list of buttons and button groups used throughout the app.",
+      "sidebar": "uiDocsSidebar"
+    },
+    "ui-components/input/checkbox": {
+      "id": "ui-components/input/checkbox",
+      "title": "Checkbox",
+      "description": "Used when a user needs to select multiple values from several options.",
+      "sidebar": "uiDocsSidebar"
+    },
+    "ui-components/input/color-scheme": {
+      "id": "ui-components/input/color-scheme",
+      "title": "Color Scheme",
+      "description": "Color Scheme Card",
+      "sidebar": "uiDocsSidebar"
+    },
+    "ui-components/input/icon-picker": {
+      "id": "ui-components/input/icon-picker",
+      "title": "Icon Picker",
+      "description": "A dropdown-based icon picker that allows users to select an icon from a list.",
+      "sidebar": "uiDocsSidebar"
+    },
+    "ui-components/input/image-input": {
+      "id": "ui-components/input/image-input",
+      "title": "Image Input",
+      "description": "Allows users to upload and remove an image.",
+      "sidebar": "uiDocsSidebar"
+    },
+    "ui-components/input/radio": {
+      "id": "ui-components/input/radio",
+      "title": "Radio",
+      "description": "Used when users may only choose one option from a series of options.",
+      "sidebar": "uiDocsSidebar"
+    },
+    "ui-components/input/select": {
+      "id": "ui-components/input/select",
+      "title": "Select",
+      "description": "Allows users to pick a value from a list of predefined options.",
+      "sidebar": "uiDocsSidebar"
+    },
+    "ui-components/input/text": {
+      "id": "ui-components/input/text",
+      "title": "Text",
+      "description": "Text Input",
+      "sidebar": "uiDocsSidebar"
+    },
+    "ui-components/input/toggle": {
+      "id": "ui-components/input/toggle",
+      "title": "Toggle",
+      "description": "<SandpackEditor",
+      "sidebar": "uiDocsSidebar"
+    },
+    "ui-components/navigation/bread-crumb": {
+      "id": "ui-components/navigation/bread-crumb",
+      "title": "Breadcrumb",
+      "description": "Renders a breadcrumb navigation bar.",
+      "sidebar": "uiDocsSidebar"
+    },
+    "ui-components/navigation/link": {
+      "id": "ui-components/navigation/link",
+      "title": "Links",
+      "description": "Contact Link",
+      "sidebar": "uiDocsSidebar"
+    },
+    "ui-components/navigation/menu-item": {
+      "id": "ui-components/navigation/menu-item",
+      "title": "Menu Item",
+      "description": "A versatile menu item designed to be used in a menu or navigation list.",
+      "sidebar": "uiDocsSidebar"
+    },
+    "ui-components/navigation/navigation-bar": {
+      "id": "ui-components/navigation/navigation-bar",
+      "title": "Navigation Bar",
+      "description": "Renders a navigation bar that contains multiple NavigationBarItem components.",
+      "sidebar": "uiDocsSidebar"
+    },
+    "ui-components/navigation/step-bar": {
+      "id": "ui-components/navigation/step-bar",
+      "title": "Step Bar",
+      "description": "Displays progress through a sequence of numbered steps by highlighting the active step. It renders a container with steps, each represented by the Step component.",
+      "sidebar": "uiDocsSidebar"
+    },
+    "ui-components/ui-components": {
+      "id": "ui-components/ui-components",
+      "title": "UI Components",
+      "description": "",
+      "sidebar": "uiDocsSidebar"
+    }
+  }
+}

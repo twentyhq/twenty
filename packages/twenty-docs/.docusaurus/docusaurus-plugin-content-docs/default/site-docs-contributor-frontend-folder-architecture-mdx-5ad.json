@@ -1,0 +1,32 @@
+{
+  "id": "contributor/frontend/folder-architecture",
+  "title": "Folder Architecture",
+  "description": "A detailed look into our folder architecture",
+  "source": "@site/docs/contributor/frontend/folder-architecture.mdx",
+  "sourceDirName": "contributor/frontend",
+  "slug": "/contributor/frontend/folder-architecture",
+  "permalink": "/contributor/frontend/folder-architecture",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/contributor/frontend/folder-architecture.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 5,
+  "frontMatter": {
+    "title": "Folder Architecture",
+    "sidebar_position": 5,
+    "description": "A detailed look into our folder architecture",
+    "sidebar_custom_props": {
+      "icon": "TbFolder"
+    }
+  },
+  "sidebar": "docsSidebar",
+  "previous": {
+    "title": "Style Guide",
+    "permalink": "/contributor/frontend/style-guide"
+  },
+  "next": {
+    "title": "Hotkeys",
+    "permalink": "/contributor/frontend/hotkeys"
+  }
+}

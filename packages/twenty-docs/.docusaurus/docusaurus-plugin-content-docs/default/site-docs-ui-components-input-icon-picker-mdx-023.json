@@ -1,0 +1,31 @@
+{
+  "id": "ui-components/input/icon-picker",
+  "title": "Icon Picker",
+  "description": "A dropdown-based icon picker that allows users to select an icon from a list.",
+  "source": "@site/docs/ui-components/input/icon-picker.mdx",
+  "sourceDirName": "ui-components/input",
+  "slug": "/ui-components/input/icon-picker",
+  "permalink": "/ui-components/input/icon-picker",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/input/icon-picker.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 5,
+  "frontMatter": {
+    "title": "Icon Picker",
+    "sidebar_position": 5,
+    "sidebar_custom_props": {
+      "icon": "TbColorPicker"
+    }
+  },
+  "sidebar": "uiDocsSidebar",
+  "previous": {
+    "title": "Checkbox",
+    "permalink": "/ui-components/input/checkbox"
+  },
+  "next": {
+    "title": "Image Input",
+    "permalink": "/ui-components/input/image-input"
+  }
+}

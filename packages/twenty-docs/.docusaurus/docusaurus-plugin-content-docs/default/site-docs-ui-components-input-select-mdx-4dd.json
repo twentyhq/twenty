@@ -1,0 +1,31 @@
+{
+  "id": "ui-components/input/select",
+  "title": "Select",
+  "description": "Allows users to pick a value from a list of predefined options.",
+  "source": "@site/docs/ui-components/input/select.mdx",
+  "sourceDirName": "ui-components/input",
+  "slug": "/ui-components/input/select",
+  "permalink": "/ui-components/input/select",
+  "draft": false,
+  "unlisted": false,
+  "editUrl": "https://github.com/twentyhq/twenty/tree/main/packages/twenty-docs/docs/ui-components/input/select.mdx",
+  "tags": [],
+  "version": "current",
+  "sidebarPosition": 8,
+  "frontMatter": {
+    "title": "Select",
+    "sidebar_position": 8,
+    "sidebar_custom_props": {
+      "icon": "TbSelect"
+    }
+  },
+  "sidebar": "uiDocsSidebar",
+  "previous": {
+    "title": "Radio",
+    "permalink": "/ui-components/input/radio"
+  },
+  "next": {
+    "title": "Toggle",
+    "permalink": "/ui-components/input/toggle"
+  }
+}
