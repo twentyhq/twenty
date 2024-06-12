@@ -279,9 +279,7 @@ export const CommandMenu = () => {
     .concat(companies.map((company) => company.id))
     .concat(activities.map((activity) => activity.id));
 
-  const [getAskAI, { data, loading, error }] = useGetAskAiLazyQuery({
-    variables: { text: 'How many employees does Stripe have?' },
-  });
+  const [getAskAI] = useGetAskAiLazyQuery();
 
   return (
     <>
