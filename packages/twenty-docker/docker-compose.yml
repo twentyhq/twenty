@@ -5,7 +5,8 @@ services:
   server:
     image: twentycrm/twenty:${TAG}
     volumes:
-      - server-local-data:/app/${STORAGE_LOCAL_PATH:-.local-storage}
+      - server-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
+      - docker-data:/app/docker-data
     ports:
       - "3000:3000"
     environment:
@@ -39,7 +40,7 @@ services:
   worker:
     image: twentycrm/twenty:${TAG}
     volumes:
-      - worker-local-data:/app/${STORAGE_LOCAL_PATH:-.local-storage}
+      - worker-local-data:/app/packages/twenty-server/${STORAGE_LOCAL_PATH:-.local-storage}
     command: ["yarn", "worker:prod"]
     environment:
       PG_DATABASE_URL: postgres://twenty:twenty@${PG_DATABASE_HOST}/default
@@ -76,6 +77,7 @@ services:
     restart: always
 
 volumes:
+  docker-data:
   db-data:
   server-local-data:
   worker-local-data:
