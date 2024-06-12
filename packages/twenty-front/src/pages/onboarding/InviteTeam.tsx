@@ -25,24 +25,10 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { LightButton } from '@/ui/input/button/components/LightButton';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
+import { AnimatedTranslation } from '@/ui/utilities/animation/components/AnimatedTranslation';
 import { useScopedHotkeys } from '@/ui/utilities/hotkey/hooks/useScopedHotkeys';
 import { OnboardingStep, useSendInviteLinkMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
-
-const StyledAnimatedInput = styled.div`
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: translateY(-20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  animation: ${({ theme }) =>
-    `fadeIn ${theme.animation.duration['normal']}s ease-in-out`};
-`;
 
 const StyledAnimatedContainer = styled.div`
   display: flex;
@@ -191,7 +177,7 @@ export const InviteTeam = () => {
               field: { onChange, onBlur, value },
               fieldState: { error },
             }) => (
-              <StyledAnimatedInput>
+              <AnimatedTranslation>
                 <TextInputV2
                   autoFocus={index === 0}
                   type="email"
@@ -203,7 +189,7 @@ export const InviteTeam = () => {
                   noErrorHelper
                   fullWidth
                 />
-              </StyledAnimatedInput>
+              </AnimatedTranslation>
             )}
           />
         ))}
