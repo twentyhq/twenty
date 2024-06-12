@@ -124,10 +124,30 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     description: "User's preferred date format",
     icon: 'IconCalendarEvent',
     options: [
-      { value: DateFormat.SYSTEM, label: 'System', position: 0, color: 'turquoise' },
-      { value: DateFormat.MONTH_FIRST, label: 'Month First', position: 1, color: 'red' },
-      { value: DateFormat.DAY_FIRST, label: 'Day First', position: 2, color: 'purple' },
-      { value: DateFormat.YEAR_FIRST, label: 'Year First', position: 3, color: 'sky' },
+      {
+        value: DateFormat.SYSTEM,
+        label: 'System',
+        position: 0,
+        color: 'turquoise',
+      },
+      {
+        value: DateFormat.MONTH_FIRST,
+        label: 'Month First',
+        position: 1,
+        color: 'red',
+      },
+      {
+        value: DateFormat.DAY_FIRST,
+        label: 'Day First',
+        position: 2,
+        color: 'purple',
+      },
+      {
+        value: DateFormat.YEAR_FIRST,
+        label: 'Year First',
+        position: 3,
+        color: 'sky',
+      },
     ],
     defaultValue: `'${DateFormat.SYSTEM}'`,
   })
@@ -141,8 +161,18 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
     icon: 'IconClock2',
     options: [
       { value: TimeFormat.SYSTEM, label: 'System', position: 0, color: 'sky' },
-      { value: TimeFormat.MILITARY, label: 'Military', position: 1, color: 'red' },
-      { value: TimeFormat.STANDARD, label: 'Standard', position: 2, color: 'purple' },
+      {
+        value: TimeFormat.MILITARY,
+        label: 'Military',
+        position: 1,
+        color: 'red',
+      },
+      {
+        value: TimeFormat.STANDARD,
+        label: 'Standard',
+        position: 2,
+        color: 'purple',
+      },
     ],
     defaultValue: `'${TimeFormat.SYSTEM}'`,
   })

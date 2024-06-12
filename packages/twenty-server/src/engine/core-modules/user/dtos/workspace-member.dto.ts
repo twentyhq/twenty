@@ -3,16 +3,20 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { DateFormat, TimeFormat } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+import {
+  DateFormat,
+  TimeFormat,
+} from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 registerEnumType(DateFormat, {
-  name: "DateFormat",
-  description: "Date format as Month first, Day first, Year first or system as default"
+  name: 'DateFormat',
+  description:
+    'Date format as Month first, Day first, Year first or system as default',
 });
 
 registerEnumType(TimeFormat, {
-  name: "TimeFormat",
-  description: "Time time as Military, Standard or system as default"
+  name: 'TimeFormat',
+  description: 'Time time as Military, Standard or system as default',
 });
 
 @ObjectType('FullName')
