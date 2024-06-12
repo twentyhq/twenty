@@ -36,13 +36,16 @@ export const useRecordValue = (recordId: string) => {
   return tableValue?.[recordId] as ObjectRecord | undefined;
 };
 
-export const useRecordFieldValue = (recordId: string, fieldName: string) => {
+export const useRecordFieldValue = <T,>(
+  recordId: string,
+  fieldName: string,
+) => {
   const recordFieldValues = useContextSelector(
     RecordFieldValueSelectorContext,
     (value) => value[0],
   );
 
-  return recordFieldValues?.[recordId]?.[fieldName];
+  return recordFieldValues?.[recordId]?.[fieldName] as T;
 };
 
 export const useSetRecordFieldValue = () => {

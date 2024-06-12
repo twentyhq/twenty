@@ -27907,6 +27907,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fast-equals@npm:^3.0.1":
+  version: 3.0.3
+  resolution: "fast-equals@npm:3.0.3"
+  checksum: ec59372c3f0604fe1569814dd5f86bbe46a5e8ec049f8eda49ce9ab0218e1700c9b7fdef5fe8253453788829a6b2aae6af5f9003f376aed1117f9194b2a7578c
+  languageName: node
+  linkType: hard
+
 "fast-fifo@npm:^1.1.0, fast-fifo@npm:^1.2.0":
   version: 1.3.2
   resolution: "fast-fifo@npm:1.3.2"
@@ -36160,6 +36167,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"micro-memoize@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "micro-memoize@npm:4.1.2"
+  checksum: 4b52dc1aa1c4b533f4008f6181f1e640e1bd1d4826881672b4f60f07ab6acc1deea073413e0488d589308e862abf6f03d1dcf7018bf08e751690268a462de4d3
+  languageName: node
+  linkType: hard
+
 "microdiff@npm:^1.3.2":
   version: 1.3.2
   resolution: "microdiff@npm:1.3.2"
@@ -37624,6 +37638,16 @@ __metadata:
   bin:
     module-deps: bin/cmd.js
   checksum: 4161734c23bc5d7e5cd0c5164cf4c41d885b8e1d64e3c43ed74c9ad00efe69ddebb30d4cac9ce29f7d7d6989e52f3ae56891afd39f8d2b50addbffe0236fd528
+  languageName: node
+  linkType: hard
+
+"moize@npm:^6.1.6":
+  version: 6.1.6
+  resolution: "moize@npm:6.1.6"
+  dependencies:
+    fast-equals: "npm:^3.0.1"
+    micro-memoize: "npm:^4.1.2"
+  checksum: 5496569c25fd2eaf7a50707e62b5109bad9c3ca43166a82e52c7d3fed41d8b7312cabe3180e1c3c68b3785db06dbeee1bfc60b01b69c7389fae4ce3b3154e28f
   languageName: node
   linkType: hard
 
@@ -47444,6 +47468,7 @@ __metadata:
     lodash.upperfirst: "npm:^4.3.1"
     luxon: "npm:^3.3.0"
     microdiff: "npm:^1.3.2"
+    moize: "npm:^6.1.6"
     msw: "npm:^2.0.11"
     msw-storybook-addon: "npm:2.0.0--canary.122.b3ed3b1.0"
     nest-commander: "npm:^3.12.0"

@@ -3,6 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/context/PreComputedChipGeneratorsContext';
 import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
+import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FIELD_EDIT_BUTTON_WIDTH } from '@/ui/field/display/constants/FieldEditButtonWidth';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
@@ -32,7 +33,10 @@ export const useRelationFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue(entityId, fieldName);
+  const fieldValue = useRecordFieldValue<ObjectRecord | undefined>(
+    entityId,
+    fieldName,
+  );
 
   const maxWidthForField =
     isDefined(button) && isDefined(maxWidth)

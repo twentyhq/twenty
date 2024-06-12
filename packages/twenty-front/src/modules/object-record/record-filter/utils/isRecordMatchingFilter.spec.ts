@@ -1,20 +1,26 @@
 import { RecordGqlOperationFilter } from '@/object-record/graphql/types/RecordGqlOperationFilter';
-import { mockedCompaniesData } from '~/testing/mock-data/companies';
-import { mockObjectMetadataItem } from '~/testing/mock-data/objectMetadataItems';
+import { getCompaniesMock } from '~/testing/mock-data/companies';
+import { generatedMockObjectMetadataItems } from '~/testing/mock-data/objectMetadataItems';
 
 import { isRecordMatchingFilter } from './isRecordMatchingFilter';
+
+const companiesMock = getCompaniesMock();
+
+const companyMockObjectMetadataItem = generatedMockObjectMetadataItems.find(
+  (item) => item.nameSingular === 'company',
+)!;
 
 describe('isRecordMatchingFilter', () => {
   describe('Empty Filters', () => {
     it('matches any record when no filter is provided', () => {
       const emptyFilter = {};
 
-      mockedCompaniesData.forEach((company) => {
+      companiesMock.forEach((company) => {
         expect(
           isRecordMatchingFilter({
             record: company,
             filter: emptyFilter,
-            objectMetadataItem: mockObjectMetadataItem,
+            objectMetadataItem: companyMockObjectMetadataItem,
           }),
         ).toBe(true);
       });
@@ -26,12 +32,12 @@ describe('isRecordMatchingFilter', () => {
         employees: {},
       };
 
-      mockedCompaniesData.forEach((company) => {
+      companiesMock.forEach((company) => {
         expect(
           isRecordMatchingFilter({
             record: company,
             filter: filterWithEmptyFields,
-            objectMetadataItem: mockObjectMetadataItem,
+            objectMetadataItem: companyMockObjectMetadataItem,
           }),
         ).toBe(true);
       });
@@ -40,12 +46,12 @@ describe('isRecordMatchingFilter', () => {
     it('matches any record with an empty and filter', () => {
       const filter = { and: [] };
 
-      mockedCompaniesData.forEach((company) => {
+      companiesMock.forEach((company) => {
         expect(
           isRecordMatchingFilter({
             record: company,
             filter,
-            objectMetadataItem: mockObjectMetadataItem,
+            objectMetadataItem: companyMockObjectMetadataItem,
           }),
         ).toBe(true);
       });
@@ -54,12 +60,12 @@ describe('isRecordMatchingFilter', () => {
     it('matches any record with an empty or filter', () => {
       const filter = { or: [] };
 
-      mockedCompaniesData.forEach((company) => {
+      companiesMock.forEach((company) => {
         expect(
           isRecordMatchingFilter({
             record: company,
             filter,
-            objectMetadataItem: mockObjectMetadataItem,
+            objectMetadataItem: companyMockObjectMetadataItem,
           }),
         ).toBe(true);
       });
@@ -68,12 +74,12 @@ describe('isRecordMatchingFilter', () => {
     it('matches any record with an empty not filter', () => {
       const filter = { not: {} };
 
-      mockedCompaniesData.forEach((company) => {
+      companiesMock.forEach((company) => {
         expect(
           isRecordMatchingFilter({
             record: company,
             filter,
-            objectMetadataItem: mockObjectMetadataItem,
+            objectMetadataItem: companyMockObjectMetadataItem,
           }),
         ).toBe(true);
       });
@@ -82,92 +88,161 @@ describe('isRecordMatchingFilter', () => {
 
   describe('Simple Filters', () => {
     it('matches a record with a simple equality filter on name', () => {
-      const filter = { name: { eq: 'Airbnb' } };
+      const companyMockInFilter = {
+        ...companiesMock[0],
+      };
+
+      const companyMockNotInFilter = {
+        ...companiesMock[0],
+        name: companyMockInFilter.name + 'Different',
+      };
+
+      const filter = { name: { eq: companyMockInFilter.name } };
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[0],
+          record: companyMockInFilter,
           filter,
-          objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItem: companyMockObjectMetadataItem,
         }),
       ).toBe(true);
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[1],
+          record: companyMockNotInFilter,
           filter,
-          objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItem: companyMockObjectMetadataItem,
         }),
       ).toBe(false);
     });
 
     it('matches a record with a simple equality filter on domainName', () => {
-      const filter = { domainName: { eq: 'airbnb.com' } };
+      const companyMockInFilter = {
+        ...companiesMock[0],
+      };
+
+      const companyMockNotInFilter = {
+        ...companiesMock[0],
+        domainName: companyMockInFilter.domainName + 'Different',
+      };
+
+      const filter = { domainName: { eq: companyMockInFilter.domainName } };
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[0],
+          record: companyMockInFilter,
           filter,
-          objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItem: companyMockObjectMetadataItem,
         }),
       ).toBe(true);
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[1],
+          record: companyMockNotInFilter,
           filter,
-          objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItem: companyMockObjectMetadataItem,
         }),
       ).toBe(false);
     });
 
     it('matches a record with a greater than filter on employees', () => {
-      const filter = { employees: { gt: 10 } };
+      const companyMockInFilter = {
+        ...companiesMock[0],
+        employees: 100,
+      };
+
+      const companyMockNotInFilter = {
+        ...companiesMock[0],
+        employees: companyMockInFilter.employees - 50,
+      };
+
+      const filter = {
+        employees: { gt: companyMockInFilter.employees - 1 },
+      };
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[0],
+          record: companyMockInFilter,
           filter,
-          objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItem: companyMockObjectMetadataItem,
         }),
       ).toBe(true);
+
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[1],
+          record: companyMockNotInFilter,
           filter,
-          objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItem: companyMockObjectMetadataItem,
         }),
       ).toBe(false);
     });
 
     it('matches a record with a boolean filter on idealCustomerProfile', () => {
-      const filter = { idealCustomerProfile: { eq: true } };
+      const companyIdealCustomerProfileTrue = {
+        ...companiesMock[0],
+        idealCustomerProfile: true,
+      };
+
+      const companyIdealCustomerProfileFalse = {
+        ...companiesMock[0],
+        idealCustomerProfile: false,
+      };
+
+      const filter = {
+        idealCustomerProfile: {
+          eq: companyIdealCustomerProfileTrue.idealCustomerProfile,
+        },
+      };
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[0],
+          record: companyIdealCustomerProfileTrue,
           filter,
-          objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItem: companyMockObjectMetadataItem,
         }),
-      ).toBe(true);
+      ).toBe(companyIdealCustomerProfileTrue.idealCustomerProfile);
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[4], // Assuming this record has idealCustomerProfile as false
+          record: companyIdealCustomerProfileFalse,
           filter,
-          objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItem: companyMockObjectMetadataItem,
         }),
-      ).toBe(false);
+      ).toBe(companyIdealCustomerProfileFalse.idealCustomerProfile);
     });
   });
 
   describe('Complex And/Or/Not Nesting', () => {
     it('matches record with a combination of and + or filters', () => {
+      const companyMockInFilter = {
+        ...companiesMock[0],
+        idealCustomerProfile: true,
+        employees: 100,
+      };
+
+      const companyMockNotInFilter = {
+        ...companiesMock[0],
+        idealCustomerProfile: false,
+        employees: 0,
+      };
+
       const filter: RecordGqlOperationFilter = {
         and: [
-          { domainName: { eq: 'airbnb.com' } },
+          {
+            domainName: {
+              eq: companyMockInFilter.domainName,
+            },
+          },
           {
             or: [
-              { employees: { gt: 10 } },
-              { idealCustomerProfile: { eq: true } },
+              {
+                employees: {
+                  gt: companyMockInFilter.employees - 1,
+                },
+              },
+              {
+                idealCustomerProfile: {
+                  eq: companyMockInFilter.idealCustomerProfile,
+                },
+              },
             ],
           },
         ],
@@ -175,118 +250,181 @@ describe('isRecordMatchingFilter', () => {
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[0], // Airbnb
+          record: companyMockInFilter,
           filter,
-          objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItem: companyMockObjectMetadataItem,
         }),
       ).toBe(true);
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[1], // Aircall
+          record: companyMockNotInFilter,
           filter,
-          objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItem: companyMockObjectMetadataItem,
         }),
       ).toBe(false);
     });
 
     it('matches record with nested not filter', () => {
+      const companyMockInFilter = {
+        ...companiesMock[0],
+        idealCustomerProfile: true,
+        employees: 100,
+      };
+
+      const companyMockNotInFilter = {
+        ...companiesMock[0],
+        idealCustomerProfile: false,
+        name: companyMockInFilter.name + 'Different',
+      };
+
       const filter: RecordGqlOperationFilter = {
         not: {
           and: [
-            { name: { eq: 'Airbnb' } },
-            { idealCustomerProfile: { eq: true } },
+            { name: { eq: companyMockInFilter.name } },
+            {
+              idealCustomerProfile: {
+                eq: companyMockInFilter.idealCustomerProfile,
+              },
+            },
           ],
         },
       };
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[0], // Airbnb
+          record: companyMockInFilter,
           filter,
-          objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItem: companyMockObjectMetadataItem,
         }),
-      ).toBe(false); // Should not match as it's Airbnb with idealCustomerProfile true
+      ).toBe(false);
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[3], // Apple
+          record: companyMockNotInFilter,
           filter,
-          objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItem: companyMockObjectMetadataItem,
         }),
-      ).toBe(true); // Should match as it's not Airbnb
+      ).toBe(true);
     });
 
     it('matches record with deep nesting of and, or, and not filters', () => {
+      const companyMockInFilter = {
+        ...companiesMock[0],
+        idealCustomerProfile: true,
+        employees: 100,
+      };
+
+      const companyMockNotInFilter = {
+        ...companiesMock[0],
+        domainName: companyMockInFilter.domainName + 'Different',
+        employees: 5,
+        name: companyMockInFilter.name + 'Different',
+      };
+
       const filter: RecordGqlOperationFilter = {
         and: [
-          { domainName: { eq: 'apple.com' } },
+          { domainName: { eq: companyMockInFilter.domainName } },
           {
-            or: [{ employees: { eq: 10 } }, { not: { name: { eq: 'Apple' } } }],
+            or: [
+              { employees: { eq: companyMockInFilter.employees } },
+              { not: { name: { eq: companyMockInFilter.name } } },
+            ],
           },
         ],
       };
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[3], // Apple
+          record: companyMockInFilter,
           filter,
-          objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItem: companyMockObjectMetadataItem,
         }),
       ).toBe(true);
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[4], // Qonto
+          record: companyMockNotInFilter,
           filter,
-          objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItem: companyMockObjectMetadataItem,
         }),
       ).toBe(false);
     });
 
     it('matches record with and filter at root level', () => {
+      const companyMockInFilter = {
+        ...companiesMock[0],
+        idealCustomerProfile: true,
+      };
+
+      const companyMockNotInFilter = {
+        ...companiesMock[0],
+        idealCustomerProfile: false,
+        name: companyMockInFilter.name + 'Different',
+      };
+
       const filter: RecordGqlOperationFilter = {
         and: [
-          { name: { eq: 'Facebook' } },
-          { idealCustomerProfile: { eq: true } },
+          { name: { eq: companyMockInFilter.name } },
+          {
+            idealCustomerProfile: {
+              eq: companyMockInFilter.idealCustomerProfile,
+            },
+          },
         ],
       };
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[5], // Facebook
+          record: companyMockInFilter,
           filter,
-          objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItem: companyMockObjectMetadataItem,
         }),
       ).toBe(true);
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[0], // Airbnb
+          record: companyMockNotInFilter,
           filter,
-          objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItem: companyMockObjectMetadataItem,
         }),
       ).toBe(false);
     });
 
     it('matches record with or filter at root level including a not condition', () => {
+      const companyMockInFilter = {
+        ...companiesMock[0],
+        idealCustomerProfile: true,
+        employees: 100,
+      };
+
+      const companyMockNotInFilter = {
+        ...companiesMock[0],
+        idealCustomerProfile: false,
+        name: companyMockInFilter.name + 'Different',
+        employees: companyMockInFilter.employees - 1,
+      };
+
       const filter: RecordGqlOperationFilter = {
-        or: [{ name: { eq: 'Sequoia' } }, { not: { employees: { eq: 1 } } }],
+        or: [
+          { name: { eq: companyMockInFilter.name } },
+          { not: { employees: { eq: companyMockInFilter.employees - 1 } } },
+        ],
       };
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[6], // Sequoia
+          record: companyMockInFilter,
           filter,
-          objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItem: companyMockObjectMetadataItem,
         }),
       ).toBe(true);
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[1], // Aircall
+          record: companyMockNotInFilter,
           filter,
-          objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItem: companyMockObjectMetadataItem,
         }),
       ).toBe(false);
     });
@@ -294,49 +432,75 @@ describe('isRecordMatchingFilter', () => {
 
   describe('Implicit And Conditions', () => {
     it('matches record with implicit and of multiple operators within the same field', () => {
+      const companyMockInFilter = {
+        ...companiesMock[0],
+        idealCustomerProfile: true,
+        employees: 100,
+      };
+
+      const companyMockNotInFilter = {
+        ...companiesMock[0],
+        idealCustomerProfile: false,
+        name: companyMockInFilter.name + 'Different',
+        employees: companyMockInFilter.employees + 100,
+      };
+
       const filter = {
-        employees: { gt: 10, lt: 100000 },
-        name: { eq: 'Airbnb' },
+        employees: {
+          gt: companyMockInFilter.employees - 10,
+          lt: companyMockInFilter.employees + 10,
+        },
+        name: { eq: companyMockInFilter.name },
       };
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[0], // Airbnb
+          record: companyMockInFilter,
           filter,
-          objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItem: companyMockObjectMetadataItem,
         }),
       ).toBe(true); // Matches as Airbnb's employee count is between 10 and 100000
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[1], // Aircall
+          record: companyMockNotInFilter,
           filter,
-          objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItem: companyMockObjectMetadataItem,
         }),
       ).toBe(false); // Does not match as Aircall's employee count is not within the range
     });
 
     it('matches record with implicit and within an object passed to or', () => {
+      const companyMockInFilter = {
+        ...companiesMock[0],
+      };
+
+      const companyMockNotInFilter = {
+        ...companiesMock[0],
+        name: companyMockInFilter.name + 'Different',
+        domainName: companyMockInFilter.name + 'Different',
+      };
+
       const filter = {
         or: {
-          name: { eq: 'Airbnb' },
-          domainName: { eq: 'airbnb.com' },
+          name: { eq: companyMockInFilter.name },
+          domainName: { eq: companyMockInFilter.domainName },
         },
       };
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[0], // Airbnb
+          record: companyMockInFilter,
           filter,
-          objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItem: companyMockObjectMetadataItem,
         }),
       ).toBe(true);
 
       expect(
         isRecordMatchingFilter({
-          record: mockedCompaniesData[2], // Algolia
+          record: companyMockNotInFilter,
           filter,
-          objectMetadataItem: mockObjectMetadataItem,
+          objectMetadataItem: companyMockObjectMetadataItem,
         }),
       ).toBe(false);
     });

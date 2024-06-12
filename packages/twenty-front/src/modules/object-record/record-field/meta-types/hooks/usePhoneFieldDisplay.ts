@@ -9,7 +9,10 @@ export const usePhoneFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue(entityId, fieldName);
+  const fieldValue = useRecordFieldValue<string | undefined>(
+    entityId,
+    fieldName,
+  );
 
   return {
     fieldDefinition,
