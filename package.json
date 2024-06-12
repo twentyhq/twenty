@@ -351,7 +351,6 @@
     "packages": [
       "packages/twenty-chrome-extension",
       "packages/twenty-front",
-      "packages/twenty-docs",
       "packages/twenty-server",
       "packages/twenty-emails",
       "packages/twenty-ui",

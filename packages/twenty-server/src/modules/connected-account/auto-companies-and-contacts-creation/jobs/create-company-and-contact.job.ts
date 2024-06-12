@@ -1,11 +1,13 @@
+import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/integrations/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
+import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { CreateCompanyAndContactService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/services/create-company-and-contact.service';
-import { Process } from 'src/engine/integrations/message-queue/decorators/process.decorator';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 export type CreateCompanyAndContactJobData = {
   workspaceId: string;
-  connectedAccountHandle: string;
+  connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>;
   contactsToCreate: {
     displayName: string;
     handle: string;
@@ -20,10 +22,10 @@ export class CreateCompanyAndContactJob {
 
   @Process(CreateCompanyAndContactJob.name)
   async handle(data: CreateCompanyAndContactJobData): Promise<void> {
-    const { workspaceId, connectedAccountHandle, contactsToCreate } = data;
+    const { workspaceId, connectedAccount, contactsToCreate } = data;
 
     await this.createCompanyAndContactService.createCompaniesAndContactsAndUpdateParticipants(
-      connectedAccountHandle,
+      connectedAccount,
       contactsToCreate.map((contact) => ({
         handle: contact.handle,
         displayName: contact.displayName,

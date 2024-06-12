@@ -7,7 +7,6 @@ import { Repository } from 'typeorm';
 import { MessageQueue } from 'src/engine/integrations/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/integrations/message-queue/services/message-queue.service';
 import { ObjectRecordCreateEvent } from 'src/engine/integrations/event-emitter/types/object-record-create.event';
-import { CreateAuditLogFromInternalEvent } from 'src/modules/timeline/jobs/create-audit-log-from-internal-event';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
@@ -17,7 +16,7 @@ import { ObjectRecordUpdateEvent } from 'src/engine/integrations/event-emitter/t
 import { ObjectRecordBaseEvent } from 'src/engine/integrations/event-emitter/types/object-record.base.event';
 import { UpsertTimelineActivityFromInternalEvent } from 'src/modules/timeline/jobs/upsert-timeline-activity-from-internal-event.job';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
-
+import { CreateAuditLogFromInternalEvent } from 'src/modules/timeline/jobs/create-audit-log-from-internal-event';
 @Injectable()
 export class EntityEventsToDbListener {
   constructor(
@@ -49,7 +48,7 @@ export class EntityEventsToDbListener {
   // @OnEvent('*.restored') - TODO: implement when we soft delete has been implemented
   // ....
 
-  private async handle(payload: ObjectRecordCreateEvent<any>) {
+  private async handle(payload: ObjectRecordBaseEvent) {
     if (!payload.objectMetadata.isAuditLogged) {
       return;
     }

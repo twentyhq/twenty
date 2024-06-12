@@ -13,10 +13,6 @@
       "path": "../packages/twenty-docker"
     },
     {
-      "name": "packages/twenty-docs",
-      "path": "../packages/twenty-docs"
-    },
-    {
       "name": "packages/twenty-front",
       "path": "../packages/twenty-front"
     },
@@ -99,7 +95,6 @@
       "ROOT",
       "packages/twenty-zapier",
       "packages/twenty-docker",
-      "packages/twenty-docs",
       "packages/twenty-utils",
       "packages/twenty-postgres"
     ]

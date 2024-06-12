@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { EntityManager, Repository } from 'typeorm';
 
@@ -19,11 +20,13 @@ import {
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import {
   GmailMessage,
+  Participant,
   ParticipantWithMessageId,
 } from 'src/modules/messaging/message-import-manager/drivers/gmail/types/gmail-message';
 import { MessagingMessageService } from 'src/modules/messaging/common/services/messaging-message.service';
 import { MessagingMessageParticipantService } from 'src/modules/messaging/common/services/messaging-message-participant.service';
 import { InjectMessageQueue } from 'src/engine/integrations/message-queue/decorators/message-queue.decorator';
+import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 
 @Injectable()
 export class MessagingSaveMessagesAndEnqueueContactCreationService {
@@ -35,6 +38,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     private readonly messageParticipantService: MessagingMessageParticipantService,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async saveMessagesAndEnqueueContactCreationJob(
@@ -58,6 +62,9 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
     const isContactCreationForSentAndReceivedEmailsEnabled =
       isContactCreationForSentAndReceivedEmailsEnabledFeatureFlag?.value;
 
+    let savedMessageParticipants: ObjectRecord<MessageParticipantWorkspaceEntity>[] =
+      [];
+
     const participantsWithMessageId = await workspaceDataSource?.transaction(
       async (transactionManager: EntityManager) => {
         const messageExternalIdsAndIdsMap =
@@ -75,7 +82,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
           const messageId = messageExternalIdsAndIdsMap.get(message.externalId);
 
           return messageId
-            ? message.participants.map((participant) => ({
+            ? message.participants.map((participant: Participant) => ({
                 ...participant,
                 messageId,
                 shouldCreateContact:
@@ -87,15 +94,22 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
             : [];
         });
 
-        await this.messageParticipantService.saveMessageParticipants(
-          participantsWithMessageId,
-          workspaceId,
-          transactionManager,
-        );
+        savedMessageParticipants =
+          await this.messageParticipantService.saveMessageParticipants(
+            participantsWithMessageId,
+            workspaceId,
+            transactionManager,
+          );
 
         return participantsWithMessageId;
       },
     );
+
+    this.eventEmitter.emit(`messageParticipant.matched`, {
+      workspaceId,
+      userId: connectedAccount.accountOwnerId,
+      messageParticipants: savedMessageParticipants,
+    });
 
     if (messageChannel.isContactAutoCreationEnabled) {
       const contactsToCreate = participantsWithMessageId.filter(
@@ -106,7 +120,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
         CreateCompanyAndContactJob.name,
         {
           workspaceId,
-          connectedAccountHandle: connectedAccount.handle,
+          connectedAccount,
           contactsToCreate,
         },
       );

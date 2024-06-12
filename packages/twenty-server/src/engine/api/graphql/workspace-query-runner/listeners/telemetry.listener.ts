@@ -24,4 +24,21 @@ export class TelemetryListener {
       '',
     );
   }
+
+  @OnEvent('user.signup')
+  async handleUserSignup(payload: ObjectRecordCreateEvent<any>) {
+    await this.analyticsService.create(
+      {
+        type: 'track',
+        data: {
+          eventName: 'user.signup',
+        },
+      },
+      payload.userId,
+      payload.workspaceId,
+      '',
+      '',
+      '',
+    );
+  }
 }
