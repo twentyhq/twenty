@@ -99,7 +99,8 @@ export const computeLastCursorParameters = (): OpenAPIV3_1.ParameterObject => {
   return {
     name: 'last_cursor',
     in: 'query',
-    description: 'Returns objects starting from a specific cursor.',
+    description:
+      'Returns objects starting from a specific cursor. You can find cursors in **startCursor** and **endCursor** in **pageInfo** in response data',
     required: false,
     schema: {
       type: 'string',
