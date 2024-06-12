@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
+import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { GoogleEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/google/google-email-alias-manager.service';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
@@ -8,10 +8,8 @@ import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/s
 
 @Injectable()
 export class EmailAliasManagerService {
-  private readonly logger = new Logger(EmailAliasManagerService.name);
-
   constructor(
-    @InjectWorkspaceRepository(ConnectedAccountWorkspaceEntity)
+    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
     private readonly googleEmailAliasManagerService: GoogleEmailAliasManagerService,
   ) {}

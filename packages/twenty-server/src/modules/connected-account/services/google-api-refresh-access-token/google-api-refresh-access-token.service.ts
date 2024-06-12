@@ -10,6 +10,7 @@ import { MessageChannelRepository } from 'src/modules/messaging/common/repositor
 import { MessagingTelemetryService } from 'src/modules/messaging/common/services/messaging-telemetry.service';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
 import { MessagingChannelSyncStatusService } from 'src/modules/messaging/common/services/messaging-channel-sync-status.service';
+import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 @Injectable()
 export class GoogleAPIRefreshAccessTokenService {
@@ -24,25 +25,14 @@ export class GoogleAPIRefreshAccessTokenService {
   ) {}
 
   async refreshAndSaveAccessToken(
+    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
     workspaceId: string,
-    connectedAccountId: string,
   ): Promise<void> {
-    const connectedAccount = await this.connectedAccountRepository.getById(
-      connectedAccountId,
-      workspaceId,
-    );
-
-    if (!connectedAccount) {
-      throw new Error(
-        `No connected account found for ${connectedAccountId} in workspace ${workspaceId}`,
-      );
-    }
-
-    const refreshToken = connectedAccount.refreshToken;
+    const { refreshToken } = connectedAccount;
 
     if (!refreshToken) {
       throw new Error(
-        `No refresh token found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
+        `No refresh token found for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
       );
     }
 
@@ -51,19 +41,19 @@ export class GoogleAPIRefreshAccessTokenService {
 
       await this.connectedAccountRepository.updateAccessToken(
         accessToken,
-        connectedAccountId,
+        connectedAccount.id,
         workspaceId,
       );
     } catch (error) {
       const messageChannel =
         await this.messageChannelRepository.getFirstByConnectedAccountId(
-          connectedAccountId,
+          connectedAccount.id,
           workspaceId,
         );
 
       if (!messageChannel) {
         throw new Error(
-          `No message channel found for connected account ${connectedAccountId} in workspace ${workspaceId}`,
+          `No message channel found for connected account ${connectedAccount.id} in workspace ${workspaceId}`,
         );
       }
 

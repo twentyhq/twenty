@@ -60,8 +60,8 @@ export class MessagingGmailFullMessageListFetchService {
     );
 
     await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
+      connectedAccount,
       workspaceId,
-      connectedAccount.id,
     );
 
     const refreshedConnectedAccount =

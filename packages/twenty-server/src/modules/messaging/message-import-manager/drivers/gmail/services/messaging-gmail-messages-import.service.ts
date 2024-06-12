@@ -22,6 +22,7 @@ import { MessagingGmailFetchMessagesByBatchesService } from 'src/modules/messagi
 import { MessagingErrorHandlingService } from 'src/modules/messaging/common/services/messaging-error-handling.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/common/services/messaging-save-messages-and-enqueue-contact-creation.service';
 import { MessageChannelRepository } from 'src/modules/messaging/common/repositories/message-channel.repository';
+import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 
 @Injectable()
 export class MessagingGmailMessagesImportService {
@@ -42,6 +43,7 @@ export class MessagingGmailMessagesImportService {
     private readonly blocklistRepository: BlocklistRepository,
     @InjectObjectMetadataRepository(MessageChannelWorkspaceEntity)
     private readonly messageChannelRepository: MessageChannelRepository,
+    private readonly emailAliasManagerService: EmailAliasManagerService,
   ) {}
 
   async processMessageBatchImport(
@@ -73,8 +75,13 @@ export class MessagingGmailMessagesImportService {
     );
 
     await this.googleAPIsRefreshAccessTokenService.refreshAndSaveAccessToken(
+      connectedAccount,
       workspaceId,
-      connectedAccount.id,
+    );
+
+    await this.emailAliasManagerService.refreshEmailAliases(
+      connectedAccount,
+      workspaceId,
     );
 
     const messageIdsToFetch =
