@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import {
   Controller,
   SubmitHandler,
@@ -95,7 +95,18 @@ export const InviteTeam = () => {
     name: 'emails',
   });
 
-  const emailValues = watch('emails').map((email) => email.email);
+  watch(({ emails }) => {
+    if (!emails) {
+      return;
+    }
+    const emailValues = emails.map((email) => email?.email);
+    if (emailValues[emailValues.length - 1] !== '') {
+      append({ email: '' });
+    }
+    if (emailValues.length > 3 && emailValues[emailValues.length - 2] === '') {
+      remove(emailValues.length - 1);
+    }
+  });
 
   const getPlaceholder = (emailIndex: number) => {
     if (emailIndex === 0) {
@@ -148,16 +159,6 @@ export const InviteTeam = () => {
     [enqueueSnackBar, sendInviteLink, setNextOnboardingStep],
   );
 
-  useEffect(() => {
-    const lastEmailIndex = emailValues.length - 1;
-    if (emailValues[lastEmailIndex] !== '') {
-      append({ email: '' });
-    }
-    if (emailValues.length > 3 && emailValues[emailValues.length - 2] === '') {
-      remove(emailValues.length - 1);
-    }
-  }, [emailValues, append, remove]);
-
   if (currentUser?.onboardingStep !== OnboardingStep.InviteTeam) {
     return <></>;
   }
@@ -171,6 +172,7 @@ export const InviteTeam = () => {
       <StyledAnimatedContainer>
         {fields.map((field, index) => (
           <Controller
+            key={index}
             name={`emails.${index}.email`}
             control={control}
             render={({
