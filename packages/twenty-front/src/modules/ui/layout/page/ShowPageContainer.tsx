@@ -16,7 +16,7 @@ const StyledOuterContainer = styled.div`
 const StyledInnerContainer = styled.div`
   display: flex;
   flex-direction: ${() => (useIsMobile() ? 'column' : 'row')};
-  max-width: 100%;
+  width: 100%;
   overflow-x: ${() => (useIsMobile() ? 'hidden' : 'auto')};
 `;
 
