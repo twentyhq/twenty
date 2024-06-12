@@ -37,7 +37,7 @@ export class CanAccessMessageThreadService {
       (channel) => channel.visibility,
     );
 
-    if (messageChannelsGroupByVisibility.share_everything) {
+    if (messageChannelsGroupByVisibility.SHARE_EVERYTHING) {
       return;
     }
 
