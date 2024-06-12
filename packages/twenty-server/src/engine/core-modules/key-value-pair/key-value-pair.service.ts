@@ -4,28 +4,14 @@ import { BadRequestException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import { KeyValueTypes } from 'src/engine/core-modules/key-value-pair/enums/key-value-types.enum';
-import { OnboardingStepKeys } from 'src/engine/core-modules/key-value-pair/enums/onboarding-step/onboarding-step-keys.enum';
-import { OnboardingStepValues } from 'src/engine/core-modules/key-value-pair/enums/onboarding-step/values/onboarding-step-values.enum';
 
-type KeyValuePairs = {
-  [KeyValueTypes.ONBOARDING]: {
-    [OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP]: OnboardingStepValues;
-    [OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP]: OnboardingStepValues;
-  };
-};
-
-type KeyValueType<
-  TYPE extends keyof KeyValuePairs,
-  K extends keyof KeyValuePairs[TYPE],
-> = KeyValuePairs[TYPE][K];
-export class KeyValuePairService<TYPE extends keyof KeyValuePairs> {
+export class KeyValuePairService<TYPE> {
   constructor(
     @InjectRepository(KeyValuePair, 'core')
     private readonly keyValuePairRepository: Repository<KeyValuePair>,
   ) {}
 
-  async get<K extends keyof KeyValuePairs[TYPE]>({
+  async get<K extends keyof TYPE>({
     userId,
     workspaceId,
     key,
@@ -33,7 +19,7 @@ export class KeyValuePairService<TYPE extends keyof KeyValuePairs> {
     userId?: string;
     workspaceId?: string;
     key: K;
-  }): Promise<KeyValueType<TYPE, K> | undefined> {
+  }): Promise<TYPE[K] | undefined> {
     return (
       await this.keyValuePairRepository.findOne({
         where: {
@@ -42,10 +28,10 @@ export class KeyValuePairService<TYPE extends keyof KeyValuePairs> {
           key: key as string,
         },
       })
-    )?.value as KeyValueType<TYPE, K> | undefined;
+    )?.value as TYPE[K] | undefined;
   }
 
-  async set<K extends keyof KeyValuePairs[TYPE]>({
+  async set<K extends keyof TYPE>({
     userId,
     workspaceId,
     key,
@@ -54,7 +40,7 @@ export class KeyValuePairService<TYPE extends keyof KeyValuePairs> {
     userId?: string;
     workspaceId?: string;
     key: K;
-    value: KeyValuePairs[TYPE][K];
+    value: TYPE[K];
   }) {
     if (!userId && !workspaceId) {
       throw new BadRequestException('userId and workspaceId are undefined');

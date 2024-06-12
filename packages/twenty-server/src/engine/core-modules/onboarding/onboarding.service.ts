@@ -8,15 +8,26 @@ import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/use
 import { InjectObjectMetadataRepository } from 'src/engine/object-metadata-repository/object-metadata-repository.decorator';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
-import { KeyValueTypes } from 'src/engine/core-modules/key-value-pair/enums/key-value-types.enum';
-import { OnboardingStepKeys } from 'src/engine/core-modules/key-value-pair/enums/onboarding-step/onboarding-step-keys.enum';
-import { OnboardingStepValues } from 'src/engine/core-modules/key-value-pair/enums/onboarding-step/values/onboarding-step-values.enum';
+
+enum OnboardingStepValues {
+  SKIPPED = 'SKIPPED',
+}
+
+enum OnboardingStepKeys {
+  SYNC_EMAIL_ONBOARDING_STEP = 'SYNC_EMAIL_ONBOARDING_STEP',
+  INVITE_TEAM_ONBOARDING_STEP = 'INVITE_TEAM_ONBOARDING_STEP',
+}
+
+type OnboardingKeyValueType = {
+  [OnboardingStepKeys.SYNC_EMAIL_ONBOARDING_STEP]: OnboardingStepValues;
+  [OnboardingStepKeys.INVITE_TEAM_ONBOARDING_STEP]: OnboardingStepValues;
+};
 
 @Injectable()
 export class OnboardingService {
   constructor(
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly keyValuePairService: KeyValuePairService<KeyValueTypes.ONBOARDING>,
+    private readonly keyValuePairService: KeyValuePairService<OnboardingKeyValueType>,
     @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
     private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {}
