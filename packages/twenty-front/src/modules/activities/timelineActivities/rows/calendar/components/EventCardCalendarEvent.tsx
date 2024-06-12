@@ -10,7 +10,7 @@ import {
   formatToHumanReadableDay,
   formatToHumanReadableMonth,
   formatToHumanReadableTime,
-} from '~/utils';
+} from '~/utils/format/formatDate';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
