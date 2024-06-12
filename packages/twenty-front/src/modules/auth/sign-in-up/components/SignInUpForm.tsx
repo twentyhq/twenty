@@ -4,6 +4,7 @@ import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
 import { motion } from 'framer-motion';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { Key } from 'ts-key-enum';
 import { IconGoogle, IconMicrosoft } from 'twenty-ui';
 
 import { FooterNote } from '@/auth/sign-in-up/components/FooterNote';
@@ -25,7 +26,6 @@ import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
 import { isDefined } from '~/utils/isDefined';
-import { Key } from "ts-key-enum";
 
 const StyledContentContainer = styled.div`
   margin-bottom: ${({ theme }) => theme.spacing(8)};
