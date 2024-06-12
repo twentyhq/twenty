@@ -22,6 +22,13 @@ describe('cleanGraphQLResponse', () => {
   it('should remove nested edges/node from results', () => {
     const data = {
       companies: {
+        totalCount: 14,
+        pageInfo: {
+          hasNextPage: true,
+          startCursor:
+            'WyIwMDliYjNkYy1hNGEyLTRiNWUtYTZmYi1iMTFiMmFlMGI1MmIiXQ==',
+          endCursor: 'WyIyMDIwMjAyMC0wNzEzLTQwYTUtODIxNi04MjgwMjQwMWQzM2UiXQ==',
+        },
         edges: [
           {
             node: {
@@ -44,6 +51,12 @@ describe('cleanGraphQLResponse', () => {
             people: [{ id: 'id1' }, { id: 'id2' }],
           },
         ],
+      },
+      totalCount: 14,
+      pageInfo: {
+        hasNextPage: true,
+        startCursor: 'WyIwMDliYjNkYy1hNGEyLTRiNWUtYTZmYi1iMTFiMmFlMGI1MmIiXQ==',
+        endCursor: 'WyIyMDIwMjAyMC0wNzEzLTQwYTUtODIxNi04MjgwMjQwMWQzM2UiXQ==',
       },
     };
 
