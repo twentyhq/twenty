@@ -8,6 +8,7 @@ const StyledFieldTextAreaOverlay = styled.div`
   align-items: center;
   display: flex;
   max-height: 420px;
+  margin: -1px;
   width: 100%;
   ${OVERLAY_BACKGROUND}
 `;
