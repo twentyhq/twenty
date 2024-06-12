@@ -1,13 +1,9 @@
-import { isArray } from '@sniptt/guards';
 import { EntityChip } from 'twenty-ui';
 
-import { RelationFromManyFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RelationFromManyFieldDisplay';
 import { useRelationFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useRelationFieldDisplay';
-import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
-export const RelationFieldDisplay = () => {
+export const RelationToOneFieldDisplay = () => {
   const { fieldValue, fieldDefinition, generateRecordChipData } =
     useRelationFieldDisplay();
 
@@ -16,12 +12,6 @@ export const RelationFieldDisplay = () => {
     !fieldDefinition?.metadata.relationObjectMetadataNameSingular
   ) {
     return null;
-  }
-
-  if (isArray(fieldValue) && isFieldRelationFromManyObjects(fieldDefinition)) {
-    return (
-      <RelationFromManyFieldDisplay fieldValue={fieldValue as ObjectRecord[]} />
-    );
   }
 
   const recordChipData = generateRecordChipData(fieldValue);

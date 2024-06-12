@@ -29,7 +29,7 @@ export const useUpdateRelationManyFieldInput = ({
     );
 
     const updatedFieldValue = isSelected
-      ? [...(fieldValue ?? []), entityToAddOrRemove]
+      ? [...(fieldValue ?? []), entityToAddOrRemove?.record]
       : (fieldValue ?? []).filter(
           (value) => value.id !== objectRecord?.recordIdentifier.id,
         );

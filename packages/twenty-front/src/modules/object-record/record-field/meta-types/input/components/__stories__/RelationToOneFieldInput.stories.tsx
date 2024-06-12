@@ -26,9 +26,9 @@ import {
 
 import { FieldContextProvider } from '../../../__stories__/FieldContextProvider';
 import {
-  RelationFieldInput,
-  RelationFieldInputProps,
-} from '../RelationFieldInput';
+  RelationToOneFieldInput,
+  RelationToOneFieldInputProps,
+} from '../RelationToOneFieldInput';
 
 const RelationWorkspaceSetterEffect = () => {
   const setCurrentWorkspace = useSetRecoilState(currentWorkspaceState);
@@ -44,16 +44,16 @@ const RelationWorkspaceSetterEffect = () => {
   return <></>;
 };
 
-type RelationFieldInputWithContextProps = RelationFieldInputProps & {
+type RelationToOneFieldInputWithContextProps = RelationToOneFieldInputProps & {
   value: number;
   entityId?: string;
 };
 
-const RelationFieldInputWithContext = ({
+const RelationToOneFieldInputWithContext = ({
   entityId,
   onSubmit,
   onCancel,
-}: RelationFieldInputWithContextProps) => {
+}: RelationToOneFieldInputWithContextProps) => {
   const setHotKeyScope = useSetHotkeyScope();
 
   useEffect(() => {
@@ -80,7 +80,7 @@ const RelationFieldInputWithContext = ({
         entityId={entityId}
       >
         <RelationWorkspaceSetterEffect />
-        <RelationFieldInput onSubmit={onSubmit} onCancel={onCancel} />
+        <RelationToOneFieldInput onSubmit={onSubmit} onCancel={onCancel} />
       </FieldContextProvider>
       <div data-testid="data-field-input-click-outside-div" />
     </div>
@@ -99,8 +99,8 @@ const clearMocksDecorator: Decorator = (Story, context) => {
 };
 
 const meta: Meta = {
-  title: 'UI/Data/Field/Input/RelationFieldInput',
-  component: RelationFieldInputWithContext,
+  title: 'UI/Data/Field/Input/RelationToOneFieldInput',
+  component: RelationToOneFieldInputWithContext,
   args: {
     useEditButton: true,
     onSubmit: submitJestFn,

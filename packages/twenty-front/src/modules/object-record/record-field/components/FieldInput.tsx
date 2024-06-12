@@ -16,6 +16,7 @@ import { isFieldLinks } from '@/object-record/record-field/types/guards/isFieldL
 import { isFieldMultiSelect } from '@/object-record/record-field/types/guards/isFieldMultiSelect';
 import { isFieldRawJson } from '@/object-record/record-field/types/guards/isFieldRawJson';
 import { isFieldRelationFromManyObjects } from '@/object-record/record-field/types/guards/isFieldRelationFromManyObjects';
+import { isFieldRelationToOneObject } from '@/object-record/record-field/types/guards/isFieldRelationToOneObject';
 import { isFieldSelect } from '@/object-record/record-field/types/guards/isFieldSelect';
 import { getScopeIdFromComponentId } from '@/ui/utilities/recoil-scope/utils/getScopeIdFromComponentId';
 
@@ -28,7 +29,7 @@ import { LinkFieldInput } from '../meta-types/input/components/LinkFieldInput';
 import { NumberFieldInput } from '../meta-types/input/components/NumberFieldInput';
 import { PhoneFieldInput } from '../meta-types/input/components/PhoneFieldInput';
 import { RatingFieldInput } from '../meta-types/input/components/RatingFieldInput';
-import { RelationFieldInput } from '../meta-types/input/components/RelationFieldInput';
+import { RelationToOneFieldInput } from '../meta-types/input/components/RelationToOneFieldInput';
 import { TextFieldInput } from '../meta-types/input/components/TextFieldInput';
 import { FieldInputEvent } from '../types/FieldInputEvent';
 import { isFieldAddress } from '../types/guards/isFieldAddress';
@@ -40,7 +41,6 @@ import { isFieldLink } from '../types/guards/isFieldLink';
 import { isFieldNumber } from '../types/guards/isFieldNumber';
 import { isFieldPhone } from '../types/guards/isFieldPhone';
 import { isFieldRating } from '../types/guards/isFieldRating';
-import { isFieldRelation } from '../types/guards/isFieldRelation';
 import { isFieldText } from '../types/guards/isFieldText';
 
 type FieldInputProps = {
@@ -72,17 +72,10 @@ export const FieldInput = ({
     <RecordFieldInputScope
       recordFieldInputScopeId={getScopeIdFromComponentId(recordFieldInputdId)}
     >
-      {isFieldRelation(fieldDefinition) ? (
-        isFieldRelationFromManyObjects(fieldDefinition) ? (
-          <RelationManyFieldInput
-            relationPickerScopeId={getScopeIdFromComponentId(
-              `relation-picker-${fieldDefinition.fieldMetadataId}`,
-            )}
-            onCancel={onCancel}
-          />
-        ) : (
-          <RelationFieldInput onSubmit={onSubmit} onCancel={onCancel} />
-        )
+      {isFieldRelationToOneObject(fieldDefinition) ? (
+        <RelationToOneFieldInput onSubmit={onSubmit} onCancel={onCancel} />
+      ) : isFieldRelationFromManyObjects(fieldDefinition) ? (
+        <RelationManyFieldInput onSubmit={onSubmit} />
       ) : isFieldPhone(fieldDefinition) ||
         isFieldDisplayedAsPhone(fieldDefinition) ? (
         <PhoneFieldInput

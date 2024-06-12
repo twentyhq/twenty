@@ -2,17 +2,20 @@ import { EntityChip } from 'twenty-ui';
 
 import { useFieldFocus } from '@/object-record/record-field/hooks/useFieldFocus';
 import { useRelationFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useRelationFieldDisplay';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { ExpandableList } from '@/ui/layout/expandable-list/components/ExpandableList';
 import { getImageAbsoluteURIOrBase64 } from '~/utils/image/getImageAbsoluteURIOrBase64';
 
-export const RelationFromManyFieldDisplay = ({
-  fieldValue,
-}: {
-  fieldValue: ObjectRecord[];
-}) => {
+export const RelationFromManyFieldDisplay = () => {
+  const { fieldValue, fieldDefinition, generateRecordChipData } =
+    useRelationFieldDisplay();
   const { isFocused } = useFieldFocus();
-  const { generateRecordChipData } = useRelationFieldDisplay();
+
+  if (
+    !fieldValue ||
+    !fieldDefinition?.metadata.relationObjectMetadataNameSingular
+  ) {
+    return null;
+  }
 
   const recordChipsData = fieldValue.map((fieldValueItem) =>
     generateRecordChipData(fieldValueItem),
