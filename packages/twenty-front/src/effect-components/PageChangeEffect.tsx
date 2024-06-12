@@ -101,6 +101,14 @@ export const PageChangeEffect = () => {
         setHotkeyScope(PageHotkeyScope.CreateWokspace);
         break;
       }
+      case isMatchingLocation(AppPath.SyncEmails): {
+        setHotkeyScope(PageHotkeyScope.SyncEmail);
+        break;
+      }
+      case isMatchingLocation(AppPath.InviteTeam): {
+        setHotkeyScope(PageHotkeyScope.InviteTeam);
+        break;
+      }
       case isMatchingLocation(AppPath.PlanRequired): {
         setHotkeyScope(PageHotkeyScope.PlanRequired);
         break;
