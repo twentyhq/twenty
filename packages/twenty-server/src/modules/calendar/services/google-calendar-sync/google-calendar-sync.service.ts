@@ -428,9 +428,9 @@ export class GoogleCalendarSyncService {
       await dataSourceMetadata?.transaction(async (transactionManager) => {
         startTime = Date.now();
 
-        await this.calendarEventRepository.saveCalendarEvents(
+        await this.calendarEventRepository.save(
           eventsToSave,
-          workspaceId,
+          {},
           transactionManager,
         );
 
@@ -444,9 +444,9 @@ export class GoogleCalendarSyncService {
 
         startTime = Date.now();
 
-        await this.calendarEventRepository.updateCalendarEvents(
+        await this.calendarChannelRepository.save(
           eventsToUpdate,
-          workspaceId,
+          {},
           transactionManager,
         );
 
