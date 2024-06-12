@@ -12,6 +12,7 @@ import { BillingSubscription } from 'src/engine/core-modules/billing/entities/bi
 import { BillingSubscriptionItem } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { UserWorkspace } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { KeyValuePair } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { PostgresCredentials } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 
 @Injectable()
 export class TypeORMService implements OnModuleInit, OnModuleDestroy {
@@ -34,6 +35,7 @@ export class TypeORMService implements OnModuleInit, OnModuleDestroy {
         FeatureFlagEntity,
         BillingSubscription,
         BillingSubscriptionItem,
+        PostgresCredentials,
       ],
       ssl: environmentService.get('PG_SSL_ALLOW_SELF_SIGNED')
         ? {

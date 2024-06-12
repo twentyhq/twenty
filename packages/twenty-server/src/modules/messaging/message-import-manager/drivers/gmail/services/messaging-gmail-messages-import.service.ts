@@ -101,9 +101,8 @@ export class MessagingGmailMessagesImportService {
       const allMessages =
         await this.fetchMessagesByBatchesService.fetchAllMessages(
           messageQueries,
-          connectedAccount.accessToken,
-          workspaceId,
           connectedAccount.id,
+          workspaceId,
         );
 
       const blocklist = await this.blocklistRepository.getByWorkspaceMemberId(
@@ -156,6 +155,11 @@ export class MessagingGmailMessagesImportService {
         `messages-to-import:${workspaceId}:gmail:${messageChannel.id}`,
         messageIdsToFetch,
       );
+
+      if (error.code === undefined) {
+        // This should never happen as all errors must be known
+        throw error;
+      }
 
       await this.gmailErrorHandlingService.handleGmailError(
         {

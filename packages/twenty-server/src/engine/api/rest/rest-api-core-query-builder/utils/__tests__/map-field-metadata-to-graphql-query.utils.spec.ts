@@ -2,7 +2,7 @@ import {
   fieldCurrencyMock,
   fieldLinkMock,
   fieldNumberMock,
-  fieldStringMock,
+  fieldTextMock,
   objectMetadataItemMock,
 } from 'src/engine/api/__mocks__/object-metadata-item.mock';
 import { mapFieldMetadataToGraphqlQuery } from 'src/engine/api/rest/rest-api-core-query-builder/utils/map-field-metadata-to-graphql-query.utils';
@@ -13,8 +13,8 @@ describe('mapFieldMetadataToGraphqlQuery', () => {
       mapFieldMetadataToGraphqlQuery(objectMetadataItemMock, fieldNumberMock),
     ).toEqual('fieldNumber');
     expect(
-      mapFieldMetadataToGraphqlQuery(objectMetadataItemMock, fieldStringMock),
-    ).toEqual('fieldString');
+      mapFieldMetadataToGraphqlQuery(objectMetadataItemMock, fieldTextMock),
+    ).toEqual('fieldText');
     expect(
       mapFieldMetadataToGraphqlQuery(objectMetadataItemMock, fieldLinkMock),
     ).toEqual(`

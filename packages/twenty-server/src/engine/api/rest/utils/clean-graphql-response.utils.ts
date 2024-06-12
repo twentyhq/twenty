@@ -11,6 +11,12 @@ export const cleanGraphQLResponse = (input: any) => {
       output[key] = input[key].edges.map((edge) =>
         cleanGraphQLResponse(edge.node),
       );
+      if (input[key].pageInfo) {
+        output['pageInfo'] = input[key].pageInfo;
+      }
+      if (input[key].totalCount) {
+        output['totalCount'] = input[key].totalCount;
+      }
     } else if (isObject(input[key])) {
       output[key] = cleanGraphQLResponse(input[key]);
     } else if (key !== '__typename') {

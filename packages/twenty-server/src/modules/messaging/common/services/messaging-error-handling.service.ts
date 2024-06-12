@@ -18,7 +18,7 @@ type SyncStep =
   | 'messages-import';
 
 export type GmailError = {
-  code: number;
+  code: number | string;
   reason: string;
 };
 
@@ -94,13 +94,47 @@ export class MessagingErrorHandlingService {
           workspaceId,
         );
         break;
+      case 500:
+        if (reason === 'backendError') {
+          await this.handleRateLimitExceeded(
+            error,
+            syncStep,
+            messageChannel,
+            workspaceId,
+          );
+        } else {
+          await this.messagingChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
+            messageChannel.id,
+            workspaceId,
+          );
+          throw new Error(
+            `Unhandled Gmail error code ${code} with reason ${reason}`,
+          );
+        }
+        break;
+      case 'ECONNRESET':
+      case 'ENOTFOUND':
+      case 'ECONNABORTED':
+      case 'ETIMEDOUT':
+      case 'ERR_NETWORK':
+        // We are currently mixing up Gmail Error code (HTTP status) and axios error code (ECONNRESET)
 
+        // In case of a network error, we should retry the request
+        await this.handleRateLimitExceeded(
+          error,
+          syncStep,
+          messageChannel,
+          workspaceId,
+        );
+        break;
       default:
         await this.messagingChannelSyncStatusService.markAsFailedUnknownAndFlushMessagesToImport(
           messageChannel.id,
           workspaceId,
         );
-        break;
+        throw new Error(
+          `Unhandled Gmail error code ${code} with reason ${reason}`,
+        );
     }
   }
 

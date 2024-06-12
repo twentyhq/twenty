@@ -1,7 +1,6 @@
 'use client';
 
 import styled from '@emotion/styled';
-import Image from 'next/image';
 import Link from 'next/link';
 
 import MotionContainer from '@/app/_components/ui/layout/LoaderAnimation';
@@ -10,6 +9,15 @@ export interface User {
   id: string;
   avatarUrl: string;
 }
+
+const StyledImg = styled.img`
+  width: 100%; // Adjust width as needed
+  height: 100%; // Adjust height as needed
+  object-fit: cover; // Keeps the aspect ratio and covers the area
+  position: absolute; // Similar to layout="fill" in Next Image
+  top: 0;
+  left: 0;
+`;
 
 const AvatarGridContainer = styled.div`
   margin: 0 auto;
@@ -67,14 +75,13 @@ const AvatarGrid = ({ users }: { users: User[] }) => {
     <MotionContainer>
       <AvatarGridContainer>
         {users.map((user) => (
-          <Link href={`/contributors/${user.id}`} key={`l_${user.id}`}>
+          <Link
+            href={`/contributors/${user.id}`}
+            key={`l_${user.id}`}
+            prefetch={false}
+          >
             <AvatarItem key={user.id}>
-              <Image
-                src={user.avatarUrl}
-                alt={user.id}
-                layout="fill"
-                objectFit="cover"
-              />
+              <StyledImg src={user.avatarUrl} alt={user.id} />
               <span className="username">{user.id}</span>
             </AvatarItem>
           </Link>

@@ -16,8 +16,8 @@ import { MessagingGmailPartialMessageListFetchService } from 'src/modules/messag
 import { isThrottled } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/is-throttled';
 
 export type MessagingMessageListFetchJobData = {
+  messageChannelId: string;
   workspaceId: string;
-  connectedAccountId: string;
 };
 
 @Injectable()
@@ -37,42 +37,36 @@ export class MessagingMessageListFetchJob
   ) {}
 
   async handle(data: MessagingMessageListFetchJobData): Promise<void> {
-    const { workspaceId, connectedAccountId } = data;
+    const { messageChannelId, workspaceId } = data;
 
     await this.messagingTelemetryService.track({
       eventName: 'message_list_fetch_job.triggered',
+      messageChannelId,
       workspaceId,
-      connectedAccountId,
     });
 
-    const connectedAccount = await this.connectedAccountRepository.getById(
-      connectedAccountId,
+    const messageChannel = await this.messageChannelRepository.getById(
+      messageChannelId,
       workspaceId,
     );
 
-    if (!connectedAccount) {
+    if (!messageChannel) {
       await this.messagingTelemetryService.track({
-        eventName: 'message_list_fetch_job.error.connected_account_not_found',
+        eventName: 'message_list_fetch_job.error.message_channel_not_found',
+        messageChannelId,
         workspaceId,
-        connectedAccountId,
       });
 
       return;
     }
 
-    const messageChannel =
-      await this.messageChannelRepository.getFirstByConnectedAccountId(
-        connectedAccountId,
+    const connectedAccount =
+      await this.connectedAccountRepository.getByIdOrFail(
+        messageChannel.connectedAccountId,
         workspaceId,
       );
 
-    if (!messageChannel) {
-      await this.messagingTelemetryService.track({
-        eventName: 'message_list_fetch_job.error.message_channel_not_found',
-        workspaceId,
-        connectedAccountId,
-      });
-
+    if (!messageChannel?.isSyncEnabled) {
       return;
     }
 
@@ -88,13 +82,13 @@ export class MessagingMessageListFetchJob
     switch (messageChannel.syncStage) {
       case MessageChannelSyncStage.PARTIAL_MESSAGE_LIST_FETCH_PENDING:
         this.logger.log(
-          `Fetching partial message list for workspace ${workspaceId} and account ${connectedAccount.id}`,
+          `Fetching partial message list for workspace ${workspaceId} and messageChannelId ${messageChannel.id}`,
         );
 
         await this.messagingTelemetryService.track({
           eventName: 'partial_message_list_fetch.started',
           workspaceId,
-          connectedAccountId,
+          connectedAccountId: connectedAccount.id,
           messageChannelId: messageChannel.id,
         });
 
@@ -107,7 +101,7 @@ export class MessagingMessageListFetchJob
         await this.messagingTelemetryService.track({
           eventName: 'partial_message_list_fetch.completed',
           workspaceId,
-          connectedAccountId,
+          connectedAccountId: connectedAccount.id,
           messageChannelId: messageChannel.id,
         });
 
@@ -121,7 +115,7 @@ export class MessagingMessageListFetchJob
         await this.messagingTelemetryService.track({
           eventName: 'full_message_list_fetch.started',
           workspaceId,
-          connectedAccountId,
+          connectedAccountId: connectedAccount.id,
           messageChannelId: messageChannel.id,
         });
 
@@ -134,7 +128,7 @@ export class MessagingMessageListFetchJob
         await this.messagingTelemetryService.track({
           eventName: 'full_message_list_fetch.completed',
           workspaceId,
-          connectedAccountId,
+          connectedAccountId: connectedAccount.id,
           messageChannelId: messageChannel.id,
         });
 

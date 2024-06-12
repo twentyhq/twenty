@@ -11,7 +11,10 @@ import {
   getFindOneResponse200,
   getUpdateOneResponse200,
 } from 'src/engine/core-modules/open-api/utils/responses.utils';
-import { getRequestBody } from 'src/engine/core-modules/open-api/utils/request-body.utils';
+import {
+  getArrayRequestBody,
+  getRequestBody,
+} from 'src/engine/core-modules/open-api/utils/request-body.utils';
 
 export const computeBatchPath = (
   item: ObjectMetadataEntity,
@@ -22,7 +25,7 @@ export const computeBatchPath = (
       summary: `Create Many ${item.namePlural}`,
       operationId: `createMany${capitalize(item.namePlural)}`,
       parameters: [{ $ref: '#/components/parameters/depth' }],
-      requestBody: getRequestBody(capitalize(item.namePlural)),
+      requestBody: getArrayRequestBody(capitalize(item.nameSingular)),
       responses: {
         '201': getCreateManyResponse201(item),
         '400': { $ref: '#/components/responses/400' },

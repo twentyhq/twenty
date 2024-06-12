@@ -19,8 +19,19 @@ export const getFindManyResponse200 = (
                   items: {
                     $ref: `#/components/schemas/${capitalize(
                       item.nameSingular,
-                    )}`,
+                    )} with Relations`,
                   },
+                },
+                pageInfo: {
+                  type: 'object',
+                  properties: {
+                    hasNextPage: { type: 'boolean' },
+                    startCursor: { type: 'string' },
+                    endCursor: { type: 'string' },
+                  },
+                },
+                totalCount: {
+                  type: 'integer',
                 },
               },
             },
@@ -54,7 +65,9 @@ export const getFindOneResponse200 = (
               type: 'object',
               properties: {
                 [item.nameSingular]: {
-                  $ref: `#/components/schemas/${capitalize(item.nameSingular)}`,
+                  $ref: `#/components/schemas/${capitalize(
+                    item.nameSingular,
+                  )} with Relations`,
                 },
               },
             },

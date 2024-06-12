@@ -1,4 +1,4 @@
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import { useRelationPickerScopedStates } from '@/object-record/relation-picker/hooks/internal/useRelationPickerScopedStates';
 import { RelationPickerScopeInternalContext } from '@/object-record/relation-picker/scopes/scope-internal-context/RelationPickerScopeInternalContext';
@@ -28,6 +28,10 @@ export const useRelationPicker = (props?: useRelationPickeProps) => {
     relationPickerSearchFilterState,
   );
 
+  const relationPickerSearchFilter = useRecoilValue(
+    relationPickerSearchFilterState,
+  );
+
   const [relationPickerPreselectedId, setRelationPickerPreselectedId] =
     useRecoilState(relationPickerPreselectedIdState);
 
@@ -37,5 +41,6 @@ export const useRelationPicker = (props?: useRelationPickeProps) => {
     setRelationPickerSearchFilter,
     relationPickerPreselectedId,
     setRelationPickerPreselectedId,
+    relationPickerSearchFilter,
   };
 };
