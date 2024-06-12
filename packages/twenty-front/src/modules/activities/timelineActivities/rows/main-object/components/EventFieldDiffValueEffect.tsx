@@ -6,18 +6,18 @@ import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 
 export const EventFieldDiffValueEffect = ({
-  forgedRecordId,
+  diffArtificialRecordStoreId,
   diffRecord,
   mainObjectMetadataItem,
   fieldMetadataItem,
 }: {
-  forgedRecordId: string;
+  diffArtificialRecordStoreId: string;
   diffRecord: Record<string, any> | undefined;
   mainObjectMetadataItem: ObjectMetadataItem;
   fieldMetadataItem: FieldMetadataItem;
 }) => {
   const setEntityFields = useSetRecoilState(
-    recordStoreFamilyState(forgedRecordId),
+    recordStoreFamilyState(diffArtificialRecordStoreId),
   );
 
   useEffect(() => {
@@ -25,14 +25,14 @@ export const EventFieldDiffValueEffect = ({
 
     const forgedObjectRecord = {
       __typename: mainObjectMetadataItem.nameSingular,
-      id: forgedRecordId,
+      id: diffArtificialRecordStoreId,
       [fieldMetadataItem.name]: diffRecord,
     };
 
     setEntityFields(forgedObjectRecord);
   }, [
     diffRecord,
-    forgedRecordId,
+    diffArtificialRecordStoreId,
     fieldMetadataItem.name,
     mainObjectMetadataItem.nameSingular,
     setEntityFields,

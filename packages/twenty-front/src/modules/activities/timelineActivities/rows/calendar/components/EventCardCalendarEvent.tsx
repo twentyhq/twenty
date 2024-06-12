@@ -10,7 +10,7 @@ import {
   formatToHumanReadableDay,
   formatToHumanReadableMonth,
   formatToHumanReadableTime,
-} from '~/utils';
+} from '~/utils/format/formatDate';
 import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
@@ -121,7 +121,7 @@ export const EventCardCalendarEvent = ({
       return <div>Calendar event not found</div>;
     }
 
-    return <div>Error loading message</div>;
+    return <div>Error loading calendar event</div>;
   }
 
   if (loading || isUndefined(calendarEvent)) {
