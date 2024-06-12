@@ -32,6 +32,9 @@ const StyledEmailTop = styled.div`
 const StyledEmailTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.medium};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const StyledEmailParticipants = styled.div`
@@ -104,15 +107,14 @@ export const EventCardMessage = ({
 
   const messageParticipantHandles = message.messageParticipants
     .map((participant) => participant.handle)
+    .filter((handle) => isDefined(handle) && handle !== '')
     .join(', ');
 
   return (
     <StyledEventCardMessageContainer>
       <StyledEmailContent>
         <StyledEmailTop>
-          <StyledEmailTitle>
-            <div>{message.subject}</div>
-          </StyledEmailTitle>
+          <StyledEmailTitle>{message.subject}</StyledEmailTitle>
           <StyledEmailParticipants>
             <OverflowingTextWithTooltip text={messageParticipantHandles} />
           </StyledEmailParticipants>
