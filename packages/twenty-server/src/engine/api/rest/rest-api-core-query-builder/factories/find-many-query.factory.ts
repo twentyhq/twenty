@@ -15,11 +15,12 @@ export class FindManyQueryFactory {
       query FindMany${capitalize(objectNamePlural)}(
         $filter: ${objectNameSingular}FilterInput,
         $orderBy: ${objectNameSingular}OrderByInput,
-        $lastCursor: String,
+        $startingAfter: String,
+        $endingBefore: String,
         $limit: Int = 60
         ) {
         ${objectNamePlural}(
-        filter: $filter, orderBy: $orderBy, first: $limit, after: $lastCursor
+        filter: $filter, orderBy: $orderBy, first: $limit, after: $startingAfter, before: $endingBefore
         ) {
           edges {
             node {

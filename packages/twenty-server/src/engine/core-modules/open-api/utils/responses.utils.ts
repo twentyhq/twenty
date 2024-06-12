@@ -22,18 +22,18 @@ export const getFindManyResponse200 = (
                     )} with Relations`,
                   },
                 },
-                pageInfo: {
-                  type: 'object',
-                  properties: {
-                    hasNextPage: { type: 'boolean' },
-                    startCursor: { type: 'string' },
-                    endCursor: { type: 'string' },
-                  },
-                },
-                totalCount: {
-                  type: 'integer',
-                },
               },
+            },
+            pageInfo: {
+              type: 'object',
+              properties: {
+                hasNextPage: { type: 'boolean' },
+                startCursor: { type: 'string' },
+                endCursor: { type: 'string' },
+              },
+            },
+            totalCount: {
+              type: 'integer',
             },
           },
           example: {
@@ -44,6 +44,12 @@ export const getFindManyResponse200 = (
                 '...',
               ],
             },
+            pageInfo: {
+              hasNextPage: true,
+              startCursor: '56f411fb-0900-4ffb-b942-d7e8d6709eff',
+              endCursor: '93adf3c6-6cf7-4a86-adcd-75f77857ba67',
+            },
+            totalCount: 132,
           },
         },
       },

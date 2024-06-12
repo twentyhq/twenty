@@ -1,16 +1,19 @@
-// https://gist.github.com/ManUtopiK/469aec75b655d6a4d912aeb3b75af3c9
 export const cleanGraphQLResponse = (input: any) => {
   if (!input) return null;
   const output = {};
+  const topLevelData = {};
+
   const isObject = (obj: any) => {
     return obj !== null && typeof obj === 'object' && !Array.isArray(obj);
   };
 
   Object.keys(input).forEach((key) => {
     if (input[key] && input[key].edges) {
-      output[key] = input[key].edges.map((edge) =>
+      // Store the cleaned nodes directly under the 'data' key
+      topLevelData[key] = input[key].edges.map((edge) =>
         cleanGraphQLResponse(edge.node),
       );
+      // Handle pageInfo and totalCount at the top level of the output
       if (input[key].pageInfo) {
         output['pageInfo'] = input[key].pageInfo;
       }
@@ -18,11 +21,15 @@ export const cleanGraphQLResponse = (input: any) => {
         output['totalCount'] = input[key].totalCount;
       }
     } else if (isObject(input[key])) {
-      output[key] = cleanGraphQLResponse(input[key]);
+      // Recursively clean and store objects
+      topLevelData[key] = cleanGraphQLResponse(input[key]);
     } else if (key !== '__typename') {
-      output[key] = input[key];
+      // Copy other properties directly
+      topLevelData[key] = input[key];
     }
   });
+
+  output['data'] = topLevelData;
 
   return output;
 };
