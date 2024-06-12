@@ -13,6 +13,7 @@ import { isDefined } from '~/utils/isDefined';
 const StyledEventCardMessageContainer = styled.div`
   display: flex;
   flex-direction: column;
+  width: 380px;
 `;
 
 const StyledEmailContent = styled.div`
@@ -31,18 +32,18 @@ const StyledEmailTop = styled.div`
 const StyledEmailTitle = styled.div`
   color: ${({ theme }) => theme.font.color.primary};
   font-weight: ${({ theme }) => theme.font.weight.medium};
-  display: flex;
 `;
 
 const StyledEmailParticipants = styled.div`
   color: ${({ theme }) => theme.font.color.tertiary};
-  display: flex;
   font-size: ${({ theme }) => theme.font.size.sm};
 `;
 
 const StyledEmailBody = styled.div`
   cursor: pointer;
-  display: flex;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const EventCardMessage = ({
