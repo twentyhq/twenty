@@ -53,9 +53,7 @@ export class MessagingGmailPartialMessageListFetchService {
     const lastSyncHistoryId = messageChannel.syncCursor;
 
     const gmailClient: gmail_v1.Gmail =
-      await this.gmailClientProvider.getGmailClient(
-        connectedAccount.refreshToken,
-      );
+      await this.gmailClientProvider.getGmailClient(connectedAccount);
 
     const { history, historyId, error } =
       await this.gmailGetHistoryService.getHistory(

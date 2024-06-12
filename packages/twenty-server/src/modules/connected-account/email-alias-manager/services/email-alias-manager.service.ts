@@ -29,8 +29,7 @@ export class EmailAliasManagerService {
     switch (connectedAccount.provider) {
       case 'google':
         await this.googleEmailAliasManagerService.refreshAliases(
-          connectedAccountId,
-          workspaceId,
+          connectedAccount,
         );
         break;
       default:

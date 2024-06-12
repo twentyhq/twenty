@@ -77,9 +77,7 @@ export class MessagingGmailFullMessageListFetchService {
     }
 
     const gmailClient: gmail_v1.Gmail =
-      await this.gmailClientProvider.getGmailClient(
-        refreshedConnectedAccount.refreshToken,
-      );
+      await this.gmailClientProvider.getGmailClient(refreshedConnectedAccount);
 
     const { error: gmailError } =
       await this.fetchAllMessageIdsFromGmailAndStoreInCache(

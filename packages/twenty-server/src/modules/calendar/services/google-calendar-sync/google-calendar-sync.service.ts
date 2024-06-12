@@ -36,6 +36,7 @@ import {
   CreateCompanyAndContactJobData,
   CreateCompanyAndContactJob,
 } from 'src/modules/connected-account/auto-companies-and-contacts-creation/jobs/create-company-and-contact.job';
+import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 
 @Injectable()
 export class GoogleCalendarSyncService {
@@ -104,9 +105,8 @@ export class GoogleCalendarSyncService {
     const calendarChannelId = calendarChannel.id;
 
     const { events, nextSyncToken } = await this.getEventsFromGoogleCalendar(
-      refreshToken,
+      connectedAccount,
       workspaceId,
-      connectedAccountId,
       emailOrDomainToReimport,
       syncToken,
     );
@@ -298,9 +298,8 @@ export class GoogleCalendarSyncService {
   }
 
   public async getEventsFromGoogleCalendar(
-    refreshToken: string,
+    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
     workspaceId: string,
-    connectedAccountId: string,
     emailOrDomainToReimport?: string,
     syncToken?: string,
   ): Promise<{
@@ -309,7 +308,7 @@ export class GoogleCalendarSyncService {
   }> {
     const googleCalendarClient =
       await this.googleCalendarClientProvider.getGoogleCalendarClient(
-        refreshToken,
+        connectedAccount,
       );
 
     const startTime = Date.now();
@@ -337,12 +336,12 @@ export class GoogleCalendarSyncService {
 
           await this.calendarChannelRepository.updateSyncCursor(
             null,
-            connectedAccountId,
+            connectedAccount.id,
             workspaceId,
           );
 
           this.logger.log(
-            `Sync token is no longer valid for connected account ${connectedAccountId} in workspace ${workspaceId}, resetting sync cursor.`,
+            `Sync token is no longer valid for connected account ${connectedAccount.id} in workspace ${workspaceId}, resetting sync cursor.`,
           );
 
           return {
@@ -373,9 +372,9 @@ export class GoogleCalendarSyncService {
     const endTime = Date.now();
 
     this.logger.log(
-      `google calendar sync for workspace ${workspaceId} and account ${connectedAccountId} getting events list in ${
-        endTime - startTime
-      }ms.`,
+      `google calendar sync for workspace ${workspaceId} and account ${
+        connectedAccount.id
+      } getting events list in ${endTime - startTime}ms.`,
     );
 
     return { events, nextSyncToken };
