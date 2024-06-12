@@ -1,9 +1,8 @@
 import { useContext } from 'react';
+import { isNonEmptyString } from '@sniptt/guards';
 
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { getObjectRecordIdentifier } from '@/object-metadata/utils/getObjectRecordIdentifier';
+import { PreComputedChipGeneratorsContext } from '@/object-metadata/context/PreComputedChipGeneratorsContext';
 import { useRecordFieldValue } from '@/object-record/record-store/contexts/RecordFieldValueSelectorContext';
-import { ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { FIELD_EDIT_BUTTON_WIDTH } from '@/ui/field/display/constants/FieldEditButtonWidth';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { isDefined } from '~/utils/isDefined';
@@ -14,6 +13,14 @@ import { isFieldRelation } from '../../types/guards/isFieldRelation';
 
 export const useRelationFieldDisplay = () => {
   const { entityId, fieldDefinition, maxWidth } = useContext(FieldContext);
+
+  const { chipGeneratorPerObjectPerField } = useContext(
+    PreComputedChipGeneratorsContext,
+  );
+
+  if (!isDefined(chipGeneratorPerObjectPerField)) {
+    throw new Error('Chip generator per object per field is not defined');
+  }
 
   assertFieldMetadata(
     FieldMetadataType.Relation,
@@ -32,18 +39,14 @@ export const useRelationFieldDisplay = () => {
       ? maxWidth - FIELD_EDIT_BUTTON_WIDTH
       : maxWidth;
 
-  const { objectMetadataItem: relationObjectMetadataItem } =
-    useObjectMetadataItem({
-      objectNameSingular:
-        fieldDefinition.metadata.relationObjectMetadataNameSingular,
-    });
+  if (!isNonEmptyString(fieldDefinition.metadata.objectMetadataNameSingular)) {
+    throw new Error('Object metadata name singular is not a non-empty string');
+  }
 
-  const generateRecordChipData = (record: ObjectRecord) => {
-    return getObjectRecordIdentifier({
-      objectMetadataItem: relationObjectMetadataItem,
-      record,
-    });
-  };
+  const generateRecordChipData =
+    chipGeneratorPerObjectPerField[
+      fieldDefinition.metadata.objectMetadataNameSingular
+    ][fieldDefinition.metadata.fieldName];
 
   return {
     fieldDefinition,

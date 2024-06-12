@@ -22,6 +22,17 @@ export const getFindManyResponse200 = (
                     )} with Relations`,
                   },
                 },
+                pageInfo: {
+                  type: 'object',
+                  properties: {
+                    hasNextPage: { type: 'boolean' },
+                    startCursor: { type: 'string' },
+                    endCursor: { type: 'string' },
+                  },
+                },
+                totalCount: {
+                  type: 'integer',
+                },
               },
             },
           },

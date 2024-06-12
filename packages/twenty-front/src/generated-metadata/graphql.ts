@@ -914,7 +914,6 @@ export type Support = {
 
 export type Telemetry = {
   __typename?: 'Telemetry';
-  anonymizationEnabled: Scalars['Boolean']['output'];
   enabled: Scalars['Boolean']['output'];
 };
 

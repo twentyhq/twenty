@@ -33,7 +33,7 @@ export const seedFeatureFlags = async (
       {
         key: FeatureFlagKeys.IsEventObjectEnabled,
         workspaceId: workspaceId,
-        value: true,
+        value: false,
       },
       {
         key: FeatureFlagKeys.IsStripeIntegrationEnabled,

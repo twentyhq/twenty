@@ -2,7 +2,7 @@ import { useInView } from 'react-intersection-observer';
 import styled from '@emotion/styled';
 import { GRAY_SCALE } from 'twenty-ui';
 
-type FetchMoreLoaderProps = {
+type CustomResolverFetchMoreLoaderProps = {
   loading: boolean;
   onLastRowVisible: (...args: any[]) => any;
 };
@@ -17,10 +17,10 @@ const StyledText = styled.div`
   padding-left: ${({ theme }) => theme.spacing(2)};
 `;
 
-export const FetchMoreLoader = ({
+export const CustomResolverFetchMoreLoader = ({
   loading,
   onLastRowVisible,
-}: FetchMoreLoaderProps) => {
+}: CustomResolverFetchMoreLoaderProps) => {
   const { ref: tbodyRef } = useInView({
     onChange: onLastRowVisible,
   });

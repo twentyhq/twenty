@@ -1,11 +1,11 @@
 import { Company } from '@/companies/types/Company';
 import { Person } from '@/people/types/Person';
 
-type RequiredAndNotNull<T> = {
+export type RequiredAndNotNull<T> = {
   [P in keyof T]-?: Exclude<T[P], null | undefined>;
 };
 
-type MockedPerson = RequiredAndNotNull<
+export type MockedPerson = RequiredAndNotNull<
   Pick<
     Person,
     | '__typename'
