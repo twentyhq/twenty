@@ -1,21 +1,19 @@
 import { Meta, StoryObj } from '@storybook/react';
 import { ComponentDecorator } from 'twenty-ui';
 
-import { RelationFieldDisplay } from '@/object-record/record-field/meta-types/display/components/RelationFieldDisplay';
-import { ChipGeneratorsDecorator } from '~/testing/decorators/ChipGeneratorsDecorator';
+import { PhoneFieldDisplay } from '@/object-record/record-field/meta-types/display/components/PhoneFieldDisplay';
 import { getFieldDecorator } from '~/testing/decorators/getFieldDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { getProfilingStory } from '~/testing/profiling/utils/getProfilingStory';
 
 const meta: Meta = {
-  title: 'UI/Data/Field/Display/RelationFieldDisplay',
+  title: 'UI/Data/Field/Display/PhoneFieldDisplay',
   decorators: [
     MemoryRouterDecorator,
-    ChipGeneratorsDecorator,
-    getFieldDecorator('person', 'company'),
+    getFieldDecorator('person', 'phone'),
     ComponentDecorator,
   ],
-  component: RelationFieldDisplay,
+  component: PhoneFieldDisplay,
   args: {},
   parameters: {
     chromatic: { disableSnapshot: true },
@@ -24,13 +22,26 @@ const meta: Meta = {
 
 export default meta;
 
-type Story = StoryObj<typeof RelationFieldDisplay>;
+type Story = StoryObj<typeof PhoneFieldDisplay>;
 
 export const Default: Story = {};
 
+export const Elipsis: Story = {
+  parameters: {
+    container: { width: 50 },
+  },
+};
+
+export const WrongNumber: Story = {
+  parameters: {
+    container: { width: 50 },
+  },
+  decorators: [getFieldDecorator('person', 'phone', 'sdklaskdj')],
+};
+
 export const Performance = getProfilingStory({
-  componentName: 'RelationFieldDisplay',
-  averageThresholdInMs: 0.2,
+  componentName: 'PhoneFieldDisplay',
+  averageThresholdInMs: 0.5,
   numberOfRuns: 20,
   numberOfTestsPerRun: 100,
 });

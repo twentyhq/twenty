@@ -10,7 +10,6 @@ const meta: Meta<typeof ContactLink> = {
   component: ContactLink,
   decorators: [ComponentWithRouterDecorator],
   args: {
-    className: 'ContactLink',
     href: '/test',
     children: 'Contact Link',
   },

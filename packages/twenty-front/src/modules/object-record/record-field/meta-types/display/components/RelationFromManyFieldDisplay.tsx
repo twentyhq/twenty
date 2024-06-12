@@ -23,8 +23,8 @@ export const RelationFromManyFieldDisplay = ({
       {recordChipsData.map((record) => {
         return (
           <EntityChip
-            key={record.id}
-            entityId={record.id}
+            key={record.recordId}
+            entityId={record.recordId}
             name={record.name as any}
             avatarType={record.avatarType}
             avatarUrl={getImageAbsoluteURIOrBase64(record.avatarUrl) || ''}

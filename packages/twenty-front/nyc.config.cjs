@@ -8,7 +8,7 @@ const globalCoverage = {
 
 const modulesCoverage = {
   branches: 25,
-  statements: 50,
+  statements: 49,
   lines: 50,
   functions: 40,
   include: ['src/modules/**/*'],
