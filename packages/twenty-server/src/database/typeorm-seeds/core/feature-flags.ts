@@ -45,6 +45,11 @@ export const seedFeatureFlags = async (
         workspaceId: workspaceId,
         value: true,
       },
+      {
+        key: FeatureFlagKeys.IsProfileEmailsReadEnabled,
+        workspaceId: workspaceId,
+        value: true,
+      },
     ])
     .execute();
 };

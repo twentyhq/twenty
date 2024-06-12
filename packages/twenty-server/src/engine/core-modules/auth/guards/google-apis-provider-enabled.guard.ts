@@ -49,7 +49,7 @@ export class GoogleAPIsProviderEnabledGuard implements CanActivate {
       isProfileEmailsReadEnabled: !!(await this.featureFlagRepository.findOneBy(
         {
           workspaceId,
-          key: FeatureFlagKeys.IsBlocklistEnabled,
+          key: FeatureFlagKeys.IsProfileEmailsReadEnabled,
           value: true,
         },
       )),
