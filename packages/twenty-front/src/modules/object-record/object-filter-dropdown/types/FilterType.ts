@@ -8,6 +8,7 @@ export type FilterType =
   | 'CURRENCY'
   | 'FULL_NAME'
   | 'LINK'
+  | 'LINKS'
   | 'RELATION'
   | 'ADDRESS'
   | 'SELECT'

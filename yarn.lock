@@ -46702,12 +46702,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"twenty-docs@workspace:packages/twenty-docs":
-  version: 0.0.0-use.local
-  resolution: "twenty-docs@workspace:packages/twenty-docs"
-  languageName: unknown
-  linkType: soft
-
 "twenty-emails@workspace:packages/twenty-emails":
   version: 0.0.0-use.local
   resolution: "twenty-emails@workspace:packages/twenty-emails"

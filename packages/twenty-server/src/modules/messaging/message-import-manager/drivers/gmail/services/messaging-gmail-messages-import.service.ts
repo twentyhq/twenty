@@ -101,9 +101,8 @@ export class MessagingGmailMessagesImportService {
       const allMessages =
         await this.fetchMessagesByBatchesService.fetchAllMessages(
           messageQueries,
-          connectedAccount.accessToken,
-          workspaceId,
           connectedAccount.id,
+          workspaceId,
         );
 
       const blocklist = await this.blocklistRepository.getByWorkspaceMemberId(

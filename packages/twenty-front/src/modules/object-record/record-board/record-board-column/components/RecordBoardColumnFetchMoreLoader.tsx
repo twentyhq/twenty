@@ -19,19 +19,22 @@ const StyledText = styled.div`
 
 export const RecordBoardColumnFetchMoreLoader = () => {
   const { columnDefinition } = useContext(RecordBoardColumnContext);
-  const { isFetchingRecordState, shouldFetchMoreInColumnFamilyState } =
+  const { shouldFetchMoreInColumnFamilyState, isFetchingRecordsByColumnState } =
     useRecordBoardStates();
-  const isFetchingRecord = useRecoilValue(isFetchingRecordState);
 
-  const shouldFetchMore = useSetRecoilState(
+  const isFetchingRecord = useRecoilValue(
+    isFetchingRecordsByColumnState({ columnId: columnDefinition.id }),
+  );
+
+  const setShouldFetchMore = useSetRecoilState(
     shouldFetchMoreInColumnFamilyState(columnDefinition.id),
   );
 
   const { ref, inView } = useInView();
 
   useEffect(() => {
-    shouldFetchMore(inView);
-  }, [shouldFetchMore, inView]);
+    setShouldFetchMore(inView);
+  }, [setShouldFetchMore, inView]);
 
   return (
     <div ref={ref}>

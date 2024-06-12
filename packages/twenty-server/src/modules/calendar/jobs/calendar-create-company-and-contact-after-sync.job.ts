@@ -8,6 +8,8 @@ import { CalendarEventParticipantRepository } from 'src/modules/calendar/reposit
 import { CalendarChannelWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-channel.workspace-entity';
 import { CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/standard-objects/calendar-event-participant.workspace-entity';
 import { CreateCompanyAndContactService } from 'src/modules/connected-account/auto-companies-and-contacts-creation/services/create-company-and-contact.service';
+import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
+import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 export type CalendarCreateCompanyAndContactAfterSyncJobData = {
   workspaceId: string;
@@ -27,6 +29,8 @@ export class CalendarCreateCompanyAndContactAfterSyncJob
     private readonly calendarChannelService: CalendarChannelRepository,
     @InjectObjectMetadataRepository(CalendarEventParticipantWorkspaceEntity)
     private readonly calendarEventParticipantRepository: CalendarEventParticipantRepository,
+    @InjectObjectMetadataRepository(ConnectedAccountWorkspaceEntity)
+    private readonly connectedAccountRepository: ConnectedAccountRepository,
   ) {}
 
   async handle(
@@ -48,10 +52,22 @@ export class CalendarCreateCompanyAndContactAfterSyncJob
       );
     }
 
-    const { handle, isContactAutoCreationEnabled } = calendarChannels[0];
+    const { handle, isContactAutoCreationEnabled, connectedAccountId } =
+      calendarChannels[0];
 
     if (!isContactAutoCreationEnabled || !handle) {
       return;
+    }
+
+    const connectedAccount = await this.connectedAccountRepository.getById(
+      connectedAccountId,
+      workspaceId,
+    );
+
+    if (!connectedAccount) {
+      throw new Error(
+        `Connected account with id ${connectedAccountId} not found in workspace ${workspaceId}`,
+      );
     }
 
     const calendarEventParticipantsWithoutPersonIdAndWorkspaceMemberId =
@@ -61,7 +77,7 @@ export class CalendarCreateCompanyAndContactAfterSyncJob
       );
 
     await this.createCompanyAndContactService.createCompaniesAndContactsAndUpdateParticipants(
-      handle,
+      connectedAccount,
       calendarEventParticipantsWithoutPersonIdAndWorkspaceMemberId,
       workspaceId,
     );
