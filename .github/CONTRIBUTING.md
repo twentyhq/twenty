@@ -75,6 +75,20 @@ git push origin branch-name
 
 <br>
 
+## Testing Suite
+
+When working on a new tool or making improvements to an existing tool, it's crucial to include a testing suite in your pull request. 
+
+**Why is this important?** 
+Including a testing suite is cricial for maintaining the quality and reliability of the project. Firstly, it serves as a safety net, ensuring that the code being pushed doesn't introduce errors or bugs into the project. It also encourages developers to write robust, testable code and streamline the integration process by ensuring that all members working on the project can understand and incorporate the changes. 
+
+**When is a testing suite needed?**
+A testing suite will be needed when there is an introduction of a new tool or substantial improvements to an existing tool. These changes have a higher risk of introducing bugs or breaking existing functionality, making thorough testing essential. For other changes, such as aesthethic improvements or documentation updates, a testing suite may not be necessary. 
+
+By including a testing suite in your pull request, you not only ensure the stability and reliability of the project but also contribute to a smoother development process for all contributors! 
+
+<br>
+
 ## Code of Conduct
 
 Please note that by contributing to this project, you're expected to follow Twenty's [Code of Conduct](./CODE_OF_CONDUCT.md). All maintainers strive to maintain a welcoming, friendly, and inclusive community for all contributors.  
