@@ -1,13 +1,11 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-const StyledButtonLink = styled.a<{ enhanced: boolean }>`
+const StyledButtonLink = styled.a`
   align-items: center;
-  color: ${({ theme, enhanced }) =>
-    enhanced ? theme.font.color.tertiary : theme.font.color.light};
+  color: ${({ theme }) => theme.font.color.light};
   display: flex;
-  font-size: ${({ theme, enhanced }) =>
-    enhanced ? theme.font.size.md : theme.font.size.sm};
+  font-size: ${({ theme }) => theme.font.size.sm};
   font-weight: ${({ theme }) => theme.font.weight.medium};
   gap: ${({ theme }) => theme.spacing(1)};
   padding: 0 ${({ theme }) => theme.spacing(1)};
@@ -19,27 +17,15 @@ const StyledButtonLink = styled.a<{ enhanced: boolean }>`
   }
 `;
 
-type ActionLinkProps = React.ComponentProps<'a'> & {
-  enhanced?: boolean;
-};
-
-export const ActionLink = ({
-  href,
-  onClick,
-  target,
-  rel,
-  enhanced = false,
-  children,
-}: ActionLinkProps) => {
+export const ActionLink = (props: React.ComponentProps<'a'>) => {
   return (
     <StyledButtonLink
-      href={href}
-      onClick={onClick}
-      target={target}
-      rel={rel}
-      enhanced={enhanced}
+      href={props.href}
+      onClick={props.onClick}
+      target={props.target}
+      rel={props.rel}
     >
-      {children}
+      {props.children}
     </StyledButtonLink>
   );
 };

@@ -20,9 +20,9 @@ import { useSetNextOnboardingStep } from '@/onboarding/hooks/useSetNextOnboardin
 import { SeparatorLineText } from '@/ui/display/text/components/SeparatorLineText';
 import { SnackBarVariant } from '@/ui/feedback/snack-bar-manager/components/SnackBar';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { LightButton } from '@/ui/input/button/components/LightButton';
 import { MainButton } from '@/ui/input/button/components/MainButton';
 import { TextInputV2 } from '@/ui/input/components/TextInputV2';
-import { ActionLink } from '@/ui/navigation/link/components/ActionLink';
 import { OnboardingStep, useSendInviteLinkMutation } from '~/generated/graphql';
 import { isDefined } from '~/utils/isDefined';
 
@@ -196,10 +196,12 @@ export const InviteTeam = () => {
           <>
             <SeparatorLineText>Or</SeparatorLineText>
             <StyledActionLinkContainer>
-              <ActionLink enhanced onClick={copyInviteLink}>
-                <IconCopy size={14} />
-                Copy invitation link
-              </ActionLink>
+              <LightButton
+                title="Copy invitation link"
+                accent="tertiary"
+                onClick={copyInviteLink}
+                Icon={IconCopy}
+              />
             </StyledActionLinkContainer>
           </>
         )}
