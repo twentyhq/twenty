@@ -9,10 +9,7 @@ export const useEmailFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue<string | undefined>(
-    entityId,
-    fieldName,
-  );
+  const fieldValue = useRecordFieldValue<string>(entityId, fieldName);
 
   return {
     fieldDefinition,
