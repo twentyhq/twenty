@@ -15,12 +15,31 @@ export class TelemetryListener {
         type: 'track',
         data: {
           eventName: payload.name,
+          recordId: payload.recordId,
         },
       },
       payload.userId,
       payload.workspaceId,
       '', // voluntarely not retrieving this
       '', // to avoid slowing down
+      '',
+    );
+  }
+
+  @OnEvent('user.signup')
+  async handleUserSignup(payload: ObjectRecordCreateEvent<any>) {
+    await this.analyticsService.create(
+      {
+        type: 'track',
+        data: {
+          eventName: 'user.signup',
+          recordId: payload.recordId,
+        },
+      },
+      payload.userId,
+      payload.workspaceId,
+      '',
+      '',
       '',
     );
   }

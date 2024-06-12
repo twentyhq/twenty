@@ -34,6 +34,14 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspace> {
       workspaceId,
     });
 
+    const payload = new ObjectRecordCreateEvent<UserWorkspace>();
+
+    payload.workspaceId = workspaceId;
+    payload.userId = userId;
+    payload.recordId = userId;
+
+    this.eventEmitter.emit('user.signup', payload);
+
     return this.userWorkspaceRepository.save(userWorkspace);
   }
 
