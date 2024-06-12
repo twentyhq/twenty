@@ -14,9 +14,10 @@ export const useSelectFieldDisplay = () => {
 
   const { fieldName } = fieldDefinition.metadata;
 
-  const fieldValue = useRecordFieldValue(entityId, fieldName) as
-    | FieldSelectValue
-    | undefined;
+  const fieldValue = useRecordFieldValue<FieldSelectValue | undefined>(
+    entityId,
+    fieldName,
+  );
 
   return {
     fieldDefinition: fieldDefinition as FieldDefinition<FieldSelectMetadata>,

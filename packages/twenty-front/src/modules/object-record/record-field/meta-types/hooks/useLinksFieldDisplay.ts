@@ -10,9 +10,10 @@ export const useLinksFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue(entityId, fieldName) as
-    | FieldLinksValue
-    | undefined;
+  const fieldValue = useRecordFieldValue<FieldLinksValue | undefined>(
+    entityId,
+    fieldName,
+  );
 
   return {
     fieldDefinition,

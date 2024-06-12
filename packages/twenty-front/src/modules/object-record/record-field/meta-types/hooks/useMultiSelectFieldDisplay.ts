@@ -13,9 +13,10 @@ export const useMultiSelectFieldDisplay = () => {
 
   const { fieldName } = fieldDefinition.metadata;
 
-  const fieldValue = useRecordFieldValue(entityId, fieldName) as
-    | FieldMultiSelectValue
-    | undefined;
+  const fieldValue = useRecordFieldValue<FieldMultiSelectValue | undefined>(
+    entityId,
+    fieldName,
+  );
 
   return {
     fieldDefinition:

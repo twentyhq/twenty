@@ -10,9 +10,10 @@ export const useCurrencyFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue(entityId, fieldName) as
-    | FieldCurrencyValue
-    | undefined;
+  const fieldValue = useRecordFieldValue<FieldCurrencyValue | undefined>(
+    entityId,
+    fieldName,
+  );
 
   return {
     fieldDefinition,

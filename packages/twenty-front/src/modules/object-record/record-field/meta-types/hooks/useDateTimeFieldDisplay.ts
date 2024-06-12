@@ -10,7 +10,10 @@ export const useDateTimeFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue(entityId, fieldName) as string;
+  const fieldValue = useRecordFieldValue<string | undefined>(
+    entityId,
+    fieldName,
+  );
 
   return {
     fieldDefinition,

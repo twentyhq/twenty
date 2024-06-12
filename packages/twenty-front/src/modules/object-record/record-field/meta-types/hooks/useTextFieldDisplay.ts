@@ -11,7 +11,7 @@ export const useTextFieldDisplay = () => {
   const fieldName = fieldDefinition.metadata.fieldName;
 
   const fieldValue =
-    (useRecordFieldValue(entityId, fieldName) as string | undefined) ?? '';
+    useRecordFieldValue<string | undefined>(entityId, fieldName) ?? '';
 
   return {
     maxWidth,

@@ -10,9 +10,10 @@ export const useJsonFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue(entityId, fieldName) as
-    | FieldJsonValue
-    | undefined;
+  const fieldValue = useRecordFieldValue<FieldJsonValue | undefined>(
+    entityId,
+    fieldName,
+  );
 
   return {
     maxWidth,

@@ -9,9 +9,10 @@ export const useBooleanFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue(entityId, fieldName) as
-    | boolean
-    | undefined;
+  const fieldValue = useRecordFieldValue<boolean | undefined>(
+    entityId,
+    fieldName,
+  );
 
   return {
     fieldDefinition,

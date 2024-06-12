@@ -10,9 +10,10 @@ export const useFullNameFieldDisplay = () => {
 
   const fieldName = fieldDefinition.metadata.fieldName;
 
-  const fieldValue = useRecordFieldValue(entityId, fieldName) as
-    | FieldFullNameValue
-    | undefined;
+  const fieldValue = useRecordFieldValue<FieldFullNameValue | undefined>(
+    entityId,
+    fieldName,
+  );
 
   return {
     fieldDefinition,
