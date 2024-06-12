@@ -185,7 +185,7 @@
     "tslib": "^2.3.0",
     "tsup": "^8.0.1",
     "type-fest": "4.10.1",
-    "typeorm": "^0.3.17",
+    "typeorm": "^0.3.20",
     "use-context-selector": "^2.0.0",
     "use-debounce": "^10.0.0",
     "uuid": "^9.0.0",

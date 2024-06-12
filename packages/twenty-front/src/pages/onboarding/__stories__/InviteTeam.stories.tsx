@@ -6,7 +6,7 @@ import { graphql, HttpResponse } from 'msw';
 import { OnboardingStep } from '~/generated/graphql';
 import { AppPath } from '~/modules/types/AppPath';
 import { GET_CURRENT_USER } from '~/modules/users/graphql/queries/getCurrentUser';
-import { SyncEmails } from '~/pages/onboarding/SyncEmails';
+import { InviteTeam } from '~/pages/onboarding/InviteTeam';
 import {
   PageDecorator,
   PageDecoratorArgs,
@@ -15,10 +15,10 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedOnboardingUsersData } from '~/testing/mock-data/users';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Onboarding/SyncEmails',
-  component: SyncEmails,
+  title: 'Pages/Onboarding/InviteTeam',
+  component: InviteTeam,
   decorators: [PageDecorator],
-  args: { routePath: AppPath.SyncEmails },
+  args: { routePath: AppPath.InviteTeam },
   parameters: {
     msw: {
       handlers: [
@@ -27,7 +27,7 @@ const meta: Meta<PageDecoratorArgs> = {
             data: {
               currentUser: {
                 ...mockedOnboardingUsersData[0],
-                onboardingStep: OnboardingStep.SyncEmail,
+                onboardingStep: OnboardingStep.InviteTeam,
               },
             },
           });
@@ -40,11 +40,11 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SyncEmails>;
+export type Story = StoryObj<typeof InviteTeam>;
 
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('Emails and Calendar');
+    await canvas.findByText('Invite your team');
   },
 };

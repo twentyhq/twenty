@@ -42859,6 +42859,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"reflect-metadata@npm:^0.2.1":
+  version: 0.2.2
+  resolution: "reflect-metadata@npm:0.2.2"
+  checksum: 1cd93a15ea291e420204955544637c264c216e7aac527470e393d54b4bb075f10a17e60d8168ec96600c7e0b9fcc0cb0bb6e91c3fbf5b0d8c9056f04e6ac1ec2
+  languageName: node
+  linkType: hard
+
 "reflect.getprototypeof@npm:^1.0.4":
   version: 1.0.4
   resolution: "reflect.getprototypeof@npm:1.0.4"
@@ -47538,7 +47545,7 @@ __metadata:
     tsup: "npm:^8.0.1"
     tsx: "npm:^4.7.2"
     type-fest: "npm:4.10.1"
-    typeorm: "npm:^0.3.17"
+    typeorm: "npm:^0.3.20"
     typescript: "npm:5.3.3"
     use-context-selector: "npm:^2.0.0"
     use-debounce: "npm:^10.0.0"
@@ -47664,9 +47671,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typeorm@npm:^0.3.17":
-  version: 0.3.19
-  resolution: "typeorm@npm:0.3.19"
+"typeorm@npm:^0.3.20":
+  version: 0.3.20
+  resolution: "typeorm@npm:0.3.20"
   dependencies:
     "@sqltools/formatter": "npm:^1.2.5"
     app-root-path: "npm:^3.1.0"
@@ -47678,7 +47685,7 @@ __metadata:
     dotenv: "npm:^16.0.3"
     glob: "npm:^10.3.10"
     mkdirp: "npm:^2.1.3"
-    reflect-metadata: "npm:^0.1.13"
+    reflect-metadata: "npm:^0.2.1"
     sha.js: "npm:^2.4.11"
     tslib: "npm:^2.5.0"
     uuid: "npm:^9.0.0"
@@ -47740,7 +47747,7 @@ __metadata:
     typeorm: cli.js
     typeorm-ts-node-commonjs: cli-ts-node-commonjs.js
     typeorm-ts-node-esm: cli-ts-node-esm.js
-  checksum: c03a226b6d78c65fa0e69f5d0f0c515f80d6d2f39ffdac50a84e41bcc59d3296c012e4f6033d8f7444c9f5fd277c6bb4c9fa72bac637547d8bf2ff29a38cb3c6
+  checksum: 7e4be724641beef86ae36289c87b6e66bfaf19a4313f089926d36d2d6f0d67f9314d942711c9d83ab8a174b8622148c2f7e83e6c1448d638ee3ab24469257814
   languageName: node
   linkType: hard
 

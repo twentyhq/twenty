@@ -1,8 +1,7 @@
-export const extractEmailsList = (emails: string) => {
+export const sanitizeEmailList = (emailList: string[]): string[] => {
   return Array.from(
     new Set(
-      emails
-        .split(',')
+      emailList
         .map((email) => email.trim())
         .filter((email) => email.length > 0),
     ),

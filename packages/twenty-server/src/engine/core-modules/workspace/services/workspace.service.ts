@@ -18,6 +18,7 @@ import { BillingService } from 'src/engine/core-modules/billing/billing.service'
 import { SendInviteLink } from 'src/engine/core-modules/workspace/dtos/send-invite-link.entity';
 import { EmailService } from 'src/engine/integrations/email/email.service';
 import { EnvironmentService } from 'src/engine/integrations/environment/environment.service';
+import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 
 export class WorkspaceService extends TypeOrmQueryService<Workspace> {
   constructor(
@@ -32,6 +33,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     private readonly billingService: BillingService,
     private readonly environmentService: EnvironmentService,
     private readonly emailService: EmailService,
+    private readonly onboardingService: OnboardingService,
   ) {
     super(workspaceRepository);
   }
@@ -96,6 +98,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
       userId,
       workspaceId,
     });
+    await this.onboardingService.skipInviteTeamOnboardingStep(workspaceId);
     await this.reassignOrRemoveUserDefaultWorkspace(workspaceId, userId);
   }
 
@@ -107,6 +110,7 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
     if (!workspace?.inviteHash) {
       return { success: false };
     }
+
     const frontBaseURL = this.environmentService.get('FRONT_BASE_URL');
     const inviteLink = `${frontBaseURL}/invite/${workspace.inviteHash}`;
 
@@ -135,6 +139,8 @@ export class WorkspaceService extends TypeOrmQueryService<Workspace> {
         html,
       });
     }
+
+    await this.onboardingService.skipInviteTeamOnboardingStep(workspace.id);
 
     return { success: true };
   }

@@ -55,9 +55,7 @@ type Form = z.infer<typeof validationSchema>;
 
 export const CreateProfile = () => {
   const onboardingStatus = useOnboardingStatus();
-
   const { enqueueSnackBar } = useSnackBar();
-
   const [currentWorkspaceMember, setCurrentWorkspaceMember] = useRecoilState(
     currentWorkspaceMemberState,
   );
@@ -145,7 +143,7 @@ export const CreateProfile = () => {
 
   return (
     <>
-      <Title withMarginTop={false}>Create profile</Title>
+      <Title noMarginTop>Create profile</Title>
       <SubTitle>How you'll be identified on the app.</SubTitle>
       <StyledContentContainer>
         <StyledSectionContainer>
