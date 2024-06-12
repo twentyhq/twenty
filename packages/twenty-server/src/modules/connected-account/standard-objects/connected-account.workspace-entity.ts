@@ -17,6 +17,8 @@ import { WorkspaceField } from 'src/engine/twenty-orm/decorators/workspace-field
 import { WorkspaceRelation } from 'src/engine/twenty-orm/decorators/workspace-relation.decorator';
 import { WorkspaceIsNullable } from 'src/engine/twenty-orm/decorators/workspace-is-nullable.decorator';
 import { MessageChannelWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { FeatureFlagKeys } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
+import { WorkspaceGate } from 'src/engine/twenty-orm/decorators/workspace-gate.decorator';
 
 export enum ConnectedAccountProvider {
   GOOGLE = 'google',
@@ -87,6 +89,18 @@ export class ConnectedAccountWorkspaceEntity extends BaseWorkspaceEntity {
   })
   @WorkspaceIsNullable()
   authFailedAt: Date;
+
+  @WorkspaceGate({
+    featureFlag: FeatureFlagKeys.IsProfileEmailsReadEnabled,
+  })
+  @WorkspaceField({
+    standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.emailAliases,
+    type: FieldMetadataType.TEXT,
+    label: 'Email Aliases',
+    description: 'Email Aliases',
+    icon: 'IconMail',
+  })
+  emailAliases: string;
 
   @WorkspaceRelation({
     standardId: CONNECTED_ACCOUNT_STANDARD_FIELD_IDS.accountOwner,
