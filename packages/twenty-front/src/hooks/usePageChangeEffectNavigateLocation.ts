@@ -28,6 +28,10 @@ export const usePageChangeEffectNavigateLocation = () => {
     isMatchingLocation(AppPath.PlanRequired) ||
     isMatchingLocation(AppPath.PlanRequiredSuccess);
 
+  if (isMatchingOpenRoute) {
+    return;
+  }
+
   if (
     onboardingStatus === OnboardingStatus.OngoingUserCreation &&
     !isMatchingOngoingUserCreationRoute

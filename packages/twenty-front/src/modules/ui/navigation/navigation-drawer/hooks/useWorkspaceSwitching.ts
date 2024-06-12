@@ -4,6 +4,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { tokenPairState } from '@/auth/states/tokenPairState';
 import { AppPath } from '@/types/AppPath';
 import { useGenerateJwtMutation } from '~/generated/graphql';
+import { sleep } from '~/testing/sleep';
 import { isDefined } from '~/utils/isDefined';
 
 export const useWorkspaceSwitching = () => {
@@ -29,6 +30,7 @@ export const useWorkspaceSwitching = () => {
 
     const { tokens } = jwt.data.generateJWT;
     setTokenPair(tokens);
+    await sleep(200);
     window.location.href = AppPath.Index;
   };
 
