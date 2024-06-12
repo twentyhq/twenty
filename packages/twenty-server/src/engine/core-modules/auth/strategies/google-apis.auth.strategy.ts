@@ -15,7 +15,7 @@ export type GoogleAPIsRequest = Omit<
   user: {
     firstName?: string | null;
     lastName?: string | null;
-    email: string;
+    emails: { value: string }[];
     picture: string | null;
     workspaceInviteHash?: string;
     accessToken: string;
@@ -52,10 +52,6 @@ export class GoogleAPIsStrategy extends PassportStrategy(
       scopeConfig?.isCalendarEnabled
     ) {
       scope.push('https://www.googleapis.com/auth/calendar.events');
-    }
-
-    if (scopeConfig?.isProfileEmailsReadEnabled) {
-      scope.push('https://www.googleapis.com/auth/profile.emails.read');
     }
 
     super({
@@ -98,7 +94,7 @@ export class GoogleAPIsStrategy extends PassportStrategy(
         : undefined;
 
     const user: GoogleAPIsRequest['user'] = {
-      email: emails[0].value,
+      emails,
       firstName: name.givenName,
       lastName: name.familyName,
       picture: photos?.[0]?.value,

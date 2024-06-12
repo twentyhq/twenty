@@ -47,7 +47,7 @@ export class GoogleAPIsAuthController {
     const { user } = req;
 
     const {
-      email,
+      emails,
       accessToken,
       refreshToken,
       transientToken,
@@ -71,8 +71,10 @@ export class GoogleAPIsAuthController {
       throw new Error('Workspace not found');
     }
 
+    const handle = emails[0].value;
+
     await this.googleAPIsService.refreshGoogleRefreshToken({
-      handle: email,
+      handle,
       workspaceMemberId: workspaceMemberId,
       workspaceId: workspaceId,
       accessToken,
