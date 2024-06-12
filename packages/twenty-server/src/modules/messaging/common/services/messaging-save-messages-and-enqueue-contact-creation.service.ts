@@ -32,7 +32,7 @@ import { MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/
 export class MessagingSaveMessagesAndEnqueueContactCreationService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
-    @InjectMessageQueue(MessageQueue.messagingQueue)
+    @InjectMessageQueue(MessageQueue.contactCreationQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly messageService: MessagingMessageService,
     private readonly messageParticipantService: MessagingMessageParticipantService,

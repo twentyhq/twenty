@@ -14,7 +14,7 @@ export type CreateCompanyAndContactJobData = {
   }[];
 };
 
-@Processor(MessageQueue.messagingQueue)
+@Processor(MessageQueue.contactCreationQueue)
 export class CreateCompanyAndContactJob {
   constructor(
     private readonly createCompanyAndContactService: CreateCompanyAndContactService,
