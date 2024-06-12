@@ -19,7 +19,7 @@ const StyledEventFieldDiffContainer = styled.div`
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
   height: 24px;
-  width: 250px;
+  width: 380px;
 `;
 
 export const EventFieldDiff = ({
