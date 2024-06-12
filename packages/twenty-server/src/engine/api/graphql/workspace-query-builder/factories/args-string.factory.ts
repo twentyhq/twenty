@@ -8,7 +8,7 @@ import { ArgsAliasFactory } from './args-alias.factory';
 
 @Injectable()
 export class ArgsStringFactory {
-  constructor(private readonly argsAliasFactory: ArgsAliasFactory) {}
+  constructor(private readonly argsAliasFactory: ArgsAliasFactory) { }
 
   create(
     initialArgs: Record<string, any> | undefined,
@@ -63,10 +63,9 @@ export class ArgsStringFactory {
   private buildStringifiedOrderBy(
     keyValuePairArray: Array<Record<string, any>>,
   ): string {
-    // check if we dont have an empty object in array [{}]
     if (
       keyValuePairArray.length !== 0 &&
-      Object.keys(keyValuePairArray[0].length === 0)
+      Object.keys(keyValuePairArray[0]).length === 0
     ) {
       return `[]`;
     }
