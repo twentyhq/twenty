@@ -87,6 +87,7 @@ export const getRecordChipGeneratorPerObjectPerField = (
           return [
             fieldMetadataItem.name,
             (record: ObjectRecord) => ({
+              recordId: record.id,
               name: getLabelIdentifierFieldValue(
                 record,
                 labelIdentifierFieldMetadataItem,
