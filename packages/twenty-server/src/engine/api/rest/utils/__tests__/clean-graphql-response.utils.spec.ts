@@ -12,7 +12,9 @@ describe('cleanGraphQLResponse', () => {
       },
     };
     const expectedResult = {
-      companies: [{ id: 'id', createdAt: '2023-01-01' }],
+      data: {
+        companies: [{ id: 'id', createdAt: '2023-01-01' }],
+      },
     };
 
     expect(cleanGraphQLResponse(data)).toEqual(expectedResult);
@@ -34,20 +36,27 @@ describe('cleanGraphQLResponse', () => {
       },
     };
     const expectedResult = {
-      companies: [
-        {
-          id: 'id',
-          createdAt: '2023-01-01',
-          people: [{ id: 'id1' }, { id: 'id2' }],
-        },
-      ],
+      data: {
+        companies: [
+          {
+            id: 'id',
+            createdAt: '2023-01-01',
+            people: [{ id: 'id1' }, { id: 'id2' }],
+          },
+        ],
+      },
     };
 
     expect(cleanGraphQLResponse(data)).toEqual(expectedResult);
   });
   it('should not format when no list returned', () => {
     const data = { company: { id: 'id' } };
+    const expectedResult = {
+      data: {
+        company: { id: 'id' },
+      },
+    };
 
-    expect(cleanGraphQLResponse(data)).toEqual(data);
+    expect(cleanGraphQLResponse(data)).toEqual(expectedResult);
   });
 });
