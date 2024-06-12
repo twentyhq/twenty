@@ -36,6 +36,7 @@ const testCases = [
   { loc: AppPath.Verify, status: OnboardingStatus.OngoingWorkspaceActivation, res: AppPath.CreateWorkspace },
   { loc: AppPath.Verify, status: OnboardingStatus.OngoingProfileCreation, res: AppPath.CreateProfile },
   { loc: AppPath.Verify, status: OnboardingStatus.OngoingSyncEmail, res: AppPath.SyncEmails },
+  { loc: AppPath.Verify, status: OnboardingStatus.OngoingInviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.Verify, status: OnboardingStatus.Completed, res: defaultHomePagePath },
   { loc: AppPath.Verify, status: OnboardingStatus.CompletedWithoutSubscription, res: defaultHomePagePath },
 
@@ -47,6 +48,7 @@ const testCases = [
   { loc: AppPath.SignInUp, status: OnboardingStatus.OngoingWorkspaceActivation, res: AppPath.CreateWorkspace },
   { loc: AppPath.SignInUp, status: OnboardingStatus.OngoingProfileCreation, res: AppPath.CreateProfile },
   { loc: AppPath.SignInUp, status: OnboardingStatus.OngoingSyncEmail, res: AppPath.SyncEmails },
+  { loc: AppPath.SignInUp, status: OnboardingStatus.OngoingInviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.SignInUp, status: OnboardingStatus.Completed, res: defaultHomePagePath },
   { loc: AppPath.SignInUp, status: OnboardingStatus.CompletedWithoutSubscription, res: defaultHomePagePath },
 
@@ -58,6 +60,7 @@ const testCases = [
   { loc: AppPath.Invite, status: OnboardingStatus.OngoingWorkspaceActivation, res: AppPath.CreateWorkspace },
   { loc: AppPath.Invite, status: OnboardingStatus.OngoingProfileCreation, res: AppPath.CreateProfile },
   { loc: AppPath.Invite, status: OnboardingStatus.OngoingSyncEmail, res: AppPath.SyncEmails },
+  { loc: AppPath.Invite, status: OnboardingStatus.OngoingInviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.Invite, status: OnboardingStatus.Completed, res: undefined },
   { loc: AppPath.Invite, status: OnboardingStatus.CompletedWithoutSubscription, res: undefined },
 
@@ -69,6 +72,7 @@ const testCases = [
   { loc: AppPath.ResetPassword, status: OnboardingStatus.OngoingWorkspaceActivation, res: AppPath.CreateWorkspace },
   { loc: AppPath.ResetPassword, status: OnboardingStatus.OngoingProfileCreation, res: AppPath.CreateProfile },
   { loc: AppPath.ResetPassword, status: OnboardingStatus.OngoingSyncEmail, res: AppPath.SyncEmails },
+  { loc: AppPath.ResetPassword, status: OnboardingStatus.OngoingInviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.ResetPassword, status: OnboardingStatus.Completed, res: undefined },
   { loc: AppPath.ResetPassword, status: OnboardingStatus.CompletedWithoutSubscription, res: undefined },
 
@@ -80,6 +84,7 @@ const testCases = [
   { loc: AppPath.CreateWorkspace, status: OnboardingStatus.OngoingWorkspaceActivation, res: undefined },
   { loc: AppPath.CreateWorkspace, status: OnboardingStatus.OngoingProfileCreation, res: AppPath.CreateProfile },
   { loc: AppPath.CreateWorkspace, status: OnboardingStatus.OngoingSyncEmail, res: AppPath.SyncEmails },
+  { loc: AppPath.CreateWorkspace, status: OnboardingStatus.OngoingInviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.CreateWorkspace, status: OnboardingStatus.Completed, res: defaultHomePagePath },
   { loc: AppPath.CreateWorkspace, status: OnboardingStatus.CompletedWithoutSubscription, res: defaultHomePagePath },
 
@@ -91,6 +96,7 @@ const testCases = [
   { loc: AppPath.CreateProfile, status: OnboardingStatus.OngoingWorkspaceActivation, res: AppPath.CreateWorkspace },
   { loc: AppPath.CreateProfile, status: OnboardingStatus.OngoingProfileCreation, res: undefined },
   { loc: AppPath.CreateProfile, status: OnboardingStatus.OngoingSyncEmail, res: AppPath.SyncEmails },
+  { loc: AppPath.CreateProfile, status: OnboardingStatus.OngoingInviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.CreateProfile, status: OnboardingStatus.Completed, res: defaultHomePagePath },
   { loc: AppPath.CreateProfile, status: OnboardingStatus.CompletedWithoutSubscription, res: defaultHomePagePath },
 
@@ -102,8 +108,21 @@ const testCases = [
   { loc: AppPath.SyncEmails, status: OnboardingStatus.OngoingWorkspaceActivation, res: AppPath.CreateWorkspace },
   { loc: AppPath.SyncEmails, status: OnboardingStatus.OngoingProfileCreation, res: AppPath.CreateProfile },
   { loc: AppPath.SyncEmails, status: OnboardingStatus.OngoingSyncEmail, res: undefined },
+  { loc: AppPath.SyncEmails, status: OnboardingStatus.OngoingInviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.SyncEmails, status: OnboardingStatus.Completed, res: defaultHomePagePath },
   { loc: AppPath.SyncEmails, status: OnboardingStatus.CompletedWithoutSubscription, res: defaultHomePagePath },
+
+  { loc: AppPath.InviteTeam, status: OnboardingStatus.Incomplete, res: AppPath.PlanRequired },
+  { loc: AppPath.InviteTeam, status: OnboardingStatus.Canceled, res: '/settings/billing' },
+  { loc: AppPath.InviteTeam, status: OnboardingStatus.Unpaid, res: '/settings/billing' },
+  { loc: AppPath.InviteTeam, status: OnboardingStatus.PastDue, res: undefined },
+  { loc: AppPath.InviteTeam, status: OnboardingStatus.OngoingUserCreation, res: AppPath.SignInUp },
+  { loc: AppPath.InviteTeam, status: OnboardingStatus.OngoingWorkspaceActivation, res: AppPath.CreateWorkspace },
+  { loc: AppPath.InviteTeam, status: OnboardingStatus.OngoingProfileCreation, res: AppPath.CreateProfile },
+  { loc: AppPath.InviteTeam, status: OnboardingStatus.OngoingSyncEmail, res: AppPath.SyncEmails },
+  { loc: AppPath.InviteTeam, status: OnboardingStatus.OngoingInviteTeam, res: undefined },
+  { loc: AppPath.InviteTeam, status: OnboardingStatus.Completed, res: defaultHomePagePath },
+  { loc: AppPath.InviteTeam, status: OnboardingStatus.CompletedWithoutSubscription, res: defaultHomePagePath },
 
   { loc: AppPath.PlanRequired, status: OnboardingStatus.Incomplete, res: undefined },
   { loc: AppPath.PlanRequired, status: OnboardingStatus.Canceled, res: undefined },
@@ -113,6 +132,7 @@ const testCases = [
   { loc: AppPath.PlanRequired, status: OnboardingStatus.OngoingWorkspaceActivation, res: AppPath.CreateWorkspace },
   { loc: AppPath.PlanRequired, status: OnboardingStatus.OngoingProfileCreation, res: AppPath.CreateProfile },
   { loc: AppPath.PlanRequired, status: OnboardingStatus.OngoingSyncEmail, res: AppPath.SyncEmails },
+  { loc: AppPath.PlanRequired, status: OnboardingStatus.OngoingInviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.PlanRequired, status: OnboardingStatus.Completed, res: defaultHomePagePath },
   { loc: AppPath.PlanRequired, status: OnboardingStatus.CompletedWithoutSubscription, res: undefined },
 
@@ -124,6 +144,7 @@ const testCases = [
   { loc: AppPath.PlanRequiredSuccess, status: OnboardingStatus.OngoingWorkspaceActivation, res: undefined },
   { loc: AppPath.PlanRequiredSuccess, status: OnboardingStatus.OngoingProfileCreation, res: AppPath.CreateProfile },
   { loc: AppPath.PlanRequiredSuccess, status: OnboardingStatus.OngoingSyncEmail, res: AppPath.SyncEmails },
+  { loc: AppPath.PlanRequiredSuccess, status: OnboardingStatus.OngoingInviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.PlanRequiredSuccess, status: OnboardingStatus.Completed, res: defaultHomePagePath },
   { loc: AppPath.PlanRequiredSuccess, status: OnboardingStatus.CompletedWithoutSubscription, res: defaultHomePagePath },
 
@@ -135,6 +156,7 @@ const testCases = [
   { loc: AppPath.Index, status: OnboardingStatus.OngoingWorkspaceActivation, res: AppPath.CreateWorkspace },
   { loc: AppPath.Index, status: OnboardingStatus.OngoingProfileCreation, res: AppPath.CreateProfile },
   { loc: AppPath.Index, status: OnboardingStatus.OngoingSyncEmail, res: AppPath.SyncEmails },
+  { loc: AppPath.Index, status: OnboardingStatus.OngoingInviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.Index, status: OnboardingStatus.Completed, res: defaultHomePagePath },
   { loc: AppPath.Index, status: OnboardingStatus.CompletedWithoutSubscription, res: defaultHomePagePath },
 
@@ -146,6 +168,7 @@ const testCases = [
   { loc: AppPath.TasksPage, status: OnboardingStatus.OngoingWorkspaceActivation, res: AppPath.CreateWorkspace },
   { loc: AppPath.TasksPage, status: OnboardingStatus.OngoingProfileCreation, res: AppPath.CreateProfile },
   { loc: AppPath.TasksPage, status: OnboardingStatus.OngoingSyncEmail, res: AppPath.SyncEmails },
+  { loc: AppPath.TasksPage, status: OnboardingStatus.OngoingInviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.TasksPage, status: OnboardingStatus.Completed, res: undefined },
   { loc: AppPath.TasksPage, status: OnboardingStatus.CompletedWithoutSubscription, res: undefined },
 
@@ -157,6 +180,7 @@ const testCases = [
   { loc: AppPath.OpportunitiesPage, status: OnboardingStatus.OngoingWorkspaceActivation, res: AppPath.CreateWorkspace },
   { loc: AppPath.OpportunitiesPage, status: OnboardingStatus.OngoingProfileCreation, res: AppPath.CreateProfile },
   { loc: AppPath.OpportunitiesPage, status: OnboardingStatus.OngoingSyncEmail, res: AppPath.SyncEmails },
+  { loc: AppPath.OpportunitiesPage, status: OnboardingStatus.OngoingInviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.OpportunitiesPage, status: OnboardingStatus.Completed, res: undefined },
   { loc: AppPath.OpportunitiesPage, status: OnboardingStatus.CompletedWithoutSubscription, res: undefined },
 
@@ -168,6 +192,7 @@ const testCases = [
   { loc: AppPath.RecordIndexPage, status: OnboardingStatus.OngoingWorkspaceActivation, res: AppPath.CreateWorkspace },
   { loc: AppPath.RecordIndexPage, status: OnboardingStatus.OngoingProfileCreation, res: AppPath.CreateProfile },
   { loc: AppPath.RecordIndexPage, status: OnboardingStatus.OngoingSyncEmail, res: AppPath.SyncEmails },
+  { loc: AppPath.RecordIndexPage, status: OnboardingStatus.OngoingInviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.RecordIndexPage, status: OnboardingStatus.Completed, res: undefined },
   { loc: AppPath.RecordIndexPage, status: OnboardingStatus.CompletedWithoutSubscription, res: undefined },
 
@@ -179,6 +204,7 @@ const testCases = [
   { loc: AppPath.RecordShowPage, status: OnboardingStatus.OngoingWorkspaceActivation, res: AppPath.CreateWorkspace },
   { loc: AppPath.RecordShowPage, status: OnboardingStatus.OngoingProfileCreation, res: AppPath.CreateProfile },
   { loc: AppPath.RecordShowPage, status: OnboardingStatus.OngoingSyncEmail, res: AppPath.SyncEmails },
+  { loc: AppPath.RecordShowPage, status: OnboardingStatus.OngoingInviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.RecordShowPage, status: OnboardingStatus.Completed, res: undefined },
   { loc: AppPath.RecordShowPage, status: OnboardingStatus.CompletedWithoutSubscription, res: undefined },
 
@@ -190,6 +216,7 @@ const testCases = [
   { loc: AppPath.SettingsCatchAll, status: OnboardingStatus.OngoingWorkspaceActivation, res: AppPath.CreateWorkspace },
   { loc: AppPath.SettingsCatchAll, status: OnboardingStatus.OngoingProfileCreation, res: AppPath.CreateProfile },
   { loc: AppPath.SettingsCatchAll, status: OnboardingStatus.OngoingSyncEmail, res: AppPath.SyncEmails },
+  { loc: AppPath.SettingsCatchAll, status: OnboardingStatus.OngoingInviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.SettingsCatchAll, status: OnboardingStatus.Completed, res: undefined },
   { loc: AppPath.SettingsCatchAll, status: OnboardingStatus.CompletedWithoutSubscription, res: undefined },
 
@@ -201,6 +228,7 @@ const testCases = [
   { loc: AppPath.DevelopersCatchAll, status: OnboardingStatus.OngoingWorkspaceActivation, res: AppPath.CreateWorkspace },
   { loc: AppPath.DevelopersCatchAll, status: OnboardingStatus.OngoingProfileCreation, res: AppPath.CreateProfile },
   { loc: AppPath.DevelopersCatchAll, status: OnboardingStatus.OngoingSyncEmail, res: AppPath.SyncEmails },
+  { loc: AppPath.DevelopersCatchAll, status: OnboardingStatus.OngoingInviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.DevelopersCatchAll, status: OnboardingStatus.Completed, res: undefined },
   { loc: AppPath.DevelopersCatchAll, status: OnboardingStatus.CompletedWithoutSubscription, res: undefined },
 
@@ -212,6 +240,7 @@ const testCases = [
   { loc: AppPath.Impersonate, status: OnboardingStatus.OngoingWorkspaceActivation, res: AppPath.CreateWorkspace },
   { loc: AppPath.Impersonate, status: OnboardingStatus.OngoingProfileCreation, res: AppPath.CreateProfile },
   { loc: AppPath.Impersonate, status: OnboardingStatus.OngoingSyncEmail, res: AppPath.SyncEmails },
+  { loc: AppPath.Impersonate, status: OnboardingStatus.OngoingInviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.Impersonate, status: OnboardingStatus.Completed, res: undefined },
   { loc: AppPath.Impersonate, status: OnboardingStatus.CompletedWithoutSubscription, res: undefined },
 
@@ -223,6 +252,7 @@ const testCases = [
   { loc: AppPath.Authorize, status: OnboardingStatus.OngoingWorkspaceActivation, res: AppPath.CreateWorkspace },
   { loc: AppPath.Authorize, status: OnboardingStatus.OngoingProfileCreation, res: AppPath.CreateProfile },
   { loc: AppPath.Authorize, status: OnboardingStatus.OngoingSyncEmail, res: AppPath.SyncEmails },
+  { loc: AppPath.Authorize, status: OnboardingStatus.OngoingInviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.Authorize, status: OnboardingStatus.Completed, res: undefined },
   { loc: AppPath.Authorize, status: OnboardingStatus.CompletedWithoutSubscription, res: undefined },
 
@@ -234,6 +264,7 @@ const testCases = [
   { loc: AppPath.NotFoundWildcard, status: OnboardingStatus.OngoingWorkspaceActivation, res: AppPath.CreateWorkspace },
   { loc: AppPath.NotFoundWildcard, status: OnboardingStatus.OngoingProfileCreation, res: AppPath.CreateProfile },
   { loc: AppPath.NotFoundWildcard, status: OnboardingStatus.OngoingSyncEmail, res: AppPath.SyncEmails },
+  { loc: AppPath.NotFoundWildcard, status: OnboardingStatus.OngoingInviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.NotFoundWildcard, status: OnboardingStatus.Completed, res: undefined },
   { loc: AppPath.NotFoundWildcard, status: OnboardingStatus.CompletedWithoutSubscription, res: undefined },
 
@@ -245,6 +276,7 @@ const testCases = [
   { loc: AppPath.NotFound, status: OnboardingStatus.OngoingWorkspaceActivation, res: AppPath.CreateWorkspace },
   { loc: AppPath.NotFound, status: OnboardingStatus.OngoingProfileCreation, res: AppPath.CreateProfile },
   { loc: AppPath.NotFound, status: OnboardingStatus.OngoingSyncEmail, res: AppPath.SyncEmails },
+  { loc: AppPath.NotFound, status: OnboardingStatus.OngoingInviteTeam, res: AppPath.InviteTeam },
   { loc: AppPath.NotFound, status: OnboardingStatus.Completed, res: undefined },
   { loc: AppPath.NotFound, status: OnboardingStatus.CompletedWithoutSubscription, res: undefined },
 ];

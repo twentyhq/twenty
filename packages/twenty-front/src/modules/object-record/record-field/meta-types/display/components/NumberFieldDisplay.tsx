@@ -1,9 +1,8 @@
+import { useNumberFieldDisplay } from '@/object-record/record-field/meta-types/hooks/useNumberFieldDisplay';
 import { NumberDisplay } from '@/ui/field/display/components/NumberDisplay';
 
-import { useNumberField } from '../../hooks/useNumberField';
-
 export const NumberFieldDisplay = () => {
-  const { fieldValue } = useNumberField();
+  const { fieldValue } = useNumberFieldDisplay();
 
   return <NumberDisplay value={fieldValue} />;
 };

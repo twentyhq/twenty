@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { useRecoilCallback } from 'recoil';
 
-import { FetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
+import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
 import { EmailLoader } from '@/activities/emails/components/EmailLoader';
 import { EmailThreadHeader } from '@/activities/emails/components/EmailThreadHeader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
@@ -43,11 +43,14 @@ export const RightDrawerEmailThread = () => {
 
   useRegisterClickOutsideListenerCallback({
     callbackId:
-      'EmailThreadClickOutsideCallBack-' + (thread.id ?? 'no-thread-id'),
+      'EmailThreadClickOutsideCallBack-' + (thread?.id ?? 'no-thread-id'),
     callbackFunction: useRecoilCallback(
       ({ set }) =>
         () => {
-          set(emailThreadIdWhenEmailThreadWasClosedState, thread.id);
+          set(
+            emailThreadIdWhenEmailThreadWasClosedState,
+            thread?.id ?? 'no-thread-id',
+          );
         },
       [thread],
     ),
@@ -71,14 +74,14 @@ export const RightDrawerEmailThread = () => {
 
   return (
     <StyledContainer>
-      <EmailThreadHeader
-        subject={thread.subject}
-        lastMessageSentAt={thread.lastMessageReceivedAt}
-      />
       {loading ? (
         <EmailLoader loadingText="Loading thread" />
       ) : (
         <>
+          <EmailThreadHeader
+            subject={thread.subject}
+            lastMessageSentAt={lastMessage.receivedAt}
+          />
           {firstMessages.map((message) => (
             <EmailThreadMessage
               key={message.id}
@@ -95,7 +98,7 @@ export const RightDrawerEmailThread = () => {
             sentAt={lastMessage.receivedAt}
             isExpanded
           />
-          <FetchMoreLoader
+          <CustomResolverFetchMoreLoader
             loading={loading}
             onLastRowVisible={fetchMoreMessages}
           />

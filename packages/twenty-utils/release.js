@@ -14,7 +14,6 @@ if (!semver.valid(version)) {
 
 const frontPackageJson = path.join(__dirname, '../twenty-front/package.json');
 const serverPackageJson = path.join(__dirname, '../twenty-server/package.json');
-const docsPackageJson = path.join(__dirname, '../twenty-docs/package.json');
 const emailPackageJson = path.join(__dirname, '../twenty-emails/package.json');
 
 // Update package.json

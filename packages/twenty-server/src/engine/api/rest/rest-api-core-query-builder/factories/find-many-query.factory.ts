@@ -41,6 +41,7 @@ export class FindManyQueryFactory {
             startCursor
             endCursor
           }
+          totalCount
         }
       }
     `;
