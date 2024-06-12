@@ -29,8 +29,6 @@ const StyledTabListContainer = styled.div`
   align-items: end;
   display: flex;
   height: 40px;
-  margin-left: ${({ theme }) => `-${theme.spacing(2)}`};
-  margin-left: 8px;
 `;
 
 export const Tasks = () => {
