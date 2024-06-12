@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { InjectWorkspaceRepository } from 'src/engine/twenty-orm/decorators/inject-workspace-repository.decorator';
+import { ObjectRecord } from 'src/engine/workspace-manager/workspace-sync-metadata/types/object-record';
 import { GoogleEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/google/google-email-alias-manager.service';
 import { ConnectedAccountRepository } from 'src/modules/connected-account/repositories/connected-account.repository';
 import { ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
@@ -15,27 +16,29 @@ export class EmailAliasManagerService {
     private readonly googleEmailAliasManagerService: GoogleEmailAliasManagerService,
   ) {}
 
-  public async refreshAliases(connectedAccountId: string, workspaceId: string) {
-    this.logger.log(
-      `Refreshing email aliases for connected account ${connectedAccountId} in workspace ${workspaceId}`,
-    );
-
-    const connectedAccount =
-      await this.connectedAccountRepository.getByIdOrFail(
-        connectedAccountId,
-        workspaceId,
-      );
+  public async refreshEmailAliases(
+    connectedAccount: ObjectRecord<ConnectedAccountWorkspaceEntity>,
+    workspaceId: string,
+  ) {
+    let emailAliases: string[];
 
     switch (connectedAccount.provider) {
       case 'google':
-        await this.googleEmailAliasManagerService.refreshAliases(
-          connectedAccount,
-        );
+        emailAliases =
+          await this.googleEmailAliasManagerService.getEmailAliases(
+            connectedAccount,
+          );
         break;
       default:
         throw new Error(
           `Email alias manager for provider ${connectedAccount.provider} is not implemented`,
         );
     }
+
+    await this.connectedAccountRepository.updateEmailAliases(
+      emailAliases,
+      connectedAccount.id,
+      workspaceId,
+    );
   }
 }
