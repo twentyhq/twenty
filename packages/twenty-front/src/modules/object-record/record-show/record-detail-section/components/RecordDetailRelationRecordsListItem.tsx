@@ -126,7 +126,8 @@ export const RecordDetailRelationRecordsListItem = ({
     )
     .sort();
 
-  const dropdownScopeId = `record-field-card-menu-${relationRecord.id}`;
+  const dropdownScopeId = `record-field-card-menu-${relationFieldMetadataId}-${relationRecord.id}`;
+  console.log(dropdownScopeId);
 
   const { closeDropdown, isDropdownOpen } = useDropdown(dropdownScopeId);
 
