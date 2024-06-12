@@ -21,9 +21,6 @@ class AuthProviders {
 class Telemetry {
   @Field(() => Boolean)
   enabled: boolean;
-
-  @Field(() => Boolean)
-  anonymizationEnabled: boolean;
 }
 
 @ObjectType()

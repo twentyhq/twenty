@@ -86,11 +86,6 @@ export class EnvironmentVariables {
   @IsBoolean()
   TELEMETRY_ENABLED = true;
 
-  @CastToBoolean()
-  @IsOptional()
-  @IsBoolean()
-  TELEMETRY_ANONYMIZATION_ENABLED = true;
-
   @CastToPositiveNumber()
   @IsNumber()
   @IsOptional()

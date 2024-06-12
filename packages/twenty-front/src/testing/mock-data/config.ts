@@ -14,7 +14,6 @@ export const mockedClientConfig: ClientConfig = {
   },
   telemetry: {
     enabled: false,
-    anonymizationEnabled: true,
     __typename: 'Telemetry',
   },
   support: {

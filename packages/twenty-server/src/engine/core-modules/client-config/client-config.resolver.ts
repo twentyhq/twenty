@@ -19,9 +19,6 @@ export class ClientConfigResolver {
       },
       telemetry: {
         enabled: this.environmentService.get('TELEMETRY_ENABLED'),
-        anonymizationEnabled: this.environmentService.get(
-          'TELEMETRY_ANONYMIZATION_ENABLED',
-        ),
       },
       billing: {
         isBillingEnabled: this.environmentService.get('IS_BILLING_ENABLED'),

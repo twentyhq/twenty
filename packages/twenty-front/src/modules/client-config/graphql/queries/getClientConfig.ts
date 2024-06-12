@@ -18,7 +18,6 @@ export const GET_CLIENT_CONFIG = gql`
       debugMode
       telemetry {
         enabled
-        anonymizationEnabled
       }
       support {
         supportDriver
