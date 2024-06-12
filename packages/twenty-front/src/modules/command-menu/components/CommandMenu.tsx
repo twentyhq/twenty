@@ -22,7 +22,7 @@ import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useLis
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { useGetTextToSqlLazyQuery } from '~/generated/graphql';
+import { useGetAskAiLazyQuery } from '~/generated/graphql';
 import { getLogoUrlFromDomainName } from '~/utils';
 import { generateILikeFiltersForCompositeFields } from '~/utils/array/generateILikeFiltersForCompositeFields';
 import { isDefined } from '~/utils/isDefined';
@@ -261,11 +261,11 @@ export const CommandMenu = () => {
     label: 'Ask AI',
     type: CommandType.Navigate,
     onCommandClick: async () => {
-      const queryResult = await getTextToSql({
+      const queryResult = await getAskAI({
         variables: { text: commandMenuSearch },
       });
       console.log('queryResult', queryResult);
-      alert(JSON.stringify(queryResult.data?.getTextToSQL, undefined, 2));
+      alert(JSON.stringify(queryResult.data?.getAskAI, undefined, 2));
       // TODO: Call openActivityRightDrawer
     },
   };
@@ -279,7 +279,7 @@ export const CommandMenu = () => {
     .concat(companies.map((company) => company.id))
     .concat(activities.map((activity) => activity.id));
 
-  const [getTextToSql, { data, loading, error }] = useGetTextToSqlLazyQuery({
+  const [getAskAI, { data, loading, error }] = useGetAskAiLazyQuery({
     variables: { text: 'How many employees does Stripe have?' },
   });
 

@@ -3,8 +3,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { UserModule } from 'src/engine/core-modules/user/user.module';
-import { TextToSQLResolver } from 'src/engine/core-modules/text-to-sql/text-to-sql.resolver';
-import { TextToSQLService } from 'src/engine/core-modules/text-to-sql/text-to-sql.service';
+import { AskAIResolver } from 'src/engine/core-modules/ask-ai/ask-ai.resolver';
+import { AskAIService } from 'src/engine/core-modules/ask-ai/ask-ai.service';
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 @Module({
   imports: [
@@ -13,6 +13,6 @@ import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-
     TypeOrmModule.forFeature([FeatureFlagEntity], 'core'),
   ],
   exports: [],
-  providers: [TextToSQLResolver, TextToSQLService],
+  providers: [AskAIResolver, AskAIService],
 })
-export class TextToSQLModule {}
+export class AskAIModule {}

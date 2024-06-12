@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
-@ObjectType('TextToSQLQueryResult')
-export class TextToSQLQueryResult {
+@ObjectType('AskAIQueryResult')
+export class AskAIQueryResult {
   @Field(() => String)
   sqlQuery: string;
 

@@ -52,6 +52,12 @@ export type AppTokenEdge = {
   node: AppToken;
 };
 
+export type AskAiQueryResult = {
+  __typename?: 'AskAIQueryResult';
+  sqlQuery: Scalars['String'];
+  sqlQueryResult: Scalars['String'];
+};
+
 export type AuthProviders = {
   __typename?: 'AuthProviders';
   google: Scalars['Boolean'];
@@ -474,8 +480,8 @@ export type Query = {
   currentUser: User;
   currentWorkspace: Workspace;
   findWorkspaceFromInviteHash: Workspace;
+  getAskAI: AskAiQueryResult;
   getProductPrices: ProductPricesEntity;
-  getTextToSQL: TextToSqlQueryResult;
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
   getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
@@ -507,13 +513,13 @@ export type QueryFindWorkspaceFromInviteHashArgs = {
 };
 
 
-export type QueryGetProductPricesArgs = {
-  product: Scalars['String'];
+export type QueryGetAskAiArgs = {
+  text: Scalars['String'];
 };
 
 
-export type QueryGetTextToSqlArgs = {
-  text: Scalars['String'];
+export type QueryGetProductPricesArgs = {
+  product: Scalars['String'];
 };
 
 
@@ -645,12 +651,6 @@ export type Telemetry = {
   __typename?: 'Telemetry';
   anonymizationEnabled: Scalars['Boolean'];
   enabled: Scalars['Boolean'];
-};
-
-export type TextToSqlQueryResult = {
-  __typename?: 'TextToSQLQueryResult';
-  sqlQuery: Scalars['String'];
-  sqlQueryResult: Scalars['String'];
 };
 
 export type TimelineCalendarEvent = {
@@ -1202,12 +1202,12 @@ export type GetClientConfigQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type GetClientConfigQuery = { __typename?: 'Query', clientConfig: { __typename?: 'ClientConfig', signInPrefilled: boolean, signUpDisabled: boolean, debugMode: boolean, chromeExtensionId?: string | null, authProviders: { __typename?: 'AuthProviders', google: boolean, password: boolean, microsoft: boolean }, billing: { __typename?: 'Billing', isBillingEnabled: boolean, billingUrl?: string | null, billingFreeTrialDurationInDays?: number | null }, telemetry: { __typename?: 'Telemetry', enabled: boolean, anonymizationEnabled: boolean }, support: { __typename?: 'Support', supportDriver: string, supportFrontChatId?: string | null }, sentry: { __typename?: 'Sentry', dsn?: string | null, environment?: string | null, release?: string | null }, captcha: { __typename?: 'Captcha', provider?: CaptchaDriverType | null, siteKey?: string | null } } };
 
-export type GetTextToSqlQueryVariables = Exact<{
+export type GetAskAiQueryVariables = Exact<{
   text: Scalars['String'];
 }>;
 
 
-export type GetTextToSqlQuery = { __typename?: 'Query', getTextToSQL: { __typename?: 'TextToSQLQueryResult', sqlQuery: string, sqlQueryResult: string } };
+export type GetAskAiQuery = { __typename?: 'Query', getAskAI: { __typename?: 'AskAIQueryResult', sqlQuery: string, sqlQueryResult: string } };
 
 export type UserQueryFragmentFragment = { __typename?: 'User', id: any, firstName: string, lastName: string, email: string, canImpersonate: boolean, supportUserHash?: string | null, workspaceMember?: { __typename?: 'WorkspaceMember', id: any, colorScheme: string, avatarUrl?: string | null, locale: string, name: { __typename?: 'FullName', firstName: string, lastName: string } } | null, defaultWorkspace: { __typename?: 'Workspace', id: any, displayName?: string | null, logo?: string | null, domainName?: string | null, inviteHash?: string | null, allowImpersonation: boolean, subscriptionStatus: string, activationStatus: string, currentCacheVersion?: string | null, featureFlags?: Array<{ __typename?: 'FeatureFlag', id: any, key: string, value: boolean, workspaceId: string }> | null, currentBillingSubscription?: { __typename?: 'BillingSubscription', id: any, status: string, interval?: string | null } | null }, workspaces: Array<{ __typename?: 'UserWorkspace', workspace?: { __typename?: 'Workspace', id: any, logo?: string | null, displayName?: string | null, domainName?: string | null } | null }> };
 
@@ -2359,9 +2359,9 @@ export function useGetClientConfigLazyQuery(baseOptions?: Apollo.LazyQueryHookOp
 export type GetClientConfigQueryHookResult = ReturnType<typeof useGetClientConfigQuery>;
 export type GetClientConfigLazyQueryHookResult = ReturnType<typeof useGetClientConfigLazyQuery>;
 export type GetClientConfigQueryResult = Apollo.QueryResult<GetClientConfigQuery, GetClientConfigQueryVariables>;
-export const GetTextToSqlDocument = gql`
-    query GetTextToSQL($text: String!) {
-  getTextToSQL(text: $text) {
+export const GetAskAiDocument = gql`
+    query GetAskAI($text: String!) {
+  getAskAI(text: $text) {
     sqlQuery
     sqlQueryResult
   }
@@ -2369,32 +2369,32 @@ export const GetTextToSqlDocument = gql`
     `;
 
 /**
- * __useGetTextToSqlQuery__
+ * __useGetAskAiQuery__
  *
- * To run a query within a React component, call `useGetTextToSqlQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetTextToSqlQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * To run a query within a React component, call `useGetAskAiQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAskAiQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
  *
  * @example
- * const { data, loading, error } = useGetTextToSqlQuery({
+ * const { data, loading, error } = useGetAskAiQuery({
  *   variables: {
  *      text: // value for 'text'
  *   },
  * });
  */
-export function useGetTextToSqlQuery(baseOptions: Apollo.QueryHookOptions<GetTextToSqlQuery, GetTextToSqlQueryVariables>) {
+export function useGetAskAiQuery(baseOptions: Apollo.QueryHookOptions<GetAskAiQuery, GetAskAiQueryVariables>) {
         const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<GetTextToSqlQuery, GetTextToSqlQueryVariables>(GetTextToSqlDocument, options);
+        return Apollo.useQuery<GetAskAiQuery, GetAskAiQueryVariables>(GetAskAiDocument, options);
       }
-export function useGetTextToSqlLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetTextToSqlQuery, GetTextToSqlQueryVariables>) {
+export function useGetAskAiLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetAskAiQuery, GetAskAiQueryVariables>) {
           const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<GetTextToSqlQuery, GetTextToSqlQueryVariables>(GetTextToSqlDocument, options);
+          return Apollo.useLazyQuery<GetAskAiQuery, GetAskAiQueryVariables>(GetAskAiDocument, options);
         }
-export type GetTextToSqlQueryHookResult = ReturnType<typeof useGetTextToSqlQuery>;
-export type GetTextToSqlLazyQueryHookResult = ReturnType<typeof useGetTextToSqlLazyQuery>;
-export type GetTextToSqlQueryResult = Apollo.QueryResult<GetTextToSqlQuery, GetTextToSqlQueryVariables>;
+export type GetAskAiQueryHookResult = ReturnType<typeof useGetAskAiQuery>;
+export type GetAskAiLazyQueryHookResult = ReturnType<typeof useGetAskAiLazyQuery>;
+export type GetAskAiQueryResult = Apollo.QueryResult<GetAskAiQuery, GetAskAiQueryVariables>;
 export const DeleteUserAccountDocument = gql`
     mutation DeleteUserAccount {
   deleteUser {

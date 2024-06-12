@@ -7,32 +7,32 @@ import { Repository } from 'typeorm';
 import { JwtAuthGuard } from 'src/engine/guards/jwt.auth.guard';
 import { Workspace } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
-import { TextToSQLService } from 'src/engine/core-modules/text-to-sql/text-to-sql.service';
-import { TextToSQLQueryResult } from 'src/engine/core-modules/text-to-sql/dtos/text-to-sql-query-result.dto';
+import { AskAIService } from 'src/engine/core-modules/ask-ai/ask-ai.service';
+import { AskAIQueryResult } from 'src/engine/core-modules/ask-ai/dtos/ask-ai-query-result.dto';
 import {
   FeatureFlagEntity,
   FeatureFlagKeys,
 } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 
 @ArgsType()
-class GetTextToSQLArgs {
+class GetAskAIArgs {
   @Field(() => String)
   text: string;
 }
 
 @UseGuards(JwtAuthGuard)
-@Resolver(() => TextToSQLQueryResult)
-export class TextToSQLResolver {
+@Resolver(() => AskAIQueryResult)
+export class AskAIResolver {
   constructor(
-    private readonly textToSQLService: TextToSQLService,
+    private readonly askAIService: AskAIService,
     @InjectRepository(FeatureFlagEntity, 'core')
     private readonly featureFlagRepository: Repository<FeatureFlagEntity>,
   ) {}
 
-  @Query(() => TextToSQLQueryResult)
-  async getTextToSQL(
+  @Query(() => AskAIQueryResult)
+  async getAskAI(
     @AuthWorkspace() { id: workspaceId }: Workspace,
-    @Args() { text }: GetTextToSQLArgs,
+    @Args() { text }: GetAskAIArgs,
   ) {
     const isAskAIEnabledFeatureFlag =
       await this.featureFlagRepository.findOneBy({
@@ -47,6 +47,6 @@ export class TextToSQLResolver {
       );
     }
 
-    return this.textToSQLService.query(workspaceId, text);
+    return this.askAIService.query(workspaceId, text);
   }
 }

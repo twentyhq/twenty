@@ -10,19 +10,16 @@ import {
 import { StringOutputParser } from '@langchain/core/output_parsers';
 import { CallbackHandler, Langfuse } from 'langfuse-langchain';
 
-import { TextToSQLQueryResult } from 'src/engine/core-modules/text-to-sql/dtos/text-to-sql-query-result.dto';
+import { AskAIQueryResult } from 'src/engine/core-modules/ask-ai/dtos/ask-ai-query-result.dto';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 
 @Injectable()
-export class TextToSQLService {
+export class AskAIService {
   constructor(
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
   ) {}
 
-  async query(
-    workspaceId: string,
-    text: string,
-  ): Promise<TextToSQLQueryResult> {
+  async query(workspaceId: string, text: string): Promise<AskAIQueryResult> {
     const workspaceSchemaName =
       this.workspaceDataSourceService.getSchemaName(workspaceId);
 
