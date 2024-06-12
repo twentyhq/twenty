@@ -151,7 +151,7 @@ export class MessageQueueExplorer implements OnModuleInit {
         for (const [methodName, metadata] of processMetadataCollection) {
           if (job.name === metadata?.jobName || !metadata?.jobName) {
             try {
-              await contextInstance[methodName].call(contextInstance, job);
+              await contextInstance[methodName].call(contextInstance, job.data);
             } catch (err) {
               if (!shouldFilterException(err)) {
                 this.exceptionHandlerService.captureExceptions([err]);
@@ -164,9 +164,9 @@ export class MessageQueueExplorer implements OnModuleInit {
     } else {
       queue.work(async (job) => {
         for (const [methodName, metadata] of processMetadataCollection) {
-          if (job.name === metadata?.jobName || !metadata?.jobName) {
+          if (job.name === metadata?.jobName) {
             try {
-              await instance[methodName].call(instance, job);
+              await instance[methodName].call(instance, job.data);
             } catch (err) {
               if (!shouldFilterException(err)) {
                 this.exceptionHandlerService.captureExceptions([err]);

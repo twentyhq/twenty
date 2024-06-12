@@ -8,11 +8,10 @@ export interface MessageQueueProcessOptions {
   concurrency?: number;
 }
 
-export function Process(): MethodDecorator;
 export function Process(jobName: string): MethodDecorator;
 export function Process(options: MessageQueueProcessOptions): MethodDecorator;
 export function Process(
-  nameOrOptions?: string | MessageQueueProcessOptions,
+  nameOrOptions: string | MessageQueueProcessOptions,
 ): MethodDecorator {
   const options = isString(nameOrOptions)
     ? { jobName: nameOrOptions }
