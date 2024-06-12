@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { IconPlus, IconSettings } from 'twenty-ui';
 
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { Button } from '@/ui/input/button/components/Button';
 import AnimatedPlaceholder from '@/ui/layout/animated-placeholder/components/AnimatedPlaceholder';
 import {
@@ -11,20 +12,22 @@ import {
 } from '@/ui/layout/animated-placeholder/components/EmptyPlaceholderStyled';
 
 type RecordTableEmptyStateProps = {
+  objectNameSingular: string;
   objectLabel: string;
   createRecord: () => void;
   isRemote: boolean;
-  hasUnfilteredRecords: boolean;
 };
 
 export const RecordTableEmptyState = ({
+  objectNameSingular,
   objectLabel,
   createRecord,
   isRemote,
-  hasUnfilteredRecords
 }: RecordTableEmptyStateProps) => {
   const navigate = useNavigate();
-  const localTitle = hasUnfilteredRecords ? `No ${objectLabel} found` : `Add your first ${objectLabel}`
+  const { totalCount } = useFindManyRecords({ objectNameSingular, limit: 1 });
+  const noExistingRecords = totalCount === 0;
+
   const [title, subTitle, Icon, onClick, buttonTitle] = isRemote
     ? [
         'No Data Available for Remote Table',
@@ -34,8 +37,12 @@ export const RecordTableEmptyState = ({
         'Go to Settings',
       ]
     : [
-        localTitle,
-        `Use our API or add your first ${objectLabel} manually`,
+        noExistingRecords
+          ? `Add your first ${objectLabel}`
+          : `No ${objectLabel} found`,
+        noExistingRecords
+          ? `Use our API or add your first ${objectLabel} manually`
+          : 'No records matching the filter criteria were found.',
         IconPlus,
         createRecord,
         `Add a ${objectLabel}`,
