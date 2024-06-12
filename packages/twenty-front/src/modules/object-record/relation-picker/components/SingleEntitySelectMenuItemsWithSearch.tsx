@@ -1,12 +1,9 @@
-import { useRecoilValue } from 'recoil';
-
 import { ObjectMetadataItemsRelationPickerEffect } from '@/object-metadata/components/ObjectMetadataItemsRelationPickerEffect';
 import {
   SingleEntitySelectMenuItems,
   SingleEntitySelectMenuItemsProps,
 } from '@/object-record/relation-picker/components/SingleEntitySelectMenuItems';
-import { useRelationPickerScopedStates } from '@/object-record/relation-picker/hooks/internal/useRelationPickerScopedStates';
-import { useFilteredSearchEntityQuery } from '@/search/hooks/useFilteredSearchEntityQuery';
+import { useRelationPickerEntitiesOptions } from '@/object-record/relation-picker/hooks/useRelationPickerEntitiesOptions';
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { isDefined } from '~/utils/isDefined';
@@ -15,7 +12,7 @@ import { useEntitySelectSearch } from '../hooks/useEntitySelectSearch';
 
 export type SingleEntitySelectMenuItemsWithSearchProps = {
   excludedRelationRecordIds?: string[];
-  onCreate?: () => void;
+  onCreate?: ((searchInput?: string) => void) | (() => void);
   relationObjectNameSingular: string;
   relationPickerScopeId?: string;
   selectedRelationRecordIds: string[];
@@ -44,32 +41,29 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
     relationPickerScopeId,
   });
 
-  const { searchQueryState, relationPickerSearchFilterState } =
-    useRelationPickerScopedStates({
-      relationPickerScopedId: relationPickerScopeId,
+  const { entities, relationPickerSearchFilter } =
+    useRelationPickerEntitiesOptions({
+      relationObjectNameSingular,
+      relationPickerScopeId,
+      selectedRelationRecordIds,
+      excludedRelationRecordIds,
     });
 
-  const searchQuery = useRecoilValue(searchQueryState);
-  const relationPickerSearchFilter = useRecoilValue(
-    relationPickerSearchFilterState,
-  );
+  const showCreateButton = isDefined(onCreate);
 
-  const showCreateButton =
-    isDefined(onCreate) && relationPickerSearchFilter !== '';
+  let onCreateWithInput = undefined;
 
-  const entities = useFilteredSearchEntityQuery({
-    filters: [
-      {
-        fieldNames:
-          searchQuery?.computeFilterFields?.(relationObjectNameSingular) ?? [],
-        filter: relationPickerSearchFilter,
-      },
-    ],
-    orderByField: 'createdAt',
-    selectedIds: selectedRelationRecordIds,
-    excludeEntityIds: excludedRelationRecordIds,
-    objectNameSingular: relationObjectNameSingular,
-  });
+  if (isDefined(onCreate)) {
+    onCreateWithInput = () => {
+      if (onCreate.length > 0) {
+        (onCreate as (searchInput?: string) => void)(
+          relationPickerSearchFilter,
+        );
+      } else {
+        (onCreate as () => void)();
+      }
+    };
+  }
 
   return (
     <>
@@ -81,12 +75,17 @@ export const SingleEntitySelectMenuItemsWithSearch = ({
       <SingleEntitySelectMenuItems
         entitiesToSelect={entities.entitiesToSelect}
         loading={entities.loading}
-        selectedEntity={selectedEntity ?? entities.selectedEntities[0]}
+        selectedEntity={
+          selectedEntity ??
+          (entities.selectedEntities.length === 1
+            ? entities.selectedEntities[0]
+            : undefined)
+        }
+        onCreate={onCreateWithInput}
         {...{
           EmptyIcon,
           emptyLabel,
           onCancel,
-          onCreate,
           onEntitySelected,
           showCreateButton,
         }}

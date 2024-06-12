@@ -72,7 +72,7 @@
 
 .variant-rounded {
   --chip-horizontal-padding: calc(var(--twentycrm-spacing-multiplicator) * 2px);
-  --chip-vertical-padding: 3px;
+  --chip-vertical-padding: 1px;
 
   background-color: var(--twentycrm-background-transparent-light);
   border: 1px solid var(--twentycrm-border-color-medium);

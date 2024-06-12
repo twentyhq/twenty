@@ -6,7 +6,7 @@ const isValidStringPosition = (value: string): boolean =>
   typeof value === 'string' && (value === 'first' || value === 'last');
 
 const isValidNumberPosition = (value: number): boolean =>
-  typeof value === 'number' && value >= 0;
+  typeof value === 'number';
 
 const checkPosition = (value: any): PositionType => {
   if (isValidNumberPosition(value) || isValidStringPosition(value)) {

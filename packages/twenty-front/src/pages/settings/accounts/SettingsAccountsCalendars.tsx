@@ -17,10 +17,8 @@ import { SettingsPath } from '@/types/SettingsPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/SubMenuTopBarContainer';
 import { Section } from '@/ui/layout/section/components/Section';
 import { Breadcrumb } from '@/ui/navigation/bread-crumb/components/Breadcrumb';
-import {
-  TimelineCalendarEvent,
-  TimelineCalendarEventVisibility,
-} from '~/generated-metadata/graphql';
+import { CalendarChannelVisibility } from '~/generated/graphql';
+import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
 
 export const SettingsAccountsCalendars = () => {
   const calendarSettingsEnabled = false;
@@ -79,7 +77,7 @@ export const SettingsAccountsCalendars = () => {
     isCanceled: false,
     location: '',
     title: 'Onboarding call',
-    visibility: TimelineCalendarEventVisibility.ShareEverything,
+    visibility: CalendarChannelVisibility.ShareEverything,
   };
 
   return (

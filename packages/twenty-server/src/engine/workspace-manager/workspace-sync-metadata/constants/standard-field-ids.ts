@@ -70,6 +70,7 @@ export const CALENDAR_CHANNEL_STANDARD_FIELD_IDS = {
   isSyncEnabled: '20202020-fe19-4818-8854-21f7b1b43395',
   syncCursor: '20202020-bac2-4852-a5cb-7a7898992b70',
   calendarChannelEventAssociations: '20202020-afb0-4a9f-979f-2d5087d71d09',
+  throttleFailureCount: '20202020-525c-4b76-b9bd-0dd57fd11d61',
 };
 
 export const CALENDAR_EVENT_PARTICIPANT_STANDARD_FIELD_IDS = {
@@ -206,8 +207,9 @@ export const MESSAGE_CHANNEL_STANDARD_FIELD_IDS = {
   syncCursor: '20202020-79d1-41cf-b738-bcf5ed61e256',
   syncedAt: '20202020-263d-4c6b-ad51-137ada56f7d4',
   syncStatus: '20202020-56a1-4f7e-9880-a8493bb899cc',
-  syncSubStatus: '20202020-7979-4b08-89fe-99cb5e698767',
-  ongoingSyncStartedAt: '20202020-8c61-4a42-ae63-73c1c3c52e06',
+  syncStage: '20202020-7979-4b08-89fe-99cb5e698767',
+  syncStageStartedAt: '20202020-8c61-4a42-ae63-73c1c3c52e06',
+  throttleFailureCount: '20202020-0291-42be-9ad0-d578a51684ab',
 };
 
 export const MESSAGE_PARTICIPANT_STANDARD_FIELD_IDS = {

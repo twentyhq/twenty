@@ -1,24 +1,32 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import ReactFlow, {
   applyEdgeChanges,
   applyNodeChanges,
   Background,
-  Controls,
   EdgeChange,
   getIncomers,
   getOutgoers,
   NodeChange,
   useEdgesState,
   useNodesState,
+  useReactFlow,
 } from 'reactflow';
 import styled from '@emotion/styled';
-import { IconX } from 'twenty-ui';
+import {
+  IconLock,
+  IconLockOpen,
+  IconMaximize,
+  IconMinus,
+  IconPlus,
+  IconX,
+} from 'twenty-ui';
 
 import { SettingsDataModelOverviewEffect } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewEffect';
 import { SettingsDataModelOverviewObject } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewObject';
 import { SettingsDataModelOverviewRelationMarkers } from '@/settings/data-model/graph-overview/components/SettingsDataModelOverviewRelationMarkers';
 import { calculateHandlePosition } from '@/settings/data-model/graph-overview/util/calculateHandlePosition';
 import { Button } from '@/ui/input/button/components/Button';
+import { IconButtonGroup } from '@/ui/input/button/components/IconButtonGroup';
 import { isDefined } from '~/utils/isDefined';
 
 import 'reactflow/dist/style.css';
@@ -28,34 +36,6 @@ const NodeTypes = {
 };
 const StyledContainer = styled.div`
   height: 100%;
-  .has-many-edge {
-    &.selected path.react-flow__edge-path {
-      marker-end: url(#hasManySelected);
-      stroke-width: 1.5;
-    }
-  }
-  .has-many-edge--highlighted {
-    path.react-flow__edge-path,
-    path.react-flow__edge-interaction,
-    path.react-flow__connection-path {
-      stroke: ${({ theme }) => theme.tag.background.blue} !important;
-      stroke-width: 1.5px;
-    }
-  }
-  .has-many-edge-reversed {
-    &.selected path.react-flow__edge-path {
-      marker-end: url(#hasManyReversedSelected);
-      stroke-width: 1.5;
-    }
-  }
-  .has-many-edge-reversed--highlighted {
-    path.react-flow__edge-path,
-    path.react-flow__edge-interaction,
-    path.react-flow__connection-path {
-      stroke: ${({ theme }) => theme.tag.background.blue} !important;
-      stroke-width: 1.5px;
-    }
-  }
   .react-flow__handle {
     border: 0 !important;
     background: transparent !important;
@@ -75,27 +55,6 @@ const StyledContainer = styled.div`
     top: 50%;
     transform: translateX(50%) translateY(-50%);
   }
-  .top-handle {
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%) translateY(-50%);
-  }
-  .bottom-handle {
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%) translateY(50%);
-  }
-  .react-flow__panel {
-    display: flex;
-    border-radius: ${({ theme }) => theme.border.radius.md};
-    box-shadow: unset;
-
-    button {
-      background: ${({ theme }) => theme.background.secondary};
-      border-bottom: none;
-      fill: ${({ theme }) => theme.font.color.secondary};
-    }
-  }
   .react-flow__node {
     z-index: -1 !important;
   }
@@ -109,8 +68,11 @@ const StyledCloseButton = styled.div`
 `;
 
 export const SettingsDataModelOverview = () => {
+  const { fitView, zoomIn, zoomOut } = useReactFlow();
+
   const [nodes, setNodes] = useNodesState([]);
   const [edges, setEdges] = useEdgesState([]);
+  const [isInteractive, setInteractive] = useState(true);
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) =>
@@ -236,10 +198,34 @@ export const SettingsDataModelOverview = () => {
         onEdgesChange={onEdgesChange}
         nodeTypes={NodeTypes}
         onNodesChange={handleNodesChange}
+        nodesDraggable={isInteractive}
+        elementsSelectable={isInteractive}
         proOptions={{ hideAttribution: true }}
       >
         <Background />
-        <Controls />
+
+        <IconButtonGroup
+          className="react-flow__panel react-flow__controls bottom left"
+          size="small"
+          iconButtons={[
+            {
+              Icon: IconPlus,
+              onClick: () => zoomIn(),
+            },
+            {
+              Icon: IconMinus,
+              onClick: () => zoomOut(),
+            },
+            {
+              Icon: IconMaximize,
+              onClick: () => fitView(),
+            },
+            {
+              Icon: isInteractive ? IconLockOpen : IconLock,
+              onClick: () => setInteractive(!isInteractive),
+            },
+          ]}
+        ></IconButtonGroup>
       </ReactFlow>
     </StyledContainer>
   );

@@ -33,15 +33,10 @@ export const seedFeatureFlags = async (
       {
         key: FeatureFlagKeys.IsEventObjectEnabled,
         workspaceId: workspaceId,
-        value: true,
+        value: false,
       },
       {
         key: FeatureFlagKeys.IsStripeIntegrationEnabled,
-        workspaceId: workspaceId,
-        value: true,
-      },
-      {
-        key: FeatureFlagKeys.IsGmailSyncV2Enabled,
         workspaceId: workspaceId,
         value: true,
       },

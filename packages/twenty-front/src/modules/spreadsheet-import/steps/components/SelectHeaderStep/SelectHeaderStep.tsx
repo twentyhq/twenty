@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
 import styled from '@emotion/styled';
 
-import { ContinueButton } from '@/spreadsheet-import/components/ContinueButton';
 import { Heading } from '@/spreadsheet-import/components/Heading';
+import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { RawData } from '@/spreadsheet-import/types';
 import { Modal } from '@/ui/layout/modal/components/Modal';
 
@@ -21,11 +21,13 @@ const StyledTableContainer = styled.div`
 type SelectHeaderStepProps = {
   data: RawData[];
   onContinue: (headerValues: RawData, data: RawData[]) => Promise<void>;
+  onBack: () => void;
 };
 
 export const SelectHeaderStep = ({
   data,
   onContinue,
+  onBack,
 }: SelectHeaderStepProps) => {
   const [selectedRows, setSelectedRows] = useState<ReadonlySet<number>>(
     new Set([0]),
@@ -53,9 +55,10 @@ export const SelectHeaderStep = ({
           />
         </StyledTableContainer>
       </Modal.Content>
-      <ContinueButton
-        onContinue={handleContinue}
-        title="Next"
+      <StepNavigationButton
+        onClick={handleContinue}
+        onBack={onBack}
+        title="Continue"
         isLoading={isLoading}
       />
     </>

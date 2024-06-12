@@ -21,9 +21,6 @@ class AuthProviders {
 class Telemetry {
   @Field(() => Boolean)
   enabled: boolean;
-
-  @Field(() => Boolean)
-  anonymizationEnabled: boolean;
 }
 
 @ObjectType()
@@ -96,4 +93,7 @@ export class ClientConfig {
 
   @Field(() => Captcha)
   captcha: Captcha;
+
+  @Field(() => String, { nullable: true })
+  chromeExtensionId: string | undefined;
 }

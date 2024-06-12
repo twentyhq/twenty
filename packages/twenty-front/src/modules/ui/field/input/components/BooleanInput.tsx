@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useTheme } from '@emotion/react';
 import styled from '@emotion/styled';
-import { IconCheck, IconX } from 'twenty-ui';
+
+import { BooleanDisplay } from '@/ui/field/display/components/BooleanDisplay';
 
 const StyledEditableBooleanFieldContainer = styled.div`
   align-items: center;
@@ -10,10 +10,6 @@ const StyledEditableBooleanFieldContainer = styled.div`
 
   height: 100%;
   width: 100%;
-`;
-
-const StyledEditableBooleanFieldValue = styled.div`
-  margin-left: ${({ theme }) => theme.spacing(1)};
 `;
 
 type BooleanInputProps = {
@@ -40,21 +36,12 @@ export const BooleanInput = ({
     onToggle?.(!internalValue);
   };
 
-  const theme = useTheme();
-
   return (
     <StyledEditableBooleanFieldContainer
       onClick={readonly ? undefined : handleClick}
       data-testid={testId}
     >
-      {internalValue ? (
-        <IconCheck size={theme.icon.size.sm} />
-      ) : (
-        <IconX size={theme.icon.size.sm} />
-      )}
-      <StyledEditableBooleanFieldValue>
-        {internalValue ? 'True' : 'False'}
-      </StyledEditableBooleanFieldValue>
+      <BooleanDisplay value={internalValue} />
     </StyledEditableBooleanFieldContainer>
   );
 };

@@ -7,9 +7,9 @@ import {
 } from '@hello-pangea/dnd';
 import {
   AppTooltip,
+  IconEye,
+  IconEyeOff,
   IconInfoCircle,
-  IconMinus,
-  IconPlus,
   useIcons,
 } from 'twenty-ui';
 
@@ -33,6 +33,7 @@ type ViewFieldsVisibilityDropdownSectionProps = {
     field: Omit<ColumnDefinition<FieldMetadata>, 'size' | 'position'>,
   ) => void;
   title: string;
+  showSubheader: boolean;
 };
 
 export const ViewFieldsVisibilityDropdownSection = ({
@@ -41,6 +42,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
   onDragEnd,
   onVisibilityChange,
   title,
+  showSubheader = true,
 }: ViewFieldsVisibilityDropdownSectionProps) => {
   const handleOnDrag = (result: DropResult, provided: ResponderProvided) => {
     onDragEnd?.(result, provided);
@@ -69,7 +71,7 @@ export const ViewFieldsVisibilityDropdownSection = ({
       field.isLabelIdentifier
         ? null
         : {
-            Icon: field.isVisible ? IconMinus : IconPlus,
+            Icon: field.isVisible ? IconEyeOff : IconEye,
             onClick: () => onVisibilityChange(field),
           },
     ].filter(isDefined);
@@ -94,7 +96,9 @@ export const ViewFieldsVisibilityDropdownSection = ({
 
   return (
     <div ref={ref}>
-      <StyledDropdownMenuSubheader>{title}</StyledDropdownMenuSubheader>
+      {showSubheader && (
+        <StyledDropdownMenuSubheader>{title}</StyledDropdownMenuSubheader>
+      )}
       <DropdownMenuItemsContainer>
         {nonDraggableItems.map((field, fieldIndex) => (
           <MenuItem

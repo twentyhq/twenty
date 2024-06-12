@@ -78,12 +78,12 @@ describe('FilterInputFactory', () => {
     it('should create filter parser properly', () => {
       const request: any = {
         query: {
-          filter: 'fieldNumber[eq]:1,fieldString[eq]:"Test"',
+          filter: 'fieldNumber[eq]:1,fieldText[eq]:"Test"',
         },
       };
 
       expect(service.create(request, objectMetadata)).toEqual({
-        and: [{ fieldNumber: { eq: 1 } }, { fieldString: { eq: 'Test' } }],
+        and: [{ fieldNumber: { eq: 1 } }, { fieldText: { eq: 'Test' } }],
       });
     });
 
@@ -91,21 +91,21 @@ describe('FilterInputFactory', () => {
       const request: any = {
         query: {
           filter:
-            'and(fieldNumber[eq]:1,fieldString[gte]:"Test",not(fieldString[ilike]:"%val%"),or(not(and(fieldString[startsWith]:"test",fieldNumber[in]:[2,4,5])),fieldCurrency.amountMicros[gt]:1))',
+            'and(fieldNumber[eq]:1,fieldText[gte]:"Test",not(fieldText[ilike]:"%val%"),or(not(and(fieldText[startsWith]:"test",fieldNumber[in]:[2,4,5])),fieldCurrency.amountMicros[gt]:1))',
         },
       };
 
       expect(service.create(request, objectMetadata)).toEqual({
         and: [
           { fieldNumber: { eq: 1 } },
-          { fieldString: { gte: 'Test' } },
-          { not: { fieldString: { ilike: '%val%' } } },
+          { fieldText: { gte: 'Test' } },
+          { not: { fieldText: { ilike: '%val%' } } },
           {
             or: [
               {
                 not: {
                   and: [
-                    { fieldString: { startsWith: 'test' } },
+                    { fieldText: { startsWith: 'test' } },
                     { fieldNumber: { in: [2, 4, 5] } },
                   ],
                 },

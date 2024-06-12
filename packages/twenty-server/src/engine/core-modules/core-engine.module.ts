@@ -11,6 +11,7 @@ import { TimelineCalendarEventModule } from 'src/engine/core-modules/calendar/ti
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { HealthModule } from 'src/engine/core-modules/health/health.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
+import { PostgresCredentialsModule } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.module';
 
 import { AnalyticsModule } from './analytics/analytics.module';
 import { FileModule } from './file/file.module';
@@ -34,6 +35,7 @@ import { ClientConfigModule } from './client-config/client-config.module';
     TimelineCalendarEventModule,
     UserModule,
     WorkspaceModule,
+    PostgresCredentialsModule,
   ],
   exports: [
     AnalyticsModule,

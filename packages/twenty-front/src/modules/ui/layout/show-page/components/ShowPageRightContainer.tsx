@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 import {
   IconCalendarEvent,
   IconCheckbox,
+  IconHome,
   IconMail,
   IconNotes,
   IconPaperclip,
@@ -17,6 +18,7 @@ import { ObjectTasks } from '@/activities/tasks/components/ObjectTasks';
 import { Timeline } from '@/activities/timeline/components/Timeline';
 import { TimelineQueryEffect } from '@/activities/timeline/components/TimelineQueryEffect';
 import { TimelineActivities } from '@/activities/timelineActivities/components/TimelineActivities';
+import { TimelineActivitiesQueryEffect } from '@/activities/timelineActivities/components/TimelineActivitiesQueryEffect';
 import { ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { CoreObjectNameSingular } from '@/object-metadata/types/CoreObjectNameSingular';
 import { TabList } from '@/ui/layout/tab/components/TabList';
@@ -24,12 +26,12 @@ import { useTabList } from '@/ui/layout/tab/hooks/useTabList';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 
-const StyledShowPageRightContainer = styled.div`
+const StyledShowPageRightContainer = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex: 1 0 0;
   flex-direction: column;
   justify-content: start;
-  overflow: ${() => (useIsMobile() ? 'none' : 'hidden')};
+  overflow: ${(isMobile) => (isMobile ? 'none' : 'hidden')};
   width: calc(100% + 4px);
 `;
 
@@ -53,6 +55,8 @@ type ShowPageRightContainerProps = {
   tasks?: boolean;
   notes?: boolean;
   emails?: boolean;
+  summary?: JSX.Element;
+  isRightDrawer?: boolean;
   loading: boolean;
 };
 
@@ -63,48 +67,44 @@ export const ShowPageRightContainer = ({
   notes,
   emails,
   loading,
+  summary,
+  isRightDrawer = false,
 }: ShowPageRightContainerProps) => {
-  const { activeTabIdState } = useTabList(TAB_LIST_COMPONENT_ID);
+  const { activeTabIdState } = useTabList(
+    TAB_LIST_COMPONENT_ID + isRightDrawer,
+  );
   const activeTabId = useRecoilValue(activeTabIdState);
 
-  const shouldDisplayCalendarTab =
-    targetableObject.targetObjectNameSingular ===
-      CoreObjectNameSingular.Company ||
-    targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Person;
+  const targetObjectNameSingular =
+    targetableObject.targetObjectNameSingular as CoreObjectNameSingular;
 
+  const isCompanyOrPerson = [
+    CoreObjectNameSingular.Company,
+    CoreObjectNameSingular.Person,
+  ].includes(targetObjectNameSingular);
+
+  const shouldDisplayCalendarTab = isCompanyOrPerson;
   const shouldDisplayLogTab = useIsFeatureEnabled('IS_EVENT_OBJECT_ENABLED');
+  const shouldDisplayEmailsTab = emails && isCompanyOrPerson;
 
-  const shouldDisplayEmailsTab =
-    (emails &&
-      targetableObject.targetObjectNameSingular ===
-        CoreObjectNameSingular.Company) ||
-    targetableObject.targetObjectNameSingular === CoreObjectNameSingular.Person;
+  const isMobile = useIsMobile() || isRightDrawer;
 
-  const TASK_TABS = [
+  const tabs = [
+    {
+      id: 'summary',
+      title: 'Summary',
+      Icon: IconHome,
+      hide: !isMobile,
+    },
     {
       id: 'timeline',
       title: 'Timeline',
       Icon: IconTimelineEvent,
-      hide: !timeline,
+      hide: !timeline || isRightDrawer,
     },
-    {
-      id: 'tasks',
-      title: 'Tasks',
-      Icon: IconCheckbox,
-      hide: !tasks,
-    },
-    {
-      id: 'notes',
-      title: 'Notes',
-      Icon: IconNotes,
-      hide: !notes,
-    },
-    {
-      id: 'files',
-      title: 'Files',
-      Icon: IconPaperclip,
-      hide: !notes,
-    },
+    { id: 'tasks', title: 'Tasks', Icon: IconCheckbox, hide: !tasks },
+    { id: 'notes', title: 'Notes', Icon: IconNotes, hide: !notes },
+    { id: 'files', title: 'Files', Icon: IconPaperclip, hide: !notes },
     {
       id: 'emails',
       title: 'Emails',
@@ -117,46 +117,51 @@ export const ShowPageRightContainer = ({
       Icon: IconCalendarEvent,
       hide: !shouldDisplayCalendarTab,
     },
-    {
-      id: 'logs',
-      title: 'Logs',
-      Icon: IconTimelineEvent,
-      hide: !shouldDisplayLogTab,
-      hasBetaPill: true,
-    },
   ];
 
+  const renderActiveTabContent = () => {
+    switch (activeTabId) {
+      case 'timeline':
+        return shouldDisplayLogTab ? (
+          <>
+            <TimelineActivitiesQueryEffect
+              targetableObject={targetableObject}
+            />
+            <TimelineActivities targetableObject={targetableObject} />
+          </>
+        ) : (
+          <>
+            <TimelineQueryEffect targetableObject={targetableObject} />
+            <Timeline loading={loading} targetableObject={targetableObject} />
+          </>
+        );
+      case 'summary':
+        return summary;
+      case 'tasks':
+        return <ObjectTasks targetableObject={targetableObject} />;
+      case 'notes':
+        return <Notes targetableObject={targetableObject} />;
+      case 'files':
+        return <Attachments targetableObject={targetableObject} />;
+      case 'emails':
+        return <EmailThreads targetableObject={targetableObject} />;
+      case 'calendar':
+        return <Calendar targetableObject={targetableObject} />;
+      default:
+        return <></>;
+    }
+  };
+
   return (
-    <StyledShowPageRightContainer>
+    <StyledShowPageRightContainer isMobile={isMobile}>
       <StyledTabListContainer>
         <TabList
           loading={loading}
-          tabListId={TAB_LIST_COMPONENT_ID}
-          tabs={TASK_TABS}
+          tabListId={TAB_LIST_COMPONENT_ID + isRightDrawer}
+          tabs={tabs}
         />
       </StyledTabListContainer>
-      {activeTabId === 'timeline' && (
-        <>
-          <TimelineQueryEffect targetableObject={targetableObject} />
-          <Timeline loading={loading} targetableObject={targetableObject} />
-        </>
-      )}
-      {activeTabId === 'tasks' && (
-        <ObjectTasks targetableObject={targetableObject} />
-      )}
-      {activeTabId === 'notes' && <Notes targetableObject={targetableObject} />}
-      {activeTabId === 'files' && (
-        <Attachments targetableObject={targetableObject} />
-      )}
-      {activeTabId === 'emails' && (
-        <EmailThreads targetableObject={targetableObject} />
-      )}
-      {activeTabId === 'calendar' && (
-        <Calendar targetableObject={targetableObject} />
-      )}
-      {activeTabId === 'logs' && (
-        <TimelineActivities targetableObject={targetableObject} />
-      )}
+      {renderActiveTabContent()}
     </StyledShowPageRightContainer>
   );
 };

@@ -1,14 +1,14 @@
-import { UserGuideArticlesProps } from '@/content/user-guide/constants/getUserGuideArticles';
+import { DocsArticlesProps } from '@/content/user-guide/constants/getDocsArticles';
 
 export const groupArticlesByTopic = (
-  items: UserGuideArticlesProps[],
-): Record<string, UserGuideArticlesProps[]> => {
+  items: DocsArticlesProps[],
+): Record<string, DocsArticlesProps[]> => {
   return items.reduce(
     (acc, item) => {
       acc[item.topic] = acc[item.topic] || [];
       acc[item.topic].push(item);
       return acc;
     },
-    {} as Record<string, UserGuideArticlesProps[]>,
+    {} as Record<string, DocsArticlesProps[]>,
   );
 };

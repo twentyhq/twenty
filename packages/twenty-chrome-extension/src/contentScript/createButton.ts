@@ -36,6 +36,7 @@ export const createDefaultButton = (
     padding: '0 1rem',
     cursor: 'pointer',
     height: '32px',
+    width: 'max-content',
   };
 
   Object.assign(div.style, divStyles);

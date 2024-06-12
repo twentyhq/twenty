@@ -1,7 +1,5 @@
-import {
-  TimelineCalendarEvent,
-  TimelineCalendarEventVisibility,
-} from '~/generated-metadata/graphql';
+import { CalendarChannelVisibility } from '~/generated/graphql';
+import { TimelineCalendarEvent } from '~/generated-metadata/graphql';
 
 export const mockedTimelineCalendarEvents: TimelineCalendarEvent[] = [
   {
@@ -18,7 +16,7 @@ export const mockedTimelineCalendarEvents: TimelineCalendarEvent[] = [
     },
     conferenceSolution: 'GOOGLE_MEET',
     isCanceled: false,
-    visibility: TimelineCalendarEventVisibility.ShareEverything,
+    visibility: CalendarChannelVisibility.ShareEverything,
     isFullDay: false,
     participants: [
       {
@@ -58,7 +56,7 @@ export const mockedTimelineCalendarEvents: TimelineCalendarEvent[] = [
     },
     conferenceSolution: 'GOOGLE_MEET',
     isCanceled: false,
-    visibility: TimelineCalendarEventVisibility.Metadata,
+    visibility: CalendarChannelVisibility.Metadata,
     participants: [
       {
         __typename: 'TimelineCalendarEventParticipant',
@@ -87,7 +85,7 @@ export const mockedTimelineCalendarEvents: TimelineCalendarEvent[] = [
     },
     conferenceSolution: 'GOOGLE_MEET',
     isCanceled: false,
-    visibility: TimelineCalendarEventVisibility.Metadata,
+    visibility: CalendarChannelVisibility.Metadata,
     participants: [
       {
         __typename: 'TimelineCalendarEventParticipant',

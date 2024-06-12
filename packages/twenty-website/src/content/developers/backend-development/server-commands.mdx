@@ -1,0 +1,82 @@
+---
+title: Backend Commands
+icon: TbTerminal
+image: /images/user-guide/kanban-views/kanban.png
+---
+
+## Useful commands
+
+These commands should be exectued from packages/twenty-server folder.
+From any other folder you can run `npx nx <command>` twenty-server.
+
+### First time setup
+
+```
+npx nx database:reset # setup the database with dev seeds
+```
+
+###  Starting the app
+
+```
+npx nx start
+```
+
+### Lint
+
+```
+npx nx lint
+```
+
+### Test
+
+```
+npx nx test:unit
+```
+
+### Resetting the database
+
+If you want to reset the database, you can run the following command:
+
+```bash
+npx nx database:reset
+```
+
+<ArticleWarning>
+
+This will drop the database and re-run the migrations and seed.
+
+Make sure to back up any data you want to keep before running this command.
+
+</ArticleWarning>
+
+## Tech Stack
+
+Twenty primarily uses NestJS for the backend. 
+
+Prisma was the first ORM we used. But in order to allow users to create custom fields and custom objects, a lower-level made more sense as we need to have fine-grained control. The project now uses TypeORM. 
+
+Here's what the tech stack now looks like. 
+
+
+**Core**
+- [NestJS](https://nestjs.com/)
+- [TypeORM](https://typeorm.io/)
+- [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
+
+**Database**
+- [Postgres](https://www.postgresql.org/)
+
+**Third-party integrations**
+- [Sentry](https://sentry.io/welcome/) for tracking bugs
+
+**Testing**
+- [Jest](https://jestjs.io/)
+
+**Tooling**
+- [Yarn](https://yarnpkg.com/)
+- [ESLint](https://eslint.org/)
+
+**Development**
+- [AWS EKS](https://aws.amazon.com/eks/) 
+
+<ArticleEditContent></ArticleEditContent>

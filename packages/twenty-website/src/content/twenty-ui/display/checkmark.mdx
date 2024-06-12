@@ -1,0 +1,65 @@
+---
+title: Checkmark
+icon: TbCheck
+image: /images/user-guide/tasks/tasks_header.png
+---
+
+Represents a successful or completed action. 
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { Checkmark } from 'twenty-ui';
+
+export const MyComponent = () => {
+  return <Checkmark />;
+};`} />
+
+
+</ArticleTab>
+
+<ArticleTab>
+
+Extends `React.ComponentPropsWithoutRef<'div'>` and accepts all the props of a regular `div` element.
+
+</ArticleTab>
+
+</ArticleTabs>
+
+## Animated Checkmark 
+
+Represents a checkmark icon with the added feature of animation. 
+
+<ArticleTabs label1="Usage" label2="Props">
+
+<ArticleTab>
+
+<SandpackEditor content={`import { AnimatedCheckmark } from 'twenty-ui';
+
+export const MyComponent = () => {
+  return (
+    <AnimatedCheckmark
+      isAnimating={true}
+      color="green"
+      duration={0.5}
+      size={30}
+    />
+  );
+};`} />
+
+</ArticleTab>
+
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['isAnimating', 'boolean', 'Controls whether the checkmark is animating', 'false'],
+  ['color', 'string', 'Color of the checkmark', "Theme's gray0"],
+  ['duration', 'number', 'The duration of the animation in seconds', '0.5 seconds'],
+  ['size', 'number', 'The size of the checkmark', '28 pixels']
+]} />
+
+</ArticleTab>
+
+</ArticleTabs>
+
+<ArticleEditContent></ArticleEditContent>

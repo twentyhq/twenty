@@ -31,9 +31,14 @@ export const useOpenRecordTableCellFromCell = () => {
   const cellPosition = useCurrentTableCellPosition();
   const customCellHotkeyScope = useContext(CellHotkeyScopeContext);
   const { entityId, fieldDefinition } = useContext(FieldContext);
-  const { isReadOnly, pathToShowPage } = useContext(RecordTableRowContext);
+  const { isReadOnly, pathToShowPage, objectNameSingular } = useContext(
+    RecordTableRowContext,
+  );
 
-  const openTableCell = (initialValue?: string) => {
+  const openTableCell = (
+    initialValue?: string,
+    isActionButtonClick = false,
+  ) => {
     onOpenTableCell({
       cellPosition,
       customCellHotkeyScope,
@@ -41,7 +46,9 @@ export const useOpenRecordTableCellFromCell = () => {
       fieldDefinition,
       isReadOnly,
       pathToShowPage,
+      objectNameSingular,
       initialValue,
+      isActionButtonClick,
     });
   };
 

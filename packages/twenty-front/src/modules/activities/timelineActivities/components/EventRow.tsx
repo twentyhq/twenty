@@ -1,75 +1,44 @@
-import { Tooltip } from 'react-tooltip';
+import { useContext } from 'react';
 import styled from '@emotion/styled';
-import {
-  IconCheckbox,
-  IconCirclePlus,
-  IconEditCircle,
-  IconFocusCentered,
-  IconNotes,
-  useIcons,
-} from 'twenty-ui';
+import { useRecoilValue } from 'recoil';
 
-import { useOpenActivityRightDrawer } from '@/activities/hooks/useOpenActivityRightDrawer';
 import { useLinkedObject } from '@/activities/timeline/hooks/useLinkedObject';
-import { EventUpdateProperty } from '@/activities/timelineActivities/components/EventUpdateProperty';
+import { TimelineActivityContext } from '@/activities/timelineActivities/contexts/TimelineActivityContext';
+import {
+  EventIconDynamicComponent,
+  EventRowDynamicComponent,
+} from '@/activities/timelineActivities/rows/components/EventRowDynamicComponent';
 import { TimelineActivity } from '@/activities/timelineActivities/types/TimelineActivity';
+import {
+  CurrentWorkspaceMember,
+  currentWorkspaceMemberState,
+} from '@/auth/states/currentWorkspaceMemberState';
 import { ObjectMetadataItem } from '@/object-metadata/types/ObjectMetadataItem';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import {
-  beautifyExactDateTime,
-  beautifyPastDateRelativeToNow,
-} from '~/utils/date-utils';
+import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
+import { isDefined } from '~/utils/isDefined';
 import { isUndefinedOrNull } from '~/utils/isUndefinedOrNull';
 
 const StyledIconContainer = styled.div`
-  align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
   display: flex;
-  user-select: none;
-  height: 16px;
-  margin: 5px;
+  align-items: center;
   justify-content: center;
-  text-decoration-line: underline;
+  color: ${({ theme }) => theme.font.color.tertiary};
+  height: 16px;
   width: 16px;
+  margin: 5px;
+  user-select: none;
+  text-decoration-line: underline;
   z-index: 2;
-`;
-
-const StyledActionName = styled.span`
-  overflow: hidden;
-  flex: none;
-  white-space: nowrap;
+  align-self: normal;
 `;
 
 const StyledItemContainer = styled.div`
-  align-content: center;
+  display: flex;
   align-items: center;
-  color: ${({ theme }) => theme.font.color.tertiary};
-  display: flex;
+  gap: ${({ theme }) => theme.spacing(1)};
   flex: 1;
-  gap: ${({ theme }) => theme.spacing(1)};
-  span {
-    color: ${({ theme }) => theme.font.color.secondary};
-  }
   overflow: hidden;
-`;
-
-const StyledItemAuthorText = styled.span`
-  display: flex;
-  color: ${({ theme }) => theme.font.color.primary};
-  gap: ${({ theme }) => theme.spacing(1)};
-  white-space: nowrap;
-`;
-
-const StyledItemTitle = styled.span`
-  display: flex;
-  flex-flow: row nowrap;
-  overflow: hidden;
-  white-space: nowrap;
-`;
-
-const StyledLinkedObject = styled.span`
-  cursor: pointer;
-  text-decoration: underline;
 `;
 
 const StyledItemTitleDate = styled.div`
@@ -98,25 +67,10 @@ const StyledVerticalLine = styled.div`
   width: 2px;
 `;
 
-const StyledTooltip = styled(Tooltip)`
-  background-color: ${({ theme }) => theme.background.primary};
-
-  box-shadow: 0px 2px 4px 3px
-    ${({ theme }) => theme.background.transparent.light};
-
-  box-shadow: 2px 4px 16px 6px
-    ${({ theme }) => theme.background.transparent.light};
-
-  color: ${({ theme }) => theme.font.color.primary};
-
-  opacity: 1;
-  padding: ${({ theme }) => theme.spacing(2)};
-`;
-
 const StyledTimelineItemContainer = styled.div<{ isGap?: boolean }>`
-  align-items: center;
-  align-self: stretch;
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: ${({ theme }) => theme.spacing(4)};
   height: ${({ isGap, theme }) =>
     isGap ? (useIsMobile() ? theme.spacing(6) : theme.spacing(3)) : 'auto'};
@@ -127,8 +81,9 @@ const StyledTimelineItemContainer = styled.div<{ isGap?: boolean }>`
 const StyledSummary = styled.summary`
   display: flex;
   flex: 1;
-  flex-flow: row ${() => (useIsMobile() ? 'wrap' : 'nowrap')};
+  flex-direction: row;
   gap: ${({ theme }) => theme.spacing(1)};
+  align-items: center;
   overflow: hidden;
 `;
 
@@ -138,135 +93,69 @@ type EventRowProps = {
   event: TimelineActivity;
 };
 
+const getAuthorFullName = (
+  event: TimelineActivity,
+  currentWorkspaceMember: CurrentWorkspaceMember,
+) => {
+  if (isDefined(event.workspaceMember)) {
+    return currentWorkspaceMember.id === event.workspaceMember.id
+      ? 'You'
+      : `${event.workspaceMember?.name.firstName} ${event.workspaceMember?.name.lastName}`;
+  }
+  return 'Twenty';
+};
+
 export const EventRow = ({
   isLastEvent,
   event,
   mainObjectMetadataItem,
 }: EventRowProps) => {
+  const currentWorkspaceMember = useRecoilValue(currentWorkspaceMemberState);
+
+  const { labelIdentifierValue } = useContext(TimelineActivityContext);
   const beautifiedCreatedAt = beautifyPastDateRelativeToNow(event.createdAt);
-  const exactCreatedAt = beautifyExactDateTime(event.createdAt);
+  const linkedObjectMetadataItem = useLinkedObject(
+    event.linkedObjectMetadataId,
+  );
 
-  const properties = JSON.parse(event.properties);
-  const diff: Record<string, { before: any; after: any }> = properties?.diff;
-
-  const isEventType = (type: 'created' | 'updated') => {
-    if (event.name.includes('.')) {
-      return event.name.split('.')[1] === type;
-    }
-    return false;
-  };
-
-  const { getIcon } = useIcons();
-
-  const linkedObjectMetadata = useLinkedObject(event.linkedObjectMetadataId);
-
-  const linkedObjectLabel = event.name.includes('note')
-    ? 'note'
-    : event.name.includes('task')
-      ? 'task'
-      : linkedObjectMetadata?.labelSingular;
-
-  const ActivityIcon = event.linkedObjectMetadataId
-    ? event.name.includes('note')
-      ? IconNotes
-      : event.name.includes('task')
-        ? IconCheckbox
-        : getIcon(linkedObjectMetadata?.icon)
-    : isEventType('created')
-      ? IconCirclePlus
-      : isEventType('updated')
-        ? IconEditCircle
-        : IconFocusCentered;
-
-  const author =
-    event.workspaceMember?.name.firstName +
-    ' ' +
-    event.workspaceMember?.name.lastName;
-
-  const action = isEventType('created')
-    ? 'created'
-    : isEventType('updated')
-      ? 'updated'
-      : event.name;
-
-  let description;
-
-  if (!isUndefinedOrNull(linkedObjectMetadata)) {
-    description = 'a ' + linkedObjectLabel;
-  } else if (!event.linkedObjectMetadataId && isEventType('created')) {
-    description = `a new ${mainObjectMetadataItem?.labelSingular}`;
-  } else if (isEventType('updated')) {
-    const diffKeys = Object.keys(diff);
-    if (diffKeys.length === 0) {
-      description = `a ${mainObjectMetadataItem?.labelSingular}`;
-    } else if (diffKeys.length === 1) {
-      const [key, value] = Object.entries(diff)[0];
-      description = [
-        <EventUpdateProperty
-          propertyName={key}
-          after={value?.after as string}
-        />,
-      ];
-    } else if (diffKeys.length === 2) {
-      description =
-        mainObjectMetadataItem?.fields.find(
-          (field) => diffKeys[0] === field.name,
-        )?.label +
-        ' and ' +
-        mainObjectMetadataItem?.fields.find(
-          (field) => diffKeys[1] === field.name,
-        )?.label;
-    } else if (diffKeys.length > 2) {
-      description =
-        diffKeys[0] + ' and ' + (diffKeys.length - 1) + ' other fields';
-    }
-  } else if (!isEventType('created') && !isEventType('updated')) {
-    description = JSON.stringify(diff);
+  if (isUndefinedOrNull(currentWorkspaceMember)) {
+    return null;
   }
-  const details = JSON.stringify(diff);
 
-  const openActivityRightDrawer = useOpenActivityRightDrawer();
+  const authorFullName = getAuthorFullName(event, currentWorkspaceMember);
+
+  if (isUndefinedOrNull(mainObjectMetadataItem)) {
+    return null;
+  }
 
   return (
     <>
       <StyledTimelineItemContainer>
         <StyledIconContainer>
-          <ActivityIcon />
+          <EventIconDynamicComponent
+            event={event}
+            linkedObjectMetadataItem={linkedObjectMetadataItem}
+          />
         </StyledIconContainer>
         <StyledItemContainer>
-          <details>
-            <StyledSummary>
-              <StyledItemAuthorText>{author}</StyledItemAuthorText>
-              <StyledActionName>{action}</StyledActionName>
-              <StyledItemTitle>{description}</StyledItemTitle>
-              {isUndefinedOrNull(linkedObjectMetadata) ? (
-                <></>
-              ) : (
-                <StyledLinkedObject
-                  onClick={() => openActivityRightDrawer(event.linkedRecordId)}
-                >
-                  {event.linkedRecordCachedName}
-                </StyledLinkedObject>
-              )}
-            </StyledSummary>
-            {details}
-          </details>
-
+          <StyledSummary>
+            <EventRowDynamicComponent
+              authorFullName={authorFullName}
+              labelIdentifierValue={labelIdentifierValue}
+              event={event}
+              mainObjectMetadataItem={mainObjectMetadataItem}
+              linkedObjectMetadataItem={linkedObjectMetadataItem}
+            />
+          </StyledSummary>
           <StyledItemTitleDate id={`id-${event.id}`}>
             {beautifiedCreatedAt}
           </StyledItemTitleDate>
-          <StyledTooltip
-            anchorSelect={`#id-${event.id}`}
-            content={exactCreatedAt}
-            clickable
-            noArrow
-          />
         </StyledItemContainer>
       </StyledTimelineItemContainer>
       {!isLastEvent && (
         <StyledTimelineItemContainer isGap>
           <StyledVerticalLineContainer>
-            <StyledVerticalLine></StyledVerticalLine>
+            <StyledVerticalLine />
           </StyledVerticalLineContainer>
         </StyledTimelineItemContainer>
       )}

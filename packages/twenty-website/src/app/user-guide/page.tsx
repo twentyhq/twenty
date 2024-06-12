@@ -1,5 +1,5 @@
-import UserGuideMain from '@/app/_components/user-guide/UserGuideMain';
-import { getUserGuideArticles } from '@/content/user-guide/constants/getUserGuideArticles';
+import DocsMain from '@/app/_components/docs/DocsMain';
+import { getDocsArticles } from '@/content/user-guide/constants/getDocsArticles';
 
 export const metadata = {
   title: 'Twenty - User Guide',
@@ -11,7 +11,8 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function UserGuideHome() {
-  const userGuideArticleCards = getUserGuideArticles();
+  const filePath = 'src/content/user-guide/';
+  const docsArticleCards = getDocsArticles(filePath);
 
-  return <UserGuideMain userGuideArticleCards={userGuideArticleCards} />;
+  return <DocsMain docsArticleCards={docsArticleCards} />;
 }

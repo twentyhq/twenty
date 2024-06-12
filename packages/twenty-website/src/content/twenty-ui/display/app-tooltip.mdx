@@ -1,0 +1,84 @@
+---
+title: App Tooltip
+icon: TbTooltip
+image: /images/user-guide/tips/light-bulb.png
+---
+
+A brief message that displays additional information when a user interacts with an element.
+
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { AppTooltip } from "@/ui/display/tooltip/AppTooltip";
+
+export const MyComponent = () => {
+  return (
+    <>
+      <p id="hoverText" style={{ display: "inline-block" }}>
+        Customer Insights
+      </p>
+      <AppTooltip
+        className
+        anchorSelect="#hoverText"
+        content="Explore customer behavior and preferences"
+        delayHide={0}
+        offset={6}
+        noArrow={false}
+        isOpen={true}
+        place="bottom"
+        positionStrategy="absolute"
+      />
+    </>
+  );
+};`} />
+
+</ArticleTab>
+
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['className', 'string', 'Optional CSS class for additional styling'],
+  ['anchorSelect', 'CSS selector', 'Selector for the tooltip anchor (the element that triggers the tooltip)'],
+  ['content', 'string', 'The content you want to display within the tooltip'],
+  ['delayHide', 'number', 'The delay in seconds before hiding the tooltip after the cursor leaves the anchor'],
+  ['offset', 'number', 'The offset in pixels for positioning the tooltip'],
+  ['noArrow', 'boolean', 'If `true`, hides the arrow on the tooltip'],
+  ['isOpen', 'boolean', 'If `true`, the tooltip is open by default'],
+  ['place', '`PlacesType` string from `react-tooltip`', 'Specifies the placement of the tooltip. Values include `bottom`, `left`, `right`, `top`, `top-start`, `top-end`, `right-start`, `right-end`, `bottom-start`, `bottom-end`, `left-start`, and `left-end`'],
+  ['positionStrategy', '`PositionStrategy` string from `react-tooltip`', 'Position strategy for the tooltip. Has two values: `absolute` and `fixed`']
+]} />
+
+</ArticleTab>
+
+</ArticleTabs>
+
+## Overflowing Text with Tooltip
+
+Handles overflowing text and displays a tooltip when the text overflows. 
+
+<ArticleTabs label1="Usage" label2="Props">
+<ArticleTab>
+
+<SandpackEditor content={`import { OverflowingTextWithTooltip } from 'twenty-ui';
+
+export const MyComponent = () => {
+  const crmTaskDescription =
+    'Follow up with client regarding their recent product inquiry. Discuss pricing options, address any concerns, and provide additional product information. Record the details of the conversation in the CRM for future reference.';
+
+  return <OverflowingTextWithTooltip text={crmTaskDescription} />;
+};`} />
+
+</ArticleTab>
+
+<ArticleTab>
+
+<ArticlePropsTable options={[
+  ['text', 'string', 'The content you want to display in the overflowing text area']
+]} />
+
+</ArticleTab>
+
+</ArticleTabs>
+
+<ArticleEditContent></ArticleEditContent>
