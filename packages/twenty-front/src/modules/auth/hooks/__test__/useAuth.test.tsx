@@ -128,7 +128,6 @@ describe('useAuth', () => {
     });
     expect(state.telemetry).toEqual({
       enabled: true,
-      anonymizationEnabled: true,
     });
     expect(state.isDebugMode).toBe(false);
   });
