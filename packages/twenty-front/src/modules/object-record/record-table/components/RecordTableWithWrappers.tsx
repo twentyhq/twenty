@@ -19,6 +19,7 @@ import { RecordUpdateContext } from '../contexts/EntityUpdateMutationHookContext
 import { useRecordTable } from '../hooks/useRecordTable';
 
 import { RecordTableInternalEffect } from './RecordTableInternalEffect';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 
 const StyledTableWithHeader = styled.div`
   height: 100%;
@@ -67,6 +68,8 @@ export const RecordTableWithWrappers = ({
     },
   );
 
+  const { totalCount } = useFindManyRecords({ objectNameSingular, limit: 1 });
+
   const { saveViewFields } = useSaveCurrentViewFields(viewBarId);
 
   const { deleteOneRecord } = useDeleteOneRecord({ objectNameSingular });
@@ -111,6 +114,7 @@ export const RecordTableWithWrappers = ({
                 // we cannot rely on count states because this is not available for remote objects
                 tableRowIds.length === 0 && (
                   <RecordTableEmptyState
+                    hasUnfilteredRecords={!!totalCount}
                     objectLabel={objectLabel}
                     createRecord={createRecord}
                     isRemote={isRemote}

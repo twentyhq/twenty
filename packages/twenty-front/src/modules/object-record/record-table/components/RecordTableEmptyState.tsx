@@ -14,15 +14,17 @@ type RecordTableEmptyStateProps = {
   objectLabel: string;
   createRecord: () => void;
   isRemote: boolean;
+  hasUnfilteredRecords: boolean;
 };
 
 export const RecordTableEmptyState = ({
   objectLabel,
   createRecord,
   isRemote,
+  hasUnfilteredRecords
 }: RecordTableEmptyStateProps) => {
   const navigate = useNavigate();
-
+  const localTitle = hasUnfilteredRecords ? `No ${objectLabel} found` : `Add your first ${objectLabel}`
   const [title, subTitle, Icon, onClick, buttonTitle] = isRemote
     ? [
         'No Data Available for Remote Table',
@@ -32,7 +34,7 @@ export const RecordTableEmptyState = ({
         'Go to Settings',
       ]
     : [
-        `Add your first ${objectLabel}`,
+        localTitle,
         `Use our API or add your first ${objectLabel} manually`,
         IconPlus,
         createRecord,
