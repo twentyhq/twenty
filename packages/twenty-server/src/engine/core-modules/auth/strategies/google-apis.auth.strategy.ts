@@ -29,6 +29,7 @@ export type GoogleAPIsRequest = Omit<
 
 export type GoogleAPIScopeConfig = {
   isCalendarEnabled?: boolean;
+  isProfileEmailsReadEnabled?: boolean;
 };
 
 @Injectable()
@@ -51,6 +52,10 @@ export class GoogleAPIsStrategy extends PassportStrategy(
       scopeConfig?.isCalendarEnabled
     ) {
       scope.push('https://www.googleapis.com/auth/calendar.events');
+    }
+
+    if (scopeConfig?.isProfileEmailsReadEnabled) {
+      scope.push('https://www.googleapis.com/auth/profile.emails.read');
     }
 
     super({
